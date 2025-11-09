@@ -341,6 +341,23 @@ This will show:
 - Next scheduled workflow runs
 - Autonomous success rate
 
+### Verify Scheduled Workflows
+
+**New!** To verify that your cron schedules are actually running:
+
+```bash
+./verify-schedules.sh
+```
+
+This tool checks:
+- When each scheduled workflow last ran
+- Whether workflows are running on time
+- Detection of overdue or late workflows
+- Analysis of recent failures
+- Repository activity status (60-day deactivation warning)
+
+See **[WORKFLOW_TRIGGERS.md](./WORKFLOW_TRIGGERS.md)** for complete details about how workflows are triggered and scheduled.
+
 ### Via GitHub Pages
 Visit the live site to see real-time statistics, timeline, and learnings.
 
@@ -349,6 +366,7 @@ Visit the live site to see real-time statistics, timeline, and learnings.
 - Issues tagged with `copilot-assigned` are assigned to Copilot
 - Issues tagged with `learning` appear in the learnings section
 - Issues tagged with `progress-report` contain progress reports
+- Issues tagged with `workflow-monitor` indicate schedule or execution problems
 
 ### Via Actions
 Check the Actions tab to see workflow runs and their logs.
@@ -357,9 +375,24 @@ Check the Actions tab to see workflow runs and their logs.
 
 The repository includes helper scripts to manage the autonomous system:
 
+### verify-schedules.sh
+**NEW!** Verify that scheduled workflows are running properly:
+- Checks when each workflow last ran
+- Compares against expected schedule intervals
+- Detects overdue or late workflow runs
+- Analyzes recent failures
+- Warns about 60-day inactivity deactivation
+- Provides actionable recommendations
+
+```bash
+./verify-schedules.sh
+```
+
+**Use this when:** You want to verify your cron schedules are actually executing.
+
 ### evaluate-workflows.sh
 Comprehensive workflow state evaluation:
-- Checks all 12 workflows are present
+- Checks all workflows are present
 - Validates workflow triggers and schedules
 - Verifies workflow permissions
 - Checks workflow dependencies
