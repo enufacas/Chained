@@ -54,28 +54,52 @@ All workflows support manual triggering via the Actions tab or API.
 Here's exactly how work gets done after an issue is assigned:
 
 ```
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    AUTONOMOUS WORKFLOW AUTOMATION                         ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
 1. Issue Created (Manual or AI-generated)
-   └─> EVENT TRIGGER: copilot-assign.yml runs immediately
-       └─> Adds "copilot-assigned" label
-       └─> Issue is now in the queue
+   │
+   ↓ [EVENT TRIGGER - Immediate, Reliable]
+   │
+   ├─→ copilot-assign.yml runs INSTANTLY
+   │   └─→ Adds "copilot-assigned" label
+   │   └─→ Issue is now queued for work
+   │
+   ↓ [PASSIVE POLLING - Wait up to 30 minutes]
+   │
+2. CRON TRIGGER: issue-to-pr.yml runs (every 30 min)
+   │   └─→ Scans for issues with "copilot-assigned" label
+   │   └─→ Creates branch: copilot/issue-{number}-{timestamp}
+   │   └─→ Creates PR with implementation
+   │   └─→ Adds "in-progress" label
+   │   └─→ Adds "copilot" label to PR
+   │
+   ↓ [PASSIVE POLLING - Wait up to 15 minutes]
+   │
+3. CRON TRIGGER: auto-review-merge.yml runs (every 15 min)
+   │   └─→ Finds PRs with "copilot" label
+   │   └─→ Validates author (owner or bot)
+   │   └─→ Reviews and approves PR
+   │   └─→ Merges to main branch
+   │   └─→ Deletes branch
+   │
+   ↓ [PASSIVE POLLING - Wait up to 30 minutes]
+   │
+4. CRON TRIGGER: auto-close-issues.yml runs (every 30 min)
+   │   └─→ Finds merged PRs
+   │   └─→ Closes related issues
+   │   └─→ Adds "completed" label
+   │
+   ↓ [DONE]
+   │
+   └─→ Issue lifecycle complete!
 
-2. [Wait up to 30 minutes]
-   └─> CRON TRIGGER: issue-to-pr.yml runs
-       └─> Scans for issues with "copilot-assigned" label
-       └─> Creates branch and PR for the issue
-       └─> Adds "in-progress" label
+═══════════════════════════════════════════════════════════════════════════
 
-3. [Wait up to 15 minutes]
-   └─> CRON TRIGGER: auto-review-merge.yml runs
-       └─> Finds the new PR
-       └─> Reviews and approves it
-       └─> Merges to main branch
+TOTAL TIME: 15-75 minutes (depends on when scheduled workflows catch it)
 
-4. [Wait up to 30 minutes]
-   └─> CRON TRIGGER: auto-close-issues.yml runs
-       └─> Finds the merged PR
-       └─> Closes the related issue
-       └─> Adds "completed" label
+KEY INSIGHT: It's all PASSIVE POLLING via cron schedules, not active dispatch!
 ```
 
 **Key Insight:** The "forcing" mechanism is **passive polling** via scheduled workflows, NOT active dispatching!
