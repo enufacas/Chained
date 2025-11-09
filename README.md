@@ -14,6 +14,10 @@
 
 **New to autonomous AI development?** Read [COPILOT_VISION.md](./COPILOT_VISION.md) to understand what AI wants to build.
 
+**Have questions about how it works?** Check out the [FAQ.md](./FAQ.md) for answers to common questions!
+
+**Curious about workflow triggers?** Read [WORKFLOW_TRIGGERS.md](./WORKFLOW_TRIGGERS.md) to understand the automation.
+
 ## 🎯 Vision
 
 The goal of Chained is to create an entertaining and educational demonstration of **fully autonomous AI-driven development** by building a system that:
