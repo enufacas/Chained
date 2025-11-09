@@ -1,0 +1,173 @@
+name: Code Golf Optimizer
+
+on:
+  schedule:
+    # Run weekly on Mondays at 10 AM UTC
+    - cron: '0 10 * * 1'
+  workflow_dispatch:
+    inputs:
+      file_path:
+        description: 'Path to file to optimize (optional)'
+        required: false
+        type: string
+      language:
+        description: 'Programming language'
+        required: false
+        default: 'python'
+        type: choice
+        options:
+          - python
+          - javascript
+          - bash
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  optimize-code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run Code Golf Optimizer on Examples
+        id: optimize
+        run: |
+          cd tools
+          
+          # Create output directory
+          mkdir -p optimizations
+          
+          echo "## Code Golf Optimization Report" > optimizations/report.md
+          echo "" >> optimizations/report.md
+          echo "Generated on: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> optimizations/report.md
+          echo "" >> optimizations/report.md
+          
+          total_original=0
+          total_optimized=0
+          
+          # Optimize Python examples
+          echo "### Python Examples" >> optimizations/report.md
+          echo "" >> optimizations/report.md
+          
+          for file in examples/*.py; do
+            if [ -f "$file" ]; then
+              echo "Optimizing: $file"
+              filename=$(basename "$file")
+              
+              # Run optimizer and capture output
+              python3 code-golf-optimizer.py -f "$file" -l python > "optimizations/${filename}.txt"
+              
+              # Extract metrics
+              original=$(grep "Original:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
+              optimized=$(grep "Optimized:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
+              reduction=$(grep "Reduction:" "optimizations/${filename}.txt" | grep -oP '\d+\.\d+' | head -1)
+              
+              total_original=$((total_original + original))
+              total_optimized=$((total_optimized + optimized))
+              
+              echo "- **$filename**: $original → $optimized chars (${reduction}% reduction)" >> optimizations/report.md
+            fi
+          done
+          
+          echo "" >> optimizations/report.md
+          
+          # Optimize JavaScript examples
+          echo "### JavaScript Examples" >> optimizations/report.md
+          echo "" >> optimizations/report.md
+          
+          for file in examples/*.js; do
+            if [ -f "$file" ]; then
+              echo "Optimizing: $file"
+              filename=$(basename "$file")
+              
+              python3 code-golf-optimizer.py -f "$file" -l javascript > "optimizations/${filename}.txt"
+              
+              original=$(grep "Original:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
+              optimized=$(grep "Optimized:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
+              reduction=$(grep "Reduction:" "optimizations/${filename}.txt" | grep -oP '\d+\.\d+' | head -1)
+              
+              total_original=$((total_original + original))
+              total_optimized=$((total_optimized + optimized))
+              
+              echo "- **$filename**: $original → $optimized chars (${reduction}% reduction)" >> optimizations/report.md
+            fi
+          done
+          
+          echo "" >> optimizations/report.md
+          
+          # Optimize Bash examples
+          echo "### Bash Examples" >> optimizations/report.md
+          echo "" >> optimizations/report.md
+          
+          for file in examples/*.sh; do
+            if [ -f "$file" ]; then
+              echo "Optimizing: $file"
+              filename=$(basename "$file")
+              
+              python3 code-golf-optimizer.py -f "$file" -l bash > "optimizations/${filename}.txt"
+              
+              original=$(grep "Original:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
+              optimized=$(grep "Optimized:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
+              reduction=$(grep "Reduction:" "optimizations/${filename}.txt" | grep -oP '\d+\.\d+' | head -1)
+              
+              total_original=$((total_original + original))
+              total_optimized=$((total_optimized + optimized))
+              
+              echo "- **$filename**: $original → $optimized chars (${reduction}% reduction)" >> optimizations/report.md
+            fi
+          done
+          
+          echo "" >> optimizations/report.md
+          echo "### Summary" >> optimizations/report.md
+          echo "" >> optimizations/report.md
+          echo "- **Total Original Size**: $total_original characters" >> optimizations/report.md
+          echo "- **Total Optimized Size**: $total_optimized characters" >> optimizations/report.md
+          
+          saved=$((total_original - total_optimized))
+          if [ $total_original -gt 0 ]; then
+            overall_reduction=$(echo "scale=2; ($saved * 100) / $total_original" | bc)
+            echo "- **Total Saved**: $saved characters (${overall_reduction}% reduction)" >> optimizations/report.md
+          fi
+          
+          echo "" >> optimizations/report.md
+          echo "---" >> optimizations/report.md
+          echo "" >> optimizations/report.md
+          echo "*Generated by the AI Code Golf Optimizer*" >> optimizations/report.md
+          
+          # Display report
+          cat optimizations/report.md
+          
+          # Set output for issue creation
+          echo "report_created=true" >> $GITHUB_OUTPUT
+          echo "total_saved=$saved" >> $GITHUB_OUTPUT
+
+      - name: Create optimization report issue
+        if: steps.optimize.outputs.report_created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd tools
+          
+          # Read the report
+          report_body=$(cat optimizations/report.md)
+          
+          # Create an issue with the report
+          issue_url=$(gh issue create \
+            --title "📊 Code Golf Optimization Report - $(date +%Y-%m-%d)" \
+            --body "$report_body" \
+            --label "code-golf,ai-generated,report")
+          
+          echo "Created optimization report issue: ${issue_url}"
+
+      - name: Log activity
+        run: |
+          echo "Code Golf Optimizer workflow completed"
+          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
