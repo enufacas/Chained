@@ -59,7 +59,7 @@ The system operates fully autonomously when configured correctly:
 **What Happens:**
 1. Issue is created or labeled
 2. Workflow runs automatically
-3. Issues is assigned to Copilot via API
+3. Issue is assigned to Copilot via API
 4. Copilot analyzes requirements
 5. Copilot creates branch, writes code, opens PR
 6. Auto-review workflow merges PR
