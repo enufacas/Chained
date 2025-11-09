@@ -23,9 +23,32 @@ jobs:
        (github.event.action == 'labeled' && github.event.label.name == 'copilot-assigned'))) ||
       github.event_name == 'workflow_dispatch'
     steps:
+      - name: Check for PAT configuration
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "⚠️ WARNING: COPILOT_PAT secret is not configured!"
+            echo ""
+            echo "The default GITHUB_TOKEN cannot assign issues to Copilot due to licensing restrictions."
+            echo "You must create a Personal Access Token (PAT) with 'repo' scope and add it as a secret."
+            echo ""
+            echo "See COPILOT_SETUP.md for detailed setup instructions."
+            echo ""
+            echo "📚 Documentation: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr"
+            echo ""
+            echo "Proceeding with GITHUB_TOKEN (will likely fail to find Copilot actor)..."
+          else
+            echo "✅ COPILOT_PAT is configured"
+          fi
+      
       - name: Discover and process all open issues
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # IMPORTANT: Use a Personal Access Token (PAT) instead of GITHUB_TOKEN
+          # The default GITHUB_TOKEN does not have permissions to assign Copilot
+          # See: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr
+          # Create a PAT with 'repo' scope and add it as a secret named COPILOT_PAT
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
         run: |
           echo "🔍 Discovering all open issues..."
           
@@ -113,21 +136,23 @@ jobs:
           Could not find GitHub Copilot in the list of available assignees for this repository.
           
           **This means:**
-          - GitHub Copilot is not enabled for this repository
-          - You need to enable Copilot in repository Settings
-          - Or your subscription does not include Copilot agents
+          - GitHub Copilot is not enabled for this repository, OR
+          - The workflow is not using a Personal Access Token (PAT) with proper permissions
           
-          **To enable Copilot:**
-          1. Go to repository Settings → Copilot
-          2. Enable GitHub Copilot for this repository
-          3. Ensure your account has a Copilot subscription (Individual, Business, or Enterprise)
+          **To fix this:**
+          1. **Enable Copilot:** Go to repository Settings → Copilot and enable GitHub Copilot
+          2. **Set up PAT:** Create a Personal Access Token with \`repo\` scope at https://github.com/settings/tokens
+          3. **Add Secret:** Add the PAT as a repository secret named \`COPILOT_PAT\`
+          4. **Verify Subscription:** Ensure your account has a Copilot subscription (Individual, Business, or Enterprise)
+          
+          **Note:** The default \`GITHUB_TOKEN\` cannot assign Copilot due to licensing restrictions. A PAT is required.
           
           **For now:**
           - This issue has been labeled \`copilot-assigned\` for tracking
-          - Assign a developer to implement this manually
+          - You can manually assign Copilot from the GitHub UI, or assign a developer
           
           ---
-          *🤖 Automated check via GitHub GraphQL API*"
+          *🤖 Automated check via GitHub GraphQL API - See https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr*"
               continue
             fi
             
@@ -191,18 +216,19 @@ jobs:
           - GraphQL mutation: \`replaceActorsForAssignable\`
           - Actor ID: \`$copilot_actor_id\`
           
-          **Possible reasons:**
-          1. GitHub Copilot is not enabled for this repository
-          2. Copilot coding agent is not activated for your organization
-          3. You need a GitHub Copilot subscription (Individual, Business, or Enterprise)
-          4. The repository lacks necessary Copilot permissions
-          5. Copilot may not be available in your GitHub plan
+          **Most Common Cause:**
+          This workflow is using the default \`GITHUB_TOKEN\` which cannot assign Copilot due to licensing restrictions. A Personal Access Token (PAT) is required.
           
-          **To enable Copilot:**
-          1. Ensure you have an active Copilot subscription
-          2. Enable Copilot for this repository in repository Settings → Copilot
-          3. Verify Copilot agents are available for your account/organization
-          4. Check that the workflow has sufficient permissions
+          **To Fix:**
+          1. Create a PAT with \`repo\` scope at https://github.com/settings/tokens
+          2. Add it as a repository secret named \`COPILOT_PAT\`
+          3. Re-run this workflow
+          
+          **Other Possible Reasons:**
+          - GitHub Copilot is not enabled for this repository
+          - Copilot coding agent is not activated for your organization
+          - You need a GitHub Copilot subscription (Individual, Business, or Enterprise)
+          - The repository lacks necessary Copilot permissions
           
           **For now:**
           - This issue has been labeled \`copilot-assigned\` for tracking
