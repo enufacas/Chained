@@ -282,7 +282,18 @@ Check the Actions tab to see workflow runs and their logs.
 
 ## 🤝 Contributing
 
-While Chained is designed to be autonomous, contributions are welcome!
+While Chained is designed to be autonomous, **external contributions are welcome and require manual review** for security!
+
+### How External Contributions Work
+
+- **Submit PRs**: External contributors can submit pull requests
+- **Manual Review**: All external PRs require repository owner review (via CODEOWNERS)
+- **Security**: Auto-merge only works for owner and trusted bot PRs with `copilot` label
+- **Transparency**: PRs that don't meet auto-merge criteria receive clear feedback
+
+See [docs/SECURITY_IMPLEMENTATION.md](./docs/SECURITY_IMPLEMENTATION.md) for details on how the security model works.
+
+### Ways to Contribute
 
 - **Suggest new ideas**: Add to the ideas array in `idea-generator.yml`
 - **Improve workflows**: Enhance the automation logic
