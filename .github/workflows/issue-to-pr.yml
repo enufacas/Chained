@@ -197,8 +197,10 @@ jobs:
             # Extract PR number from URL
             pr_number=$(echo "${pr_url}" | grep -oP '\d+$')
             
-            # Request Copilot to work on this PR by adding a comment that triggers it  
-            gh pr comment ${pr_number} --body "🤖 Copilot Implementation Request - GitHub Copilot, please help implement this feature. Analyze issue #${issue_num} and implement the necessary changes. Task specification: .copilot/task-${issue_num}.md"
+            # Request Copilot to work on this PR by adding a comment that triggers it
+            # Use a variable to avoid YAML parsing issues with @ symbol
+            copilot_mention="@github-copilot"
+            gh pr comment ${pr_number} --body "🤖 Copilot Implementation Request - ${copilot_mention} please help implement this feature. Analyze issue #${issue_num} and implement the necessary changes. Task specification: .copilot/task-${issue_num}.md"
             
             # Also trigger Copilot through repository dispatch (if available)
             # This creates a webhook event that Copilot can listen to
