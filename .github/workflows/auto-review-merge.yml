@@ -80,7 +80,10 @@ jobs:
             
             is_trusted_bot=0
             # Match various bot author formats (gh CLI may return different formats)
-            if echo "${author}" | grep -qE "^(github-actions\[bot\]|dependabot\[bot\]|copilot.*\[bot\])$"; then
+            # GitHub Actions can appear as: github-actions[bot], app/github-actions
+            # Dependabot appears as: dependabot[bot], app/dependabot
+            # Copilot appears as: copilot*[bot]
+            if echo "${author}" | grep -qE "^(github-actions\[bot\]|app/github-actions|dependabot\[bot\]|app/dependabot|copilot.*\[bot\])$"; then
               is_trusted_bot=1
             fi
             
@@ -205,7 +208,7 @@ jobs:
               
               **Auto-merge criteria:**
               - PR must be from the repository owner (\`${repo_owner}\`) AND have the \`copilot\` label, OR
-              - PR must be from a trusted bot (\`github-actions[bot]\`, \`dependabot[bot]\`, \`copilot-swe-agent[bot]\`) AND have the \`copilot\` label
+              - PR must be from a trusted bot (\`github-actions[bot]\`, \`app/github-actions\`, \`dependabot[bot]\`, \`app/dependabot\`, \`copilot*[bot]\`) AND have the \`copilot\` label
               
               **Current PR details:**
               - Author: \`${author}\`
