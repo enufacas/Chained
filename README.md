@@ -6,6 +6,12 @@
 
 **Chained** is an experimental "perpetual AI motion machine" - a self-evolving repository that generates ideas, creates issues, assigns work to AI agents, and documents its own progress with minimal human intervention.
 
+## 🚀 Quick Start
+
+**Want to get started immediately?** See [QUICKSTART.md](./QUICKSTART.md) for 5-minute setup guide!
+
+**New to autonomous AI development?** Read [COPILOT_VISION.md](./COPILOT_VISION.md) to understand what AI wants to build.
+
 ## 🎯 Vision
 
 The goal of Chained is to create an entertaining and educational demonstration of **fully autonomous AI-driven development** by building a system that:
