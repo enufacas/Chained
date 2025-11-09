@@ -19,7 +19,7 @@ These workflows run **instantly** when a specific GitHub event occurs:
 | Workflow | Event | Description |
 |----------|-------|-------------|
 | `copilot-graphql-assign.yml` | `issues: [opened, labeled]` | Runs immediately when an issue is created or labeled |
-| `auto-review-merge.yml` | `pull_request: [opened, synchronize, reopened]` | Runs immediately when a PR is created or updated |
+| `auto-review-merge.yml` | `pull_request: [opened, synchronize, reopened, ready_for_review]` | Runs immediately when a non-draft PR is created/updated or when a draft is marked ready. Draft PRs are processed by scheduled runs. |
 | `auto-kickoff.yml` | `push: branches: [main]` | Runs immediately when code is pushed to main |
 
 **Trust Factor:** ✅ These are highly reliable - GitHub guarantees event triggers fire.
