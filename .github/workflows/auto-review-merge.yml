@@ -69,12 +69,36 @@ jobs:
               continue
             fi
             
-            # Check if PR has Copilot label or was created by a bot
-            has_copilot_label=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "copilot" || echo "0")
-            is_bot=$(echo "${author}" | grep -c "bot\|copilot" || echo "0")
+            # Get repository owner
+            repo_owner="${{ github.repository_owner }}"
             
-            if [ "${has_copilot_label}" -gt 0 ] || [ "${is_bot}" -gt 0 ]; then
-              echo "PR #${pr_num} is Copilot-generated, proceeding with auto-review"
+            # Check if PR author is the repository owner or a trusted bot
+            is_repo_owner=0
+            if [ "${author}" = "${repo_owner}" ]; then
+              is_repo_owner=1
+            fi
+            
+            is_trusted_bot=0
+            if echo "${author}" | grep -qE "^(github-actions\[bot\]|dependabot\[bot\]|copilot)$"; then
+              is_trusted_bot=1
+            fi
+            
+            # Check if PR has Copilot label
+            has_copilot_label=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "copilot" || echo "0")
+            
+            # Only auto-merge if:
+            # 1. PR is from the repository owner AND has copilot label, OR
+            # 2. PR is from a trusted bot (github-actions, dependabot, copilot)
+            should_auto_merge=0
+            if [ "${is_repo_owner}" -eq 1 ] && [ "${has_copilot_label}" -gt 0 ]; then
+              should_auto_merge=1
+              echo "PR #${pr_num} is from repository owner with copilot label, proceeding with auto-review"
+            elif [ "${is_trusted_bot}" -eq 1 ] && [ "${has_copilot_label}" -gt 0 ]; then
+              should_auto_merge=1
+              echo "PR #${pr_num} is from trusted bot with copilot label, proceeding with auto-review"
+            fi
+            
+            if [ "${should_auto_merge}" -eq 1 ]; then
               
               # Add approval review
               gh pr review ${pr_num} --approve --body "🤖 **Automated Review by Copilot**
@@ -126,7 +150,29 @@ jobs:
                 Please check for conflicts or failing checks." || true
               fi
             else
-              echo "Skipping PR #${pr_num} - not a Copilot-generated PR"
+              echo "⚠️ Skipping PR #${pr_num} - not authorized for auto-merge"
+              echo "Author: ${author}, Owner: ${repo_owner}, Trusted Bot: ${is_trusted_bot}, Copilot Label: ${has_copilot_label}"
+              
+              # Add a comment explaining why it wasn't auto-merged
+              gh pr comment ${pr_num} --body "⚠️ **Manual Review Required**
+              
+              This PR was not automatically merged because it does not meet the criteria for autonomous merge.
+              
+              **Auto-merge criteria:**
+              - PR must be from the repository owner (\`${repo_owner}\`) AND have the \`copilot\` label, OR
+              - PR must be from a trusted bot (\`github-actions[bot]\`, \`dependabot[bot]\`, \`copilot\`) AND have the \`copilot\` label
+              
+              **Current PR details:**
+              - Author: \`${author}\`
+              - Has copilot label: $([ "${has_copilot_label}" -gt 0 ] && echo "✅ Yes" || echo "❌ No")
+              - From repository owner: $([ "${is_repo_owner}" -eq 1 ] && echo "✅ Yes" || echo "❌ No")
+              - From trusted bot: $([ "${is_trusted_bot}" -eq 1 ] && echo "✅ Yes" || echo "❌ No")
+              
+              **Next steps:**
+              The repository owner will need to manually review and approve this PR before it can be merged.
+              
+              ---
+              *Automated security check by the Auto Review and Merge workflow*" || true
             fi
           done
 

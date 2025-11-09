@@ -2,15 +2,24 @@
 
 ## Branch Protection Settings
 
-To enable fully autonomous operation without human review:
+To enable fully autonomous operation for owner/Copilot while requiring review for external contributions:
 
 1. Go to Repository Settings → Branches
 2. Add a branch protection rule for `main`:
    - ✅ Require a pull request before merging
-   - ⚠️ **UNCHECK** "Require approvals" (to allow auto-merge)
+   - ✅ Require approvals (1 approval required)
+   - ✅ Require review from Code Owners
+   - ⚠️ **CHECK** "Allow specified actors to bypass required pull requests" and add:
+     - `github-actions[bot]` (for autonomous Copilot workflows)
    - ✅ Allow auto-merge
    - ✅ Automatically delete head branches
    - Optional: Require status checks to pass (if you have CI)
+
+**Security Note:** This configuration ensures:
+- External contributions require owner review (via CODEOWNERS)
+- Owner's Copilot-labeled PRs can auto-merge (via auto-review-merge workflow)
+- Bot-created PRs with copilot label can auto-merge (via auto-review-merge workflow)
+- All other PRs require manual review and approval
 
 ## Workflow Permissions
 
@@ -65,9 +74,23 @@ To use a custom domain for GitHub Pages:
 
 ## Security Considerations
 
-This repository is designed for experimentation and entertainment. For production use:
+This repository is designed for autonomous AI development while maintaining security:
+
+### Protection Against External Contributions
+- **CODEOWNERS file**: Requires repository owner review for all changes
+- **Auto-merge restrictions**: Only owner or trusted bot PRs with `copilot` label can auto-merge
+- **Branch protection**: Configured to require review from code owners
+
+### Autonomous Operation
+The system maintains full autonomy for:
+- Repository owner's Copilot-generated PRs (with `copilot` label)
+- Trusted bot PRs (github-actions[bot], dependabot[bot], copilot) with `copilot` label
+
+### For Production Use
+Additional considerations:
 - Add required status checks before merge
 - Implement comprehensive testing
 - Add code scanning and security analysis
 - Consider limiting auto-merge to specific branches
 - Review automated changes periodically
+- Monitor for unusual PR patterns

@@ -1,0 +1,17 @@
+# CODEOWNERS file for Chained repository
+#
+# This file defines who must review and approve changes before they can be merged.
+# It ensures the repository owner maintains control over external contributions
+# while still allowing autonomous Copilot/AI workflows.
+#
+# Learn more: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Repository owner must review all changes by default
+# This prevents outside contributions from being merged without review
+* @enufacas
+
+# Note: The auto-review-merge workflow will only auto-merge PRs that are:
+# 1. Created by the repository owner (@enufacas) with the 'copilot' label, OR
+# 2. Created by trusted bots (github-actions[bot], dependabot[bot], copilot) with the 'copilot' label
+#
+# All other PRs will require manual review and approval from @enufacas
