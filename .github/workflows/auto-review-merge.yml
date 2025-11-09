@@ -80,8 +80,8 @@ jobs:
             # Match various bot author formats (gh CLI may return different formats)
             # GitHub Actions can appear as: github-actions[bot], app/github-actions
             # Dependabot appears as: dependabot[bot], app/dependabot
-            # Copilot appears as: copilot*[bot]
-            if echo "${author}" | grep -qE "^(github-actions\[bot\]|app/github-actions|dependabot\[bot\]|app/dependabot|copilot.*\[bot\])$"; then
+            # Copilot appears as: Copilot, copilot-swe-agent[bot], copilot*[bot]
+            if echo "${author}" | grep -qiE "^(github-actions\[bot\]|app/github-actions|dependabot\[bot\]|app/dependabot|copilot)"; then
               is_trusted_bot=1
             fi
             
