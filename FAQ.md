@@ -2,6 +2,21 @@
 
 ## General Questions
 
+### If I open an issue that gets auto-picked up by Copilot, will it also get auto-merged eventually?
+
+**Yes! Absolutely.** The system is designed for complete end-to-end automation:
+
+1. ✅ **Issue created** → Auto-assigned to Copilot (within seconds)
+2. ✅ **Copilot creates PR** → Typically within a few minutes
+3. ✅ **PR auto-merged** → Within 15 minutes via `auto-review-merge.yml`
+4. ✅ **Issue closed** → Automatically when PR merges
+
+**Timeline:** From issue creation to merged PR typically takes **15-30 minutes** total, with no human intervention required.
+
+**Requirements:** This requires the `COPILOT_PAT` secret to be configured. See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for setup.
+
+**Example:** Issue #110 → PR #112 (created by Copilot) → Auto-merged → Issue #110 closed. All automatic!
+
 ### What is Chained?
 
 Chained is an experimental "perpetual AI motion machine" - a fully autonomous repository that generates ideas, creates issues, implements solutions, reviews code, and merges changes without human intervention.
