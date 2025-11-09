@@ -8,53 +8,66 @@ Chained is an experimental "perpetual AI motion machine" - a fully autonomous re
 
 ### Is it really fully autonomous?
 
-**Mostly, with one important caveat!**
+**Yes! With proper setup, it's truly autonomous.**
 
-The system operates autonomously for most tasks:
+The system operates fully autonomously when configured correctly:
 - ✅ Learns from external sources (TLDR Tech, Hacker News)
 - ✅ Generates ideas based on learnings
 - ✅ Creates GitHub issues automatically
-- ✅ Converts issues to pull requests with task specifications
+- ✅ **Auto-assigns issues to Copilot** (requires COPILOT_PAT secret)
+- ✅ Copilot implements code and creates PRs automatically
 - ✅ Reviews and merges PRs automatically
 - ✅ Tracks progress and health
 
-**The Manual Step:** Currently, GitHub Copilot cannot be triggered programmatically. After a PR is created, you need to manually assign it to `@copilot-swe-agent` for actual code implementation. See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for details.
+**Setup Required:** You need to add a `COPILOT_PAT` secret (Personal Access Token from a user with Copilot subscription). This one-time setup enables full automation. See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for setup instructions.
 
-**TL;DR**: Semi-autonomous - automates everything except the actual Copilot invocation step.
+**TL;DR**: Truly autonomous with PAT, semi-autonomous without it.
 
 ## Workflow and Automation Questions
 
-### How does an issue actually get worked on after it's assigned to Copilot?
+### How does an issue actually get worked on after it's created?
 
-**The Short Answer:** Scheduled workflows prepare work, then you manually assign to Copilot.
+**The Short Answer:** With COPILOT_PAT configured, it's fully automatic!
 
 **The Detailed Flow:**
 
-1. **Issue Created** → Event trigger runs `copilot-assign.yml` immediately, adds "copilot-assigned" label
-2. **Wait up to 30 minutes** → `issue-to-pr.yml` runs on schedule, creates a PR with task specification file
-3. **Manual Step Required** → You assign the PR to `@copilot-swe-agent` (see [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md))
-4. **Copilot Works** → Copilot analyzes task and makes code commits
-5. **Wait up to 15 minutes** → `auto-review-merge.yml` runs on schedule, reviews and merges the PR
-6. **Wait up to 30 minutes** → `auto-close-issues.yml` runs on schedule, closes the completed issue
+1. **Issue Created** → Event trigger runs `copilot-graphql-assign.yml` immediately
+2. **Automatic Assignment** → Workflow assigns issue to Copilot using PAT
+3. **Copilot Works** → Copilot analyzes issue, writes code, creates PR (typically within minutes)
+4. **Wait up to 15 minutes** → `auto-review-merge.yml` runs on schedule, reviews and merges the PR
+5. **Wait up to 30 minutes** → `auto-close-issues.yml` runs on schedule, closes the completed issue
 
-**Key Insight:** Workflows automate PR preparation, but Copilot assignment is currently manual due to GitHub API limitations.
+**Key Insight:** With PAT configured, the entire flow is automated! No manual steps required.
 
-### What's forcing Copilot to do the work?
+**Without PAT:** System falls back to semi-autonomous mode requiring manual assignment (see [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md)).
 
-**Important Update:** Copilot is NOT automatically triggered by the workflows.
+### How does Copilot get triggered to do the work?
 
-**What Actually Happens:**
-- Scheduled workflows create PRs with task specifications
-- These PRs contain `.copilot/task-{issue}.md` files describing what needs to be done
-- Workflows @mention `@github-copilot` in comments (but this doesn't trigger work)
-- **Manual step required**: You must assign the PR to `@copilot-swe-agent` to start actual implementation
+**Update:** Copilot CAN be automatically triggered!
 
-**Why the Manual Step?**
-- GitHub doesn't provide a public API to programmatically trigger Copilot agent sessions
-- Simple @mentions in comments don't activate Copilot's autonomous work mode
-- Assignment to `@copilot-swe-agent` is the only reliable way to trigger work
+**How It Works:**
+- New workflow `copilot-graphql-assign.yml` automatically assigns issues to Copilot
+- Uses `gh issue edit` command with a Personal Access Token (PAT)
+- Copilot receives the assignment and starts working automatically
+- No manual clicking or @mentioning required!
 
-See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for complete details and workarounds.
+**Requirements:**
+- Must configure `COPILOT_PAT` secret (one-time setup)
+- PAT must be from a user with Copilot subscription
+- Cannot use default `GITHUB_TOKEN` (GitHub API limitation)
+
+**What Happens:**
+1. Issue is created or labeled
+2. Workflow runs automatically
+3. Issues is assigned to Copilot via API
+4. Copilot analyzes requirements
+5. Copilot creates branch, writes code, opens PR
+6. Auto-review workflow merges PR
+7. Issue is closed automatically
+
+See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for complete setup instructions.
+
+**TL;DR**: Fully automated with PAT, falls back to manual assignment without it.
 
 ### Can I trust the cron schedules to actually run?
 
