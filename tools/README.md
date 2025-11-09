@@ -255,6 +255,8 @@ You can trigger the workflow manually from the Actions tab:
 - **Maintainability**: Shortened variable names reduce clarity
 - **Language Features**: Not all language-specific tricks are implemented
 - **Context Awareness**: Cannot understand complex business logic
+- **Python Indentation**: Aggressive whitespace reduction may break Python's indentation requirements - optimized code may need manual indentation adjustment for proper execution
+- **Testing Required**: Always test optimized code before use, as optimizations are heuristic-based and may not preserve all functionality in complex cases
 
 ## Contributing
 
