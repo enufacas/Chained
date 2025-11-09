@@ -2,8 +2,8 @@ name: Issue to PR Automator
 
 on:
   schedule:
-    # Run every 3 hours to check for issues ready to be worked on
-    - cron: '0 */3 * * *'
+    # Run every 30 minutes to check for issues ready to be worked on
+    - cron: '*/30 * * * *'
   workflow_dispatch:
     inputs:
       issue_number:

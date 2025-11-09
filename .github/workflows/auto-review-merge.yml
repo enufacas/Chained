@@ -4,8 +4,8 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
   schedule:
-    # Run every 2 hours to check for PRs ready to merge
-    - cron: '0 */2 * * *'
+    # Run every 15 minutes to check for PRs ready to merge
+    - cron: '*/15 * * * *'
   workflow_dispatch:
     inputs:
       pr_number:

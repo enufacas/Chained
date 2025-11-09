@@ -4,8 +4,8 @@ on:
   pull_request:
     types: [closed]
   schedule:
-    # Run every 4 hours to check for completed issues
-    - cron: '0 */4 * * *'
+    # Run every 30 minutes to check for completed issues
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 permissions:

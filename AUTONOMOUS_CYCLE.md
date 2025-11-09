@@ -23,10 +23,10 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
 
 **Output:** Learning PR ready for auto-merge
 
-### 2. Auto-Review Phase (Every 2 hours)
+### 2. Auto-Review Phase (Every 15 minutes)
 
 **Workflow:**
-- `auto-review-merge.yml` - Runs every 2 hours + on PR events
+- `auto-review-merge.yml` - Runs every 15 minutes + on PR events
 
 **Process:**
 1. Detects new PR (learning, timeline, or feature)
@@ -67,7 +67,7 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
 - `copilot-assign.yml` - Runs on issue creation
 
 **Process:**
-1. New issue created (from idea generator)
+1. New issue created (from idea generator or manually logged)
 2. Adds `copilot-assigned` label
 3. Adds tracking comment
 4. Marks issue as ready for work
@@ -75,10 +75,10 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
 
 **Output:** Issue ready for implementation
 
-### 5. Implementation Phase (Every 3 hours)
+### 5. Implementation Phase (Every 30 minutes)
 
 **Workflow:**
-- `issue-to-pr.yml` - Runs every 3 hours
+- `issue-to-pr.yml` - Runs every 30 minutes
 
 **Process:**
 1. Finds issues with `copilot-assigned` label
@@ -94,7 +94,7 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
 
 **Output:** Implementation PR ready for review
 
-### 6. Auto-Merge Phase (Every 2 hours + on PR events)
+### 6. Auto-Merge Phase (Every 15 minutes + on PR events)
 
 **Workflow:**
 - `auto-review-merge.yml` - Same as step 2
@@ -103,10 +103,10 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
 
 **Output:** Implementation merged to main branch
 
-### 7. Issue Closure Phase (Every 4 hours)
+### 7. Issue Closure Phase (Every 30 minutes)
 
 **Workflow:**
-- `auto-close-issues.yml` - Runs every 4 hours
+- `auto-close-issues.yml` - Runs every 30 minutes
 
 **Process:**
 1. Finds issues with `copilot-assigned` label
@@ -187,7 +187,7 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
            │ Create Learning PR
            ▼
     ┌──────────────┐
-    │ AUTO-REVIEW  │  Every 2 hours + on PR events
+    │ AUTO-REVIEW  │  Every 15 minutes + on PR events
     │  & MERGE     │  • Validate author & labels
     └──────┬───────┘  • Approve & merge
            │ Learning merged to main
@@ -205,19 +205,19 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
            │ Issue ready
            ▼
     ┌──────────────┐
-    │    ISSUE     │  Every 3 hours
+    │    ISSUE     │  Every 30 minutes
     │   TO PR      │  • Create branch & PR
     └──────┬───────┘
            │ Implementation PR
            ▼
     ┌──────────────┐
-    │ AUTO-REVIEW  │  Every 2 hours + on PR events
+    │ AUTO-REVIEW  │  Every 15 minutes + on PR events
     │  & MERGE     │  • Review & merge
     └──────┬───────┘
            │ Implementation merged
            ▼
     ┌──────────────┐
-    │    ISSUE     │  Every 4 hours
+    │    ISSUE     │  Every 30 minutes
     │   CLOSURE    │  • Mark completed & close
     └──────┬───────┘
            │
