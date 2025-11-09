@@ -150,9 +150,9 @@ jobs:
           echo "  • smart-idea-generator.yml - Runs at 10:00 UTC daily"
           echo ""
           echo "Automation Workflows:"
-          echo "  • issue-to-pr.yml - Runs every 3 hours"
-          echo "  • auto-review-merge.yml - Runs every 2 hours"
-          echo "  • auto-close-issues.yml - Runs every 4 hours"
+          echo "  • issue-to-pr.yml - Runs every 30 minutes"
+          echo "  • auto-review-merge.yml - Runs every 15 minutes"
+          echo "  • auto-close-issues.yml - Runs every 30 minutes"
           echo "  • timeline-updater.yml - Runs every 6 hours"
           echo "  • progress-tracker.yml - Runs every 12 hours"
           echo ""
@@ -192,9 +192,10 @@ jobs:
           1. Learn from external sources continuously
           2. Generate ideas daily at 10:00 UTC
           3. Create issues from ideas
-          4. Convert issues to PRs every 3 hours
-          5. Review and merge PRs every 2 hours
-          6. Update timeline every 6 hours
+          4. Convert issues to PRs every 30 minutes
+          5. Review and merge PRs every 15 minutes
+          6. Close completed issues every 30 minutes
+          7. Update timeline every 6 hours
 
           **Monitor Progress:**
           - 📊 GitHub Pages: View live timeline
