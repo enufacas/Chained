@@ -21,17 +21,19 @@ The system uses the **official GitHub GraphQL API** to assign issues to Copilot,
    ↓
 2. copilot-graphql-assign.yml triggers (on issue opened)
    ↓
-3. Workflow queries GraphQL for Copilot bot user
+3. Workflow fetches issue node ID via GraphQL
    ↓
-4. If found: Assigns issue to Copilot via GraphQL mutation
+4. Workflow queries repository suggestedActors for Copilot actor ID
    ↓
-5. Copilot receives assignment notification
+5. If found: Uses replaceActorsForAssignable mutation to assign
    ↓
-6. Copilot analyzes issue and creates PR
+6. Copilot receives assignment notification
    ↓
-7. auto-review-merge.yml reviews and merges PR
+7. Copilot analyzes issue and creates PR
    ↓
-8. Issue is automatically closed
+8. auto-review-merge.yml reviews and merges PR
+   ↓
+9. Issue is automatically closed
 ```
 
 ## 🔑 Requirements
@@ -51,10 +53,11 @@ The system uses the **official GitHub GraphQL API** to assign issues to Copilot,
 ### What the Workflow Does
 
 1. ✅ Checks if issue is already assigned to Copilot
-2. ✅ Queries GraphQL API for Copilot bot user
-3. ✅ Assigns issue to Copilot via GraphQL mutation
-4. ✅ Adds `copilot-assigned` label for tracking
-5. ✅ Posts comment explaining what happens next
+2. ✅ Fetches issue node ID via GraphQL
+3. ✅ Queries repository suggestedActors for Copilot actor ID
+4. ✅ Assigns issue to Copilot via replaceActorsForAssignable mutation
+5. ✅ Adds `copilot-assigned` label for tracking
+6. ✅ Posts comment explaining what happens next
 
 ### Success Scenarios
 
@@ -135,14 +138,16 @@ This implementation follows:
 ## 💡 Key Insights
 
 **This is the CORRECT way to assign Copilot:**
-- ✅ Uses official GitHub API
-- ✅ Follows documented approach
+- ✅ Uses official GitHub GraphQL API
+- ✅ Follows documented approach from https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr
 - ✅ Works with standard GITHUB_TOKEN
-- ✅ Automatic Copilot bot detection
-- ✅ Proper GraphQL mutations
+- ✅ Queries repository suggestedActors for Copilot actor ID
+- ✅ Uses replaceActorsForAssignable GraphQL mutation with actor node ID
+- ✅ Properly handles cases where Copilot is not available
 
 **NOT the correct way:**
-- ❌ Using `--add-assignee "@me"` (assigns to human, not bot)
+- ❌ Using `gh issue edit --add-assignee "@copilot"` (REST API method, not supported)
+- ❌ Using string "copilot" instead of actor node ID in GraphQL mutation
 - ❌ Just @mentioning in comments (doesn't trigger assignment)
 - ❌ Requiring special PAT tokens (not needed for this)
 
@@ -164,6 +169,6 @@ This implementation follows:
 ---
 
 **Last Updated**: 2025-11-09  
-**Status**: ✅ Implementing official GitHub API method  
-**Compliance**: Following official GitHub documentation  
+**Status**: ✅ Implemented official GitHub GraphQL API method  
+**Compliance**: Following official GitHub documentation with `replaceActorsForAssignable` mutation  
 **Autonomy**: 🟢 FULL (with Copilot) / 🟡 SEMI (without Copilot)
