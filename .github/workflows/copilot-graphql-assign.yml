@@ -54,26 +54,27 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Query for assignable users and find Copilot bot
-          echo "Querying for Copilot bot user..."
+          # Query for suggested actors with CAN_BE_ASSIGNED capability to find Copilot
+          echo "Querying for Copilot bot actor..."
           
-          # Use GraphQL to find Copilot user
+          # Use GraphQL to find Copilot actor using suggestedActors
           copilot_data=$(gh api graphql -f query='
             query($owner: String!, $repo: String!) {
               repository(owner: $owner, name: $repo) {
-                assignableUsers(first: 100) {
+                suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
                   nodes {
                     login
                     id
+                    __typename
                   }
                 }
               }
             }
           ' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}")
           
-          # Extract Copilot user info
-          copilot_login=$(echo "$copilot_data" | jq -r '.data.repository.assignableUsers.nodes[] | select(.login | test("copilot"; "i")) | .login' | head -1)
-          copilot_id=$(echo "$copilot_data" | jq -r '.data.repository.assignableUsers.nodes[] | select(.login | test("copilot"; "i")) | .id' | head -1)
+          # Extract Copilot actor info (look for Bot type with copilot in name)
+          copilot_login=$(echo "$copilot_data" | jq -r '.data.repository.suggestedActors.nodes[] | select(.__typename == "Bot" and (.login | test("copilot"; "i"))) | .login' | head -1)
+          copilot_id=$(echo "$copilot_data" | jq -r '.data.repository.suggestedActors.nodes[] | select(.__typename == "Bot" and (.login | test("copilot"; "i"))) | .id' | head -1)
           
           if [ -n "$copilot_login" ] && [ -n "$copilot_id" ]; then
             echo "found=true" >> $GITHUB_OUTPUT
@@ -82,7 +83,7 @@ jobs:
             echo "✓ Found Copilot bot: $copilot_login (ID: $copilot_id)"
           else
             echo "found=false" >> $GITHUB_OUTPUT
-            echo "⚠️ Copilot bot not found in assignable users"
+            echo "⚠️ Copilot bot not found in suggested actors"
           fi
 
       - name: Add copilot-assigned label
@@ -119,12 +120,12 @@ jobs:
             -F number=${{ steps.issue.outputs.number }} \
             --jq '.data.repository.issue.id')
           
-          # Assign using GraphQL mutation
+          # Assign using replaceActorsForAssignable mutation (required for Copilot)
           result=$(gh api graphql -f query='
-            mutation($issueId: ID!, $assigneeIds: [ID!]!) {
-              addAssigneesToAssignable(input: {
+            mutation($issueId: ID!, $actorIds: [ID!]!) {
+              replaceActorsForAssignable(input: {
                 assignableId: $issueId
-                assigneeIds: $assigneeIds
+                actorIds: $actorIds
               }) {
                 assignable {
                   ... on Issue {
@@ -138,9 +139,9 @@ jobs:
                 }
               }
             }
-          ' -f issueId="$issue_id" -f assigneeIds="[\"${{ steps.find_copilot.outputs.id }}\"]")
+          ' -f issueId="$issue_id" -f actorIds="[\"${{ steps.find_copilot.outputs.id }}\"]")
           
-          if echo "$result" | jq -e '.data.addAssigneesToAssignable.assignable' > /dev/null; then
+          if echo "$result" | jq -e '.data.replaceActorsForAssignable.assignable' > /dev/null; then
             echo "success=true" >> $GITHUB_OUTPUT
             echo "✅ Successfully assigned issue to Copilot via GraphQL"
           else
@@ -178,17 +179,19 @@ jobs:
         run: |
           gh issue comment ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --body "⚠️ **Copilot Bot Not Available**
           
-          The GitHub Copilot bot is not available as an assignable user in this repository.
+          The GitHub Copilot bot is not available as a suggested actor in this repository.
           
           **This could mean:**
           1. GitHub Copilot is not enabled for this repository
           2. Copilot coding agent is not activated
           3. You need a GitHub Copilot subscription (Pro or Enterprise)
+          4. The repository owner needs to enable Copilot access
           
           **To enable Copilot:**
           1. Ensure you have an active Copilot subscription
           2. Enable Copilot for this repository in Settings
           3. Verify Copilot agents are available
+          4. Make sure the token used has Copilot access (user PAT required)
           
           **For now:**
           - This issue has been labeled \`copilot-assigned\` for tracking
@@ -198,7 +201,7 @@ jobs:
           **Alternative:** You can manually assign a developer or implement the feature yourself.
           
           ---
-          *🤖 Automated check via GitHub API - Copilot not found in assignable users*"
+          *🤖 Automated check via GitHub API - Copilot not found in suggested actors*"
 
       - name: Log assignment activity
         run: |
