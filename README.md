@@ -52,7 +52,7 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
    - Automatically assigns unassigned issues to Copilot via API
    - Adds tracking labels and comments
    - Requires COPILOT_PAT secret for full automation
-   - Can be manually triggered for specific issues
+   - Can be manually triggered with optional issue number (or process all issues)
 
 3. **Auto Review and Merge** (`auto-review-merge.yml`)
    - Runs every 15 minutes
