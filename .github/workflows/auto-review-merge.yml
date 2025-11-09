@@ -83,7 +83,7 @@ jobs:
             fi
             
             # Check if PR has Copilot label
-            has_copilot_label=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "copilot" || echo "0")
+            has_copilot_label=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "copilot" || true)
             
             # Handle draft PRs that are ready (WIP removed, from trusted source)
             if [ "${is_draft}" = "true" ] && [ "${pr_state}" = "OPEN" ]; then
