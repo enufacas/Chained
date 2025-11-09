@@ -39,7 +39,7 @@ jobs:
           fi
 
       - name: Label all existing Copilot PRs (from workflow_dispatch)
-        if: github.event_name == 'workflow_dispatch' && inputs.label_existing == 'true'
+        if: github.event_name == 'workflow_dispatch' && inputs.label_existing == true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
