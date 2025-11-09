@@ -189,7 +189,7 @@ jobs:
           
           **API Method Used:**
           - GraphQL mutation: \`replaceActorsForAssignable\`
-          - Actor ID: \`copilot\`
+          - Actor ID: \`$copilot_actor_id\`
           
           **Possible reasons:**
           1. GitHub Copilot is not enabled for this repository
