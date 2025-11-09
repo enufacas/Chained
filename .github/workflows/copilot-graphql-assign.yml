@@ -48,45 +48,8 @@ jobs:
             echo "already_assigned=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Find Copilot bot user ID
-        if: steps.check_assigned.outputs.already_assigned != 'true'
-        id: find_copilot
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Query for assignable users and find Copilot bot
-          echo "Querying for Copilot bot user..."
-          
-          # Use GraphQL to find Copilot user
-          copilot_data=$(gh api graphql -f query='
-            query($owner: String!, $repo: String!) {
-              repository(owner: $owner, name: $repo) {
-                assignableUsers(first: 100) {
-                  nodes {
-                    login
-                    id
-                  }
-                }
-              }
-            }
-          ' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}")
-          
-          # Extract Copilot user info
-          copilot_login=$(echo "$copilot_data" | jq -r '.data.repository.assignableUsers.nodes[] | select(.login | test("copilot"; "i")) | .login' | head -1)
-          copilot_id=$(echo "$copilot_data" | jq -r '.data.repository.assignableUsers.nodes[] | select(.login | test("copilot"; "i")) | .id' | head -1)
-          
-          if [ -n "$copilot_login" ] && [ -n "$copilot_id" ]; then
-            echo "found=true" >> $GITHUB_OUTPUT
-            echo "login=$copilot_login" >> $GITHUB_OUTPUT
-            echo "id=$copilot_id" >> $GITHUB_OUTPUT
-            echo "✓ Found Copilot bot: $copilot_login (ID: $copilot_id)"
-          else
-            echo "found=false" >> $GITHUB_OUTPUT
-            echo "⚠️ Copilot bot not found in assignable users"
-          fi
-
       - name: Add copilot-assigned label
-        if: steps.check_assigned.outputs.already_assigned != 'true' && steps.find_copilot.outputs.found == 'true'
+        if: steps.check_assigned.outputs.already_assigned != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -97,56 +60,26 @@ jobs:
             echo "✓ Added copilot-assigned label"
           fi
 
-      - name: Assign issue to Copilot via GraphQL
-        if: steps.check_assigned.outputs.already_assigned != 'true' && steps.find_copilot.outputs.found == 'true'
+      - name: Assign issue to Copilot via GitHub API
+        if: steps.check_assigned.outputs.already_assigned != 'true'
         id: assign
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Assigning issue #${{ steps.issue.outputs.number }} to ${{ steps.find_copilot.outputs.login }}..."
+          echo "Assigning issue #${{ steps.issue.outputs.number }} to Copilot..."
           
-          # Get issue node ID for GraphQL mutation
-          issue_id=$(gh api graphql -f query='
-            query($owner: String!, $repo: String!, $number: Int!) {
-              repository(owner: $owner, name: $repo) {
-                issue(number: $number) {
-                  id
-                }
-              }
-            }
-          ' -f owner="${{ github.repository_owner }}" \
-            -f repo="${{ github.event.repository.name }}" \
-            -F number=${{ steps.issue.outputs.number }} \
-            --jq '.data.repository.issue.id')
-          
-          # Assign using GraphQL mutation
-          result=$(gh api graphql -f query='
-            mutation($issueId: ID!, $assigneeIds: [ID!]!) {
-              addAssigneesToAssignable(input: {
-                assignableId: $issueId
-                assigneeIds: $assigneeIds
-              }) {
-                assignable {
-                  ... on Issue {
-                    number
-                    assignees(first: 10) {
-                      nodes {
-                        login
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          ' -f issueId="$issue_id" -f assigneeIds="[\"${{ steps.find_copilot.outputs.id }}\"]")
-          
-          if echo "$result" | jq -e '.data.addAssigneesToAssignable.assignable' > /dev/null; then
+          # Use the official GitHub CLI method to assign to Copilot
+          # As documented: gh issue edit --add-assignee "@copilot"
+          if gh issue edit ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --add-assignee "@copilot"; then
             echo "success=true" >> $GITHUB_OUTPUT
-            echo "✅ Successfully assigned issue to Copilot via GraphQL"
+            echo "✅ Successfully assigned issue to Copilot"
           else
             echo "success=false" >> $GITHUB_OUTPUT
-            echo "❌ Failed to assign issue"
-            echo "$result"
+            echo "❌ Failed to assign issue to Copilot"
+            echo "This could mean:"
+            echo "  - Copilot is not enabled for this repository"
+            echo "  - You don't have a Copilot subscription"
+            echo "  - The repository is on GitHub Enterprise Server (not supported)"
           fi
 
       - name: Add success comment
@@ -156,7 +89,7 @@ jobs:
         run: |
           gh issue comment ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
           
-          GitHub Copilot (\`${{ steps.find_copilot.outputs.login }}\`) has been automatically assigned to this issue via the GitHub API.
+          GitHub Copilot has been automatically assigned to this issue via the GitHub API.
           
           **What happens next:**
           1. ✅ Copilot will analyze the issue requirements
@@ -171,40 +104,42 @@ jobs:
           ---
           *🤖 Automated via the official GitHub API method - True autonomous operation!*"
 
-      - name: Add informational comment (Copilot not found)
-        if: steps.check_assigned.outputs.already_assigned != 'true' && steps.find_copilot.outputs.found == 'false'
+      - name: Add error comment
+        if: steps.assign.outputs.success == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue comment ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --body "⚠️ **Copilot Bot Not Available**
+          gh issue comment ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --body "⚠️ **Failed to Assign Copilot**
           
-          The GitHub Copilot bot is not available as an assignable user in this repository.
+          The workflow attempted to assign GitHub Copilot to this issue but the assignment failed.
           
-          **This could mean:**
+          **Possible reasons:**
           1. GitHub Copilot is not enabled for this repository
           2. Copilot coding agent is not activated
-          3. You need a GitHub Copilot subscription (Pro or Enterprise)
+          3. You need a GitHub Copilot subscription (Individual, Business, or Enterprise)
+          4. This repository is on GitHub Enterprise Server (Copilot assignment not supported)
           
           **To enable Copilot:**
           1. Ensure you have an active Copilot subscription
-          2. Enable Copilot for this repository in Settings
-          3. Verify Copilot agents are available
+          2. Enable Copilot for this repository in repository Settings
+          3. Verify Copilot agents are available for your account
           
           **For now:**
           - This issue has been labeled \`copilot-assigned\` for tracking
-          - Manual implementation will be needed
-          - Any PR with the \`copilot\` label will still auto-merge
+          - You can manually assign Copilot from the GitHub UI
+          - Or assign a developer to implement this manually
           
-          **Alternative:** You can manually assign a developer or implement the feature yourself.
+          **To manually assign Copilot:**
+          - Click on \"Assignees\" in the right sidebar
+          - Select \"Copilot\" from the dropdown
           
           ---
-          *🤖 Automated check via GitHub API - Copilot not found in assignable users*"
+          *🤖 Automated via the official GitHub API*"
 
       - name: Log assignment activity
         run: |
           echo "Copilot assignment workflow completed"
           echo "Issue: #${{ steps.issue.outputs.number }}"
           echo "Already assigned: ${{ steps.check_assigned.outputs.already_assigned }}"
-          echo "Copilot found: ${{ steps.find_copilot.outputs.found }}"
           echo "Assignment successful: ${{ steps.assign.outputs.success }}"
           echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
