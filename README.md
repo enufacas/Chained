@@ -14,6 +14,8 @@
 
 **New to autonomous AI development?** Read [COPILOT_VISION.md](./COPILOT_VISION.md) to understand what AI wants to build.
 
+**Understanding Copilot integration?** See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for how Copilot actually works in this system!
+
 **Have questions about how it works?** Check out the [FAQ.md](./FAQ.md) for answers to common questions!
 
 **Curious about workflow triggers?** Read [WORKFLOW_TRIGGERS.md](./WORKFLOW_TRIGGERS.md) to understand the automation.

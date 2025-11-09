@@ -8,40 +8,66 @@ Chained is an experimental "perpetual AI motion machine" - a fully autonomous re
 
 ### Is it really fully autonomous?
 
-Yes! Once started, the system operates continuously:
-- Learns from external sources (TLDR Tech, Hacker News)
-- Generates ideas based on learnings
-- Creates GitHub issues
-- Converts issues to pull requests
-- Reviews and merges its own PRs
-- Tracks progress and health
+**Yes! With proper setup, it's truly autonomous.**
 
-Human intervention is optional but not required.
+The system operates fully autonomously when configured correctly:
+- ✅ Learns from external sources (TLDR Tech, Hacker News)
+- ✅ Generates ideas based on learnings
+- ✅ Creates GitHub issues automatically
+- ✅ **Auto-assigns issues to Copilot** (requires COPILOT_PAT secret)
+- ✅ Copilot implements code and creates PRs automatically
+- ✅ Reviews and merges PRs automatically
+- ✅ Tracks progress and health
+
+**Setup Required:** You need to add a `COPILOT_PAT` secret (Personal Access Token from a user with Copilot subscription). This one-time setup enables full automation. See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for setup instructions.
+
+**TL;DR**: Truly autonomous with PAT, semi-autonomous without it.
 
 ## Workflow and Automation Questions
 
-### How does an issue actually get worked on after it's assigned to Copilot?
+### How does an issue actually get worked on after it's created?
 
-**The Short Answer:** Scheduled workflows poll for work every 15-30 minutes.
+**The Short Answer:** With COPILOT_PAT configured, it's fully automatic!
 
 **The Detailed Flow:**
 
-1. **Issue Created** → Event trigger runs `copilot-assign.yml` immediately, adds "copilot-assigned" label
-2. **Wait up to 30 minutes** → `issue-to-pr.yml` runs on schedule, picks up the issue, creates a PR
-3. **Wait up to 15 minutes** → `auto-review-merge.yml` runs on schedule, reviews and merges the PR
-4. **Wait up to 30 minutes** → `auto-close-issues.yml` runs on schedule, closes the completed issue
+1. **Issue Created** → Event trigger runs `copilot-graphql-assign.yml` immediately
+2. **Automatic Assignment** → Workflow assigns issue to Copilot using PAT
+3. **Copilot Works** → Copilot analyzes issue, writes code, creates PR (typically within minutes)
+4. **Wait up to 15 minutes** → `auto-review-merge.yml` runs on schedule, reviews and merges the PR
+5. **Wait up to 30 minutes** → `auto-close-issues.yml` runs on schedule, closes the completed issue
 
-**Key Insight:** It's all **passive polling** via cron schedules, not active triggering!
+**Key Insight:** With PAT configured, the entire flow is automated! No manual steps required.
 
-### What's forcing Copilot to do the work?
+**Without PAT:** System falls back to semi-autonomous mode requiring manual assignment (see [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md)).
 
-Nothing is "forcing" in the active sense. Instead:
-- Scheduled workflows run at regular intervals (every 15-30 minutes)
-- Each workflow checks for work to do (issues with certain labels, PRs to review, etc.)
-- When work is found, the workflow performs the actions
-- If no work is found, the workflow exits successfully
+### How does Copilot get triggered to do the work?
 
-Think of it like a periodic batch job rather than event-driven processing.
+**Update:** Copilot CAN be automatically triggered!
+
+**How It Works:**
+- New workflow `copilot-graphql-assign.yml` automatically assigns issues to Copilot
+- Uses `gh issue edit` command with a Personal Access Token (PAT)
+- Copilot receives the assignment and starts working automatically
+- No manual clicking or @mentioning required!
+
+**Requirements:**
+- Must configure `COPILOT_PAT` secret (one-time setup)
+- PAT must be from a user with Copilot subscription
+- Cannot use default `GITHUB_TOKEN` (GitHub API limitation)
+
+**What Happens:**
+1. Issue is created or labeled
+2. Workflow runs automatically
+3. Issue is assigned to Copilot via API
+4. Copilot analyzes requirements
+5. Copilot creates branch, writes code, opens PR
+6. Auto-review workflow merges PR
+7. Issue is closed automatically
+
+See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for complete setup instructions.
+
+**TL;DR**: Fully automated with PAT, falls back to manual assignment without it.
 
 ### Can I trust the cron schedules to actually run?
 

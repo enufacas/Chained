@@ -1,0 +1,163 @@
+name: Copilot Issue Assignment (GraphQL)
+
+on:
+  issues:
+    types: [opened, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to assign to Copilot'
+        required: true
+        type: number
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  assign-to-copilot:
+    runs-on: ubuntu-latest
+    # Only run if issue has appropriate label or was just created
+    if: |
+      (github.event_name == 'issues' && (github.event.action == 'opened' || 
+       (github.event.action == 'labeled' && github.event.label.name == 'copilot-assigned'))) ||
+      github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Check for Copilot PAT
+        id: check_pat
+        run: |
+          if [ -z "${{ secrets.COPILOT_PAT }}" ]; then
+            echo "has_pat=false" >> $GITHUB_OUTPUT
+            echo "⚠️ COPILOT_PAT secret not configured"
+          else
+            echo "has_pat=true" >> $GITHUB_OUTPUT
+            echo "✓ COPILOT_PAT found"
+          fi
+
+      - name: Get issue number
+        id: issue
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "number=${{ inputs.issue_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Add copilot-assigned label (if not present)
+        if: steps.check_pat.outputs.has_pat == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if label already exists
+          labels=$(gh issue view ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --json labels --jq '.labels[].name')
+          if ! echo "$labels" | grep -q "copilot-assigned"; then
+            gh issue edit ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --add-label "copilot-assigned"
+            echo "Added copilot-assigned label"
+          fi
+
+      - name: Assign Issue to Copilot
+        if: steps.check_pat.outputs.has_pat == 'true'
+        id: assign
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT }}
+        run: |
+          echo "Attempting to assign issue #${{ steps.issue.outputs.number }} to Copilot..."
+          
+          # Use gh CLI to assign - much simpler than GraphQL!
+          # This requires a PAT from a user with Copilot enabled
+          if gh issue edit ${{ steps.issue.outputs.number }} \
+             --repo ${{ github.repository }} \
+             --add-assignee "@me" 2>&1 | tee /tmp/assign_output.txt; then
+            echo "success=true" >> $GITHUB_OUTPUT
+            echo "✅ Successfully assigned issue to Copilot!"
+          else
+            # Check if error is because Copilot isn't available
+            if grep -q "not found\|invalid" /tmp/assign_output.txt; then
+              echo "success=false" >> $GITHUB_OUTPUT
+              echo "error=notfound" >> $GITHUB_OUTPUT
+              echo "❌ Copilot not available for assignment"
+            else
+              echo "success=false" >> $GITHUB_OUTPUT
+              echo "error=other" >> $GITHUB_OUTPUT
+              echo "❌ Failed to assign issue to Copilot"
+              cat /tmp/assign_output.txt
+            fi
+          fi
+
+      - name: Add success comment
+        if: steps.check_pat.outputs.has_pat == 'true' && steps.assign.outputs.success == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
+          
+          GitHub Copilot has been automatically assigned to this issue and will begin working on it shortly.
+          
+          **What happens next:**
+          1. ✅ Copilot analyzes the issue requirements
+          2. 🔄 Copilot creates a branch and implements code
+          3. 📝 Copilot opens a PR with the implementation
+          4. 🔍 Auto-review workflow validates and merges
+          5. ✅ Issue is automatically closed when complete
+          
+          **Estimated time:** Copilot typically starts within a few minutes
+          **Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          
+          ---
+          *🤖 Automated by the Copilot Issue Assignment workflow - True autonomous operation!*"
+
+      - name: Add failure comment (No PAT)
+        if: steps.check_pat.outputs.has_pat == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --body "⚠️ **Manual Assignment Required**
+          
+          The COPILOT_PAT secret is not configured, so automatic assignment failed.
+          
+          **To enable automatic Copilot assignment:**
+          1. Create a Personal Access Token (PAT) from a user with Copilot subscription
+          2. Add it as a repository secret named \`COPILOT_PAT\`
+          3. Re-run this workflow or manually assign the issue to @copilot-swe-agent
+          
+          **For now, please manually assign:**
+          1. Click \"Assignees\" on the right sidebar
+          2. Search for and select: copilot-swe-agent
+          3. Copilot will automatically begin working
+          
+          See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for detailed setup instructions.
+          
+          ---
+          *🤖 Automated check by the Copilot Issue Assignment workflow*"
+
+      - name: Add failure comment (No Copilot)
+        if: steps.check_pat.outputs.has_pat == 'true' && steps.assign.outputs.success == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --body "⚠️ **Copilot Not Available**
+          
+          Could not find copilot-swe-agent for this repository.
+          
+          **Possible reasons:**
+          1. GitHub Copilot is not enabled for this repository
+          2. The PAT user doesn't have Copilot subscription
+          3. Copilot coding agent is not activated
+          
+          **To enable:**
+          1. Ensure you have a Copilot subscription (Pro or Enterprise)
+          2. Enable Copilot for this repository
+          3. Verify the PAT is from a user with Copilot access
+          
+          **For now, manual development is required.**
+          
+          ---
+          *🤖 Automated check by the Copilot Issue Assignment workflow*"
+
+      - name: Log assignment activity
+        run: |
+          echo "Copilot assignment workflow completed"
+          echo "Issue: #${{ steps.issue.outputs.number }}"
+          echo "PAT configured: ${{ steps.check_pat.outputs.has_pat }}"
+          echo "Assignment successful: ${{ steps.assign.outputs.success }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

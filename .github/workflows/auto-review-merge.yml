@@ -79,7 +79,8 @@ jobs:
             fi
             
             is_trusted_bot=0
-            if echo "${author}" | grep -qE "^(github-actions\[bot\]|dependabot\[bot\]|copilot)$"; then
+            # Match various bot author formats (gh CLI may return different formats)
+            if echo "${author}" | grep -qE "^(github-actions\[bot\]|app/github-actions|dependabot\[bot\]|copilot)$"; then
               is_trusted_bot=1
             fi
             
