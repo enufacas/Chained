@@ -19,6 +19,9 @@ jobs:
   label-copilot-pr:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Label specific PR (from pull_request event)
         if: github.event_name == 'pull_request'
         env:
