@@ -11,9 +11,6 @@ jobs:
   trigger-label-workflow:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Trigger auto-label workflow
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
