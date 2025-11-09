@@ -1,9 +1,19 @@
 {
-  "total_learnings": 2,
+  "total_learnings": 3,
   "sources": {
     "hacker_news": 2,
-    "tldr": 0
+    "tldr": 1
   },
-  "last_updated": "2025-11-09T13:17:22.599154",
-  "top_topics": {}
+  "total_stories_analyzed": 26,
+  "last_updated": "2025-11-09T16:03:26.233671",
+  "top_topics": {
+    "AI/ML": 11,
+    "Performance": 1,
+    "Programming": 1
+  },
+  "statistics": {
+    "avg_stories_per_hn_cycle": 13.0,
+    "most_common_topic": "AI/ML",
+    "topic_diversity": 3
+  }
 }
