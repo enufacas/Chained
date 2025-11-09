@@ -46,6 +46,30 @@ python3 tools/pattern-matcher.py -d /path/to/repo
 python3 tools/pattern-matcher.py -d . -o report.txt
 ```
 
+### Cross-Repository Analysis
+
+Analyze multiple GitHub repositories for patterns:
+
+```bash
+# Search and analyze top 5 Python ML repositories
+python3 tools/cross-repo-analyzer.py --search "language:python topic:machine-learning" --max 5
+
+# Analyze specific repositories
+python3 tools/cross-repo-analyzer.py --repos "owner1/repo1,owner2/repo2"
+
+# Search for JavaScript repos with many stars
+python3 tools/cross-repo-analyzer.py --search "language:javascript stars:>1000" --max 3
+
+# Save cross-repo analysis as JSON
+python3 tools/cross-repo-analyzer.py --search "topic:devops" --format json -o cross-repo.json
+```
+
+**Note:** For cross-repository analysis, set the `GITHUB_TOKEN` environment variable or use `--token` to avoid rate limits:
+```bash
+export GITHUB_TOKEN="your_github_token"
+python3 tools/cross-repo-analyzer.py --search "language:python"
+```
+
 ### Advanced Options
 
 ```bash

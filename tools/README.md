@@ -10,6 +10,7 @@ An intelligent best practices analyzer that detects anti-patterns, security issu
 **Features:**
 - Multi-language support (Python, JavaScript, Bash, YAML)
 - Security analysis (hardcoded secrets, SQL injection, unsafe eval)
+- Cross-repository analysis via GitHub API
 - Automated weekly reports via GitHub Actions
 - Detailed categorized findings
 
@@ -17,6 +18,9 @@ An intelligent best practices analyzer that detects anti-patterns, security issu
 ```bash
 # Scan entire repository
 python3 tools/pattern-matcher.py -d .
+
+# Analyze multiple GitHub repositories
+python3 tools/cross-repo-analyzer.py --search "language:python topic:ml" --max 5
 
 # Get statistics
 python3 tools/pattern-matcher.py -d . --stats
