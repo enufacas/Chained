@@ -120,7 +120,6 @@ The system is designed to be **delay-tolerant**:
 
 **Core Automation Workflows:**
 - `auto-review-merge.yml`: Every 15 minutes
-- `issue-to-pr.yml`: Every 30 minutes
 - `auto-close-issues.yml`: Every 30 minutes
 
 **Learning Workflows:**
@@ -226,7 +225,7 @@ gh workflow run "workflow-name.yml"
 
 Or for a specific workflow with inputs:
 ```bash
-gh workflow run "issue-to-pr.yml" -f issue_number=42
+gh workflow run "copilot-graphql-assign.yml" -f issue_number=42
 ```
 
 ### A workflow failed. Should I be concerned?

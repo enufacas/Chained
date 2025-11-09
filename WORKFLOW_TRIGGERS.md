@@ -18,7 +18,7 @@ These workflows run **instantly** when a specific GitHub event occurs:
 
 | Workflow | Event | Description |
 |----------|-------|-------------|
-| `copilot-assign.yml` | `issues: [opened, labeled]` | Runs immediately when an issue is created or labeled |
+| `copilot-graphql-assign.yml` | `issues: [opened, labeled]` | Runs immediately when an issue is created or labeled, assigns to Copilot |
 | `auto-review-merge.yml` | `pull_request: [opened, synchronize, reopened]` | Runs immediately when a PR is created or updated |
 | `auto-kickoff.yml` | `push: branches: [main]` | Runs immediately when code is pushed to main |
 
@@ -30,7 +30,6 @@ These workflows run **on a schedule** using cron expressions:
 
 | Workflow | Schedule | Frequency | Purpose |
 |----------|----------|-----------|---------|
-| `issue-to-pr.yml` | `*/30 * * * *` | Every 30 minutes | Converts assigned issues to PRs |
 | `auto-review-merge.yml` | `*/15 * * * *` | Every 15 minutes | Reviews and merges PRs |
 | `auto-close-issues.yml` | `*/30 * * * *` | Every 30 minutes | Closes completed issues |
 | `timeline-updater.yml` | `0 */6 * * *` | Every 6 hours | Updates timeline data |
@@ -62,22 +61,23 @@ Here's exactly how work gets done after an issue is assigned:
    │
    ↓ [EVENT TRIGGER - Immediate, Reliable]
    │
-   ├─→ copilot-assign.yml runs INSTANTLY
+   ├─→ copilot-graphql-assign.yml runs INSTANTLY
    │   └─→ Adds "copilot-assigned" label
-   │   └─→ Issue is now queued for work
+   │   └─→ Assigns issue directly to GitHub Copilot
+   │   └─→ Copilot receives assignment notification
    │
-   ↓ [PASSIVE POLLING - Wait up to 30 minutes]
+   ↓ [COPILOT WORKS AUTONOMOUSLY]
    │
-2. CRON TRIGGER: issue-to-pr.yml runs (every 30 min)
-   │   └─→ Scans for issues with "copilot-assigned" label
-   │   └─→ Creates branch: copilot/issue-{number}-{timestamp}
-   │   └─→ Creates PR with implementation
-   │   └─→ Adds "in-progress" label
-   │   └─→ Adds "copilot" label to PR
+2. Copilot Analyzes Issue and Creates PR
+   │   └─→ Copilot creates branch automatically
+   │   └─→ Copilot writes actual implementation code
+   │   └─→ Copilot opens PR with real changes
+   │   └─→ PR is linked to original issue
    │
-   ↓ [PASSIVE POLLING - Wait up to 15 minutes]
+   ↓ [EVENT TRIGGER - Immediate, Reliable]
    │
-3. CRON TRIGGER: auto-review-merge.yml runs (every 15 min)
+3. auto-review-merge.yml runs INSTANTLY (PR opened event)
+   │   └─→ Can also run on schedule every 15 min as backup
    │   └─→ Finds PRs with "copilot" label
    │   └─→ Validates author (owner or bot)
    │   └─→ Reviews and approves PR
@@ -97,12 +97,12 @@ Here's exactly how work gets done after an issue is assigned:
 
 ═══════════════════════════════════════════════════════════════════════════
 
-TOTAL TIME: 15-75 minutes (depends on when scheduled workflows catch it)
+TOTAL TIME: Minutes to hours (depends on when Copilot completes work)
 
-KEY INSIGHT: It's all PASSIVE POLLING via cron schedules, not active dispatch!
+KEY INSIGHT: Copilot is directly assigned and creates PRs autonomously!
 ```
 
-**Key Insight:** The "forcing" mechanism is **passive polling** via scheduled workflows, NOT active dispatching!
+**Key Insight:** Copilot is **directly assigned to issues** and creates PRs autonomously, NOT via polling!
 
 ## GitHub Actions Schedule Caveats
 
@@ -241,9 +241,10 @@ One workflow can trigger another using the GitHub API (requires PAT token with w
 
 **The process forcing Copilot to work:**
 1. Issues get auto-assigned via event trigger (immediate, reliable)
-2. Scheduled workflows poll for work every 15-30 minutes (mostly reliable)
-3. Work gets done progressively through the automation pipeline
-4. Monitoring detects and reports failures
+2. Copilot receives assignment and autonomously creates PR with real implementation
+3. PR events trigger auto-review workflow (immediate)
+4. Scheduled workflows handle cleanup (close issues every 30 minutes)
+5. Monitoring detects and reports failures
 
 **Trust your schedules by:**
 - Using the verification tools provided

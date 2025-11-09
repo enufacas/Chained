@@ -46,8 +46,7 @@ declare -A workflows=(
     ["system-kickoff.yml"]="System Kickoff|workflow_dispatch"
     ["idea-generator.yml"]="AI Idea Generator|schedule,workflow_dispatch"
     ["smart-idea-generator.yml"]="Smart Idea Generator|schedule,workflow_dispatch"
-    ["copilot-assign.yml"]="Copilot Auto-Assign|issues,workflow_dispatch"
-    ["issue-to-pr.yml"]="Issue to PR Automator|schedule,workflow_dispatch"
+    ["copilot-graphql-assign.yml"]="Copilot Issue Assignment (GraphQL)|issues,workflow_dispatch"
     ["auto-review-merge.yml"]="Auto Review and Merge|pull_request,schedule,workflow_dispatch"
     ["auto-close-issues.yml"]="Auto Close Issues|schedule,workflow_dispatch"
     ["timeline-updater.yml"]="Timeline Updater|schedule,workflow_dispatch"
@@ -146,13 +145,6 @@ else
     print_status "ERROR" "Auto-kickoff missing system-kickoff dependency"
 fi
 
-# Issue-to-PR depends on copilot-assign labels
-if [ -f ".github/workflows/issue-to-pr.yml" ] && [ -f ".github/workflows/copilot-assign.yml" ]; then
-    print_status "OK" "Issue-to-PR can process copilot-assigned issues"
-else
-    print_status "ERROR" "Issue-to-PR missing copilot-assign dependency"
-fi
-
 # Smart idea generator depends on learning workflows
 if [ -f ".github/workflows/smart-idea-generator.yml" ] && \
    [ -f ".github/workflows/learn-from-tldr.yml" ] && \
@@ -174,7 +166,6 @@ scheduled_workflows=(
     "smart-idea-generator.yml:daily at 10 AM UTC"
     "idea-generator.yml:daily at 9 AM UTC"
     "auto-review-merge.yml:every 2 hours"
-    "issue-to-pr.yml:every 3 hours"
     "auto-close-issues.yml:every 4 hours"
     "timeline-updater.yml:every 6 hours"
     "progress-tracker.yml:every 12 hours"
@@ -243,14 +234,13 @@ echo "    20:00 UTC - learn-from-tldr.yml"
 echo ""
 echo "  Continuous Automation:"
 echo "    Every 2h - auto-review-merge.yml"
-echo "    Every 3h - issue-to-pr.yml"
 echo "    Every 4h - auto-close-issues.yml"
 echo "    Every 6h - timeline-updater.yml"
 echo "    Every 12h - progress-tracker.yml"
 echo "    Every 12h - workflow-monitor.yml"
 echo ""
 echo "  Event-Driven:"
-echo "    On issue created → copilot-assign.yml"
+echo "    On issue created → copilot-graphql-assign.yml"
 echo "    On PR opened → auto-review-merge.yml"
 echo ""
 

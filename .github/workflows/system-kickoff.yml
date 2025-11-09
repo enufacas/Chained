@@ -150,7 +150,7 @@ jobs:
           echo "  • smart-idea-generator.yml - Runs at 10:00 UTC daily"
           echo ""
           echo "Automation Workflows:"
-          echo "  • issue-to-pr.yml - Runs every 3 hours"
+          echo "  • copilot-graphql-assign.yml - Runs on issue creation (event-driven)"
           echo "  • auto-review-merge.yml - Runs every 2 hours"
           echo "  • auto-close-issues.yml - Runs every 4 hours"
           echo "  • timeline-updater.yml - Runs every 6 hours"
