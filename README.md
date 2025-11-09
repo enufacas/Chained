@@ -8,7 +8,9 @@
 
 ## 🚀 Quick Start
 
-**Want to get started immediately?** See [QUICKSTART.md](./QUICKSTART.md) for 5-minute setup guide!
+**Want to verify and launch immediately?** See [GETTING_STARTED.md](./GETTING_STARTED.md) for validation and kickoff!
+
+**Want manual setup instructions?** See [QUICKSTART.md](./QUICKSTART.md) for 5-minute setup guide!
 
 **New to autonomous AI development?** Read [COPILOT_VISION.md](./COPILOT_VISION.md) to understand what AI wants to build.
 
