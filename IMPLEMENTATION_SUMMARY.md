@@ -151,15 +151,14 @@ CodeQL Analysis: 0 alerts found
 - 1 System kickoff
 
 **Scheduled Workflows:** 10
-- Every 2 hours: auto-review-merge
-- Every 3 hours: issue-to-pr
-- Every 4 hours: auto-close-issues
+- Every 15 minutes: auto-review-merge
+- Every 30 minutes: issue-to-pr, auto-close-issues
 - Every 6 hours: timeline-updater
 - Every 12 hours: progress-tracker, workflow-monitor
 - Daily: learn-from-hackernews (3x), learn-from-tldr (2x), idea generators (2x)
 
 **Event-Driven Workflows:** 3
-- On issue creation: copilot-assign
+- On issue creation: copilot-graphql-assign
 - On PR events: auto-review-merge
 - On push to main: auto-kickoff
 

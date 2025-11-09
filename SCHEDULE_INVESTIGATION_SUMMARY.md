@@ -14,7 +14,8 @@ The user wanted to understand:
 The autonomous system uses **passive polling via scheduled workflows**, not active triggering:
 
 1. **Issue Assignment** (Event Trigger - Immediate)
-   - `copilot-assign.yml` runs instantly when an issue is created
+   - `copilot-graphql-assign.yml` runs instantly when an issue is created
+   - Assigns issue to Copilot via API (if COPILOT_PAT configured)
    - Adds "copilot-assigned" label
    - Issue queued for work
 

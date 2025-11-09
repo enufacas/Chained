@@ -33,10 +33,10 @@ This repository is now a **fully autonomous, self-learning AI motion machine** t
 | Learn from TLDR | 2x daily (8 AM, 8 PM) | Tech news scraping |
 | Learn from HN | 3x daily (7 AM, 1 PM, 7 PM) | Community trends |
 | Smart Idea Generator | Daily at 10 AM | Trend-aware ideas |
-| Copilot Auto-Assign | On issue creation | Tag for AI work |
-| Issue to PR | Every 3 hours | Convert issues to PRs |
-| Auto Review & Merge | Every 2 hours | Self-review and merge |
-| Auto Close Issues | Every 4 hours | Complete lifecycle |
+| Copilot Issue Assignment | On issue creation | Assign to Copilot via API |
+| Issue to PR | Every 30 minutes | Convert issues to PRs |
+| Auto Review & Merge | Every 15 minutes | Self-review and merge |
+| Auto Close Issues | Every 30 minutes | Complete lifecycle |
 | Timeline Updater | Every 6 hours | Update GitHub Pages |
 | Progress Tracker | Every 12 hours | Analyze success |
 
@@ -49,7 +49,7 @@ This repository is now a **fully autonomous, self-learning AI motion machine** t
 │       ├── learn-from-tldr.yml          # TLDR Tech learning
 │       ├── learn-from-hackernews.yml    # Hacker News learning
 │       ├── smart-idea-generator.yml     # Trend-aware ideas
-│       ├── copilot-assign.yml           # Auto-assign
+│       ├── copilot-graphql-assign.yml    # Auto-assign to Copilot
 │       ├── issue-to-pr.yml              # Issue → PR
 │       ├── auto-review-merge.yml        # Self-review & merge
 │       ├── auto-close-issues.yml        # Close completed

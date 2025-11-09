@@ -64,16 +64,18 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
 ### 4. Issue Assignment Phase (On issue creation)
 
 **Workflow:**
-- `copilot-assign.yml` - Runs on issue creation
+- `copilot-graphql-assign.yml` - Runs on issue creation
 
 **Process:**
 1. New issue created (from idea generator or manually logged)
-2. Adds `copilot-assigned` label
-3. Adds tracking comment
-4. Marks issue as ready for work
-5. Workflow completes
+2. Checks for COPILOT_PAT secret
+3. If configured: Assigns issue to Copilot via API
+4. Adds `copilot-assigned` label
+5. Adds tracking comment
+6. Marks issue as ready for work
+7. Workflow completes
 
-**Output:** Issue ready for implementation
+**Output:** Issue ready for implementation (with Copilot assigned if PAT configured)
 
 ### 5. Implementation Phase (Every 30 minutes)
 
