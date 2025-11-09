@@ -1,0 +1,40 @@
+name: Trigger Auto Label
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  actions: write
+
+jobs:
+  trigger-label-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger auto-label workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🚀 Triggering auto-label workflow to do a round-up of all PRs..."
+          
+          # Trigger the auto-label-copilot-prs workflow with label_existing=true
+          # This will label all existing Copilot PRs, not just the current one
+          if gh workflow run auto-label-copilot-prs.yml \
+            -f label_existing=true; then
+            echo "✅ Auto-label workflow triggered successfully"
+            echo "This will label all open Copilot PRs, including the newly opened one"
+          else
+            echo "⚠️ Failed to trigger auto-label workflow"
+            exit 1
+          fi
+          
+          echo ""
+          echo "📋 Summary:"
+          echo "  - Trigger type: pull_request (opened)"
+          echo "  - Action: Dispatch auto-label-copilot-prs workflow"
+          echo "  - Mode: Round-up (label_existing=true)"
+          echo ""
+          echo "The auto-label workflow will now process all open PRs."
