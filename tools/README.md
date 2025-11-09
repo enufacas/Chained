@@ -1,4 +1,32 @@
-# 🏌️ AI Code Golf Optimizer
+# 🛠️ Chained Development Tools
+
+A collection of intelligent development tools for the Chained autonomous AI system.
+
+## Available Tools
+
+### 🔍 Cross-Repository Pattern Matcher
+An intelligent best practices analyzer that detects anti-patterns, security issues, and code quality problems across multiple programming languages.
+
+**Features:**
+- Multi-language support (Python, JavaScript, Bash, YAML)
+- Security analysis (hardcoded secrets, SQL injection, unsafe eval)
+- Automated weekly reports via GitHub Actions
+- Detailed categorized findings
+
+**Quick Start:**
+```bash
+# Scan entire repository
+python3 tools/pattern-matcher.py -d .
+
+# Get statistics
+python3 tools/pattern-matcher.py -d . --stats
+```
+
+[📖 Full Documentation](./PATTERN_MATCHER.md)
+
+---
+
+### 🏌️ AI Code Golf Optimizer
 
 An intelligent code optimizer that minimizes code character count while preserving functionality - perfect for code golf challenges!
 
