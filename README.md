@@ -54,7 +54,19 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
    - Requires COPILOT_PAT secret for full automation
    - Can be manually triggered with optional issue number (or process all issues)
 
-3. **Auto Review and Merge** (`auto-review-merge.yml`)
+3. **Auto Label Copilot PRs** (`auto-label-copilot-prs.yml`)
+   - Labels PRs created by Copilot with the "copilot" label
+   - Triggered by the Trigger Auto Label workflow on PR events
+   - Can be manually triggered to label all existing Copilot PRs
+   - Essential for PR automation pipeline
+
+4. **Trigger Auto Label** (`trigger-auto-label.yml`)
+   - Runs when new PRs are opened
+   - Dispatches the Auto Label workflow with full round-up mode
+   - Ensures all open Copilot PRs are labeled, not just the new one
+   - Part of the PR labeling reliability system
+
+5. **Auto Review and Merge** (`auto-review-merge.yml`)
    - Runs every 15 minutes
    - Reviews PRs created by Copilot
    - AI reviews AI code
@@ -62,37 +74,37 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
    - Closes associated issues when PRs are merged
    - No human approval required
 
-4. **Timeline Updater** (`timeline-updater.yml`)
+6. **Timeline Updater** (`timeline-updater.yml`)
    - Runs every 6 hours
    - Fetches all repository activity
    - Updates timeline data for GitHub Pages
    - Documents autonomous actions
 
-5. **Progress Tracker** (`progress-tracker.yml`)
+7. **Progress Tracker** (`progress-tracker.yml`)
    - Runs every 12 hours
    - Analyzes repository progress and statistics
    - Generates progress reports
    - Tracks autonomous success rates
 
-6. **Learning from TLDR Tech** (`learn-from-tldr.yml`)
+8. **Learning from TLDR Tech** (`learn-from-tldr.yml`)
    - Runs twice daily (8 AM, 8 PM UTC)
    - Fetches latest tech news and trends
    - Extracts insights about AI, DevOps, and programming
    - Saves learnings to influence future ideas
 
-7. **Learning from Hacker News** (`learn-from-hackernews.yml`)
+9. **Learning from Hacker News** (`learn-from-hackernews.yml`)
    - Runs three times daily (7 AM, 1 PM, 7 PM UTC)
    - Analyzes trending technical discussions
    - Categorizes topics (AI/ML, Security, Performance, etc.)
    - Generates ideas based on community trends
 
-8. **Smart Idea Generator** (`smart-idea-generator.yml`)
+10. **Smart Idea Generator** (`smart-idea-generator.yml`)
     - Runs daily at 10 AM UTC (after learning workflows)
     - Generates ideas informed by external learnings
     - Adapts to trending technologies and patterns
     - Creates enhanced issues with learning context
 
-9. **System Kickoff** (`system-kickoff.yml`)
+11. **System Kickoff** (`system-kickoff.yml`)
     - Can be triggered manually or automatically
     - Validates system configuration
     - Creates required labels
@@ -100,7 +112,7 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
     - Triggers initial workflows
     - Creates kickoff success issue
 
-11. **Auto Kickoff on First Run** (`auto-kickoff.yml`)
+12. **Auto Kickoff on First Run** (`auto-kickoff.yml`)
     - Runs automatically on merge to main
     - Detects if system already kicked off
     - Triggers kickoff workflow if needed
