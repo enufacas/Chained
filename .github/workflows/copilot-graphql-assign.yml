@@ -87,15 +87,61 @@ jobs:
             
             echo "📍 Issue node ID: $issue_node_id"
             
+            # Get Copilot's actor ID from the repository's suggested actors
+            echo "🔍 Fetching Copilot actor ID..."
+            copilot_actor_id=$(gh api graphql -f query='
+              query($owner: String!, $repo: String!) {
+                repository(owner: $owner, name: $repo) {
+                  suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
+                    nodes {
+                      login
+                      __typename
+                      ... on Bot { id }
+                      ... on User { id }
+                    }
+                  }
+                }
+              }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" | jq -r '.data.repository.suggestedActors.nodes[] | select(.login | test("copilot"; "i")) | .id' | head -1)
+            
+            if [ -z "$copilot_actor_id" ]; then
+              echo "❌ Could not find Copilot actor ID in suggested actors"
+              echo "ℹ️  Copilot may not be enabled for this repository"
+              failed_count=$((failed_count + 1))
+              
+              gh issue comment $issue_number --repo ${{ github.repository }} --body "⚠️ **Copilot Not Available**
+          
+          Could not find GitHub Copilot in the list of available assignees for this repository.
+          
+          **This means:**
+          - GitHub Copilot is not enabled for this repository
+          - You need to enable Copilot in repository Settings
+          - Or your subscription does not include Copilot agents
+          
+          **To enable Copilot:**
+          1. Go to repository Settings → Copilot
+          2. Enable GitHub Copilot for this repository
+          3. Ensure your account has a Copilot subscription (Individual, Business, or Enterprise)
+          
+          **For now:**
+          - This issue has been labeled \`copilot-assigned\` for tracking
+          - Assign a developer to implement this manually
+          
+          ---
+          *🤖 Automated check via GitHub GraphQL API*"
+              continue
+            fi
+            
+            echo "📍 Copilot actor ID: $copilot_actor_id"
+            
             # Assign issue to Copilot using GraphQL API
             echo "🤖 Assigning issue #$issue_number to Copilot via GraphQL API..."
             
             # Use GraphQL mutation to assign Copilot (this is the official method per GitHub docs)
             mutation_result=$(gh api graphql -f query='
-              mutation($issueId: ID!) {
+              mutation($issueId: ID!, $actorId: ID!) {
                 replaceActorsForAssignable(input: {
                   assignableId: $issueId,
-                  actorIds: ["copilot"]
+                  actorIds: [$actorId]
                 }) {
                   assignable {
                     ... on Issue {
@@ -108,7 +154,7 @@ jobs:
                     }
                   }
                 }
-              }' -f issueId="$issue_node_id" 2>&1)
+              }' -f issueId="$issue_node_id" -f actorId="$copilot_actor_id" 2>&1)
             
             if echo "$mutation_result" | jq -e '.data.replaceActorsForAssignable.assignable' > /dev/null 2>&1; then
               echo "✅ Successfully assigned issue #$issue_number to Copilot"
