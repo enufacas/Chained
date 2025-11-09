@@ -18,7 +18,7 @@ These workflows run **instantly** when a specific GitHub event occurs:
 
 | Workflow | Event | Description |
 |----------|-------|-------------|
-| `copilot-assign.yml` | `issues: [opened, labeled]` | Runs immediately when an issue is created or labeled |
+| `copilot-graphql-assign.yml` | `issues: [opened, labeled]` | Runs immediately when an issue is created or labeled |
 | `auto-review-merge.yml` | `pull_request: [opened, synchronize, reopened]` | Runs immediately when a PR is created or updated |
 | `auto-kickoff.yml` | `push: branches: [main]` | Runs immediately when code is pushed to main |
 
@@ -62,7 +62,8 @@ Here's exactly how work gets done after an issue is assigned:
    │
    ↓ [EVENT TRIGGER - Immediate, Reliable]
    │
-   ├─→ copilot-assign.yml runs INSTANTLY
+   ├─→ copilot-graphql-assign.yml runs INSTANTLY
+   │   └─→ Assigns issue to Copilot via API (if COPILOT_PAT configured)
    │   └─→ Adds "copilot-assigned" label
    │   └─→ Issue is now queued for work
    │
