@@ -1,0 +1,60 @@
+name: Auto Kickoff on First Run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+  actions: read
+
+jobs:
+  check-and-kickoff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if already kicked off
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if kickoff issue exists
+          if gh issue list --state all --label "automated,completed" --search "System Kickoff Complete" --json title | grep -q "System Kickoff Complete"; then
+            echo "already_kicked_off=true" >> $GITHUB_OUTPUT
+            echo "System already kicked off. Skipping."
+          else
+            echo "already_kicked_off=false" >> $GITHUB_OUTPUT
+            echo "System not yet kicked off."
+          fi
+
+      - name: Trigger kickoff workflow
+        if: steps.check.outputs.already_kicked_off == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Triggering system kickoff workflow..."
+          gh workflow run "system-kickoff.yml" \
+            -f trigger_initial_workflows=true \
+            -f create_labels=true
+          
+          echo "✓ Kickoff workflow triggered!"
+          echo ""
+          echo "The system will be initialized automatically."
+          echo "Check the Actions tab to see progress."
+
+      - name: Skip message
+        if: steps.check.outputs.already_kicked_off == 'true'
+        run: |
+          echo "================================================================"
+          echo "System already kicked off - skipping automatic kickoff"
+          echo "================================================================"
+          echo ""
+          echo "The Chained system is already running!"
+          echo ""
+          echo "To manually trigger workflows, go to the Actions tab."
+          echo ""

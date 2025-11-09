@@ -2,9 +2,39 @@
 
 This guide answers: **"How do we know it's going to work? Can we kick things off now?"**
 
-## Quick Answer: Yes! Here's How
+## Quick Answer: Yes! Three Ways to Start
 
-### Step 1: Validate Everything Works
+### Option 1: Automatic (Easiest) 🎯
+
+**The system automatically kicks off when you merge to main!**
+
+A GitHub Actions workflow detects the first merge and:
+- ✅ Validates the system
+- ✅ Creates required labels
+- ✅ Initializes directories
+- ✅ Triggers initial workflows
+- ✅ Creates a kickoff success issue
+
+**Just merge this PR and watch the Actions tab!**
+
+### Option 2: Manual via GitHub Actions
+
+Go to the **Actions** tab and run the "System Kickoff" workflow:
+
+1. Click on "System Kickoff" workflow
+2. Click "Run workflow"
+3. Choose options:
+   - Create labels: Yes
+   - Trigger workflows: Yes
+4. Click "Run workflow"
+
+The automated workflow will handle everything!
+
+### Option 3: Local Script (If GitHub CLI is set up)
+
+If you have the repository locally and GitHub CLI authenticated:
+
+#### Step 1: Validate Everything Works
 
 Run the validation script to check your system:
 
@@ -21,7 +51,7 @@ This checks:
 
 **If validation passes with only warnings**, you're ready to go!
 
-### Step 2: Kick Things Off
+#### Step 2: Kick Things Off
 
 Start the autonomous system:
 
@@ -36,7 +66,9 @@ This will:
 - ✅ Initialize directories
 - ✅ Optionally trigger initial workflows
 
-### Step 3: Monitor Progress
+---
+
+## Monitor Progress (All Options)
 
 Check the status anytime:
 

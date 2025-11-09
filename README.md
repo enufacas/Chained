@@ -94,6 +94,20 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
     - Adapts to trending technologies and patterns
     - Creates enhanced issues with learning context
 
+11. **System Kickoff** (`system-kickoff.yml`)
+    - Can be triggered manually or automatically
+    - Validates system configuration
+    - Creates required labels
+    - Initializes directories
+    - Triggers initial workflows
+    - Creates kickoff success issue
+
+12. **Auto Kickoff on First Run** (`auto-kickoff.yml`)
+    - Runs automatically on merge to main
+    - Detects if system already kicked off
+    - Triggers kickoff workflow if needed
+    - Ensures one-time initialization
+
 ### GitHub Pages
 
 The project includes a beautiful, responsive GitHub Pages site at [`docs/`](./docs/) that displays:
@@ -108,9 +122,22 @@ Visit the live site: **[https://enufacas.github.io/Chained/](https://enufacas.gi
 
 ## 🚀 Getting Started
 
-### Quick Start - Verify and Launch! 🎯
+### Automatic Kickoff (Easiest!) 🎯
 
-**New to Chained?** Use our automated scripts to verify everything and kick things off:
+**The system automatically starts when you merge to main!** 
+
+A GitHub Actions workflow will:
+- ✅ Validate the system
+- ✅ Create required labels
+- ✅ Initialize directories  
+- ✅ Trigger initial workflows
+- ✅ Create a kickoff success issue
+
+**Just merge and watch the Actions tab!**
+
+### Alternative: Manual Start
+
+**Local Scripts:** If you have the repository locally:
 
 ```bash
 # 1. Validate your system is ready
@@ -123,12 +150,16 @@ Visit the live site: **[https://enufacas.github.io/Chained/](https://enufacas.gi
 ./check-status.sh
 ```
 
-These scripts will:
+**GitHub Actions:** Go to Actions → "System Kickoff" → Run workflow
+
+These methods will:
 - ✅ Verify all workflows and documentation exist
 - ✅ Create necessary labels
 - ✅ Validate system configuration
 - ✅ Trigger initial workflows
 - ✅ Provide status updates
+
+**See [GETTING_STARTED.md](./GETTING_STARTED.md) for detailed instructions.**
 
 **See [QUICKSTART.md](./QUICKSTART.md) for the 5-minute manual setup guide.**
 
