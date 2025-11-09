@@ -705,6 +705,7 @@ loadLearnings();
 loadWorkflowSchedules();
 loadAutoLearnings();
 loadNewsFeed();
+loadLearningsIndex();
 
 // Refresh data every 5 minutes
 setInterval(() => {
@@ -713,4 +714,135 @@ setInterval(() => {
     loadWorkflowSchedules();
     loadAutoLearnings();
     loadNewsFeed();
+    loadLearningsIndex();
 }, 5 * 60 * 1000);
+
+// Load learnings index
+async function loadLearningsIndex() {
+    try {
+        // Load index.json for stats
+        const indexResponse = await fetch('../learnings/index.json');
+        if (indexResponse.ok) {
+            const indexData = await indexResponse.json();
+            document.getElementById('index-total-learnings').textContent = indexData.total_learnings || 0;
+            document.getElementById('index-tldr-count').textContent = indexData.sources?.tldr || 0;
+            document.getElementById('index-hn-count').textContent = indexData.sources?.hacker_news || 0;
+        }
+
+        // Load all learning files
+        const learningFiles = await fetchLearningFiles();
+        displayLearningsIndex(learningFiles);
+        displayTopics(learningFiles);
+    } catch (error) {
+        console.error('Error loading learnings index:', error);
+        document.getElementById('learnings-index-container').innerHTML = '<p style="color: var(--text-muted);">Unable to load learnings index.</p>';
+    }
+}
+
+// Fetch learning files from the repository
+async function fetchLearningFiles() {
+    try {
+        const response = await fetch('https://api.github.com/repos/enufacas/Chained/contents/learnings');
+        if (!response.ok) return [];
+        
+        const files = await response.json();
+        const learningFiles = files.filter(file => 
+            (file.name.startsWith('tldr_') || file.name.startsWith('hn_')) && 
+            file.name.endsWith('.json')
+        );
+
+        // Fetch content for each file
+        const filesWithContent = await Promise.all(
+            learningFiles.map(async (file) => {
+                try {
+                    const contentResponse = await fetch(file.download_url);
+                    const content = await contentResponse.json();
+                    return {
+                        name: file.name,
+                        url: file.html_url,
+                        size: file.size,
+                        content: content
+                    };
+                } catch (e) {
+                    return {
+                        name: file.name,
+                        url: file.html_url,
+                        size: file.size,
+                        content: null
+                    };
+                }
+            })
+        );
+
+        return filesWithContent.sort((a, b) => b.name.localeCompare(a.name));
+    } catch (error) {
+        console.error('Error fetching learning files:', error);
+        return [];
+    }
+}
+
+// Display learnings index
+function displayLearningsIndex(files) {
+    const container = document.getElementById('learnings-index-container');
+    
+    if (files.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">No learning files found yet.</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+    files.forEach(file => {
+        const div = document.createElement('div');
+        div.className = 'learning-index-item';
+        
+        const source = file.name.startsWith('tldr_') ? 'TLDR Tech' : 'Hacker News';
+        const dateMatch = file.name.match(/(\d{8})_(\d{6})/);
+        let dateStr = 'Unknown date';
+        if (dateMatch) {
+            const date = dateMatch[1];
+            const time = dateMatch[2];
+            dateStr = `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)} ${time.slice(0, 2)}:${time.slice(2, 4)}`;
+        }
+        
+        const itemCount = file.content?.learnings?.length || 0;
+        
+        div.innerHTML = `
+            <div class="index-file-name">${escapeHtml(source)}</div>
+            <div class="index-file-meta">📅 ${dateStr}</div>
+            <div class="index-file-count">📄 ${itemCount} items</div>
+        `;
+        
+        div.addEventListener('click', () => {
+            window.open(file.url, '_blank');
+        });
+        
+        container.appendChild(div);
+    });
+}
+
+// Display topics from learnings
+function displayTopics(files) {
+    const container = document.getElementById('topics-container');
+    const topicsSet = new Set();
+
+    files.forEach(file => {
+        if (file.content && file.content.topics) {
+            Object.keys(file.content.topics).forEach(topic => {
+                topicsSet.add(topic);
+            });
+        }
+    });
+
+    if (topicsSet.size === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">No topics categorized yet.</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+    Array.from(topicsSet).sort().forEach(topic => {
+        const tag = document.createElement('span');
+        tag.className = 'topic-tag';
+        tag.textContent = topic;
+        container.appendChild(tag);
+    });
+}

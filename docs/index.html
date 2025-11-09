@@ -8,12 +8,22 @@
 </head>
 <body>
     <header>
-        <h1>🤖 Chained: The Perpetual AI Motion Machine</h1>
-        <p class="tagline">A self-evolving repository where AI generates ideas, creates issues, and advances autonomously</p>
+        <div class="header-content">
+            <h1>🤖 Chained: The Perpetual AI Motion Machine</h1>
+            <p class="tagline">A self-evolving repository where AI generates ideas, creates issues, and advances autonomously</p>
+        </div>
+        <nav class="main-nav">
+            <a href="#stats" class="nav-link">📊 Stats</a>
+            <a href="#automation" class="nav-link">🤖 Automation</a>
+            <a href="#learnings-index" class="nav-link">🧠 Learnings</a>
+            <a href="#codebase-index" class="nav-link">🛠️ Codebase</a>
+            <a href="#timeline" class="nav-link">⏰ Timeline</a>
+            <a href="https://github.com/enufacas/Chained" target="_blank" class="nav-link">📂 GitHub</a>
+        </nav>
     </header>
 
     <main>
-        <section class="stats">
+        <section id="stats" class="stats">
             <div class="stat-card">
                 <h3 id="total-ideas">0</h3>
                 <p>Ideas Generated</p>
@@ -32,7 +42,7 @@
             </div>
         </section>
 
-        <section class="automation-status">
+        <section id="automation" class="automation-status">
             <h2>🤖 Autonomous System Status</h2>
             <div class="automation-grid">
                 <div class="automation-item active">
@@ -78,8 +88,8 @@
             </div>
         </section>
 
-        <section class="timeline">
-            <h2>Timeline of Autonomous Actions</h2>
+        <section id="timeline" class="timeline">
+            <h2>⏰ Timeline of Autonomous Actions</h2>
             <div id="timeline-container">
                 <div class="timeline-item">
                     <div class="timeline-date">Day 1</div>
@@ -144,6 +154,114 @@
             <div id="news-feed-container">
                 <div class="news-item">
                     <p>⏳ Loading latest news...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="learnings-index" class="learnings-index">
+            <h2>🧠 Learnings Index</h2>
+            <p class="section-description">Complete index of all learnings collected from tech news and community discussions</p>
+            
+            <div class="index-stats">
+                <div class="index-stat-card">
+                    <h3 id="index-total-learnings">0</h3>
+                    <p>Learning Sessions</p>
+                </div>
+                <div class="index-stat-card">
+                    <h3 id="index-tldr-count">0</h3>
+                    <p>TLDR Articles</p>
+                </div>
+                <div class="index-stat-card">
+                    <h3 id="index-hn-count">0</h3>
+                    <p>HN Stories</p>
+                </div>
+            </div>
+
+            <div class="learnings-directory">
+                <h3>📁 Learning Files</h3>
+                <div id="learnings-index-container">
+                    <p>⏳ Loading learnings index...</p>
+                </div>
+            </div>
+
+            <div class="learnings-topics">
+                <h3>🏷️ Topics Covered</h3>
+                <div id="topics-container">
+                    <p>⏳ Analyzing topics...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="codebase-index" class="codebase-index">
+            <h2>🛠️ Codebase & Tools Index</h2>
+            <p class="section-description">Comprehensive index of all tools, utilities, and code components in the repository</p>
+            
+            <div class="codebase-categories">
+                <div class="category-card">
+                    <h3>⚙️ Automation Workflows</h3>
+                    <ul>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/smart-idea-generator.yml" target="_blank">Smart Idea Generator</a> - Generates trend-aware ideas daily</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/idea-generator.yml" target="_blank">AI Idea Generator</a> - Creates AI-focused feature ideas</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/learn-from-tldr.yml" target="_blank">TLDR Learning</a> - Fetches tech news twice daily</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/learn-from-hackernews.yml" target="_blank">HN Learning</a> - Analyzes trending discussions 3x daily</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/auto-review-merge.yml" target="_blank">Auto Review & Merge</a> - AI reviews and merges PRs</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/timeline-updater.yml" target="_blank">Timeline Updater</a> - Updates GitHub Pages data</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/progress-tracker.yml" target="_blank">Progress Tracker</a> - Analyzes repository progress</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/code-analyzer.yml" target="_blank">Code Analyzer</a> - Self-improving code analysis</li>
+                    </ul>
+                </div>
+
+                <div class="category-card">
+                    <h3>🐍 Python Tools</h3>
+                    <ul>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/tools/code-analyzer.py" target="_blank">code-analyzer.py</a> - Self-improving code quality analyzer</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/tools/code-golf-optimizer.py" target="_blank">code-golf-optimizer.py</a> - Code golf optimizer for minimal code</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/tools/pattern-matcher.py" target="_blank">pattern-matcher.py</a> - Pattern detection tool</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/tools/cross-repo-analyzer.py" target="_blank">cross-repo-analyzer.py</a> - Cross-repository analysis</li>
+                    </ul>
+                </div>
+
+                <div class="category-card">
+                    <h3>📜 Shell Scripts</h3>
+                    <ul>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/kickoff-system.sh" target="_blank">kickoff-system.sh</a> - Initialize the autonomous system</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/validate-system.sh" target="_blank">validate-system.sh</a> - Pre-flight validation checks</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/check-status.sh" target="_blank">check-status.sh</a> - Monitor system health</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/verify-schedules.sh" target="_blank">verify-schedules.sh</a> - Verify workflow schedules</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/evaluate-workflows.sh" target="_blank">evaluate-workflows.sh</a> - Comprehensive workflow evaluation</li>
+                    </ul>
+                </div>
+
+                <div class="category-card">
+                    <h3>📚 Documentation</h3>
+                    <ul>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/README.md" target="_blank">README.md</a> - Main project documentation</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/GETTING_STARTED.md" target="_blank">GETTING_STARTED.md</a> - Quick start guide</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/FAQ.md" target="_blank">FAQ.md</a> - Frequently asked questions</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/COPILOT_VISION.md" target="_blank">COPILOT_VISION.md</a> - AI development vision</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/tools/README.md" target="_blank">tools/README.md</a> - Tools documentation</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/learnings/README.md" target="_blank">learnings/README.md</a> - Learnings structure</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/WORKFLOW_TRIGGERS.md" target="_blank">WORKFLOW_TRIGGERS.md</a> - Workflow trigger details</li>
+                    </ul>
+                </div>
+
+                <div class="category-card">
+                    <h3>🎨 Frontend Assets</h3>
+                    <ul>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/docs/index.html" target="_blank">index.html</a> - Main GitHub Pages template</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/docs/style.css" target="_blank">style.css</a> - Stylesheet for GitHub Pages</li>
+                        <li><a href="https://github.com/enufacas/Chained/blob/main/docs/script.js" target="_blank">script.js</a> - Interactive functionality</li>
+                    </ul>
+                </div>
+
+                <div class="category-card">
+                    <h3>📊 Data & Analysis</h3>
+                    <ul>
+                        <li><a href="https://github.com/enufacas/Chained/tree/main/docs/data" target="_blank">docs/data/</a> - GitHub Pages cache data</li>
+                        <li><a href="https://github.com/enufacas/Chained/tree/main/learnings" target="_blank">learnings/</a> - Learning files from TLDR & HN</li>
+                        <li><a href="https://github.com/enufacas/Chained/tree/main/analysis" target="_blank">analysis/</a> - Code analysis reports</li>
+                        <li><a href="https://github.com/enufacas/Chained/tree/main/tools/examples" target="_blank">tools/examples/</a> - Code golf examples</li>
+                    </ul>
                 </div>
             </div>
         </section>
