@@ -2,6 +2,53 @@
 
 Get your perpetual AI motion machine running in 5 minutes!
 
+## Two Ways to Get Started
+
+### Option A: Automated Setup (Recommended) 🤖
+
+Use our helper scripts for an automated experience:
+
+1. **Clone and enter the repository**
+   ```bash
+   git clone https://github.com/<your-username>/Chained.git
+   cd Chained
+   ```
+
+2. **Install GitHub CLI** (if not already installed)
+   - macOS: `brew install gh`
+   - Linux: See [cli.github.com](https://cli.github.com)
+   - Windows: `winget install GitHub.cli`
+
+3. **Authenticate GitHub CLI**
+   ```bash
+   gh auth login
+   ```
+
+4. **Run the automated kickoff**
+   ```bash
+   ./kickoff-system.sh
+   ```
+
+The script will:
+- ✅ Validate your system configuration
+- ✅ Verify all required files exist
+- ✅ Create necessary labels
+- ✅ Initialize directories
+- ✅ Optionally trigger initial workflows
+
+Then monitor with:
+```bash
+./check-status.sh
+```
+
+**Done! Your system is running.** Skip to [What to Expect](#what-to-expect) below.
+
+---
+
+### Option B: Manual Setup (Step-by-Step)
+
+If you prefer manual configuration or the automated scripts don't work:
+
 ## Prerequisites
 
 - A GitHub repository (this one!)
@@ -87,9 +134,25 @@ The workflows will start automatically:
 - 👀 Watch Issues and PRs appear automatically
 - 🎉 See the autonomous cycle complete end-to-end
 
-## Verification Checklist
+---
 
-After setup, verify these permissions:
+## Verification & Monitoring
+
+After setup (automated or manual), use these scripts:
+
+### Validate Configuration
+```bash
+./validate-system.sh
+```
+Checks all files, workflows, and configuration.
+
+### Check System Status
+```bash
+./check-status.sh
+```
+Shows workflow runs, issues, PRs, and success metrics.
+
+### Manual Verification (Alternative)
 
 ```bash
 # Check if Actions can create PRs
@@ -104,9 +167,15 @@ gh api repos/:owner/:repo/pages
 
 ## Troubleshooting
 
+### System validation fails?
+- ✅ Run `./validate-system.sh` to identify specific issues
+- ✅ Check error messages for missing files or configurations
+- ✅ Ensure you're in the repository root directory
+
 ### Workflows not creating issues/PRs?
 - ✅ Check workflow permissions are "Read and write"
 - ✅ Check "Allow GitHub Actions to create and approve pull requests" is enabled
+- ✅ Run `./check-status.sh` to see recent workflow runs
 
 ### PRs not auto-merging?
 - ✅ Check branch protection has 0 required approvals
@@ -117,6 +186,11 @@ gh api repos/:owner/:repo/pages
 - ✅ Wait 2-3 minutes after enabling
 - ✅ Check the Pages build workflow succeeded
 - ✅ Verify the docs/ folder exists in main branch
+
+### Kickoff script fails?
+- ✅ Install and authenticate GitHub CLI: `gh auth login`
+- ✅ Ensure you have admin access to the repository
+- ✅ Check workflow permissions in repository settings
 
 ### Labels not working?
 - ✅ Create missing labels manually

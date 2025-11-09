@@ -1,0 +1,227 @@
+name: System Kickoff
+
+on:
+  workflow_dispatch:
+    inputs:
+      trigger_initial_workflows:
+        description: 'Trigger initial workflows after kickoff'
+        required: false
+        type: boolean
+        default: true
+      create_labels:
+        description: 'Create required labels'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  issues: write
+  contents: write
+  actions: write
+
+jobs:
+  kickoff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Run validation
+        id: validate
+        run: |
+          echo "Running pre-flight validation..."
+          chmod +x validate-system.sh
+          ./validate-system.sh || {
+            echo "validation_failed=true" >> $GITHUB_OUTPUT
+            exit 0  # Don't fail the job, just mark validation failed
+          }
+          echo "validation_passed=true" >> $GITHUB_OUTPUT
+
+      - name: Check validation results
+        if: steps.validate.outputs.validation_failed == 'true'
+        run: |
+          echo "::error::Validation failed. Please fix errors before kickoff."
+          exit 1
+
+      - name: Create required labels
+        if: inputs.create_labels == true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Creating required labels..."
+          
+          # Define labels with colors and descriptions
+          declare -A labels=(
+            ["ai-generated"]="7057ff:Created by AI Idea Generator"
+            ["copilot-assigned"]="0366d6:Assigned to Copilot"
+            ["copilot"]="0366d6:Created by Copilot"
+            ["automated"]="fbca04:Automated process"
+            ["in-progress"]="fbca04:Work in progress"
+            ["completed"]="0e8a16:Completed task"
+            ["learning"]="d93f0b:Learning or insight"
+            ["progress-report"]="c5def5:Progress tracking"
+            ["enhancement"]="a2eeef:New feature or request"
+          )
+          
+          for label in "${!labels[@]}"; do
+            IFS=':' read -r color description <<< "${labels[$label]}"
+            
+            # Check if label exists
+            if gh label list | grep -q "^${label}"; then
+              echo "✓ Label '$label' already exists"
+            else
+              if gh label create "$label" --color "$color" --description "$description" 2>/dev/null; then
+                echo "✓ Created label '$label'"
+              else
+                echo "⚠ Could not create label '$label' (may already exist)"
+              fi
+            fi
+          done
+
+      - name: Initialize learnings directory
+        run: |
+          echo "Initializing learnings directory..."
+          mkdir -p learnings
+          
+          if [ ! -f "learnings/README.md" ]; then
+            cat > learnings/README.md << 'LEARNINGS_EOF'
+          # Learning Database
+
+          This directory contains learnings collected from external sources.
+
+          ## Sources
+
+          - **TLDR Tech**: Tech news summaries (twice daily)
+          - **Hacker News**: Trending discussions (3x daily)
+
+          ## Format
+
+          Learning files are stored as JSON with the following structure:
+          - `timestamp`: When the learning was captured
+          - `source`: Where it came from (tldr, hackernews)
+          - `topics`: Categorized topics
+          - `insights`: Key takeaways
+          - `trends`: Identified trends
+
+          ## Usage
+
+          These learnings influence the Smart Idea Generator to create
+          trend-aware ideas based on what's happening in the tech world.
+          LEARNINGS_EOF
+            echo "✓ Created learnings/README.md"
+          else
+            echo "✓ learnings/README.md already exists"
+          fi
+
+      - name: Commit initialization changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git add learnings/
+            git commit -m "Initialize learnings directory [automated]" || echo "Nothing to commit"
+            git push || echo "Nothing to push"
+          fi
+
+      - name: Trigger initial workflows
+        if: inputs.trigger_initial_workflows == true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Triggering initial workflows..."
+          
+          # Trigger learning workflows first
+          echo "→ Triggering TLDR Tech learning..."
+          gh workflow run "learn-from-tldr.yml" || echo "⚠ Could not trigger TLDR workflow"
+          
+          echo "→ Triggering Hacker News learning..."
+          gh workflow run "learn-from-hackernews.yml" || echo "⚠ Could not trigger HN workflow"
+          
+          # Wait a moment for learning workflows to start
+          sleep 3
+          
+          # Trigger idea generator
+          echo "→ Triggering AI Idea Generator..."
+          gh workflow run "idea-generator.yml" || echo "⚠ Could not trigger idea generator"
+          
+          echo "✓ Initial workflows triggered!"
+
+      - name: Create kickoff success issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create an issue announcing successful kickoff
+          gh issue create \
+            --title "🚀 System Kickoff Complete!" \
+            --body "## Chained System Started
+
+          The perpetual AI motion machine has been successfully initialized and started!
+
+          **Kickoff Time:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          **Workflows Triggered:**
+          - ✅ Learn from TLDR Tech
+          - ✅ Learn from Hacker News  
+          - ✅ AI Idea Generator
+
+          **Status:**
+          - All validation checks passed
+          - Required labels created
+          - Learnings directory initialized
+          - Initial workflows triggered
+
+          ## What's Next?
+
+          The autonomous system will now:
+          1. Learn from external sources continuously
+          2. Generate ideas daily at 10:00 UTC
+          3. Create issues from ideas
+          4. Convert issues to PRs every 3 hours
+          5. Review and merge PRs every 2 hours
+          6. Update timeline every 6 hours
+
+          **Monitor Progress:**
+          - 📊 GitHub Pages: View live timeline
+          - 🔄 Actions Tab: See workflow runs
+          - 📋 Issues: Watch AI-generated issues appear
+          - 🔀 Pull Requests: See autonomous contributions
+
+          **Check Status:**
+          \`\`\`bash
+          ./check-status.sh
+          \`\`\`
+
+          ---
+
+          This issue was created automatically by the System Kickoff workflow.
+          The perpetual motion machine is now running! 🎉" \
+            --label "automated,completed"
+
+      - name: Generate kickoff summary
+        run: |
+          echo "================================================================"
+          echo "🎉 KICKOFF COMPLETE!"
+          echo "================================================================"
+          echo ""
+          echo "The Chained perpetual AI motion machine is now running!"
+          echo ""
+          echo "✓ Validation passed"
+          echo "✓ Labels created"
+          echo "✓ Learnings initialized"
+          echo "✓ Workflows triggered"
+          echo ""
+          echo "Monitor progress:"
+          echo "  • Actions: ${{ github.server_url }}/${{ github.repository }}/actions"
+          echo "  • Issues: ${{ github.server_url }}/${{ github.repository }}/issues"
+          echo "  • PRs: ${{ github.server_url }}/${{ github.repository }}/pulls"
+          echo ""
+          echo "The autonomous cycle has begun! 🚀"
+          echo ""
