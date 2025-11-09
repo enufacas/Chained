@@ -98,101 +98,139 @@ jobs:
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git checkout -b "${branch_name}"
             
-            # Create a placeholder file for the implementation
-            mkdir -p implementations
-            cat > "implementations/issue-${issue_num}.md" << EOF
-          # Implementation for Issue #${issue_num}
+            # Create a task specification file for Copilot to work with
+            mkdir -p .copilot
+            cat > ".copilot/task-${issue_num}.md" << EOF
+          # Task Specification for Issue #${issue_num}
           
-          **Title:** ${issue_title}
+          ## Issue Title
+          ${issue_title}
           
-          ## Original Issue
-          
+          ## Issue Description
           ${issue_body}
           
-          ## Implementation Notes
+          ## Instructions for GitHub Copilot
           
-          This file documents the implementation approach for this issue.
+          This PR is ready for implementation. Please analyze the issue above and:
           
-          ### Approach
+          1. Understand the requirements from the issue description
+          2. Implement the necessary code changes
+          3. Add or update tests as appropriate
+          4. Update documentation if needed
+          5. Ensure the implementation follows repository patterns
           
-          - Analyzed the requirements from the issue
-          - Planned the implementation strategy
-          - Created necessary files and changes
+          ## Context
           
-          ### Changes Made
+          - **Issue Number:** #${issue_num}
+          - **Repository:** ${{ github.repository }}
+          - **Branch:** ${branch_name}
+          - **Created:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
           
-          - Created implementation documentation
-          - Updated relevant files
-          - Added necessary configurations
+          ## Expected Outcome
           
-          ### Testing
-          
-          - Verified changes work as expected
-          - Checked for integration issues
-          - Validated against requirements
-          
-          ### Status
-          
-          ✅ Implementation complete and ready for review
-          
-          **Completed at:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          A working implementation that fully addresses the issue requirements.
           EOF
             
-            git add .
-            git commit -m "Implement solution for issue #${issue_num}: ${issue_title}"
+            # Create an empty commit to initialize the branch for Copilot to work on
+            git add .copilot/
+            git commit -m "Initialize branch for Copilot to implement issue #${issue_num}: ${issue_title}" \
+              -m "This PR is ready for GitHub Copilot to implement the solution." \
+              -m "Issue: #${issue_num}" \
+              -m "Task specification: .copilot/task-${issue_num}.md" \
+              -m "@github-copilot please analyze the issue and implement the necessary changes."
             git push origin "${branch_name}"
             
-            # Create PR
+            # Create PR for Copilot to work on
             pr_url=$(gh pr create \
-              --title "🤖 Implement: ${issue_title}" \
-              --body "## Automated Implementation
+              --title "🤖 [Ready for Copilot] ${issue_title}" \
+              --body "## 🔧 Implementation Request for GitHub Copilot
             
-            This PR implements the solution for issue #${issue_num}.
+            This PR has been created for GitHub Copilot to implement the solution for issue #${issue_num}.
             
-            ### Issue Details
+            ### 📋 Issue Details
             
-            **Original Issue:** #${issue_num}
+            **Original Issue:** Closes #${issue_num}
             **Title:** ${issue_title}
             
-            ### Implementation
+            **Issue Description:**
+            ${issue_body}
             
-            See \`implementations/issue-${issue_num}.md\` for detailed implementation notes.
+            ### 🎯 Task for Copilot
             
-            ### Changes
+            @github-copilot Please implement this feature by:
             
-            - Created implementation documentation
-            - Added necessary files and configurations
-            - Validated the solution
+            1. 📖 **Analyzing** the issue requirements in detail
+            2. 💻 **Implementing** the necessary code changes
+            3. ✅ **Testing** the implementation (add tests if appropriate)
+            4. 📝 **Documenting** any new functionality
+            5. 🔍 **Reviewing** for best practices and patterns
             
-            ### Testing
+            ### 📂 Task Specification
             
-            - ✅ Implementation verified
-            - ✅ No breaking changes
-            - ✅ Follows repository patterns
+            See \`.copilot/task-${issue_num}.md\` for detailed task specification and context.
             
-            ### Review
+            ### 🚀 What Happens Next
             
-            This PR will be automatically reviewed and merged by the autonomous review system.
+            1. GitHub Copilot will analyze this PR and the linked issue
+            2. Copilot will implement the necessary changes
+            3. The auto-review system will review and merge the PR
+            4. The original issue will be automatically closed
+            
+            ### ⚙️ Automation Status
+            
+            - ✅ Branch created: \`${branch_name}\`
+            - ✅ Task specification prepared
+            - ✅ PR created and ready
+            - 🔄 Awaiting Copilot implementation
+            
+            **Created:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
             
             ---
             
-            Closes #${issue_num}
-            
-            *Generated by the Issue to PR Automator workflow*" \
+            *🤖 Generated by the Issue to PR Automator workflow - Part of the perpetual AI motion machine*" \
               --label "copilot,automated" \
               --base main \
               --head "${branch_name}")
             
             echo "Created PR: ${pr_url}"
             
+            # Extract PR number from URL
+            pr_number=$(echo "${pr_url}" | grep -oP '\d+$')
+            
+            # Request Copilot to work on this PR by adding a comment that triggers it  
+            gh pr comment ${pr_number} --body "🤖 Copilot Implementation Request - GitHub Copilot, please help implement this feature. Analyze issue #${issue_num} and implement the necessary changes. Task specification: .copilot/task-${issue_num}.md"
+            
+            # Also trigger Copilot through repository dispatch (if available)
+            # This creates a webhook event that Copilot can listen to
+            gh api repos/${{ github.repository }}/dispatches \
+              -f event_type="copilot_work_request" \
+              -f client_payload[pr_number]="${pr_number}" \
+              -f client_payload[issue_number]="${issue_num}" \
+              -f client_payload[title]="${issue_title}" \
+              2>/dev/null || echo "Note: repository_dispatch not available, relying on @mention"
+            
             # Comment back on the issue
-            gh issue comment ${issue_num} --body "📝 **PR Created**
+            gh issue comment ${issue_num} --body "🚀 **PR Created and Copilot Requested**
             
-            A pull request has been created: ${pr_url}
+            A pull request has been created and GitHub Copilot has been requested to implement the solution.
             
-            The PR will be automatically reviewed and merged.
+            **PR:** ${pr_url}
+            **Branch:** \`${branch_name}\`
+            **Status:** 🔄 Awaiting Copilot implementation
             
-            **Created at:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+            ### What's Next?
+            
+            1. ✅ PR created with task specification
+            2. ✅ GitHub Copilot has been mentioned and requested to work
+            3. 🔄 Copilot will analyze the issue and implement the solution
+            4. 🔄 Once implemented, auto-review will validate and merge
+            5. ✅ Issue will be automatically closed when PR is merged
+            
+            **Created at:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            
+            ---
+            
+            *🤖 Part of the perpetual AI motion machine - Copilot will handle the actual implementation*"
             
             # Return to main branch for next issue
             git checkout main
