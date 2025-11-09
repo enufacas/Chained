@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       issue_number:
-        description: 'Issue number to assign to Copilot'
-        required: true
+        description: 'Issue number to assign to Copilot (leave empty to process all open issues)'
+        required: false
         type: string
 
 permissions:
