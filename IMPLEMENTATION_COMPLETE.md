@@ -51,8 +51,7 @@ This repository is now a **fully autonomous, self-learning AI motion machine** t
 │       ├── smart-idea-generator.yml     # Trend-aware ideas
 │       ├── copilot-graphql-assign.yml    # Auto-assign to Copilot
 │       ├── issue-to-pr.yml              # Issue → PR
-│       ├── auto-review-merge.yml        # Self-review & merge
-│       ├── auto-close-issues.yml        # Close completed
+│       ├── auto-review-merge.yml        # Self-review, merge & close issues
 │       ├── timeline-updater.yml         # Update timeline
 │       ├── progress-tracker.yml         # Track progress
 │       └── idea-generator.yml           # Backup generator

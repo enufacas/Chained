@@ -34,8 +34,7 @@ The system operates fully autonomously when configured correctly:
 1. **Issue Created** → Event trigger runs `copilot-graphql-assign.yml` immediately
 2. **Automatic Assignment** → Workflow assigns issue to Copilot using PAT
 3. **Copilot Works** → Copilot analyzes issue, writes code, creates PR (typically within minutes)
-4. **Wait up to 15 minutes** → `auto-review-merge.yml` runs on schedule, reviews and merges the PR
-5. **Wait up to 30 minutes** → `auto-close-issues.yml` runs on schedule, closes the completed issue
+4. **Wait up to 15 minutes** → `auto-review-merge.yml` runs on schedule, reviews and merges the PR, and closes the completed issue
 
 **Key Insight:** With PAT configured, the entire flow is automated! No manual steps required.
 

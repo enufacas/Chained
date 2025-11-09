@@ -173,17 +173,26 @@ jobs:
                 
                 echo "✅ PR #${pr_num} processed successfully"
                 
-                # Comment on related issue if exists
-                issue_num=$(gh pr view ${pr_num} --json body --jq '.body' | grep -oP '(?<=#)\d+' | head -1 || echo "")
-                if [ -n "${issue_num}" ]; then
-                  gh issue comment ${issue_num} --body "✅ **PR #${pr_num} merged successfully**
-                  
-                  The implementation has been automatically reviewed and merged.
-                  
-                  **Merged at:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-                  
-                  This issue can now be closed or tracked for additional work." || true
-                fi
+                # Close related issue if exists
+                pr_body=$(gh pr view ${pr_num} --json body --jq '.body' || echo "")
+                issue_numbers=$(echo "${pr_body}" | grep -oP '(?<=#)\d+' || echo "")
+                
+                for issue_num in ${issue_numbers}; do
+                  if [ -n "${issue_num}" ]; then
+                    echo "Closing issue #${issue_num} as completed by PR #${pr_num}"
+                    
+                    gh issue close ${issue_num} --comment "✅ **Completed**
+                    
+                    This issue has been completed and merged via PR #${pr_num}.
+                    
+                    **Merged at:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+                    
+                    ---
+                    *Automatically closed by the auto-review system*" || true
+                    
+                    gh issue edit ${issue_num} --add-label "completed" || true
+                  fi
+                done
               else
                 echo "⚠️ PR #${pr_num} is not mergeable (status: ${mergeable})"
                 gh pr comment ${pr_num} --body "⚠️ This PR is not currently mergeable. Status: ${mergeable}
