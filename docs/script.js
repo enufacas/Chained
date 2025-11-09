@@ -388,6 +388,289 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// Load auto learnings from the learnings directory
+async function loadAutoLearnings() {
+    try {
+        // Fetch learning index
+        const indexResponse = await fetch('../learnings/index.json');
+        if (!indexResponse.ok) {
+            console.log('Learning index not available');
+            return;
+        }
+        
+        const indexData = await indexResponse.json();
+        
+        // Update stats
+        document.getElementById('total-learnings').textContent = indexData.total_learnings || 0;
+        document.getElementById('tldr-learnings').textContent = indexData.sources?.tldr || 0;
+        document.getElementById('hn-learnings').textContent = indexData.sources?.hacker_news || 0;
+        
+        // Try to fetch recent files by looking at the current date pattern
+        const container = document.getElementById('learning-files-container');
+        container.innerHTML = '';
+        
+        // Fetch learning files - try common patterns for today
+        const learningFiles = [];
+        const today = new Date();
+        const dateStr = today.toISOString().split('T')[0].replace(/-/g, '');
+        
+        // Add known patterns for today
+        ['082735', '083000', '202403', '202500'].forEach(time => {
+            learningFiles.push({ name: `tldr_${dateStr}_${time}.json`, type: 'tldr' });
+        });
+        
+        ['070959', '071000', '131719', '131800', '190715', '191000'].forEach(time => {
+            learningFiles.push({ name: `hn_${dateStr}_${time}.json`, type: 'hn' });
+        });
+        
+        // Try yesterday too
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0].replace(/-/g, '');
+        ['082000', '083000', '202000', '202500'].forEach(time => {
+            learningFiles.push({ name: `tldr_${yesterdayStr}_${time}.json`, type: 'tldr' });
+        });
+        ['070000', '071000', '130000', '131000', '190000', '191000'].forEach(time => {
+            learningFiles.push({ name: `hn_${yesterdayStr}_${time}.json`, type: 'hn' });
+        });
+        
+        let filesFound = 0;
+        for (const file of learningFiles) {
+            try {
+                const response = await fetch(`../learnings/${file.name}`, { method: 'HEAD' });
+                if (response.ok) {
+                    const dataResponse = await fetch(`../learnings/${file.name}`);
+                    const data = await dataResponse.json();
+                    
+                    if (data.learnings && data.learnings.length > 0) {
+                        filesFound++;
+                        const fileItem = createLearningFileItem(file.name, data);
+                        container.appendChild(fileItem);
+                        
+                        if (filesFound >= 10) break;
+                    }
+                }
+            } catch (e) {
+                // File doesn't exist, continue silently
+            }
+        }
+        
+        if (filesFound === 0) {
+            container.innerHTML = '<p style="color: var(--text-muted);">No learning sessions found yet. Check back after the scheduled learning workflows run.</p>';
+        }
+        
+    } catch (error) {
+        console.error('Error loading auto learnings:', error);
+    }
+}
+
+// Create a learning file item
+function createLearningFileItem(filename, data) {
+    const item = document.createElement('div');
+    item.className = 'learning-file-item';
+    
+    // Extract date and time from filename
+    const match = filename.match(/([a-z]+)_(\d{8})_(\d{6})\.json/);
+    if (!match) return item;
+    
+    const [, source, dateStr, timeStr] = match;
+    const year = dateStr.substring(0, 4);
+    const month = dateStr.substring(4, 6);
+    const day = dateStr.substring(6, 8);
+    const hour = timeStr.substring(0, 2);
+    const minute = timeStr.substring(2, 4);
+    
+    const date = new Date(`${year}-${month}-${day}T${hour}:${minute}:00Z`);
+    const dateFormatted = date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    const sourceLabel = source === 'tldr' ? 'TLDR Tech' : 'Hacker News';
+    const sourceEmoji = source === 'tldr' ? '📰' : '💬';
+    const learningCount = data.learnings?.length || 0;
+    
+    item.innerHTML = `
+        <div class="file-name">${sourceEmoji} ${escapeHtml(sourceLabel)}</div>
+        <div class="file-meta">${dateFormatted}</div>
+        <div class="file-count">${learningCount} stories collected</div>
+    `;
+    
+    // Make it clickable to expand in news feed
+    item.onclick = () => {
+        // Scroll to news feed and filter by source
+        const newsSection = document.querySelector('.news-feed');
+        newsSection.scrollIntoView({ behavior: 'smooth' });
+        
+        // Set filter
+        const filterBtn = document.querySelector(`.filter-btn[data-filter="${source === 'tldr' ? 'tldr' : 'hn'}"]`);
+        if (filterBtn) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            filterBtn.classList.add('active');
+            filterNewsFeed(source === 'tldr' ? 'tldr' : 'hn');
+        }
+    };
+    
+    return item;
+}
+
+// Load news feed from recent learning files
+let allNewsItems = [];
+
+async function loadNewsFeed() {
+    try {
+        // Fetch recent learning files by trying today and yesterday
+        const learningFiles = [];
+        const today = new Date();
+        const dateStr = today.toISOString().split('T')[0].replace(/-/g, '');
+        
+        // Add today's patterns
+        ['082735', '083000', '202403', '202500'].forEach(time => {
+            learningFiles.push({ name: `tldr_${dateStr}_${time}.json`, type: 'tldr' });
+        });
+        
+        ['070959', '071000', '131719', '131800', '190715', '191000'].forEach(time => {
+            learningFiles.push({ name: `hn_${dateStr}_${time}.json`, type: 'hn' });
+        });
+        
+        // Add yesterday's patterns
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0].replace(/-/g, '');
+        ['082000', '083000', '202000', '202500'].forEach(time => {
+            learningFiles.push({ name: `tldr_${yesterdayStr}_${time}.json`, type: 'tldr' });
+        });
+        ['070000', '071000', '130000', '131000', '190000', '191000'].forEach(time => {
+            learningFiles.push({ name: `hn_${yesterdayStr}_${time}.json`, type: 'hn' });
+        });
+        
+        allNewsItems = [];
+        
+        for (const file of learningFiles) {
+            try {
+                const response = await fetch(`../learnings/${file.name}`, { method: 'HEAD' });
+                if (response.ok) {
+                    const dataResponse = await fetch(`../learnings/${file.name}`);
+                    const data = await dataResponse.json();
+                    
+                    if (data.learnings && data.learnings.length > 0) {
+                        data.learnings.forEach(learning => {
+                            allNewsItems.push({
+                                ...learning,
+                                source: file.type,
+                                timestamp: data.timestamp
+                            });
+                        });
+                    }
+                }
+            } catch (e) {
+                // File doesn't exist, continue
+            }
+        }
+        
+        // Sort by score (for HN) or by order (for TLDR)
+        allNewsItems.sort((a, b) => {
+            const scoreA = a.score || 0;
+            const scoreB = b.score || 0;
+            return scoreB - scoreA;
+        });
+        
+        // Limit to 50 most relevant items
+        allNewsItems = allNewsItems.slice(0, 50);
+        
+        // Display news feed
+        displayNewsFeed(allNewsItems);
+        
+        // Setup filter buttons
+        setupNewsFilters();
+        
+    } catch (error) {
+        console.error('Error loading news feed:', error);
+    }
+}
+
+// Display news feed
+function displayNewsFeed(items) {
+    const container = document.getElementById('news-feed-container');
+    container.innerHTML = '';
+    
+    if (items.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">No news items found yet. Check back after the scheduled learning workflows run.</p>';
+        return;
+    }
+    
+    items.forEach(item => {
+        const newsItem = createNewsItem(item);
+        container.appendChild(newsItem);
+    });
+}
+
+// Create a news item
+function createNewsItem(item) {
+    const div = document.createElement('div');
+    div.className = `news-item ${item.source}`;
+    div.dataset.source = item.source;
+    
+    const sourceLabel = item.source === 'tldr' ? 'TLDR Tech' : 'Hacker News';
+    const hasUrl = item.url && item.url.trim() !== '';
+    
+    let scoreInfo = '';
+    if (item.score) {
+        scoreInfo = `<span class="news-score">▲ ${item.score} points</span>`;
+    }
+    
+    div.innerHTML = `
+        <span class="news-source ${item.source}">${escapeHtml(sourceLabel)}</span>
+        <h3>${escapeHtml(item.title)}</h3>
+        ${item.description ? `<p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">${escapeHtml(item.description)}</p>` : ''}
+        <div class="news-meta">
+            ${scoreInfo}
+            ${hasUrl ? `<a href="${item.url}" target="_blank" rel="noopener noreferrer">Read more →</a>` : ''}
+        </div>
+    `;
+    
+    return div;
+}
+
+// Setup news filters
+function setupNewsFilters() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active state
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Filter news
+            const filter = btn.dataset.filter;
+            filterNewsFeed(filter);
+        });
+    });
+}
+
+// Filter news feed
+function filterNewsFeed(filter) {
+    let filteredItems = allNewsItems;
+    
+    if (filter === 'tldr') {
+        filteredItems = allNewsItems.filter(item => item.source === 'tldr');
+    } else if (filter === 'hn') {
+        filteredItems = allNewsItems.filter(item => item.source === 'hn');
+    }
+    
+    displayNewsFeed(filteredItems);
+}
+
+// Utility function to escape HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 // Add CSS for labels dynamically
 const style = document.createElement('style');
 style.textContent = `
@@ -420,10 +703,14 @@ document.head.appendChild(style);
 fetchStats();
 loadLearnings();
 loadWorkflowSchedules();
+loadAutoLearnings();
+loadNewsFeed();
 
 // Refresh data every 5 minutes
 setInterval(() => {
     fetchStats();
     loadLearnings();
     loadWorkflowSchedules();
+    loadAutoLearnings();
+    loadNewsFeed();
 }, 5 * 60 * 1000);

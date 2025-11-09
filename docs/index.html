@@ -91,8 +91,65 @@
             </div>
         </section>
 
+        <section class="auto-learnings">
+            <h2>🧠 Auto Learnings from the World</h2>
+            <p class="section-description">The AI continuously learns from tech news and community discussions, adapting its ideas based on real-world trends.</p>
+            
+            <div class="learning-stats">
+                <div class="learning-stat-card">
+                    <h3 id="total-learnings">0</h3>
+                    <p>Total Learnings</p>
+                </div>
+                <div class="learning-stat-card">
+                    <h3 id="tldr-learnings">0</h3>
+                    <p>TLDR Tech News</p>
+                </div>
+                <div class="learning-stat-card">
+                    <h3 id="hn-learnings">0</h3>
+                    <p>Hacker News Stories</p>
+                </div>
+            </div>
+
+            <div class="learning-sources">
+                <div class="learning-source">
+                    <h3>📰 TLDR Tech</h3>
+                    <p>Tech news summaries, AI updates, DevOps trends</p>
+                    <p class="frequency">Collected 2x daily (8 AM, 8 PM UTC)</p>
+                </div>
+                <div class="learning-source">
+                    <h3>💬 Hacker News</h3>
+                    <p>Top technical discussions, trending topics</p>
+                    <p class="frequency">Collected 3x daily (7 AM, 1 PM, 7 PM UTC)</p>
+                </div>
+            </div>
+
+            <div class="learning-files">
+                <h3>Recent Learning Sessions</h3>
+                <div id="learning-files-container">
+                    <p>⏳ Loading learning sessions...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="news-feed">
+            <h2>📡 Latest News Feed</h2>
+            <p class="section-description">Recent stories and trends collected from TLDR Tech and Hacker News that inform our AI's decision-making.</p>
+            
+            <div class="news-filter">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="tldr">TLDR Tech</button>
+                <button class="filter-btn" data-filter="hn">Hacker News</button>
+            </div>
+            
+            <div id="news-feed-container">
+                <div class="news-item">
+                    <p>⏳ Loading latest news...</p>
+                </div>
+            </div>
+        </section>
+
         <section class="learnings">
-            <h2>Key Learnings & Insights</h2>
+            <h2>Key Insights & Takeaways</h2>
             <div id="learnings-container">
                 <div class="learning-item">
                     <h3>🧠 Autonomous Systems</h3>
