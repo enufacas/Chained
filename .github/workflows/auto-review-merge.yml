@@ -101,22 +101,46 @@ jobs:
             
             if [ "${should_auto_merge}" -eq 1 ]; then
               
-              # Add approval review
-              gh pr review ${pr_num} --approve --body "🤖 **Automated Review by Copilot**
-              
-              This PR has been automatically reviewed and approved.
-              
-              **Review Criteria:**
-              - ✅ Created by AI/Copilot
-              - ✅ Follows repository patterns
-              - ✅ Part of autonomous development cycle
-              
-              **Status:** Approved for merge
-              **Reviewed by:** Autonomous Review System
-              **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-              
-              ---
-              *Part of the perpetual AI motion machine - no human review required.*"
+              # For bot-created PRs, skip approval (can't approve own PR) and enable auto-merge
+              # For owner PRs, add approval review first
+              if [ "${is_trusted_bot}" -eq 1 ]; then
+                echo "PR #${pr_num} is from trusted bot, skipping approval and enabling auto-merge"
+                
+                # Add a comment instead of approval
+                gh pr comment ${pr_num} --body "🤖 **Automated Processing by Copilot**
+                
+                This PR has been automatically identified for merge.
+                
+                **Merge Criteria Met:**
+                - ✅ Created by trusted automation (${author})
+                - ✅ Has copilot label
+                - ✅ Part of autonomous development cycle
+                
+                **Action:** Enabling auto-merge (will merge automatically when all checks pass)
+                **Processed by:** Autonomous Review System
+                **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+                
+                ---
+                *Part of the perpetual AI motion machine - no human review required.*" || true
+              else
+                # Repository owner PR - add approval review
+                gh pr review ${pr_num} --approve --body "🤖 **Automated Review by Copilot**
+                
+                This PR has been automatically reviewed and approved.
+                
+                **Review Criteria:**
+                - ✅ Created by repository owner
+                - ✅ Has copilot label
+                - ✅ Follows repository patterns
+                - ✅ Part of autonomous development cycle
+                
+                **Status:** Approved for merge
+                **Reviewed by:** Autonomous Review System
+                **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+                
+                ---
+                *Part of the perpetual AI motion machine - no human review required.*"
+              fi
               
               # Wait a moment for checks to complete
               sleep 10
@@ -126,12 +150,13 @@ jobs:
               mergeable=$(echo "${pr_data}" | jq -r '.mergeable')
               
               if [ "${mergeable}" = "MERGEABLE" ]; then
-                # Merge the PR
-                gh pr merge ${pr_num} --auto --squash --delete-branch || \
-                gh pr merge ${pr_num} --squash --delete-branch || \
-                echo "Could not merge PR #${pr_num} - may have conflicts or require checks"
+                # Enable auto-merge (will merge when checks pass)
+                # For bot PRs, this works without approval
+                gh pr merge ${pr_num} --auto --squash --delete-branch && \
+                echo "✅ Auto-merge enabled for PR #${pr_num}" || \
+                echo "Could not enable auto-merge for PR #${pr_num} - may require checks or have conflicts"
                 
-                echo "✅ PR #${pr_num} merged successfully"
+                echo "✅ PR #${pr_num} processed successfully"
                 
                 # Comment on related issue if exists
                 issue_num=$(gh pr view ${pr_num} --json body --jq '.body' | grep -oP '(?<=#)\d+' | head -1 || echo "")
