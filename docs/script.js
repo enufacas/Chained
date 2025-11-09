@@ -3,6 +3,17 @@ const REPO_OWNER = 'enufacas';
 const REPO_NAME = 'Chained';
 const API_BASE = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`;
 
+// Workflow schedules mapping
+const WORKFLOW_SCHEDULES = {
+    'Smart Idea Generator': { cron: '0 10 * * *', description: 'Daily at 10:00 AM UTC' },
+    'AI Idea Generator': { cron: '0 9 * * *', description: 'Daily at 9:00 AM UTC' },
+    'Learning from TLDR Tech': { cron: '0 8,20 * * *', description: 'Twice daily at 8:00 AM and 8:00 PM UTC' },
+    'Learning from Hacker News': { cron: '0 7,13,19 * * *', description: 'Three times daily at 7:00 AM, 1:00 PM, and 7:00 PM UTC' },
+    'Auto Review and Merge': { cron: '*/15 * * * *', description: 'Every 15 minutes' },
+    'Progress Tracker': { cron: '0 */12 * * *', description: 'Every 12 hours' },
+    'Timeline Updater': { cron: '0 */6 * * *', description: 'Every 6 hours' },
+};
+
 // Update last updated timestamp
 document.getElementById('last-updated').textContent = new Date().toLocaleString();
 
@@ -74,6 +85,217 @@ async function fetchStats() {
         console.error('Error fetching stats:', error);
         // Keep default values on error
     }
+}
+
+// Load timeline from issues and events
+function loadTimeline(issues) {
+    const timelineContainer = document.getElementById('timeline-container');
+    
+    // Sort issues by creation date (newest first)
+    const sortedIssues = issues.sort((a, b) => 
+        new Date(b.created_at) - new Date(a.created_at)
+    );
+    
+    // Add issues to timeline
+    sortedIssues.slice(0, 10).forEach(issue => {
+        const timelineItem = createTimelineItem(issue);
+        timelineContainer.appendChild(timelineItem);
+    });
+}
+
+// Load workflow schedules and display them
+async function loadWorkflowSchedules() {
+    try {
+        // Try to fetch workflows from cached data
+        const workflowsResponse = await fetch('data/workflows.json');
+        if (workflowsResponse.ok) {
+            const workflows = await workflowsResponse.json();
+            displayWorkflowSchedules(workflows);
+        } else {
+            console.log('Workflows data not available');
+        }
+    } catch (error) {
+        console.error('Error fetching workflow schedules:', error);
+    }
+}
+
+// Display workflow schedules with last run and next run info
+function displayWorkflowSchedules(workflows) {
+    const container = document.getElementById('workflow-schedules-container');
+    container.innerHTML = '';
+    
+    // Group workflows by name and find the most recent run
+    const workflowMap = new Map();
+    workflows.forEach(workflow => {
+        const name = workflow.name;
+        if (!workflowMap.has(name) || new Date(workflow.createdAt) > new Date(workflowMap.get(name).createdAt)) {
+            workflowMap.set(name, workflow);
+        }
+    });
+    
+    // Display scheduled workflows
+    Object.entries(WORKFLOW_SCHEDULES).forEach(([workflowName, schedule]) => {
+        const latestRun = workflowMap.get(workflowName);
+        const scheduleItem = createWorkflowScheduleItem(workflowName, schedule, latestRun);
+        container.appendChild(scheduleItem);
+    });
+}
+
+// Create a workflow schedule item
+function createWorkflowScheduleItem(workflowName, schedule, latestRun) {
+    const item = document.createElement('div');
+    item.className = 'workflow-schedule-item';
+    
+    let statusEmoji = '⏰';
+    let statusClass = '';
+    let lastRunText = 'No recent runs';
+    
+    if (latestRun) {
+        const lastRunDate = new Date(latestRun.createdAt);
+        const timeAgo = getTimeAgo(lastRunDate);
+        
+        if (latestRun.status === 'completed') {
+            if (latestRun.conclusion === 'success') {
+                statusEmoji = '✅';
+                statusClass = 'success';
+                lastRunText = `Last run: ${timeAgo} - Success`;
+            } else if (latestRun.conclusion === 'failure') {
+                statusEmoji = '❌';
+                statusClass = 'failure';
+                lastRunText = `Last run: ${timeAgo} - Failed`;
+            } else {
+                statusEmoji = '⚠️';
+                statusClass = 'success';
+                lastRunText = `Last run: ${timeAgo} - ${latestRun.conclusion}`;
+            }
+        } else if (latestRun.status === 'in_progress') {
+            statusEmoji = '🔄';
+            statusClass = 'in-progress';
+            lastRunText = `Running now (started ${timeAgo})`;
+        }
+    }
+    
+    const nextRun = calculateNextRun(schedule.cron);
+    
+    item.innerHTML = `
+        <h3>${statusEmoji} ${escapeHtml(workflowName)}</h3>
+        <p class="schedule-info"><strong>Schedule:</strong> ${escapeHtml(schedule.description)}</p>
+        <p class="schedule-info"><strong>Next run:</strong> ${nextRun}</p>
+        <p class="last-run ${statusClass}">${lastRunText}</p>
+    `;
+    
+    return item;
+}
+
+// Calculate next run time from cron expression (simplified)
+function calculateNextRun(cronExpression) {
+    const now = new Date();
+    const parts = cronExpression.split(' ');
+    
+    // Simple cron parser for common patterns
+    if (cronExpression.startsWith('*/15')) {
+        // Every 15 minutes
+        const minutes = now.getMinutes();
+        const nextMinute = Math.ceil(minutes / 15) * 15;
+        const nextRun = new Date(now);
+        if (nextMinute >= 60) {
+            nextRun.setHours(now.getHours() + 1);
+            nextRun.setMinutes(0);
+        } else {
+            nextRun.setMinutes(nextMinute);
+        }
+        return getTimeUntil(nextRun);
+    } else if (cronExpression.includes('*/12')) {
+        // Every 12 hours
+        const hours = now.getUTCHours();
+        const nextHour = Math.ceil(hours / 12) * 12;
+        const nextRun = new Date(now);
+        if (nextHour >= 24) {
+            nextRun.setUTCDate(now.getUTCDate() + 1);
+            nextRun.setUTCHours(0);
+        } else {
+            nextRun.setUTCHours(nextHour);
+        }
+        nextRun.setUTCMinutes(0);
+        return getTimeUntil(nextRun);
+    } else if (cronExpression.includes('*/6')) {
+        // Every 6 hours
+        const hours = now.getUTCHours();
+        const nextHour = Math.ceil(hours / 6) * 6;
+        const nextRun = new Date(now);
+        if (nextHour >= 24) {
+            nextRun.setUTCDate(now.getUTCDate() + 1);
+            nextRun.setUTCHours(0);
+        } else {
+            nextRun.setUTCHours(nextHour);
+        }
+        nextRun.setUTCMinutes(0);
+        return getTimeUntil(nextRun);
+    } else {
+        // Daily or multiple times daily
+        const hours = parts[1].split(',').map(h => parseInt(h));
+        const currentHour = now.getUTCHours();
+        
+        let nextHour = hours.find(h => h > currentHour);
+        const nextRun = new Date(now);
+        
+        if (nextHour !== undefined) {
+            nextRun.setUTCHours(nextHour);
+            nextRun.setUTCMinutes(0);
+        } else {
+            // Next day
+            nextRun.setUTCDate(now.getUTCDate() + 1);
+            nextRun.setUTCHours(hours[0]);
+            nextRun.setUTCMinutes(0);
+        }
+        
+        return getTimeUntil(nextRun);
+    }
+}
+
+// Get time ago string
+function getTimeAgo(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    
+    const intervals = {
+        year: 31536000,
+        month: 2592000,
+        week: 604800,
+        day: 86400,
+        hour: 3600,
+        minute: 60
+    };
+    
+    for (const [name, secondsInInterval] of Object.entries(intervals)) {
+        const interval = Math.floor(seconds / secondsInInterval);
+        if (interval >= 1) {
+            return `${interval} ${name}${interval !== 1 ? 's' : ''} ago`;
+        }
+    }
+    
+    return 'just now';
+}
+
+// Get time until string
+function getTimeUntil(date) {
+    const seconds = Math.floor((date - new Date()) / 1000);
+    
+    if (seconds < 60) {
+        return `in ${seconds} second${seconds !== 1 ? 's' : ''}`;
+    }
+    
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) {
+        return `in ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    }
+    
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) {
+        return `in ${hours} hour${hours !== 1 ? 's' : ''}`;
+    }
+    
+    const days = Math.floor(hours / 24);
+    return `in ${days} day${days !== 1 ? 's' : ''}`;
 }
 
 // Load timeline from issues and events
@@ -197,9 +419,11 @@ document.head.appendChild(style);
 // Initialize
 fetchStats();
 loadLearnings();
+loadWorkflowSchedules();
 
 // Refresh data every 5 minutes
 setInterval(() => {
     fetchStats();
     loadLearnings();
+    loadWorkflowSchedules();
 }, 5 * 60 * 1000);
