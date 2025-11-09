@@ -113,6 +113,13 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
     - Generates optimization reports with metrics
     - Can be triggered manually for specific files
 
+14. **Code Translator** (`code-translator.yml`)
+    - Runs weekly on Tuesdays at 11 AM UTC
+    - Translates code between Python, JavaScript, and Bash
+    - Compares code implementations across languages
+    - Generates translation and comparison reports
+    - Can be triggered manually with custom file/language options
+
 ### GitHub Pages
 
 The project includes a beautiful, responsive GitHub Pages site at [`docs/`](./docs/) that displays:
@@ -333,24 +340,28 @@ Evening    → TLDR scraper runs     → Evening news update
 - **GitHub API**: Fetching repository data
 - **GitHub Pages**: Hosting the timeline website
 - **GitHub Copilot**: AI-powered development
-- **Python**: Learning scripts, data processing, and code optimization
+- **Python**: Learning scripts, data processing, code optimization, and translation
 - **HTML/CSS/JavaScript**: Frontend for the timeline
 - **Bash scripting**: Workflow logic
 - **TLDR Tech API**: Tech news aggregation
 - **Hacker News API**: Community trend analysis
 
-## 🏌️ Code Golf Optimizer
+## 🛠️ Developer Tools
 
-Chained includes an AI-powered code golf optimizer that minimizes code while preserving functionality. Perfect for code golf challenges and learning how to write concise code!
+Chained includes powerful AI-powered developer tools for code analysis and transformation:
 
-### Features
+### 🏌️ Code Golf Optimizer
+
+An intelligent code optimizer that minimizes code character count while preserving functionality. Perfect for code golf challenges and learning how to write concise code!
+
+#### Features
 
 - 🎯 **Multi-Language Support**: Python, JavaScript, and Bash
 - 🤖 **Smart Optimizations**: Comment removal, whitespace reduction, variable shortening
 - 📊 **Detailed Metrics**: Character counts and reduction percentages
 - 🔄 **Automated Reports**: Weekly optimization reports via GitHub Actions
 
-### Quick Start
+#### Quick Start
 
 ```bash
 # Optimize a Python file
@@ -361,6 +372,31 @@ echo "function test() { return true; }" | python3 tools/code-golf-optimizer.py -
 
 # View all examples
 ls tools/examples/
+```
+
+### 🔄 Cross-Language Code Translator
+
+An intelligent code translator that converts code between programming languages and provides comparison tools. Perfect for learning language syntax, migrating code, and understanding different implementations!
+
+#### Features
+
+- 🔄 **Multi-Language Translation**: Python ↔ JavaScript, Python ↔ Bash, JavaScript ↔ Bash
+- 📊 **Code Comparison**: Side-by-side comparison with similarity scores
+- 📝 **Translation Notes**: Detailed explanations of transformations
+- 🎯 **Bidirectional**: Translate in both directions between language pairs
+- 🔄 **Multiple Formats**: Text and JSON output
+
+#### Quick Start
+
+```bash
+# Translate Python to JavaScript
+python3 tools/code-translator.py translate -f script.py -s python -t javascript
+
+# Compare two implementations
+python3 tools/code-translator.py compare -f1 calc.py -l1 python -f2 calc.js -l2 javascript
+
+# Translate from stdin
+echo 'print("Hello")' | python3 tools/code-translator.py translate -s python -t javascript
 ```
 
 ### Example Optimization
