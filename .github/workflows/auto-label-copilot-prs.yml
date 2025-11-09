@@ -1,0 +1,44 @@
+name: Auto Label Copilot PRs
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  label-copilot-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR is from Copilot
+        id: check_author
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ github.event.pull_request.number }}"
+          author="${{ github.event.pull_request.user.login }}"
+          
+          echo "PR #${pr_number} author: ${author}"
+          
+          # Check if author is Copilot (matches various formats)
+          if echo "${author}" | grep -qiE "^(Copilot|copilot-swe-agent)"; then
+            echo "is_copilot=true" >> $GITHUB_OUTPUT
+            echo "✅ PR is from Copilot"
+          else
+            echo "is_copilot=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ PR is not from Copilot"
+          fi
+
+      - name: Add copilot label
+        if: steps.check_author.outputs.is_copilot == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ github.event.pull_request.number }}"
+          
+          echo "Adding 'copilot' label to PR #${pr_number}"
+          gh pr edit ${pr_number} --add-label "copilot" --repo ${{ github.repository }}
+          
+          echo "✅ Label added successfully"
