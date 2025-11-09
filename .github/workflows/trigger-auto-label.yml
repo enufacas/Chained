@@ -1,7 +1,7 @@
 name: Trigger Auto Label
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened]
 
 permissions:
@@ -33,7 +33,7 @@ jobs:
           
           echo ""
           echo "📋 Summary:"
-          echo "  - Trigger type: pull_request (opened)"
+          echo "  - Trigger type: pull_request_target (opened)"
           echo "  - Action: Dispatch auto-label-copilot-prs workflow"
           echo "  - Mode: Round-up (label_existing=true)"
           echo ""
