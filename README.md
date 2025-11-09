@@ -106,6 +106,30 @@ Visit the live site: **[https://enufacas.github.io/Chained/](https://enufacas.gi
 
 ## 🚀 Getting Started
 
+### Quick Start - Verify and Launch! 🎯
+
+**New to Chained?** Use our automated scripts to verify everything and kick things off:
+
+```bash
+# 1. Validate your system is ready
+./validate-system.sh
+
+# 2. Initialize and start the autonomous system
+./kickoff-system.sh
+
+# 3. Check the status anytime
+./check-status.sh
+```
+
+These scripts will:
+- ✅ Verify all workflows and documentation exist
+- ✅ Create necessary labels
+- ✅ Validate system configuration
+- ✅ Trigger initial workflows
+- ✅ Provide status updates
+
+**See [QUICKSTART.md](./QUICKSTART.md) for the 5-minute manual setup guide.**
+
 ### Enabling GitHub Pages
 
 1. Go to your repository **Settings** → **Pages**
@@ -268,6 +292,22 @@ Evening    → TLDR scraper runs     → Evening news update
 
 ## 📊 Monitoring Progress
 
+### Quick Status Check
+
+Run the status checker script anytime:
+
+```bash
+./check-status.sh
+```
+
+This will show:
+- Recent workflow runs and their status
+- Issue and PR statistics
+- Learning files count
+- GitHub Pages status
+- Next scheduled workflow runs
+- Autonomous success rate
+
 ### Via GitHub Pages
 Visit the live site to see real-time statistics, timeline, and learnings.
 
@@ -279,6 +319,48 @@ Visit the live site to see real-time statistics, timeline, and learnings.
 
 ### Via Actions
 Check the Actions tab to see workflow runs and their logs.
+
+## 🔧 System Utilities
+
+The repository includes helper scripts to manage the autonomous system:
+
+### validate-system.sh
+Pre-flight validation script that checks:
+- Repository structure and files
+- All workflow files exist
+- Documentation completeness
+- GitHub Pages configuration
+- Git and GitHub CLI setup
+- YAML syntax validation (if yamllint available)
+
+```bash
+./validate-system.sh
+```
+
+### kickoff-system.sh
+Initialize and start the perpetual motion machine:
+- Runs pre-flight validation
+- Verifies GitHub configuration
+- Creates required labels
+- Initializes directories
+- Optionally triggers initial workflows
+
+```bash
+./kickoff-system.sh
+```
+
+### check-status.sh
+Monitor the system's health and progress:
+- Recent workflow runs
+- Issue and PR statistics
+- Learning files count
+- GitHub Pages status
+- Next scheduled runs
+- Success metrics
+
+```bash
+./check-status.sh
+```
 
 ## 🤝 Contributing
 
