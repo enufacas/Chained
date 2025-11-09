@@ -8,40 +8,53 @@ Chained is an experimental "perpetual AI motion machine" - a fully autonomous re
 
 ### Is it really fully autonomous?
 
-Yes! Once started, the system operates continuously:
-- Learns from external sources (TLDR Tech, Hacker News)
-- Generates ideas based on learnings
-- Creates GitHub issues
-- Converts issues to pull requests
-- Reviews and merges its own PRs
-- Tracks progress and health
+**Mostly, with one important caveat!**
 
-Human intervention is optional but not required.
+The system operates autonomously for most tasks:
+- ✅ Learns from external sources (TLDR Tech, Hacker News)
+- ✅ Generates ideas based on learnings
+- ✅ Creates GitHub issues automatically
+- ✅ Converts issues to pull requests with task specifications
+- ✅ Reviews and merges PRs automatically
+- ✅ Tracks progress and health
+
+**The Manual Step:** Currently, GitHub Copilot cannot be triggered programmatically. After a PR is created, you need to manually assign it to `@copilot-swe-agent` for actual code implementation. See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for details.
+
+**TL;DR**: Semi-autonomous - automates everything except the actual Copilot invocation step.
 
 ## Workflow and Automation Questions
 
 ### How does an issue actually get worked on after it's assigned to Copilot?
 
-**The Short Answer:** Scheduled workflows poll for work every 15-30 minutes.
+**The Short Answer:** Scheduled workflows prepare work, then you manually assign to Copilot.
 
 **The Detailed Flow:**
 
 1. **Issue Created** → Event trigger runs `copilot-assign.yml` immediately, adds "copilot-assigned" label
-2. **Wait up to 30 minutes** → `issue-to-pr.yml` runs on schedule, picks up the issue, creates a PR
-3. **Wait up to 15 minutes** → `auto-review-merge.yml` runs on schedule, reviews and merges the PR
-4. **Wait up to 30 minutes** → `auto-close-issues.yml` runs on schedule, closes the completed issue
+2. **Wait up to 30 minutes** → `issue-to-pr.yml` runs on schedule, creates a PR with task specification file
+3. **Manual Step Required** → You assign the PR to `@copilot-swe-agent` (see [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md))
+4. **Copilot Works** → Copilot analyzes task and makes code commits
+5. **Wait up to 15 minutes** → `auto-review-merge.yml` runs on schedule, reviews and merges the PR
+6. **Wait up to 30 minutes** → `auto-close-issues.yml` runs on schedule, closes the completed issue
 
-**Key Insight:** It's all **passive polling** via cron schedules, not active triggering!
+**Key Insight:** Workflows automate PR preparation, but Copilot assignment is currently manual due to GitHub API limitations.
 
 ### What's forcing Copilot to do the work?
 
-Nothing is "forcing" in the active sense. Instead:
-- Scheduled workflows run at regular intervals (every 15-30 minutes)
-- Each workflow checks for work to do (issues with certain labels, PRs to review, etc.)
-- When work is found, the workflow performs the actions
-- If no work is found, the workflow exits successfully
+**Important Update:** Copilot is NOT automatically triggered by the workflows.
 
-Think of it like a periodic batch job rather than event-driven processing.
+**What Actually Happens:**
+- Scheduled workflows create PRs with task specifications
+- These PRs contain `.copilot/task-{issue}.md` files describing what needs to be done
+- Workflows @mention `@github-copilot` in comments (but this doesn't trigger work)
+- **Manual step required**: You must assign the PR to `@copilot-swe-agent` to start actual implementation
+
+**Why the Manual Step?**
+- GitHub doesn't provide a public API to programmatically trigger Copilot agent sessions
+- Simple @mentions in comments don't activate Copilot's autonomous work mode
+- Assignment to `@copilot-swe-agent` is the only reliable way to trigger work
+
+See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for complete details and workarounds.
 
 ### Can I trust the cron schedules to actually run?
 
