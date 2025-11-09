@@ -21,7 +21,7 @@ PRs are auto-merged if they meet ONE of the following conditions:
 - **Author**: Must be one of:
   - `github-actions[bot]`
   - `dependabot[bot]`
-  - `copilot`
+  - `copilot-swe-agent[bot]` (or any copilot bot variant)
 - **Label Required**: Must have `copilot` label
 - **Rationale**: Trusted automation bots with copilot label are authorized
 
@@ -111,4 +111,14 @@ The current PR check logic is **well-designed and appropriate** for the autonomo
 - ✅ Transparency through labeling requirements
 - ✅ Quality through state validation
 
-**No changes needed to the PR check logic.**
+### Recent Improvements (2025-11-09)
+
+The auto-review-merge workflow has been optimized:
+
+1. **Fixed Bot Detection**: Updated regex to correctly match all copilot bot variants (`copilot.*\[bot\]`)
+2. **Simplified Merge Logic**: Removed redundant merge attempts, now tries immediate merge first with auto-merge as fallback
+3. **Increased Wait Time**: Extended from 10 to 30 seconds to allow checks to complete
+4. **Better Error Handling**: Added clear error messages and comments when merge fails
+5. **Clearer Flow**: Simplified conditional logic for easier maintenance
+
+**These changes ensure Copilot PRs are automatically reviewed and merged without human intervention.**
