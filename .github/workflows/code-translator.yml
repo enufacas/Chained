@@ -1,0 +1,228 @@
+name: Code Translator Workflow
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      source_file:
+        description: 'Source file to translate (relative to repo root)'
+        required: false
+        default: 'tools/examples/calculator.py'
+      source_lang:
+        description: 'Source language'
+        required: false
+        default: 'python'
+        type: choice
+        options:
+          - python
+          - javascript
+          - bash
+      target_lang:
+        description: 'Target language'
+        required: false
+        default: 'javascript'
+        type: choice
+        options:
+          - python
+          - javascript
+          - bash
+      compare_mode:
+        description: 'Run in comparison mode'
+        required: false
+        default: false
+        type: boolean
+      compare_file:
+        description: 'Second file for comparison (only if compare_mode is true)'
+        required: false
+        default: 'tools/examples/calculator.js'
+      compare_lang:
+        description: 'Language of second file (only if compare_mode is true)'
+        required: false
+        default: 'javascript'
+        type: choice
+        options:
+          - python
+          - javascript
+          - bash
+
+  # Automatic weekly run
+  schedule:
+    - cron: '0 11 * * 2'  # Every Tuesday at 11 AM UTC
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    name: Cross-Language Code Translation
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Make translator executable
+        run: chmod +x tools/code-translator.py
+      
+      - name: Run translator tests
+        id: tests
+        run: |
+          echo "Running translator tests..."
+          python3 tools/test_translator.py
+          echo "All tests passed!"
+      
+      - name: Translate example files
+        if: github.event_name == 'schedule' || (!inputs.compare_mode && github.event_name == 'workflow_dispatch')
+        id: translate
+        run: |
+          echo "# Code Translation Examples" > translation_report.md
+          echo "" >> translation_report.md
+          echo "Generated on: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> translation_report.md
+          echo "" >> translation_report.md
+          
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            SOURCE_FILE="${{ inputs.source_file }}"
+            SOURCE_LANG="${{ inputs.source_lang }}"
+            TARGET_LANG="${{ inputs.target_lang }}"
+            
+            echo "## Translation: $SOURCE_LANG → $TARGET_LANG" >> translation_report.md
+            echo "" >> translation_report.md
+            echo "**Source file:** \`$SOURCE_FILE\`" >> translation_report.md
+            echo "" >> translation_report.md
+            
+            echo "\`\`\`" >> translation_report.md
+            python3 tools/code-translator.py translate -f "$SOURCE_FILE" -s "$SOURCE_LANG" -t "$TARGET_LANG" >> translation_report.md 2>&1 || echo "Translation failed"
+            echo "\`\`\`" >> translation_report.md
+            
+          else
+            # Weekly automatic translations of example files
+            echo "## Python to JavaScript Translation" >> translation_report.md
+            echo "" >> translation_report.md
+            echo "**Source:** tools/examples/calculator.py" >> translation_report.md
+            echo "" >> translation_report.md
+            echo "\`\`\`" >> translation_report.md
+            python3 tools/code-translator.py translate -f tools/examples/calculator.py -s python -t javascript >> translation_report.md 2>&1 || echo "Translation failed"
+            echo "\`\`\`" >> translation_report.md
+            echo "" >> translation_report.md
+            
+            echo "## JavaScript to Python Translation" >> translation_report.md
+            echo "" >> translation_report.md
+            echo "**Source:** tools/examples/factorial.js" >> translation_report.md
+            echo "" >> translation_report.md
+            echo "\`\`\`" >> translation_report.md
+            python3 tools/code-translator.py translate -f tools/examples/factorial.js -s javascript -t python >> translation_report.md 2>&1 || echo "Translation failed"
+            echo "\`\`\`" >> translation_report.md
+            echo "" >> translation_report.md
+            
+            echo "## Python to Bash Translation" >> translation_report.md
+            echo "" >> translation_report.md
+            echo "**Source:** tools/examples/fibonacci.py" >> translation_report.md
+            echo "" >> translation_report.md
+            echo "\`\`\`" >> translation_report.md
+            python3 tools/code-translator.py translate -f tools/examples/fibonacci.py -s python -t bash >> translation_report.md 2>&1 || echo "Translation failed"
+            echo "\`\`\`" >> translation_report.md
+          fi
+          
+          echo "REPORT_GENERATED=true" >> $GITHUB_OUTPUT
+      
+      - name: Compare code files
+        if: inputs.compare_mode && github.event_name == 'workflow_dispatch'
+        id: compare
+        run: |
+          echo "# Code Comparison Report" > comparison_report.md
+          echo "" >> comparison_report.md
+          echo "Generated on: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> comparison_report.md
+          echo "" >> comparison_report.md
+          
+          echo "## Comparison: ${{ inputs.source_lang }} vs ${{ inputs.compare_lang }}" >> comparison_report.md
+          echo "" >> comparison_report.md
+          echo "**File 1:** \`${{ inputs.source_file }}\` (${{ inputs.source_lang }})" >> comparison_report.md
+          echo "**File 2:** \`${{ inputs.compare_file }}\` (${{ inputs.compare_lang }})" >> comparison_report.md
+          echo "" >> comparison_report.md
+          
+          echo "\`\`\`" >> comparison_report.md
+          python3 tools/code-translator.py compare \
+            -f1 "${{ inputs.source_file }}" -l1 "${{ inputs.source_lang }}" \
+            -f2 "${{ inputs.compare_file }}" -l2 "${{ inputs.compare_lang }}" >> comparison_report.md 2>&1 || echo "Comparison failed"
+          echo "\`\`\`" >> comparison_report.md
+          
+          echo "REPORT_GENERATED=true" >> $GITHUB_OUTPUT
+      
+      - name: Generate weekly comparison
+        if: github.event_name == 'schedule'
+        id: weekly_compare
+        run: |
+          echo "" >> translation_report.md
+          echo "---" >> translation_report.md
+          echo "" >> translation_report.md
+          echo "## Code Comparison: Python vs JavaScript" >> translation_report.md
+          echo "" >> translation_report.md
+          echo "**Files:** calculator.py vs calculator.js" >> translation_report.md
+          echo "" >> translation_report.md
+          echo "\`\`\`" >> translation_report.md
+          python3 tools/code-translator.py compare \
+            -f1 tools/examples/calculator.py -l1 python \
+            -f2 tools/examples/calculator.js -l2 javascript >> translation_report.md 2>&1 || echo "Comparison failed"
+          echo "\`\`\`" >> translation_report.md
+      
+      - name: Create translation report issue
+        if: github.event_name == 'schedule' && steps.translate.outputs.REPORT_GENERATED == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('translation_report.md', 'utf8');
+            
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `📊 Code Translation Report - ${new Date().toISOString().split('T')[0]}`,
+              body: report,
+              labels: ['translation-report', 'automated']
+            });
+            
+            console.log(`Created issue #${issue.data.number}`);
+      
+      - name: Upload translation report
+        if: steps.translate.outputs.REPORT_GENERATED == 'true' || steps.compare.outputs.REPORT_GENERATED == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: translation-report
+          path: |
+            translation_report.md
+            comparison_report.md
+          retention-days: 30
+      
+      - name: Summary
+        run: |
+          echo "## 🔄 Code Translator Workflow Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            if [ "${{ inputs.compare_mode }}" == "true" ]; then
+              echo "✅ Comparison completed successfully" >> $GITHUB_STEP_SUMMARY
+              echo "- File 1: \`${{ inputs.source_file }}\` (${{ inputs.source_lang }})" >> $GITHUB_STEP_SUMMARY
+              echo "- File 2: \`${{ inputs.compare_file }}\` (${{ inputs.compare_lang }})" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ Translation completed successfully" >> $GITHUB_STEP_SUMMARY
+              echo "- Source: \`${{ inputs.source_file }}\` (${{ inputs.source_lang }})" >> $GITHUB_STEP_SUMMARY
+              echo "- Target: ${{ inputs.target_lang }}" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "✅ Weekly translation and comparison completed" >> $GITHUB_STEP_SUMMARY
+            echo "- Python → JavaScript translations" >> $GITHUB_STEP_SUMMARY
+            echo "- JavaScript → Python translations" >> $GITHUB_STEP_SUMMARY
+            echo "- Python → Bash translations" >> $GITHUB_STEP_SUMMARY
+            echo "- Cross-language comparisons" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📁 Translation reports uploaded as artifacts" >> $GITHUB_STEP_SUMMARY

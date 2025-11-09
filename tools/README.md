@@ -1,3 +1,14 @@
+# 🛠️ Chained Developer Tools
+
+A collection of AI-powered code analysis and transformation tools.
+
+## Tools
+
+1. **🏌️ Code Golf Optimizer** - Minimize code character count
+2. **🔄 Cross-Language Code Translator** - Translate and compare code across languages
+
+---
+
 # 🏌️ AI Code Golf Optimizer
 
 An intelligent code optimizer that minimizes code character count while preserving functionality - perfect for code golf challenges!
@@ -281,6 +292,360 @@ python3 tools/code-golf-optimizer.py -f tools/examples/factorial.js -l javascrip
 # Test Bash optimization
 python3 tools/code-golf-optimizer.py -f tools/examples/backup.sh -l bash
 ```
+
+---
+
+# 🔄 Cross-Language Code Translator
+
+An intelligent code translator that converts code between different programming languages and provides comparison tools to analyze differences across language implementations.
+
+## Overview
+
+The Cross-Language Code Translator helps developers:
+- Translate code between Python, JavaScript, and Bash
+- Compare implementations across different languages
+- Understand syntax differences between languages
+- Migrate code between programming languages
+
+## Features
+
+- 🔄 **Multi-Language Translation**: Python ↔ JavaScript, Python ↔ Bash, JavaScript ↔ Bash
+- 📊 **Code Comparison**: Side-by-side comparison with similarity scores
+- 📝 **Translation Notes**: Detailed explanations of transformations applied
+- 🔄 **Multiple Output Formats**: Text and JSON
+- 🎯 **Bidirectional Translation**: Translate in both directions between language pairs
+
+## Installation
+
+The translator is a standalone Python script with no external dependencies:
+
+```bash
+# Make the script executable
+chmod +x tools/code-translator.py
+
+# Run directly
+./tools/code-translator.py --help
+```
+
+## Usage
+
+### Translation
+
+#### Basic Translation
+
+```bash
+# Translate Python to JavaScript
+python3 tools/code-translator.py translate -f script.py -s python -t javascript
+
+# Translate JavaScript to Python
+python3 tools/code-translator.py translate -f script.js -s javascript -t python
+
+# Translate from stdin
+echo 'print("Hello")' | python3 tools/code-translator.py translate -s python -t javascript
+
+# Translate Python to Bash
+python3 tools/code-translator.py translate -f script.py -s python -t bash
+```
+
+#### Advanced Translation Options
+
+```bash
+# Output as JSON for programmatic use
+python3 tools/code-translator.py translate -f script.py -s python -t javascript --format json
+
+# Save output to a file
+python3 tools/code-translator.py translate -f script.py -s python -t javascript -o output.js
+
+# Use short language names (js for javascript, sh for bash)
+python3 tools/code-translator.py translate -f script.py -s python -t js
+```
+
+### Comparison
+
+#### Basic Comparison
+
+```bash
+# Compare Python and JavaScript implementations
+python3 tools/code-translator.py compare \
+  -f1 calculator.py -l1 python \
+  -f2 calculator.js -l2 javascript
+
+# Compare with JSON output
+python3 tools/code-translator.py compare \
+  -f1 script1.py -l1 python \
+  -f2 script2.py -l2 python \
+  --format json
+```
+
+### Command-Line Options
+
+#### translate command
+
+- `-f, --file`: Input file to translate (or use stdin)
+- `-s, --source`: Source language (python, javascript/js, bash/sh)
+- `-t, --target`: Target language (python, javascript/js, bash/sh)
+- `--format`: Output format (text, json)
+- `-o, --output`: Output file (default: stdout)
+
+#### compare command
+
+- `-f1, --file1`: First file to compare
+- `-l1, --lang1`: Language of first file
+- `-f2, --file2`: Second file to compare
+- `-l2, --lang2`: Language of second file
+- `--format`: Output format (text, json)
+- `-o, --output`: Output file (default: stdout)
+
+## Translation Capabilities
+
+### Python to JavaScript
+
+**Supported Conversions:**
+- `print()` → `console.log()`
+- `def function_name():` → `function functionName() {}`
+- `True`/`False` → `true`/`false`
+- `None` → `null`
+- `elif` → `else if`
+- `f"string {var}"` → `` `string ${var}` ``
+- `len(list)` → `list.length`
+- Python indentation → JavaScript braces
+
+**Example:**
+
+Python:
+```python
+def greet(name):
+    if name:
+        print(f"Hello, {name}!")
+    else:
+        print("Hello, stranger!")
+```
+
+JavaScript:
+```javascript
+function greet(name) {
+    if (name) {
+        console.log(`Hello, ${name}!`);
+    }
+    else {
+        console.log("Hello, stranger!");
+    }
+}
+```
+
+### JavaScript to Python
+
+**Supported Conversions:**
+- `console.log()` → `print()`
+- `function functionName() {}` → `def function_name():`
+- `true`/`false` → `True`/`False`
+- `null`/`undefined` → `None`
+- `else if` → `elif`
+- `` `string ${var}` `` → `f"string {var}"`
+- `list.length` → `len(list)`
+- `var`/`let`/`const` removed
+- JavaScript braces → Python indentation
+
+**Example:**
+
+JavaScript:
+```javascript
+function calculate(x, y) {
+    let result = x + y;
+    if (result > 10) {
+        return true;
+    }
+    return false;
+}
+```
+
+Python:
+```python
+def calculate(x, y):
+    result = x + y
+    if result > 10:
+        return True
+    return False
+```
+
+### Python/JavaScript to Bash
+
+**Supported Conversions:**
+- `print()`/`console.log()` → `echo`
+- Adds shebang (`#!/bin/bash`)
+- Basic variable assignments
+
+**Note:** Python/JavaScript to Bash translation is basic and best suited for simple scripts. Complex logic may require manual adjustment.
+
+### Bash to Python/JavaScript
+
+**Supported Conversions:**
+- `echo` → `print()`/`console.log()`
+- Removes shebang
+- Basic structure conversion
+
+**Note:** Bash to Python/JavaScript translation is basic and best suited for simple scripts.
+
+## Examples
+
+### Example 1: Calculator Translation
+
+**calculator.py:**
+```python
+def add(a, b):
+    return a + b
+
+def multiply(a, b):
+    return a * b
+
+result = add(5, 3)
+print(f"Result: {result}")
+```
+
+**Translate to JavaScript:**
+```bash
+python3 tools/code-translator.py translate -f calculator.py -s python -t javascript
+```
+
+**Output (calculator.js equivalent):**
+```javascript
+function add(a, b) {
+    return a + b;
+}
+
+function multiply(a, b) {
+    return a * b;
+}
+
+result = add(5, 3);
+console.log(`Result: ${result}`);
+```
+
+### Example 2: Code Comparison
+
+**Compare two implementations:**
+```bash
+python3 tools/code-translator.py compare \
+  -f1 tools/examples/calculator.py -l1 python \
+  -f2 tools/examples/calculator.js -l2 javascript
+```
+
+**Output:**
+```
+Comparison: python vs javascript
+============================================================
+
+Similarity Score: 1.89%
+
+Differences:
+------------------------------------------------------------
+--- python code
++++ javascript code
+@@ -1,5 +1,5 @@
+-def add(a, b):
+-    return a + b
++function add(a, b) {
++    return a + b;
++}
+```
+
+### Example 3: Batch Translation
+
+```bash
+# Translate all Python files in examples directory
+for file in tools/examples/*.py; do
+    output="${file%.py}.js"
+    python3 tools/code-translator.py translate -f "$file" -s python -t javascript -o "$output"
+done
+```
+
+## Translation Notes
+
+The translator provides detailed notes about transformations applied during translation. These notes include:
+
+- Syntax conversions (e.g., "Converted print() to console.log()")
+- Structure changes (e.g., "Converted braces to Python indentation")
+- Type conversions (e.g., "Converted True/False to true/false")
+- Features requiring manual adjustment
+
+Example output:
+```
+Translation Notes:
+------------------------------------------------------------
+  • Converted print() to console.log()
+  • Converted def to function
+  • Converted True/False to true/false
+  • Converted None to null
+  • Converted f-strings to template literals
+```
+
+## Best Practices
+
+### ✅ Do
+
+- Use for learning language syntax differences
+- Use for quick prototyping in different languages
+- Review generated code before using in production
+- Test translated code thoroughly
+- Read translation notes carefully
+- Use for simple to moderate complexity code
+
+### ⚠️ Don't
+
+- Use translated code in production without review
+- Expect perfect translation of complex logic
+- Ignore translation notes and warnings
+- Assume all language features translate directly
+- Forget to test translated code
+
+## Limitations
+
+- **Complexity**: Works best with simple to moderate complexity code
+- **Language Features**: Some language-specific features don't have direct equivalents
+- **Idioms**: Language-specific idioms may not translate naturally
+- **Libraries**: External library calls are not translated
+- **Error Handling**: Exception handling may need manual adjustment
+- **Advanced Features**: Decorators, generators, async/await may need manual conversion
+- **Context**: Cannot understand complex business logic or domain-specific requirements
+
+## Testing
+
+Run the translator test suite:
+
+```bash
+# Run all translator tests
+python3 tools/test_translator.py
+```
+
+Test on provided examples:
+
+```bash
+# Test Python to JavaScript translation
+python3 tools/code-translator.py translate -f tools/examples/calculator.py -s python -t javascript
+
+# Test comparison
+python3 tools/code-translator.py compare \
+  -f1 tools/examples/calculator.py -l1 python \
+  -f2 tools/examples/calculator.js -l2 javascript
+```
+
+## Use Cases
+
+1. **Learning**: Understand how concepts translate between languages
+2. **Migration**: Get a starting point when porting code to a new language
+3. **Comparison**: Analyze different language approaches to the same problem
+4. **Prototyping**: Quickly sketch out code in multiple languages
+5. **Documentation**: Generate example code in multiple languages
+
+## Future Enhancements
+
+Potential improvements for future versions:
+- Support for more languages (Ruby, Go, Rust, etc.)
+- Better handling of language-specific features
+- Improved indentation and formatting
+- Support for class and object-oriented translations
+- Enhanced error handling translation
+- Library mapping (e.g., requests → axios)
 
 ## License
 
