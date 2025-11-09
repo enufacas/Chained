@@ -66,6 +66,7 @@ jobs:
             ["learning"]="d93f0b:Learning or insight"
             ["progress-report"]="c5def5:Progress tracking"
             ["enhancement"]="a2eeef:New feature or request"
+            ["workflow-monitor"]="d73a4a:Workflow monitoring alert"
           )
           
           for label in "${!labels[@]}"; do
