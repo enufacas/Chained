@@ -1,0 +1,104 @@
+{
+  "timestamp": "2025-11-09T07:09:59.016848",
+  "source": "Hacker News",
+  "learnings": [
+    {
+      "title": "Tabloid: The Clickbait Headline Programming Language",
+      "url": "https://tabloid.vercel.app/",
+      "score": 149,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Ironclad \u2013 formally verified, real-time capable, Unix-like OS kernel",
+      "url": "https://ironclad-os.org/",
+      "score": 201,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Largest cargo sailboat completes first Atlantic crossing",
+      "url": "https://www.marineinsight.com/shipping-news/worlds-largest-cargo-sailboat-completes-historic-first-atlantic-crossing/",
+      "score": 195,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Marko \u2013 A declarative, HTML\u2011based language",
+      "url": "https://markojs.com/",
+      "score": 254,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Study identifies weaknesses in how AI systems are evaluated",
+      "url": "https://www.oii.ox.ac.uk/news-events/study-identifies-weaknesses-in-how-ai-systems-are-evaluated/",
+      "score": 332,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Open-source communications by bouncing signals off the Moon",
+      "url": "https://open.space/",
+      "score": 124,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Control structures in programming languages: from goto to algebraic effects",
+      "url": "http://xavierleroy.org/control-structures/",
+      "score": 125,
+      "source": "Hacker News"
+    },
+    {
+      "title": "WriterdeckOS",
+      "url": "https://writerdeckos.com",
+      "score": 163,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Aver\u00eda: The Average Font (2011)",
+      "url": "http://iotic.com/averia/",
+      "score": 150,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Judge denies request to exempt Flock footage from Public Records Act",
+      "url": "https://www.goskagit.com/news/local_news/court-denies-request-that-it-find-flock-safety-camera-data-is-exempt-from-public-records/article_f1edd028-d242-479c-ada8-f2dfca73a1b1.html",
+      "score": 113,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Cloudflare scrubs Aisuru botnet from top domains list",
+      "url": "https://krebsonsecurity.com/2025/11/cloudflare-scrubs-aisuru-botnet-from-top-domains-list/",
+      "score": 127,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Valdi \u2013 A cross-platform UI framework that delivers native performance",
+      "url": "https://github.com/Snapchat/Valdi",
+      "score": 480,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Why is Zig so cool?",
+      "url": "https://nilostolte.github.io/tech/articles/ZigCool.html",
+      "score": 506,
+      "source": "Hacker News"
+    },
+    {
+      "title": "IP blocking the UK is not enough to comply with the Online Safety Act",
+      "url": "https://prestonbyrne.com/2025/11/06/the-ofcom-files-part-2-ip-blocking-the-uk-is-not-enough-to-comply-with-the-online-safety-act/",
+      "score": 235,
+      "source": "Hacker News"
+    }
+  ],
+  "topics": {
+    "AI/ML": [
+      "Tabloid: The Clickbait Headline Programming Language",
+      "Largest cargo sailboat completes first Atlantic crossing",
+      "Marko \u2013 A declarative, HTML\u2011based language",
+      "Study identifies weaknesses in how AI systems are evaluated",
+      "Control structures in programming languages: from goto to algebraic effects",
+      "Cloudflare scrubs Aisuru botnet from top domains list"
+    ],
+    "Performance": [
+      "Valdi \u2013 A cross-platform UI framework that delivers native performance"
+    ]
+  },
+  "total_stories": 14
+}
