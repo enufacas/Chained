@@ -8,7 +8,7 @@ on:
       issue_number:
         description: 'Issue number to assign Copilot to'
         required: true
-        type: number
+        type: string
 
 permissions:
   issues: write

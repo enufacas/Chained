@@ -9,7 +9,7 @@ on:
       issue_number:
         description: 'Issue number to convert to PR'
         required: false
-        type: number
+        type: string
 
 permissions:
   contents: write
