@@ -41,25 +41,25 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
    - Can be triggered manually
 
 2. **Copilot Auto-Assign** (`copilot-assign.yml`)
-   - Triggers when AI-generated issues are created
+   - Triggers when any new issue is created
    - Automatically tags issues for Copilot
    - Adds tracking labels and comments
    - Can be manually triggered for specific issues
 
 3. **Issue to PR Automator** (`issue-to-pr.yml`)
-   - Runs every 3 hours
+   - Runs every 30 minutes
    - Converts open issues into pull requests
    - Creates branches and implementation files
    - Links PRs back to original issues
 
 4. **Auto Review and Merge** (`auto-review-merge.yml`)
-   - Runs every 2 hours
+   - Runs every 15 minutes
    - AI reviews its own pull requests
    - Automatically approves and merges PRs
    - No human approval required
 
 5. **Auto Close Issues** (`auto-close-issues.yml`)
-   - Runs every 4 hours
+   - Runs every 30 minutes
    - Closes issues when their PRs are merged
    - Tracks completion status
    - Maintains issue lifecycle
@@ -223,12 +223,12 @@ All workflows support manual triggering via GitHub's Actions tab:
            │
            ▼
 ┌─────────────────────┐
-│  Issue to PR        │ ──► Creates pull request (Every 3h)
+│  Issue to PR        │ ──► Creates pull request (Every 30min)
 └──────────┬──────────┘
            │
            ▼
 ┌─────────────────────┐
-│  Auto Review        │ ──► AI reviews AI code (Every 2h)
+│  Auto Review        │ ──► AI reviews AI code (Every 15min)
 └──────────┬──────────┘
            │
            ▼
@@ -238,7 +238,7 @@ All workflows support manual triggering via GitHub's Actions tab:
            │
            ▼
 ┌─────────────────────┐
-│  Auto Close Issue   │ ──► Completes lifecycle (Every 4h)
+│  Auto Close Issue   │ ──► Completes lifecycle (Every 30min)
 └──────────┬──────────┘
            │
            ▼
