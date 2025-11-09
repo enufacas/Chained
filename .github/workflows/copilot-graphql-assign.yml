@@ -1,4 +1,4 @@
-name: Copilot Issue Assignment via API
+name: Copilot Assignment Workflow
 
 on:
   issues:
@@ -23,71 +23,66 @@ jobs:
        (github.event.action == 'labeled' && github.event.label.name == 'copilot-assigned'))) ||
       github.event_name == 'workflow_dispatch'
     steps:
-      - name: Get issue number
-        id: issue
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "number=${{ inputs.issue_number }}" >> $GITHUB_OUTPUT
-          else
-            echo "number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Check if already assigned to Copilot
-        id: check_assigned
+      - name: Discover and process all open issues
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get current assignees
-          assignees=$(gh issue view ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --json assignees --jq '.assignees[].login')
+          echo "🔍 Discovering all open issues..."
           
-          # Check if any assignee matches Copilot patterns
-          if echo "$assignees" | grep -qE 'copilot|github-copilot'; then
-            echo "already_assigned=true" >> $GITHUB_OUTPUT
-            echo "✓ Issue already assigned to Copilot"
+          # If workflow_dispatch with specific issue number, process only that issue
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.issue_number }}" ]; then
+            echo "Processing specific issue #${{ inputs.issue_number }}"
+            issue_numbers="${{ inputs.issue_number }}"
           else
-            echo "already_assigned=false" >> $GITHUB_OUTPUT
+            # Get all open issues
+            issue_numbers=$(gh issue list --repo ${{ github.repository }} --state open --limit 1000 --json number --jq '.[].number')
           fi
-
-      - name: Add copilot-assigned label
-        if: steps.check_assigned.outputs.already_assigned != 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Add label if not present
-          labels=$(gh issue view ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --json labels --jq '.labels[].name')
-          if ! echo "$labels" | grep -q "copilot-assigned"; then
-            gh issue edit ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --add-label "copilot-assigned"
-            echo "✓ Added copilot-assigned label"
-          fi
-
-      - name: Assign issue to Copilot via GitHub API
-        if: steps.check_assigned.outputs.already_assigned != 'true'
-        id: assign
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Assigning issue #${{ steps.issue.outputs.number }} to Copilot..."
           
-          # Use the official GitHub CLI method to assign to Copilot
-          # As documented: gh issue edit --add-assignee "@copilot"
-          if gh issue edit ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --add-assignee "@copilot"; then
-            echo "success=true" >> $GITHUB_OUTPUT
-            echo "✅ Successfully assigned issue to Copilot"
-          else
-            echo "success=false" >> $GITHUB_OUTPUT
-            echo "❌ Failed to assign issue to Copilot"
-            echo "This could mean:"
-            echo "  - Copilot is not enabled for this repository"
-            echo "  - You don't have a Copilot subscription"
-            echo "  - The repository is on GitHub Enterprise Server (not supported)"
+          if [ -z "$issue_numbers" ]; then
+            echo "ℹ️ No open issues found"
+            exit 0
           fi
-
-      - name: Add success comment
-        if: steps.assign.outputs.success == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh issue comment ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
+          
+          echo "Found issues to check: $issue_numbers"
+          
+          success_count=0
+          already_assigned_count=0
+          failed_count=0
+          
+          # Process each issue
+          for issue_number in $issue_numbers; do
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Processing issue #$issue_number"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            
+            # Get current assignees
+            assignees=$(gh issue view $issue_number --repo ${{ github.repository }} --json assignees --jq '.assignees[].login')
+            
+            # Check if any assignee matches Copilot patterns
+            if echo "$assignees" | grep -qE 'copilot|github-copilot'; then
+              echo "✓ Issue #$issue_number already assigned to Copilot"
+              already_assigned_count=$((already_assigned_count + 1))
+              continue
+            fi
+            
+            echo "📝 Issue #$issue_number not yet assigned to Copilot"
+            
+            # Add copilot-assigned label if not present
+            labels=$(gh issue view $issue_number --repo ${{ github.repository }} --json labels --jq '.labels[].name')
+            if ! echo "$labels" | grep -q "copilot-assigned"; then
+              gh issue edit $issue_number --repo ${{ github.repository }} --add-label "copilot-assigned"
+              echo "✓ Added copilot-assigned label to issue #$issue_number"
+            fi
+            
+            # Assign issue to Copilot
+            echo "🤖 Assigning issue #$issue_number to Copilot..."
+            if gh issue edit $issue_number --repo ${{ github.repository }} --add-assignee "@copilot"; then
+              echo "✅ Successfully assigned issue #$issue_number to Copilot"
+              success_count=$((success_count + 1))
+              
+              # Add success comment
+              gh issue comment $issue_number --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
           
           GitHub Copilot has been automatically assigned to this issue via the GitHub API.
           
@@ -103,13 +98,12 @@ jobs:
           
           ---
           *🤖 Automated via the official GitHub API method - True autonomous operation!*"
-
-      - name: Add error comment
-        if: steps.assign.outputs.success == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh issue comment ${{ steps.issue.outputs.number }} --repo ${{ github.repository }} --body "⚠️ **Failed to Assign Copilot**
+            else
+              echo "❌ Failed to assign issue #$issue_number to Copilot"
+              failed_count=$((failed_count + 1))
+              
+              # Add error comment
+              gh issue comment $issue_number --repo ${{ github.repository }} --body "⚠️ **Failed to Assign Copilot**
           
           The workflow attempted to assign GitHub Copilot to this issue but the assignment failed.
           
@@ -135,11 +129,14 @@ jobs:
           
           ---
           *🤖 Automated via the official GitHub API*"
-
-      - name: Log assignment activity
-        run: |
-          echo "Copilot assignment workflow completed"
-          echo "Issue: #${{ steps.issue.outputs.number }}"
-          echo "Already assigned: ${{ steps.check_assigned.outputs.already_assigned }}"
-          echo "Assignment successful: ${{ steps.assign.outputs.success }}"
+            fi
+          done
+          
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📊 Summary"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Successfully assigned: $success_count"
+          echo "✓ Already assigned: $already_assigned_count"
+          echo "❌ Failed: $failed_count"
           echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

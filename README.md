@@ -46,9 +46,10 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
    - Creates GitHub issues automatically
    - Can be triggered manually
 
-2. **Copilot Issue Assignment** (`copilot-graphql-assign.yml`)
-   - Triggers when any new issue is created
-   - Automatically assigns issues to Copilot via API
+2. **Copilot Assignment Workflow** (`copilot-graphql-assign.yml`)
+   - Triggers when any new issue is created or labeled
+   - Discovers and processes ALL open issues
+   - Automatically assigns unassigned issues to Copilot via API
    - Adds tracking labels and comments
    - Requires COPILOT_PAT secret for full automation
    - Can be manually triggered for specific issues
