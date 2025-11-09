@@ -33,15 +33,18 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
 2. Validates PR author:
    - ✅ Repository owner with `copilot` label, OR
    - ✅ Trusted bot with `copilot` label
-3. Checks PR state:
+3. Handles draft PRs:
+   - If draft and no "WIP" in title and from trusted source: convert to ready
+   - Adds comment explaining automatic conversion
+4. Checks PR state:
    - Must be OPEN
-   - Must not be draft
+   - Must not be draft (after conversion attempt)
    - Must be MERGEABLE
-4. Approves PR with automated review
-5. Waits 10 seconds for checks
-6. Merges PR (squash merge)
-7. Deletes branch
-8. Comments on related issue (if exists)
+5. Approves PR with automated review
+6. Waits 30 seconds for checks
+7. Merges PR (squash merge)
+8. Deletes branch
+9. Comments on related issue (if exists)
 
 **Output:** Learning data merged to main branch
 
