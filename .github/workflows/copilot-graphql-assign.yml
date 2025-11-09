@@ -75,16 +75,49 @@ jobs:
               echo "✓ Added copilot-assigned label to issue #$issue_number"
             fi
             
-            # Assign issue to Copilot
-            echo "🤖 Assigning issue #$issue_number to Copilot..."
-            if gh issue edit $issue_number --repo ${{ github.repository }} --add-assignee "@copilot"; then
+            # Get the issue node ID (required for GraphQL mutation)
+            echo "🔍 Fetching issue node ID for issue #$issue_number..."
+            issue_node_id=$(gh issue view $issue_number --repo ${{ github.repository }} --json id --jq '.id')
+            
+            if [ -z "$issue_node_id" ]; then
+              echo "❌ Failed to get issue node ID for issue #$issue_number"
+              failed_count=$((failed_count + 1))
+              continue
+            fi
+            
+            echo "📍 Issue node ID: $issue_node_id"
+            
+            # Assign issue to Copilot using GraphQL API
+            echo "🤖 Assigning issue #$issue_number to Copilot via GraphQL API..."
+            
+            # Use GraphQL mutation to assign Copilot (this is the official method per GitHub docs)
+            mutation_result=$(gh api graphql -f query='
+              mutation($issueId: ID!) {
+                replaceActorsForAssignable(input: {
+                  assignableId: $issueId,
+                  actorIds: ["copilot"]
+                }) {
+                  assignable {
+                    ... on Issue {
+                      id
+                      assignees(first: 10) {
+                        nodes {
+                          login
+                        }
+                      }
+                    }
+                  }
+                }
+              }' -f issueId="$issue_node_id" 2>&1)
+            
+            if echo "$mutation_result" | jq -e '.data.replaceActorsForAssignable.assignable' > /dev/null 2>&1; then
               echo "✅ Successfully assigned issue #$issue_number to Copilot"
               success_count=$((success_count + 1))
               
               # Add success comment
               gh issue comment $issue_number --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
           
-          GitHub Copilot has been automatically assigned to this issue via the GitHub API.
+          GitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.
           
           **What happens next:**
           1. ✅ Copilot will analyze the issue requirements
@@ -97,26 +130,33 @@ jobs:
           **Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           
           ---
-          *🤖 Automated via the official GitHub API method - True autonomous operation!*"
+          *🤖 Automated via the official GitHub GraphQL API method using \`replaceActorsForAssignable\` mutation - True autonomous operation!*"
             else
               echo "❌ Failed to assign issue #$issue_number to Copilot"
+              echo "Error details: $mutation_result"
               failed_count=$((failed_count + 1))
               
-              # Add error comment
-              gh issue comment $issue_number --repo ${{ github.repository }} --body "⚠️ **Failed to Assign Copilot**
+              # Add error comment with details
+              gh issue comment $issue_number --repo ${{ github.repository }} --body "⚠️ **Failed to Assign Copilot via GraphQL API**
           
-          The workflow attempted to assign GitHub Copilot to this issue but the assignment failed.
+          The workflow attempted to assign GitHub Copilot to this issue using the official GraphQL API method, but the assignment failed.
+          
+          **API Method Used:**
+          - GraphQL mutation: \`replaceActorsForAssignable\`
+          - Actor ID: \`copilot\`
           
           **Possible reasons:**
           1. GitHub Copilot is not enabled for this repository
-          2. Copilot coding agent is not activated
+          2. Copilot coding agent is not activated for your organization
           3. You need a GitHub Copilot subscription (Individual, Business, or Enterprise)
-          4. This repository is on GitHub Enterprise Server (Copilot assignment not supported)
+          4. The repository lacks necessary Copilot permissions
+          5. Copilot may not be available in your GitHub plan
           
           **To enable Copilot:**
           1. Ensure you have an active Copilot subscription
-          2. Enable Copilot for this repository in repository Settings
-          3. Verify Copilot agents are available for your account
+          2. Enable Copilot for this repository in repository Settings → Copilot
+          3. Verify Copilot agents are available for your account/organization
+          4. Check that the workflow has sufficient permissions
           
           **For now:**
           - This issue has been labeled \`copilot-assigned\` for tracking
@@ -126,9 +166,10 @@ jobs:
           **To manually assign Copilot:**
           - Click on \"Assignees\" in the right sidebar
           - Select \"Copilot\" from the dropdown
+          - Copilot should automatically pick up the issue
           
           ---
-          *🤖 Automated via the official GitHub API*"
+          *🤖 Automated via the official GitHub GraphQL API as documented at https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr*"
             fi
           done
           
