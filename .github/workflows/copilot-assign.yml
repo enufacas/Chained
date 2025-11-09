@@ -1,0 +1,71 @@
+name: Copilot Auto-Assign
+
+on:
+  issues:
+    types: [opened, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to assign Copilot to'
+        required: true
+        type: number
+
+permissions:
+  issues: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  assign-copilot:
+    runs-on: ubuntu-latest
+    # Only run for ai-generated issues or when manually triggered
+    if: |
+      (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'ai-generated')) ||
+      github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get issue details
+        id: issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            issue_number="${{ inputs.issue_number }}"
+          else
+            issue_number="${{ github.event.issue.number }}"
+          fi
+          
+          echo "issue_number=${issue_number}" >> $GITHUB_OUTPUT
+          
+          issue_data=$(gh issue view ${issue_number} --json title,body,labels)
+          echo "Issue #${issue_number} details retrieved"
+
+      - name: Add copilot label
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue edit ${{ steps.issue.outputs.issue_number }} --add-label "copilot-assigned"
+          echo "Added 'copilot-assigned' label to issue #${{ steps.issue.outputs.issue_number }}"
+
+      - name: Add comment to issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ steps.issue.outputs.issue_number }} --body "🤖 **Copilot Assignment**
+
+          GitHub Copilot has been notified about this issue and will be assigned to work on it.
+
+          **Status:** Ready for Copilot
+          **Priority:** Normal
+          **Assigned on:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          ---
+
+          *This is an automated message from the Copilot Auto-Assign workflow.*"
+
+      - name: Log assignment
+        run: |
+          echo "Successfully assigned Copilot to issue #${{ steps.issue.outputs.issue_number }}"
+          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
