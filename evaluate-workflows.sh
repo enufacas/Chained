@@ -54,6 +54,7 @@ declare -A workflows=(
     ["progress-tracker.yml"]="Progress Tracker|schedule,workflow_dispatch"
     ["learn-from-tldr.yml"]="Learn from TLDR|schedule,workflow_dispatch"
     ["learn-from-hackernews.yml"]="Learn from Hacker News|schedule,workflow_dispatch"
+    ["workflow-monitor.yml"]="Workflow Monitor|schedule,workflow_dispatch"
 )
 
 total_workflows=${#workflows[@]}
@@ -177,6 +178,7 @@ scheduled_workflows=(
     "auto-close-issues.yml:every 4 hours"
     "timeline-updater.yml:every 6 hours"
     "progress-tracker.yml:every 12 hours"
+    "workflow-monitor.yml:every 12 hours"
 )
 
 for item in "${scheduled_workflows[@]}"; do
@@ -245,6 +247,7 @@ echo "    Every 3h - issue-to-pr.yml"
 echo "    Every 4h - auto-close-issues.yml"
 echo "    Every 6h - timeline-updater.yml"
 echo "    Every 12h - progress-tracker.yml"
+echo "    Every 12h - workflow-monitor.yml"
 echo ""
 echo "  Event-Driven:"
 echo "    On issue created → copilot-assign.yml"
