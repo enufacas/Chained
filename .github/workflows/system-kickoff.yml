@@ -73,7 +73,7 @@ jobs:
             IFS=':' read -r color description <<< "${labels[$label]}"
             
             # Check if label exists
-            if gh label list | grep -q "^${label}"; then
+            if gh label list | grep -q $'^'"${label}"$'\t'; then
               echo "✓ Label '$label' already exists"
             else
               if gh label create "$label" --color "$color" --description "$description" 2>/dev/null; then
