@@ -103,25 +103,9 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
 
 **Process:** (Same as Auto-Review Phase above)
 
-**Output:** Implementation merged to main branch
+**Output:** Implementation merged to main branch, associated issues closed
 
-### 7. Issue Closure Phase (Every 30 minutes)
-
-**Workflow:**
-- `auto-close-issues.yml` - Runs every 30 minutes
-
-**Process:**
-1. Finds issues with `copilot-assigned` label
-2. Checks if related PR is merged
-3. If merged:
-   - Adds `completed` label
-   - Removes `in-progress` label
-   - Closes issue with completion comment
-4. Workflow completes
-
-**Output:** Issue marked as completed and closed
-
-### 8. Timeline Update Phase (Every 6 hours)
+### 7. Timeline Update Phase (Every 6 hours)
 
 **Workflow:**
 - `timeline-updater.yml` - Runs every 6 hours + on events
@@ -142,7 +126,7 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
 
 **Output:** Timeline update PR ready for auto-merge
 
-### 9. Progress Tracking Phase (Every 12 hours)
+### 8. Progress Tracking Phase (Every 12 hours)
 
 **Workflow:**
 - `progress-tracker.yml` - Runs every 12 hours
@@ -156,7 +140,7 @@ The Chained repository operates as a perpetual motion machine for AI-driven deve
 
 **Output:** Progress report issue
 
-### 10. Health Monitoring Phase (Every 12 hours)
+### 9. Health Monitoring Phase (Every 12 hours)
 
 **Workflow:**
 - `workflow-monitor.yml` - Runs every 12 hours

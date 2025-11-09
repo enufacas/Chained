@@ -58,45 +58,40 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
    - Reviews PRs created by Copilot
    - AI reviews AI code
    - Automatically approves and merges PRs
+   - Closes associated issues when PRs are merged
    - No human approval required
 
-4. **Auto Close Issues** (`auto-close-issues.yml`)
-   - Runs every 30 minutes
-   - Closes issues when their PRs are merged
-   - Tracks completion status
-   - Maintains issue lifecycle
-
-5. **Timeline Updater** (`timeline-updater.yml`)
+4. **Timeline Updater** (`timeline-updater.yml`)
    - Runs every 6 hours
    - Fetches all repository activity
    - Updates timeline data for GitHub Pages
    - Documents autonomous actions
 
-6. **Progress Tracker** (`progress-tracker.yml`)
+5. **Progress Tracker** (`progress-tracker.yml`)
    - Runs every 12 hours
    - Analyzes repository progress and statistics
    - Generates progress reports
    - Tracks autonomous success rates
 
-7. **Learning from TLDR Tech** (`learn-from-tldr.yml`)
+6. **Learning from TLDR Tech** (`learn-from-tldr.yml`)
    - Runs twice daily (8 AM, 8 PM UTC)
    - Fetches latest tech news and trends
    - Extracts insights about AI, DevOps, and programming
    - Saves learnings to influence future ideas
 
-8. **Learning from Hacker News** (`learn-from-hackernews.yml`)
+7. **Learning from Hacker News** (`learn-from-hackernews.yml`)
    - Runs three times daily (7 AM, 1 PM, 7 PM UTC)
    - Analyzes trending technical discussions
    - Categorizes topics (AI/ML, Security, Performance, etc.)
    - Generates ideas based on community trends
 
-9. **Smart Idea Generator** (`smart-idea-generator.yml`)
+8. **Smart Idea Generator** (`smart-idea-generator.yml`)
     - Runs daily at 10 AM UTC (after learning workflows)
     - Generates ideas informed by external learnings
     - Adapts to trending technologies and patterns
     - Creates enhanced issues with learning context
 
-10. **System Kickoff** (`system-kickoff.yml`)
+9. **System Kickoff** (`system-kickoff.yml`)
     - Can be triggered manually or automatically
     - Validates system configuration
     - Creates required labels

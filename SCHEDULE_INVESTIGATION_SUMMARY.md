@@ -28,13 +28,10 @@ The autonomous system uses **passive polling via scheduled workflows**, not acti
    - `auto-review-merge.yml` polls for PRs with "copilot" label
    - Reviews, approves, and merges
    - Deletes branch
-
-4. **Issue Closure** (Cron Schedule - Every 30 minutes)
-   - `auto-close-issues.yml` polls for merged PRs
    - Closes related issues
    - Adds "completed" label
 
-**Total Time:** 15-75 minutes depending on when scheduled workflows catch the work.
+**Total Time:** 15-45 minutes depending on when scheduled workflows catch the work.
 
 ### Schedule Reliability
 
@@ -173,9 +170,8 @@ gh workflow run "workflow-name.yml"
 ## Schedule Frequencies
 
 ### Critical Automation Workflows
-- `auto-review-merge.yml`: Every 15 minutes
+- `auto-review-merge.yml`: Every 15 minutes (includes issue closing)
 - `issue-to-pr.yml`: Every 30 minutes
-- `auto-close-issues.yml`: Every 30 minutes
 
 ### Learning Workflows
 - `learn-from-hackernews.yml`: 3x daily (07:00, 13:00, 19:00 UTC)

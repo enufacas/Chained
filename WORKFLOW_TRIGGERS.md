@@ -30,8 +30,7 @@ These workflows run **on a schedule** using cron expressions:
 
 | Workflow | Schedule | Frequency | Purpose |
 |----------|----------|-----------|---------|
-| `auto-review-merge.yml` | `*/15 * * * *` | Every 15 minutes | Reviews and merges PRs |
-| `auto-close-issues.yml` | `*/30 * * * *` | Every 30 minutes | Closes completed issues |
+| `auto-review-merge.yml` | `*/15 * * * *` | Every 15 minutes | Reviews, merges PRs, and closes completed issues |
 | `timeline-updater.yml` | `0 */6 * * *` | Every 6 hours | Updates timeline data |
 | `progress-tracker.yml` | `0 */12 * * *` | Every 12 hours | Generates progress reports |
 | `workflow-monitor.yml` | `0 */12 * * *` | Every 12 hours | Monitors workflow health |
@@ -81,14 +80,9 @@ Here's exactly how work gets done after an issue is assigned:
    │   └─→ Validates author (owner or bot)
    │   └─→ Reviews and approves PR
    │   └─→ Merges to main branch
-   │   └─→ Deletes branch
-   │
-   ↓ [PASSIVE POLLING - Wait up to 30 minutes]
-   │
-4. CRON TRIGGER: auto-close-issues.yml runs (every 30 min)
-   │   └─→ Finds merged PRs
    │   └─→ Closes related issues
-   │   └─→ Adds "completed" label
+   │   └─→ Adds "completed" label to issues
+   │   └─→ Deletes branch
    │
    ↓ [DONE]
    │
@@ -96,7 +90,7 @@ Here's exactly how work gets done after an issue is assigned:
 
 ═══════════════════════════════════════════════════════════════════════════
 
-TOTAL TIME: 15-45 minutes (depends on when Copilot responds and scheduled workflows catch it)
+TOTAL TIME: 15-30 minutes (depends on when Copilot responds and scheduled workflows catch it)
 
 KEY INSIGHT: Copilot creates the PR automatically when assigned! No polling needed for that step!
 ```
