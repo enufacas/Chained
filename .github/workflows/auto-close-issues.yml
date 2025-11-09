@@ -1,0 +1,128 @@
+name: Auto Close Issues
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+jobs:
+  close-completed-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find recently merged PRs
+        id: find_prs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Finding recently merged PRs..."
+          
+          merged_prs=$(gh pr list \
+            --state merged \
+            --limit 50 \
+            --json number,title,body,mergedAt \
+            --jq '.[] | select(.mergedAt >= (now - 86400 | strftime("%Y-%m-%dT%H:%M:%SZ"))) | .number' | tr '\n' ' ')
+          
+          if [ -z "$merged_prs" ]; then
+            echo "No recently merged PRs found"
+            echo "has_prs=false" >> $GITHUB_OUTPUT
+          else
+            echo "Found recently merged PRs: $merged_prs"
+            echo "has_prs=true" >> $GITHUB_OUTPUT
+            echo "pr_numbers=${merged_prs}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Close linked issues
+        if: steps.find_prs.outputs.has_prs == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          processed_count=0
+          closed_count=0
+          
+          for pr_num in ${{ steps.find_prs.outputs.pr_numbers }}; do
+            if [ -z "${pr_num}" ]; then
+              continue
+            fi
+            
+            echo ""
+            echo "Checking PR #${pr_num} for linked issues"
+            
+            pr_data=$(gh pr view ${pr_num} --json title,body,mergedAt,url)
+            pr_title=$(echo "${pr_data}" | jq -r '.title')
+            pr_body=$(echo "${pr_data}" | jq -r '.body // ""')
+            pr_merged_at=$(echo "${pr_data}" | jq -r '.mergedAt')
+            pr_url=$(echo "${pr_data}" | jq -r '.url')
+            
+            echo "PR: ${pr_title}"
+            echo "Merged at: ${pr_merged_at}"
+            
+            issue_numbers=$(echo "${pr_body}" | grep -oP '(?<=#)\d+' | sort -u)
+            
+            if [ -z "$issue_numbers" ]; then
+              echo "No linked issues found in PR #${pr_num}"
+              continue
+            fi
+            
+            echo "Found linked issues: $(echo $issue_numbers | tr '\n' ' ')"
+            
+            for issue_num in $issue_numbers; do
+              processed_count=$((processed_count + 1))
+              
+              echo ""
+              echo "  Processing issue #${issue_num}..."
+              
+              issue_state=$(gh issue view ${issue_num} --json state --jq '.state' 2>/dev/null || echo "NOT_FOUND")
+              
+              if [ "${issue_state}" = "NOT_FOUND" ]; then
+                echo "  Issue #${issue_num} not found"
+                continue
+              fi
+              
+              if [ "${issue_state}" = "CLOSED" ]; then
+                echo "  Issue #${issue_num} is already closed"
+                continue
+              fi
+              
+              echo "  Closing issue #${issue_num}..."
+              
+              {
+                echo "Completed and merged via PR #${pr_num}"
+                echo ""
+                echo "PR: ${pr_title}"
+                echo "Merged at: ${pr_merged_at}"
+                echo "Link: ${pr_url}"
+                echo ""
+                echo "Automatically closed by Auto Close Issues workflow"
+              } > /tmp/close_msg.txt
+              
+              if gh issue close ${issue_num} --comment-file /tmp/close_msg.txt; then
+                echo "  Successfully closed issue #${issue_num}"
+                
+                gh issue edit ${issue_num} --add-label "completed" 2>/dev/null || echo "  Could not add completed label"
+                
+                closed_count=$((closed_count + 1))
+              else
+                echo "  Failed to close issue #${issue_num}"
+              fi
+            done
+          done
+          
+          echo ""
+          echo "Summary:"
+          echo "Processed PRs: $(echo '${{ steps.find_prs.outputs.pr_numbers }}' | wc -w)"
+          echo "Linked issues found: ${processed_count}"
+          echo "Newly closed: ${closed_count}"
+          echo "Timestamp: $(date -u)"
+
+      - name: Log completion
+        run: |
+          echo "Auto close issues workflow completed"
+          echo "Timestamp: $(date -u)"
