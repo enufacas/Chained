@@ -1,0 +1,111 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-09T16:02:51.967465",
+  "total_merges_analyzed": 1,
+  "good_patterns": {
+    "descriptive_variable_names": {
+      "count": 851,
+      "examples": [
+        "line 27",
+        "line 34",
+        "line 104",
+        "line 219",
+        "line 375"
+      ],
+      "correlation_with_success": 0.9999999999999994
+    },
+    "comprehensive_docstrings": {
+      "count": 27,
+      "examples": [
+        "_load_patterns at line 27",
+        "_initialize_patterns at line 34",
+        "_save_patterns at line 97",
+        "analyze_python_file at line 104",
+        "_get_max_nesting_depth at line 205"
+      ],
+      "correlation_with_success": 0.94185026299696
+    },
+    "error_handling": {
+      "count": 4,
+      "examples": [
+        "analyze_python_file at line 104",
+        "test_unsupported_language at line 111",
+        "run_all_tests at line 185",
+        "main at line 267"
+      ],
+      "correlation_with_success": 0.34390000000000004
+    },
+    "modular_functions": {
+      "count": 27,
+      "examples": [
+        "main at line 371",
+        "__init__ at line 23",
+        "_load_patterns at line 27",
+        "_save_patterns at line 97",
+        "_get_max_nesting_depth at line 205"
+      ],
+      "correlation_with_success": 0.94185026299696
+    },
+    "type_hints": {
+      "count": 13,
+      "examples": [
+        "__init__ at line 23",
+        "_load_patterns at line 27",
+        "_initialize_patterns at line 34",
+        "analyze_python_file at line 104",
+        "_get_max_nesting_depth at line 205"
+      ],
+      "correlation_with_success": 0.7458134171671
+    }
+  },
+  "bad_patterns": {
+    "long_functions": {
+      "count": 6,
+      "examples": [
+        "_initialize_patterns at line 34",
+        "analyze_python_file at line 104",
+        "learn_from_merge at line 258",
+        "generate_report at line 314",
+        "main at line 267"
+      ],
+      "correlation_with_issues": 0.0
+    },
+    "deep_nesting": {
+      "count": 1,
+      "examples": [
+        "analyze_directory at line 219"
+      ],
+      "correlation_with_issues": 0.0
+    },
+    "magic_numbers": {
+      "count": 31,
+      "examples": [
+        "line 131",
+        "line 172",
+        "line 286",
+        "line 303",
+        "line 341"
+      ],
+      "correlation_with_issues": 0.0
+    },
+    "unused_imports": {
+      "count": 0,
+      "examples": [],
+      "correlation_with_issues": 0.0
+    },
+    "inconsistent_naming": {
+      "count": 0,
+      "examples": [],
+      "correlation_with_issues": 0.0
+    }
+  },
+  "merge_history": [
+    {
+      "timestamp": "2025-11-09T16:02:51.967052",
+      "successful": true,
+      "files_analyzed": 6,
+      "good_patterns": 922,
+      "bad_patterns": 38
+    }
+  ]
+}
