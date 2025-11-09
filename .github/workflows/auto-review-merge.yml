@@ -91,6 +91,7 @@ jobs:
             # Handle draft PRs that are ready (WIP removed, from trusted source)
             if [ "${is_draft}" = "true" ] && [ "${pr_state}" = "OPEN" ]; then
               echo "PR #${pr_num} is currently in draft status"
+              echo "Debug - Author: '${author}', Trusted Bot: ${is_trusted_bot}, Repo Owner: ${is_repo_owner}, Copilot Label: ${has_copilot_label}"
               
               # Check if title contains WIP markers
               if echo "${pr_title}" | grep -qiE '\b(WIP|work.?in.?progress)\b'; then
