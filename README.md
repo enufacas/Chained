@@ -127,6 +127,17 @@ Visit the live site: **[https://enufacas.github.io/Chained/](https://enufacas.gi
 
 ## 🚀 Getting Started
 
+### ⚡ IMPORTANT: Copilot PAT Setup Required
+
+**For full autonomous operation**, you must set up a Personal Access Token (PAT) for Copilot assignments:
+
+🔐 **Quick Setup:**
+1. Create a PAT at https://github.com/settings/tokens (with `repo` scope)
+2. Add it as a repository secret named `COPILOT_PAT`
+3. See **[COPILOT_SETUP.md](./COPILOT_SETUP.md)** for detailed instructions
+
+**Why?** The default `GITHUB_TOKEN` cannot assign Copilot due to licensing restrictions. Without this, the workflow will fail to assign issues to Copilot.
+
 ### Automatic Kickoff (Easiest!) 🎯
 
 **The system automatically starts when you merge to main!** 
