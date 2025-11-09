@@ -61,16 +61,15 @@ echo "------------------------------"
 declare -A workflows=(
     ["idea-generator.yml"]="AI Idea Generator"
     ["smart-idea-generator.yml"]="Smart Idea Generator"
-    ["copilot-assign.yml"]="Copilot Auto-Assign"
-    ["issue-to-pr.yml"]="Issue to PR Automator"
+    ["copilot-graphql-assign.yml"]="Copilot Auto-Assign (GraphQL)"
     ["auto-review-merge.yml"]="Auto Review and Merge"
-    ["auto-close-issues.yml"]="Auto Close Issues"
     ["timeline-updater.yml"]="Timeline Updater"
     ["progress-tracker.yml"]="Progress Tracker"
     ["learn-from-tldr.yml"]="Learn from TLDR"
     ["learn-from-hackernews.yml"]="Learn from Hacker News"
     ["system-kickoff.yml"]="System Kickoff"
     ["auto-kickoff.yml"]="Auto Kickoff on First Run"
+    ["auto-label-copilot-prs.yml"]="Auto Label Copilot PRs"
 )
 
 for workflow in "${!workflows[@]}"; do
