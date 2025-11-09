@@ -150,11 +150,26 @@ jobs:
               mergeable=$(echo "${pr_data}" | jq -r '.mergeable')
               
               if [ "${mergeable}" = "MERGEABLE" ]; then
-                # Enable auto-merge (will merge when checks pass)
-                # For bot PRs, this works without approval
-                gh pr merge ${pr_num} --auto --squash --delete-branch && \
-                echo "✅ Auto-merge enabled for PR #${pr_num}" || \
-                echo "Could not enable auto-merge for PR #${pr_num} - may require checks or have conflicts"
+                # For bot PRs without required checks, merge immediately
+                # For PRs with checks, enable auto-merge
+                if [ "${is_trusted_bot}" -eq 1 ]; then
+                  # Try immediate merge first (works if no required checks)
+                  if gh pr merge ${pr_num} --squash --delete-branch 2>/dev/null; then
+                    echo "✅ PR #${pr_num} merged immediately"
+                  else
+                    # Fall back to auto-merge (for PRs with required checks)
+                    gh pr merge ${pr_num} --auto --squash --delete-branch && \
+                    echo "✅ Auto-merge enabled for PR #${pr_num}" || \
+                    echo "⚠️ Could not merge or enable auto-merge for PR #${pr_num}"
+                  fi
+                else
+                  # Owner PRs - enable auto-merge (approval already added)
+                  gh pr merge ${pr_num} --auto --squash --delete-branch && \
+                  echo "✅ Auto-merge enabled for PR #${pr_num}" || \
+                  gh pr merge ${pr_num} --squash --delete-branch && \
+                  echo "✅ PR #${pr_num} merged immediately" || \
+                  echo "⚠️ Could not merge PR #${pr_num}"
+                fi
                 
                 echo "✅ PR #${pr_num} processed successfully"
                 
