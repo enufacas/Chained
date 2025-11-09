@@ -1,0 +1,237 @@
+name: Learning from Hacker News
+
+on:
+  schedule:
+    # Run three times daily - morning, afternoon, evening
+    - cron: '0 7,13,19 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  learn-from-hn:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Fetch and analyze Hacker News
+        id: fetch
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import requests
+          import json
+          from datetime import datetime
+          import os
+          import re
+          
+          print("Fetching Hacker News top stories...")
+          
+          # Hacker News API
+          base_url = 'https://hacker-news.firebaseio.com/v0'
+          
+          learnings = []
+          tech_topics = {}
+          
+          try:
+              # Get top stories
+              response = requests.get(f'{base_url}/topstories.json', timeout=10)
+              top_stories = response.json()[:30]  # Top 30 stories
+              
+              for story_id in top_stories:
+                  try:
+                      story_response = requests.get(f'{base_url}/item/{story_id}.json', timeout=5)
+                      story = story_response.json()
+                      
+                      if story and 'title' in story:
+                          title = story['title']
+                          url = story.get('url', '')
+                          score = story.get('score', 0)
+                          
+                          # Only include high-quality stories (score > 100)
+                          if score > 100:
+                              learnings.append({
+                                  'title': title,
+                                  'url': url,
+                                  'score': score,
+                                  'source': 'Hacker News'
+                              })
+                              
+                              # Categorize by keywords
+                              title_lower = title.lower()
+                              
+                              keywords = {
+                                  'AI/ML': ['ai', 'ml', 'machine learning', 'neural', 'gpt', 'llm', 'copilot'],
+                                  'Programming': ['python', 'rust', 'go', 'javascript', 'typescript', 'code'],
+                                  'DevOps': ['docker', 'kubernetes', 'ci/cd', 'github', 'actions'],
+                                  'Database': ['postgres', 'sql', 'database', 'mongodb', 'redis'],
+                                  'Web': ['web', 'browser', 'http', 'api', 'react', 'vue'],
+                                  'Security': ['security', 'vulnerability', 'encryption', 'auth'],
+                                  'Performance': ['performance', 'optimization', 'speed', 'benchmark'],
+                                  'Open Source': ['open source', 'oss', 'github', 'git']
+                              }
+                              
+                              for category, terms in keywords.items():
+                                  if any(term in title_lower for term in terms):
+                                      if category not in tech_topics:
+                                          tech_topics[category] = []
+                                      tech_topics[category].append(title)
+                                      break
+                  except Exception as e:
+                      print(f"Error fetching story {story_id}: {e}")
+                      continue
+              
+              print(f"✓ Fetched {len(learnings)} high-quality stories")
+              
+          except Exception as e:
+              print(f"✗ Error fetching Hacker News: {e}")
+          
+          # Save learnings
+          os.makedirs('learnings', exist_ok=True)
+          timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+          
+          with open(f'learnings/hn_{timestamp}.json', 'w') as f:
+              json.dump({
+                  'timestamp': datetime.utcnow().isoformat(),
+                  'source': 'Hacker News',
+                  'learnings': learnings,
+                  'topics': tech_topics,
+                  'total_stories': len(learnings)
+              }, f, indent=2)
+          
+          print(f"Saved {len(learnings)} learnings across {len(tech_topics)} topics")
+          
+          # Generate ideas based on trends
+          ai_ideas = []
+          if 'AI/ML' in tech_topics:
+              ai_ideas.append("Implement trending AI technique from Hacker News discussions")
+          if 'Programming' in tech_topics:
+              ai_ideas.append("Adopt new programming pattern trending on HN")
+          if 'Performance' in tech_topics:
+              ai_ideas.append("Apply performance optimization inspired by HN")
+          
+          # Output for GitHub Actions
+          if learnings:
+              top_story = learnings[0]
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"has_learnings=true\n")
+                  f.write(f"learning_count={len(learnings)}\n")
+                  f.write(f"topic_count={len(tech_topics)}\n")
+                  f.write(f"top_story_title={top_story['title']}\n")
+                  f.write(f"top_story_score={top_story['score']}\n")
+                  f.write(f"idea_count={len(ai_ideas)}\n")
+          else:
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"has_learnings=false\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Create learning issue
+        if: steps.fetch.outputs.has_learnings == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "🔥 Learning Update from Hacker News - $(date +%Y-%m-%d)" \
+            --body "## Hot Topics from Hacker News
+
+          **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **High-Quality Stories:** ${{ steps.fetch.outputs.learning_count }}
+          **Topics Covered:** ${{ steps.fetch.outputs.topic_count }}
+          **New Ideas Generated:** ${{ steps.fetch.outputs.idea_count }}
+
+          **Top Story:**
+          - 🏆 ${{ steps.fetch.outputs.top_story_title }}
+          - ⬆️ Score: ${{ steps.fetch.outputs.top_story_score }}
+
+          ---
+
+          ### What I Learned
+          - Analyzed top trending technical discussions
+          - Identified emerging technologies and patterns
+          - Extracted insights from community wisdom
+          - Generated new ideas based on trends
+
+          ### Impact on Development
+          These learnings will influence:
+          - 🎯 Idea generation priorities
+          - 🛠️ Technology adoption decisions
+          - 📈 Feature implementation approaches
+          - 🎓 Best practices and patterns
+
+          See \`learnings/\` directory for complete analysis.
+
+          ---
+
+          *This learning was automatically collected by the Hacker News Learning workflow.*" \
+            --label "learning,automated" || echo "Issue creation skipped or failed"
+
+      - name: Update learning index
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          from datetime import datetime
+          
+          # Create or update learning index
+          index_file = 'learnings/index.json'
+          
+          if os.path.exists(index_file):
+              with open(index_file, 'r') as f:
+                  index = json.load(f)
+          else:
+              index = {
+                  'total_learnings': 0,
+                  'sources': {},
+                  'last_updated': None,
+                  'top_topics': {}
+              }
+          
+          # Count learning files
+          hn_files = [f for f in os.listdir('learnings') if f.startswith('hn_')]
+          tldr_files = [f for f in os.listdir('learnings') if f.startswith('tldr_')]
+          
+          index['total_learnings'] = len(hn_files) + len(tldr_files)
+          index['sources']['hacker_news'] = len(hn_files)
+          index['sources']['tldr'] = len(tldr_files)
+          index['last_updated'] = datetime.utcnow().isoformat()
+          
+          with open(index_file, 'w') as f:
+              json.dump(index, f, indent=2)
+          
+          print(f"Updated learning index: {index['total_learnings']} total learnings")
+          PYTHON_SCRIPT
+
+      - name: Commit learnings
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add learnings/
+          
+          if git diff --staged --quiet; then
+            echo "No new learnings to commit"
+          else
+            git commit -m "🔥 Learn from Hacker News - $(date -u +%Y-%m-%d)"
+            git push
+            echo "Learnings committed successfully"
+          fi
+
+      - name: Log learning activity
+        run: |
+          echo "Hacker News learning completed"
+          echo "Stories analyzed: ${{ steps.fetch.outputs.learning_count }}"
+          echo "Topics identified: ${{ steps.fetch.outputs.topic_count }}"
+          echo "New ideas: ${{ steps.fetch.outputs.idea_count }}"
+          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"

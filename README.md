@@ -74,14 +74,33 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
    - Generates progress reports
    - Tracks autonomous success rates
 
+8. **Learning from TLDR Tech** (`learn-from-tldr.yml`)
+   - Runs twice daily (8 AM, 8 PM UTC)
+   - Fetches latest tech news and trends
+   - Extracts insights about AI, DevOps, and programming
+   - Saves learnings to influence future ideas
+
+9. **Learning from Hacker News** (`learn-from-hackernews.yml`)
+   - Runs three times daily (7 AM, 1 PM, 7 PM UTC)
+   - Analyzes trending technical discussions
+   - Categorizes topics (AI/ML, Security, Performance, etc.)
+   - Generates ideas based on community trends
+
+10. **Smart Idea Generator** (`smart-idea-generator.yml`)
+    - Runs daily at 10 AM UTC (after learning workflows)
+    - Generates ideas informed by external learnings
+    - Adapts to trending technologies and patterns
+    - Creates enhanced issues with learning context
+
 ### GitHub Pages
 
 The project includes a beautiful, responsive GitHub Pages site at [`docs/`](./docs/) that displays:
 
 - 📈 **Live statistics** from the repository
 - ⏱️ **Timeline of events** showing all AI-generated ideas and their progress
-- 🧠 **Key learnings** documented throughout the project's evolution
+- 🧠 **Key learnings** documented throughout the project's evolution, including insights from TLDR Tech and Hacker News
 - 📊 **Interactive visualizations** of the perpetual motion machine in action
+- 🌐 **External learning integration** showing how the AI stays current with tech trends
 
 Visit the live site: **[https://enufacas.github.io/Chained/](https://enufacas.github.io/Chained/)**
 
@@ -121,7 +140,18 @@ All workflows support manual triggering via GitHub's Actions tab:
 
 ```
 ┌─────────────────────┐
-│  Idea Generator     │ ──► Generates creative ideas (Daily)
+│  External Learning  │ ──► TLDR Tech (2x daily)
+│  Sources            │ ──► Hacker News (3x daily)
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Learning Database  │ ──► Saves insights & trends
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Smart Idea Gen     │ ──► Generates trend-aware ideas (Daily)
 └──────────┬──────────┘
            │
            ▼
@@ -165,9 +195,10 @@ All workflows support manual triggering via GitHub's Actions tab:
 └──────────┬──────────┘
            │
            └──────────────► Cycle continues forever...
+                           Getting smarter with each iteration!
 ```
 
-**This is fully autonomous** - no human in the loop!
+**This is fully autonomous AND continuously learning** - no human in the loop!
 
 ### Human Intervention
 
@@ -182,14 +213,58 @@ The system is **fully autonomous** and requires zero human intervention. However
 
 The beauty is that you can walk away and come back later to see what the AI has built!
 
+## 🧠 Continuous Learning
+
+One of the most powerful features of Chained is its ability to **continuously learn** from external sources:
+
+### Learning Sources
+
+- **[TLDR Tech](https://tldr.tech/)**: Twice daily scraping of tech news summaries
+- **[Hacker News](https://news.ycombinator.com/)**: Three times daily analysis of trending discussions
+
+### What It Learns
+
+The system automatically:
+- 📰 Fetches latest tech news and articles
+- 🎯 Identifies trending topics (AI/ML, Security, Performance, etc.)
+- 💡 Extracts insights from community discussions
+- 📊 Categorizes and prioritizes learnings
+- 🔄 Feeds learnings back into idea generation
+
+### Impact on Development
+
+Learnings influence:
+- **Idea Generation**: New ideas based on trending technologies
+- **Technology Choices**: Adopting what's hot, avoiding what's deprecated
+- **Best Practices**: Learning from the global tech community
+- **Security**: Staying aware of vulnerabilities and fixes
+
+See [`learnings/`](./learnings/) directory for all collected insights.
+
+### Learning Workflow
+
+```
+Morning    → TLDR scraper runs     → Saves tech news
+           → HN scraper runs        → Analyzes trending discussions
+           → Smart Idea Generator   → Creates trend-aware ideas
+Afternoon  → HN scraper runs again → Updates with new trends
+Evening    → TLDR scraper runs     → Evening news update
+           → HN scraper runs        → Final daily update
+```
+
+**The AI never stops learning from the world around it!** 🌍
+
 ## 🛠️ Technologies Used
 
 - **GitHub Actions**: Workflow automation
 - **GitHub API**: Fetching repository data
 - **GitHub Pages**: Hosting the timeline website
 - **GitHub Copilot**: AI-powered development
+- **Python**: Learning scripts and data processing
 - **HTML/CSS/JavaScript**: Frontend for the timeline
 - **Bash scripting**: Workflow logic
+- **TLDR Tech API**: Tech news aggregation
+- **Hacker News API**: Community trend analysis
 
 ## 📊 Monitoring Progress
 
