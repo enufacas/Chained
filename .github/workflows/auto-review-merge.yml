@@ -116,7 +116,7 @@ jobs:
                 - ✅ Has copilot label
                 - ✅ Part of autonomous development cycle
                 
-                **Action:** Enabling auto-merge (will merge automatically when all checks pass)
+                **Action:** Will attempt to merge automatically
                 **Processed by:** Autonomous Review System
                 **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
                 
@@ -196,7 +196,7 @@ jobs:
               
               **Auto-merge criteria:**
               - PR must be from the repository owner (\`${repo_owner}\`) AND have the \`copilot\` label, OR
-              - PR must be from a trusted bot (\`github-actions[bot]\`, \`dependabot[bot]\`, \`copilot\`) AND have the \`copilot\` label
+              - PR must be from a trusted bot (\`github-actions[bot]\`, \`dependabot[bot]\`, \`copilot-swe-agent[bot]\`) AND have the \`copilot\` label
               
               **Current PR details:**
               - Author: \`${author}\`
