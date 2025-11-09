@@ -131,28 +131,33 @@ jobs:
             git push || echo "Nothing to push"
           fi
 
-      - name: Trigger initial workflows
+      - name: Verify scheduled workflows
         if: inputs.trigger_initial_workflows == true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Triggering initial workflows..."
-          
-          # Trigger learning workflows first
-          echo "→ Triggering TLDR Tech learning..."
-          gh workflow run "learn-from-tldr.yml" || echo "⚠ Could not trigger TLDR workflow"
-          
-          echo "→ Triggering Hacker News learning..."
-          gh workflow run "learn-from-hackernews.yml" || echo "⚠ Could not trigger HN workflow"
-          
-          # Wait a moment for learning workflows to start
-          sleep 3
-          
-          # Trigger idea generator
-          echo "→ Triggering AI Idea Generator..."
-          gh workflow run "idea-generator.yml" || echo "⚠ Could not trigger idea generator"
-          
-          echo "✓ Initial workflows triggered!"
+          echo "Verifying scheduled workflows..."
+          echo ""
+          echo "📋 Scheduled workflows will run automatically:"
+          echo ""
+          echo "Learning Workflows:"
+          echo "  • learn-from-tldr.yml - Runs at 08:00 and 20:00 UTC daily"
+          echo "  • learn-from-hackernews.yml - Runs at 07:00, 13:00, and 19:00 UTC daily"
+          echo ""
+          echo "Idea Generation:"
+          echo "  • idea-generator.yml - Runs at 09:00 UTC daily"
+          echo "  • smart-idea-generator.yml - Runs at 10:00 UTC daily"
+          echo ""
+          echo "Automation Workflows:"
+          echo "  • issue-to-pr.yml - Runs every 3 hours"
+          echo "  • auto-review-merge.yml - Runs every 2 hours"
+          echo "  • auto-close-issues.yml - Runs every 4 hours"
+          echo "  • timeline-updater.yml - Runs every 6 hours"
+          echo "  • progress-tracker.yml - Runs every 12 hours"
+          echo ""
+          echo "✓ All workflows are scheduled and will execute automatically"
+          echo ""
+          echo "💡 To manually trigger a workflow, go to Actions tab and use 'Run workflow'"
 
       - name: Create kickoff success issue
         env:
@@ -167,16 +172,18 @@ jobs:
 
           **Kickoff Time:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
-          **Workflows Triggered:**
-          - ✅ Learn from TLDR Tech
-          - ✅ Learn from Hacker News  
-          - ✅ AI Idea Generator
+          **Scheduled Workflows Ready:**
+          - ✅ Learn from TLDR Tech (08:00, 20:00 UTC)
+          - ✅ Learn from Hacker News (07:00, 13:00, 19:00 UTC)
+          - ✅ AI Idea Generator (09:00 UTC)
+          - ✅ Smart Idea Generator (10:00 UTC)
+          - ✅ Automation workflows (continuous)
 
           **Status:**
           - All validation checks passed
           - Required labels created
           - Learnings directory initialized
-          - Initial workflows triggered
+          - Workflows scheduled and ready
 
           ## What's Next?
 

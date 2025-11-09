@@ -13,7 +13,7 @@ on:
 permissions:
   contents: write
   issues: read
-  pull-requests: read
+  pull-requests: write
 
 jobs:
   update-timeline:
@@ -104,7 +104,9 @@ jobs:
           
           echo "Timeline data updated successfully with automation metrics"
 
-      - name: Commit and push changes
+      - name: Create PR for timeline updates
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -114,9 +116,43 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
+            # Create a branch for this timeline update
+            branch_name="timeline/update-$(date +%Y%m%d-%H%M%S)"
+            git checkout -b "${branch_name}"
+            
             git commit -m "📊 Update timeline data - $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
-            git push
-            echo "Changes committed and pushed"
+            git push origin "${branch_name}"
+            
+            # Create PR
+            gh pr create \
+              --title "📊 Timeline Update - $(date -u +%Y-%m-%d %H:%M:%S UTC")" \
+              --body "## Automated Timeline Data Update
+            
+            **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            
+            ### Summary
+            This PR updates the timeline data with the latest repository activity metrics.
+            
+            ### Changes
+            - Updated issues and pull request data
+            - Refreshed workflow run statistics
+            - Updated automation metrics and completion rates
+            - Regenerated activity summary
+            
+            ### Data Updated
+            - \`docs/data/issues.json\` - Recent issues
+            - \`docs/data/pulls.json\` - Recent pull requests
+            - \`docs/data/workflows.json\` - Workflow runs
+            - \`docs/data/stats.json\` - Repository statistics
+            - \`docs/data/automation-log.json\` - Automation activity
+            
+            ---
+            *This PR was automatically created by the Timeline Updater workflow and will be auto-merged.*" \
+              --label "automated,copilot" \
+              --base main \
+              --head "${branch_name}"
+            
+            echo "✅ PR created successfully for timeline update"
           fi
 
       - name: Log update

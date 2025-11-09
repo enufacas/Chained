@@ -9,6 +9,7 @@ on:
 permissions:
   contents: write
   issues: write
+  pull-requests: write
 
 jobs:
   learn-from-hn:
@@ -213,7 +214,9 @@ jobs:
           print(f"Updated learning index: {index['total_learnings']} total learnings")
           PYTHON_SCRIPT
 
-      - name: Commit learnings
+      - name: Create PR for learnings
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -223,9 +226,41 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new learnings to commit"
           else
+            # Create a branch for this learning update
+            branch_name="learning/hackernews-$(date +%Y%m%d-%H%M%S)"
+            git checkout -b "${branch_name}"
+            
             git commit -m "🔥 Learn from Hacker News - $(date -u +%Y-%m-%d)"
-            git push
-            echo "Learnings committed successfully"
+            git push origin "${branch_name}"
+            
+            # Create PR
+            gh pr create \
+              --title "🔥 Learning Update: Hacker News - $(date -u +%Y-%m-%d)" \
+              --body "## Automated Learning Update from Hacker News
+            
+            **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            **Stories Analyzed:** ${{ steps.fetch.outputs.learning_count }}
+            **Topics Identified:** ${{ steps.fetch.outputs.topic_count }}
+            **New Ideas Generated:** ${{ steps.fetch.outputs.idea_count }}
+            
+            ### Summary
+            This PR adds new learnings collected from Hacker News trending discussions.
+            
+            **Sample Learning:**
+            ${{ steps.fetch.outputs.sample_learning }}
+            
+            ### Changes
+            - Updated learnings database with community insights
+            - Extracted trending topics and patterns
+            - Identified potential project ideas
+            
+            ---
+            *This PR was automatically created by the Hacker News Learning workflow and will be auto-merged.*" \
+              --label "automated,learning,copilot" \
+              --base main \
+              --head "${branch_name}"
+            
+            echo "✅ PR created successfully for Hacker News learnings"
           fi
 
       - name: Log learning activity
