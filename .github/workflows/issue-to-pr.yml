@@ -43,6 +43,28 @@ jobs:
           echo "issue_numbers=${issue_numbers}" >> $GITHUB_OUTPUT
           echo "Found issues to work on: ${issue_numbers}"
 
+      - name: Ensure required labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Ensuring required labels exist..."
+          
+          # Check and create 'copilot' label if it doesn't exist
+          if ! gh label list | grep -q "^copilot"; then
+            echo "Creating 'copilot' label..."
+            gh label create "copilot" --color "0366d6" --description "Created by Copilot" || echo "Label may already exist"
+          else
+            echo "✓ Label 'copilot' exists"
+          fi
+          
+          # Check and create 'automated' label if it doesn't exist
+          if ! gh label list | grep -q "^automated"; then
+            echo "Creating 'automated' label..."
+            gh label create "automated" --color "fbca04" --description "Automated process" || echo "Label may already exist"
+          else
+            echo "✓ Label 'automated' exists"
+          fi
+
       - name: Process issues
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
