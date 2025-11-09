@@ -110,6 +110,13 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
     - Triggers kickoff workflow if needed
     - Ensures one-time initialization
 
+13. **Code Golf Optimizer** (`code-golf-optimizer.yml`)
+    - Runs weekly on Mondays at 10 AM UTC
+    - Optimizes code for minimal character count
+    - Supports Python, JavaScript, and Bash
+    - Generates optimization reports with metrics
+    - Can be triggered manually for specific files
+
 ### GitHub Pages
 
 The project includes a beautiful, responsive GitHub Pages site at [`docs/`](./docs/) that displays:
@@ -319,11 +326,62 @@ Evening    → TLDR scraper runs     → Evening news update
 - **GitHub API**: Fetching repository data
 - **GitHub Pages**: Hosting the timeline website
 - **GitHub Copilot**: AI-powered development
-- **Python**: Learning scripts and data processing
+- **Python**: Learning scripts, data processing, and code optimization
 - **HTML/CSS/JavaScript**: Frontend for the timeline
 - **Bash scripting**: Workflow logic
 - **TLDR Tech API**: Tech news aggregation
 - **Hacker News API**: Community trend analysis
+
+## 🏌️ Code Golf Optimizer
+
+Chained includes an AI-powered code golf optimizer that minimizes code while preserving functionality. Perfect for code golf challenges and learning how to write concise code!
+
+### Features
+
+- 🎯 **Multi-Language Support**: Python, JavaScript, and Bash
+- 🤖 **Smart Optimizations**: Comment removal, whitespace reduction, variable shortening
+- 📊 **Detailed Metrics**: Character counts and reduction percentages
+- 🔄 **Automated Reports**: Weekly optimization reports via GitHub Actions
+
+### Quick Start
+
+```bash
+# Optimize a Python file
+python3 tools/code-golf-optimizer.py -f script.py -l python
+
+# Optimize JavaScript from stdin
+echo "function test() { return true; }" | python3 tools/code-golf-optimizer.py -l javascript
+
+# View all examples
+ls tools/examples/
+```
+
+### Example Optimization
+
+Before (283 chars):
+```python
+def calculate_sum(number_list):
+    """Calculate the sum of numbers"""
+    # Initialize total
+    total = 0
+    
+    # Loop through each number
+    for number in number_list:
+        total = total + number
+    
+    return total
+```
+
+After (146 chars, 48.41% reduction):
+```python
+def calculate_sum(number_list):
+ a = 0
+ for number in number_list:
+ a = a + number
+ return a
+```
+
+For complete documentation, see [`tools/README.md`](./tools/README.md)
 
 ## 📊 Monitoring Progress
 
