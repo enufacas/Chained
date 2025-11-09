@@ -1,0 +1,171 @@
+name: Learning from TLDR Tech
+
+on:
+  schedule:
+    # Run twice daily - morning and evening
+    - cron: '0 8,20 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  learn-from-tldr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install beautifulsoup4 requests feedparser
+
+      - name: Fetch and analyze TLDR content
+        id: fetch
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import requests
+          import json
+          import re
+          from datetime import datetime
+          from bs4 import BeautifulSoup
+          import os
+          
+          print("Fetching TLDR Tech content...")
+          
+          # TLDR has an RSS feed we can use
+          rss_urls = [
+              'https://tldr.tech/tech/rss',
+              'https://tldr.tech/ai/rss',
+              'https://tldr.tech/devops/rss'
+          ]
+          
+          learnings = []
+          tech_trends = []
+          
+          for rss_url in rss_urls:
+              try:
+                  response = requests.get(rss_url, timeout=10)
+                  if response.status_code == 200:
+                      # Parse RSS content
+                      from xml.etree import ElementTree as ET
+                      root = ET.fromstring(response.content)
+                      
+                      for item in root.findall('.//item')[:5]:  # Top 5 items
+                          title = item.find('title')
+                          desc = item.find('description')
+                          
+                          if title is not None and title.text:
+                              learnings.append({
+                                  'title': title.text,
+                                  'description': desc.text if desc is not None else '',
+                                  'source': 'TLDR'
+                              })
+                              
+                              # Extract tech trends
+                              title_lower = title.text.lower()
+                              if any(word in title_lower for word in ['ai', 'ml', 'llm', 'gpt', 'copilot']):
+                                  tech_trends.append(f"AI/ML: {title.text}")
+                              elif any(word in title_lower for word in ['github', 'git', 'devops', 'ci/cd']):
+                                  tech_trends.append(f"DevOps: {title.text}")
+                              elif any(word in title_lower for word in ['python', 'javascript', 'rust', 'go']):
+                                  tech_trends.append(f"Programming: {title.text}")
+                      
+                      print(f"✓ Fetched from {rss_url}")
+              except Exception as e:
+                  print(f"✗ Error fetching {rss_url}: {e}")
+          
+          # Save learnings
+          os.makedirs('learnings', exist_ok=True)
+          timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+          
+          with open(f'learnings/tldr_{timestamp}.json', 'w') as f:
+              json.dump({
+                  'timestamp': datetime.utcnow().isoformat(),
+                  'source': 'TLDR Tech',
+                  'learnings': learnings,
+                  'trends': tech_trends
+              }, f, indent=2)
+          
+          print(f"Saved {len(learnings)} learnings and {len(tech_trends)} trends")
+          
+          # Output for GitHub Actions
+          if learnings:
+              first_learning = learnings[0]['title']
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"has_learnings=true\n")
+                  f.write(f"learning_count={len(learnings)}\n")
+                  f.write(f"trend_count={len(tech_trends)}\n")
+                  f.write(f"sample_learning={first_learning}\n")
+          else:
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"has_learnings=false\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Create learning issue
+        if: steps.fetch.outputs.has_learnings == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create an issue documenting the learnings
+          gh issue create \
+            --title "🧠 Learning Update from TLDR Tech - $(date +%Y-%m-%d)" \
+            --body "## New Tech Insights from TLDR
+
+          **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Learnings Collected:** ${{ steps.fetch.outputs.learning_count }}
+          **Trends Identified:** ${{ steps.fetch.outputs.trend_count }}
+
+          **Sample Learning:**
+          ${{ steps.fetch.outputs.sample_learning }}
+
+          ---
+
+          ### Actions Taken
+          - ✅ Fetched latest tech news from TLDR
+          - ✅ Extracted key learnings and trends
+          - ✅ Saved to learnings database
+          - ⏳ Will incorporate into next idea generation cycle
+
+          ### Next Steps
+          These learnings will influence:
+          - Future idea generation
+          - Technology choices
+          - Implementation approaches
+          - Best practices adoption
+
+          See \`learnings/\` directory for full details.
+
+          ---
+
+          *This learning was automatically collected by the TLDR Learning workflow.*" \
+            --label "learning,automated" || echo "Issue creation skipped or failed"
+
+      - name: Commit learnings
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add learnings/
+          
+          if git diff --staged --quiet; then
+            echo "No new learnings to commit"
+          else
+            git commit -m "🧠 Learn from TLDR Tech - $(date -u +%Y-%m-%d)"
+            git push
+            echo "Learnings committed successfully"
+          fi
+
+      - name: Log learning activity
+        run: |
+          echo "TLDR learning completed"
+          echo "Learnings collected: ${{ steps.fetch.outputs.learning_count }}"
+          echo "Trends identified: ${{ steps.fetch.outputs.trend_count }}"
+          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"

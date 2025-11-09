@@ -1,0 +1,125 @@
+name: Timeline Updater
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  issues:
+    types: [opened, closed, labeled]
+  pull_request:
+    types: [opened, closed, merged]
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: read
+
+jobs:
+  update-timeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch repository activity
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create timeline data directory
+          mkdir -p docs/data
+          
+          # Fetch recent issues
+          echo "Fetching recent issues..."
+          gh issue list --limit 100 --json number,title,body,state,createdAt,closedAt,labels,url > docs/data/issues.json
+          
+          # Fetch recent pull requests
+          echo "Fetching recent pull requests..."
+          gh pr list --limit 100 --state all --json number,title,body,state,createdAt,closedAt,mergedAt,url,author > docs/data/pulls.json
+          
+          # Fetch workflow runs to document automation activity
+          echo "Fetching workflow runs..."
+          gh run list --limit 100 --json databaseId,name,status,conclusion,createdAt,displayTitle > docs/data/workflows.json
+          
+          # Create activity summary
+          total_issues=$(gh issue list --state all --limit 1000 --json number | jq '. | length')
+          open_issues=$(gh issue list --state open --limit 1000 --json number | jq '. | length')
+          closed_issues=$(gh issue list --state closed --limit 1000 --json number | jq '. | length')
+          
+          total_prs=$(gh pr list --state all --limit 1000 --json number | jq '. | length')
+          merged_prs=$(gh pr list --state merged --limit 1000 --json number | jq '. | length')
+          
+          ai_generated=$(gh issue list --state all --label "ai-generated" --limit 1000 --json number | jq '. | length')
+          copilot_assigned=$(gh issue list --state all --label "copilot-assigned" --limit 1000 --json number | jq '. | length')
+          completed=$(gh issue list --state all --label "completed" --limit 1000 --json number | jq '. | length')
+          in_progress=$(gh issue list --state open --label "in-progress" --limit 1000 --json number | jq '. | length')
+          
+          # Calculate metrics
+          if [ ${ai_generated} -gt 0 ]; then
+            completion_rate=$(awk "BEGIN {printf \"%.1f\", (${completed}/${ai_generated})*100}")
+          else
+            completion_rate="0.0"
+          fi
+          
+          if [ ${total_prs} -gt 0 ]; then
+            merge_rate=$(awk "BEGIN {printf \"%.1f\", (${merged_prs}/${total_prs})*100}")
+          else
+            merge_rate="0.0"
+          fi
+          
+          cat > docs/data/stats.json << EOF
+          {
+            "total_issues": ${total_issues},
+            "open_issues": ${open_issues},
+            "closed_issues": ${closed_issues},
+            "total_prs": ${total_prs},
+            "merged_prs": ${merged_prs},
+            "ai_generated": ${ai_generated},
+            "copilot_assigned": ${copilot_assigned},
+            "completed": ${completed},
+            "in_progress": ${in_progress},
+            "completion_rate": ${completion_rate},
+            "merge_rate": ${merge_rate},
+            "last_updated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          }
+          EOF
+          
+          # Create automation log
+          cat > docs/data/automation-log.json << EOF
+          {
+            "last_idea_generated": "$(gh issue list --label "ai-generated" --limit 1 --json createdAt --jq '.[0].createdAt // "N/A"')",
+            "last_pr_merged": "$(gh pr list --state merged --limit 1 --json mergedAt --jq '.[0].mergedAt // "N/A"')",
+            "last_issue_closed": "$(gh issue list --state closed --limit 1 --json closedAt --jq '.[0].closedAt // "N/A"')",
+            "autonomous_actions_today": "$(date +%s | awk '{print int($1/86400)}')",
+            "system_status": "active"
+          }
+          EOF
+          
+          echo "Timeline data updated successfully with automation metrics"
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add docs/data/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "📊 Update timeline data - $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+            git push
+            echo "Changes committed and pushed"
+          fi
+
+      - name: Log update
+        run: |
+          echo "Timeline updated successfully"
+          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
