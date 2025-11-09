@@ -133,6 +133,14 @@ echo ""
 # Auto-kickoff depends on system-kickoff
 if [ -f ".github/workflows/auto-kickoff.yml" ] && [ -f ".github/workflows/system-kickoff.yml" ]; then
     print_status "OK" "Auto-kickoff can trigger system-kickoff"
+    
+    # Check if auto-kickoff has actions: write permission (needed to trigger workflows)
+    if grep -q "permissions:" ".github/workflows/auto-kickoff.yml" && \
+       grep -A 5 "permissions:" ".github/workflows/auto-kickoff.yml" | grep -q "actions: write"; then
+        print_status "OK" "Auto-kickoff has actions: write permission"
+    else
+        print_status "ERROR" "Auto-kickoff missing actions: write permission (needed to trigger workflows)"
+    fi
 else
     print_status "ERROR" "Auto-kickoff missing system-kickoff dependency"
 fi
