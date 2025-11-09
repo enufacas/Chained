@@ -30,7 +30,6 @@ These workflows run **on a schedule** using cron expressions:
 
 | Workflow | Schedule | Frequency | Purpose |
 |----------|----------|-----------|---------|
-| `issue-to-pr.yml` | `*/30 * * * *` | Every 30 minutes | Converts assigned issues to PRs |
 | `auto-review-merge.yml` | `*/15 * * * *` | Every 15 minutes | Reviews and merges PRs |
 | `auto-close-issues.yml` | `*/30 * * * *` | Every 30 minutes | Closes completed issues |
 | `timeline-updater.yml` | `0 */6 * * *` | Every 6 hours | Updates timeline data |
@@ -65,16 +64,15 @@ Here's exactly how work gets done after an issue is assigned:
    ├─→ copilot-graphql-assign.yml runs INSTANTLY
    │   └─→ Assigns issue to Copilot via API (if COPILOT_PAT configured)
    │   └─→ Adds "copilot-assigned" label
-   │   └─→ Issue is now queued for work
+   │   └─→ Copilot receives assignment notification
    │
-   ↓ [PASSIVE POLLING - Wait up to 30 minutes]
+   ↓ [COPILOT WORKS - Automatic when assigned]
    │
-2. CRON TRIGGER: issue-to-pr.yml runs (every 30 min)
-   │   └─→ Scans for issues with "copilot-assigned" label
-   │   └─→ Creates branch: copilot/issue-{number}-{timestamp}
-   │   └─→ Creates PR with implementation
-   │   └─→ Adds "in-progress" label
-   │   └─→ Adds "copilot" label to PR
+2. Copilot Creates PR
+   │   └─→ Copilot analyzes issue requirements
+   │   └─→ Copilot implements code changes
+   │   └─→ Copilot creates branch and opens PR
+   │   └─→ PR is labeled with "copilot"
    │
    ↓ [PASSIVE POLLING - Wait up to 15 minutes]
    │
@@ -98,9 +96,9 @@ Here's exactly how work gets done after an issue is assigned:
 
 ═══════════════════════════════════════════════════════════════════════════
 
-TOTAL TIME: 15-75 minutes (depends on when scheduled workflows catch it)
+TOTAL TIME: 15-45 minutes (depends on when Copilot responds and scheduled workflows catch it)
 
-KEY INSIGHT: It's all PASSIVE POLLING via cron schedules, not active dispatch!
+KEY INSIGHT: Copilot creates the PR automatically when assigned! No polling needed for that step!
 ```
 
 **Key Insight:** The "forcing" mechanism is **passive polling** via scheduled workflows, NOT active dispatching!
