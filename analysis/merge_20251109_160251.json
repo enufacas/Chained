@@ -1,0 +1,4903 @@
+{
+  "timestamp": "2025-11-09T16:02:51.935422",
+  "directory": "tools",
+  "files_analyzed": [
+    {
+      "file": "tools/code-analyzer.py",
+      "language": "python",
+      "metrics": {
+        "total_lines": 426,
+        "function_count": 10
+      },
+      "patterns_found": {
+        "good": [
+          {
+            "type": "modular_functions",
+            "location": "main at line 371",
+            "details": "50 lines"
+          },
+          {
+            "type": "modular_functions",
+            "location": "__init__ at line 23",
+            "details": "2 lines"
+          },
+          {
+            "type": "type_hints",
+            "location": "__init__ at line 23",
+            "details": "Has type hints"
+          },
+          {
+            "type": "modular_functions",
+            "location": "_load_patterns at line 27",
+            "details": "5 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "_load_patterns at line 27",
+            "details": "25 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "_load_patterns at line 27",
+            "details": "Has type hints"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "_initialize_patterns at line 34",
+            "details": "41 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "_initialize_patterns at line 34",
+            "details": "Has type hints"
+          },
+          {
+            "type": "modular_functions",
+            "location": "_save_patterns at line 97",
+            "details": "5 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "_save_patterns at line 97",
+            "details": "33 chars"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "analyze_python_file at line 104",
+            "details": "34 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "analyze_python_file at line 104",
+            "details": "Has type hints"
+          },
+          {
+            "type": "error_handling",
+            "location": "analyze_python_file at line 104",
+            "details": "Uses try/except"
+          },
+          {
+            "type": "modular_functions",
+            "location": "_get_max_nesting_depth at line 205",
+            "details": "12 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "_get_max_nesting_depth at line 205",
+            "details": "38 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "_get_max_nesting_depth at line 205",
+            "details": "Has type hints"
+          },
+          {
+            "type": "modular_functions",
+            "location": "analyze_directory at line 219",
+            "details": "37 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "analyze_directory at line 219",
+            "details": "32 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "analyze_directory at line 219",
+            "details": "Has type hints"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "learn_from_merge at line 258",
+            "details": "46 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "learn_from_merge at line 258",
+            "details": "Has type hints"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "generate_report at line 314",
+            "details": "32 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "generate_report at line 314",
+            "details": "Has type hints"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 27",
+            "details": "Variable: Dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 34",
+            "details": "Variable: Dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 104",
+            "details": "Variable: Dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 219",
+            "details": "Variable: Dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 375",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 383",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 385",
+            "details": "Variable: analyzer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 24",
+            "details": "Variable: patterns_file"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 109",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 203",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 207",
+            "details": "Variable: max_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 207",
+            "details": "Variable: current_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 209",
+            "details": "Variable: child"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 217",
+            "details": "Variable: max_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 221",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 256",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 263",
+            "details": "Variable: merge_record"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 277",
+            "details": "Variable: file_analysis"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 316",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 385",
+            "details": "Variable: CodeAnalyzer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 387",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 397",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 400",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 417",
+            "details": "Variable: analysis_file"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 425",
+            "details": "Variable: main"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 24",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 25",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 107",
+            "details": "Variable: content"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 110",
+            "details": "Variable: filepath"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 120",
+            "details": "Variable: tree"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 124",
+            "details": "Variable: functions"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 127",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 127",
+            "details": "Variable: functions"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 180",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 190",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 200",
+            "details": "Variable: SyntaxError"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 209",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 223",
+            "details": "Variable: directory"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 233",
+            "details": "Variable: root"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 233",
+            "details": "Variable: dirs"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 233",
+            "details": "Variable: files"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 233",
+            "details": "Variable: directory"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 237",
+            "details": "Variable: file"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 237",
+            "details": "Variable: files"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 258",
+            "details": "Variable: Dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 258",
+            "details": "Variable: bool"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 265",
+            "details": "Variable: merge_successful"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 270",
+            "details": "Variable: merge_record"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 277",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 278",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 295",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 314",
+            "details": "Variable: Dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 337",
+            "details": "Variable: good_sorted"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 343",
+            "details": "Variable: good_sorted"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 349",
+            "details": "Variable: bad_sorted"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 355",
+            "details": "Variable: bad_sorted"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 368",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 375",
+            "details": "Variable: argparse"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 376",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 377",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 378",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 379",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 380",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 381",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 383",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 390",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 400",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 402",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 410",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 411",
+            "details": "Variable: merge_successful"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 421",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 25",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 29",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 32",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 99",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 101",
+            "details": "Variable: open"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 106",
+            "details": "Variable: open"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 106",
+            "details": "Variable: filepath"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 120",
+            "details": "Variable: content"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 124",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 125",
+            "details": "Variable: functions"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 128",
+            "details": "Variable: func_lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 145",
+            "details": "Variable: docstring"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 162",
+            "details": "Variable: has_try"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 163",
+            "details": "Variable: has_try"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 171",
+            "details": "Variable: max_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 180",
+            "details": "Variable: tree"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 190",
+            "details": "Variable: tree"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 210",
+            "details": "Variable: isinstance"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 210",
+            "details": "Variable: child"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 211",
+            "details": "Variable: child_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 212",
+            "details": "Variable: max_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 214",
+            "details": "Variable: child_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 215",
+            "details": "Variable: max_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 219",
+            "details": "Variable: List"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 235",
+            "details": "Variable: dirs"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 260",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 279",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 296",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 312",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 317",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 318",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 319",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 320",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 321",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 322",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 323",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 325",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 327",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 327",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 327",
+            "details": "Variable: sorted"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 332",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 333",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 343",
+            "details": "Variable: pattern_name"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 343",
+            "details": "Variable: pattern_data"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 344",
+            "details": "Variable: corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 345",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 355",
+            "details": "Variable: pattern_name"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 355",
+            "details": "Variable: pattern_data"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 356",
+            "details": "Variable: corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 357",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 360",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 391",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 393",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 397",
+            "details": "Variable: analyzer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 397",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 400",
+            "details": "Variable: analyzer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 405",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 407",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 407",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 412",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 412",
+            "details": "Variable: merge_successful"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 413",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 414",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 419",
+            "details": "Variable: open"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 419",
+            "details": "Variable: analysis_file"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 420",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 30",
+            "details": "Variable: open"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 100",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 101",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 102",
+            "details": "Variable: json"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 102",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 121",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 124",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 125",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 131",
+            "details": "Variable: func_lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 145",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 146",
+            "details": "Variable: docstring"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 171",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 172",
+            "details": "Variable: max_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 191",
+            "details": "Variable: isinstance"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 191",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 192",
+            "details": "Variable: var_name"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 201",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 211",
+            "details": "Variable: child"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 212",
+            "details": "Variable: max_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 212",
+            "details": "Variable: child_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 214",
+            "details": "Variable: child"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 214",
+            "details": "Variable: current_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 215",
+            "details": "Variable: max_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 215",
+            "details": "Variable: child_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 229",
+            "details": "Variable: defaultdict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 235",
+            "details": "Variable: dirs"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 239",
+            "details": "Variable: filepath"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 266",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 267",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 268",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 274",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 278",
+            "details": "Variable: file_analysis"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 279",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 280",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 284",
+            "details": "Variable: current_corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 285",
+            "details": "Variable: success_value"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 286",
+            "details": "Variable: weight"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 287",
+            "details": "Variable: new_corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 288",
+            "details": "Variable: new_corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 291",
+            "details": "Variable: examples"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 295",
+            "details": "Variable: file_analysis"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 296",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 297",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 301",
+            "details": "Variable: current_corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 302",
+            "details": "Variable: issue_value"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 303",
+            "details": "Variable: weight"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 304",
+            "details": "Variable: new_corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 305",
+            "details": "Variable: new_corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 308",
+            "details": "Variable: examples"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 326",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 335",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 336",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 337",
+            "details": "Variable: sorted"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 344",
+            "details": "Variable: pattern_data"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 345",
+            "details": "Variable: pattern_data"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 348",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 349",
+            "details": "Variable: sorted"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 356",
+            "details": "Variable: pattern_data"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 357",
+            "details": "Variable: pattern_data"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 361",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 362",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 363",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 365",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 365",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 366",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 389",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 390",
+            "details": "Variable: analyzer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 390",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 391",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 403",
+            "details": "Variable: open"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 404",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 411",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 412",
+            "details": "Variable: analyzer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 420",
+            "details": "Variable: json"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 421",
+            "details": "Variable: analysis_file"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 30",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 31",
+            "details": "Variable: json"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 99",
+            "details": "Variable: datetime"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 121",
+            "details": "Variable: content"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 124",
+            "details": "Variable: tree"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 124",
+            "details": "Variable: isinstance"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 124",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 128",
+            "details": "Variable: hasattr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 128",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 154",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 171",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: isinstance"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: isinstance"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 192",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 211",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 211",
+            "details": "Variable: current_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 214",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 239",
+            "details": "Variable: root"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 239",
+            "details": "Variable: file"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 242",
+            "details": "Variable: analysis"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 250",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 253",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 270",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 273",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 274",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 285",
+            "details": "Variable: merge_successful"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 302",
+            "details": "Variable: merge_successful"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 318",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 319",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 329",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 346",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 358",
+            "details": "Variable: report"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 391",
+            "details": "Variable: json"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 403",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 413",
+            "details": "Variable: merge_successful"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 128",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 128",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 146",
+            "details": "Variable: docstring"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 162",
+            "details": "Variable: isinstance"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 162",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 162",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: float"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: isinstance"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: bool"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 182",
+            "details": "Variable: hasattr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 182",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 222",
+            "details": "Variable: datetime"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 238",
+            "details": "Variable: extensions"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 241",
+            "details": "Variable: file"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 242",
+            "details": "Variable: filepath"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 243",
+            "details": "Variable: analysis"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 264",
+            "details": "Variable: datetime"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 280",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 281",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 284",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 287",
+            "details": "Variable: current_corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 287",
+            "details": "Variable: success_value"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 287",
+            "details": "Variable: weight"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 288",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 291",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 292",
+            "details": "Variable: examples"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 297",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 298",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 301",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 304",
+            "details": "Variable: current_corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 304",
+            "details": "Variable: issue_value"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 304",
+            "details": "Variable: weight"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 305",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 308",
+            "details": "Variable: pattern_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 309",
+            "details": "Variable: examples"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 321",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 322",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 323",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 329",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 329",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 333",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 346",
+            "details": "Variable: pattern_name"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 346",
+            "details": "Variable: corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 346",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 358",
+            "details": "Variable: pattern_name"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 358",
+            "details": "Variable: corr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 358",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 393",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 405",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 162",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 182",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 193",
+            "details": "Variable: var_name"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 238",
+            "details": "Variable: file"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 242",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 246",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 247",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 248",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 250",
+            "details": "Variable: analysis"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 253",
+            "details": "Variable: analysis"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 287",
+            "details": "Variable: weight"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 293",
+            "details": "Variable: examples"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 293",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 304",
+            "details": "Variable: weight"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 310",
+            "details": "Variable: examples"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 310",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 327",
+            "details": "Variable: analysis_results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 414",
+            "details": "Variable: analyzer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 417",
+            "details": "Variable: datetime"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 132",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 135",
+            "details": "Variable: func_lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 138",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 141",
+            "details": "Variable: func_lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 147",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 155",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 164",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 173",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 176",
+            "details": "Variable: max_depth"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 193",
+            "details": "Variable: var_name"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 243",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 247",
+            "details": "Variable: analysis"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 248",
+            "details": "Variable: analysis"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 281",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 284",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 288",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 291",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 298",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 301",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 305",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 308",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 338",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 350",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 134",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 134",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 140",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 140",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 149",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 149",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 150",
+            "details": "Variable: docstring"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 154",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 157",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 157",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 166",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 166",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 175",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 175",
+            "details": "Variable: func"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 183",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 194",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 197",
+            "details": "Variable: var_name"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 251",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 254",
+            "details": "Variable: results"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 185",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 186",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 251",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 254",
+            "details": "Variable: pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 196",
+            "details": "Variable: hasattr"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 196",
+            "details": "Variable: node"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 196",
+            "details": "Variable: node"
+          }
+        ],
+        "bad": [
+          {
+            "type": "long_functions",
+            "location": "_initialize_patterns at line 34",
+            "details": "61 lines"
+          },
+          {
+            "type": "long_functions",
+            "location": "analyze_python_file at line 104",
+            "details": "99 lines"
+          },
+          {
+            "type": "deep_nesting",
+            "location": "analyze_directory at line 219",
+            "details": "Depth: 5"
+          },
+          {
+            "type": "long_functions",
+            "location": "learn_from_merge at line 258",
+            "details": "54 lines"
+          },
+          {
+            "type": "long_functions",
+            "location": "generate_report at line 314",
+            "details": "54 lines"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 131",
+            "details": "Number: 50"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 172",
+            "details": "Number: 4"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 286",
+            "details": "Number: 0.1"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 303",
+            "details": "Number: 0.1"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 341",
+            "details": "Number: 3"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 353",
+            "details": "Number: 3"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 146",
+            "details": "Number: 20"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 292",
+            "details": "Number: 5"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 309",
+            "details": "Number: 5"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 193",
+            "details": "Number: 3"
+          }
+        ]
+      }
+    },
+    {
+      "file": "tools/test_optimizer.py",
+      "language": "python",
+      "metrics": {
+        "total_lines": 225,
+        "function_count": 12
+      },
+      "patterns_found": {
+        "good": [
+          {
+            "type": "modular_functions",
+            "location": "test_python_comment_removal at line 22",
+            "details": "11 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "test_python_comment_removal at line 22",
+            "details": "37 chars"
+          },
+          {
+            "type": "modular_functions",
+            "location": "test_python_docstring_removal at line 36",
+            "details": "13 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "test_python_docstring_removal at line 36",
+            "details": "32 chars"
+          },
+          {
+            "type": "modular_functions",
+            "location": "test_python_blank_line_removal at line 52",
+            "details": "11 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "test_python_blank_line_removal at line 52",
+            "details": "33 chars"
+          },
+          {
+            "type": "modular_functions",
+            "location": "test_javascript_comment_removal at line 66",
+            "details": "12 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "test_javascript_comment_removal at line 66",
+            "details": "41 chars"
+          },
+          {
+            "type": "modular_functions",
+            "location": "test_javascript_boolean_optimization at line 81",
+            "details": "9 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "test_javascript_boolean_optimization at line 81",
+            "details": "43 chars"
+          },
+          {
+            "type": "modular_functions",
+            "location": "test_bash_comment_removal at line 93",
+            "details": "15 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "test_bash_comment_removal at line 93",
+            "details": "35 chars"
+          },
+          {
+            "type": "modular_functions",
+            "location": "test_unsupported_language at line 111",
+            "details": "10 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "test_unsupported_language at line 111",
+            "details": "48 chars"
+          },
+          {
+            "type": "error_handling",
+            "location": "test_unsupported_language at line 111",
+            "details": "Uses try/except"
+          },
+          {
+            "type": "modular_functions",
+            "location": "test_reduction_percentage at line 124",
+            "details": "14 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "test_reduction_percentage at line 124",
+            "details": "54 chars"
+          },
+          {
+            "type": "modular_functions",
+            "location": "test_optimization_result_to_dict at line 141",
+            "details": "12 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "test_optimization_result_to_dict at line 141",
+            "details": "53 chars"
+          },
+          {
+            "type": "modular_functions",
+            "location": "test_empty_code at line 156",
+            "details": "8 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "test_empty_code at line 156",
+            "details": "27 chars"
+          },
+          {
+            "type": "modular_functions",
+            "location": "test_variable_shortening at line 167",
+            "details": "15 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "test_variable_shortening at line 167",
+            "details": "43 chars"
+          },
+          {
+            "type": "modular_functions",
+            "location": "run_all_tests at line 185",
+            "details": "35 lines"
+          },
+          {
+            "type": "error_handling",
+            "location": "run_all_tests at line 185",
+            "details": "Uses try/except"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 11",
+            "details": "Variable: spec"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 15",
+            "details": "Variable: code_golf_optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 18",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 19",
+            "details": "Variable: OptimizationResult"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 15",
+            "details": "Variable: spec"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 16",
+            "details": "Variable: code_golf_optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 18",
+            "details": "Variable: code_golf_optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 19",
+            "details": "Variable: code_golf_optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 24",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 25",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 30",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 38",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 39",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 46",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 54",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 55",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 61",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 68",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 69",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 75",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 83",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 84",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 86",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 95",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 96",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 103",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 105",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 106",
+            "details": "Variable: comment_count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 113",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 114",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 126",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 127",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 133",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 136",
+            "details": "Variable: expected_reduction"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 143",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 144",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 146",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 147",
+            "details": "Variable: result_dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 158",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 159",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 161",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 169",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 170",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 177",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 189",
+            "details": "Variable: tests"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 203",
+            "details": "Variable: failed"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 204",
+            "details": "Variable: test"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 204",
+            "details": "Variable: tests"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 24",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 30",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 33",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 38",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 46",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 49",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 54",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 61",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 63",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 68",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 75",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 78",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 83",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 86",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 90",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 95",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 103",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 107",
+            "details": "Variable: comment_count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 108",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 113",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 117",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 119",
+            "details": "Variable: ValueError"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 126",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 133",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 138",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 143",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 146",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 149",
+            "details": "Variable: isinstance"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 149",
+            "details": "Variable: result_dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 149",
+            "details": "Variable: dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 150",
+            "details": "Variable: result_dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 151",
+            "details": "Variable: result_dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 152",
+            "details": "Variable: result_dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 153",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 158",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 161",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 164",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 169",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 177",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 182",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 187",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 190",
+            "details": "Variable: test_python_comment_removal"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 191",
+            "details": "Variable: test_python_docstring_removal"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 192",
+            "details": "Variable: test_python_blank_line_removal"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 193",
+            "details": "Variable: test_javascript_comment_removal"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 194",
+            "details": "Variable: test_javascript_boolean_optimization"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 195",
+            "details": "Variable: test_bash_comment_removal"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 196",
+            "details": "Variable: test_unsupported_language"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 197",
+            "details": "Variable: test_reduction_percentage"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 198",
+            "details": "Variable: test_optimization_result_to_dict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 199",
+            "details": "Variable: test_empty_code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 200",
+            "details": "Variable: test_variable_shortening"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 214",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 215",
+            "details": "Variable: failed"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 11",
+            "details": "Variable: importlib"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 15",
+            "details": "Variable: importlib"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 16",
+            "details": "Variable: spec"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 30",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 31",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 32",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 32",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 46",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 47",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 48",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 48",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 61",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 62",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 75",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 76",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 77",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 86",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 87",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 88",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 103",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 117",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 133",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 134",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 135",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 135",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 146",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 147",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 161",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 162",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 163",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 177",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 179",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 179",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 207",
+            "details": "Variable: AssertionError"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 210",
+            "details": "Variable: Exception"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 216",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 219",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 224",
+            "details": "Variable: run_all_tests"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 89",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 89",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 105",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 106",
+            "details": "Variable: line"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 106",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 117",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 121",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 136",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 137",
+            "details": "Variable: expected_reduction"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 206",
+            "details": "Variable: test"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 209",
+            "details": "Variable: failed"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 212",
+            "details": "Variable: failed"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 136",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 136",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 137",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 208",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 211",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 219",
+            "details": "Variable: failed"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 216",
+            "details": "Variable: tests"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 219",
+            "details": "Variable: tests"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 106",
+            "details": "Variable: line"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 208",
+            "details": "Variable: test"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 211",
+            "details": "Variable: test"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 106",
+            "details": "Variable: line"
+          }
+        ],
+        "bad": [
+          {
+            "type": "magic_numbers",
+            "location": "line 137",
+            "details": "Number: 0.01"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 214",
+            "details": "Number: 60"
+          }
+        ]
+      }
+    },
+    {
+      "file": "tools/code-golf-optimizer.py",
+      "language": "python",
+      "metrics": {
+        "total_lines": 336,
+        "function_count": 8
+      },
+      "patterns_found": {
+        "good": [
+          {
+            "type": "modular_functions",
+            "location": "format_output at line 226",
+            "details": "38 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "format_output at line 226",
+            "details": "27 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "format_output at line 226",
+            "details": "Has type hints"
+          },
+          {
+            "type": "error_handling",
+            "location": "main at line 267",
+            "details": "Uses try/except"
+          },
+          {
+            "type": "modular_functions",
+            "location": "to_dict at line 28",
+            "details": "1 lines"
+          },
+          {
+            "type": "modular_functions",
+            "location": "__init__ at line 35",
+            "details": "7 lines"
+          },
+          {
+            "type": "modular_functions",
+            "location": "optimize at line 44",
+            "details": "21 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "optimize at line 44",
+            "details": "40 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "optimize at line 44",
+            "details": "Has type hints"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "_optimize_python at line 67",
+            "details": "48 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "_optimize_python at line 67",
+            "details": "Has type hints"
+          },
+          {
+            "type": "modular_functions",
+            "location": "_optimize_javascript at line 155",
+            "details": "39 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "_optimize_javascript at line 155",
+            "details": "52 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "_optimize_javascript at line 155",
+            "details": "Has type hints"
+          },
+          {
+            "type": "modular_functions",
+            "location": "_optimize_bash at line 196",
+            "details": "27 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "_optimize_bash at line 196",
+            "details": "55 chars"
+          },
+          {
+            "type": "type_hints",
+            "location": "_optimize_bash at line 196",
+            "details": "Has type hints"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 17",
+            "details": "Variable: dataclass"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 20",
+            "details": "Variable: original_code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 21",
+            "details": "Variable: optimized_code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 22",
+            "details": "Variable: original_chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 23",
+            "details": "Variable: optimized_chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 24",
+            "details": "Variable: reduction_percentage"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 24",
+            "details": "Variable: float"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 25",
+            "details": "Variable: optimizations_applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 26",
+            "details": "Variable: language"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 44",
+            "details": "Variable: OptimizationResult"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 232",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 269",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 296",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 316",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 324",
+            "details": "Variable: output"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 25",
+            "details": "Variable: List"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 46",
+            "details": "Variable: language"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 51",
+            "details": "Variable: original_chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 53",
+            "details": "Variable: optimized_chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 55",
+            "details": "Variable: reduction"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 69",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 70",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 70",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 80",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 81",
+            "details": "Variable: cleaned_lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 82",
+            "details": "Variable: line"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 82",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 96",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 97",
+            "details": "Variable: cleaned_lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 98",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 148",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 151",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 67",
+            "details": "Variable: Tuple"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 157",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 158",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 158",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 193",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 155",
+            "details": "Variable: Tuple"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 198",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 199",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 199",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 217",
+            "details": "Variable: replacements"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 222",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 196",
+            "details": "Variable: Tuple"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 226",
+            "details": "Variable: OptimizationResult"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 228",
+            "details": "Variable: format_type"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 244",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 264",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 299",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 309",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 316",
+            "details": "Variable: CodeGolfOptimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 318",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 319",
+            "details": "Variable: ValueError"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 324",
+            "details": "Variable: format_output"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 324",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 326",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 335",
+            "details": "Variable: main"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 29",
+            "details": "Variable: asdict"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 29",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 36",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 48",
+            "details": "Variable: language"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 51",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 52",
+            "details": "Variable: optimized_code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 52",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 52",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 53",
+            "details": "Variable: optimized_code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 57",
+            "details": "Variable: OptimizationResult"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 74",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 75",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 76",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 83",
+            "details": "Variable: stripped"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 87",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 91",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 92",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 98",
+            "details": "Variable: cleaned_lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 101",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 102",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 108",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 109",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 113",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 120",
+            "details": "Variable: var_pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 121",
+            "details": "Variable: variables"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 122",
+            "details": "Variable: var_counts"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 123",
+            "details": "Variable: variables"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 128",
+            "details": "Variable: vars_to_shorten"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 134",
+            "details": "Variable: short_names"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 137",
+            "details": "Variable: replacements"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 142",
+            "details": "Variable: replacements"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 148",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 153",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 153",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 161",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 162",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 166",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 167",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 171",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 172",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 176",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 177",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 182",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 183",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 187",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 194",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 194",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 202",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 203",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 207",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 208",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 212",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 213",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 223",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 223",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 247",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 250",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 269",
+            "details": "Variable: argparse"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 288",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 289",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 292",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 294",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 296",
+            "details": "Variable: parser"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 303",
+            "details": "Variable: FileNotFoundError"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 312",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 318",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 324",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 329",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 331",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 331",
+            "details": "Variable: output"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 37",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 38",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 39",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 40",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 41",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 46",
+            "details": "Variable: language"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 48",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 49",
+            "details": "Variable: ValueError"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 52",
+            "details": "Variable: language"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 55",
+            "details": "Variable: original_chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 58",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 59",
+            "details": "Variable: optimized_code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 60",
+            "details": "Variable: original_chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 61",
+            "details": "Variable: optimized_chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 63",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 64",
+            "details": "Variable: language"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 73",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 73",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 73",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 74",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 75",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 76",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 80",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 86",
+            "details": "Variable: cleaned_lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 86",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 87",
+            "details": "Variable: cleaned_lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 92",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 96",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 97",
+            "details": "Variable: line"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 97",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 102",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 106",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 106",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 108",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 109",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 118",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 121",
+            "details": "Variable: var_pattern"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 121",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 138",
+            "details": "Variable: enumerate"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 138",
+            "details": "Variable: vars_to_shorten"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 151",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 67",
+            "details": "Variable: List"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 162",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 167",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 172",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 177",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 181",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 182",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 183",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 193",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 155",
+            "details": "Variable: List"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 203",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 208",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 213",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 222",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 196",
+            "details": "Variable: List"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 229",
+            "details": "Variable: json"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 245",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 248",
+            "details": "Variable: lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 255",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 260",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 271",
+            "details": "Variable: argparse"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 302",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 308",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 311",
+            "details": "Variable: code"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 318",
+            "details": "Variable: optimizer"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 318",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 320",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 327",
+            "details": "Variable: open"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 328",
+            "details": "Variable: output"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 52",
+            "details": "Variable: self"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 55",
+            "details": "Variable: original_chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 62",
+            "details": "Variable: round"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 62",
+            "details": "Variable: reduction"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 77",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 83",
+            "details": "Variable: line"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 85",
+            "details": "Variable: line"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 88",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 93",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 97",
+            "details": "Variable: line"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 103",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 110",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 114",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 128",
+            "details": "Variable: sorted"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 135",
+            "details": "Variable: short_names"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 143",
+            "details": "Variable: old_var"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 143",
+            "details": "Variable: new_var"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 144",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 163",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 168",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 173",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 178",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 184",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 188",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 204",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 209",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 214",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 229",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 237",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 238",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 239",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 301",
+            "details": "Variable: open"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 304",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 327",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 49",
+            "details": "Variable: language"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 55",
+            "details": "Variable: original_chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 55",
+            "details": "Variable: optimized_chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 85",
+            "details": "Variable: cleaned_lines"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 125",
+            "details": "Variable: var_counts"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 134",
+            "details": "Variable: range"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 139",
+            "details": "Variable: short_names"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 140",
+            "details": "Variable: replacements"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 140",
+            "details": "Variable: short_names"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 143",
+            "details": "Variable: replacements"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 144",
+            "details": "Variable: new_var"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 144",
+            "details": "Variable: optimized"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 145",
+            "details": "Variable: applied"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 239",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 239",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 301",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 329",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 49",
+            "details": "Variable: list"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 84",
+            "details": "Variable: stripped"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 84",
+            "details": "Variable: stripped"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 129",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 135",
+            "details": "Variable: range"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 236",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 125",
+            "details": "Variable: var_counts"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 129",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 144",
+            "details": "Variable: old_var"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 145",
+            "details": "Variable: replacements"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 304",
+            "details": "Variable: args"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 129",
+            "details": "Variable: var_counts"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 129",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 49",
+            "details": "Variable: self"
+          }
+        ],
+        "bad": [
+          {
+            "type": "long_functions",
+            "location": "main at line 267",
+            "details": "64 lines"
+          },
+          {
+            "type": "long_functions",
+            "location": "_optimize_python at line 67",
+            "details": "86 lines"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 233",
+            "details": "Number: 70"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 235",
+            "details": "Number: 70"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 252",
+            "details": "Number: 70"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 254",
+            "details": "Number: 70"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 257",
+            "details": "Number: 70"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 259",
+            "details": "Number: 70"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 261",
+            "details": "Number: 70"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 134",
+            "details": "Number: 97"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 134",
+            "details": "Number: 26"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 135",
+            "details": "Number: 65"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 135",
+            "details": "Number: 26"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 129",
+            "details": "Number: 3"
+          }
+        ]
+      }
+    },
+    {
+      "file": "tools/examples/prime.py",
+      "language": "python",
+      "metrics": {
+        "total_lines": 47,
+        "function_count": 1
+      },
+      "patterns_found": {
+        "good": [
+          {
+            "type": "modular_functions",
+            "location": "is_prime at line 7",
+            "details": "30 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "is_prime at line 7",
+            "details": "111 chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 31",
+            "details": "Variable: square_root"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 33",
+            "details": "Variable: divisor"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 42",
+            "details": "Variable: test_numbers"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 44",
+            "details": "Variable: test_number"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 44",
+            "details": "Variable: test_numbers"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 18",
+            "details": "Variable: number"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 22",
+            "details": "Variable: number"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 33",
+            "details": "Variable: range"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 45",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 26",
+            "details": "Variable: number"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 31",
+            "details": "Variable: number"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 33",
+            "details": "Variable: square_root"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 45",
+            "details": "Variable: is_prime"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 45",
+            "details": "Variable: test_number"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 46",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 31",
+            "details": "Variable: math"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 34",
+            "details": "Variable: number"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 34",
+            "details": "Variable: divisor"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 46",
+            "details": "Variable: test_number"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 46",
+            "details": "Variable: result"
+          }
+        ],
+        "bad": [
+          {
+            "type": "magic_numbers",
+            "location": "line 33",
+            "details": "Number: 3"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 42",
+            "details": "Number: 3"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 42",
+            "details": "Number: 4"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 42",
+            "details": "Number: 17"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 42",
+            "details": "Number: 20"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 42",
+            "details": "Number: 29"
+          },
+          {
+            "type": "magic_numbers",
+            "location": "line 42",
+            "details": "Number: 97"
+          }
+        ]
+      }
+    },
+    {
+      "file": "tools/examples/fibonacci.py",
+      "language": "python",
+      "metrics": {
+        "total_lines": 41,
+        "function_count": 1
+      },
+      "patterns_found": {
+        "good": [
+          {
+            "type": "modular_functions",
+            "location": "generate_fibonacci at line 7",
+            "details": "25 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "generate_fibonacci at line 7",
+            "details": "129 chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 24",
+            "details": "Variable: fibonacci_sequence"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 32",
+            "details": "Variable: fibonacci_sequence"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 37",
+            "details": "Variable: number_of_terms"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 38",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 18",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 27",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 29",
+            "details": "Variable: next_number"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 38",
+            "details": "Variable: generate_fibonacci"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 38",
+            "details": "Variable: number_of_terms"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 39",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 40",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 40",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 20",
+            "details": "Variable: count"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 27",
+            "details": "Variable: fibonacci_sequence"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 30",
+            "details": "Variable: next_number"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 29",
+            "details": "Variable: fibonacci_sequence"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 29",
+            "details": "Variable: fibonacci_sequence"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 30",
+            "details": "Variable: fibonacci_sequence"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 39",
+            "details": "Variable: number_of_terms"
+          }
+        ],
+        "bad": []
+      }
+    },
+    {
+      "file": "tools/examples/palindrome.py",
+      "language": "python",
+      "metrics": {
+        "total_lines": 40,
+        "function_count": 1
+      },
+      "patterns_found": {
+        "good": [
+          {
+            "type": "modular_functions",
+            "location": "is_palindrome at line 7",
+            "details": "18 lines"
+          },
+          {
+            "type": "comprehensive_docstrings",
+            "location": "is_palindrome at line 7",
+            "details": "126 chars"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 18",
+            "details": "Variable: cleaned_text"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 22",
+            "details": "Variable: cleaned_text"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 30",
+            "details": "Variable: test_strings"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 37",
+            "details": "Variable: test_string"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 37",
+            "details": "Variable: test_strings"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 25",
+            "details": "Variable: cleaned_text"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 38",
+            "details": "Variable: result"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 22",
+            "details": "Variable: cleaned_text"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 25",
+            "details": "Variable: cleaned_text"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 38",
+            "details": "Variable: is_palindrome"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 38",
+            "details": "Variable: test_string"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 39",
+            "details": "Variable: print"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 22",
+            "details": "Variable: string"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 18",
+            "details": "Variable: text"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 39",
+            "details": "Variable: test_string"
+          },
+          {
+            "type": "descriptive_variable_names",
+            "location": "line 39",
+            "details": "Variable: result"
+          }
+        ],
+        "bad": []
+      }
+    }
+  ],
+  "summary": {
+    "total_files": 6,
+    "total_good_patterns": 922,
+    "total_bad_patterns": 38,
+    "pattern_breakdown": {
+      "good:modular_functions": 27,
+      "good:type_hints": 13,
+      "good:comprehensive_docstrings": 27,
+      "good:error_handling": 4,
+      "good:descriptive_variable_names": 851,
+      "bad:long_functions": 6,
+      "bad:deep_nesting": 1,
+      "bad:magic_numbers": 31
+    }
+  }
+}

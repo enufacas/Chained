@@ -1,0 +1,205 @@
+name: Code Analyzer
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      directory:
+        description: 'Directory to analyze (default: .)'
+        required: false
+        default: '.'
+      mark_as_failure:
+        description: 'Mark this analysis as a failed merge (for learning)'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  analyze-code:
+    runs-on: ubuntu-latest
+    # Only run on merge to main or manual trigger
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Get full history for better analysis
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Run Code Analyzer
+        id: analyze
+        run: |
+          # Determine if this was a successful merge
+          merge_success="true"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.mark_as_failure }}" = "true" ]; then
+            merge_success="false"
+          fi
+          
+          # Directory to analyze
+          target_dir="${{ inputs.directory }}"
+          if [ -z "${target_dir}" ]; then
+            target_dir="."
+          fi
+          
+          echo "Analyzing directory: ${target_dir}"
+          echo "Merge successful: ${merge_success}"
+          
+          # Run analyzer with learning enabled
+          if [ "${merge_success}" = "true" ]; then
+            python3 tools/code-analyzer.py -d "${target_dir}" --learn --success -o analysis/latest_report.md
+          else
+            python3 tools/code-analyzer.py -d "${target_dir}" --learn --failure -o analysis/latest_report.md
+          fi
+          
+          # Save summary for later
+          echo "merge_success=${merge_success}" >> $GITHUB_OUTPUT
+          echo "target_dir=${target_dir}" >> $GITHUB_OUTPUT
+
+      - name: Get analysis statistics
+        id: stats
+        run: |
+          # Extract key metrics from patterns.json
+          if [ -f analysis/patterns.json ]; then
+            total_merges=$(cat analysis/patterns.json | python3 -c "import sys, json; print(json.load(sys.stdin).get('total_merges_analyzed', 0))")
+            echo "total_merges=${total_merges}" >> $GITHUB_OUTPUT
+            
+            # Get top good pattern
+            top_good=$(cat analysis/patterns.json | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+patterns = data.get('good_patterns', {})
+if patterns:
+    top = max(patterns.items(), key=lambda x: x[1].get('correlation_with_success', 0))
+    print(f'{top[0]} ({top[1].get(\"correlation_with_success\", 0):.2%})')
+else:
+    print('None')
+            ")
+            echo "top_good=${top_good}" >> $GITHUB_OUTPUT
+            
+            # Get top bad pattern
+            top_bad=$(cat analysis/patterns.json | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+patterns = data.get('bad_patterns', {})
+if patterns:
+    top = max(patterns.items(), key=lambda x: x[1].get('correlation_with_issues', 0))
+    print(f'{top[0]} ({top[1].get(\"correlation_with_issues\", 0):.2%})')
+else:
+    print('None')
+            ")
+            echo "top_bad=${top_bad}" >> $GITHUB_OUTPUT
+          else
+            echo "total_merges=0" >> $GITHUB_OUTPUT
+            echo "top_good=None" >> $GITHUB_OUTPUT
+            echo "top_bad=None" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit analysis results
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add analysis files
+          git add analysis/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🤖 Update code analysis data after merge
+
+Analysis completed for directory: ${{ steps.analyze.outputs.target_dir }}
+Merge successful: ${{ steps.analyze.outputs.merge_success }}
+Total merges analyzed: ${{ steps.stats.outputs.total_merges }}"
+            
+            git push
+          fi
+
+      - name: Create analysis summary comment
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Post analysis summary as PR comment
+          pr_number="${{ github.event.pull_request.number }}"
+          
+          if [ -f analysis/latest_report.md ]; then
+            comment_body="## 🤖 Code Analysis Report
+
+**Self-Improving Analyzer Results**
+
+$(cat analysis/latest_report.md)
+
+---
+
+**Learning Stats:**
+- Total merges analyzed: ${{ steps.stats.outputs.total_merges }}
+- Most reliable good pattern: ${{ steps.stats.outputs.top_good }}
+- Most problematic bad pattern: ${{ steps.stats.outputs.top_bad }}
+
+*The analyzer learns from each merge and improves its pattern recognition over time.*
+"
+            
+            gh pr comment ${pr_number} --body "${comment_body}" || true
+          fi
+
+      - name: Create analysis issue (if significant findings)
+        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if there are significant bad patterns detected
+          if [ -f analysis/latest_report.md ]; then
+            bad_count=$(grep -c "Bad patterns found:" analysis/latest_report.md | head -1 || echo "0")
+            
+            # Extract the number from the line
+            bad_number=$(grep "Bad patterns found:" analysis/latest_report.md | grep -oP '\d+' | head -1 || echo "0")
+            
+            # If more than 10 bad patterns, create an issue
+            if [ "${bad_number}" -gt 10 ]; then
+              gh issue create \
+                --title "🔍 Code Quality Alert: ${bad_number} bad patterns detected" \
+                --body "The self-improving code analyzer detected significant code quality issues.
+
+$(cat analysis/latest_report.md)
+
+**Recommendations:**
+- Review the detected patterns in the analysis report
+- Refactor code to address the most problematic patterns
+- Consider adding tests for areas with high complexity
+
+**Learning Context:**
+- Total merges analyzed: ${{ steps.stats.outputs.total_merges }}
+- Most problematic pattern: ${{ steps.stats.outputs.top_bad }}
+
+---
+*Generated by the Self-Improving Code Analyzer*" \
+                --label "code-quality,ai-generated" || true
+            fi
+          fi
+
+      - name: Log activity
+        run: |
+          echo "Code analysis completed"
+          echo "Target: ${{ steps.analyze.outputs.target_dir }}"
+          echo "Merge successful: ${{ steps.analyze.outputs.merge_success }}"
+          echo "Total merges analyzed: ${{ steps.stats.outputs.total_merges }}"
+          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
