@@ -80,7 +80,7 @@ jobs:
             
             is_trusted_bot=0
             # Match various bot author formats (gh CLI may return different formats)
-            if echo "${author}" | grep -qE "^(github-actions\[bot\]|app/github-actions|dependabot\[bot\]|copilot)$"; then
+            if echo "${author}" | grep -qE "^(github-actions\[bot\]|dependabot\[bot\]|copilot.*\[bot\])$"; then
               is_trusted_bot=1
             fi
             
@@ -142,33 +142,28 @@ jobs:
                 *Part of the perpetual AI motion machine - no human review required.*"
               fi
               
-              # Wait a moment for checks to complete
-              sleep 10
+              # Wait for checks to complete or start (if any)
+              sleep 30
               
               # Check if mergeable
               pr_data=$(gh pr view ${pr_num} --json mergeable)
               mergeable=$(echo "${pr_data}" | jq -r '.mergeable')
               
               if [ "${mergeable}" = "MERGEABLE" ]; then
-                # For bot PRs without required checks, merge immediately
-                # For PRs with checks, enable auto-merge
-                if [ "${is_trusted_bot}" -eq 1 ]; then
-                  # Try immediate merge first (works if no required checks)
-                  if gh pr merge ${pr_num} --squash --delete-branch 2>/dev/null; then
-                    echo "✅ PR #${pr_num} merged immediately"
-                  else
-                    # Fall back to auto-merge (for PRs with required checks)
-                    gh pr merge ${pr_num} --auto --squash --delete-branch && \
-                    echo "✅ Auto-merge enabled for PR #${pr_num}" || \
-                    echo "⚠️ Could not merge or enable auto-merge for PR #${pr_num}"
-                  fi
+                # Merge the PR (works since no required checks in this repo)
+                # For bot PRs, just merge immediately (no approval needed/possible)
+                # For owner PRs, approval was already added above
+                if gh pr merge ${pr_num} --squash --delete-branch; then
+                  echo "✅ PR #${pr_num} merged successfully"
                 else
-                  # Owner PRs - enable auto-merge (approval already added)
-                  gh pr merge ${pr_num} --auto --squash --delete-branch && \
-                  echo "✅ Auto-merge enabled for PR #${pr_num}" || \
-                  gh pr merge ${pr_num} --squash --delete-branch && \
-                  echo "✅ PR #${pr_num} merged immediately" || \
-                  echo "⚠️ Could not merge PR #${pr_num}"
+                  # If immediate merge fails, enable auto-merge as fallback
+                  # This handles cases where checks might be required in the future
+                  if gh pr merge ${pr_num} --auto --squash --delete-branch; then
+                    echo "✅ Auto-merge enabled for PR #${pr_num} (will merge when checks pass)"
+                  else
+                    echo "⚠️ Could not merge or enable auto-merge for PR #${pr_num}"
+                    gh pr comment ${pr_num} --body "⚠️ Unable to merge this PR automatically. Please check the PR status and merge manually if needed." || true
+                  fi
                 fi
                 
                 echo "✅ PR #${pr_num} processed successfully"
