@@ -32,8 +32,8 @@ jobs:
           
           echo "PR #${pr_number} author: ${author}"
           
-          # Check if author is Copilot (matches various formats)
-          if echo "${author}" | grep -qiE "^(Copilot|copilot-swe-agent)"; then
+          # Check if author is Copilot (matches various formats including app/copilot-swe-agent)
+          if echo "${author}" | grep -qiE "^(Copilot|copilot|app/copilot)"; then
             echo "✅ PR is from Copilot, adding label"
             gh pr edit ${pr_number} --add-label "copilot" --repo ${{ github.repository }}
             echo "✅ Label added successfully to PR #${pr_number}"
@@ -48,8 +48,8 @@ jobs:
         run: |
           echo "🔍 Finding all open PRs from Copilot..."
           
-          # Get all open PRs
-          pr_list=$(gh pr list --state open --json number,author --jq '.[] | select(.author.login | test("^(Copilot|copilot-swe-agent)"; "i")) | .number')
+          # Get all open PRs (matches various copilot formats including app/copilot-swe-agent)
+          pr_list=$(gh pr list --state open --json number,author --jq '.[] | select(.author.login | test("^(Copilot|copilot|app/copilot)"; "i")) | .number')
           
           if [ -z "${pr_list}" ]; then
             echo "ℹ️ No Copilot PRs found"
