@@ -34,7 +34,7 @@ jobs:
           import requests
           import json
           import re
-          from datetime import datetime
+          from datetime import datetime, timezone
           from bs4 import BeautifulSoup
           import os
           
@@ -84,11 +84,12 @@ jobs:
           
           # Save learnings
           os.makedirs('learnings', exist_ok=True)
-          timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+          now = datetime.now(timezone.utc)
+          timestamp = now.strftime('%Y%m%d_%H%M%S')
           
           with open(f'learnings/tldr_{timestamp}.json', 'w') as f:
               json.dump({
-                  'timestamp': datetime.utcnow().isoformat(),
+                  'timestamp': now.isoformat(),
                   'source': 'TLDR Tech',
                   'learnings': learnings,
                   'trends': tech_trends

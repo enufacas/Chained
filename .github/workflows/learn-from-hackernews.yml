@@ -33,7 +33,7 @@ jobs:
           python3 << 'PYTHON_SCRIPT'
           import requests
           import json
-          from datetime import datetime
+          from datetime import datetime, timezone
           import os
           import re
           
@@ -100,11 +100,12 @@ jobs:
           
           # Save learnings
           os.makedirs('learnings', exist_ok=True)
-          timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+          now = datetime.now(timezone.utc)
+          timestamp = now.strftime('%Y%m%d_%H%M%S')
           
           with open(f'learnings/hn_{timestamp}.json', 'w') as f:
               json.dump({
-                  'timestamp': datetime.utcnow().isoformat(),
+                  'timestamp': now.isoformat(),
                   'source': 'Hacker News',
                   'learnings': learnings,
                   'topics': tech_topics,
@@ -124,7 +125,8 @@ jobs:
           
           # Output for GitHub Actions
           if learnings:
-              top_story = learnings[0]
+              # Sort by score and get the highest scoring story
+              top_story = max(learnings, key=lambda x: x['score'])
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                   f.write(f"has_learnings=true\n")
                   f.write(f"learning_count={len(learnings)}\n")
@@ -183,7 +185,7 @@ jobs:
           python3 << 'PYTHON_SCRIPT'
           import json
           import os
-          from datetime import datetime
+          from datetime import datetime, timezone
           
           # Create or update learning index
           index_file = 'learnings/index.json'
@@ -206,7 +208,7 @@ jobs:
           index['total_learnings'] = len(hn_files) + len(tldr_files)
           index['sources']['hacker_news'] = len(hn_files)
           index['sources']['tldr'] = len(tldr_files)
-          index['last_updated'] = datetime.utcnow().isoformat()
+          index['last_updated'] = datetime.now(timezone.utc).isoformat()
           
           with open(index_file, 'w') as f:
               json.dump(index, f, indent=2)
