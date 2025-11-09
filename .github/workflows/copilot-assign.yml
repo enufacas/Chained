@@ -18,9 +18,9 @@ permissions:
 jobs:
   assign-copilot:
     runs-on: ubuntu-latest
-    # Run for all new issues or when manually triggered
+    # Run for all new issues, labeled issues, or when manually triggered
     if: |
-      (github.event_name == 'issues' && github.event.action == 'opened') ||
+      (github.event_name == 'issues' && (github.event.action == 'opened' || github.event.action == 'labeled')) ||
       github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout repository
