@@ -357,10 +357,23 @@ Check the Actions tab to see workflow runs and their logs.
 
 The repository includes helper scripts to manage the autonomous system:
 
+### evaluate-workflows.sh
+Comprehensive workflow state evaluation:
+- Checks all 12 workflows are present
+- Validates workflow triggers and schedules
+- Verifies workflow permissions
+- Checks workflow dependencies
+- Validates workflow chain execution
+- YAML syntax validation
+
+```bash
+./evaluate-workflows.sh
+```
+
 ### validate-system.sh
 Pre-flight validation script that checks:
 - Repository structure and files
-- All workflow files exist
+- All workflow files exist (including auto-kickoff and system-kickoff)
 - Documentation completeness
 - GitHub Pages configuration
 - Git and GitHub CLI setup

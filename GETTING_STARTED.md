@@ -43,11 +43,23 @@ Run the validation script to check your system:
 ```
 
 This checks:
-- ✅ All workflow files exist
+- ✅ All workflow files exist (including auto-kickoff and system-kickoff)
 - ✅ Documentation is complete  
 - ✅ GitHub Pages is configured
 - ✅ Git is set up properly
 - ✅ Required tools are available
+
+For a more comprehensive workflow evaluation:
+
+```bash
+./evaluate-workflows.sh
+```
+
+This additionally validates:
+- ✅ All 12 workflows are present
+- ✅ Workflow triggers and schedules
+- ✅ Workflow permissions and dependencies
+- ✅ Complete workflow execution chain
 
 **If validation passes with only warnings**, you're ready to go!
 

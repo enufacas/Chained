@@ -69,6 +69,8 @@ declare -A workflows=(
     ["progress-tracker.yml"]="Progress Tracker"
     ["learn-from-tldr.yml"]="Learn from TLDR"
     ["learn-from-hackernews.yml"]="Learn from Hacker News"
+    ["system-kickoff.yml"]="System Kickoff"
+    ["auto-kickoff.yml"]="Auto Kickoff on First Run"
 )
 
 for workflow in "${!workflows[@]}"; do

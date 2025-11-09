@@ -36,6 +36,11 @@ The script will:
 - ✅ Initialize directories
 - ✅ Optionally trigger initial workflows
 
+For a comprehensive workflow state check:
+```bash
+./evaluate-workflows.sh
+```
+
 Then monitor with:
 ```bash
 ./check-status.sh
