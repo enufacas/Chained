@@ -94,7 +94,7 @@ jobs:
 
           ### Labels
           This issue should be tagged with relevant labels for tracking." \
-            --label "ai-generated,enhancement")
+            --label "ai-generated,enhancement,copilot-assigned")
           
           echo "Created issue: ${issue_url}"
 

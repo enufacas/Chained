@@ -18,9 +18,9 @@ permissions:
 jobs:
   assign-copilot:
     runs-on: ubuntu-latest
-    # Run for all new issues or when manually triggered
+    # Run for all new issues, when labeled, or when manually triggered
     if: |
-      (github.event_name == 'issues' && github.event.action == 'opened') ||
+      (github.event_name == 'issues' && (github.event.action == 'opened' || github.event.action == 'labeled')) ||
       github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout repository
@@ -41,8 +41,18 @@ jobs:
           
           issue_data=$(gh issue view ${issue_number} --json title,body,labels)
           echo "Issue #${issue_number} details retrieved"
+          
+          # Check if copilot-assigned label already exists
+          has_label=$(echo "${issue_data}" | jq -r '.labels[] | select(.name == "copilot-assigned") | .name')
+          if [ -n "${has_label}" ]; then
+            echo "already_assigned=true" >> $GITHUB_OUTPUT
+            echo "Issue #${issue_number} already has copilot-assigned label"
+          else
+            echo "already_assigned=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Add copilot label
+        if: steps.issue.outputs.already_assigned != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -50,6 +60,7 @@ jobs:
           echo "Added 'copilot-assigned' label to issue #${{ steps.issue.outputs.issue_number }}"
 
       - name: Add comment to issue
+        if: steps.issue.outputs.already_assigned != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
