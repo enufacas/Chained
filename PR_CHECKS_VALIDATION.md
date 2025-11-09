@@ -7,7 +7,12 @@ The `auto-review-merge.yml` workflow implements the following checks to determin
 ### 1. PR State Validation
 - **Status**: Must be `OPEN`
 - **Draft**: Must NOT be a draft PR (`isDraft = false`)
-- **Rationale**: Only ready PRs should be considered for merge
+- **Automatic Draft-to-Ready Conversion**: Draft PRs are automatically converted to ready if:
+  - PR is in draft status
+  - Title does NOT contain "WIP" or "work in progress" markers
+  - From trusted source (repository owner or trusted bot)
+  - Has `copilot` label
+- **Rationale**: Only ready PRs should be considered for merge, but Copilot PRs are automatically transitioned when work is complete
 
 ### 2. Author Authentication
 PRs are auto-merged if they meet ONE of the following conditions:
@@ -111,7 +116,20 @@ The current PR check logic is **well-designed and appropriate** for the autonomo
 - ✅ Transparency through labeling requirements
 - ✅ Quality through state validation
 
-### Recent Improvements (2025-11-09)
+### Recent Improvements
+
+#### 2025-11-09 (Latest)
+
+**Automatic Draft-to-Ready Conversion:**
+1. **Draft PR Handling**: Added automatic conversion of draft PRs to ready status
+2. **WIP Detection**: Checks PR title for "WIP" or "work in progress" markers
+3. **Trusted Source Validation**: Only converts PRs from repository owner or trusted bots with copilot label
+4. **Autonomous Workflow**: Enables fully autonomous PR lifecycle from draft to merge
+5. **Audit Trail**: Adds informative comments when converting PRs from draft to ready
+
+**Impact:** Resolves issue where Copilot removes "WIP" from PR titles but PRs remain in draft status, breaking the autonomous cycle.
+
+#### 2025-11-09 (Previous)
 
 The auto-review-merge workflow has been optimized:
 

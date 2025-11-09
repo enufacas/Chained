@@ -62,12 +62,7 @@ jobs:
             is_draft=$(echo "${pr_data}" | jq -r '.isDraft')
             mergeable=$(echo "${pr_data}" | jq -r '.mergeable')
             author=$(echo "${pr_data}" | jq -r '.author.login')
-            
-            # Skip if not open or is draft
-            if [ "${pr_state}" != "OPEN" ] || [ "${is_draft}" = "true" ]; then
-              echo "Skipping PR #${pr_num} - not ready (state: ${pr_state}, draft: ${is_draft})"
-              continue
-            fi
+            pr_title=$(echo "${pr_data}" | jq -r '.title')
             
             # Get repository owner
             repo_owner="${{ github.repository_owner }}"
@@ -89,6 +84,59 @@ jobs:
             
             # Check if PR has Copilot label
             has_copilot_label=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "copilot" || echo "0")
+            
+            # Handle draft PRs that are ready (WIP removed, from trusted source)
+            if [ "${is_draft}" = "true" ] && [ "${pr_state}" = "OPEN" ]; then
+              echo "PR #${pr_num} is currently in draft status"
+              
+              # Check if title contains WIP markers
+              if echo "${pr_title}" | grep -qiE '\b(WIP|work.?in.?progress)\b'; then
+                echo "PR #${pr_num} still has WIP in title, keeping as draft"
+              else
+                # Convert draft to ready if trusted source with copilot label
+                if [ "${has_copilot_label}" -gt 0 ] && { [ "${is_trusted_bot}" -eq 1 ] || [ "${is_repo_owner}" -eq 1 ]; }; then
+                  echo "✨ Converting PR #${pr_num} from draft to ready (no WIP in title, from trusted source)"
+                  
+                  if gh pr ready ${pr_num}; then
+                    echo "✅ PR #${pr_num} marked as ready for review"
+                    
+                    # Add comment explaining the conversion
+                    gh pr comment ${pr_num} --body "🚀 **Automatically Marked Ready for Review**
+                    
+                    This PR has been automatically converted from draft to ready status.
+                    
+                    **Criteria met:**
+                    - ✅ No WIP markers in title
+                    - ✅ From trusted source (${author})
+                    - ✅ Has copilot label
+                    - ✅ Part of autonomous development cycle
+                    
+                    **Next steps:**
+                    - Auto-review will process this PR in the next cycle
+                    - PR will be automatically merged if all checks pass
+                    
+                    **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+                    
+                    ---
+                    *Part of the perpetual AI motion machine - autonomous draft-to-ready conversion*" || true
+                    
+                    # Refresh PR data after marking ready
+                    pr_data=$(gh pr view ${pr_num} --json title,body,author,labels,mergeable,state,isDraft)
+                    is_draft=$(echo "${pr_data}" | jq -r '.isDraft')
+                  else
+                    echo "⚠️ Failed to mark PR #${pr_num} as ready"
+                  fi
+                else
+                  echo "PR #${pr_num} does not meet criteria for automatic ready conversion"
+                fi
+              fi
+            fi
+            
+            # Skip if not open or is still draft
+            if [ "${pr_state}" != "OPEN" ] || [ "${is_draft}" = "true" ]; then
+              echo "Skipping PR #${pr_num} - not ready (state: ${pr_state}, draft: ${is_draft})"
+              continue
+            fi
             
             # Only auto-merge if:
             # 1. PR is from the repository owner AND has copilot label, OR
