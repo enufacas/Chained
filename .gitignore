@@ -32,3 +32,10 @@ temp/
 # OS generated files
 Thumbs.db
 .DS_Store
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
