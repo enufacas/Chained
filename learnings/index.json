@@ -1,9 +1,14 @@
 {
-  "total_learnings": 2,
+  "total_learnings": 3,
   "sources": {
     "hacker_news": 2,
-    "tldr": 0
+    "tldr": 1
   },
-  "last_updated": "2025-11-09T13:17:22.599154",
-  "top_topics": {}
+  "last_updated": "2025-11-09T16:02:50.005198",
+  "top_topics": {
+    "AI/ML": 5,
+    "Programming": 1
+  },
+  "analysis_documents": 1,
+  "insight_documents": 1
 }
