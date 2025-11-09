@@ -128,7 +128,7 @@ The workflows will start automatically:
 4. Wait ~30 seconds, then refresh
 5. Go to **Issues** - you should see a new AI-generated issue!
 6. Repeat for other workflows in this order:
-   - Copilot Auto-Assign
+   - Copilot Issue Assignment
    - Issue to PR Automator
    - Auto Review and Merge
    - Timeline Updater

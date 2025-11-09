@@ -101,10 +101,10 @@ Once started, the system runs autonomously:
 1. **Ideas Generated** - Daily at 10:00 UTC
 2. **Learning Happens** - Multiple times daily from TLDR Tech and Hacker News
 3. **Issues Created** - Automatically from ideas
-4. **PRs Opened** - Every 3 hours from open issues
-5. **Code Reviewed** - Every 2 hours by AI
+4. **PRs Opened** - Every 30 minutes from open issues
+5. **Code Reviewed** - Every 15 minutes by AI
 6. **PRs Merged** - Automatically after approval
-7. **Issues Closed** - Every 4 hours after PR merge
+7. **Issues Closed** - Every 30 minutes after PR merge
 8. **Timeline Updated** - Every 6 hours on GitHub Pages
 
 ## How to Know It's Working
