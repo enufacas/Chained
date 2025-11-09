@@ -26,6 +26,17 @@ async function fetchStats() {
                     loadTimeline(issues);
                 }
                 
+                // Try to load learning stats
+                try {
+                    const learningResponse = await fetch('../learnings/index.json');
+                    if (learningResponse.ok) {
+                        const learningStats = await learningResponse.json();
+                        console.log('Learning stats:', learningStats);
+                    }
+                } catch (e) {
+                    console.log('Learning stats not yet available');
+                }
+                
                 return; // Successfully loaded from cache
             }
         } catch (e) {
