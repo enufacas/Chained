@@ -125,7 +125,7 @@ jobs:
             
             # Create PR
             gh pr create \
-              --title "📊 Timeline Update - $(date -u +%Y-%m-%d %H:%M:%S UTC")" \
+              --title "📊 Timeline Update - $(date -u +%Y-%m-%d %H:%M:%S UTC)" \
               --body "## Automated Timeline Data Update
             
             **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
