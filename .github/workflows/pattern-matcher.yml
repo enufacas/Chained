@@ -1,0 +1,224 @@
+name: Pattern Matcher
+
+on:
+  schedule:
+    # Run weekly on Mondays at 11 AM UTC
+    - cron: '0 11 * * 1'
+  workflow_dispatch:
+    inputs:
+      directory:
+        description: 'Directory to scan (default: entire repo)'
+        required: false
+        default: '.'
+      severity_filter:
+        description: 'Minimum severity to report (error/warning/info)'
+        required: false
+        default: 'info'
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  pattern-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Run pattern matcher
+        id: scan
+        run: |
+          echo "Running pattern matcher on repository..."
+          
+          # Run the pattern matcher
+          python3 tools/pattern-matcher.py \
+            -d ${{ github.event.inputs.directory || '.' }} \
+            --format json \
+            -o pattern-report.json || true
+          
+          # Also generate text report for issue
+          python3 tools/pattern-matcher.py \
+            -d ${{ github.event.inputs.directory || '.' }} \
+            --format text \
+            -o pattern-report.txt || true
+          
+          # Get statistics
+          python3 tools/pattern-matcher.py \
+            -d ${{ github.event.inputs.directory || '.' }} \
+            --stats \
+            -o pattern-stats.json || true
+          
+          echo "Pattern matching complete"
+
+      - name: Parse results
+        id: parse
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          
+          # Read statistics
+          with open('pattern-stats.json', 'r') as f:
+              stats = json.load(f)
+          
+          # Read full report for details
+          with open('pattern-report.txt', 'r') as f:
+              report = f.read()
+          
+          # Extract key metrics
+          total = stats['total_issues']
+          errors = stats['by_severity']['error']
+          warnings = stats['by_severity']['warning']
+          info_count = stats['by_severity']['info']
+          
+          # Get top categories
+          categories = sorted(stats['by_category'].items(), 
+                            key=lambda x: x[1], reverse=True)[:5]
+          
+          # Get top files
+          files = sorted(stats['by_file'].items(), 
+                        key=lambda x: x[1], reverse=True)[:10]
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"total_issues={total}\n")
+              f.write(f"errors={errors}\n")
+              f.write(f"warnings={warnings}\n")
+              f.write(f"info_count={info_count}\n")
+              f.write(f"top_category={categories[0][0] if categories else 'none'}\n")
+              f.write(f"top_category_count={categories[0][1] if categories else 0}\n")
+          
+          # Create summary for issue
+          summary = f"""## Pattern Analysis Summary
+          
+          **Total Issues Found:** {total}
+          - ❌ Errors: {errors}
+          - ⚠️ Warnings: {warnings}
+          - ℹ️ Info: {info_count}
+          
+          ### Top Issue Categories
+          """
+          
+          for cat, count in categories:
+              summary += f"- **{cat.title()}**: {count} issues\n"
+          
+          summary += "\n### Top Files with Issues\n"
+          for file, count in files:
+              summary += f"- `{file}`: {count} issues\n"
+          
+          summary += f"""
+          
+          ### Recommendations
+          """
+          
+          if errors > 0:
+              summary += f"\n🚨 **{errors} critical security/error issues found** - Address these immediately!\n"
+          
+          if warnings > 10:
+              summary += f"\n⚠️ **{warnings} warnings detected** - Consider addressing these for better code quality.\n"
+          
+          if info_count > 50:
+              summary += f"\nℹ️ **{info_count} info-level suggestions** - Review for potential improvements.\n"
+          
+          # Save summary
+          with open('pattern-summary.txt', 'w') as f:
+              f.write(summary)
+          
+          print("Summary generated successfully")
+          PYTHON_SCRIPT
+
+      - name: Create pattern analysis issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Read summary
+          SUMMARY=$(cat pattern-summary.txt)
+          
+          # Read first 50 lines of detailed report
+          DETAILS=$(head -n 100 pattern-report.txt)
+          
+          # Create timestamp
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          # Create issue
+          gh issue create \
+            --title "🔍 Pattern Analysis Report - $TIMESTAMP" \
+            --label "pattern-analysis,automated" \
+            --body "## Automated Pattern Analysis
+          
+          **Scan Date:** $TIMESTAMP
+          **Scanned Directory:** ${{ github.event.inputs.directory || 'entire repository' }}
+          
+          $SUMMARY
+          
+          ---
+          
+          <details>
+          <summary>📋 Detailed Report (first 100 lines)</summary>
+          
+          \`\`\`
+          $DETAILS
+          \`\`\`
+          
+          </details>
+          
+          ---
+          
+          ### What is Pattern Analysis?
+          
+          The Pattern Matcher scans the repository for common best practice violations and anti-patterns across multiple languages:
+          
+          - **Security Issues**: Hardcoded secrets, SQL injection risks, unsafe eval()
+          - **Code Quality**: Missing type hints, poor error handling, debug statements
+          - **Maintainability**: TODO comments, deprecated patterns, code smells
+          - **Best Practices**: Language-specific recommendations
+          
+          ### How to Use This Report
+          
+          1. **Address Errors First** (❌) - These are critical issues
+          2. **Review Warnings** (⚠️) - These affect code quality
+          3. **Consider Info** (ℹ️) - These are suggestions for improvement
+          
+          ### Running Pattern Analysis Manually
+          
+          \`\`\`bash
+          # Scan entire repository
+          python3 tools/pattern-matcher.py -d .
+          
+          # Scan specific directory
+          python3 tools/pattern-matcher.py -d tools/
+          
+          # Get JSON output
+          python3 tools/pattern-matcher.py -d . --format json
+          
+          # Get statistics only
+          python3 tools/pattern-matcher.py -d . --stats
+          \`\`\`
+          
+          ---
+          
+          *Generated by Pattern Matcher workflow*"
+
+      - name: Upload reports as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: pattern-reports
+          path: |
+            pattern-report.json
+            pattern-report.txt
+            pattern-stats.json
+            pattern-summary.txt
+
+      - name: Log completion
+        run: |
+          echo "Pattern analysis completed"
+          echo "Total issues: ${{ steps.parse.outputs.total_issues }}"
+          echo "Errors: ${{ steps.parse.outputs.errors }}"
+          echo "Warnings: ${{ steps.parse.outputs.warnings }}"
+          echo "Info: ${{ steps.parse.outputs.info_count }}"
