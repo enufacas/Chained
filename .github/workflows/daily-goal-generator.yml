@@ -14,6 +14,7 @@ on:
 permissions:
   contents: write
   issues: write
+  pull-requests: write
 
 jobs:
   generate-daily-goal:
@@ -34,6 +35,8 @@ jobs:
 
       - name: Check existing goals
         id: check_goals
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TODAY=$(date +%Y-%m-%d)
           GOALS_FILE="docs/AI_GOALS.md"
@@ -54,9 +57,30 @@ jobs:
           ## Goal History
           
           EOF
+            
+            # Create a branch for initialization
+            INIT_BRANCH="ai-goal/initialize-$(date +%Y%m%d-%H%M%S)"
+            git checkout -b "${INIT_BRANCH}"
+            
             git add "$GOALS_FILE"
             git commit -m "Initialize AI Goals tracking" || true
-            git push || true
+            git push origin "${INIT_BRANCH}" || true
+            
+            # Create PR for initialization
+            gh pr create \
+              --title "🎯 Initialize AI Goals Tracking" \
+              --body "## Initialize AI Goals Documentation
+            
+            This PR creates the initial \`docs/AI_GOALS.md\` file for tracking daily AI goals.
+            
+            ---
+            *This PR was automatically created by the Daily AI Goal Generator workflow.*" \
+              --label "documentation,automated" \
+              --base main \
+              --head "${INIT_BRANCH}" || true
+            
+            # Switch back to main for goal checking
+            git checkout main
           fi
           
           # Check if we already have a goal for today
@@ -207,6 +231,8 @@ jobs:
 
       - name: Update goals file
         if: steps.check_goals.outputs.goal_exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TODAY="${{ steps.generate_goal.outputs.today }}"
           CATEGORY="${{ steps.generate_goal.outputs.category }}"
@@ -252,10 +278,42 @@ jobs:
           # Replace old file with new file
           mv /tmp/new_goal.md "$GOALS_FILE"
           
-          # Commit and push
+          # Create a branch for this goal
+          BRANCH_NAME="ai-goal/daily-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "${BRANCH_NAME}"
+          
+          # Commit and push to branch
           git add "$GOALS_FILE"
           git commit -m "🎯 Set AI Goal of the Day: $CATEGORY - $TODAY"
-          git push
+          git push origin "${BRANCH_NAME}"
+          
+          # Create PR
+          gh pr create \
+            --title "🎯 AI Goal of the Day: $CATEGORY - $TODAY" \
+            --body "## Daily AI Goal Generated
+          
+          **Date:** $TODAY
+          **Category:** $CATEGORY
+          **Goal:** $GOAL
+          
+          ### Changes
+          - Updated AI Goals documentation in \`docs/AI_GOALS.md\`
+          - Set new current goal for $TODAY
+          - Added goal to history
+          
+          ### Next Steps
+          This goal will be:
+          - 🎫 Tracked in a new GitHub issue
+          - 🔄 Monitored with 3-hour progress checks
+          - ✅ Worked on autonomously throughout the day
+          
+          ---
+          *This PR was automatically created by the Daily AI Goal Generator workflow and will be auto-merged.*" \
+            --label "ai-goal,automated,copilot" \
+            --base main \
+            --head "${BRANCH_NAME}"
+          
+          echo "✅ PR created successfully for daily AI goal"
 
       - name: Create goal tracking issue
         if: steps.check_goals.outputs.goal_exists == 'false'
