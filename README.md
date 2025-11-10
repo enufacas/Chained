@@ -40,9 +40,10 @@ The goal of Chained is to create an entertaining and educational demonstration o
 
 Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
 
-1. **AI Idea Generator** (`idea-generator.yml`)
-   - Runs daily at 9 AM UTC
-   - Generates creative AI-focused feature ideas
+1. **AI Idea Generator** (`idea-generator.yml`) ✨
+   - Runs daily at 10 AM UTC (after learning workflows)
+   - Generates creative AI-focused feature ideas with learning context
+   - Adapts to trending technologies from HN and TLDR
    - Creates GitHub issues automatically
    - Can be triggered manually
 
@@ -54,60 +55,65 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
    - Requires COPILOT_PAT secret for full automation
    - Can be manually triggered with optional issue number (or process all issues)
 
-3. **Auto Label Copilot PRs** (`auto-label-copilot-prs.yml`)
-   - Runs immediately when PRs are opened/updated (via events)
-   - Also runs every 10 minutes on a scheduled timer (when GitHub allows)
-   - Labels PRs created by Copilot with the "copilot" label
-   - Performs a round-up of all open Copilot PRs each run
-   - Can be manually triggered via workflow_dispatch
-   - Hybrid approach ensures immediate response + regular cleanup
-   - Essential for PR automation pipeline
-
-4. **Auto Review and Merge** (`auto-review-merge.yml`)
+3. **Auto Review and Merge** (`auto-review-merge.yml`) ✨
    - Runs every 15 minutes
-   - Reviews PRs created by Copilot
-   - AI reviews AI code
+   - Labels PRs created by Copilot with the "copilot" label
+   - Reviews PRs created by Copilot (AI reviews AI code)
    - Automatically approves and merges PRs
    - Closes associated issues when PRs are merged
    - No human approval required
 
-5. **Timeline Updater** (`timeline-updater.yml`)
-   - Runs every 6 hours
+4. **System Monitor** (`system-monitor.yml`) 🆕
+   - Timeline updates every 6 hours + on events
+   - Progress tracking every 12 hours
+   - Workflow health monitoring every 12 hours
    - Fetches all repository activity
    - Updates timeline data for GitHub Pages
-   - Documents autonomous actions
-
-6. **Progress Tracker** (`progress-tracker.yml`)
-   - Runs every 12 hours
    - Analyzes repository progress and statistics
-   - Generates progress reports
-   - Tracks autonomous success rates
+   - Generates progress reports and health alerts
 
-7. **Learning from TLDR Tech** (`learn-from-tldr.yml`)
+5. **Learning from TLDR Tech** (`learn-from-tldr.yml`)
    - Runs twice daily (8 AM, 8 PM UTC)
    - Fetches latest tech news and trends
    - Extracts insights about AI, DevOps, and programming
    - Saves learnings to influence future ideas
 
-8. **Learning from Hacker News** (`learn-from-hackernews.yml`)
+6. **Learning from Hacker News** (`learn-from-hackernews.yml`)
    - Runs three times daily (7 AM, 1 PM, 7 PM UTC)
    - Analyzes trending technical discussions
    - Categorizes topics (AI/ML, Security, Performance, etc.)
    - Generates ideas based on community trends
 
-9. **Smart Idea Generator** (`smart-idea-generator.yml`)
-    - Runs daily at 10 AM UTC (after learning workflows)
-    - Generates ideas informed by external learnings
-    - Adapts to trending technologies and patterns
-    - Creates enhanced issues with learning context
+7. **System Kickoff** (`system-kickoff.yml`) ✨
+   - Triggers automatically on first push to main
+   - Can also be triggered manually
+   - Validates system configuration
+   - Creates required labels
+   - Initializes directories
+   - Triggers initial workflows
+   - Creates kickoff success issue
 
-10. **System Kickoff** (`system-kickoff.yml`)
-    - Can be triggered manually or automatically
-    - Validates system configuration
-    - Creates required labels
-    - Initializes directories
-    - Triggers initial workflows
-    - Creates kickoff success issue
+8. **Code Analyzer** (`code-analyzer.yml`)
+   - Runs on push to main and PR merges
+   - Analyzes code patterns and quality
+   - Learns from successful/failed merges
+   - Tracks code quality trends
+
+9. **Pattern Matcher** (`pattern-matcher.yml`)
+   - Runs weekly on Mondays at 10 AM UTC
+   - Scans repository for code patterns
+   - Identifies anti-patterns and best practices
+   - Generates pattern analysis reports
+
+10. **Code Golf Optimizer** (`code-golf-optimizer.yml`)
+    - Runs weekly on Mondays at 10 AM UTC
+    - Optimizes code for minimal size
+    - Generates optimization reports
+    - Demonstrates code golf techniques
+
+> **Note**: Workflows marked with ✨ have been enhanced through consolidation.
+> Workflow marked with 🆕 is newly consolidated from multiple workflows.
+> See [WORKFLOW_CONSOLIDATION.md](./WORKFLOW_CONSOLIDATION.md) for details.
 
 11. **Auto Kickoff on First Run** (`auto-kickoff.yml`)
     - Runs automatically on merge to main
