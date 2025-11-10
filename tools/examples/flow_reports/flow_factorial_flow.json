@@ -1,0 +1,324 @@
+{
+  "language": "python",
+  "source_lines": [
+    "#!/usr/bin/env python3",
+    "\"\"\"",
+    "Example: Factorial Calculator",
+    "Demonstrates recursive function calls and return flow",
+    "\"\"\"",
+    "",
+    "def factorial(n):",
+    "    \"\"\"Calculate factorial of n recursively\"\"\"",
+    "    if n <= 1:",
+    "        return 1",
+    "    else:",
+    "        result = n * factorial(n - 1)",
+    "        return result",
+    "",
+    "",
+    "def factorial_iterative(n):",
+    "    \"\"\"Calculate factorial of n iteratively\"\"\"",
+    "    result = 1",
+    "    for i in range(2, n + 1):",
+    "        result = result * i",
+    "    return result",
+    "",
+    "",
+    "def main():",
+    "    \"\"\"Main function to test factorial calculations\"\"\"",
+    "    number = 5",
+    "    ",
+    "    # Test recursive version",
+    "    recursive_result = factorial(number)",
+    "    print(f\"Factorial of {number} (recursive): {recursive_result}\")",
+    "    ",
+    "    # Test iterative version",
+    "    iterative_result = factorial_iterative(number)",
+    "    print(f\"Factorial of {number} (iterative): {iterative_result}\")",
+    "    ",
+    "    # Verify both give same result",
+    "    if recursive_result == iterative_result:",
+    "        print(\"Both methods produce the same result!\")",
+    "    ",
+    "    return recursive_result",
+    "",
+    "",
+    "if __name__ == \"__main__\":",
+    "    main()",
+    ""
+  ],
+  "steps": [
+    {
+      "type": "call",
+      "line": 7,
+      "description": "Function 'factorial' defined with 1 parameter(s)",
+      "variables": {},
+      "function": "factorial",
+      "timestamp": null
+    },
+    {
+      "type": "condition",
+      "line": 9,
+      "description": "If condition: n <= 1",
+      "variables": {},
+      "function": "factorial",
+      "timestamp": null
+    },
+    {
+      "type": "return",
+      "line": 10,
+      "description": "Return 1",
+      "variables": {},
+      "function": "factorial",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 12,
+      "description": "Assign result = n * factorial()",
+      "variables": {
+        "result": "n * factorial()"
+      },
+      "function": "factorial",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 12,
+      "description": "Call function: factorial()",
+      "variables": {},
+      "function": "factorial",
+      "timestamp": null
+    },
+    {
+      "type": "return",
+      "line": 13,
+      "description": "Return result",
+      "variables": {},
+      "function": "factorial",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 16,
+      "description": "Function 'factorial_iterative' defined with 1 parameter(s)",
+      "variables": {},
+      "function": "factorial_iterative",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 18,
+      "description": "Assign result = 1",
+      "variables": {
+        "result": "1"
+      },
+      "function": "factorial_iterative",
+      "timestamp": null
+    },
+    {
+      "type": "loop",
+      "line": 19,
+      "description": "For loop: i in range()",
+      "variables": {},
+      "function": "factorial_iterative",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 19,
+      "description": "Call function: range()",
+      "variables": {},
+      "function": "factorial_iterative",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 20,
+      "description": "Assign result = result * i",
+      "variables": {
+        "result": "result * i"
+      },
+      "function": "factorial_iterative",
+      "timestamp": null
+    },
+    {
+      "type": "return",
+      "line": 21,
+      "description": "Return result",
+      "variables": {},
+      "function": "factorial_iterative",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 24,
+      "description": "Function 'main' defined with 0 parameter(s)",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 26,
+      "description": "Assign number = 5",
+      "variables": {
+        "number": "5"
+      },
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 29,
+      "description": "Assign recursive_result = factorial()",
+      "variables": {
+        "recursive_result": "factorial()"
+      },
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 29,
+      "description": "Call function: factorial()",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 30,
+      "description": "Call function: print()",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 33,
+      "description": "Assign iterative_result = factorial_iterative()",
+      "variables": {
+        "iterative_result": "factorial_iterative()"
+      },
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 33,
+      "description": "Call function: factorial_iterative()",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 34,
+      "description": "Call function: print()",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "condition",
+      "line": 37,
+      "description": "If condition: recursive_result == iterative_result",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 38,
+      "description": "Call function: print()",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "return",
+      "line": 40,
+      "description": "Return recursive_result",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "condition",
+      "line": 43,
+      "description": "If condition: __name__ == '__main__'",
+      "variables": {},
+      "function": null,
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 44,
+      "description": "Call function: main()",
+      "variables": {},
+      "function": null,
+      "timestamp": null
+    }
+  ],
+  "function_calls": [
+    {
+      "name": "factorial",
+      "line": 7,
+      "params": [
+        "n"
+      ]
+    },
+    {
+      "name": "factorial_iterative",
+      "line": 16,
+      "params": [
+        "n"
+      ]
+    },
+    {
+      "name": "main",
+      "line": 24,
+      "params": []
+    }
+  ],
+  "control_flow": [
+    {
+      "type": "if",
+      "line": 9,
+      "condition": "n <= 1",
+      "has_else": true
+    },
+    {
+      "type": "for",
+      "line": 19,
+      "variable": "i",
+      "iterable": "range()"
+    },
+    {
+      "type": "if",
+      "line": 37,
+      "condition": "recursive_result == iterative_result",
+      "has_else": false
+    },
+    {
+      "type": "if",
+      "line": 43,
+      "condition": "__name__ == '__main__'",
+      "has_else": false
+    }
+  ],
+  "statistics": {
+    "total_steps": 25,
+    "function_definitions": 3,
+    "control_flow_statements": 4,
+    "assignments": 6,
+    "function_calls": 11,
+    "returns": 4
+  },
+  "metadata": {
+    "total_lines": 45,
+    "language": "python",
+    "analyzer": "CodeFlowAnimator"
+  }
+}

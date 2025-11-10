@@ -357,12 +357,46 @@ Evening    → TLDR scraper runs     → Evening news update
 - **GitHub API**: Fetching repository data
 - **GitHub Pages**: Hosting the timeline website
 - **GitHub Copilot**: AI-powered development
-- **Python**: Learning scripts, data processing, code optimization, and code analysis
-- **AST (Abstract Syntax Tree)**: Code pattern analysis and detection
-- **HTML/CSS/JavaScript**: Frontend for the timeline
+- **Python**: Learning scripts, data processing, code optimization, code analysis, and flow visualization
+- **AST (Abstract Syntax Tree)**: Code pattern analysis, detection, and execution flow tracing
+- **HTML/CSS/JavaScript**: Frontend for the timeline and interactive visualizations
 - **Bash scripting**: Workflow logic
 - **TLDR Tech API**: Tech news aggregation
 - **Hacker News API**: Community trend analysis
+
+## 🔍 Visual Code Execution Flow Animator
+
+Chained includes a visual code execution flow animator that traces and visualizes how code executes step-by-step. Perfect for learning, debugging, and understanding algorithms!
+
+### Features
+
+- 🎯 **Multi-Language Support**: Python (AST-based) and JavaScript
+- 📊 **Interactive Visualizations**: Click-through HTML reports
+- 🔄 **Function Call Tracking**: See the execution flow through functions
+- 💾 **Multiple Formats**: JSON data and HTML visualizations
+- 🎓 **Educational Tool**: Great for learning and teaching programming
+
+### Quick Start
+
+```bash
+# Analyze a Python file
+python3 tools/code-flow-animator.py -f script.py
+
+# Analyze JavaScript
+python3 tools/code-flow-animator.py -f app.js
+
+# View example visualizations at:
+# https://enufacas.github.io/Chained/flow-animator.html
+```
+
+### Example Visualizations
+
+The tool comes with example analyses:
+- **Factorial Calculator**: Recursive vs iterative approaches
+- **Bubble Sort**: Nested loops and conditional swapping
+- **Binary Search**: Divide-and-conquer algorithm
+
+For complete documentation, see [`tools/CODE_FLOW_ANIMATOR.md`](./tools/CODE_FLOW_ANIMATOR.md)
 
 ## 🏌️ Code Golf Optimizer
 

@@ -1,0 +1,307 @@
+{
+  "language": "python",
+  "source_lines": [
+    "#!/usr/bin/env python3",
+    "\"\"\"",
+    "Example: Bubble Sort",
+    "Demonstrates nested loops and conditional swapping",
+    "\"\"\"",
+    "",
+    "def bubble_sort(arr):",
+    "    \"\"\"Sort an array using bubble sort algorithm\"\"\"",
+    "    n = len(arr)",
+    "    ",
+    "    # Traverse through all array elements",
+    "    for i in range(n):",
+    "        swapped = False",
+    "        ",
+    "        # Last i elements are already sorted",
+    "        for j in range(0, n - i - 1):",
+    "            # Compare adjacent elements",
+    "            if arr[j] > arr[j + 1]:",
+    "                # Swap if they are in wrong order",
+    "                temp = arr[j]",
+    "                arr[j] = arr[j + 1]",
+    "                arr[j + 1] = temp",
+    "                swapped = True",
+    "        ",
+    "        # If no swaps occurred, array is sorted",
+    "        if not swapped:",
+    "            break",
+    "    ",
+    "    return arr",
+    "",
+    "",
+    "def main():",
+    "    \"\"\"Test the bubble sort function\"\"\"",
+    "    numbers = [64, 34, 25, 12, 22, 11, 90]",
+    "    print(f\"Original array: {numbers}\")",
+    "    ",
+    "    sorted_numbers = bubble_sort(numbers.copy())",
+    "    print(f\"Sorted array: {sorted_numbers}\")",
+    "    ",
+    "    return sorted_numbers",
+    "",
+    "",
+    "if __name__ == \"__main__\":",
+    "    main()",
+    ""
+  ],
+  "steps": [
+    {
+      "type": "call",
+      "line": 7,
+      "description": "Function 'bubble_sort' defined with 1 parameter(s)",
+      "variables": {},
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 9,
+      "description": "Assign n = len()",
+      "variables": {
+        "n": "len()"
+      },
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 9,
+      "description": "Call function: len()",
+      "variables": {},
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "loop",
+      "line": 12,
+      "description": "For loop: i in range()",
+      "variables": {},
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 12,
+      "description": "Call function: range()",
+      "variables": {},
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 13,
+      "description": "Assign swapped = False",
+      "variables": {
+        "swapped": "False"
+      },
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "loop",
+      "line": 16,
+      "description": "For loop: j in range()",
+      "variables": {},
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 16,
+      "description": "Call function: range()",
+      "variables": {},
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "condition",
+      "line": 18,
+      "description": "If condition: arr[j] > arr[j + 1]",
+      "variables": {},
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 20,
+      "description": "Assign temp = arr[j]",
+      "variables": {
+        "temp": "arr[j]"
+      },
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 23,
+      "description": "Assign swapped = True",
+      "variables": {
+        "swapped": "True"
+      },
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "condition",
+      "line": 26,
+      "description": "If condition: not swapped",
+      "variables": {},
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "return",
+      "line": 29,
+      "description": "Return arr",
+      "variables": {},
+      "function": "bubble_sort",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 32,
+      "description": "Function 'main' defined with 0 parameter(s)",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 34,
+      "description": "Assign numbers = [...]",
+      "variables": {
+        "numbers": "[...]"
+      },
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 35,
+      "description": "Call function: print()",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "assign",
+      "line": 37,
+      "description": "Assign sorted_numbers = bubble_sort()",
+      "variables": {
+        "sorted_numbers": "bubble_sort()"
+      },
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 37,
+      "description": "Call function: bubble_sort()",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 37,
+      "description": "Call function: numbers.copy()",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 38,
+      "description": "Call function: print()",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "return",
+      "line": 40,
+      "description": "Return sorted_numbers",
+      "variables": {},
+      "function": "main",
+      "timestamp": null
+    },
+    {
+      "type": "condition",
+      "line": 43,
+      "description": "If condition: __name__ == '__main__'",
+      "variables": {},
+      "function": null,
+      "timestamp": null
+    },
+    {
+      "type": "call",
+      "line": 44,
+      "description": "Call function: main()",
+      "variables": {},
+      "function": null,
+      "timestamp": null
+    }
+  ],
+  "function_calls": [
+    {
+      "name": "bubble_sort",
+      "line": 7,
+      "params": [
+        "arr"
+      ]
+    },
+    {
+      "name": "main",
+      "line": 32,
+      "params": []
+    }
+  ],
+  "control_flow": [
+    {
+      "type": "for",
+      "line": 12,
+      "variable": "i",
+      "iterable": "range()"
+    },
+    {
+      "type": "for",
+      "line": 16,
+      "variable": "j",
+      "iterable": "range()"
+    },
+    {
+      "type": "if",
+      "line": 18,
+      "condition": "arr[j] > arr[j + 1]",
+      "has_else": false
+    },
+    {
+      "type": "if",
+      "line": 26,
+      "condition": "not swapped",
+      "has_else": false
+    },
+    {
+      "type": "if",
+      "line": 43,
+      "condition": "__name__ == '__main__'",
+      "has_else": false
+    }
+  ],
+  "statistics": {
+    "total_steps": 23,
+    "function_definitions": 2,
+    "control_flow_statements": 5,
+    "assignments": 6,
+    "function_calls": 10,
+    "returns": 2
+  },
+  "metadata": {
+    "total_lines": 45,
+    "language": "python",
+    "analyzer": "CodeFlowAnimator"
+  }
+}

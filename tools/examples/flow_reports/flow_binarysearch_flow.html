@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Execution Flow - Javascript</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-card h3 {
+            margin: 0;
+            font-size: 2em;
+        }
+        .stat-card p {
+            margin: 5px 0 0;
+            opacity: 0.9;
+        }
+        .flow-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .code-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+        .code-line {
+            font-family: 'Courier New', monospace;
+            padding: 5px;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .code-line:hover {
+            background: #e9ecef;
+        }
+        .code-line.active {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+        .steps-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+        .step-item {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .step-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .step-item.call {
+            border-left-color: #28a745;
+        }
+        .step-item.assign {
+            border-left-color: #17a2b8;
+        }
+        .step-item.condition {
+            border-left-color: #ffc107;
+        }
+        .step-item.loop {
+            border-left-color: #fd7e14;
+        }
+        .step-item.return {
+            border-left-color: #dc3545;
+        }
+        .step-line {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        .step-desc {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .step-vars {
+            font-size: 0.9em;
+            color: #495057;
+            background: #f8f9fa;
+            padding: 5px;
+            border-radius: 3px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Code Execution Flow Analysis</h1>
+        <p><strong>Language:</strong> Javascript | <strong>Lines:</strong> 46</p>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>21</h3>
+                <p>Total Steps</p>
+            </div>
+            <div class="stat-card">
+                <h3>2</h3>
+                <p>Functions</p>
+            </div>
+            <div class="stat-card">
+                <h3>3</h3>
+                <p>Control Flow</p>
+            </div>
+        </div>
+        
+        <div class="flow-container">
+            <div class="code-panel">
+                <h3>Source Code</h3>
+                <div id="code-lines">
+<div class="code-line" data-line="1"><span style="color:#999; width:40px; display:inline-block">1</span>#!/usr/bin/env node</div>
+<div class="code-line" data-line="2"><span style="color:#999; width:40px; display:inline-block">2</span>/**</div>
+<div class="code-line" data-line="3"><span style="color:#999; width:40px; display:inline-block">3</span> * Example: Binary Search</div>
+<div class="code-line" data-line="4"><span style="color:#999; width:40px; display:inline-block">4</span> * Demonstrates conditional logic and divide-and-conquer</div>
+<div class="code-line" data-line="5"><span style="color:#999; width:40px; display:inline-block">5</span> */</div>
+<div class="code-line" data-line="6"><span style="color:#999; width:40px; display:inline-block">6</span></div>
+<div class="code-line" data-line="7"><span style="color:#999; width:40px; display:inline-block">7</span>function binarySearch(arr, target) {</div>
+<div class="code-line" data-line="8"><span style="color:#999; width:40px; display:inline-block">8</span>    let left = 0;</div>
+<div class="code-line" data-line="9"><span style="color:#999; width:40px; display:inline-block">9</span>    let right = arr.length - 1;</div>
+<div class="code-line" data-line="10"><span style="color:#999; width:40px; display:inline-block">10</span>    </div>
+<div class="code-line" data-line="11"><span style="color:#999; width:40px; display:inline-block">11</span>    while (left &lt;= right) {</div>
+<div class="code-line" data-line="12"><span style="color:#999; width:40px; display:inline-block">12</span>        const mid = Math.floor((left + right) / 2);</div>
+<div class="code-line" data-line="13"><span style="color:#999; width:40px; display:inline-block">13</span>        </div>
+<div class="code-line" data-line="14"><span style="color:#999; width:40px; display:inline-block">14</span>        if (arr[mid] === target) {</div>
+<div class="code-line" data-line="15"><span style="color:#999; width:40px; display:inline-block">15</span>            return mid;</div>
+<div class="code-line" data-line="16"><span style="color:#999; width:40px; display:inline-block">16</span>        } else if (arr[mid] &lt; target) {</div>
+<div class="code-line" data-line="17"><span style="color:#999; width:40px; display:inline-block">17</span>            left = mid + 1;</div>
+<div class="code-line" data-line="18"><span style="color:#999; width:40px; display:inline-block">18</span>        } else {</div>
+<div class="code-line" data-line="19"><span style="color:#999; width:40px; display:inline-block">19</span>            right = mid - 1;</div>
+<div class="code-line" data-line="20"><span style="color:#999; width:40px; display:inline-block">20</span>        }</div>
+<div class="code-line" data-line="21"><span style="color:#999; width:40px; display:inline-block">21</span>    }</div>
+<div class="code-line" data-line="22"><span style="color:#999; width:40px; display:inline-block">22</span>    </div>
+<div class="code-line" data-line="23"><span style="color:#999; width:40px; display:inline-block">23</span>    return -1;</div>
+<div class="code-line" data-line="24"><span style="color:#999; width:40px; display:inline-block">24</span>}</div>
+<div class="code-line" data-line="25"><span style="color:#999; width:40px; display:inline-block">25</span></div>
+<div class="code-line" data-line="26"><span style="color:#999; width:40px; display:inline-block">26</span>function main() {</div>
+<div class="code-line" data-line="27"><span style="color:#999; width:40px; display:inline-block">27</span>    const sortedArray = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];</div>
+<div class="code-line" data-line="28"><span style="color:#999; width:40px; display:inline-block">28</span>    const target = 13;</div>
+<div class="code-line" data-line="29"><span style="color:#999; width:40px; display:inline-block">29</span>    </div>
+<div class="code-line" data-line="30"><span style="color:#999; width:40px; display:inline-block">30</span>    const result = binarySearch(sortedArray, target);</div>
+<div class="code-line" data-line="31"><span style="color:#999; width:40px; display:inline-block">31</span>    </div>
+<div class="code-line" data-line="32"><span style="color:#999; width:40px; display:inline-block">32</span>    if (result !== -1) {</div>
+<div class="code-line" data-line="33"><span style="color:#999; width:40px; display:inline-block">33</span>        console.log(`Found ${target} at index ${result}`);</div>
+<div class="code-line" data-line="34"><span style="color:#999; width:40px; display:inline-block">34</span>    } else {</div>
+<div class="code-line" data-line="35"><span style="color:#999; width:40px; display:inline-block">35</span>        console.log(`${target} not found in array`);</div>
+<div class="code-line" data-line="36"><span style="color:#999; width:40px; display:inline-block">36</span>    }</div>
+<div class="code-line" data-line="37"><span style="color:#999; width:40px; display:inline-block">37</span>    </div>
+<div class="code-line" data-line="38"><span style="color:#999; width:40px; display:inline-block">38</span>    return result;</div>
+<div class="code-line" data-line="39"><span style="color:#999; width:40px; display:inline-block">39</span>}</div>
+<div class="code-line" data-line="40"><span style="color:#999; width:40px; display:inline-block">40</span></div>
+<div class="code-line" data-line="41"><span style="color:#999; width:40px; display:inline-block">41</span>if (require.main === module) {</div>
+<div class="code-line" data-line="42"><span style="color:#999; width:40px; display:inline-block">42</span>    main();</div>
+<div class="code-line" data-line="43"><span style="color:#999; width:40px; display:inline-block">43</span>}</div>
+<div class="code-line" data-line="44"><span style="color:#999; width:40px; display:inline-block">44</span></div>
+<div class="code-line" data-line="45"><span style="color:#999; width:40px; display:inline-block">45</span>module.exports = { binarySearch };</div>
+<div class="code-line" data-line="46"><span style="color:#999; width:40px; display:inline-block">46</span></div>
+
+                </div>
+            </div>
+            
+            <div class="steps-panel">
+                <h3>Execution Steps</h3>
+                <div id="steps-list">
+<div class="step-item call" data-line="7">
+    <div class="step-line">Line 7 <small>(in binarySearch)</small></div>
+    <div class="step-desc">Function 'binarySearch' defined</div>
+    
+</div>
+<div class="step-item assign" data-line="8">
+    <div class="step-line">Line 8</div>
+    <div class="step-desc">Variable assignment: let left = 0;</div>
+    <div class="step-vars">Variables: left=value</div>
+</div>
+<div class="step-item assign" data-line="9">
+    <div class="step-line">Line 9</div>
+    <div class="step-desc">Variable assignment: let right = arr.length - 1;</div>
+    <div class="step-vars">Variables: right=value</div>
+</div>
+<div class="step-item assign" data-line="11">
+    <div class="step-line">Line 11</div>
+    <div class="step-desc">Variable assignment: while (left <= right) {</div>
+    <div class="step-vars">Variables: <=value</div>
+</div>
+<div class="step-item assign" data-line="12">
+    <div class="step-line">Line 12</div>
+    <div class="step-desc">Variable assignment: const mid = Math.floor((left + right) / 2);</div>
+    <div class="step-vars">Variables: mid=value</div>
+</div>
+<div class="step-item assign" data-line="14">
+    <div class="step-line">Line 14</div>
+    <div class="step-desc">Variable assignment: if (arr[mid] === target) {</div>
+    <div class="step-vars">Variables: (arr[mid]=value</div>
+</div>
+<div class="step-item return" data-line="15">
+    <div class="step-line">Line 15</div>
+    <div class="step-desc">Return: return mid;</div>
+    
+</div>
+<div class="step-item condition" data-line="16">
+    <div class="step-line">Line 16</div>
+    <div class="step-desc">Conditional: } else if (arr[mid] < target) {</div>
+    
+</div>
+<div class="step-item assign" data-line="17">
+    <div class="step-line">Line 17</div>
+    <div class="step-desc">Variable assignment: left = mid + 1;</div>
+    <div class="step-vars">Variables: left=value</div>
+</div>
+<div class="step-item condition" data-line="18">
+    <div class="step-line">Line 18</div>
+    <div class="step-desc">Conditional: } else {</div>
+    
+</div>
+<div class="step-item assign" data-line="19">
+    <div class="step-line">Line 19</div>
+    <div class="step-desc">Variable assignment: right = mid - 1;</div>
+    <div class="step-vars">Variables: right=value</div>
+</div>
+<div class="step-item return" data-line="23">
+    <div class="step-line">Line 23</div>
+    <div class="step-desc">Return: return -1;</div>
+    
+</div>
+<div class="step-item call" data-line="26">
+    <div class="step-line">Line 26 <small>(in main)</small></div>
+    <div class="step-desc">Function 'main' defined</div>
+    
+</div>
+<div class="step-item assign" data-line="27">
+    <div class="step-line">Line 27</div>
+    <div class="step-desc">Variable assignment: const sortedArray = [1, 3, 5, 7, 9, 11, 13, 15, 17</div>
+    <div class="step-vars">Variables: sortedArray=value</div>
+</div>
+<div class="step-item assign" data-line="28">
+    <div class="step-line">Line 28</div>
+    <div class="step-desc">Variable assignment: const target = 13;</div>
+    <div class="step-vars">Variables: target=value</div>
+</div>
+<div class="step-item assign" data-line="30">
+    <div class="step-line">Line 30</div>
+    <div class="step-desc">Variable assignment: const result = binarySearch(sortedArray, target);</div>
+    <div class="step-vars">Variables: result=value</div>
+</div>
+<div class="step-item assign" data-line="32">
+    <div class="step-line">Line 32</div>
+    <div class="step-desc">Variable assignment: if (result !== -1) {</div>
+    <div class="step-vars">Variables: !=value</div>
+</div>
+<div class="step-item condition" data-line="34">
+    <div class="step-line">Line 34</div>
+    <div class="step-desc">Conditional: } else {</div>
+    
+</div>
+<div class="step-item return" data-line="38">
+    <div class="step-line">Line 38</div>
+    <div class="step-desc">Return: return result;</div>
+    
+</div>
+<div class="step-item assign" data-line="41">
+    <div class="step-line">Line 41</div>
+    <div class="step-desc">Variable assignment: if (require.main === module) {</div>
+    <div class="step-vars">Variables: (require.main=value</div>
+</div>
+<div class="step-item assign" data-line="45">
+    <div class="step-line">Line 45</div>
+    <div class="step-desc">Variable assignment: module.exports = { binarySearch };</div>
+    <div class="step-vars">Variables: module.exports=value</div>
+</div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const steps = [{"type": "call", "line": 7, "description": "Function 'binarySearch' defined", "function": "binarySearch"}, {"type": "assign", "line": 8, "description": "Variable assignment: let left = 0;", "variables": {"left": "value"}}, {"type": "assign", "line": 9, "description": "Variable assignment: let right = arr.length - 1;", "variables": {"right": "value"}}, {"type": "assign", "line": 11, "description": "Variable assignment: while (left <= right) {", "variables": {"<": "value"}}, {"type": "assign", "line": 12, "description": "Variable assignment: const mid = Math.floor((left + right) / 2);", "variables": {"mid": "value"}}, {"type": "assign", "line": 14, "description": "Variable assignment: if (arr[mid] === target) {", "variables": {"(arr[mid]": "value"}}, {"type": "return", "line": 15, "description": "Return: return mid;"}, {"type": "condition", "line": 16, "description": "Conditional: } else if (arr[mid] < target) {"}, {"type": "assign", "line": 17, "description": "Variable assignment: left = mid + 1;", "variables": {"left": "value"}}, {"type": "condition", "line": 18, "description": "Conditional: } else {"}, {"type": "assign", "line": 19, "description": "Variable assignment: right = mid - 1;", "variables": {"right": "value"}}, {"type": "return", "line": 23, "description": "Return: return -1;"}, {"type": "call", "line": 26, "description": "Function 'main' defined", "function": "main"}, {"type": "assign", "line": 27, "description": "Variable assignment: const sortedArray = [1, 3, 5, 7, 9, 11, 13, 15, 17", "variables": {"sortedArray": "value"}}, {"type": "assign", "line": 28, "description": "Variable assignment: const target = 13;", "variables": {"target": "value"}}, {"type": "assign", "line": 30, "description": "Variable assignment: const result = binarySearch(sortedArray, target);", "variables": {"result": "value"}}, {"type": "assign", "line": 32, "description": "Variable assignment: if (result !== -1) {", "variables": {"!": "value"}}, {"type": "condition", "line": 34, "description": "Conditional: } else {"}, {"type": "return", "line": 38, "description": "Return: return result;"}, {"type": "assign", "line": 41, "description": "Variable assignment: if (require.main === module) {", "variables": {"(require.main": "value"}}, {"type": "assign", "line": 45, "description": "Variable assignment: module.exports = { binarySearch };", "variables": {"module.exports": "value"}}];
+        
+        // Add click handlers for code lines and steps
+        document.querySelectorAll('.code-line').forEach(line => {
+            line.addEventListener('click', function() {
+                const lineNum = parseInt(this.dataset.line);
+                highlightStepsForLine(lineNum);
+            });
+        });
+        
+        document.querySelectorAll('.step-item').forEach(step => {
+            step.addEventListener('click', function() {
+                const lineNum = parseInt(this.dataset.line);
+                highlightCodeLine(lineNum);
+            });
+        });
+        
+        function highlightCodeLine(lineNum) {
+            document.querySelectorAll('.code-line').forEach(l => l.classList.remove('active'));
+            const line = document.querySelector(`[data-line="${lineNum}"]`);
+            if (line) {
+                line.classList.add('active');
+                line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+        
+        function highlightStepsForLine(lineNum) {
+            const relatedSteps = steps.filter(s => s.line === lineNum);
+            console.log('Steps for line', lineNum, ':', relatedSteps);
+        }
+    </script>
+</body>
+</html>

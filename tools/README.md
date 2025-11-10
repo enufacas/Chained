@@ -4,6 +4,34 @@ A collection of intelligent development tools for the Chained autonomous AI syst
 
 ## Available Tools
 
+### 🔍 Visual Code Execution Flow Animator
+
+An interactive code execution flow visualizer that traces and animates how code executes step-by-step.
+
+**Features:**
+- Multi-language support (Python, JavaScript)
+- AST-based analysis for Python
+- Interactive HTML visualizations
+- Function call and variable tracking
+- Control flow analysis
+- Educational and debugging tool
+
+**Quick Start:**
+```bash
+# Analyze a Python file
+python3 tools/code-flow-animator.py -f script.py
+
+# Analyze JavaScript file
+python3 tools/code-flow-animator.py -f app.js -l javascript
+
+# View example visualizations
+open tools/examples/flow_reports/flow_factorial_flow.html
+```
+
+[📖 Full Documentation](./CODE_FLOW_ANIMATOR.md)
+
+---
+
 ### 🔍 Cross-Repository Pattern Matcher
 An intelligent best practices analyzer that detects anti-patterns, security issues, and code quality problems across multiple programming languages.
 
