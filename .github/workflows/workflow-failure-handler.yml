@@ -1,22 +1,26 @@
 name: Workflow Failure Handler
 
 on:
-  workflow_run:
-    workflows:
-      - "AI Friend Daily"
-      - "Auto Review and Merge"
-      - "Code Analyzer"
-      - "Code Golf Optimizer"
-      - "Copilot Assignment Workflow"
-      - "Daily AI Goal Generator"
-      - "Goal Progress Checker"
-      - "Smart Idea Generator"
-      - "Learning from Hacker News"
-      - "Learning from TLDR Tech"
-      - "Pattern Matcher"
-      - "System Kickoff"
-      - "System Monitor"
-    types: [completed]
+  # Disabled: workflow_run trigger commented out to disable automatic failure handling
+  # workflow_run:
+  #   workflows:
+  #     - "AI Friend Daily"
+  #     - "Auto Review and Merge"
+  #     - "Code Analyzer"
+  #     - "Code Golf Optimizer"
+  #     - "Copilot Assignment Workflow"
+  #     - "Daily AI Goal Generator"
+  #     - "Goal Progress Checker"
+  #     - "Smart Idea Generator"
+  #     - "Learning from Hacker News"
+  #     - "Learning from TLDR Tech"
+  #     - "Pattern Matcher"
+  #     - "System Kickoff"
+  #     - "System Monitor"
+  #   types: [completed]
+  
+  # Manual trigger is available if needed for testing
+  workflow_dispatch:
 
 permissions:
   issues: write
