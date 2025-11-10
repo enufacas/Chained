@@ -45,7 +45,7 @@ async function fetchAIGoal() {
             }
             
             // Parse progress from the markdown (look for progress updates)
-            const progressMatches = markdown.match(/\((\d+)% complete\)/);
+            const progressMatches = markdown.match(/\((\d+)%\s*complete\)/);
             if (progressMatches) {
                 const progress = parseInt(progressMatches[1]);
                 document.getElementById('goal-progress').style.width = progress + '%';
