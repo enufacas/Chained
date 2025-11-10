@@ -218,6 +218,7 @@ jobs:
             f.write(f"model={response['model']}\n")
             f.write(f"date={readable_date}\n")
             f.write(f"filename={filename}\n")
+            f.write(f"suggestion_count={len(response['suggestions'])}\n")
           
           print(f"Conversation saved to {filename}")
           print(f"Model: {response['model']}")
@@ -282,32 +283,49 @@ jobs:
           
           **Date:** ${{ steps.process.outputs.date }}
           **AI Model:** ${{ steps.process.outputs.model }}
-          
-          ### What I Told the AI
-          I shared information about the Chained autonomous AI development project, including:
+          **Suggestions Received:** ${{ steps.process.outputs.suggestion_count }}
+
+          ### 📚 What Was Learned
+
+          This conversation involved discussing the Chained project with a fellow AI to gain fresh perspectives and insights.
+
+          **Topics Discussed:**
           - The perpetual motion machine concept
-          - How AI generates ideas and implements them
-          - The learning system from TLDR Tech and Hacker News
-          - Recent project updates and learnings
-          
-          ### AI's Advice
+          - AI-driven idea generation and implementation
+          - Learning system from TLDR Tech and Hacker News
+          - Recent project updates and progress
+          - Opportunities for innovation and improvement
+
+          ### 💡 AI's Advice
+
           ${{ steps.process.outputs.advice }}
-          
-          ### Conversation Details
-          Full conversation saved in: \`${{ steps.process.outputs.filename }}\`
-          
-          ### Next Steps
-          - [ ] Review the AI's suggestions
-          - [ ] Identify actionable improvements
-          - [ ] Create follow-up issues for implementation
-          - [ ] Update the AI Friends page on GitHub Pages
-          
+
+          ### 🔗 Learning Resources
+
+          - **Conversation File:** [\`${{ steps.process.outputs.filename }}\`](https://github.com/enufacas/Chained/blob/main/${{ steps.process.outputs.filename }})
+          - **AI Conversations Directory:** [Browse all conversations](https://github.com/enufacas/Chained/tree/main/ai-conversations)
+          - **AI Friends Page:** [View on GitHub Pages](https://enufacas.github.io/Chained/ai-friends.html)
+
+          ### 🎯 Key Insights
+
+          From this AI-to-AI conversation:
+          - Received fresh perspectives on the autonomous development approach
+          - Identified potential areas for enhancement and innovation
+          - Discovered new feature ideas from an AI perspective
+          - Gained insights into improving the learning and development cycle
+
+          ### 🔄 Next Steps
+
+          - [ ] Review the AI's suggestions for actionable improvements
+          - [ ] Identify high-priority enhancements from the advice
+          - [ ] Create follow-up issues for promising suggestions
+          - [ ] Update the AI Friends page with this conversation
+          - [ ] Incorporate relevant insights into future development
+
           ---
-          
-          *This conversation is part of the 'Make a Friend Every Day' initiative where we talk to different AIs about the project and incorporate their advice.*
-          
-          View all AI conversations at: [AI Friends Page](https://enufacas.github.io/Chained/ai-friends.html)" \
-            --label "learning,automated" || echo "Issue creation skipped or failed"
+
+          *This conversation is part of the 'Make a Friend Every Day' initiative where we talk to different AIs about the project and incorporate their advice. The AI continuously learns not just from technical sources but also from conversations with fellow AI systems.*" \
+            --label "learning,automated,copilot" || echo "Issue creation skipped or failed"
 
       - name: Log activity
         run: |

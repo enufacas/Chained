@@ -105,6 +105,7 @@ jobs:
                   f.write(f"learning_count={len(learnings)}\n")
                   f.write(f"trend_count={len(tech_trends)}\n")
                   f.write(f"sample_learning={first_learning}\n")
+                  f.write(f"learning_file=learnings/tldr_{timestamp}.json\n")
           else:
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                   f.write(f"has_learnings=false\n")
@@ -118,37 +119,57 @@ jobs:
         run: |
           # Create an issue documenting the learnings
           gh issue create \
-            --title "🧠 Learning Update from TLDR Tech - $(date +%Y-%m-%d)" \
-            --body "## New Tech Insights from TLDR
+            --title "🧠 Learn from TLDR Tech - $(date +%Y-%m-%d)" \
+            --body "## New Tech Insights from TLDR Tech
 
           **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           **Learnings Collected:** ${{ steps.fetch.outputs.learning_count }}
           **Trends Identified:** ${{ steps.fetch.outputs.trend_count }}
 
+          ### 📚 What Was Learned
+
           **Sample Learning:**
           ${{ steps.fetch.outputs.sample_learning }}
 
-          ---
+          This learning session collected insights from TLDR Tech newsletters covering:
+          - 🤖 AI/ML developments and LLM advancements
+          - 🚀 DevOps practices and CI/CD innovations
+          - 💻 Programming languages and framework updates
+          - 🔧 Developer tools and productivity enhancements
 
-          ### Actions Taken
-          - ✅ Fetched latest tech news from TLDR
+          ### 🔗 Learning Resources
+
+          - **Learning File:** [\`${{ steps.fetch.outputs.learning_file }}\`](https://github.com/enufacas/Chained/blob/main/${{ steps.fetch.outputs.learning_file }})
+          - **Learnings Directory:** [Browse all learnings](https://github.com/enufacas/Chained/tree/main/learnings)
+          - **Learnings Documentation:** [README](https://github.com/enufacas/Chained/blob/main/learnings/README.md)
+
+          ### 📊 Key Insights
+
+          The collected learnings include:
+          - Technology trends and emerging patterns
+          - Best practices from industry leaders
+          - Security updates and vulnerability alerts
+          - Performance optimization techniques
+          - New tool and framework releases
+
+          ### 🎯 Actions Taken
+          - ✅ Fetched latest tech news from TLDR Tech
           - ✅ Extracted key learnings and trends
           - ✅ Saved to learnings database
+          - ✅ Categorized by topic (AI/ML, DevOps, Programming)
           - ⏳ Will incorporate into next idea generation cycle
 
-          ### Next Steps
+          ### 🔄 Next Steps
           These learnings will influence:
-          - Future idea generation
-          - Technology choices
-          - Implementation approaches
+          - Future idea generation and prioritization
+          - Technology choices in implementations
           - Best practices adoption
-
-          See \`learnings/\` directory for full details.
+          - Feature development approaches
 
           ---
 
-          *This learning was automatically collected by the TLDR Learning workflow.*" \
-            --label "learning,automated" || echo "Issue creation skipped or failed"
+          *This learning was automatically collected by the TLDR Learning workflow. The AI continuously learns from external sources to stay current with technology trends.*" \
+            --label "learning,automated,copilot" || echo "Issue creation skipped or failed"
 
       - name: Create PR for learnings
         env:
