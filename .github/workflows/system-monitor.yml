@@ -164,7 +164,7 @@ jobs:
             git checkout "${branch_name}"
             git merge main --no-edit || true
             git add docs/data/
-            git commit -m "📊 Update timeline data - $(date -u +"%Y-%m-%d %H:%M:%S UTC")" || {
+            git commit -m "📊 Update timeline data - $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || {
               echo "No new changes to commit to existing PR"
               exit 0
             }
@@ -176,15 +176,15 @@ jobs:
             branch_name="timeline/update-$(date +%Y%m%d-%H%M%S)"
             git checkout -b "${branch_name}"
             
-            git commit -m "📊 Update timeline data - $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+            git commit -m "📊 Update timeline data - $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
             git push origin "${branch_name}"
             
             # Create PR with timeline-update label for tracking
             gh pr create \
-              --title "📊 Timeline Update - $(date -u +%Y-%m-%d %H:%M:%S UTC)" \
+              --title "📊 Timeline Update - $(date -u +'%Y-%m-%d %H:%M:%S UTC')" \
               --body "## Automated Timeline Data Update
             
-            **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
             
             ### Summary
             This PR updates the timeline data with the latest repository activity metrics.
@@ -204,7 +204,7 @@ jobs:
             
             ---
             *This PR was automatically created by the System Monitor workflow and will be auto-merged.*" \
-              --label "automated,copilot,timeline-update" \
+              --label "automated,copilot" \
               --base main \
               --head "${branch_name}"
             
@@ -256,7 +256,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Create a progress report
-          report="## 📊 Progress Report - $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          report="## 📊 Progress Report - $(date -u +'%Y-%m-%d %H:%M:%S UTC')
 
           ### Overall Statistics
           - **Total Issues:** ${{ steps.analyze.outputs.total_issues }}
@@ -357,7 +357,7 @@ jobs:
             
             gh issue comment "${existing_issue}" --body "## 🔄 Updated Workflow Health Check
             
-            **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
             
             ### Current Status
             - **Total Workflow Runs:** ${{ steps.monitor.outputs.total_runs }}
@@ -375,7 +375,7 @@ jobs:
             
             The workflow monitor has detected issues that require attention.
             
-            **Detection Time:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            **Detection Time:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
             
             ### Health Summary
             - **Total Workflow Runs:** ${{ steps.monitor.outputs.total_runs }}
@@ -403,7 +403,7 @@ jobs:
           echo "Workflow Health Report"
           echo "================================================================"
           echo ""
-          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
           echo ""
           echo "Summary:"
           echo "  Total Runs: ${{ steps.monitor.outputs.total_runs }}"
