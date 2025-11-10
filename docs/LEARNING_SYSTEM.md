@@ -201,6 +201,16 @@ Visit the live site to see:
 - Learning statistics
 - Impact analysis
 
+### Via AI Knowledge Graph
+**NEW!** Visit the [AI Knowledge Graph](https://enufacas.github.io/Chained/ai-knowledge-graph.html) to:
+- 🌐 **Visualize AI relationships**: Interactive node graph showing connections between AI topics
+- 🔍 **Explore trends**: See which AI topics are most popular and interconnected
+- 📊 **Analyze patterns**: Identify emerging technologies and research areas
+- 🎯 **Track evolution**: Monitor how AI topics evolve over time
+- 💡 **Get insights**: View trending topics, emerging tech, and most connected stories
+
+The knowledge graph automatically extracts AI/ML-related topics from HN and TLDR learnings, creating an intuitive visualization of the AI landscape.
+
 ### Via Issues
 Issues tagged with `learning` label contain:
 - Important insights
