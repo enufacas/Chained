@@ -14,7 +14,9 @@
 - ❌ Low performers getting **eliminated** (survival of the fittest!)
 - 🎮 Full **gamification** with leaderboards and achievements
 
-**[View the Agent Ecosystem →](https://enufacas.github.io/Chained/agents.html)** | **[Learn More →](./agents/README.md)** | **[Explore Possibilities →](./AGENT_BRAINSTORMING.md)**
+**[View the Agent Ecosystem →](https://enufacas.github.io/Chained/agents.html)** | **[Learn More →](./agents/README.md)** | **[Quick Start →](./AGENT_QUICKSTART.md)** | **[Configuration →](./AGENT_CONFIGURATION.md)** | **[Explore Possibilities →](./AGENT_BRAINSTORMING.md)**
+
+**✅ Zero Configuration Required!** The agent system works out of the box. Just merge and watch agents spawn automatically.
 
 ## 🎯 AI Goal of the Day
 
