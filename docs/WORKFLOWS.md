@@ -165,6 +165,17 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
   - Supports documentation generation
   - Extensible pattern library
 
+### 18. GitHub Pages Review (`github-pages-review.yml`)
+- **Schedule**: Weekly on Mondays at 8 AM UTC
+- **Purpose**: Regularly review GitHub Pages for issues
+- **Actions**: 
+  - Checks for missing files in docs directory
+  - Validates workflow references in HTML files
+  - Checks data freshness (stats.json should be < 24 hours old)
+  - Scans for TODO/FIXME comments
+  - Creates/updates GitHub issue if problems found
+- **Manual Trigger**: Can be triggered manually with option to skip issue creation
+
 ## Workflow Chain
 
 The workflows form an autonomous cycle:
