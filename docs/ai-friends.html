@@ -374,7 +374,7 @@
         async function loadConversations() {
             try {
                 // Load index file
-                const indexResponse = await fetch('../ai-conversations/index.json');
+                const indexResponse = await fetch('ai-conversations/index.json');
                 
                 if (!indexResponse.ok) {
                     throw new Error('Index not found');
@@ -391,7 +391,7 @@
                 const conversations = [];
                 for (const conv of index.conversations) {
                     try {
-                        const response = await fetch(`../${conv.file}`);
+                        const response = await fetch(`${conv.file}`);
                         if (response.ok) {
                             const data = await response.json();
                             conversations.push(data);
