@@ -42,9 +42,9 @@ jobs:
           
           # TLDR has an RSS feed we can use
           rss_urls = [
-              'https://tldr.tech/tech/rss',
-              'https://tldr.tech/ai/rss',
-              'https://tldr.tech/devops/rss'
+              'https://tldr.tech/api/rss/tech',
+              'https://tldr.tech/api/rss/ai',
+              'https://tldr.tech/api/rss/devops'
           ]
           
           learnings = []
