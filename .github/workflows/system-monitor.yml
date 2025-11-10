@@ -131,9 +131,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add docs/data/
-          
-          if git diff --staged --quiet; then
+          # Check if there are any changes before proceeding
+          if git diff --quiet docs/data/ && ! git ls-files --others --exclude-standard docs/data/ | grep -q .; then
             echo "No changes to commit"
             exit 0
           fi
@@ -159,16 +158,31 @@ jobs:
               exit 0
             fi
             
-            # Switch to the existing branch and update it
+            # Update the existing branch by resetting it to main (avoids merge conflicts)
+            # First, save the current changes
+            git add docs/data/
+            git stash push -m "timeline-update-$(date +%s)"
+            
+            # Fetch latest main and reset branch to it
+            git fetch origin main
             git fetch origin "${branch_name}"
             git checkout "${branch_name}"
-            git merge main --no-edit || true
+            git reset --hard origin/main
+            
+            # Apply the stashed changes
+            git stash pop || {
+              echo "⚠️  Conflict while applying changes, using --theirs strategy"
+              git checkout --theirs docs/data/
+              git add docs/data/
+              git stash drop
+            }
+            
             git add docs/data/
             git commit -m "📊 Update timeline data - $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || {
               echo "No new changes to commit to existing PR"
               exit 0
             }
-            git push origin "${branch_name}"
+            git push --force-with-lease origin "${branch_name}"
             
             echo "✅ Updated existing PR #${pr_number}"
           else
@@ -176,6 +190,7 @@ jobs:
             branch_name="timeline/update-$(date +%Y%m%d-%H%M%S)"
             git checkout -b "${branch_name}"
             
+            git add docs/data/
             git commit -m "📊 Update timeline data - $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
             git push origin "${branch_name}"
             
