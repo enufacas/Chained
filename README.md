@@ -6,6 +6,18 @@
 
 **Chained** is an experimental "perpetual AI motion machine" - a self-evolving repository that generates ideas, creates issues, assigns work to AI agents, and documents its own progress with minimal human intervention.
 
+## 🤖 NEW: Autonomous Agent Ecosystem
+
+**Chained now features a competitive agent system!** Every 3 hours, a new AI agent spawns with a unique specialization (Bug Hunter, Feature Architect, etc.). Agents compete for performance, with:
+- 🏆 Top performers entering the **Hall of Fame**
+- 👑 Best agent becoming the **System Lead** with governance powers
+- ❌ Low performers getting **eliminated** (survival of the fittest!)
+- 🎮 Full **gamification** with leaderboards and achievements
+
+**[View the Agent Ecosystem →](https://enufacas.github.io/Chained/agents.html)** | **[Learn More →](./agents/README.md)** | **[Quick Start →](./AGENT_QUICKSTART.md)** | **[Configuration →](./AGENT_CONFIGURATION.md)** | **[Explore Possibilities →](./AGENT_BRAINSTORMING.md)**
+
+**✅ Zero Configuration Required!** The agent system works out of the box. Just merge and watch agents spawn automatically.
+
 ## 🎯 AI Goal of the Day
 
 **Today's Focus**: Check [docs/AI_GOALS.md](./docs/AI_GOALS.md) or the [GitHub Pages](https://enufacas.github.io/Chained/) for the current AI goal!
@@ -47,6 +59,7 @@ The goal of Chained is to create an entertaining and educational demonstration o
 Chained uses GitHub Actions to maintain its fully autonomous perpetual motion. The system includes:
 
 - **Core Workflows**: Idea generation, Copilot assignment, auto-review & merge
+- **Agent System**: Autonomous agent spawning, evaluation, and governance
 - **Learning Workflows**: TLDR Tech, Hacker News, Smart Idea Generator
 - **System Management**: Kickoff, monitoring, progress tracking
 - **Micro Projects**: Code Golf Optimizer, Code Analyzer, Pattern Matcher
