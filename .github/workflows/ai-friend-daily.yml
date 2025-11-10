@@ -303,7 +303,7 @@ jobs:
           ### 🔗 Learning Resources
 
           - **Conversation File:** [\`${{ steps.process.outputs.filename }}\`](https://github.com/enufacas/Chained/blob/main/${{ steps.process.outputs.filename }})
-          - **AI Conversations Directory:** [Browse all conversations](https://github.com/enufacas/Chained/tree/main/ai-conversations)
+          - **AI Conversations Directory:** [Browse all conversations](https://github.com/enufacas/Chained/tree/main/docs/ai-conversations)
           - **AI Friends Page:** [View on GitHub Pages](https://enufacas.github.io/Chained/ai-friends.html)
 
           ### 🎯 Key Insights

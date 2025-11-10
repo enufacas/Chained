@@ -342,7 +342,7 @@ AI Friend suggestions can inspire:
 - Documentation enhancements
 - Architecture refinements
 
-All conversations are preserved in `ai-conversations/` and displayed on the dedicated GitHub Pages section.
+All conversations are preserved in `docs/ai-conversations/` and displayed on the dedicated GitHub Pages section.
 
 ## Future Enhancements
 

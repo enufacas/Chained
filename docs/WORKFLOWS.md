@@ -79,7 +79,7 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
   - Uses free AI APIs (Puter.js) requiring no authentication
   - Shares project information and recent learnings
   - Asks for advice and suggestions
-  - Saves conversations to `ai-conversations/` directory
+  - Saves conversations to `docs/ai-conversations/` directory
   - Creates GitHub issues documenting conversations
   - Updates AI Friends page on GitHub Pages
 - **Models**: GPT-4, Claude, Gemini, Llama (400+ models via Puter.js)
