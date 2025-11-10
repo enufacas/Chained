@@ -29,6 +29,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Label Copilot PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Checking for Copilot PRs to label..."
+          
+          # Get all open PRs from Copilot (matches various copilot formats including app/copilot-swe-agent)
+          pr_list=$(gh pr list --repo ${{ github.repository }} --state open --json number,author,labels --jq '.[] | select(.author.login | test("^(Copilot|copilot|app/copilot)"; "i")) | .number')
+          
+          if [ -z "${pr_list}" ]; then
+            echo "ℹ️ No Copilot PRs found"
+          else
+            echo "Found Copilot PRs: ${pr_list}"
+            
+            # Add label to each PR
+            for pr_num in ${pr_list}; do
+              # Check if PR already has the copilot label
+              has_label=$(gh pr view ${pr_num} --repo ${{ github.repository }} --json labels --jq '.labels[] | select(.name == "copilot") | .name')
+              
+              if [ -z "${has_label}" ]; then
+                echo "Adding 'copilot' label to PR #${pr_num}"
+                gh pr edit ${pr_num} --add-label "copilot" --repo ${{ github.repository }} || echo "⚠️ Failed to add label to PR #${pr_num}"
+              fi
+            done
+          fi
+
       - name: Get PRs to review
         id: get_prs
         env:

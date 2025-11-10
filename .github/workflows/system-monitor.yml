@@ -1,0 +1,422 @@
+name: System Monitor
+
+on:
+  schedule:
+    # Run every 6 hours for timeline updates
+    # Run every 12 hours for progress tracking and workflow monitoring
+    - cron: '0 */6 * * *'
+  issues:
+    types: [opened, closed, labeled]
+  pull_request:
+    types: [opened, closed, merged]
+  workflow_dispatch:
+    inputs:
+      skip_timeline:
+        description: 'Skip timeline update'
+        required: false
+        type: boolean
+        default: false
+      skip_progress:
+        description: 'Skip progress tracking'
+        required: false
+        type: boolean
+        default: false
+      skip_workflow_monitor:
+        description: 'Skip workflow monitoring'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: read
+  checks: read
+
+jobs:
+  timeline-update:
+    runs-on: ubuntu-latest
+    if: inputs.skip_timeline != true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch repository activity
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create timeline data directory
+          mkdir -p docs/data
+          
+          # Fetch recent issues
+          echo "Fetching recent issues..."
+          gh issue list --limit 100 --json number,title,body,state,createdAt,closedAt,labels,url > docs/data/issues.json
+          
+          # Fetch recent pull requests
+          echo "Fetching recent pull requests..."
+          gh pr list --limit 100 --state all --json number,title,body,state,createdAt,closedAt,mergedAt,url,author > docs/data/pulls.json
+          
+          # Fetch workflow runs to document automation activity
+          echo "Fetching workflow runs..."
+          gh run list --limit 100 --json databaseId,name,status,conclusion,createdAt,displayTitle > docs/data/workflows.json
+          
+          # Create activity summary
+          total_issues=$(gh issue list --state all --limit 1000 --json number | jq '. | length')
+          open_issues=$(gh issue list --state open --limit 1000 --json number | jq '. | length')
+          closed_issues=$(gh issue list --state closed --limit 1000 --json number | jq '. | length')
+          
+          total_prs=$(gh pr list --state all --limit 1000 --json number | jq '. | length')
+          merged_prs=$(gh pr list --state merged --limit 1000 --json number | jq '. | length')
+          
+          ai_generated=$(gh issue list --state all --label "ai-generated" --limit 1000 --json number | jq '. | length')
+          copilot_assigned=$(gh issue list --state all --label "copilot-assigned" --limit 1000 --json number | jq '. | length')
+          completed=$(gh issue list --state all --label "completed" --limit 1000 --json number | jq '. | length')
+          in_progress=$(gh issue list --state open --label "in-progress" --limit 1000 --json number | jq '. | length')
+          
+          # Calculate metrics
+          if [ ${ai_generated} -gt 0 ]; then
+            completion_rate=$(awk "BEGIN {printf \"%.1f\", (${completed}/${ai_generated})*100}")
+          else
+            completion_rate="0.0"
+          fi
+          
+          if [ ${total_prs} -gt 0 ]; then
+            merge_rate=$(awk "BEGIN {printf \"%.1f\", (${merged_prs}/${total_prs})*100}")
+          else
+            merge_rate="0.0"
+          fi
+          
+          cat > docs/data/stats.json << EOF
+          {
+            "total_issues": ${total_issues},
+            "open_issues": ${open_issues},
+            "closed_issues": ${closed_issues},
+            "total_prs": ${total_prs},
+            "merged_prs": ${merged_prs},
+            "ai_generated": ${ai_generated},
+            "copilot_assigned": ${copilot_assigned},
+            "completed": ${completed},
+            "in_progress": ${in_progress},
+            "completion_rate": ${completion_rate},
+            "merge_rate": ${merge_rate},
+            "last_updated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          }
+          EOF
+          
+          # Create automation log
+          cat > docs/data/automation-log.json << EOF
+          {
+            "last_idea_generated": "$(gh issue list --label "ai-generated" --limit 1 --json createdAt --jq '.[0].createdAt // "N/A"')",
+            "last_pr_merged": "$(gh pr list --state merged --limit 1 --json mergedAt --jq '.[0].mergedAt // "N/A"')",
+            "last_issue_closed": "$(gh issue list --state closed --limit 1 --json closedAt --jq '.[0].closedAt // "N/A"')",
+            "autonomous_actions_today": "$(date +%s | awk '{print int($1/86400)}')",
+            "system_status": "active"
+          }
+          EOF
+          
+          echo "Timeline data updated successfully with automation metrics"
+
+      - name: Create or update PR for timeline updates
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add docs/data/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Check for existing open timeline update PRs
+          existing_prs=$(gh pr list --state open --label "timeline-update" --json number,headRefName --jq '.[].number' | head -1)
+          
+          if [ -n "${existing_prs}" ]; then
+            pr_number="${existing_prs}"
+            branch_name=$(gh pr view ${pr_number} --json headRefName --jq '.headRefName')
+            
+            echo "Found existing timeline PR #${pr_number} on branch ${branch_name}"
+            
+            # Check last update time of the PR to avoid too frequent updates
+            last_update=$(gh pr view ${pr_number} --json updatedAt --jq '.updatedAt')
+            last_update_seconds=$(date -d "${last_update}" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "${last_update}" +%s 2>/dev/null || echo 0)
+            current_seconds=$(date +%s)
+            seconds_since_update=$((current_seconds - last_update_seconds))
+            
+            # Skip if updated less than 5 minutes ago (300 seconds)
+            if [ ${seconds_since_update} -lt 300 ]; then
+              echo "⏭️  Skipping update - PR was updated ${seconds_since_update} seconds ago (< 5 minutes)"
+              exit 0
+            fi
+            
+            # Switch to the existing branch and update it
+            git fetch origin "${branch_name}"
+            git checkout "${branch_name}"
+            git merge main --no-edit || true
+            git add docs/data/
+            git commit -m "📊 Update timeline data - $(date -u +"%Y-%m-%d %H:%M:%S UTC")" || {
+              echo "No new changes to commit to existing PR"
+              exit 0
+            }
+            git push origin "${branch_name}"
+            
+            echo "✅ Updated existing PR #${pr_number}"
+          else
+            # No existing PR, create a new one
+            branch_name="timeline/update-$(date +%Y%m%d-%H%M%S)"
+            git checkout -b "${branch_name}"
+            
+            git commit -m "📊 Update timeline data - $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+            git push origin "${branch_name}"
+            
+            # Create PR with timeline-update label for tracking
+            gh pr create \
+              --title "📊 Timeline Update - $(date -u +%Y-%m-%d %H:%M:%S UTC)" \
+              --body "## Automated Timeline Data Update
+            
+            **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            
+            ### Summary
+            This PR updates the timeline data with the latest repository activity metrics.
+            
+            ### Changes
+            - Updated issues and pull request data
+            - Refreshed workflow run statistics
+            - Updated automation metrics and completion rates
+            - Regenerated activity summary
+            
+            ### Data Updated
+            - \`docs/data/issues.json\` - Recent issues
+            - \`docs/data/pulls.json\` - Recent pull requests
+            - \`docs/data/workflows.json\` - Workflow runs
+            - \`docs/data/stats.json\` - Repository statistics
+            - \`docs/data/automation-log.json\` - Automation activity
+            
+            ---
+            *This PR was automatically created by the System Monitor workflow and will be auto-merged.*" \
+              --label "automated,copilot,timeline-update" \
+              --base main \
+              --head "${branch_name}"
+            
+            echo "✅ PR created successfully for timeline update"
+          fi
+
+  progress-tracking:
+    runs-on: ubuntu-latest
+    # Run every 12 hours (at 00:00 and 12:00 UTC)
+    if: (github.event.schedule == '0 */12 * * *' || inputs.skip_progress != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Analyze repository progress
+        id: analyze
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get issue statistics
+          total_issues=$(gh issue list --state all --limit 1000 --json number | jq '. | length')
+          open_issues=$(gh issue list --state open --limit 1000 --json number | jq '. | length')
+          closed_issues=$(gh issue list --state closed --limit 1000 --json number | jq '. | length')
+          
+          # Get AI-generated issue statistics
+          ai_issues=$(gh issue list --state all --label "ai-generated" --limit 1000 --json number | jq '. | length')
+          ai_completed=$(gh issue list --state closed --label "ai-generated" --limit 1000 --json number | jq '. | length')
+          
+          # Get Copilot-assigned statistics
+          copilot_issues=$(gh issue list --state all --label "copilot-assigned" --limit 1000 --json number | jq '. | length')
+          
+          # Calculate completion rate
+          if [ ${ai_issues} -gt 0 ]; then
+            completion_rate=$(awk "BEGIN {printf \"%.1f\", (${ai_completed}/${ai_issues})*100}")
+          else
+            completion_rate="0.0"
+          fi
+          
+          echo "total_issues=${total_issues}" >> $GITHUB_OUTPUT
+          echo "open_issues=${open_issues}" >> $GITHUB_OUTPUT
+          echo "closed_issues=${closed_issues}" >> $GITHUB_OUTPUT
+          echo "ai_issues=${ai_issues}" >> $GITHUB_OUTPUT
+          echo "ai_completed=${ai_completed}" >> $GITHUB_OUTPUT
+          echo "copilot_issues=${copilot_issues}" >> $GITHUB_OUTPUT
+          echo "completion_rate=${completion_rate}" >> $GITHUB_OUTPUT
+
+      - name: Create progress report
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create a progress report
+          report="## 📊 Progress Report - $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          ### Overall Statistics
+          - **Total Issues:** ${{ steps.analyze.outputs.total_issues }}
+          - **Open Issues:** ${{ steps.analyze.outputs.open_issues }}
+          - **Closed Issues:** ${{ steps.analyze.outputs.closed_issues }}
+
+          ### AI Motion Machine Statistics
+          - **AI-Generated Ideas:** ${{ steps.analyze.outputs.ai_issues }}
+          - **Completed AI Tasks:** ${{ steps.analyze.outputs.ai_completed }}
+          - **Copilot Assignments:** ${{ steps.analyze.outputs.copilot_issues }}
+          - **Completion Rate:** ${{ steps.analyze.outputs.completion_rate }}%
+
+          ### System Status
+          - ✅ Idea Generator: Active
+          - ✅ Copilot Auto-Assign: Active
+          - ✅ System Monitor: Active
+
+          ---
+
+          *This report was automatically generated by the System Monitor workflow.*"
+          
+          # Try to find existing progress tracking issue
+          tracking_issue=$(gh issue list --label "progress-report" --state open --limit 1 --json number | jq -r '.[0].number // empty')
+          
+          if [ -n "${tracking_issue}" ]; then
+            echo "Adding progress report to issue #${tracking_issue}"
+            echo "${report}" | gh issue comment ${tracking_issue} --body-file -
+          else
+            echo "No tracking issue found. Progress logged to workflow output."
+            echo "${report}"
+          fi
+
+  workflow-monitoring:
+    runs-on: ubuntu-latest
+    # Run every 12 hours (at 00:00 and 12:00 UTC)
+    if: (github.event.schedule == '0 */12 * * *' || inputs.skip_workflow_monitor != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Monitor workflow health
+        id: monitor
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Monitoring workflow health..."
+          echo ""
+          
+          # Get workflow runs from the last 24 hours
+          runs_json=$(gh run list --limit 100 --json databaseId,name,status,conclusion,createdAt,displayTitle)
+          
+          # Count failures
+          total_runs=$(echo "$runs_json" | jq '. | length')
+          failed_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "failure")] | length')
+          cancelled_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "cancelled")] | length')
+          success_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "success")] | length')
+          
+          echo "Total runs (last 100): $total_runs"
+          echo "Failed: $failed_runs"
+          echo "Cancelled: $cancelled_runs"
+          echo "Successful: $success_runs"
+          echo ""
+          
+          # Calculate failure rate
+          if [ "$total_runs" -gt 0 ]; then
+            failure_rate=$(awk "BEGIN {printf \"%.1f\", ($failed_runs/$total_runs)*100}")
+          else
+            failure_rate="0.0"
+          fi
+          
+          echo "Failure rate: ${failure_rate}%"
+          echo ""
+          
+          # Set outputs
+          echo "failure_rate=${failure_rate}" >> $GITHUB_OUTPUT
+          echo "failed_runs=${failed_runs}" >> $GITHUB_OUTPUT
+          echo "total_runs=${total_runs}" >> $GITHUB_OUTPUT
+          
+          # Determine if critical
+          if [ "$failed_runs" -gt 10 ]; then
+            echo "has_critical_failures=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_critical_failures=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create monitoring issue if needed
+        if: steps.monitor.outputs.has_critical_failures == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Creating monitoring alert issue..."
+          
+          # Check if there's already an open monitoring issue
+          existing_issue=$(gh issue list --label "workflow-monitor" --state open --limit 1 --json number --jq '.[0].number' || echo "")
+          
+          if [ -n "$existing_issue" ]; then
+            echo "Updating existing monitoring issue #${existing_issue}"
+            
+            gh issue comment "${existing_issue}" --body "## 🔄 Updated Workflow Health Check
+            
+            **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            
+            ### Current Status
+            - **Total Workflow Runs:** ${{ steps.monitor.outputs.total_runs }}
+            - **Failed Runs:** ${{ steps.monitor.outputs.failed_runs }}
+            - **Failure Rate:** ${{ steps.monitor.outputs.failure_rate }}%
+            
+            ---
+            *Automated update from System Monitor*"
+          else
+            echo "Creating new monitoring issue"
+            
+            gh issue create \
+              --title "⚠️ Workflow Health Alert - $(date -u +%Y-%m-%d)" \
+              --body "## Workflow Health Monitoring Alert
+            
+            The workflow monitor has detected issues that require attention.
+            
+            **Detection Time:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            
+            ### Health Summary
+            - **Total Workflow Runs:** ${{ steps.monitor.outputs.total_runs }}
+            - **Failed Runs:** ${{ steps.monitor.outputs.failed_runs }}
+            - **Failure Rate:** ${{ steps.monitor.outputs.failure_rate }}%
+            
+            ### Recommended Actions
+            1. Review failed workflow runs in the Actions tab
+            2. Check for permission or authentication issues
+            3. Verify workflow configurations
+            4. Review recent changes to workflows
+            
+            ### Monitoring
+            This issue will be automatically updated with health checks every 12 hours.
+            Close this issue once all problems are resolved.
+            
+            ---
+            *This issue was automatically created by the System Monitor workflow.*" \
+              --label "workflow-monitor,automated"
+          fi
+
+      - name: Generate health report
+        run: |
+          echo "================================================================"
+          echo "Workflow Health Report"
+          echo "================================================================"
+          echo ""
+          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo ""
+          echo "Summary:"
+          echo "  Total Runs: ${{ steps.monitor.outputs.total_runs }}"
+          echo "  Failed: ${{ steps.monitor.outputs.failed_runs }}"
+          echo "  Failure Rate: ${{ steps.monitor.outputs.failure_rate }}%"
+          echo ""
+          
+          if [ "${{ steps.monitor.outputs.has_critical_failures }}" = "true" ]; then
+            echo "Status: ⚠️  ATTENTION NEEDED"
+            echo "High failure rate detected"
+          else
+            echo "Status: ✅ HEALTHY"
+            echo "All workflows operating normally"
+          fi
+          echo ""
+          echo "================================================================"

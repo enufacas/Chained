@@ -1,6 +1,9 @@
 name: System Kickoff
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       trigger_initial_workflows:
@@ -13,6 +16,11 @@ on:
         required: false
         type: boolean
         default: true
+      force_kickoff:
+        description: 'Force kickoff even if already completed'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   issues: write
@@ -26,6 +34,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check if already kicked off
+        id: check
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.force_kickoff != true)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if kickoff issue exists
+          if gh issue list --state all --label "automated,completed" --search "System Kickoff Complete" --json title | grep -q "System Kickoff Complete"; then
+            echo "already_kicked_off=true" >> $GITHUB_OUTPUT
+            echo "System already kicked off. Skipping."
+          else
+            echo "already_kicked_off=false" >> $GITHUB_OUTPUT
+            echo "System not yet kicked off."
+          fi
+
+      - name: Skip message
+        if: steps.check.outputs.already_kicked_off == 'true'
+        run: |
+          echo "================================================================"
+          echo "System already kicked off - skipping automatic kickoff"
+          echo "================================================================"
+          echo ""
+          echo "The Chained system is already running!"
+          echo ""
+          echo "To manually trigger workflows, use workflow_dispatch with force_kickoff=true"
+          echo ""
+          exit 0
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -33,6 +69,7 @@ jobs:
 
       - name: Run validation
         id: validate
+        if: steps.check.outputs.already_kicked_off != 'true'
         run: |
           echo "Running pre-flight validation..."
           chmod +x validate-system.sh
@@ -43,13 +80,13 @@ jobs:
           echo "validation_passed=true" >> $GITHUB_OUTPUT
 
       - name: Check validation results
-        if: steps.validate.outputs.validation_failed == 'true'
+        if: steps.check.outputs.already_kicked_off != 'true' && steps.validate.outputs.validation_failed == 'true'
         run: |
           echo "::error::Validation failed. Please fix errors before kickoff."
           exit 1
 
       - name: Create required labels
-        if: inputs.create_labels == true
+        if: steps.check.outputs.already_kicked_off != 'true' && (inputs.create_labels == true || github.event_name == 'push')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -85,6 +122,7 @@ jobs:
           done
 
       - name: Initialize learnings directory
+        if: steps.check.outputs.already_kicked_off != 'true'
         run: |
           echo "Initializing learnings directory..."
           mkdir -p learnings
@@ -120,6 +158,7 @@ jobs:
           fi
 
       - name: Commit initialization changes
+        if: steps.check.outputs.already_kicked_off != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -133,7 +172,7 @@ jobs:
           fi
 
       - name: Trigger initial workflows
-        if: inputs.trigger_initial_workflows == true
+        if: steps.check.outputs.already_kicked_off != 'true' && (inputs.trigger_initial_workflows == true || github.event_name == 'push')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -176,6 +215,7 @@ jobs:
           echo ""
 
       - name: Create kickoff success issue
+        if: steps.check.outputs.already_kicked_off != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -227,6 +267,7 @@ jobs:
             --label "automated,completed"
 
       - name: Generate kickoff summary
+        if: steps.check.outputs.already_kicked_off != 'true'
         run: |
           echo "================================================================"
           echo "🎉 KICKOFF COMPLETE!"

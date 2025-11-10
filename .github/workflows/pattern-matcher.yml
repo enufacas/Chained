@@ -2,8 +2,8 @@ name: Pattern Matcher
 
 on:
   schedule:
-    # Run weekly on Mondays at 11 AM UTC
-    - cron: '0 11 * * 1'
+    # Run weekly on Mondays at 10 AM UTC (consolidated with other code quality checks)
+    - cron: '0 10 * * 1'
   workflow_dispatch:
     inputs:
       directory:
