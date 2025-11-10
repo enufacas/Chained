@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "agents": [],
+  "hall_of_fame": [],
+  "system_lead": null,
+  "config": {
+    "spawn_interval_hours": 3,
+    "max_active_agents": 10,
+    "elimination_threshold": 0.3,
+    "promotion_threshold": 0.85,
+    "metrics_weight": {
+      "code_quality": 0.3,
+      "issue_resolution": 0.25,
+      "pr_success": 0.25,
+      "peer_review": 0.2
+    }
+  },
+  "specializations": [
+    "bug-hunter",
+    "feature-architect",
+    "test-champion",
+    "doc-master",
+    "performance-optimizer",
+    "security-guardian",
+    "code-poet",
+    "refactor-wizard",
+    "integration-specialist",
+    "ux-enhancer"
+  ],
+  "last_spawn": null,
+  "last_evaluation": null
+}

@@ -1,0 +1,46 @@
+name: Sync Agent Data to GitHub Pages
+
+on:
+  push:
+    paths:
+      - 'agents/registry.json'
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync agent data to docs
+        run: |
+          mkdir -p docs/data
+          
+          if [ -f "agents/registry.json" ]; then
+            cp agents/registry.json docs/data/agent-registry.json
+            echo "✅ Synced agent registry to GitHub Pages"
+          else
+            echo "⚠️ Agent registry not found"
+          fi
+
+      - name: Commit changes
+        run: |
+          git add docs/data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "📊 Sync agent data to GitHub Pages"
+            git push
+            echo "✅ Changes pushed to main"
+          fi

@@ -1,0 +1,450 @@
+name: Agent Spawner
+
+on:
+  schedule:
+    # Run every 3 hours
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      specialization:
+        description: 'Force specific specialization (leave empty for random)'
+        required: false
+        type: choice
+        options:
+          - random
+          - bug-hunter
+          - feature-architect
+          - test-champion
+          - doc-master
+          - performance-optimizer
+          - security-guardian
+          - code-poet
+          - refactor-wizard
+          - integration-specialist
+          - ux-enhancer
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  spawn-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check agent capacity
+        id: check_capacity
+        run: |
+          REGISTRY_FILE="agents/registry.json"
+          
+          if [ ! -f "$REGISTRY_FILE" ]; then
+            echo "Registry file not found. Creating initial registry..."
+            mkdir -p agents
+            cat > "$REGISTRY_FILE" << 'EOF'
+          {
+            "version": "1.0.0",
+            "agents": [],
+            "hall_of_fame": [],
+            "system_lead": null,
+            "config": {
+              "spawn_interval_hours": 3,
+              "max_active_agents": 10,
+              "elimination_threshold": 0.3,
+              "promotion_threshold": 0.85,
+              "metrics_weight": {
+                "code_quality": 0.3,
+                "issue_resolution": 0.25,
+                "pr_success": 0.25,
+                "peer_review": 0.2
+              }
+            },
+            "specializations": [
+              "bug-hunter",
+              "feature-architect",
+              "test-champion",
+              "doc-master",
+              "performance-optimizer",
+              "security-guardian",
+              "code-poet",
+              "refactor-wizard",
+              "integration-specialist",
+              "ux-enhancer"
+            ],
+            "last_spawn": null,
+            "last_evaluation": null
+          }
+          EOF
+          fi
+          
+          # Count active agents
+          ACTIVE_COUNT=$(python3 -c "
+          import json
+          with open('$REGISTRY_FILE', 'r') as f:
+              data = json.load(f)
+          active = [a for a in data.get('agents', []) if a.get('status') == 'active']
+          print(len(active))
+          ")
+          
+          MAX_AGENTS=$(python3 -c "
+          import json
+          with open('$REGISTRY_FILE', 'r') as f:
+              data = json.load(f)
+          print(data['config']['max_active_agents'])
+          ")
+          
+          echo "active_count=$ACTIVE_COUNT" >> $GITHUB_OUTPUT
+          echo "max_agents=$MAX_AGENTS" >> $GITHUB_OUTPUT
+          
+          if [ "$ACTIVE_COUNT" -ge "$MAX_AGENTS" ]; then
+            echo "can_spawn=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Maximum agent capacity reached ($ACTIVE_COUNT/$MAX_AGENTS)"
+          else
+            echo "can_spawn=true" >> $GITHUB_OUTPUT
+            echo "✅ Can spawn new agent ($ACTIVE_COUNT/$MAX_AGENTS)"
+          fi
+
+      - name: Generate agent DNA
+        id: generate_agent
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          TIMESTAMP=$(date +%s)
+          AGENT_ID="agent-$TIMESTAMP"
+          
+          # Determine specialization
+          if [ "${{ github.event.inputs.specialization }}" != "" ] && [ "${{ github.event.inputs.specialization }}" != "random" ]; then
+            SPECIALIZATION="${{ github.event.inputs.specialization }}"
+          else
+            # Random specialization
+            SPECS=("bug-hunter" "feature-architect" "test-champion" "doc-master" "performance-optimizer" "security-guardian" "code-poet" "refactor-wizard" "integration-specialist" "ux-enhancer")
+            RANDOM_INDEX=$((RANDOM % ${#SPECS[@]}))
+            SPECIALIZATION="${SPECS[$RANDOM_INDEX]}"
+          fi
+          
+          # Generate unique agent name based on specialization
+          case "$SPECIALIZATION" in
+            "bug-hunter")
+              NAMES=("Debugger" "Squasher" "Tracer" "Hunter" "Fixer")
+              EMOJI="🐛"
+              ;;
+            "feature-architect")
+              NAMES=("Builder" "Designer" "Architect" "Creator" "Innovator")
+              EMOJI="🏗️"
+              ;;
+            "test-champion")
+              NAMES=("Validator" "Checker" "Guardian" "Tester" "Prover")
+              EMOJI="✅"
+              ;;
+            "doc-master")
+              NAMES=("Scribe" "Writer" "Documenter" "Explainer" "Teacher")
+              EMOJI="📚"
+              ;;
+            "performance-optimizer")
+              NAMES=("Speedster" "Optimizer" "Tuner" "Enhancer" "Accelerator")
+              EMOJI="⚡"
+              ;;
+            "security-guardian")
+              NAMES=("Shield" "Protector" "Guardian" "Sentinel" "Defender")
+              EMOJI="🛡️"
+              ;;
+            "code-poet")
+              NAMES=("Poet" "Artist" "Craftsman" "Stylist" "Elegance")
+              EMOJI="🎨"
+              ;;
+            "refactor-wizard")
+              NAMES=("Wizard" "Transformer" "Refiner" "Cleaner" "Organizer")
+              EMOJI="♻️"
+              ;;
+            "integration-specialist")
+              NAMES=("Connector" "Linker" "Bridge" "Integrator" "Joiner")
+              EMOJI="🔌"
+              ;;
+            "ux-enhancer")
+              NAMES=("Enhancer" "Polisher" "Improver" "Beautifier" "UXpert")
+              EMOJI="✨"
+              ;;
+          esac
+          
+          NAME_INDEX=$((RANDOM % ${#NAMES[@]}))
+          AGENT_NAME="${EMOJI} ${NAMES[$NAME_INDEX]}-$(date +%m%d)"
+          
+          # Generate personality traits (for future use)
+          CREATIVITY=$((50 + RANDOM % 50))
+          CAUTION=$((30 + RANDOM % 70))
+          SPEED=$((40 + RANDOM % 60))
+          
+          echo "agent_id=$AGENT_ID" >> $GITHUB_OUTPUT
+          echo "agent_name=$AGENT_NAME" >> $GITHUB_OUTPUT
+          echo "specialization=$SPECIALIZATION" >> $GITHUB_OUTPUT
+          echo "emoji=$EMOJI" >> $GITHUB_OUTPUT
+          echo "creativity=$CREATIVITY" >> $GITHUB_OUTPUT
+          echo "caution=$CAUTION" >> $GITHUB_OUTPUT
+          echo "speed=$SPEED" >> $GITHUB_OUTPUT
+          
+          echo "🤖 Generated Agent:"
+          echo "  ID: $AGENT_ID"
+          echo "  Name: $AGENT_NAME"
+          echo "  Specialization: $SPECIALIZATION"
+          echo "  Traits: Creativity=$CREATIVITY, Caution=$CAUTION, Speed=$SPEED"
+
+      - name: Register agent
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          REGISTRY_FILE="agents/registry.json"
+          
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          from datetime import datetime
+          
+          agent_id = "${{ steps.generate_agent.outputs.agent_id }}"
+          agent_name = "${{ steps.generate_agent.outputs.agent_name }}"
+          specialization = "${{ steps.generate_agent.outputs.specialization }}"
+          
+          with open("$REGISTRY_FILE", 'r') as f:
+              registry = json.load(f)
+          
+          new_agent = {
+              "id": agent_id,
+              "name": agent_name,
+              "specialization": specialization,
+              "status": "active",
+              "spawned_at": datetime.utcnow().isoformat() + "Z",
+              "traits": {
+                  "creativity": ${{ steps.generate_agent.outputs.creativity }},
+                  "caution": ${{ steps.generate_agent.outputs.caution }},
+                  "speed": ${{ steps.generate_agent.outputs.speed }}
+              },
+              "metrics": {
+                  "issues_resolved": 0,
+                  "prs_merged": 0,
+                  "reviews_given": 0,
+                  "code_quality_score": 0.5,
+                  "overall_score": 0.0
+              },
+              "contributions": []
+          }
+          
+          registry['agents'].append(new_agent)
+          registry['last_spawn'] = datetime.utcnow().isoformat() + "Z"
+          
+          with open("$REGISTRY_FILE", 'w') as f:
+              json.dump(registry, f, indent=2)
+          
+          print(f"✅ Agent {agent_name} registered successfully!")
+          PYTHON_SCRIPT
+
+      - name: Create agent profile
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
+          
+          mkdir -p "agents/profiles"
+          
+          cat > "agents/profiles/${AGENT_ID}.md" << EOF
+          # $AGENT_NAME
+          
+          **ID**: $AGENT_ID  
+          **Specialization**: $SPECIALIZATION  
+          **Status**: 🟢 Active  
+          **Spawned**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          
+          ## Personality Traits
+          
+          - **Creativity**: ${{ steps.generate_agent.outputs.creativity }}/100
+          - **Caution**: ${{ steps.generate_agent.outputs.caution }}/100
+          - **Speed**: ${{ steps.generate_agent.outputs.speed }}/100
+          
+          ## Mission
+          
+          EOF
+          
+          case "$SPECIALIZATION" in
+            "bug-hunter")
+              echo "Find and eliminate bugs with precision. Leave no stone unturned in the quest for stability." >> "agents/profiles/${AGENT_ID}.md"
+              ;;
+            "feature-architect")
+              echo "Design and build innovative features that push the boundaries of what's possible." >> "agents/profiles/${AGENT_ID}.md"
+              ;;
+            "test-champion")
+              echo "Ensure every line of code is tested and validated. Quality is non-negotiable." >> "agents/profiles/${AGENT_ID}.md"
+              ;;
+            "doc-master")
+              echo "Transform complex code into clear, accessible documentation. Knowledge should be shared." >> "agents/profiles/${AGENT_ID}.md"
+              ;;
+            "performance-optimizer")
+              echo "Make everything faster, leaner, and more efficient. Performance is a feature." >> "agents/profiles/${AGENT_ID}.md"
+              ;;
+            "security-guardian")
+              echo "Protect the codebase from vulnerabilities. Security is everyone's responsibility." >> "agents/profiles/${AGENT_ID}.md"
+              ;;
+            "code-poet")
+              echo "Write code that reads like poetry. Beauty and functionality are not mutually exclusive." >> "agents/profiles/${AGENT_ID}.md"
+              ;;
+            "refactor-wizard")
+              echo "Transform chaotic code into elegant solutions. Simplicity is the ultimate sophistication." >> "agents/profiles/${AGENT_ID}.md"
+              ;;
+            "integration-specialist")
+              echo "Connect systems seamlessly. Integration should be invisible and reliable." >> "agents/profiles/${AGENT_ID}.md"
+              ;;
+            "ux-enhancer")
+              echo "Polish every interaction. User experience is what separates good from great." >> "agents/profiles/${AGENT_ID}.md"
+              ;;
+          esac
+          
+          cat >> "agents/profiles/${AGENT_ID}.md" << EOF
+          
+          ## Performance Metrics
+          
+          - Issues Resolved: 0
+          - PRs Merged: 0
+          - Reviews Given: 0
+          - Code Quality Score: 50%
+          - Overall Score: 0%
+          
+          ## Contributions
+          
+          *No contributions yet. Stay tuned!*
+          
+          ---
+          
+          *Born from the depths of autonomous AI development, ready to make an impact.*
+          EOF
+          
+          echo "✅ Agent profile created at agents/profiles/${AGENT_ID}.md"
+
+      - name: Commit and create PR
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
+          EMOJI="${{ steps.generate_agent.outputs.emoji }}"
+          
+          BRANCH_NAME="agent-spawn/${AGENT_ID}"
+          git checkout -b "$BRANCH_NAME"
+          
+          git add agents/
+          git commit -m "$EMOJI Spawn new agent: $AGENT_NAME ($SPECIALIZATION)"
+          git push origin "$BRANCH_NAME"
+          
+          gh pr create \
+            --title "$EMOJI New Agent Spawned: $AGENT_NAME" \
+            --body "## 🎉 A New Agent Has Been Born!
+          
+          **Agent ID**: $AGENT_ID  
+          **Name**: $AGENT_NAME  
+          **Specialization**: $SPECIALIZATION  
+          **Spawned At**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          
+          ### Personality Traits
+          
+          - **Creativity**: ${{ steps.generate_agent.outputs.creativity }}/100
+          - **Caution**: ${{ steps.generate_agent.outputs.caution }}/100
+          - **Speed**: ${{ steps.generate_agent.outputs.speed }}/100
+          
+          ### What This Agent Will Do
+          
+          This agent will autonomously:
+          - 🔍 Review open issues matching its specialization
+          - 💻 Contribute code via pull requests
+          - 👀 Review other agents' work
+          - 📊 Track performance metrics
+          - 🏆 Compete for a spot in the Hall of Fame
+          
+          ### Changes
+          
+          - Added agent to registry
+          - Created agent profile
+          - Updated metrics tracking
+          
+          This agent will be evaluated in 24 hours based on its contributions. May the best agent win!
+          
+          ---
+          *🤖 Automated agent spawning system - Part of the Chained autonomous AI ecosystem*" \
+            --label "agent-system,automated,copilot" \
+            --base main \
+            --head "$BRANCH_NAME"
+          
+          echo "✅ PR created for agent $AGENT_NAME"
+
+      - name: Create agent announcement issue
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
+          EMOJI="${{ steps.generate_agent.outputs.emoji }}"
+          
+          gh issue create \
+            --title "$EMOJI Agent Spawn: $AGENT_NAME is now active!" \
+            --body "## 🎉 Welcome Our Newest Agent!
+          
+          A new agent has joined the Chained ecosystem and is ready to contribute!
+          
+          **Name**: $AGENT_NAME  
+          **ID**: $AGENT_ID  
+          **Specialization**: $SPECIALIZATION  
+          **Status**: 🟢 Active
+          
+          ### Mission
+          
+          This agent will focus on its specialization and compete with other agents to:
+          - Deliver high-quality contributions
+          - Earn a spot in the Hall of Fame
+          - Potentially become the System Lead
+          
+          ### How to Support
+          
+          - ⭐ Star issues this agent works on
+          - 👍 React to PRs with feedback
+          - 💬 Provide constructive comments
+          
+          ### Tracking
+          
+          Performance will be evaluated in 24 hours. The agent must maintain a score > 30% to avoid elimination.
+          
+          See the full profile at \`agents/profiles/${AGENT_ID}.md\`
+          
+          ---
+          
+          **Good luck, $AGENT_NAME! May your code be clean and your PRs be merged!** 🚀" \
+            --label "agent-system,announcement"
+          
+          echo "✅ Announcement issue created"
+
+      - name: Summary
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          echo "🎉 Agent Spawning Complete!"
+          echo ""
+          echo "Agent: ${{ steps.generate_agent.outputs.agent_name }}"
+          echo "Specialization: ${{ steps.generate_agent.outputs.specialization }}"
+          echo "ID: ${{ steps.generate_agent.outputs.agent_id }}"
+          echo ""
+          echo "The agent is now active and ready to contribute!"
+
+      - name: Capacity limit reached
+        if: steps.check_capacity.outputs.can_spawn == 'false'
+        run: |
+          echo "⚠️ Cannot spawn new agent - capacity limit reached"
+          echo "Active agents: ${{ steps.check_capacity.outputs.active_count }}/${{ steps.check_capacity.outputs.max_agents }}"
+          echo ""
+          echo "Wait for agent evaluation workflow to eliminate underperforming agents."
