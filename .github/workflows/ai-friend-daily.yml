@@ -9,6 +9,7 @@ on:
 permissions:
   issues: write
   contents: write
+  pull-requests: write
 
 jobs:
   talk-to-ai-friend:
@@ -224,13 +225,48 @@ jobs:
           
           PYTHON_SCRIPT
 
-      - name: Commit conversation
+      - name: Create PR for conversation
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
           git add ai-conversations/
-          git commit -m "🤖 AI Friend Daily Conversation - $(date -u +'%Y-%m-%d')" || echo "No changes to commit"
-          git push || echo "No changes to push"
+          
+          if git diff --staged --quiet; then
+            echo "No new conversations to commit"
+          else
+            # Create a branch for this conversation
+            branch_name="ai-friend/conversation-$(date +%Y%m%d-%H%M%S)"
+            git checkout -b "${branch_name}"
+            
+            git commit -m "🤖 AI Friend Daily Conversation - $(date -u +'%Y-%m-%d')"
+            git push origin "${branch_name}"
+            
+            # Create PR
+            gh pr create \
+              --title "🤖 AI Friend Conversation - $(date -u +'%Y-%m-%d')" \
+              --body "## AI Friend Daily Conversation
+            
+            **Date:** ${{ steps.process.outputs.date }}
+            **AI Model:** ${{ steps.process.outputs.model }}
+            
+            ### AI's Advice
+            ${{ steps.process.outputs.advice }}
+            
+            ### Changes
+            - Updated AI conversations database with latest chat
+            - Saved conversation to: \`${{ steps.process.outputs.filename }}\`
+            
+            ---
+            *This PR was automatically created by the AI Friend Daily workflow and will be auto-merged.*" \
+              --label "automated,learning,copilot" \
+              --base main \
+              --head "${branch_name}"
+            
+            echo "✅ PR created successfully for AI Friend conversation"
+          fi
 
       - name: Create issue documenting conversation
         env:
@@ -271,7 +307,7 @@ jobs:
           *This conversation is part of the 'Make a Friend Every Day' initiative where we talk to different AIs about the project and incorporate their advice.*
           
           View all AI conversations at: [AI Friends Page](https://enufacas.github.io/Chained/ai-friends.html)" \
-            --label "ai-friend,learning,documentation"
+            --label "learning,automated" || echo "Issue creation skipped or failed"
 
       - name: Log activity
         run: |
