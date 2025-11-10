@@ -19,6 +19,7 @@ These workflows run **instantly** when a specific GitHub event occurs:
 | Workflow | Event | Description |
 |----------|-------|-------------|
 | `copilot-graphql-assign.yml` | `issues: [opened, labeled]` | Runs immediately when an issue is created or labeled |
+| `auto-label-copilot-prs.yml` | `pull_request_target: [opened, synchronize, reopened, ready_for_review]` | Runs immediately when a PR is created/updated |
 | `auto-review-merge.yml` | `pull_request: [opened, synchronize, reopened, ready_for_review]` | Runs immediately when a non-draft PR is created/updated or when a draft is marked ready. Draft PRs are processed by scheduled runs. |
 | `auto-kickoff.yml` | `push: branches: [main]` | Runs immediately when code is pushed to main |
 
@@ -30,6 +31,7 @@ These workflows run **on a schedule** using cron expressions:
 
 | Workflow | Schedule | Frequency | Purpose |
 |----------|----------|-----------|---------|
+| `auto-label-copilot-prs.yml` | `*/10 * * * *` | Every 10 minutes (when GitHub allows) | Labels Copilot PRs (backup to event triggers) |
 | `auto-review-merge.yml` | `*/15 * * * *` | Every 15 minutes | Reviews, merges PRs, and closes completed issues |
 | `timeline-updater.yml` | `0 */6 * * *` | Every 6 hours | Updates timeline data |
 | `progress-tracker.yml` | `0 */12 * * *` | Every 12 hours | Generates progress reports |
@@ -40,6 +42,13 @@ These workflows run **on a schedule** using cron expressions:
 | `learn-from-hackernews.yml` | `0 7,13,19 * * *` | Daily at 07:00, 13:00, 19:00 UTC | Learns from Hacker News |
 
 **Trust Factor:** ⚠️ GitHub Actions scheduled workflows have some known caveats (see below).
+
+**Important Note:** GitHub does NOT guarantee cron schedule execution. Schedules can be delayed or skipped entirely, especially for:
+- Newly created/modified workflows
+- During GitHub's high-load periods
+- Public repositories with low activity
+
+This is why `auto-label-copilot-prs.yml` uses a **hybrid approach** with both event triggers (primary) and schedule (backup).
 
 ### 3. Manual Triggers (workflow_dispatch)
 
