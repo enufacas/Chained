@@ -134,6 +134,7 @@ jobs:
                   f.write(f"top_story_title={top_story['title']}\n")
                   f.write(f"top_story_score={top_story['score']}\n")
                   f.write(f"idea_count={len(ai_ideas)}\n")
+                  f.write(f"learning_file=learnings/hn_{timestamp}.json\n")
           else:
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                   f.write(f"has_learnings=false\n")
@@ -146,7 +147,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh issue create \
-            --title "🔥 Learning Update from Hacker News - $(date +%Y-%m-%d)" \
+            --title "🔥 Learn from Hacker News - $(date +%Y-%m-%d)" \
             --body "## Hot Topics from Hacker News
 
           **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
@@ -154,31 +155,62 @@ jobs:
           **Topics Covered:** ${{ steps.fetch.outputs.topic_count }}
           **New Ideas Generated:** ${{ steps.fetch.outputs.idea_count }}
 
-          **Top Story:**
-          - 🏆 ${{ steps.fetch.outputs.top_story_title }}
-          - ⬆️ Score: ${{ steps.fetch.outputs.top_story_score }}
+          ### 🏆 Top Story
 
-          ---
+          **${{ steps.fetch.outputs.top_story_title }}**
+          - ⬆️ Community Score: **${{ steps.fetch.outputs.top_story_score }}**
 
-          ### What I Learned
-          - Analyzed top trending technical discussions
-          - Identified emerging technologies and patterns
-          - Extracted insights from community wisdom
-          - Generated new ideas based on trends
+          This highly-upvoted story represents what the tech community finds most valuable right now.
 
-          ### Impact on Development
+          ### 📚 What Was Learned
+
+          This learning session analyzed trending Hacker News discussions (stories with 100+ upvotes) across multiple categories:
+
+          - 🤖 **AI/ML**: Latest developments in machine learning, LLMs, and AI applications
+          - 💻 **Programming**: Language features, frameworks, and coding practices
+          - 🚀 **DevOps**: CI/CD, Docker, Kubernetes, and infrastructure topics
+          - 🗄️ **Database**: PostgreSQL, SQL, NoSQL, and data management
+          - 🌐 **Web**: Browser technologies, HTTP, APIs, and web frameworks
+          - 🔒 **Security**: Vulnerabilities, encryption, and authentication
+          - ⚡ **Performance**: Optimization techniques and benchmarking
+          - 🌟 **Open Source**: GitHub projects and OSS community insights
+
+          ### 🔗 Learning Resources
+
+          - **Learning File:** [\`${{ steps.fetch.outputs.learning_file }}\`](https://github.com/enufacas/Chained/blob/main/${{ steps.fetch.outputs.learning_file }})
+          - **Learnings Directory:** [Browse all learnings](https://github.com/enufacas/Chained/tree/main/learnings)
+          - **Learnings Documentation:** [README](https://github.com/enufacas/Chained/blob/main/learnings/README.md)
+
+          ### 💡 Key Insights
+
+          From this learning session:
+          - Identified trending technologies and patterns
+          - Extracted community wisdom and best practices
+          - Discovered emerging tools and frameworks
+          - Found discussions on performance and security
+          - Generated actionable ideas based on trends
+
+          ### 🎯 Actions Taken
+          - ✅ Analyzed top 30 trending Hacker News stories
+          - ✅ Filtered for high-quality content (100+ upvotes)
+          - ✅ Categorized by technical topics
+          - ✅ Extracted insights and patterns
+          - ✅ Generated ${{ steps.fetch.outputs.idea_count }} new project ideas
+          - ✅ Saved to learnings database
+
+          ### 🔄 Impact on Development
+
           These learnings will influence:
-          - 🎯 Idea generation priorities
+          - 🎯 Idea generation priorities and focus areas
           - 🛠️ Technology adoption decisions
           - 📈 Feature implementation approaches
-          - 🎓 Best practices and patterns
-
-          See \`learnings/\` directory for complete analysis.
+          - 🎓 Best practices and coding patterns
+          - 🔍 Areas for deeper research and exploration
 
           ---
 
-          *This learning was automatically collected by the Hacker News Learning workflow.*" \
-            --label "learning,automated" || echo "Issue creation skipped or failed"
+          *This learning was automatically collected by the Hacker News Learning workflow. The AI continuously learns from the tech community to stay current with industry trends and discussions.*" \
+            --label "learning,automated,copilot" || echo "Issue creation skipped or failed"
 
       - name: Update learning index
         run: |
