@@ -144,6 +144,7 @@ jobs:
             git checkout "${branch_name}"
             
             # Try to merge main, but handle conflicts properly
+            branch_recreated=false
             if ! git merge main --no-edit; then
               echo "⚠️  Merge conflict detected. Recreating branch from main with fresh data..."
               
@@ -158,6 +159,7 @@ jobs:
               # Re-add the fresh data that was already generated
               git add docs/data/
               
+              branch_recreated=true
               echo "✅ Branch recreated from main to resolve conflicts"
             else
               echo "✅ Merged main successfully"
@@ -171,7 +173,7 @@ jobs:
             }
             
             # Force push if we recreated the branch, otherwise regular push
-            if git rev-parse --verify origin/"${branch_name}" >/dev/null 2>&1; then
+            if [ "${branch_recreated}" = true ]; then
               git push --force-with-lease origin "${branch_name}"
             else
               git push origin "${branch_name}"
