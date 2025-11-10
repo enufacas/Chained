@@ -162,11 +162,13 @@ All workflows support manual triggering via GitHub's Actions tab:
 ┌─────────────────────┐
 │  External Learning  │ ──► TLDR Tech (2x daily)
 │  Sources            │ ──► Hacker News (3x daily)
+│                     │ ──► AI Friends (Daily conversations)
 └──────────┬──────────┘
            │
            ▼
 ┌─────────────────────┐
 │  Learning Database  │ ──► Saves insights & trends
+│                     │ ──► AI advice & suggestions
 └──────────┬──────────┘
            │
            ▼
@@ -238,6 +240,9 @@ The beauty is that you can walk away and come back later to see what the AI has 
 The system continuously learns from external sources:
 - **[TLDR Tech](https://tldr.tech/)**: Tech news (2x daily)
 - **[Hacker News](https://news.ycombinator.com/)**: Community trends (3x daily)
+- **[AI Friends](https://enufacas.github.io/Chained/ai-friends.html)**: Daily conversations with different AI models
+
+Every day, the system talks to a different AI about the project, asks for advice, and incorporates suggestions. These conversations are captured and displayed on the **[AI Friends page](https://enufacas.github.io/Chained/ai-friends.html)**.
 
 Learnings influence idea generation, technology choices, and best practices. For complete details, see **[docs/LEARNING_SYSTEM.md](./docs/LEARNING_SYSTEM.md)**.
 
