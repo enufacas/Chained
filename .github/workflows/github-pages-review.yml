@@ -1,0 +1,201 @@
+name: GitHub Pages Review
+
+on:
+  schedule:
+    # Run weekly on Mondays at 8 AM UTC
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+    inputs:
+      create_issue:
+        description: 'Create issue if problems found'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  review-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Review GitHub Pages files
+        id: review
+        run: |
+          echo "🔍 Reviewing GitHub Pages files..."
+          echo ""
+          
+          issues_found=0
+          report=""
+          
+          # Check if all expected files exist
+          echo "Checking file existence..."
+          files_to_check=(
+            "docs/index.html"
+            "docs/style.css"
+            "docs/script.js"
+            "docs/ai-knowledge-graph.html"
+            "docs/ai-knowledge-graph.js"
+            "docs/ai-friends.html"
+            "docs/AI_GOALS.md"
+            "docs/data/stats.json"
+            "docs/data/issues.json"
+            "docs/data/pulls.json"
+            "docs/data/workflows.json"
+            "docs/data/automation-log.json"
+          )
+          
+          missing_files=""
+          for file in "${files_to_check[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing: $file"
+              missing_files="${missing_files}\n- $file"
+              issues_found=$((issues_found + 1))
+            else
+              echo "✅ Found: $file"
+            fi
+          done
+          
+          # Check for broken workflow links in HTML files
+          echo ""
+          echo "Checking for broken workflow references..."
+          
+          # Get list of actual workflow files
+          actual_workflows=$(ls .github/workflows/*.yml | xargs -n 1 basename)
+          
+          # Check HTML files for workflow references
+          broken_links=""
+          for html_file in docs/*.html; do
+            if [ -f "$html_file" ]; then
+              # Extract workflow references from HTML
+              workflow_refs=$(grep -oP '\.github/workflows/[a-z-]+\.yml' "$html_file" | sed 's/.*\///' | sort -u)
+              
+              for workflow in $workflow_refs; do
+                if ! echo "$actual_workflows" | grep -q "^${workflow}$"; then
+                  echo "❌ Broken link in $(basename $html_file): $workflow"
+                  broken_links="${broken_links}\n- $(basename $html_file) references missing workflow: $workflow"
+                  issues_found=$((issues_found + 1))
+                fi
+              done
+            fi
+          done
+          
+          # Check if data files are recent (updated within last 24 hours)
+          echo ""
+          echo "Checking data freshness..."
+          stale_data=""
+          
+          if [ -f "docs/data/stats.json" ]; then
+            last_updated=$(jq -r '.last_updated // empty' docs/data/stats.json)
+            if [ -n "$last_updated" ]; then
+              last_updated_seconds=$(date -d "$last_updated" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$last_updated" +%s 2>/dev/null || echo 0)
+              current_seconds=$(date +%s)
+              age_hours=$(( (current_seconds - last_updated_seconds) / 3600 ))
+              
+              if [ $age_hours -gt 24 ]; then
+                echo "⚠️  Stats data is ${age_hours} hours old (last updated: $last_updated)"
+                stale_data="${stale_data}\n- stats.json is ${age_hours} hours old"
+                issues_found=$((issues_found + 1))
+              else
+                echo "✅ Stats data is fresh (${age_hours} hours old)"
+              fi
+            fi
+          fi
+          
+          # Check for TODO/FIXME/BUG comments
+          echo ""
+          echo "Checking for TODO/FIXME comments..."
+          todo_comments=$(grep -rn "TODO\|FIXME\|XXX\|HACK\|BUG" docs/*.html docs/*.js docs/*.css 2>/dev/null | wc -l)
+          
+          if [ $todo_comments -gt 0 ]; then
+            echo "ℹ️  Found $todo_comments TODO/FIXME comments"
+          else
+            echo "✅ No TODO/FIXME comments found"
+          fi
+          
+          # Generate report
+          echo ""
+          echo "================================================================"
+          echo "GitHub Pages Review Summary"
+          echo "================================================================"
+          echo "Total issues found: $issues_found"
+          echo ""
+          
+          report="## GitHub Pages Review Report\n\n"
+          report="${report}**Review Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')\n\n"
+          report="${report}### Summary\n"
+          report="${report}Total issues found: **${issues_found}**\n\n"
+          
+          if [ $issues_found -eq 0 ]; then
+            echo "✅ No issues found!"
+            report="${report}✅ **All checks passed!** GitHub Pages is in good health.\n"
+          else
+            if [ -n "$missing_files" ]; then
+              report="${report}### Missing Files\n${missing_files}\n\n"
+            fi
+            
+            if [ -n "$broken_links" ]; then
+              report="${report}### Broken Workflow Links\n${broken_links}\n\n"
+            fi
+            
+            if [ -n "$stale_data" ]; then
+              report="${report}### Stale Data\n${stale_data}\n\n"
+            fi
+            
+            report="${report}### Recommendations\n"
+            report="${report}1. Review and fix broken workflow references\n"
+            report="${report}2. Ensure System Monitor workflow is running regularly\n"
+            report="${report}3. Update any outdated documentation links\n"
+          fi
+          
+          echo "issues_found=${issues_found}" >> $GITHUB_OUTPUT
+          echo "report<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$report" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create issue if problems found
+        if: steps.review.outputs.issues_found != '0' && (github.event.inputs.create_issue != 'false' && github.event_name != 'workflow_dispatch' || github.event.inputs.create_issue == 'true')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if there's already an open pages-review issue
+          existing_issue=$(gh issue list --label "pages-review" --state open --limit 1 --json number --jq '.[0].number // empty')
+          
+          if [ -n "$existing_issue" ]; then
+            echo "Updating existing issue #${existing_issue}"
+            echo "" >> /tmp/issue-body.md
+            echo "======" >> /tmp/issue-body.md
+            echo "*Automated update from GitHub Pages Review workflow*" >> /tmp/issue-body.md
+            echo "${{ steps.review.outputs.report }}" | cat - /tmp/issue-body.md | gh issue comment "${existing_issue}" --body-file -
+          else
+            echo "Creating new issue"
+            echo "${{ steps.review.outputs.report }}" > /tmp/issue-body.md
+            echo "" >> /tmp/issue-body.md
+            echo "======" >> /tmp/issue-body.md
+            echo "*This issue was automatically created by the GitHub Pages Review workflow. It runs weekly to ensure the GitHub Pages site is healthy and up-to-date.*" >> /tmp/issue-body.md
+            gh issue create \
+              --title "⚠️ GitHub Pages Review Found Issues" \
+              --body-file /tmp/issue-body.md \
+              --label "pages-review,automated,documentation"
+          fi
+
+      - name: Post success message
+        if: steps.review.outputs.issues_found == '0'
+        run: |
+          echo "================================================================"
+          echo "✅ GitHub Pages Review Completed Successfully"
+          echo "================================================================"
+          echo ""
+          echo "All checks passed. GitHub Pages is healthy!"
+          echo ""
+          echo "Next review scheduled for next Monday at 8 AM UTC"
+          echo "================================================================"

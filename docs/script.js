@@ -6,14 +6,13 @@ const API_BASE = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`;
 // Workflow schedules mapping
 const WORKFLOW_SCHEDULES = {
     'Smart Idea Generator': { cron: '0 10 * * *', description: 'Daily at 10:00 AM UTC' },
-    'AI Idea Generator': { cron: '0 9 * * *', description: 'Daily at 9:00 AM UTC' },
     'Daily AI Goal Generator': { cron: '0 6 * * *', description: 'Daily at 6:00 AM UTC' },
     'Goal Progress Checker': { cron: '0 */3 * * *', description: 'Every 3 hours' },
     'Learning from TLDR Tech': { cron: '0 8,20 * * *', description: 'Twice daily at 8:00 AM and 8:00 PM UTC' },
     'Learning from Hacker News': { cron: '0 7,13,19 * * *', description: 'Three times daily at 7:00 AM, 1:00 PM, and 7:00 PM UTC' },
+    'AI Friend Daily': { cron: '0 9 * * *', description: 'Daily at 9:00 AM UTC' },
     'Auto Review and Merge': { cron: '*/15 * * * *', description: 'Every 15 minutes' },
-    'Progress Tracker': { cron: '0 */12 * * *', description: 'Every 12 hours' },
-    'Timeline Updater': { cron: '0 */6 * * *', description: 'Every 6 hours' },
+    'System Monitor': { cron: '0 */6 * * *', description: 'Every 6 hours (timeline updates, progress tracking, workflow monitoring)' },
 };
 
 // Update last updated timestamp
