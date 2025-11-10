@@ -113,17 +113,32 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
   - Triggers kickoff workflow if needed
   - Runs only once per repository
 
-### 13. Workflow Monitor (`workflow-monitor.yml`)
-- **Schedule**: Periodically checks workflow health
+### 13. System Monitor (`system-monitor.yml`)
+- **Schedule**: 
+  - Every 6 hours for timeline updates
+  - Every 12 hours for progress tracking and workflow monitoring
 - **Purpose**: Monitors workflow execution and schedules
 - **Actions**: 
   - Verifies workflows are running on schedule
   - Creates issues for failed or late workflows
   - Provides system health reports
+  - Updates timeline data
+  - Tracks progress statistics
+
+### 14. Workflow Failure Handler (`workflow-failure-handler.yml`)
+- **Triggers**: Automatically when any workflow completes with failure status
+- **Purpose**: Immediately detect and report workflow failures
+- **Actions**: 
+  - Creates GitHub issues for failed workflows
+  - Includes failure details (workflow name, run number, branch, commit)
+  - Updates existing issues if the same workflow fails multiple times
+  - Provides quick links to failed runs and logs
+  - Labels issues with `workflow-failure` and `automated`
+- **Notes**: Complements the periodic System Monitor with real-time failure detection
 
 ## Micro Project Workflows
 
-### 14. Code Golf Optimizer (`code-golf-optimizer.yml`)
+### 15. Code Golf Optimizer (`code-golf-optimizer.yml`)
 - **Schedule**: Weekly on Mondays at 10 AM UTC
 - **Purpose**: Optimizes code for minimal character count
 - **Actions**: 
@@ -131,7 +146,7 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
   - Generates optimization reports with metrics
   - Can be triggered manually for specific files
 
-### 15. Self-Improving Code Analyzer (`code-analyzer.yml`)
+### 16. Self-Improving Code Analyzer (`code-analyzer.yml`)
 - **Triggers**: Automatically on every merge to main
 - **Purpose**: Analyzes code quality and learns from outcomes
 - **Actions**: 
@@ -141,7 +156,7 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
   - Creates issues for quality problems
   - Updates learning database
 
-### 16. Pattern Matcher (`pattern-matcher.yml`)
+### 17. Pattern Matcher (`pattern-matcher.yml`)
 - **Triggers**: As needed by other workflows
 - **Purpose**: Flexible pattern matching for code analysis
 - **Actions**: 
@@ -179,6 +194,8 @@ Timeline Update
 Progress Report
     ↓
 Cycle continues...
+
+[Workflow Failure Handler monitors all workflows in real-time]
 ```
 
 ## Customizing Workflows

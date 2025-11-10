@@ -104,6 +104,7 @@ jobs:
             ["progress-report"]="c5def5:Progress tracking"
             ["enhancement"]="a2eeef:New feature or request"
             ["workflow-monitor"]="d73a4a:Workflow monitoring alert"
+            ["workflow-failure"]="d73a4a:Workflow failure alert"
           )
           
           for label in "${!labels[@]}"; do
