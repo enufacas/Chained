@@ -140,18 +140,133 @@
             padding: 0;
         }
 
-        .suggestions-list li {
+        .suggestion-item {
             padding: 0.75rem;
             margin-bottom: 0.5rem;
             background: rgba(102, 126, 234, 0.05);
             border-radius: 6px;
             border-left: 3px solid var(--accent-secondary);
             color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s;
         }
 
-        .suggestions-list li:before {
+        .suggestion-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(4px);
+        }
+
+        .suggestion-text {
+            flex: 1;
+        }
+
+        .suggestion-text:before {
             content: "💡";
             margin-right: 0.5rem;
+        }
+
+        .suggestion-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .vote-btn {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .vote-btn:hover {
+            border-color: var(--accent-primary);
+            transform: scale(1.05);
+        }
+
+        .vote-btn.voted {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .vote-count {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .feedback-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .feedback-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .feedback-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .top-suggestions {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .top-suggestion-card {
+            background: rgba(102, 126, 234, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .top-suggestion-text {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .top-suggestion-votes {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .activity-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         .empty-state {
@@ -231,6 +346,23 @@
             </div>
         </div>
 
+        <div class="feedback-section">
+            <h2 class="feedback-title">
+                <span class="activity-indicator"></span>
+                🗳️ Community Feedback: Guide the AI's Learning
+            </h2>
+            <p class="feedback-description">
+                Vote on AI suggestions to help guide future development! Your feedback helps the AI understand 
+                which features and improvements the community values most. Click the 👍 button on any suggestion 
+                to vote for it.
+            </p>
+            <div id="top-suggestions" class="top-suggestions">
+                <div class="loading" style="padding: 2rem;">
+                    Loading top suggestions...
+                </div>
+            </div>
+        </div>
+
         <div id="conversations-container">
             <div class="loading">
                 <div>🤖 Loading AI conversations...</div>
@@ -274,6 +406,9 @@
 
                 // Update stats
                 updateStats(conversations);
+
+                // Display top suggestions
+                displayTopSuggestions(conversations);
 
                 // Display conversations
                 displayConversations(conversations);
@@ -336,7 +471,7 @@
                         <span>AI Suggestions:</span>
                     </div>
                     <ul class="suggestions-list">
-                        ${conversation.suggestions.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+                        ${conversation.suggestions.map((s, idx) => createSuggestionItem(s, conversation.timestamp, idx)).join('')}
                     </ul>
                 </div>
             ` : '';
@@ -359,6 +494,114 @@
                     </div>
                 </div>
             `;
+        }
+
+        // Voting system using localStorage
+        function getSuggestionId(timestamp, idx) {
+            return `suggestion_${timestamp}_${idx}`;
+        }
+
+        function getVotes(suggestionId) {
+            const votes = localStorage.getItem(`votes_${suggestionId}`);
+            return votes ? parseInt(votes) : 0;
+        }
+
+        function hasVoted(suggestionId) {
+            return localStorage.getItem(`voted_${suggestionId}`) === 'true';
+        }
+
+        function toggleVote(suggestionId) {
+            const voted = hasVoted(suggestionId);
+            const currentVotes = getVotes(suggestionId);
+            
+            if (voted) {
+                // Unvote
+                localStorage.setItem(`votes_${suggestionId}`, Math.max(0, currentVotes - 1).toString());
+                localStorage.removeItem(`voted_${suggestionId}`);
+            } else {
+                // Vote
+                localStorage.setItem(`votes_${suggestionId}`, (currentVotes + 1).toString());
+                localStorage.setItem(`voted_${suggestionId}`, 'true');
+            }
+        }
+
+        function createSuggestionItem(suggestion, timestamp, idx) {
+            const suggestionId = getSuggestionId(timestamp, idx);
+            const votes = getVotes(suggestionId);
+            const voted = hasVoted(suggestionId);
+            
+            return `
+                <li class="suggestion-item">
+                    <span class="suggestion-text">${escapeHtml(suggestion)}</span>
+                    <div class="suggestion-actions">
+                        <span class="vote-count">${votes} vote${votes !== 1 ? 's' : ''}</span>
+                        <button class="vote-btn ${voted ? 'voted' : ''}" 
+                                onclick="handleVote('${suggestionId}', this)">
+                            ${voted ? '✓' : '👍'}
+                        </button>
+                    </div>
+                </li>
+            `;
+        }
+
+        function handleVote(suggestionId, button) {
+            toggleVote(suggestionId);
+            const voted = hasVoted(suggestionId);
+            const votes = getVotes(suggestionId);
+            
+            // Update button
+            button.textContent = voted ? '✓' : '👍';
+            button.className = `vote-btn ${voted ? 'voted' : ''}`;
+            
+            // Update vote count
+            const voteCount = button.parentElement.querySelector('.vote-count');
+            voteCount.textContent = `${votes} vote${votes !== 1 ? 's' : ''}`;
+            
+            // Refresh top suggestions
+            loadConversations();
+        }
+
+        function displayTopSuggestions(conversations) {
+            const container = document.getElementById('top-suggestions');
+            
+            // Collect all suggestions with their votes
+            const allSuggestions = [];
+            conversations.forEach(conv => {
+                if (conv.suggestions) {
+                    conv.suggestions.forEach((suggestion, idx) => {
+                        const suggestionId = getSuggestionId(conv.timestamp, idx);
+                        const votes = getVotes(suggestionId);
+                        allSuggestions.push({
+                            text: suggestion,
+                            votes: votes,
+                            model: conv.model,
+                            date: conv.timestamp
+                        });
+                    });
+                }
+            });
+            
+            // Sort by votes and take top 5
+            allSuggestions.sort((a, b) => b.votes - a.votes);
+            const topSuggestions = allSuggestions.slice(0, 5);
+            
+            if (topSuggestions.length === 0 || topSuggestions[0].votes === 0) {
+                container.innerHTML = `
+                    <p style="text-align: center; color: var(--text-secondary); padding: 1rem;">
+                        No votes yet! Start voting on suggestions below to see them here. 👇
+                    </p>
+                `;
+                return;
+            }
+            
+            const html = topSuggestions.map(s => `
+                <div class="top-suggestion-card">
+                    <div class="top-suggestion-text">${escapeHtml(s.text)}</div>
+                    <div class="top-suggestion-votes">${s.votes} 👍</div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
         }
 
         function showEmptyState() {
