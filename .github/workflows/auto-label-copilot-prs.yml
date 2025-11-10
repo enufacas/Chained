@@ -3,6 +3,8 @@ name: Auto Label Copilot PRs
 on:
   schedule:
     - cron: '*/10 * * * *'  # Run every 10 minutes
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
