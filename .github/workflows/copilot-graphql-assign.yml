@@ -2,7 +2,10 @@ name: Copilot Assignment Workflow
 
 on:
   issues:
-    types: [opened, labeled]
+    types: [opened]
+  schedule:
+    # Run daily at 12:00 UTC to check for unassigned issues
+    - cron: '0 12 * * *'
   workflow_dispatch:
     inputs:
       issue_number:
@@ -17,10 +20,10 @@ permissions:
 jobs:
   assign-to-copilot:
     runs-on: ubuntu-latest
-    # Only run if issue has appropriate label or was just created
+    # Only run if issue was just created, on schedule, or via workflow_dispatch
     if: |
-      (github.event_name == 'issues' && (github.event.action == 'opened' || 
-       (github.event.action == 'labeled' && github.event.label.name == 'copilot-assigned'))) ||
+      github.event_name == 'issues' ||
+      github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
     steps:
       - name: Check for PAT configuration
@@ -42,7 +45,7 @@ jobs:
             echo "✅ COPILOT_PAT is configured"
           fi
       
-      - name: Discover and process all open issues
+      - name: Discover and process issues
         env:
           # IMPORTANT: Use a Personal Access Token (PAT) instead of GITHUB_TOKEN
           # The default GITHUB_TOKEN does not have permissions to assign Copilot
@@ -50,14 +53,19 @@ jobs:
           # Create a PAT with 'repo' scope and add it as a secret named COPILOT_PAT
           GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
         run: |
-          echo "🔍 Discovering all open issues..."
+          echo "🔍 Determining which issues to process..."
           
           # If workflow_dispatch with specific issue number, process only that issue
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.issue_number }}" ]; then
             echo "Processing specific issue #${{ inputs.issue_number }}"
             issue_numbers="${{ inputs.issue_number }}"
+          # If triggered by issue opened event, process only that issue
+          elif [ "${{ github.event_name }}" = "issues" ]; then
+            issue_numbers="${{ github.event.issue.number }}"
+            echo "Processing newly opened issue #$issue_numbers"
           else
-            # Get all open issues
+            # For scheduled runs or manual dispatch without issue number, get all open issues
+            echo "Processing all open issues (scheduled or manual run)"
             issue_numbers=$(gh issue list --repo ${{ github.repository }} --state open --limit 1000 --json number --jq '.[].number')
           fi
           
@@ -90,6 +98,14 @@ jobs:
             fi
             
             echo "📝 Issue #$issue_number not yet assigned to Copilot"
+            
+            # Check if we've already commented on this issue to avoid duplicate comments
+            existing_comments=$(gh issue view $issue_number --repo ${{ github.repository }} --json comments --jq '.comments[].body')
+            if echo "$existing_comments" | grep -q "🤖 **Copilot"; then
+              echo "✓ Issue #$issue_number already has assignment comment, skipping to avoid duplicates"
+              already_assigned_count=$((already_assigned_count + 1))
+              continue
+            fi
             
             # Add copilot-assigned label if not present
             labels=$(gh issue view $issue_number --repo ${{ github.repository }} --json labels --jq '.labels[].name')
