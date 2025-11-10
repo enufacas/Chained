@@ -9,8 +9,8 @@ on:
       - 'learnings/**'
       - 'analysis/**'
   schedule:
-    # Run every hour to check for PRs ready to merge (reduced from 15 min to conserve runner resources)
-    - cron: '0 * * * *'
+    # Run every 15 minutes to sweep and check all PRs for merge readiness
+    - cron: '*/15 * * * *'
   workflow_dispatch:
     inputs:
       pr_number:
@@ -18,10 +18,10 @@ on:
         required: false
         type: string
 
-# Prevent multiple simultaneous runs on the same PR
+# Prevent multiple simultaneous runs - allow scheduled runs to proceed but prevent concurrent PR runs
 concurrency:
-  group: auto-review-merge-${{ github.event.pull_request.number || 'scheduled' }}
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'schedule' && 'auto-review-scheduled' || format('auto-review-pr-{0}', github.event.pull_request.number) }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
