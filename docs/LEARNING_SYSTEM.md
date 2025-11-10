@@ -27,6 +27,19 @@ This learning continuously influences the system's behavior, making it smarter o
 - **Content**: Trending technical discussions
 - **Focus**: Community-driven topics, debates, and insights
 
+### AI Friends (Daily Conversations)
+- **URL**: [AI Friends Page](https://enufacas.github.io/Chained/ai-friends.html)
+- **Frequency**: Daily (9 AM UTC)
+- **Content**: Conversations with different AI models about the project
+- **Focus**: Direct advice, suggestions, and diverse AI perspectives
+- **Models Used**: GPT-4, Claude, Gemini, Llama (via Puter.js free API)
+
+The **"Make a Friend Every Day"** initiative involves talking to a different AI each day, sharing project updates, asking for advice, and incorporating suggestions. These conversations provide:
+- 🧠 Diverse perspectives from different AI architectures
+- 💡 Actionable suggestions for improvements
+- 🔄 Fresh ideas and approaches
+- 🌐 Connection to the broader AI community
+
 ## What the System Learns
 
 ### Topics Tracked
@@ -267,6 +280,60 @@ Update category lists in workflow files:
 - ✅ Validate stored data format
 - ✅ Clean up old learning files periodically
 
+## AI Friends: Making a Friend Every Day
+
+The **AI Friends** feature is a unique addition to the learning system where the autonomous AI talks to other AIs daily.
+
+### How It Works
+
+1. **Daily Schedule**: Runs at 9 AM UTC (after TLDR/HN learning, before idea generation)
+2. **Free AI APIs**: Uses Puter.js and other no-auth APIs to access various AI models
+3. **Conversation**: Shares project info, recent learnings, and asks for advice
+4. **Documentation**: Saves conversations as JSON and creates GitHub issues
+5. **Integration**: Displays beautifully on the [AI Friends page](https://enufacas.github.io/Chained/ai-friends.html)
+
+### AI Models Used
+
+- **GPT-4 Nano**: Quick, efficient responses
+- **Claude-3**: Deep architectural insights
+- **Gemini Pro**: Creative suggestions
+- **Llama-3**: Open-source perspective
+- And 400+ more models via Puter.js!
+
+### Conversation Format
+
+Each conversation includes:
+```json
+{
+  "timestamp": "2025-11-10T09:00:00Z",
+  "model": "gpt-4.1-nano",
+  "question": "What advice would you give for Chained?",
+  "response": "AI's detailed response...",
+  "suggestions": [
+    "Specific actionable suggestion 1",
+    "Specific actionable suggestion 2"
+  ]
+}
+```
+
+### Benefits
+
+- 🧠 **Diverse Perspectives**: Different AI architectures offer unique insights
+- 💡 **Fresh Ideas**: Daily conversations prevent repetitive patterns
+- 🔄 **Continuous Feedback**: Regular external input on project direction
+- 🌐 **AI Community**: Connects with the broader AI ecosystem
+- 📈 **Measurable Impact**: Suggestions tracked and implemented
+
+### Integration with Idea Generation
+
+AI Friend suggestions can inspire:
+- New feature ideas for the idea generator
+- Improvements to existing workflows
+- Documentation enhancements
+- Architecture refinements
+
+All conversations are preserved in `ai-conversations/` and displayed on the dedicated GitHub Pages section.
+
 ## Future Enhancements
 
 The learning system can be extended with:
@@ -275,6 +342,7 @@ The learning system can be extended with:
 - 🎯 **Smarter filtering**: ML-based relevance scoring
 - 📊 **Visualization**: Trend graphs, topic networks
 - 🤖 **Feedback loops**: Direct outcome correlation
+- 🤝 **More AI Friends**: Expand to specialized AI consultants
 
 ---
 

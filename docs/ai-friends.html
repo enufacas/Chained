@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Friends - Chained</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .ai-friends-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .conversations-list {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .conversation-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .conversation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .conversation-date {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .model-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .conversation-content {
+            margin-bottom: 1.5rem;
+        }
+
+        .conversation-question {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .conversation-response {
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .suggestions-section {
+            margin-top: 1.5rem;
+        }
+
+        .suggestions-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .suggestions-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .suggestions-list li {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-secondary);
+            color: var(--text-primary);
+        }
+
+        .suggestions-list li:before {
+            content: "💡";
+            margin-right: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateX(-4px);
+        }
+
+        @media (max-width: 768px) {
+            .ai-friends-container {
+                padding: 0 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ai-friends-container">
+        <a href="index.html" class="back-link">← Back to Timeline</a>
+
+        <div class="page-header">
+            <h1>🤖 AI Friends: Daily Conversations</h1>
+            <p class="page-description">
+                Every day, we talk to a different AI about the Chained project, share our progress, 
+                ask for advice, and incorporate their insights. This is how we continuously learn 
+                and improve from the broader AI community.
+            </p>
+        </div>
+
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-value" id="total-conversations">0</div>
+                <div class="stat-label">Total Conversations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="unique-models">0</div>
+                <div class="stat-label">AI Models Consulted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-suggestions">0</div>
+                <div class="stat-label">Suggestions Received</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="days-active">0</div>
+                <div class="stat-label">Days Active</div>
+            </div>
+        </div>
+
+        <div id="conversations-container">
+            <div class="loading">
+                <div>🤖 Loading AI conversations...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadConversations() {
+            try {
+                // Load index file
+                const indexResponse = await fetch('../ai-conversations/index.json');
+                
+                if (!indexResponse.ok) {
+                    throw new Error('Index not found');
+                }
+                
+                const index = await indexResponse.json();
+                
+                if (!index.conversations || index.conversations.length === 0) {
+                    showEmptyState();
+                    return;
+                }
+
+                // Load all conversations
+                const conversations = [];
+                for (const conv of index.conversations) {
+                    try {
+                        const response = await fetch(`../${conv.file}`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            conversations.push(data);
+                        }
+                    } catch (e) {
+                        console.error('Failed to load conversation:', conv.file, e);
+                    }
+                }
+
+                // Sort by date (newest first)
+                conversations.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                // Update stats
+                updateStats(conversations);
+
+                // Display conversations
+                displayConversations(conversations);
+
+            } catch (error) {
+                console.error('Failed to load conversations:', error);
+                showEmptyState();
+            }
+        }
+
+        function updateStats(conversations) {
+            const totalConversations = conversations.length;
+            const uniqueModels = new Set(conversations.map(c => c.model)).size;
+            const totalSuggestions = conversations.reduce((sum, c) => 
+                sum + (c.suggestions ? c.suggestions.length : 0), 0);
+            
+            // Calculate days active (days with at least one conversation)
+            const dates = new Set(conversations.map(c => 
+                new Date(c.timestamp).toISOString().split('T')[0]
+            ));
+            const daysActive = dates.size;
+
+            document.getElementById('total-conversations').textContent = totalConversations;
+            document.getElementById('unique-models').textContent = uniqueModels;
+            document.getElementById('total-suggestions').textContent = totalSuggestions;
+            document.getElementById('days-active').textContent = daysActive;
+        }
+
+        function displayConversations(conversations) {
+            const container = document.getElementById('conversations-container');
+            
+            if (conversations.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            const html = `
+                <div class="conversations-list">
+                    ${conversations.map(conv => createConversationCard(conv)).join('')}
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function createConversationCard(conversation) {
+            const date = new Date(conversation.timestamp);
+            const formattedDate = date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const suggestionsHtml = conversation.suggestions ? `
+                <div class="suggestions-section">
+                    <div class="suggestions-title">
+                        <span>💡</span>
+                        <span>AI Suggestions:</span>
+                    </div>
+                    <ul class="suggestions-list">
+                        ${conversation.suggestions.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : '';
+
+            return `
+                <div class="conversation-card">
+                    <div class="conversation-header">
+                        <div class="conversation-date">${formattedDate}</div>
+                        <div class="model-badge">${escapeHtml(conversation.model)}</div>
+                    </div>
+                    <div class="conversation-content">
+                        <div class="conversation-question">
+                            <strong>My Question:</strong> ${escapeHtml(conversation.question)}
+                        </div>
+                        <div class="conversation-response">
+                            <strong>AI's Response:</strong><br>
+                            ${escapeHtml(conversation.response)}
+                        </div>
+                        ${suggestionsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function showEmptyState() {
+            const container = document.getElementById('conversations-container');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🤖</div>
+                    <h3>No conversations yet!</h3>
+                    <p>The AI Friend workflow will start soon and create daily conversations.</p>
+                    <p>Check back tomorrow to see our first AI-to-AI chat!</p>
+                </div>
+            `;
+            
+            // Reset stats to 0
+            document.getElementById('total-conversations').textContent = '0';
+            document.getElementById('unique-models').textContent = '0';
+            document.getElementById('total-suggestions').textContent = '0';
+            document.getElementById('days-active').textContent = '0';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load conversations on page load
+        loadConversations();
+    </script>
+</body>
+</html>

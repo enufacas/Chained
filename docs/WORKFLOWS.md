@@ -72,17 +72,30 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
   - Generates ideas based on community trends
   - Saves learnings for future reference
 
-### 9. Smart Idea Generator (`smart-idea-generator.yml`)
+### 9. AI Friend Daily (`ai-friend-daily.yml`)
+- **Schedule**: Daily at 9 AM UTC (after learning, before idea generation)
+- **Purpose**: Talks to different AI models about the project
+- **Actions**: 
+  - Uses free AI APIs (Puter.js) requiring no authentication
+  - Shares project information and recent learnings
+  - Asks for advice and suggestions
+  - Saves conversations to `ai-conversations/` directory
+  - Creates GitHub issues documenting conversations
+  - Updates AI Friends page on GitHub Pages
+- **Models**: GPT-4, Claude, Gemini, Llama (400+ models via Puter.js)
+- **View**: [AI Friends Page](https://enufacas.github.io/Chained/ai-friends.html)
+
+### 10. Smart Idea Generator (`smart-idea-generator.yml`)
 - **Schedule**: Daily at 10 AM UTC (after learning workflows)
 - **Purpose**: Generates ideas informed by external learnings
 - **Actions**: 
   - Adapts to trending technologies and patterns
   - Creates enhanced issues with learning context
-  - Uses learnings from TLDR and Hacker News
+  - Uses learnings from TLDR, Hacker News, and AI Friends
 
 ## System Management Workflows
 
-### 10. System Kickoff (`system-kickoff.yml`)
+### 11. System Kickoff (`system-kickoff.yml`)
 - **Triggers**: Manual or automatic
 - **Purpose**: Initialize and validate the autonomous system
 - **Actions**: 
@@ -92,7 +105,7 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
   - Triggers initial workflows
   - Creates kickoff success issue
 
-### 11. Auto Kickoff on First Run (`auto-kickoff.yml`)
+### 12. Auto Kickoff on First Run (`auto-kickoff.yml`)
 - **Triggers**: Automatically on merge to main
 - **Purpose**: Ensures one-time system initialization
 - **Actions**: 
@@ -100,7 +113,7 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
   - Triggers kickoff workflow if needed
   - Runs only once per repository
 
-### 12. Workflow Monitor (`workflow-monitor.yml`)
+### 13. Workflow Monitor (`workflow-monitor.yml`)
 - **Schedule**: Periodically checks workflow health
 - **Purpose**: Monitors workflow execution and schedules
 - **Actions**: 
@@ -110,7 +123,7 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
 
 ## Micro Project Workflows
 
-### 13. Code Golf Optimizer (`code-golf-optimizer.yml`)
+### 14. Code Golf Optimizer (`code-golf-optimizer.yml`)
 - **Schedule**: Weekly on Mondays at 10 AM UTC
 - **Purpose**: Optimizes code for minimal character count
 - **Actions**: 
@@ -118,7 +131,7 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
   - Generates optimization reports with metrics
   - Can be triggered manually for specific files
 
-### 14. Self-Improving Code Analyzer (`code-analyzer.yml`)
+### 15. Self-Improving Code Analyzer (`code-analyzer.yml`)
 - **Triggers**: Automatically on every merge to main
 - **Purpose**: Analyzes code quality and learns from outcomes
 - **Actions**: 
@@ -128,7 +141,7 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
   - Creates issues for quality problems
   - Updates learning database
 
-### 15. Pattern Matcher (`pattern-matcher.yml`)
+### 16. Pattern Matcher (`pattern-matcher.yml`)
 - **Triggers**: As needed by other workflows
 - **Purpose**: Flexible pattern matching for code analysis
 - **Actions**: 
@@ -141,7 +154,7 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
 The workflows form an autonomous cycle:
 
 ```
-External Learning (TLDR, HN)
+External Learning (TLDR, HN, AI Friends)
     ↓
 Learning Database
     ↓
