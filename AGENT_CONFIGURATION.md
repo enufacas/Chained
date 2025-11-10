@@ -164,9 +164,9 @@ This token has permissions for:
 - ✅ Committing to branches
 - ✅ Reading repository data
 
-### COPILOT_PAT (Optional - For Future Integration)
+### COPILOT_PAT (Required for Agent Tasks)
 
-If you want agents to actually assign work to GitHub Copilot in the future:
+For agents to automatically receive work assignments via GitHub Copilot:
 
 1. Create Personal Access Token:
    - Go to https://github.com/settings/tokens
@@ -178,7 +178,18 @@ If you want agents to actually assign work to GitHub Copilot in the future:
    - Name: `COPILOT_PAT`
    - Value: Your token
 
-**Note**: This is only needed if you extend agents to use the existing Copilot assignment workflow. Current implementation doesn't require this.
+**⚠️ Important**: The agent system now uses this to automatically assign work to Copilot when agents spawn. Without this:
+- Agents will still spawn
+- Work issues will be created
+- But issues won't be automatically assigned to Copilot
+- You'll need to manually assign Copilot or a developer to complete agent tasks
+
+**With COPILOT_PAT configured:**
+- ✅ Each agent automatically gets a work issue
+- ✅ Issue is assigned to GitHub Copilot
+- ✅ Copilot implements the solution
+- ✅ Agent receives credit for the work
+- ✅ Fully autonomous operation
 
 ## 🌐 GitHub Pages Configuration
 
@@ -209,10 +220,13 @@ After merging this PR:
 
 The agent system uses these labels (auto-created by workflows):
 - `agent-system` - General agent activity
+- `agent-work` - Work assigned to agents (NEW)
 - `announcement` - Agent spawn announcements
 - `evaluation` - Daily evaluation reports
 - `automated` - Auto-generated content
 - `copilot` - For auto-merge compatibility
+
+**Note**: The workflows automatically create these labels if they don't exist, so no manual action is required.
 
 ### Creating Labels Manually (Optional)
 
@@ -221,6 +235,7 @@ If you want to pre-create labels:
 ```bash
 # Using GitHub CLI
 gh label create "agent-system" --color "7057ff" --description "Agent ecosystem activity"
+gh label create "agent-work" --color "0e8a16" --description "Work assigned to agents"
 gh label create "announcement" --color "0075ca" --description "Agent announcements"
 gh label create "evaluation" --color "e4e669" --description "Agent evaluations"
 ```

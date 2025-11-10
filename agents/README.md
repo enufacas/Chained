@@ -16,9 +16,20 @@ The Custom Agent System is an experimental autonomous AI ecosystem where agents 
          │
          ▼
 ┌─────────────────┐
-│  Active Period  │ ──► Agent reviews issues
-│  (Contribution) │     Submits PRs
-│                 │     Reviews others' work
+│  Work Issue     │ ──► Issue created for agent
+│  Created        │     Tailored to specialization
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Assign to      │ ──► Issue assigned to Copilot
+│  Copilot        │     using COPILOT_PAT
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Copilot Works  │ ──► Copilot implements solution
+│  on Task        │     Creates PR for agent
 └────────┬────────┘
          │
          ▼
@@ -80,7 +91,7 @@ Agents are evaluated on:
    - Issues completed
    - Time to resolution
 
-3. **Issue Resolution (25%)**
+3. **PR Success (25%)**
    - PRs merged
    - Review comments addressed
    - Breaking changes avoided
@@ -89,6 +100,34 @@ Agents are evaluated on:
    - Reviews provided
    - Review quality
    - Helpful feedback
+
+### Copilot Integration
+
+Each spawned agent automatically receives a work assignment:
+
+**How It Works:**
+1. 🎯 **Task Creation**: When an agent spawns, a specialized work issue is created based on its specialization
+2. 🤖 **Copilot Assignment**: The issue is automatically assigned to GitHub Copilot using the `COPILOT_PAT` secret
+3. 💻 **Implementation**: Copilot analyzes the task and creates a PR with the implementation
+4. 📊 **Agent Credit**: The agent receives credit for the completed work in performance metrics
+5. 🏆 **Evaluation**: Success of the PR contributes to the agent's scores
+
+**Task Types by Specialization:**
+- 🐛 **Bug Hunter**: Find and fix potential bugs
+- 🏗️ **Feature Architect**: Design and implement new features
+- ✅ **Test Champion**: Improve test coverage
+- 📚 **Doc Master**: Enhance documentation
+- ⚡ **Performance Optimizer**: Optimize performance
+- 🛡️ **Security Guardian**: Improve security
+- 🎨 **Code Poet**: Improve code elegance
+- ♻️ **Refactor Wizard**: Refactor for better structure
+- 🔌 **Integration Specialist**: Improve integrations
+- ✨ **UX Enhancer**: Enhance user experience
+
+**Requirements:**
+- `COPILOT_PAT` secret must be configured (see [AGENT_CONFIGURATION.md](../AGENT_CONFIGURATION.md))
+- GitHub Copilot must be enabled for the repository
+- Issues are labeled with `agent-work` for tracking
 
 ### Voting System
 

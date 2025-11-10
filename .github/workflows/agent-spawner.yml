@@ -45,6 +45,36 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Ensure agent system labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🏷️ Checking and creating agent system labels..."
+          
+          # Function to create label if it doesn't exist
+          create_label_if_missing() {
+            local name="$1"
+            local color="$2"
+            local description="$3"
+            
+            if gh label list --repo ${{ github.repository }} | grep -q "^${name}"; then
+              echo "✓ Label '$name' already exists"
+            else
+              gh label create "$name" --color "$color" --description "$description" --repo ${{ github.repository }}
+              echo "✅ Created label '$name'"
+            fi
+          }
+          
+          # Create all agent system labels
+          create_label_if_missing "agent-system" "7057ff" "Agent ecosystem activity"
+          create_label_if_missing "agent-work" "0e8a16" "Work assigned to agents"
+          create_label_if_missing "announcement" "0075ca" "Agent announcements"
+          create_label_if_missing "evaluation" "e4e669" "Agent evaluations"
+          create_label_if_missing "automated" "ededed" "Auto-generated content"
+          create_label_if_missing "copilot" "8b5cf6" "Copilot-related tasks"
+          
+          echo "✅ All agent system labels verified"
+
       - name: Check agent capacity
         id: check_capacity
         run: |
@@ -429,6 +459,341 @@ jobs:
             --label "agent-system,announcement"
           
           echo "✅ Announcement issue created"
+
+      - name: Create agent work issue
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
+          EMOJI="${{ steps.generate_agent.outputs.emoji }}"
+          
+          # Generate work item based on specialization
+          case "$SPECIALIZATION" in
+            "bug-hunter")
+              WORK_TITLE="🐛 Agent Task: Find and fix potential bugs in codebase"
+              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its bug-hunting capabilities.
+          
+          **Agent Details:**
+          - ID: $AGENT_ID
+          - Specialization: Bug Hunter
+          - Mission: Find and eliminate bugs with precision
+          
+          **Task:**
+          Search the codebase for potential bugs, edge cases, or error handling issues. Fix at least one issue or add defensive programming improvements.
+          
+          **Success Criteria:**
+          - Identify real or potential bugs
+          - Implement fixes or improvements
+          - Add tests to prevent regression
+          - Document changes clearly"
+              ;;
+            "feature-architect")
+              WORK_TITLE="🏗️ Agent Task: Design and implement a new feature"
+              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its architectural capabilities.
+          
+          **Agent Details:**
+          - ID: $AGENT_ID
+          - Specialization: Feature Architect
+          - Mission: Design and build innovative features
+          
+          **Task:**
+          Identify a useful enhancement or new feature for the Chained project. Design and implement it following best practices.
+          
+          **Success Criteria:**
+          - Well-designed feature
+          - Clean implementation
+          - Proper documentation
+          - Tests included"
+              ;;
+            "test-champion")
+              WORK_TITLE="✅ Agent Task: Improve test coverage"
+              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its testing capabilities.
+          
+          **Agent Details:**
+          - ID: $AGENT_ID
+          - Specialization: Test Champion
+          - Mission: Ensure every line of code is tested
+          
+          **Task:**
+          Identify areas with low or missing test coverage. Add comprehensive tests to improve code quality and reliability.
+          
+          **Success Criteria:**
+          - Increased test coverage
+          - Tests for edge cases
+          - Clear test documentation
+          - All tests passing"
+              ;;
+            "doc-master")
+              WORK_TITLE="📚 Agent Task: Enhance documentation"
+              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its documentation capabilities.
+          
+          **Agent Details:**
+          - ID: $AGENT_ID
+          - Specialization: Doc Master
+          - Mission: Transform complex code into clear documentation
+          
+          **Task:**
+          Identify areas with unclear or missing documentation. Add or improve documentation to make the project more accessible.
+          
+          **Success Criteria:**
+          - Clear, comprehensive docs
+          - Examples and use cases
+          - Updated README or guides
+          - Proper formatting"
+              ;;
+            "performance-optimizer")
+              WORK_TITLE="⚡ Agent Task: Optimize performance"
+              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its optimization capabilities.
+          
+          **Agent Details:**
+          - ID: $AGENT_ID
+          - Specialization: Performance Optimizer
+          - Mission: Make everything faster and more efficient
+          
+          **Task:**
+          Identify performance bottlenecks or inefficiencies. Implement optimizations to improve speed or reduce resource usage.
+          
+          **Success Criteria:**
+          - Measurable performance improvement
+          - No functionality regression
+          - Benchmarks or metrics
+          - Clean implementation"
+              ;;
+            "security-guardian")
+              WORK_TITLE="🛡️ Agent Task: Improve security"
+              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its security capabilities.
+          
+          **Agent Details:**
+          - ID: $AGENT_ID
+          - Specialization: Security Guardian
+          - Mission: Protect the codebase from vulnerabilities
+          
+          **Task:**
+          Review code for security vulnerabilities or weaknesses. Implement security improvements or best practices.
+          
+          **Success Criteria:**
+          - Identified security issues
+          - Implemented fixes
+          - Security best practices applied
+          - No new vulnerabilities introduced"
+              ;;
+            "code-poet")
+              WORK_TITLE="🎨 Agent Task: Improve code elegance"
+              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its code craftsmanship.
+          
+          **Agent Details:**
+          - ID: $AGENT_ID
+          - Specialization: Code Poet
+          - Mission: Write code that reads like poetry
+          
+          **Task:**
+          Find code that could be more elegant, readable, or maintainable. Refactor it to improve clarity and beauty.
+          
+          **Success Criteria:**
+          - Improved code readability
+          - Better naming and structure
+          - Reduced complexity
+          - Maintained functionality"
+              ;;
+            "refactor-wizard")
+              WORK_TITLE="♻️ Agent Task: Refactor for better structure"
+              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its refactoring capabilities.
+          
+          **Agent Details:**
+          - ID: $AGENT_ID
+          - Specialization: Refactor Wizard
+          - Mission: Transform chaotic code into elegant solutions
+          
+          **Task:**
+          Identify code that needs structural improvement. Refactor to improve organization, reduce duplication, or simplify complexity.
+          
+          **Success Criteria:**
+          - Better code organization
+          - Reduced duplication
+          - Simplified complexity
+          - All tests still passing"
+              ;;
+            "integration-specialist")
+              WORK_TITLE="🔌 Agent Task: Improve integrations"
+              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its integration capabilities.
+          
+          **Agent Details:**
+          - ID: $AGENT_ID
+          - Specialization: Integration Specialist
+          - Mission: Connect systems seamlessly
+          
+          **Task:**
+          Enhance existing integrations or add new ones. Improve reliability, error handling, or functionality of system connections.
+          
+          **Success Criteria:**
+          - Improved integration reliability
+          - Better error handling
+          - Clear integration documentation
+          - Tests for integration points"
+              ;;
+            "ux-enhancer")
+              WORK_TITLE="✨ Agent Task: Enhance user experience"
+              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its UX capabilities.
+          
+          **Agent Details:**
+          - ID: $AGENT_ID
+          - Specialization: UX Enhancer
+          - Mission: Polish every interaction
+          
+          **Task:**
+          Improve user-facing elements of the project. Enhance GitHub Pages, documentation, or any user interactions.
+          
+          **Success Criteria:**
+          - Better user experience
+          - Improved visual design
+          - Enhanced interactivity
+          - Clear improvements"
+              ;;
+          esac
+          
+          # Create the work issue without ai-generated label (let Copilot assignment workflow handle it)
+          ISSUE_NUMBER=$(gh issue create \
+            --title "$WORK_TITLE" \
+            --body "$WORK_BODY
+          
+          ---
+          
+          **Agent Performance Tracking:**
+          This issue is tracked as part of **$AGENT_NAME**'s performance evaluation.
+          
+          - Completing this issue contributes to the agent's Issue Resolution score (25%)
+          - The quality of the implementation affects the Code Quality score (30%)
+          - This work demonstrates the agent's specialization capabilities
+          
+          **Note:** This issue will be automatically assigned to GitHub Copilot for implementation." \
+            --label "agent-work" \
+            --json number \
+            --jq '.number')
+          
+          echo "work_issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          echo "✅ Work issue #$ISSUE_NUMBER created for agent $AGENT_NAME"
+
+      - name: Assign work issue to Copilot
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          ISSUE_NUMBER="${{ steps.create_agent_work_issue.outputs.work_issue_number }}"
+          
+          echo "🤖 Attempting to assign issue #$ISSUE_NUMBER to GitHub Copilot..."
+          
+          # Get the issue node ID
+          issue_node_id=$(gh issue view $ISSUE_NUMBER --repo ${{ github.repository }} --json id --jq '.id')
+          
+          if [ -z "$issue_node_id" ]; then
+            echo "❌ Failed to get issue node ID"
+            exit 0
+          fi
+          
+          echo "📍 Issue node ID: $issue_node_id"
+          
+          # Get Copilot's actor ID
+          copilot_actor_id=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!) {
+              repository(owner: $owner, name: $repo) {
+                suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
+                  nodes {
+                    login
+                    __typename
+                    ... on Bot { id }
+                    ... on User { id }
+                  }
+                }
+              }
+            }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" | jq -r '.data.repository.suggestedActors.nodes[] | select(.login | test("copilot"; "i")) | .id' | head -1)
+          
+          if [ -z "$copilot_actor_id" ]; then
+            echo "⚠️ Could not find Copilot actor ID"
+            echo "The work issue #$ISSUE_NUMBER was created but could not be assigned to Copilot."
+            echo "This may be because:"
+            echo "  - COPILOT_PAT is not configured"
+            echo "  - Copilot is not enabled for this repository"
+            echo "  - Copilot agent feature is not available"
+            
+            # Add a comment to the issue
+            gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "⚠️ **Agent Assignment Note**
+          
+          This issue was created for agent **$AGENT_NAME** but could not be automatically assigned to GitHub Copilot.
+          
+          **To enable Copilot assignment:**
+          1. Ensure COPILOT_PAT secret is configured
+          2. Verify Copilot is enabled for this repository
+          3. Manually assign Copilot from the UI if needed
+          
+          The agent's performance will still be tracked based on issue completion."
+            exit 0
+          fi
+          
+          echo "📍 Copilot actor ID: $copilot_actor_id"
+          
+          # Assign issue to Copilot using GraphQL API
+          mutation_result=$(gh api graphql -f query='
+            mutation($issueId: ID!, $actorId: ID!) {
+              replaceActorsForAssignable(input: {
+                assignableId: $issueId,
+                actorIds: [$actorId]
+              }) {
+                assignable {
+                  ... on Issue {
+                    id
+                    assignees(first: 10) {
+                      nodes {
+                        login
+                      }
+                    }
+                  }
+                }
+              }
+            }' -f issueId="$issue_node_id" -f actorId="$copilot_actor_id" 2>&1)
+          
+          if echo "$mutation_result" | jq -e '.data.replaceActorsForAssignable.assignable' > /dev/null 2>&1; then
+            echo "✅ Successfully assigned issue #$ISSUE_NUMBER to Copilot"
+            
+            # Add success comment
+            gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🤖 **Agent Task Assigned to Copilot**
+          
+          This issue has been automatically assigned to GitHub Copilot on behalf of agent **$AGENT_NAME**.
+          
+          **What happens next:**
+          1. ✅ Copilot will analyze the task requirements
+          2. 💻 Copilot will create a branch and implement the solution
+          3. 📝 Copilot will open a PR with the implementation
+          4. 🔍 The PR will be reviewed and merged
+          5. 📊 Agent **$AGENT_NAME** will receive credit for this contribution
+          
+          **Agent Specialization:** ${{ steps.generate_agent.outputs.specialization }}  
+          **Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          
+          ---
+          *🤖 This is an autonomous agent task. The agent's performance will be evaluated based on the quality and success of this work.*"
+          else
+            echo "⚠️ Failed to assign issue #$ISSUE_NUMBER to Copilot"
+            echo "Error: $mutation_result"
+            
+            # Add error comment
+            gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "⚠️ **Copilot Assignment Failed**
+          
+          Attempted to assign this issue to GitHub Copilot for agent **$AGENT_NAME**, but the assignment failed.
+          
+          **Possible reasons:**
+          - Using GITHUB_TOKEN instead of COPILOT_PAT
+          - Copilot not properly enabled
+          - Repository permissions issue
+          
+          **Manual action needed:** Please assign Copilot manually from the issue sidebar, or a human developer can complete this task.
+          
+          The agent **$AGENT_NAME** will still receive credit if this issue is completed."
+          fi
 
       - name: Summary
         if: steps.check_capacity.outputs.can_spawn == 'true'

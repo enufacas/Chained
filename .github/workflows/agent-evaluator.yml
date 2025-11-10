@@ -34,6 +34,31 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Ensure agent system labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🏷️ Checking agent system labels..."
+          
+          # Function to create label if it doesn't exist
+          create_label_if_missing() {
+            local name="$1"
+            local color="$2"
+            local description="$3"
+            
+            if gh label list --repo ${{ github.repository }} | grep -q "^${name}"; then
+              echo "✓ Label '$name' already exists"
+            else
+              gh label create "$name" --color "$color" --description "$description" --repo ${{ github.repository }} 2>/dev/null || echo "⚠️ Could not create label '$name'"
+            fi
+          }
+          
+          # Create evaluation-specific labels
+          create_label_if_missing "agent-system" "7057ff" "Agent ecosystem activity"
+          create_label_if_missing "evaluation" "e4e669" "Agent evaluations"
+          create_label_if_missing "automated" "ededed" "Auto-generated content"
+          create_label_if_missing "copilot" "8b5cf6" "Copilot-related tasks"
+
       - name: Evaluate all agents
         id: evaluate
         env:
