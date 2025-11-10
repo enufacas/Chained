@@ -55,10 +55,12 @@ Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
    - Can be manually triggered with optional issue number (or process all issues)
 
 3. **Auto Label Copilot PRs** (`auto-label-copilot-prs.yml`)
-   - Runs every 10 minutes on a scheduled timer
+   - Runs immediately when PRs are opened/updated (via events)
+   - Also runs every 10 minutes on a scheduled timer (when GitHub allows)
    - Labels PRs created by Copilot with the "copilot" label
    - Performs a round-up of all open Copilot PRs each run
    - Can be manually triggered via workflow_dispatch
+   - Hybrid approach ensures immediate response + regular cleanup
    - Essential for PR automation pipeline
 
 4. **Auto Review and Merge** (`auto-review-merge.yml`)
