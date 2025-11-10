@@ -1,0 +1,167 @@
+name: Workflow Failure Handler
+
+on:
+  workflow_run:
+    workflows:
+      - "AI Friend Daily"
+      - "Auto Review and Merge"
+      - "Code Analyzer"
+      - "Code Golf Optimizer"
+      - "Copilot GraphQL Assign"
+      - "Daily Goal Generator"
+      - "Goal Progress Checker"
+      - "Idea Generator"
+      - "Learn from Hacker News"
+      - "Learn from TLDR"
+      - "Pattern Matcher"
+      - "System Kickoff"
+      - "System Monitor"
+    types: [completed]
+
+permissions:
+  issues: write
+  actions: read
+  contents: read
+
+jobs:
+  handle-failure:
+    runs-on: ubuntu-latest
+    # Only run if the workflow failed
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract failure details
+        id: extract
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          workflow_name="${{ github.event.workflow_run.name }}"
+          workflow_id="${{ github.event.workflow_run.id }}"
+          run_number="${{ github.event.workflow_run.run_number }}"
+          run_attempt="${{ github.event.workflow_run.run_attempt }}"
+          html_url="${{ github.event.workflow_run.html_url }}"
+          head_branch="${{ github.event.workflow_run.head_branch }}"
+          head_sha="${{ github.event.workflow_run.head_sha }}"
+          created_at="${{ github.event.workflow_run.created_at }}"
+          
+          echo "workflow_name=${workflow_name}" >> $GITHUB_OUTPUT
+          echo "workflow_id=${workflow_id}" >> $GITHUB_OUTPUT
+          echo "run_number=${run_number}" >> $GITHUB_OUTPUT
+          echo "run_attempt=${run_attempt}" >> $GITHUB_OUTPUT
+          echo "html_url=${html_url}" >> $GITHUB_OUTPUT
+          echo "head_branch=${head_branch}" >> $GITHUB_OUTPUT
+          echo "head_sha=${head_sha}" >> $GITHUB_OUTPUT
+          echo "created_at=${created_at}" >> $GITHUB_OUTPUT
+          
+          # Get abbreviated commit SHA
+          short_sha="${head_sha:0:7}"
+          echo "short_sha=${short_sha}" >> $GITHUB_OUTPUT
+
+      - name: Check for existing failure issue
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          workflow_name="${{ steps.extract.outputs.workflow_name }}"
+          
+          # Search for open issues with the workflow-failure label and workflow name in the title
+          existing_issue=$(gh issue list \
+            --state open \
+            --label "workflow-failure" \
+            --search "Workflow Failure: ${workflow_name}" \
+            --json number,title \
+            --jq '.[0].number // empty')
+          
+          if [ -n "${existing_issue}" ]; then
+            echo "existing_issue=${existing_issue}" >> $GITHUB_OUTPUT
+            echo "Found existing issue #${existing_issue}"
+          else
+            echo "No existing issue found"
+          fi
+
+      - name: Update existing issue
+        if: steps.check.outputs.existing_issue != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          issue_number="${{ steps.check.outputs.existing_issue }}"
+          
+          gh issue comment "${issue_number}" --body "## 🔄 Additional Failure Detected
+          
+          **Workflow:** ${{ steps.extract.outputs.workflow_name }}
+          **Run:** [#${{ steps.extract.outputs.run_number }}](${{ steps.extract.outputs.html_url }})
+          **Attempt:** ${{ steps.extract.outputs.run_attempt }}
+          **Branch:** \`${{ steps.extract.outputs.head_branch }}\`
+          **Commit:** [\`${{ steps.extract.outputs.short_sha }}\`](https://github.com/${{ github.repository }}/commit/${{ steps.extract.outputs.head_sha }})
+          **Time:** ${{ steps.extract.outputs.created_at }}
+          
+          [View Run Details](${{ steps.extract.outputs.html_url }})
+          
+          ---
+          *This failure was automatically detected and reported by the Workflow Failure Handler.*"
+          
+          echo "✅ Updated existing issue #${issue_number}"
+
+      - name: Create new failure issue
+        if: steps.check.outputs.existing_issue == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "⚠️ Workflow Failure: ${{ steps.extract.outputs.workflow_name }}" \
+            --body "## Workflow Failure Detected
+          
+          A workflow has failed and requires attention.
+          
+          ### Failure Details
+          - **Workflow:** ${{ steps.extract.outputs.workflow_name }}
+          - **Run Number:** [#${{ steps.extract.outputs.run_number }}](${{ steps.extract.outputs.html_url }})
+          - **Run Attempt:** ${{ steps.extract.outputs.run_attempt }}
+          - **Branch:** \`${{ steps.extract.outputs.head_branch }}\`
+          - **Commit:** [\`${{ steps.extract.outputs.short_sha }}\`](https://github.com/${{ github.repository }}/commit/${{ steps.extract.outputs.head_sha }})
+          - **Failed At:** ${{ steps.extract.outputs.created_at }}
+          
+          ### Actions Required
+          1. Review the [failed workflow run](${{ steps.extract.outputs.html_url }})
+          2. Check the logs for error messages
+          3. Identify the root cause of the failure
+          4. Fix the issue and re-run the workflow if needed
+          5. Close this issue once the problem is resolved
+          
+          ### Quick Links
+          - [View Run Details](${{ steps.extract.outputs.html_url }})
+          - [View Commit](https://github.com/${{ github.repository }}/commit/${{ steps.extract.outputs.head_sha }})
+          - [Actions Tab](https://github.com/${{ github.repository }}/actions)
+          
+          ### Monitoring
+          This issue will be updated if the same workflow fails again.
+          Close this issue once the workflow is stable.
+          
+          ---
+          *This issue was automatically created by the Workflow Failure Handler.*" \
+            --label "workflow-failure,automated"
+          
+          echo "✅ Created new failure issue"
+
+      - name: Generate summary
+        run: |
+          echo "================================================================"
+          echo "Workflow Failure Handler - Summary"
+          echo "================================================================"
+          echo ""
+          echo "Workflow: ${{ steps.extract.outputs.workflow_name }}"
+          echo "Run: #${{ steps.extract.outputs.run_number }}"
+          echo "Branch: ${{ steps.extract.outputs.head_branch }}"
+          echo "Commit: ${{ steps.extract.outputs.short_sha }}"
+          echo ""
+          if [ -n "${{ steps.check.outputs.existing_issue }}" ]; then
+            echo "Action: Updated existing issue #${{ steps.check.outputs.existing_issue }}"
+          else
+            echo "Action: Created new failure issue"
+          fi
+          echo ""
+          echo "View Run: ${{ steps.extract.outputs.html_url }}"
+          echo ""
+          echo "================================================================"
