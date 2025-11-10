@@ -13,6 +13,7 @@ This directory contains insights and learnings collected from external sources t
 - **Frequency**: Three times daily (7 AM, 1 PM, 7 PM UTC)
 - **Content**: Top technical discussions, trending topics, community insights
 - **Format**: `hn_YYYYMMDD_HHMMSS.json`
+- **Analysis**: `analysis_YYYYMMDD_HHMMSS.md` (detailed analysis reports)
 
 ## Learning Structure
 
@@ -37,6 +38,25 @@ Each learning file contains:
   "trends": ["Extracted trend statements"]
 }
 ```
+
+## Analysis Files
+
+For high-impact learning sessions, detailed analysis reports are created:
+
+**Format:** `analysis_YYYYMMDD_HHMMSS.md`
+
+**Content:**
+- Collection summary with key metrics
+- Top stories by community score
+- Topic breakdown and categorization
+- Statistical analysis
+- Keyword frequency analysis
+- Emerging patterns and themes
+- Ideas generated from learnings
+- Integration status
+- Impact on development priorities
+
+**Example:** `analysis_20251110_071202.md`
 
 ## How Learnings Are Used
 
