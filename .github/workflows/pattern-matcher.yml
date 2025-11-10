@@ -144,7 +144,7 @@ jobs:
           DETAILS=$(head -n 100 pattern-report.txt)
           
           # Create timestamp
-          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          TIMESTAMP=$(date -u +'%Y-%m-%d %H:%M:%S UTC')
           
           # Create issue
           gh issue create \

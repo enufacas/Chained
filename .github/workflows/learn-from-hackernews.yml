@@ -149,7 +149,7 @@ jobs:
             --title "🔥 Learning Update from Hacker News - $(date +%Y-%m-%d)" \
             --body "## Hot Topics from Hacker News
 
-          **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           **High-Quality Stories:** ${{ steps.fetch.outputs.learning_count }}
           **Topics Covered:** ${{ steps.fetch.outputs.topic_count }}
           **New Ideas Generated:** ${{ steps.fetch.outputs.idea_count }}
@@ -240,7 +240,7 @@ jobs:
               --title "🔥 Learning Update: Hacker News - $(date -u +%Y-%m-%d)" \
               --body "## Automated Learning Update from Hacker News
             
-            **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
             **Stories Analyzed:** ${{ steps.fetch.outputs.learning_count }}
             **Topics Identified:** ${{ steps.fetch.outputs.topic_count }}
             **New Ideas Generated:** ${{ steps.fetch.outputs.idea_count }}
@@ -271,4 +271,4 @@ jobs:
           echo "Stories analyzed: ${{ steps.fetch.outputs.learning_count }}"
           echo "Topics identified: ${{ steps.fetch.outputs.topic_count }}"
           echo "New ideas: ${{ steps.fetch.outputs.idea_count }}"
-          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

@@ -160,7 +160,7 @@ jobs:
                     - Auto-review will process this PR in the next cycle
                     - PR will be automatically merged if all checks pass
                     
-                    **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+                    **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
                     
                     ---
                     *Part of the perpetual AI motion machine - autonomous draft-to-ready conversion*" || true
@@ -214,7 +214,7 @@ jobs:
                 
                 **Action:** Will attempt to merge automatically
                 **Processed by:** Autonomous Review System
-                **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+                **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
                 
                 ---
                 *Part of the perpetual AI motion machine - no human review required.*" || true
@@ -232,7 +232,7 @@ jobs:
                 
                 **Status:** Approved for merge
                 **Reviewed by:** Autonomous Review System
-                **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+                **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
                 
                 ---
                 *Part of the perpetual AI motion machine - no human review required.*"
@@ -276,7 +276,7 @@ jobs:
                     
                     This issue has been completed and merged via PR #${pr_num}.
                     
-                    **Merged at:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+                    **Merged at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
                     
                     ---
                     *Automatically closed by the auto-review system*" || true
@@ -320,4 +320,4 @@ jobs:
       - name: Log review activity
         run: |
           echo "Auto-review and merge process completed"
-          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

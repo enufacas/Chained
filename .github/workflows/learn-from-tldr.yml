@@ -121,7 +121,7 @@ jobs:
             --title "🧠 Learning Update from TLDR Tech - $(date +%Y-%m-%d)" \
             --body "## New Tech Insights from TLDR
 
-          **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           **Learnings Collected:** ${{ steps.fetch.outputs.learning_count }}
           **Trends Identified:** ${{ steps.fetch.outputs.trend_count }}
 
@@ -174,7 +174,7 @@ jobs:
               --title "🧠 Learning Update: TLDR Tech - $(date -u +%Y-%m-%d)" \
               --body "## Automated Learning Update from TLDR Tech
             
-            **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
             **Learnings Collected:** ${{ steps.fetch.outputs.learning_count }}
             **Trends Identified:** ${{ steps.fetch.outputs.trend_count }}
             
@@ -202,4 +202,4 @@ jobs:
           echo "TLDR learning completed"
           echo "Learnings collected: ${{ steps.fetch.outputs.learning_count }}"
           echo "Trends identified: ${{ steps.fetch.outputs.trend_count }}"
-          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

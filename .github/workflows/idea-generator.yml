@@ -162,7 +162,7 @@ jobs:
 
           **Idea:** ${{ steps.generate.outputs.idea }}
 
-          **Generated on:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Generated on:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
 
           **ID:** ${{ steps.generate.outputs.idea_id }}
 
@@ -201,4 +201,4 @@ jobs:
           echo "Smart idea generation completed"
           echo "Idea: ${{ steps.generate.outputs.idea }}"
           echo "Learning-based: ${{ steps.generate.outputs.is_learning_based }}"
-          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
