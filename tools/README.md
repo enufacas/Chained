@@ -4,6 +4,71 @@ A collection of intelligent development tools for the Chained autonomous AI syst
 
 ## Available Tools
 
+### 🏛️ AI Code Archaeologist
+
+An intelligent tool that analyzes git history to document legacy decisions, architectural evolution, and technical debt.
+
+**Features:**
+- Git history analysis to understand code decisions
+- Automatic categorization of commits (architectural, features, bug fixes, debt)
+- Decision extraction from commit messages
+- Technical debt tracking (TODOs, FIXMEs, workarounds)
+- Architectural evolution timeline
+- Human-readable markdown reports
+- Automated weekly analysis via GitHub Actions
+
+**Quick Start:**
+```bash
+# Analyze last 100 commits
+python3 tools/code-archaeologist.py -n 100
+
+# Analyze commits from last month
+python3 tools/code-archaeologist.py --since "1 month ago"
+
+# Generate JSON report
+python3 tools/code-archaeologist.py -n 50 --format json
+
+# Save report to file
+python3 tools/code-archaeologist.py -n 100 -o archaeology_report.md
+```
+
+**What It Does:**
+- 📜 **Documents Legacy Decisions**: Extracts "why" from commit messages
+- 🏗️ **Tracks Architecture Evolution**: Shows how design changed over time
+- ⚠️ **Identifies Technical Debt**: Finds TODOs, FIXMEs, and workarounds
+- 📊 **Provides Statistics**: Commits by category, top contributors, most changed files
+- 💡 **Gives Recommendations**: Actionable insights for improvement
+
+**Command-Line Options:**
+- `-d, --directory`: Repository directory to analyze (default: current)
+- `-n, --max-commits`: Maximum commits to analyze (default: 100)
+- `--since`: Only analyze commits since date (e.g., "2023-01-01", "1 month ago")
+- `-o, --output`: Output file for report (default: stdout)
+- `--format`: Output format - text or json (default: text)
+
+**Example Output:**
+```markdown
+# 🏛️ Code Archaeology Report
+
+## 📊 Summary
+- Total commits analyzed: 100
+- Architectural decisions found: 12
+- Technical debt items found: 8
+
+## 🏗️ Architectural Decisions
+1. **Decided to move config to separate file because it improves modularity**
+   - Commit: `abc123d`
+   - Date: 2024-01-15
+
+## ⚠️ Technical Debt
+1. **TODO: Fix this workaround for the database connection**
+   - Commit: `def456e`
+   - Date: 2024-02-20
+   - Files: utils.py
+```
+
+---
+
 ### 🔍 Cross-Repository Pattern Matcher
 An intelligent best practices analyzer that detects anti-patterns, security issues, and code quality problems across multiple programming languages.
 
