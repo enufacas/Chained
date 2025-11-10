@@ -3,15 +3,25 @@ name: Auto Review and Merge
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'learnings/**'
+      - 'analysis/**'
   schedule:
-    # Run every 15 minutes to check for PRs ready to merge
-    - cron: '*/15 * * * *'
+    # Run every hour to check for PRs ready to merge (reduced from 15 min to conserve runner resources)
+    - cron: '0 * * * *'
   workflow_dispatch:
     inputs:
       pr_number:
         description: 'PR number to review and merge'
         required: false
         type: string
+
+# Prevent multiple simultaneous runs on the same PR
+concurrency:
+  group: auto-review-merge-${{ github.event.pull_request.number || 'scheduled' }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -22,9 +32,14 @@ permissions:
 jobs:
   auto-review-merge:
     runs-on: ubuntu-latest
-    # Skip draft PRs when triggered by pull_request events
-    # Draft PRs will be processed by scheduled runs instead
-    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    # Skip draft PRs unless they're being converted to ready_for_review
+    # Skip when PR is closed to avoid wasted runs
+    if: |
+      (github.event_name != 'pull_request' || 
+       (github.event.action == 'ready_for_review' || 
+        !github.event.pull_request.draft)) &&
+      (github.event_name != 'pull_request' || 
+       github.event.pull_request.state == 'open')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
