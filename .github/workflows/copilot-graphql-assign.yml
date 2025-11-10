@@ -4,8 +4,8 @@ on:
   issues:
     types: [opened]
   schedule:
-    # Run daily at 12:00 UTC to check for unassigned issues
-    - cron: '0 12 * * *'
+    # Run every 3 hours to check for unassigned issues
+    - cron: '0 */3 * * *'
   workflow_dispatch:
     inputs:
       issue_number:
