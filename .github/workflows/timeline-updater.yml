@@ -119,7 +119,7 @@ jobs:
           fi
           
           # Check for existing open timeline update PRs
-          existing_prs=$(gh pr list --state open --label "timeline-update" --json number,headRefName --jq '.[].number' | head -1)
+          existing_prs=$(gh pr list --state open --json number,headRefName,labels --jq '.[] | select(.headRefName | startswith("timeline/update-")) | .number' | head -1)
           
           if [ -n "${existing_prs}" ]; then
             pr_number="${existing_prs}"
@@ -161,7 +161,7 @@ jobs:
             
             # Create PR with timeline-update label for tracking
             gh pr create \
-              --title "📊 Timeline Update - $(date -u +%Y-%m-%d %H:%M:%S UTC)" \
+              --title "📊 Timeline Update - $(date -u +"%Y-%m-%d %H:%M:%S UTC")" \
               --body "## Automated Timeline Data Update
             
             **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
@@ -184,7 +184,7 @@ jobs:
             
             ---
             *This PR was automatically created by the Timeline Updater workflow and will be auto-merged.*" \
-              --label "automated,copilot,timeline-update" \
+              --label "automated,copilot" \
               --base main \
               --head "${branch_name}"
             
