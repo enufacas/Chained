@@ -142,13 +142,40 @@ jobs:
             # Switch to the existing branch and update it
             git fetch origin "${branch_name}"
             git checkout "${branch_name}"
-            git merge main --no-edit || true
-            git add docs/data/
+            
+            # Try to merge main, but handle conflicts properly
+            if ! git merge main --no-edit; then
+              echo "⚠️  Merge conflict detected. Recreating branch from main with fresh data..."
+              
+              # Abort the failed merge
+              git merge --abort
+              
+              # Switch back to main and recreate the branch
+              git checkout main
+              git branch -D "${branch_name}"
+              git checkout -b "${branch_name}"
+              
+              # Re-add the fresh data that was already generated
+              git add docs/data/
+              
+              echo "✅ Branch recreated from main to resolve conflicts"
+            else
+              echo "✅ Merged main successfully"
+              git add docs/data/
+            fi
+            
+            # Commit the changes
             git commit -m "📊 Update timeline data - $(date -u +"%Y-%m-%d %H:%M:%S UTC")" || {
               echo "No new changes to commit to existing PR"
               exit 0
             }
-            git push origin "${branch_name}"
+            
+            # Force push if we recreated the branch, otherwise regular push
+            if git rev-parse --verify origin/"${branch_name}" >/dev/null 2>&1; then
+              git push --force-with-lease origin "${branch_name}"
+            else
+              git push origin "${branch_name}"
+            fi
             
             echo "✅ Updated existing PR #${pr_number}"
           else
