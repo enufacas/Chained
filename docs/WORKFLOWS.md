@@ -126,15 +126,16 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
   - Tracks progress statistics
 
 ### 14. Workflow Failure Handler (`workflow-failure-handler.yml`)
-- **Triggers**: Automatically when any workflow completes with failure status
-- **Purpose**: Immediately detect and report workflow failures
+- **Status**: ⚠️ **DISABLED** - Automatic failure detection is currently disabled
+- **Triggers**: Manual trigger only (automatic `workflow_run` trigger commented out)
+- **Purpose**: Immediately detect and report workflow failures (when enabled)
 - **Actions**: 
   - Creates GitHub issues for failed workflows
   - Includes failure details (workflow name, run number, branch, commit)
   - Updates existing issues if the same workflow fails multiple times
   - Provides quick links to failed runs and logs
   - Labels issues with `workflow-failure` and `automated`
-- **Notes**: Complements the periodic System Monitor with real-time failure detection
+- **Notes**: Can be manually triggered for testing. To re-enable, uncomment the `workflow_run` trigger in the workflow file
 
 ## Micro Project Workflows
 
@@ -195,7 +196,7 @@ Progress Report
     ↓
 Cycle continues...
 
-[Workflow Failure Handler monitors all workflows in real-time]
+[Workflow Failure Handler: DISABLED - automatic monitoring not active]
 ```
 
 ## Customizing Workflows
