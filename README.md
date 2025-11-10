@@ -61,10 +61,13 @@ The project includes a beautiful, responsive GitHub Pages site at [`docs/`](./do
 - 📈 **Live statistics** from the repository
 - ⏱️ **Timeline of events** showing all AI-generated ideas and their progress
 - 🧠 **Key learnings** documented throughout the project's evolution, including insights from TLDR Tech and Hacker News
+- 🌐 **AI Knowledge Graph** - Interactive node graph visualization of all AI-related learnings and their relationships
 - 📊 **Interactive visualizations** of the perpetual motion machine in action
-- 🌐 **External learning integration** showing how the AI stays current with tech trends
+- 🌍 **External learning integration** showing how the AI stays current with tech trends
 
 Visit the live site: **[https://enufacas.github.io/Chained/](https://enufacas.github.io/Chained/)**
+
+Check out the **[AI Knowledge Graph](https://enufacas.github.io/Chained/ai-knowledge-graph.html)** to explore AI trends visually!
 
 ## 🚀 Getting Started
 
