@@ -1,8 +1,10 @@
-# 🛠️ Development Tools
+# 🛠️ Micro Projects
+
+This page documents the various micro projects and tools built within the Chained autonomous system.
 
 ## 🏌️ Code Golf Optimizer
 
-Chained includes an AI-powered code golf optimizer that minimizes code while preserving functionality. Perfect for code golf challenges and learning how to write concise code!
+An AI-powered code golf optimizer that minimizes code while preserving functionality. Perfect for code golf challenges and learning how to write concise code!
 
 ### Features
 
@@ -49,11 +51,20 @@ def calculate_sum(number_list):
  return a
 ```
 
+### Workflow Integration
+
+The Code Golf Optimizer runs automatically:
+- **Schedule**: Weekly on Mondays at 10 AM UTC
+- **Trigger**: Can be manually triggered via GitHub Actions
+- **Output**: Generates optimization reports with metrics
+
 For complete documentation, see [`tools/README.md`](../tools/README.md)
+
+---
 
 ## 🔍 Self-Improving Code Analyzer
 
-Chained includes a self-improving code analyzer that learns from each merge, tracking code patterns and their correlation with successful vs. problematic merges.
+A self-improving code analyzer that learns from each merge, tracking code patterns and their correlation with successful vs. problematic merges.
 
 ### Features
 
@@ -110,8 +121,37 @@ All analysis data is stored in [`analysis/`](../analysis/):
 - `merge_*.json`: Individual analysis reports for each merge
 - `latest_report.md`: Most recent analysis report
 
+### Workflow Integration
+
+The Code Analyzer runs automatically:
+- **Trigger**: On every merge to main branch
+- **Action**: Analyzes code, posts PR comments, creates issues if needed
+- **Learning**: Updates pattern database with merge outcome
+
 For complete documentation, see [`analysis/README.md`](../analysis/README.md)
 
 ---
 
-[← Learning](LEARNING.md) | [Back to README](../README.md) | [Monitoring →](MONITORING.md)
+## 🎯 Pattern Matcher
+
+A flexible pattern matching system for code analysis and documentation generation.
+
+### Features
+
+- 🔍 **Multi-Pattern Support**: Detects various code patterns
+- 📝 **Documentation Integration**: Auto-generates documentation
+- 🔄 **Extensible**: Easy to add new patterns
+
+### Workflow Integration
+
+The Pattern Matcher runs automatically to help identify code patterns and support other automation tools.
+
+---
+
+## 🔮 Future Micro Projects
+
+The autonomous system may generate new micro projects over time. This page will be updated automatically as new tools and features are developed.
+
+---
+
+**Back to [Main README](../README.md) | [Workflows](./WORKFLOWS.md) | [Learning System](./LEARNING_SYSTEM.md)**
