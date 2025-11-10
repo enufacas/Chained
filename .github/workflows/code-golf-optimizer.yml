@@ -47,7 +47,7 @@ jobs:
           
           echo "## Code Golf Optimization Report" > optimizations/report.md
           echo "" >> optimizations/report.md
-          echo "Generated on: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> optimizations/report.md
+          echo "Generated on: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> optimizations/report.md
           echo "" >> optimizations/report.md
           
           total_original=0
@@ -170,4 +170,4 @@ jobs:
       - name: Log activity
         run: |
           echo "Code Golf Optimizer workflow completed"
-          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

@@ -163,4 +163,4 @@ jobs:
           echo "Target: ${{ steps.analyze.outputs.target_dir }}"
           echo "Merge successful: ${{ steps.analyze.outputs.merge_success }}"
           echo "Total merges analyzed: ${{ steps.stats.outputs.total_merges }}"
-          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

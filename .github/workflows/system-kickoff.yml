@@ -227,7 +227,7 @@ jobs:
 
           The perpetual AI motion machine has been successfully initialized and started!
 
-          **Kickoff Time:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Kickoff Time:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
 
           **Workflows Triggered:**
           - ✅ Learn from TLDR Tech
