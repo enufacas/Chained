@@ -1,52 +1,27 @@
 name: Auto Label Copilot PRs
 
 on:
-  pull_request_target:
-    types: [opened, reopened]
+  schedule:
+    - cron: '*/10 * * * *'  # Run every 10 minutes
   workflow_dispatch:
-    inputs:
-      label_existing:
-        description: 'Label all existing Copilot PRs'
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   pull-requests: write
   issues: write
 
 jobs:
-  label-copilot-pr:
+  label-copilot-prs:
     runs-on: ubuntu-latest
     steps:
-      - name: Label specific PR (from pull_request_target event)
-        if: github.event_name == 'pull_request_target'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pr_number="${{ github.event.pull_request.number }}"
-          author="${{ github.event.pull_request.user.login }}"
-          
-          echo "PR #${pr_number} author: ${author}"
-          
-          # Check if author is Copilot (matches various formats including app/copilot-swe-agent)
-          if echo "${author}" | grep -qiE "^(Copilot|copilot|app/copilot)"; then
-            echo "✅ PR is from Copilot, adding label"
-            gh pr edit ${pr_number} --add-label "copilot" --repo ${{ github.repository }}
-            echo "✅ Label added successfully to PR #${pr_number}"
-          else
-            echo "ℹ️ PR is not from Copilot, skipping"
-          fi
-
-      - name: Label all existing Copilot PRs (from workflow_dispatch)
-        if: github.event_name == 'workflow_dispatch' && inputs.label_existing == true
+      - name: Label all open Copilot PRs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "🔍 Finding all open PRs from Copilot..."
+          echo "Trigger: ${{ github.event_name }}"
           
           # Get all open PRs (matches various copilot formats including app/copilot-swe-agent)
-          pr_list=$(gh pr list --state open --json number,author --jq '.[] | select(.author.login | test("^(Copilot|copilot|app/copilot)"; "i")) | .number')
+          pr_list=$(gh pr list --state open --json number,author,labels --jq '.[] | select(.author.login | test("^(Copilot|copilot|app/copilot)"; "i")) | .number')
           
           if [ -z "${pr_list}" ]; then
             echo "ℹ️ No Copilot PRs found"
@@ -57,12 +32,21 @@ jobs:
           
           # Add label to each PR
           for pr_num in ${pr_list}; do
-            echo "Adding 'copilot' label to PR #${pr_num}"
-            if gh pr edit ${pr_num} --add-label "copilot" --repo ${{ github.repository }}; then
-              echo "✅ Label added to PR #${pr_num}"
+            echo "Checking PR #${pr_num}..."
+            
+            # Check if PR already has the copilot label
+            has_label=$(gh pr view ${pr_num} --json labels --jq '.labels[] | select(.name == "copilot") | .name')
+            
+            if [ -n "${has_label}" ]; then
+              echo "ℹ️ PR #${pr_num} already has 'copilot' label, skipping"
             else
-              echo "⚠️ Failed to add label to PR #${pr_num}"
+              echo "Adding 'copilot' label to PR #${pr_num}"
+              if gh pr edit ${pr_num} --add-label "copilot" --repo ${{ github.repository }}; then
+                echo "✅ Label added to PR #${pr_num}"
+              else
+                echo "⚠️ Failed to add label to PR #${pr_num}"
+              fi
             fi
           done
           
-          echo "✅ Finished labeling all Copilot PRs"
+          echo "✅ Finished processing all Copilot PRs"
