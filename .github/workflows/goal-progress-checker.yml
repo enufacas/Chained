@@ -1,0 +1,252 @@
+name: Goal Progress Checker
+
+on:
+  schedule:
+    # Run every 3 hours
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: read
+
+jobs:
+  check-goal-progress:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check for current goal
+        id: check_goal
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          GOALS_FILE="docs/AI_GOALS.md"
+          
+          if [ ! -f "$GOALS_FILE" ]; then
+            echo "No goals file found. Skipping progress check."
+            echo "has_goal=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Check if there's a current goal
+          if grep -q "## Current Goal" "$GOALS_FILE" && grep -q "🟡 In Progress" "$GOALS_FILE"; then
+            echo "has_goal=true" >> $GITHUB_OUTPUT
+            
+            # Extract current goal info
+            CATEGORY=$(grep "^\*\*Category\*\*:" "$GOALS_FILE" | head -1 | sed 's/\*\*Category\*\*: //' | xargs)
+            GOAL=$(grep "^\*\*Goal\*\*:" "$GOALS_FILE" | head -1 | sed 's/\*\*Goal\*\*: //' | xargs)
+            GOAL_DATE=$(grep "^\*\*Date\*\*:" "$GOALS_FILE" | head -1 | sed 's/\*\*Date\*\*: //' | xargs)
+            
+            echo "category=$CATEGORY" >> $GITHUB_OUTPUT
+            echo "goal=$GOAL" >> $GITHUB_OUTPUT
+            echo "goal_date=$GOAL_DATE" >> $GITHUB_OUTPUT
+            
+            echo "Found active goal:"
+            echo "  Date: $GOAL_DATE"
+            echo "  Category: $CATEGORY"
+            echo "  Goal: $GOAL"
+          else
+            echo "has_goal=false" >> $GITHUB_OUTPUT
+            echo "No active goal found for today."
+          fi
+
+      - name: Gather progress data
+        id: gather_progress
+        if: steps.check_goal.outputs.has_goal == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          GOAL_DATE="${{ steps.check_goal.outputs.goal_date }}"
+          CATEGORY="${{ steps.check_goal.outputs.category }}"
+          GOAL="${{ steps.check_goal.outputs.goal }}"
+          
+          echo "Gathering progress data since $GOAL_DATE..."
+          
+          # Get recent commits (since goal date)
+          COMMIT_COUNT=$(git log --since="$GOAL_DATE 00:00:00" --oneline | wc -l)
+          echo "Commits since goal: $COMMIT_COUNT"
+          
+          # Get recent PRs
+          PR_COUNT=$(gh pr list --state all --search "created:>=$GOAL_DATE" --json number | jq 'length')
+          echo "PRs since goal: $PR_COUNT"
+          
+          # Get recent issues
+          ISSUE_COUNT=$(gh issue list --state all --search "created:>=$GOAL_DATE" --json number | jq 'length')
+          echo "Issues since goal: $ISSUE_COUNT"
+          
+          # Find goal-related issue
+          GOAL_ISSUE=$(gh issue list --label "ai-goal" --search "created:>=$GOAL_DATE" --json number,title --jq '.[0].number // ""')
+          
+          # Check if goal issue exists and get comments
+          PROGRESS_NOTES=""
+          if [ -n "$GOAL_ISSUE" ]; then
+            echo "Found goal issue: #$GOAL_ISSUE"
+            COMMENT_COUNT=$(gh issue view "$GOAL_ISSUE" --json comments --jq '.comments | length')
+            echo "Comments on goal issue: $COMMENT_COUNT"
+            echo "goal_issue=$GOAL_ISSUE" >> $GITHUB_OUTPUT
+          else
+            echo "No goal issue found"
+            echo "goal_issue=" >> $GITHUB_OUTPUT
+          fi
+          
+          # Calculate progress percentage based on activity
+          TOTAL_ACTIVITY=$((COMMIT_COUNT + PR_COUNT * 2 + ISSUE_COUNT))
+          if [ $TOTAL_ACTIVITY -gt 10 ]; then
+            PROGRESS=75
+            STATUS="🟢 Strong Progress"
+          elif [ $TOTAL_ACTIVITY -gt 5 ]; then
+            PROGRESS=50
+            STATUS="🟡 Moderate Progress"
+          elif [ $TOTAL_ACTIVITY -gt 0 ]; then
+            PROGRESS=25
+            STATUS="🟠 Some Progress"
+          else
+            PROGRESS=0
+            STATUS="🔴 No Progress Yet"
+          fi
+          
+          echo "progress=$PROGRESS" >> $GITHUB_OUTPUT
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+          echo "pr_count=$PR_COUNT" >> $GITHUB_OUTPUT
+          echo "issue_count=$ISSUE_COUNT" >> $GITHUB_OUTPUT
+          
+          echo ""
+          echo "Progress Assessment:"
+          echo "  Status: $STATUS"
+          echo "  Progress: $PROGRESS%"
+          echo "  Activity: $TOTAL_ACTIVITY events"
+
+      - name: Update progress in goals file
+        if: steps.check_goal.outputs.has_goal == 'true'
+        run: |
+          GOALS_FILE="docs/AI_GOALS.md"
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+          STATUS="${{ steps.gather_progress.outputs.status }}"
+          PROGRESS="${{ steps.gather_progress.outputs.progress }}"
+          COMMITS="${{ steps.gather_progress.outputs.commit_count }}"
+          PRS="${{ steps.gather_progress.outputs.pr_count }}"
+          ISSUES="${{ steps.gather_progress.outputs.issue_count }}"
+          
+          # Create progress update entry
+          PROGRESS_UPDATE="- **$TIMESTAMP**: Progress check - $STATUS ($PROGRESS% complete) - Activity: $COMMITS commits, $PRS PRs, $ISSUES issues"
+          
+          # Insert progress update after the "### Progress Updates" line
+          sed -i "/^### Progress Updates/a\\
+          $PROGRESS_UPDATE" "$GOALS_FILE"
+          
+          # Commit if there are changes
+          if git diff --quiet "$GOALS_FILE"; then
+            echo "No changes to commit"
+          else
+            git add "$GOALS_FILE"
+            git commit -m "📊 Goal progress update: $STATUS"
+            git push
+            echo "✅ Progress update committed"
+          fi
+
+      - name: Comment on goal issue
+        if: steps.check_goal.outputs.has_goal == 'true' && steps.gather_progress.outputs.goal_issue != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          GOAL_ISSUE="${{ steps.gather_progress.outputs.goal_issue }}"
+          STATUS="${{ steps.gather_progress.outputs.status }}"
+          PROGRESS="${{ steps.gather_progress.outputs.progress }}"
+          COMMITS="${{ steps.gather_progress.outputs.commit_count }}"
+          PRS="${{ steps.gather_progress.outputs.pr_count }}"
+          ISSUES="${{ steps.gather_progress.outputs.issue_count }}"
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+          
+          # Create progress bar
+          FILLED=$((PROGRESS / 10))
+          EMPTY=$((10 - FILLED))
+          PROGRESS_BAR=$(printf '█%.0s' $(seq 1 $FILLED))$(printf '░%.0s' $(seq 1 $EMPTY))
+          
+          gh issue comment "$GOAL_ISSUE" --body "## 📊 Progress Check - $TIMESTAMP
+
+          **Status**: $STATUS  
+          **Progress**: [$PROGRESS_BAR] $PROGRESS%
+          
+          ### Activity Since Goal Set
+          - 📝 **$COMMITS** commits
+          - 🔀 **$PRS** pull requests  
+          - 🎫 **$ISSUES** issues
+          
+          The AI will continue working towards this goal. Next check in 3 hours."
+
+      - name: Suggest next actions
+        if: steps.check_goal.outputs.has_goal == 'true'
+        run: |
+          CATEGORY="${{ steps.check_goal.outputs.category }}"
+          PROGRESS="${{ steps.gather_progress.outputs.progress }}"
+          
+          echo "## 🤖 AI Next Actions Recommendation"
+          echo ""
+          
+          if [ $PROGRESS -lt 25 ]; then
+            echo "⚠️ Limited progress detected. Suggested actions:"
+            echo "- Review the goal requirements"
+            echo "- Break down the goal into smaller tasks"
+            echo "- Create specific issues for implementation steps"
+          elif [ $PROGRESS -lt 50 ]; then
+            echo "✅ Some progress made. Continue with:"
+            echo "- Keep working on current implementation"
+            echo "- Add tests for completed work"
+            echo "- Update documentation as you go"
+          elif [ $PROGRESS -lt 75 ]; then
+            echo "🎯 Good progress! Focus on:"
+            echo "- Complete remaining implementation"
+            echo "- Ensure all tests pass"
+            echo "- Finalize documentation"
+          else
+            echo "🎉 Excellent progress! Final steps:"
+            echo "- Perform final review and testing"
+            echo "- Update all relevant documentation"
+            echo "- Prepare for goal completion"
+          fi
+
+      - name: Check if goal should be completed
+        if: steps.check_goal.outputs.has_goal == 'true'
+        run: |
+          PROGRESS="${{ steps.gather_progress.outputs.progress }}"
+          GOAL_DATE="${{ steps.check_goal.outputs.goal_date }}"
+          TODAY=$(date +%Y-%m-%d)
+          
+          # Check if it's a new day or if progress is complete
+          if [ "$TODAY" != "$GOAL_DATE" ]; then
+            echo "⏰ New day detected. Current goal will be archived."
+            echo "should_archive=true" >> $GITHUB_OUTPUT
+          elif [ $PROGRESS -ge 90 ]; then
+            echo "✅ Goal appears to be complete based on activity."
+            echo "should_archive=true" >> $GITHUB_OUTPUT
+          else
+            echo "Goal still in progress. Continue working..."
+            echo "should_archive=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Summary
+        if: steps.check_goal.outputs.has_goal == 'true'
+        run: |
+          echo "✅ Goal Progress Check Complete"
+          echo ""
+          echo "Goal: ${{ steps.check_goal.outputs.goal }}"
+          echo "Status: ${{ steps.gather_progress.outputs.status }}"
+          echo "Progress: ${{ steps.gather_progress.outputs.progress }}%"
+          echo ""
+          echo "Updates:"
+          echo "- 📝 Progress logged in AI_GOALS.md"
+          echo "- 💬 Comment added to goal issue"
+          echo "- 🤖 Next actions suggested"

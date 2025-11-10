@@ -6,6 +6,12 @@
 
 **Chained** is an experimental "perpetual AI motion machine" - a self-evolving repository that generates ideas, creates issues, assigns work to AI agents, and documents its own progress with minimal human intervention.
 
+## 🎯 AI Goal of the Day
+
+**Today's Focus**: Check [docs/AI_GOALS.md](./docs/AI_GOALS.md) or the [GitHub Pages](https://enufacas.github.io/Chained/) for the current AI goal!
+
+The AI sets a new goal daily and works towards it autonomously, checking progress every 3 hours.
+
 ## 🚀 Quick Start
 
 **Want to verify and launch immediately?** See [GETTING_STARTED.md](./GETTING_STARTED.md) for validation and kickoff!
@@ -18,7 +24,7 @@
 
 **Have questions about how it works?** Check out the [FAQ.md](./FAQ.md) for answers to common questions!
 
-**Curious about workflow triggers?** Read [WORKFLOW_TRIGGERS.md](./WORKFLOW_TRIGGERS.md) to understand the automation.
+**Want detailed workflow documentation?** See [docs/WORKFLOWS.md](./docs/WORKFLOWS.md) for comprehensive workflow information.
 
 ## 🎯 Vision
 
@@ -38,104 +44,15 @@ The goal of Chained is to create an entertaining and educational demonstration o
 
 ### Automated Workflows
 
-Chained uses GitHub Actions to maintain its fully autonomous perpetual motion:
+Chained uses GitHub Actions to maintain its fully autonomous perpetual motion. The system includes:
 
-1. **AI Idea Generator** (`idea-generator.yml`) ✨
-   - Runs daily at 10 AM UTC (after learning workflows)
-   - Generates creative AI-focused feature ideas with learning context
-   - Adapts to trending technologies from HN and TLDR
-   - Creates GitHub issues automatically
-   - Can be triggered manually
+- **Core Workflows**: Idea generation, Copilot assignment, auto-review & merge
+- **Learning Workflows**: TLDR Tech, Hacker News, Smart Idea Generator
+- **System Management**: Kickoff, monitoring, progress tracking
+- **Micro Projects**: Code Golf Optimizer, Code Analyzer, Pattern Matcher
+- **AI Goals**: Daily goal generation and 3-hour progress checks
 
-2. **Copilot Assignment Workflow** (`copilot-graphql-assign.yml`)
-   - Triggers when any new issue is created or labeled
-   - Discovers and processes ALL open issues
-   - Automatically assigns unassigned issues to Copilot via API
-   - Adds tracking labels and comments
-   - Requires COPILOT_PAT secret for full automation
-   - Can be manually triggered with optional issue number (or process all issues)
-
-3. **Auto Review and Merge** (`auto-review-merge.yml`) ✨
-   - Runs every 15 minutes
-   - Labels PRs created by Copilot with the "copilot" label
-   - Reviews PRs created by Copilot (AI reviews AI code)
-   - Automatically approves and merges PRs
-   - Closes associated issues when PRs are merged
-   - No human approval required
-
-4. **System Monitor** (`system-monitor.yml`) 🆕
-   - Timeline updates every 6 hours + on events
-   - Progress tracking every 12 hours
-   - Workflow health monitoring every 12 hours
-   - Fetches all repository activity
-   - Updates timeline data for GitHub Pages
-   - Analyzes repository progress and statistics
-   - Generates progress reports and health alerts
-
-5. **Learning from TLDR Tech** (`learn-from-tldr.yml`)
-   - Runs twice daily (8 AM, 8 PM UTC)
-   - Fetches latest tech news and trends
-   - Extracts insights about AI, DevOps, and programming
-   - Saves learnings to influence future ideas
-
-6. **Learning from Hacker News** (`learn-from-hackernews.yml`)
-   - Runs three times daily (7 AM, 1 PM, 7 PM UTC)
-   - Analyzes trending technical discussions
-   - Categorizes topics (AI/ML, Security, Performance, etc.)
-   - Generates ideas based on community trends
-
-7. **System Kickoff** (`system-kickoff.yml`) ✨
-   - Triggers automatically on first push to main
-   - Can also be triggered manually
-   - Validates system configuration
-   - Creates required labels
-   - Initializes directories
-   - Triggers initial workflows
-   - Creates kickoff success issue
-
-8. **Code Analyzer** (`code-analyzer.yml`)
-   - Runs on push to main and PR merges
-   - Analyzes code patterns and quality
-   - Learns from successful/failed merges
-   - Tracks code quality trends
-
-9. **Pattern Matcher** (`pattern-matcher.yml`)
-   - Runs weekly on Mondays at 10 AM UTC
-   - Scans repository for code patterns
-   - Identifies anti-patterns and best practices
-   - Generates pattern analysis reports
-
-10. **Code Golf Optimizer** (`code-golf-optimizer.yml`)
-    - Runs weekly on Mondays at 10 AM UTC
-    - Optimizes code for minimal size
-    - Generates optimization reports
-    - Demonstrates code golf techniques
-
-> **Note**: Workflows marked with ✨ have been enhanced through consolidation.
-> Workflow marked with 🆕 is newly consolidated from multiple workflows.
-> See [WORKFLOW_CONSOLIDATION.md](./WORKFLOW_CONSOLIDATION.md) for details.
-
-11. **Auto Kickoff on First Run** (`auto-kickoff.yml`)
-    - Runs automatically on merge to main
-    - Detects if system already kicked off
-    - Triggers kickoff workflow if needed
-    - Ensures one-time initialization
-
-12. **Code Golf Optimizer** (`code-golf-optimizer.yml`)
-    - Runs weekly on Mondays at 10 AM UTC
-    - Optimizes code for minimal character count
-    - Supports Python, JavaScript, and Bash
-    - Generates optimization reports with metrics
-    - Can be triggered manually for specific files
-
-13. **Self-Improving Code Analyzer** (`code-analyzer.yml`)
-    - Runs automatically on every merge to main
-    - Analyzes code for quality patterns and issues
-    - Learns from merge outcomes (success vs. issues)
-    - Tracks pattern correlations over time
-    - Posts analysis reports on PRs
-    - Creates issues for significant quality problems
-    - Can be triggered manually for any directory
+For detailed information about all workflows, see **[docs/WORKFLOWS.md](./docs/WORKFLOWS.md)**.
 
 ### GitHub Pages
 
@@ -237,6 +154,12 @@ All workflows support manual triggering via GitHub's Actions tab:
 
 ```
 ┌─────────────────────┐
+│  Daily AI Goal      │ ──► Sets daily objective (Daily at 6 AM UTC)
+│  Generator          │     Progress checks every 3 hours
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
 │  External Learning  │ ──► TLDR Tech (2x daily)
 │  Sources            │ ──► Hacker News (3x daily)
 └──────────┬──────────┘
@@ -312,321 +235,42 @@ The beauty is that you can walk away and come back later to see what the AI has 
 
 ## 🧠 Continuous Learning
 
-One of the most powerful features of Chained is its ability to **continuously learn** from external sources:
+The system continuously learns from external sources:
+- **[TLDR Tech](https://tldr.tech/)**: Tech news (2x daily)
+- **[Hacker News](https://news.ycombinator.com/)**: Community trends (3x daily)
 
-### Learning Sources
+Learnings influence idea generation, technology choices, and best practices. For complete details, see **[docs/LEARNING_SYSTEM.md](./docs/LEARNING_SYSTEM.md)**.
 
-- **[TLDR Tech](https://tldr.tech/)**: Twice daily scraping of tech news summaries
-- **[Hacker News](https://news.ycombinator.com/)**: Three times daily analysis of trending discussions
+## 🛠️ Micro Projects
 
-### What It Learns
+Chained includes several specialized tools and projects:
+- **Visual Code Execution Flow Animator**: Interactive step-by-step code execution visualizations
+- **Code Golf Optimizer**: Minimizes code while preserving functionality
+- **Self-Improving Code Analyzer**: Learns from merges to improve code quality
+- **Pattern Matcher**: Flexible pattern detection system
 
-The system automatically:
-- 📰 Fetches latest tech news and articles
-- 🎯 Identifies trending topics (AI/ML, Security, Performance, etc.)
-- 💡 Extracts insights from community discussions
-- 📊 Categorizes and prioritizes learnings
-- 🔄 Feeds learnings back into idea generation
-
-### Impact on Development
-
-Learnings influence:
-- **Idea Generation**: New ideas based on trending technologies
-- **Technology Choices**: Adopting what's hot, avoiding what's deprecated
-- **Best Practices**: Learning from the global tech community
-- **Security**: Staying aware of vulnerabilities and fixes
-
-See [`learnings/`](./learnings/) directory for all collected insights.
-
-### Learning Workflow
-
-```
-Morning    → TLDR scraper runs     → Saves tech news
-           → HN scraper runs        → Analyzes trending discussions
-           → Smart Idea Generator   → Creates trend-aware ideas
-Afternoon  → HN scraper runs again → Updates with new trends
-Evening    → TLDR scraper runs     → Evening news update
-           → HN scraper runs        → Final daily update
-```
-
-**The AI never stops learning from the world around it!** 🌍
-
-## 🛠️ Technologies Used
-
-- **GitHub Actions**: Workflow automation
-- **GitHub API**: Fetching repository data
-- **GitHub Pages**: Hosting the timeline website
-- **GitHub Copilot**: AI-powered development
-- **Python**: Learning scripts, data processing, code optimization, code analysis, and flow visualization
-- **AST (Abstract Syntax Tree)**: Code pattern analysis, detection, and execution flow tracing
-- **HTML/CSS/JavaScript**: Frontend for the timeline and interactive visualizations
-- **Bash scripting**: Workflow logic
-- **TLDR Tech API**: Tech news aggregation
-- **Hacker News API**: Community trend analysis
-
-## 🔍 Visual Code Execution Flow Animator
-
-Chained includes a visual code execution flow animator that traces and visualizes how code executes step-by-step. Perfect for learning, debugging, and understanding algorithms!
-
-### Features
-
-- 🎯 **Multi-Language Support**: Python (AST-based) and JavaScript
-- 📊 **Interactive Visualizations**: Click-through HTML reports
-- 🔄 **Function Call Tracking**: See the execution flow through functions
-- 💾 **Multiple Formats**: JSON data and HTML visualizations
-- 🎓 **Educational Tool**: Great for learning and teaching programming
-
-### Quick Start
-
-```bash
-# Analyze a Python file
-python3 tools/code-flow-animator.py -f script.py
-
-# Analyze JavaScript
-python3 tools/code-flow-animator.py -f app.js
-
-# View example visualizations at:
-# https://enufacas.github.io/Chained/flow-animator.html
-```
-
-### Example Visualizations
-
-The tool comes with example analyses:
-- **Factorial Calculator**: Recursive vs iterative approaches
-- **Bubble Sort**: Nested loops and conditional swapping
-- **Binary Search**: Divide-and-conquer algorithm
-
-For complete documentation, see [`tools/CODE_FLOW_ANIMATOR.md`](./tools/CODE_FLOW_ANIMATOR.md)
-
-## 🏌️ Code Golf Optimizer
-
-Chained includes an AI-powered code golf optimizer that minimizes code while preserving functionality. Perfect for code golf challenges and learning how to write concise code!
-
-### Features
-
-- 🎯 **Multi-Language Support**: Python, JavaScript, and Bash
-- 🤖 **Smart Optimizations**: Comment removal, whitespace reduction, variable shortening
-- 📊 **Detailed Metrics**: Character counts and reduction percentages
-- 🔄 **Automated Reports**: Weekly optimization reports via GitHub Actions
-
-### Quick Start
-
-```bash
-# Optimize a Python file
-python3 tools/code-golf-optimizer.py -f script.py -l python
-
-# Optimize JavaScript from stdin
-echo "function test() { return true; }" | python3 tools/code-golf-optimizer.py -l javascript
-
-# View all examples
-ls tools/examples/
-```
-
-### Example Optimization
-
-Before (283 chars):
-```python
-def calculate_sum(number_list):
-    """Calculate the sum of numbers"""
-    # Initialize total
-    total = 0
-    
-    # Loop through each number
-    for number in number_list:
-        total = total + number
-    
-    return total
-```
-
-After (146 chars, 48.41% reduction):
-```python
-def calculate_sum(number_list):
- a = 0
- for number in number_list:
- a = a + number
- return a
-```
-
-For complete documentation, see [`tools/README.md`](./tools/README.md)
-
-## 🔍 Self-Improving Code Analyzer
-
-Chained includes a self-improving code analyzer that learns from each merge, tracking code patterns and their correlation with successful vs. problematic merges.
-
-### Features
-
-- 🧠 **Learning Algorithm**: Updates pattern correlations based on merge outcomes
-- 📊 **Pattern Detection**: Identifies both good and bad code patterns
-- 📈 **Trend Analysis**: Tracks code quality metrics over time
-- 🤖 **Auto-Integration**: Runs on every merge to main branch
-- 💬 **PR Comments**: Posts analysis summaries on pull requests
-- 🚨 **Quality Alerts**: Creates issues for significant code quality problems
-
-### Pattern Categories
-
-**Good Patterns** (correlated with successful merges):
-- Descriptive variable names
-- Comprehensive docstrings
-- Error handling (try/except)
-- Modular functions (<50 lines)
-- Type hints
-
-**Bad Patterns** (correlated with issues):
-- Long functions (>50 lines)
-- Deep nesting (>4 levels)
-- Magic numbers
-- Unused imports
-- Inconsistent naming
-
-### How It Learns
-
-1. **On each merge**: Analyzes code for patterns
-2. **Tracks outcomes**: Records whether merge was successful or had issues
-3. **Updates correlations**: Uses exponential moving average (10% learning rate)
-4. **Improves suggestions**: Pattern weights adjust based on historical data
-
-### Quick Start
-
-```bash
-# Analyze current code and learn from it
-python3 tools/code-analyzer.py -d . --learn --success
-
-# Analyze a specific directory
-python3 tools/code-analyzer.py -d tools -o report.md
-
-# Analyze and mark as problematic merge
-python3 tools/code-analyzer.py -d . --learn --failure
-
-# Run tests
-python3 tools/test_code_analyzer.py
-```
-
-### Analysis Data
-
-All analysis data is stored in [`analysis/`](./analysis/):
-- `patterns.json`: The learning database with pattern correlations
-- `merge_*.json`: Individual analysis reports for each merge
-- `latest_report.md`: Most recent analysis report
-
-For complete documentation, see [`analysis/README.md`](./analysis/README.md)
+For details on all micro projects, see **[docs/MICRO_PROJECTS.md](./docs/MICRO_PROJECTS.md)**.
 
 ## 📊 Monitoring Progress
 
 ### Quick Status Check
 
-Run the status checker script anytime:
-
 ```bash
-./check-status.sh
+./check-status.sh      # Overall system health
+./verify-schedules.sh  # Verify workflow schedules
+./evaluate-workflows.sh # Comprehensive workflow evaluation
 ```
-
-This will show:
-- Recent workflow runs and their status
-- Issue and PR statistics
-- Learning files count
-- GitHub Pages status
-- Next scheduled workflow runs
-- Autonomous success rate
-
-### Verify Scheduled Workflows
-
-**New!** To verify that your cron schedules are actually running:
-
-```bash
-./verify-schedules.sh
-```
-
-This tool checks:
-- When each scheduled workflow last ran
-- Whether workflows are running on time
-- Detection of overdue or late workflows
-- Analysis of recent failures
-- Repository activity status (60-day deactivation warning)
-
-See **[WORKFLOW_TRIGGERS.md](./WORKFLOW_TRIGGERS.md)** for complete details about how workflows are triggered and scheduled.
 
 ### Via GitHub Pages
-Visit the live site to see real-time statistics, timeline, and learnings.
+Visit the live site to see real-time statistics, timeline, learnings, and **the current AI Goal of the Day**.
 
 ### Via Issues
-- Issues tagged with `ai-generated` are created by the Idea Generator
-- Issues tagged with `copilot-assigned` are assigned to Copilot
-- Issues tagged with `learning` appear in the learnings section
-- Issues tagged with `progress-report` contain progress reports
-- Issues tagged with `workflow-monitor` indicate schedule or execution problems
-
-### Via Actions
-Check the Actions tab to see workflow runs and their logs.
-
-## 🔧 System Utilities
-
-The repository includes helper scripts to manage the autonomous system:
-
-### verify-schedules.sh
-**NEW!** Verify that scheduled workflows are running properly:
-- Checks when each workflow last ran
-- Compares against expected schedule intervals
-- Detects overdue or late workflow runs
-- Analyzes recent failures
-- Warns about 60-day inactivity deactivation
-- Provides actionable recommendations
-
-```bash
-./verify-schedules.sh
-```
-
-**Use this when:** You want to verify your cron schedules are actually executing.
-
-### evaluate-workflows.sh
-Comprehensive workflow state evaluation:
-- Checks all workflows are present
-- Validates workflow triggers and schedules
-- Verifies workflow permissions
-- Checks workflow dependencies
-- Validates workflow chain execution
-- YAML syntax validation
-
-```bash
-./evaluate-workflows.sh
-```
-
-### validate-system.sh
-Pre-flight validation script that checks:
-- Repository structure and files
-- All workflow files exist (including auto-kickoff and system-kickoff)
-- Documentation completeness
-- GitHub Pages configuration
-- Git and GitHub CLI setup
-- YAML syntax validation (if yamllint available)
-
-```bash
-./validate-system.sh
-```
-
-### kickoff-system.sh
-Initialize and start the perpetual motion machine:
-- Runs pre-flight validation
-- Verifies GitHub configuration
-- Creates required labels
-- Initializes directories
-- Optionally triggers initial workflows
-
-```bash
-./kickoff-system.sh
-```
-
-### check-status.sh
-Monitor the system's health and progress:
-- Recent workflow runs
-- Issue and PR statistics
-- Learning files count
-- GitHub Pages status
-- Next scheduled runs
-- Success metrics
-
-```bash
-./check-status.sh
-```
+- `ai-generated` - Created by Idea Generator
+- `copilot-assigned` - Assigned to Copilot
+- `learning` - Learnings section content
+- `progress-report` - Progress reports
+- `workflow-monitor` - Schedule/execution problems
+- `ai-goal` - Daily AI goals and progress
 
 ## 🤝 Contributing
 

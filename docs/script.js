@@ -7,6 +7,8 @@ const API_BASE = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`;
 const WORKFLOW_SCHEDULES = {
     'Smart Idea Generator': { cron: '0 10 * * *', description: 'Daily at 10:00 AM UTC' },
     'AI Idea Generator': { cron: '0 9 * * *', description: 'Daily at 9:00 AM UTC' },
+    'Daily AI Goal Generator': { cron: '0 6 * * *', description: 'Daily at 6:00 AM UTC' },
+    'Goal Progress Checker': { cron: '0 */3 * * *', description: 'Every 3 hours' },
     'Learning from TLDR Tech': { cron: '0 8,20 * * *', description: 'Twice daily at 8:00 AM and 8:00 PM UTC' },
     'Learning from Hacker News': { cron: '0 7,13,19 * * *', description: 'Three times daily at 7:00 AM, 1:00 PM, and 7:00 PM UTC' },
     'Auto Review and Merge': { cron: '*/15 * * * *', description: 'Every 15 minutes' },
@@ -16,6 +18,54 @@ const WORKFLOW_SCHEDULES = {
 
 // Update last updated timestamp
 document.getElementById('last-updated').textContent = new Date().toLocaleString();
+
+// Fetch and display AI Goal of the Day
+async function fetchAIGoal() {
+    try {
+        const response = await fetch('AI_GOALS.md');
+        if (!response.ok) {
+            throw new Error('Could not fetch AI goals');
+        }
+        
+        const markdown = await response.text();
+        
+        // Parse the current goal from markdown
+        const categoryMatch = markdown.match(/\*\*Category\*\*:\s*(.+)/);
+        const goalMatch = markdown.match(/\*\*Goal\*\*:\s*(.+)/);
+        const dateMatch = markdown.match(/\*\*Date\*\*:\s*(.+)/);
+        const statusMatch = markdown.match(/\*\*Status\*\*:\s*(.+)/);
+        
+        if (categoryMatch && goalMatch && dateMatch) {
+            document.getElementById('goal-category').textContent = categoryMatch[1].trim();
+            document.getElementById('goal-description').textContent = goalMatch[1].trim();
+            document.getElementById('goal-date').textContent = dateMatch[1].trim();
+            
+            if (statusMatch) {
+                document.getElementById('goal-status').textContent = statusMatch[1].trim();
+            }
+            
+            // Parse progress from the markdown (look for progress updates)
+            const progressMatches = markdown.match(/\((\d+)%\s*complete\)/);
+            if (progressMatches) {
+                const progress = parseInt(progressMatches[1]);
+                document.getElementById('goal-progress').style.width = progress + '%';
+                document.getElementById('goal-progress-text').textContent = progress + '%';
+            }
+        } else {
+            // No current goal
+            document.getElementById('goal-category').textContent = 'No Active Goal';
+            document.getElementById('goal-description').textContent = 'The next goal will be generated at 6 AM UTC. You can also trigger it manually via GitHub Actions.';
+            document.getElementById('goal-date').textContent = 'Pending';
+            document.getElementById('goal-status').textContent = '⏳ Pending';
+        }
+    } catch (error) {
+        console.error('Error fetching AI goal:', error);
+        document.getElementById('goal-category').textContent = 'Loading Error';
+        document.getElementById('goal-description').textContent = 'Could not load the current goal. Please check back later.';
+        document.getElementById('goal-date').textContent = '-';
+        document.getElementById('goal-status').textContent = '❌ Error';
+    }
+}
 
 // Fetch repository statistics
 async function fetchStats() {
@@ -700,6 +750,7 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Initialize
+fetchAIGoal();
 fetchStats();
 loadLearnings();
 loadWorkflowSchedules();
@@ -709,6 +760,7 @@ loadLearningsIndex();
 
 // Refresh data every 5 minutes
 setInterval(() => {
+    fetchAIGoal();
     fetchStats();
     loadLearnings();
     loadWorkflowSchedules();

@@ -1,0 +1,303 @@
+name: Daily AI Goal Generator
+
+on:
+  schedule:
+    # Run daily at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      force_new_goal:
+        description: 'Force generation of new goal even if one exists for today'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  generate-daily-goal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check existing goals
+        id: check_goals
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          GOALS_FILE="docs/AI_GOALS.md"
+          
+          # Create goals file if it doesn't exist
+          if [ ! -f "$GOALS_FILE" ]; then
+            cat > "$GOALS_FILE" << 'EOF'
+          # 🎯 AI Goals of the Day
+          
+          This page tracks the daily goals set by the AI system and progress towards achieving them.
+          
+          ## Current Goal
+          
+          *No goal set yet. Check back soon!*
+          
+          ---
+          
+          ## Goal History
+          
+          EOF
+            git add "$GOALS_FILE"
+            git commit -m "Initialize AI Goals tracking" || true
+            git push || true
+          fi
+          
+          # Check if we already have a goal for today
+          if grep -q "### $TODAY" "$GOALS_FILE" && [ "${{ github.event.inputs.force_new_goal }}" != "true" ]; then
+            echo "goal_exists=true" >> $GITHUB_OUTPUT
+            echo "Goal already exists for today: $TODAY"
+          else
+            echo "goal_exists=false" >> $GITHUB_OUTPUT
+            echo "No goal exists for today: $TODAY"
+          fi
+
+      - name: Read recent learnings
+        id: read_learnings
+        if: steps.check_goals.outputs.goal_exists == 'false'
+        run: |
+          echo "Reading recent learnings to inform goal generation..."
+          
+          # Get recent learning files (last 3 days)
+          LEARNING_CONTEXT=""
+          if [ -d "learnings" ]; then
+            RECENT_LEARNINGS=$(find learnings -name "*.json" -mtime -3 | head -5)
+            if [ -n "$RECENT_LEARNINGS" ]; then
+              echo "Found recent learnings:"
+              echo "$RECENT_LEARNINGS"
+              LEARNING_CONTEXT="Recent tech trends: "
+              for file in $RECENT_LEARNINGS; do
+                if [ -f "$file" ]; then
+                  LEARNING_CONTEXT="${LEARNING_CONTEXT}$(cat "$file" | head -20 | tail -10)"
+                fi
+              done
+            fi
+          fi
+          
+          # Save learning context (truncate for safety)
+          echo "${LEARNING_CONTEXT:0:2000}" > /tmp/learning_context.txt
+          echo "Learning context prepared"
+
+      - name: Generate daily goal
+        id: generate_goal
+        if: steps.check_goals.outputs.goal_exists == 'false'
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          
+          # Goal categories and ideas
+          CATEGORIES=(
+            "Code Quality|Improve code quality across the repository"
+            "Performance|Optimize performance of key workflows"
+            "Documentation|Enhance documentation and examples"
+            "Testing|Expand test coverage"
+            "Learning|Integrate new learning sources or improve learning algorithms"
+            "Automation|Add new automated workflows or improve existing ones"
+            "Micro Projects|Create or enhance micro projects"
+            "Security|Improve security scanning and vulnerability handling"
+            "Monitoring|Enhance monitoring and observability"
+            "User Experience|Improve GitHub Pages UI or repository navigation"
+          )
+          
+          # Select random category
+          RANDOM_INDEX=$((RANDOM % ${#CATEGORIES[@]}))
+          SELECTED="${CATEGORIES[$RANDOM_INDEX]}"
+          CATEGORY=$(echo "$SELECTED" | cut -d'|' -f1)
+          BASE_GOAL=$(echo "$SELECTED" | cut -d'|' -f2)
+          
+          # Generate specific goal based on category
+          case "$CATEGORY" in
+            "Code Quality")
+              GOALS=(
+                "Refactor 3 functions to reduce complexity and improve readability"
+                "Add comprehensive docstrings to all Python modules"
+                "Eliminate code duplication by creating reusable utility functions"
+              )
+              ;;
+            "Performance")
+              GOALS=(
+                "Optimize workflow execution time by 10%"
+                "Reduce API calls in learning workflows"
+                "Cache frequently accessed data to improve page load times"
+              )
+              ;;
+            "Documentation")
+              GOALS=(
+                "Create interactive tutorial for new users"
+                "Add architecture diagrams to documentation"
+                "Write detailed troubleshooting guide"
+              )
+              ;;
+            "Testing")
+              GOALS=(
+                "Add unit tests for all code analyzer functions"
+                "Create integration tests for workflow chain"
+                "Implement end-to-end testing for GitHub Pages"
+              )
+              ;;
+            "Learning")
+              GOALS=(
+                "Add RSS feed parsing for tech blogs"
+                "Implement sentiment analysis for community trends"
+                "Create learning effectiveness metrics dashboard"
+              )
+              ;;
+            "Automation")
+              GOALS=(
+                "Create workflow for automatic dependency updates"
+                "Add auto-cleanup for old learning files"
+                "Implement smart PR auto-labeling based on content analysis"
+              )
+              ;;
+            "Micro Projects")
+              GOALS=(
+                "Build a code visualization tool"
+                "Create a commit message quality analyzer"
+                "Develop an AI-powered code reviewer scoring system"
+              )
+              ;;
+            "Security")
+              GOALS=(
+                "Add automated security scanning for all dependencies"
+                "Implement secrets detection in commits"
+                "Create security best practices checklist"
+              )
+              ;;
+            "Monitoring")
+              GOALS=(
+                "Add real-time workflow status dashboard"
+                "Create alerting system for failed workflows"
+                "Implement performance metrics collection"
+              )
+              ;;
+            "User Experience")
+              GOALS=(
+                "Add dark mode to GitHub Pages"
+                "Create interactive goal progress visualization"
+                "Implement search functionality for timeline"
+              )
+              ;;
+          esac
+          
+          GOAL_INDEX=$((RANDOM % ${#GOALS[@]}))
+          SPECIFIC_GOAL="${GOALS[$GOAL_INDEX]}"
+          
+          echo "category=$CATEGORY" >> $GITHUB_OUTPUT
+          echo "goal=$SPECIFIC_GOAL" >> $GITHUB_OUTPUT
+          echo "today=$TODAY" >> $GITHUB_OUTPUT
+          
+          echo "Generated goal for $TODAY:"
+          echo "Category: $CATEGORY"
+          echo "Goal: $SPECIFIC_GOAL"
+
+      - name: Update goals file
+        if: steps.check_goals.outputs.goal_exists == 'false'
+        run: |
+          TODAY="${{ steps.generate_goal.outputs.today }}"
+          CATEGORY="${{ steps.generate_goal.outputs.category }}"
+          GOAL="${{ steps.generate_goal.outputs.goal }}"
+          GOALS_FILE="docs/AI_GOALS.md"
+          
+          # Create temporary file with new goal at the top
+          cat > /tmp/new_goal.md << EOF
+          # 🎯 AI Goals of the Day
+          
+          This page tracks the daily goals set by the AI system and progress towards achieving them.
+          
+          ## Current Goal
+          
+          **Category**: $CATEGORY  
+          **Goal**: $GOAL  
+          **Date**: $TODAY  
+          **Status**: 🟡 In Progress  
+          
+          ### Progress Updates
+          
+          - **$TODAY 06:00 UTC**: Goal set by AI system
+          
+          ---
+          
+          ## Goal History
+          
+          ### $TODAY - $CATEGORY
+          **Goal**: $GOAL  
+          **Status**: 🟡 In Progress
+          
+          EOF
+          
+          # Append existing history (skip the header and current goal sections)
+          if [ -f "$GOALS_FILE" ]; then
+            sed -n '/^## Goal History/,$ {
+              /^## Goal History/d
+              /^$/d
+              p
+            }' "$GOALS_FILE" >> /tmp/new_goal.md || true
+          fi
+          
+          # Replace old file with new file
+          mv /tmp/new_goal.md "$GOALS_FILE"
+          
+          # Commit and push
+          git add "$GOALS_FILE"
+          git commit -m "🎯 Set AI Goal of the Day: $CATEGORY - $TODAY"
+          git push
+
+      - name: Create goal tracking issue
+        if: steps.check_goals.outputs.goal_exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TODAY="${{ steps.generate_goal.outputs.today }}"
+          CATEGORY="${{ steps.generate_goal.outputs.category }}"
+          GOAL="${{ steps.generate_goal.outputs.goal }}"
+          
+          # Create issue for the goal
+          gh issue create \
+            --title "🎯 AI Goal: $GOAL" \
+            --body "**Daily AI Goal for $TODAY**
+
+          **Category**: $CATEGORY  
+          **Goal**: $GOAL
+          
+          This goal will be worked on autonomously throughout the day. Progress will be checked every 3 hours.
+          
+          ## Progress Tracking
+          
+          - [ ] Initial planning and approach
+          - [ ] Implementation started
+          - [ ] Testing and validation
+          - [ ] Documentation updated
+          - [ ] Goal completed
+          
+          See [AI_GOALS.md](https://github.com/${{ github.repository }}/blob/main/docs/AI_GOALS.md) for details.
+          " \
+            --label "ai-goal" \
+            --label "ai-generated"
+
+      - name: Summary
+        if: steps.check_goals.outputs.goal_exists == 'false'
+        run: |
+          echo "✅ Daily AI Goal Generated Successfully!"
+          echo "Category: ${{ steps.generate_goal.outputs.category }}"
+          echo "Goal: ${{ steps.generate_goal.outputs.goal }}"
+          echo "Date: ${{ steps.generate_goal.outputs.today }}"
+          echo ""
+          echo "The goal has been:"
+          echo "- 📝 Documented in docs/AI_GOALS.md"
+          echo "- 🎫 Tracked in a new GitHub issue"
+          echo "- 🔄 Ready for 3-hour progress checks"
