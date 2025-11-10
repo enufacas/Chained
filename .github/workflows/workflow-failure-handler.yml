@@ -18,7 +18,7 @@ on:
   #     - "System Kickoff"
   #     - "System Monitor"
   #   types: [completed]
-  
+
   # Manual trigger is available if needed for testing
   workflow_dispatch:
 
