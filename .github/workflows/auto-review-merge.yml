@@ -277,6 +277,10 @@ jobs:
                   if [ -n "${linked_issue}" ]; then
                     echo "📝 Found linked work issue #${linked_issue} for agent spawn PR"
                     
+                    # Remove spawn-pending label to unblock assignment
+                    echo "🏷️  Removing spawn-pending label from issue #${linked_issue}..."
+                    gh issue edit ${linked_issue} --repo ${{ github.repository }} --remove-label "spawn-pending" 2>&1 || echo "⚠️ Could not remove spawn-pending label (may not exist)"
+                    
                     # Add comment to the work issue that the spawn is complete
                     gh issue comment ${linked_issue} --body "✅ **Agent Spawn Complete**
                     
@@ -285,10 +289,11 @@ jobs:
                     **Status Update:**
                     - ✅ Spawn PR merged
                     - ✅ Agent is now active
+                    - ✅ Removed \`spawn-pending\` label
                     - ✅ This issue is now ready to be worked on
                     
                     **Next Steps:**
-                    The agent can now begin work on this issue. If Copilot is assigned, it will analyze the task and create a PR with the implementation.
+                    The Copilot assignment workflow will now assign this issue to GitHub Copilot to begin implementation.
                     
                     **Merged at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
                     
@@ -296,6 +301,39 @@ jobs:
                     *Agent spawn sequence completed by the auto-review system*" || true
                     
                     echo "✅ Notified work issue #${linked_issue} about spawn completion"
+                    
+                    # Trigger Copilot assignment now that spawn is complete
+                    echo "🤖 Triggering Copilot assignment for work issue #${linked_issue}..."
+                    
+                    # Use workflow_dispatch to trigger copilot assignment for this specific issue
+                    if gh workflow run copilot-graphql-assign.yml --repo ${{ github.repository }} -f issue_number="${linked_issue}" 2>&1; then
+                      echo "✅ Triggered Copilot assignment workflow for issue #${linked_issue}"
+                      
+                      # Add a comment to indicate assignment is being processed
+                      gh issue comment ${linked_issue} --body "🔄 **Processing Copilot Assignment**
+                      
+                      The Copilot assignment workflow has been triggered now that the agent spawn is complete.
+                      
+                      Copilot will be assigned to this issue shortly (typically within 1-2 minutes).
+                      
+                      ---
+                      *Automated sequence: Spawn PR merged → Assignment triggered*" || true
+                    else
+                      echo "⚠️ Failed to trigger Copilot assignment workflow"
+                      
+                      # Add a comment with manual instructions
+                      gh issue comment ${linked_issue} --body "⚠️ **Assignment Workflow Not Triggered**
+                      
+                      The agent spawn is complete, but the automatic Copilot assignment workflow could not be triggered.
+                      
+                      **Manual action needed:**
+                      - Wait for the scheduled assignment workflow (runs every 3 hours), OR
+                      - Manually trigger the Copilot assignment workflow from the Actions tab, OR  
+                      - Manually assign Copilot from the issue sidebar
+                      
+                      ---
+                      *The scheduled assignment workflow will pick this up automatically.*" || true
+                    fi
                   else
                     echo "ℹ️ No linked work issue found in PR comments"
                   fi

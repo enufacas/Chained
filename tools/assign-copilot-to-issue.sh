@@ -48,9 +48,19 @@ for issue_number in $issue_numbers; do
   echo "Processing issue #$issue_number"
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   
-  # Skip agent-system issues as they are handled by agent-spawner workflow
+  # Get issue labels for checking
   issue_labels=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')
-  if echo "$issue_labels" | grep -q "agent-system"; then
+  
+  # Skip issues with spawn-pending label (waiting for agent spawn PR to merge)
+  if echo "$issue_labels" | grep -q "spawn-pending"; then
+    echo "⏭️  Skipping issue #$issue_number - has spawn-pending label (waiting for spawn PR to merge)"
+    already_assigned_count=$((already_assigned_count + 1))
+    continue
+  fi
+  
+  # Skip agent-system issues as they are handled by agent-spawner workflow
+  # (but allow agent-work issues that don't have spawn-pending)
+  if echo "$issue_labels" | grep -q "agent-system" && ! echo "$issue_labels" | grep -q "agent-work"; then
     echo "⏭️  Skipping issue #$issue_number - agent-system issues are handled by agent-spawner workflow"
     already_assigned_count=$((already_assigned_count + 1))
     continue
@@ -67,6 +77,55 @@ for issue_number in $issue_numbers; do
   fi
   
   echo "📝 Issue #$issue_number not yet assigned to Copilot"
+  
+  # Check if this is an agent spawn work issue waiting for spawn PR to merge
+  issue_body=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json body --jq '.body // ""')
+  if echo "$issue_body" | grep -q "⚠️ Agent Spawn Sequence"; then
+    echo "🔍 Detected agent spawn work issue, checking if spawn PR is still open..."
+    
+    # Extract spawn PR number from issue body
+    spawn_pr_number=$(echo "$issue_body" | grep -oP 'PR #\K\d+' | head -1)
+    
+    if [ -n "$spawn_pr_number" ]; then
+      echo "   Found spawn PR: #$spawn_pr_number"
+      
+      # Check if spawn PR is still open
+      pr_state=$(gh pr view "$spawn_pr_number" --repo "$GITHUB_REPOSITORY" --json state --jq '.state' 2>/dev/null || echo "NOT_FOUND")
+      
+      if [ "$pr_state" = "OPEN" ]; then
+        echo "   ⏳ Spawn PR #$spawn_pr_number is still open, skipping assignment"
+        echo "   ℹ️  Will assign after spawn PR merges"
+        already_assigned_count=$((already_assigned_count + 1))
+        
+        # Add a comment to explain why we're waiting
+        existing_wait_comment=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json comments --jq '.comments[].body' | grep -c "⏳ Waiting for Agent Spawn" || true)
+        if [ "$existing_wait_comment" -eq 0 ]; then
+          gh issue comment "$issue_number" --repo "$GITHUB_REPOSITORY" --body "⏳ **Waiting for Agent Spawn to Complete**
+
+This is an agent spawn work issue. Assignment to Copilot is deferred until the agent spawn PR merges.
+
+**Status:**
+- 🔄 Spawn PR #${spawn_pr_number} is currently open
+- ⏳ Waiting for auto-review to merge the spawn PR
+- ✅ Once merged, Copilot will be automatically assigned
+
+**Why wait?**
+The agent needs to be registered and active in the system before work can begin. This ensures the agent profile and definition are available when Copilot starts working.
+
+---
+*This check prevents premature assignment and ensures proper sequence.*" || true
+        fi
+        
+        continue
+      elif [ "$pr_state" = "MERGED" ] || [ "$pr_state" = "CLOSED" ]; then
+        echo "   ✅ Spawn PR #$spawn_pr_number is $pr_state, proceeding with assignment"
+      else
+        echo "   ⚠️ Could not determine spawn PR state (got: $pr_state), proceeding cautiously"
+      fi
+    else
+      echo "   ⚠️ Could not extract spawn PR number from issue body"
+    fi
+  fi
   
   # Check if we've already commented on this issue to avoid duplicate comments
   existing_comments=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json comments --jq '.comments[].body')

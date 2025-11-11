@@ -88,6 +88,7 @@ jobs:
           # Create all agent system labels
           create_label_if_missing "agent-system" "7057ff" "Agent ecosystem activity"
           create_label_if_missing "agent-work" "0e8a16" "Work assigned to agents"
+          create_label_if_missing "spawn-pending" "d4c5f9" "Waiting for agent spawn PR to merge"
           create_label_if_missing "announcement" "0075ca" "Agent announcements"
           create_label_if_missing "evaluation" "e4e669" "Agent evaluations"
           create_label_if_missing "automated" "ededed" "Auto-generated content"
@@ -706,8 +707,8 @@ jobs:
           
           **Good luck, $HUMAN_NAME! May your code be clean and your PRs be merged!** 🚀
           
-          *This issue will be automatically assigned to GitHub Copilot for implementation. The agent receives credit for completed work.*" \
-            --label "agent-system,agent-work")
+          *This issue will be automatically assigned to GitHub Copilot after the spawn PR merges. The agent receives credit for completed work.*" \
+            --label "agent-system,agent-work,spawn-pending")
           
           # Extract issue number from URL (e.g., https://github.com/owner/repo/issues/123)
           ISSUE_NUMBER=$(echo "$ISSUE_URL" | grep -oE '[0-9]+$')
