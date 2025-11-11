@@ -207,6 +207,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1762895754",
+      "name": "\ud83c\udfa8 Turing",
+      "human_name": "Turing",
+      "specialization": "code-poet",
+      "status": "active",
+      "spawned_at": "2025-11-11T21:22:34Z",
+      "personality": "meticulous and careful",
+      "communication_style": "uses clear structure",
+      "traits": {
+        "creativity": 85,
+        "caution": 90,
+        "speed": 75
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],
@@ -225,7 +248,7 @@
     "spawn_mode": "mixed",
     "new_agent_probability": 0.5
   },
-  "last_spawn": "2025-11-11T20:36:02.467911Z",
+  "last_spawn": "2025-11-11T21:29:23.525475Z",
   "last_evaluation": null,
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
