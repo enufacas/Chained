@@ -260,3 +260,275 @@ def safe_file_write(
             f.write(content)
     except (IOError, OSError, UnicodeEncodeError) as e:
         raise ValidationError(f"Failed to write file '{filepath}': {e}")
+
+
+def validate_numeric_range(
+    value: Any,
+    min_value: Optional[Union[int, float]] = None,
+    max_value: Optional[Union[int, float]] = None,
+    field_name: str = "value"
+) -> Union[int, float]:
+    """
+    Validate that a numeric value is within a specified range.
+    
+    Args:
+        value: The value to validate
+        min_value: Minimum allowed value (inclusive)
+        max_value: Maximum allowed value (inclusive)
+        field_name: Name of the field for error messages
+        
+    Returns:
+        The validated numeric value
+        
+    Raises:
+        ValidationError: If validation fails
+    """
+    if not isinstance(value, (int, float)):
+        raise ValidationError(
+            f"{field_name} must be a number, got {type(value).__name__}"
+        )
+    
+    if min_value is not None and value < min_value:
+        raise ValidationError(
+            f"{field_name} is below minimum ({value} < {min_value})"
+        )
+    
+    if max_value is not None and value > max_value:
+        raise ValidationError(
+            f"{field_name} exceeds maximum ({value} > {max_value})"
+        )
+    
+    return value
+
+
+def validate_url(url: Any, field_name: str = "URL") -> str:
+    """
+    Validate that a string is a valid URL.
+    
+    Args:
+        url: The URL to validate
+        field_name: Name of the field for error messages
+        
+    Returns:
+        The validated URL as a string
+        
+    Raises:
+        ValidationError: If the URL is invalid
+    """
+    if not isinstance(url, str):
+        raise ValidationError(f"{field_name} must be a string, got {type(url).__name__}")
+    
+    url = url.strip()
+    if not url:
+        raise ValidationError(f"{field_name} cannot be empty")
+    
+    # Basic URL validation pattern
+    url_pattern = re.compile(
+        r'^https?://'  # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'  # domain
+        r'localhost|'  # localhost
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # or IP
+        r'(?::\d+)?'  # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE
+    )
+    
+    if not url_pattern.match(url):
+        raise ValidationError(f"{field_name} is not a valid URL: {url}")
+    
+    return url
+
+
+def validate_email(email: Any, field_name: str = "email") -> str:
+    """
+    Validate that a string is a valid email address.
+    
+    Args:
+        email: The email to validate
+        field_name: Name of the field for error messages
+        
+    Returns:
+        The validated email as a string
+        
+    Raises:
+        ValidationError: If the email is invalid
+    """
+    if not isinstance(email, str):
+        raise ValidationError(f"{field_name} must be a string, got {type(email).__name__}")
+    
+    email = email.strip()
+    if not email:
+        raise ValidationError(f"{field_name} cannot be empty")
+    
+    # Basic email validation pattern
+    email_pattern = re.compile(
+        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    )
+    
+    if not email_pattern.match(email):
+        raise ValidationError(f"{field_name} is not a valid email address: {email}")
+    
+    return email
+
+
+def validate_json_safe(data: Any) -> dict:
+    """
+    Validate and safely parse JSON data.
+    
+    Args:
+        data: The data to validate (can be string or dict)
+        
+    Returns:
+        The validated dictionary
+        
+    Raises:
+        ValidationError: If validation fails
+    """
+    if isinstance(data, dict):
+        return data
+    
+    if isinstance(data, str):
+        import json
+        try:
+            parsed = json.loads(data)
+            if not isinstance(parsed, dict):
+                raise ValidationError(
+                    f"JSON must represent an object, got {type(parsed).__name__}"
+                )
+            return parsed
+        except json.JSONDecodeError as e:
+            raise ValidationError(f"Invalid JSON: {e}")
+    
+    raise ValidationError(f"Expected dict or JSON string, got {type(data).__name__}")
+
+
+def validate_list_non_empty(value: Any, field_name: str = "value") -> list:
+    """
+    Validate that a value is a non-empty list.
+    
+    Args:
+        value: The value to validate
+        field_name: Name of the field for error messages
+        
+    Returns:
+        The validated list
+        
+    Raises:
+        ValidationError: If validation fails
+    """
+    if not isinstance(value, list):
+        raise ValidationError(f"{field_name} must be a list, got {type(value).__name__}")
+    
+    if len(value) == 0:
+        raise ValidationError(f"{field_name} cannot be an empty list")
+    
+    return value
+
+
+def sanitize_command_input(command: str) -> str:
+    """
+    Sanitize command input to prevent command injection.
+    
+    This function removes potentially dangerous characters that could
+    be used for command injection attacks. Use with caution and prefer
+    parameterized commands when possible.
+    
+    Args:
+        command: The command string to sanitize
+        
+    Returns:
+        The sanitized command string
+        
+    Raises:
+        ValidationError: If the command contains dangerous patterns
+    """
+    if not isinstance(command, str):
+        raise ValidationError(f"Command must be a string, got {type(command).__name__}")
+    
+    # Check for common injection patterns
+    dangerous_patterns = [
+        r'[;&|`$]',  # Command chaining and substitution
+        r'\$\(',     # Command substitution
+        r'\n',       # Newline injection
+        r'\r',       # Carriage return
+    ]
+    
+    for pattern in dangerous_patterns:
+        if re.search(pattern, command):
+            raise ValidationError(
+                f"Command contains potentially dangerous characters: {pattern}"
+            )
+    
+    return command
+
+
+def validate_dict_schema(
+    data: dict,
+    schema: dict,
+    field_name: str = "data"
+) -> dict:
+    """
+    Validate that a dictionary matches a simple schema.
+    
+    Args:
+        data: The dictionary to validate
+        schema: Schema dict where keys are field names and values are expected types
+        field_name: Name of the field for error messages
+        
+    Returns:
+        The validated dictionary
+        
+    Raises:
+        ValidationError: If validation fails
+        
+    Example:
+        schema = {'name': str, 'age': int, 'tags': list}
+        validate_dict_schema(data, schema)
+    """
+    if not isinstance(data, dict):
+        raise ValidationError(f"{field_name} must be a dict, got {type(data).__name__}")
+    
+    # Check for missing required keys
+    missing_keys = set(schema.keys()) - set(data.keys())
+    if missing_keys:
+        raise ValidationError(
+            f"{field_name} is missing required keys: {', '.join(sorted(missing_keys))}"
+        )
+    
+    # Validate types
+    for key, expected_type in schema.items():
+        if key in data:
+            value = data[key]
+            if not isinstance(value, expected_type):
+                raise ValidationError(
+                    f"{field_name}['{key}'] must be {expected_type.__name__}, "
+                    f"got {type(value).__name__}"
+                )
+    
+    return data
+
+
+def validate_percentage(value: Any, field_name: str = "percentage") -> float:
+    """
+    Validate that a value is a valid percentage (0-100).
+    
+    Args:
+        value: The value to validate
+        field_name: Name of the field for error messages
+        
+    Returns:
+        The validated percentage as a float
+        
+    Raises:
+        ValidationError: If validation fails
+    """
+    if not isinstance(value, (int, float)):
+        raise ValidationError(
+            f"{field_name} must be a number, got {type(value).__name__}"
+        )
+    
+    if value < 0 or value > 100:
+        raise ValidationError(
+            f"{field_name} must be between 0 and 100, got {value}"
+        )
+    
+    return float(value)
