@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
 """
-List custom agent actor IDs from GitHub API.
+List Custom Agent Actor IDs.
 
-This tool queries the GitHub GraphQL API to discover if custom agents
-have their own actor IDs that can be used for direct assignment.
+An elegant tool that bridges the gap between custom agent definitions and
+GitHub's actor system. It reveals which agents have assignable actor IDs,
+enabling direct programmatic assignment through the GitHub API.
+
+Features:
+    • Query repository actors via GraphQL
+    • Scan custom agent definitions
+    • Map agents to actor IDs
+    • Provide actionable API examples
 
 Usage:
     export GH_TOKEN="your_github_token"
@@ -18,10 +25,23 @@ import sys
 import json
 import subprocess
 from pathlib import Path
+from typing import Dict, List, Optional, Any
 
 
-def run_gh_command(args, env=None):
-    """Execute a gh CLI command."""
+def execute_github_cli(args: List[str], env: Optional[Dict] = None) -> Optional[str]:
+    """
+    Execute a GitHub CLI command with elegant error handling.
+    
+    This function wraps the gh CLI, providing a clean interface for
+    running commands while gracefully handling failures.
+    
+    Args:
+        args: List of command arguments (excluding 'gh' itself)
+        env: Optional environment dictionary (defaults to os.environ)
+        
+    Returns:
+        Command output as string, or None if execution fails
+    """
     if env is None:
         env = os.environ.copy()
     
@@ -34,13 +54,25 @@ def run_gh_command(args, env=None):
             env=env
         )
         return result.stdout
-    except subprocess.CalledProcessError as e:
-        print(f"Error running gh command: {e.stderr}", file=sys.stderr)
+    except subprocess.CalledProcessError as error:
+        print(f"❌ GitHub CLI command failed: {error.stderr}", file=sys.stderr)
         return None
 
 
-def get_suggested_actors(owner, repo):
-    """Get all suggested actors for a repository."""
+def fetch_assignable_actors(owner: str, repo: str) -> List[Dict[str, Any]]:
+    """
+    Retrieve all actors assignable to repository issues.
+    
+    Queries GitHub's GraphQL API to discover which actors (users and bots)
+    possess the CAN_BE_ASSIGNED capability for the specified repository.
+    
+    Args:
+        owner: Repository owner username
+        repo: Repository name
+        
+    Returns:
+        List of actor dictionaries containing login, type, and ID details
+    """
     query = '''
     query($owner: String!, $repo: String!) {
       repository(owner: $owner, name: $repo) {
@@ -64,7 +96,7 @@ def get_suggested_actors(owner, repo):
     }
     '''
     
-    output = run_gh_command([
+    output = execute_github_cli([
         'api', 'graphql',
         '-f', f'query={query}',
         '-f', f'owner={owner}',
@@ -75,30 +107,46 @@ def get_suggested_actors(owner, repo):
         try:
             result = json.loads(output)
             return result.get('data', {}).get('repository', {}).get('suggestedActors', {}).get('nodes', [])
-        except json.JSONDecodeError as e:
-            print(f"Error parsing JSON: {e}", file=sys.stderr)
+        except json.JSONDecodeError as error:
+            print(f"❌ JSON parsing failed: {error}", file=sys.stderr)
     
     return []
 
 
-def get_custom_agents():
-    """Get list of custom agent files from .github/agents/."""
-    agents_dir = Path('.github/agents')
-    if not agents_dir.exists():
+def discover_custom_agents() -> List[Dict[str, str]]:
+    """
+    Discover custom agent definition files.
+    
+    Scans the .github/agents/ directory for markdown files that define
+    custom agent personas, each with unique capabilities and specializations.
+    
+    Returns:
+        List of dictionaries containing agent name and file path,
+        sorted alphabetically by name
+    """
+    agents_directory = Path('.github/agents')
+    if not agents_directory.exists():
         return []
     
-    agents = []
-    for agent_file in agents_dir.glob('*.md'):
-        if agent_file.name != 'README.md':
-            agents.append({
-                'name': agent_file.stem,
-                'path': str(agent_file)
-            })
+    agents = [
+        {'name': agent_file.stem, 'path': str(agent_file)}
+        for agent_file in agents_directory.glob('*.md')
+        if agent_file.name != 'README.md'
+    ]
     
-    return sorted(agents, key=lambda x: x['name'])
+    return sorted(agents, key=lambda agent: agent['name'])
 
 
-def main():
+def main() -> int:
+    """
+    Main orchestration function for the actor ID listing tool.
+    
+    Coordinates the discovery of custom agents and their corresponding
+    GitHub actor IDs, presenting findings in a clear and actionable format.
+    
+    Returns:
+        Exit code (0 for success, 1 for failure)
+    """
     if len(sys.argv) != 3:
         print("Usage: python3 list-agent-actor-ids.py <owner> <repo>")
         print("Example: python3 list-agent-actor-ids.py enufacas Chained")
@@ -121,7 +169,7 @@ def main():
     
     # Get all suggested actors
     print("🔍 Querying GitHub API for available actors...")
-    actors = get_suggested_actors(owner, repo)
+    actors = fetch_assignable_actors(owner, repo)
     
     if not actors:
         print("❌ Failed to retrieve actors (check token permissions)")
@@ -132,7 +180,7 @@ def main():
     
     # Get custom agents from files
     print("📁 Scanning .github/agents/ directory...")
-    custom_agents = get_custom_agents()
+    custom_agents = discover_custom_agents()
     
     if not custom_agents:
         print("❌ No custom agent files found in .github/agents/")

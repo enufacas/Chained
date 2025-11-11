@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
 """
-Inspect issue assignment history to understand custom agent assignments.
+Inspect Issue Assignment History.
 
-This tool queries the GitHub API to examine how custom agents are assigned
-when done through the UI, helping us understand the assignment patterns.
+An investigative tool that examines how custom agents are assigned to issues,
+revealing patterns in the GitHub actor system. This elegant inspector helps
+understand assignment mechanisms for automation purposes.
+
+Features:
+    • Query issue details and assignment history
+    • Track assignment/unassignment events
+    • Detect custom agent assignments
+    • Provide insights for API integration
 
 Usage:
     export GH_TOKEN="your_github_token"
@@ -18,10 +25,23 @@ import sys
 import json
 import subprocess
 from datetime import datetime
+from typing import Dict, List, Optional, Any
 
 
-def run_gh_command(args, env=None):
-    """Execute a gh CLI command."""
+def execute_github_cli(args: List[str], env: Optional[Dict] = None) -> Optional[str]:
+    """
+    Execute a GitHub CLI command with graceful error handling.
+    
+    This elegant wrapper provides a clean interface to the gh CLI,
+    managing subprocess complexity and error scenarios with poise.
+    
+    Args:
+        args: Command arguments (excluding 'gh' itself)
+        env: Optional environment dictionary
+        
+    Returns:
+        Command output as string, or None on failure
+    """
     if env is None:
         env = os.environ.copy()
     
@@ -34,13 +54,27 @@ def run_gh_command(args, env=None):
             env=env
         )
         return result.stdout
-    except subprocess.CalledProcessError as e:
-        print(f"Error running gh command: {e.stderr}", file=sys.stderr)
+    except subprocess.CalledProcessError as error:
+        print(f"❌ GitHub CLI command failed: {error.stderr}", file=sys.stderr)
         return None
 
 
-def get_issue_details(owner, repo, issue_number):
-    """Get detailed issue information including assignees."""
+def fetch_issue_details(owner: str, repo: str, issue_number: int) -> Optional[Dict[str, Any]]:
+    """
+    Retrieve comprehensive issue information including assignment history.
+    
+    This function queries GitHub's GraphQL API for rich issue data,
+    including current assignees and the complete timeline of assignment
+    and unassignment events.
+    
+    Args:
+        owner: Repository owner username
+        repo: Repository name
+        issue_number: Issue number to inspect
+        
+    Returns:
+        Dictionary with issue details, or None if query fails
+    """
     query = '''
     query($owner: String!, $repo: String!, $number: Int!) {
       repository(owner: $owner, name: $repo) {
@@ -95,7 +129,7 @@ def get_issue_details(owner, repo, issue_number):
     }
     '''
     
-    output = run_gh_command([
+    output = execute_github_cli([
         'api', 'graphql',
         '-f', f'query={query}',
         '-f', f'owner={owner}',
@@ -107,24 +141,46 @@ def get_issue_details(owner, repo, issue_number):
         try:
             result = json.loads(output)
             return result.get('data', {}).get('repository', {}).get('issue')
-        except json.JSONDecodeError as e:
-            print(f"Error parsing JSON: {e}", file=sys.stderr)
+        except json.JSONDecodeError as error:
+            print(f"❌ JSON parsing failed: {error}", file=sys.stderr)
     
     return None
 
 
-def format_timestamp(timestamp):
-    """Format ISO timestamp to readable format."""
+def format_timestamp(timestamp: str) -> str:
+    """
+    Transform ISO timestamp to human-readable format.
+    
+    Converts GitHub's ISO 8601 timestamps into a friendly,
+    readable format for display purposes.
+    
+    Args:
+        timestamp: ISO 8601 timestamp string
+        
+    Returns:
+        Formatted timestamp string, or "N/A" if parsing fails
+    """
     if not timestamp:
         return "N/A"
+    
     try:
         dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
         return dt.strftime('%Y-%m-%d %H:%M:%S UTC')
-    except Exception:
+    except (ValueError, AttributeError):
         return timestamp
 
 
-def main():
+def main() -> int:
+    """
+    Main orchestration function for issue assignment inspection.
+    
+    Coordinates the retrieval and analysis of issue assignment data,
+    presenting insights about custom agent assignments in a clear,
+    organized manner.
+    
+    Returns:
+        Exit code (0 for success, 1 for failure)
+    """
     if len(sys.argv) != 4:
         print("Usage: python3 inspect-issue-assignment.py <owner> <repo> <issue_number>")
         print("Example: python3 inspect-issue-assignment.py enufacas Chained 42")
@@ -149,7 +205,7 @@ def main():
     
     # Get issue details
     print("📡 Querying GitHub API...")
-    issue = get_issue_details(owner, repo, issue_number)
+    issue = fetch_issue_details(owner, repo, issue_number)
     
     if not issue:
         print("❌ Failed to retrieve issue details")

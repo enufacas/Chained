@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
 """
-Debug script to explore GitHub actor IDs and custom agents.
+Debug tool for GitHub Custom Agent Actor IDs.
 
-This script queries the GitHub GraphQL API to discover:
-1. All available actors that can be assigned to issues
-2. Whether custom agents have their own actor IDs
-3. How to properly assign to specific custom agents
+This elegant diagnostic script explores the GitHub GraphQL API to discover
+how custom agents are represented in the actor system. It reveals the
+relationship between agent definition files and assignable actors.
+
+Features:
+    • Query all assignable actors for a repository
+    • Discover custom agent actor IDs
+    • Match agent files to GitHub actors
+    • Provide actionable insights for automation
 
 Usage:
     export GH_TOKEN="your_github_token"
+    python3 debug_custom_agent_actors.py <owner> <repo>
+    
+Example:
     python3 debug_custom_agent_actors.py enufacas Chained
 """
 
@@ -17,35 +25,59 @@ import sys
 import json
 import subprocess
 from pathlib import Path
+from typing import Dict, List, Optional, Any
 
-def run_graphql_query(query, variables):
-    """Execute a GraphQL query using gh CLI."""
-    cmd = [
-        'gh', 'api', 'graphql',
-        '-f', f'query={query}'
-    ]
+def execute_graphql_query(query: str, variables: Dict[str, str]) -> Optional[Dict[str, Any]]:
+    """
+    Execute a GraphQL query using GitHub CLI.
+    
+    This function orchestrates the communication with GitHub's GraphQL API,
+    handling the complexities of subprocess execution and JSON parsing with
+    grace and proper error handling.
+    
+    Args:
+        query: GraphQL query string
+        variables: Dictionary of query variables
+        
+    Returns:
+        Parsed JSON response, or None if the query fails
+    """
+    command = ['gh', 'api', 'graphql', '-f', f'query={query}']
     
     for key, value in variables.items():
-        cmd.extend(['-f', f'{key}={value}'])
+        command.extend(['-f', f'{key}={value}'])
     
     try:
         result = subprocess.run(
-            cmd,
+            command,
             capture_output=True,
             text=True,
             check=True,
             env=os.environ
         )
         return json.loads(result.stdout)
-    except subprocess.CalledProcessError as e:
-        print(f"Error running query: {e.stderr}", file=sys.stderr)
+    except subprocess.CalledProcessError as error:
+        print(f"❌ GraphQL query failed: {error.stderr}", file=sys.stderr)
         return None
-    except json.JSONDecodeError as e:
-        print(f"Error parsing JSON: {e}", file=sys.stderr)
+    except json.JSONDecodeError as error:
+        print(f"❌ JSON parsing failed: {error}", file=sys.stderr)
         return None
 
-def get_suggested_actors(owner, repo):
-    """Get all suggested actors for a repository."""
+def fetch_assignable_actors(owner: str, repo: str) -> List[Dict[str, Any]]:
+    """
+    Retrieve all actors that can be assigned to issues.
+    
+    This function queries GitHub's GraphQL API to discover which actors
+    (users and bots) have the ability to be assigned to issues in the
+    specified repository.
+    
+    Args:
+        owner: Repository owner username
+        repo: Repository name
+        
+    Returns:
+        List of actor dictionaries with login, type, and ID information
+    """
     query = '''
     query($owner: String!, $repo: String!) {
       repository(owner: $owner, name: $repo) {
@@ -69,25 +101,62 @@ def get_suggested_actors(owner, repo):
     }
     '''
     
-    result = run_graphql_query(query, {'owner': owner, 'repo': repo})
+    result = execute_graphql_query(query, {'owner': owner, 'repo': repo})
     if result and 'data' in result:
         return result['data']['repository']['suggestedActors']['nodes']
     return []
 
-def get_custom_agents():
-    """Get list of custom agent files from .github/agents/."""
-    agents_dir = Path('.github/agents')
-    if not agents_dir.exists():
+def discover_custom_agents() -> List[str]:
+    """
+    Discover custom agent definitions in the repository.
+    
+    Scans the .github/agents/ directory for agent definition files,
+    each representing a specialized AI persona configured for specific
+    types of tasks.
+    
+    Returns:
+        Sorted list of agent names (without .md extension)
+    """
+    agents_directory = Path('.github/agents')
+    if not agents_directory.exists():
         return []
     
-    agents = []
-    for agent_file in agents_dir.glob('*.md'):
-        if agent_file.name != 'README.md':
-            agents.append(agent_file.stem)
+    agent_names = [
+        agent_file.stem 
+        for agent_file in agents_directory.glob('*.md')
+        if agent_file.name != 'README.md'
+    ]
     
-    return sorted(agents)
+    return sorted(agent_names)
 
-def main():
+def display_header(owner: str, repo: str) -> None:
+    """Display the tool's header banner."""
+    print("="*60)
+    print("🔍 GitHub Custom Agent Actor ID Debug Tool")
+    print("="*60)
+    print(f"Repository: {owner}/{repo}")
+    print()
+
+
+def check_authentication() -> None:
+    """Verify GitHub authentication is configured."""
+    if not os.environ.get('GH_TOKEN') and not os.environ.get('GITHUB_TOKEN'):
+        print("⚠️  WARNING: No GH_TOKEN or GITHUB_TOKEN environment variable set")
+        print("Set a token to query the GitHub API:")
+        print("  export GH_TOKEN='your_token_here'")
+        print()
+
+
+def main() -> int:
+    """
+    Main entry point for the debug tool.
+    
+    Orchestrates the discovery process, displaying findings about custom
+    agent actors in an organized and informative manner.
+    
+    Returns:
+        Exit code (0 for success, 1 for failure)
+    """
     if len(sys.argv) != 3:
         print("Usage: python3 debug_custom_agent_actors.py <owner> <repo>")
         print("Example: python3 debug_custom_agent_actors.py enufacas Chained")
@@ -96,23 +165,14 @@ def main():
     owner = sys.argv[1]
     repo = sys.argv[2]
     
-    if not os.environ.get('GH_TOKEN') and not os.environ.get('GITHUB_TOKEN'):
-        print("⚠️  WARNING: No GH_TOKEN or GITHUB_TOKEN environment variable set")
-        print("Set a token to query the GitHub API:")
-        print("  export GH_TOKEN='your_token_here'")
-        print()
-    
-    print("="*60)
-    print("🔍 GitHub Custom Agent Actor ID Debug Tool")
-    print("="*60)
-    print(f"Repository: {owner}/{repo}")
-    print()
+    check_authentication()
+    display_header(owner, repo)
     
     # Step 1: Get all suggested actors
     print("━"*60)
     print("📋 Step 1: Querying Suggested Actors")
     print("━"*60)
-    actors = get_suggested_actors(owner, repo)
+    actors = fetch_assignable_actors(owner, repo)
     
     if not actors:
         print("❌ Failed to retrieve actors (check token permissions)")
@@ -149,7 +209,7 @@ def main():
     print("━"*60)
     print("📁 Step 3: Custom Agent Files")
     print("━"*60)
-    custom_agents = get_custom_agents()
+    custom_agents = discover_custom_agents()
     
     if custom_agents:
         print(f"Found {len(custom_agents)} custom agent file(s):")

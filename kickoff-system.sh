@@ -1,59 +1,120 @@
 #!/bin/bash
 
+################################################################################
 # Chained System Kickoff Script
-# This script initializes and starts the perpetual AI motion machine
+#
+# An elegant initialization script that brings the Chained autonomous AI
+# ecosystem to life. This script orchestrates system validation, configuration
+# verification, and workflow activation with grace and clarity.
+#
+# Features:
+#   • Pre-flight validation checks
+#   • GitHub configuration verification
+#   • Automated label creation
+#   • Workflow initialization
+#   • Comprehensive status reporting
+#
+# Usage:
+#   ./kickoff-system.sh
+#
+# Requirements:
+#   • GitHub CLI (gh) installed and authenticated
+#   • Repository write access
+#   • Proper GitHub Actions permissions configured
+################################################################################
 
-set -e
+set -e  # Exit on any error
 
-echo "🚀 Chained System Kickoff"
-echo "========================="
-echo ""
+# Terminal color codes for beautiful output
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly RED='\033[0;31m'
+readonly NC='\033[0m'  # No Color
 
-# Color codes
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-RED='\033[0;31m'
-NC='\033[0m'
+################################################################################
+# Display Functions
+################################################################################
 
-# Check if gh CLI is available
-if ! command -v gh &> /dev/null; then
-    echo -e "${RED}Error: GitHub CLI (gh) is required but not installed.${NC}"
+print_header() {
+    echo "🚀 Chained System Kickoff"
+    echo "========================="
     echo ""
-    echo "Please install it from: https://cli.github.com/"
-    echo ""
-    exit 1
-fi
+}
 
-# Check if gh is authenticated
-if ! gh auth status &> /dev/null; then
-    echo -e "${RED}Error: GitHub CLI is not authenticated.${NC}"
+print_step() {
+    local step_number="$1"
+    local step_name="$2"
     echo ""
-    echo "Please run: gh auth login"
+    echo -e "${BLUE}Step ${step_number}: ${step_name}${NC}"
+    echo "$(printf '%.0s-' {1..50})"
     echo ""
-    exit 1
-fi
+}
 
-echo -e "${BLUE}Step 1: Pre-flight Validation${NC}"
-echo "------------------------------"
-echo ""
+print_success() {
+    echo -e "${GREEN}✓${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}⚠${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}✗${NC} $1"
+}
+
+################################################################################
+# Validation Functions
+################################################################################
+
+check_github_cli() {
+    if ! command -v gh &> /dev/null; then
+        print_error "GitHub CLI (gh) is required but not installed."
+        echo ""
+        echo "Please install it from: https://cli.github.com/"
+        echo ""
+        return 1
+    fi
+    return 0
+}
+
+check_authentication() {
+    if ! gh auth status &> /dev/null; then
+        print_error "GitHub CLI is not authenticated."
+        echo ""
+        echo "Please run: gh auth login"
+        echo ""
+        return 1
+    fi
+    return 0
+}
+
+################################################################################
+# Main Script Logic
+################################################################################
+
+main() {
+    print_header
+    
+    # Validate prerequisites
+    check_github_cli || exit 1
+    check_authentication || exit 1
+    
+    print_step 1 "Pre-flight Validation"
 
 # Run validation script
 if [ -f "./validate-system.sh" ]; then
     if ./validate-system.sh; then
-        echo -e "${GREEN}✓ Validation passed!${NC}"
+        print_success "Validation passed!"
     else
-        echo -e "${RED}✗ Validation failed. Please fix errors before proceeding.${NC}"
+        print_error "Validation failed. Please fix errors before proceeding."
         exit 1
     fi
 else
-    echo -e "${YELLOW}⚠ Validation script not found, skipping validation.${NC}"
+    print_warning "Validation script not found, skipping validation."
 fi
 
-echo ""
-echo -e "${BLUE}Step 2: Verify GitHub Configuration${NC}"
-echo "------------------------------------"
-echo ""
+print_step 2 "Verify GitHub Configuration"
 
 # Get repository info
 REPO_INFO=$(gh repo view --json owner,name -q '.owner.login + "/" + .name')
@@ -62,7 +123,7 @@ echo "Repository: $REPO_INFO"
 # Check workflow permissions
 echo ""
 echo "Checking required permissions..."
-echo -e "${YELLOW}Note: This script cannot verify all GitHub settings.${NC}"
+print_warning "Note: This script cannot verify all GitHub settings."
 echo "Please ensure these are configured in your repository settings:"
 echo "  1. Settings → Actions → General → Workflow permissions"
 echo "     ✓ Read and write permissions"
@@ -89,12 +150,9 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 1
 fi
 
-echo ""
-echo -e "${BLUE}Step 3: Create Required Labels${NC}"
-echo "-------------------------------"
-echo ""
+print_step 3 "Create Required Labels"
 
-# Define labels
+# Define labels as associative array
 declare -A labels=(
     ["ai-generated"]="7057ff:Created by AI Idea Generator"
     ["copilot-assigned"]="0366d6:Assigned to Copilot"
@@ -113,38 +171,32 @@ for label in "${!labels[@]}"; do
     
     # Check if label exists
     if gh label list --search "$label" 2>/dev/null | grep -q "$label"; then
-        echo -e "${GREEN}✓${NC} Label '$label' already exists"
+        print_success "Label '$label' already exists"
     else
         if gh label create "$label" --color "$color" --description "$description" 2>/dev/null; then
-            echo -e "${GREEN}✓${NC} Created label '$label'"
+            print_success "Created label '$label'"
         else
-            echo -e "${YELLOW}⚠${NC} Could not create label '$label' (may already exist)"
+            print_warning "Could not create label '$label' (may already exist)"
         fi
     fi
 done
 
-echo ""
-echo -e "${BLUE}Step 4: Initialize Learnings Directory${NC}"
-echo "---------------------------------------"
-echo ""
+print_step 4 "Initialize Learnings Directory"
 
 # Ensure learnings directory exists
 if [ ! -d "learnings" ]; then
     mkdir -p learnings
-    echo -e "${GREEN}✓${NC} Created learnings directory"
+    print_success "Created learnings directory"
 else
-    echo -e "${GREEN}✓${NC} Learnings directory already exists"
+    print_success "Learnings directory already exists"
 fi
 
 # Check if learnings/README.md exists
 if [ ! -f "learnings/README.md" ]; then
-    echo -e "${YELLOW}⚠${NC} learnings/README.md not found (will be created by workflows)"
+    print_warning "learnings/README.md not found (will be created by workflows)"
 fi
 
-echo ""
-echo -e "${BLUE}Step 5: Trigger Initial Workflows${NC}"
-echo "----------------------------------"
-echo ""
+print_step 5 "Trigger Initial Workflows"
 
 echo "Would you like to trigger the initial workflows now?"
 echo "This will:"
@@ -161,9 +213,9 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     
     # Trigger idea generator
     if gh workflow run "idea-generator.yml" 2>/dev/null; then
-        echo -e "${GREEN}✓${NC} Triggered AI Idea Generator"
+        print_success "Triggered AI Idea Generator"
     else
-        echo -e "${YELLOW}⚠${NC} Could not trigger AI Idea Generator (may need to wait or trigger manually)"
+        print_warning "Could not trigger AI Idea Generator (may need to wait or trigger manually)"
     fi
     
     # Wait a moment
@@ -171,15 +223,15 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     
     # Trigger learning workflows
     if gh workflow run "learn-from-tldr.yml" 2>/dev/null; then
-        echo -e "${GREEN}✓${NC} Triggered Learn from TLDR"
+        print_success "Triggered Learn from TLDR"
     else
-        echo -e "${YELLOW}⚠${NC} Could not trigger Learn from TLDR"
+        print_warning "Could not trigger Learn from TLDR"
     fi
     
     if gh workflow run "learn-from-hackernews.yml" 2>/dev/null; then
-        echo -e "${GREEN}✓${NC} Triggered Learn from Hacker News"
+        print_success "Triggered Learn from Hacker News"
     else
-        echo -e "${YELLOW}⚠${NC} Could not trigger Learn from Hacker News"
+        print_warning "Could not trigger Learn from Hacker News"
     fi
     
     echo ""
@@ -213,5 +265,9 @@ echo ""
 echo "Check system status:"
 echo "  ./check-status.sh"
 echo ""
-echo -e "${YELLOW}Tip: Come back in 24 hours to see what the AI has built!${NC}"
+print_warning "Tip: Come back in 24 hours to see what the AI has built!"
 echo ""
+}
+
+# Execute main function
+main

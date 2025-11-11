@@ -1,58 +1,127 @@
 #!/bin/bash
 
+################################################################################
 # Chained System Status Checker
-# This script checks the status of the autonomous system
+#
+# An elegant monitoring tool that provides comprehensive insights into the
+# Chained autonomous AI ecosystem's health and activity. This script presents
+# system metrics, workflow status, and progress indicators with clarity.
+#
+# Features:
+#   • Recent workflow run analysis
+#   • Issue and PR statistics
+#   • Learning file tracking
+#   • GitHub Pages status
+#   • Scheduled workflow overview
+#   • Success rate calculations
+#
+# Usage:
+#   ./check-status.sh
+#
+# Requirements:
+#   • GitHub CLI (gh) installed and authenticated
+#   • Repository read access
+################################################################################
 
-set -e
+set -e  # Exit on any error
 
-echo "📊 Chained System Status"
-echo "========================"
-echo ""
+# Terminal color codes for beautiful output
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly RED='\033[0;31m'
+readonly NC='\033[0m'  # No Color
 
-# Color codes
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-RED='\033[0;31m'
-NC='\033[0m'
+################################################################################
+# Display Functions
+################################################################################
 
-# Check if gh CLI is available
-if ! command -v gh &> /dev/null; then
-    echo -e "${RED}Error: GitHub CLI (gh) is required but not installed.${NC}"
-    echo "Please install it from: https://cli.github.com/"
-    exit 1
-fi
+print_header() {
+    echo "📊 Chained System Status"
+    echo "========================"
+    echo ""
+}
 
-# Check if gh is authenticated
-if ! gh auth status &> /dev/null; then
-    echo -e "${RED}Error: GitHub CLI is not authenticated.${NC}"
-    echo "Please run: gh auth login"
-    exit 1
-fi
+print_section() {
+    local section_number="$1"
+    local section_name="$2"
+    echo ""
+    echo -e "${BLUE}${section_number}. ${section_name}${NC}"
+    echo "$(printf '%.0s-' {1..50})"
+    echo ""
+}
 
-# Get repository info
-REPO_INFO=$(gh repo view --json owner,name -q '.owner.login + "/" + .name')
-echo "Repository: $REPO_INFO"
-echo ""
+print_success() {
+    echo -e "${GREEN}✓${NC} $1"
+}
 
-echo -e "${BLUE}1. Recent Workflow Runs${NC}"
-echo "----------------------"
-echo ""
+print_warning() {
+    echo -e "${YELLOW}⚠${NC} $1"
+}
 
-# Get recent workflow runs
+print_error() {
+    echo -e "${RED}✗${NC} $1"
+}
+
+################################################################################
+# Validation Functions
+################################################################################
+
+check_github_cli() {
+    if ! command -v gh &> /dev/null; then
+        print_error "GitHub CLI (gh) is required but not installed."
+        echo "Please install it from: https://cli.github.com/"
+        return 1
+    fi
+    return 0
+}
+
+check_authentication() {
+    if ! gh auth status &> /dev/null; then
+        print_error "GitHub CLI is not authenticated."
+        echo "Please run: gh auth login"
+        return 1
+    fi
+    return 0
+}
+
+################################################################################
+# Data Collection Functions
+################################################################################
+
+count_issues_by_label() {
+    local label="$1"
+    gh issue list --label "$label" --state all --limit 1000 --json number -q 'length' 2>/dev/null || echo "0"
+}
+
+################################################################################
+# Main Script Logic
+################################################################################
+
+main() {
+    print_header
+    
+    # Validate prerequisites
+    check_github_cli || exit 1
+    check_authentication || exit 1
+
+    
+    # Get repository information
+    REPO_INFO=$(gh repo view --json owner,name -q '.owner.login + "/" + .name')
+    echo "Repository: $REPO_INFO"
+
+    print_section 1 "Recent Workflow Runs"
+
 echo "Last 5 workflow runs:"
 gh run list --limit 5 --json name,conclusion,status,createdAt -q '.[] | "\(.createdAt | split("T")[0] + " " + split("T")[1] | split(".")[0]): \(.name) - \(.status) \(if .conclusion then "(\(.conclusion))" else "" end)"' 2>/dev/null || echo "No workflow runs found"
 
-echo ""
-echo -e "${BLUE}2. Issue Statistics${NC}"
-echo "-------------------"
-echo ""
+print_section 2 "Issue Statistics"
 
 # Count issues by label
-ai_generated=$(gh issue list --label "ai-generated" --state all --limit 1000 --json number -q 'length' 2>/dev/null || echo "0")
-copilot_assigned=$(gh issue list --label "copilot-assigned" --state all --limit 1000 --json number -q 'length' 2>/dev/null || echo "0")
-completed=$(gh issue list --label "completed" --state closed --limit 1000 --json number -q 'length' 2>/dev/null || echo "0")
-learning=$(gh issue list --label "learning" --state all --limit 1000 --json number -q 'length' 2>/dev/null || echo "0")
+ai_generated=$(count_issues_by_label "ai-generated")
+copilot_assigned=$(count_issues_by_label "copilot-assigned")
+completed=$(count_issues_by_label "completed")
+learning=$(count_issues_by_label "learning")
 
 open_issues=$(gh issue list --state open --limit 1000 --json number -q 'length' 2>/dev/null || echo "0")
 closed_issues=$(gh issue list --state closed --limit 1000 --json number -q 'length' 2>/dev/null || echo "0")
@@ -67,17 +136,11 @@ echo "  Copilot-Assigned: $copilot_assigned"
 echo "  Completed: $completed"
 echo "  Learning: $learning"
 
-echo ""
-echo -e "${BLUE}3. Recent Issues${NC}"
-echo "---------------"
-echo ""
+print_section 3 "Recent Issues"
 echo "Last 5 issues:"
 gh issue list --limit 5 --json number,title,labels,state -q '.[] | "#\(.number): \(.title) [\(.state)] (\(.labels | map(.name) | join(", ")))"' 2>/dev/null || echo "No issues found"
 
-echo ""
-echo -e "${BLUE}4. Pull Request Statistics${NC}"
-echo "--------------------------"
-echo ""
+print_section 4 "Pull Request Statistics"
 
 # Count PRs
 open_prs=$(gh pr list --state open --limit 1000 --json number -q 'length' 2>/dev/null || echo "0")
@@ -93,10 +156,7 @@ echo ""
 echo "Last 5 PRs:"
 gh pr list --state all --limit 5 --json number,title,state -q '.[] | "#\(.number): \(.title) [\(.state)]"' 2>/dev/null || echo "No pull requests found"
 
-echo ""
-echo -e "${BLUE}5. Learning Files${NC}"
-echo "----------------"
-echo ""
+print_section 5 "Learning Files"
 
 if [ -d "learnings" ]; then
     learning_count=$(find learnings -name "*.json" 2>/dev/null | wc -l)
@@ -111,10 +171,7 @@ else
     echo "Learnings directory not found"
 fi
 
-echo ""
-echo -e "${BLUE}6. GitHub Pages Status${NC}"
-echo "---------------------"
-echo ""
+print_section 6 "GitHub Pages Status"
 
 pages_url="https://$(gh repo view --json owner,name -q '.owner.login').github.io/$(gh repo view --json name -q '.name')/"
 echo "GitHub Pages URL: $pages_url"
@@ -128,10 +185,7 @@ else
     echo "docs/ directory not found"
 fi
 
-echo ""
-echo -e "${BLUE}7. Next Scheduled Runs${NC}"
-echo "---------------------"
-echo ""
+print_section 7 "Next Scheduled Runs"
 
 # Get current time in UTC
 current_hour=$(date -u +%H)
@@ -157,7 +211,7 @@ echo -e "${GREEN}Status Check Complete!${NC}"
 echo "================================================================"
 echo ""
 
-# Calculate some metrics
+# Calculate success metrics
 if [ "$ai_generated" -gt 0 ]; then
     success_rate=0
     if [ "$completed" -gt 0 ]; then
@@ -177,3 +231,7 @@ echo "  • Trigger workflow: gh workflow run <workflow-name>"
 echo "  • View issues: gh issue list"
 echo "  • View PRs: gh pr list"
 echo ""
+}
+
+# Execute main function
+main
