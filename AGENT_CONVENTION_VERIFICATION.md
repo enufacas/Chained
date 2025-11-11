@@ -114,11 +114,26 @@ The existing autonomous agent spawning, evaluation, and governance systems conti
 
 - [`.github/agents/README.md`](.github/agents/README.md) - Custom agents documentation
 - [`agents/README.md`](agents/README.md) - Agent system overview (updated with convention reference)
+- [`docs/CUSTOM_AGENTS_CONVENTIONS.md`](docs/CUSTOM_AGENTS_CONVENTIONS.md) - **Comprehensive convention verification guide** (NEW)
+
+## Automated Testing
+
+The repository now includes automated testing for convention compliance:
+
+- **Test Script**: `test_custom_agents_conventions.py` - Validates all conventions
+- **Integration**: Runs as part of `validate-system.sh` system validation
+- **CI/CD Ready**: Can be integrated into continuous integration workflows
+
+Run the test manually:
+```bash
+python3 test_custom_agents_conventions.py
+```
 
 ## References
 
 - [GitHub Docs: Custom agents configuration](https://docs.github.com/en/copilot/reference/custom-agents-configuration)
 - [GitHub Docs: Creating custom agents](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents)
+- [GitHub Docs: Testing custom agents](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/test-custom-agents)
 
 ## Conclusion
 
@@ -126,6 +141,9 @@ The existing autonomous agent spawning, evaluation, and governance systems conti
 
 All agent definitions are properly formatted with YAML frontmatter, located in the correct directory, and include comprehensive custom instructions for each specialization.
 
+**Compliance is now enforced through automated testing** to prevent future convention violations.
+
 ---
 
-*Verified: 2025-11-11*
+*Verified: 2025-11-11*  
+*Automated Testing Added: 2025-11-11*

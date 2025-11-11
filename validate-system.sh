@@ -181,6 +181,32 @@ else
 fi
 
 echo ""
+echo "9. Running System Tests..."
+echo "-------------------------"
+
+# Run custom agents convention test
+if [ -f "test_custom_agents_conventions.py" ]; then
+    if python3 test_custom_agents_conventions.py > /dev/null 2>&1; then
+        print_status "OK" "Custom agents follow GitHub Copilot conventions"
+    else
+        print_status "ERROR" "Custom agents convention test failed"
+    fi
+else
+    print_status "WARN" "Custom agents convention test not found"
+fi
+
+# Run agent system test
+if [ -f "test_agent_system.py" ]; then
+    if python3 test_agent_system.py > /dev/null 2>&1; then
+        print_status "OK" "Agent system validation passed"
+    else
+        print_status "WARN" "Agent system validation failed"
+    fi
+else
+    print_status "WARN" "Agent system test not found"
+fi
+
+echo ""
 echo "================================================================"
 echo "Validation Summary"
 echo "================================================================"
