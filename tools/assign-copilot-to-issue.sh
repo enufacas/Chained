@@ -243,11 +243,16 @@ Could not find GitHub Copilot in the list of available assignees for this reposi
     
     # Authenticate gh CLI for OAuth operations required by agent-task
     echo "   Authenticating gh CLI with token..."
-    if echo "$GH_TOKEN" | gh auth login --with-token 2>&1; then
+    # Save token and temporarily unset GH_TOKEN to avoid gh CLI warning
+    SAVED_TOKEN="$GH_TOKEN"
+    unset GH_TOKEN
+    if echo "$SAVED_TOKEN" | gh auth login --with-token 2>&1; then
       echo "   ✅ gh CLI authenticated successfully"
     else
       echo "   ⚠️ gh auth login failed, CLI assignment may not work"
     fi
+    # Restore GH_TOKEN for subsequent API calls
+    export GH_TOKEN="$SAVED_TOKEN"
     
     # Build task description with custom agent directive
     # Following GitHub's documentation for custom agent specification in CLI
