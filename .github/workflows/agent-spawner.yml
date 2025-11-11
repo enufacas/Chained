@@ -180,6 +180,9 @@ jobs:
             
             SPECIALIZATION=$(echo "$NEW_AGENT_JSON" | jq -r '.agent_name')
             EMOJI=$(echo "$NEW_AGENT_JSON" | jq -r '.emoji')
+            HUMAN_NAME=$(echo "$NEW_AGENT_JSON" | jq -r '.human_name')
+            PERSONALITY=$(echo "$NEW_AGENT_JSON" | jq -r '.personality')
+            COMM_STYLE=$(echo "$NEW_AGENT_JSON" | jq -r '.communication_style')
             
             echo "✅ Created new agent type: $SPECIALIZATION"
           else
@@ -198,12 +201,24 @@ jobs:
             
             # Get emoji from convention-compliant agent definition
             EMOJI=$(python3 tools/get-agent-info.py emoji "$SPECIALIZATION")
+            
+            # Generate human name for existing specialization
+            HUMAN_NAMES=("Ada" "Tesla" "Einstein" "Curie" "Turing" "Lovelace" "Darwin" "Newton" "Feynman" "Hopper" "Hamilton" "Liskov" "Dijkstra" "Knuth" "Shannon")
+            NAME_INDEX=$((RANDOM % ${#HUMAN_NAMES[@]}))
+            HUMAN_NAME="${HUMAN_NAMES[$NAME_INDEX]}"
+            
+            # Generate personality for existing agents
+            PERSONALITIES=("methodical and precise" "enthusiastic and energetic" "calm and thoughtful" "bold and innovative" "meticulous and careful" "creative and artistic" "analytical and logical" "friendly and collaborative")
+            PERS_INDEX=$((RANDOM % ${#PERSONALITIES[@]}))
+            PERSONALITY="${PERSONALITIES[$PERS_INDEX]}"
+            
+            COMM_STYLES=("uses technical jargon with enthusiasm" "explains things with analogies" "gets straight to the point" "adds encouraging emojis" "likes to share facts" "uses clear structure" "adds humor to discussions")
+            COMM_INDEX=$((RANDOM % ${#COMM_STYLES[@]}))
+            COMM_STYLE="${COMM_STYLES[$COMM_INDEX]}"
           fi
           
-          # Generate unique agent name
-          DESCRIPTORS=("Alpha" "Beta" "Gamma" "Delta" "Epsilon" "Zeta" "Eta" "Theta" "Iota" "Kappa" "Lambda" "Sigma" "Omega")
-          DESCRIPTOR_INDEX=$((RANDOM % ${#DESCRIPTORS[@]}))
-          AGENT_NAME="${EMOJI} ${DESCRIPTORS[$DESCRIPTOR_INDEX]}-$(date +%m%d)"
+          # Generate unique agent name using human name
+          AGENT_NAME="${EMOJI} ${HUMAN_NAME}"
           
           # Generate personality traits (for future use)
           CREATIVITY=$((50 + RANDOM % 50))
@@ -212,8 +227,11 @@ jobs:
           
           echo "agent_id=$AGENT_ID" >> $GITHUB_OUTPUT
           echo "agent_name=$AGENT_NAME" >> $GITHUB_OUTPUT
+          echo "human_name=$HUMAN_NAME" >> $GITHUB_OUTPUT
           echo "specialization=$SPECIALIZATION" >> $GITHUB_OUTPUT
           echo "emoji=$EMOJI" >> $GITHUB_OUTPUT
+          echo "personality=$PERSONALITY" >> $GITHUB_OUTPUT
+          echo "communication_style=$COMM_STYLE" >> $GITHUB_OUTPUT
           echo "creativity=$CREATIVITY" >> $GITHUB_OUTPUT
           echo "caution=$CAUTION" >> $GITHUB_OUTPUT
           echo "speed=$SPEED" >> $GITHUB_OUTPUT
@@ -221,7 +239,10 @@ jobs:
           echo "🤖 Generated Agent:"
           echo "  ID: $AGENT_ID"
           echo "  Name: $AGENT_NAME"
+          echo "  Human Name: $HUMAN_NAME"
           echo "  Specialization: $SPECIALIZATION"
+          echo "  Personality: $PERSONALITY"
+          echo "  Communication: $COMM_STYLE"
           echo "  Is New Type: $CREATE_NEW"
           echo "  Traits: Creativity=$CREATIVITY, Caution=$CAUTION, Speed=$SPEED"
 
@@ -236,7 +257,10 @@ jobs:
           
           agent_id = "${{ steps.generate_agent.outputs.agent_id }}"
           agent_name = "${{ steps.generate_agent.outputs.agent_name }}"
+          human_name = "${{ steps.generate_agent.outputs.human_name }}"
           specialization = "${{ steps.generate_agent.outputs.specialization }}"
+          personality = "${{ steps.generate_agent.outputs.personality }}"
+          communication_style = "${{ steps.generate_agent.outputs.communication_style }}"
           
           with open("${REGISTRY_FILE}", 'r') as f:
               registry = json.load(f)
@@ -244,9 +268,12 @@ jobs:
           new_agent = {
               "id": agent_id,
               "name": agent_name,
+              "human_name": human_name,
               "specialization": specialization,
               "status": "active",
               "spawned_at": datetime.utcnow().isoformat() + "Z",
+              "personality": personality,
+              "communication_style": communication_style,
               "traits": {
                   "creativity": ${{ steps.generate_agent.outputs.creativity }},
                   "caution": ${{ steps.generate_agent.outputs.caution }},
@@ -276,7 +303,10 @@ jobs:
         run: |
           AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
           AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          HUMAN_NAME="${{ steps.generate_agent.outputs.human_name }}"
           SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
+          PERSONALITY="${{ steps.generate_agent.outputs.personality }}"
+          COMM_STYLE="${{ steps.generate_agent.outputs.communication_style }}"
           
           mkdir -p ".github/agent-system/profiles"
           
@@ -287,12 +317,18 @@ jobs:
           # $AGENT_NAME
           
           **ID**: $AGENT_ID  
+          **Human Name**: $HUMAN_NAME  
           **Specialization**: $SPECIALIZATION  
           **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](../.github/agents/${SPECIALIZATION}.md)  
           **Status**: 🟢 Active  
           **Spawned**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           
-          ## Personality Traits
+          ## Personality
+          
+          **Character**: $PERSONALITY  
+          **Communication Style**: $COMM_STYLE
+          
+          ## Performance Traits
           
           - **Creativity**: ${{ steps.generate_agent.outputs.creativity }}/100
           - **Caution**: ${{ steps.generate_agent.outputs.caution }}/100
@@ -328,8 +364,11 @@ jobs:
         run: |
           AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
           AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          HUMAN_NAME="${{ steps.generate_agent.outputs.human_name }}"
           SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
           EMOJI="${{ steps.generate_agent.outputs.emoji }}"
+          PERSONALITY="${{ steps.generate_agent.outputs.personality }}"
+          COMM_STYLE="${{ steps.generate_agent.outputs.communication_style }}"
           IS_NEW="${{ steps.generate_agent.outputs.is_new_agent }}"
           
           BRANCH_NAME="agent-spawn/${AGENT_ID}"
@@ -339,9 +378,9 @@ jobs:
           git add .github/agent-system/
           if [ "$IS_NEW" == "true" ]; then
             git add .github/agents/
-            git commit -m "$EMOJI Spawn new agent type: $AGENT_NAME ($SPECIALIZATION) + definition"
+            git commit -m "$EMOJI Spawn new agent: $HUMAN_NAME ($SPECIALIZATION) + definition"
           else
-            git commit -m "$EMOJI Spawn new agent: $AGENT_NAME ($SPECIALIZATION)"
+            git commit -m "$EMOJI Spawn new agent: $HUMAN_NAME ($SPECIALIZATION)"
           fi
           git push origin "$BRANCH_NAME"
           
@@ -360,16 +399,24 @@ jobs:
           fi
           
           gh pr create \
-            --title "$EMOJI New Agent Spawned: $AGENT_NAME" \
-            --body "## 🎉 A New Agent Has Been Born!
+            --title "$EMOJI New Agent Spawned: $HUMAN_NAME" \
+            --body "## 🎉 Meet $HUMAN_NAME!
+          
+          A new agent has joined our autonomous AI ecosystem!
           
           **Agent ID**: $AGENT_ID  
           **Name**: $AGENT_NAME  
+          **Goes By**: $HUMAN_NAME  
           **Specialization**: $SPECIALIZATION  
           **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](.github/agents/${SPECIALIZATION}.md)  
           **Spawned At**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           
-          ${NEW_AGENT_INFO}### Personality Traits
+          ${NEW_AGENT_INFO}### Personality Profile
+          
+          **Character**: $PERSONALITY  
+          **Communication Style**: $COMM_STYLE
+          
+          ### Performance Traits
           
           - **Creativity**: ${{ steps.generate_agent.outputs.creativity }}/100
           - **Caution**: ${{ steps.generate_agent.outputs.caution }}/100
@@ -407,9 +454,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          HUMAN_NAME="${{ steps.generate_agent.outputs.human_name }}"
           AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
           SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
           EMOJI="${{ steps.generate_agent.outputs.emoji }}"
+          PERSONALITY="${{ steps.generate_agent.outputs.personality }}"
+          COMM_STYLE="${{ steps.generate_agent.outputs.communication_style }}"
           IS_NEW="${{ steps.generate_agent.outputs.is_new_agent }}"
           
           # Build issue body with conditional new agent type info
@@ -420,18 +470,26 @@ jobs:
           fi
           
           gh issue create \
-            --title "$EMOJI Agent Spawn: $AGENT_NAME is now active!" \
-            --body "## 🎉 Welcome Our Newest Agent!
+            --title "$EMOJI Meet $HUMAN_NAME - Our Newest Agent!" \
+            --body "## 🎉 Welcome $HUMAN_NAME!
           
           ${NEW_TYPE_BADGE}
           
           A new agent has joined the Chained ecosystem and is ready to contribute!
           
-          **Name**: $AGENT_NAME  
+          **Display Name**: $AGENT_NAME  
+          **Goes By**: $HUMAN_NAME  
           **ID**: $AGENT_ID  
           **Specialization**: $SPECIALIZATION  
           **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](https://github.com/${{ github.repository }}/blob/main/.github/agents/${SPECIALIZATION}.md)  
           **Status**: 🟢 Active
+          
+          ### Personality Profile
+          
+          **Character**: $PERSONALITY  
+          **Communication Style**: $COMM_STYLE
+          
+          $HUMAN_NAME brings a unique personality to the team! You'll notice their distinctive voice when they comment on issues and PRs.
           
           ### Mission
           
@@ -443,7 +501,7 @@ jobs:
           
           ### Evolutionary System
           
-          - 🎲 Agents are spawned with random or new specializations
+          - 🎲 Agents are spawned with unique personalities and specializations
           - ⚔️ Agents compete for survival based on performance
           - 🏆 Top performers enter the Hall of Fame permanently
           - ❌ Weak performers (< 30%) are eliminated daily
@@ -463,7 +521,7 @@ jobs:
           
           ---
           
-          **Good luck, $AGENT_NAME! May your code be clean and your PRs be merged!** 🚀" \
+          **Good luck, $HUMAN_NAME! May your code be clean and your PRs be merged!** 🚀" \
             --label "agent-system,announcement"
           
           echo "✅ Announcement issue created"
