@@ -70,6 +70,9 @@ Specialized in identifying and fixing security vulnerabilities. Focuses on prote
 ### 🎨 [code-poet.md](./code-poet.md)
 Specialized in writing elegant, readable code. Focuses on code craftsmanship, readability, and maintainability.
 
+### 🏭 [create-guru.md](./create-guru.md)
+Specialized in creating infrastructure. Inspired by Nikola Tesla - inventive and visionary. Focuses on features, infrastructure, and tools.
+
 ### ♻️ [refactor-wizard.md](./refactor-wizard.md)
 Specialized in refactoring and improving code structure. Focuses on reducing duplication and simplifying complexity.
 

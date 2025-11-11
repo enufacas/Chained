@@ -4,6 +4,41 @@ A collection of intelligent development tools for the Chained autonomous AI syst
 
 ## Available Tools
 
+### 🏭 Agent Definition Validator
+
+A comprehensive validation tool for GitHub Copilot custom agent definitions.
+
+**Purpose:** Ensure all agent definitions in `.github/agents/` follow the GitHub Copilot custom agents convention and maintain consistency across the agent ecosystem.
+
+**Quick Start:**
+```bash
+# Validate all agent definitions
+python3 tools/validate-agent-definition.py
+
+# Validate a single agent file
+python3 tools/validate-agent-definition.py -f .github/agents/create-guru.md
+
+# Strict mode (treat warnings as errors)
+python3 tools/validate-agent-definition.py --strict
+
+# Quiet mode (only show errors)
+python3 tools/validate-agent-definition.py --quiet
+```
+
+**What It Validates:**
+- YAML frontmatter structure and syntax
+- Required fields: `name` and `description`
+- Filename matches agent name (kebab-case convention)
+- Markdown body structure and recommended sections
+- Tool list format and content
+- Overall convention compliance
+
+**Use Case:** Run this tool before committing agent definition changes to ensure they follow the GitHub Copilot custom agents convention. Integrate into CI/CD pipelines for automated validation.
+
+**Infrastructure Innovation:** Built by the create-guru agent to demonstrate infrastructure-building capabilities with elegant validation logic and beautiful terminal output.
+
+---
+
 ### 🔍 Issue Assignment Inspector
 
 Inspect GitHub issue assignments to discover custom agent actor IDs for direct API assignment.
