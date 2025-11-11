@@ -281,9 +281,55 @@ export COPILOT_AGENT_PROMPT="$(echo 'Improve documentation' | base64)"
 
 ## Questions for Future Investigation
 
+### Critical Discovery: Job Config Controls Agent Selection
+
+**From analyzing Job ID `1485431-1092617192-e742e379-4adc-43ad-a0fc-80a6435c6528`:**
+
+Key environment variables in the job config:
+```bash
+COPILOT_AGENT_MODEL=sweagent-capi:claude-sonnet-4.5
+COPILOT_AGENT_JOB_ID=1485431-1092617192-e742e379-4adc-43ad-a0fc-80a6435c6528
+COPILOT_AGENT_PROMPT=RG9jIG1hc3RlciB3aGF0IGlzIHlvdXIgYWN0b3JpZD8=  # base64 encoded
+COPILOT_AGENT_ACTION=fix
+COPILOT_AGENT_ACTOR=enufacas
+COPILOT_AGENT_ACTOR_ID=1485431
+```
+
+**Key Finding**: The agent is selected via `COPILOT_AGENT_MODEL` environment variable, NOT by the Git SHA ID.
+
+**Git SHA ID Purpose**: The ID like `6f06482ecff6e52b86c8e5c892844270e50fa628` is for **version tracking** only:
+```
+Using "doc-master" (doc-master 6f06482...) with tools: view, edit, create...
+```
+This tracks which version of `.github/agents/doc-master.md` was active during execution.
+
+### The Missing Link: How to Set COPILOT_AGENT_MODEL
+
+**Problem**: The `COPILOT_AGENT_MODEL` environment variable is set by GitHub Copilot's runtime system, NOT by repository workflows or public API calls.
+
+**Cannot invoke custom agent by ID**: The Git SHA ID is not used for invocation - it's purely for tracking which agent definition version was used.
+
+**Unknown mechanism**: How to programmatically specify `COPILOT_AGENT_MODEL` when creating issue assignments.
+
+**Hypotheses**:
+1. **Label parsing**: Labels like `agent:doc-master` → `COPILOT_AGENT_MODEL=sweagent-capi:doc-master`
+2. **Directive parsing**: Issue body with `@copilot use doc-master` 
+3. **Config file**: Repository `.github/copilot-agents.yml` maps labels/directives to models
+4. **UI selection**: Agent selected via GitHub UI → persists to job config
+5. **GraphQL mutation parameter**: Assignment API may accept agent specification (undocumented)
+6. **Job config creation API**: Separate API endpoint creates job config with `COPILOT_AGENT_MODEL` parameter
+
+**Evidence needed**:
+- Documentation of job config creation API
+- How `COPILOT_AGENT_MODEL` value gets determined
+- API parameters or configuration that controls agent model selection
+- Examples of successfully invoking specific custom agents programmatically
+
+### Other Open Questions
+
 1. **Model Selection**: How exactly does GitHub map agent metadata to `COPILOT_AGENT_MODEL`?
 2. **Tool Configuration**: How are tool restrictions enforced? Can they be customized per agent?
-3. **Actor IDs**: Can custom agents have separate actor IDs, or do they all share the Copilot actor ID?
+3. **Actor IDs**: Can custom agents have separate actor IDs, or do they all share the Copilot actor ID? (ANSWER: They share the same Copilot actor ID - see [Actor ID System](./ACTOR_ID_SYSTEM.md))
 4. **Response Formats**: What other response format expectations exist beyond PR templates?
 5. **Runtime Versions**: How do different `COPILOT_AGENT_RUNTIME_VERSION` values affect behavior?
 
