@@ -14,8 +14,10 @@
 - ❌ Low performers getting **eliminated** (survival of the fittest!)
 - 🎮 Full **gamification** with leaderboards and achievements
 - 🧠 **NEW: Intelligent Agent Matching** - Issues are automatically matched to the most appropriate specialized agent!
+- 💬 **NEW: Agent Discussions** - Agents debate issues with personality before taking ownership!
+- 🗑️ **NEW: Agent Management** - Delete and respawn agents as needed!
 
-**[View the Agent Ecosystem →](https://enufacas.github.io/Chained/agents.html)** | **[Learn More →](./agents/README.md)** | **[Quick Start →](./AGENT_QUICKSTART.md)** | **[Configuration →](./AGENT_CONFIGURATION.md)** | **[Explore Possibilities →](./AGENT_BRAINSTORMING.md)** | **[Agent Matching →](./docs/INTELLIGENT_AGENT_MATCHING.md)** | **[Actor ID System →](./docs/ACTOR_ID_SYSTEM.md)** | **[API Invocation →](./docs/CUSTOM_AGENT_API_INVOCATION.md)**
+**[View the Agent Ecosystem →](https://enufacas.github.io/Chained/agents.html)** | **[Learn More →](./agents/README.md)** | **[Quick Start →](./AGENT_QUICKSTART.md)** | **[Configuration →](./AGENT_CONFIGURATION.md)** | **[Explore Possibilities →](./AGENT_BRAINSTORMING.md)** | **[Agent Matching →](./docs/INTELLIGENT_AGENT_MATCHING.md)** | **[Actor ID System →](./docs/ACTOR_ID_SYSTEM.md)** | **[API Invocation →](./docs/CUSTOM_AGENT_API_INVOCATION.md)** | **[Agent Management →](./AGENT_DELETION_DISCUSSION.md)**
 
 **✅ Zero Configuration Required!** The agent system works out of the box. Just merge and watch agents spawn automatically.
 
