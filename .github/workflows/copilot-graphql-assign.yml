@@ -137,11 +137,48 @@ jobs:
             echo "   Score: $agent_score | Confidence: $agent_confidence"
             echo "   Description: $agent_description"
             
-            # Add copilot-assigned label if not present
+            # Add copilot-assigned label and agent-specific label
             labels=$(gh issue view $issue_number --repo ${{ github.repository }} --json labels --jq '.labels[].name')
             if ! echo "$labels" | grep -q "copilot-assigned"; then
               gh issue edit $issue_number --repo ${{ github.repository }} --add-label "copilot-assigned"
               echo "✓ Added copilot-assigned label to issue #$issue_number"
+            fi
+            
+            # Add agent-specific label to help Copilot identify which custom agent to use
+            agent_label="agent:$matched_agent"
+            if ! echo "$labels" | grep -q "$agent_label"; then
+              # Create label if it doesn't exist (will fail silently if it already exists)
+              gh label create "$agent_label" --repo ${{ github.repository }} --description "Custom agent: $matched_agent" --color "0E8A16" 2>/dev/null || true
+              gh issue edit $issue_number --repo ${{ github.repository }} --add-label "$agent_label"
+              echo "✓ Added $agent_label label to issue #$issue_number"
+            fi
+            
+            # Add agent directive to issue body so Copilot knows which custom agent to use
+            # This is crucial: Copilot reads the issue body when assigned to understand context
+            echo "📝 Adding agent directive to issue body..."
+            issue_body_original=$(gh issue view $issue_number --repo ${{ github.repository }} --json body --jq '.body // ""')
+            
+            # Check if agent directive already exists in the issue body
+            if ! echo "$issue_body_original" | grep -q "<!-- COPILOT_AGENT:"; then
+              # Prepend agent directive to issue body
+              agent_directive="<!-- COPILOT_AGENT:$matched_agent -->
+          
+          > **🤖 Agent Assignment**
+          > 
+          > This issue has been assigned to GitHub Copilot with the **$agent_emoji $matched_agent** custom agent profile.
+          > Please use the specialized approach and tools defined in [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md).
+          
+          ---
+          
+          "
+              # Combine directive with original body
+              new_body="${agent_directive}${issue_body_original}"
+              
+              # Update issue body using gh issue edit
+              echo "$new_body" | gh issue edit $issue_number --repo ${{ github.repository }} --body-file -
+              echo "✓ Added agent directive to issue #$issue_number body"
+            else
+              echo "✓ Agent directive already exists in issue #$issue_number body"
             fi
             
             # Get the issue node ID (required for GraphQL mutation)
@@ -231,7 +268,7 @@ jobs:
               echo "✅ Successfully assigned issue #$issue_number to Copilot"
               success_count=$((success_count + 1))
               
-              # Add success comment with agent matching info
+              # Add success comment with agent matching info and directive for Copilot
               gh issue comment $issue_number --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
           
           GitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.
@@ -245,10 +282,14 @@ jobs:
           - **Match Score**: $agent_score
           - **Description**: $agent_description
           
+          ## 🎯 Copilot Agent Directive
+          
+          @copilot please use the **$matched_agent** custom agent profile from \`.github/agents/${matched_agent}.md\` when working on this issue. Follow the specialized approach, tools, and best practices defined in that agent's configuration.
+          
           The implementation should align with the [$matched_agent agent definition](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md) and its specialized capabilities.
           
           **What happens next:**
-          1. ✅ Copilot will analyze the issue requirements
+          1. ✅ Copilot will analyze the issue requirements using the $matched_agent specialization
           2. 💻 Copilot will create a branch and implement the solution following the $matched_agent approach
           3. 📝 Copilot will open a PR with the implementation
           4. 🔍 Auto-review workflow will validate and merge

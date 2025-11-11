@@ -1,0 +1,214 @@
+name: Debug Custom Agent Actors
+
+on:
+  workflow_dispatch:
+    inputs:
+      verbose:
+        description: 'Enable verbose output'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  debug-actors:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Debug Actor IDs and Custom Agents
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "=================================="
+          echo "🔍 Exploring GitHub Actor IDs"
+          echo "=================================="
+          echo ""
+          echo "Repository: ${{ github.repository }}"
+          echo "Owner: ${{ github.repository_owner }}"
+          echo "Repo Name: ${{ github.event.repository.name }}"
+          echo ""
+          
+          # Step 1: Query ALL suggestedActors
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📋 Step 1: All Suggested Actors"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          gh api graphql -f query='
+            query($owner: String!, $repo: String!) {
+              repository(owner: $owner, name: $repo) {
+                suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
+                  nodes {
+                    login
+                    __typename
+                    ... on Bot { 
+                      id
+                      databaseId
+                      url
+                    }
+                    ... on User { 
+                      id
+                      databaseId
+                      url
+                    }
+                  }
+                }
+              }
+            }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" | jq '.data.repository.suggestedActors.nodes[] | {login, type: .__typename, id}'
+          
+          echo ""
+          
+          # Step 2: Filter for Copilot-like actors
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🤖 Step 2: Copilot-Related Actors"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          copilot_actors=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!) {
+              repository(owner: $owner, name: $repo) {
+                suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
+                  nodes {
+                    login
+                    __typename
+                    ... on Bot { id }
+                    ... on User { id }
+                  }
+                }
+              }
+            }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" | jq '.data.repository.suggestedActors.nodes[] | select(.login | test("copilot"; "i"))')
+          
+          if [ -n "$copilot_actors" ]; then
+            echo "$copilot_actors" | jq -s '.'
+          else
+            echo "❌ No Copilot actors found"
+          fi
+          
+          echo ""
+          
+          # Step 3: List custom agent files
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📁 Step 3: Custom Agent Files"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          agent_count=0
+          for agent_file in .github/agents/*.md; do
+            if [[ $(basename "$agent_file") != "README.md" ]]; then
+              agent_name=$(basename "$agent_file" .md)
+              echo "  ✓ $agent_name"
+              agent_count=$((agent_count + 1))
+            fi
+          done
+          echo ""
+          echo "Total custom agents: $agent_count"
+          
+          echo ""
+          
+          # Step 4: Search for each custom agent as an actor
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🔎 Step 4: Custom Agents as Actors"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          found_count=0
+          not_found_count=0
+          
+          for agent_file in .github/agents/*.md; do
+            if [[ $(basename "$agent_file") != "README.md" ]]; then
+              agent_name=$(basename "$agent_file" .md)
+              
+              # Try exact match
+              result=$(gh api graphql -f query='
+                query($owner: String!, $repo: String!) {
+                  repository(owner: $owner, name: $repo) {
+                    suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
+                      nodes {
+                        login
+                        __typename
+                        ... on Bot { id }
+                        ... on User { id }
+                      }
+                    }
+                  }
+                }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" | jq -r ".data.repository.suggestedActors.nodes[] | select(.login == \"$agent_name\") | \"  ✅ \" + .login + \" (\" + .__typename + \"): \" + .id")
+              
+              if [ -n "$result" ]; then
+                echo "$result"
+                found_count=$((found_count + 1))
+              else
+                echo "  ❌ $agent_name - not found as actor"
+                not_found_count=$((not_found_count + 1))
+              fi
+            fi
+          done
+          
+          echo ""
+          echo "Summary: $found_count found, $not_found_count not found"
+          
+          echo ""
+          
+          # Step 5: Try alternative searches
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🔬 Step 5: Alternative Searches"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          # Search for bots with 'agent' in the name
+          echo "Searching for bots with 'agent' in name:"
+          agent_bots=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!) {
+              repository(owner: $owner, name: $repo) {
+                suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
+                  nodes {
+                    login
+                    __typename
+                    ... on Bot { id }
+                    ... on User { id }
+                  }
+                }
+              }
+            }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" | jq '.data.repository.suggestedActors.nodes[] | select(.login | test("agent"; "i"))')
+          
+          if [ -n "$agent_bots" ]; then
+            echo "$agent_bots" | jq -s '.'
+          else
+            echo "  None found"
+          fi
+          
+          echo ""
+          
+          # Check if we can query Copilot's actor directly
+          echo "Attempting to query Copilot bot details:"
+          gh api /users/github-copilot 2>/dev/null | jq '{login, id, node_id, type}' || echo "  Could not retrieve Copilot user info"
+          
+          echo ""
+          
+          # Step 6: Summary and conclusions
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📊 Step 6: Analysis & Conclusions"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Key Findings:"
+          echo "1. Custom agent files exist in .github/agents/"
+          echo "2. Custom agents are ${found_count:-0} out of ${agent_count:-0} found as actors in suggestedActors"
+          echo "3. This ${found_count:-0} > 0 && echo 'CONFIRMS' || echo 'SUGGESTS') that custom agents ${found_count:-0} > 0 && echo 'DO have' || echo 'DO NOT have') separate actor IDs"
+          echo ""
+          
+          if [ "${found_count:-0}" -gt 0 ]; then
+            echo "✅ BREAKTHROUGH: Custom agents have actor IDs!"
+            echo "   We can potentially assign to specific agents via API using their actor IDs."
+            echo ""
+            echo "   Next steps:"
+            echo "   - Update workflow to use custom agent actor IDs"
+            echo "   - Remove workaround directives"
+            echo "   - Assign directly to the matched agent's actor ID"
+          else
+            echo "❌ CONFIRMED: Custom agents do NOT have separate actor IDs"
+            echo "   Custom agents are profiles/configs, not separate actors."
+            echo ""
+            echo "   This means:"
+            echo "   - We can only assign to the generic Copilot bot"
+            echo "   - Agent selection must be communicated through other means"
+            echo "   - Current workaround approach (directives) is necessary"
+          fi
+          
+          echo ""
+          echo "=================================="
+          echo "Debug exploration complete!"
+          echo "=================================="
