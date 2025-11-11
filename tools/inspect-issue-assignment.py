@@ -53,26 +53,9 @@ def get_issue_details(owner, repo, issue_number):
           updatedAt
           assignees(first: 10) {
             nodes {
-              __typename
-              ... on User {
-                login
-                id
-                url
-              }
-              ... on Bot {
-                login
-                id
-                url
-              }
-              ... on Mannequin {
-                login
-                id
-              }
-              ... on Organization {
-                login
-                id
-                url
-              }
+              login
+              id
+              url
             }
           }
           timelineItems(first: 100, itemTypes: [ASSIGNED_EVENT, UNASSIGNED_EVENT]) {
@@ -82,22 +65,7 @@ def get_issue_details(owner, repo, issue_number):
                 id
                 createdAt
                 assignee {
-                  __typename
                   ... on User {
-                    login
-                    id
-                    url
-                  }
-                  ... on Bot {
-                    login
-                    id
-                    url
-                  }
-                  ... on Mannequin {
-                    login
-                    id
-                  }
-                  ... on Organization {
                     login
                     id
                     url
@@ -111,20 +79,7 @@ def get_issue_details(owner, repo, issue_number):
                 id
                 createdAt
                 assignee {
-                  __typename
                   ... on User {
-                    login
-                    id
-                  }
-                  ... on Bot {
-                    login
-                    id
-                  }
-                  ... on Mannequin {
-                    login
-                    id
-                  }
-                  ... on Organization {
                     login
                     id
                   }
@@ -224,17 +179,13 @@ def main():
     else:
         for assignee in assignees:
             print(f"\n✅ {assignee['login']}")
-            print(f"   Type: {assignee['__typename']}")
             print(f"   Actor ID: {assignee['id']}")
             print(f"   URL: {assignee.get('url', 'N/A')}")
             
             # Check if this looks like a custom agent
-            if 'copilot' not in assignee['login'].lower() and assignee['__typename'] == 'Bot':
+            if 'copilot' not in assignee['login'].lower() and '-' in assignee['login']:
                 print(f"   🎯 POSSIBLE CUSTOM AGENT DETECTED!")
                 print(f"   Login '{assignee['login']}' might be a custom agent name")
-            elif '-' in assignee['login'] and assignee['__typename'] == 'Bot':
-                print(f"   🎯 CUSTOM AGENT FORMAT DETECTED!")
-                print(f"   Login pattern matches custom agent naming (contains hyphen)")
     
     print()
     
@@ -265,7 +216,6 @@ def main():
             
             if assignee:
                 print(f"   Assignee: {assignee.get('login', 'Unknown')}")
-                print(f"   Assignee Type: {assignee.get('__typename', 'Unknown')}")
                 print(f"   Assignee ID: {assignee.get('id', 'N/A')}")
                 
                 # Detect custom agent patterns
@@ -287,7 +237,7 @@ def main():
     custom_agent_logins = []
     for assignee in assignees:
         login = assignee.get('login', '')
-        if login and login not in ['github-copilot', 'copilot'] and assignee['__typename'] == 'Bot':
+        if login and login not in ['github-copilot', 'copilot'] and '-' in login:
             custom_agent_logins.append({
                 'login': login,
                 'id': assignee['id'],
@@ -306,10 +256,10 @@ def main():
         print()
         print("💡 KEY INSIGHTS:")
         print()
-        print("1. Custom agents HAVE separate actor IDs in the GitHub API")
-        print("2. When assigned via UI, they appear as Bot type assignees")
-        print("3. Their login matches the agent name (e.g., 'bug-hunter')")
-        print("4. We CAN use these actor IDs for programmatic assignment!")
+        print("1. Custom agents appear as User assignees in the GitHub API")
+        print("2. When assigned via UI, their login matches the agent name (e.g., 'bug-hunter')")
+        print("3. They have actor IDs that can be used for programmatic assignment")
+        print("4. We CAN use these actor IDs for direct assignment!")
         print()
         print("📋 To use this for API assignment:")
         print()

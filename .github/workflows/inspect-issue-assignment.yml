@@ -53,26 +53,9 @@ jobs:
                 issue(number: $number) {
                   assignees(first: 10) {
                     nodes {
-                      __typename
-                      ... on User {
-                        login
-                        id
-                        url
-                      }
-                      ... on Bot {
-                        login
-                        id
-                        url
-                      }
-                      ... on Mannequin {
-                        login
-                        id
-                      }
-                      ... on Organization {
-                        login
-                        id
-                        url
-                      }
+                      login
+                      id
+                      url
                     }
                   }
                 }
@@ -92,23 +75,8 @@ jobs:
                 issue(number: $number) {
                   assignees(first: 10) {
                     nodes {
-                      __typename
-                      ... on User {
-                        login
-                        id
-                      }
-                      ... on Bot {
-                        login
-                        id
-                      }
-                      ... on Mannequin {
-                        login
-                        id
-                      }
-                      ... on Organization {
-                        login
-                        id
-                      }
+                      login
+                      id
                     }
                   }
                 }
@@ -116,15 +84,15 @@ jobs:
             }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" -F number=${{ inputs.issue_number }})
           
           echo "$assignees_json" | jq -r '.data.repository.issue.assignees.nodes[] | 
-            select(.login != "github-copilot" and .login != "copilot" and .__typename == "Bot") | 
+            select(.login != "github-copilot" and .login != "copilot" and (.login | contains("-"))) | 
             "🎯 CUSTOM AGENT FOUND: " + .login + " (Actor ID: " + .id + ")"'
           
           # Store the custom agent info if found
           custom_agent_login=$(echo "$assignees_json" | jq -r '.data.repository.issue.assignees.nodes[] | 
-            select(.login != "github-copilot" and .login != "copilot" and .__typename == "Bot") | .login' | head -1)
+            select(.login != "github-copilot" and .login != "copilot" and (.login | contains("-"))) | .login' | head -1)
           
           custom_agent_id=$(echo "$assignees_json" | jq -r '.data.repository.issue.assignees.nodes[] | 
-            select(.login != "github-copilot" and .login != "copilot" and .__typename == "Bot") | .id' | head -1)
+            select(.login != "github-copilot" and .login != "copilot" and (.login | contains("-"))) | .id' | head -1)
           
           if [ -n "$custom_agent_login" ] && [ -n "$custom_agent_id" ]; then
             echo ""
