@@ -106,10 +106,24 @@ This directory follows the official GitHub Copilot custom agents convention:
 ✅ Custom instructions in Markdown body  
 ✅ Committed to the default branch for availability
 
+## Agent Environment Setup
+
+The development environment for Copilot agents is customized via `.github/workflows/copilot-setup-steps.yml`. This workflow:
+
+- 🐍 Sets up Python 3.x for running tests
+- 📦 Installs dependencies from `requirements.txt`
+- 🔧 Makes scripts executable
+- ✅ Verifies the setup is complete
+
+This ensures agents have all necessary tools and dependencies available before they start working, improving efficiency and reducing setup time.
+
+**Learn more**: [Customizing the agent environment](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment)
+
 ## Documentation
 
 - [GitHub Docs: Custom agents configuration](https://docs.github.com/en/copilot/reference/custom-agents-configuration)
 - [GitHub Docs: Creating custom agents](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents)
+- [GitHub Docs: Customizing the agent environment](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment)
 - [Agent System Overview](../../agents/README.md) - Full autonomous agent system documentation
 
 ---
