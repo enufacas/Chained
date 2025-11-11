@@ -184,6 +184,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1762902920",
+      "name": "\ud83d\udcad Barbara Liskov",
+      "human_name": "Barbara Liskov",
+      "specialization": "coach-master",
+      "status": "active",
+      "spawned_at": "2025-11-11T23:15:20.369973Z",
+      "personality": "principled and guiding, but more direct",
+      "communication_style": "mentors through example",
+      "traits": {
+        "creativity": 60,
+        "caution": 60,
+        "speed": 45
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],
@@ -202,7 +225,7 @@
     "spawn_mode": "mixed",
     "new_agent_probability": 0.5
   },
-  "last_spawn": "2025-11-11T22:52:18.015078Z",
+  "last_spawn": "2025-11-11T23:15:20.370016Z",
   "last_evaluation": "2025-11-11T22:06:38.458743Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
