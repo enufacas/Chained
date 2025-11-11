@@ -1,6 +1,27 @@
 {
   "version": "2.0.0",
-  "agents": [],
+  "agents": [
+    {
+      "id": "agent-1762824870",
+      "name": "\ud83d\udd17 Omega-1111",
+      "specialization": "coordinate-wizard",
+      "status": "active",
+      "spawned_at": "2025-11-11T01:34:30.671088Z",
+      "traits": {
+        "creativity": 56,
+        "caution": 43,
+        "speed": 54
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    }
+  ],
   "hall_of_fame": [],
   "system_lead": null,
   "config": {
@@ -17,7 +38,7 @@
     "spawn_mode": "mixed",
     "new_agent_probability": 0.5
   },
-  "last_spawn": null,
+  "last_spawn": "2025-11-11T01:34:30.671120Z",
   "last_evaluation": null,
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
