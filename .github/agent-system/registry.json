@@ -184,6 +184,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1762902920",
+      "name": "\ud83d\udcad Barbara Liskov",
+      "human_name": "Barbara Liskov",
+      "specialization": "coach-master",
+      "status": "active",
+      "spawned_at": "2025-11-11T23:16:12.000Z",
+      "personality": "principled and guiding, but more direct",
+      "communication_style": "mentors through example",
+      "traits": {
+        "creativity": 70,
+        "caution": 85,
+        "speed": 75
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],

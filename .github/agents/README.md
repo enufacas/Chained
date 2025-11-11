@@ -94,6 +94,9 @@ Specialized in teaching tutorials. Focuses on documentation, comments, and guide
 ### 📖 [support-master.md](./support-master.md)
 Specialized in supporting skill building. Inspired by Barbara Liskov - principled and guiding. Focuses on code reviews, best practices, and knowledge sharing.
 
+### 💭 [coach-master.md](./coach-master.md)
+Specialized in coaching team development. Inspired by Barbara Liskov - principled and guiding, but more direct. Focuses on code reviews, best practices, and knowledge sharing.
+
 ### 🔧 [coordinate-wizard.md](./coordinate-wizard.md)
 Specialized in coordinating APIs. Focuses on integrations, APIs, and services.
 
