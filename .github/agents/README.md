@@ -67,6 +67,9 @@ Specialized in creating and maintaining documentation. Focuses on clarity, acces
 ### ⚡ [performance-optimizer.md](./performance-optimizer.md)
 Specialized in optimizing code performance. Focuses on speed, efficiency, and resource optimization.
 
+### 📈 [accelerate-master.md](./accelerate-master.md)
+Specialized in accelerating algorithms. Inspired by Rich Hickey - thoughtful and deliberate, but more direct. Focuses on performance, efficiency, and resource usage.
+
 ### 🛡️ [security-guardian.md](./security-guardian.md)
 Specialized in identifying and fixing security vulnerabilities. Focuses on protecting the codebase and security best practices.
 
