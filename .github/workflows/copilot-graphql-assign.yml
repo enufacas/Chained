@@ -193,9 +193,14 @@ jobs:
             
             echo "📍 Issue node ID: $issue_node_id"
             
-            # Get Copilot's actor ID from the repository's suggested actors
-            echo "🔍 Fetching Copilot actor ID..."
-            copilot_actor_id=$(gh api graphql -f query='
+            # 🎯 NEW: Try to find custom agent actor ID first
+            echo ""
+            echo "🔍 Step 1: Searching for custom agent actor ID..."
+            echo "   Agent: $matched_agent"
+            echo "   Path: .github/agents/${matched_agent}.md"
+            
+            # Query all suggested actors and look for custom agent match
+            all_actors=$(gh api graphql -f query='
               query($owner: String!, $repo: String!) {
                 repository(owner: $owner, name: $repo) {
                   suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
@@ -207,14 +212,35 @@ jobs:
                     }
                   }
                 }
-              }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" | jq -r '.data.repository.suggestedActors.nodes[] | select(.login | test("copilot"; "i")) | .id' | head -1)
+              }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}")
             
-            if [ -z "$copilot_actor_id" ]; then
-              echo "❌ Could not find Copilot actor ID in suggested actors"
-              echo "ℹ️  Copilot may not be enabled for this repository"
-              failed_count=$((failed_count + 1))
+            # Log all actors for debugging
+            echo "   Available actors in repository:"
+            echo "$all_actors" | jq -r '.data.repository.suggestedActors.nodes[] | "     - \(.login) (\(.__typename)): \(.id)"'
+            
+            # Try to find custom agent by exact name match
+            custom_agent_actor_id=$(echo "$all_actors" | jq -r ".data.repository.suggestedActors.nodes[] | select(.login == \"$matched_agent\") | .id")
+            
+            if [ -n "$custom_agent_actor_id" ]; then
+              echo "   ✅ Found custom agent actor ID: $custom_agent_actor_id"
+              echo "   🎯 Will assign directly to custom agent: $matched_agent"
+              target_actor_id="$custom_agent_actor_id"
+              target_actor_name="$matched_agent"
+              assignment_method="direct-custom-agent"
+            else
+              echo "   ℹ️  Custom agent '$matched_agent' not found as separate actor"
+              echo ""
+              echo "🔍 Step 2: Falling back to generic Copilot actor..."
               
-              gh issue comment $issue_number --repo ${{ github.repository }} --body "⚠️ **Copilot Not Available**
+              # Get Copilot's actor ID from the repository's suggested actors
+              copilot_actor_id=$(echo "$all_actors" | jq -r '.data.repository.suggestedActors.nodes[] | select(.login | test("copilot"; "i")) | .id' | head -1)
+              
+              if [ -z "$copilot_actor_id" ]; then
+                echo "   ❌ Could not find Copilot actor ID in suggested actors"
+                echo "   ℹ️  Copilot may not be enabled for this repository"
+                failed_count=$((failed_count + 1))
+              
+                gh issue comment $issue_number --repo ${{ github.repository }} --body "⚠️ **Copilot Not Available**
           
           Could not find GitHub Copilot in the list of available assignees for this repository.
           
@@ -236,15 +262,29 @@ jobs:
           
           ---
           *🤖 Automated check via GitHub GraphQL API - See https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr*"
-              continue
+                continue
+              fi
+              
+              echo "   ✅ Found generic Copilot actor ID: $copilot_actor_id"
+              echo "   ℹ️  Will assign to Copilot (agent selection via directives)"
+              target_actor_id="$copilot_actor_id"
+              target_actor_name="github-copilot"
+              assignment_method="generic-with-directives"
             fi
             
-            echo "📍 Copilot actor ID: $copilot_actor_id"
+            # Log assignment details
+            echo ""
+            echo "📋 Assignment Details:"
+            echo "   Target Actor: $target_actor_name"
+            echo "   Actor ID: $target_actor_id"
+            echo "   Method: $assignment_method"
+            echo "   Agent Path: .github/agents/${matched_agent}.md"
             
-            # Assign issue to Copilot using GraphQL API
-            echo "🤖 Assigning issue #$issue_number to Copilot via GraphQL API..."
+            # Assign issue using GraphQL API
+            echo ""
+            echo "🤖 Assigning issue #$issue_number via GraphQL API..."
             
-            # Use GraphQL mutation to assign Copilot (this is the official method per GitHub docs)
+            # Use GraphQL mutation to assign (this is the official method per GitHub docs)
             mutation_result=$(gh api graphql -f query='
               mutation($issueId: ID!, $actorId: ID!) {
                 replaceActorsForAssignable(input: {
@@ -262,17 +302,27 @@ jobs:
                     }
                   }
                 }
-              }' -f issueId="$issue_node_id" -f actorId="$copilot_actor_id" 2>&1)
+              }' -f issueId="$issue_node_id" -f actorId="$target_actor_id" 2>&1)
             
             if echo "$mutation_result" | jq -e '.data.replaceActorsForAssignable.assignable' > /dev/null 2>&1; then
-              echo "✅ Successfully assigned issue #$issue_number to Copilot"
+              echo "✅ Successfully assigned issue #$issue_number"
               success_count=$((success_count + 1))
               
-              # Add success comment with agent matching info and directive for Copilot
-              gh issue comment $issue_number --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
+              # Build success message based on assignment method
+              if [ "$assignment_method" = "direct-custom-agent" ]; then
+                assignment_details="
+          ## 🎯 Direct Custom Agent Assignment
           
-          GitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.
+          **SUCCESS!** This issue was assigned directly to the custom agent actor:
           
+          - **Custom Agent**: $agent_emoji $matched_agent
+          - **Actor ID**: \`$target_actor_id\`
+          - **Agent Path**: [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md)
+          - **Assignment Method**: Direct API assignment to custom agent actor
+          
+          The custom agent has its own actor ID in the GitHub API, allowing direct assignment without directives."
+              else
+                assignment_details="
           ## 🧠 Intelligent Agent Matching
           
           This issue has been analyzed and matched to the **$agent_emoji $matched_agent** specialization:
@@ -281,12 +331,21 @@ jobs:
           - **Match Confidence**: $agent_confidence
           - **Match Score**: $agent_score
           - **Description**: $agent_description
+          - **Agent Path**: [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md)
+          - **Assignment Method**: Generic Copilot with agent directives
           
           ## 🎯 Copilot Agent Directive
           
           @copilot please use the **$matched_agent** custom agent profile from \`.github/agents/${matched_agent}.md\` when working on this issue. Follow the specialized approach, tools, and best practices defined in that agent's configuration.
           
-          The implementation should align with the [$matched_agent agent definition](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md) and its specialized capabilities.
+          The implementation should align with the [$matched_agent agent definition](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md) and its specialized capabilities."
+              fi
+              
+              # Add success comment with agent matching info
+              gh issue comment $issue_number --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
+          
+          GitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.
+          $assignment_details
           
           **What happens next:**
           1. ✅ Copilot will analyze the issue requirements using the $matched_agent specialization
@@ -299,9 +358,9 @@ jobs:
           **Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           
           ---
-          *🤖 Automated via intelligent agent matching + GitHub GraphQL API - True autonomous operation!*"
+          *🤖 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*"
             else
-              echo "❌ Failed to assign issue #$issue_number to Copilot"
+              echo "❌ Failed to assign issue #$issue_number"
               echo "Error details: $mutation_result"
               failed_count=$((failed_count + 1))
               
@@ -312,7 +371,10 @@ jobs:
           
           **API Method Used:**
           - GraphQL mutation: \`replaceActorsForAssignable\`
-          - Actor ID: \`$copilot_actor_id\`
+          - Target Actor: \`$target_actor_name\`
+          - Actor ID: \`$target_actor_id\`
+          - Assignment Method: \`$assignment_method\`
+          - Agent Path: \`.github/agents/${matched_agent}.md\`
           
           **Most Common Cause:**
           This workflow is using the default \`GITHUB_TOKEN\` which cannot assign Copilot due to licensing restrictions. A Personal Access Token (PAT) is required.

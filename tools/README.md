@@ -4,6 +4,53 @@ A collection of intelligent development tools for the Chained autonomous AI syst
 
 ## Available Tools
 
+### 🔍 Issue Assignment Inspector
+
+Inspect GitHub issue assignments to discover custom agent actor IDs for direct API assignment.
+
+**Purpose:** When you assign a custom agent via the GitHub UI, this tool examines the assignment through the API to discover the agent's actor ID, which can then be used for programmatic assignment.
+
+**Quick Start:**
+```bash
+# Inspect a specific issue's assignment history
+export GH_TOKEN="your_github_token"
+python3 tools/inspect-issue-assignment.py enufacas Chained 42
+```
+
+**What It Shows:**
+- Current assignees with their actor IDs and types
+- Assignment timeline (who assigned what, when)
+- Detection of custom agents vs generic Copilot
+- Actor IDs that can be used for direct API assignment
+- Actionable insights for enabling direct assignment
+
+**Use Case:** You assigned bug-hunter agent via UI to an issue. Run this tool to see the actor ID that was used, then use that ID for future programmatic assignments.
+
+---
+
+### 📋 Agent Actor ID Lister
+
+List all custom agents and their corresponding actor IDs from the GitHub API.
+
+**Purpose:** Query the GitHub API to see which custom agents have separate actor IDs that can be used for direct assignment.
+
+**Quick Start:**
+```bash
+# List all agents and their actor IDs
+export GH_TOKEN="your_github_token"
+python3 tools/list-agent-actor-ids.py enufacas Chained
+```
+
+**What It Shows:**
+- All custom agents found in `.github/agents/`
+- Which agents have actor IDs in the GitHub API
+- Actor ID mapping for each agent
+- Summary of direct assignment capabilities
+
+**Use Case:** Quickly see all available custom agents and which ones can be directly assigned via API.
+
+---
+
 ### 🏛️ AI Code Archaeologist
 
 An intelligent tool that analyzes git history to document legacy decisions, architectural evolution, and technical debt.
