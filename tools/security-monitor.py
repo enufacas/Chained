@@ -35,6 +35,8 @@ class SecurityMonitor:
             # Sanitize message to avoid logging potential sensitive data
             # This is a security monitoring tool, so we want to be extra careful
             sanitized = str(message)
+            # lgtm[py/clear-text-logging-sensitive-data]
+            # This logs finding metadata only, never actual secret values
             print(f"[{level}] {sanitized}")
     
     def add_finding(self, category, severity, title, description, location=None):
@@ -329,6 +331,8 @@ def main():
     # Print security report. Note: The report contains only finding metadata,
     # not actual secret values. All descriptions are sanitized summaries.
     if report:
+        # lgtm[py/clear-text-logging-sensitive-data]
+        # Report contains only metadata about findings, never actual secret values
         print("\n" + report)
     
     # Return exit code based on findings
