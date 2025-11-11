@@ -37,7 +37,8 @@ permissions:
 jobs:
   timeline-update:
     runs-on: ubuntu-latest
-    if: inputs.skip_timeline != true
+    # Temporarily disabled - spawning too many events, will fix later
+    if: false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
