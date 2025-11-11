@@ -305,6 +305,14 @@ jobs:
               echo ""
               echo "🔧 Attempting CLI-based assignment using 'gh agent-task create'..."
               
+              # Authenticate gh CLI for OAuth operations required by agent-task
+              echo "   Authenticating gh CLI with token..."
+              if echo "$GH_TOKEN" | gh auth login --with-token 2>&1; then
+                echo "   ✅ gh CLI authenticated successfully"
+              else
+                echo "   ⚠️ gh auth login failed, CLI assignment may not work"
+              fi
+              
               # Build task description with custom agent directive
               # Following GitHub's documentation for custom agent specification in CLI
               # See: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-copilot-cli#use-custom-agents
