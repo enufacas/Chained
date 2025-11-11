@@ -11,77 +11,159 @@ import yaml
 import re
 from pathlib import Path
 
+# Import validation utilities
+try:
+    from validation_utils import (
+        ValidationError,
+        validate_agent_name,
+        validate_file_path,
+        safe_file_read
+    )
+except ImportError:
+    # Fallback if validation_utils is not available
+    class ValidationError(Exception):
+        pass
+    def validate_agent_name(name):
+        return name
+    def validate_file_path(path, base=None):
+        return Path(path)
+    def safe_file_read(path, encoding='utf-8'):
+        with open(path, 'r', encoding=encoding) as f:
+            return f.read()
+
 AGENTS_DIR = Path(".github/agents")
 
 def parse_agent_file(filepath):
-    """Parse an agent markdown file and extract frontmatter and content."""
-    with open(filepath, 'r', encoding='utf-8') as f:
-        content = f.read()
+    """
+    Parse an agent markdown file and extract frontmatter and content.
     
-    # Extract YAML frontmatter
-    frontmatter_match = re.match(r'^---\n(.*?)\n---\n(.*)$', content, re.DOTALL)
-    if not frontmatter_match:
-        return None
-    
-    frontmatter_str = frontmatter_match.group(1)
-    body = frontmatter_match.group(2).strip()
-    
+    Args:
+        filepath: Path to the agent markdown file
+        
+    Returns:
+        Dict with agent information, or None if parsing fails
+    """
     try:
-        frontmatter = yaml.safe_load(frontmatter_str)
-    except yaml.YAMLError:
+        # Validate filepath to prevent path traversal
+        filepath = validate_file_path(filepath, AGENTS_DIR.resolve())
+        
+        # Read file safely
+        content = safe_file_read(filepath)
+        
+        # Extract YAML frontmatter
+        frontmatter_match = re.match(r'^---\n(.*?)\n---\n(.*)$', content, re.DOTALL)
+        if not frontmatter_match:
+            return None
+        
+        frontmatter_str = frontmatter_match.group(1)
+        body = frontmatter_match.group(2).strip()
+        
+        try:
+            frontmatter = yaml.safe_load(frontmatter_str)
+        except yaml.YAMLError:
+            return None
+        
+        # Validate that frontmatter is a dict
+        if not isinstance(frontmatter, dict):
+            return None
+        
+        # Extract emoji from body if present
+        emoji_match = re.search(r'^#\s*([^\s]+)\s+', body)
+        emoji = emoji_match.group(1) if emoji_match else ""
+        
+        # Extract mission statement (first paragraph or section after Core Responsibilities)
+        mission_match = re.search(r'##\s+Core Responsibilities\s*\n\n1\.\s+\*\*([^:]+):\*\*\s+([^\n]+)', body)
+        if mission_match:
+            mission = mission_match.group(2)
+        else:
+            # Fallback: use description
+            mission = frontmatter.get('description', '')
+        
+        return {
+            'name': frontmatter.get('name', ''),
+            'description': frontmatter.get('description', ''),
+            'tools': frontmatter.get('tools', []),
+            'emoji': emoji,
+            'mission': mission,
+            'body': body
+        }
+    except (ValidationError, IOError, OSError, UnicodeDecodeError) as e:
+        # Handle file reading errors gracefully
         return None
-    
-    # Extract emoji from body if present
-    emoji_match = re.search(r'^#\s*([^\s]+)\s+', body)
-    emoji = emoji_match.group(1) if emoji_match else ""
-    
-    # Extract mission statement (first paragraph or section after Core Responsibilities)
-    mission_match = re.search(r'##\s+Core Responsibilities\s*\n\n1\.\s+\*\*([^:]+):\*\*\s+([^\n]+)', body)
-    if mission_match:
-        mission = mission_match.group(2)
-    else:
-        # Fallback: use description
-        mission = frontmatter.get('description', '')
-    
-    return {
-        'name': frontmatter.get('name', ''),
-        'description': frontmatter.get('description', ''),
-        'tools': frontmatter.get('tools', []),
-        'emoji': emoji,
-        'mission': mission,
-        'body': body
-    }
+    except Exception as e:
+        # Catch any other unexpected errors
+        return None
 
 def list_agents():
-    """List all agent names from .github/agents/."""
+    """
+    List all agent names from .github/agents/.
+    
+    Returns:
+        Sorted list of agent names
+    """
     agents = []
     if not AGENTS_DIR.exists():
         return agents
     
-    for filepath in AGENTS_DIR.glob("*.md"):
-        if filepath.name == "README.md":
-            continue
-        agent_info = parse_agent_file(filepath)
-        if agent_info and agent_info['name']:
-            agents.append(agent_info['name'])
+    try:
+        for filepath in AGENTS_DIR.glob("*.md"):
+            if filepath.name == "README.md":
+                continue
+            agent_info = parse_agent_file(filepath)
+            if agent_info and agent_info['name']:
+                agents.append(agent_info['name'])
+    except Exception:
+        # Handle any errors gracefully
+        pass
     
     return sorted(agents)
 
 def get_agent_info(agent_name):
-    """Get full information about a specific agent."""
-    filepath = AGENTS_DIR / f"{agent_name}.md"
-    if not filepath.exists():
-        return None
+    """
+    Get full information about a specific agent.
     
-    return parse_agent_file(filepath)
+    Args:
+        agent_name: Name of the agent (validated for security)
+        
+    Returns:
+        Dict with agent information, or None if not found
+    """
+    try:
+        # Validate agent_name to prevent path traversal
+        agent_name = validate_agent_name(agent_name)
+        
+        filepath = AGENTS_DIR / f"{agent_name}.md"
+        if not filepath.exists():
+            return None
+        
+        return parse_agent_file(filepath)
+    except ValidationError:
+        # Invalid agent name
+        return None
 
 def get_agent_emoji(agent_name):
-    """Get the emoji for a specific agent."""
+    """
+    Get the emoji for a specific agent.
+    
+    Args:
+        agent_name: Name of the agent (validated for security)
+        
+    Returns:
+        Agent emoji string, or empty string if not found
+    """
     info = get_agent_info(agent_name)
     return info['emoji'] if info else ""
 
 def get_agent_mission(agent_name):
-    """Get the mission statement for a specific agent."""
+    """
+    Get the mission statement for a specific agent.
+    
+    Args:
+        agent_name: Name of the agent (validated for security)
+        
+    Returns:
+        Agent mission string, or empty string if not found
+    """
     info = get_agent_info(agent_name)
     return info['mission'] if info else ""
 

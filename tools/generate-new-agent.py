@@ -11,6 +11,32 @@ import random
 from pathlib import Path
 from datetime import datetime
 
+# Import validation utilities
+try:
+    from validation_utils import (
+        ValidationError,
+        validate_agent_name,
+        validate_non_empty_string,
+        safe_file_write
+    )
+except ImportError:
+    # Fallback if validation_utils is not available
+    class ValidationError(Exception):
+        pass
+    def validate_agent_name(name):
+        if not name or not isinstance(name, str):
+            raise ValidationError("Invalid agent name")
+        return name
+    def validate_non_empty_string(s, field="value"):
+        if not s or not isinstance(s, str):
+            raise ValidationError(f"Invalid {field}")
+        return s
+    def safe_file_write(path, content, encoding='utf-8', create_dirs=False):
+        if create_dirs:
+            Path(path).parent.mkdir(parents=True, exist_ok=True)
+        with open(path, 'w', encoding=encoding) as f:
+            f.write(content)
+
 AGENTS_DIR = Path(".github/agents")
 
 # Agent archetype templates for generating new specialized agents
@@ -169,37 +195,59 @@ def generate_random_agent():
     }
 
 def create_agent_file(agent_info):
-    """Create a convention-compliant agent file."""
-    filename = AGENTS_DIR / f"{agent_info['name']}.md"
+    """
+    Create a convention-compliant agent file.
     
-    # Check if agent already exists
-    if filename.exists():
-        return False, f"Agent {agent_info['name']} already exists"
-    
-    # Create the agent file content
-    content = f"""---
-name: {agent_info['name']}
+    Args:
+        agent_info: Dictionary containing agent information
+        
+    Returns:
+        Tuple of (success: bool, message: str)
+    """
+    try:
+        # Validate agent name
+        agent_name = validate_agent_name(agent_info['name'])
+        
+        # Validate required fields
+        validate_non_empty_string(agent_info.get('description', ''), 'description')
+        validate_non_empty_string(agent_info.get('emoji', ''), 'emoji')
+        
+        filename = AGENTS_DIR / f"{agent_name}.md"
+        
+        # Check if agent already exists
+        if filename.exists():
+            return False, f"Agent {agent_name} already exists"
+        
+        # Validate tools list
+        if not isinstance(agent_info.get('tools', []), list):
+            return False, "Agent tools must be a list"
+        
+        # Create the agent file content
+        content = f"""---
+name: {agent_name}
 description: "{agent_info['description']}"
 tools:
 """
-    
-    for tool in agent_info['tools']:
-        content += f"  - {tool}\n"
-    
-    content += f"""---
+        
+        for tool in agent_info['tools']:
+            # Validate each tool name
+            tool_str = validate_non_empty_string(str(tool), 'tool')
+            content += f"  - {tool_str}\n"
+        
+        content += f"""---
 
-# {agent_info['emoji']} {agent_info['name'].replace('-', ' ').title()} Agent
+# {agent_info['emoji']} {agent_name.replace('-', ' ').title()} Agent
 
-You are a specialized {agent_info['name'].replace('-', ' ').title()} agent, part of the Chained autonomous AI ecosystem. {agent_info['mission']}
+You are a specialized {agent_name.replace('-', ' ').title()} agent, part of the Chained autonomous AI ecosystem. {agent_info['mission']}
 
 ## Core Responsibilities
 
 """
-    
-    for i, responsibility in enumerate(agent_info['responsibilities'], 1):
-        content += f"{i}. {responsibility}\n"
-    
-    content += f"""
+        
+        for i, responsibility in enumerate(agent_info['responsibilities'], 1):
+            content += f"{i}. {responsibility}\n"
+        
+        content += f"""
 
 ## Approach
 
@@ -233,13 +281,16 @@ Maintain a score above 30% to continue contributing, and strive for 85%+ to earn
 
 *Born from the evolutionary agent ecosystem, ready to make an impact.*
 """
+        
+        # Write the file safely
+        safe_file_write(filename, content, create_dirs=True)
+        
+        return True, f"Created agent {agent_name} at {filename}"
     
-    # Write the file
-    AGENTS_DIR.mkdir(parents=True, exist_ok=True)
-    with open(filename, 'w', encoding='utf-8') as f:
-        f.write(content)
-    
-    return True, f"Created agent {agent_info['name']} at {filename}"
+    except ValidationError as e:
+        return False, f"Validation error: {e}"
+    except Exception as e:
+        return False, f"Error creating agent file: {e}"
 
 def main():
     """Command-line interface."""
