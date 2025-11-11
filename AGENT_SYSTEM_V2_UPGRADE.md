@@ -99,7 +99,7 @@ Changes:
    - Archives eliminated agents while preserving their definitions
    - Notes about agent definitions in evaluation output
 
-3. **`agents/registry.json`**
+3. **`.github/agent-system/registry.json`**
    - Updated to version 2.0.0
    - Added dynamic config options
    - Removed hardcoded specializations
@@ -121,7 +121,7 @@ Changes:
    ↓
 4. Create .github/agents/{name}.md (if new)
    ↓
-5. Create agent profile in agents/profiles/
+5. Create agent profile in .github/agent-system/profiles/
    ↓
 6. Link profile to agent definition
    ↓
@@ -198,7 +198,7 @@ python3 tools/generate-new-agent.py
 
 ## Configuration
 
-Adjust spawning behavior in `agents/registry.json`:
+Adjust spawning behavior in `.github/agent-system/registry.json`:
 
 ```json
 {

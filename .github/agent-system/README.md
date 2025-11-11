@@ -1,17 +1,17 @@
-# 🤖 Custom Agent System
+# 🤖 Agent System Infrastructure
 
 ## Overview
 
-The Custom Agent System is an experimental autonomous AI ecosystem where agents are spawned, evolve, compete, and collaborate to improve the Chained repository.
+This directory contains the agent system's infrastructure for tracking, metrics, and lifecycle management. It is part of the Chained autonomous AI ecosystem.
 
 ## GitHub Copilot Convention Compliance
 
-This agent system follows the [GitHub Copilot custom agents convention](https://docs.github.com/en/copilot/reference/custom-agents-configuration). Custom agent definitions are located in:
+This agent system follows the [GitHub Copilot custom agents convention](https://docs.github.com/en/copilot/reference/custom-agents-configuration). The system is organized as follows:
 
 - **`.github/agents/`** - GitHub Copilot custom agent definitions (Markdown files with YAML frontmatter)
-- **`agents/`** - Agent system tracking, metrics, and lifecycle management
+- **`.github/agent-system/`** - Agent system tracking, metrics, and lifecycle management (this directory)
 
-See [`.github/agents/README.md`](../.github/agents/README.md) for details on the custom agent definitions.
+See [`.github/agents/README.md`](../agents/README.md) for details on the custom agent definitions.
 
 ## How It Works
 
@@ -163,7 +163,7 @@ The highest-ranked Hall of Fame member becomes System Lead:
 
 ## Configuration
 
-See `agents/registry.json` for current configuration:
+See `.github/agent-system/registry.json` for current configuration:
 - `spawn_interval_hours`: How often new agents spawn
 - `max_active_agents`: Maximum concurrent agents
 - `elimination_threshold`: Score below which agents are eliminated
@@ -179,7 +179,7 @@ See `agents/registry.json` for current configuration:
 ## Understanding Actor IDs
 
 For detailed information about how agent IDs and Copilot actor IDs work in the Chained system, see:
-- **[Actor ID System Documentation](../docs/ACTOR_ID_SYSTEM.md)** - Complete guide to the two ID systems
+- **[Actor ID System Documentation](../../docs/ACTOR_ID_SYSTEM.md)** - Complete guide to the two ID systems
 
 ## Workflows
 

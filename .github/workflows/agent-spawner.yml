@@ -80,11 +80,11 @@ jobs:
       - name: Check agent capacity
         id: check_capacity
         run: |
-          REGISTRY_FILE="agents/registry.json"
+          REGISTRY_FILE=".github/agent-system/registry.json"
           
           if [ ! -f "$REGISTRY_FILE" ]; then
             echo "Registry file not found. Creating initial registry..."
-            mkdir -p agents
+            mkdir -p .github/agent-system
             cat > "$REGISTRY_FILE" << 'EOF'
           {
             "version": "2.0.0",
@@ -228,7 +228,7 @@ jobs:
       - name: Register agent
         if: steps.check_capacity.outputs.can_spawn == 'true'
         run: |
-          REGISTRY_FILE="agents/registry.json"
+          REGISTRY_FILE=".github/agent-system/registry.json"
           
           python3 << PYTHON_SCRIPT
           import json
@@ -278,12 +278,12 @@ jobs:
           AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
           SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
           
-          mkdir -p "agents/profiles"
+          mkdir -p ".github/agent-system/profiles"
           
           # Get mission from convention-compliant agent definition
           AGENT_DESCRIPTION=$(python3 tools/get-agent-info.py description "$SPECIALIZATION")
           
-          cat > "agents/profiles/${AGENT_ID}.md" << EOF
+          cat > ".github/agent-system/profiles/${AGENT_ID}.md" << EOF
           # $AGENT_NAME
           
           **ID**: $AGENT_ID  
@@ -319,7 +319,7 @@ jobs:
           *Born from the depths of autonomous AI development, ready to make an impact.*
           EOF
           
-          echo "✅ Agent profile created at agents/profiles/${AGENT_ID}.md"
+          echo "✅ Agent profile created at .github/agent-system/profiles/${AGENT_ID}.md"
 
       - name: Commit and create PR
         if: steps.check_capacity.outputs.can_spawn == 'true'
@@ -335,8 +335,8 @@ jobs:
           BRANCH_NAME="agent-spawn/${AGENT_ID}"
           git checkout -b "$BRANCH_NAME"
           
-          # Add both agents/ directory and .github/agents/ if new agent was created
-          git add agents/
+          # Add agent-system directory and .github/agents/ if new agent was created
+          git add .github/agent-system/
           if [ "$IS_NEW" == "true" ]; then
             git add .github/agents/
             git commit -m "$EMOJI Spawn new agent type: $AGENT_NAME ($SPECIALIZATION) + definition"
@@ -459,7 +459,7 @@ jobs:
           
           Performance will be evaluated in 24 hours. The agent must maintain a score > 30% to avoid elimination.
           
-          See the full profile at \`agents/profiles/${AGENT_ID}.md\`
+          See the full profile at \`.github/agent-system/profiles/${AGENT_ID}.md\`
           
           ---
           

@@ -86,9 +86,9 @@ You'll see:
 - Agent achievements celebrated
 
 **Repository Files:**
-- `agents/registry.json` - Current state
-- `agents/profiles/` - Individual agent files
-- `agents/archive/` - Retired agents
+- `.github/agent-system/registry.json` - Current state
+- `.github/agent-system/profiles/` - Individual agent files
+- `.github/agent-system/archive/` - Retired agents
 
 ## Agent Specializations
 
@@ -178,7 +178,7 @@ gh workflow run agent-evaluator.yml -f force_evaluation=true
 ```
 
 **Adjust System Parameters:**
-Edit `agents/registry.json`:
+Edit `.github/agent-system/registry.json`:
 ```json
 {
   "config": {
@@ -208,13 +208,13 @@ Edit `agents/registry.json`:
 **Via Repository:**
 ```bash
 # Check agent count
-cat agents/registry.json | jq '.agents | length'
+cat .github/agent-system/registry.json | jq '.agents | length'
 
 # View Hall of Fame
-cat agents/registry.json | jq '.hall_of_fame'
+cat .github/agent-system/registry.json | jq '.hall_of_fame'
 
 # Check System Lead
-cat agents/registry.json | jq '.system_lead'
+cat .github/agent-system/registry.json | jq '.system_lead'
 ```
 
 ### Common Issues
@@ -230,9 +230,9 @@ cat agents/registry.json | jq '.system_lead'
 - GitHub Pages may take a few minutes to deploy
 
 **Q: Can't find agent profiles?**
-- Check `agents/profiles/` directory
+- Check `.github/agent-system/profiles/` directory
 - Profiles created when agent spawns
-- Moved to `agents/archive/` when eliminated
+- Moved to `.github/agent-system/archive/` when eliminated
 
 ## What's Next?
 
