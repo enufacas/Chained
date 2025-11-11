@@ -5,6 +5,8 @@ on:
     # Run every 6 hours for timeline updates
     # Run every 12 hours for progress tracking and workflow monitoring
     - cron: '0 */6 * * *'
+    # Run every 3 hours for merge conflict resolution, agent health, and pages health
+    - cron: '0 */3 * * *'
   issues:
     types: [opened, closed, labeled]
   pull_request:
@@ -23,6 +25,21 @@ on:
         default: false
       skip_workflow_monitor:
         description: 'Skip workflow monitoring'
+        required: false
+        type: boolean
+        default: false
+      skip_merge_conflicts:
+        description: 'Skip merge conflict resolution'
+        required: false
+        type: boolean
+        default: false
+      skip_agent_health:
+        description: 'Skip custom agent health check'
+        required: false
+        type: boolean
+        default: false
+      skip_pages_health:
+        description: 'Skip GitHub Pages health check'
         required: false
         type: boolean
         default: false
@@ -433,6 +450,611 @@ jobs:
           else
             echo "Status: ✅ HEALTHY"
             echo "All workflows operating normally"
+          fi
+          echo ""
+          echo "================================================================"
+
+  merge-conflict-resolution:
+    runs-on: ubuntu-latest
+    # Run every 3 hours to sweep for merge conflicts
+    if: (github.event.schedule == '0 */3 * * *' || inputs.skip_merge_conflicts != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Sweep open PRs for merge conflicts
+        id: check_conflicts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Sweeping open PRs for merge conflicts..."
+          echo ""
+          
+          # Get all open PRs
+          pr_list=$(gh pr list --state open --json number,title,mergeable,mergeStateStatus --jq '.[] | "\(.number)|\(.title)|\(.mergeable)|\(.mergeStateStatus)"')
+          
+          if [ -z "${pr_list}" ]; then
+            echo "ℹ️ No open PRs found"
+            echo "has_conflicts=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          conflict_count=0
+          conflict_prs=""
+          
+          echo "Checking PRs for merge conflicts..."
+          while IFS='|' read -r pr_number pr_title mergeable merge_state; do
+            echo "Checking PR #${pr_number}: ${pr_title}"
+            echo "  Mergeable: ${mergeable}, Merge State: ${merge_state}"
+            
+            # Check if PR has conflicts
+            if [ "${mergeable}" = "CONFLICTING" ] || [ "${merge_state}" = "DIRTY" ]; then
+              echo "  ⚠️ PR #${pr_number} has merge conflicts"
+              conflict_count=$((conflict_count + 1))
+              conflict_prs="${conflict_prs} ${pr_number}"
+            else
+              echo "  ✅ PR #${pr_number} is clean"
+            fi
+          done <<< "${pr_list}"
+          
+          echo ""
+          echo "Found ${conflict_count} PR(s) with merge conflicts"
+          
+          if [ ${conflict_count} -gt 0 ]; then
+            echo "has_conflicts=true" >> $GITHUB_OUTPUT
+            echo "conflict_prs=${conflict_prs}" >> $GITHUB_OUTPUT
+            echo "conflict_count=${conflict_count}" >> $GITHUB_OUTPUT
+          else
+            echo "has_conflicts=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Resolve merge conflicts intelligently
+        if: steps.check_conflicts.outputs.has_conflicts == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔧 Attempting to resolve merge conflicts..."
+          echo ""
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          for pr_num in ${{ steps.check_conflicts.outputs.conflict_prs }}; do
+            echo "Processing PR #${pr_num}"
+            
+            # Get PR details
+            pr_data=$(gh pr view ${pr_num} --json headRefName,baseRefName,author,labels)
+            head_branch=$(echo "${pr_data}" | jq -r '.headRefName')
+            base_branch=$(echo "${pr_data}" | jq -r '.baseRefName')
+            author=$(echo "${pr_data}" | jq -r '.author.login')
+            has_copilot_label=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "copilot" || true)
+            
+            # Only auto-resolve for trusted sources
+            is_trusted=0
+            if echo "${author}" | grep -qiE "^(github-actions\[bot\]|app/github-actions|dependabot\[bot\]|app/dependabot|app/copilot|copilot)"; then
+              is_trusted=1
+            elif [ "${author}" = "${{ github.repository_owner }}" ] && [ "${has_copilot_label}" -gt 0 ]; then
+              is_trusted=1
+            fi
+            
+            if [ ${is_trusted} -eq 0 ]; then
+              echo "⚠️ PR #${pr_num} is not from a trusted source, skipping auto-resolution"
+              gh pr comment ${pr_num} --body "⚠️ **Merge Conflicts Detected**
+              
+              This PR has merge conflicts that need to be resolved manually.
+              
+              **Action required:** Please resolve the conflicts and update the PR.
+              
+              ---
+              *Detected by System Monitor - Merge Conflict Resolution*" || true
+              continue
+            fi
+            
+            echo "✅ PR #${pr_num} is from trusted source (${author}), attempting resolution"
+            
+            # Fetch and checkout the PR branch
+            git fetch origin "${head_branch}" || {
+              echo "❌ Failed to fetch branch ${head_branch}"
+              continue
+            }
+            
+            git checkout "${head_branch}" || {
+              echo "❌ Failed to checkout branch ${head_branch}"
+              continue
+            }
+            
+            # Fetch latest base branch
+            git fetch origin "${base_branch}"
+            
+            # Attempt to merge base into head with strategy
+            # Try ours strategy first (prefer PR changes for automated PRs)
+            if git merge "origin/${base_branch}" -X ours --no-edit; then
+              echo "✅ Merged ${base_branch} into ${head_branch} using 'ours' strategy"
+              
+              # Push the resolved conflicts
+              if git push origin "${head_branch}"; then
+                echo "✅ Pushed conflict resolution for PR #${pr_num}"
+                
+                gh pr comment ${pr_num} --body "✅ **Merge Conflicts Resolved**
+                
+                The merge conflicts in this PR have been automatically resolved.
+                
+                **Resolution strategy:** Used 'ours' strategy (preferred PR changes)
+                **Base branch:** \`${base_branch}\`
+                **Updated branch:** \`${head_branch}\`
+                
+                The PR should now be ready for review and merge.
+                
+                **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+                
+                ---
+                *Automatically resolved by System Monitor - Merge Conflict Resolution*" || true
+              else
+                echo "❌ Failed to push conflict resolution"
+              fi
+            else
+              # Merge failed, abort and try alternative strategy
+              git merge --abort
+              
+              echo "⚠️ 'ours' strategy failed, trying 'theirs' strategy"
+              
+              if git merge "origin/${base_branch}" -X theirs --no-edit; then
+                echo "✅ Merged ${base_branch} into ${head_branch} using 'theirs' strategy"
+                
+                if git push origin "${head_branch}"; then
+                  echo "✅ Pushed conflict resolution for PR #${pr_num}"
+                  
+                  gh pr comment ${pr_num} --body "✅ **Merge Conflicts Resolved**
+                  
+                  The merge conflicts in this PR have been automatically resolved.
+                  
+                  **Resolution strategy:** Used 'theirs' strategy (preferred base branch changes)
+                  **Base branch:** \`${base_branch}\`
+                  **Updated branch:** \`${head_branch}\`
+                  
+                  ⚠️ Note: This strategy preferred changes from the base branch. Please verify the changes.
+                  
+                  **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+                  
+                  ---
+                  *Automatically resolved by System Monitor - Merge Conflict Resolution*" || true
+                else
+                  echo "❌ Failed to push conflict resolution"
+                fi
+              else
+                # Both strategies failed
+                git merge --abort
+                
+                echo "❌ Automatic resolution failed for PR #${pr_num}"
+                
+                gh pr comment ${pr_num} --body "⚠️ **Automatic Conflict Resolution Failed**
+                
+                This PR has complex merge conflicts that could not be automatically resolved.
+                
+                **Action required:** Manual resolution is needed.
+                
+                Please:
+                1. Pull the latest changes from \`${base_branch}\`
+                2. Resolve conflicts manually
+                3. Push the updated branch
+                
+                **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+                
+                ---
+                *Attempted by System Monitor - Merge Conflict Resolution*" || true
+              fi
+            fi
+            
+            # Return to main branch
+            git checkout main 2>/dev/null || git checkout master 2>/dev/null || true
+          done
+
+      - name: Report merge conflict resolution
+        if: steps.check_conflicts.outputs.has_conflicts == 'true'
+        run: |
+          echo "================================================================"
+          echo "Merge Conflict Resolution Report"
+          echo "================================================================"
+          echo ""
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "PRs with conflicts: ${{ steps.check_conflicts.outputs.conflict_count }}"
+          echo "PR numbers: ${{ steps.check_conflicts.outputs.conflict_prs }}"
+          echo ""
+          echo "Resolution attempts completed. Check individual PR comments for details."
+          echo "================================================================"
+
+  agent-health-check:
+    runs-on: ubuntu-latest
+    # Run every 3 hours to check agent system health
+    if: (github.event.schedule == '0 */3 * * *' || inputs.skip_agent_health != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Check agent system health
+        id: agent_check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Checking custom agent system health..."
+          echo ""
+          
+          # Check 1: Verify agent spawner workflow exists and is enabled
+          echo "Check 1: Agent Spawner Workflow"
+          if [ -f ".github/workflows/agent-spawner.yml" ]; then
+            echo "✅ Agent spawner workflow exists"
+            spawner_healthy=1
+          else
+            echo "❌ Agent spawner workflow missing"
+            spawner_healthy=0
+          fi
+          
+          # Check 2: Verify agent data files exist
+          echo ""
+          echo "Check 2: Agent Data Files"
+          agent_files_healthy=1
+          if [ -d "docs/data/agents" ]; then
+            agent_count=$(find docs/data/agents -name "*.json" -type f 2>/dev/null | wc -l)
+            echo "✅ Agent data directory exists with ${agent_count} agent file(s)"
+            if [ ${agent_count} -eq 0 ]; then
+              echo "⚠️ No agent data files found"
+              agent_files_healthy=0
+            fi
+          else
+            echo "❌ Agent data directory missing"
+            agent_files_healthy=0
+          fi
+          
+          # Check 3: Verify recent agent activity
+          echo ""
+          echo "Check 3: Recent Agent Activity"
+          recent_agent_issues=$(gh issue list --label "agent-created" --limit 10 --json number,createdAt --jq 'length')
+          if [ ${recent_agent_issues} -gt 0 ]; then
+            echo "✅ Found ${recent_agent_issues} recent agent-created issues"
+            agent_activity_healthy=1
+          else
+            echo "⚠️ No recent agent-created issues found"
+            agent_activity_healthy=0
+          fi
+          
+          # Check 4: Verify agent assignment is working
+          echo ""
+          echo "Check 4: Agent Assignment"
+          assigned_issues=$(gh issue list --label "copilot-assigned" --state open --limit 10 --json number --jq 'length')
+          if [ ${assigned_issues} -gt 0 ]; then
+            echo "✅ Found ${assigned_issues} assigned issue(s)"
+            assignment_healthy=1
+          else
+            echo "⚠️ No open assigned issues found"
+            assignment_healthy=0
+          fi
+          
+          # Check 5: Verify agent scoring/evaluation workflow
+          echo ""
+          echo "Check 5: Agent Evaluation"
+          if [ -f ".github/workflows/agent-evaluator.yml" ]; then
+            echo "✅ Agent evaluator workflow exists"
+            evaluator_healthy=1
+          else
+            echo "⚠️ Agent evaluator workflow missing"
+            evaluator_healthy=0
+          fi
+          
+          # Calculate overall health score
+          total_checks=5
+          passed_checks=$((spawner_healthy + agent_files_healthy + agent_activity_healthy + assignment_healthy + evaluator_healthy))
+          health_percentage=$((passed_checks * 100 / total_checks))
+          
+          echo ""
+          echo "================================================================"
+          echo "Agent System Health: ${passed_checks}/${total_checks} checks passed (${health_percentage}%)"
+          echo "================================================================"
+          
+          # Set outputs
+          echo "health_percentage=${health_percentage}" >> $GITHUB_OUTPUT
+          echo "passed_checks=${passed_checks}" >> $GITHUB_OUTPUT
+          echo "total_checks=${total_checks}" >> $GITHUB_OUTPUT
+          
+          if [ ${health_percentage} -lt 60 ]; then
+            echo "health_status=critical" >> $GITHUB_OUTPUT
+          elif [ ${health_percentage} -lt 80 ]; then
+            echo "health_status=warning" >> $GITHUB_OUTPUT
+          else
+            echo "health_status=healthy" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Perform agent system diagnostics
+        if: steps.agent_check.outputs.health_status != 'healthy'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔧 Performing agent system diagnostics..."
+          echo ""
+          
+          # Check if agent spawner has recent runs
+          echo "Checking agent spawner workflow runs..."
+          spawner_runs=$(gh run list --workflow=agent-spawner.yml --limit 10 --json conclusion,createdAt --jq 'length')
+          
+          if [ ${spawner_runs} -eq 0 ]; then
+            echo "⚠️ Agent spawner has no recent runs"
+            echo "Recommendation: Trigger agent spawner workflow manually"
+          else
+            echo "Agent spawner runs found: ${spawner_runs}"
+            
+            # Check for failures
+            failed_runs=$(gh run list --workflow=agent-spawner.yml --limit 10 --json conclusion --jq '[.[] | select(.conclusion == "failure")] | length')
+            if [ ${failed_runs} -gt 0 ]; then
+              echo "⚠️ Found ${failed_runs} failed spawner run(s)"
+              echo "Recommendation: Review agent-spawner.yml workflow logs"
+            fi
+          fi
+          
+          # Check agent assignment workflow
+          echo ""
+          echo "Checking agent assignment workflow..."
+          if [ -f ".github/workflows/copilot-graphql-assign.yml" ]; then
+            assignment_runs=$(gh run list --workflow=copilot-graphql-assign.yml --limit 5 --json conclusion --jq 'length')
+            echo "Assignment workflow runs: ${assignment_runs}"
+          fi
+          
+          # Provide recommendations
+          echo ""
+          echo "Recommendations for improving agent system health:"
+          if [ ${{ steps.agent_check.outputs.health_percentage }} -lt 60 ]; then
+            echo "1. Verify all agent workflows are enabled"
+            echo "2. Check workflow permissions and secrets"
+            echo "3. Review recent workflow failures in Actions tab"
+            echo "4. Consider re-initializing agent system"
+          else
+            echo "1. Monitor agent activity over next few cycles"
+            echo "2. Verify agent scoring is working correctly"
+            echo "3. Check for any workflow permission issues"
+          fi
+
+      - name: Create or update agent health issue
+        if: steps.agent_check.outputs.health_status == 'critical'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if there's already an open agent health issue
+          existing_issue=$(gh issue list --label "agent-health" --state open --limit 1 --json number --jq '.[0].number // empty')
+          
+          health_report="## 🤖 Agent System Health Check
+          
+          **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          **Health Status:** ⚠️ Critical (${{ steps.agent_check.outputs.passed_checks }}/${{ steps.agent_check.outputs.total_checks }} checks passed)
+          
+          ### Health Checks
+          
+          The agent system health check has identified issues that need attention.
+          
+          **Health Score:** ${{ steps.agent_check.outputs.health_percentage }}%
+          
+          ### Recommended Actions
+          
+          1. Review agent spawner workflow status
+          2. Check agent data files in \`docs/data/agents/\`
+          3. Verify agent assignment is working
+          4. Review recent workflow runs in Actions tab
+          5. Check for any permission or configuration issues
+          
+          ### Next Steps
+          
+          This health check runs every 3 hours. The issue will be automatically updated with the latest status.
+          Close this issue once all problems are resolved and health is above 80%.
+          
+          ---
+          *Automated health check by System Monitor*"
+          
+          if [ -n "${existing_issue}" ]; then
+            echo "Updating existing agent health issue #${existing_issue}"
+            echo "${health_report}" | gh issue comment "${existing_issue}" --body-file -
+          else
+            echo "Creating new agent health issue"
+            echo "${health_report}" | gh issue create \
+              --title "⚠️ Agent System Health Check - $(date -u +%Y-%m-%d)" \
+              --body-file - \
+              --label "agent-health,automated,system-monitor"
+          fi
+
+      - name: Report agent health status
+        run: |
+          echo "================================================================"
+          echo "Agent System Health Check Report"
+          echo "================================================================"
+          echo ""
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "Health Status: ${{ steps.agent_check.outputs.health_status }}"
+          echo "Checks Passed: ${{ steps.agent_check.outputs.passed_checks }}/${{ steps.agent_check.outputs.total_checks }}"
+          echo "Health Score: ${{ steps.agent_check.outputs.health_percentage }}%"
+          echo ""
+          
+          if [ "${{ steps.agent_check.outputs.health_status }}" = "healthy" ]; then
+            echo "Status: ✅ HEALTHY"
+            echo "Agent system is operating normally"
+          elif [ "${{ steps.agent_check.outputs.health_status }}" = "warning" ]; then
+            echo "Status: ⚠️  WARNING"
+            echo "Agent system needs attention"
+          else
+            echo "Status: ❌ CRITICAL"
+            echo "Agent system requires immediate attention"
+          fi
+          echo ""
+          echo "================================================================"
+
+  pages-health-check:
+    runs-on: ubuntu-latest
+    # Run every 3 hours to check GitHub Pages health
+    if: (github.event.schedule == '0 */3 * * *' || inputs.skip_pages_health != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check GitHub Pages health
+        id: pages_check
+        run: |
+          echo "🔍 Checking GitHub Pages health..."
+          echo ""
+          
+          issues_found=0
+          
+          # Check 1: Verify essential HTML files exist
+          echo "Check 1: Essential HTML Files"
+          html_files=(
+            "docs/index.html"
+            "docs/ai-knowledge-graph.html"
+            "docs/ai-friends.html"
+            "docs/agents.html"
+          )
+          
+          missing_html=""
+          for file in "${html_files[@]}"; do
+            if [ ! -f "${file}" ]; then
+              echo "❌ Missing: ${file}"
+              missing_html="${missing_html}\n- ${file}"
+              issues_found=$((issues_found + 1))
+            else
+              echo "✅ Found: ${file}"
+            fi
+          done
+          
+          # Check 2: Verify data files exist
+          echo ""
+          echo "Check 2: Data Files"
+          data_files=(
+            "docs/data/stats.json"
+            "docs/data/issues.json"
+            "docs/data/pulls.json"
+            "docs/data/workflows.json"
+          )
+          
+          missing_data=""
+          for file in "${data_files[@]}"; do
+            if [ ! -f "${file}" ]; then
+              echo "❌ Missing: ${file}"
+              missing_data="${missing_data}\n- ${file}"
+              issues_found=$((issues_found + 1))
+            else
+              echo "✅ Found: ${file}"
+            fi
+          done
+          
+          # Check 3: Verify data freshness
+          echo ""
+          echo "Check 3: Data Freshness"
+          if [ -f "docs/data/stats.json" ]; then
+            last_updated=$(jq -r '.last_updated // empty' docs/data/stats.json)
+            if [ -n "${last_updated}" ]; then
+              last_updated_seconds=$(date -d "${last_updated}" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "${last_updated}" +%s 2>/dev/null || echo 0)
+              current_seconds=$(date +%s)
+              age_hours=$(( (current_seconds - last_updated_seconds) / 3600 ))
+              
+              if [ ${age_hours} -gt 12 ]; then
+                echo "⚠️ Stats data is ${age_hours} hours old"
+                issues_found=$((issues_found + 1))
+              else
+                echo "✅ Stats data is fresh (${age_hours} hours old)"
+              fi
+            else
+              echo "⚠️ Stats data has no last_updated field"
+              issues_found=$((issues_found + 1))
+            fi
+          fi
+          
+          # Check 4: Verify GitHub Pages is accessible (basic check)
+          echo ""
+          echo "Check 4: GitHub Pages Deployment"
+          pages_url="https://${{ github.repository_owner }}.github.io/Chained/"
+          if curl -s -o /dev/null -w "%{http_code}" "${pages_url}" | grep -q "200"; then
+            echo "✅ GitHub Pages is accessible at ${pages_url}"
+          else
+            echo "⚠️ GitHub Pages may not be accessible"
+            issues_found=$((issues_found + 1))
+          fi
+          
+          # Set outputs
+          echo "issues_found=${issues_found}" >> $GITHUB_OUTPUT
+          
+          if [ ${issues_found} -eq 0 ]; then
+            echo "pages_status=healthy" >> $GITHUB_OUTPUT
+          elif [ ${issues_found} -le 2 ]; then
+            echo "pages_status=warning" >> $GITHUB_OUTPUT
+          else
+            echo "pages_status=critical" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create or update pages health issue
+        if: steps.pages_check.outputs.issues_found != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if there's already an open pages health issue
+          existing_issue=$(gh issue list --label "pages-health" --state open --limit 1 --json number --jq '.[0].number // empty')
+          
+          pages_report="## 📄 GitHub Pages Health Check
+          
+          **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          **Status:** ${{ steps.pages_check.outputs.pages_status }}
+          **Issues Found:** ${{ steps.pages_check.outputs.issues_found }}
+          
+          ### Health Check Results
+          
+          The GitHub Pages health check has identified issues that need attention.
+          
+          ### Recommended Actions
+          
+          1. Verify all essential HTML files exist in \`docs/\`
+          2. Check that data files in \`docs/data/\` are up to date
+          3. Ensure System Monitor workflow is running regularly
+          4. Verify GitHub Pages deployment is active in repository settings
+          
+          ### Next Steps
+          
+          This health check runs every 3 hours. The issue will be automatically updated with the latest status.
+          Close this issue once all problems are resolved.
+          
+          ---
+          *Automated health check by System Monitor*"
+          
+          if [ -n "${existing_issue}" ]; then
+            echo "Updating existing pages health issue #${existing_issue}"
+            echo "${pages_report}" | gh issue comment "${existing_issue}" --body-file -
+          else
+            echo "Creating new pages health issue"
+            echo "${pages_report}" | gh issue create \
+              --title "📄 GitHub Pages Health Check - $(date -u +%Y-%m-%d)" \
+              --body-file - \
+              --label "pages-health,automated,documentation"
+          fi
+
+      - name: Report pages health status
+        run: |
+          echo "================================================================"
+          echo "GitHub Pages Health Check Report"
+          echo "================================================================"
+          echo ""
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "Status: ${{ steps.pages_check.outputs.pages_status }}"
+          echo "Issues Found: ${{ steps.pages_check.outputs.issues_found }}"
+          echo ""
+          
+          if [ "${{ steps.pages_check.outputs.pages_status }}" = "healthy" ]; then
+            echo "Status: ✅ HEALTHY"
+            echo "GitHub Pages is operating normally"
+          elif [ "${{ steps.pages_check.outputs.pages_status }}" = "warning" ]; then
+            echo "Status: ⚠️  WARNING"
+            echo "GitHub Pages needs attention"
+          else
+            echo "Status: ❌ CRITICAL"
+            echo "GitHub Pages requires immediate attention"
           fi
           echo ""
           echo "================================================================"
