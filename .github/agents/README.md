@@ -49,6 +49,9 @@ For detailed information about configured MCP servers, see **[MCP_SERVERS_CONFIG
 
 ## Available Agents
 
+### 🧪 [assert-specialist.md](./assert-specialist.md)
+Specialized in asserting coverage. Inspired by Leslie Lamport - specification-driven, with systematic approach. Focuses on tests, quality assurance, and edge cases.
+
 ### 🐛 [bug-hunter.md](./bug-hunter.md)
 Specialized in finding and fixing bugs with precision. Focuses on edge cases, error handling, and defensive programming.
 
