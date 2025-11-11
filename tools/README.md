@@ -51,6 +51,57 @@ python3 tools/list-agent-actor-ids.py enufacas Chained
 
 ---
 
+### 📊 Code Readability Scorer
+
+An intelligent code quality analyzer that scores code readability and provides actionable improvement suggestions.
+
+**Purpose:** Analyze Python code to measure readability across multiple dimensions and get specific, prioritized suggestions for improvement.
+
+**Quick Start:**
+```bash
+# Analyze a single file
+python3 tools/readability-scorer.py -f myfile.py
+
+# Analyze a directory
+python3 tools/readability-scorer.py -d ./src
+
+# Generate markdown report
+python3 tools/readability-scorer.py -d ./src --format markdown -o report.md
+
+# Output JSON for automation
+python3 tools/readability-scorer.py -f myfile.py --format json
+
+# Quality gate (exit 1 if score below threshold)
+python3 tools/readability-scorer.py -f myfile.py --min-score 80
+```
+
+**What It Analyzes:**
+- 📝 **Naming Quality (25%)**: Variable/function names, conventions, clarity
+- 🧩 **Complexity (25%)**: Cyclomatic complexity, nesting depth, function length
+- 📚 **Documentation (20%)**: Docstrings, parameter docs, completeness
+- ✨ **Formatting (15%)**: Line length, indentation, whitespace
+- 🏗️ **Structure (15%)**: Import organization, global variables
+
+**Features:**
+- 0-100 scoring system with letter grades (A-F)
+- Category-specific scores with visual progress bars
+- Actionable suggestions with priority levels (High, Medium, Low)
+- Line-specific feedback with improvement examples
+- JSON and Markdown report formats
+- Quality gate support for CI/CD integration
+- Comprehensive metrics and statistics
+
+**Use Cases:**
+- Code reviews - Quickly assess code quality
+- CI/CD pipelines - Enforce quality standards
+- Pre-commit hooks - Catch issues before commit
+- Team standards - Maintain consistent code quality
+- Learning - Get feedback on code improvements
+
+[📖 Full Documentation](./READABILITY_SCORER.md)
+
+---
+
 ### 🏛️ AI Code Archaeologist
 
 An intelligent tool that analyzes git history to document legacy decisions, architectural evolution, and technical debt.
