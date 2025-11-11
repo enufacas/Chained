@@ -45,6 +45,19 @@ jobs:
             echo "✅ COPILOT_PAT is configured"
           fi
       
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -q PyYAML
+      
       - name: Discover and process issues
         env:
           # IMPORTANT: Use a Personal Access Token (PAT) instead of GITHUB_TOKEN
@@ -106,6 +119,23 @@ jobs:
               already_assigned_count=$((already_assigned_count + 1))
               continue
             fi
+            
+            # ✨ Intelligent Agent Matching ✨
+            echo "🧠 Analyzing issue content to match with appropriate agent..."
+            issue_title=$(gh issue view $issue_number --repo ${{ github.repository }} --json title --jq '.title')
+            issue_body=$(gh issue view $issue_number --repo ${{ github.repository }} --json body --jq '.body // ""')
+            
+            # Use intelligent matching to determine best agent
+            agent_match=$(python3 tools/match-issue-to-agent.py "$issue_title" "$issue_body" 2>/dev/null || echo '{"agent":"feature-architect","score":0,"confidence":"low"}')
+            matched_agent=$(echo "$agent_match" | jq -r '.agent')
+            agent_score=$(echo "$agent_match" | jq -r '.score')
+            agent_confidence=$(echo "$agent_match" | jq -r '.confidence')
+            agent_emoji=$(echo "$agent_match" | jq -r '.emoji')
+            agent_description=$(echo "$agent_match" | jq -r '.description')
+            
+            echo "✅ Matched to agent: $agent_emoji $matched_agent"
+            echo "   Score: $agent_score | Confidence: $agent_confidence"
+            echo "   Description: $agent_description"
             
             # Add copilot-assigned label if not present
             labels=$(gh issue view $issue_number --repo ${{ github.repository }} --json labels --jq '.labels[].name')
@@ -201,14 +231,25 @@ jobs:
               echo "✅ Successfully assigned issue #$issue_number to Copilot"
               success_count=$((success_count + 1))
               
-              # Add success comment
+              # Add success comment with agent matching info
               gh issue comment $issue_number --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
           
           GitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.
           
+          ## 🧠 Intelligent Agent Matching
+          
+          This issue has been analyzed and matched to the **$agent_emoji $matched_agent** specialization:
+          
+          - **Agent**: $matched_agent
+          - **Match Confidence**: $agent_confidence
+          - **Match Score**: $agent_score
+          - **Description**: $agent_description
+          
+          The implementation should align with the [$matched_agent agent definition](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md) and its specialized capabilities.
+          
           **What happens next:**
           1. ✅ Copilot will analyze the issue requirements
-          2. 💻 Copilot will create a branch and implement the solution
+          2. 💻 Copilot will create a branch and implement the solution following the $matched_agent approach
           3. 📝 Copilot will open a PR with the implementation
           4. 🔍 Auto-review workflow will validate and merge
           5. ✅ Issue will be automatically closed when complete
@@ -217,7 +258,7 @@ jobs:
           **Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           
           ---
-          *🤖 Automated via the official GitHub GraphQL API method using \`replaceActorsForAssignable\` mutation - True autonomous operation!*"
+          *🤖 Automated via intelligent agent matching + GitHub GraphQL API - True autonomous operation!*"
             else
               echo "❌ Failed to assign issue #$issue_number to Copilot"
               echo "Error details: $mutation_result"
