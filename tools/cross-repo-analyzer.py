@@ -4,6 +4,8 @@ Cross-Repository Analyzer
 
 Extends the pattern matcher to analyze multiple repositories across GitHub.
 Uses GitHub API to fetch and analyze code from multiple repos.
+
+Updated to use robust GitHub integration utilities with retry logic and error handling.
 """
 
 import argparse
@@ -17,46 +19,48 @@ from typing import List, Dict, Optional
 import urllib.request
 import urllib.error
 
+# Import GitHub integration utilities
+from github_integration import GitHubAPIClient, GitHubAPIException, RetryConfig
+
 
 class GitHubRepoAnalyzer:
-    """Analyze multiple GitHub repositories for best practices"""
+    """Analyze multiple GitHub repositories for best practices
+    
+    Now uses GitHubAPIClient for improved reliability, retry logic,
+    and comprehensive error handling.
+    """
     
     def __init__(self, token: Optional[str] = None):
-        self.token = token or os.environ.get('GITHUB_TOKEN')
+        # Initialize with robust GitHub API client
+        self.client = GitHubAPIClient(
+            token=token,
+            retry_config=RetryConfig(
+                max_attempts=5,  # Retry up to 5 times
+                initial_delay=2.0,
+                max_delay=60.0
+            )
+        )
         self.temp_dir = None
-        
-    def _make_api_request(self, url: str) -> Dict:
-        """Make authenticated GitHub API request"""
-        headers = {
-            'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'Chained-Pattern-Matcher/1.0'
-        }
-        
-        if self.token:
-            headers['Authorization'] = f'token {self.token}'
-        
-        req = urllib.request.Request(url, headers=headers)
-        
-        try:
-            with urllib.request.urlopen(req) as response:
-                return json.loads(response.read().decode())
-        except urllib.error.HTTPError as e:
-            if e.code == 403:
-                print(f"Rate limit exceeded or authentication required", file=sys.stderr)
-            else:
-                print(f"API request failed: {e}", file=sys.stderr)
-            return {}
-        except Exception as e:
-            print(f"Error making API request: {e}", file=sys.stderr)
-            return {}
     
     def search_repositories(self, query: str, max_results: int = 10) -> List[Dict]:
-        """Search for repositories on GitHub"""
-        encoded_query = urllib.parse.quote(query)
-        url = f"https://api.github.com/search/repositories?q={encoded_query}&per_page={max_results}&sort=stars"
-        
-        data = self._make_api_request(url)
-        return data.get('items', [])
+        """Search for repositories on GitHub with improved error handling"""
+        try:
+            # Use new client with automatic retry and rate limit handling
+            data = self.client.get('/search/repositories', params={
+                'q': query,
+                'per_page': max_results,
+                'sort': 'stars'
+            })
+            return data.get('items', [])
+        except GitHubAPIException as e:
+            if e.error.is_rate_limited:
+                print(f"Rate limit exceeded. Resets at timestamp: {e.error.rate_limit_reset}", file=sys.stderr)
+            else:
+                print(f"API request failed: {e.error.message}", file=sys.stderr)
+            return []
+        except Exception as e:
+            print(f"Error searching repositories: {e}", file=sys.stderr)
+            return []
     
     def clone_or_download_repo(self, owner: str, repo: str, output_dir: str) -> Optional[str]:
         """Clone or download a repository"""
