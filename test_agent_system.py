@@ -18,18 +18,23 @@ def test_agent_registry():
     with open(registry_path, 'r') as f:
         registry = json.load(f)
     
-    # Check required top-level keys
-    required_keys = ['version', 'agents', 'hall_of_fame', 'system_lead', 'config', 'specializations']
+    # Check required top-level keys (v2.0.0+ uses specializations_note instead of specializations array)
+    required_keys = ['version', 'agents', 'hall_of_fame', 'system_lead', 'config']
     for key in required_keys:
         if key not in registry:
             print(f"❌ Missing required key: {key}")
             return False
     
-    # Check config structure
+    # Check that either specializations or specializations_note exists
+    if 'specializations' not in registry and 'specializations_note' not in registry:
+        print("❌ Missing specializations info (need either 'specializations' array or 'specializations_note')")
+        return False
+    
+    # Check config structure (v2.0.0+ includes spawn_mode and new_agent_probability)
     config = registry['config']
-    config_keys = ['spawn_interval_hours', 'max_active_agents', 'elimination_threshold', 
+    required_config_keys = ['spawn_interval_hours', 'max_active_agents', 'elimination_threshold', 
                    'promotion_threshold', 'metrics_weight']
-    for key in config_keys:
+    for key in required_config_keys:
         if key not in config:
             print(f"❌ Missing config key: {key}")
             return False
@@ -48,16 +53,18 @@ def test_agent_registry():
         print(f"❌ Metrics weights don't sum to 1.0 (got {total_weight})")
         return False
     
-    # Check specializations
-    if not isinstance(registry['specializations'], list):
-        print("❌ specializations must be a list")
-        return False
+    # Check specializations (v2.0+ uses dynamic loading from .github/agents/)
+    if 'specializations' in registry:
+        if not isinstance(registry['specializations'], list):
+            print("❌ specializations must be a list")
+            return False
+        
+        if len(registry['specializations']) == 0:
+            print("❌ No specializations defined")
+            return False
     
-    if len(registry['specializations']) == 0:
-        print("❌ No specializations defined")
-        return False
-    
-    print("✅ Agent registry schema is valid")
+    version = registry.get('version', '1.0.0')
+    print(f"✅ Agent registry schema is valid (version {version})")
     return True
 
 def test_workflow_files():
