@@ -16,29 +16,48 @@ AGENTS_DIR = Path(".github/agents")
 
 def parse_agent_file(filepath):
     """Parse an agent markdown file and extract frontmatter and content."""
-    with open(filepath, 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    frontmatter_match = re.match(r'^---\n(.*?)\n---\n(.*)$', content, re.DOTALL)
-    if not frontmatter_match:
-        return None
-    
-    frontmatter_str = frontmatter_match.group(1)
-    body = frontmatter_match.group(2).strip()
-    
     try:
-        frontmatter = yaml.safe_load(frontmatter_str)
-    except yaml.YAMLError:
+        # Validate filepath to prevent path traversal
+        filepath = Path(filepath).resolve()
+        agents_dir = AGENTS_DIR.resolve()
+        
+        # Ensure the file is within the agents directory
+        if not str(filepath).startswith(str(agents_dir)):
+            return None
+        
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        frontmatter_match = re.match(r'^---\n(.*?)\n---\n(.*)$', content, re.DOTALL)
+        if not frontmatter_match:
+            return None
+        
+        frontmatter_str = frontmatter_match.group(1)
+        body = frontmatter_match.group(2).strip()
+        
+        try:
+            frontmatter = yaml.safe_load(frontmatter_str)
+        except yaml.YAMLError:
+            return None
+        
+        # Validate that frontmatter is a dict
+        if not isinstance(frontmatter, dict):
+            return None
+        
+        emoji_match = re.search(r'^#\s*([^\s]+)\s+', body)
+        emoji = emoji_match.group(1) if emoji_match else ""
+        
+        return {
+            'name': frontmatter.get('name', ''),
+            'description': frontmatter.get('description', ''),
+            'emoji': emoji
+        }
+    except (IOError, OSError, UnicodeDecodeError) as e:
+        # Handle file reading errors gracefully
         return None
-    
-    emoji_match = re.search(r'^#\s*([^\s]+)\s+', body)
-    emoji = emoji_match.group(1) if emoji_match else ""
-    
-    return {
-        'name': frontmatter.get('name', ''),
-        'description': frontmatter.get('description', ''),
-        'emoji': emoji
-    }
+    except Exception as e:
+        # Catch any other unexpected errors
+        return None
 
 def list_agents():
     """List all agent names from .github/agents/."""
@@ -57,6 +76,14 @@ def list_agents():
 
 def get_agent_info(agent_name):
     """Get full information about a specific agent."""
+    # Validate agent_name to prevent path traversal
+    if not agent_name or not isinstance(agent_name, str):
+        return None
+    
+    # Only allow alphanumeric, hyphens, and underscores in agent names
+    if not re.match(r'^[a-zA-Z0-9_-]+$', agent_name):
+        return None
+    
     filepath = AGENTS_DIR / f"{agent_name}.md"
     if not filepath.exists():
         return None
@@ -179,10 +206,23 @@ AGENT_PATTERNS = {
     }
 }
 
+def sanitize_input(text):
+    """Sanitize input text to prevent issues with special characters."""
+    if not text:
+        return ""
+    # Remove null bytes and other control characters (except common whitespace)
+    # This prevents potential security issues and processing errors
+    text = text.replace('\x00', '')  # Remove null bytes
+    text = ''.join(char for char in text if ord(char) >= 32 or char in '\t\n\r')
+    return text
+
 def normalize_text(text):
     """Normalize text for matching (lowercase, remove extra whitespace)."""
     if not text:
         return ""
+    # First sanitize the input
+    text = sanitize_input(text)
+    # Then normalize whitespace and convert to lowercase
     return re.sub(r'\s+', ' ', text.lower().strip())
 
 def calculate_match_score(text, agent_name):
@@ -272,11 +312,25 @@ def main():
         print("Analyzes issue content and suggests the best agent specialization.", file=sys.stderr)
         sys.exit(1)
     
-    title = sys.argv[1]
-    body = sys.argv[2] if len(sys.argv) > 2 else ""
-    
-    result = match_issue_to_agent(title, body)
-    print(json.dumps(result, indent=2))
+    try:
+        title = sys.argv[1]
+        body = sys.argv[2] if len(sys.argv) > 2 else ""
+        
+        # Sanitize inputs to prevent issues with special characters
+        title = sanitize_input(title)
+        body = sanitize_input(body)
+        
+        result = match_issue_to_agent(title, body)
+        print(json.dumps(result, indent=2))
+    except Exception as e:
+        print(json.dumps({
+            'error': str(e),
+            'agent': 'feature-architect',
+            'score': 0,
+            'confidence': 'low',
+            'reason': 'Error processing input, using default agent'
+        }, indent=2), file=sys.stderr)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

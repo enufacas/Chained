@@ -1,0 +1,117 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-11T04:22:42.987084+00:00",
+  "repository": "tmp7j_9bpd6",
+  "total_commits_analyzed": 5,
+  "architectural_decisions": [
+    {
+      "type": "explicit_decision",
+      "content": "move config to separate file because it improves modularity",
+      "commit": "1b7c593",
+      "timestamp": "2025-11-11T04:22:42+00:00"
+    },
+    {
+      "type": "explicit_decision",
+      "content": "it improves modularity",
+      "commit": "1b7c593",
+      "timestamp": "2025-11-11T04:22:42+00:00"
+    }
+  ],
+  "technical_debt": [
+    {
+      "type": "technical_debt",
+      "description": "issue #123",
+      "commit": "bfefb1f",
+      "timestamp": "2025-11-11T04:22:42+00:00",
+      "files": [
+        "utils.py"
+      ]
+    },
+    {
+      "type": "technical_debt",
+      "description": "workaround for issue #123",
+      "commit": "bfefb1f",
+      "timestamp": "2025-11-11T04:22:42+00:00",
+      "files": [
+        "utils.py"
+      ]
+    }
+  ],
+  "legacy_patterns": [],
+  "code_evolution": {
+    "major_refactors": [
+      {
+        "hash": "1b7c593",
+        "subject": "Refactor: Decided to move config to separate file because it improves modularity",
+        "author": "Test User",
+        "timestamp": "2025-11-11T04:22:42+00:00",
+        "files_changed": 1,
+        "stats": "1 file changed, 2 insertions(+)"
+      }
+    ],
+    "feature_additions": [
+      {
+        "hash": "89c5f13",
+        "subject": "Implement new feature: user authentication",
+        "author": "Test User",
+        "timestamp": "2025-11-11T04:22:42+00:00",
+        "files_changed": 1,
+        "stats": "1 file changed, 2 insertions(+)"
+      },
+      {
+        "hash": "b8e67ba",
+        "subject": "Add initial implementation of main module",
+        "author": "Test User",
+        "timestamp": "2025-11-11T04:22:42+00:00",
+        "files_changed": 0,
+        "stats": "1 file changed, 2 insertions(+)"
+      }
+    ],
+    "bug_fixes": [
+      {
+        "hash": "148a5ca",
+        "subject": "Fix bug in main module causing crash",
+        "author": "Test User",
+        "timestamp": "2025-11-11T04:22:42+00:00",
+        "files_changed": 1,
+        "stats": "1 file changed, 2 insertions(+), 2 deletions(-)"
+      }
+    ],
+    "maintenance": [
+      {
+        "hash": "bfefb1f",
+        "subject": "Add utility functions with temporary workaround for issue #123",
+        "author": "Test User",
+        "timestamp": "2025-11-11T04:22:42+00:00",
+        "files_changed": 1,
+        "stats": "1 file changed, 3 insertions(+)"
+      }
+    ]
+  },
+  "decision_timeline": [
+    {
+      "timestamp": "2025-11-11T04:22:42+00:00",
+      "type": "decision",
+      "content": "move config to separate file because it improves modularity",
+      "commit": "1b7c593"
+    },
+    {
+      "timestamp": "2025-11-11T04:22:42+00:00",
+      "type": "decision",
+      "content": "it improves modularity",
+      "commit": "1b7c593"
+    },
+    {
+      "timestamp": "2025-11-11T04:22:42+00:00",
+      "type": "debt",
+      "content": "issue #123",
+      "commit": "bfefb1f"
+    },
+    {
+      "timestamp": "2025-11-11T04:22:42+00:00",
+      "type": "debt",
+      "content": "workaround for issue #123",
+      "commit": "bfefb1f"
+    }
+  ]
+}
