@@ -1,0 +1,105 @@
+name: Create AI Friend Follow-up Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (do not create issues)'
+        required: false
+        default: 'false'
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  create-follow-up-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python for issue processing
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Process and create issues
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import re
+          import subprocess
+          import sys
+          
+          def process_issue_file(filepath, title, labels):
+              """Strip frontmatter and create issue from markdown file."""
+              with open(filepath, 'r') as f:
+                  content = f.read()
+              
+              # Remove frontmatter
+              body = re.sub(r'^---\n.*?\n---\n', '', content, flags=re.DOTALL).strip()
+              
+              # Create temp file for body
+              temp_file = '/tmp/issue_body.md'
+              with open(temp_file, 'w') as f:
+                  f.write(body)
+              
+              # Create issue using gh CLI
+              cmd = [
+                  'gh', 'issue', 'create',
+                  '--title', title,
+                  '--body-file', temp_file,
+                  '--label', labels,
+                  '--repo', 'enufacas/Chained'
+              ]
+              
+              try:
+                  result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+                  print(f"✅ Created: {title}")
+                  print(f"   URL: {result.stdout.strip()}")
+                  return True
+              except subprocess.CalledProcessError as e:
+                  print(f"❌ Failed to create: {title}")
+                  print(f"   Error: {e.stderr}")
+                  return False
+          
+          # Process all issues
+          issues = [
+              ('docs/ai-suggestions/issue-1-creativity-metrics.md',
+               '📊 Enhanced Creativity & Innovation Metrics for AI Agents',
+               'enhancement,ai-suggested,copilot,agent-system'),
+              ('docs/ai-suggestions/issue-2-repetition-detection.md',
+               '🔄 AI Pattern Repetition Detection & Prevention System',
+               'enhancement,ai-suggested,copilot,agent-system'),
+              ('docs/ai-suggestions/issue-3-knowledge-graph.md',
+               '🕸️ Enhanced Knowledge Graph with Intelligent Connections',
+               'enhancement,ai-suggested,copilot,learning'),
+              ('docs/ai-suggestions/issue-4-archaeology-learning.md',
+               '🏛️ Enhanced Code Archaeology with Active Learning',
+               'enhancement,ai-suggested,copilot,learning')
+          ]
+          
+          success_count = 0
+          for filepath, title, labels in issues:
+              if process_issue_file(filepath, title, labels):
+                  success_count += 1
+          
+          print(f"\n✅ Successfully created {success_count}/{len(issues)} issues")
+          sys.exit(0 if success_count > 0 else 1)
+          
+          PYTHON_SCRIPT
+
+      - name: Summary
+        run: |
+          echo "✅ AI Friend follow-up issues creation completed"
+          echo ""
+          echo "Issues created from AI Friend conversation:"
+          echo "- 📊 Enhanced Creativity & Innovation Metrics"
+          echo "- 🔄 AI Pattern Repetition Detection & Prevention"
+          echo "- 🕸️ Enhanced Knowledge Graph with Intelligent Connections"
+          echo "- 🏛️ Enhanced Code Archaeology with Active Learning"
+          echo ""
+          echo "Source conversation: docs/ai-conversations/conversation_20251111_091509.json"
