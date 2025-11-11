@@ -30,8 +30,9 @@ jobs:
   assign-to-copilot:
     runs-on: ubuntu-latest
     # Only run if issue was just created, on schedule, or via workflow_dispatch
+    # Skip agent-system issues as they are handled by the agent-spawner workflow
     if: |
-      github.event_name == 'issues' ||
+      (github.event_name == 'issues' && !contains(github.event.issue.labels.*.name, 'agent-system')) ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
     steps:
