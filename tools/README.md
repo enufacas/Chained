@@ -39,6 +39,96 @@ python3 tools/validate-agent-definition.py --quiet
 
 ---
 
+### 🕰️ Repository Time-Travel Debugger
+
+An interactive tool to navigate and debug git repository history, allowing developers to view code at any point in time, compare versions, and understand code evolution.
+
+**Purpose:** Provide an intuitive interface for exploring git history, debugging issues by examining historical states, and understanding how code evolved over time.
+
+**Quick Start:**
+```bash
+# Interactive mode (default)
+python3 tools/repo-time-travel.py
+
+# List recent commits
+python3 tools/repo-time-travel.py --list 10
+
+# Show details for a specific commit
+python3 tools/repo-time-travel.py --show abc1234
+
+# Search commits by message
+python3 tools/repo-time-travel.py --search "fix bug"
+
+# Show file history
+python3 tools/repo-time-travel.py --history path/to/file.py
+```
+
+**Interactive Commands:**
+- `go <commit>` - Navigate to specific commit
+- `back [n]` - Go back n commits (default: 1)
+- `forward [n]` - Go forward n commits (default: 1)
+- `show [commit]` - Show commit details
+- `list [n]` - List n recent commits (default: 10)
+- `diff <c1> <c2> [file]` - Show diff between commits
+- `file <commit> <path>` - Show file at commit
+- `history <path>` - Show file history
+- `search <query>` - Search commits by message
+- `search-author <name>` - Search by author
+- `search-file <path>` - Search commits for file
+- `search-code <text>` - Search in code content
+- `blame <path>` - Show blame for file
+- `branches [commit]` - Show branches at commit
+- `tags [commit]` - Show tags at commit
+- `current` - Show current commit
+- `help` - Show help
+- `quit` - Exit
+
+**Features:**
+- 🎯 Interactive navigation through git history
+- 🔍 Multiple search modes (message, author, file, code content)
+- 📂 View file content at any point in time
+- 🔀 Compare versions across commits with diffs
+- 📊 File history tracking and blame information
+- 🏷️ Branch and tag visualization
+- ⚡ Fast navigation with forward/backward commands
+- 🎨 Clean, readable terminal output
+
+**Use Cases:**
+- Debug when a bug was introduced by examining historical states
+- Understand code evolution and architectural decisions
+- Review changes made by specific authors or to specific files
+- Find when specific functionality was added or removed
+- Investigate merge conflicts by examining branch histories
+- Create code archaeology documentation
+
+**Example Session:**
+```bash
+$ python3 tools/repo-time-travel.py
+🕰️  Repository Time-Travel Debugger
+Current position: 4bb93b1
+
+time-travel> list 5
+→ [0] 4bb93b1 - 2025-11-11 21:14:45 - copilot: Initial plan
+  [1] 4af6ed4 - 2025-11-11 21:12:25 - copilot: Add feature
+  [2] ae62686 - 2025-11-11 20:51:18 - Copilot: Add agent
+
+time-travel> back 2
+Moved back to: ae62686 - 2025-11-11 20:51:18 - Copilot: Add agent
+
+time-travel> show
+Commit: ae62686...
+Author: Copilot
+Date:   2025-11-11 20:51:18 UTC
+Files changed: ...
+
+time-travel> search "bug fix"
+Found 3 commits: ...
+
+time-travel> quit
+```
+
+---
+
 ### 🔍 Issue Assignment Inspector
 
 Inspect GitHub issue assignments to discover custom agent actor IDs for direct API assignment.
