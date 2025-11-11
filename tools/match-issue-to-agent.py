@@ -2,6 +2,11 @@
 """
 Intelligent agent matching system for Chained.
 Analyzes issue content and matches it to the most appropriate specialized agent.
+
+Performance optimizations:
+- Pre-compiled regex patterns for faster matching
+- LRU cache for agent info to reduce file I/O
+- Memoization for text normalization
 """
 
 import sys
@@ -10,12 +15,21 @@ import re
 import os
 import yaml
 from pathlib import Path
+from functools import lru_cache
 
 # Agent utilities (inline for self-contained script)
 AGENTS_DIR = Path(".github/agents")
 
+# Pre-compiled regex patterns for performance
+_FRONTMATTER_PATTERN = re.compile(r'^---\n(.*?)\n---\n(.*)$', re.DOTALL)
+_EMOJI_PATTERN = re.compile(r'^#\s*([^\s]+)\s+')
+
+@lru_cache(maxsize=32)
 def parse_agent_file(filepath):
-    """Parse an agent markdown file and extract frontmatter and content."""
+    """Parse an agent markdown file and extract frontmatter and content.
+    
+    Uses LRU cache to avoid repeated file reads for the same agent.
+    """
     try:
         # Validate filepath to prevent path traversal
         filepath = Path(filepath).resolve()
@@ -28,7 +42,7 @@ def parse_agent_file(filepath):
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        frontmatter_match = re.match(r'^---\n(.*?)\n---\n(.*)$', content, re.DOTALL)
+        frontmatter_match = _FRONTMATTER_PATTERN.match(content)
         if not frontmatter_match:
             return None
         
@@ -44,7 +58,7 @@ def parse_agent_file(filepath):
         if not isinstance(frontmatter, dict):
             return None
         
-        emoji_match = re.search(r'^#\s*([^\s]+)\s+', body)
+        emoji_match = _EMOJI_PATTERN.search(body)
         emoji = emoji_match.group(1) if emoji_match else ""
         
         return {
@@ -59,23 +73,32 @@ def parse_agent_file(filepath):
         # Catch any other unexpected errors
         return None
 
+@lru_cache(maxsize=128)
 def list_agents():
-    """List all agent names from .github/agents/."""
+    """List all agent names from .github/agents/.
+    
+    Uses LRU cache to avoid repeated directory scans.
+    """
     agents = []
     if not AGENTS_DIR.exists():
-        return agents
+        return tuple(agents)  # Return tuple for hashability
     
     for filepath in AGENTS_DIR.glob("*.md"):
         if filepath.name == "README.md":
             continue
-        agent_info = parse_agent_file(filepath)
+        # Convert path to string for caching compatibility
+        agent_info = parse_agent_file(str(filepath))
         if agent_info and agent_info['name']:
             agents.append(agent_info['name'])
     
-    return sorted(agents)
+    return tuple(sorted(agents))  # Return tuple for hashability
 
+@lru_cache(maxsize=32)
 def get_agent_info(agent_name):
-    """Get full information about a specific agent."""
+    """Get full information about a specific agent.
+    
+    Uses LRU cache to avoid repeated file reads.
+    """
     # Validate agent_name to prevent path traversal
     if not agent_name or not isinstance(agent_name, str):
         return None
@@ -88,7 +111,7 @@ def get_agent_info(agent_name):
     if not filepath.exists():
         return None
     
-    return parse_agent_file(filepath)
+    return parse_agent_file(str(filepath))
 
 # Define keyword patterns for each agent specialization
 AGENT_PATTERNS = {
@@ -206,8 +229,24 @@ AGENT_PATTERNS = {
     }
 }
 
+# Pre-compile all regex patterns for performance
+# This is done once at module load time, avoiding recompilation on every match
+_COMPILED_PATTERNS = {}
+for agent_name, patterns_dict in AGENT_PATTERNS.items():
+    _COMPILED_PATTERNS[agent_name] = [
+        re.compile(pattern, re.IGNORECASE) 
+        for pattern in patterns_dict['patterns']
+    ]
+
+# Pre-compile whitespace normalization pattern
+_WHITESPACE_PATTERN = re.compile(r'\s+')
+
+@lru_cache(maxsize=256)
 def sanitize_input(text):
-    """Sanitize input text to prevent issues with special characters."""
+    """Sanitize input text to prevent issues with special characters.
+    
+    Uses LRU cache to avoid re-sanitizing the same text.
+    """
     if not text:
         return ""
     # Remove null bytes and other control characters (except common whitespace)
@@ -216,17 +255,25 @@ def sanitize_input(text):
     text = ''.join(char for char in text if ord(char) >= 32 or char in '\t\n\r')
     return text
 
+@lru_cache(maxsize=256)
 def normalize_text(text):
-    """Normalize text for matching (lowercase, remove extra whitespace)."""
+    """Normalize text for matching (lowercase, remove extra whitespace).
+    
+    Uses LRU cache to avoid re-normalizing the same text.
+    Uses pre-compiled pattern for whitespace normalization.
+    """
     if not text:
         return ""
     # First sanitize the input
     text = sanitize_input(text)
     # Then normalize whitespace and convert to lowercase
-    return re.sub(r'\s+', ' ', text.lower().strip())
+    return _WHITESPACE_PATTERN.sub(' ', text.lower().strip())
 
 def calculate_match_score(text, agent_name):
-    """Calculate how well the text matches an agent's specialization."""
+    """Calculate how well the text matches an agent's specialization.
+    
+    Uses pre-compiled regex patterns for optimal performance.
+    """
     if agent_name not in AGENT_PATTERNS:
         return 0
     
@@ -241,8 +288,9 @@ def calculate_match_score(text, agent_name):
             score += 1
     
     # Check pattern matches (2 points each, as they're more precise)
-    for pattern in patterns['patterns']:
-        if re.search(pattern, normalized_text, re.IGNORECASE):
+    # Use pre-compiled patterns from _COMPILED_PATTERNS
+    for compiled_pattern in _COMPILED_PATTERNS[agent_name]:
+        if compiled_pattern.search(normalized_text):
             score += 2
     
     return score

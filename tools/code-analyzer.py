@@ -13,8 +13,9 @@ import re
 import ast
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Set
 from collections import defaultdict
+from functools import lru_cache
 
 
 class CodeAnalyzer:
@@ -170,10 +171,26 @@ class CodeAnalyzer:
             tree = ast.parse(content)
             results["metrics"]["total_lines"] = len(content.split('\n'))
             
-            # Analyze functions
-            functions = [node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
+            # Single-pass AST traversal for better performance
+            # Collect all necessary information in one pass
+            functions = []
+            magic_numbers = []
+            variable_names = []
+            
+            for node in ast.walk(tree):
+                if isinstance(node, ast.FunctionDef):
+                    functions.append(node)
+                elif isinstance(node, ast.Constant) and isinstance(node.value, (int, float)) and not isinstance(node.value, bool):
+                    if node.value not in [0, 1, -1, 2, 10, 100] and hasattr(node, 'lineno'):
+                        magic_numbers.append(node)
+                elif isinstance(node, ast.Name):
+                    var_name = node.id
+                    if len(var_name) > 3 and not var_name.startswith('_'):
+                        variable_names.append(node)
+            
             results["metrics"]["function_count"] = len(functions)
             
+            # Process functions
             for func in functions:
                 func_lines = func.end_lineno - func.lineno if hasattr(func, 'end_lineno') else 0
                 
@@ -226,26 +243,22 @@ class CodeAnalyzer:
                         "details": f"Depth: {max_depth}"
                     })
             
-            # Check for magic numbers
-            for node in ast.walk(tree):
-                if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)) and not isinstance(node.value, bool):
-                    if node.value not in [0, 1, -1, 2, 10, 100] and hasattr(node, 'lineno'):
-                        results["patterns_found"]["bad"].append({
-                            "type": "magic_numbers",
-                            "location": f"line {node.lineno}",
-                            "details": f"Number: {node.value}"
-                        })
+            # Process magic numbers collected in single pass
+            for node in magic_numbers:
+                results["patterns_found"]["bad"].append({
+                    "type": "magic_numbers",
+                    "location": f"line {node.lineno}",
+                    "details": f"Number: {node.value}"
+                })
             
-            # Check variable naming
-            for node in ast.walk(tree):
-                if isinstance(node, ast.Name):
-                    var_name = node.id
-                    if len(var_name) > 3 and not var_name.startswith('_'):
-                        results["patterns_found"]["good"].append({
-                            "type": "descriptive_variable_names",
-                            "location": f"line {node.lineno if hasattr(node, 'lineno') else 0}",
-                            "details": f"Variable: {var_name}"
-                        })
+            # Process variable names collected in single pass
+            for node in variable_names:
+                var_name = node.id
+                results["patterns_found"]["good"].append({
+                    "type": "descriptive_variable_names",
+                    "location": f"line {node.lineno if hasattr(node, 'lineno') else 0}",
+                    "details": f"Variable: {var_name}"
+                })
         
         except SyntaxError as e:
             results["error"] = f"Syntax error: {str(e)}"
