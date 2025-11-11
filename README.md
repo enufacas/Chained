@@ -41,6 +41,22 @@ The AI sets a new goal daily and works towards it autonomously, checking progres
 
 **Want to create your own custom agent?** Check out our [tutorials](./docs/tutorials/) including [Creating Your First Custom Agent](./docs/tutorials/creating-custom-agent.md)!
 
+## 📚 Documentation
+
+**New to Chained? Start here:**
+
+- **[📖 Documentation Index](./docs/INDEX.md)** - Complete guide to all documentation (50+ files organized by topic)
+- **[⚡ Quick Reference](./docs/QUICK_REFERENCE.md)** - Command-line cheat sheet for common operations
+- **[🏗️ Architecture Guide](./docs/ARCHITECTURE.md)** - Visual diagrams and system architecture overview
+
+**Essential docs:**
+- [FAQ](./FAQ.md) - Frequently asked questions
+- [Workflows](./docs/WORKFLOWS.md) - All GitHub Actions workflows explained
+- [Learning System](./docs/LEARNING_SYSTEM.md) - How Chained learns and evolves
+- [Security Best Practices](./docs/SECURITY_BEST_PRACTICES.md) - Comprehensive security guide
+
+**Not sure where to look?** Check the **[Documentation Index](./docs/INDEX.md)** first!
+
 ## 🎯 Vision
 
 The goal of Chained is to create an entertaining and educational demonstration of **fully autonomous AI-driven development** by building a system that:
