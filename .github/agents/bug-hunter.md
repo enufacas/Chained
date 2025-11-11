@@ -8,6 +8,7 @@ tools:
   - bash
   - github-mcp-server-search_code
   - github-mcp-server-search_issues
+  - github-mcp-server-web_search
   - codeql_checker
 ---
 

@@ -8,6 +8,11 @@ tools:
   - bash
   - github-mcp-server-get_file_contents
   - github-mcp-server-search_code
+  - playwright-browser_navigate
+  - playwright-browser_snapshot
+  - playwright-browser_take_screenshot
+  - playwright-browser_click
+  - playwright-browser_fill_form
 ---
 
 # ✅ Test Champion Agent

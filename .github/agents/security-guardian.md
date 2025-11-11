@@ -9,6 +9,7 @@ tools:
   - github-mcp-server-search_code
   - github-mcp-server-list_secret_scanning_alerts
   - github-mcp-server-list_code_scanning_alerts
+  - github-mcp-server-web_search
   - codeql_checker
   - gh-advisory-database
 ---

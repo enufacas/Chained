@@ -9,6 +9,8 @@ tools:
   - github-mcp-server-get_file_contents
   - github-mcp-server-search_code
   - github-mcp-server-web_search
+  - playwright-browser_navigate
+  - playwright-browser_snapshot
 ---
 
 # 🔌 Integration Specialist Agent

@@ -38,6 +38,15 @@ Custom instructions for the agent...
 
 - **tools**: List of tools the agent has access to
 
+## MCP Servers
+
+All agents have access to trusted, widely-adopted MCP (Model Context Protocol) servers:
+
+- **GitHub MCP Server** (Microsoft/GitHub) - Repository management, code search, security scanning, web search
+- **Playwright MCP Server** (Microsoft) - Browser automation, E2E testing, UI interaction
+
+For detailed information about configured MCP servers, see **[MCP_SERVERS_CONFIGURATION.md](../../MCP_SERVERS_CONFIGURATION.md)** in the repository root.
+
 ## Available Agents
 
 ### 🐛 [bug-hunter.md](./bug-hunter.md)
