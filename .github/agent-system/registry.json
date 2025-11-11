@@ -17,7 +17,7 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.6050324169807642
       },
       "contributions": [],
       "human_name": "Omega",
@@ -40,7 +40,7 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4968493818754784
       },
       "contributions": [],
       "human_name": "Zeta",
@@ -63,7 +63,7 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.8116141101722381
       },
       "contributions": [],
       "human_name": "Iota",
@@ -86,7 +86,7 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.5958525181127075
       },
       "contributions": [],
       "human_name": "Lambda",
@@ -109,150 +109,12 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.3730897324715115
       },
       "contributions": [],
       "human_name": "Alpha",
       "personality": "methodical and precise",
       "communication_style": "clear and professional"
-    },
-    {
-      "id": "agent-1762874189",
-      "name": "\u26a1 Theta-1111",
-      "specialization": "performance-optimizer",
-      "status": "active",
-      "spawned_at": "2025-11-11T15:16:29.937323Z",
-      "traits": {
-        "creativity": 72,
-        "caution": 59,
-        "speed": 47
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": [],
-      "human_name": "Theta",
-      "personality": "methodical and precise",
-      "communication_style": "clear and professional"
-    },
-    {
-      "id": "agent-1762885303",
-      "name": "\ud83d\udcdd Theta-1111",
-      "specialization": "teach-wizard",
-      "status": "active",
-      "spawned_at": "2025-11-11T18:21:43.808330Z",
-      "traits": {
-        "creativity": 95,
-        "caution": 71,
-        "speed": 83
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": [],
-      "human_name": "Theta",
-      "personality": "methodical and precise",
-      "communication_style": "clear and professional"
-    },
-    {
-      "id": "agent-1762893362",
-      "name": "\u2699\ufe0f Nu-1111",
-      "human_name": "Nu",
-      "specialization": "engineer-wizard",
-      "status": "active",
-      "spawned_at": "2025-11-11T20:36:02.467870Z",
-      "personality": "inventive and visionary",
-      "communication_style": "uses technical jargon with enthusiasm",
-      "traits": {
-        "creativity": 93,
-        "caution": 70,
-        "speed": 71
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1762893245",
-      "name": "\ud83c\udfed Curie",
-      "human_name": "Curie",
-      "specialization": "create-guru",
-      "status": "active",
-      "spawned_at": "2025-11-11T20:34:05.000000Z",
-      "personality": "enthusiastic and energetic",
-      "communication_style": "adds encouraging emojis",
-      "traits": {
-        "creativity": 53,
-        "caution": 60,
-        "speed": 87
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1762893362",
-      "name": "\u2699\ufe0f null",
-      "human_name": "null",
-      "specialization": "engineer-wizard",
-      "status": "active",
-      "spawned_at": "2025-11-11T20:36:02.467870Z",
-      "personality": "null",
-      "communication_style": "null",
-      "traits": {
-        "creativity": 93,
-        "caution": 70,
-        "speed": 71
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1762895837",
-      "name": "\ud83e\uddd9 Shannon",
-      "human_name": "Shannon",
-      "specialization": "validate-wizard",
-      "status": "active",
-      "spawned_at": "2025-11-11T21:17:17.822388Z",
-      "personality": "methodical and precise",
-      "communication_style": "uses technical jargon with enthusiasm",
-      "traits": {
-        "creativity": 75,
-        "caution": 30,
-        "speed": 77
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
     }
   ],
   "hall_of_fame": [],
@@ -272,6 +134,6 @@
     "new_agent_probability": 0.5
   },
   "last_spawn": "2025-11-11T21:17:17.822418Z",
-  "last_evaluation": null,
+  "last_evaluation": "2025-11-11T22:06:38.458743Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
