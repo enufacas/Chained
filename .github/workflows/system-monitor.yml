@@ -246,8 +246,10 @@ jobs:
 
   progress-tracking:
     runs-on: ubuntu-latest
-    # Run every 12 hours (at 00:00 and 12:00 UTC)
-    if: (github.event.schedule == '0 */12 * * *' || inputs.skip_progress != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    # Run on schedule or when manually triggered (unless skipped)
+    if: |
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.skip_progress != true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -324,8 +326,10 @@ jobs:
 
   workflow-monitoring:
     runs-on: ubuntu-latest
-    # Run every 12 hours (at 00:00 and 12:00 UTC)
-    if: (github.event.schedule == '0 */12 * * *' || inputs.skip_workflow_monitor != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    # Run on schedule or when manually triggered (unless skipped)
+    if: |
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.skip_workflow_monitor != true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -456,8 +460,10 @@ jobs:
 
   merge-conflict-resolution:
     runs-on: ubuntu-latest
-    # Run every 3 hours to sweep for merge conflicts
-    if: (github.event.schedule == '0 */3 * * *' || inputs.skip_merge_conflicts != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    # Run on schedule or when manually triggered (unless skipped)
+    if: |
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.skip_merge_conflicts != true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -668,8 +674,10 @@ jobs:
 
   agent-health-check:
     runs-on: ubuntu-latest
-    # Run every 3 hours to check agent system health
-    if: (github.event.schedule == '0 */3 * * *' || inputs.skip_agent_health != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    # Run on schedule or when manually triggered (unless skipped)
+    if: |
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.skip_agent_health != true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -892,8 +900,10 @@ jobs:
 
   pages-health-check:
     runs-on: ubuntu-latest
-    # Run every 3 hours to check GitHub Pages health
-    if: (github.event.schedule == '0 */3 * * *' || inputs.skip_pages_health != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    # Run on schedule or when manually triggered (unless skipped)
+    if: |
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.skip_pages_health != true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
