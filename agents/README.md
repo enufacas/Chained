@@ -176,6 +176,11 @@ See `agents/registry.json` for current configuration:
 - `metrics/`: Performance tracking data
 - `archive/`: Retired agents and their learnings
 
+## Understanding Actor IDs
+
+For detailed information about how agent IDs and Copilot actor IDs work in the Chained system, see:
+- **[Actor ID System Documentation](../docs/ACTOR_ID_SYSTEM.md)** - Complete guide to the two ID systems
+
 ## Workflows
 
 - `agent-spawner.yml`: Creates new agents every 3 hours
