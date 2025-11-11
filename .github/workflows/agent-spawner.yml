@@ -6,22 +6,19 @@ on:
     - cron: '0 */3 * * *'
   workflow_dispatch:
     inputs:
-      specialization:
-        description: 'Force specific specialization (leave empty for random)'
+      mode:
+        description: 'Spawning mode'
         required: false
         type: choice
+        default: 'mixed'
         options:
-          - random
-          - bug-hunter
-          - feature-architect
-          - test-champion
-          - doc-master
-          - performance-optimizer
-          - security-guardian
-          - code-poet
-          - refactor-wizard
-          - integration-specialist
-          - ux-enhancer
+          - mixed  # 50% existing, 50% new random agents
+          - existing  # Only use existing agent definitions
+          - new  # Always create new random agents
+      specialization:
+        description: 'Force specific specialization (leave empty for random, only works with existing mode)'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -153,55 +150,64 @@ jobs:
           TIMESTAMP=$(date +%s)
           AGENT_ID="agent-$TIMESTAMP"
           
-          # Determine specialization - read from convention-compliant agent definitions
-          if [ "${{ github.event.inputs.specialization }}" != "" ] && [ "${{ github.event.inputs.specialization }}" != "random" ]; then
-            SPECIALIZATION="${{ github.event.inputs.specialization }}"
-          else
-            # Random specialization - dynamically load from .github/agents/
-            SPECS=($(python3 tools/get-agent-info.py list))
-            RANDOM_INDEX=$((RANDOM % ${#SPECS[@]}))
-            SPECIALIZATION="${SPECS[$RANDOM_INDEX]}"
+          # Determine spawning mode
+          MODE="${{ github.event.inputs.mode }}"
+          if [ -z "$MODE" ]; then
+            MODE="mixed"
           fi
           
-          # Get emoji from convention-compliant agent definition
-          EMOJI=$(python3 tools/get-agent-info.py emoji "$SPECIALIZATION")
+          # Decide whether to create new agent or use existing
+          if [ "$MODE" == "new" ]; then
+            CREATE_NEW="true"
+          elif [ "$MODE" == "existing" ]; then
+            CREATE_NEW="false"
+          else
+            # Mixed mode: 50% chance of creating new agent
+            if [ $((RANDOM % 2)) -eq 0 ]; then
+              CREATE_NEW="true"
+            else
+              CREATE_NEW="false"
+            fi
+          fi
           
-          # Generate unique agent name based on specialization
-          case "$SPECIALIZATION" in
-            "bug-hunter")
-              NAMES=("Debugger" "Squasher" "Tracer" "Hunter" "Fixer")
-              ;;
-            "feature-architect")
-              NAMES=("Builder" "Designer" "Architect" "Creator" "Innovator")
-              ;;
-            "test-champion")
-              NAMES=("Validator" "Checker" "Guardian" "Tester" "Prover")
-              ;;
-            "doc-master")
-              NAMES=("Scribe" "Writer" "Documenter" "Explainer" "Teacher")
-              ;;
-            "performance-optimizer")
-              NAMES=("Speedster" "Optimizer" "Tuner" "Enhancer" "Accelerator")
-              ;;
-            "security-guardian")
-              NAMES=("Shield" "Protector" "Guardian" "Sentinel" "Defender")
-              ;;
-            "code-poet")
-              NAMES=("Poet" "Artist" "Craftsman" "Stylist" "Elegance")
-              ;;
-            "refactor-wizard")
-              NAMES=("Wizard" "Transformer" "Refiner" "Cleaner" "Organizer")
-              ;;
-            "integration-specialist")
-              NAMES=("Connector" "Linker" "Bridge" "Integrator" "Joiner")
-              ;;
-            "ux-enhancer")
-              NAMES=("Enhancer" "Polisher" "Improver" "Beautifier" "UXpert")
-              ;;
-          esac
+          echo "is_new_agent=$CREATE_NEW" >> $GITHUB_OUTPUT
           
-          NAME_INDEX=$((RANDOM % ${#NAMES[@]}))
-          AGENT_NAME="${EMOJI} ${NAMES[$NAME_INDEX]}-$(date +%m%d)"
+          if [ "$CREATE_NEW" == "true" ]; then
+            # Generate a brand new random agent definition
+            echo "🎲 Generating new random agent..."
+            NEW_AGENT_JSON=$(python3 tools/generate-new-agent.py)
+            
+            if [ $? -ne 0 ]; then
+              echo "❌ Failed to generate new agent"
+              exit 1
+            fi
+            
+            SPECIALIZATION=$(echo "$NEW_AGENT_JSON" | jq -r '.agent_name')
+            EMOJI=$(echo "$NEW_AGENT_JSON" | jq -r '.emoji')
+            
+            echo "✅ Created new agent type: $SPECIALIZATION"
+          else
+            # Use existing agent definition
+            echo "📚 Using existing agent definition..."
+            
+            # Determine specialization
+            if [ "${{ github.event.inputs.specialization }}" != "" ]; then
+              SPECIALIZATION="${{ github.event.inputs.specialization }}"
+            else
+              # Random specialization - dynamically load from .github/agents/
+              SPECS=($(python3 tools/get-agent-info.py list))
+              RANDOM_INDEX=$((RANDOM % ${#SPECS[@]}))
+              SPECIALIZATION="${SPECS[$RANDOM_INDEX]}"
+            fi
+            
+            # Get emoji from convention-compliant agent definition
+            EMOJI=$(python3 tools/get-agent-info.py emoji "$SPECIALIZATION")
+          fi
+          
+          # Generate unique agent name
+          DESCRIPTORS=("Alpha" "Beta" "Gamma" "Delta" "Epsilon" "Zeta" "Eta" "Theta" "Iota" "Kappa" "Lambda" "Sigma" "Omega")
+          DESCRIPTOR_INDEX=$((RANDOM % ${#DESCRIPTORS[@]}))
+          AGENT_NAME="${EMOJI} ${DESCRIPTORS[$DESCRIPTOR_INDEX]}-$(date +%m%d)"
           
           # Generate personality traits (for future use)
           CREATIVITY=$((50 + RANDOM % 50))
@@ -220,6 +226,7 @@ jobs:
           echo "  ID: $AGENT_ID"
           echo "  Name: $AGENT_NAME"
           echo "  Specialization: $SPECIALIZATION"
+          echo "  Is New Type: $CREATE_NEW"
           echo "  Traits: Creativity=$CREATIVITY, Caution=$CAUTION, Speed=$SPEED"
 
       - name: Register agent
@@ -327,13 +334,34 @@ jobs:
           AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
           SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
           EMOJI="${{ steps.generate_agent.outputs.emoji }}"
+          IS_NEW="${{ steps.generate_agent.outputs.is_new_agent }}"
           
           BRANCH_NAME="agent-spawn/${AGENT_ID}"
           git checkout -b "$BRANCH_NAME"
           
+          # Add both agents/ directory and .github/agents/ if new agent was created
           git add agents/
-          git commit -m "$EMOJI Spawn new agent: $AGENT_NAME ($SPECIALIZATION)"
+          if [ "$IS_NEW" == "true" ]; then
+            git add .github/agents/
+            git commit -m "$EMOJI Spawn new agent type: $AGENT_NAME ($SPECIALIZATION) + definition"
+          else
+            git commit -m "$EMOJI Spawn new agent: $AGENT_NAME ($SPECIALIZATION)"
+          fi
           git push origin "$BRANCH_NAME"
+          
+          # Build PR body with conditional new agent info
+          if [ "$IS_NEW" == "true" ]; then
+            NEW_AGENT_INFO="### 🆕 Brand New Agent Type!
+          
+          This is a **newly generated agent specialization** that didn't exist before! The system has evolved to include this new type of agent with its own:
+          - Convention-compliant definition in \`.github/agents/${SPECIALIZATION}.md\`
+          - Unique capabilities and tools
+          - Specialized mission and responsibilities
+          
+          "
+          else
+            NEW_AGENT_INFO=""
+          fi
           
           gh pr create \
             --title "$EMOJI New Agent Spawned: $AGENT_NAME" \
@@ -342,9 +370,10 @@ jobs:
           **Agent ID**: $AGENT_ID  
           **Name**: $AGENT_NAME  
           **Specialization**: $SPECIALIZATION  
+          **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](.github/agents/${SPECIALIZATION}.md)  
           **Spawned At**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           
-          ### Personality Traits
+          ${NEW_AGENT_INFO}### Personality Traits
           
           - **Creativity**: ${{ steps.generate_agent.outputs.creativity }}/100
           - **Caution**: ${{ steps.generate_agent.outputs.caution }}/100
@@ -358,17 +387,18 @@ jobs:
           - 👀 Review other agents' work
           - 📊 Track performance metrics
           - 🏆 Compete for a spot in the Hall of Fame
+          - ⚔️ Compete against other agents (score > 30% to survive)
           
           ### Changes
           
           - Added agent to registry
-          - Created agent profile
+          - Created agent profile${IS_NEW:+ (linked to new agent definition)}
           - Updated metrics tracking
           
-          This agent will be evaluated in 24 hours based on its contributions. May the best agent win!
+          This agent will be evaluated in 24 hours. Agents scoring below 30% face elimination, while top performers (85%+) enter the Hall of Fame!
           
           ---
-          *🤖 Automated agent spawning system - Part of the Chained autonomous AI ecosystem*" \
+          *🤖 Automated agent spawning system - Evolving autonomous AI ecosystem*" \
             --label "agent-system,automated,copilot" \
             --base main \
             --head "$BRANCH_NAME"
@@ -384,24 +414,44 @@ jobs:
           AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
           SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
           EMOJI="${{ steps.generate_agent.outputs.emoji }}"
+          IS_NEW="${{ steps.generate_agent.outputs.is_new_agent }}"
+          
+          # Build issue body with conditional new agent type info
+          if [ "$IS_NEW" == "true" ]; then
+            NEW_TYPE_BADGE="🆕 **NEW AGENT TYPE** - This specialization was just created!"
+          else
+            NEW_TYPE_BADGE=""
+          fi
           
           gh issue create \
             --title "$EMOJI Agent Spawn: $AGENT_NAME is now active!" \
             --body "## 🎉 Welcome Our Newest Agent!
+          
+          ${NEW_TYPE_BADGE}
           
           A new agent has joined the Chained ecosystem and is ready to contribute!
           
           **Name**: $AGENT_NAME  
           **ID**: $AGENT_ID  
           **Specialization**: $SPECIALIZATION  
+          **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](https://github.com/${{ github.repository }}/blob/main/.github/agents/${SPECIALIZATION}.md)  
           **Status**: 🟢 Active
           
           ### Mission
           
           This agent will focus on its specialization and compete with other agents to:
           - Deliver high-quality contributions
-          - Earn a spot in the Hall of Fame
+          - Earn a spot in the Hall of Fame (score > 85%)
           - Potentially become the System Lead
+          - Survive elimination (must maintain score > 30%)
+          
+          ### Evolutionary System
+          
+          - 🎲 Agents are spawned with random or new specializations
+          - ⚔️ Agents compete for survival based on performance
+          - 🏆 Top performers enter the Hall of Fame permanently
+          - ❌ Weak performers (< 30%) are eliminated daily
+          - 🧬 The ecosystem evolves through natural selection
           
           ### How to Support
           
