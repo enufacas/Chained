@@ -70,6 +70,9 @@ Specialized in improving integrations and connections between systems. Focuses o
 ### ✨ [ux-enhancer.md](./ux-enhancer.md)
 Specialized in improving user experience. Focuses on polish, usability, and visual design.
 
+### 👮 [validate-pro.md](./validate-pro.md)
+Specialized in validating security. Focuses on security, data integrity, and access control.
+
 ## Using Custom Agents
 
 Custom agents can be invoked:
