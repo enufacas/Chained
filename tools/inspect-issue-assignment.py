@@ -57,12 +57,6 @@ def get_issue_details(owner, repo, issue_number):
               __typename
               id
               url
-              ... on Bot {
-                databaseId
-              }
-              ... on User {
-                databaseId
-              }
             }
           }
           timelineItems(first: 100, itemTypes: [ASSIGNED_EVENT, UNASSIGNED_EVENT]) {
@@ -73,16 +67,9 @@ def get_issue_details(owner, repo, issue_number):
                 createdAt
                 assignee {
                   __typename
-                  ... on Bot {
-                    login
-                    id
-                    url
-                  }
-                  ... on User {
-                    login
-                    id
-                    url
-                  }
+                  login
+                  id
+                  url
                 }
                 actor {
                   login
@@ -93,14 +80,8 @@ def get_issue_details(owner, repo, issue_number):
                 createdAt
                 assignee {
                   __typename
-                  ... on Bot {
-                    login
-                    id
-                  }
-                  ... on User {
-                    login
-                    id
-                  }
+                  login
+                  id
                 }
                 actor {
                   login
