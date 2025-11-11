@@ -138,6 +138,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1762899779",
+      "name": "\ud83d\udd10 Katie Moussouris",
+      "human_name": "Katie Moussouris",
+      "specialization": "monitor-champion",
+      "status": "active",
+      "spawned_at": "2025-11-11T22:23:00.123576Z",
+      "personality": "proactive and strategic, with extra enthusiasm",
+      "communication_style": "closes security gaps",
+      "traits": {
+        "creativity": 53,
+        "caution": 86,
+        "speed": 41
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],
@@ -156,7 +179,7 @@
     "spawn_mode": "mixed",
     "new_agent_probability": 0.5
   },
-  "last_spawn": "2025-11-11T22:08:37.060924Z",
+  "last_spawn": "2025-11-11T22:23:00.123618Z",
   "last_evaluation": "2025-11-11T22:06:38.458743Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
