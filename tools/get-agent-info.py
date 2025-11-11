@@ -168,73 +168,107 @@ def get_agent_mission(agent_name):
     return info['mission'] if info else ""
 
 def main():
-    """Command-line interface."""
+    """Command-line interface with elegant command dispatch."""
+    commands = {
+        'list': handle_list_command,
+        'info': handle_info_command,
+        'emoji': handle_emoji_command,
+        'mission': handle_mission_command,
+        'description': handle_description_command,
+    }
+    
     if len(sys.argv) < 2:
-        print("Usage: get-agent-info.py <command> [args]", file=sys.stderr)
-        print("Commands:", file=sys.stderr)
-        print("  list                  - List all agent names", file=sys.stderr)
-        print("  info <agent>          - Get full info as JSON", file=sys.stderr)
-        print("  emoji <agent>         - Get agent emoji", file=sys.stderr)
-        print("  mission <agent>       - Get agent mission", file=sys.stderr)
-        print("  description <agent>   - Get agent description", file=sys.stderr)
+        print_usage()
         sys.exit(1)
     
     command = sys.argv[1]
     
-    if command == "list":
-        agents = list_agents()
-        print(" ".join(agents))
-    
-    elif command == "info":
-        if len(sys.argv) < 3:
-            print("Usage: get-agent-info.py info <agent-name>", file=sys.stderr)
-            sys.exit(1)
-        agent_name = sys.argv[2]
-        info = get_agent_info(agent_name)
-        if info:
-            print(json.dumps(info, indent=2))
-        else:
-            print(f"Agent '{agent_name}' not found", file=sys.stderr)
-            sys.exit(1)
-    
-    elif command == "emoji":
-        if len(sys.argv) < 3:
-            print("Usage: get-agent-info.py emoji <agent-name>", file=sys.stderr)
-            sys.exit(1)
-        agent_name = sys.argv[2]
-        emoji = get_agent_emoji(agent_name)
-        if emoji:
-            print(emoji)
-        else:
-            print(f"Agent '{agent_name}' not found", file=sys.stderr)
-            sys.exit(1)
-    
-    elif command == "mission":
-        if len(sys.argv) < 3:
-            print("Usage: get-agent-info.py mission <agent-name>", file=sys.stderr)
-            sys.exit(1)
-        agent_name = sys.argv[2]
-        mission = get_agent_mission(agent_name)
-        if mission:
-            print(mission)
-        else:
-            print(f"Agent '{agent_name}' not found", file=sys.stderr)
-            sys.exit(1)
-    
-    elif command == "description":
-        if len(sys.argv) < 3:
-            print("Usage: get-agent-info.py description <agent-name>", file=sys.stderr)
-            sys.exit(1)
-        agent_name = sys.argv[2]
-        info = get_agent_info(agent_name)
-        if info:
-            print(info['description'])
-        else:
-            print(f"Agent '{agent_name}' not found", file=sys.stderr)
-            sys.exit(1)
-    
-    else:
+    if command not in commands:
         print(f"Unknown command: {command}", file=sys.stderr)
+        print_usage()
+        sys.exit(1)
+    
+    commands[command]()
+
+
+def print_usage():
+    """Display usage information."""
+    print("Usage: get-agent-info.py <command> [args]", file=sys.stderr)
+    print("\nCommands:", file=sys.stderr)
+    print("  list                  - List all agent names", file=sys.stderr)
+    print("  info <agent>          - Get full info as JSON", file=sys.stderr)
+    print("  emoji <agent>         - Get agent emoji", file=sys.stderr)
+    print("  mission <agent>       - Get agent mission", file=sys.stderr)
+    print("  description <agent>   - Get agent description", file=sys.stderr)
+
+
+def require_agent_argument() -> str:
+    """
+    Ensure an agent name was provided as an argument.
+    
+    Returns:
+        The agent name from command line arguments
+        
+    Exits:
+        If no agent name is provided
+    """
+    if len(sys.argv) < 3:
+        print(f"Usage: get-agent-info.py {sys.argv[1]} <agent-name>", file=sys.stderr)
+        sys.exit(1)
+    return sys.argv[2]
+
+
+def handle_list_command():
+    """List all available agents."""
+    agents = list_agents()
+    print(" ".join(agents))
+
+
+def handle_info_command():
+    """Display full agent information as JSON."""
+    agent_name = require_agent_argument()
+    info = get_agent_info(agent_name)
+    
+    if info:
+        print(json.dumps(info, indent=2))
+    else:
+        print(f"Agent '{agent_name}' not found", file=sys.stderr)
+        sys.exit(1)
+
+
+def handle_emoji_command():
+    """Display agent emoji."""
+    agent_name = require_agent_argument()
+    emoji = get_agent_emoji(agent_name)
+    
+    if emoji:
+        print(emoji)
+    else:
+        print(f"Agent '{agent_name}' not found", file=sys.stderr)
+        sys.exit(1)
+
+
+def handle_mission_command():
+    """Display agent mission statement."""
+    agent_name = require_agent_argument()
+    mission = get_agent_mission(agent_name)
+    
+    if mission:
+        print(mission)
+    else:
+        print(f"Agent '{agent_name}' not found", file=sys.stderr)
+        sys.exit(1)
+
+
+def handle_description_command():
+    """Display agent description."""
+    agent_name = require_agent_argument()
+    info = get_agent_info(agent_name)
+    
+    if info:
+        print(info['description'])
+    else:
+        print(f"Agent '{agent_name}' not found", file=sys.stderr)
         sys.exit(1)
 
 if __name__ == "__main__":
