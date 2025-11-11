@@ -115,8 +115,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
-          DISCUSSION_ROUNDS="${{ github.event.inputs.discussion_rounds || 3 }}"
+          export ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
+          export DISCUSSION_ROUNDS="${{ github.event.inputs.discussion_rounds || 3 }}"
           
           # Ensure discussion rounds is between 2-5
           if [ "$DISCUSSION_ROUNDS" -lt 2 ]; then
@@ -340,7 +340,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
+          export ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
           
           python3 << 'PYTHON_SCRIPT'
           import json
