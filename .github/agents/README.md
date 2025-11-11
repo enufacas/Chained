@@ -88,6 +88,18 @@ Specialized in validating security. Focuses on security, data integrity, and acc
 ### 📝 [teach-wizard.md](./teach-wizard.md)
 Specialized in teaching tutorials. Focuses on documentation, comments, and guides.
 
+### 📖 [support-master.md](./support-master.md)
+Specialized in supporting skill building. Inspired by Barbara Liskov - principled and guiding. Focuses on code reviews, best practices, and knowledge sharing.
+
+### 🔧 [coordinate-wizard.md](./coordinate-wizard.md)
+Specialized in coordinating APIs. Focuses on integrations, APIs, and services.
+
+### ⚙️ [engineer-wizard.md](./engineer-wizard.md)
+Specialized in engineering APIs. Inspired by Nikola Tesla - inventive and visionary, with extra enthusiasm. Focuses on features, infrastructure, and tools.
+
+### ✔️ [validate-wizard.md](./validate-wizard.md)
+Specialized in ensuring comprehensive validation. Focuses on input validation, data integrity, and error handling across all system boundaries.
+
 ## Using Custom Agents
 
 Custom agents can be invoked:

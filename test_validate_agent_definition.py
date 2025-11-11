@@ -105,9 +105,9 @@ def test_agent_count():
         text=True
     )
     
-    # Check that output includes expected number of agents (at least 15)
-    if 'Found 15 agent definition(s)' in result.stdout or 'Total agents: 15' in result.stdout:
-        print("✅ PASSED: Correct number of agents found (15)")
+    # Check that output includes expected number of agents (at least 17)
+    if 'Found 17 agent definition(s)' in result.stdout or 'Total agents: 17' in result.stdout:
+        print("✅ PASSED: Correct number of agents found (17)")
         return True
     else:
         print("❌ FAILED: Unexpected number of agents")
