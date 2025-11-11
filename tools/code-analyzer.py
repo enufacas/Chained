@@ -95,16 +95,66 @@ class CodeAnalyzer:
         }
     
     def _save_patterns(self):
-        """Save the updated pattern database"""
-        self.patterns_data["last_updated"] = datetime.now(timezone.utc).isoformat()
-        os.makedirs(os.path.dirname(self.patterns_file), exist_ok=True)
-        with open(self.patterns_file, 'w') as f:
-            json.dump(self.patterns_data, f, indent=2)
+        """Save the updated pattern database with proper error handling."""
+        try:
+            self.patterns_data["last_updated"] = datetime.now(timezone.utc).isoformat()
+            
+            # Ensure directory exists
+            patterns_dir = os.path.dirname(self.patterns_file)
+            if patterns_dir:
+                os.makedirs(patterns_dir, exist_ok=True)
+            
+            # Write to temporary file first, then rename (atomic operation)
+            temp_file = self.patterns_file + '.tmp'
+            with open(temp_file, 'w', encoding='utf-8') as f:
+                json.dump(self.patterns_data, f, indent=2)
+            
+            # Atomic rename
+            os.replace(temp_file, self.patterns_file)
+        except (IOError, OSError, json.JSONEncodeError) as e:
+            # Clean up temp file if it exists
+            temp_file = self.patterns_file + '.tmp'
+            if os.path.exists(temp_file):
+                try:
+                    os.remove(temp_file)
+                except OSError:
+                    pass
+            raise IOError(f"Failed to save patterns: {e}")
     
     def analyze_python_file(self, filepath: str) -> Dict:
-        """Analyze a Python file for patterns"""
-        with open(filepath, 'r', encoding='utf-8') as f:
-            content = f.read()
+        """
+        Analyze a Python file for patterns with proper error handling.
+        
+        Args:
+            filepath: Path to the Python file to analyze
+            
+        Returns:
+            Dictionary containing analysis results
+            
+        Raises:
+            IOError: If the file cannot be read
+            ValueError: If the file is not valid Python
+        """
+        # Validate filepath
+        if not filepath:
+            raise ValueError("File path cannot be empty")
+        
+        if not isinstance(filepath, str):
+            raise ValueError(f"File path must be a string, got {type(filepath).__name__}")
+        
+        # Check file exists
+        if not os.path.exists(filepath):
+            raise IOError(f"File does not exist: {filepath}")
+        
+        if not os.path.isfile(filepath):
+            raise IOError(f"Path is not a file: {filepath}")
+        
+        # Read file with proper error handling
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                content = f.read()
+        except (IOError, OSError, UnicodeDecodeError) as e:
+            raise IOError(f"Failed to read file '{filepath}': {e}")
         
         results = {
             "file": filepath,
@@ -199,6 +249,8 @@ class CodeAnalyzer:
         
         except SyntaxError as e:
             results["error"] = f"Syntax error: {str(e)}"
+        except Exception as e:
+            results["error"] = f"Analysis error: {str(e)}"
         
         return results
     
@@ -217,11 +269,41 @@ class CodeAnalyzer:
         return max_depth
     
     def analyze_directory(self, directory: str, extensions: List[str] = ['.py']) -> Dict:
-        """Analyze all files in a directory"""
+        """
+        Analyze all files in a directory with proper error handling.
+        
+        Args:
+            directory: Path to the directory to analyze
+            extensions: List of file extensions to analyze (default: ['.py'])
+            
+        Returns:
+            Dictionary containing analysis results
+            
+        Raises:
+            ValueError: If directory parameter is invalid
+            IOError: If directory cannot be accessed
+        """
+        # Validate inputs
+        if not directory:
+            raise ValueError("Directory path cannot be empty")
+        
+        if not isinstance(directory, str):
+            raise ValueError(f"Directory must be a string, got {type(directory).__name__}")
+        
+        if not os.path.exists(directory):
+            raise IOError(f"Directory does not exist: {directory}")
+        
+        if not os.path.isdir(directory):
+            raise IOError(f"Path is not a directory: {directory}")
+        
+        if not isinstance(extensions, list):
+            raise ValueError(f"Extensions must be a list, got {type(extensions).__name__}")
+        
         results = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "directory": directory,
             "files_analyzed": [],
+            "errors": [],
             "summary": {
                 "total_files": 0,
                 "total_good_patterns": 0,
@@ -230,28 +312,38 @@ class CodeAnalyzer:
             }
         }
         
-        for root, dirs, files in os.walk(directory):
-            # Skip hidden directories and common excludes
-            dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ['node_modules', '__pycache__', 'venv']]
-            
-            for file in files:
-                if any(file.endswith(ext) for ext in extensions):
-                    filepath = os.path.join(root, file)
-                    
-                    if file.endswith('.py'):
-                        analysis = self.analyze_python_file(filepath)
-                        results["files_analyzed"].append(analysis)
+        try:
+            for root, dirs, files in os.walk(directory):
+                # Skip hidden directories and common excludes
+                dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ['node_modules', '__pycache__', 'venv']]
+                
+                for file in files:
+                    if any(file.endswith(ext) for ext in extensions):
+                        filepath = os.path.join(root, file)
                         
-                        # Update summary
-                        results["summary"]["total_files"] += 1
-                        results["summary"]["total_good_patterns"] += len(analysis["patterns_found"]["good"])
-                        results["summary"]["total_bad_patterns"] += len(analysis["patterns_found"]["bad"])
-                        
-                        for pattern in analysis["patterns_found"]["good"]:
-                            results["summary"]["pattern_breakdown"][f"good:{pattern['type']}"] += 1
-                        
-                        for pattern in analysis["patterns_found"]["bad"]:
-                            results["summary"]["pattern_breakdown"][f"bad:{pattern['type']}"] += 1
+                        try:
+                            if file.endswith('.py'):
+                                analysis = self.analyze_python_file(filepath)
+                                results["files_analyzed"].append(analysis)
+                                
+                                # Update summary
+                                results["summary"]["total_files"] += 1
+                                results["summary"]["total_good_patterns"] += len(analysis["patterns_found"]["good"])
+                                results["summary"]["total_bad_patterns"] += len(analysis["patterns_found"]["bad"])
+                                
+                                for pattern in analysis["patterns_found"]["good"]:
+                                    results["summary"]["pattern_breakdown"][f"good:{pattern['type']}"] += 1
+                                
+                                for pattern in analysis["patterns_found"]["bad"]:
+                                    results["summary"]["pattern_breakdown"][f"bad:{pattern['type']}"] += 1
+                        except Exception as e:
+                            # Log error but continue processing other files
+                            results["errors"].append({
+                                "file": filepath,
+                                "error": str(e)
+                            })
+        except OSError as e:
+            raise IOError(f"Error walking directory '{directory}': {e}")
         
         return results
     
