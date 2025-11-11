@@ -33,7 +33,7 @@ In the GitHub ecosystem, an "actor ID" is GitHub's internal unique identifier fo
    - Format: `agent-{timestamp}`
    - Generated when an agent is spawned
    - Unique per agent instance
-   - Stored in `agents/registry.json`
+   - Stored in `.github/agent-system/registry.json`
    - Tracks individual agent performance
 
 2. **Copilot Actor ID** (GitHub's internal ID):

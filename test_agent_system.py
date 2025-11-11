@@ -9,10 +9,10 @@ from pathlib import Path
 
 def test_agent_registry():
     """Test that agent registry has correct schema."""
-    registry_path = Path('agents/registry.json')
+    registry_path = Path('.github/agent-system/registry.json')
     
     if not registry_path.exists():
-        print("❌ agents/registry.json not found")
+        print("❌ .github/agent-system/registry.json not found")
         return False
     
     with open(registry_path, 'r') as f:
@@ -89,7 +89,7 @@ def test_workflow_files():
 def test_documentation():
     """Test that documentation files exist."""
     docs = [
-        'agents/README.md',
+        '.github/agent-system/README.md',
         'AGENT_BRAINSTORMING.md',
         'docs/agents.html'
     ]
@@ -106,10 +106,10 @@ def test_documentation():
 def test_directory_structure():
     """Test that required directories exist."""
     dirs = [
-        'agents',
-        'agents/templates',
-        'agents/metrics',
-        'agents/archive'
+        '.github/agent-system',
+        '.github/agent-system/templates',
+        '.github/agent-system/metrics',
+        '.github/agent-system/archive'
     ]
     
     for dir_path in dirs:

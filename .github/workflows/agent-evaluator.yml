@@ -69,7 +69,7 @@ jobs:
           import subprocess
           from datetime import datetime, timedelta
           
-          REGISTRY_FILE = "agents/registry.json"
+          REGISTRY_FILE = ".github/agent-system/registry.json"
           
           # Load registry
           with open(REGISTRY_FILE, 'r') as f:
@@ -176,7 +176,7 @@ jobs:
           
           # Update profiles for eliminated agents
           for agent in results.get('eliminated', []):
-              profile_path = f"agents/profiles/{agent['id']}.md"
+              profile_path = f".github/agent-system/profiles/{agent['id']}.md"
               if os.path.exists(profile_path):
                   with open(profile_path, 'r') as f:
                       content = f.read()
@@ -189,7 +189,7 @@ jobs:
           
           # Update profiles for promoted agents
           for agent in results.get('promoted', []):
-              profile_path = f"agents/profiles/{agent['id']}.md"
+              profile_path = f".github/agent-system/profiles/{agent['id']}.md"
               if os.path.exists(profile_path):
                   with open(profile_path, 'r') as f:
                       content = f.read()
@@ -206,8 +206,8 @@ jobs:
       - name: Archive eliminated agents
         if: steps.evaluate.outputs.has_results == 'true'
         run: |
-          mkdir -p agents/archive
-          mkdir -p agents/archive/definitions
+          mkdir -p .github/agent-system/archive
+          mkdir -p .github/agent-system/archive/definitions
           
           python3 << 'PYTHON_SCRIPT'
           import json
@@ -218,15 +218,15 @@ jobs:
           with open('/tmp/evaluation_results.json', 'r') as f:
               results = json.load(f)
           
-          with open('agents/registry.json', 'r') as f:
+          with open('.github/agent-system/registry.json', 'r') as f:
               registry = json.load(f)
           
           for agent in results.get('eliminated', []):
               agent_id = agent['id']
               
               # Archive profile
-              profile_path = f"agents/profiles/{agent_id}.md"
-              archive_path = f"agents/archive/{agent_id}.md"
+              profile_path = f".github/agent-system/profiles/{agent_id}.md"
+              archive_path = f".github/agent-system/archive/{agent_id}.md"
               
               if os.path.exists(profile_path):
                   shutil.move(profile_path, archive_path)
@@ -255,7 +255,7 @@ jobs:
           BRANCH_NAME="agent-evaluation/$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH_NAME"
           
-          git add agents/
+          git add .github/agent-system/
           git commit -m "🔄 Daily agent evaluation and governance"
           git push origin "$BRANCH_NAME"
           
@@ -359,7 +359,7 @@ jobs:
           with open('/tmp/evaluation_results.json', 'r') as f:
               results = json.load(f)
           
-          with open('agents/registry.json', 'r') as f:
+          with open('.github/agent-system/registry.json', 'r') as f:
               registry = json.load(f)
           
           title = f"🏛️ Agent Evaluation Report - {datetime.utcnow().strftime('%Y-%m-%d')}"

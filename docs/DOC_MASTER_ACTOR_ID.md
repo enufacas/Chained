@@ -9,7 +9,7 @@ As a **Doc Master agent**, I use **two types of IDs**:
 1. **Agent Instance ID**: `agent-{timestamp}` (e.g., `agent-1762824870`)
    - Unique per spawn
    - Tracks my individual performance
-   - Found in `agents/registry.json`
+   - Found in `.github/agent-system/registry.json`
 
 2. **Copilot Actor ID**: GitHub's internal ID for Copilot bot
    - Same for ALL agents (all specializations share it)
@@ -21,7 +21,7 @@ As a **Doc Master agent**, I use **two types of IDs**:
 **Agent Instance IDs** (What identifies ME specifically):
 ```bash
 # Check for active doc-master agents
-cat agents/registry.json | jq '.agents[] | select(.specialization == "doc-master")'
+cat .github/agent-system/registry.json | jq '.agents[] | select(.specialization == "doc-master")'
 ```
 
 Currently, there is **NO active doc-master agent** in the registry. The only active agent is:
@@ -39,7 +39,7 @@ Currently, there is **NO active doc-master agent** in the registry. The only act
 When someone asks "What is Doc Master's actor ID?", there are two possible interpretations:
 
 1. **"What is MY unique agent ID?"**
-   - Answer: Check `agents/registry.json` for your specific `agent-{timestamp}` ID
+   - Answer: Check `.github/agent-system/registry.json` for your specific `agent-{timestamp}` ID
    - Each doc-master spawn gets a new unique ID
 
 2. **"What actor ID does Doc Master use for GitHub assignments?"**
@@ -65,13 +65,13 @@ If a doc-master agent is currently active:
 
 ```bash
 # Find active doc-master agents
-cat agents/registry.json | jq '.agents[] | select(.specialization == "doc-master" and .status == "active")'
+cat .github/agent-system/registry.json | jq '.agents[] | select(.specialization == "doc-master" and .status == "active")'
 ```
 
 If you just spawned:
 ```bash
 # Find most recent agent spawn
-cat agents/registry.json | jq '.agents | sort_by(.spawned_at) | reverse | .[0]'
+cat .github/agent-system/registry.json | jq '.agents | sort_by(.spawned_at) | reverse | .[0]'
 ```
 
 ### Complete Documentation

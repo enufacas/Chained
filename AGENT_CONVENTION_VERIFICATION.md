@@ -105,8 +105,8 @@ The implementation maintains compatibility with the existing agent system:
 
 - **`.github/agents/`** - GitHub Copilot custom agent definitions (NEW)
 - **`agents/`** - Agent lifecycle management, metrics, and tracking (EXISTING)
-- **`agents/registry.json`** - Agent database and configuration (EXISTING)
-- **`agents/profiles/`** - Agent performance profiles (EXISTING)
+- **`.github/agent-system/registry.json`** - Agent database and configuration (EXISTING)
+- **`.github/agent-system/profiles/`** - Agent performance profiles (EXISTING)
 
 The existing autonomous agent spawning, evaluation, and governance systems continue to work with the new convention-compliant agent definitions.
 

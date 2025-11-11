@@ -111,7 +111,7 @@ This directory follows the official GitHub Copilot custom agents convention:
 - [GitHub Docs: Custom agents configuration](https://docs.github.com/en/copilot/reference/custom-agents-configuration)
 - [GitHub Docs: Creating custom agents](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents)
 - [GitHub Docs: Customizing the agent environment](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment)
-- [Agent System Overview](../../agents/README.md) - Full autonomous agent system documentation
+- [Agent System Overview](../agent-system/README.md) - Full autonomous agent system documentation
 
 ---
 

@@ -93,7 +93,7 @@ Change to your preferred label.
 
 ### Default Configuration
 
-Located in `agents/registry.json`:
+Located in `.github/agent-system/registry.json`:
 
 ```json
 {
@@ -117,16 +117,16 @@ Located in `agents/registry.json`:
 **Option A: Edit JSON Directly**
 ```bash
 # Edit the registry file
-vi agents/registry.json
+vi .github/agent-system/registry.json
 
 # Commit changes
-git add agents/registry.json
+git add .github/agent-system/registry.json
 git commit -m "Adjust agent parameters"
 git push
 ```
 
 **Option B: Via PR**
-1. Edit `agents/registry.json` in GitHub UI
+1. Edit `.github/agent-system/registry.json` in GitHub UI
 2. Create PR with changes
 3. Merge when ready
 
@@ -337,7 +337,7 @@ gh workflow run agent-spawner.yml
 gh run watch
 
 # Check if agent was created
-cat agents/registry.json | jq '.agents'
+cat .github/agent-system/registry.json | jq '.agents'
 ```
 
 ### Test Evaluation
@@ -379,16 +379,16 @@ gh run view <run-id>
 
 ```bash
 # Count active agents
-cat agents/registry.json | jq '.agents | length'
+cat .github/agent-system/registry.json | jq '.agents | length'
 
 # View all agents
-cat agents/registry.json | jq '.agents[] | {id: .id, name: .name, status: .status}'
+cat .github/agent-system/registry.json | jq '.agents[] | {id: .id, name: .name, status: .status}'
 
 # View Hall of Fame
-cat agents/registry.json | jq '.hall_of_fame'
+cat .github/agent-system/registry.json | jq '.hall_of_fame'
 
 # Check System Lead
-cat agents/registry.json | jq '.system_lead'
+cat .github/agent-system/registry.json | jq '.system_lead'
 ```
 
 ## 🔧 Troubleshooting
@@ -449,7 +449,7 @@ gh workflow run agent-spawner.yml
 # 3. View agents
 # Visit: https://enufacas.github.io/Chained/agents.html
 # Or check:
-cat agents/registry.json
+cat .github/agent-system/registry.json
 
 # 4. Monitor
 gh run list --workflow=agent-spawner.yml

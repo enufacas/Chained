@@ -3,7 +3,7 @@ name: Sync Agent Data to GitHub Pages
 on:
   push:
     paths:
-      - 'agents/registry.json'
+      - '.github/agent-system/registry.json'
     branches:
       - main
   workflow_dispatch:
@@ -27,8 +27,8 @@ jobs:
         run: |
           mkdir -p docs/data
           
-          if [ -f "agents/registry.json" ]; then
-            cp agents/registry.json docs/data/agent-registry.json
+          if [ -f ".github/agent-system/registry.json" ]; then
+            cp .github/agent-system/registry.json docs/data/agent-registry.json
             echo "✅ Synced agent registry to GitHub Pages"
           else
             echo "⚠️ Agent registry not found"

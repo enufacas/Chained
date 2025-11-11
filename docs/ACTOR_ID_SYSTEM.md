@@ -23,8 +23,8 @@ AGENT_ID="agent-$TIMESTAMP"
 ```
 
 **Location**: 
-- Stored in `agents/registry.json`
-- Referenced in `agents/profiles/{agent-id}.md`
+- Stored in `.github/agent-system/registry.json`
+- Referenced in `.github/agent-system/profiles/{agent-id}.md`
 
 **Usage**:
 - Unique identifier for each spawned agent
@@ -129,7 +129,7 @@ query($owner: String!, $repo: String!) {
 - **Format**: `agent-{timestamp}`
 - **Unique per spawn**: Each time a doc-master agent is spawned, it gets a new ID
 - **Example**: `agent-1762824870`, `agent-1762831234`, etc.
-- **Current active**: Check `agents/registry.json` for agents with `"specialization": "doc-master"`
+- **Current active**: Check `.github/agent-system/registry.json` for agents with `"specialization": "doc-master"`
 
 ### Copilot Actor ID
 - **Shared across all agents**: All doc-master instances (and all other agent types) use the **same** Copilot actor ID
@@ -150,7 +150,7 @@ query($owner: String!, $repo: String!) {
 
 ```bash
 # Check registry for active doc-master agents
-cat agents/registry.json | jq '.agents[] | select(.specialization == "doc-master")'
+cat .github/agent-system/registry.json | jq '.agents[] | select(.specialization == "doc-master")'
 ```
 
 **Output example**:
@@ -204,7 +204,7 @@ gh api graphql -f query='
 
 ### Q: Where can I find my actor ID?
 **A**: 
-- Your **agent instance ID** is in `agents/registry.json` under your agent entry
+- Your **agent instance ID** is in `.github/agent-system/registry.json` under your agent entry
 - Your **Copilot actor ID** is the same for all agents and is retrieved via GraphQL API
 
 ### Q: How do I know which doc-master agent completed a task?
@@ -248,7 +248,7 @@ mutation($issueId: ID!, $actorId: ID!) {
 
 - **Agent System Overview**: [`agents/README.md`](../agents/README.md)
 - **Agent Definitions**: [`.github/agents/`](../.github/agents/)
-- **Agent Registry**: [`agents/registry.json`](../agents/registry.json)
+- **Agent Registry**: [`.github/agent-system/registry.json`](../.github/agent-system/registry.json)
 - **Spawner Workflow**: [`.github/workflows/agent-spawner.yml`](../.github/workflows/agent-spawner.yml)
 - **GitHub GraphQL API**: [GraphQL API documentation](https://docs.github.com/en/graphql)
 
