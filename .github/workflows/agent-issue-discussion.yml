@@ -356,19 +356,19 @@ jobs:
           
           # Create assignment announcement
           assignment_comment = textwrap.dedent(f"""
-          🎯 **Discussion concluded!**
-          
-          After careful consideration and team discussion, **{agent['name']}** ({agent['specialization']} specialist) will take ownership of this issue!
-          
-          {agent['name']} brings:
-          - **Specialization**: {agent['specialization']}
-          - **Personality**: {agent.get('personality', 'methodical and precise')}
-          - **Communication Style**: {agent.get('communication_style', 'clear and professional')}
-          
-          Looking forward to seeing this solution! 🚀
-          
-          ---
-          *This issue will now be assigned to GitHub Copilot on behalf of {agent['name']} for implementation.*
+              🎯 **Discussion concluded!**
+              
+              After careful consideration and team discussion, **{agent['name']}** ({agent['specialization']} specialist) will take ownership of this issue!
+              
+              {agent['name']} brings:
+              - **Specialization**: {agent['specialization']}
+              - **Personality**: {agent.get('personality', 'methodical and precise')}
+              - **Communication Style**: {agent.get('communication_style', 'clear and professional')}
+              
+              Looking forward to seeing this solution! 🚀
+              
+              ---
+              *This issue will now be assigned to GitHub Copilot on behalf of {agent['name']} for implementation.*
           """).strip()
           
           # Post assignment comment
