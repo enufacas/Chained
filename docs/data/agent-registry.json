@@ -1,0 +1,104 @@
+{
+  "version": "2.0.0",
+  "agents": [
+    {
+      "id": "agent-1762824870",
+      "name": "\ud83d\udd17 Omega-1111",
+      "specialization": "coordinate-wizard",
+      "status": "active",
+      "spawned_at": "2025-11-11T01:34:30.671088Z",
+      "traits": {
+        "creativity": 56,
+        "caution": 43,
+        "speed": 54
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1762832596",
+      "name": "\ud83e\uddea Zeta-1111",
+      "specialization": "validate-wizard",
+      "status": "active",
+      "spawned_at": "2025-11-11T03:45:09.660Z",
+      "traits": {
+        "creativity": 45,
+        "caution": 78,
+        "speed": 62
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1762842252",
+      "name": "\ud83e\uddd9 Iota-1111",
+      "specialization": "validate-wizard",
+      "status": "active",
+      "spawned_at": "2025-11-11T06:24:12.222136Z",
+      "traits": {
+        "creativity": 57,
+        "caution": 95,
+        "speed": 54
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1762852654",
+      "name": "\ud83d\udcda Lambda-1111",
+      "specialization": "doc-master",
+      "status": "active",
+      "spawned_at": "2025-11-11T09:17:34.213288Z",
+      "traits": {
+        "creativity": 95,
+        "caution": 61,
+        "speed": 82
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    }
+  ],
+  "hall_of_fame": [],
+  "system_lead": null,
+  "config": {
+    "spawn_interval_hours": 3,
+    "max_active_agents": 10,
+    "elimination_threshold": 0.3,
+    "promotion_threshold": 0.85,
+    "metrics_weight": {
+      "code_quality": 0.3,
+      "issue_resolution": 0.25,
+      "pr_success": 0.25,
+      "peer_review": 0.2
+    },
+    "spawn_mode": "mixed",
+    "new_agent_probability": 0.5
+  },
+  "last_spawn": "2025-11-11T09:17:34.213327Z",
+  "last_evaluation": null,
+  "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
+}
