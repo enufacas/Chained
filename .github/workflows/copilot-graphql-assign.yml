@@ -114,6 +114,76 @@ jobs:
               echo "✓ Added copilot-assigned label to issue #$issue_number"
             fi
             
+            # Analyze issue and determine appropriate agent specialization
+            echo "🔍 Analyzing issue to determine appropriate agent specialization..."
+            issue_data=$(gh issue view $issue_number --repo ${{ github.repository }} --json title,body --jq '{title: .title, body: .body}')
+            issue_title=$(echo "$issue_data" | jq -r '.title')
+            issue_body=$(echo "$issue_data" | jq -r '.body // ""')
+            
+            # Get list of available agent specializations
+            available_agents=$(ls -1 .github/agents/*.md 2>/dev/null | xargs -n 1 basename | sed 's/\.md$//' | grep -v "README" || echo "")
+            
+            # Simple keyword matching to suggest appropriate agent
+            suggested_agent=""
+            agent_context=""
+            if [ -n "$available_agents" ]; then
+              # Check for bug-related keywords
+              if echo "$issue_title $issue_body" | grep -qiE "bug|error|crash|fix|issue|problem|exception|fail"; then
+                if echo "$available_agents" | grep -q "bug-hunter"; then
+                  suggested_agent="bug-hunter"
+                fi
+              fi
+              
+              # Check for security keywords  
+              if echo "$issue_title $issue_body" | grep -qiE "security|vulnerability|auth|injection|xss|csrf"; then
+                if echo "$available_agents" | grep -q "security-guardian"; then
+                  suggested_agent="security-guardian"
+                fi
+              fi
+              
+              # Check for feature/build keywords
+              if echo "$issue_title $issue_body" | grep -qiE "feature|add|implement|create|build|new"; then
+                if echo "$available_agents" | grep -q "feature-architect"; then
+                  suggested_agent="feature-architect"
+                fi
+              fi
+              
+              # Check for documentation keywords
+              if echo "$issue_title $issue_body" | grep -qiE "doc|documentation|readme|guide|tutorial"; then
+                if echo "$available_agents" | grep -q "doc-master"; then
+                  suggested_agent="doc-master"
+                fi
+              fi
+              
+              # Check for refactoring keywords
+              if echo "$issue_title $issue_body" | grep -qiE "refactor|cleanup|improve|optimize|restructure"; then
+                if echo "$available_agents" | grep -q "refactor-wizard"; then
+                  suggested_agent="refactor-wizard"
+                elif echo "$available_agents" | grep -q "performance-optimizer"; then
+                  suggested_agent="performance-optimizer"
+                fi
+              fi
+              
+              # Check for testing keywords
+              if echo "$issue_title $issue_body" | grep -qiE "test|testing|coverage|qa|validation"; then
+                if echo "$available_agents" | grep -q "test-champion"; then
+                  suggested_agent="test-champion"
+                fi
+              fi
+              
+              # If we found a matching agent, get its description
+              if [ -n "$suggested_agent" ] && [ -f ".github/agents/${suggested_agent}.md" ]; then
+                echo "✅ Suggested agent specialization: $suggested_agent"
+                agent_context="
+
+**🎯 Recommended Agent Specialization:** [\`$suggested_agent\`](.github/agents/${suggested_agent}.md)
+
+This issue appears to be best suited for the **$suggested_agent** agent. When implementing, please follow the specialized approach and responsibilities defined in the agent definition."
+              else
+                echo "ℹ️ No specific agent specialization matched, will use general approach"
+              fi
+            fi
+            
             # Get the issue node ID (required for GraphQL mutation)
             echo "🔍 Fetching issue node ID for issue #$issue_number..."
             issue_node_id=$(gh issue view $issue_number --repo ${{ github.repository }} --json id --jq '.id')
@@ -201,23 +271,23 @@ jobs:
               echo "✅ Successfully assigned issue #$issue_number to Copilot"
               success_count=$((success_count + 1))
               
-              # Add success comment
+              # Add success comment with agent context if available
               gh issue comment $issue_number --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
-          
-          GitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.
-          
-          **What happens next:**
-          1. ✅ Copilot will analyze the issue requirements
-          2. 💻 Copilot will create a branch and implement the solution
-          3. 📝 Copilot will open a PR with the implementation
-          4. 🔍 Auto-review workflow will validate and merge
-          5. ✅ Issue will be automatically closed when complete
-          
-          **Estimated time:** Copilot typically starts work within a few minutes
-          **Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
-          
-          ---
-          *🤖 Automated via the official GitHub GraphQL API method using \`replaceActorsForAssignable\` mutation - True autonomous operation!*"
+
+GitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.${agent_context}
+
+**What happens next:**
+1. ✅ Copilot will analyze the issue requirements
+2. 💻 Copilot will create a branch and implement the solution
+3. 📝 Copilot will open a PR with the implementation
+4. 🔍 Auto-review workflow will validate and merge
+5. ✅ Issue will be automatically closed when complete
+
+**Estimated time:** Copilot typically starts work within a few minutes
+**Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+
+---
+*🤖 Automated via the official GitHub GraphQL API method using \`replaceActorsForAssignable\` mutation - True autonomous operation!*"
             else
               echo "❌ Failed to assign issue #$issue_number to Copilot"
               echo "Error details: $mutation_result"
