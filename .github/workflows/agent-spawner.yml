@@ -469,6 +469,7 @@ jobs:
           echo "✅ Announcement issue created"
 
       - name: Create agent work issue
+        id: create_agent_work_issue
         if: steps.check_capacity.outputs.can_spawn == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
