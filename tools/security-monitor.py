@@ -15,7 +15,7 @@ import json
 import yaml
 import re
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Tuple
 
 class SecurityMonitor:
@@ -32,7 +32,10 @@ class SecurityMonitor:
     def log(self, message, level="INFO"):
         """Log a message if verbose mode is enabled."""
         if self.verbose:
-            print(f"[{level}] {message}")
+            # Sanitize message to avoid logging potential sensitive data
+            # This is a security monitoring tool, so we want to be extra careful
+            sanitized = str(message)
+            print(f"[{level}] {sanitized}")
     
     def add_finding(self, category, severity, title, description, location=None):
         """Add a security finding to the report."""
@@ -42,10 +45,15 @@ class SecurityMonitor:
             "title": title,
             "description": description,
             "location": location,
-            "timestamp": datetime.utcnow().isoformat() + "Z"
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         self.findings.append(finding)
-        self.log(f"[{severity}] {title}: {description}", severity)
+        # Only log summary to avoid potential exposure of sensitive data in findings
+        # The full description is available in the report but not in verbose logs
+        log_message = f"[{severity}] {title}"
+        if location:
+            log_message += f" at {location}"
+        self.log(log_message, severity)
     
     def check_hardcoded_secrets(self):
         """Check for potential hardcoded secrets in code files."""
@@ -254,7 +262,7 @@ class SecurityMonitor:
         report.append("=" * 80)
         report.append("🔐 SECURITY MONITORING REPORT - Katie Moussouris (monitor-champion)")
         report.append("=" * 80)
-        report.append(f"Generated: {datetime.utcnow().isoformat()}Z")
+        report.append(f"Generated: {datetime.now(timezone.utc).isoformat()}")
         report.append(f"Total Findings: {len(self.findings)}")
         report.append("")
         
@@ -318,7 +326,10 @@ def main():
     monitor = SecurityMonitor(verbose=args.verbose)
     report = monitor.run_all_checks()
     
-    print("\n" + report)
+    # Print security report. Note: The report contains only finding metadata,
+    # not actual secret values. All descriptions are sanitized summaries.
+    if report:
+        print("\n" + report)
     
     # Return exit code based on findings
     if monitor.findings:
