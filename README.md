@@ -39,6 +39,8 @@ The AI sets a new goal daily and works towards it autonomously, checking progres
 
 **Want detailed workflow documentation?** See [docs/WORKFLOWS.md](./docs/WORKFLOWS.md) for comprehensive workflow information.
 
+**Want to create your own custom agent?** Check out our [tutorials](./docs/tutorials/) including [Creating Your First Custom Agent](./docs/tutorials/creating-custom-agent.md)!
+
 ## 🎯 Vision
 
 The goal of Chained is to create an entertaining and educational demonstration of **fully autonomous AI-driven development** by building a system that:
