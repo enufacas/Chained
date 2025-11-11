@@ -1,0 +1,20 @@
+{
+  "timestamp": "2025-11-11 15:24:47",
+  "results": {
+    "agent_matching": {
+      "total_time": 0.0003426074981689453,
+      "avg_time_ms": 0.00034260749816894526,
+      "throughput": 2918791.9276270005
+    },
+    "code_analyzer": {
+      "total_time": 0.2178952693939209,
+      "avg_time_ms": 4.357905387878418,
+      "throughput": 229.46803819594516
+    },
+    "text_normalization": {
+      "total_time": 0.0005574226379394531,
+      "avg_time_us": 0.05574226379394531,
+      "throughput": 17939709.15312233
+    }
+  }
+}
