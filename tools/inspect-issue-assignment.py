@@ -67,16 +67,9 @@ def get_issue_details(owner, repo, issue_number):
                 createdAt
                 assignee {
                   __typename
-                  ... on Bot {
-                    login
-                    id
-                    url
-                  }
-                  ... on User {
-                    login
-                    id
-                    url
-                  }
+                  login
+                  id
+                  url
                 }
                 actor {
                   login
@@ -87,14 +80,8 @@ def get_issue_details(owner, repo, issue_number):
                 createdAt
                 assignee {
                   __typename
-                  ... on Bot {
-                    login
-                    id
-                  }
-                  ... on User {
-                    login
-                    id
-                  }
+                  login
+                  id
                 }
                 actor {
                   login
