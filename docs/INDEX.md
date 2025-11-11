@@ -95,10 +95,17 @@ How GitHub Copilot powers the system:
 
 ## 📖 Tutorials
 
-Step-by-step guides:
+**⭐ New! Comprehensive tutorial series:**
 
-- **[tutorials/README.md](./tutorials/README.md)** - Tutorial directory
-- **[tutorials/creating-custom-agent.md](./tutorials/creating-custom-agent.md)** - Create your first agent
+Step-by-step guides for all skill levels:
+
+- **[tutorials/README.md](./tutorials/README.md)** - Tutorial directory and learning paths
+- **[tutorials/understanding-autonomous-workflow.md](./tutorials/understanding-autonomous-workflow.md)** - ⭐ How the perpetual motion machine works
+- **[tutorials/setting-up-your-first-instance.md](./tutorials/setting-up-your-first-instance.md)** - Complete setup guide from fork to running system
+- **[tutorials/monitoring-and-debugging.md](./tutorials/monitoring-and-debugging.md)** - System monitoring, debugging, and optimization
+- **[tutorials/creating-custom-agent.md](./tutorials/creating-custom-agent.md)** - Create your first custom agent
+
+**Recommended learning path**: Start with understanding → setup → monitoring → custom agents
 
 ## 📊 Data and Examples
 

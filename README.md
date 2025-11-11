@@ -39,13 +39,18 @@ The AI sets a new goal daily and works towards it autonomously, checking progres
 
 **Want detailed workflow documentation?** See [docs/WORKFLOWS.md](./docs/WORKFLOWS.md) for comprehensive workflow information.
 
-**Want to create your own custom agent?** Check out our [tutorials](./docs/tutorials/) including [Creating Your First Custom Agent](./docs/tutorials/creating-custom-agent.md)!
+**Ready to learn?** Explore our [comprehensive tutorials](./docs/tutorials/) - now featuring 4 in-depth guides covering setup, monitoring, and customization!
 
 ## 📚 Documentation
 
 **New to Chained? Start here:**
 
 - **[📖 Documentation Index](./docs/INDEX.md)** - Complete guide to all documentation (50+ files organized by topic)
+- **[📚 Tutorial Series](./docs/tutorials/)** - ⭐ **NEW!** Step-by-step guides:
+  - [Understanding the Autonomous Workflow](./docs/tutorials/understanding-autonomous-workflow.md) - How it all works
+  - [Setting Up Your First Instance](./docs/tutorials/setting-up-your-first-instance.md) - Complete setup guide
+  - [Monitoring and Debugging](./docs/tutorials/monitoring-and-debugging.md) - Keep your system healthy
+  - [Creating Your First Custom Agent](./docs/tutorials/creating-custom-agent.md) - Build specialized agents
 - **[⚡ Quick Reference](./docs/QUICK_REFERENCE.md)** - Command-line cheat sheet for common operations
 - **[🏗️ Architecture Guide](./docs/ARCHITECTURE.md)** - Visual diagrams and system architecture overview
 
