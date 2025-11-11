@@ -123,7 +123,7 @@ query($owner: String!, $repo: String!) {
 
 **Question**: "What is Doc Master's actor ID?"
 
-**Answer**: Doc Master uses **two types of IDs**:
+**Answer**: Doc Master uses **three types of IDs**:
 
 ### Agent Instance ID
 - **Format**: `agent-{timestamp}`
@@ -136,6 +136,13 @@ query($owner: String!, $repo: String!) {
 - **Dynamically retrieved**: Not stored, queried from GitHub API when needed
 - **Purpose**: Enables automatic assignment to GitHub Copilot bot
 - **Location in code**: `.github/workflows/agent-spawner.yml` lines 554-566
+
+### Agent Definition Version ID (Git SHA)
+- **Format**: Git commit/blob SHA hash (e.g., `6f06482ecff6e52b86c8e5c892844270e50fa628`)
+- **Purpose**: Tracks which version of the agent definition file is being used
+- **Example from logs**: `Using "doc-master" (doc-master 6f06482...) with tools: view, edit, create...`
+- **Use case**: Ensures reproducibility and allows tracking which agent definition version was active during a workflow run
+- **Location**: References the Git object hash of `.github/agents/doc-master.md` at runtime
 
 ## Practical Examples
 
