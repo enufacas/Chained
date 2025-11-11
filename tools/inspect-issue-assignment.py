@@ -53,10 +53,26 @@ def get_issue_details(owner, repo, issue_number):
           updatedAt
           assignees(first: 10) {
             nodes {
-              login
               __typename
-              id
-              url
+              ... on User {
+                login
+                id
+                url
+              }
+              ... on Bot {
+                login
+                id
+                url
+              }
+              ... on Mannequin {
+                login
+                id
+              }
+              ... on Organization {
+                login
+                id
+                url
+              }
             }
           }
           timelineItems(first: 100, itemTypes: [ASSIGNED_EVENT, UNASSIGNED_EVENT]) {
@@ -67,9 +83,25 @@ def get_issue_details(owner, repo, issue_number):
                 createdAt
                 assignee {
                   __typename
-                  login
-                  id
-                  url
+                  ... on User {
+                    login
+                    id
+                    url
+                  }
+                  ... on Bot {
+                    login
+                    id
+                    url
+                  }
+                  ... on Mannequin {
+                    login
+                    id
+                  }
+                  ... on Organization {
+                    login
+                    id
+                    url
+                  }
                 }
                 actor {
                   login
@@ -80,8 +112,22 @@ def get_issue_details(owner, repo, issue_number):
                 createdAt
                 assignee {
                   __typename
-                  login
-                  id
+                  ... on User {
+                    login
+                    id
+                  }
+                  ... on Bot {
+                    login
+                    id
+                  }
+                  ... on Mannequin {
+                    login
+                    id
+                  }
+                  ... on Organization {
+                    login
+                    id
+                  }
                 }
                 actor {
                   login

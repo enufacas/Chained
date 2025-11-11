@@ -53,10 +53,26 @@ jobs:
                 issue(number: $number) {
                   assignees(first: 10) {
                     nodes {
-                      login
                       __typename
-                      id
-                      url
+                      ... on User {
+                        login
+                        id
+                        url
+                      }
+                      ... on Bot {
+                        login
+                        id
+                        url
+                      }
+                      ... on Mannequin {
+                        login
+                        id
+                      }
+                      ... on Organization {
+                        login
+                        id
+                        url
+                      }
                     }
                   }
                 }
@@ -76,9 +92,23 @@ jobs:
                 issue(number: $number) {
                   assignees(first: 10) {
                     nodes {
-                      login
                       __typename
-                      id
+                      ... on User {
+                        login
+                        id
+                      }
+                      ... on Bot {
+                        login
+                        id
+                      }
+                      ... on Mannequin {
+                        login
+                        id
+                      }
+                      ... on Organization {
+                        login
+                        id
+                      }
                     }
                   }
                 }
