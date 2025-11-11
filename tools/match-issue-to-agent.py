@@ -157,22 +157,24 @@ AGENT_PATTERNS = {
         'keywords': [
             'integration', 'api', 'webhook', 'external', 'third-party',
             'service', 'endpoint', 'http', 'rest', 'graphql', 'connect',
-            'interface', 'plugin'
+            'interface', 'plugin', 'stripe', 'paypal', 'payment', 'oauth'
         ],
         'patterns': [
             r'\bintegrat', r'\bapi\b', r'\bwebhook\b', r'\bexternal\b',
-            r'\bthird.?party\b', r'\bservice\b', r'\bendpoint\b', r'\bhttp\b'
+            r'\bthird.?party\b', r'\bservice\b', r'\bendpoint\b', r'\bhttp\b',
+            r'\bstripe\b', r'\bpaypal\b', r'\bpayment\b', r'\boauth\b'
         ]
     },
     'ux-enhancer': {
         'keywords': [
             'ui', 'ux', 'user interface', 'user experience', 'design',
             'usability', 'accessibility', 'a11y', 'responsive', 'layout',
-            'css', 'styling', 'visual', 'polish'
+            'css', 'styling', 'visual', 'polish', 'colors', 'theme'
         ],
         'patterns': [
             r'\bui\b', r'\bux\b', r'\buser interface\b', r'\buser experience\b',
-            r'\busabilit', r'\baccessibilit', r'\ba11y\b', r'\bresponsive\b'
+            r'\busabilit', r'\baccessibilit', r'\ba11y\b', r'\bresponsive\b',
+            r'\bdesign\b', r'\bcolors?\b', r'\btheme\b', r'\blayout\b'
         ]
     }
 }
