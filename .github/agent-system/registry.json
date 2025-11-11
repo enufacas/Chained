@@ -207,6 +207,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1762895833",
+      "name": "\u2699\ufe0f Ada",
+      "human_name": "Ada",
+      "specialization": "engineer-wizard",
+      "status": "active",
+      "spawned_at": "2025-11-11T21:27:13.000000Z",
+      "personality": "enthusiastic and energetic",
+      "communication_style": "gets straight to the point",
+      "traits": {
+        "creativity": 85,
+        "caution": 65,
+        "speed": 80
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],
