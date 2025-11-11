@@ -242,17 +242,28 @@ Could not find GitHub Copilot in the list of available assignees for this reposi
     echo "🔧 Attempting CLI-based assignment using 'gh agent-task create'..."
     
     # Authenticate gh CLI for OAuth operations required by agent-task
-    echo "   Authenticating gh CLI with token..."
-    # Save token and temporarily unset GH_TOKEN to avoid gh CLI warning
-    SAVED_TOKEN="$GH_TOKEN"
-    unset GH_TOKEN
-    if echo "$SAVED_TOKEN" | gh auth login --with-token 2>&1; then
-      echo "   ✅ gh CLI authenticated successfully"
+    # The COPILOT_PAT token is already set as GH_TOKEN in the workflow
+    # GitHub CLI will automatically use GH_TOKEN for authentication
+    echo "   Setting up gh CLI authentication..."
+    
+    # Verify we have a token available
+    if [ -z "$GH_TOKEN" ]; then
+      echo "   ⚠️ No GH_TOKEN available, CLI assignment will likely fail"
     else
-      echo "   ⚠️ gh auth login failed, CLI assignment may not work"
+      echo "   ✅ GH_TOKEN is set (will be used automatically by gh CLI)"
+      
+      # Use --with-token to explicitly authenticate with the token
+      # This creates a stored credential that gh agent-task can use
+      if echo "$GH_TOKEN" | gh auth login --with-token --hostname github.com 2>&1; then
+        echo "   ✅ gh CLI authenticated successfully with COPILOT_PAT"
+        # Verify authentication status
+        if gh auth status 2>&1 | grep -q "Logged in"; then
+          echo "   ✅ gh auth status confirmed"
+        fi
+      else
+        echo "   ⚠️ gh auth login failed, CLI assignment may not work"
+      fi
     fi
-    # Restore GH_TOKEN for subsequent API calls
-    export GH_TOKEN="$SAVED_TOKEN"
     
     # Build task description with custom agent directive
     # Following GitHub's documentation for custom agent specification in CLI
@@ -359,13 +370,17 @@ $cli_result
 \`\`\`
 
 **Possible reasons:**
-- The \`gh agent-task\` command may not be available in this environment
+- The \`gh agent-task\` command requires an OAuth token, not a regular PAT
+- The COPILOT_PAT may not have the required permissions or token type
+- The \`gh agent-task\` feature may not be available in this environment
 - Feature may still be in preview/limited availability
-- Authentication or permission issues
+
+**Note about authentication:**
+The \`gh agent-task create\` command has stricter authentication requirements than other GitHub CLI commands. It requires an OAuth token obtained through interactive login, which is challenging to automate in CI/CD environments. The workflow will automatically fall back to GraphQL API assignment.
 
 **Matched Agent:** $agent_emoji $matched_agent
 
-You can manually assign Copilot from the GitHub UI or wait for automatic GraphQL-based assignment."
+The system will automatically attempt GraphQL-based assignment as a fallback."
         
         continue
       fi
