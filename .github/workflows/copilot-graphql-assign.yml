@@ -74,6 +74,7 @@ jobs:
           # See: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr
           # Create a PAT with 'repo' scope and add it as a secret named COPILOT_PAT
           GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          # Pass GitHub context as environment variables to the script
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
@@ -82,4 +83,5 @@ jobs:
           INPUT_ASSIGNMENT_METHOD: ${{ inputs.assignment_method }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
+          # Execute the Copilot assignment script (extracted to avoid GitHub Actions expression length limits)
           ./tools/assign-copilot-to-issue.sh
