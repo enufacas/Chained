@@ -73,6 +73,9 @@ Specialized in improving user experience. Focuses on polish, usability, and visu
 ### 👮 [validate-pro.md](./validate-pro.md)
 Specialized in validating security. Focuses on security, data integrity, and access control.
 
+### 📝 [teach-wizard.md](./teach-wizard.md)
+Specialized in teaching tutorials. Focuses on documentation, comments, and guides.
+
 ## Using Custom Agents
 
 Custom agents can be invoked:
