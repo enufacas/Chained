@@ -29,6 +29,7 @@ We needed a way to **directly assign custom agents via the API** by discovering 
 3. **Documentation**:
    - `docs/INSPECTING_AGENT_ASSIGNMENTS.md` - Complete guide
    - `docs/CUSTOM_AGENT_ASSIGNMENT_LIMITATIONS.md` - Updated with solution
+   - `docs/CUSTOM_AGENT_API_INVOCATION.md` - **NEW**: Deep insights from actual API logs
    - `tools/README.md` - Tool documentation
 
 ## How It Works
@@ -176,6 +177,7 @@ The assignment is fully automatic! When you create an issue:
 - [GitHub Docs: Assigning Issues to Copilot](https://docs.github.com/copilot/how-tos/use-copilot-agents/coding-agent/assign-copilot-to-an-issue)
 - [GitHub GraphQL API: Mutations](https://docs.github.com/en/graphql/reference/mutations)
 - [Inspecting Agent Assignments](./docs/INSPECTING_AGENT_ASSIGNMENTS.md)
+- [Custom Agent API Invocation](./docs/CUSTOM_AGENT_API_INVOCATION.md) - **NEW**: Analysis of actual agent invocation from logs
 
 ---
 

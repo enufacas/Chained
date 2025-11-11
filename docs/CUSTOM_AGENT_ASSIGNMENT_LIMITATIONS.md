@@ -149,6 +149,8 @@ mutation {
 
 - [Intelligent Agent Matching](./INTELLIGENT_AGENT_MATCHING.md) - How agents are matched to issues
 - [Custom Agents Conventions](./CUSTOM_AGENTS_CONVENTIONS.md) - Agent definitions and structure
+- [Custom Agent API Invocation](./CUSTOM_AGENT_API_INVOCATION.md) - **NEW**: Deep insights from actual API logs
+- [Inspecting Agent Assignments](./INSPECTING_AGENT_ASSIGNMENTS.md) - Tools for discovering actor IDs
 - [GitHub Docs: Creating Custom Agents](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents)
 - [GitHub Docs: Assigning Issues to Copilot](https://docs.github.com/copilot/how-tos/use-copilot-agents/coding-agent/assign-copilot-to-an-issue)
 

@@ -10,6 +10,11 @@ When you assign a custom agent to an issue via the GitHub UI, that assignment is
 2. The exact actor ID for each custom agent
 3. How to use those IDs for direct API assignment
 
+**Related Documentation:**
+- [Custom Agent API Invocation](./CUSTOM_AGENT_API_INVOCATION.md) - Deep dive into how agents are invoked via API based on actual log analysis
+- [Custom Agent Assignment Investigation](../CUSTOM_AGENT_ASSIGNMENT_INVESTIGATION.md) - Complete investigation history
+- [Actor ID System](./ACTOR_ID_SYSTEM.md) - Explanation of agent ID systems
+
 ## Tools
 
 ### 1. Inspect Issue Assignment Tool
