@@ -7,6 +7,7 @@ This infrastructure tool ensures that all agent definitions in .github/agents/
 follow the GitHub Copilot custom agents convention and maintain consistency.
 
 Inspired by the create-guru agent's vision for robust infrastructure.
+Enhanced with comprehensive validation by the validate-wizard agent.
 """
 
 import sys
@@ -14,6 +15,23 @@ import yaml
 import argparse
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
+
+# Import validation utilities for enhanced validation
+try:
+    from validation_utils import (
+        ValidationError,
+        validate_agent_name,
+        validate_non_empty_string,
+        validate_list_of_strings,
+        validate_string_length,
+        safe_file_read
+    )
+    VALIDATION_UTILS_AVAILABLE = True
+except ImportError:
+    VALIDATION_UTILS_AVAILABLE = False
+    # Fallback validation functions
+    class ValidationError(Exception):
+        pass
 
 # ANSI color codes for beautiful terminal output
 class Colors:

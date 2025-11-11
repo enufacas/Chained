@@ -23,7 +23,15 @@ from validation_utils import (
     validate_non_empty_string,
     validate_list_of_strings,
     safe_file_read,
-    safe_file_write
+    safe_file_write,
+    validate_numeric_range,
+    validate_url,
+    validate_email,
+    validate_json_safe,
+    validate_list_non_empty,
+    sanitize_command_input,
+    validate_dict_schema,
+    validate_percentage
 )
 
 
@@ -297,6 +305,321 @@ def test_safe_file_operations():
     print("✅ safe_file_read/write tests passed")
 
 
+def test_validate_numeric_range():
+    """Test numeric range validation."""
+    print("Testing validate_numeric_range()...")
+    
+    # Valid ranges
+    assert validate_numeric_range(5, 0, 10) == 5
+    assert validate_numeric_range(0, 0, 10) == 0
+    assert validate_numeric_range(10, 0, 10) == 10
+    assert validate_numeric_range(5.5, 0, 10) == 5.5
+    assert validate_numeric_range(100, min_value=0) == 100
+    assert validate_numeric_range(-5, max_value=0) == -5
+    
+    # Invalid ranges
+    try:
+        validate_numeric_range(-1, 0, 10)
+        assert False, "Should reject value below minimum"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_numeric_range(11, 0, 10)
+        assert False, "Should reject value above maximum"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_numeric_range("5", 0, 10)
+        assert False, "Should reject non-numeric"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_numeric_range(None, 0, 10)
+        assert False, "Should reject None"
+    except ValidationError:
+        pass
+    
+    print("✅ validate_numeric_range tests passed")
+
+
+def test_validate_url():
+    """Test URL validation."""
+    print("Testing validate_url()...")
+    
+    # Valid URLs
+    assert validate_url("http://example.com") == "http://example.com"
+    assert validate_url("https://example.com") == "https://example.com"
+    assert validate_url("https://example.com/path") == "https://example.com/path"
+    assert validate_url("http://localhost:8080") == "http://localhost:8080"
+    assert validate_url("https://sub.example.com") == "https://sub.example.com"
+    assert validate_url("  https://example.com  ") == "https://example.com"
+    
+    # Invalid URLs
+    try:
+        validate_url("")
+        assert False, "Should reject empty URL"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_url("   ")
+        assert False, "Should reject whitespace only"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_url("not-a-url")
+        assert False, "Should reject invalid URL"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_url("ftp://example.com")
+        assert False, "Should reject non-http(s) protocol"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_url(123)
+        assert False, "Should reject non-string"
+    except ValidationError:
+        pass
+    
+    print("✅ validate_url tests passed")
+
+
+def test_validate_email():
+    """Test email validation."""
+    print("Testing validate_email()...")
+    
+    # Valid emails
+    assert validate_email("user@example.com") == "user@example.com"
+    assert validate_email("user.name@example.com") == "user.name@example.com"
+    assert validate_email("user+tag@example.co.uk") == "user+tag@example.co.uk"
+    assert validate_email("  user@example.com  ") == "user@example.com"
+    
+    # Invalid emails
+    try:
+        validate_email("")
+        assert False, "Should reject empty email"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_email("   ")
+        assert False, "Should reject whitespace only"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_email("not-an-email")
+        assert False, "Should reject invalid format"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_email("@example.com")
+        assert False, "Should reject missing username"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_email("user@")
+        assert False, "Should reject missing domain"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_email(123)
+        assert False, "Should reject non-string"
+    except ValidationError:
+        pass
+    
+    print("✅ validate_email tests passed")
+
+
+def test_validate_json_safe():
+    """Test safe JSON validation."""
+    print("Testing validate_json_safe()...")
+    
+    # Valid JSON
+    assert validate_json_safe({"key": "value"}) == {"key": "value"}
+    assert validate_json_safe('{"key": "value"}') == {"key": "value"}
+    assert validate_json_safe('{}') == {}
+    
+    # Invalid JSON
+    try:
+        validate_json_safe('[1, 2, 3]')  # Array, not object
+        assert False, "Should reject JSON array"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_json_safe('{"invalid": json}')
+        assert False, "Should reject invalid JSON"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_json_safe(123)
+        assert False, "Should reject non-dict/string"
+    except ValidationError:
+        pass
+    
+    print("✅ validate_json_safe tests passed")
+
+
+def test_validate_list_non_empty():
+    """Test non-empty list validation."""
+    print("Testing validate_list_non_empty()...")
+    
+    # Valid lists
+    assert validate_list_non_empty([1, 2, 3]) == [1, 2, 3]
+    assert validate_list_non_empty(["a"]) == ["a"]
+    assert validate_list_non_empty([None]) == [None]
+    
+    # Invalid lists
+    try:
+        validate_list_non_empty([])
+        assert False, "Should reject empty list"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_list_non_empty("not a list")
+        assert False, "Should reject non-list"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_list_non_empty(None)
+        assert False, "Should reject None"
+    except ValidationError:
+        pass
+    
+    print("✅ validate_list_non_empty tests passed")
+
+
+def test_sanitize_command_input():
+    """Test command input sanitization."""
+    print("Testing sanitize_command_input()...")
+    
+    # Safe commands
+    assert sanitize_command_input("ls -la") == "ls -la"
+    assert sanitize_command_input("python script.py") == "python script.py"
+    assert sanitize_command_input("echo hello") == "echo hello"
+    
+    # Dangerous commands
+    try:
+        sanitize_command_input("ls; rm -rf /")
+        assert False, "Should reject command with semicolon"
+    except ValidationError:
+        pass
+    
+    try:
+        sanitize_command_input("ls | grep test")
+        assert False, "Should reject command with pipe"
+    except ValidationError:
+        pass
+    
+    try:
+        sanitize_command_input("echo `whoami`")
+        assert False, "Should reject command substitution"
+    except ValidationError:
+        pass
+    
+    try:
+        sanitize_command_input("echo $(whoami)")
+        assert False, "Should reject command substitution"
+    except ValidationError:
+        pass
+    
+    try:
+        sanitize_command_input("echo test\nrm file")
+        assert False, "Should reject newline injection"
+    except ValidationError:
+        pass
+    
+    try:
+        sanitize_command_input(123)
+        assert False, "Should reject non-string"
+    except ValidationError:
+        pass
+    
+    print("✅ sanitize_command_input tests passed")
+
+
+def test_validate_dict_schema():
+    """Test dictionary schema validation."""
+    print("Testing validate_dict_schema()...")
+    
+    # Valid schema
+    schema = {'name': str, 'age': int, 'active': bool}
+    data = {'name': 'Alice', 'age': 30, 'active': True}
+    assert validate_dict_schema(data, schema) == data
+    
+    # Extra keys are allowed
+    data_extra = {'name': 'Bob', 'age': 25, 'active': False, 'extra': 'ignored'}
+    assert validate_dict_schema(data_extra, schema) == data_extra
+    
+    # Invalid schema
+    try:
+        validate_dict_schema({'name': 'Alice'}, schema)
+        assert False, "Should reject missing keys"
+    except ValidationError:
+        pass
+    
+    try:
+        data_wrong_type = {'name': 123, 'age': 30, 'active': True}
+        validate_dict_schema(data_wrong_type, schema)
+        assert False, "Should reject wrong type"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_dict_schema("not a dict", schema)
+        assert False, "Should reject non-dict"
+    except ValidationError:
+        pass
+    
+    print("✅ validate_dict_schema tests passed")
+
+
+def test_validate_percentage():
+    """Test percentage validation."""
+    print("Testing validate_percentage()...")
+    
+    # Valid percentages
+    assert validate_percentage(0) == 0.0
+    assert validate_percentage(50) == 50.0
+    assert validate_percentage(100) == 100.0
+    assert validate_percentage(25.5) == 25.5
+    
+    # Invalid percentages
+    try:
+        validate_percentage(-1)
+        assert False, "Should reject negative percentage"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_percentage(101)
+        assert False, "Should reject percentage over 100"
+    except ValidationError:
+        pass
+    
+    try:
+        validate_percentage("50")
+        assert False, "Should reject non-numeric"
+    except ValidationError:
+        pass
+    
+    print("✅ validate_percentage tests passed")
+
+
 def main():
     """Run all tests."""
     print("=" * 70)
@@ -312,6 +635,14 @@ def main():
         test_validate_non_empty_string()
         test_validate_list_of_strings()
         test_safe_file_operations()
+        test_validate_numeric_range()
+        test_validate_url()
+        test_validate_email()
+        test_validate_json_safe()
+        test_validate_list_non_empty()
+        test_sanitize_command_input()
+        test_validate_dict_schema()
+        test_validate_percentage()
         
         print()
         print("=" * 70)
