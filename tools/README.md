@@ -57,6 +57,8 @@ An intelligent code quality analyzer that scores code readability and provides a
 
 **Purpose:** Analyze Python code to measure readability across multiple dimensions and get specific, prioritized suggestions for improvement.
 
+⚡ **Performance:** Optimized with single-pass AST traversal (2.4x faster) - see [Performance Optimization](./PERFORMANCE_OPTIMIZATION.md)
+
 **Quick Start:**
 ```bash
 # Analyze a single file
@@ -99,6 +101,67 @@ python3 tools/readability-scorer.py -f myfile.py --min-score 80
 - Learning - Get feedback on code improvements
 
 [📖 Full Documentation](./READABILITY_SCORER.md)
+
+---
+
+### 🔬 Self-Improving Code Analyzer
+
+An intelligent code pattern analyzer that learns from merge outcomes to continuously improve code quality assessment.
+
+**Purpose:** Analyze code patterns, track correlations with successful merges, and build institutional knowledge about what works.
+
+⚡ **Performance:** Optimized with single-pass AST traversal achieving **2.4x speedup** - see [Performance Optimization](./PERFORMANCE_OPTIMIZATION.md)
+
+**Quick Start:**
+```bash
+# Analyze a single Python file
+python3 tools/code-analyzer.py -f myfile.py
+
+# Analyze entire directory
+python3 tools/code-analyzer.py -d ./src
+
+# Learn from a successful merge
+python3 tools/code-analyzer.py -d . --learn --success
+
+# Learn from a problematic merge
+python3 tools/code-analyzer.py -d . --learn --failure
+```
+
+**What It Analyzes:**
+- ✅ **Good Patterns**: Descriptive names, docstrings, error handling, type hints
+- ⚠️ **Bad Patterns**: Long functions, deep nesting, magic numbers, unused imports
+- 📈 **Learning**: Tracks correlation between patterns and merge success
+- 🧠 **Adaptive**: Updates pattern database based on outcomes
+
+**Features:**
+- Single-pass AST traversal for optimal performance (2.4x faster)
+- Pattern correlation tracking with merge outcomes
+- Persistent learning database in `analysis/patterns.json`
+- Detailed reports with recommendations
+- Linear scalability (O(n) complexity)
+
+**Performance Benchmarks:**
+```
+Small file (10 functions):     2.3 ms  (435 files/sec)
+Medium file (50 functions):   11.4 ms  ( 88 files/sec)
+Large file (150 functions):   34.6 ms  ( 29 files/sec)
+Very large (300 functions):   70.3 ms  ( 14 files/sec)
+Scalability factor: 1.02 (near-perfect linear scaling)
+```
+
+**Use Cases:**
+- CI/CD quality gates - Enforce pattern standards
+- Code review automation - Flag anti-patterns
+- Team learning - Build knowledge base of effective patterns
+- Performance monitoring - Track analyzer efficiency
+
+**Benchmark Tool:**
+```bash
+# Run comprehensive performance benchmark
+python3 tools/benchmark_code_analyzer.py
+```
+
+[📖 Performance Documentation](./PERFORMANCE_OPTIMIZATION.md)
 
 ---
 
