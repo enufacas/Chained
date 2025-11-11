@@ -2,14 +2,32 @@
 """
 Test suite for direct custom agent assignment functionality.
 
-This test validates the "direct assignment" feature where custom agents
-with their own actor IDs can be assigned directly via API, as opposed to
-assigning to generic Copilot with directives.
+This test validates the "direct assignment" feature implemented in the
+copilot-graphql-assign.yml workflow. Direct assignment allows custom agents
+with their own actor IDs to be assigned directly via the GitHub GraphQL API,
+providing a more elegant solution than assigning to generic Copilot with
+directives.
+
+The workflow flow:
+    1. Issue is created
+    2. Agent matching determines best custom agent
+    3. Workflow checks if agent has actor ID
+    4. If yes: Direct assignment to custom agent
+    5. If no: Fallback to generic Copilot with agent directives
 
 Tests cover:
-- Direct assignment to custom agents with actor IDs
-- Fallback to generic Copilot when custom agent has no actor ID
-- Agent matching and assignment workflow integration
+    - Direct assignment to custom agents with actor IDs
+    - Fallback to generic Copilot when custom agent has no actor ID
+    - Agent matching and assignment workflow integration
+    - Edge cases and boundary conditions
+
+Run with:
+    python3 test_direct_assignment.py
+
+Related files:
+    - .github/workflows/copilot-graphql-assign.yml (lines 196-323)
+    - tools/match-issue-to-agent.py
+    - tools/list-agent-actor-ids.py
 """
 
 import sys
@@ -45,9 +63,12 @@ def test_agent_matching_for_direct_assignment():
     Test that agent matching works correctly for issues that should use direct assignment.
     
     Direct assignment is appropriate when:
-    1. The issue clearly matches a specific custom agent
-    2. That agent has high confidence/score
-    3. The agent has its own actor ID (checked at runtime by workflow)
+        1. The issue clearly matches a specific custom agent
+        2. That agent has high confidence/score
+        3. The agent has its own actor ID (checked at runtime by workflow)
+    
+    This test verifies the first two conditions; the workflow verifies the third
+    by querying the GitHub API for actor IDs.
     """
     print("🧪 Testing Agent Matching for Direct Assignment")
     print("=" * 70)
@@ -142,9 +163,13 @@ def test_assignment_method_selection():
     direct assignment vs fallback to generic Copilot.
     
     This simulates the workflow's decision-making process:
-    1. Match issue to agent
-    2. Check if agent has actor ID (simulated)
-    3. Choose assignment method
+        1. Match issue to agent
+        2. Check if agent has actor ID (simulated here, checked by workflow)
+        3. Choose assignment method based on confidence and score
+    
+    The workflow uses similar logic to decide between:
+        - direct-custom-agent: Direct API assignment to custom agent actor
+        - generic-with-directives: Assign to generic Copilot with agent directives
     """
     print("🧪 Testing Assignment Method Selection")
     print("=" * 70)
@@ -227,9 +252,13 @@ def test_fallback_scenarios():
     Test scenarios where direct assignment should fallback to generic Copilot.
     
     Fallback occurs when:
-    1. Custom agent does not have an actor ID
-    2. Issue matching has low confidence
-    3. Generic/ambiguous issues without clear agent match
+        1. Custom agent does not have an actor ID (checked by workflow)
+        2. Issue matching has low confidence
+        3. Generic/ambiguous issues without clear agent match
+    
+    The workflow gracefully falls back to assigning generic Copilot with
+    agent directives embedded in the issue body, ensuring all issues can
+    still be handled even when direct assignment isn't possible.
     """
     print("🧪 Testing Fallback Scenarios")
     print("=" * 70)
@@ -303,9 +332,16 @@ def test_workflow_integration():
     Test that the workflow integration points work correctly.
     
     Validates that:
-    1. Agent matching produces output compatible with workflow
-    2. Output includes all required fields for assignment decision
-    3. Assignment method can be determined from matching results
+        1. Agent matching produces output compatible with workflow
+        2. Output includes all required fields for assignment decision
+        3. Assignment method can be determined from matching results
+    
+    The workflow relies on specific JSON fields from match-issue-to-agent.py:
+        - agent: The custom agent name (e.g., "bug-hunter")
+        - score: Numeric confidence score
+        - confidence: String confidence level ("high", "medium", "low")
+        - emoji: Agent's emoji for visual identification
+        - description: Human-readable agent description
     """
     print("🧪 Testing Workflow Integration")
     print("=" * 70)
