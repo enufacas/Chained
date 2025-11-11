@@ -96,20 +96,27 @@ This runs the custom agents convention test as part of the overall system valida
 
 ## Current Agents
 
-The repository includes 10 specialized agents, all fully compliant with conventions:
+The repository includes 17 specialized agents, all fully compliant with conventions:
 
 | Agent | Name | Tools | Purpose |
 |-------|------|-------|---------|
-| 🐛 Bug Hunter | `bug-hunter` | 7 | Finding and fixing bugs with precision |
-| 🎨 Code Poet | `code-poet` | 4 | Writing elegant, readable code |
+| 🐛 Bug Hunter | `bug-hunter` | 8 | Finding and fixing bugs with precision |
+| 🎨 Code Poet | `code-poet` | 5 | Writing elegant, readable code |
+| 🔗 Coordinate Wizard | `coordinate-wizard` | 7 | Coordinating APIs and integrations |
+| 🌟 Create Guru | `create-guru` | 8 | Creating infrastructure (inspired by Nikola Tesla) |
 | 📚 Doc Master | `doc-master` | 6 | Creating and maintaining documentation |
-| 🏗️ Feature Architect | `feature-architect` | 7 | Designing and building innovative features |
-| 🔌 Integration Specialist | `integration-specialist` | 7 | Improving integrations between systems |
-| ⚡ Performance Optimizer | `performance-optimizer` | 5 | Optimizing code performance |
-| ♻️ Refactor Wizard | `refactor-wizard` | 5 | Refactoring and improving code structure |
-| 🛡️ Security Guardian | `security-guardian` | 9 | Identifying and fixing security vulnerabilities |
-| ✅ Test Champion | `test-champion` | 6 | Ensuring comprehensive test coverage |
-| ✨ UX Enhancer | `ux-enhancer` | 8 | Improving user experience |
+| ⚙️ Engineer Master | `engineer-master` | 5 | Engineering APIs (inspired by Margaret Hamilton) |
+| ⚡ Engineer Wizard | `engineer-wizard` | 5 | Engineering APIs (inspired by Nikola Tesla) |
+| 🏗️ Feature Architect | `feature-architect` | 8 | Designing and building innovative features |
+| 🔌 Integration Specialist | `integration-specialist` | 9 | Improving integrations between systems |
+| 🚀 Performance Optimizer | `performance-optimizer` | 6 | Optimizing code performance |
+| ♻️ Refactor Wizard | `refactor-wizard` | 6 | Refactoring and improving code structure |
+| 🛡️ Security Guardian | `security-guardian` | 10 | Identifying and fixing security vulnerabilities |
+| 🎓 Teach Wizard | `teach-wizard` | 6 | Teaching tutorials and documentation |
+| ✅ Test Champion | `test-champion` | 11 | Ensuring comprehensive test coverage |
+| ✨ UX Enhancer | `ux-enhancer` | 13 | Improving user experience |
+| 🔒 Validate Pro | `validate-pro` | 10 | Validating security and data integrity |
+| ✔️ Validate Wizard | `validate-wizard` | 8 | Ensuring comprehensive validation |
 
 ## Example: Bug Hunter Agent
 
@@ -286,8 +293,8 @@ You are a specialized agent...
 - Naming conventions: Compliant
 - Markdown content: Compliant
 
-**Total Agents**: 10  
-**Compliant Agents**: 10 (100%)
+**Total Agents**: 17  
+**Compliant Agents**: 17 (100%)
 
 ---
 
