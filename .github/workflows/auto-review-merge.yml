@@ -264,7 +264,44 @@ jobs:
                 
                 echo "✅ PR #${pr_num} processed successfully"
                 
-                # Close related issue if exists
+                # Check if this is an agent spawn PR
+                has_agent_system_label=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "agent-system" || true)
+                
+                if [ "${has_agent_system_label}" -gt 0 ]; then
+                  echo "🤖 Detected agent spawn PR - checking for linked work issue"
+                  
+                  # Look for linked issue in PR comments
+                  pr_comments=$(gh pr view ${pr_num} --json comments --jq '.comments[].body' || echo "")
+                  linked_issue=$(echo "${pr_comments}" | grep -oP 'issue #\K\d+' | head -1 || echo "")
+                  
+                  if [ -n "${linked_issue}" ]; then
+                    echo "📝 Found linked work issue #${linked_issue} for agent spawn PR"
+                    
+                    # Add comment to the work issue that the spawn is complete
+                    gh issue comment ${linked_issue} --body "✅ **Agent Spawn Complete**
+                    
+                    The agent spawn PR #${pr_num} has been merged! The agent is now active and registered in the system.
+                    
+                    **Status Update:**
+                    - ✅ Spawn PR merged
+                    - ✅ Agent is now active
+                    - ✅ This issue is now ready to be worked on
+                    
+                    **Next Steps:**
+                    The agent can now begin work on this issue. If Copilot is assigned, it will analyze the task and create a PR with the implementation.
+                    
+                    **Merged at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+                    
+                    ---
+                    *Agent spawn sequence completed by the auto-review system*" || true
+                    
+                    echo "✅ Notified work issue #${linked_issue} about spawn completion"
+                  else
+                    echo "ℹ️ No linked work issue found in PR comments"
+                  fi
+                fi
+                
+                # Close related issue if exists (for non-agent-spawn PRs)
                 pr_body=$(gh pr view ${pr_num} --json body --jq '.body' || echo "")
                 issue_numbers=$(echo "${pr_body}" | grep -oP '(?<=#)\d+' || echo "")
                 

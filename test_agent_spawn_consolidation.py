@@ -187,6 +187,89 @@ def test_issue_has_clear_task_directive():
     return True
 
 
+def test_spawn_pr_linked_to_work_issue():
+    """Test that spawn PR is properly linked to work issue."""
+    print("\n🧪 Testing spawn PR is linked to work issue")
+    print("-" * 60)
+    
+    workflow_path = Path('.github/workflows/agent-spawner.yml')
+    
+    if not workflow_path.exists():
+        print(f"❌ FAILED: Workflow file not found: {workflow_path}")
+        return False
+    
+    with open(workflow_path, 'r') as f:
+        content = f.read()
+    
+    # Check that PR creation step has an ID
+    if 'id: create_spawn_pr' not in content:
+        print(f"❌ FAILED: PR creation step does not have id 'create_spawn_pr'")
+        return False
+    
+    # Check that PR number is captured as output
+    if 'pr_number=$PR_NUMBER' not in content or 'echo "pr_number=' not in content:
+        print(f"❌ FAILED: PR number is not captured as step output")
+        return False
+    
+    # Check that issue references the PR number
+    if 'PR_NUMBER="${{ steps.create_spawn_pr.outputs.pr_number }}"' not in content:
+        print(f"❌ FAILED: Issue creation does not reference spawn PR number")
+        return False
+    
+    # Check that issue explains the spawn sequence
+    if 'Agent Spawn Sequence' not in content:
+        print(f"❌ FAILED: Issue does not include 'Agent Spawn Sequence' section")
+        return False
+    
+    # Check for step that links PR to issue
+    if 'name: Link PR to work issue' not in content:
+        print(f"❌ FAILED: Missing step to link PR to work issue")
+        return False
+    
+    print(f"✅ PASSED: Spawn PR is properly linked to work issue")
+    print(f"   • PR creation captures PR number")
+    print(f"   • Issue references spawn PR")
+    print(f"   • Issue explains spawn sequence")
+    print(f"   • PR is linked back to issue")
+    return True
+
+
+def test_auto_review_handles_agent_spawn():
+    """Test that auto-review workflow handles agent spawn PRs specially."""
+    print("\n🧪 Testing auto-review handles agent spawn PRs")
+    print("-" * 60)
+    
+    workflow_path = Path('.github/workflows/auto-review-merge.yml')
+    
+    if not workflow_path.exists():
+        print(f"❌ FAILED: Workflow file not found: {workflow_path}")
+        return False
+    
+    with open(workflow_path, 'r') as f:
+        content = f.read()
+    
+    # Check that it detects agent spawn PRs
+    if 'agent-system' not in content:
+        print(f"❌ FAILED: auto-review does not check for agent-system label")
+        return False
+    
+    # Check that it looks for linked work issue
+    if 'linked_issue' not in content:
+        print(f"❌ FAILED: auto-review does not look for linked work issue")
+        return False
+    
+    # Check that it notifies the work issue after merge
+    if 'Agent Spawn Complete' not in content:
+        print(f"❌ FAILED: auto-review does not notify work issue about spawn completion")
+        return False
+    
+    print(f"✅ PASSED: auto-review properly handles agent spawn PRs")
+    print(f"   • Detects agent spawn PRs")
+    print(f"   • Extracts linked work issue")
+    print(f"   • Notifies work issue after merge")
+    return True
+
+
 def test_no_duplicate_assignment_logic():
     """Test that assignment logic is not duplicated across workflows."""
     print("\n🧪 Testing no duplicate assignment logic")
@@ -237,6 +320,8 @@ def main():
         test_agent_spawner_registers_and_assigns,
         test_assign_script_skips_agent_system,
         test_issue_has_clear_task_directive,
+        test_spawn_pr_linked_to_work_issue,
+        test_auto_review_handles_agent_spawn,
         test_no_duplicate_assignment_logic,
     ]
     

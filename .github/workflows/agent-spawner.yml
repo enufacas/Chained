@@ -470,6 +470,7 @@ jobs:
           echo "✅ Agent profile created at .github/agent-system/profiles/${AGENT_ID}.md"
 
       - name: Commit and create PR
+        id: create_spawn_pr
         if: steps.check_capacity.outputs.can_spawn == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -510,7 +511,7 @@ jobs:
             NEW_AGENT_INFO=""
           fi
           
-          gh pr create \
+          PR_URL=$(gh pr create \
             --title "$EMOJI New Agent Spawned: $HUMAN_NAME" \
             --body "## 🎉 Meet $HUMAN_NAME!
           
@@ -556,9 +557,13 @@ jobs:
           *🤖 Automated agent spawning system - Evolving autonomous AI ecosystem*" \
             --label "agent-system,automated,copilot" \
             --base main \
-            --head "$BRANCH_NAME"
+            --head "$BRANCH_NAME")
           
-          echo "✅ PR created for agent $AGENT_NAME"
+          # Extract PR number from URL
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          
+          echo "✅ PR #$PR_NUMBER created for agent $AGENT_NAME"
 
       - name: Create agent work and welcome issue
         id: create_agent_work_issue
@@ -574,6 +579,7 @@ jobs:
           PERSONALITY="${{ steps.generate_agent.outputs.personality }}"
           COMM_STYLE="${{ steps.generate_agent.outputs.communication_style }}"
           IS_NEW="${{ steps.generate_agent.outputs.is_new_agent }}"
+          PR_NUMBER="${{ steps.create_spawn_pr.outputs.pr_number }}"
           
           # Get agent description from convention-compliant definition
           AGENT_DESCRIPTION=$(python3 tools/get-agent-info.py description "$SPECIALIZATION")
@@ -598,6 +604,24 @@ jobs:
 
           ---
 
+          ## ⚠️ Agent Spawn Sequence
+
+          **IMPORTANT:** This agent is being spawned and will be available once PR #${PR_NUMBER} is merged.
+          
+          **Current Status:**
+          - ✅ Agent registration PR created: #${PR_NUMBER}
+          - ⏳ Waiting for spawn PR to merge
+          - ⏳ Agent will become active after merge
+          
+          **What happens next:**
+          1. The auto-review workflow will merge PR #${PR_NUMBER} 
+          2. Once merged, the agent **${AGENT_NAME}** becomes active
+          3. Then this issue can be assigned and worked on by the agent
+          
+          **Note:** The agent cannot work on this issue until its spawn PR is merged. This is not circular logic—it's a two-step process where the agent is created first, then it can take on work.
+
+          ---
+
           ## 🎉 Welcome $HUMAN_NAME!
           
           ${NEW_TYPE_BADGE}
@@ -609,7 +633,7 @@ jobs:
           **ID**: $AGENT_ID  
           **Specialization**: $SPECIALIZATION  
           **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](https://github.com/${{ github.repository }}/blob/main/.github/agents/${SPECIALIZATION}.md)  
-          **Status**: 🟢 Active
+          **Status**: ⏳ Spawning (PR #${PR_NUMBER})
           
           ### Personality Profile
           
@@ -630,7 +654,7 @@ jobs:
           
           ### 🎯 First Task: Demonstrate Your Specialization
           
-          **@${SPECIALIZATION}**, this issue serves as your first task to demonstrate your capabilities.
+          **@${SPECIALIZATION}**, once PR #${PR_NUMBER} is merged and you are active, this issue serves as your first task to demonstrate your capabilities.
           
           **Your Assignment:**
           Apply your specialized skills as defined in [\`.github/agents/${SPECIALIZATION}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${SPECIALIZATION}.md) to make a meaningful contribution to the Chained project. Choose a task that:
@@ -809,6 +833,32 @@ jobs:
           
           The agent **$AGENT_NAME** will still receive credit if this issue is completed."
           fi
+
+      - name: Link PR to work issue
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.create_spawn_pr.outputs.pr_number }}"
+          ISSUE_NUMBER="${{ steps.create_agent_work_issue.outputs.work_issue_number }}"
+          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          
+          # Add comment to PR linking to the work issue
+          gh pr comment $PR_NUMBER --repo ${{ github.repository }} --body "🔗 **Linked Work Issue**
+          
+          Once this spawn PR is merged, agent **$AGENT_NAME** will become active and can begin work on issue #${ISSUE_NUMBER}.
+          
+          **Sequence:**
+          1. ✅ This PR merges → Agent is registered and active
+          2. ⏳ Issue #${ISSUE_NUMBER} becomes actionable
+          3. 🤖 Agent can be assigned and work begins
+          
+          The auto-review workflow will merge this PR automatically since it has the \`agent-system\` and \`copilot\` labels.
+          
+          ---
+          *This is part of the autonomous agent spawning system. The agent spawn must complete before work can begin.*"
+          
+          echo "✅ Linked PR #$PR_NUMBER to work issue #$ISSUE_NUMBER"
 
       - name: Summary
         if: steps.check_capacity.outputs.can_spawn == 'true'
