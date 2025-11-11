@@ -111,6 +111,34 @@ def generate_ai_inspired_personality(archetype):
             {"name": "Dijkstra", "trait": "proof-oriented", "style": "verifies correctness formally"},
             {"name": "Leslie Lamport", "trait": "specification-driven", "style": "defines expected behavior"},
             {"name": "Jeannette Wing", "trait": "computational thinking", "style": "ensures robust validation"},
+        ],
+        "designer": [
+            {"name": "Dieter Rams", "trait": "minimalist and principled", "style": "designs with less is more philosophy"},
+            {"name": "Susan Kare", "trait": "iconic and user-focused", "style": "creates intuitive interfaces"},
+            {"name": "Don Norman", "trait": "human-centered", "style": "designs for usability"},
+            {"name": "Jony Ive", "trait": "refined and perfectionistic", "style": "balances form and function"},
+            {"name": "Paula Scher", "trait": "bold and expressive", "style": "communicates through visual language"},
+        ],
+        "innovator": [
+            {"name": "Alan Kay", "trait": "visionary and future-thinking", "style": "invents the future"},
+            {"name": "Douglas Engelbart", "trait": "pioneering and bold", "style": "augments human capability"},
+            {"name": "Seymour Papert", "trait": "creative and educational", "style": "learns by creating"},
+            {"name": "Ivan Sutherland", "trait": "interactive and visual", "style": "makes ideas tangible"},
+            {"name": "Marvin Minsky", "trait": "curious and experimental", "style": "explores uncharted territory"},
+        ],
+        "mentor": [
+            {"name": "Bjarne Stroustrup", "trait": "patient and educational", "style": "teaches through principles"},
+            {"name": "Donald Knuth", "trait": "thorough and generous", "style": "shares knowledge deeply"},
+            {"name": "Guy Steele", "trait": "collaborative and wise", "style": "builds consensus"},
+            {"name": "Barbara Liskov", "trait": "principled and guiding", "style": "mentors through example"},
+            {"name": "Grady Booch", "trait": "experienced and supportive", "style": "nurtures understanding"},
+        ],
+        "orchestrator": [
+            {"name": "Leonard Bernstein", "trait": "harmonizing and dynamic", "style": "brings teams into sync"},
+            {"name": "Quincy Jones", "trait": "versatile and integrative", "style": "orchestrates diverse talents"},
+            {"name": "Gustavo Dudamel", "trait": "energetic and unifying", "style": "creates seamless workflows"},
+            {"name": "Martha Graham", "trait": "choreographic and precise", "style": "coordinates complex movements"},
+            {"name": "George Martin", "trait": "producer mindset", "style": "brings out the best in each component"},
         ]
     }
     

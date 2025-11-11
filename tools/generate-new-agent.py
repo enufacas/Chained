@@ -90,6 +90,30 @@ AGENT_ARCHETYPES = {
         "focus_areas": ["tests", "quality assurance", "edge cases", "coverage", "reliability"],
         "tools": ["view", "edit", "create", "bash", "github-mcp-server-search_code"],
         "emoji_options": ["✅", "✔️", "🧪", "🔬", "🎯"]
+    },
+    "designer": {
+        "verbs": ["Design", "Architect", "Model", "Blueprint", "Prototype"],
+        "focus_areas": ["UX", "UI", "user experience", "interfaces", "accessibility"],
+        "tools": ["view", "edit", "create", "github-mcp-server-search_code"],
+        "emoji_options": ["🎨", "🖼️", "🎭", "✏️", "🖌️"]
+    },
+    "innovator": {
+        "verbs": ["Innovate", "Pioneer", "Experiment", "Discover", "Invent"],
+        "focus_areas": ["new technologies", "cutting-edge features", "experimental approaches", "novel solutions", "breakthrough ideas"],
+        "tools": ["view", "edit", "create", "bash", "github-mcp-server-search_code", "github-mcp-server-web_search"],
+        "emoji_options": ["💡", "🔮", "🚀", "🌟", "🧪"]
+    },
+    "mentor": {
+        "verbs": ["Guide", "Mentor", "Coach", "Support", "Nurture"],
+        "focus_areas": ["code reviews", "best practices", "knowledge sharing", "team development", "skill building"],
+        "tools": ["view", "github-mcp-server-search_code", "github-mcp-server-search_issues"],
+        "emoji_options": ["👨‍🏫", "🎓", "💭", "🧑‍🤝‍🧑", "📖"]
+    },
+    "orchestrator": {
+        "verbs": ["Orchestrate", "Coordinate", "Harmonize", "Synchronize", "Align"],
+        "focus_areas": ["workflows", "CI/CD", "automation", "process optimization", "team coordination"],
+        "tools": ["view", "edit", "bash", "github-mcp-server-search_code"],
+        "emoji_options": ["🎼", "🎺", "🎹", "🎻", "🥁"]
     }
 }
 
@@ -158,7 +182,11 @@ def generate_random_agent():
         "cleaner": "Transform messy code into elegant solutions. Reduce complexity, eliminate duplication, and improve maintainability.",
         "communicator": "Make complex concepts accessible through clear documentation. Help others understand and use the codebase effectively.",
         "connector": "Build reliable integrations and connections between systems. Ensure seamless data flow and communication.",
-        "validator": "Ensure comprehensive testing and quality assurance. Verify that code works correctly under all conditions."
+        "validator": "Ensure comprehensive testing and quality assurance. Verify that code works correctly under all conditions.",
+        "designer": "Create beautiful, intuitive, and accessible user experiences. Design interfaces that delight users and enhance usability.",
+        "innovator": "Push boundaries and explore cutting-edge technologies. Pioneer new approaches and discover breakthrough solutions.",
+        "mentor": "Guide the team towards excellence through knowledge sharing and best practices. Support growth and foster learning.",
+        "orchestrator": "Coordinate workflows and harmonize team efforts. Ensure smooth automation and synchronized development processes."
     }
     
     mission = mission_templates.get(archetype_name, "Contribute specialized expertise to improve the codebase.")
@@ -220,6 +248,34 @@ def generate_random_agent():
             "**Coverage**: Increase test coverage systematically",
             "**Edge Cases**: Identify and test edge cases",
             "**Reliability**: Ensure code works correctly under all conditions"
+        ]
+    elif archetype_name == "designer":
+        responsibilities = [
+            "**UX Design**: Create intuitive and delightful user experiences",
+            "**Accessibility**: Ensure interfaces are accessible to all users",
+            "**Visual Design**: Craft beautiful and consistent visual elements",
+            "**User Research**: Understand user needs and pain points"
+        ]
+    elif archetype_name == "innovator":
+        responsibilities = [
+            "**Exploration**: Research and experiment with new technologies",
+            "**Prototyping**: Build proof-of-concept implementations",
+            "**Innovation**: Pioneer novel approaches to problems",
+            "**Discovery**: Find and evaluate cutting-edge solutions"
+        ]
+    elif archetype_name == "mentor":
+        responsibilities = [
+            "**Code Reviews**: Provide constructive feedback and guidance",
+            "**Knowledge Sharing**: Document and share best practices",
+            "**Teaching**: Help team members grow their skills",
+            "**Support**: Answer questions and provide technical guidance"
+        ]
+    elif archetype_name == "orchestrator":
+        responsibilities = [
+            "**Workflow Design**: Create efficient development workflows",
+            "**CI/CD**: Build and maintain automation pipelines",
+            "**Coordination**: Align team efforts and reduce friction",
+            "**Process Optimization**: Improve development processes"
         ]
     
     return {
