@@ -517,12 +517,13 @@ jobs:
           **Note:** This issue will be automatically assigned to GitHub Copilot for implementation. The agent receives credit for completed work."
           
           # Create the work issue without ai-generated label (let Copilot assignment workflow handle it)
-          ISSUE_NUMBER=$(gh issue create \
+          ISSUE_URL=$(gh issue create \
             --title "$WORK_TITLE" \
             --body "$WORK_BODY" \
-            --label "agent-work" \
-            --json number \
-            --jq '.number')
+            --label "agent-work")
+          
+          # Extract issue number from URL (e.g., https://github.com/owner/repo/issues/123)
+          ISSUE_NUMBER=$(echo "$ISSUE_URL" | grep -oE '[0-9]+$')
           
           echo "work_issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
           echo "✅ Work issue #$ISSUE_NUMBER created for agent $AGENT_NAME"
