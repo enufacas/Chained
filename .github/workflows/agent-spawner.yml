@@ -19,6 +19,24 @@ on:
         description: 'Force specific specialization (leave empty for random, only works with existing mode)'
         required: false
         type: string
+      delete_mode:
+        description: 'Delete agents before spawning'
+        required: false
+        type: choice
+        default: 'none'
+        options:
+          - none  # Don't delete any agents
+          - all  # Delete all active agents and respawn
+          - specific  # Delete specific agent IDs (provide in delete_agent_ids)
+      delete_agent_ids:
+        description: 'Comma-separated agent IDs to delete (only used with delete_mode=specific, e.g., "agent-123,agent-456")'
+        required: false
+        type: string
+      respawn_count:
+        description: 'Number of agents to spawn after deletion (default: 1, max: 5)'
+        required: false
+        type: number
+        default: 1
 
 permissions:
   contents: write
@@ -76,6 +94,100 @@ jobs:
           create_label_if_missing "copilot" "8b5cf6" "Copilot-related tasks"
           
           echo "✅ All agent system labels verified"
+
+      - name: Delete agents if requested
+        id: delete_agents
+        if: github.event.inputs.delete_mode != 'none' && github.event.inputs.delete_mode != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DELETE_MODE="${{ github.event.inputs.delete_mode }}"
+          DELETE_AGENT_IDS="${{ github.event.inputs.delete_agent_ids }}"
+          REGISTRY_FILE=".github/agent-system/registry.json"
+          
+          echo "🗑️ Delete mode: $DELETE_MODE"
+          
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import shutil
+          from datetime import datetime
+          
+          delete_mode = os.environ.get('DELETE_MODE', 'none')
+          delete_agent_ids_str = os.environ.get('DELETE_AGENT_IDS', '')
+          REGISTRY_FILE = ".github/agent-system/registry.json"
+          
+          # Load registry
+          with open(REGISTRY_FILE, 'r') as f:
+              registry = json.load(f)
+          
+          deleted_agents = []
+          
+          if delete_mode == 'all':
+              # Delete all active agents
+              for agent in registry['agents']:
+                  if agent.get('status') == 'active':
+                      agent['status'] = 'deleted'
+                      agent['deleted_at'] = datetime.utcnow().isoformat() + 'Z'
+                      agent['deletion_reason'] = 'Manual deletion - all agents'
+                      deleted_agents.append(agent)
+                      
+                      # Archive profile
+                      profile_path = f".github/agent-system/profiles/{agent['id']}.md"
+                      archive_path = f".github/agent-system/archive/{agent['id']}.md"
+                      if os.path.exists(profile_path):
+                          os.makedirs('.github/agent-system/archive', exist_ok=True)
+                          shutil.move(profile_path, archive_path)
+                      
+                      print(f"🗑️ Deleted agent: {agent['name']} ({agent['id']})")
+              
+              # Remove all deleted agents from active list
+              registry['agents'] = [a for a in registry['agents'] if a.get('status') != 'deleted']
+              
+          elif delete_mode == 'specific' and delete_agent_ids_str:
+              # Delete specific agents by ID
+              delete_ids = [id.strip() for id in delete_agent_ids_str.split(',') if id.strip()]
+              
+              for agent_id in delete_ids:
+                  agent = next((a for a in registry['agents'] if a['id'] == agent_id), None)
+                  if agent and agent.get('status') == 'active':
+                      agent['status'] = 'deleted'
+                      agent['deleted_at'] = datetime.utcnow().isoformat() + 'Z'
+                      agent['deletion_reason'] = f'Manual deletion - specific ID: {agent_id}'
+                      deleted_agents.append(agent)
+                      
+                      # Archive profile
+                      profile_path = f".github/agent-system/profiles/{agent['id']}.md"
+                      archive_path = f".github/agent-system/archive/{agent['id']}.md"
+                      if os.path.exists(profile_path):
+                          os.makedirs('.github/agent-system/archive', exist_ok=True)
+                          shutil.move(profile_path, archive_path)
+                      
+                      print(f"🗑️ Deleted agent: {agent['name']} ({agent['id']})")
+                  else:
+                      print(f"⚠️ Agent {agent_id} not found or not active")
+              
+              # Remove deleted agents from active list
+              registry['agents'] = [a for a in registry['agents'] if a.get('status') != 'deleted']
+          
+          # Save updated registry
+          with open(REGISTRY_FILE, 'w') as f:
+              json.dump(registry, f, indent=2)
+          
+          print(f"\n✅ Deleted {len(deleted_agents)} agent(s)")
+          
+          # Save deleted count for later steps
+          with open('/tmp/deleted_count.txt', 'w') as f:
+              f.write(str(len(deleted_agents)))
+          PYTHON_SCRIPT
+          
+          if [ -f "/tmp/deleted_count.txt" ]; then
+            DELETED_COUNT=$(cat /tmp/deleted_count.txt)
+            echo "deleted_count=$DELETED_COUNT" >> $GITHUB_OUTPUT
+            echo "✅ Deleted $DELETED_COUNT agent(s)"
+          else
+            echo "deleted_count=0" >> $GITHUB_OUTPUT
+          fi
 
       - name: Check agent capacity
         id: check_capacity
