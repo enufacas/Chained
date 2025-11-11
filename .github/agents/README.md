@@ -103,6 +103,9 @@ Specialized in engineering APIs. Inspired by Nikola Tesla - inventive and vision
 ### ✔️ [validate-wizard.md](./validate-wizard.md)
 Specialized in ensuring comprehensive validation. Focuses on input validation, data integrity, and error handling across all system boundaries.
 
+### 🔐 [monitor-champion.md](./monitor-champion.md)
+Specialized in monitoring security. Inspired by Katie Moussouris - proactive and strategic, with extra enthusiasm. Focuses on security, data integrity, and access control through continuous monitoring and threat detection.
+
 ## Using Custom Agents
 
 Custom agents can be invoked:
