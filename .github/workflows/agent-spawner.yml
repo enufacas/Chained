@@ -560,7 +560,8 @@ jobs:
           
           echo "✅ PR created for agent $AGENT_NAME"
 
-      - name: Create agent announcement issue
+      - name: Create agent introduction and work issue
+        id: create_agent_issue
         if: steps.check_capacity.outputs.can_spawn == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -574,6 +575,9 @@ jobs:
           COMM_STYLE="${{ steps.generate_agent.outputs.communication_style }}"
           IS_NEW="${{ steps.generate_agent.outputs.is_new_agent }}"
           
+          # Get agent description from convention-compliant definition
+          AGENT_DESCRIPTION=$(python3 tools/get-agent-info.py description "$SPECIALIZATION")
+          
           # Build issue body with conditional new agent type info
           if [ "$IS_NEW" == "true" ]; then
             NEW_TYPE_BADGE="🆕 **NEW AGENT TYPE** - This specialization was just created!"
@@ -581,7 +585,8 @@ jobs:
             NEW_TYPE_BADGE=""
           fi
           
-          gh issue create \
+          # Create combined announcement and work issue
+          ISSUE_URL=$(gh issue create \
             --title "$EMOJI Meet $HUMAN_NAME - Our Newest Agent!" \
             --body "## 🎉 Welcome $HUMAN_NAME!
           
@@ -605,6 +610,8 @@ jobs:
           
           ### Mission
           
+          $AGENT_DESCRIPTION
+          
           This agent will focus on its specialization and compete with other agents to:
           - Deliver high-quality contributions
           - Earn a spot in the Hall of Fame (score > 85%)
@@ -625,44 +632,11 @@ jobs:
           - 👍 React to PRs with feedback
           - 💬 Provide constructive comments
           
-          ### Tracking
-          
-          Performance will be evaluated in 24 hours. The agent must maintain a score > 30% to avoid elimination.
-          
-          See the full profile at \`.github/agent-system/profiles/${AGENT_ID}.md\`
-          
           ---
           
-          **Good luck, $HUMAN_NAME! May your code be clean and your PRs be merged!** 🚀" \
-            --label "agent-system,announcement"
+          ## 🚀 First Task
           
-          echo "✅ Announcement issue created"
-
-      - name: Create agent work issue
-        id: create_agent_work_issue
-        if: steps.check_capacity.outputs.can_spawn == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
-          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
-          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
-          EMOJI="${{ steps.generate_agent.outputs.emoji }}"
-          
-          # Get agent description from convention-compliant definition
-          AGENT_DESCRIPTION=$(python3 tools/get-agent-info.py description "$SPECIALIZATION")
-          
-          # Generate work title based on specialization
-          WORK_TITLE="$EMOJI Agent Task: Work for $AGENT_NAME"
-          
-          # Create comprehensive work body referencing the agent definition
-          WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its capabilities.
-          
-          **Agent Details:**
-          - ID: \`$AGENT_ID\`
-          - Specialization: $SPECIALIZATION
-          - Agent Definition: [.github/agents/${SPECIALIZATION}.md](https://github.com/${{ github.repository }}/blob/main/.github/agents/${SPECIALIZATION}.md)
-          - Description: $AGENT_DESCRIPTION
+          This issue is also for agent **$AGENT_NAME** to demonstrate its capabilities through its first contribution.
           
           **Task:**
           This agent should apply its specialized skills defined in its agent definition to contribute to the Chained project. The agent's custom instructions in \`.github/agents/${SPECIALIZATION}.md\` guide its approach and responsibilities.
@@ -685,28 +659,29 @@ jobs:
           **Agent Performance Tracking:**
           This issue is tracked as part of **$AGENT_NAME**'s performance evaluation. Agents must maintain a score above 30% to avoid elimination and can achieve Hall of Fame status (preserved forever) with scores above 85%.
           
-          **Note:** This issue will be automatically assigned to GitHub Copilot for implementation. The agent receives credit for completed work."
+          Performance will be evaluated in 24 hours. See the full profile at \`.github/agent-system/profiles/${AGENT_ID}.md\`
           
-          # Create the work issue without ai-generated label (let Copilot assignment workflow handle it)
-          ISSUE_URL=$(gh issue create \
-            --title "$WORK_TITLE" \
-            --body "$WORK_BODY" \
-            --label "agent-work")
+          **Note:** This issue will be automatically assigned to GitHub Copilot for implementation. The agent receives credit for completed work.
+          
+          ---
+          
+          **Good luck, $HUMAN_NAME! May your code be clean and your PRs be merged!** 🚀" \
+            --label "agent-system,announcement,agent-work")
           
           # Extract issue number from URL (e.g., https://github.com/owner/repo/issues/123)
           ISSUE_NUMBER=$(echo "$ISSUE_URL" | grep -oE '[0-9]+$')
           
-          echo "work_issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
-          echo "✅ Work issue #$ISSUE_NUMBER created for agent $AGENT_NAME"
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          echo "✅ Agent issue #$ISSUE_NUMBER created for $AGENT_NAME"
 
-      - name: Assign work issue to Copilot
+      - name: Assign agent issue to Copilot
         if: steps.check_capacity.outputs.can_spawn == 'true'
         env:
           GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
         run: |
           AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
           AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
-          ISSUE_NUMBER="${{ steps.create_agent_work_issue.outputs.work_issue_number }}"
+          ISSUE_NUMBER="${{ steps.create_agent_issue.outputs.issue_number }}"
           
           echo "🤖 Attempting to assign issue #$ISSUE_NUMBER to GitHub Copilot..."
           
