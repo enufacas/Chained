@@ -1,9 +1,15 @@
 {
-  "total_learnings": 16,
+  "total_learnings": 17,
   "sources": {
-    "hacker_news": 10,
-    "tldr": 6
+    "tldr": 7,
+    "hacker_news": 10
   },
-  "last_updated": "2025-11-11T19:09:09.182238+00:00",
-  "top_topics": {}
+  "last_updated": "2025-11-11T21:15:22.130232+00:00",
+  "top_topics": {
+    "AI/ML": 31,
+    "Programming": 5,
+    "Performance": 3,
+    "Open Source": 2,
+    "Web": 2
+  }
 }
