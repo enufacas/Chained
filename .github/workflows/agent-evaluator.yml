@@ -207,22 +207,43 @@ jobs:
         if: steps.evaluate.outputs.has_results == 'true'
         run: |
           mkdir -p agents/archive
+          mkdir -p agents/archive/definitions
           
           python3 << 'PYTHON_SCRIPT'
           import json
           import shutil
           import os
+          from pathlib import Path
           
           with open('/tmp/evaluation_results.json', 'r') as f:
               results = json.load(f)
           
+          with open('agents/registry.json', 'r') as f:
+              registry = json.load(f)
+          
           for agent in results.get('eliminated', []):
-              profile_path = f"agents/profiles/{agent['id']}.md"
-              archive_path = f"agents/archive/{agent['id']}.md"
+              agent_id = agent['id']
+              
+              # Archive profile
+              profile_path = f"agents/profiles/{agent_id}.md"
+              archive_path = f"agents/archive/{agent_id}.md"
               
               if os.path.exists(profile_path):
                   shutil.move(profile_path, archive_path)
-                  print(f"📦 Archived {agent['name']}")
+                  print(f"📦 Archived profile for {agent['name']}")
+              
+              # Find and note the agent definition (but don't remove it - keep for future spawns)
+              # Get specialization from registry
+              full_agent = next((a for a in registry.get('agents', []) if a.get('id') == agent_id), None)
+              if not full_agent:
+                  # Check eliminated list in registry for historical data
+                  continue
+              
+              specialization = full_agent.get('specialization', 'unknown')
+              agent_def_path = Path(f".github/agents/{specialization}.md")
+              
+              if agent_def_path.exists():
+                  print(f"  ℹ️  Agent definition {specialization}.md remains for future spawns")
           
           PYTHON_SCRIPT
 

@@ -82,7 +82,7 @@ jobs:
             mkdir -p agents
             cat > "$REGISTRY_FILE" << 'EOF'
           {
-            "version": "1.0.0",
+            "version": "2.0.0",
             "agents": [],
             "hall_of_fame": [],
             "system_lead": null,
@@ -91,6 +91,8 @@ jobs:
               "max_active_agents": 10,
               "elimination_threshold": 0.3,
               "promotion_threshold": 0.85,
+              "spawn_mode": "mixed",
+              "new_agent_probability": 0.5,
               "metrics_weight": {
                 "code_quality": 0.3,
                 "issue_resolution": 0.25,
@@ -98,18 +100,7 @@ jobs:
                 "peer_review": 0.2
               }
             },
-            "specializations": [
-              "bug-hunter",
-              "feature-architect",
-              "test-champion",
-              "doc-master",
-              "performance-optimizer",
-              "security-guardian",
-              "code-poet",
-              "refactor-wizard",
-              "integration-specialist",
-              "ux-enhancer"
-            ],
+            "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory",
             "last_spawn": null,
             "last_evaluation": null
           }
