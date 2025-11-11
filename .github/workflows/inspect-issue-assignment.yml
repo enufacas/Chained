@@ -1,0 +1,134 @@
+name: Inspect Issue Assignment
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to inspect'
+        required: true
+        type: string
+
+permissions:
+  issues: read
+  contents: read
+
+jobs:
+  inspect-assignment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Inspect Issue Assignment History
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "=================================================================="
+          echo "🔍 Inspecting Issue Assignment History"
+          echo "=================================================================="
+          echo ""
+          echo "Repository: ${{ github.repository }}"
+          echo "Issue: #${{ inputs.issue_number }}"
+          echo ""
+          
+          # Run the inspection tool
+          python3 tools/inspect-issue-assignment.py ${{ github.repository_owner }} ${{ github.event.repository.name }} ${{ inputs.issue_number }}
+          
+          echo ""
+          echo "=================================================================="
+          echo "💾 Capturing Raw Assignment Data"
+          echo "=================================================================="
+          echo ""
+          
+          # Get raw issue data with assignees
+          echo "Current assignees (full details):"
+          gh api graphql -f query='
+            query($owner: String!, $repo: String!, $number: Int!) {
+              repository(owner: $owner, name: $repo) {
+                issue(number: $number) {
+                  assignees(first: 10) {
+                    nodes {
+                      login
+                      __typename
+                      id
+                      url
+                      ... on Bot {
+                        databaseId
+                      }
+                      ... on User {
+                        databaseId
+                      }
+                    }
+                  }
+                }
+              }
+            }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" -F number=${{ inputs.issue_number }} | jq '.data.repository.issue.assignees.nodes'
+          
+          echo ""
+          echo "=================================================================="
+          echo "🎯 Custom Agent Detection"
+          echo "=================================================================="
+          echo ""
+          
+          # Check if any assignee looks like a custom agent
+          assignees_json=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!, $number: Int!) {
+              repository(owner: $owner, name: $repo) {
+                issue(number: $number) {
+                  assignees(first: 10) {
+                    nodes {
+                      login
+                      __typename
+                      id
+                    }
+                  }
+                }
+              }
+            }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" -F number=${{ inputs.issue_number }})
+          
+          echo "$assignees_json" | jq -r '.data.repository.issue.assignees.nodes[] | 
+            select(.login != "github-copilot" and .login != "copilot" and .__typename == "Bot") | 
+            "🎯 CUSTOM AGENT FOUND: " + .login + " (Actor ID: " + .id + ")"'
+          
+          # Store the custom agent info if found
+          custom_agent_login=$(echo "$assignees_json" | jq -r '.data.repository.issue.assignees.nodes[] | 
+            select(.login != "github-copilot" and .login != "copilot" and .__typename == "Bot") | .login' | head -1)
+          
+          custom_agent_id=$(echo "$assignees_json" | jq -r '.data.repository.issue.assignees.nodes[] | 
+            select(.login != "github-copilot" and .login != "copilot" and .__typename == "Bot") | .id' | head -1)
+          
+          if [ -n "$custom_agent_login" ] && [ -n "$custom_agent_id" ]; then
+            echo ""
+            echo "✅ SUCCESS! Custom agent detected via API:"
+            echo "   Name: $custom_agent_login"
+            echo "   Actor ID: $custom_agent_id"
+            echo "   Agent File: .github/agents/${custom_agent_login}.md"
+            echo ""
+            echo "💡 This proves custom agents have actor IDs!"
+            echo "   The workflow can use this ID for direct assignment."
+            echo ""
+            
+            # Check if the agent file exists
+            if [ -f ".github/agents/${custom_agent_login}.md" ]; then
+              echo "✅ Agent configuration file exists: .github/agents/${custom_agent_login}.md"
+            else
+              echo "⚠️  Agent configuration file NOT found: .github/agents/${custom_agent_login}.md"
+              echo "   This might be a different type of bot, not a custom agent."
+            fi
+          else
+            echo "ℹ️  No custom agent detected as assignee."
+            echo "   Either:"
+            echo "   - No custom agent was assigned to this issue"
+            echo "   - Custom agents don't have separate actor IDs"
+            echo "   - The assignee is the generic 'github-copilot' bot"
+          fi
+          
+          echo ""
+          echo "=================================================================="
+          echo "✅ Inspection Complete"
+          echo "=================================================================="

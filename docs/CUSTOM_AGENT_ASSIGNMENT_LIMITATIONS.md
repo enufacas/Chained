@@ -1,92 +1,56 @@
-# Custom Agent Assignment Limitations
+# Custom Agent Assignment
 
 ## Overview
 
-This document explains the current limitations of GitHub Copilot's API when working with multiple custom agents and how this repository attempts to work around them.
+This document explains how this repository handles custom agent assignment via GitHub's GraphQL API, including both direct assignment (when supported) and fallback approaches.
 
-## The Problem
+## The Solution
 
-When using GitHub's API to assign Copilot to an issue, there is **no official way to specify which custom agent profile should be used** when multiple agents exist in `.github/agents/`.
+This repository now implements **intelligent custom agent assignment** that attempts direct API assignment to custom agents when possible, with automatic fallback to directive-based assignment.
 
-### What Works
+### Assignment Methods
 
-✅ **UI Assignment**: When manually assigning Copilot via GitHub's web interface, you can select which custom agent to use from a dropdown.
+The workflow now uses a **two-tier approach**:
 
-✅ **CLI Usage**: When using the GitHub Copilot CLI, you can invoke specific agents using `/agent <name>` command.
+#### Method 1: Direct Custom Agent Assignment (Preferred)
 
-✅ **API Assignment**: You can assign the generic Copilot bot to an issue via the GraphQL API.
+The workflow first attempts to find the custom agent as a separate actor in the GitHub API:
 
-### What Doesn't Work
+```bash
+# Query all available actors
+gh api graphql -f query='
+  query($owner: String!, $repo: String!) {
+    repository(owner: $owner, name: $repo) {
+      suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
+        nodes {
+          login
+          __typename
+          ... on Bot { id }
+          ... on User { id }
+        }
+      }
+    }
+  }'
 
-❌ **API Agent Selection**: The GraphQL `replaceActorsForAssignable` mutation has no parameter to specify which custom agent profile to use.
-
-## API Structure
-
-The `replaceActorsForAssignable` mutation only accepts:
-```graphql
-mutation {
-  replaceActorsForAssignable(input: {
-    assignableId: "<ISSUE_ID>",
-    actorIds: ["<COPILOT_ACTOR_ID>"],
-    clientMutationId: "optional-tracking-id"
-  }) {
-    # ...
-  }
-}
+# Try to find custom agent by name (e.g., "bug-hunter")
+custom_agent_actor_id=$(... | select(.login == "bug-hunter") | .id)
 ```
 
-**Missing**: No field for `agentProfile`, `customAgent`, or similar to specify which agent.
+**If found:** Assign directly to the custom agent actor ID
+- ✅ Direct API assignment to specific custom agent
+- ✅ No directives needed
+- ✅ Guaranteed agent selection
 
-## Current Workaround
+#### Method 2: Generic Copilot with Directives (Fallback)
 
-This repository uses a **best-effort approach** to communicate agent selection:
+If the custom agent doesn't have a separate actor ID, the workflow falls back to the previous approach:
 
-### 1. Intelligent Matching
-The workflow analyzes issue content and identifies the most appropriate agent:
-- `bug-hunter` for bug reports
-- `feature-architect` for new features
-- `doc-master` for documentation
-- etc.
+1. Assigns to the generic Copilot bot
+2. Adds agent-specific label (`agent:bug-hunter`)
+3. Prepends directive to issue body
+4. Adds comment with agent instructions
 
-### 2. Multiple Communication Methods
-The workflow attempts to communicate the matched agent through:
-
-**A. Labels**: Adds `agent:<agent-name>` label to the issue
-```yaml
-gh issue edit --add-label "agent:bug-hunter"
-```
-
-**B. Issue Body Directive**: Prepends agent instruction to issue description
-```markdown
-> **🤖 Agent Assignment**
-> This issue has been assigned to GitHub Copilot with the bug-hunter custom agent profile.
-> Please use the specialized approach defined in `.github/agents/bug-hunter.md`.
-```
-
-**C. Assignment Comment**: Adds a comment mentioning the agent
-```markdown
-@copilot please use the **bug-hunter** custom agent profile from `.github/agents/bug-hunter.md` when working on this issue.
-```
-
-### 3. Hope for the Best
-Since these methods are not officially documented, we hope that:
-- Copilot's system reads and respects these directives
-- The issue context influences agent selection
-- Future GitHub updates will make this work
-
-## Limitations of This Approach
-
-### Uncertainty
-- ⚠️ **Not officially supported**: GitHub doesn't document that Copilot respects these directives
-- ⚠️ **May be ignored**: Copilot might use a default agent or random selection
-- ⚠️ **No guarantee**: Success rate unknown and untestable
-
-### What Copilot Might Actually Do
-When assigned to an issue with multiple custom agents, Copilot likely:
-1. Uses the first agent found alphabetically
-2. Uses a repository-level default (if configured)
-3. Uses built-in default behavior
-4. **Unknown** - behavior is not documented
+### How It Works
 
 ## Alternative Approaches Considered
 
