@@ -1,0 +1,398 @@
+name: Agent Issue Discussion
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to discuss'
+        required: true
+        type: number
+      discussion_rounds:
+        description: 'Number of discussion rounds (2-5)'
+        required: false
+        type: number
+        default: 3
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  agent-discussion:
+    # Only run when 'agent-discussion' label is added or manual trigger
+    if: |
+      (github.event_name == 'issues' && github.event.label.name == 'agent-discussion') ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Get issue details
+        id: get_issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            ISSUE_NUMBER="${{ github.event.inputs.issue_number }}"
+          else
+            ISSUE_NUMBER="${{ github.event.issue.number }}"
+          fi
+          
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          
+          # Get issue details
+          ISSUE_JSON=$(gh issue view $ISSUE_NUMBER --repo ${{ github.repository }} --json title,body,labels)
+          ISSUE_TITLE=$(echo "$ISSUE_JSON" | jq -r '.title')
+          ISSUE_BODY=$(echo "$ISSUE_JSON" | jq -r '.body')
+          
+          # Save to file for Python processing
+          echo "$ISSUE_TITLE" > /tmp/issue_title.txt
+          echo "$ISSUE_BODY" > /tmp/issue_body.txt
+          
+          echo "✅ Got issue #$ISSUE_NUMBER: $ISSUE_TITLE"
+
+      - name: Load active agents
+        id: load_agents
+        run: |
+          REGISTRY_FILE=".github/agent-system/registry.json"
+          
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import random
+          
+          # Load registry
+          with open('.github/agent-system/registry.json', 'r') as f:
+              registry = json.load(f)
+          
+          # Get active agents
+          active_agents = [a for a in registry.get('agents', []) if a.get('status') == 'active']
+          
+          if len(active_agents) < 2:
+              print("⚠️ Not enough active agents for discussion (need at least 2)")
+              with open('/tmp/agent_count.txt', 'w') as f:
+                  f.write('0')
+              exit(0)
+          
+          # Randomly select 3-5 agents for discussion
+          num_discussants = min(len(active_agents), random.randint(3, 5))
+          selected_agents = random.sample(active_agents, num_discussants)
+          
+          # Save selected agents
+          with open('/tmp/selected_agents.json', 'w') as f:
+              json.dump(selected_agents, f, indent=2)
+          
+          with open('/tmp/agent_count.txt', 'w') as f:
+              f.write(str(len(selected_agents)))
+          
+          print(f"✅ Selected {len(selected_agents)} agents for discussion:")
+          for agent in selected_agents:
+              print(f"  - {agent['name']} ({agent['specialization']})")
+          PYTHON_SCRIPT
+          
+          if [ -f "/tmp/agent_count.txt" ]; then
+            AGENT_COUNT=$(cat /tmp/agent_count.txt)
+            echo "agent_count=$AGENT_COUNT" >> $GITHUB_OUTPUT
+          else
+            echo "agent_count=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate agent discussion
+        if: steps.load_agents.outputs.agent_count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
+          DISCUSSION_ROUNDS="${{ github.event.inputs.discussion_rounds || 3 }}"
+          
+          # Ensure discussion rounds is between 2-5
+          if [ "$DISCUSSION_ROUNDS" -lt 2 ]; then
+            DISCUSSION_ROUNDS=2
+          elif [ "$DISCUSSION_ROUNDS" -gt 5 ]; then
+            DISCUSSION_ROUNDS=5
+          fi
+          
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import random
+          import os
+          import subprocess
+          
+          # Load selected agents
+          with open('/tmp/selected_agents.json', 'r') as f:
+              agents = json.load(f)
+          
+          # Load issue details
+          with open('/tmp/issue_title.txt', 'r') as f:
+              issue_title = f.read().strip()
+          with open('/tmp/issue_body.txt', 'r') as f:
+              issue_body = f.read().strip()
+          
+          issue_number = os.environ['ISSUE_NUMBER']
+          discussion_rounds = int(os.environ['DISCUSSION_ROUNDS'])
+          
+          # Personality-based comment templates
+          comment_styles = {
+              "enthusiastic and energetic": [
+                  "🎉 Oh, this looks interesting! I think {opinion}. Let me share my take: {detail}",
+                  "⚡ Wow! I have some thoughts on this! {opinion} Here's why: {detail}",
+                  "🚀 This is exciting! My perspective: {opinion}. {detail}"
+              ],
+              "methodical and precise": [
+                  "Let me analyze this carefully. {opinion}. My reasoning: {detail}",
+                  "After careful consideration, {opinion}. Here's my analysis: {detail}",
+                  "I've evaluated the requirements. {opinion}. Details: {detail}"
+              ],
+              "calm and thoughtful": [
+                  "Interesting issue. I believe {opinion}. Let me explain: {detail}",
+                  "Taking a moment to consider this... {opinion}. My thoughts: {detail}",
+                  "After reflection, {opinion}. Here's my perspective: {detail}"
+              ],
+              "bold and innovative": [
+                  "💡 I have a bold idea! {opinion} Here's my vision: {detail}",
+                  "🔥 Let's think outside the box! {opinion}. {detail}",
+                  "⚡ This calls for innovation! {opinion} My approach: {detail}"
+              ],
+              "friendly and collaborative": [
+                  "Hey team! 👋 I think {opinion}. Let me share: {detail}",
+                  "Great discussion! My two cents: {opinion}. {detail}",
+                  "Love this collaboration! 🤝 {opinion} Here's why: {detail}"
+              ]
+          }
+          
+          # Opinion templates based on specialization
+          specialization_opinions = {
+              "bug-hunter": [
+                  "we should focus on edge cases and error handling",
+                  "this needs thorough testing for potential bugs",
+                  "I can help identify and fix any issues"
+              ],
+              "code-poet": [
+                  "we should prioritize code readability and elegance",
+                  "this is an opportunity for beautiful, maintainable code",
+                  "I can craft a solution that's both functional and artistic"
+              ],
+              "performance-optimizer": [
+                  "we need to consider performance implications",
+                  "this should be implemented with efficiency in mind",
+                  "I can optimize this for speed and resource usage"
+              ],
+              "doc-master": [
+                  "we should ensure comprehensive documentation",
+                  "this needs clear documentation for future maintainers",
+                  "I can create excellent documentation for this"
+              ],
+              "test-champion": [
+                  "we need comprehensive test coverage for this",
+                  "this requires thorough testing strategy",
+                  "I can ensure robust test coverage"
+              ],
+              "security-guardian": [
+                  "we must consider security implications carefully",
+                  "this needs a security-first approach",
+                  "I can ensure this is implemented securely"
+              ],
+              "feature-architect": [
+                  "we should design this with scalability in mind",
+                  "this needs solid architectural planning",
+                  "I can architect a robust solution"
+              ],
+              "refactor-wizard": [
+                  "we could refactor this for better maintainability",
+                  "this is an opportunity to improve code structure",
+                  "I can restructure this elegantly"
+              ],
+              "ux-enhancer": [
+                  "we should focus on user experience",
+                  "this needs to be intuitive and delightful",
+                  "I can make this user-friendly"
+              ],
+              "validate-wizard": [
+                  "we need robust input validation",
+                  "this requires thorough validation logic",
+                  "I can ensure data integrity"
+              ],
+              "coordinate-wizard": [
+                  "we should coordinate this across the system",
+                  "this needs integration with other components",
+                  "I can ensure smooth system integration"
+              ],
+              "teach-wizard": [
+                  "we should make this educational and clear",
+                  "this is a teaching opportunity",
+                  "I can document this for learning"
+              ]
+          }
+          
+          # Detail templates
+          detail_templates = [
+              "Based on my {specialization} expertise, I suggest {suggestion}.",
+              "From my experience with {specialization}, {suggestion}.",
+              "My {specialization} background tells me {suggestion}.",
+              "As a {specialization} specialist, I recommend {suggestion}."
+          ]
+          
+          suggestions = [
+              "focusing on clean architecture and maintainability",
+              "implementing comprehensive error handling",
+              "adding thorough documentation and examples",
+              "ensuring backward compatibility",
+              "considering edge cases carefully",
+              "writing extensive test coverage",
+              "optimizing for performance from the start",
+              "following established design patterns",
+              "keeping the solution simple and elegant",
+              "thinking about scalability"
+          ]
+          
+          print(f"🗣️ Starting discussion with {len(agents)} agents for {discussion_rounds} rounds...")
+          
+          # Shuffle agents for random order
+          random.shuffle(agents)
+          
+          # Generate comments for each round
+          for round_num in range(discussion_rounds):
+              # Select agent for this round (rotate through agents)
+              agent = agents[round_num % len(agents)]
+              
+              # Get agent's personality and specialization
+              personality = agent.get('personality', 'methodical and precise')
+              specialization = agent.get('specialization', 'general')
+              human_name = agent.get('human_name', 'Agent')
+              agent_name = agent.get('name', human_name)
+              
+              # Select appropriate comment style
+              style_templates = comment_styles.get(personality, comment_styles["methodical and precise"])
+              comment_template = random.choice(style_templates)
+              
+              # Select opinion based on specialization
+              spec_opinions = specialization_opinions.get(specialization, [
+                  "we should approach this methodically",
+                  "this needs careful consideration",
+                  "I can contribute my expertise"
+              ])
+              opinion = random.choice(spec_opinions)
+              
+              # Generate detail
+              detail_template = random.choice(detail_templates)
+              suggestion = random.choice(suggestions)
+              detail = detail_template.format(
+                  specialization=specialization.replace('-', ' '),
+                  suggestion=suggestion
+              )
+              
+              # Format final comment
+              comment = comment_template.format(opinion=opinion, detail=detail)
+              
+              # Add signature
+              full_comment = f"{comment}\n\n---\n*{agent_name} - {specialization} specialist*"
+              
+              # Post comment via gh CLI
+              print(f"\n📝 Round {round_num + 1}: {agent_name}")
+              print(f"   Comment: {comment[:80]}...")
+              
+              # Escape comment for shell
+              import tempfile
+              with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+                  f.write(full_comment)
+                  comment_file = f.name
+              
+              subprocess.run([
+                  'gh', 'issue', 'comment', str(issue_number),
+                  '--repo', '${{ github.repository }}',
+                  '--body-file', comment_file
+              ], check=True)
+              
+              os.unlink(comment_file)
+              
+              # Add delay between comments for natural flow (but not on last comment)
+              if round_num < discussion_rounds - 1:
+                  import time
+                  time.sleep(2)
+          
+          print(f"\n✅ Discussion complete! {discussion_rounds} agents participated.")
+          
+          # Now decide which agent should take the issue
+          # For now, randomly select from the discussants
+          assigned_agent = random.choice(agents)
+          
+          with open('/tmp/assigned_agent.json', 'w') as f:
+              json.dump(assigned_agent, f, indent=2)
+          
+          print(f"\n🎯 Selected {assigned_agent['name']} to take the issue!")
+          PYTHON_SCRIPT
+
+      - name: Post assignment decision
+        if: steps.load_agents.outputs.agent_count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
+          
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import subprocess
+          import os
+          
+          # Load assigned agent
+          with open('/tmp/assigned_agent.json', 'r') as f:
+              agent = json.load(f)
+          
+          issue_number = os.environ['ISSUE_NUMBER']
+          
+          # Create assignment announcement
+          assignment_comment = f"""🎯 **Discussion concluded!**
+
+After careful consideration and team discussion, **{agent['name']}** ({agent['specialization']} specialist) will take ownership of this issue!
+
+{agent['name']} brings:
+- **Specialization**: {agent['specialization']}
+- **Personality**: {agent.get('personality', 'methodical and precise')}
+- **Communication Style**: {agent.get('communication_style', 'clear and professional')}
+
+Looking forward to seeing this solution! 🚀
+
+---
+*This issue will now be assigned to GitHub Copilot on behalf of {agent['name']} for implementation.*"""
+          
+          # Post assignment comment
+          import tempfile
+          with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+              f.write(assignment_comment)
+              comment_file = f.name
+          
+          subprocess.run([
+              'gh', 'issue', 'comment', str(issue_number),
+              '--repo', '${{ github.repository }}',
+              '--body-file', comment_file
+          ], check=True)
+          
+          os.unlink(comment_file)
+          
+          print(f"✅ Assignment posted for {agent['name']}")
+          PYTHON_SCRIPT
+
+      - name: Summary
+        if: steps.load_agents.outputs.agent_count != '0'
+        run: |
+          echo "✅ Agent discussion workflow complete!"
+          echo "Issue #${{ steps.get_issue.outputs.issue_number }} discussed by ${{ steps.load_agents.outputs.agent_count }} agents"
+
+      - name: Not enough agents
+        if: steps.load_agents.outputs.agent_count == '0'
+        run: |
+          echo "⚠️ Not enough active agents for discussion"
+          echo "Need at least 2 active agents. Please spawn more agents."
