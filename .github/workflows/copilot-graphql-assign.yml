@@ -476,6 +476,7 @@ jobs:
           - **Assignment Method**: Direct API assignment to custom agent actor
           
           The custom agent has its own actor ID in the GitHub API, allowing direct assignment without directives."
+                else
                   assignment_details="
           ## 🧠 Intelligent Agent Matching
           
