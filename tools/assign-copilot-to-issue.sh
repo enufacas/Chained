@@ -103,18 +103,19 @@ for issue_number in $issue_numbers; do
   
   # Add agent directive to issue body so Copilot knows which custom agent to use
   # This is crucial: Copilot reads the issue body when assigned to understand context
-  echo "📝 Adding agent directive to issue body..."
+  echo "📝 Adding agent directive with @mention to issue body..."
   issue_body_original=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json body --jq '.body // ""')
   
   # Check if agent directive already exists in the issue body
   if ! echo "$issue_body_original" | grep -q "<!-- COPILOT_AGENT:"; then
-    # Prepend agent directive to issue body
+    # Prepend agent directive to issue body with @agent-name mention
     agent_directive="<!-- COPILOT_AGENT:$matched_agent -->
 
 > **🤖 Agent Assignment**
 > 
 > This issue has been assigned to GitHub Copilot with the **$agent_emoji $matched_agent** custom agent profile.
-> Please use the specialized approach and tools defined in [\`.github/agents/${matched_agent}.md\`](https://github.com/$GITHUB_REPOSITORY/blob/main/.github/agents/${matched_agent}.md).
+> 
+> **@$matched_agent** - Please use the specialized approach and tools defined in [\`.github/agents/${matched_agent}.md\`](https://github.com/$GITHUB_REPOSITORY/blob/main/.github/agents/${matched_agent}.md).
 
 ---
 
@@ -124,7 +125,7 @@ for issue_number in $issue_numbers; do
     
     # Update issue body using gh issue edit
     echo "$new_body" | gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --body-file -
-    echo "✓ Added agent directive to issue #$issue_number body"
+    echo "✓ Added agent directive with @$matched_agent mention to issue #$issue_number body"
   else
     echo "✓ Agent directive already exists in issue #$issue_number body"
   fi

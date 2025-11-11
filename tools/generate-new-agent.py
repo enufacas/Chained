@@ -2,12 +2,14 @@
 """
 Generate new convention-compliant agent definitions dynamically.
 Creates agents in .github/agents/ following GitHub Copilot convention.
+Uses AI-inspired personality generation for unique agent characteristics.
 """
 
 import os
 import sys
 import json
 import random
+import subprocess
 from pathlib import Path
 from datetime import datetime
 
@@ -88,28 +90,88 @@ AGENT_ARCHETYPES = {
         "focus_areas": ["tests", "quality assurance", "edge cases", "coverage", "reliability"],
         "tools": ["view", "edit", "create", "bash", "github-mcp-server-search_code"],
         "emoji_options": ["✅", "✔️", "🧪", "🔬", "🎯"]
+    },
+    "designer": {
+        "verbs": ["Design", "Architect", "Model", "Blueprint", "Prototype"],
+        "focus_areas": ["UX", "UI", "user experience", "interfaces", "accessibility"],
+        "tools": ["view", "edit", "create", "github-mcp-server-search_code"],
+        "emoji_options": ["🎨", "🖼️", "🎭", "✏️", "🖌️"]
+    },
+    "innovator": {
+        "verbs": ["Innovate", "Pioneer", "Experiment", "Discover", "Invent"],
+        "focus_areas": ["new technologies", "cutting-edge features", "experimental approaches", "novel solutions", "breakthrough ideas"],
+        "tools": ["view", "edit", "create", "bash", "github-mcp-server-search_code", "github-mcp-server-web_search"],
+        "emoji_options": ["💡", "🔮", "🚀", "🌟", "🧪"]
+    },
+    "mentor": {
+        "verbs": ["Guide", "Mentor", "Coach", "Support", "Nurture"],
+        "focus_areas": ["code reviews", "best practices", "knowledge sharing", "team development", "skill building"],
+        "tools": ["view", "github-mcp-server-search_code", "github-mcp-server-search_issues"],
+        "emoji_options": ["👨‍🏫", "🎓", "💭", "🧑‍🤝‍🧑", "📖"]
+    },
+    "orchestrator": {
+        "verbs": ["Orchestrate", "Coordinate", "Harmonize", "Synchronize", "Align"],
+        "focus_areas": ["workflows", "CI/CD", "automation", "process optimization", "team coordination"],
+        "tools": ["view", "edit", "bash", "github-mcp-server-search_code"],
+        "emoji_options": ["🎼", "🎺", "🎹", "🎻", "🥁"]
     }
 }
 
+def get_ai_personality(archetype_name):
+    """
+    Get an AI-generated personality for the agent.
+    Uses the generate-agent-personality.py script to get inspiration from real innovators.
+    """
+    try:
+        # Call the personality generator
+        result = subprocess.run(
+            ['python3', 'tools/generate-agent-personality.py', archetype_name],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        
+        if result.returncode == 0:
+            personality_data = json.loads(result.stdout)
+            return personality_data
+        else:
+            print(f"⚠️ Personality generator failed, using fallback", file=sys.stderr)
+            return None
+    except Exception as e:
+        print(f"⚠️ Could not generate AI personality: {e}", file=sys.stderr)
+        return None
+
 def generate_random_agent():
-    """Generate a new random agent definition."""
+    """Generate a new random agent definition with AI-inspired personality."""
     # Select random archetype
     archetype_name = random.choice(list(AGENT_ARCHETYPES.keys()))
     archetype = AGENT_ARCHETYPES[archetype_name]
     
-    # Generate agent name
+    # Get AI-generated personality based on real innovators
+    ai_personality = get_ai_personality(archetype_name)
+    
+    if ai_personality:
+        human_name = ai_personality['name']
+        personality = ai_personality['personality']
+        communication_style = ai_personality['communication_style']
+    else:
+        # Fallback to simple generation if AI personality fails
+        fallback_names = ["Ada", "Tesla", "Turing", "Curie", "Hopper", "Einstein", "Darwin", "Newton"]
+        human_name = random.choice(fallback_names)
+        personality = "innovative and thoughtful"
+        communication_style = "communicates clearly and effectively"
+    
+    # Generate agent name (kebab-case for file naming)
     verb = random.choice(archetype["verbs"])
     focus = random.choice(archetype["focus_areas"])
     name_suffix = random.choice(["master", "expert", "specialist", "champion", "wizard", "guru", "ninja", "pro"])
-    
-    # Create kebab-case name
     agent_name = f"{verb.lower()}-{name_suffix}"
     
     # Select emoji
     emoji = random.choice(archetype["emoji_options"])
     
-    # Create description
-    description = f"Specialized agent for {verb.lower()}ing {focus}. Focuses on {archetype['focus_areas'][0]}, {archetype['focus_areas'][1]}, and {archetype['focus_areas'][2]}."
+    # Create description with personality
+    description = f"Specialized agent for {verb.lower()}ing {focus}. Inspired by '{human_name}' - {personality}. Focuses on {archetype['focus_areas'][0]}, {archetype['focus_areas'][1]}, and {archetype['focus_areas'][2]}."
     
     # Create mission based on archetype
     mission_templates = {
@@ -120,7 +182,11 @@ def generate_random_agent():
         "cleaner": "Transform messy code into elegant solutions. Reduce complexity, eliminate duplication, and improve maintainability.",
         "communicator": "Make complex concepts accessible through clear documentation. Help others understand and use the codebase effectively.",
         "connector": "Build reliable integrations and connections between systems. Ensure seamless data flow and communication.",
-        "validator": "Ensure comprehensive testing and quality assurance. Verify that code works correctly under all conditions."
+        "validator": "Ensure comprehensive testing and quality assurance. Verify that code works correctly under all conditions.",
+        "designer": "Create beautiful, intuitive, and accessible user experiences. Design interfaces that delight users and enhance usability.",
+        "innovator": "Push boundaries and explore cutting-edge technologies. Pioneer new approaches and discover breakthrough solutions.",
+        "mentor": "Guide the team towards excellence through knowledge sharing and best practices. Support growth and foster learning.",
+        "orchestrator": "Coordinate workflows and harmonize team efforts. Ensure smooth automation and synchronized development processes."
     }
     
     mission = mission_templates.get(archetype_name, "Contribute specialized expertise to improve the codebase.")
@@ -183,15 +249,46 @@ def generate_random_agent():
             "**Edge Cases**: Identify and test edge cases",
             "**Reliability**: Ensure code works correctly under all conditions"
         ]
+    elif archetype_name == "designer":
+        responsibilities = [
+            "**UX Design**: Create intuitive and delightful user experiences",
+            "**Accessibility**: Ensure interfaces are accessible to all users",
+            "**Visual Design**: Craft beautiful and consistent visual elements",
+            "**User Research**: Understand user needs and pain points"
+        ]
+    elif archetype_name == "innovator":
+        responsibilities = [
+            "**Exploration**: Research and experiment with new technologies",
+            "**Prototyping**: Build proof-of-concept implementations",
+            "**Innovation**: Pioneer novel approaches to problems",
+            "**Discovery**: Find and evaluate cutting-edge solutions"
+        ]
+    elif archetype_name == "mentor":
+        responsibilities = [
+            "**Code Reviews**: Provide constructive feedback and guidance",
+            "**Knowledge Sharing**: Document and share best practices",
+            "**Teaching**: Help team members grow their skills",
+            "**Support**: Answer questions and provide technical guidance"
+        ]
+    elif archetype_name == "orchestrator":
+        responsibilities = [
+            "**Workflow Design**: Create efficient development workflows",
+            "**CI/CD**: Build and maintain automation pipelines",
+            "**Coordination**: Align team efforts and reduce friction",
+            "**Process Optimization**: Improve development processes"
+        ]
     
     return {
         "name": agent_name,
+        "human_name": human_name,
         "emoji": emoji,
         "description": description,
         "mission": mission,
         "responsibilities": responsibilities,
         "tools": archetype["tools"],
-        "archetype": archetype_name
+        "archetype": archetype_name,
+        "personality": personality,
+        "communication_style": communication_style
     }
 
 def create_agent_file(agent_info):
@@ -238,7 +335,15 @@ tools:
 
 # {agent_info['emoji']} {agent_name.replace('-', ' ').title()} Agent
 
-You are a specialized {agent_name.replace('-', ' ').title()} agent, part of the Chained autonomous AI ecosystem. {agent_info['mission']}
+**Agent Name:** {agent_info.get('human_name', agent_name.replace('-', ' ').title())}  
+**Personality:** {agent_info.get('personality', 'Focused and professional')}  
+**Communication Style:** {agent_info.get('communication_style', 'Clear and direct')}
+
+You are **{agent_info.get('human_name', agent_name.replace('-', ' ').title())}**, a specialized {agent_name.replace('-', ' ').title()} agent, part of the Chained autonomous AI ecosystem. {agent_info['mission']}
+
+## Your Personality
+
+You are {agent_info.get('personality', 'focused and professional')}. When communicating in issues and PRs, you {agent_info.get('communication_style', 'communicate clearly and directly')}. Let your personality shine through while maintaining professionalism.
 
 ## Core Responsibilities
 

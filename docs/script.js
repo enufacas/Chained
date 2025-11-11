@@ -897,3 +897,88 @@ function displayTopics(files) {
         container.appendChild(tag);
     });
 }
+
+// Fetch and display featured agents
+async function fetchFeaturedAgents() {
+    try {
+        const response = await fetch('../.github/agent-system/registry.json');
+        if (!response.ok) {
+            throw new Error('Could not fetch agent registry');
+        }
+        
+        const registry = await response.json();
+        const agents = registry.agents || [];
+        
+        // Get top 3-4 active agents (or all if less than 4)
+        const activeAgents = agents
+            .filter(agent => agent.status === 'active')
+            .slice(0, 4);
+        
+        const featuredGrid = document.getElementById('featured-agents');
+        if (!featuredGrid) return;
+        
+        if (activeAgents.length === 0) {
+            featuredGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">No active agents yet. Agents spawn every 3 hours!</p>';
+            return;
+        }
+        
+        featuredGrid.innerHTML = activeAgents.map(agent => `
+            <div class="featured-agent-card">
+                <div class="featured-agent-header">
+                    <span class="featured-agent-emoji">${getAgentEmoji(agent)}</span>
+                    <div>
+                        <div class="featured-agent-name">${agent.human_name || agent.name || 'Agent'}</div>
+                    </div>
+                </div>
+                <div class="featured-agent-specialization">${formatSpecialization(agent.specialization)}</div>
+                <div class="featured-agent-personality">
+                    ${agent.personality ? `"${agent.personality}"` : 'Personality loading...'}
+                </div>
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Error fetching featured agents:', error);
+        const featuredGrid = document.getElementById('featured-agents');
+        if (featuredGrid) {
+            featuredGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Agents are spawning... Check back soon!</p>';
+        }
+    }
+}
+
+function getAgentEmoji(agent) {
+    // Try to extract emoji from agent name
+    const emojiMatch = agent.name && agent.name.match(/^([\u{1F300}-\u{1F9FF}])/u);
+    if (emojiMatch) return emojiMatch[1];
+    
+    // Default emoji based on specialization
+    const emojiMap = {
+        'bug-hunter': '🐛',
+        'code-poet': '🎨',
+        'coordinate-wizard': '🔗',
+        'doc-master': '📚',
+        'feature-architect': '🏗️',
+        'integration-specialist': '🔌',
+        'performance-optimizer': '⚡',
+        'refactor-wizard': '♻️',
+        'security-guardian': '🛡️',
+        'teach-wizard': '📝',
+        'test-champion': '✅',
+        'ux-enhancer': '✨',
+        'validate-pro': '🔍',
+        'validate-wizard': '🧙'
+    };
+    
+    return emojiMap[agent.specialization] || '🤖';
+}
+
+function formatSpecialization(spec) {
+    if (!spec) return 'Unknown Specialization';
+    return spec.split('-').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+}
+
+// Load featured agents when page loads
+fetchFeaturedAgents();
+
