@@ -229,8 +229,8 @@ jobs:
 
   progress-tracking:
     runs-on: ubuntu-latest
-    # Run every 12 hours (at 00:00 and 12:00 UTC)
-    if: (github.event.schedule == '0 */12 * * *' || inputs.skip_progress != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    # Run on schedule trigger or when explicitly enabled via workflow_dispatch
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.skip_progress != true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -307,8 +307,8 @@ jobs:
 
   workflow-monitoring:
     runs-on: ubuntu-latest
-    # Run every 12 hours (at 00:00 and 12:00 UTC)
-    if: (github.event.schedule == '0 */12 * * *' || inputs.skip_workflow_monitor != true) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    # Run on schedule trigger or when explicitly enabled via workflow_dispatch
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.skip_workflow_monitor != true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
