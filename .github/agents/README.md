@@ -76,6 +76,9 @@ Specialized in validating security. Focuses on security, data integrity, and acc
 ### 📝 [teach-wizard.md](./teach-wizard.md)
 Specialized in teaching tutorials. Focuses on documentation, comments, and guides.
 
+### 🧙 [validate-wizard.md](./validate-wizard.md)
+Specialized in validating coverage. Focuses on tests, quality assurance, and edge cases.
+
 ## Using Custom Agents
 
 Custom agents can be invoked:
