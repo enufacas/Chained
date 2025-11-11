@@ -47,7 +47,7 @@ def test_copilot_assign_skips_agent_system():
 
 def test_agent_spawner_creates_issues_with_labels():
     """Test that agent-spawner creates issues with agent-system label."""
-    print("\n🧪 Testing agent-spawner creates issues with agent-system label")
+    print("\n🧪 Testing agent-spawner creates issues with agent-system label and directive")
     print("-" * 60)
     
     workflow_path = Path('.github/workflows/agent-spawner.yml')
@@ -64,7 +64,20 @@ def test_agent_spawner_creates_issues_with_labels():
         print(f"❌ FAILED: agent-spawner does not create issues with agent-system label")
         return False
     
-    print(f"✅ PASSED: agent-spawner creates issues with agent-system label")
+    # Check that the issue includes Copilot directive
+    if '<!-- COPILOT_AGENT:' not in content:
+        print(f"❌ FAILED: agent-spawner does not include Copilot agent directive")
+        return False
+    
+    # Check that the directive includes @mention
+    if '**@${SPECIALIZATION}**' not in content and '**@$SPECIALIZATION**' not in content:
+        print(f"❌ FAILED: agent-spawner directive does not include @mention")
+        return False
+    
+    print(f"✅ PASSED: agent-spawner creates issues with:")
+    print(f"   • agent-system label")
+    print(f"   • Copilot agent directive")
+    print(f"   • @mention of agent")
     return True
 
 
@@ -134,6 +147,46 @@ def test_assign_script_skips_agent_system():
     return True
 
 
+def test_issue_has_clear_task_directive():
+    """Test that spawned issues have clear task directives."""
+    print("\n🧪 Testing spawned issues have clear task directives")
+    print("-" * 60)
+    
+    workflow_path = Path('.github/workflows/agent-spawner.yml')
+    
+    if not workflow_path.exists():
+        print(f"❌ FAILED: Workflow file not found: {workflow_path}")
+        return False
+    
+    with open(workflow_path, 'r') as f:
+        content = f.read()
+    
+    required_elements = [
+        ('Your Assignment:', 'Clear assignment section'),
+        ('Aligns with your specialization', 'Specialization alignment guidance'),
+        ('Demonstrates your capabilities', 'Capability demonstration requirement'),
+        ('Success Criteria:', 'Success criteria section'),
+        ('agent definition', 'Reference to agent definition'),
+    ]
+    
+    missing = []
+    for element, description in required_elements:
+        if element not in content:
+            missing.append(description)
+    
+    if missing:
+        print(f"❌ FAILED: Issue directive missing elements:")
+        for item in missing:
+            print(f"   • {item}")
+        return False
+    
+    print(f"✅ PASSED: Issue includes clear task directive with:")
+    for _, description in required_elements:
+        print(f"   • {description}")
+    
+    return True
+
+
 def test_no_duplicate_assignment_logic():
     """Test that assignment logic is not duplicated across workflows."""
     print("\n🧪 Testing no duplicate assignment logic")
@@ -183,6 +236,7 @@ def main():
         test_agent_spawner_creates_issues_with_labels,
         test_agent_spawner_registers_and_assigns,
         test_assign_script_skips_agent_system,
+        test_issue_has_clear_task_directive,
         test_no_duplicate_assignment_logic,
     ]
     
