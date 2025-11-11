@@ -145,6 +145,16 @@ def generate_random_agent():
     # Create responsibilities based on archetype
     responsibilities = create_agent_responsibilities(archetype_name)
     
+    return {
+        "name": agent_name,
+        "emoji": emoji,
+        "description": description,
+        "mission": mission,
+        "responsibilities": responsibilities,
+        "tools": archetype["tools"],
+        "archetype": archetype_name
+    }
+
 def create_agent_responsibilities(archetype_name):
     """
     Generate responsibilities based on agent archetype.
@@ -207,16 +217,6 @@ def create_agent_responsibilities(archetype_name):
     }
     
     return responsibilities_map.get(archetype_name, [])
-    
-    return {
-        "name": agent_name,
-        "emoji": emoji,
-        "description": description,
-        "mission": mission,
-        "responsibilities": responsibilities,
-        "tools": archetype["tools"],
-        "archetype": archetype_name
-    }
 
 def create_agent_file(agent_info):
     """
