@@ -4,6 +4,15 @@
 
 The Custom Agent System is an experimental autonomous AI ecosystem where agents are spawned, evolve, compete, and collaborate to improve the Chained repository.
 
+## GitHub Copilot Convention Compliance
+
+This agent system follows the [GitHub Copilot custom agents convention](https://docs.github.com/en/copilot/reference/custom-agents-configuration). Custom agent definitions are located in:
+
+- **`.github/agents/`** - GitHub Copilot custom agent definitions (Markdown files with YAML frontmatter)
+- **`agents/`** - Agent system tracking, metrics, and lifecycle management
+
+See [`.github/agents/README.md`](../.github/agents/README.md) for details on the custom agent definitions.
+
 ## How It Works
 
 ### Agent Lifecycle
