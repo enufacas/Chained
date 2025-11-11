@@ -306,22 +306,31 @@ jobs:
               echo "🔧 Attempting CLI-based assignment using 'gh agent-task create'..."
               
               # Build task description with custom agent directive
-              task_description="<!-- COPILOT_AGENT:${matched_agent} -->
+              # Following GitHub's documentation for custom agent specification in CLI
+              # See: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-copilot-cli#use-custom-agents
+              task_description="@${matched_agent}
 
-          ## Custom Agent Assignment
+          Please use the **${agent_emoji} ${matched_agent}** custom agent to handle this task.
           
-          This task should be handled by the **${agent_emoji} ${matched_agent}** custom agent.
-          
-          **Agent Profile**: \`.github/agents/${matched_agent}.md\`
-          **Description**: ${agent_description}
+          **Custom Agent Profile**: \`.github/agents/${matched_agent}.md\`
+          **Agent Description**: ${agent_description}
+          **Specialization**: ${matched_agent}
           
           ---
           
-          ## Original Issue
+          ## Task Details
           
-          **Title**: ${issue_title}
+          **Issue #${issue_number}**: ${issue_title}
           
-          ${issue_body}"
+          ${issue_body}
+          
+          ---
+          
+          **Instructions for ${matched_agent} agent:**
+          - Follow the specialized approach defined in \`.github/agents/${matched_agent}.md\`
+          - Apply your domain-specific expertise and tools
+          - Ensure the solution aligns with your agent specialization
+          - Include appropriate tests and documentation as per your agent guidelines"
               
               # Create a temporary file for the task description
               task_file="/tmp/agent-task-${issue_number}.md"
@@ -329,6 +338,7 @@ jobs:
               
               # Try to create agent task via CLI
               echo "   Creating agent task from issue #${issue_number}..."
+              echo "   Using @${matched_agent} agent directive in task description..."
               cli_result=$(gh agent-task create -F "$task_file" --repo ${{ github.repository }} 2>&1 || echo "CLI_FAILED")
               
               if echo "$cli_result" | grep -qE "(created|session|task)"; then

@@ -33,15 +33,19 @@ The `copilot-graphql-assign.yml` workflow now supports three assignment methods:
 
 1. **Agent Matching**: The workflow analyzes the issue and matches it to the most appropriate custom agent (e.g., bug-hunter, feature-architect, etc.)
 
-2. **Task Description Generation**: Creates a markdown task description that includes:
-   - Custom agent directive: `<!-- COPILOT_AGENT:agent-name -->`
-   - Agent profile reference
-   - Original issue title and body
+2. **Task Description Generation**: Creates a markdown task description following GitHub's recommended format for custom agent specification:
+   - Starts with `@agent-name` directive (e.g., `@bug-hunter`)
+   - Explicitly requests the custom agent
+   - References the agent profile path (`.github/agents/agent-name.md`)
+   - Includes agent-specific instructions
+   - Preserves original issue title and body
 
 3. **CLI Command Execution**:
    ```bash
    gh agent-task create -F task-description.md --repo owner/repo
    ```
+   
+   The task description follows the format recommended in [GitHub's documentation](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-copilot-cli#use-custom-agents) for custom agent invocation.
 
 4. **Result Handling**:
    - **Success**: Comments on the issue with CLI assignment details
@@ -80,7 +84,28 @@ gh workflow run copilot-graphql-assign.yml \
 
 ## Custom Agent Directives
 
-Both methods include custom agent directives to help Copilot understand which specialized agent should handle the task:
+Both methods include custom agent directives to help Copilot understand which specialized agent should handle the task. The syntax differs between methods to align with their respective APIs.
+
+### The @agent-name Syntax (CLI Method)
+
+According to [GitHub's official documentation](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-copilot-cli#use-custom-agents), when using the GitHub CLI to create agent tasks, you should reference custom agents using the `@agent-name` syntax at the beginning of your task description:
+
+```markdown
+@bug-hunter
+
+Please use the **🐛 bug-hunter** custom agent to handle this task.
+
+**Custom Agent Profile**: `.github/agents/bug-hunter.md`
+
+[Rest of task description]
+```
+
+**Key points about @agent-name syntax:**
+- Place it at the very beginning of the task description
+- Use the exact agent name (e.g., `@bug-hunter`, `@feature-architect`)
+- The agent name must match the filename in `.github/agents/` (without `.md`)
+- GitHub Copilot will recognize this and route the task to the specified custom agent
+- This is the **recommended** way to specify custom agents in CLI-created tasks
 
 ### In Issue Body (GraphQL Method)
 ```markdown
@@ -92,15 +117,29 @@ Both methods include custom agent directives to help Copilot understand which sp
 ```
 
 ### In Task Description (CLI Method)
+
+According to [GitHub's documentation on using custom agents with Copilot CLI](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-copilot-cli#use-custom-agents), custom agents should be referenced using the `@agent-name` syntax at the beginning of the task description:
+
 ```markdown
-<!-- COPILOT_AGENT:bug-hunter -->
+@bug-hunter
 
-## Custom Agent Assignment
+Please use the **🐛 bug-hunter** custom agent to handle this task.
 
-This task should be handled by the **🐛 bug-hunter** custom agent.
+**Custom Agent Profile**: `.github/agents/bug-hunter.md`
+**Agent Description**: Specialized in finding and fixing bugs
 
-**Agent Profile**: `.github/agents/bug-hunter.md`
+---
+
+## Task Details
+
+[Issue details here]
 ```
+
+This format ensures that:
+- The custom agent is explicitly mentioned using `@` notation
+- GitHub Copilot recognizes the agent reference
+- The agent profile path is clearly specified
+- Task context is preserved
 
 ## Advantages of CLI Method
 
