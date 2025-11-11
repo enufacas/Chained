@@ -6,6 +6,9 @@ tools:
   - edit
   - bash
   - github-mcp-server-search_code
+  - github-mcp-server-web_search
+  - playwright-browser_navigate
+  - playwright-browser_snapshot
 ---
 
 # 🔗 Coordinate Wizard Agent

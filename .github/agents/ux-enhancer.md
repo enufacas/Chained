@@ -7,9 +7,14 @@ tools:
   - create
   - github-mcp-server-get_file_contents
   - github-mcp-server-search_code
+  - github-mcp-server-web_search
   - playwright-browser_navigate
   - playwright-browser_snapshot
   - playwright-browser_take_screenshot
+  - playwright-browser_click
+  - playwright-browser_fill_form
+  - playwright-browser_hover
+  - playwright-browser_evaluate
 ---
 
 # ✨ UX Enhancer Agent
