@@ -414,6 +414,9 @@ def main():
             "success": True,
             "agent_name": agent_info['name'],
             "emoji": agent_info['emoji'],
+            "human_name": agent_info['human_name'],
+            "personality": agent_info['personality'],
+            "communication_style": agent_info['communication_style'],
             "description": agent_info['description'],
             "message": message
         }, indent=2))
