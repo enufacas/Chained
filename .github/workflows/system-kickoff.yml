@@ -211,7 +211,7 @@ jobs:
           echo "  • idea-generator.yml - 09:00 UTC daily"
           echo "  • smart-idea-generator.yml - 10:00 UTC daily"
           echo "  • auto-review-merge.yml - Every 2 hours"
-          echo "  • timeline-updater.yml - Every 6 hours"
+          echo "  • timeline-updater.yml - Daily at 00:00 UTC"
           echo "  • progress-tracker.yml - Every 12 hours"
           echo ""
 
@@ -248,7 +248,7 @@ jobs:
           3. Create issues from ideas
           4. Convert issues to PRs every 3 hours
           5. Review and merge PRs every 2 hours
-          6. Update timeline every 6 hours
+          6. Update timeline daily at 00:00 UTC
 
           **Monitor Progress:**
           - 📊 GitHub Pages: View live timeline

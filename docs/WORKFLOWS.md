@@ -115,8 +115,7 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
 
 ### 13. System Monitor (`system-monitor.yml`)
 - **Schedule**: 
-  - Every 6 hours for timeline updates
-  - Every 12 hours for progress tracking and workflow monitoring
+  - Daily at 00:00 UTC for timeline updates, progress tracking and workflow monitoring
 - **Purpose**: Monitors workflow execution and schedules
 - **Actions**: 
   - Verifies workflows are running on schedule
