@@ -57,12 +57,6 @@ jobs:
                       __typename
                       id
                       url
-                      ... on Bot {
-                        databaseId
-                      }
-                      ... on User {
-                        databaseId
-                      }
                     }
                   }
                 }

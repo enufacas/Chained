@@ -57,12 +57,6 @@ def get_issue_details(owner, repo, issue_number):
               __typename
               id
               url
-              ... on Bot {
-                databaseId
-              }
-              ... on User {
-                databaseId
-              }
             }
           }
           timelineItems(first: 100, itemTypes: [ASSIGNED_EVENT, UNASSIGNED_EVENT]) {
