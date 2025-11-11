@@ -60,6 +60,36 @@ Custom agents may have **limited tool access**. From the logs:
 
 **Configure tools in:** `.github/agents/<agent-name>.md`
 
+## Agent Preparation Phase
+
+The logs reveal that agents go through an **orientation phase** when first invoked:
+
+### 1. Repository Navigation
+```
+Agent explores filesystem:
+/root → /home → /home/runner → /home/runner/work → repository
+```
+
+### 2. Tool Discovery
+```
+Agent attempts tools and learns restrictions from error messages:
+"Tool 'bash' does not exist. Available tools are view, create, edit, report_progress."
+```
+
+### 3. Convention Search
+```
+Agent searches for standard files:
+- PR templates
+- Configuration files
+- Repository conventions
+```
+
+### 4. Response Format Learning
+```
+Agent learns expected formats from error feedback:
+"Agent response did not contain expected template_path and template_content tags"
+```
+
 ## Response Format Requirements
 
 For certain workflows, agents must structure responses with XML-style tags:

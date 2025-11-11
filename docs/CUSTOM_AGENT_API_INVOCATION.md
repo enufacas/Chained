@@ -71,6 +71,50 @@ COPILOT_AGENT_COMMIT_LOGIN: copilot-swe-agent[bot]
 COPILOT_AGENT_COMMIT_EMAIL: 198982749+Copilot@users.noreply.github.com
 ```
 
+## Preparation Phase: Agent Orientation
+
+The logs reveal that when a custom agent is invoked, there's a **preparation/orientation phase** where the agent:
+
+### 1. Locates the Repository
+The agent navigates through the filesystem to find the working directory:
+```
+- Tries /root (permission denied)
+- Tries / (sees system directories)
+- Tries /home (finds runner)
+- Tries /home/runner (finds work)
+- Tries /home/runner/work (finds Chained)
+- Finally reaches /home/runner/work/Chained/Chained
+```
+
+**Insight**: The agent doesn't automatically know where the repository is located. It must explore the filesystem using the `view` tool.
+
+### 2. Discovers Tool Limitations
+When the agent tries to use `bash`:
+```
+Tool 'bash' does not exist. Available tools that can be called are view, create, edit, report_progress.
+```
+
+**Critical Discovery**: The agent discovers its tool restrictions **at runtime** by attempting to use tools and receiving error messages.
+
+### 3. Searches for Repository Conventions
+The agent looks for standard files like PR templates:
+```
+- Checks .github/pull_request_template.md (not found)
+- Checks docs/pull_request_template.md (not found)
+- Checks pull_request_template.md at root (not found)
+- Checks .github/PULL_REQUEST_TEMPLATE/ directory (not found)
+```
+
+**Insight**: The agent actively searches for standard GitHub conventions to understand the repository structure.
+
+### 4. Understands Response Expectations
+The logs show error message:
+```
+Agent response did not contain expected template_path and template_content tags
+```
+
+**Insight**: For certain workflows, the agent's responses must include specific XML-style tags. The agent learns this requirement when it receives error feedback.
+
 ## Tool Restrictions for Custom Agents
 
 **Critical Discovery**: Custom agents have **limited tool access** compared to what's available in the main Copilot runtime.
