@@ -153,57 +153,50 @@ jobs:
           TIMESTAMP=$(date +%s)
           AGENT_ID="agent-$TIMESTAMP"
           
-          # Determine specialization
+          # Determine specialization - read from convention-compliant agent definitions
           if [ "${{ github.event.inputs.specialization }}" != "" ] && [ "${{ github.event.inputs.specialization }}" != "random" ]; then
             SPECIALIZATION="${{ github.event.inputs.specialization }}"
           else
-            # Random specialization
-            SPECS=("bug-hunter" "feature-architect" "test-champion" "doc-master" "performance-optimizer" "security-guardian" "code-poet" "refactor-wizard" "integration-specialist" "ux-enhancer")
+            # Random specialization - dynamically load from .github/agents/
+            SPECS=($(python3 tools/get-agent-info.py list))
             RANDOM_INDEX=$((RANDOM % ${#SPECS[@]}))
             SPECIALIZATION="${SPECS[$RANDOM_INDEX]}"
           fi
+          
+          # Get emoji from convention-compliant agent definition
+          EMOJI=$(python3 tools/get-agent-info.py emoji "$SPECIALIZATION")
           
           # Generate unique agent name based on specialization
           case "$SPECIALIZATION" in
             "bug-hunter")
               NAMES=("Debugger" "Squasher" "Tracer" "Hunter" "Fixer")
-              EMOJI="🐛"
               ;;
             "feature-architect")
               NAMES=("Builder" "Designer" "Architect" "Creator" "Innovator")
-              EMOJI="🏗️"
               ;;
             "test-champion")
               NAMES=("Validator" "Checker" "Guardian" "Tester" "Prover")
-              EMOJI="✅"
               ;;
             "doc-master")
               NAMES=("Scribe" "Writer" "Documenter" "Explainer" "Teacher")
-              EMOJI="📚"
               ;;
             "performance-optimizer")
               NAMES=("Speedster" "Optimizer" "Tuner" "Enhancer" "Accelerator")
-              EMOJI="⚡"
               ;;
             "security-guardian")
               NAMES=("Shield" "Protector" "Guardian" "Sentinel" "Defender")
-              EMOJI="🛡️"
               ;;
             "code-poet")
               NAMES=("Poet" "Artist" "Craftsman" "Stylist" "Elegance")
-              EMOJI="🎨"
               ;;
             "refactor-wizard")
               NAMES=("Wizard" "Transformer" "Refiner" "Cleaner" "Organizer")
-              EMOJI="♻️"
               ;;
             "integration-specialist")
               NAMES=("Connector" "Linker" "Bridge" "Integrator" "Joiner")
-              EMOJI="🔌"
               ;;
             "ux-enhancer")
               NAMES=("Enhancer" "Polisher" "Improver" "Beautifier" "UXpert")
-              EMOJI="✨"
               ;;
           esac
           
@@ -284,11 +277,15 @@ jobs:
           
           mkdir -p "agents/profiles"
           
+          # Get mission from convention-compliant agent definition
+          AGENT_DESCRIPTION=$(python3 tools/get-agent-info.py description "$SPECIALIZATION")
+          
           cat > "agents/profiles/${AGENT_ID}.md" << EOF
           # $AGENT_NAME
           
           **ID**: $AGENT_ID  
           **Specialization**: $SPECIALIZATION  
+          **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](../.github/agents/${SPECIALIZATION}.md)  
           **Status**: 🟢 Active  
           **Spawned**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           
@@ -300,42 +297,7 @@ jobs:
           
           ## Mission
           
-          EOF
-          
-          case "$SPECIALIZATION" in
-            "bug-hunter")
-              echo "Find and eliminate bugs with precision. Leave no stone unturned in the quest for stability." >> "agents/profiles/${AGENT_ID}.md"
-              ;;
-            "feature-architect")
-              echo "Design and build innovative features that push the boundaries of what's possible." >> "agents/profiles/${AGENT_ID}.md"
-              ;;
-            "test-champion")
-              echo "Ensure every line of code is tested and validated. Quality is non-negotiable." >> "agents/profiles/${AGENT_ID}.md"
-              ;;
-            "doc-master")
-              echo "Transform complex code into clear, accessible documentation. Knowledge should be shared." >> "agents/profiles/${AGENT_ID}.md"
-              ;;
-            "performance-optimizer")
-              echo "Make everything faster, leaner, and more efficient. Performance is a feature." >> "agents/profiles/${AGENT_ID}.md"
-              ;;
-            "security-guardian")
-              echo "Protect the codebase from vulnerabilities. Security is everyone's responsibility." >> "agents/profiles/${AGENT_ID}.md"
-              ;;
-            "code-poet")
-              echo "Write code that reads like poetry. Beauty and functionality are not mutually exclusive." >> "agents/profiles/${AGENT_ID}.md"
-              ;;
-            "refactor-wizard")
-              echo "Transform chaotic code into elegant solutions. Simplicity is the ultimate sophistication." >> "agents/profiles/${AGENT_ID}.md"
-              ;;
-            "integration-specialist")
-              echo "Connect systems seamlessly. Integration should be invisible and reliable." >> "agents/profiles/${AGENT_ID}.md"
-              ;;
-            "ux-enhancer")
-              echo "Polish every interaction. User experience is what separates good from great." >> "agents/profiles/${AGENT_ID}.md"
-              ;;
-          esac
-          
-          cat >> "agents/profiles/${AGENT_ID}.md" << EOF
+          $AGENT_DESCRIPTION
           
           ## Performance Metrics
           
@@ -470,205 +432,48 @@ jobs:
           SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
           EMOJI="${{ steps.generate_agent.outputs.emoji }}"
           
-          # Generate work item based on specialization
-          case "$SPECIALIZATION" in
-            "bug-hunter")
-              WORK_TITLE="🐛 Agent Task: Find and fix potential bugs in codebase"
-              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its bug-hunting capabilities.
+          # Get agent description from convention-compliant definition
+          AGENT_DESCRIPTION=$(python3 tools/get-agent-info.py description "$SPECIALIZATION")
+          
+          # Generate work title based on specialization
+          WORK_TITLE="$EMOJI Agent Task: Work for $AGENT_NAME"
+          
+          # Create comprehensive work body referencing the agent definition
+          WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its capabilities.
           
           **Agent Details:**
-          - ID: $AGENT_ID
-          - Specialization: Bug Hunter
-          - Mission: Find and eliminate bugs with precision
+          - ID: \`$AGENT_ID\`
+          - Specialization: $SPECIALIZATION
+          - Agent Definition: [.github/agents/${SPECIALIZATION}.md](https://github.com/${{ github.repository }}/blob/main/.github/agents/${SPECIALIZATION}.md)
+          - Description: $AGENT_DESCRIPTION
           
           **Task:**
-          Search the codebase for potential bugs, edge cases, or error handling issues. Fix at least one issue or add defensive programming improvements.
+          This agent should apply its specialized skills defined in its agent definition to contribute to the Chained project. The agent's custom instructions in \`.github/agents/${SPECIALIZATION}.md\` guide its approach and responsibilities.
           
           **Success Criteria:**
-          - Identify real or potential bugs
-          - Implement fixes or improvements
-          - Add tests to prevent regression
-          - Document changes clearly"
-              ;;
-            "feature-architect")
-              WORK_TITLE="🏗️ Agent Task: Design and implement a new feature"
-              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its architectural capabilities.
+          - Follows the agent's core responsibilities as defined in its agent definition
+          - Demonstrates the agent's specialized capabilities
+          - Maintains high code quality standards
+          - Includes appropriate tests and documentation
+          - Successfully completes the task with measurable impact
           
-          **Agent Details:**
-          - ID: $AGENT_ID
-          - Specialization: Feature Architect
-          - Mission: Design and build innovative features
-          
-          **Task:**
-          Identify a useful enhancement or new feature for the Chained project. Design and implement it following best practices.
-          
-          **Success Criteria:**
-          - Well-designed feature
-          - Clean implementation
-          - Proper documentation
-          - Tests included"
-              ;;
-            "test-champion")
-              WORK_TITLE="✅ Agent Task: Improve test coverage"
-              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its testing capabilities.
-          
-          **Agent Details:**
-          - ID: $AGENT_ID
-          - Specialization: Test Champion
-          - Mission: Ensure every line of code is tested
-          
-          **Task:**
-          Identify areas with low or missing test coverage. Add comprehensive tests to improve code quality and reliability.
-          
-          **Success Criteria:**
-          - Increased test coverage
-          - Tests for edge cases
-          - Clear test documentation
-          - All tests passing"
-              ;;
-            "doc-master")
-              WORK_TITLE="📚 Agent Task: Enhance documentation"
-              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its documentation capabilities.
-          
-          **Agent Details:**
-          - ID: $AGENT_ID
-          - Specialization: Doc Master
-          - Mission: Transform complex code into clear documentation
-          
-          **Task:**
-          Identify areas with unclear or missing documentation. Add or improve documentation to make the project more accessible.
-          
-          **Success Criteria:**
-          - Clear, comprehensive docs
-          - Examples and use cases
-          - Updated README or guides
-          - Proper formatting"
-              ;;
-            "performance-optimizer")
-              WORK_TITLE="⚡ Agent Task: Optimize performance"
-              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its optimization capabilities.
-          
-          **Agent Details:**
-          - ID: $AGENT_ID
-          - Specialization: Performance Optimizer
-          - Mission: Make everything faster and more efficient
-          
-          **Task:**
-          Identify performance bottlenecks or inefficiencies. Implement optimizations to improve speed or reduce resource usage.
-          
-          **Success Criteria:**
-          - Measurable performance improvement
-          - No functionality regression
-          - Benchmarks or metrics
-          - Clean implementation"
-              ;;
-            "security-guardian")
-              WORK_TITLE="🛡️ Agent Task: Improve security"
-              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its security capabilities.
-          
-          **Agent Details:**
-          - ID: $AGENT_ID
-          - Specialization: Security Guardian
-          - Mission: Protect the codebase from vulnerabilities
-          
-          **Task:**
-          Review code for security vulnerabilities or weaknesses. Implement security improvements or best practices.
-          
-          **Success Criteria:**
-          - Identified security issues
-          - Implemented fixes
-          - Security best practices applied
-          - No new vulnerabilities introduced"
-              ;;
-            "code-poet")
-              WORK_TITLE="🎨 Agent Task: Improve code elegance"
-              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its code craftsmanship.
-          
-          **Agent Details:**
-          - ID: $AGENT_ID
-          - Specialization: Code Poet
-          - Mission: Write code that reads like poetry
-          
-          **Task:**
-          Find code that could be more elegant, readable, or maintainable. Refactor it to improve clarity and beauty.
-          
-          **Success Criteria:**
-          - Improved code readability
-          - Better naming and structure
-          - Reduced complexity
-          - Maintained functionality"
-              ;;
-            "refactor-wizard")
-              WORK_TITLE="♻️ Agent Task: Refactor for better structure"
-              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its refactoring capabilities.
-          
-          **Agent Details:**
-          - ID: $AGENT_ID
-          - Specialization: Refactor Wizard
-          - Mission: Transform chaotic code into elegant solutions
-          
-          **Task:**
-          Identify code that needs structural improvement. Refactor to improve organization, reduce duplication, or simplify complexity.
-          
-          **Success Criteria:**
-          - Better code organization
-          - Reduced duplication
-          - Simplified complexity
-          - All tests still passing"
-              ;;
-            "integration-specialist")
-              WORK_TITLE="🔌 Agent Task: Improve integrations"
-              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its integration capabilities.
-          
-          **Agent Details:**
-          - ID: $AGENT_ID
-          - Specialization: Integration Specialist
-          - Mission: Connect systems seamlessly
-          
-          **Task:**
-          Enhance existing integrations or add new ones. Improve reliability, error handling, or functionality of system connections.
-          
-          **Success Criteria:**
-          - Improved integration reliability
-          - Better error handling
-          - Clear integration documentation
-          - Tests for integration points"
-              ;;
-            "ux-enhancer")
-              WORK_TITLE="✨ Agent Task: Enhance user experience"
-              WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its UX capabilities.
-          
-          **Agent Details:**
-          - ID: $AGENT_ID
-          - Specialization: UX Enhancer
-          - Mission: Polish every interaction
-          
-          **Task:**
-          Improve user-facing elements of the project. Enhance GitHub Pages, documentation, or any user interactions.
-          
-          **Success Criteria:**
-          - Better user experience
-          - Improved visual design
-          - Enhanced interactivity
-          - Clear improvements"
-              ;;
-          esac
-          
-          # Create the work issue without ai-generated label (let Copilot assignment workflow handle it)
-          ISSUE_NUMBER=$(gh issue create \
-            --title "$WORK_TITLE" \
-            --body "$WORK_BODY
+          **Performance Impact:**
+          - Completing this issue contributes to the agent's **Issue Resolution** score (25%)
+          - The quality of implementation affects the **Code Quality** score (30%)
+          - PR review success impacts the **PR Success** score (25%)
+          - This work demonstrates the agent's specialization capabilities
           
           ---
           
           **Agent Performance Tracking:**
-          This issue is tracked as part of **$AGENT_NAME**'s performance evaluation.
+          This issue is tracked as part of **$AGENT_NAME**'s performance evaluation. Agents must maintain a score above 30% to avoid elimination and can achieve Hall of Fame status (preserved forever) with scores above 85%.
           
-          - Completing this issue contributes to the agent's Issue Resolution score (25%)
-          - The quality of the implementation affects the Code Quality score (30%)
-          - This work demonstrates the agent's specialization capabilities
+          **Note:** This issue will be automatically assigned to GitHub Copilot for implementation. The agent receives credit for completed work."
           
-          **Note:** This issue will be automatically assigned to GitHub Copilot for implementation." \
+          # Create the work issue without ai-generated label (let Copilot assignment workflow handle it)
+          ISSUE_NUMBER=$(gh issue create \
+            --title "$WORK_TITLE" \
+            --body "$WORK_BODY" \
             --label "agent-work" \
             --json number \
             --jq '.number')
