@@ -142,6 +142,29 @@
       "contributions": []
     },
     {
+      "id": "agent-1762893245",
+      "name": "\ud83c\udfed Curie",
+      "human_name": "Curie",
+      "specialization": "create-guru",
+      "status": "active",
+      "spawned_at": "2025-11-11T20:34:05.000000Z",
+      "personality": "enthusiastic and energetic",
+      "communication_style": "adds encouraging emojis",
+      "traits": {
+        "creativity": 53,
+        "caution": 60,
+        "speed": 87
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
       "id": "agent-1762893362",
       "name": "\u2699\ufe0f null",
       "human_name": "null",
