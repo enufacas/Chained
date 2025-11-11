@@ -21,6 +21,9 @@ def validate_agent_name(agent_name: Any) -> str:
     """
     Validate and sanitize an agent name.
     
+    Ensures the agent name contains only safe characters (alphanumeric, 
+    hyphens, and underscores) and meets length requirements.
+    
     Args:
         agent_name: The agent name to validate
         
@@ -50,11 +53,12 @@ def validate_agent_name(agent_name: Any) -> str:
         )
     
     # Check length constraints
-    if len(agent_name) > 100:
-        raise ValidationError(f"Agent name too long ({len(agent_name)} chars), maximum is 100")
+    min_length, max_length = 2, 100
+    if len(agent_name) > max_length:
+        raise ValidationError(f"Agent name too long ({len(agent_name)} chars), maximum is {max_length}")
     
-    if len(agent_name) < 2:
-        raise ValidationError(f"Agent name too short ({len(agent_name)} chars), minimum is 2")
+    if len(agent_name) < min_length:
+        raise ValidationError(f"Agent name too short ({len(agent_name)} chars), minimum is {min_length}")
     
     return agent_name
 

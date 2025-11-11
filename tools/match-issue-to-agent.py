@@ -13,6 +13,15 @@ from pathlib import Path
 
 # Agent utilities (inline for self-contained script)
 AGENTS_DIR = Path(".github/agents")
+DEFAULT_AGENT = 'feature-architect'
+
+# Scoring weights
+KEYWORD_MATCH_WEIGHT = 1
+PATTERN_MATCH_WEIGHT = 2  # Patterns are more precise, worth more
+
+# Confidence thresholds
+HIGH_CONFIDENCE_THRESHOLD = 5
+MEDIUM_CONFIDENCE_THRESHOLD = 3
 
 def parse_agent_file(filepath):
     """Parse an agent markdown file and extract frontmatter and content."""
@@ -226,26 +235,70 @@ def normalize_text(text):
     return re.sub(r'\s+', ' ', text.lower().strip())
 
 def calculate_match_score(text, agent_name):
-    """Calculate how well the text matches an agent's specialization."""
+    """
+    Calculate how well the text matches an agent's specialization.
+    
+    Uses a weighted scoring system:
+    - Keyword matches: 1 point each
+    - Pattern matches: 2 points each (more precise)
+    
+    Args:
+        text: The text to analyze
+        agent_name: The agent to match against
+        
+    Returns:
+        Integer score representing match quality
+    """
     if agent_name not in AGENT_PATTERNS:
         return 0
     
     patterns = AGENT_PATTERNS[agent_name]
     normalized_text = normalize_text(text)
     
-    score = 0
+    keyword_score = sum(KEYWORD_MATCH_WEIGHT for keyword in patterns['keywords'] if keyword in normalized_text)
+    pattern_score = sum(PATTERN_MATCH_WEIGHT for pattern in patterns['patterns'] if re.search(pattern, normalized_text, re.IGNORECASE))
     
-    # Check keyword matches (1 point each)
-    for keyword in patterns['keywords']:
-        if keyword in normalized_text:
-            score += 1
+    return keyword_score + pattern_score
+
+def calculate_confidence_level(score):
+    """
+    Determine confidence level based on match score.
     
-    # Check pattern matches (2 points each, as they're more precise)
-    for pattern in patterns['patterns']:
-        if re.search(pattern, normalized_text, re.IGNORECASE):
-            score += 2
+    Args:
+        score: The numerical match score
+        
+    Returns:
+        String describing confidence level ('high', 'medium', or 'low')
+    """
+    if score >= HIGH_CONFIDENCE_THRESHOLD:
+        return 'high'
+    elif score >= MEDIUM_CONFIDENCE_THRESHOLD:
+        return 'medium'
+    else:
+        return 'low'
+
+def create_match_result(agent_name, score, reason="Matched based on issue content analysis"):
+    """
+    Create a standardized match result dictionary.
     
-    return score
+    Args:
+        agent_name: Name of the matched agent
+        score: Match score
+        reason: Explanation for the match
+        
+    Returns:
+        Dictionary with match information
+    """
+    agent_info = get_agent_info(agent_name)
+    
+    return {
+        'agent': agent_name,
+        'score': score,
+        'confidence': calculate_confidence_level(score),
+        'emoji': agent_info['emoji'] if agent_info else '',
+        'description': agent_info['description'] if agent_info else '',
+        'reason': reason
+    }
 
 def match_issue_to_agent(title, body=""):
     """
@@ -273,36 +326,21 @@ def match_issue_to_agent(title, body=""):
     # Find the best match
     if not scores or max(scores.values()) == 0:
         # No clear match, default to feature-architect for general issues
-        return {
-            'agent': 'feature-architect',
-            'score': 0,
-            'confidence': 'low',
-            'reason': 'No specific keywords matched, using default agent'
-        }
+        result = create_match_result(
+            DEFAULT_AGENT, 
+            0, 
+            'No specific keywords matched, using default agent'
+        )
+        result['all_scores'] = scores
+        return result
     
     best_agent = max(scores, key=scores.get)
     best_score = scores[best_agent]
     
-    # Determine confidence level
-    if best_score >= 5:
-        confidence = 'high'
-    elif best_score >= 3:
-        confidence = 'medium'
-    else:
-        confidence = 'low'
-    
-    # Get agent info
-    agent_info = get_agent_info(best_agent)
-    
-    return {
-        'agent': best_agent,
-        'score': best_score,
-        'confidence': confidence,
-        'emoji': agent_info['emoji'] if agent_info else '',
-        'description': agent_info['description'] if agent_info else '',
-        'all_scores': scores,
-        'reason': f'Matched based on issue content analysis'
-    }
+    # Create and return the match result
+    result = create_match_result(best_agent, best_score)
+    result['all_scores'] = scores
+    return result
 
 def main():
     """Command-line interface."""
@@ -325,7 +363,7 @@ def main():
     except Exception as e:
         print(json.dumps({
             'error': str(e),
-            'agent': 'feature-architect',
+            'agent': DEFAULT_AGENT,
             'score': 0,
             'confidence': 'low',
             'reason': 'Error processing input, using default agent'

@@ -142,30 +142,30 @@ def get_agent_info(agent_name):
         return None
 
 def get_agent_emoji(agent_name):
-    """
-    Get the emoji for a specific agent.
-    
-    Args:
-        agent_name: Name of the agent (validated for security)
-        
-    Returns:
-        Agent emoji string, or empty string if not found
-    """
-    info = get_agent_info(agent_name)
-    return info['emoji'] if info else ""
+    """Get the emoji for a specific agent."""
+    return _get_agent_field(agent_name, 'emoji')
 
 def get_agent_mission(agent_name):
+    """Get the mission statement for a specific agent."""
+    return _get_agent_field(agent_name, 'mission')
+
+def get_agent_description(agent_name):
+    """Get the description for a specific agent."""
+    return _get_agent_field(agent_name, 'description')
+
+def _get_agent_field(agent_name, field_name):
     """
-    Get the mission statement for a specific agent.
+    Extract a specific field from agent info.
     
     Args:
         agent_name: Name of the agent (validated for security)
+        field_name: The field to retrieve from agent info
         
     Returns:
-        Agent mission string, or empty string if not found
+        Field value as string, or empty string if not found
     """
     info = get_agent_info(agent_name)
-    return info['mission'] if info else ""
+    return info.get(field_name, '') if info else ''
 
 def main():
     """Command-line interface with elegant command dispatch."""
@@ -263,10 +263,10 @@ def handle_mission_command():
 def handle_description_command():
     """Display agent description."""
     agent_name = require_agent_argument()
-    info = get_agent_info(agent_name)
+    description = get_agent_description(agent_name)
     
-    if info:
-        print(info['description'])
+    if description:
+        print(description)
     else:
         print(f"Agent '{agent_name}' not found", file=sys.stderr)
         sys.exit(1)

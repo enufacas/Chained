@@ -39,6 +39,23 @@ except ImportError:
 
 AGENTS_DIR = Path(".github/agents")
 
+# Agent generation constants
+MIN_PERSONALITY_TRAIT = 30
+MAX_PERSONALITY_TRAIT = 100
+CREATIVITY_BASE = 50
+CAUTION_BASE = 30
+SPEED_BASE = 40
+
+# Performance tracking weights
+WEIGHT_CODE_QUALITY = 0.3
+WEIGHT_ISSUE_RESOLUTION = 0.25
+WEIGHT_PR_SUCCESS = 0.25
+WEIGHT_PEER_REVIEW = 0.2
+
+# Scoring thresholds
+SCORE_THRESHOLD_SURVIVAL = 0.3
+SCORE_THRESHOLD_HALL_OF_FAME = 0.85
+
 # Agent archetype templates for generating new specialized agents
 AGENT_ARCHETYPES = {
     "analyzer": {
@@ -126,63 +143,70 @@ def generate_random_agent():
     mission = mission_templates.get(archetype_name, "Contribute specialized expertise to improve the codebase.")
     
     # Create responsibilities based on archetype
-    responsibilities = []
-    if archetype_name == "analyzer":
-        responsibilities = [
+    responsibilities = create_agent_responsibilities(archetype_name)
+    
+def create_agent_responsibilities(archetype_name):
+    """
+    Generate responsibilities based on agent archetype.
+    
+    Args:
+        archetype_name: The archetype category (e.g., 'analyzer', 'builder')
+        
+    Returns:
+        List of responsibility strings
+    """
+    responsibilities_map = {
+        "analyzer": [
             "**Analysis**: Systematically examine code and identify patterns",
             "**Investigation**: Dig deep into issues and understand root causes",
             "**Reporting**: Provide clear insights and recommendations",
             "**Metrics**: Track and analyze relevant metrics and trends"
-        ]
-    elif archetype_name == "builder":
-        responsibilities = [
+        ],
+        "builder": [
             "**Design**: Create well-architected solutions",
             "**Implementation**: Build features following best practices",
             "**Testing**: Ensure new code is thoroughly tested",
             "**Documentation**: Document design decisions and usage"
-        ]
-    elif archetype_name == "optimizer":
-        responsibilities = [
+        ],
+        "optimizer": [
             "**Profiling**: Identify performance bottlenecks",
             "**Optimization**: Implement performance improvements",
             "**Benchmarking**: Measure and validate improvements",
             "**Efficiency**: Reduce resource usage without sacrificing quality"
-        ]
-    elif archetype_name == "guardian":
-        responsibilities = [
+        ],
+        "guardian": [
             "**Security**: Identify and fix vulnerabilities",
             "**Validation**: Ensure proper input validation and sanitization",
             "**Monitoring**: Watch for security issues and suspicious patterns",
             "**Best Practices**: Apply security best practices consistently"
-        ]
-    elif archetype_name == "cleaner":
-        responsibilities = [
+        ],
+        "cleaner": [
             "**Refactoring**: Improve code structure without changing behavior",
             "**Simplification**: Reduce unnecessary complexity",
             "**Organization**: Improve code organization and readability",
             "**Maintenance**: Reduce technical debt systematically"
-        ]
-    elif archetype_name == "communicator":
-        responsibilities = [
+        ],
+        "communicator": [
             "**Documentation**: Create clear, comprehensive documentation",
             "**Examples**: Provide practical usage examples",
             "**Guides**: Write helpful guides and tutorials",
             "**Clarity**: Make complex concepts accessible"
-        ]
-    elif archetype_name == "connector":
-        responsibilities = [
+        ],
+        "connector": [
             "**Integration**: Build and maintain integrations",
             "**APIs**: Design and implement API connections",
             "**Error Handling**: Ensure robust error handling in integrations",
             "**Documentation**: Document integration points and usage"
-        ]
-    elif archetype_name == "validator":
-        responsibilities = [
+        ],
+        "validator": [
             "**Testing**: Write comprehensive tests",
             "**Coverage**: Increase test coverage systematically",
             "**Edge Cases**: Identify and test edge cases",
             "**Reliability**: Ensure code works correctly under all conditions"
         ]
+    }
+    
+    return responsibilities_map.get(archetype_name, [])
     
     return {
         "name": agent_name,
@@ -270,12 +294,12 @@ When assigned a task:
 ## Performance Tracking
 
 Your contributions are tracked and evaluated on:
-- **Code Quality** (30%): Clean, maintainable code
-- **Issue Resolution** (25%): Successfully completed tasks
-- **PR Success** (25%): PRs merged without breaking changes
-- **Peer Review** (20%): Quality of reviews provided
+- **Code Quality** ({WEIGHT_CODE_QUALITY:.0%}): Clean, maintainable code
+- **Issue Resolution** ({WEIGHT_ISSUE_RESOLUTION:.0%}): Successfully completed tasks
+- **PR Success** ({WEIGHT_PR_SUCCESS:.0%}): PRs merged without breaking changes
+- **Peer Review** ({WEIGHT_PEER_REVIEW:.0%}): Quality of reviews provided
 
-Maintain a score above 30% to continue contributing, and strive for 85%+ to earn a place in the Hall of Fame.
+Maintain a score above {SCORE_THRESHOLD_SURVIVAL:.0%} to continue contributing, and strive for {SCORE_THRESHOLD_HALL_OF_FAME:.0%}+ to earn a place in the Hall of Fame.
 
 ---
 
