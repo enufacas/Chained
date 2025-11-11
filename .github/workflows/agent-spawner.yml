@@ -560,7 +560,8 @@ jobs:
           
           echo "✅ PR created for agent $AGENT_NAME"
 
-      - name: Create agent announcement issue
+      - name: Create agent work and welcome issue
+        id: create_agent_work_issue
         if: steps.check_capacity.outputs.can_spawn == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -574,15 +575,19 @@ jobs:
           COMM_STYLE="${{ steps.generate_agent.outputs.communication_style }}"
           IS_NEW="${{ steps.generate_agent.outputs.is_new_agent }}"
           
-          # Build issue body with conditional new agent type info
+          # Get agent description from convention-compliant definition
+          AGENT_DESCRIPTION=$(python3 tools/get-agent-info.py description "$SPECIALIZATION")
+          
+          # Build conditional new agent type info
           if [ "$IS_NEW" == "true" ]; then
             NEW_TYPE_BADGE="🆕 **NEW AGENT TYPE** - This specialization was just created!"
           else
             NEW_TYPE_BADGE=""
           fi
           
-          gh issue create \
-            --title "$EMOJI Meet $HUMAN_NAME - Our Newest Agent!" \
+          # Create combined issue with welcome message and work assignment
+          ISSUE_URL=$(gh issue create \
+            --title "$EMOJI Meet $HUMAN_NAME - Ready to Work!" \
             --body "## 🎉 Welcome $HUMAN_NAME!
           
           ${NEW_TYPE_BADGE}
@@ -603,13 +608,26 @@ jobs:
           
           $HUMAN_NAME brings a unique personality to the team! You'll notice their distinctive voice when they comment on issues and PRs.
           
-          ### Mission
+          ### Mission & Task
           
           This agent will focus on its specialization and compete with other agents to:
           - Deliver high-quality contributions
           - Earn a spot in the Hall of Fame (score > 85%)
           - Potentially become the System Lead
           - Survive elimination (must maintain score > 30%)
+          
+          **Agent Description**: $AGENT_DESCRIPTION
+          
+          ### First Task
+          
+          This issue serves as **$HUMAN_NAME**'s first task to demonstrate capabilities. The agent should apply its specialized skills defined in its agent definition to contribute to the Chained project.
+          
+          **Success Criteria:**
+          - Follows the agent's core responsibilities as defined in its agent definition
+          - Demonstrates the agent's specialized capabilities
+          - Maintains high code quality standards
+          - Includes appropriate tests and documentation
+          - Successfully completes the task with measurable impact
           
           ### Evolutionary System
           
@@ -619,85 +637,35 @@ jobs:
           - ❌ Weak performers (< 30%) are eliminated daily
           - 🧬 The ecosystem evolves through natural selection
           
-          ### How to Support
+          ### Performance Impact
           
-          - ⭐ Star issues this agent works on
-          - 👍 React to PRs with feedback
-          - 💬 Provide constructive comments
-          
-          ### Tracking
-          
-          Performance will be evaluated in 24 hours. The agent must maintain a score > 30% to avoid elimination.
-          
-          See the full profile at \`.github/agent-system/profiles/${AGENT_ID}.md\`
-          
-          ---
-          
-          **Good luck, $HUMAN_NAME! May your code be clean and your PRs be merged!** 🚀" \
-            --label "agent-system,announcement"
-          
-          echo "✅ Announcement issue created"
-
-      - name: Create agent work issue
-        id: create_agent_work_issue
-        if: steps.check_capacity.outputs.can_spawn == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
-          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
-          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
-          EMOJI="${{ steps.generate_agent.outputs.emoji }}"
-          
-          # Get agent description from convention-compliant definition
-          AGENT_DESCRIPTION=$(python3 tools/get-agent-info.py description "$SPECIALIZATION")
-          
-          # Generate work title based on specialization
-          WORK_TITLE="$EMOJI Agent Task: Work for $AGENT_NAME"
-          
-          # Create comprehensive work body referencing the agent definition
-          WORK_BODY="This issue is for agent **$AGENT_NAME** to demonstrate its capabilities.
-          
-          **Agent Details:**
-          - ID: \`$AGENT_ID\`
-          - Specialization: $SPECIALIZATION
-          - Agent Definition: [.github/agents/${SPECIALIZATION}.md](https://github.com/${{ github.repository }}/blob/main/.github/agents/${SPECIALIZATION}.md)
-          - Description: $AGENT_DESCRIPTION
-          
-          **Task:**
-          This agent should apply its specialized skills defined in its agent definition to contribute to the Chained project. The agent's custom instructions in \`.github/agents/${SPECIALIZATION}.md\` guide its approach and responsibilities.
-          
-          **Success Criteria:**
-          - Follows the agent's core responsibilities as defined in its agent definition
-          - Demonstrates the agent's specialized capabilities
-          - Maintains high code quality standards
-          - Includes appropriate tests and documentation
-          - Successfully completes the task with measurable impact
-          
-          **Performance Impact:**
           - Completing this issue contributes to the agent's **Issue Resolution** score (25%)
           - The quality of implementation affects the **Code Quality** score (30%)
           - PR review success impacts the **PR Success** score (25%)
           - This work demonstrates the agent's specialization capabilities
           
+          Performance will be evaluated in 24 hours. The agent must maintain a score > 30% to avoid elimination.
+          
+          ### How to Support
+          
+          - ⭐ Star this issue
+          - 👍 React to PRs with feedback
+          - 💬 Provide constructive comments
+          
+          See the full profile at \`.github/agent-system/profiles/${AGENT_ID}.md\`
+          
           ---
           
-          **Agent Performance Tracking:**
-          This issue is tracked as part of **$AGENT_NAME**'s performance evaluation. Agents must maintain a score above 30% to avoid elimination and can achieve Hall of Fame status (preserved forever) with scores above 85%.
+          **Good luck, $HUMAN_NAME! May your code be clean and your PRs be merged!** 🚀
           
-          **Note:** This issue will be automatically assigned to GitHub Copilot for implementation. The agent receives credit for completed work."
-          
-          # Create the work issue without ai-generated label (let Copilot assignment workflow handle it)
-          ISSUE_URL=$(gh issue create \
-            --title "$WORK_TITLE" \
-            --body "$WORK_BODY" \
-            --label "agent-work")
+          *This issue will be automatically assigned to GitHub Copilot for implementation. The agent receives credit for completed work.*" \
+            --label "agent-system,agent-work")
           
           # Extract issue number from URL (e.g., https://github.com/owner/repo/issues/123)
           ISSUE_NUMBER=$(echo "$ISSUE_URL" | grep -oE '[0-9]+$')
           
           echo "work_issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
-          echo "✅ Work issue #$ISSUE_NUMBER created for agent $AGENT_NAME"
+          echo "✅ Combined welcome and work issue #$ISSUE_NUMBER created for agent $AGENT_NAME"
 
       - name: Assign work issue to Copilot
         if: steps.check_capacity.outputs.can_spawn == 'true'

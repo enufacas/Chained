@@ -19,8 +19,9 @@ The following are automatically set up by this PR:
 
 ### Current Behavior
 
-**Agent Announcements**:
-- When an agent spawns, it creates an issue with label `agent-system,announcement`
+**Agent Spawning**:
+- When an agent spawns, it creates a single issue with labels `agent-system,agent-work`
+- This issue both welcomes the agent AND assigns them their first task
 - When evaluation completes, it creates an issue with label `agent-system,evaluation`
 - Everyone who watches the repository gets notifications
 
@@ -54,7 +55,7 @@ By default, GitHub notifies:
 3. Enable "Issues" and "Pull requests"
 4. Use GitHub notification filters to filter by labels:
    - `agent-system` - All agent activity
-   - `agent-system,announcement` - Just new agent spawns
+   - `agent-work` - Agent work assignments (including new spawns)
    - `agent-system,evaluation` - Just evaluations
 
 #### Option 3: Unsubscribe (For Less Active Users)
@@ -70,14 +71,14 @@ If you want different labels for agent issues, edit the workflows:
 
 **File**: `.github/workflows/agent-spawner.yml`
 
-Find this line (appears twice - in PR creation and issue creation):
+Find this line in the issue creation step:
 ```yaml
---label "agent-system,announcement"
+--label "agent-system,agent-work"
 ```
 
 Change to your preferred labels:
 ```yaml
---label "ai-agent,bot-spawn"
+--label "ai-agent,bot-task"
 ```
 
 **File**: `.github/workflows/agent-evaluator.yml`
