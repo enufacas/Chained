@@ -12,6 +12,15 @@ on:
         description: 'Issue number to assign to Copilot (leave empty to process all open issues)'
         required: false
         type: string
+      assignment_method:
+        description: 'Assignment method: graphql (default), cli, or auto (try CLI first, fallback to GraphQL)'
+        required: false
+        type: choice
+        default: 'auto'
+        options:
+          - auto
+          - graphql
+          - cli
 
 permissions:
   issues: write
@@ -280,37 +289,175 @@ jobs:
             echo "   Method: $assignment_method"
             echo "   Agent Path: .github/agents/${matched_agent}.md"
             
-            # Assign issue using GraphQL API
-            echo ""
-            echo "🤖 Assigning issue #$issue_number via GraphQL API..."
+            # Determine which assignment method to use
+            PREFERRED_METHOD="${{ inputs.assignment_method }}"
+            if [ -z "$PREFERRED_METHOD" ]; then
+              PREFERRED_METHOD="auto"
+            fi
             
-            # Use GraphQL mutation to assign (this is the official method per GitHub docs)
-            mutation_result=$(gh api graphql -f query='
-              mutation($issueId: ID!, $actorId: ID!) {
-                replaceActorsForAssignable(input: {
-                  assignableId: $issueId,
-                  actorIds: [$actorId]
-                }) {
-                  assignable {
-                    ... on Issue {
-                      id
-                      assignees(first: 10) {
-                        nodes {
-                          login
+            echo ""
+            echo "   Preferred Assignment Method: $PREFERRED_METHOD"
+            
+            assignment_successful=false
+            
+            # Try CLI-based assignment if requested or in auto mode
+            if [ "$PREFERRED_METHOD" = "cli" ] || [ "$PREFERRED_METHOD" = "auto" ]; then
+              echo ""
+              echo "🔧 Attempting CLI-based assignment using 'gh agent-task create'..."
+              
+              # Build task description with custom agent directive
+              # Following GitHub's documentation for custom agent specification in CLI
+              # See: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-copilot-cli#use-custom-agents
+              task_description="@${matched_agent}
+
+          Please use the **${agent_emoji} ${matched_agent}** custom agent to handle this task.
+          
+          **Custom Agent Profile**: \`.github/agents/${matched_agent}.md\`
+          **Agent Description**: ${agent_description}
+          **Specialization**: ${matched_agent}
+          
+          ---
+          
+          ## Task Details
+          
+          **Issue #${issue_number}**: ${issue_title}
+          
+          ${issue_body}
+          
+          ---
+          
+          **Instructions for ${matched_agent} agent:**
+          - Follow the specialized approach defined in \`.github/agents/${matched_agent}.md\`
+          - Apply your domain-specific expertise and tools
+          - Ensure the solution aligns with your agent specialization
+          - Include appropriate tests and documentation as per your agent guidelines"
+              
+              # Create a temporary file for the task description
+              task_file="/tmp/agent-task-${issue_number}.md"
+              echo "$task_description" > "$task_file"
+              
+              # Try to create agent task via CLI
+              echo "   Creating agent task from issue #${issue_number}..."
+              echo "   Using @${matched_agent} agent directive in task description..."
+              cli_result=$(gh agent-task create -F "$task_file" --repo ${{ github.repository }} 2>&1 || echo "CLI_FAILED")
+              
+              if echo "$cli_result" | grep -qE "(created|session|task)"; then
+                echo "   ✅ CLI-based task created successfully!"
+                echo "   Result: $cli_result"
+                
+                # Extract PR or session info if available
+                if echo "$cli_result" | grep -qE "pull|PR"; then
+                  pr_info=$(echo "$cli_result" | grep -oE "https://github.com/[^/]+/[^/]+/pull/[0-9]+" || echo "")
+                  if [ -n "$pr_info" ]; then
+                    echo "   🔗 PR created: $pr_info"
+                  fi
+                fi
+                
+                assignment_successful=true
+                actual_method="cli"
+                success_count=$((success_count + 1))
+                
+                # Comment on the issue about CLI assignment
+                gh issue comment $issue_number --repo ${{ github.repository }} --body "🤖 **Copilot Agent Task Created via CLI**
+          
+          GitHub Copilot has been assigned to this issue using the **\`gh agent-task create\`** CLI method.
+          
+          ## 🧠 Intelligent Agent Matching
+          
+          - **Agent**: $agent_emoji $matched_agent
+          - **Match Confidence**: $agent_confidence
+          - **Description**: $agent_description
+          - **Agent Definition**: [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md)
+          - **Assignment Method**: CLI-based (\`gh agent-task create\`)
+          
+          ## 🎯 Custom Agent Directive
+          
+          The task description includes a directive for Copilot to use the **${matched_agent}** custom agent profile. This approach leverages the GitHub CLI's agent task system.
+          
+          **What happens next:**
+          1. ✅ Copilot will analyze the issue using the ${matched_agent} specialization
+          2. 💻 Copilot will create a branch and implement the solution
+          3. 📝 Copilot will open a PR with the implementation
+          4. 🔍 Auto-review workflow will validate and merge
+          5. ✅ Issue will be automatically closed when complete
+          
+          **CLI Result:**
+          \`\`\`
+          $cli_result
+          \`\`\`
+          
+          ---
+          *🤖 Automated via \`gh agent-task create\` CLI with intelligent agent matching*"
+                
+                rm -f "$task_file"
+              else
+                echo "   ⚠️ CLI-based assignment failed or not available"
+                echo "   Error: $cli_result"
+                rm -f "$task_file"
+                
+                if [ "$PREFERRED_METHOD" = "cli" ]; then
+                  # CLI was explicitly requested but failed
+                  echo "   ❌ CLI assignment was required but failed"
+                  failed_count=$((failed_count + 1))
+                  
+                  gh issue comment $issue_number --repo ${{ github.repository }} --body "⚠️ **CLI-Based Assignment Failed**
+          
+          Attempted to assign this issue to GitHub Copilot using \`gh agent-task create\` CLI, but the command failed.
+          
+          **Error:**
+          \`\`\`
+          $cli_result
+          \`\`\`
+          
+          **Possible reasons:**
+          - The \`gh agent-task\` command may not be available in this environment
+          - Feature may still be in preview/limited availability
+          - Authentication or permission issues
+          
+          **Matched Agent:** $agent_emoji $matched_agent
+          
+          You can manually assign Copilot from the GitHub UI or wait for automatic GraphQL-based assignment."
+                  
+                  continue
+                fi
+                # If auto mode, we'll fall through to GraphQL method
+              fi
+            fi
+            
+            # Use GraphQL API assignment if CLI wasn't used or failed
+            if [ "$assignment_successful" = false ] && [ "$PREFERRED_METHOD" != "cli" ]; then
+              # Assign issue using GraphQL API
+              echo ""
+              echo "🤖 Assigning issue #$issue_number via GraphQL API..."
+            
+              # Use GraphQL mutation to assign (this is the official method per GitHub docs)
+              mutation_result=$(gh api graphql -f query='
+                mutation($issueId: ID!, $actorId: ID!) {
+                  replaceActorsForAssignable(input: {
+                    assignableId: $issueId,
+                    actorIds: [$actorId]
+                  }) {
+                    assignable {
+                      ... on Issue {
+                        id
+                        assignees(first: 10) {
+                          nodes {
+                            login
+                          }
                         }
                       }
                     }
                   }
-                }
-              }' -f issueId="$issue_node_id" -f actorId="$target_actor_id" 2>&1)
+                }' -f issueId="$issue_node_id" -f actorId="$target_actor_id" 2>&1)
             
-            if echo "$mutation_result" | jq -e '.data.replaceActorsForAssignable.assignable' > /dev/null 2>&1; then
-              echo "✅ Successfully assigned issue #$issue_number"
-              success_count=$((success_count + 1))
-              
-              # Build success message based on assignment method
-              if [ "$assignment_method" = "direct-custom-agent" ]; then
-                assignment_details="
+              if echo "$mutation_result" | jq -e '.data.replaceActorsForAssignable.assignable' > /dev/null 2>&1; then
+                echo "✅ Successfully assigned issue #$issue_number"
+                success_count=$((success_count + 1))
+                actual_method="graphql"
+                
+                # Build success message based on assignment method
+                if [ "$assignment_method" = "direct-custom-agent" ]; then
+                  assignment_details="
           ## 🎯 Direct Custom Agent Assignment
           
           **SUCCESS!** This issue was assigned directly to the custom agent actor:
@@ -321,8 +468,7 @@ jobs:
           - **Assignment Method**: Direct API assignment to custom agent actor
           
           The custom agent has its own actor ID in the GitHub API, allowing direct assignment without directives."
-              else
-                assignment_details="
+                  assignment_details="
           ## 🧠 Intelligent Agent Matching
           
           This issue has been analyzed and matched to the **$agent_emoji $matched_agent** specialization:
@@ -339,10 +485,10 @@ jobs:
           @copilot please use the **$matched_agent** custom agent profile from \`.github/agents/${matched_agent}.md\` when working on this issue. Follow the specialized approach, tools, and best practices defined in that agent's configuration.
           
           The implementation should align with the [$matched_agent agent definition](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md) and its specialized capabilities."
-              fi
-              
-              # Add success comment with agent matching info
-              gh issue comment $issue_number --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
+                fi
+                
+                # Add success comment with agent matching info
+                gh issue comment $issue_number --repo ${{ github.repository }} --body "🤖 **Copilot Assigned Successfully**
           
           GitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.
           $assignment_details
@@ -359,13 +505,13 @@ jobs:
           
           ---
           *🤖 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*"
-            else
-              echo "❌ Failed to assign issue #$issue_number"
-              echo "Error details: $mutation_result"
-              failed_count=$((failed_count + 1))
-              
-              # Add error comment with details
-              gh issue comment $issue_number --repo ${{ github.repository }} --body "⚠️ **Failed to Assign Copilot via GraphQL API**
+              else
+                echo "❌ Failed to assign issue #$issue_number"
+                echo "Error details: $mutation_result"
+                failed_count=$((failed_count + 1))
+                
+                # Add error comment with details
+                gh issue comment $issue_number --repo ${{ github.repository }} --body "⚠️ **Failed to Assign Copilot via GraphQL API**
           
           The workflow attempted to assign GitHub Copilot to this issue using the official GraphQL API method, but the assignment failed.
           
@@ -402,6 +548,7 @@ jobs:
           
           ---
           *🤖 Automated via the official GitHub GraphQL API as documented at https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr*"
+              fi
             fi
           done
           
