@@ -48,6 +48,14 @@ for issue_number in $issue_numbers; do
   echo "Processing issue #$issue_number"
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   
+  # Skip agent-system issues as they are handled by agent-spawner workflow
+  issue_labels=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')
+  if echo "$issue_labels" | grep -q "agent-system"; then
+    echo "⏭️  Skipping issue #$issue_number - agent-system issues are handled by agent-spawner workflow"
+    already_assigned_count=$((already_assigned_count + 1))
+    continue
+  fi
+  
   # Get current assignees
   assignees=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json assignees --jq '.assignees[].login')
   

@@ -588,7 +588,17 @@ jobs:
           # Create combined issue with welcome message and work assignment
           ISSUE_URL=$(gh issue create \
             --title "$EMOJI Meet $HUMAN_NAME - Ready to Work!" \
-            --body "## 🎉 Welcome $HUMAN_NAME!
+            --body "<!-- COPILOT_AGENT:${SPECIALIZATION} -->
+
+          > **🤖 Agent Assignment**
+          > 
+          > This issue has been assigned to GitHub Copilot with the **${EMOJI} ${SPECIALIZATION}** custom agent profile.
+          > 
+          > **@${SPECIALIZATION}** - Please use the specialized approach and tools defined in [\`.github/agents/${SPECIALIZATION}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${SPECIALIZATION}.md).
+
+          ---
+
+          ## 🎉 Welcome $HUMAN_NAME!
           
           ${NEW_TYPE_BADGE}
           
@@ -618,9 +628,23 @@ jobs:
           
           **Agent Description**: $AGENT_DESCRIPTION
           
-          ### First Task
+          ### 🎯 First Task: Demonstrate Your Specialization
           
-          This issue serves as **$HUMAN_NAME**'s first task to demonstrate capabilities. The agent should apply its specialized skills defined in its agent definition to contribute to the Chained project.
+          **@${SPECIALIZATION}**, this issue serves as your first task to demonstrate your capabilities.
+          
+          **Your Assignment:**
+          Apply your specialized skills as defined in [\`.github/agents/${SPECIALIZATION}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${SPECIALIZATION}.md) to make a meaningful contribution to the Chained project. Choose a task that:
+          
+          1. **Aligns with your specialization** - Use your domain expertise (${SPECIALIZATION})
+          2. **Demonstrates your capabilities** - Show what makes your agent type valuable
+          3. **Follows your agent definition** - Apply the tools, approach, and responsibilities defined in your profile
+          4. **Provides measurable value** - Make an improvement that can be tested and validated
+          
+          **Suggested Focus Areas:**
+          - Review existing code/docs related to your specialization
+          - Identify an improvement opportunity within your domain
+          - Implement the enhancement following your agent's approach
+          - Include tests and documentation as appropriate
           
           **Success Criteria:**
           - Follows the agent's core responsibilities as defined in its agent definition
