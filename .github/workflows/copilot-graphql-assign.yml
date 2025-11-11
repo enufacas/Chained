@@ -1,6 +1,6 @@
 name: Copilot Assignment Workflow
 
-"on":
+on:
   issues:
     types: [opened]
   schedule:
