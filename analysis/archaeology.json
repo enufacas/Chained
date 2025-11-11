@@ -1,56 +1,117 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-10T13:05:31.849430+00:00",
+  "last_updated": "2025-11-11T04:40:54.142085+00:00",
   "repository": "tmp_hj4w711",
-  "total_commits_analyzed": 3,
+  "total_commits_analyzed": 5,
   "architectural_decisions": [
     {
       "type": "explicit_decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "82ae70b",
-      "timestamp": "2025-11-10T13:03:34+00:00"
+      "content": "move config to separate file because it improves modularity",
+      "commit": "6832cce",
+      "timestamp": "2025-11-11T04:40:54+00:00"
+    },
+    {
+      "type": "explicit_decision",
+      "content": "it improves modularity",
+      "commit": "6832cce",
+      "timestamp": "2025-11-11T04:40:54+00:00"
     }
   ],
-  "technical_debt": [],
+  "technical_debt": [
+    {
+      "type": "technical_debt",
+      "description": "issue #123",
+      "commit": "9d462e1",
+      "timestamp": "2025-11-11T04:40:54+00:00",
+      "files": [
+        "utils.py"
+      ]
+    },
+    {
+      "type": "technical_debt",
+      "description": "workaround for issue #123",
+      "commit": "9d462e1",
+      "timestamp": "2025-11-11T04:40:54+00:00",
+      "files": [
+        "utils.py"
+      ]
+    }
+  ],
   "legacy_patterns": [],
   "code_evolution": {
-    "major_refactors": [],
-    "feature_additions": [
+    "major_refactors": [
       {
-        "hash": "82ae70b",
-        "subject": "Implement AI Code Archaeologist tool with tests and workflow",
-        "author": "copilot-swe-agent[bot]",
-        "timestamp": "2025-11-10T13:03:34+00:00",
-        "files_changed": 6,
-        "stats": "6 files changed, 1617 insertions(+)"
+        "hash": "6832cce",
+        "subject": "Refactor: Decided to move config to separate file because it improves modularity",
+        "author": "Test User",
+        "timestamp": "2025-11-11T04:40:54+00:00",
+        "files_changed": 1,
+        "stats": "1 file changed, 2 insertions(+)"
       }
     ],
-    "bug_fixes": [],
-    "maintenance": [
+    "feature_additions": [
       {
-        "hash": "45bda8f",
-        "subject": "Initial plan",
-        "author": "copilot-swe-agent[bot]",
-        "timestamp": "2025-11-10T12:55:28+00:00",
-        "files_changed": 0,
-        "stats": ""
+        "hash": "842527f",
+        "subject": "Implement new feature: user authentication",
+        "author": "Test User",
+        "timestamp": "2025-11-11T04:40:54+00:00",
+        "files_changed": 1,
+        "stats": "1 file changed, 2 insertions(+)"
       },
       {
-        "hash": "da59221",
-        "subject": "\ud83e\udd16 AI Friend Daily Conversation - 2025-11-10 (#165)",
-        "author": "github-actions[bot]",
-        "timestamp": "2025-11-10T09:19:37+00:00",
+        "hash": "26f7823",
+        "subject": "Add initial implementation of main module",
+        "author": "Test User",
+        "timestamp": "2025-11-11T04:40:54+00:00",
         "files_changed": 0,
-        "stats": "111 files changed, 25361 insertions(+)"
+        "stats": "1 file changed, 2 insertions(+)"
+      }
+    ],
+    "bug_fixes": [
+      {
+        "hash": "72130ad",
+        "subject": "Fix bug in main module causing crash",
+        "author": "Test User",
+        "timestamp": "2025-11-11T04:40:54+00:00",
+        "files_changed": 1,
+        "stats": "1 file changed, 2 insertions(+), 2 deletions(-)"
+      }
+    ],
+    "maintenance": [
+      {
+        "hash": "9d462e1",
+        "subject": "Add utility functions with temporary workaround for issue #123",
+        "author": "Test User",
+        "timestamp": "2025-11-11T04:40:54+00:00",
+        "files_changed": 1,
+        "stats": "1 file changed, 3 insertions(+)"
       }
     ]
   },
   "decision_timeline": [
     {
-      "timestamp": "2025-11-10T13:03:34+00:00",
+      "timestamp": "2025-11-11T04:40:54+00:00",
       "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "82ae70b"
+      "content": "move config to separate file because it improves modularity",
+      "commit": "6832cce"
+    },
+    {
+      "timestamp": "2025-11-11T04:40:54+00:00",
+      "type": "decision",
+      "content": "it improves modularity",
+      "commit": "6832cce"
+    },
+    {
+      "timestamp": "2025-11-11T04:40:54+00:00",
+      "type": "debt",
+      "content": "issue #123",
+      "commit": "9d462e1"
+    },
+    {
+      "timestamp": "2025-11-11T04:40:54+00:00",
+      "type": "debt",
+      "content": "workaround for issue #123",
+      "commit": "9d462e1"
     }
   ]
 }
