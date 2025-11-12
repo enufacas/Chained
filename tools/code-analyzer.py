@@ -122,6 +122,81 @@ class CodeAnalyzer:
                     pass
             raise IOError(f"Failed to save patterns: {e}")
     
+    def _validate_filepath(self, filepath: str):
+        """Validate file path and raise appropriate errors"""
+        if not filepath:
+            raise ValueError("File path cannot be empty")
+        
+        if not isinstance(filepath, str):
+            raise ValueError(f"File path must be a string, got {type(filepath).__name__}")
+        
+        if not os.path.exists(filepath):
+            raise IOError(f"File does not exist: {filepath}")
+        
+        if not os.path.isfile(filepath):
+            raise IOError(f"Path is not a file: {filepath}")
+    
+    def _read_file_content(self, filepath: str) -> str:
+        """Read file content with proper error handling"""
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                return f.read()
+        except (IOError, OSError, UnicodeDecodeError) as e:
+            raise IOError(f"Failed to read file '{filepath}': {e}")
+    
+    def _analyze_functions(self, functions: List, results: Dict):
+        """Analyze function patterns"""
+        for func in functions:
+            func_lines = func.end_lineno - func.lineno if hasattr(func, 'end_lineno') else 0
+            
+            if func_lines > 50:
+                results["patterns_found"]["bad"].append({
+                    "type": "long_functions",
+                    "location": f"{func.name} at line {func.lineno}",
+                    "details": f"{func_lines} lines"
+                })
+            else:
+                results["patterns_found"]["good"].append({
+                    "type": "modular_functions",
+                    "location": f"{func.name} at line {func.lineno}",
+                    "details": f"{func_lines} lines"
+                })
+            
+            self._check_function_quality(func, results)
+    
+    def _check_function_quality(self, func: ast.FunctionDef, results: Dict):
+        """Check function for docstrings, type hints, and error handling"""
+        docstring = ast.get_docstring(func)
+        if docstring and len(docstring) > 20:
+            results["patterns_found"]["good"].append({
+                "type": "comprehensive_docstrings",
+                "location": f"{func.name} at line {func.lineno}",
+                "details": f"{len(docstring)} chars"
+            })
+        
+        if func.returns or any(arg.annotation for arg in func.args.args):
+            results["patterns_found"]["good"].append({
+                "type": "type_hints",
+                "location": f"{func.name} at line {func.lineno}",
+                "details": "Has type hints"
+            })
+        
+        has_try = any(isinstance(node, ast.Try) for node in ast.walk(func))
+        if has_try:
+            results["patterns_found"]["good"].append({
+                "type": "error_handling",
+                "location": f"{func.name} at line {func.lineno}",
+                "details": "Uses try/except"
+            })
+        
+        max_depth = self._get_max_nesting_depth(func)
+        if max_depth > 4:
+            results["patterns_found"]["bad"].append({
+                "type": "deep_nesting",
+                "location": f"{func.name} at line {func.lineno}",
+                "details": f"Depth: {max_depth}"
+            })
+
     def analyze_python_file(self, filepath: str) -> Dict:
         """
         Analyze a Python file for patterns with proper error handling.
@@ -136,26 +211,8 @@ class CodeAnalyzer:
             IOError: If the file cannot be read
             ValueError: If the file is not valid Python
         """
-        # Validate filepath
-        if not filepath:
-            raise ValueError("File path cannot be empty")
-        
-        if not isinstance(filepath, str):
-            raise ValueError(f"File path must be a string, got {type(filepath).__name__}")
-        
-        # Check file exists
-        if not os.path.exists(filepath):
-            raise IOError(f"File does not exist: {filepath}")
-        
-        if not os.path.isfile(filepath):
-            raise IOError(f"Path is not a file: {filepath}")
-        
-        # Read file with proper error handling
-        try:
-            with open(filepath, 'r', encoding='utf-8') as f:
-                content = f.read()
-        except (IOError, OSError, UnicodeDecodeError) as e:
-            raise IOError(f"Failed to read file '{filepath}': {e}")
+        self._validate_filepath(filepath)
+        content = self._read_file_content(filepath)
         
         results = {
             "file": filepath,
@@ -171,10 +228,6 @@ class CodeAnalyzer:
             tree = ast.parse(content)
             results["metrics"]["total_lines"] = len(content.split('\n'))
             
-            # PERFORMANCE OPTIMIZATION: Single-pass AST traversal
-            # Instead of multiple ast.walk() calls, collect all data in one pass
-            # This reduces time complexity from O(n*m) to O(n) where n=nodes, m=passes
-            # Benchmark shows ~2.4x speedup for typical Python files
             functions = []
             magic_numbers = []
             variable_names = []
@@ -192,60 +245,8 @@ class CodeAnalyzer:
             
             results["metrics"]["function_count"] = len(functions)
             
-            # Process functions
-            for func in functions:
-                func_lines = func.end_lineno - func.lineno if hasattr(func, 'end_lineno') else 0
-                
-                # Check for long functions
-                if func_lines > 50:
-                    results["patterns_found"]["bad"].append({
-                        "type": "long_functions",
-                        "location": f"{func.name} at line {func.lineno}",
-                        "details": f"{func_lines} lines"
-                    })
-                else:
-                    results["patterns_found"]["good"].append({
-                        "type": "modular_functions",
-                        "location": f"{func.name} at line {func.lineno}",
-                        "details": f"{func_lines} lines"
-                    })
-                
-                # Check for docstrings
-                docstring = ast.get_docstring(func)
-                if docstring and len(docstring) > 20:
-                    results["patterns_found"]["good"].append({
-                        "type": "comprehensive_docstrings",
-                        "location": f"{func.name} at line {func.lineno}",
-                        "details": f"{len(docstring)} chars"
-                    })
-                
-                # Check for type hints
-                if func.returns or any(arg.annotation for arg in func.args.args):
-                    results["patterns_found"]["good"].append({
-                        "type": "type_hints",
-                        "location": f"{func.name} at line {func.lineno}",
-                        "details": "Has type hints"
-                    })
-                
-                # Check for error handling
-                has_try = any(isinstance(node, ast.Try) for node in ast.walk(func))
-                if has_try:
-                    results["patterns_found"]["good"].append({
-                        "type": "error_handling",
-                        "location": f"{func.name} at line {func.lineno}",
-                        "details": "Uses try/except"
-                    })
-                
-                # Check nesting depth
-                max_depth = self._get_max_nesting_depth(func)
-                if max_depth > 4:
-                    results["patterns_found"]["bad"].append({
-                        "type": "deep_nesting",
-                        "location": f"{func.name} at line {func.lineno}",
-                        "details": f"Depth: {max_depth}"
-                    })
+            self._analyze_functions(functions, results)
             
-            # Process magic numbers collected in single pass
             for node in magic_numbers:
                 results["patterns_found"]["bad"].append({
                     "type": "magic_numbers",
@@ -253,7 +254,6 @@ class CodeAnalyzer:
                     "details": f"Number: {node.value}"
                 })
             
-            # Process variable names collected in single pass
             for node in variable_names:
                 var_name = node.id
                 results["patterns_found"]["good"].append({
