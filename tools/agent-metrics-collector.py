@@ -100,6 +100,7 @@ class MetricsScore:
     issue_resolution: float = 0.0
     pr_success: float = 0.0
     peer_review: float = 0.0
+    creativity: float = 0.0
     overall: float = 0.0
     
     def to_dict(self) -> Dict[str, float]:
@@ -159,6 +160,29 @@ class MetricsCollector:
         # Load scoring configuration from registry
         self.weights = self._load_scoring_weights()
         
+        # Initialize creativity analyzer
+        try:
+            from pathlib import Path
+            import sys
+            import importlib.util
+            
+            # Handle hyphenated filename
+            analyzer_path = Path(__file__).parent / "creativity-metrics-analyzer.py"
+            spec = importlib.util.spec_from_file_location(
+                "creativity_metrics_analyzer",
+                analyzer_path
+            )
+            creativity_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(creativity_module)
+            
+            CreativityAnalyzer = creativity_module.CreativityAnalyzer
+            self.creativity_analyzer = CreativityAnalyzer(repo=self.repo, github_token=github_token)
+            self.creativity_available = True
+        except (ImportError, FileNotFoundError, AttributeError) as e:
+            print(f"⚠️  Warning: Creativity analyzer not available: {e}", file=sys.stderr)
+            self.creativity_analyzer = None
+            self.creativity_available = False
+        
         # Ensure metrics directory exists
         METRICS_DIR.mkdir(parents=True, exist_ok=True)
     
@@ -172,12 +196,13 @@ class MetricsCollector:
         except Exception as e:
             print(f"⚠️  Warning: Could not load scoring weights: {e}", file=sys.stderr)
         
-        # Default weights
+        # Default weights (updated to include creativity)
         return {
             'code_quality': 0.30,
-            'issue_resolution': 0.25,
-            'pr_success': 0.25,
-            'peer_review': 0.20
+            'issue_resolution': 0.20,
+            'pr_success': 0.20,
+            'peer_review': 0.15,
+            'creativity': 0.15
         }
     
     def collect_agent_activity(
@@ -346,10 +371,89 @@ class MetricsCollector:
         
         return comments
     
+    def _collect_contributions_for_creativity(
+        self,
+        agent_id: str,
+        since_days: int
+    ) -> List[Dict[str, Any]]:
+        """
+        Collect contribution data for creativity analysis.
+        
+        Args:
+            agent_id: Agent identifier
+            since_days: Look back period
+            
+        Returns:
+            List of contributions with metadata for creativity analysis
+        """
+        contributions = []
+        
+        try:
+            agent_user = self._get_agent_github_user(agent_id)
+            since_date = (datetime.now(timezone.utc) - timedelta(days=since_days)).isoformat()
+            
+            # Get PRs by agent
+            prs = self._search_issues(
+                agent_id,
+                'is:pr',
+                f'author:{agent_user}',
+                f'created:>={since_date}'
+            )
+            
+            for pr in prs:
+                pr_number = pr['number']
+                
+                # Get PR details including files changed
+                try:
+                    pr_details = self.github.get(f'/repos/{self.repo}/pulls/{pr_number}')
+                    
+                    if not pr_details:
+                        continue
+                    
+                    # Get list of files changed in PR
+                    files_data = self.github.get(f'/repos/{self.repo}/pulls/{pr_number}/files')
+                    
+                    files = []
+                    diff_content = ""
+                    
+                    if files_data:
+                        for file_info in files_data:
+                            files.append(file_info.get('filename', ''))
+                            # Accumulate patch/diff content
+                            if file_info.get('patch'):
+                                diff_content += file_info.get('patch', '') + "\n"
+                    
+                    contribution = {
+                        'type': 'pull_request',
+                        'number': pr_number,
+                        'title': pr.get('title', ''),
+                        'body': pr.get('body', ''),
+                        'files': files,
+                        'diff': diff_content,
+                        'changed_files': pr_details.get('changed_files', 0),
+                        'additions': pr_details.get('additions', 0),
+                        'deletions': pr_details.get('deletions', 0),
+                        'merged': pr_details.get('merged', False),
+                        'created_at': pr.get('created_at', ''),
+                        'url': pr.get('html_url', '')
+                    }
+                    
+                    contributions.append(contribution)
+                
+                except Exception as e:
+                    print(f"⚠️  Warning: Error fetching PR {pr_number} details: {e}", file=sys.stderr)
+                    continue
+        
+        except Exception as e:
+            print(f"⚠️  Warning: Error collecting contributions for creativity: {e}", file=sys.stderr)
+        
+        return contributions
+    
     def calculate_scores(
         self,
         activity: AgentActivity,
-        agent_id: str
+        agent_id: str,
+        contributions: Optional[List[Dict[str, Any]]] = None
     ) -> MetricsScore:
         """
         Calculate performance scores from activity data.
@@ -359,10 +463,12 @@ class MetricsCollector:
         - Issue Resolution: Issues resolved / issues created ratio
         - PR Success: PRs merged / PRs created ratio
         - Peer Review: Normalized review activity
+        - Creativity: Novel patterns, diversity, impact, learning (if available)
         
         Args:
             activity: Agent activity data
             agent_id: Agent identifier
+            contributions: Optional list of contribution data for creativity analysis
             
         Returns:
             MetricsScore with calculated scores
@@ -399,12 +505,42 @@ class MetricsCollector:
         # Normalize to 0-1 based on reasonable review activity (5+ reviews = 1.0)
         scores.peer_review = min(1.0, activity.reviews_given / 5.0)
         
+        # Creativity Score
+        if self.creativity_available and contributions:
+            try:
+                creativity_metrics = self.creativity_analyzer.analyze_creativity(
+                    agent_id, 
+                    contributions
+                )
+                scores.creativity = creativity_metrics.score.overall
+            except Exception as e:
+                print(f"⚠️  Warning: Creativity analysis failed for {agent_id}: {e}", file=sys.stderr)
+                scores.creativity = 0.5  # Neutral score on error
+        else:
+            # Fallback: Use randomized trait from registry as baseline
+            try:
+                if REGISTRY_FILE.exists():
+                    with open(REGISTRY_FILE, 'r') as f:
+                        registry = json.load(f)
+                        agents = registry.get('agents', [])
+                        for agent in agents:
+                            if agent.get('id') == agent_id:
+                                # Convert 0-100 trait to 0-1 score
+                                creativity_trait = agent.get('traits', {}).get('creativity', 50)
+                                scores.creativity = creativity_trait / 100.0
+                                break
+                        else:
+                            scores.creativity = 0.5
+            except Exception:
+                scores.creativity = 0.5
+        
         # Calculate weighted overall score
         scores.overall = (
             scores.code_quality * self.weights.get('code_quality', 0.30) +
-            scores.issue_resolution * self.weights.get('issue_resolution', 0.25) +
-            scores.pr_success * self.weights.get('pr_success', 0.25) +
-            scores.peer_review * self.weights.get('peer_review', 0.20)
+            scores.issue_resolution * self.weights.get('issue_resolution', 0.20) +
+            scores.pr_success * self.weights.get('pr_success', 0.20) +
+            scores.peer_review * self.weights.get('peer_review', 0.15) +
+            scores.creativity * self.weights.get('creativity', 0.15)
         )
         
         return scores
@@ -429,8 +565,13 @@ class MetricsCollector:
         # Collect activity
         activity = self.collect_agent_activity(agent_id, since_days)
         
-        # Calculate scores
-        scores = self.calculate_scores(activity, agent_id)
+        # Collect contributions for creativity analysis
+        contributions = None
+        if self.creativity_available:
+            contributions = self._collect_contributions_for_creativity(agent_id, since_days)
+        
+        # Calculate scores (including creativity if contributions available)
+        scores = self.calculate_scores(activity, agent_id, contributions)
         
         # Create metrics snapshot
         metrics = AgentMetrics(
@@ -441,7 +582,8 @@ class MetricsCollector:
             metadata={
                 'lookback_days': since_days,
                 'repo': self.repo,
-                'weights': self.weights
+                'weights': self.weights,
+                'creativity_enabled': self.creativity_available
             }
         )
         
@@ -531,6 +673,7 @@ class MetricsCollector:
                     agent['metrics']['prs_merged'] = metrics.activity.prs_merged
                     agent['metrics']['reviews_given'] = metrics.activity.reviews_given
                     agent['metrics']['code_quality_score'] = metrics.scores.code_quality
+                    agent['metrics']['creativity_score'] = metrics.scores.creativity
                     agent['metrics']['overall_score'] = metrics.scores.overall
                 
                 except Exception as e:
@@ -627,6 +770,7 @@ def main():
             print(f"  Issue Resolution: {metrics.scores.issue_resolution:.2%}")
             print(f"  PR Success: {metrics.scores.pr_success:.2%}")
             print(f"  Peer Review: {metrics.scores.peer_review:.2%}")
+            print(f"  🎨 Creativity: {metrics.scores.creativity:.2%}")
             print(f"\n  ⭐ Overall Score: {metrics.scores.overall:.2%}")
     
     else:

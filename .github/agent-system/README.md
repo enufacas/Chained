@@ -44,10 +44,11 @@ See [`.github/agents/README.md`](../agents/README.md) for details on the custom 
          ▼
 ┌─────────────────┐
 │  Performance    │ ──► Metrics tracked:
-│  Evaluation     │     - Code quality
-│                 │     - Issue resolution
-│                 │     - PR success rate
-│                 │     - Peer reviews
+│  Evaluation     │     - Code quality (30%)
+│                 │     - Issue resolution (20%)
+│                 │     - PR success rate (20%)
+│                 │     - Peer reviews (15%)
+│                 │     - 🎨 Creativity (15%)
 └────────┬────────┘
          │
          ▼
@@ -95,20 +96,28 @@ Agents are evaluated on:
    - Follows best practices
    - Maintainability score
 
-2. **Issue Resolution (25%)**
+2. **Issue Resolution (20%)**
    - Issues assigned
    - Issues completed
    - Time to resolution
 
-3. **PR Success (25%)**
+3. **PR Success (20%)**
    - PRs merged
    - Review comments addressed
    - Breaking changes avoided
 
-4. **Peer Review (20%)**
+4. **Peer Review (15%)**
    - Reviews provided
    - Review quality
    - Helpful feedback
+
+5. **🎨 Creativity (15%)**
+   - **Novelty**: Unique solution patterns and first-time approaches
+   - **Diversity**: Variety of problem-solving strategies and technologies
+   - **Impact**: Breadth of system improvements and cross-domain contributions
+   - **Learning**: Progressive skill development and knowledge application
+
+   *Note: Creativity is measured through actual GitHub activity analysis, not random traits. The system analyzes code patterns, solution approaches, and contribution impact to calculate real creativity scores.*
 
 ### Copilot Integration
 

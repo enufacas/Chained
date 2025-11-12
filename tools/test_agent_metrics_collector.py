@@ -277,11 +277,12 @@ def test_default_weights_fallback():
         with patch.object(metrics_module, 'REGISTRY_FILE', nonexistent_file):
             collector = MetricsCollector()
             
-            # Should have default weights
+            # Should have default weights (updated to include creativity)
             assert collector.weights['code_quality'] == 0.30
-            assert collector.weights['issue_resolution'] == 0.25
-            assert collector.weights['pr_success'] == 0.25
-            assert collector.weights['peer_review'] == 0.20
+            assert collector.weights['issue_resolution'] == 0.20
+            assert collector.weights['pr_success'] == 0.20
+            assert collector.weights['peer_review'] == 0.15
+            assert collector.weights['creativity'] == 0.15
             
             print("✓ Default weights fallback test passed")
 
@@ -292,15 +293,23 @@ def test_weighted_overall_score_calculation():
         registry_file = Path(tmpdir) / "registry.json"
         registry_file.parent.mkdir(parents=True, exist_ok=True)
         
+        # Updated weights to include creativity
         weights = {
             'code_quality': 0.30,
-            'issue_resolution': 0.25,
-            'pr_success': 0.25,
-            'peer_review': 0.20
+            'issue_resolution': 0.20,
+            'pr_success': 0.20,
+            'peer_review': 0.15,
+            'creativity': 0.15
         }
         
         with open(registry_file, 'w') as f:
-            json.dump({'config': {'metrics_weight': weights}}, f)
+            json.dump({
+                'config': {'metrics_weight': weights},
+                'agents': [{
+                    'id': 'agent-test',
+                    'traits': {'creativity': 50}  # 50/100 = 0.5
+                }]
+            }, f)
         
         with patch.object(metrics_module, 'REGISTRY_FILE', registry_file):
             collector = MetricsCollector()
@@ -314,9 +323,10 @@ def test_weighted_overall_score_calculation():
             
             scores = collector.calculate_scores(activity, "agent-test")
             
-            # Expected: 0.8*0.3 (code quality) + 0*0.25 + 0.8*0.25 + 1.0*0.20
-            # But code quality uses merge rate * 1.2, so min(1.0, 0.8*1.2) = 0.96
-            expected = 0.96 * 0.30 + 0.0 * 0.25 + 0.8 * 0.25 + 1.0 * 0.20
+            # Expected: code_quality*0.3 + issue_resolution*0.2 + pr_success*0.2 + peer_review*0.15 + creativity*0.15
+            # code quality uses merge rate * 1.2, so min(1.0, 0.8*1.2) = 0.96
+            # creativity fallback to trait: 50/100 = 0.5
+            expected = 0.96 * 0.30 + 0.0 * 0.20 + 0.8 * 0.20 + 1.0 * 0.15 + 0.5 * 0.15
             
             assert abs(scores.overall - expected) < 0.01, \
                 f"Expected {expected}, got {scores.overall}"
