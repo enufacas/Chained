@@ -147,8 +147,11 @@ The agent needs to be registered and active in the system before work can begin.
   # Add copilot-assigned label and agent-specific label
   labels=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')
   if ! echo "$labels" | grep -q "copilot-assigned"; then
-    gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --add-label "copilot-assigned"
-    echo "✓ Added copilot-assigned label to issue #$issue_number"
+    if gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --add-label "copilot-assigned" 2>/dev/null; then
+      echo "✓ Added copilot-assigned label to issue #$issue_number"
+    else
+      echo "⚠️  Could not add copilot-assigned label (insufficient permissions or repository restrictions)"
+    fi
   fi
   
   # Add agent-specific label to help Copilot identify which custom agent to use
@@ -156,8 +159,11 @@ The agent needs to be registered and active in the system before work can begin.
   if ! echo "$labels" | grep -q "$agent_label"; then
     # Create label if it doesn't exist (will fail silently if it already exists)
     gh label create "$agent_label" --repo "$GITHUB_REPOSITORY" --description "Custom agent: $matched_agent" --color "0E8A16" 2>/dev/null || true
-    gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --add-label "$agent_label"
-    echo "✓ Added $agent_label label to issue #$issue_number"
+    if gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --add-label "$agent_label" 2>/dev/null; then
+      echo "✓ Added $agent_label label to issue #$issue_number"
+    else
+      echo "⚠️  Could not add $agent_label label (insufficient permissions or repository restrictions)"
+    fi
   fi
   
   # Add agent directive to issue body so Copilot knows which custom agent to use
