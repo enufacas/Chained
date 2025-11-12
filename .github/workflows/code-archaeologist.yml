@@ -32,7 +32,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run Code Archaeologist
+      - name: Run Code Archaeologist with Active Learning
         id: archaeology
         run: |
           max_commits="${{ github.event.inputs.max_commits }}"
@@ -43,35 +43,49 @@ jobs:
             since_arg="--since '${{ github.event.inputs.since }}'"
           fi
           
-          echo "Running archaeology with max_commits=$max_commits $since_arg"
+          echo "Running archaeology with active learning: max_commits=$max_commits $since_arg"
           
           python3 tools/code-archaeologist.py \
             -n "$max_commits" \
             $since_arg \
-            -o archaeology_report.md
+            -o archaeology_report.md \
+            --learn
           
           # Extract statistics for issue
-          commits_analyzed=$(grep "Total commits analyzed:" archaeology_report.md | grep -o '[0-9]*')
-          decisions_found=$(grep "Architectural decisions found:" archaeology_report.md | grep -o '[0-9]*')
-          debt_found=$(grep "Technical debt items found:" archaeology_report.md | grep -o '[0-9]*')
+          commits_analyzed=$(grep "Total commits analyzed:" archaeology_report.md | grep -o '[0-9]*' || echo "0")
+          decisions_found=$(grep "Architectural decisions found:" archaeology_report.md | grep -o '[0-9]*' || echo "0")
+          debt_found=$(grep "Technical debt items found:" archaeology_report.md | grep -o '[0-9]*' || echo "0")
           
           echo "commits_analyzed=$commits_analyzed" >> $GITHUB_OUTPUT
           echo "decisions_found=$decisions_found" >> $GITHUB_OUTPUT
           echo "debt_found=$debt_found" >> $GITHUB_OUTPUT
+          
+          # Extract learning statistics if available
+          if [ -f analysis/archaeology-patterns.json ]; then
+            patterns_learned=$(jq '.statistics.total_patterns // 0' analysis/archaeology-patterns.json)
+            recommendations=$(jq '.statistics.recommendations_generated // 0' analysis/archaeology-patterns.json)
+            echo "patterns_learned=$patterns_learned" >> $GITHUB_OUTPUT
+            echo "recommendations=$recommendations" >> $GITHUB_OUTPUT
+          else
+            echo "patterns_learned=0" >> $GITHUB_OUTPUT
+            echo "recommendations=0" >> $GITHUB_OUTPUT
+          fi
 
       - name: Commit archaeology data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Add analysis files
+          # Add analysis files including patterns
           git add analysis/archaeology.json
           git add analysis/archaeology_*.json
+          git add analysis/archaeology_*.md
+          git add analysis/archaeology-patterns.json
           
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "🏛️ Update archaeology database - $(date -u +"%Y-%m-%d")"
+            git commit -m "🏛️ Update archaeology database with active learning - $(date -u +"%Y-%m-%d")"
             git push
             echo "Archaeology data committed and pushed"
           fi
@@ -82,7 +96,7 @@ jobs:
         run: |
           # Format report for issue
           cat > issue_body.md << 'EOF'
-          ## 🏛️ Code Archaeology Report
+          ## 🏛️ Code Archaeology Report with Active Learning
           
           **Analysis Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
           
@@ -91,13 +105,30 @@ jobs:
           - 🏗️ Architectural decisions found: ${{ steps.archaeology.outputs.decisions_found }}
           - ⚠️ Technical debt items found: ${{ steps.archaeology.outputs.debt_found }}
           
-          ### What is Code Archaeology?
+          ### 🧠 Active Learning Results
+          - 🔍 Patterns learned: ${{ steps.archaeology.outputs.patterns_learned }}
+          - 💡 Recommendations generated: ${{ steps.archaeology.outputs.recommendations }}
           
-          The Code Archaeologist analyzes git history to document:
+          ### What is Code Archaeology with Active Learning?
+          
+          The enhanced Code Archaeologist now:
+          - **Documents** legacy decisions and architectural evolution
+          - **Learns** patterns from successful and failed commits
+          - **Predicts** outcomes based on historical data
+          - **Recommends** proactive actions to improve code quality
+          
+          #### Traditional Archaeology
           - **Legacy Decisions**: Why code exists the way it does
           - **Architectural Evolution**: How the system changed over time
           - **Technical Debt**: TODOs, FIXMEs, and workarounds in commit history
           - **Decision Timeline**: When and why important choices were made
+          
+          #### Active Learning (NEW!)
+          - **Success Patterns**: What works and leads to stable code
+          - **Failure Patterns**: What to avoid based on past issues
+          - **Evolution Patterns**: How components age and need maintenance
+          - **Predictive Insights**: Risk assessment and success probability
+          - **Proactive Recommendations**: Automated suggestions for improvement
           
           ### Key Insights
           
@@ -114,19 +145,49 @@ jobs:
           sed -n '/## 🎯 Recommendations/,$p' archaeology_report.md | \
             tail -n +2 >> issue_body.md
           
+          # Add learning insights if available
+          if [ -f analysis/archaeology-patterns.json ]; then
+            echo "" >> issue_body.md
+            echo "---" >> issue_body.md
+            echo "" >> issue_body.md
+            echo "### 🧠 Learned Patterns Summary" >> issue_body.md
+            echo "" >> issue_body.md
+            
+            success_count=$(jq '.patterns.success | length' analysis/archaeology-patterns.json)
+            failure_count=$(jq '.patterns.failure | length' analysis/archaeology-patterns.json)
+            evolution_count=$(jq '.patterns.evolution | length' analysis/archaeology-patterns.json)
+            
+            echo "- ✅ Success patterns: $success_count" >> issue_body.md
+            echo "- ❌ Failure patterns: $failure_count" >> issue_body.md
+            echo "- 📈 Evolution patterns: $evolution_count" >> issue_body.md
+            
+            # Add top recommendations
+            echo "" >> issue_body.md
+            echo "### 🎯 Top Proactive Recommendations" >> issue_body.md
+            echo "" >> issue_body.md
+            
+            recommendations=$(jq -r '.recommendations[:3] | .[] | "- **[\(.priority | ascii_upcase)]** \(.title): \(.description)"' analysis/archaeology-patterns.json 2>/dev/null || echo "")
+            if [ -n "$recommendations" ]; then
+              echo "$recommendations" >> issue_body.md
+            else
+              echo "- No automated recommendations generated yet" >> issue_body.md
+            fi
+          fi
+          
           echo "" >> issue_body.md
           echo "---" >> issue_body.md
           echo "" >> issue_body.md
           echo "📁 **Full Report:** See \`archaeology_report.md\` in the workflow artifacts" >> issue_body.md
           echo "📊 **Database:** Updated in \`analysis/archaeology.json\`" >> issue_body.md
+          echo "🧠 **Patterns:** Updated in \`analysis/archaeology-patterns.json\`" >> issue_body.md
           echo "" >> issue_body.md
-          echo "*Generated by Code Archaeologist workflow*" >> issue_body.md
+          echo "*Generated by Code Archaeologist with Active Learning*" >> issue_body.md
           
           # Create issue
           gh issue create \
-            --title "🏛️ Code Archaeology Report - $(date -u +"%Y-%m-%d")" \
+            --title "🏛️ Code Archaeology Report (Active Learning) - $(date -u +"%Y-%m-%d")" \
             --body-file issue_body.md \
-            --label "archaeology,documentation,automated"
+            --label "archaeology,documentation,automated,learning"
 
       - name: Upload archaeology report
         uses: actions/upload-artifact@v4
@@ -135,10 +196,13 @@ jobs:
           path: |
             archaeology_report.md
             analysis/archaeology*.json
+            analysis/archaeology*.md
 
       - name: Log completion
         run: |
-          echo "✅ Code archaeology completed"
+          echo "✅ Code archaeology with active learning completed"
           echo "Commits analyzed: ${{ steps.archaeology.outputs.commits_analyzed }}"
           echo "Decisions found: ${{ steps.archaeology.outputs.decisions_found }}"
           echo "Technical debt found: ${{ steps.archaeology.outputs.debt_found }}"
+          echo "Patterns learned: ${{ steps.archaeology.outputs.patterns_learned }}"
+          echo "Recommendations generated: ${{ steps.archaeology.outputs.recommendations }}"

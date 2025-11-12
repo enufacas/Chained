@@ -2,7 +2,9 @@ name: "Automation: Auto Review & Merge"
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    # Only trigger on ready_for_review to avoid wasteful runs on draft PRs
+    # The scheduled sweep (every 15 minutes) handles all other PR states
+    types: [ready_for_review]
     paths-ignore:
       - '**.md'
       - 'docs/**'
@@ -32,14 +34,9 @@ permissions:
 jobs:
   auto-review-merge:
     runs-on: ubuntu-latest
-    # Skip draft PRs unless they're being converted to ready_for_review
-    # Skip when PR is closed to avoid wasted runs
-    if: |
-      (github.event_name != 'pull_request' || 
-       (github.event.action == 'ready_for_review' || 
-        !github.event.pull_request.draft)) &&
-      (github.event_name != 'pull_request' || 
-       github.event.pull_request.state == 'open')
+    # For PR events: only ready_for_review triggers (always run)
+    # For scheduled events: always run (logic handles draft/closed PRs internally)
+    # For workflow_dispatch: always run (manual triggers should always execute)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

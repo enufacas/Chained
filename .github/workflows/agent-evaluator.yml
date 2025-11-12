@@ -87,23 +87,58 @@ jobs:
           eliminated = []
           maintained = []
           
+          # Import the real metrics collector
+          import sys
+          import importlib.util
+          sys.path.insert(0, 'tools')
+          try:
+              spec = importlib.util.spec_from_file_location(
+                  "agent_metrics_collector",
+                  "tools/agent-metrics-collector.py"
+              )
+              metrics_module = importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(metrics_module)
+              MetricsCollector = metrics_module.MetricsCollector
+              collector = MetricsCollector()
+              use_real_metrics = True
+              print("✅ Using real GitHub metrics collector")
+          except Exception as e:
+              print(f"⚠️  Warning: Could not load metrics collector, using fallback: {e}")
+              use_real_metrics = False
+          
           for agent in active_agents:
               agent_id = agent['id']
               agent_name = agent['name']
               
-              # Calculate performance metrics (placeholder - in real implementation, fetch from GitHub API)
-              # For now, use random scores based on time active
-              spawned = datetime.fromisoformat(agent['spawned_at'].replace('Z', '+00:00'))
-              age_hours = (datetime.utcnow().replace(tzinfo=spawned.tzinfo) - spawned).total_seconds() / 3600
-              
-              # Simulate performance (in production, calculate from actual GitHub data)
-              base_score = min(age_hours / 24.0, 1.0)  # Score improves with age up to 1 day
-              import random
-              random.seed(hash(agent_id))
-              variation = random.uniform(-0.3, 0.3)
-              overall_score = max(0.0, min(1.0, base_score + variation))
-              
-              agent['metrics']['overall_score'] = overall_score
+              if use_real_metrics:
+                  # Use real GitHub activity metrics
+                  try:
+                      metrics = collector.collect_metrics(agent_id, since_days=7)
+                      overall_score = metrics.scores.overall
+                      
+                      # Update all metrics from real data
+                      agent['metrics']['issues_resolved'] = metrics.activity.issues_resolved
+                      agent['metrics']['prs_merged'] = metrics.activity.prs_merged
+                      agent['metrics']['reviews_given'] = metrics.activity.reviews_given
+                      agent['metrics']['code_quality_score'] = metrics.scores.code_quality
+                      agent['metrics']['overall_score'] = overall_score
+                      
+                      print(f"\n{agent_name}: {overall_score:.2%} (real metrics)")
+                  except Exception as e:
+                      print(f"⚠️  Error collecting metrics for {agent_id}, using fallback: {e}")
+                      # Fallback to time-based scoring if metrics collection fails
+                      spawned = datetime.fromisoformat(agent['spawned_at'].replace('Z', '+00:00'))
+                      age_hours = (datetime.utcnow().replace(tzinfo=spawned.tzinfo) - spawned).total_seconds() / 3600
+                      overall_score = min(0.5, age_hours / 48.0)  # Conservative scoring for new agents
+                      agent['metrics']['overall_score'] = overall_score
+                      print(f"\n{agent_name}: {overall_score:.2%} (fallback)")
+              else:
+                  # Fallback: Use time-based scoring for new agents
+                  spawned = datetime.fromisoformat(agent['spawned_at'].replace('Z', '+00:00'))
+                  age_hours = (datetime.utcnow().replace(tzinfo=spawned.tzinfo) - spawned).total_seconds() / 3600
+                  overall_score = min(0.5, age_hours / 48.0)  # Conservative scoring
+                  agent['metrics']['overall_score'] = overall_score
+                  print(f"\n{agent_name}: {overall_score:.2%} (fallback)")
               
               elimination_threshold = registry['config']['elimination_threshold']
               promotion_threshold = registry['config']['promotion_threshold']

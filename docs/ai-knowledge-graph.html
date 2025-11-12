@@ -155,13 +155,50 @@
             margin-right: 8px;
             border: 2px solid var(--primary, #00d4ff);
         }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            padding: 10px 0;
+        }
+        
+        .tab-button {
+            padding: 12px 24px;
+            background: var(--bg-secondary, #1a1a2e);
+            color: var(--text-primary, #e0e0e0);
+            border: 2px solid var(--text-muted, #666);
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button:hover {
+            background: var(--bg-primary, #0f0f1e);
+            border-color: var(--primary, #00d4ff);
+        }
+        
+        .tab-button.active {
+            background: var(--bg-primary, #0f0f1e);
+            border-color: var(--primary, #00d4ff);
+            color: var(--primary, #00d4ff);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
             <h1>🧠 AI Knowledge Graph</h1>
-            <p class="tagline">Interactive visualization of AI-related learnings from Hacker News and TLDR Tech</p>
+            <p class="tagline">Interactive visualization of AI learnings and codebase relationships</p>
         </div>
         <nav class="main-nav">
             <a href="index.html" class="nav-link">🏠 Home</a>
@@ -173,81 +210,167 @@
     </header>
 
     <main>
-        <section class="knowledge-graph-section">
-            <h2>🌐 AI Learnings Network</h2>
-            <p class="section-description">
-                This interactive graph visualizes the relationships between AI topics, technologies, and concepts 
-                learned from Hacker News and TLDR Tech. Node size represents story popularity (score), 
-                and connections show related topics.
-            </p>
-            
-            <div class="graph-container" id="graph-container">
-                <div class="stats" id="stats">
-                    <h3>📊 Graph Stats</h3>
-                    <p>Nodes: <span id="node-count">0</span></p>
-                    <p>Connections: <span id="link-count">0</span></p>
-                    <p>Topics: <span id="topic-count">0</span></p>
-                    <p>Last Updated: <span id="last-update">-</span></p>
-                </div>
-                
-                <div class="controls">
-                    <button onclick="resetZoom()">🔍 Reset View</button>
-                    <button onclick="togglePhysics()">⚡ Toggle Physics</button>
-                    <button onclick="exportGraph()">💾 Export Data</button>
-                </div>
-                
-                <div class="legend">
-                    <h4>🏷️ Legend</h4>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #ff6b6b;"></div>
-                        <span>AI/ML Core</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #4ecdc4;"></div>
-                        <span>Tools & Frameworks</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #45b7d1;"></div>
-                        <span>Applications</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #96ceb4;"></div>
-                        <span>Research & Theory</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #ffeaa7;"></div>
-                        <span>Industry & Business</span>
-                    </div>
-                </div>
-                
-                <svg id="graph-svg"></svg>
-                <div class="tooltip" id="tooltip"></div>
-            </div>
-        </section>
+        <!-- Tab Navigation -->
+        <div class="tabs" style="margin-bottom: 20px; border-bottom: 2px solid var(--primary, #00d4ff);">
+            <button class="tab-button active" onclick="switchTab('ai-learnings')">
+                📚 AI Learnings
+            </button>
+            <button class="tab-button" onclick="switchTab('codebase')">
+                💻 Codebase Graph
+            </button>
+        </div>
 
-        <section class="insights-section">
-            <h2>💡 Key Insights</h2>
-            <div id="insights-container" class="insights-grid">
-                <div class="insight-card">
-                    <h3>🔥 Trending Topics</h3>
-                    <ul id="trending-topics">
-                        <li>Loading...</li>
-                    </ul>
+        <!-- AI Learnings Tab -->
+        <div id="ai-learnings" class="tab-content active">
+            <section class="knowledge-graph-section">
+                <h2>🌐 AI Learnings Network</h2>
+                <p class="section-description">
+                    This interactive graph visualizes the relationships between AI topics, technologies, and concepts 
+                    learned from Hacker News and TLDR Tech. Node size represents story popularity (score), 
+                    and connections show related topics.
+                </p>
+                
+                <div class="graph-container" id="graph-container">
+                    <div class="stats" id="stats">
+                        <h3>📊 Graph Stats</h3>
+                        <p>Nodes: <span id="node-count">0</span></p>
+                        <p>Connections: <span id="link-count">0</span></p>
+                        <p>Topics: <span id="topic-count">0</span></p>
+                        <p>Last Updated: <span id="last-update">-</span></p>
+                    </div>
+                    
+                    <div class="controls">
+                        <button onclick="resetZoom()">🔍 Reset View</button>
+                        <button onclick="togglePhysics()">⚡ Toggle Physics</button>
+                        <button onclick="exportGraph()">💾 Export Data</button>
+                    </div>
+                    
+                    <div class="legend">
+                        <h4>🏷️ Legend</h4>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff6b6b;"></div>
+                            <span>AI/ML Core</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #4ecdc4;"></div>
+                            <span>Tools & Frameworks</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #45b7d1;"></div>
+                            <span>Applications</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #96ceb4;"></div>
+                            <span>Research & Theory</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffeaa7;"></div>
+                            <span>Industry & Business</span>
+                        </div>
+                    </div>
+                    
+                    <svg id="graph-svg"></svg>
+                    <div class="tooltip" id="tooltip"></div>
                 </div>
-                <div class="insight-card">
-                    <h3>🚀 Emerging Technologies</h3>
-                    <ul id="emerging-tech">
-                        <li>Loading...</li>
-                    </ul>
+            </section>
+
+            <section class="insights-section">
+                <h2>💡 Key Insights</h2>
+                <div id="insights-container" class="insights-grid">
+                    <div class="insight-card">
+                        <h3>🔥 Trending Topics</h3>
+                        <ul id="trending-topics">
+                            <li>Loading...</li>
+                        </ul>
+                    </div>
+                    <div class="insight-card">
+                        <h3>🚀 Emerging Technologies</h3>
+                        <ul id="emerging-tech">
+                            <li>Loading...</li>
+                        </ul>
+                    </div>
+                    <div class="insight-card">
+                        <h3>🔗 Most Connected</h3>
+                        <ul id="most-connected">
+                            <li>Loading...</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="insight-card">
-                    <h3>🔗 Most Connected</h3>
-                    <ul id="most-connected">
-                        <li>Loading...</li>
-                    </ul>
+            </section>
+        </div>
+
+        <!-- Codebase Tab -->
+        <div id="codebase" class="tab-content">
+            <section class="knowledge-graph-section">
+                <h2>💻 Codebase Relationships</h2>
+                <p class="section-description">
+                    Explore the structure of the Chained codebase: file dependencies, test coverage, agent contributions, 
+                    and collaborative patterns. Use filters to focus on specific relationship types.
+                </p>
+                
+                <div class="graph-container" id="codebase-graph-container">
+                    <div class="stats" id="codebase-stats">
+                        <h3>📊 Codebase Stats</h3>
+                        <p>Files: <span id="codebase-node-count">0</span></p>
+                        <p>Relationships: <span id="codebase-link-count">0</span></p>
+                        <p>Functions: <span id="codebase-function-count">0</span></p>
+                        <p>Classes: <span id="codebase-class-count">0</span></p>
+                    </div>
+                    
+                    <div class="controls">
+                        <button onclick="resetCodebaseZoom()">🔍 Reset View</button>
+                        <button onclick="toggleCodebasePhysics()">⚡ Toggle Physics</button>
+                        <button onclick="filterCodebase('all')">🌐 All</button>
+                        <button onclick="filterCodebase('imports')">📥 Imports</button>
+                        <button onclick="filterCodebase('tests')">🧪 Tests</button>
+                        <button onclick="filterCodebase('agents')">🤖 Agents</button>
+                    </div>
+                    
+                    <div class="legend">
+                        <h4>🏷️ Legend</h4>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #4ecdc4;"></div>
+                            <span>Code File</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff6b6b;"></div>
+                            <span>Test File</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffeaa7;"></div>
+                            <span>Agent</span>
+                        </div>
+                    </div>
+                    
+                    <svg id="codebase-graph-svg"></svg>
+                    <div class="tooltip" id="codebase-tooltip"></div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+            <section class="insights-section">
+                <h2>💡 Codebase Insights</h2>
+                <div id="codebase-insights-container" class="insights-grid">
+                    <div class="insight-card">
+                        <h3>🌟 Most Central Files</h3>
+                        <ul id="central-files">
+                            <li>Loading...</li>
+                        </ul>
+                    </div>
+                    <div class="insight-card">
+                        <h3>🧪 Test Coverage</h3>
+                        <ul id="test-coverage">
+                            <li>Loading...</li>
+                        </ul>
+                    </div>
+                    <div class="insight-card">
+                        <h3>🤖 Agent Expertise</h3>
+                        <ul id="agent-expertise">
+                            <li>Loading...</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
     <footer>

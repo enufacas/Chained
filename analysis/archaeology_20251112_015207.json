@@ -1,8 +1,6 @@
 {
-  "version": "1.0.0",
-  "last_updated": "2025-11-12T01:52:07.301708+00:00",
-  "repository": "tmp_hj4w711",
-  "total_commits_analyzed": 5,
+  "timestamp": "2025-11-12T01:52:07.247241+00:00",
+  "commits_analyzed": 5,
   "architectural_decisions": [
     {
       "type": "explicit_decision",
@@ -24,7 +22,6 @@
     }
   ],
   "technical_debt": [],
-  "legacy_patterns": [],
   "code_evolution": {
     "major_refactors": [
       {
@@ -74,24 +71,29 @@
       }
     ]
   },
-  "decision_timeline": [
-    {
-      "timestamp": "2025-11-12T01:44:42+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "c58956f"
+  "statistics": {
+    "total_commits": 5,
+    "by_category": {
+      "feature": 2,
+      "architectural": 1,
+      "maintenance": 2
     },
-    {
-      "timestamp": "2025-11-12T01:47:10+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "59234c0"
+    "by_author": {
+      "copilot-swe-agent[bot]": 4,
+      "Eric Smith": 1
     },
-    {
-      "timestamp": "2025-11-12T01:51:03+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "b66bc8f"
+    "files_most_changed": {
+      "ARCHAEOLOGY_LEARNING_IMPLEMENTATION.md": 1,
+      "analysis/archaeology-patterns.json": 3,
+      "analysis/archaeology.json": 2,
+      "analysis/README.md": 1,
+      "docs/archaeology-learner.md": 1,
+      ".github/workflows/code-archaeologist.yml": 1,
+      "analysis/archaeology_20251112_014409.json": 1,
+      "analysis/archaeology_learning_20251112_014409.md": 1,
+      "tools/archaeology-learner.py": 1,
+      "tools/code-archaeologist.py": 1,
+      "tools/test_archaeology_learner.py": 1
     }
-  ]
+  }
 }

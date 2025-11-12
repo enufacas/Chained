@@ -342,38 +342,49 @@ jobs:
           echo "🔍 Monitoring workflow health..."
           echo ""
           
-          # Get workflow runs from the last 24 hours
+          # Get workflow runs from the last 100
           runs_json=$(gh run list --limit 100 --json databaseId,name,status,conclusion,createdAt,displayTitle)
           
-          # Count failures
+          # Count all runs by conclusion type
           total_runs=$(echo "$runs_json" | jq '. | length')
           failed_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "failure")] | length')
           cancelled_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "cancelled")] | length')
           success_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "success")] | length')
+          skipped_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "skipped")] | length')
+          action_required_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "action_required")] | length')
+          
+          # Calculate completed runs (success + failure only, excluding skipped, cancelled, action_required)
+          completed_runs=$((success_runs + failed_runs))
           
           echo "Total runs (last 100): $total_runs"
-          echo "Failed: $failed_runs"
-          echo "Cancelled: $cancelled_runs"
-          echo "Successful: $success_runs"
+          echo "Completed runs (success + failure): $completed_runs"
+          echo "  - Successful: $success_runs"
+          echo "  - Failed: $failed_runs"
+          echo "Non-completed runs: $((total_runs - completed_runs))"
+          echo "  - Cancelled: $cancelled_runs"
+          echo "  - Skipped: $skipped_runs"
+          echo "  - Action Required: $action_required_runs"
           echo ""
           
-          # Calculate failure rate
-          if [ "$total_runs" -gt 0 ]; then
-            failure_rate=$(awk "BEGIN {printf \"%.1f\", ($failed_runs/$total_runs)*100}")
+          # Calculate failure rate based on completed runs only
+          if [ "$completed_runs" -gt 0 ]; then
+            failure_rate=$(awk "BEGIN {printf \"%.1f\", ($failed_runs/$completed_runs)*100}")
           else
             failure_rate="0.0"
           fi
           
-          echo "Failure rate: ${failure_rate}%"
+          echo "Failure rate (of completed runs): ${failure_rate}%"
           echo ""
           
           # Set outputs
           echo "failure_rate=${failure_rate}" >> $GITHUB_OUTPUT
           echo "failed_runs=${failed_runs}" >> $GITHUB_OUTPUT
           echo "total_runs=${total_runs}" >> $GITHUB_OUTPUT
+          echo "completed_runs=${completed_runs}" >> $GITHUB_OUTPUT
           
-          # Determine if critical
-          if [ "$failed_runs" -gt 10 ]; then
+          # Determine if critical (more than 10 failures OR failure rate > 20%)
+          failure_rate_int=${failure_rate%.*}
+          if [ "$failed_runs" -gt 10 ] || [ "$failure_rate_int" -gt 20 ]; then
             echo "has_critical_failures=true" >> $GITHUB_OUTPUT
           else
             echo "has_critical_failures=false" >> $GITHUB_OUTPUT
@@ -398,8 +409,9 @@ jobs:
             
             ### Current Status
             - **Total Workflow Runs:** ${{ steps.monitor.outputs.total_runs }}
+            - **Completed Runs:** ${{ steps.monitor.outputs.completed_runs }} (success + failure)
             - **Failed Runs:** ${{ steps.monitor.outputs.failed_runs }}
-            - **Failure Rate:** ${{ steps.monitor.outputs.failure_rate }}%
+            - **Failure Rate:** ${{ steps.monitor.outputs.failure_rate }}% (of completed runs)
             
             ---
             *Automated update from System Monitor*"
@@ -416,8 +428,9 @@ jobs:
             
             ### Health Summary
             - **Total Workflow Runs:** ${{ steps.monitor.outputs.total_runs }}
+            - **Completed Runs:** ${{ steps.monitor.outputs.completed_runs }} (success + failure)
             - **Failed Runs:** ${{ steps.monitor.outputs.failed_runs }}
-            - **Failure Rate:** ${{ steps.monitor.outputs.failure_rate }}%
+            - **Failure Rate:** ${{ steps.monitor.outputs.failure_rate }}% (of completed runs)
             
             ### Recommended Actions
             1. Review failed workflow runs in the Actions tab
@@ -444,8 +457,9 @@ jobs:
           echo ""
           echo "Summary:"
           echo "  Total Runs: ${{ steps.monitor.outputs.total_runs }}"
+          echo "  Completed Runs: ${{ steps.monitor.outputs.completed_runs }}"
           echo "  Failed: ${{ steps.monitor.outputs.failed_runs }}"
-          echo "  Failure Rate: ${{ steps.monitor.outputs.failure_rate }}%"
+          echo "  Failure Rate: ${{ steps.monitor.outputs.failure_rate }}% (of completed runs)"
           echo ""
           
           if [ "${{ steps.monitor.outputs.has_critical_failures }}" = "true" ]; then
