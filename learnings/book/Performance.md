@@ -2,7 +2,7 @@
 
 > Performance tuning, benchmarks, and optimization techniques
 
-**Total Insights:** 4
+**Total Insights:** 5
 
 **Last Updated:** 2025-11-12
 
@@ -10,6 +10,54 @@
 
 
 ## 📰 From Hacker News
+
+
+### The Department of War just shot the accountants and opted for speed
+
+**Community Score:** 165 upvotes
+
+**Link:** https://steveblank.com/2025/11/11/the-department-of-war-just-shot-the-accountants-and-opted-for-speed/
+
+
+**Content Summary:**
+
+Home
+About Steve
+Startup Books
+Slides/Videos
+Fund Raising
+Tools!
+Secret History
+Steve Blank
+Entries
+RSS
+|
+Comments RSS
+Email Subscription
+Enter your email address to subscribe to this blog and receive notifications of new posts by email.
+Email Address
+Sign me up!
+Join 55.9K other subscribers
+Categories
+2 Minute Lessons
+(15)
+Air Force
+(20)
+Ardent
+(9)
+Business Model versus Business Plan
+(64)
+California Coastal Commission
+(9)
+China
+(9)
+Commencement Speeches
+(9)
+Conservation
+(4)
+Convergent Technolog...
+
+---
 
 
 ### High-performance 2D graphics rendering on the CPU using sparse strips [pdf]
