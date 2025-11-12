@@ -2,7 +2,7 @@
 
 > General technology news and insights
 
-**Total Insights:** 110
+**Total Insights:** 111
 
 **Last Updated:** 2025-11-12
 
@@ -439,6 +439,21 @@ Scaling HNSWs
 
 
 ## 📰 From TLDR Tech
+
+
+### Secret Scanner Upgrade 🤐, BGP Zombies 🧟, Agentic IaaC ✨
+
+**Link:** https://tldr.tech/devops/2025-11-03
+
+
+**Content Summary:**
+
+📊 Everyone's building platforms, but not all have mastered success yet. (Sponsor)
+Octopus Deploy's 2025 Platform Engineering Pulse Report
+reveals how organizations across industries adopt platforms, measure their performance, and connect their efforts to long-term funding.Learn which metrics matter most—DORA, MONK, or both—and how top teams navigate the “J-curve” to maturity.Use this report as a benchmark to evaluate your own platform strategy and see where you stand.
+Read the report →
+
+---
 
 
 ### Secret Scanner Upgrade 🤐, BGP Zombies 🧟, Agentic IaaC ✨

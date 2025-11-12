@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 18
+**Total Insights:** 20
 
 **Last Updated:** 2025-11-12
 
@@ -137,6 +137,43 @@ in a new tab. When you're done, simply close that tab...
 
 
 ## 📰 From TLDR Tech
+
+
+### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-07
+
+
+**Content Summary:**
+
+Get $500 Google Cloud credits when you upgrade to Google Developer premium (Sponsor)
+Considering a
+Google Developer Premium membership
+? Google recently expanded the availability of its
+monthly membership plan
+so more people can experiment with the full breadth of Google's developer tools, including Gemini Code Assist.
+Sign up for a yearly membership to get benefits including:
+A 1-hour consultation with Google Cloud experts.
+$550 in GenAI & Cloud developer credits.
+Unlimited Google Skills.
+1500 ...
+
+---
+
+
+### Apple Gemini deal terms 💰, Amazon layoff turmoil 💼, compiler targets 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-06
+
+
+**Content Summary:**
+
+The Platform Powering Auth, Identity, and Security for AI Products (Sponsor)
+Enterprise customers expect more than a login screen. They demand SSO, directory sync, granular permissions, and detailed audit logs, all built to strict compliance standards.
+WorkOS
+gives growing teams these enterprise foundations without slowing development:- Modular APIs for authentication and access control- A hosted Admin Portal that simplifies customer setup- Built-in security and compliance features enterprises r...
+
+---
 
 
 ### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻

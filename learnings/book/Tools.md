@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 13
+**Total Insights:** 14
 
 **Last Updated:** 2025-11-12
 
@@ -136,6 +136,25 @@ inp...
 
 
 ## 📰 From TLDR Tech
+
+
+### Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 
+
+**Link:** https://tldr.tech/tech/2025-11-10
+
+
+**Content Summary:**
+
+Beyond Commands: The Terminal of the Future (Sponsor)
+Warp fuses the terminal and IDE into one place, with AI agents built in. Edit files, review diffs, and ship code, all without leaving the platform that is trusted by over 600k developers and ranks ahead of Claude Code and Gemini CLI on Terminal-Bench.
+Ask Warp agents to:
+Debug your Docker build errors
+Summarize user logs from the last 24 hours
+Onboard you to a new part of your codebase
+Download Warp for free
+and get bonus credits for your fir...
+
+---
 
 
 ### Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 
