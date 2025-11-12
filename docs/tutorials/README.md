@@ -9,7 +9,8 @@ New to Chained? Follow this learning path:
 1. **[Understanding the Autonomous Workflow](./understanding-autonomous-workflow.md)** ⭐ START HERE
 2. **[Setting Up Your First Instance](./setting-up-your-first-instance.md)**
 3. **[Monitoring and Debugging](./monitoring-and-debugging.md)**
-4. **[Creating Your First Custom Agent](./creating-custom-agent.md)**
+4. **[Mastering the Repository Time-Travel Debugger](./mastering-time-travel-debugger.md)** 🆕
+5. **[Creating Your First Custom Agent](./creating-custom-agent.md)**
 
 ## 📖 Available Tutorials
 
@@ -61,6 +62,21 @@ Master system observability:
 
 ---
 
+#### [Mastering the Repository Time-Travel Debugger](./mastering-time-travel-debugger.md)
+**Time**: 5 minutes (quick start) or 20-25 minutes (full) | **Level**: Beginner to Intermediate
+
+Navigate git history like a pro:
+- Interactive navigation through commits
+- Finding when bugs were introduced
+- Comparing code across time periods
+- Advanced search techniques
+- Real-world debugging scenarios
+- Command-line automation
+
+**Perfect for**: Developers who want to debug issues faster by understanding code evolution and exploring repository history interactively.
+
+---
+
 ### For Contributors
 
 #### [Creating Your First Custom Agent](./creating-custom-agent.md)
@@ -93,6 +109,7 @@ Build specialized AI agents:
 
 **Operations & Maintenance**
 - [Monitoring and Debugging](./monitoring-and-debugging.md) - System monitoring
+- [Mastering the Repository Time-Travel Debugger](./mastering-time-travel-debugger.md) - Git history navigation 🆕
 - [TROUBLESHOOTING.md](../TROUBLESHOOTING.md) - Problem solving
 - [MONITORING.md](../MONITORING.md) - Monitoring details
 
@@ -109,6 +126,7 @@ Build specialized AI agents:
 
 **15-20 minutes**
 - Complete [Creating Your First Custom Agent](./creating-custom-agent.md)
+- Complete [Mastering the Repository Time-Travel Debugger](./mastering-time-travel-debugger.md) 🆕
 - Review [QUICK_REFERENCE.md](../QUICK_REFERENCE.md) for commands
 
 **30-45 minutes**
@@ -130,6 +148,9 @@ Build specialized AI agents:
 
 **I'm having issues with my instance**
 → Check [Monitoring and Debugging](./monitoring-and-debugging.md) and [TROUBLESHOOTING.md](../TROUBLESHOOTING.md)
+
+**I want to debug code or understand git history**
+→ Follow [Mastering the Repository Time-Travel Debugger](./mastering-time-travel-debugger.md) 🆕
 
 **I want to create a custom agent**
 → Follow [Creating Your First Custom Agent](./creating-custom-agent.md)
