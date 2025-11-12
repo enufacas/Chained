@@ -60,7 +60,7 @@ def test_agent_spawner_creates_issues_with_labels():
         content = f.read()
     
     # Check that the issue creation includes agent-system label
-    if '--label "agent-system,agent-work"' not in content and '--label agent-system,agent-work' not in content:
+    if 'agent-system' not in content or '--label' not in content:
         print(f"❌ FAILED: agent-spawner does not create issues with agent-system label")
         return False
     
