@@ -2,75 +2,6 @@
   "version": "2.0.0",
   "agents": [
     {
-      "id": "agent-1762824870",
-      "name": "\ud83d\udd17 Omega-1111",
-      "specialization": "coordinate-wizard",
-      "status": "active",
-      "spawned_at": "2025-11-11T01:34:30.671088Z",
-      "traits": {
-        "creativity": 56,
-        "caution": 43,
-        "speed": 54
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.6050324169807642
-      },
-      "contributions": [],
-      "human_name": "Omega",
-      "personality": "methodical and precise",
-      "communication_style": "clear and professional"
-    },
-    {
-      "id": "agent-1762832596",
-      "name": "\ud83e\uddea Zeta-1111",
-      "specialization": "validate-wizard",
-      "status": "active",
-      "spawned_at": "2025-11-11T03:45:09.660Z",
-      "traits": {
-        "creativity": 45,
-        "caution": 78,
-        "speed": 62
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.4968493818754784
-      },
-      "contributions": [],
-      "human_name": "Zeta",
-      "personality": "methodical and precise",
-      "communication_style": "clear and professional"
-    },
-    {
-      "id": "agent-1762842252",
-      "name": "\ud83e\uddd9 Iota-1111",
-      "specialization": "validate-wizard",
-      "status": "active",
-      "spawned_at": "2025-11-11T06:24:12.222136Z",
-      "traits": {
-        "creativity": 57,
-        "caution": 95,
-        "speed": 54
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.8116141101722381
-      },
-      "contributions": [],
-      "human_name": "Iota",
-      "personality": "methodical and precise",
-      "communication_style": "clear and professional"
-    },
-    {
       "id": "agent-1762852654",
       "name": "\ud83d\udcda Lambda-1111",
       "specialization": "doc-master",
@@ -86,33 +17,10 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.5958525181127075
+        "overall_score": 0.7088469654840746
       },
       "contributions": [],
       "human_name": "Lambda",
-      "personality": "methodical and precise",
-      "communication_style": "clear and professional"
-    },
-    {
-      "id": "agent-1762864307",
-      "name": "\ud83c\udfa8 Alpha-1111",
-      "specialization": "code-poet",
-      "status": "active",
-      "spawned_at": "2025-11-11T12:31:47.331474Z",
-      "traits": {
-        "creativity": 80,
-        "caution": 97,
-        "speed": 83
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.3730897324715115
-      },
-      "contributions": [],
-      "human_name": "Alpha",
       "personality": "methodical and precise",
       "communication_style": "clear and professional"
     },
@@ -135,30 +43,7 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1762899779",
-      "name": "\ud83d\udd10 Katie Moussouris",
-      "human_name": "Katie Moussouris",
-      "specialization": "monitor-champion",
-      "status": "active",
-      "spawned_at": "2025-11-11T22:23:00.123576Z",
-      "personality": "proactive and strategic, with extra enthusiasm",
-      "communication_style": "closes security gaps",
-      "traits": {
-        "creativity": 53,
-        "caution": 86,
-        "speed": 41
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.30685795043217107
       },
       "contributions": []
     },
@@ -181,59 +66,86 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1762902920",
-      "name": "\ud83d\udcad Barbara Liskov",
-      "human_name": "Barbara Liskov",
-      "specialization": "coach-master",
-      "status": "active",
-      "spawned_at": "2025-11-11T23:16:12.000Z",
-      "personality": "principled and guiding, but more direct",
-      "communication_style": "mentors through example",
-      "traits": {
-        "creativity": 70,
-        "caution": 85,
-        "speed": 75
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1762904756",
-      "name": "\ud83c\udfd7\ufe0f Hopper",
-      "human_name": "Hopper",
-      "specialization": "feature-architect",
-      "status": "active",
-      "spawned_at": "2025-11-11T23:45:56.315926Z",
-      "personality": "methodical and precise",
-      "communication_style": "uses technical jargon with enthusiasm",
-      "traits": {
-        "creativity": 77,
-        "caution": 40,
-        "speed": 87
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.3566804676883876
       },
       "contributions": []
     }
   ],
-  "hall_of_fame": [],
-  "system_lead": null,
+  "hall_of_fame": [
+    {
+      "id": "agent-1762824870",
+      "name": "\ud83d\udd17 Omega-1111",
+      "specialization": "coordinate-wizard",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-11T01:34:30.671088Z",
+      "traits": {
+        "creativity": 56,
+        "caution": 43,
+        "speed": 54
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 1.0
+      },
+      "contributions": [],
+      "human_name": "Omega",
+      "personality": "methodical and precise",
+      "communication_style": "clear and professional",
+      "promoted_at": "2025-11-12T00:42:01.513783Z"
+    },
+    {
+      "id": "agent-1762832596",
+      "name": "\ud83e\uddea Zeta-1111",
+      "specialization": "validate-wizard",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-11T03:45:09.660Z",
+      "traits": {
+        "creativity": 45,
+        "caution": 78,
+        "speed": 62
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 1.0
+      },
+      "contributions": [],
+      "human_name": "Zeta",
+      "personality": "methodical and precise",
+      "communication_style": "clear and professional",
+      "promoted_at": "2025-11-12T00:42:01.513841Z"
+    },
+    {
+      "id": "agent-1762842252",
+      "name": "\ud83e\uddd9 Iota-1111",
+      "specialization": "validate-wizard",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-11T06:24:12.222136Z",
+      "traits": {
+        "creativity": 57,
+        "caution": 95,
+        "speed": 54
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.9867047965775735
+      },
+      "contributions": [],
+      "human_name": "Iota",
+      "personality": "methodical and precise",
+      "communication_style": "clear and professional",
+      "promoted_at": "2025-11-12T00:42:01.513887Z"
+    }
+  ],
+  "system_lead": "agent-1762824870",
   "config": {
     "spawn_interval_hours": 3,
     "max_active_agents": 10,
@@ -249,6 +161,6 @@
     "new_agent_probability": 0.5
   },
   "last_spawn": "2025-11-11T23:45:56.315969Z",
-  "last_evaluation": "2025-11-11T22:06:38.458743Z",
+  "last_evaluation": "2025-11-12T00:42:01.514086Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
