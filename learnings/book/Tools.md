@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 12
+**Total Insights:** 13
 
 **Last Updated:** 2025-11-12
 
@@ -10,6 +10,36 @@
 
 
 ## 📰 From Hacker News
+
+
+### Pikaday: A friendly guide to front-end date pickers
+
+**Community Score:** 189 upvotes
+
+**Link:** https://pikaday.dbushell.com
+
+
+**Content Summary:**
+
+Who needs a JavaScript date picker?
+The answer, in most cases, is nobody!
+Complex UI leads to more errors and abandoned forms.
+There can be easier ways to pick a date than a calendar widget.
+This guide provides alternate ideas and aims to send developers on a path towards
+user-friendly interfaces
+.
+Native date and time inputs
+If you absolutely must use a calendar widget then itâs wise to use the native input.
+All modern
+browsers support
+native date and time inputs.
+Date input
+Date
+The
+date
+inp...
+
+---
 
 
 ### Pikaday: A friendly guide to front-end date pickers

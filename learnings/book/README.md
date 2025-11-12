@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-12 06:38 UTC
+**Generated:** 2025-11-12 07:11 UTC
 
-**Total Learning Sessions:** 20
+**Total Learning Sessions:** 21
 
-**Total Insights:** 214
+**Total Insights:** 231
 
 ---
 
@@ -18,28 +18,28 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 74
+**Insights:** 75
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 17
+**Insights:** 18
 
 
 ### [🗄️ Databases & Data Management](./Database.md)
 
 SQL, NoSQL, data storage, and data engineering
 
-**Insights:** 2
+**Insights:** 3
 
 
 ### [🌐 Web Development](./Web.md)
 
 Web technologies, browsers, APIs, and frontend frameworks
 
-**Insights:** 3
+**Insights:** 4
 
 
 ### [🔒 Security & Privacy](./Security.md)
@@ -53,21 +53,21 @@ Security vulnerabilities, encryption, authentication, and privacy
 
 Performance tuning, benchmarks, and optimization techniques
 
-**Insights:** 5
+**Insights:** 6
 
 
 ### [🔧 Developer Tools](./Tools.md)
 
 IDEs, editors, debuggers, and productivity tools
 
-**Insights:** 12
+**Insights:** 13
 
 
 ### [📚 General Tech Insights](./Other.md)
 
 General technology news and insights
 
-**Insights:** 99
+**Insights:** 110
 
 
 ## 📊 Statistics
@@ -75,26 +75,26 @@ General technology news and insights
 
 ### By Source
 
-- **Hacker News:** 11 learning sessions
+- **Hacker News:** 12 learning sessions
 
 - **TLDR Tech:** 9 learning sessions
 
 
 ### By Topic
 
-- **📚 General Tech Insights:** 99 insights
+- **📚 General Tech Insights:** 110 insights
 
-- **🤖 AI & Machine Learning:** 74 insights
+- **🤖 AI & Machine Learning:** 75 insights
 
-- **💻 Programming Languages & Frameworks:** 17 insights
+- **💻 Programming Languages & Frameworks:** 18 insights
 
-- **🔧 Developer Tools:** 12 insights
+- **🔧 Developer Tools:** 13 insights
 
-- **⚡ Performance & Optimization:** 5 insights
+- **⚡ Performance & Optimization:** 6 insights
 
-- **🌐 Web Development:** 3 insights
+- **🌐 Web Development:** 4 insights
 
-- **🗄️ Databases & Data Management:** 2 insights
+- **🗄️ Databases & Data Management:** 3 insights
 
 - **🔒 Security & Privacy:** 2 insights
 

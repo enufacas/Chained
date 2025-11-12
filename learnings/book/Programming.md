@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 17
+**Total Insights:** 18
 
 **Last Updated:** 2025-11-12
 
@@ -10,6 +10,32 @@
 
 
 ## 📰 From Hacker News
+
+
+### FFmpeg to Google: Fund us or stop sending bugs
+
+**Community Score:** 763 upvotes
+
+**Link:** https://thenewstack.io/ffmpeg-to-google-fund-us-or-stop-sending-bugs/
+
+
+**Content Summary:**
+
+TNS
+OK
+SUBSCRIBE
+Join our community of software engineering leaders and aspirational developers. Always
+stay in-the-know by getting the most important news and exclusive content delivered
+fresh to your inbox to learn more about at-scale software development.
+EMAIL ADDRESS
+REQUIRED
+SUBSCRIBE
+RESUBSCRIPTION REQUIRED
+It seems that you've previously unsubscribed from our newsletter
+in the past. Click the button below to open the re-subscribe form
+in a new tab. When you're done, simply close that tab...
+
+---
 
 
 ### FFmpeg to Google: Fund us or stop sending bugs
