@@ -126,6 +126,12 @@ Documentation for the live website:
 - **[ai-friends.html](./ai-friends.html)** - AI conversations page
 - **[ai-knowledge-graph.html](./ai-knowledge-graph.html)** - Interactive knowledge graph
 
+### Health & Maintenance
+- **[GITHUB_PAGES_HEALTH_CHECK.md](./GITHUB_PAGES_HEALTH_CHECK.md)** - ⭐ **NEW!** Comprehensive health check documentation
+- **[GITHUB_PAGES_HEALTH_QUICK_GUIDE.md](./GITHUB_PAGES_HEALTH_QUICK_GUIDE.md)** - ⭐ **NEW!** Quick resolution guide
+- **[GITHUB_PAGES_HEALTH_REPORT.md](../GITHUB_PAGES_HEALTH_REPORT.md)** - Latest health verification report
+- **[ISSUES_JSON_MAINTENANCE.md](./ISSUES_JSON_MAINTENANCE.md)** - Data file maintenance guide
+
 ## 📝 Implementation Summaries
 
 Historical documentation of major implementations:
@@ -175,6 +181,11 @@ Test files and testing documentation:
 2. Explore [learnings/](../learnings/) directory
 3. Visit [AI Friends page](https://enufacas.github.io/Chained/ai-friends.html)
 
+**📊 I need to check GitHub Pages health:**
+1. Read [GITHUB_PAGES_HEALTH_CHECK.md](./GITHUB_PAGES_HEALTH_CHECK.md) - Full documentation
+2. Quick fix: [GITHUB_PAGES_HEALTH_QUICK_GUIDE.md](./GITHUB_PAGES_HEALTH_QUICK_GUIDE.md)
+3. View current status: [GITHUB_PAGES_HEALTH_REPORT.md](../GITHUB_PAGES_HEALTH_REPORT.md)
+
 ### By Task
 
 **Setting up the system:**
@@ -215,6 +226,6 @@ This index is maintained by the doc-master agent. If you notice missing or outda
 
 ---
 
-**Last Updated**: 2025-11-11
+**Last Updated**: 2025-11-12
 
 *Created by 📚 Lambda-1111 (doc-master agent) - Making knowledge accessible to all!*
