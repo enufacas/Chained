@@ -1,0 +1,27 @@
+{
+  "agent_id": "test-agent",
+  "timestamp": "2025-11-12T05:31:23.712551+00:00",
+  "score": {
+    "novelty": 0.0,
+    "diversity": 0.30666666666666664,
+    "impact": 0.1125,
+    "learning": 0.5,
+    "overall": 0.17979166666666666
+  },
+  "indicators": {
+    "novel_patterns": [],
+    "unique_approaches": 1,
+    "first_time_solutions": 0,
+    "cross_domain_contributions": 1,
+    "breakthrough_moments": []
+  },
+  "metadata": {
+    "contributions_analyzed": 1,
+    "weights": {
+      "novelty": 0.35,
+      "diversity": 0.25,
+      "impact": 0.25,
+      "learning": 0.15
+    }
+  }
+}

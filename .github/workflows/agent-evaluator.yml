@@ -438,9 +438,10 @@ jobs:
 
           Agents are evaluated on:
           - **Code Quality** (30%): Linting, best practices, maintainability
-          - **Issue Resolution** (25%): Issues completed, time to resolution
-          - **PR Success** (25%): PRs merged, review feedback
-          - **Peer Review** (20%): Reviews provided, quality of feedback
+          - **Issue Resolution** (20%): Issues completed, time to resolution
+          - **PR Success** (20%): PRs merged, review feedback
+          - **Peer Review** (15%): Reviews provided, quality of feedback
+          - **🎨 Creativity** (15%): Novel solutions, diverse approaches, impactful changes
 
           ### Next Steps
 
