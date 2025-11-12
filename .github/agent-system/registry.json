@@ -184,6 +184,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1762971748",
+      "name": "\ud83d\udc1b Dijkstra",
+      "human_name": "Dijkstra",
+      "specialization": "bug-hunter",
+      "status": "active",
+      "spawned_at": "2025-11-12T18:22:28.846044Z",
+      "personality": "bold and innovative",
+      "communication_style": "uses clear structure",
+      "traits": {
+        "creativity": 63,
+        "caution": 90,
+        "speed": 88
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [
@@ -276,7 +299,7 @@
     "spawn_mode": "mixed",
     "new_agent_probability": 0.5
   },
-  "last_spawn": "2025-11-12T15:17:53.772467Z",
+  "last_spawn": "2025-11-12T18:22:28.846082Z",
   "last_evaluation": "2025-11-12T00:42:01.514086Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
