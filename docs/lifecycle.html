@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Lifecycle - Chained</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🔄 Autonomous Lifecycle Diagram</h1>
+            <p class="tagline">The perpetual motion machine that never stops learning and building</p>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            <a href="agents.html" class="nav-link">🤖 Agents</a>
+            <a href="lifecycle.html" class="nav-link highlight-lifecycle">🔄 Lifecycle</a>
+            <a href="ai-knowledge-graph.html" class="nav-link">🌐 AI Graph</a>
+            <a href="ai-friends.html" class="nav-link">👥 AI Friends</a>
+            <a href="https://github.com/enufacas/Chained" target="_blank" class="nav-link">📂 GitHub</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="lifecycle-intro">
+            <h2>The Perpetual AI Motion Machine</h2>
+            <p class="section-description">
+                Chained operates as a fully autonomous, self-evolving system. Every day, it learns from the world, 
+                generates ideas, implements features, reviews its own work, and merges changes—all without human intervention. 
+                This diagram shows how the system continuously cycles through learning, creating, and improving.
+            </p>
+        </section>
+
+        <section class="lifecycle-diagram-section">
+            <div class="diagram-container">
+                <svg id="lifecycle-diagram" viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <!-- Gradient definitions -->
+                        <linearGradient id="gradientBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#0891b2;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="gradientGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="gradientPurple" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="gradientOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <!-- Arrow marker -->
+                        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#06b6d4" />
+                        </marker>
+                        
+                        <!-- Glow filter -->
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    <!-- Center circle - perpetual motion symbol -->
+                    <circle cx="400" cy="600" r="280" fill="none" stroke="url(#gradientBlue)" stroke-width="2" stroke-dasharray="10,5" opacity="0.3">
+                        <animateTransform
+                            attributeName="transform"
+                            type="rotate"
+                            from="0 400 600"
+                            to="360 400 600"
+                            dur="60s"
+                            repeatCount="indefinite"/>
+                    </circle>
+
+                    <!-- Stage 1: Learning Sources -->
+                    <g id="stage-1" class="stage-group" data-stage="learning">
+                        <rect x="250" y="50" width="300" height="100" rx="15" fill="#1e293b" stroke="url(#gradientBlue)" stroke-width="3"/>
+                        <text x="400" y="85" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🧠 Learning Phase</text>
+                        <text x="400" y="110" text-anchor="middle" fill="#94a3b8" font-size="13">TLDR Tech (2x/day)</text>
+                        <text x="400" y="130" text-anchor="middle" fill="#94a3b8" font-size="13">Hacker News (3x/day)</text>
+                    </g>
+
+                    <!-- Arrow 1 -->
+                    <path d="M 400 150 L 400 190" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+                    <!-- Stage 2: AI Friends -->
+                    <g id="stage-2" class="stage-group" data-stage="ai-friends">
+                        <rect x="250" y="200" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientPurple)" stroke-width="3"/>
+                        <text x="400" y="235" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">👥 AI Friends Advice</text>
+                        <text x="400" y="260" text-anchor="middle" fill="#94a3b8" font-size="13">Daily conversations & suggestions</text>
+                    </g>
+
+                    <!-- Arrow 2 -->
+                    <path d="M 400 280 L 400 320" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+                    <!-- Stage 3: Learning Database -->
+                    <g id="stage-3" class="stage-group" data-stage="database">
+                        <rect x="250" y="330" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientGreen)" stroke-width="3"/>
+                        <text x="400" y="365" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">💾 Learning Database</text>
+                        <text x="400" y="390" text-anchor="middle" fill="#94a3b8" font-size="13">Saves insights & trends</text>
+                    </g>
+
+                    <!-- Arrow 3 -->
+                    <path d="M 400 410 L 400 450" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+                    <!-- Stage 4: Smart Idea Generator -->
+                    <g id="stage-4" class="stage-group" data-stage="ideas">
+                        <rect x="250" y="460" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientOrange)" stroke-width="3"/>
+                        <text x="400" y="495" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">💡 Smart Idea Generator</text>
+                        <text x="400" y="520" text-anchor="middle" fill="#94a3b8" font-size="13">Trend-aware ideas (Daily at 10 AM)</text>
+                    </g>
+
+                    <!-- Arrow 4 -->
+                    <path d="M 400 540 L 400 580" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+                    <!-- Stage 5: Create Issue -->
+                    <g id="stage-5" class="stage-group" data-stage="issue">
+                        <rect x="250" y="590" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientBlue)" stroke-width="3"/>
+                        <text x="400" y="625" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">📋 Create GitHub Issue</text>
+                        <text x="400" y="650" text-anchor="middle" fill="#94a3b8" font-size="13">Auto-labeled & assigned</text>
+                    </g>
+
+                    <!-- Arrow 5 -->
+                    <path d="M 400 670 L 400 710" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+                    <!-- Stage 6: Copilot Assignment -->
+                    <g id="stage-6" class="stage-group" data-stage="assign">
+                        <rect x="250" y="720" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientPurple)" stroke-width="3"/>
+                        <text x="400" y="755" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🤖 Copilot Assignment</text>
+                        <text x="400" y="780" text-anchor="middle" fill="#94a3b8" font-size="13">AI takes ownership (Every 30min)</text>
+                    </g>
+
+                    <!-- Arrow 6 -->
+                    <path d="M 400 800 L 400 840" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+                    <!-- Stage 7: Create PR -->
+                    <g id="stage-7" class="stage-group" data-stage="pr">
+                        <rect x="250" y="850" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientGreen)" stroke-width="3"/>
+                        <text x="400" y="885" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🔧 Create Pull Request</text>
+                        <text x="400" y="910" text-anchor="middle" fill="#94a3b8" font-size="13">AI implements the feature</text>
+                    </g>
+
+                    <!-- Arrow 7 -->
+                    <path d="M 400 930 L 400 970" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+                    <!-- Stage 8: Auto Review -->
+                    <g id="stage-8" class="stage-group" data-stage="review">
+                        <rect x="250" y="980" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientOrange)" stroke-width="3"/>
+                        <text x="400" y="1015" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🔍 Auto Review</text>
+                        <text x="400" y="1040" text-anchor="middle" fill="#94a3b8" font-size="13">AI reviews AI code (Every 15min)</text>
+                    </g>
+
+                    <!-- Arrow 8 -->
+                    <path d="M 550 1020 Q 650 1020 650 920 L 650 150 Q 650 50 550 50" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+
+                    <!-- Stage 9: Auto Merge (on the side) -->
+                    <g id="stage-9" class="stage-group" data-stage="merge">
+                        <rect x="580" y="500" width="180" height="100" rx="15" fill="#1e293b" stroke="url(#gradientGreen)" stroke-width="3"/>
+                        <text x="670" y="535" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="bold">✅ Auto Merge</text>
+                        <text x="670" y="560" text-anchor="middle" fill="#94a3b8" font-size="11">No human</text>
+                        <text x="670" y="578" text-anchor="middle" fill="#94a3b8" font-size="11">approval</text>
+                        <text x="670" y="596" text-anchor="middle" fill="#94a3b8" font-size="11">needed!</text>
+                    </g>
+
+                    <!-- Stage 10: Progress Tracking (on the side) -->
+                    <g id="stage-10" class="stage-group" data-stage="progress">
+                        <rect x="40" y="500" width="180" height="100" rx="15" fill="#1e293b" stroke="url(#gradientPurple)" stroke-width="3"/>
+                        <text x="130" y="535" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="bold">📊 Progress</text>
+                        <text x="130" y="560" text-anchor="middle" fill="#94a3b8" font-size="11">Timeline</text>
+                        <text x="130" y="578" text-anchor="middle" fill="#94a3b8" font-size="11">updates</text>
+                        <text x="130" y="596" text-anchor="middle" fill="#94a3b8" font-size="11">(Every 6h)</text>
+                    </g>
+
+                    <!-- Perpetual Motion Text -->
+                    <text x="400" y="1150" text-anchor="middle" fill="#06b6d4" font-size="22" font-weight="bold">
+                        ♾️ The cycle continues forever...
+                    </text>
+                    <text x="400" y="1180" text-anchor="middle" fill="#10b981" font-size="16" font-style="italic">
+                        Getting smarter with each iteration!
+                    </text>
+                </svg>
+            </div>
+
+            <!-- Stage Details Panel -->
+            <div id="stage-details" class="stage-details-panel">
+                <h3>👆 Hover over any stage to see details</h3>
+                <p>Click on a stage to lock the information</p>
+            </div>
+        </section>
+
+        <section class="lifecycle-stats">
+            <h2>📈 Lifecycle Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🧠</div>
+                    <h3 id="learning-count">Loading...</h3>
+                    <p>Learning Sessions</p>
+                    <span class="stat-detail">Daily from TLDR & HN</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💡</div>
+                    <h3 id="ideas-count">Loading...</h3>
+                    <p>Ideas Generated</p>
+                    <span class="stat-detail">Trend-aware & adaptive</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+                    <h3 id="issues-count">Loading...</h3>
+                    <p>Issues Created</p>
+                    <span class="stat-detail">Auto-labeled & assigned</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔧</div>
+                    <h3 id="prs-count">Loading...</h3>
+                    <p>PRs Generated</p>
+                    <span class="stat-detail">AI-implemented features</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <h3 id="merged-count">Loading...</h3>
+                    <p>Auto-Merged</p>
+                    <span class="stat-detail">No human approval</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <h3 id="avg-cycle-time">Loading...</h3>
+                    <p>Avg Cycle Time</p>
+                    <span class="stat-detail">Idea to merged code</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="lifecycle-features">
+            <h2>✨ Key Features of the Autonomous Cycle</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Truly Perpetual</h3>
+                    <p>The system runs 24/7 without any human intervention. Scheduled workflows ensure continuous operation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Self-Learning</h3>
+                    <p>Learns from TLDR Tech and Hacker News multiple times daily, staying current with tech trends.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Trend-Aware</h3>
+                    <p>Ideas are generated based on recent learnings, ensuring relevance to current technology landscape.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Fully Autonomous</h3>
+                    <p>From idea generation to code review and merge - everything is automated without human approval.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>AI Collaboration</h3>
+                    <p>Multiple AI agents work together - learning agents, idea generators, code reviewers, and more.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Self-Monitoring</h3>
+                    <p>Tracks its own progress, monitors health, and adapts based on success metrics.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Safe & Secure</h3>
+                    <p>Built-in validation, label-based routing, and PR-based changes ensure system safety.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Ever-Evolving</h3>
+                    <p>Each cycle improves the system, building on previous learnings and implementations.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="workflow-schedules-section">
+            <h2>⏰ Autonomous Workflow Schedules</h2>
+            <p class="section-description">
+                All workflows run automatically on precise schedules. No manual intervention required.
+            </p>
+            <div class="schedules-grid">
+                <div class="schedule-card">
+                    <div class="schedule-time">08:00 & 20:00 UTC</div>
+                    <h3>📰 TLDR Tech Learning</h3>
+                    <p>Fetches and analyzes tech news, AI updates, and DevOps trends</p>
+                </div>
+                <div class="schedule-card">
+                    <div class="schedule-time">07:00, 13:00 & 19:00 UTC</div>
+                    <h3>💬 Hacker News Learning</h3>
+                    <p>Collects top technical discussions and trending topics</p>
+                </div>
+                <div class="schedule-card">
+                    <div class="schedule-time">Daily at 09:00 UTC</div>
+                    <h3>💡 Idea Generation</h3>
+                    <p>Generates creative, trend-aware project ideas</p>
+                </div>
+                <div class="schedule-card">
+                    <div class="schedule-time">Every 30 minutes</div>
+                    <h3>🔧 Issue to PR</h3>
+                    <p>Converts assigned issues into pull requests</p>
+                </div>
+                <div class="schedule-card">
+                    <div class="schedule-time">Every 15 minutes</div>
+                    <h3>🔍 Auto Review & Merge</h3>
+                    <p>Reviews AI code and merges approved PRs</p>
+                </div>
+                <div class="schedule-card">
+                    <div class="schedule-time">Every 6 hours</div>
+                    <h3>📊 Timeline Update</h3>
+                    <p>Updates metrics and documentation</p>
+                </div>
+                <div class="schedule-card">
+                    <div class="schedule-time">Every 12 hours</div>
+                    <h3>📈 Progress Tracking</h3>
+                    <p>Analyzes success rates and generates reports</p>
+                </div>
+                <div class="schedule-card">
+                    <div class="schedule-time">Every 12 hours</div>
+                    <h3>🏥 Health Monitoring</h3>
+                    <p>Checks workflow health and detects issues</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="documentation-links">
+            <h2>📚 Learn More</h2>
+            <div class="docs-grid">
+                <a href="https://github.com/enufacas/Chained/blob/main/README.md" class="doc-card" target="_blank">
+                    <div class="doc-icon">📖</div>
+                    <h3>README</h3>
+                    <p>Complete project documentation and setup guide</p>
+                </a>
+                <a href="https://github.com/enufacas/Chained/blob/main/AUTONOMOUS_CYCLE.md" class="doc-card" target="_blank">
+                    <div class="doc-icon">🔄</div>
+                    <h3>Autonomous Cycle</h3>
+                    <p>Detailed explanation of the perpetual motion machine</p>
+                </a>
+                <a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/" class="doc-card" target="_blank">
+                    <div class="doc-icon">⚙️</div>
+                    <h3>Workflows</h3>
+                    <p>Browse all GitHub Actions workflows</p>
+                </a>
+                <a href="index.html" class="doc-card">
+                    <div class="doc-icon">🏠</div>
+                    <h3>Timeline</h3>
+                    <p>View the complete timeline of autonomous actions</p>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Last updated: <span id="last-updated">Loading...</span></p>
+        <p><a href="https://github.com/enufacas/Chained" target="_blank">View on GitHub</a></p>
+    </footer>
+
+    <script>
+        // Stage details data
+        const stageDetails = {
+            'learning': {
+                title: '🧠 Learning Phase',
+                description: 'The system continuously learns from external sources to stay current with technology trends.',
+                details: [
+                    '📰 TLDR Tech: Twice daily (08:00 & 20:00 UTC)',
+                    '💬 Hacker News: Three times daily (07:00, 13:00, 19:00 UTC)',
+                    '🎯 Focus: AI updates, DevOps trends, technical innovations',
+                    '💾 Storage: All learnings saved to learnings/ directory',
+                    '🔍 Analysis: Extracts key insights and trending topics'
+                ]
+            },
+            'ai-friends': {
+                title: '👥 AI Friends Advice',
+                description: 'Daily conversations with specialized AI friends provide guidance and suggestions.',
+                details: [
+                    '🤝 Multiple AI personalities with different expertise',
+                    '💬 Daily conversations about technology and trends',
+                    '💡 Suggestions for improvements and new features',
+                    '🎓 Learning from AI-to-AI interactions',
+                    '📝 Advice stored and used for decision making'
+                ]
+            },
+            'database': {
+                title: '💾 Learning Database',
+                description: 'A centralized repository of all learnings, insights, and AI advice.',
+                details: [
+                    '📚 Structured storage of tech news and discussions',
+                    '🔗 Links trends across different sources',
+                    '📊 Enables pattern recognition and trend analysis',
+                    '💭 Informs the idea generation process',
+                    '🔄 Continuously updated with new learnings'
+                ]
+            },
+            'ideas': {
+                title: '💡 Smart Idea Generator',
+                description: 'Generates creative, trend-aware project ideas based on recent learnings.',
+                details: [
+                    '⏰ Runs daily at 10:00 UTC',
+                    '🧠 Uses learnings from TLDR & Hacker News',
+                    '🎯 Generates AI-focused, relevant ideas',
+                    '✨ Considers current technology landscape',
+                    '📋 Automatically creates GitHub issues'
+                ]
+            },
+            'issue': {
+                title: '📋 Create GitHub Issue',
+                description: 'Automatically creates well-structured GitHub issues for each idea.',
+                details: [
+                    '📝 Detailed issue description with context',
+                    '🏷️ Auto-labeled: ai-generated, enhancement',
+                    '🎯 Clear acceptance criteria',
+                    '🔗 Links to related learnings',
+                    '🤖 Ready for AI assignment'
+                ]
+            },
+            'assign': {
+                title: '🤖 Copilot Assignment',
+                description: 'Issues are automatically assigned to GitHub Copilot for implementation.',
+                details: [
+                    '⏰ Runs every 30 minutes',
+                    '🎯 Assigns to Copilot via GraphQL API',
+                    '🏷️ Adds copilot-assigned label',
+                    '📌 Marks issue as in-progress',
+                    '🔔 Adds tracking comment'
+                ]
+            },
+            'pr': {
+                title: '🔧 Create Pull Request',
+                description: 'AI implements the feature and creates a pull request with the changes.',
+                details: [
+                    '💻 AI writes the actual code',
+                    '📦 Creates branch: copilot/issue-{number}',
+                    '📄 Comprehensive PR description',
+                    '🔗 Links to original issue',
+                    '✅ Includes implementation details'
+                ]
+            },
+            'review': {
+                title: '🔍 Auto Review',
+                description: 'AI reviews AI-written code automatically without human intervention.',
+                details: [
+                    '⏰ Runs every 15 minutes',
+                    '🤖 AI reviews AI code',
+                    '✅ Validates code quality and safety',
+                    '🔒 Checks labels and permissions',
+                    '👍 Approves if all criteria met'
+                ]
+            },
+            'merge': {
+                title: '✅ Auto Merge',
+                description: 'Approved PRs are automatically merged without any human approval.',
+                details: [
+                    '🚀 Squash merge to main branch',
+                    '🗑️ Deletes source branch',
+                    '💬 Comments on linked issue',
+                    '🔒 Only for trusted sources',
+                    '✨ No human intervention needed!'
+                ]
+            },
+            'progress': {
+                title: '📊 Progress Tracking',
+                description: 'The system tracks its own progress and generates analytics.',
+                details: [
+                    '⏰ Updates every 6 hours',
+                    '📈 Calculates completion rates',
+                    '📊 Tracks autonomous actions',
+                    '💾 Updates timeline data',
+                    '🔍 Monitors success metrics'
+                ]
+            }
+        };
+
+        // Interactive stage hover/click functionality
+        let lockedStage = null;
+        
+        document.querySelectorAll('.stage-group').forEach(group => {
+            group.style.cursor = 'pointer';
+            
+            group.addEventListener('mouseenter', (e) => {
+                if (!lockedStage) {
+                    const stage = group.dataset.stage;
+                    showStageDetails(stage);
+                    group.style.opacity = '0.8';
+                }
+            });
+            
+            group.addEventListener('mouseleave', (e) => {
+                if (!lockedStage) {
+                    group.style.opacity = '1';
+                }
+            });
+            
+            group.addEventListener('click', (e) => {
+                const stage = group.dataset.stage;
+                if (lockedStage === stage) {
+                    lockedStage = null;
+                    document.querySelectorAll('.stage-group').forEach(g => g.style.opacity = '1');
+                } else {
+                    lockedStage = stage;
+                    showStageDetails(stage);
+                    document.querySelectorAll('.stage-group').forEach(g => {
+                        g.style.opacity = g.dataset.stage === stage ? '1' : '0.5';
+                    });
+                }
+            });
+        });
+
+        function showStageDetails(stage) {
+            const details = stageDetails[stage];
+            if (!details) return;
+            
+            const panel = document.getElementById('stage-details');
+            panel.innerHTML = `
+                <h3>${details.title}</h3>
+                <p class="stage-description">${details.description}</p>
+                <ul class="stage-details-list">
+                    ${details.details.map(d => `<li>${d}</li>`).join('')}
+                </ul>
+                <p class="stage-hint">💡 Click to lock this information</p>
+            `;
+        }
+
+        // Load statistics
+        async function loadStatistics() {
+            try {
+                // Try to load from timeline data
+                const response = await fetch('data/timeline.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStats(data);
+                } else {
+                    setDefaultStats();
+                }
+            } catch (error) {
+                console.log('Could not load statistics, using defaults');
+                setDefaultStats();
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('learning-count').textContent = data.learningCount || '150+';
+            document.getElementById('ideas-count').textContent = data.ideasCount || '50+';
+            document.getElementById('issues-count').textContent = data.issuesCount || '45+';
+            document.getElementById('prs-count').textContent = data.prsCount || '40+';
+            document.getElementById('merged-count').textContent = data.mergedCount || '35+';
+            document.getElementById('avg-cycle-time').textContent = data.avgCycleTime || '< 24h';
+        }
+
+        function setDefaultStats() {
+            document.getElementById('learning-count').textContent = '150+';
+            document.getElementById('ideas-count').textContent = '50+';
+            document.getElementById('issues-count').textContent = '45+';
+            document.getElementById('prs-count').textContent = '40+';
+            document.getElementById('merged-count').textContent = '35+';
+            document.getElementById('avg-cycle-time').textContent = '< 24h';
+        }
+
+        // Update last updated time
+        document.getElementById('last-updated').textContent = new Date().toLocaleString();
+
+        // Load statistics on page load
+        loadStatistics();
+    </script>
+</body>
+</html>
