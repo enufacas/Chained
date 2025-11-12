@@ -161,6 +161,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1762960673",
+      "name": "\ud83c\udfaf Liskov",
+      "human_name": "Liskov",
+      "specialization": "investigate-champion",
+      "status": "active",
+      "spawned_at": "2025-11-12T15:17:53.772435Z",
+      "personality": "analytical and logical",
+      "communication_style": "adds humor to discussions",
+      "traits": {
+        "creativity": 78,
+        "caution": 75,
+        "speed": 95
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [
@@ -253,7 +276,7 @@
     "spawn_mode": "mixed",
     "new_agent_probability": 0.5
   },
-  "last_spawn": "2025-11-12T12:32:20.646711Z",
+  "last_spawn": "2025-11-12T15:17:53.772467Z",
   "last_evaluation": "2025-11-12T00:42:01.514086Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
