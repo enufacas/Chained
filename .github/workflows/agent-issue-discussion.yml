@@ -121,6 +121,9 @@ jobs:
           export ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
           export DISCUSSION_ROUNDS="${{ github.event.inputs.discussion_rounds || 3 }}"
           
+          # Convert to integer (remove decimal if present, e.g., "3.0" -> "3")
+          DISCUSSION_ROUNDS=$(printf "%.0f" "$DISCUSSION_ROUNDS")
+          
           # Ensure discussion rounds is between 2-5
           if [ "$DISCUSSION_ROUNDS" -lt 2 ]; then
             DISCUSSION_ROUNDS=2
@@ -145,7 +148,8 @@ jobs:
               issue_body = f.read().strip()
           
           issue_number = os.environ['ISSUE_NUMBER']
-          discussion_rounds = int(os.environ['DISCUSSION_ROUNDS'])
+          # Handle both integer strings and float strings (e.g., "3" or "3.0")
+          discussion_rounds = int(float(os.environ['DISCUSSION_ROUNDS']))
           
           # Personality-based comment templates
           comment_styles = {
