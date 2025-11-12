@@ -1,5 +1,30 @@
 // AI Knowledge Graph Visualization using D3.js
 
+// Tab switching
+function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active from all buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName).classList.add('active');
+    
+    // Activate button
+    event.target.classList.add('active');
+    
+    // Load codebase graph if switching to that tab
+    if (tabName === 'codebase' && !window.codebaseGraphLoaded) {
+        createCodebaseGraph();
+        window.codebaseGraphLoaded = true;
+    }
+}
+
 const width = document.getElementById('graph-container').clientWidth;
 const height = 800;
 
@@ -431,5 +456,299 @@ function exportGraph() {
     URL.revokeObjectURL(url);
 }
 
-// Initialize the graph
+// Initialize the AI learnings graph
 createGraph();
+
+// ========== Codebase Graph Visualization ==========
+
+let codebaseSimulation;
+let codebasePhysicsEnabled = true;
+let currentCodebaseFilter = 'all';
+
+// Create codebase SVG
+const codebaseSvg = d3.select("#codebase-graph-svg")
+    .attr("width", width)
+    .attr("height", height);
+
+const codebaseG = codebaseSvg.append("g");
+const codebaseZoom = d3.zoom()
+    .scaleExtent([0.1, 4])
+    .on("zoom", (event) => {
+        codebaseG.attr("transform", event.transform);
+    });
+
+codebaseSvg.call(codebaseZoom);
+
+const codebaseTooltip = d3.select("#codebase-tooltip");
+
+// Color scheme for codebase
+const codebaseColorScheme = {
+    'code_file': '#4ecdc4',
+    'test_file': '#ff6b6b',
+    'agent': '#ffeaa7'
+};
+
+async function createCodebaseGraph() {
+    try {
+        const response = await fetch('data/codebase-graph.json');
+        if (!response.ok) {
+            throw new Error('Codebase graph not found');
+        }
+        
+        const graphData = await response.json();
+        
+        // Update stats
+        const stats = graphData.statistics;
+        document.getElementById('codebase-node-count').textContent = graphData.nodes.length;
+        document.getElementById('codebase-link-count').textContent = graphData.relationships.length;
+        document.getElementById('codebase-function-count').textContent = stats.total_functions || 0;
+        document.getElementById('codebase-class-count').textContent = stats.total_classes || 0;
+        
+        // Build graph
+        const nodes = graphData.nodes.map(n => ({...n}));
+        const links = graphData.relationships.map(r => ({
+            source: r.source,
+            target: r.target,
+            type: r.type,
+            weight: r.weight
+        }));
+        
+        // Create simulation
+        codebaseSimulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+            .force("charge", d3.forceManyBody().strength(-200))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide().radius(25));
+        
+        // Create links
+        const link = codebaseG.append("g")
+            .attr("class", "links")
+            .selectAll("line")
+            .data(links)
+            .enter()
+            .append("line")
+            .attr("class", d => `link link-${d.type}`)
+            .attr("stroke", d => {
+                if (d.type === 'imports') return '#666';
+                if (d.type === 'tests') return '#ff6b6b';
+                if (d.type === 'worked_on') return '#ffeaa7';
+                if (d.type === 'changes_with') return '#96ceb4';
+                return '#666';
+            })
+            .attr("stroke-opacity", 0.6)
+            .attr("stroke-width", d => Math.min(d.weight * 1.5, 4));
+        
+        // Create nodes
+        const node = codebaseG.append("g")
+            .attr("class", "nodes")
+            .selectAll("g")
+            .data(nodes)
+            .enter()
+            .append("g")
+            .attr("class", "node")
+            .call(d3.drag()
+                .on("start", codebaseDragstarted)
+                .on("drag", codebaseDragged)
+                .on("end", codebaseDragended));
+        
+        // Add circles
+        node.append("circle")
+            .attr("r", d => {
+                if (d.type === 'agent') return 20;
+                if (d.type === 'test_file') return 8;
+                return Math.min(5 + (d.functions || 0), 15);
+            })
+            .attr("fill", d => codebaseColorScheme[d.type] || '#4ecdc4')
+            .attr("opacity", 0.8);
+        
+        // Add labels
+        node.append("text")
+            .text(d => d.label)
+            .attr("dy", 25)
+            .style("font-size", d => d.type === 'agent' ? "12px" : "9px")
+            .style("font-weight", d => d.type === 'agent' ? "bold" : "normal")
+            .style("fill", "#e0e0e0");
+        
+        // Add hover effects
+        node.on("mouseover", function(event, d) {
+            d3.select(this).select("circle")
+                .transition()
+                .duration(200)
+                .attr("r", r => parseFloat(d3.select(this).select("circle").attr("r")) * 1.3);
+            
+            let tooltipContent = `<h4>${d.label}</h4>`;
+            
+            if (d.type === 'agent') {
+                tooltipContent += `
+                    <p><strong>Type:</strong> Agent</p>
+                    <p><strong>Files worked on:</strong> ${d.files_worked_on}</p>
+                    <p><strong>Expertise:</strong> ${d.expertise.join(', ')}</p>
+                `;
+            } else {
+                tooltipContent += `
+                    <p><strong>Type:</strong> ${d.type.replace('_', ' ')}</p>
+                    <p><strong>Functions:</strong> ${d.functions || 0}</p>
+                    <p><strong>Classes:</strong> ${d.classes || 0}</p>
+                    <p><strong>Lines:</strong> ${d.lines_of_code || 0}</p>
+                    <p><strong>Path:</strong> ${d.filepath}</p>
+                `;
+            }
+            
+            codebaseTooltip.style("opacity", 1)
+                .html(tooltipContent)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 10) + "px");
+        })
+        .on("mouseout", function(event, d) {
+            d3.select(this).select("circle")
+                .transition()
+                .duration(200)
+                .attr("r", r => parseFloat(d3.select(this).select("circle").attr("r")) / 1.3);
+            
+            codebaseTooltip.style("opacity", 0);
+        });
+        
+        // Update positions on tick
+        codebaseSimulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+            
+            node.attr("transform", d => `translate(${d.x},${d.y})`);
+        });
+        
+        // Update insights
+        updateCodebaseInsights(nodes, stats, graphData.relationships);
+        
+        // Store for filtering
+        window.codebaseNodes = nodes;
+        window.codebaseLinks = links;
+        window.codebaseNodeElements = node;
+        window.codebaseLinkElements = link;
+        
+    } catch (error) {
+        console.error('Error loading codebase graph:', error);
+        codebaseG.append("text")
+            .attr("x", width / 2)
+            .attr("y", height / 2)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#00d4ff")
+            .style("font-size", "18px")
+            .text("Codebase graph not generated yet. Run: python tools/knowledge_graph_builder.py");
+    }
+}
+
+function updateCodebaseInsights(nodes, stats, relationships) {
+    // Most central files
+    const fileCentrality = {};
+    relationships.forEach(rel => {
+        fileCentrality[rel.source] = (fileCentrality[rel.source] || 0) + 1;
+        fileCentrality[rel.target] = (fileCentrality[rel.target] || 0) + 1;
+    });
+    
+    const centralFiles = Object.entries(fileCentrality)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+    
+    const centralList = document.getElementById('central-files');
+    centralList.innerHTML = centralFiles
+        .map(([file, count]) => {
+            const node = nodes.find(n => n.id === file);
+            return `<li>${node ? node.label : file} (${count} connections)</li>`;
+        })
+        .join('');
+    
+    // Test coverage
+    const testRels = relationships.filter(r => r.type === 'tests');
+    const testCoverageList = document.getElementById('test-coverage');
+    testCoverageList.innerHTML = `
+        <li>Total tests: ${nodes.filter(n => n.type === 'test_file').length}</li>
+        <li>Code files tested: ${new Set(testRels.map(r => r.target)).size}</li>
+        <li>Test relationships: ${testRels.length}</li>
+    `;
+    
+    // Agent expertise
+    const agents = nodes.filter(n => n.type === 'agent');
+    const expertiseList = document.getElementById('agent-expertise');
+    if (agents.length > 0) {
+        expertiseList.innerHTML = agents
+            .slice(0, 5)
+            .map(agent => `<li>${agent.label}: ${agent.expertise.join(', ')}</li>`)
+            .join('');
+    } else {
+        expertiseList.innerHTML = '<li>No agent data available yet</li>';
+    }
+}
+
+function filterCodebase(filterType) {
+    if (!window.codebaseLinks || !window.codebaseLinkElements) return;
+    
+    currentCodebaseFilter = filterType;
+    
+    if (filterType === 'all') {
+        window.codebaseLinkElements.style("display", "block");
+        window.codebaseNodeElements.style("display", "block");
+    } else {
+        // Filter links by type
+        window.codebaseLinkElements.style("display", d => {
+            if (filterType === 'imports' && d.type === 'imports') return "block";
+            if (filterType === 'tests' && d.type === 'tests') return "block";
+            if (filterType === 'agents' && d.type === 'worked_on') return "block";
+            return "none";
+        });
+        
+        // Show only connected nodes
+        const visibleLinks = window.codebaseLinks.filter(d => {
+            if (filterType === 'imports' && d.type === 'imports') return true;
+            if (filterType === 'tests' && d.type === 'tests') return true;
+            if (filterType === 'agents' && d.type === 'worked_on') return true;
+            return false;
+        });
+        
+        const visibleNodeIds = new Set();
+        visibleLinks.forEach(link => {
+            visibleNodeIds.add(link.source.id || link.source);
+            visibleNodeIds.add(link.target.id || link.target);
+        });
+        
+        window.codebaseNodeElements.style("display", d => {
+            return visibleNodeIds.has(d.id) ? "block" : "none";
+        });
+    }
+}
+
+// Drag functions for codebase
+function codebaseDragstarted(event, d) {
+    if (!event.active) codebaseSimulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+}
+
+function codebaseDragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+}
+
+function codebaseDragended(event, d) {
+    if (!event.active) codebaseSimulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+}
+
+// Control functions for codebase
+function resetCodebaseZoom() {
+    codebaseSvg.transition().duration(750).call(codebaseZoom.transform, d3.zoomIdentity);
+}
+
+function toggleCodebasePhysics() {
+    codebasePhysicsEnabled = !codebasePhysicsEnabled;
+    if (codebasePhysicsEnabled) {
+        codebaseSimulation.alphaTarget(0.3).restart();
+        setTimeout(() => codebaseSimulation.alphaTarget(0), 1000);
+    } else {
+        codebaseSimulation.stop();
+    }
+}
+
