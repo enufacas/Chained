@@ -30,13 +30,17 @@ This page documents all GitHub Actions workflows that power the Chained autonomo
 - **Notes**: Hybrid approach ensures immediate response + regular cleanup
 
 ### 4. Auto Review and Merge (`auto-review-merge.yml`)
-- **Schedule**: Every 15 minutes
+- **Triggers**:
+  - Every 15 minutes on schedule (handles all PRs)
+  - Immediately when draft PRs become ready (`ready_for_review` event)
+  - Manual via workflow_dispatch
 - **Purpose**: Reviews and merges PRs created by Copilot
 - **Actions**: 
   - AI reviews AI code
   - Automatically approves and merges PRs
   - Closes associated issues when PRs are merged
-- **Notes**: No human approval required
+  - Converts draft PRs to ready when WIP markers removed
+- **Notes**: No human approval required. Optimized to avoid wasteful runs on draft PRs.
 
 ### 5. Timeline Updater (`timeline-updater.yml`)
 - **Schedule**: Every 6 hours
