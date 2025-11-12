@@ -5,31 +5,15 @@
 
 set -e
 
+# Load shared library
+source "$(dirname "$0")/tools/shell-common.sh"
+
 echo "🚀 Chained System Kickoff"
 echo "========================="
 echo ""
 
-# Color codes
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-RED='\033[0;31m'
-NC='\033[0m'
-
-# Check if gh CLI is available
-if ! command -v gh &> /dev/null; then
-    echo -e "${RED}Error: GitHub CLI (gh) is required but not installed.${NC}"
-    echo ""
-    echo "Please install it from: https://cli.github.com/"
-    echo ""
-    exit 1
-fi
-
-# Check if gh is authenticated
-if ! gh auth status &> /dev/null; then
-    echo -e "${RED}Error: GitHub CLI is not authenticated.${NC}"
-    echo ""
-    echo "Please run: gh auth login"
+# Check GitHub CLI prerequisites
+if ! check_gh_cli; then
     echo ""
     exit 1
 fi
