@@ -332,6 +332,58 @@ python3 tools/benchmark_code_analyzer.py
 
 ---
 
+### 🔧 Code Smell Fixer
+
+An automated tool that detects and fixes common code smells in Python code, with auto-fix capabilities and comprehensive safety features.
+
+**Purpose:** Automatically improve code quality by detecting and fixing common code smells like unused imports, magic numbers, and missing docstrings.
+
+**Quick Start:**
+```bash
+# Analyze and fix a single file (with backup)
+python3 tools/code-smell-fixer.py -f myfile.py
+
+# Preview changes without applying (dry-run)
+python3 tools/code-smell-fixer.py -d src/ --dry-run
+
+# Interactive mode - ask before each fix
+python3 tools/code-smell-fixer.py -f myfile.py --interactive
+
+# Generate JSON report
+python3 tools/code-smell-fixer.py -d src/ -o report.json --format json
+```
+
+**What It Fixes:**
+- ✅ **Auto-Fix**: Unused imports, magic numbers, missing docstrings
+- 🔍 **Detection**: Poor variable names, missing type hints, long functions, deep nesting
+
+**Features:**
+- Automatic backup system (timestamped)
+- Dry-run mode for safe previews
+- Interactive mode for manual approval
+- Comprehensive test suite (21 tests)
+- Integrates with existing code-analyzer.py
+- Handles errors gracefully
+
+**Safety Features:**
+- Creates backups before modifications
+- Validates Python syntax
+- Preserves working code
+- Can skip fixes interactively
+
+**Example Results:**
+```
+Removes unused imports:         ✓ Automatic
+Extracts magic numbers:         ✓ Automatic
+Adds skeleton docstrings:       ✓ Automatic
+Detects poor variable names:    ⚠️ Manual review needed
+Detects long functions:         ⚠️ Manual refactoring needed
+```
+
+[📖 Full Documentation](./CODE_SMELL_FIXER_README.md)
+
+---
+
 ### 🏛️ AI Code Archaeologist
 
 An intelligent tool that analyzes git history to document legacy decisions, architectural evolution, and technical debt.
