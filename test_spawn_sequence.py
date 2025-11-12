@@ -134,6 +134,20 @@ class TestWorkflowIntegration(unittest.TestCase):
             'Removed \\`spawn-pending\\` label' in auto_review_content,
             "Could not find 'Removed spawn-pending label' message"
         )
+    
+    def test_copilot_label_added_in_auto_review(self):
+        """Test that copilot label is added after spawn PR merge."""
+        with open('.github/workflows/auto-review-merge.yml', 'r') as f:
+            auto_review_content = f.read()
+        
+        # Check that copilot label is added
+        self.assertIn('--add-label "copilot"', auto_review_content)
+        # Check for addition message (more lenient check for backticks)
+        self.assertTrue(
+            'Added `copilot` label' in auto_review_content or
+            'Added \\`copilot\\` label' in auto_review_content,
+            "Could not find 'Added copilot label' message"
+        )
 
     def test_spawn_pending_check_in_script(self):
         """Test that assignment script checks for spawn-pending label."""
