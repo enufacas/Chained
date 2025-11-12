@@ -209,7 +209,8 @@ class GitHubAPIClient:
             error_data = json.loads(error.read().decode())
             message = error_data.get('message', 'Unknown error')
             documentation_url = error_data.get('documentation_url')
-        except:
+        except (json.JSONDecodeError, UnicodeDecodeError, AttributeError) as e:
+            # Fallback to basic error message if response body is malformed
             message = f"HTTP {error.code}: {error.reason}"
             documentation_url = None
         

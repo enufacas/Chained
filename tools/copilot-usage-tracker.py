@@ -165,7 +165,8 @@ class CopilotUsageTracker:
                 
                 try:
                     metric_date = datetime.fromisoformat(metric_date_str.replace('Z', '+00:00'))
-                except:
+                except (ValueError, AttributeError, TypeError) as e:
+                    # Skip invalid date formats
                     continue
                 
                 # Only count metrics from current billing period
@@ -309,7 +310,8 @@ class CopilotUsageTracker:
             try:
                 with open(self.history_file, 'r') as f:
                     return json.load(f)
-            except:
+            except (json.JSONDecodeError, IOError, OSError) as e:
+                # Return empty dict if file is corrupted or unreadable
                 pass
         return {}
     
