@@ -248,6 +248,13 @@ section h2 {
 
 .automation-item p {
     color: var(--text-muted);
+}
+
+.automation-item .last-activity {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    font-style: italic;
     font-size: 0.9rem;
 }
 
