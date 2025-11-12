@@ -30,6 +30,7 @@ jobs:
           import os
           import random
           from datetime import datetime
+          from pathlib import Path
           
           # Base creative ideas
           base_ideas = [
@@ -65,17 +66,76 @@ jobs:
               "Build an AI creative coding challenge generator"
           ]
           
-          # Check for recent learnings
+          # Check for learnings book
           enhanced_ideas = []
           learning_context = ""
+          book_insights = []
           
+          book_dir = Path('learnings/book')
+          if book_dir.exists():
+              print("📖 Reading from learnings book...")
+              
+              # Read README to get chapter info
+              readme_file = book_dir / 'README.md'
+              if readme_file.exists():
+                  with open(readme_file, 'r') as f:
+                      readme_content = f.read()
+                  
+                  # Extract chapter information
+                  if 'AI & Machine Learning' in readme_content:
+                      ai_file = book_dir / 'AI_ML.md'
+                      if ai_file.exists():
+                          enhanced_ideas.extend([
+                              "Build an LLM-powered code assistant inspired by learnings book",
+                              "Implement a transformer model for code generation from HN insights",
+                              "Create a GPT-integrated code review system based on recent AI trends"
+                          ])
+                          book_insights.append('AI/ML')
+                  
+                  if 'Programming' in readme_content:
+                      prog_file = book_dir / 'Programming.md'
+                      if prog_file.exists():
+                          enhanced_ideas.extend([
+                              "Adopt new programming patterns from learnings book",
+                              "Implement language features inspired by trending discussions"
+                          ])
+                          book_insights.append('Programming')
+                  
+                  if 'Performance' in readme_content:
+                      perf_file = book_dir / 'Performance.md'
+                      if perf_file.exists():
+                          enhanced_ideas.extend([
+                              "Build a performance profiler inspired by learnings book insights",
+                              "Implement optimization techniques from trending benchmarks"
+                          ])
+                          book_insights.append('Performance')
+                  
+                  if 'Security' in readme_content:
+                      sec_file = book_dir / 'Security.md'
+                      if sec_file.exists():
+                          enhanced_ideas.extend([
+                              "Create security scanner based on learnings book vulnerabilities",
+                              "Implement automated security patches from recent CVE insights"
+                          ])
+                          book_insights.append('Security')
+                  
+                  if 'DevOps' in readme_content:
+                      devops_file = book_dir / 'DevOps.md'
+                      if devops_file.exists():
+                          enhanced_ideas.extend([
+                              "Build CI/CD enhancement based on learnings book patterns",
+                              "Implement infrastructure automation from DevOps insights"
+                          ])
+                          book_insights.append('DevOps')
+                  
+                  learning_context = f"Inspired by learnings book chapters: {', '.join(book_insights)}"
+                  print(f"✓ Found insights in: {', '.join(book_insights)}")
+          
+          # Also check for recent learning files (backward compatibility)
           if os.path.exists('learnings'):
-              # Read recent learning files
               learning_files = sorted([f for f in os.listdir('learnings') if f.endswith('.json')])[-5:]
               
               topics_seen = set()
-              trends_seen = []
-              
               for lf in learning_files:
                   try:
                       with open(f'learnings/{lf}', 'r') as f:
@@ -83,44 +143,11 @@ jobs:
                           
                           if 'topics' in data:
                               topics_seen.update(data['topics'].keys())
-                          if 'trends' in data:
-                              trends_seen.extend(data['trends'][:3])
                   except:
                       pass
               
-              # Generate ideas based on learnings
-              if 'AI/ML' in topics_seen:
-                  enhanced_ideas.extend([
-                      "Build an LLM-powered code assistant based on recent AI trends",
-                      "Implement a transformer model for code generation inspired by HN",
-                      "Create a GPT-integrated code review system"
-                  ])
-              
-              if 'Performance' in topics_seen:
-                  enhanced_ideas.extend([
-                      "Develop a performance profiler inspired by trending optimization techniques",
-                      "Build a runtime optimizer using latest perf insights from HN"
-                  ])
-              
-              if 'Security' in topics_seen:
-                  enhanced_ideas.extend([
-                      "Implement security scanner based on latest vulnerability trends",
-                      "Create an automated security patch system inspired by recent CVEs"
-                  ])
-              
-              if 'Open Source' in topics_seen:
-                  enhanced_ideas.extend([
-                      "Build a contribution analyzer for OSS projects trending on HN",
-                      "Create a project health dashboard for open source repos"
-                  ])
-              
-              if 'Web' in topics_seen:
-                  enhanced_ideas.extend([
-                      "Develop a modern web framework feature based on trending discussions",
-                      "Build a web performance optimizer using latest browser APIs"
-                  ])
-              
-              learning_context = f"Influenced by recent learnings: {', '.join(list(topics_seen)[:3])}"
+              if topics_seen and not book_insights:
+                  learning_context = f"Influenced by recent learnings: {', '.join(list(topics_seen)[:3])}"
           
           # Combine base and enhanced ideas
           all_ideas = base_ideas + enhanced_ideas
@@ -139,10 +166,12 @@ jobs:
               f.write(f"idea_id={idea_id}\n")
               f.write(f"is_learning_based={'true' if is_learning_based else 'false'}\n")
               f.write(f"learning_context={learning_context}\n")
+              f.write(f"uses_book={'true' if book_insights else 'false'}\n")
           
-          print(f"Generated idea: {selected_idea}")
-          print(f"Learning-based: {is_learning_based}")
-          print(f"Context: {learning_context}")
+          print(f"\n💡 Generated idea: {selected_idea}")
+          print(f"📚 Learning-based: {is_learning_based}")
+          print(f"📖 Uses book: {bool(book_insights)}")
+          print(f"🎯 Context: {learning_context}")
           
           PYTHON_SCRIPT
 
@@ -153,7 +182,11 @@ jobs:
           # Create badge for learning-based ideas
           learning_badge=""
           if [ "${{ steps.generate.outputs.is_learning_based }}" = "true" ]; then
-            learning_badge="🧠 **This idea was influenced by recent learnings from TLDR Tech and Hacker News!**"
+            if [ "${{ steps.generate.outputs.uses_book }}" = "true" ]; then
+              learning_badge="📖 **This idea was inspired by insights from the [Learnings Book](https://github.com/enufacas/Chained/tree/main/learnings/book)!**"
+            else
+              learning_badge="🧠 **This idea was influenced by recent learnings from TLDR Tech and Hacker News!**"
+            fi
           fi
           
           issue_url=$(gh issue create \
@@ -187,11 +220,16 @@ jobs:
           - Base creative AI-focused concepts
           - Recent learnings from TLDR Tech
           - Trending topics on Hacker News
+          - Insights from the Learnings Book
           - Current repository patterns and needs
+
+          ### 📚 Learning Resources
+          - [Learnings Book](https://github.com/enufacas/Chained/tree/main/learnings/book) - Browse organized chapters
+          - [Recent Learnings](https://github.com/enufacas/Chained/tree/main/learnings) - View raw learning data
 
           ---
 
-          *Generated by Smart Idea Generator with learning integration*" \
+          *Generated by Smart Idea Generator with learnings book integration*" \
             --label "ai-generated,enhancement,copilot-assigned")
           
           echo "Created enhanced issue: ${issue_url}"

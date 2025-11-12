@@ -19,6 +19,17 @@ See [SECURITY_IMPLEMENTATION.md](SECURITY_IMPLEMENTATION.md) for details on how 
 - **Fix issues**: Help resolve issues that AI might struggle with
 - **Document learnings**: Create issues tagged with `learning`
 
+## Code Quality Standards
+
+Before submitting a PR, please review:
+
+- **[CODE_REVIEW_CHECKLIST.md](CODE_REVIEW_CHECKLIST.md)** - What reviewers will check
+- **[BEST_PRACTICES.md](BEST_PRACTICES.md)** - Core engineering principles
+- **[SOLID_PRINCIPLES_GUIDE.md](SOLID_PRINCIPLES_GUIDE.md)** - SOLID principles guide
+- **[CODE_REVIEW_GUIDE_TESTING.md](CODE_REVIEW_GUIDE_TESTING.md)** - Testing best practices
+
+These guides will help you write code that meets our quality standards and speeds up the review process.
+
 ## 📝 License
 
 This project is open source and available for educational and entertainment purposes.

@@ -25,7 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests
+          pip install requests==2.31.0 beautifulsoup4==4.12.3 lxml==5.1.0 html5lib==1.1
 
       - name: Fetch and analyze Hacker News
         id: fetch
@@ -36,8 +36,178 @@ jobs:
           from datetime import datetime, timezone
           import os
           import re
+          import time
+          from bs4 import BeautifulSoup
+          from urllib.parse import urlparse
+          import ipaddress
           
           print("Fetching Hacker News top stories...")
+          
+          # Security: URL validation and sanitization
+          class URLValidator:
+              """Validates URLs to prevent SSRF and other attacks"""
+              
+              # Blocked schemes
+              BLOCKED_SCHEMES = ['file', 'ftp', 'data', 'javascript', 'vbscript']
+              
+              # Allowed schemes only
+              ALLOWED_SCHEMES = ['http', 'https']
+              
+              @staticmethod
+              def is_private_ip(ip_str):
+                  """Check if IP is private/internal"""
+                  try:
+                      ip = ipaddress.ip_address(ip_str)
+                      return ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved
+                  except ValueError:
+                      return False
+              
+              @staticmethod
+              def validate_url(url):
+                  """Validate URL for security issues"""
+                  if not url or not isinstance(url, str):
+                      return False, "Invalid URL format"
+                  
+                  # Length check
+                  if len(url) > 2048:
+                      return False, "URL too long"
+                  
+                  try:
+                      parsed = urlparse(url)
+                      
+                      # Check scheme
+                      if parsed.scheme.lower() not in URLValidator.ALLOWED_SCHEMES:
+                          return False, f"Blocked scheme: {parsed.scheme}"
+                      
+                      # Check for suspicious patterns
+                      if '@' in parsed.netloc:
+                          return False, "URL contains @ (possible credential injection)"
+                      
+                      # Check hostname
+                      hostname = parsed.hostname
+                      if not hostname:
+                          return False, "No hostname found"
+                      
+                      # Block localhost variants
+                      localhost_variants = ['localhost', '127.0.0.1', '0.0.0.0', '::1', '0:0:0:0:0:0:0:1']
+                      if hostname.lower() in localhost_variants:
+                          return False, "Localhost access blocked"
+                      
+                      # Check for private IPs (attempt to resolve)
+                      try:
+                          # Basic IP check if hostname looks like IP
+                          if re.match(r'^\d+\.\d+\.\d+\.\d+$', hostname):
+                              if URLValidator.is_private_ip(hostname):
+                                  return False, "Private IP address blocked"
+                          
+                          # Check for IPv6
+                          if ':' in hostname and not hostname.startswith('['):
+                              if URLValidator.is_private_ip(hostname):
+                                  return False, "Private IPv6 address blocked"
+                      except Exception:
+                          pass  # Continue if IP validation fails
+                      
+                      return True, "Valid URL"
+                      
+                  except Exception as e:
+                      return False, f"URL parsing error: {str(e)}"
+          
+          # Web content fetcher (embedded) with security enhancements
+          class WebContentFetcher:
+              def __init__(self):
+                  self.session = requests.Session()
+                  self.session.headers.update({
+                      'User-Agent': 'Mozilla/5.0 (compatible; ChainedAI/1.0)'
+                  })
+                  self.session.max_redirects = 3  # Limit redirect chains
+                  self.validator = URLValidator()
+                  self.max_content_size = 1024 * 1024  # 1MB limit
+              
+              def sanitize_text(self, text):
+                  """Remove any remaining HTML and sanitize text"""
+                  # Remove any HTML tags that might have slipped through
+                  text = re.sub(r'<[^>]+>', '', text)
+                  # Remove any script-like content
+                  text = re.sub(r'<script[^>]*>.*?</script>', '', text, flags=re.IGNORECASE | re.DOTALL)
+                  # Remove excessive whitespace
+                  text = re.sub(r'\s+', ' ', text)
+                  return text.strip()
+              
+              def fetch(self, url):
+                  """Fetch and sanitize web content with security checks"""
+                  # Validate URL first
+                  is_valid, message = self.validator.validate_url(url)
+                  if not is_valid:
+                      print(f"  ✗ Blocked URL: {url[:60]}... Reason: {message}")
+                      return None
+                  
+                  try:
+                      response = self.session.get(
+                          url, 
+                          timeout=10, 
+                          allow_redirects=True,
+                          stream=True  # Stream to check size
+                      )
+                      
+                      # Check response size
+                      content_length = response.headers.get('content-length')
+                      if content_length and int(content_length) > self.max_content_size:
+                          print(f"  ✗ Content too large: {url[:60]}...")
+                          return None
+                      
+                      # Validate final URL after redirects
+                      final_url = response.url
+                      is_valid, message = self.validator.validate_url(final_url)
+                      if not is_valid:
+                          print(f"  ✗ Blocked redirect target: {final_url[:60]}... Reason: {message}")
+                          return None
+                      
+                      if response.status_code == 200:
+                          # Read content with size limit
+                          content = b''
+                          for chunk in response.iter_content(chunk_size=8192):
+                              content += chunk
+                              if len(content) > self.max_content_size:
+                                  print(f"  ✗ Content exceeded size limit: {url[:60]}...")
+                                  return None
+                          
+                          # Parse HTML with BeautifulSoup
+                          soup = BeautifulSoup(content, 'html.parser')
+                          
+                          # Remove ALL potentially dangerous elements
+                          for element in soup(['script', 'style', 'nav', 'footer', 'iframe', 
+                                               'object', 'embed', 'applet', 'link', 'meta']):
+                              element.decompose()
+                          
+                          # Try to find main content
+                          content_elem = soup.find('article') or soup.find('main') or soup.find('body')
+                          if content_elem:
+                              # Get text only (no HTML)
+                              text = content_elem.get_text(separator='\n', strip=True)
+                              
+                              # Additional sanitization
+                              text = self.sanitize_text(text)
+                              
+                              # Clean up lines
+                              lines = [line.strip() for line in text.split('\n') if line.strip()]
+                              text = '\n'.join(lines)
+                              
+                              # Truncate if too long
+                              if len(text) > 2000:
+                                  text = text[:2000] + '\n\n[Content truncated...]'
+                              
+                              return text
+                  except requests.exceptions.TooManyRedirects:
+                      print(f"  ✗ Too many redirects: {url[:60]}...")
+                  except requests.exceptions.Timeout:
+                      print(f"  ✗ Timeout: {url[:60]}...")
+                  except requests.exceptions.RequestException as e:
+                      print(f"  ✗ Request error for {url[:60]}...: {type(e).__name__}")
+                  except Exception as e:
+                      print(f"  ✗ Error fetching {url[:60]}...: {type(e).__name__}")
+                  return None
+          
+          fetcher = WebContentFetcher()
           
           # Hacker News API
           base_url = 'https://hacker-news.firebaseio.com/v0'
@@ -45,74 +215,167 @@ jobs:
           learnings = []
           tech_topics = {}
           
+          # Data validation helper
+          def validate_story_data(story):
+              """Validate story data from API"""
+              if not story or not isinstance(story, dict):
+                  return False, "Invalid story format"
+              
+              if 'title' not in story:
+                  return False, "Missing title"
+              
+              if not isinstance(story['title'], str):
+                  return False, "Invalid title type"
+              
+              # Title length check
+              if len(story['title']) > 500:
+                  return False, "Title too long"
+              
+              # Check score is numeric
+              score = story.get('score', 0)
+              if not isinstance(score, (int, float)):
+                  return False, "Invalid score type"
+              
+              return True, "Valid"
+          
           try:
               # Get top stories
               response = requests.get(f'{base_url}/topstories.json', timeout=10)
-              top_stories = response.json()[:30]  # Top 30 stories
+              response.raise_for_status()
+              
+              top_stories_data = response.json()
+              
+              # Validate response is a list
+              if not isinstance(top_stories_data, list):
+                  print("✗ Invalid API response format")
+                  top_stories_data = []
+              
+              # Limit to top 30 and validate IDs
+              top_stories = []
+              for story_id in top_stories_data[:30]:
+                  if isinstance(story_id, int) and story_id > 0:
+                      top_stories.append(story_id)
+              
+              print(f"Found {len(top_stories)} story IDs to process")
               
               for story_id in top_stories:
                   try:
                       story_response = requests.get(f'{base_url}/item/{story_id}.json', timeout=5)
+                      story_response.raise_for_status()
                       story = story_response.json()
                       
-                      if story and 'title' in story:
-                          title = story['title']
-                          url = story.get('url', '')
-                          score = story.get('score', 0)
+                      # Validate story data
+                      is_valid, message = validate_story_data(story)
+                      if not is_valid:
+                          print(f"  ✗ Invalid story {story_id}: {message}")
+                          continue
+                      
+                      title = story['title']
+                      url = story.get('url', '')
+                      score = story.get('score', 0)
+                      
+                      # Sanitize title (remove any HTML entities or tags)
+                      title = re.sub(r'<[^>]+>', '', title)
+                      title = title.strip()
+                      
+                      # Only include high-quality stories (score > 100)
+                      if score > 100:
+                          learning = {
+                              'title': title,
+                              'url': url,
+                              'score': score,
+                              'source': 'Hacker News'
+                          }
                           
-                          # Only include high-quality stories (score > 100)
-                          if score > 100:
-                              learnings.append({
-                                  'title': title,
-                                  'url': url,
-                                  'score': score,
-                                  'source': 'Hacker News'
-                              })
-                              
-                              # Categorize by keywords
-                              title_lower = title.lower()
-                              
-                              keywords = {
-                                  'AI/ML': ['ai', 'ml', 'machine learning', 'neural', 'gpt', 'llm', 'copilot'],
-                                  'Programming': ['python', 'rust', 'go', 'javascript', 'typescript', 'code'],
-                                  'DevOps': ['docker', 'kubernetes', 'ci/cd', 'github', 'actions'],
-                                  'Database': ['postgres', 'sql', 'database', 'mongodb', 'redis'],
-                                  'Web': ['web', 'browser', 'http', 'api', 'react', 'vue'],
-                                  'Security': ['security', 'vulnerability', 'encryption', 'auth'],
-                                  'Performance': ['performance', 'optimization', 'speed', 'benchmark'],
-                                  'Open Source': ['open source', 'oss', 'github', 'git']
-                              }
-                              
-                              for category, terms in keywords.items():
-                                  if any(term in title_lower for term in terms):
-                                      if category not in tech_topics:
-                                          tech_topics[category] = []
-                                      tech_topics[category].append(title)
-                                      break
+                          # Try to fetch actual content (with validation)
+                          if url and isinstance(url, str):
+                              # Additional URL validation
+                              is_valid_url, validation_msg = fetcher.validator.validate_url(url)
+                              if is_valid_url:
+                                  print(f"  Fetching content from: {url[:60]}...")
+                                  content = fetcher.fetch(url)
+                                  if content:
+                                      learning['content'] = content
+                                      print(f"  ✓ Fetched content ({len(content)} chars)")
+                                  time.sleep(0.5)  # Rate limiting
+                              else:
+                                  print(f"  ✗ Skipping invalid URL: {validation_msg}")
+                          
+                          learnings.append(learning)
+                          
+                          # Categorize by keywords
+                          title_lower = title.lower()
+                          
+                          keywords = {
+                              'AI/ML': ['ai', 'ml', 'machine learning', 'neural', 'gpt', 'llm', 'copilot'],
+                              'Programming': ['python', 'rust', 'go', 'javascript', 'typescript', 'code'],
+                              'DevOps': ['docker', 'kubernetes', 'ci/cd', 'github', 'actions'],
+                              'Database': ['postgres', 'sql', 'database', 'mongodb', 'redis'],
+                              'Web': ['web', 'browser', 'http', 'api', 'react', 'vue'],
+                              'Security': ['security', 'vulnerability', 'encryption', 'auth'],
+                              'Performance': ['performance', 'optimization', 'speed', 'benchmark'],
+                              'Open Source': ['open source', 'oss', 'github', 'git']
+                          }
+                          
+                          for category, terms in keywords.items():
+                              if any(term in title_lower for term in terms):
+                                  if category not in tech_topics:
+                                      tech_topics[category] = []
+                                  tech_topics[category].append(title)
+                                  break
+                  except requests.exceptions.RequestException as e:
+                      print(f"✗ Request error fetching story {story_id}: {type(e).__name__}")
+                      continue
+                  except (ValueError, KeyError) as e:
+                      print(f"✗ Data error processing story {story_id}: {type(e).__name__}")
+                      continue
                   except Exception as e:
-                      print(f"Error fetching story {story_id}: {e}")
+                      print(f"✗ Unexpected error processing story {story_id}: {type(e).__name__}")
                       continue
               
               print(f"✓ Fetched {len(learnings)} high-quality stories")
               
+          except requests.exceptions.RequestException as e:
+              print(f"✗ Network error fetching Hacker News: {type(e).__name__}")
           except Exception as e:
-              print(f"✗ Error fetching Hacker News: {e}")
+              print(f"✗ Unexpected error: {type(e).__name__}")
           
-          # Save learnings
+          # Save learnings with size validation
           os.makedirs('learnings', exist_ok=True)
           now = datetime.now(timezone.utc)
           timestamp = now.strftime('%Y%m%d_%H%M%S')
           
-          with open(f'learnings/hn_{timestamp}.json', 'w') as f:
-              json.dump({
-                  'timestamp': now.isoformat(),
-                  'source': 'Hacker News',
-                  'learnings': learnings,
-                  'topics': tech_topics,
-                  'total_stories': len(learnings)
-              }, f, indent=2)
+          # Calculate total data size
+          learning_data = {
+              'timestamp': now.isoformat(),
+              'source': 'Hacker News',
+              'learnings': learnings,
+              'topics': tech_topics,
+              'total_stories': len(learnings),
+              'security_validated': True,
+              'version': '2.0'
+          }
+          
+          # Serialize to check size
+          json_content = json.dumps(learning_data, indent=2)
+          max_file_size = 5 * 1024 * 1024  # 5MB limit
+          
+          if len(json_content) > max_file_size:
+              print(f"⚠️ Warning: Learning data exceeds size limit ({len(json_content)} bytes)")
+              # Truncate learnings if needed
+              while len(json_content) > max_file_size and len(learnings) > 0:
+                  learnings.pop()
+                  learning_data['learnings'] = learnings
+                  learning_data['total_stories'] = len(learnings)
+                  json_content = json.dumps(learning_data, indent=2)
+              print(f"  Truncated to {len(learnings)} learnings")
+          
+          filename = f'learnings/hn_{timestamp}.json'
+          with open(filename, 'w') as f:
+              f.write(json_content)
           
           print(f"Saved {len(learnings)} learnings across {len(tech_topics)} topics")
+          print(f"File size: {len(json_content)} bytes")
           
           # Generate ideas based on trends
           ai_ideas = []
@@ -255,6 +518,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
+          # Rebuild learnings book
+          echo "Rebuilding learnings book..."
+          python3 tools/build-learnings-book.py
+          
           git add learnings/
           
           if git diff --staged --quiet; then
@@ -278,7 +545,7 @@ jobs:
             **New Ideas Generated:** ${{ steps.fetch.outputs.idea_count }}
             
             ### Summary
-            This PR adds new learnings collected from Hacker News trending discussions.
+            This PR adds new learnings collected from Hacker News trending discussions with full article content.
             
             **Sample Learning:**
             ${{ steps.fetch.outputs.sample_learning }}
@@ -286,7 +553,9 @@ jobs:
             ### Changes
             - Updated learnings database with community insights
             - Extracted trending topics and patterns
+            - Fetched and summarized full article content
             - Identified potential project ideas
+            - Rebuilt learnings book with new insights
             
             ---
             *This PR was automatically created by the Hacker News Learning workflow and will be auto-merged.*" \

@@ -1,0 +1,246 @@
+name: "Learning: Daily Reflection"
+
+on:
+  schedule:
+    # Run daily at 9 AM UTC (between morning learning and idea generation)
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  daily-reflection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 lxml html5lib
+
+      - name: Daily learning reflection
+        id: reflect
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import random
+          from datetime import datetime, timezone
+          from pathlib import Path
+          
+          print("🧠 Daily Learning Reflection")
+          print("=" * 50)
+          
+          # Read the learnings book
+          book_dir = Path('learnings/book')
+          
+          if not book_dir.exists():
+              print("Learnings book not found. Building it first...")
+              os.system('python3 tools/build-learnings-book.py')
+          
+          # Get all chapter files
+          chapters = list(book_dir.glob('*.md'))
+          chapters = [c for c in chapters if c.name != 'README.md']
+          
+          if not chapters:
+              print("No chapters found in learnings book")
+              exit(0)
+          
+          # Pick a random chapter to focus on today
+          focus_chapter = random.choice(chapters)
+          chapter_name = focus_chapter.stem
+          
+          print(f"\n📖 Today's focus: {chapter_name}")
+          
+          # Read the chapter
+          with open(focus_chapter, 'r') as f:
+              chapter_content = f.read()
+          
+          # Extract insights from the chapter
+          lines = chapter_content.split('\n')
+          insights = []
+          current_insight = {}
+          
+          for line in lines:
+              if line.startswith('### '):
+                  if current_insight:
+                      insights.append(current_insight)
+                  current_insight = {'title': line[4:].strip()}
+              elif line.startswith('**Link:**'):
+                  current_insight['url'] = line.split('**Link:**')[1].strip()
+              elif line.startswith('**Content Summary:**'):
+                  current_insight['has_content'] = True
+          
+          if current_insight:
+              insights.append(current_insight)
+          
+          print(f"📚 Found {len(insights)} insights in this chapter")
+          
+          # Select top 3 insights to reflect on
+          selected_insights = random.sample(insights, min(3, len(insights)))
+          
+          # Generate reflection
+          reflection_topics = []
+          for insight in selected_insights:
+              reflection_topics.append(insight['title'])
+          
+          reflection_summary = f"""
+          ## 🧠 Daily Learning Reflection
+          
+          **Date:** {datetime.now(timezone.utc).strftime('%Y-%m-%d')}
+          **Focus Chapter:** {chapter_name}
+          **Insights Reviewed:** {len(selected_insights)}
+          
+          ### 📖 Topics Reflected Upon:
+          """
+          
+          for i, topic in enumerate(reflection_topics, 1):
+              reflection_summary += f"\n{i}. {topic}"
+          
+          reflection_summary += f"""
+          
+          ### 💡 Key Takeaways:
+          
+          - Reviewed insights from the {chapter_name} chapter of the learnings book
+          - Connected patterns across {len(selected_insights)} different sources
+          - Identified potential applications for current projects
+          - Deepened understanding of {chapter_name.replace('_', ' ').lower()} concepts
+          
+          ### 🎯 Action Items:
+          
+          - Consider incorporating these insights into next idea generation
+          - Monitor for related topics in future learning sessions
+          - Look for practical applications in current codebase
+          
+          ---
+          
+          *This reflection helps the AI continuously learn and improve by revisiting past learnings.*
+          """
+          
+          # Save reflection
+          reflection_file = f"learnings/reflection_{datetime.now(timezone.utc).strftime('%Y%m%d')}.md"
+          with open(reflection_file, 'w') as f:
+              f.write(reflection_summary)
+          
+          print(f"\n✅ Reflection saved to {reflection_file}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"has_reflection=true\n")
+              f.write(f"focus_chapter={chapter_name}\n")
+              f.write(f"insight_count={len(selected_insights)}\n")
+              f.write(f"reflection_file={reflection_file}\n")
+              sample_topic = reflection_topics[0] if reflection_topics else "No topics"
+              f.write(f"sample_topic={sample_topic}\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Create reflection issue
+        if: steps.reflect.outputs.has_reflection == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "🧠 Daily Learning Reflection - $(date +%Y-%m-%d)" \
+            --body "## Daily Learning Reflection
+          
+          **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          **Focus Chapter:** ${{ steps.reflect.outputs.focus_chapter }}
+          **Insights Reviewed:** ${{ steps.reflect.outputs.insight_count }}
+          
+          ### 📖 Reflection Summary
+          
+          Today's reflection focused on the **${{ steps.reflect.outputs.focus_chapter }}** chapter of the learnings book.
+          
+          **Sample Topic:**
+          ${{ steps.reflect.outputs.sample_topic }}
+          
+          ### 🎯 Purpose
+          
+          This daily reflection helps the AI:
+          - Review and reinforce past learnings
+          - Make connections between different insights
+          - Identify patterns and themes across sources
+          - Stay current with evolving technology trends
+          - Maintain a growth mindset through continuous learning
+          
+          ### 🔗 Resources
+          
+          - **Reflection File:** [\`${{ steps.reflect.outputs.reflection_file }}\`](https://github.com/enufacas/Chained/blob/main/${{ steps.reflect.outputs.reflection_file }})
+          - **Learnings Book:** [Browse all chapters](https://github.com/enufacas/Chained/tree/main/learnings/book)
+          - **Full Index:** [README](https://github.com/enufacas/Chained/blob/main/learnings/book/README.md)
+          
+          ### 💡 Impact
+          
+          These reflections influence:
+          - Future idea generation and creativity
+          - Technology selection and implementation
+          - Best practices adoption
+          - Learning priorities and focus areas
+          
+          ---
+          
+          *This reflection was automatically created by the Daily Learning Reflection workflow. The AI continuously learns and grows through regular reflection.*" \
+            --label "learning,reflection,automated" || echo "Issue creation skipped or failed"
+
+      - name: Create PR for reflection
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add learnings/
+          
+          if git diff --staged --quiet; then
+            echo "No reflection to commit"
+          else
+            branch_name="learning/reflection-$(date +%Y%m%d-%H%M%S)"
+            git checkout -b "${branch_name}"
+            
+            git commit -m "🧠 Daily Learning Reflection - $(date -u +%Y-%m-%d)"
+            git push origin "${branch_name}"
+            
+            gh pr create \
+              --title "🧠 Daily Learning Reflection - $(date -u +%Y-%m-%d)" \
+              --body "## Daily Learning Reflection
+            
+            **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+            **Focus Chapter:** ${{ steps.reflect.outputs.focus_chapter }}
+            **Insights Reviewed:** ${{ steps.reflect.outputs.insight_count }}
+            
+            ### Summary
+            This PR adds today's learning reflection, reviewing and reinforcing past insights.
+            
+            **Sample Topic:**
+            ${{ steps.reflect.outputs.sample_topic }}
+            
+            ### Changes
+            - Added daily reflection document
+            - Reviewed insights from ${{ steps.reflect.outputs.focus_chapter }} chapter
+            - Identified key takeaways and action items
+            
+            ---
+            *This PR was automatically created by the Daily Learning Reflection workflow and will be auto-merged.*" \
+              --label "automated,learning,reflection" \
+              --base main \
+              --head "${branch_name}"
+            
+            echo "✅ PR created successfully for daily reflection"
+          fi
+
+      - name: Log reflection activity
+        run: |
+          echo "Daily reflection completed"
+          echo "Focus chapter: ${{ steps.reflect.outputs.focus_chapter }}"
+          echo "Insights reviewed: ${{ steps.reflect.outputs.insight_count }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
