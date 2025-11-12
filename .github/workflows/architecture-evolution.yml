@@ -1,0 +1,152 @@
+name: "Architecture Evolution Tracker"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  track-architecture:
+    runs-on: ubuntu-latest
+    # Only run on merge to main or manual trigger
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Get full history
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || echo "No additional dependencies needed"
+
+      - name: Run Architecture Tracker
+        id: track
+        run: |
+          echo "Running architecture analysis..."
+          python3 tools/architecture-tracker.py \
+            --repo-path . \
+            --output-dir analysis/architecture \
+            --compare \
+            --mermaid
+          
+          echo "Analysis complete!"
+          
+          # Extract metrics for output
+          if [ -f analysis/architecture/latest.json ]; then
+            total_files=$(python3 -c "import json; print(json.load(open('analysis/architecture/latest.json'))['metrics']['total_files'])")
+            total_lines=$(python3 -c "import json; print(json.load(open('analysis/architecture/latest.json'))['metrics']['total_lines'])")
+            total_components=$(python3 -c "import json; print(json.load(open('analysis/architecture/latest.json'))['metrics']['total_components'])")
+            
+            echo "total_files=${total_files}" >> $GITHUB_OUTPUT
+            echo "total_lines=${total_lines}" >> $GITHUB_OUTPUT
+            echo "total_components=${total_components}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Copy data to GitHub Pages
+        run: |
+          # Create docs/data directory if it doesn't exist
+          mkdir -p docs/data/architecture
+          
+          # Copy architecture data to docs for GitHub Pages
+          if [ -d analysis/architecture ]; then
+            cp -r analysis/architecture/* docs/data/architecture/
+            echo "Copied architecture data to docs/data/architecture/"
+          fi
+
+      - name: Generate summary
+        id: summary
+        run: |
+          if [ -f analysis/architecture/evolution.json ]; then
+            snapshot_count=$(python3 -c "import json; print(len(json.load(open('analysis/architecture/evolution.json'))['snapshots']))")
+            echo "snapshot_count=${snapshot_count}" >> $GITHUB_OUTPUT
+            
+            echo "📊 Architecture tracking summary:" >> $GITHUB_STEP_SUMMARY
+            echo "- Total files tracked: ${{ steps.track.outputs.total_files }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Total lines of code: ${{ steps.track.outputs.total_lines }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Total components: ${{ steps.track.outputs.total_components }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Historical snapshots: ${snapshot_count}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🔗 View evolution: https://enufacas.github.io/Chained/architecture-evolution.html" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Commit architecture data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add architecture files
+          git add analysis/architecture/
+          git add docs/data/architecture/
+          
+          # Add Mermaid diagram if it exists
+          if [ -f analysis/architecture/architecture.mmd ]; then
+            git add analysis/architecture/architecture.mmd
+          fi
+          
+          if git diff --staged --quiet; then
+            echo "No architecture changes to commit"
+          else
+            git commit -m "🏗️ Update architecture evolution tracking" \
+                       -m "Files: ${{ steps.track.outputs.total_files }}" \
+                       -m "Lines: ${{ steps.track.outputs.total_lines }}" \
+                       -m "Components: ${{ steps.track.outputs.total_components }}" \
+                       -m "Snapshots: ${{ steps.summary.outputs.snapshot_count }}"
+            
+            git push
+          fi
+
+      - name: Create PR comment with architecture summary
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ github.event.pull_request.number }}"
+          
+          # Create summary comment
+          cat << 'EOF' > /tmp/architecture-comment.md
+          ## 🏗️ Architecture Evolution Update
+          
+          The architecture has been analyzed and tracked!
+          
+          ### Current Metrics
+          - **Files:** ${{ steps.track.outputs.total_files }}
+          - **Lines:** ${{ steps.track.outputs.total_lines }}
+          - **Components:** ${{ steps.track.outputs.total_components }}
+          - **Snapshots:** ${{ steps.summary.outputs.snapshot_count }}
+          
+          ### 📊 View Evolution
+          Check out the [Architecture Evolution Dashboard](https://enufacas.github.io/Chained/architecture-evolution.html) to see how the system is evolving over time!
+          
+          ---
+          *Automated by the Architecture Evolution Tracker*
+          EOF
+          
+          gh pr comment ${pr_number} --body-file /tmp/architecture-comment.md || true
+
+      - name: Log activity
+        run: |
+          echo "Architecture evolution tracking completed"
+          echo "Files: ${{ steps.track.outputs.total_files }}"
+          echo "Lines: ${{ steps.track.outputs.total_lines }}"
+          echo "Components: ${{ steps.track.outputs.total_components }}"
+          echo "Snapshots: ${{ steps.summary.outputs.snapshot_count }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
