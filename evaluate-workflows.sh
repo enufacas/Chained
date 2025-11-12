@@ -5,35 +5,39 @@
 
 set -e
 
+# Load shared library
+source "$(dirname "$0")/tools/shell-common.sh"
+
 echo "🔍 Chained Workflow State Evaluation"
 echo "====================================="
 echo ""
-
-# Color codes for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
 
 ERRORS=0
 WARNINGS=0
 INFO=0
 
-# Function to print status
+# Override print_status to track errors/warnings/info
 print_status() {
-    if [ "$1" = "OK" ]; then
-        echo -e "${GREEN}✓${NC} $2"
-    elif [ "$1" = "WARN" ]; then
-        echo -e "${YELLOW}⚠${NC} $2"
-        WARNINGS=$((WARNINGS + 1))
-    elif [ "$1" = "INFO" ]; then
-        echo -e "${BLUE}ℹ${NC} $2"
-        INFO=$((INFO + 1))
-    else
-        echo -e "${RED}✗${NC} $2"
-        ERRORS=$((ERRORS + 1))
-    fi
+    local status="$1"
+    local message="$2"
+    
+    case "$status" in
+        "OK")
+            echo -e "${GREEN}✓${NC} $message"
+            ;;
+        "WARN")
+            echo -e "${YELLOW}⚠${NC} $message"
+            WARNINGS=$((WARNINGS + 1))
+            ;;
+        "INFO")
+            echo -e "${BLUE}ℹ${NC} $message"
+            INFO=$((INFO + 1))
+            ;;
+        "ERROR"|*)
+            echo -e "${RED}✗${NC} $message"
+            ERRORS=$((ERRORS + 1))
+            ;;
+    esac
 }
 
 echo "1. Workflow Presence Check"
