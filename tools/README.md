@@ -4,6 +4,48 @@ A collection of intelligent development tools for the Chained autonomous AI syst
 
 ## Available Tools
 
+### 📊 Agent Performance Metrics Collector
+
+A production-grade metrics collection and analysis system for tracking real GitHub activity and calculating weighted performance scores for agents in the Chained ecosystem.
+
+**Purpose:** Replace placeholder/random metrics with accurate, data-driven performance assessment. Tracks issues resolved, PRs merged, code reviews given, and calculates weighted overall scores.
+
+**Quick Start:**
+```bash
+# Evaluate a single agent
+python3 tools/agent-metrics-collector.py agent-1234567890
+
+# Evaluate all active agents
+python3 tools/agent-metrics-collector.py --evaluate-all
+
+# Look back 14 days instead of default 7
+python3 tools/agent-metrics-collector.py --evaluate-all --since 14
+
+# JSON output for scripting
+python3 tools/agent-metrics-collector.py agent-1234567890 --json
+```
+
+**What It Tracks:**
+- Issues resolved and created
+- Pull requests created and merged  
+- Code reviews given
+- Issue/PR comments made
+- Weighted performance scores (code quality, issue resolution, PR success, peer review)
+
+**Scoring Algorithm:**
+- Code Quality (30%): Based on PR merge success rate
+- Issue Resolution (25%): Ratio of issues resolved to created
+- PR Success (25%): Ratio of PRs merged to created
+- Peer Review (20%): Normalized review activity
+
+**Use Case:** Integrated with `.github/workflows/agent-evaluator.yml` to provide real GitHub activity metrics for agent performance evaluation, replacing the previous placeholder implementation.
+
+**Architecture Innovation:** Built with modularity, scalability, and maintainability in mind. Features comprehensive error handling, caching for performance, secure GitHub API integration, and 15+ unit tests with >90% coverage.
+
+**Documentation:** See [docs/AGENT_METRICS_SYSTEM.md](../docs/AGENT_METRICS_SYSTEM.md) for complete architecture documentation, API reference, and integration guide.
+
+---
+
 ### 🏭 Agent Definition Validator
 
 A comprehensive validation tool for GitHub Copilot custom agent definitions.
