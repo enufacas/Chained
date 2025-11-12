@@ -184,6 +184,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1762982078",
+      "name": "\ud83d\udd17 Knuth",
+      "human_name": "Knuth",
+      "specialization": "coordinate-wizard",
+      "status": "active",
+      "spawned_at": "2025-11-12T21:14:38.427759Z",
+      "personality": "analytical and logical",
+      "communication_style": "gets straight to the point",
+      "traits": {
+        "creativity": 80,
+        "caution": 57,
+        "speed": 71
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [
@@ -276,7 +299,7 @@
     "spawn_mode": "mixed",
     "new_agent_probability": 0.5
   },
-  "last_spawn": "2025-11-12T15:17:53.772467Z",
+  "last_spawn": "2025-11-12T21:14:38.427793Z",
   "last_evaluation": "2025-11-12T00:42:01.514086Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
