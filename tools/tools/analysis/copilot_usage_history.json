@@ -1,75 +1,12 @@
 {
   "current_used": 300,
-  "last_check": "2025-11-12T03:03:42.744380+00:00",
+  "last_check": "2025-11-12T03:07:11.937320+00:00",
   "timeline": [
     {
-      "timestamp": "2025-11-12T02:59:56.193300+00:00",
+      "timestamp": "2025-11-12T03:07:11.937327+00:00",
       "used": 300,
       "remaining": 1200,
-      "burn_rate": 26.97,
-      "mode": "aggressive"
-    },
-    {
-      "timestamp": "2025-11-12T03:00:04.769427+00:00",
-      "used": 300,
-      "remaining": 1200,
-      "burn_rate": 26.97,
-      "mode": "aggressive"
-    },
-    {
-      "timestamp": "2025-11-12T03:00:11.878594+00:00",
-      "used": 300,
-      "remaining": 1200,
-      "burn_rate": 26.97,
-      "mode": "aggressive"
-    },
-    {
-      "timestamp": "2025-11-12T03:01:00.233779+00:00",
-      "used": 300,
-      "remaining": 1200,
-      "burn_rate": 26.96,
-      "mode": "aggressive"
-    },
-    {
-      "timestamp": "2025-11-12T03:01:15.916864+00:00",
-      "used": 300,
-      "remaining": 1200,
-      "burn_rate": 26.96,
-      "mode": "aggressive"
-    },
-    {
-      "timestamp": "2025-11-12T03:01:23.998338+00:00",
-      "used": 300,
-      "remaining": 1200,
-      "burn_rate": 26.96,
-      "mode": "aggressive"
-    },
-    {
-      "timestamp": "2025-11-12T03:02:09.797349+00:00",
-      "used": 300,
-      "remaining": 1200,
-      "burn_rate": 26.96,
-      "mode": "aggressive"
-    },
-    {
-      "timestamp": "2025-11-12T03:03:00.663915+00:00",
-      "used": 1300,
-      "remaining": 200,
-      "burn_rate": 116.83,
-      "mode": "conservative"
-    },
-    {
-      "timestamp": "2025-11-12T03:03:25.761722+00:00",
-      "used": 1300,
-      "remaining": 200,
-      "burn_rate": 116.83,
-      "mode": "conservative"
-    },
-    {
-      "timestamp": "2025-11-12T03:03:42.744387+00:00",
-      "used": 300,
-      "remaining": 1200,
-      "burn_rate": 26.96,
+      "burn_rate": 26.95,
       "mode": "aggressive"
     }
   ]

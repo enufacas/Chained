@@ -236,6 +236,7 @@ class CopilotUsageTracker:
                 'learn-tldr': '0 */3 * * *',      # Every 3 hours
                 'learn-hn': '0 */2 * * *',        # Every 2 hours
                 'idea-generator': '0 */4 * * *',  # Every 4 hours
+                'ai-idea-spawner': '0 */3 * * *', # Every 3 hours (AI focused!)
                 'ai-friend': '0 */6 * * *',       # Every 6 hours
                 'agent-spawner': '0 */2 * * *',   # Every 2 hours
             },
@@ -243,6 +244,7 @@ class CopilotUsageTracker:
                 'learn-tldr': '0 8,20 * * *',     # 2x daily
                 'learn-hn': '0 7,13,19 * * *',    # 3x daily
                 'idea-generator': '0 10 * * *',   # Daily at 10 AM
+                'ai-idea-spawner': '0 */4 * * *', # Every 4 hours
                 'ai-friend': '0 14 * * *',        # Daily at 2 PM
                 'agent-spawner': '0 */3 * * *',   # Every 3 hours
             },
@@ -250,6 +252,7 @@ class CopilotUsageTracker:
                 'learn-tldr': '0 12 * * *',       # Once daily at noon
                 'learn-hn': '0 8,20 * * *',       # 2x daily
                 'idea-generator': '0 10 * * 1,4', # Twice weekly
+                'ai-idea-spawner': '0 10 * * *',  # Once daily
                 'ai-friend': '0 14 * * 0',        # Weekly on Sunday
                 'agent-spawner': '0 */6 * * *',   # Every 6 hours
             }

@@ -1,0 +1,264 @@
+name: "Idea Generation: AI-Focused Spawner"
+
+on:
+  schedule:
+    # Runs every 4 hours by default (adjusted by orchestrator)
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+    inputs:
+      focus:
+        description: 'Focus area for idea generation'
+        required: false
+        type: choice
+        options:
+          - auto
+          - ai-autonomy
+          - ml-learning
+          - code-generation
+          - agent-systems
+          - performance
+        default: 'auto'
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  generate-ai-idea:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Generate AI-focused idea
+        id: generate
+        env:
+          FOCUS: ${{ github.event.inputs.focus || 'auto' }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import random
+          from datetime import datetime
+          
+          focus = os.environ.get('FOCUS', 'auto')
+          
+          # AI and Autonomy focused ideas
+          ai_autonomy_ideas = [
+              "Create a self-evolving neural architecture that adapts workflows based on success rates",
+              "Build an AI agent that learns from failed PRs to improve future code generation",
+              "Implement a meta-learning system that optimizes the learning workflow schedules",
+              "Develop an autonomous code reviewer that improves its review criteria over time",
+              "Create an AI-powered workflow orchestrator that predicts optimal execution times",
+              "Build a reinforcement learning system for optimizing GitHub Actions resource usage",
+              "Implement an autonomous issue prioritizer using multi-armed bandit algorithms",
+              "Create a self-improving prompt generator for better Copilot interactions",
+              "Develop an AI agent that automatically spawns specialized sub-agents based on workload",
+              "Build a system that learns optimal git commit strategies from successful merges",
+              "Implement autonomous A/B testing for different workflow configurations",
+              "Create an AI that generates and tests hypotheses about code patterns",
+              "Develop a self-documenting AI that learns from issue discussions",
+              "Build an autonomous refactoring agent that learns code style preferences",
+              "Implement a meta-agent that coordinates multiple specialized AI agents",
+              "Create a self-healing workflow system that fixes common failures autonomously",
+              "Develop an AI that predicts and prevents potential merge conflicts",
+              "Build a learning-based dependency manager that suggests optimal update times",
+              "Implement an autonomous code archaeology system that documents design decisions",
+              "Create an AI agent that generates custom GitHub Actions based on repository patterns"
+          ]
+          
+          # ML and Learning focused ideas
+          ml_learning_ideas = [
+              "Build a transformer model trained on successful PR patterns",
+              "Create a semantic similarity engine for matching issues to historical solutions",
+              "Implement unsupervised learning for discovering code patterns",
+              "Develop a predictive model for estimating issue complexity",
+              "Build a clustering system for categorizing similar issues automatically",
+              "Create a neural network for code style transfer across projects",
+              "Implement active learning for identifying high-value issues to work on",
+              "Develop a model that predicts optimal times to run expensive workflows",
+              "Build a recommendation system for suggesting relevant learning sources",
+              "Create a time-series forecaster for API usage patterns"
+          ]
+          
+          # Code generation focused ideas
+          code_generation_ideas = [
+              "Build a code generator that learns from the repository's existing patterns",
+              "Create a template engine that automatically generates boilerplate from examples",
+              "Implement a test generator that creates comprehensive test suites",
+              "Develop a documentation generator that writes narrative explanations",
+              "Build a refactoring suggester that identifies optimization opportunities",
+              "Create an API wrapper generator based on usage patterns",
+              "Implement a migration tool generator for version upgrades",
+              "Develop a code translator between programming paradigms",
+              "Build a performance optimizer that generates efficient alternatives",
+              "Create a security patcher that automatically fixes common vulnerabilities"
+          ]
+          
+          # Agent systems focused ideas
+          agent_systems_ideas = [
+              "Build a multi-agent debate system where agents argue different approaches",
+              "Create a hierarchical agent system with coordinators and specialists",
+              "Implement an agent marketplace where agents bid on issues",
+              "Develop an agent evolution system with genetic algorithms",
+              "Build an agent reputation system based on merge success rates",
+              "Create an agent specialization recommender based on performance history",
+              "Implement an agent collaboration protocol for complex issues",
+              "Develop an agent load balancer for distributed work",
+              "Build an agent skill tree system with progressive unlocking",
+              "Create an agent mentorship program where successful agents train new ones"
+          ]
+          
+          # Performance focused ideas
+          performance_ideas = [
+              "Build a workflow execution optimizer using dynamic programming",
+              "Create a caching strategy optimizer for GitHub Actions",
+              "Implement parallel execution scheduler for independent workflows",
+              "Develop a resource allocation optimizer for CI/CD pipelines",
+              "Build an API call batcher to reduce rate limit usage",
+              "Create a lazy evaluation system for workflow dependencies",
+              "Implement a predictive prefetcher for likely-needed resources",
+              "Develop a compression system for learning data storage",
+              "Build an incremental computation system for expensive operations",
+              "Create a memoization layer for repeated calculations"
+          ]
+          
+          # Select ideas based on focus
+          if focus == 'ai-autonomy':
+              idea_pool = ai_autonomy_ideas
+          elif focus == 'ml-learning':
+              idea_pool = ml_learning_ideas
+          elif focus == 'code-generation':
+              idea_pool = code_generation_ideas
+          elif focus == 'agent-systems':
+              idea_pool = agent_systems_ideas
+          elif focus == 'performance':
+              idea_pool = performance_ideas
+          else:  # auto
+              # Weighted selection favoring AI/autonomy
+              idea_pool = (
+                  ai_autonomy_ideas * 3 +  # 3x weight
+                  ml_learning_ideas * 2 +   # 2x weight
+                  agent_systems_ideas * 2 +  # 2x weight
+                  code_generation_ideas +
+                  performance_ideas
+              )
+          
+          # Select idea
+          selected_idea = random.choice(idea_pool)
+          
+          # Determine category
+          if selected_idea in ai_autonomy_ideas:
+              category = "AI & Autonomy"
+              emoji = "🤖"
+          elif selected_idea in ml_learning_ideas:
+              category = "Machine Learning"
+              emoji = "🧠"
+          elif selected_idea in code_generation_ideas:
+              category = "Code Generation"
+              emoji = "⚡"
+          elif selected_idea in agent_systems_ideas:
+              category = "Agent Systems"
+              emoji = "👥"
+          else:
+              category = "Performance"
+              emoji = "🚀"
+          
+          # Create unique identifier
+          timestamp = int(datetime.utcnow().timestamp())
+          idea_id = f"ai-idea-{timestamp}"
+          
+          # Load recent learnings for context
+          learning_context = ""
+          if os.path.exists('learnings'):
+              learning_files = sorted([f for f in os.listdir('learnings') if f.endswith('.json')])[-3:]
+              if learning_files:
+                  learning_context = "Influenced by recent learnings from: " + ", ".join(learning_files)
+          
+          # Output
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"idea={selected_idea}\n")
+              f.write(f"idea_id={idea_id}\n")
+              f.write(f"category={category}\n")
+              f.write(f"emoji={emoji}\n")
+              f.write(f"focus={focus}\n")
+              f.write(f"learning_context={learning_context}\n")
+          
+          print(f"Generated {category} idea: {selected_idea}")
+          print(f"Focus: {focus}")
+          print(f"Context: {learning_context}")
+          
+          PYTHON_SCRIPT
+
+      - name: Create enhanced AI-focused issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          issue_url=$(gh issue create \
+            --title "${{ steps.generate.outputs.emoji }} AI Idea: ${{ steps.generate.outputs.idea }}" \
+            --body "## ${{ steps.generate.outputs.emoji }} ${{ steps.generate.outputs.category }} Idea
+
+          **Idea:** ${{ steps.generate.outputs.idea }}
+
+          **Generated:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          **Category:** ${{ steps.generate.outputs.category }}
+          **Focus:** ${{ steps.generate.outputs.focus }}
+          **ID:** ${{ steps.generate.outputs.idea_id }}
+
+          ### 🎯 Why This Matters
+
+          This idea focuses on enhancing the autonomous capabilities of the Chained system. By implementing this, we can:
+
+          - 🚀 Increase the system's ability to self-improve
+          - 🧠 Learn from past successes and failures  
+          - ⚡ Optimize resource usage dynamically
+          - 🤖 Reduce the need for manual intervention
+          - 📈 Improve the quality of generated code and ideas
+
+          ### 🔗 Context
+
+          ${{ steps.generate.outputs.learning_context }}
+
+          This idea was generated by the AI-Focused Spawner, which emphasizes autonomy, machine learning, and intelligent agent systems.
+
+          ### 📋 Implementation Approach
+
+          Consider these steps:
+          1. Research existing patterns in the repository
+          2. Design the system architecture
+          3. Implement core functionality
+          4. Add comprehensive tests
+          5. Integrate with existing workflows
+          6. Monitor and optimize performance
+          7. Document learnings and insights
+
+          ### 🎓 Learning Opportunities
+
+          This implementation can teach us about:
+          - Advanced AI/ML techniques in autonomous systems
+          - Real-world applications of reinforcement learning
+          - Distributed agent coordination
+          - Self-improving software architectures
+          - Optimization under resource constraints
+
+          ---
+
+          *Generated by AI-Focused Idea Spawner - Optimized for autonomy and intelligence*" \
+            --label "ai-generated,enhancement,copilot-assigned,ai-autonomy")
+          
+          echo "Created AI-focused issue: ${issue_url}"
+
+      - name: Summary
+        run: |
+          echo "## AI Idea Generation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Category**: ${{ steps.generate.outputs.category }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Focus**: ${{ steps.generate.outputs.focus }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Idea**: ${{ steps.generate.outputs.idea }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This idea emphasizes AI, autonomy, and self-improvement capabilities." >> $GITHUB_STEP_SUMMARY

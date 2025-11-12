@@ -47,6 +47,7 @@ class WorkflowOrchestrator:
         'learn-tldr': '.github/workflows/learn-from-tldr.yml',
         'learn-hn': '.github/workflows/learn-from-hackernews.yml',
         'idea-generator': '.github/workflows/idea-generator.yml',
+        'ai-idea-spawner': '.github/workflows/ai-idea-spawner.yml',
         'ai-friend': '.github/workflows/ai-friend-daily.yml',
         'agent-spawner': '.github/workflows/agent-spawner.yml',
     }
