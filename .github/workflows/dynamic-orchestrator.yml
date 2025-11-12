@@ -80,7 +80,7 @@ jobs:
 
       - name: Update repository variables
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
         run: |
           # Update repository variables with latest usage data
           gh variable set COPILOT_REQUESTS_USED --body "${{ steps.usage.outputs.used }}"
