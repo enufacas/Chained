@@ -737,146 +737,134 @@ class ReadabilityScorer:
         
         return results
     
+    def _get_grade_info(self, score: float) -> Tuple[str, str]:
+        """Get grade and emoji for a score"""
+        if score >= 90:
+            return "A (Excellent)", "🌟"
+        elif score >= 80:
+            return "B (Good)", "✅"
+        elif score >= 70:
+            return "C (Fair)", "⚠️"
+        elif score >= 60:
+            return "D (Needs Improvement)", "⚠️"
+        else:
+            return "F (Poor)", "❌"
+    
+    def _generate_directory_report(self, analysis_results: Dict) -> List[str]:
+        """Generate report for directory analysis"""
+        report = []
+        report.append("# Code Readability Report")
+        report.append(f"\n**Generated:** {analysis_results['timestamp']}")
+        report.append(f"**Directory:** {analysis_results['directory']}")
+        
+        summary = analysis_results["summary"]
+        report.append("\n## Summary")
+        report.append(f"- **Files Analyzed:** {summary['total_files']}")
+        report.append(f"- **Average Overall Score:** {summary['avg_overall_score']}/100")
+        report.append(f"- **Total Suggestions:** {summary['total_suggestions']}")
+        
+        grade, emoji = self._get_grade_info(summary['avg_overall_score'])
+        report.append(f"\n**Overall Grade:** {emoji} {grade}")
+        
+        if summary["avg_scores_by_category"]:
+            report.append("\n## Category Scores")
+            for category, score in sorted(summary["avg_scores_by_category"].items(), 
+                                         key=lambda x: x[1], reverse=True):
+                bar = self._generate_score_bar(score)
+                report.append(f"- **{category.title()}:** {score}/100 {bar}")
+        
+        report.append("\n## Suggestions by Priority")
+        priorities = summary["suggestions_by_priority"]
+        report.append(f"- 🔴 **High Priority:** {priorities['high']} issues")
+        report.append(f"- 🟡 **Medium Priority:** {priorities['medium']} issues")
+        report.append(f"- 🟢 **Low Priority:** {priorities['low']} issues")
+        
+        if analysis_results["files_analyzed"]:
+            report.append("\n## File Analysis")
+            for file_analysis in sorted(analysis_results["files_analyzed"], 
+                                       key=lambda x: x["scores"]["overall"]):
+                report.append(f"\n### {os.path.basename(file_analysis['file'])}")
+                report.append(f"**Score:** {file_analysis['scores']['overall']}/100")
+                
+                if file_analysis["suggestions"]:
+                    report.append(f"\n**Top Issues:**")
+                    for suggestion in file_analysis["suggestions"][:3]:
+                        priority_emoji = {"high": "🔴", "medium": "🟡", "low": "🟢"}
+                        emoji = priority_emoji.get(suggestion["priority"], "⚪")
+                        report.append(f"- {emoji} Line {suggestion['line']}: {suggestion['issue']}")
+        
+        return report
+    
+    def _generate_single_file_report(self, analysis_results: Dict) -> List[str]:
+        """Generate report for single file analysis"""
+        report = []
+        report.append(f"# Readability Report: {os.path.basename(analysis_results['file'])}")
+        report.append(f"\n**Generated:** {analysis_results['timestamp']}")
+        report.append(f"**File:** {analysis_results['file']}")
+        
+        overall_score = analysis_results["scores"]["overall"]
+        report.append(f"\n## Overall Score: {overall_score}/100")
+        
+        grade, emoji = self._get_grade_info(overall_score)
+        report.append(f"**Grade:** {grade} {emoji}")
+        
+        report.append("\n## Category Scores")
+        scores = analysis_results["scores"]
+        for category in ["naming", "complexity", "documentation", "formatting", "structure"]:
+            if category in scores:
+                score = scores[category]
+                bar = self._generate_score_bar(score)
+                report.append(f"- **{category.title()}:** {score}/100 {bar}")
+        
+        report.append("\n## Metrics")
+        for category, metrics in analysis_results["metrics"].items():
+            report.append(f"\n### {category.title()}")
+            for metric, value in metrics.items():
+                formatted_metric = metric.replace('_', ' ').title()
+                report.append(f"- {formatted_metric}: {value}")
+        
+        if analysis_results["suggestions"]:
+            self._add_suggestions_section(report, analysis_results["suggestions"])
+        
+        return report
+    
+    def _add_suggestions_section(self, report: List[str], suggestions: List[Dict]):
+        """Add suggestions section to report"""
+        report.append("\n## Improvement Suggestions")
+        
+        high_priority = [s for s in suggestions if s["priority"] == "high"]
+        medium_priority = [s for s in suggestions if s["priority"] == "medium"]
+        low_priority = [s for s in suggestions if s["priority"] == "low"]
+        
+        if high_priority:
+            report.append("\n### 🔴 High Priority")
+            for s in high_priority[:10]:
+                report.append(f"\n**Line {s['line']}:** {s['issue']}")
+                report.append(f"- *Suggestion:* {s['suggestion']}")
+                if 'example' in s:
+                    report.append(f"- *Example:* `{s['example']}`")
+        
+        if medium_priority:
+            report.append("\n### 🟡 Medium Priority")
+            for s in medium_priority[:10]:
+                report.append(f"\n**Line {s['line']}:** {s['issue']}")
+                report.append(f"- *Suggestion:* {s['suggestion']}")
+        
+        if low_priority:
+            report.append("\n### 🟢 Low Priority")
+            for s in low_priority[:5]:
+                report.append(f"\n**Line {s['line']}:** {s['issue']}")
+                report.append(f"- *Suggestion:* {s['suggestion']}")
+
     def generate_markdown_report(self, analysis_results: Dict) -> str:
         """Generate a markdown report from analysis results"""
-        report = []
-        
-        # Check if this is a single file or directory analysis
         is_directory = "directory" in analysis_results
         
         if is_directory:
-            report.append("# Code Readability Report")
-            report.append(f"\n**Generated:** {analysis_results['timestamp']}")
-            report.append(f"**Directory:** {analysis_results['directory']}")
-            
-            # Summary section
-            report.append("\n## Summary")
-            summary = analysis_results["summary"]
-            report.append(f"- **Files Analyzed:** {summary['total_files']}")
-            report.append(f"- **Average Overall Score:** {summary['avg_overall_score']}/100")
-            report.append(f"- **Total Suggestions:** {summary['total_suggestions']}")
-            
-            # Score interpretation
-            avg_score = summary['avg_overall_score']
-            if avg_score >= 90:
-                grade = "A (Excellent)"
-                emoji = "🌟"
-            elif avg_score >= 80:
-                grade = "B (Good)"
-                emoji = "✅"
-            elif avg_score >= 70:
-                grade = "C (Fair)"
-                emoji = "⚠️"
-            elif avg_score >= 60:
-                grade = "D (Needs Improvement)"
-                emoji = "⚠️"
-            else:
-                grade = "F (Poor)"
-                emoji = "❌"
-            
-            report.append(f"\n**Overall Grade:** {emoji} {grade}")
-            
-            # Category scores
-            if summary["avg_scores_by_category"]:
-                report.append("\n## Category Scores")
-                for category, score in sorted(summary["avg_scores_by_category"].items(), 
-                                             key=lambda x: x[1], reverse=True):
-                    bar = self._generate_score_bar(score)
-                    report.append(f"- **{category.title()}:** {score}/100 {bar}")
-            
-            # Suggestions by priority
-            report.append("\n## Suggestions by Priority")
-            priorities = summary["suggestions_by_priority"]
-            report.append(f"- 🔴 **High Priority:** {priorities['high']} issues")
-            report.append(f"- 🟡 **Medium Priority:** {priorities['medium']} issues")
-            report.append(f"- 🟢 **Low Priority:** {priorities['low']} issues")
-            
-            # File-by-file breakdown
-            if analysis_results["files_analyzed"]:
-                report.append("\n## File Analysis")
-                for file_analysis in sorted(analysis_results["files_analyzed"], 
-                                           key=lambda x: x["scores"]["overall"]):
-                    report.append(f"\n### {os.path.basename(file_analysis['file'])}")
-                    report.append(f"**Score:** {file_analysis['scores']['overall']}/100")
-                    
-                    if file_analysis["suggestions"]:
-                        report.append(f"\n**Top Issues:**")
-                        # Show top 3 suggestions
-                        for suggestion in file_analysis["suggestions"][:3]:
-                            priority_emoji = {"high": "🔴", "medium": "🟡", "low": "🟢"}
-                            emoji = priority_emoji.get(suggestion["priority"], "⚪")
-                            report.append(f"- {emoji} Line {suggestion['line']}: {suggestion['issue']}")
+            report = self._generate_directory_report(analysis_results)
         else:
-            # Single file analysis
-            report.append(f"# Readability Report: {os.path.basename(analysis_results['file'])}")
-            report.append(f"\n**Generated:** {analysis_results['timestamp']}")
-            report.append(f"**File:** {analysis_results['file']}")
-            
-            # Overall score
-            overall_score = analysis_results["scores"]["overall"]
-            report.append(f"\n## Overall Score: {overall_score}/100")
-            
-            # Score interpretation
-            if overall_score >= 90:
-                grade = "A (Excellent) 🌟"
-            elif overall_score >= 80:
-                grade = "B (Good) ✅"
-            elif overall_score >= 70:
-                grade = "C (Fair) ⚠️"
-            elif overall_score >= 60:
-                grade = "D (Needs Improvement) ⚠️"
-            else:
-                grade = "F (Poor) ❌"
-            
-            report.append(f"**Grade:** {grade}")
-            
-            # Category breakdown
-            report.append("\n## Category Scores")
-            scores = analysis_results["scores"]
-            for category in ["naming", "complexity", "documentation", "formatting", "structure"]:
-                if category in scores:
-                    score = scores[category]
-                    bar = self._generate_score_bar(score)
-                    report.append(f"- **{category.title()}:** {score}/100 {bar}")
-            
-            # Metrics
-            report.append("\n## Metrics")
-            for category, metrics in analysis_results["metrics"].items():
-                report.append(f"\n### {category.title()}")
-                for metric, value in metrics.items():
-                    formatted_metric = metric.replace('_', ' ').title()
-                    report.append(f"- {formatted_metric}: {value}")
-            
-            # Suggestions
-            if analysis_results["suggestions"]:
-                report.append("\n## Improvement Suggestions")
-                
-                # Group by priority
-                high_priority = [s for s in analysis_results["suggestions"] if s["priority"] == "high"]
-                medium_priority = [s for s in analysis_results["suggestions"] if s["priority"] == "medium"]
-                low_priority = [s for s in analysis_results["suggestions"] if s["priority"] == "low"]
-                
-                if high_priority:
-                    report.append("\n### 🔴 High Priority")
-                    for s in high_priority[:10]:  # Limit to 10
-                        report.append(f"\n**Line {s['line']}:** {s['issue']}")
-                        report.append(f"- *Suggestion:* {s['suggestion']}")
-                        if 'example' in s:
-                            report.append(f"- *Example:* `{s['example']}`")
-                
-                if medium_priority:
-                    report.append("\n### 🟡 Medium Priority")
-                    for s in medium_priority[:10]:
-                        report.append(f"\n**Line {s['line']}:** {s['issue']}")
-                        report.append(f"- *Suggestion:* {s['suggestion']}")
-                
-                if low_priority:
-                    report.append("\n### 🟢 Low Priority")
-                    for s in low_priority[:5]:
-                        report.append(f"\n**Line {s['line']}:** {s['issue']}")
-                        report.append(f"- *Suggestion:* {s['suggestion']}")
+            report = self._generate_single_file_report(analysis_results)
         
-        # Errors
         if "errors" in analysis_results and analysis_results["errors"]:
             report.append("\n## Errors")
             for error in analysis_results["errors"]:

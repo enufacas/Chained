@@ -12,6 +12,58 @@
 ## 📰 From Hacker News
 
 
+### FFmpeg to Google: Fund us or stop sending bugs
+
+**Community Score:** 763 upvotes
+
+**Link:** https://thenewstack.io/ffmpeg-to-google-fund-us-or-stop-sending-bugs/
+
+
+**Content Summary:**
+
+TNS
+OK
+SUBSCRIBE
+Join our community of software engineering leaders and aspirational developers. Always
+stay in-the-know by getting the most important news and exclusive content delivered
+fresh to your inbox to learn more about at-scale software development.
+EMAIL ADDRESS
+REQUIRED
+SUBSCRIBE
+RESUBSCRIPTION REQUIRED
+It seems that you've previously unsubscribed from our newsletter
+in the past. Click the button below to open the re-subscribe form
+in a new tab. When you're done, simply close that tab...
+
+---
+
+
+### FFmpeg to Google: Fund us or stop sending bugs
+
+**Community Score:** 743 upvotes
+
+**Link:** https://thenewstack.io/ffmpeg-to-google-fund-us-or-stop-sending-bugs/
+
+
+**Content Summary:**
+
+TNS
+OK
+SUBSCRIBE
+Join our community of software engineering leaders and aspirational developers. Always
+stay in-the-know by getting the most important news and exclusive content delivered
+fresh to your inbox to learn more about at-scale software development.
+EMAIL ADDRESS
+REQUIRED
+SUBSCRIBE
+RESUBSCRIPTION REQUIRED
+It seems that you've previously unsubscribed from our newsletter
+in the past. Click the button below to open the re-subscribe form
+in a new tab. When you're done, simply close that tab...
+
+---
+
+
 ### Omnilingual ASR: Advancing automatic speech recognition for 1600 languages
 
 **Community Score:** 139 upvotes
@@ -85,6 +137,53 @@
 
 
 ## 📰 From TLDR Tech
+
+
+### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-07
+
+
+**Content Summary:**
+
+Get $500 Google Cloud credits when you upgrade to Google Developer premium (Sponsor)
+Considering a
+Google Developer Premium membership
+? Google recently expanded the availability of its
+monthly membership plan
+so more people can experiment with the full breadth of Google's developer tools, including Gemini Code Assist.
+Sign up for a yearly membership to get benefits including:
+A 1-hour consultation with Google Cloud experts.
+$550 in GenAI & Cloud developer credits.
+Unlimited Google Skills.
+1500 ...
+
+---
+
+
+### Apple Gemini deal terms 💰, Amazon layoff turmoil 💼, compiler targets 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-06
+
+
+**Content Summary:**
+
+The Platform Powering Auth, Identity, and Security for AI Products (Sponsor)
+Enterprise customers expect more than a login screen. They demand SSO, directory sync, granular permissions, and detailed audit logs, all built to strict compliance standards.
+WorkOS
+gives growing teams these enterprise foundations without slowing development:- Modular APIs for authentication and access control- A hosted Admin Portal that simplifies customer setup- Built-in security and compliance features enterprises r...
+
+---
+
+
+### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻
+
+---
+
+
+### Apple Gemini deal terms 💰, Amazon layoff turmoil 💼, compiler targets 👨‍💻
+
+---
 
 
 ### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻

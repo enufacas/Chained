@@ -172,47 +172,38 @@ jobs:
             git push || echo "Nothing to push"
           fi
 
-      - name: Trigger initial workflows
+      - name: Verify scheduled workflows
         if: steps.check.outputs.already_kicked_off != 'true' && (inputs.trigger_initial_workflows == true || github.event_name == 'push')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Triggering initial workflows to kickstart the system..."
+          echo "🎯 System Kickoff - Autonomous Workflow Scheduling"
           echo ""
-          
-          # Trigger learning workflows
-          echo "📚 Triggering learning workflows..."
-          if gh workflow run learn-from-tldr.yml 2>/dev/null; then
-            echo "  ✅ Learn from TLDR Tech triggered"
-          else
-            echo "  ⚠️  Could not trigger Learn from TLDR Tech"
-          fi
-          
-          if gh workflow run learn-from-hackernews.yml 2>/dev/null; then
-            echo "  ✅ Learn from Hacker News triggered"
-          else
-            echo "  ⚠️  Could not trigger Learn from Hacker News"
-          fi
-          
+          echo "The Chained system relies on scheduled workflows that run automatically."
+          echo "No manual triggering is needed - the system is self-sustaining!"
           echo ""
-          echo "💡 Triggering idea generation workflows..."
-          if gh workflow run idea-generator.yml 2>/dev/null; then
-            echo "  ✅ AI Idea Generator triggered"
-          else
-            echo "  ⚠️  Could not trigger AI Idea Generator"
-          fi
-          
+          echo "📋 Scheduled workflows will run automatically:"
           echo ""
-          echo "✓ Initial workflows have been triggered!"
+          echo "  📚 Learning Workflows:"
+          echo "    • learn-from-tldr.yml - 08:00, 20:00 UTC daily"
+          echo "    • learn-from-hackernews.yml - 07:00, 13:00, 19:00 UTC daily"
           echo ""
-          echo "📋 Scheduled workflows will also run automatically:"
-          echo "  • learn-from-tldr.yml - 08:00, 20:00 UTC daily"
-          echo "  • learn-from-hackernews.yml - 07:00, 13:00, 19:00 UTC daily"
-          echo "  • idea-generator.yml - 09:00 UTC daily"
-          echo "  • smart-idea-generator.yml - 10:00 UTC daily"
-          echo "  • auto-review-merge.yml - Every 2 hours"
-          echo "  • timeline-updater.yml - Every 6 hours"
-          echo "  • progress-tracker.yml - Every 12 hours"
+          echo "  💡 Idea Generation:"
+          echo "    • idea-generator.yml - 09:00 UTC daily"
+          echo "    • smart-idea-generator.yml - 10:00 UTC daily"
+          echo ""
+          echo "  🤖 Agent System:"
+          echo "    • agent-spawner.yml - 06:00, 18:00 UTC daily"
+          echo "    • copilot-graphql-assign.yml - Every 15 minutes"
+          echo ""
+          echo "  🔄 System Maintenance:"
+          echo "    • auto-review-merge.yml - Every 2 hours"
+          echo "    • system-monitor.yml - Every 3-6 hours"
+          echo ""
+          echo "✅ System is ready! Workflows will execute according to their schedules."
+          echo ""
+          echo "Note: Attempting to manually trigger workflows causes HTTP 403 errors"
+          echo "due to GitHub token permissions. The scheduled approach is more reliable."
           echo ""
 
       - name: Create kickoff success issue

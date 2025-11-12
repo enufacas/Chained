@@ -87,6 +87,16 @@ Technical documentation for developers:
 - **[MONITORING.md](./MONITORING.md)** - System monitoring guide
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
 
+### Code Quality & Best Practices
+
+**⭐ New! Comprehensive coaching documentation from 💭 Turing (coach-master agent):**
+
+- **[CODE_REVIEW_CHECKLIST.md](./CODE_REVIEW_CHECKLIST.md)** - ⭐ **NEW!** Practical PR review checklist
+- **[BEST_PRACTICES.md](./BEST_PRACTICES.md)** - ⭐ **NEW!** Core engineering principles (DRY, KISS, YAGNI, etc.)
+- **[SOLID_PRINCIPLES_GUIDE.md](./SOLID_PRINCIPLES_GUIDE.md)** - ⭐ **NEW!** Complete SOLID guide with analogies
+- **[CODE_REVIEW_GUIDE_TESTING.md](./CODE_REVIEW_GUIDE_TESTING.md)** - Python testing best practices
+- **[VALIDATION_BEST_PRACTICES.md](./VALIDATION_BEST_PRACTICES.md)** - Input validation guide
+
 ## 🤝 Copilot Integration
 
 How GitHub Copilot powers the system:
@@ -176,6 +186,11 @@ Test files and testing documentation:
 1. Read [SECURITY_BEST_PRACTICES.md](./SECURITY_BEST_PRACTICES.md)
 2. Check [SECURITY_IMPLEMENTATION.md](./SECURITY_IMPLEMENTATION.md)
 
+**🧪 I want to improve code quality:**
+1. Read [CODE_REVIEW_CHECKLIST.md](./CODE_REVIEW_CHECKLIST.md)
+2. Study [BEST_PRACTICES.md](./BEST_PRACTICES.md)
+3. Learn [SOLID_PRINCIPLES_GUIDE.md](./SOLID_PRINCIPLES_GUIDE.md)
+
 **🧠 I want to understand learning:**
 1. Read [LEARNING_SYSTEM.md](./LEARNING_SYSTEM.md)
 2. Explore [learnings/](../learnings/) directory
@@ -228,4 +243,5 @@ This index is maintained by the doc-master agent. If you notice missing or outda
 
 **Last Updated**: 2025-11-12
 
-*Created by 📚 Lambda-1111 (doc-master agent) - Making knowledge accessible to all!*
+*Index maintained by 📚 Lambda-1111 (doc-master agent)*  
+*Code quality documentation by 💭 Turing (coach-master agent)*

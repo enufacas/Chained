@@ -32,14 +32,14 @@ Programming languages, frameworks, libraries, and development tools
 
 SQL, NoSQL, data storage, and data engineering
 
-**Insights:** 1
+**Insights:** 3
 
 
 ### [🌐 Web Development](./Web.md)
 
 Web technologies, browsers, APIs, and frontend frameworks
 
-**Insights:** 2
+**Insights:** 4
 
 
 ### [🔒 Security & Privacy](./Security.md)
@@ -53,7 +53,7 @@ Security vulnerabilities, encryption, authentication, and privacy
 
 Performance tuning, benchmarks, and optimization techniques
 
-**Insights:** 4
+**Insights:** 6
 
 
 ### [🔧 Developer Tools](./Tools.md)
@@ -75,7 +75,7 @@ General technology news and insights
 
 ### By Source
 
-- **Hacker News:** 10 learning sessions
+- **Hacker News:** 12 learning sessions
 
 - **TLDR Tech:** 9 learning sessions
 
@@ -90,13 +90,13 @@ General technology news and insights
 
 - **🔧 Developer Tools:** 11 insights
 
-- **⚡ Performance & Optimization:** 4 insights
+- **⚡ Performance & Optimization:** 6 insights
+
+- **🌐 Web Development:** 4 insights
+
+- **🗄️ Databases & Data Management:** 3 insights
 
 - **🔒 Security & Privacy:** 2 insights
-
-- **🌐 Web Development:** 2 insights
-
-- **🗄️ Databases & Data Management:** 1 insights
 
 
 ## 💡 How to Use This Book

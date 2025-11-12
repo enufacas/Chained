@@ -344,8 +344,214 @@ def format_commit_details(commit: Dict) -> str:
     return '\n'.join(output)
 
 
-def interactive_mode(traveler: RepoTimeTraveler):
-    """Run interactive time-travel debugger"""
+class CommandHandler:
+    """Handles interactive debugger commands"""
+    
+    def __init__(self, traveler: RepoTimeTraveler):
+        self.traveler = traveler
+    
+    def handle_current(self, args):
+        """Show current commit details"""
+        if self.traveler.current_commit:
+            commit = self.traveler.get_commit_details(self.traveler.current_commit)
+            if commit:
+                print(format_commit_details(commit))
+        else:
+            print("No current commit")
+    
+    def handle_go(self, args):
+        """Navigate to a specific commit"""
+        if not args:
+            print("Error: commit hash required")
+            return
+        if self.traveler.navigate_to_commit(args[0]):
+            commit = self.traveler.get_commit_details(self.traveler.current_commit)
+            if commit:
+                print(f"Navigated to: {format_commit_summary(commit)}")
+        else:
+            print(f"Error: commit '{args[0]}' not found")
+    
+    def handle_back(self, args):
+        """Go back n commits"""
+        steps = int(args[0]) if args else 1
+        new_commit = self.traveler.go_back(steps)
+        if new_commit:
+            commit = self.traveler.get_commit_details(new_commit)
+            if commit:
+                print(f"Moved back to: {format_commit_summary(commit)}")
+        else:
+            print("Error: cannot go back further")
+    
+    def handle_forward(self, args):
+        """Go forward n commits"""
+        steps = int(args[0]) if args else 1
+        new_commit = self.traveler.go_forward(steps)
+        if new_commit:
+            commit = self.traveler.get_commit_details(new_commit)
+            if commit:
+                print(f"Moved forward to: {format_commit_summary(commit)}")
+        else:
+            print("Error: cannot go forward further")
+    
+    def handle_show(self, args):
+        """Show commit details"""
+        commit_hash = args[0] if args else self.traveler.current_commit
+        if commit_hash:
+            commit = self.traveler.get_commit_details(commit_hash)
+            if commit:
+                print(format_commit_details(commit))
+            else:
+                print(f"Error: commit '{commit_hash}' not found")
+        else:
+            print("Error: no commit specified and no current commit")
+    
+    def handle_list(self, args):
+        """List recent commits"""
+        count = int(args[0]) if args else 10
+        commits = self.traveler.list_commits(self.traveler.history_index, count)
+        if commits:
+            print(f"\nShowing {len(commits)} commits:")
+            for i, commit in enumerate(commits):
+                marker = "→ " if i == 0 else "  "
+                print(f"{marker}{format_commit_summary(commit, show_index=True, index=i)}")
+            print()
+        else:
+            print("No commits found")
+    
+    def handle_diff(self, args):
+        """Show diff between commits"""
+        if len(args) < 2:
+            print("Error: requires two commit hashes")
+            return
+        filepath = args[2] if len(args) > 2 else None
+        diff = self.traveler.diff_commits(args[0], args[1], filepath)
+        if diff:
+            print(diff)
+        else:
+            print("No differences found")
+    
+    def handle_file(self, args):
+        """Show file at specific commit"""
+        if len(args) < 2:
+            print("Error: requires commit hash and filepath")
+            return
+        content = self.traveler.get_file_at_commit(args[0], args[1])
+        if content:
+            print(content)
+        else:
+            print(f"Error: file '{args[1]}' not found at commit '{args[0]}'")
+    
+    def handle_history(self, args):
+        """Show file history"""
+        if not args:
+            print("Error: filepath required")
+            return
+        history = self.traveler.get_file_history(args[0])
+        if history:
+            print(f"\nHistory for {args[0]}:")
+            for commit in history:
+                print(format_commit_summary(commit))
+            print()
+        else:
+            print(f"No history found for '{args[0]}'")
+    
+    def handle_search(self, args):
+        """Search commits by message"""
+        if not args:
+            print("Error: search query required")
+            return
+        query = ' '.join(args)
+        results = self.traveler.search_commits(query, 'message')
+        self._print_search_results(results, query, "commits")
+    
+    def handle_search_author(self, args):
+        """Search commits by author"""
+        if not args:
+            print("Error: author name required")
+            return
+        query = ' '.join(args)
+        results = self.traveler.search_commits(query, 'author')
+        self._print_search_results(results, query, f"commits by '{query}'")
+    
+    def handle_search_file(self, args):
+        """Search commits by file"""
+        if not args:
+            print("Error: filepath required")
+            return
+        results = self.traveler.search_commits(args[0], 'file')
+        self._print_search_results(results, args[0], f"commits for '{args[0]}'")
+    
+    def handle_search_code(self, args):
+        """Search commits by code content"""
+        if not args:
+            print("Error: search text required")
+            return
+        query = ' '.join(args)
+        results = self.traveler.search_commits(query, 'content')
+        self._print_search_results(results, query, f"commits containing '{query}'")
+    
+    def handle_blame(self, args):
+        """Show blame for file"""
+        if not args:
+            print("Error: filepath required")
+            return
+        blame_info = self.traveler.blame_file(args[0])
+        if blame_info:
+            print(f"\nBlame for {args[0]}:")
+            current_commit = None
+            for info in blame_info:
+                if info['hash'] != current_commit:
+                    current_commit = info['hash']
+                    date_str = info['date'].strftime('%Y-%m-%d')
+                    print(f"\n{info['hash'][:7]} ({info['author']}, {date_str}):")
+                print(f"  {info.get('line', '')}")
+            print()
+        else:
+            print(f"No blame information for '{args[0]}'")
+    
+    def handle_branches(self, args):
+        """Show branches at commit"""
+        commit_hash = args[0] if args else self.traveler.current_commit
+        if commit_hash:
+            branches = self.traveler.get_branches_at_commit(commit_hash)
+            if branches:
+                print(f"\nBranches containing {commit_hash[:7]}:")
+                for branch in branches:
+                    print(f"  {branch}")
+                print()
+            else:
+                print(f"No branches found for commit {commit_hash[:7]}")
+        else:
+            print("Error: no commit specified")
+    
+    def handle_tags(self, args):
+        """Show tags at commit"""
+        commit_hash = args[0] if args else self.traveler.current_commit
+        if commit_hash:
+            tags = self.traveler.get_tags_at_commit(commit_hash)
+            if tags:
+                print(f"\nTags at {commit_hash[:7]}:")
+                for tag in tags:
+                    print(f"  {tag}")
+                print()
+            else:
+                print(f"No tags found at commit {commit_hash[:7]}")
+        else:
+            print("Error: no commit specified")
+    
+    def _print_search_results(self, results, query, description):
+        """Print search results in consistent format"""
+        if results:
+            print(f"\nFound {len(results)} {description}:")
+            for commit in results:
+                print(format_commit_summary(commit))
+            print()
+        else:
+            print(f"No {description} found")
+
+
+def _print_help():
+    """Print help message"""
     print("🕰️  Repository Time-Travel Debugger")
     print("=" * 60)
     print("Commands:")
@@ -368,11 +574,37 @@ def interactive_mode(traveler: RepoTimeTraveler):
     print("  help            - Show this help")
     print("  quit            - Exit")
     print("=" * 60)
+
+
+def interactive_mode(traveler: RepoTimeTraveler):
+    """Run interactive time-travel debugger"""
+    _print_help()
     print()
     
     if traveler.current_commit:
         print(f"Current position: {traveler.current_commit[:7]}")
         print()
+    
+    handler = CommandHandler(traveler)
+    
+    command_map = {
+        'current': handler.handle_current,
+        'go': handler.handle_go,
+        'back': handler.handle_back,
+        'forward': handler.handle_forward,
+        'show': handler.handle_show,
+        'list': handler.handle_list,
+        'diff': handler.handle_diff,
+        'file': handler.handle_file,
+        'history': handler.handle_history,
+        'search': handler.handle_search,
+        'search-author': handler.handle_search_author,
+        'search-file': handler.handle_search_file,
+        'search-code': handler.handle_search_code,
+        'blame': handler.handle_blame,
+        'branches': handler.handle_branches,
+        'tags': handler.handle_tags,
+    }
     
     while True:
         try:
@@ -387,211 +619,14 @@ def interactive_mode(traveler: RepoTimeTraveler):
             if command in ['quit', 'exit', 'q']:
                 print("Exiting time-travel debugger...")
                 break
-            
             elif command == 'help':
                 print("\nAvailable commands:")
                 print("  go, back, forward, show, list, diff, file, history")
                 print("  search, search-author, search-file, search-code")
                 print("  blame, branches, tags, current, help, quit")
                 print()
-            
-            elif command == 'current':
-                if traveler.current_commit:
-                    commit = traveler.get_commit_details(traveler.current_commit)
-                    if commit:
-                        print(format_commit_details(commit))
-                else:
-                    print("No current commit")
-            
-            elif command == 'go':
-                if not args:
-                    print("Error: commit hash required")
-                    continue
-                if traveler.navigate_to_commit(args[0]):
-                    commit = traveler.get_commit_details(traveler.current_commit)
-                    if commit:
-                        print(f"Navigated to: {format_commit_summary(commit)}")
-                else:
-                    print(f"Error: commit '{args[0]}' not found")
-            
-            elif command == 'back':
-                steps = int(args[0]) if args else 1
-                new_commit = traveler.go_back(steps)
-                if new_commit:
-                    commit = traveler.get_commit_details(new_commit)
-                    if commit:
-                        print(f"Moved back to: {format_commit_summary(commit)}")
-                else:
-                    print("Error: cannot go back further")
-            
-            elif command == 'forward':
-                steps = int(args[0]) if args else 1
-                new_commit = traveler.go_forward(steps)
-                if new_commit:
-                    commit = traveler.get_commit_details(new_commit)
-                    if commit:
-                        print(f"Moved forward to: {format_commit_summary(commit)}")
-                else:
-                    print("Error: cannot go forward further")
-            
-            elif command == 'show':
-                commit_hash = args[0] if args else traveler.current_commit
-                if commit_hash:
-                    commit = traveler.get_commit_details(commit_hash)
-                    if commit:
-                        print(format_commit_details(commit))
-                    else:
-                        print(f"Error: commit '{commit_hash}' not found")
-                else:
-                    print("Error: no commit specified and no current commit")
-            
-            elif command == 'list':
-                count = int(args[0]) if args else 10
-                commits = traveler.list_commits(traveler.history_index, count)
-                if commits:
-                    print(f"\nShowing {len(commits)} commits:")
-                    for i, commit in enumerate(commits):
-                        marker = "→ " if i == 0 else "  "
-                        print(f"{marker}{format_commit_summary(commit, show_index=True, index=i)}")
-                    print()
-                else:
-                    print("No commits found")
-            
-            elif command == 'diff':
-                if len(args) < 2:
-                    print("Error: requires two commit hashes")
-                    continue
-                filepath = args[2] if len(args) > 2 else None
-                diff = traveler.diff_commits(args[0], args[1], filepath)
-                if diff:
-                    print(diff)
-                else:
-                    print("No differences found")
-            
-            elif command == 'file':
-                if len(args) < 2:
-                    print("Error: requires commit hash and filepath")
-                    continue
-                content = traveler.get_file_at_commit(args[0], args[1])
-                if content:
-                    print(content)
-                else:
-                    print(f"Error: file '{args[1]}' not found at commit '{args[0]}'")
-            
-            elif command == 'history':
-                if not args:
-                    print("Error: filepath required")
-                    continue
-                history = traveler.get_file_history(args[0])
-                if history:
-                    print(f"\nHistory for {args[0]}:")
-                    for commit in history:
-                        print(format_commit_summary(commit))
-                    print()
-                else:
-                    print(f"No history found for '{args[0]}'")
-            
-            elif command == 'search':
-                if not args:
-                    print("Error: search query required")
-                    continue
-                query = ' '.join(args)
-                results = traveler.search_commits(query, 'message')
-                if results:
-                    print(f"\nFound {len(results)} commits:")
-                    for commit in results:
-                        print(format_commit_summary(commit))
-                    print()
-                else:
-                    print(f"No commits found matching '{query}'")
-            
-            elif command == 'search-author':
-                if not args:
-                    print("Error: author name required")
-                    continue
-                query = ' '.join(args)
-                results = traveler.search_commits(query, 'author')
-                if results:
-                    print(f"\nFound {len(results)} commits by '{query}':")
-                    for commit in results:
-                        print(format_commit_summary(commit))
-                    print()
-                else:
-                    print(f"No commits found by '{query}'")
-            
-            elif command == 'search-file':
-                if not args:
-                    print("Error: filepath required")
-                    continue
-                results = traveler.search_commits(args[0], 'file')
-                if results:
-                    print(f"\nFound {len(results)} commits for '{args[0]}':")
-                    for commit in results:
-                        print(format_commit_summary(commit))
-                    print()
-                else:
-                    print(f"No commits found for '{args[0]}'")
-            
-            elif command == 'search-code':
-                if not args:
-                    print("Error: search text required")
-                    continue
-                query = ' '.join(args)
-                results = traveler.search_commits(query, 'content')
-                if results:
-                    print(f"\nFound {len(results)} commits containing '{query}':")
-                    for commit in results:
-                        print(format_commit_summary(commit))
-                    print()
-                else:
-                    print(f"No commits found containing '{query}'")
-            
-            elif command == 'blame':
-                if not args:
-                    print("Error: filepath required")
-                    continue
-                blame_info = traveler.blame_file(args[0])
-                if blame_info:
-                    print(f"\nBlame for {args[0]}:")
-                    current_commit = None
-                    for info in blame_info:
-                        if info['hash'] != current_commit:
-                            current_commit = info['hash']
-                            date_str = info['date'].strftime('%Y-%m-%d')
-                            print(f"\n{info['hash'][:7]} ({info['author']}, {date_str}):")
-                        print(f"  {info.get('line', '')}")
-                    print()
-                else:
-                    print(f"No blame information for '{args[0]}'")
-            
-            elif command == 'branches':
-                commit_hash = args[0] if args else traveler.current_commit
-                if commit_hash:
-                    branches = traveler.get_branches_at_commit(commit_hash)
-                    if branches:
-                        print(f"\nBranches containing {commit_hash[:7]}:")
-                        for branch in branches:
-                            print(f"  {branch}")
-                        print()
-                    else:
-                        print(f"No branches found for commit {commit_hash[:7]}")
-                else:
-                    print("Error: no commit specified")
-            
-            elif command == 'tags':
-                commit_hash = args[0] if args else traveler.current_commit
-                if commit_hash:
-                    tags = traveler.get_tags_at_commit(commit_hash)
-                    if tags:
-                        print(f"\nTags at {commit_hash[:7]}:")
-                        for tag in tags:
-                            print(f"  {tag}")
-                        print()
-                    else:
-                        print(f"No tags found at commit {commit_hash[:7]}")
-                else:
-                    print("Error: no commit specified")
-            
+            elif command in command_map:
+                command_map[command](args)
             else:
                 print(f"Unknown command: {command}. Type 'help' for available commands.")
         
