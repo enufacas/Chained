@@ -25,7 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests
+          pip install requests beautifulsoup4 lxml html5lib
 
       - name: Fetch and analyze Hacker News
         id: fetch
@@ -36,8 +36,43 @@ jobs:
           from datetime import datetime, timezone
           import os
           import re
+          import time
+          from bs4 import BeautifulSoup
           
           print("Fetching Hacker News top stories...")
+          
+          # Web content fetcher (embedded)
+          class WebContentFetcher:
+              def __init__(self):
+                  self.session = requests.Session()
+                  self.session.headers.update({
+                      'User-Agent': 'Mozilla/5.0 (compatible; ChainedAI/1.0)'
+                  })
+              
+              def fetch(self, url):
+                  try:
+                      response = self.session.get(url, timeout=10, allow_redirects=True)
+                      if response.status_code == 200:
+                          soup = BeautifulSoup(response.text, 'html.parser')
+                          
+                          # Remove unwanted elements
+                          for element in soup(['script', 'style', 'nav', 'footer', 'iframe']):
+                              element.decompose()
+                          
+                          # Try to find main content
+                          content = soup.find('article') or soup.find('main') or soup.find('body')
+                          if content:
+                              text = content.get_text(separator='\n', strip=True)
+                              lines = [line.strip() for line in text.split('\n') if line.strip()]
+                              text = '\n'.join(lines)
+                              if len(text) > 2000:
+                                  text = text[:2000] + '\n\n[Content truncated...]'
+                              return text
+                  except Exception as e:
+                      print(f"  Warning: Could not fetch content from {url}: {e}")
+                  return None
+          
+          fetcher = WebContentFetcher()
           
           # Hacker News API
           base_url = 'https://hacker-news.firebaseio.com/v0'
@@ -62,12 +97,23 @@ jobs:
                           
                           # Only include high-quality stories (score > 100)
                           if score > 100:
-                              learnings.append({
+                              learning = {
                                   'title': title,
                                   'url': url,
                                   'score': score,
                                   'source': 'Hacker News'
-                              })
+                              }
+                              
+                              # Try to fetch actual content
+                              if url:
+                                  print(f"  Fetching content from: {url[:60]}...")
+                                  content = fetcher.fetch(url)
+                                  if content:
+                                      learning['content'] = content
+                                      print(f"  ✓ Fetched content ({len(content)} chars)")
+                                  time.sleep(0.5)  # Rate limiting
+                              
+                              learnings.append(learning)
                               
                               # Categorize by keywords
                               title_lower = title.lower()
@@ -255,6 +301,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
+          # Rebuild learnings book
+          echo "Rebuilding learnings book..."
+          python3 tools/build-learnings-book.py
+          
           git add learnings/
           
           if git diff --staged --quiet; then
@@ -278,7 +328,7 @@ jobs:
             **New Ideas Generated:** ${{ steps.fetch.outputs.idea_count }}
             
             ### Summary
-            This PR adds new learnings collected from Hacker News trending discussions.
+            This PR adds new learnings collected from Hacker News trending discussions with full article content.
             
             **Sample Learning:**
             ${{ steps.fetch.outputs.sample_learning }}
@@ -286,7 +336,9 @@ jobs:
             ### Changes
             - Updated learnings database with community insights
             - Extracted trending topics and patterns
+            - Fetched and summarized full article content
             - Identified potential project ideas
+            - Rebuilt learnings book with new insights
             
             ---
             *This PR was automatically created by the Hacker News Learning workflow and will be auto-merged.*" \
