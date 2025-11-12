@@ -1,0 +1,2286 @@
+{
+  "metadata": {
+    "generated_at": "2025-11-12T01:47:09.669985",
+    "repo_path": "/home/runner/work/Chained/Chained",
+    "total_files": 61,
+    "total_test_files": 32,
+    "total_relationships": 246
+  },
+  "nodes": [
+    {
+      "id": "test_github_pages_health.py",
+      "type": "test_file",
+      "label": "test_github_pages_health.py",
+      "filepath": "test_github_pages_health.py",
+      "functions": 20,
+      "classes": 1,
+      "lines_of_code": 583,
+      "imports": 4,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_agent_system.py",
+      "type": "test_file",
+      "label": "test_agent_system.py",
+      "filepath": "test_agent_system.py",
+      "functions": 5,
+      "classes": 0,
+      "lines_of_code": 163,
+      "imports": 3,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_get_agent_info.py",
+      "type": "test_file",
+      "label": "test_get_agent_info.py",
+      "filepath": "test_get_agent_info.py",
+      "functions": 11,
+      "classes": 0,
+      "lines_of_code": 336,
+      "imports": 6,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_agent_system_refactored.py",
+      "type": "test_file",
+      "label": "test_agent_system_refactored.py",
+      "filepath": "test_agent_system_refactored.py",
+      "functions": 25,
+      "classes": 0,
+      "lines_of_code": 290,
+      "imports": 4,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_knowledge_graph_query.py",
+      "type": "test_file",
+      "label": "test_knowledge_graph_query.py",
+      "filepath": "test_knowledge_graph_query.py",
+      "functions": 30,
+      "classes": 3,
+      "lines_of_code": 329,
+      "imports": 6,
+      "contributors": []
+    },
+    {
+      "id": "test_agent_matching.py",
+      "type": "test_file",
+      "label": "test_agent_matching.py",
+      "filepath": "test_agent_matching.py",
+      "functions": 3,
+      "classes": 0,
+      "lines_of_code": 132,
+      "imports": 5,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_direct_assignment.py",
+      "type": "test_file",
+      "label": "test_direct_assignment.py",
+      "filepath": "test_direct_assignment.py",
+      "functions": 6,
+      "classes": 0,
+      "lines_of_code": 468,
+      "imports": 5,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_github_integration.py",
+      "type": "test_file",
+      "label": "test_github_integration.py",
+      "filepath": "test_github_integration.py",
+      "functions": 29,
+      "classes": 5,
+      "lines_of_code": 384,
+      "imports": 16,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_agent_assignment_edge_cases.py",
+      "type": "test_file",
+      "label": "test_agent_assignment_edge_cases.py",
+      "filepath": "test_agent_assignment_edge_cases.py",
+      "functions": 5,
+      "classes": 0,
+      "lines_of_code": 255,
+      "imports": 5,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_agent_spawn_consolidation.py",
+      "type": "test_file",
+      "label": "test_agent_spawn_consolidation.py",
+      "filepath": "test_agent_spawn_consolidation.py",
+      "functions": 9,
+      "classes": 0,
+      "lines_of_code": 365,
+      "imports": 4,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_agent_deletion_discussion.py",
+      "type": "test_file",
+      "label": "test_agent_deletion_discussion.py",
+      "filepath": "test_agent_deletion_discussion.py",
+      "functions": 6,
+      "classes": 0,
+      "lines_of_code": 215,
+      "imports": 3,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_custom_agents_conventions.py",
+      "type": "test_file",
+      "label": "test_custom_agents_conventions.py",
+      "filepath": "test_custom_agents_conventions.py",
+      "functions": 10,
+      "classes": 1,
+      "lines_of_code": 291,
+      "imports": 5,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_assert_specialist.py",
+      "type": "test_file",
+      "label": "test_assert_specialist.py",
+      "filepath": "test_assert_specialist.py",
+      "functions": 7,
+      "classes": 0,
+      "lines_of_code": 225,
+      "imports": 3,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_ai_knowledge_graph.py",
+      "type": "test_file",
+      "label": "test_ai_knowledge_graph.py",
+      "filepath": "test_ai_knowledge_graph.py",
+      "functions": 6,
+      "classes": 0,
+      "lines_of_code": 200,
+      "imports": 3,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_knowledge_graph_builder.py",
+      "type": "test_file",
+      "label": "test_knowledge_graph_builder.py",
+      "filepath": "test_knowledge_graph_builder.py",
+      "functions": 20,
+      "classes": 5,
+      "lines_of_code": 311,
+      "imports": 10,
+      "contributors": []
+    },
+    {
+      "id": "test_discussion_rounds_fix.py",
+      "type": "test_file",
+      "label": "test_discussion_rounds_fix.py",
+      "filepath": "test_discussion_rounds_fix.py",
+      "functions": 5,
+      "classes": 0,
+      "lines_of_code": 180,
+      "imports": 2,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_generate_new_agent_fix.py",
+      "type": "test_file",
+      "label": "test_generate_new_agent_fix.py",
+      "filepath": "test_generate_new_agent_fix.py",
+      "functions": 2,
+      "classes": 0,
+      "lines_of_code": 100,
+      "imports": 3,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_agent_matching_security.py",
+      "type": "test_file",
+      "label": "test_agent_matching_security.py",
+      "filepath": "test_agent_matching_security.py",
+      "functions": 8,
+      "classes": 0,
+      "lines_of_code": 312,
+      "imports": 6,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_spawn_sequence.py",
+      "type": "test_file",
+      "label": "test_spawn_sequence.py",
+      "filepath": "test_spawn_sequence.py",
+      "functions": 13,
+      "classes": 2,
+      "lines_of_code": 206,
+      "imports": 2,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_validate_agent_definition.py",
+      "type": "test_file",
+      "label": "test_validate_agent_definition.py",
+      "filepath": "test_validate_agent_definition.py",
+      "functions": 7,
+      "classes": 0,
+      "lines_of_code": 149,
+      "imports": 6,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_tldr_feeds.py",
+      "type": "test_file",
+      "label": "test_tldr_feeds.py",
+      "filepath": "test_tldr_feeds.py",
+      "functions": 1,
+      "classes": 0,
+      "lines_of_code": 130,
+      "imports": 6,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "demo-time-travel.py",
+      "type": "code_file",
+      "label": "demo-time-travel.py",
+      "filepath": "demo-time-travel.py",
+      "functions": 1,
+      "classes": 0,
+      "lines_of_code": 102,
+      "imports": 3,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_issue_format_fix.py",
+      "type": "test_file",
+      "label": "test_issue_format_fix.py",
+      "filepath": "test_issue_format_fix.py",
+      "functions": 4,
+      "classes": 0,
+      "lines_of_code": 144,
+      "imports": 5,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_workflow_integrity.py",
+      "type": "test_file",
+      "label": "test_workflow_integrity.py",
+      "filepath": "test_workflow_integrity.py",
+      "functions": 13,
+      "classes": 1,
+      "lines_of_code": 567,
+      "imports": 10,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_workflow_integration.py",
+      "type": "test_file",
+      "label": "test_workflow_integration.py",
+      "filepath": "test_workflow_integration.py",
+      "functions": 8,
+      "classes": 0,
+      "lines_of_code": 365,
+      "imports": 6,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "test_performance_optimization.py",
+      "type": "test_file",
+      "label": "test_performance_optimization.py",
+      "filepath": "test_performance_optimization.py",
+      "functions": 3,
+      "classes": 0,
+      "lines_of_code": 137,
+      "imports": 4,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/code-analyzer.py",
+      "type": "code_file",
+      "label": "code-analyzer.py",
+      "filepath": "tools/code-analyzer.py",
+      "functions": 10,
+      "classes": 1,
+      "lines_of_code": 533,
+      "imports": 16,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/debug_custom_agent_actors.py",
+      "type": "code_file",
+      "label": "debug_custom_agent_actors.py",
+      "filepath": "tools/debug_custom_agent_actors.py",
+      "functions": 4,
+      "classes": 0,
+      "lines_of_code": 253,
+      "imports": 5,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/test_readability_scorer.py",
+      "type": "test_file",
+      "label": "test_readability_scorer.py",
+      "filepath": "tools/test_readability_scorer.py",
+      "functions": 22,
+      "classes": 0,
+      "lines_of_code": 605,
+      "imports": 7,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/knowledge_graph_builder.py",
+      "type": "code_file",
+      "label": "knowledge_graph_builder.py",
+      "filepath": "tools/knowledge_graph_builder.py",
+      "functions": 22,
+      "classes": 4,
+      "lines_of_code": 535,
+      "imports": 14,
+      "contributors": []
+    },
+    {
+      "id": "tools/repo-time-travel.py",
+      "type": "code_file",
+      "label": "repo-time-travel.py",
+      "filepath": "tools/repo-time-travel.py",
+      "functions": 20,
+      "classes": 1,
+      "lines_of_code": 699,
+      "imports": 12,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/benchmark_code_analyzer.py",
+      "type": "code_file",
+      "label": "benchmark_code_analyzer.py",
+      "filepath": "tools/benchmark_code_analyzer.py",
+      "functions": 3,
+      "classes": 0,
+      "lines_of_code": 202,
+      "imports": 6,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/readability-scorer.py",
+      "type": "code_file",
+      "label": "readability-scorer.py",
+      "filepath": "tools/readability-scorer.py",
+      "functions": 15,
+      "classes": 1,
+      "lines_of_code": 973,
+      "imports": 15,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/test_optimizer.py",
+      "type": "test_file",
+      "label": "test_optimizer.py",
+      "filepath": "tools/test_optimizer.py",
+      "functions": 12,
+      "classes": 0,
+      "lines_of_code": 225,
+      "imports": 3,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/validate-workflow-inputs.py",
+      "type": "code_file",
+      "label": "validate-workflow-inputs.py",
+      "filepath": "tools/validate-workflow-inputs.py",
+      "functions": 8,
+      "classes": 1,
+      "lines_of_code": 305,
+      "imports": 18,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/validate-agent-definition.py",
+      "type": "code_file",
+      "label": "validate-agent-definition.py",
+      "filepath": "tools/validate-agent-definition.py",
+      "functions": 11,
+      "classes": 2,
+      "lines_of_code": 362,
+      "imports": 14,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/list-agent-actor-ids.py",
+      "type": "code_file",
+      "label": "list-agent-actor-ids.py",
+      "filepath": "tools/list-agent-actor-ids.py",
+      "functions": 4,
+      "classes": 0,
+      "lines_of_code": 217,
+      "imports": 5,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/test_code_analyzer.py",
+      "type": "test_file",
+      "label": "test_code_analyzer.py",
+      "filepath": "tools/test_code_analyzer.py",
+      "functions": 10,
+      "classes": 0,
+      "lines_of_code": 297,
+      "imports": 7,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/github_integration.py",
+      "type": "code_file",
+      "label": "github_integration.py",
+      "filepath": "tools/github_integration.py",
+      "functions": 14,
+      "classes": 5,
+      "lines_of_code": 446,
+      "imports": 14,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/match-issue-to-agent.py",
+      "type": "code_file",
+      "label": "match-issue-to-agent.py",
+      "filepath": "tools/match-issue-to-agent.py",
+      "functions": 8,
+      "classes": 0,
+      "lines_of_code": 385,
+      "imports": 7,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/test_repo_time_travel.py",
+      "type": "test_file",
+      "label": "test_repo_time_travel.py",
+      "filepath": "tools/test_repo_time_travel.py",
+      "functions": 14,
+      "classes": 0,
+      "lines_of_code": 427,
+      "imports": 7,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/get-agent-info.py",
+      "type": "code_file",
+      "label": "get-agent-info.py",
+      "filepath": "tools/get-agent-info.py",
+      "functions": 16,
+      "classes": 1,
+      "lines_of_code": 276,
+      "imports": 10,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/generate-agent-personality.py",
+      "type": "code_file",
+      "label": "generate-agent-personality.py",
+      "filepath": "tools/generate-agent-personality.py",
+      "functions": 3,
+      "classes": 0,
+      "lines_of_code": 195,
+      "imports": 4,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/inspect-issue-assignment.py",
+      "type": "code_file",
+      "label": "inspect-issue-assignment.py",
+      "filepath": "tools/inspect-issue-assignment.py",
+      "functions": 4,
+      "classes": 0,
+      "lines_of_code": 313,
+      "imports": 5,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/code-golf-optimizer.py",
+      "type": "code_file",
+      "label": "code-golf-optimizer.py",
+      "filepath": "tools/code-golf-optimizer.py",
+      "functions": 8,
+      "classes": 2,
+      "lines_of_code": 336,
+      "imports": 10,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/knowledge_graph_query.py",
+      "type": "code_file",
+      "label": "knowledge_graph_query.py",
+      "filepath": "tools/knowledge_graph_query.py",
+      "functions": 22,
+      "classes": 1,
+      "lines_of_code": 558,
+      "imports": 9,
+      "contributors": []
+    },
+    {
+      "id": "tools/cross-repo-analyzer.py",
+      "type": "code_file",
+      "label": "cross-repo-analyzer.py",
+      "filepath": "tools/cross-repo-analyzer.py",
+      "functions": 6,
+      "classes": 1,
+      "lines_of_code": 340,
+      "imports": 18,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/test_validation_utils.py",
+      "type": "test_file",
+      "label": "test_validation_utils.py",
+      "filepath": "tools/test_validation_utils.py",
+      "functions": 16,
+      "classes": 0,
+      "lines_of_code": 664,
+      "imports": 22,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/generate-new-agent.py",
+      "type": "code_file",
+      "label": "generate-new-agent.py",
+      "filepath": "tools/generate-new-agent.py",
+      "functions": 7,
+      "classes": 1,
+      "lines_of_code": 432,
+      "imports": 11,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/test_pattern_matcher.py",
+      "type": "test_file",
+      "label": "test_pattern_matcher.py",
+      "filepath": "tools/test_pattern_matcher.py",
+      "functions": 15,
+      "classes": 1,
+      "lines_of_code": 203,
+      "imports": 8,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/performance_benchmark.py",
+      "type": "code_file",
+      "label": "performance_benchmark.py",
+      "filepath": "tools/performance_benchmark.py",
+      "functions": 4,
+      "classes": 0,
+      "lines_of_code": 231,
+      "imports": 7,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/code-archaeologist.py",
+      "type": "code_file",
+      "label": "code-archaeologist.py",
+      "filepath": "tools/code-archaeologist.py",
+      "functions": 12,
+      "classes": 1,
+      "lines_of_code": 509,
+      "imports": 15,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/pattern-matcher.py",
+      "type": "code_file",
+      "label": "pattern-matcher.py",
+      "filepath": "tools/pattern-matcher.py",
+      "functions": 8,
+      "classes": 2,
+      "lines_of_code": 430,
+      "imports": 12,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/test_code_archaeologist.py",
+      "type": "test_file",
+      "label": "test_code_archaeologist.py",
+      "filepath": "tools/test_code_archaeologist.py",
+      "functions": 12,
+      "classes": 0,
+      "lines_of_code": 376,
+      "imports": 8,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/validation_utils.py",
+      "type": "code_file",
+      "label": "validation_utils.py",
+      "filepath": "tools/validation_utils.py",
+      "functions": 16,
+      "classes": 1,
+      "lines_of_code": 535,
+      "imports": 7,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/examples/prime.py",
+      "type": "code_file",
+      "label": "prime.py",
+      "filepath": "tools/examples/prime.py",
+      "functions": 4,
+      "classes": 0,
+      "lines_of_code": 139,
+      "imports": 3,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/examples/anti-patterns.py",
+      "type": "code_file",
+      "label": "anti-patterns.py",
+      "filepath": "tools/examples/anti-patterns.py",
+      "functions": 8,
+      "classes": 0,
+      "lines_of_code": 154,
+      "imports": 4,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/examples/fibonacci.py",
+      "type": "code_file",
+      "label": "fibonacci.py",
+      "filepath": "tools/examples/fibonacci.py",
+      "functions": 3,
+      "classes": 0,
+      "lines_of_code": 97,
+      "imports": 1,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/examples/code-poetry-showcase.py",
+      "type": "code_file",
+      "label": "code-poetry-showcase.py",
+      "filepath": "tools/examples/code-poetry-showcase.py",
+      "functions": 8,
+      "classes": 1,
+      "lines_of_code": 208,
+      "imports": 5,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/examples/github_integration_examples.py",
+      "type": "code_file",
+      "label": "github_integration_examples.py",
+      "filepath": "tools/examples/github_integration_examples.py",
+      "functions": 7,
+      "classes": 0,
+      "lines_of_code": 275,
+      "imports": 7,
+      "contributors": [
+        "Eric Smith"
+      ]
+    },
+    {
+      "id": "tools/examples/palindrome.py",
+      "type": "code_file",
+      "label": "palindrome.py",
+      "filepath": "tools/examples/palindrome.py",
+      "functions": 5,
+      "classes": 0,
+      "lines_of_code": 148,
+      "imports": 2,
+      "contributors": [
+        "Eric Smith"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "source": "test_github_pages_health.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_github_pages_health.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_system.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_get_agent_info.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_get_agent_info.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_get_agent_info.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_system_refactored.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_knowledge_graph_query.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_knowledge_graph_query.py",
+      "target": "tools/knowledge_graph_query.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_knowledge_graph_query.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_matching.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_matching.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_matching.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_direct_assignment.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_direct_assignment.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_direct_assignment.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_github_integration.py",
+      "target": "demo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_github_integration.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_github_integration.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_github_integration.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_github_integration.py",
+      "target": "tools/examples/github_integration_examples.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_github_integration.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_github_integration.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_github_integration.py",
+      "target": "tools/github_integration.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_assignment_edge_cases.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_assignment_edge_cases.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_assignment_edge_cases.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_spawn_consolidation.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_spawn_consolidation.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_deletion_discussion.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_deletion_discussion.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_custom_agents_conventions.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_custom_agents_conventions.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_custom_agents_conventions.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_custom_agents_conventions.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_custom_agents_conventions.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_custom_agents_conventions.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_custom_agents_conventions.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_custom_agents_conventions.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_assert_specialist.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_assert_specialist.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_ai_knowledge_graph.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_knowledge_graph_builder.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_knowledge_graph_builder.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_knowledge_graph_builder.py",
+      "target": "tools/knowledge_graph_builder.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_knowledge_graph_builder.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_discussion_rounds_fix.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_discussion_rounds_fix.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_generate_new_agent_fix.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_generate_new_agent_fix.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_matching_security.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_matching_security.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_matching_security.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_spawn_sequence.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_spawn_sequence.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_spawn_sequence.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_spawn_sequence.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_spawn_sequence.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_spawn_sequence.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_spawn_sequence.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_validate_agent_definition.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_validate_agent_definition.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_validate_agent_definition.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_tldr_feeds.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_tldr_feeds.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "demo-time-travel.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "demo-time-travel.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "demo-time-travel.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_issue_format_fix.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_issue_format_fix.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_workflow_integrity.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_workflow_integrity.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_workflow_integrity.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_workflow_integrity.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_workflow_integrity.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_workflow_integrity.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_workflow_integrity.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_workflow_integrity.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_workflow_integration.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_workflow_integration.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_workflow_integration.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_performance_optimization.py",
+      "target": "demo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_performance_optimization.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_performance_optimization.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_performance_optimization.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_performance_optimization.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-analyzer.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-analyzer.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-analyzer.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-analyzer.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-analyzer.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-analyzer.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-analyzer.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-analyzer.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/debug_custom_agent_actors.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/debug_custom_agent_actors.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/debug_custom_agent_actors.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_readability_scorer.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_readability_scorer.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_readability_scorer.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/knowledge_graph_builder.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/knowledge_graph_builder.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/knowledge_graph_builder.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/knowledge_graph_builder.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/knowledge_graph_builder.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/knowledge_graph_builder.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/knowledge_graph_builder.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/repo-time-travel.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/repo-time-travel.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/repo-time-travel.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/repo-time-travel.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/repo-time-travel.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/repo-time-travel.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/repo-time-travel.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/benchmark_code_analyzer.py",
+      "target": "demo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/benchmark_code_analyzer.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/benchmark_code_analyzer.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/benchmark_code_analyzer.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/benchmark_code_analyzer.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/benchmark_code_analyzer.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/readability-scorer.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/readability-scorer.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/readability-scorer.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/readability-scorer.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/readability-scorer.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/readability-scorer.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/readability-scorer.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_optimizer.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_optimizer.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_optimizer.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validate-workflow-inputs.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validate-workflow-inputs.py",
+      "target": "tools/validation_utils.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validate-workflow-inputs.py",
+      "target": "tools/test_validation_utils.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validate-workflow-inputs.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validate-agent-definition.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validate-agent-definition.py",
+      "target": "tools/validation_utils.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validate-agent-definition.py",
+      "target": "tools/test_validation_utils.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validate-agent-definition.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/list-agent-actor-ids.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/list-agent-actor-ids.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/list-agent-actor-ids.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_code_analyzer.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_code_analyzer.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_code_analyzer.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/github_integration.py",
+      "target": "demo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/github_integration.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/github_integration.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/github_integration.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/github_integration.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/github_integration.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/match-issue-to-agent.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/match-issue-to-agent.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/match-issue-to-agent.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/match-issue-to-agent.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/match-issue-to-agent.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/match-issue-to-agent.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/match-issue-to-agent.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/match-issue-to-agent.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_repo_time_travel.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_repo_time_travel.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_repo_time_travel.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/get-agent-info.py",
+      "target": "tools/validation_utils.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/get-agent-info.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/get-agent-info.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/get-agent-info.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/get-agent-info.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/get-agent-info.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/get-agent-info.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/get-agent-info.py",
+      "target": "tools/test_validation_utils.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/get-agent-info.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/get-agent-info.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/generate-agent-personality.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/generate-agent-personality.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/inspect-issue-assignment.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/inspect-issue-assignment.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/inspect-issue-assignment.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-golf-optimizer.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-golf-optimizer.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-golf-optimizer.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-golf-optimizer.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-golf-optimizer.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-golf-optimizer.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-golf-optimizer.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-golf-optimizer.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/cross-repo-analyzer.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/cross-repo-analyzer.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/cross-repo-analyzer.py",
+      "target": "tools/examples/github_integration_examples.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/cross-repo-analyzer.py",
+      "target": "test_github_integration.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/cross-repo-analyzer.py",
+      "target": "tools/github_integration.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_validation_utils.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_validation_utils.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_validation_utils.py",
+      "target": "tools/validation_utils.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_validation_utils.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/generate-new-agent.py",
+      "target": "tools/validation_utils.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/generate-new-agent.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/generate-new-agent.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/generate-new-agent.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/generate-new-agent.py",
+      "target": "tools/test_validation_utils.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_pattern_matcher.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_pattern_matcher.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_pattern_matcher.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/performance_benchmark.py",
+      "target": "demo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/performance_benchmark.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/performance_benchmark.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/performance_benchmark.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/performance_benchmark.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-archaeologist.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-archaeologist.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-archaeologist.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-archaeologist.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-archaeologist.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-archaeologist.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-archaeologist.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/code-archaeologist.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/pattern-matcher.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/pattern-matcher.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/pattern-matcher.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/pattern-matcher.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/pattern-matcher.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/pattern-matcher.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/pattern-matcher.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/pattern-matcher.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_code_archaeologist.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_code_archaeologist.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/test_code_archaeologist.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validation_utils.py",
+      "target": "tools/readability-scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validation_utils.py",
+      "target": "test_direct_assignment.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validation_utils.py",
+      "target": "tools/test_repo_time_travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validation_utils.py",
+      "target": "tools/repo-time-travel.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validation_utils.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validation_utils.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/validation_utils.py",
+      "target": "tools/test_readability_scorer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/examples/anti-patterns.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/examples/github_integration_examples.py",
+      "target": "test_agent_system.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/examples/github_integration_examples.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/examples/github_integration_examples.py",
+      "target": "test_github_integration.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/examples/github_integration_examples.py",
+      "target": "tools/cross-repo-analyzer.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "tools/examples/github_integration_examples.py",
+      "target": "tools/github_integration.py",
+      "type": "imports",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_system.py",
+      "target": "test_agent_system_refactored.py",
+      "type": "tests",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_system_refactored.py",
+      "target": "test_agent_system.py",
+      "type": "tests",
+      "weight": 1
+    },
+    {
+      "source": "test_knowledge_graph_query.py",
+      "target": "tools/knowledge_graph_query.py",
+      "type": "tests",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_matching.py",
+      "target": "test_agent_matching_security.py",
+      "type": "tests",
+      "weight": 1
+    },
+    {
+      "source": "test_github_integration.py",
+      "target": "tools/github_integration.py",
+      "type": "tests",
+      "weight": 1
+    },
+    {
+      "source": "test_github_integration.py",
+      "target": "tools/examples/github_integration_examples.py",
+      "type": "tests",
+      "weight": 1
+    },
+    {
+      "source": "test_knowledge_graph_builder.py",
+      "target": "tools/knowledge_graph_builder.py",
+      "type": "tests",
+      "weight": 1
+    },
+    {
+      "source": "test_agent_matching_security.py",
+      "target": "test_agent_matching.py",
+      "type": "tests",
+      "weight": 1
+    }
+  ],
+  "statistics": {
+    "total_nodes": 61,
+    "total_relationships": 246,
+    "relationship_types": {
+      "imports": 238,
+      "tests": 8
+    },
+    "total_agents": 0,
+    "avg_file_size": 324.95081967213116,
+    "total_functions": 618,
+    "total_classes": 45
+  }
+}
