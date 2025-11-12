@@ -113,7 +113,8 @@ docs/
 This folder also hosts the GitHub Pages site:
 
 - **Live Site**: https://enufacas.github.io/Chained/
-- **Main Page**: [index.html](./index.html)
+- **Welcome Page**: [welcome.html](./welcome.html) - Simple introduction for new visitors
+- **Main Dashboard**: [index.html](./index.html) - Comprehensive real-time dashboard
 - **Agents Page**: [agents.html](./agents.html)
 - **AI Friends**: [ai-friends.html](./ai-friends.html)
 - **Knowledge Graph**: [ai-knowledge-graph.html](./ai-knowledge-graph.html)
