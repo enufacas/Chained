@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 23
+**Total Insights:** 24
 
 **Last Updated:** 2025-11-12
 
@@ -10,6 +10,20 @@
 
 
 ## 📰 From Hacker News
+
+
+### Yt-dlp: External JavaScript runtime now required for full YouTube support
+
+**Community Score:** 665 upvotes
+
+**Link:** https://github.com/yt-dlp/yt-dlp/issues/15012
+
+
+**Content Summary:**
+
+yt-dlp / yt-dlp Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 10.8k Star 135k [Announcement] External JavaScript runtime now required for full YouTube support #15012 New issue Copy link New issue Copy link Open Open [Announcement] External JavaScript runtime now required for full YouTube support #15012 Copy link Labels discussion/announcement Description bashonly opened on Nov 12, 2025 Issue body...
+
+---
 
 
 ### Yt-dlp: External JavaScript runtime now required for full YouTube support

@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-12 13:27 UTC
+**Generated:** 2025-11-12 19:09 UTC
 
-**Total Learning Sessions:** 23
+**Total Learning Sessions:** 24
 
-**Total Insights:** 269
+**Total Insights:** 283
 
 ---
 
@@ -18,14 +18,14 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 89
+**Insights:** 91
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 23
+**Insights:** 24
 
 
 ### [🗄️ Databases & Data Management](./Database.md)
@@ -46,7 +46,7 @@ Web technologies, browsers, APIs, and frontend frameworks
 
 Security vulnerabilities, encryption, authentication, and privacy
 
-**Insights:** 3
+**Insights:** 5
 
 
 ### [⚡ Performance & Optimization](./Performance.md)
@@ -60,14 +60,14 @@ Performance tuning, benchmarks, and optimization techniques
 
 IDEs, editors, debuggers, and productivity tools
 
-**Insights:** 15
+**Insights:** 16
 
 
 ### [📚 General Tech Insights](./Other.md)
 
 General technology news and insights
 
-**Insights:** 123
+**Insights:** 131
 
 
 ## 📊 Statistics
@@ -75,28 +75,28 @@ General technology news and insights
 
 ### By Source
 
-- **Hacker News:** 13 learning sessions
+- **Hacker News:** 14 learning sessions
 
 - **TLDR Tech:** 10 learning sessions
 
 
 ### By Topic
 
-- **📚 General Tech Insights:** 123 insights
+- **📚 General Tech Insights:** 131 insights
 
-- **🤖 AI & Machine Learning:** 89 insights
+- **🤖 AI & Machine Learning:** 91 insights
 
-- **💻 Programming Languages & Frameworks:** 23 insights
+- **💻 Programming Languages & Frameworks:** 24 insights
 
-- **🔧 Developer Tools:** 15 insights
+- **🔧 Developer Tools:** 16 insights
 
 - **⚡ Performance & Optimization:** 7 insights
+
+- **🔒 Security & Privacy:** 5 insights
 
 - **🌐 Web Development:** 5 insights
 
 - **🗄️ Databases & Data Management:** 4 insights
-
-- **🔒 Security & Privacy:** 3 insights
 
 
 ## 💡 How to Use This Book
