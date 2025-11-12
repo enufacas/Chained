@@ -1,6 +1,8 @@
 name: "Orchestrator: Dynamic Scheduling"
 
 on:
+  # This workflow should ONLY run on schedule or manual trigger
+  # DO NOT add workflow_run trigger - it would cause this to run on every workflow completion
   schedule:
     # Check and adjust schedules daily at midnight UTC
     - cron: '0 0 * * *'
