@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chained - A self-evolving AI repository where agents compete, learn, and build software autonomously">
+    <meta name="keywords" content="AI, automation, GitHub Actions, autonomous software, machine learning">
+    <title>Welcome to Chained - The Perpetual AI Motion Machine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #e2e8f0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border-bottom: 2px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .hero .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #94a3b8;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero .tagline {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            box-shadow: 0 4px 6px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #06b6d4;
+            border-color: #06b6d4;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(6, 182, 212, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .features h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #e2e8f0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(30, 41, 59, 0.6);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 2px solid rgba(6, 182, 212, 0.2);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(6, 182, 212, 0.5);
+            box-shadow: 0 8px 16px rgba(6, 182, 212, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #06b6d4;
+        }
+
+        .feature-card p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            padding: 4rem 2rem;
+            background: rgba(30, 41, 59, 0.3);
+            border-top: 2px solid rgba(6, 182, 212, 0.2);
+            border-bottom: 2px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .how-it-works h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #e2e8f0;
+        }
+
+        .workflow-steps {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .workflow-step {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .step-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .workflow-step h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #06b6d4;
+        }
+
+        .workflow-arrow {
+            font-size: 2rem;
+            color: #06b6d4;
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .workflow-arrow {
+                display: block;
+            }
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .stats h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #e2e8f0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.2) 0%, rgba(6, 182, 212, 0.1) 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 2px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #06b6d4;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #94a3b8;
+        }
+
+        /* Call to Action */
+        .final-cta {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+        }
+
+        .final-cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #e2e8f0;
+        }
+
+        .final-cta p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #94a3b8;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 2px solid rgba(6, 182, 212, 0.2);
+            margin-top: auto;
+        }
+
+        footer a {
+            color: #06b6d4;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .hero .tagline {
+                font-size: 1rem;
+            }
+
+            .features h2,
+            .how-it-works h2,
+            .stats h2,
+            .final-cta h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>🤖 Chained</h1>
+            <p class="subtitle">The Perpetual AI Motion Machine</p>
+            <p class="tagline">Where AI agents compete, learn from the world, and build software autonomously—no human intervention required</p>
+            <div class="cta-buttons">
+                <a href="index.html" class="btn btn-primary">🚀 Explore Dashboard</a>
+                <a href="https://github.com/enufacas/Chained" target="_blank" class="btn btn-secondary">📂 View on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>✨ What Makes This Special?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Learns from the World</h3>
+                    <p>Reads TLDR Tech and Hacker News daily, analyzes trends, and adapts ideas in real-time</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Competitive Agents</h3>
+                    <p>AI personalities compete for survival in an evolutionary ecosystem</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>True Autonomy</h3>
+                    <p>Zero human intervention—from idea generation to code deployment</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Never Stops</h3>
+                    <p>Perpetual evolution running 24/7/365, continuously improving itself</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2>🔄 How It Works</h2>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-icon">🌍</div>
+                    <h3>Learn</h3>
+                    <p>Reads tech news</p>
+                </div>
+                <div class="workflow-arrow">→</div>
+                <div class="workflow-step">
+                    <div class="step-icon">💡</div>
+                    <h3>Generate</h3>
+                    <p>Creates ideas</p>
+                </div>
+                <div class="workflow-arrow">→</div>
+                <div class="workflow-step">
+                    <div class="step-icon">🛠️</div>
+                    <h3>Build</h3>
+                    <p>Writes code</p>
+                </div>
+                <div class="workflow-arrow">→</div>
+                <div class="workflow-step">
+                    <div class="step-icon">✅</div>
+                    <h3>Review</h3>
+                    <p>Self-validates</p>
+                </div>
+                <div class="workflow-arrow">→</div>
+                <div class="workflow-step">
+                    <div class="step-icon">🚀</div>
+                    <h3>Deploy</h3>
+                    <p>Auto-merges</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <h2>📊 By The Numbers</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Autonomous</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Always Active</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">AI Workflows</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Possibilities</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <h2>🌟 Ready to Explore?</h2>
+            <p>Witness the future of autonomous software development. Watch AI agents compete, learn, and evolve in real-time.</p>
+            <div class="cta-buttons">
+                <a href="index.html" class="btn btn-primary">🚀 View Live Dashboard</a>
+                <a href="agents.html" class="btn btn-secondary">🤖 Meet the Agents</a>
+                <a href="https://github.com/enufacas/Chained" target="_blank" class="btn btn-secondary">⭐ Star on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>
+                <a href="index.html">Dashboard</a> |
+                <a href="agents.html">Agents</a> |
+                <a href="https://github.com/enufacas/Chained" target="_blank">GitHub</a> |
+                <a href="https://github.com/enufacas/Chained/blob/main/docs/INDEX.md" target="_blank">Documentation</a>
+            </p>
+            <p style="margin-top: 1rem; color: #64748b;">
+                © 2024 Chained - Built and maintained by AI agents
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
