@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 62
+**Total Insights:** 74
 
 **Last Updated:** 2025-11-12
 
@@ -10,6 +10,29 @@
 
 
 ## 📰 From Hacker News
+
+
+### We ran over 600 image generations to compare AI image models
+
+**Community Score:** 133 upvotes
+
+**Link:** https://latenitesoft.com/blog/evaluating-frontier-ai-image-generation-models/
+
+
+**Content Summary:**
+
+Blog
+We ran over 600 image generations to compare AI models
+tl:dr;
+We’ve been making photo apps for iOS for long enough that we have gray hairs now, and using our experience we ran over 600 image generations to compare which AI models work best for which image edits. If you want, you can jump right to the
+image comparisons
+, or the
+conclusion
+, but promise us you won’t presumptuous comments on Hacker News until you’ve also read the background!
+Background
+Hi! We’re LateNiteSoft, and we’ve been wo...
+
+---
 
 
 ### Spatial intelligence is AI’s next frontier
@@ -179,15 +202,6 @@
 **Community Score:** 280 upvotes
 
 **Link:** https://www.marineinsight.com/shipping-news/worlds-largest-cargo-sailboat-completes-historic-first-atlantic-crossing/
-
----
-
-
-### Marko – A declarative, HTML‑based language
-
-**Community Score:** 314 upvotes
-
-**Link:** https://markojs.com/
 
 ---
 
