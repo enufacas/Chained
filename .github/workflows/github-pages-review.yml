@@ -80,7 +80,7 @@ jobs:
               workflow_refs=$(grep -oP '\.github/workflows/[a-z-]+\.yml' "$html_file" | sed 's/.*\///' | sort -u)
               
               for workflow in $workflow_refs; do
-                if ! echo "$actual_workflows" | grep -q "^${workflow}$"; then
+                if ! echo "$actual_workflows" | grep -q "^${workflow}$" 2>/dev/null; then
                   echo "❌ Broken link in $(basename $html_file): $workflow"
                   broken_links="${broken_links}\n- $(basename $html_file) references missing workflow: $workflow"
                   issues_found=$((issues_found + 1))

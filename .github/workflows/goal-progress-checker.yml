@@ -14,6 +14,7 @@ permissions:
 jobs:
   check-goal-progress:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,14 +41,14 @@ jobs:
             exit 0
           fi
           
-          # Check if there's a current goal
-          if grep -q "## Current Goal" "$GOALS_FILE" && grep -q "🟡 In Progress" "$GOALS_FILE"; then
+          # Check if there's a current goal (handle grep failures gracefully)
+          if grep -q "## Current Goal" "$GOALS_FILE" 2>/dev/null && grep -q "🟡 In Progress" "$GOALS_FILE" 2>/dev/null; then
             echo "has_goal=true" >> $GITHUB_OUTPUT
             
             # Extract current goal info
-            CATEGORY=$(grep "^\*\*Category\*\*:" "$GOALS_FILE" | head -1 | sed 's/\*\*Category\*\*: //' | xargs)
-            GOAL=$(grep "^\*\*Goal\*\*:" "$GOALS_FILE" | head -1 | sed 's/\*\*Goal\*\*: //' | xargs)
-            GOAL_DATE=$(grep "^\*\*Date\*\*:" "$GOALS_FILE" | head -1 | sed 's/\*\*Date\*\*: //' | xargs)
+            CATEGORY=$(grep "^\*\*Category\*\*:" "$GOALS_FILE" 2>/dev/null | head -1 | sed 's/\*\*Category\*\*: //' | xargs)
+            GOAL=$(grep "^\*\*Goal\*\*:" "$GOALS_FILE" 2>/dev/null | head -1 | sed 's/\*\*Goal\*\*: //' | xargs)
+            GOAL_DATE=$(grep "^\*\*Date\*\*:" "$GOALS_FILE" 2>/dev/null | head -1 | sed 's/\*\*Date\*\*: //' | xargs)
             
             echo "category=$CATEGORY" >> $GITHUB_OUTPUT
             echo "goal=$GOAL" >> $GITHUB_OUTPUT

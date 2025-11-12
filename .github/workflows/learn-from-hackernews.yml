@@ -14,6 +14,7 @@ permissions:
 jobs:
   learn-from-hn:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

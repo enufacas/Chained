@@ -34,6 +34,7 @@ permissions:
 jobs:
   auto-review-merge:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     # For PR events: only ready_for_review triggers (always run)
     # For scheduled events: always run (logic handles draft/closed PRs internally)
     # For workflow_dispatch: always run (manual triggers should always execute)
@@ -119,20 +120,20 @@ jobs:
             # GitHub Actions can appear as: github-actions[bot], app/github-actions
             # Dependabot appears as: dependabot[bot], app/dependabot
             # Copilot appears as: Copilot, copilot-swe-agent[bot], copilot*[bot], app/copilot-swe-agent
-            if echo "${author}" | grep -qiE "^(github-actions\[bot\]|app/github-actions|dependabot\[bot\]|app/dependabot|app/copilot|copilot)"; then
+            if echo "${author}" | grep -qiE "^(github-actions\[bot\]|app/github-actions|dependabot\[bot\]|app/dependabot|app/copilot|copilot)" 2>/dev/null; then
               is_trusted_bot=1
             fi
             
-            # Check if PR has Copilot label
-            has_copilot_label=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "copilot" || true)
+            # Check if PR has Copilot label (handle grep failure gracefully)
+            has_copilot_label=$(echo "${pr_data}" | jq -r '.labels[].name' 2>/dev/null | grep -c "copilot" 2>/dev/null || echo "0")
             
             # Handle draft PRs that are ready (WIP removed, from trusted source)
             if [ "${is_draft}" = "true" ] && [ "${pr_state}" = "OPEN" ]; then
               echo "PR #${pr_num} is currently in draft status"
               echo "Debug - Author: '${author}', Trusted Bot: ${is_trusted_bot}, Repo Owner: ${is_repo_owner}, Copilot Label: ${has_copilot_label}"
               
-              # Check if title contains WIP markers
-              if echo "${pr_title}" | grep -qiE '\b(WIP|work.?in.?progress)\b'; then
+              # Check if title contains WIP markers (handle grep failure gracefully)
+              if echo "${pr_title}" | grep -qiE '\b(WIP|work.?in.?progress)\b' 2>/dev/null; then
                 echo "PR #${pr_num} still has WIP in title, keeping as draft"
               else
                 # Convert draft to ready if trusted source with copilot label

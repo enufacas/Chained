@@ -29,6 +29,7 @@ permissions:
 jobs:
   assign-to-copilot:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     # Only run if issue was just created, on schedule, or via workflow_dispatch
     if: |
       github.event_name == 'issues' ||

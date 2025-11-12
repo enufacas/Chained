@@ -26,6 +26,7 @@ permissions:
 jobs:
   analyze-code:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     # Only run on merge to main or manual trigger
     if: |
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||

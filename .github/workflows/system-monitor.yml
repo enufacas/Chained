@@ -54,6 +54,7 @@ permissions:
 jobs:
   timeline-update:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     # Temporarily disabled - spawning too many events, will fix later
     if: false
     steps:
@@ -150,7 +151,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
           # Check if there are any changes before proceeding
-          if git diff --quiet docs/data/ && ! git ls-files --others --exclude-standard docs/data/ | grep -q .; then
+          if git diff --quiet docs/data/ && ! git ls-files --others --exclude-standard docs/data/ | grep -q . 2>/dev/null; then
             echo "No changes to commit"
             exit 0
           fi
@@ -246,6 +247,7 @@ jobs:
 
   progress-tracking:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     # Run on schedule or when manually triggered (unless skipped)
     if: |
       github.event_name == 'schedule' ||
@@ -326,6 +328,7 @@ jobs:
 
   workflow-monitoring:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     # Run on schedule or when manually triggered (unless skipped)
     if: |
       github.event_name == 'schedule' ||
@@ -474,6 +477,7 @@ jobs:
 
   merge-conflict-resolution:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     # Run on schedule or when manually triggered (unless skipped)
     if: |
       github.event_name == 'schedule' ||
@@ -510,11 +514,13 @@ jobs:
             echo "Checking PR #${pr_number}: ${pr_title}"
             echo "  Mergeable: ${mergeable}, Merge State: ${merge_state}"
             
-            # Check if PR has conflicts
+            # Check if PR has conflicts (handle empty values)
             if [ "${mergeable}" = "CONFLICTING" ] || [ "${merge_state}" = "DIRTY" ]; then
               echo "  ⚠️ PR #${pr_number} has merge conflicts"
               conflict_count=$((conflict_count + 1))
               conflict_prs="${conflict_prs} ${pr_number}"
+            elif [ -z "${mergeable}" ] || [ -z "${merge_state}" ]; then
+              echo "  ⚠️ PR #${pr_number} has unknown merge status, skipping"
             else
               echo "  ✅ PR #${pr_number} is clean"
             fi
@@ -550,11 +556,11 @@ jobs:
             head_branch=$(echo "${pr_data}" | jq -r '.headRefName')
             base_branch=$(echo "${pr_data}" | jq -r '.baseRefName')
             author=$(echo "${pr_data}" | jq -r '.author.login')
-            has_copilot_label=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "copilot" || true)
+            has_copilot_label=$(echo "${pr_data}" | jq -r '.labels[].name' 2>/dev/null | grep -c "copilot" 2>/dev/null || echo "0")
             
             # Only auto-resolve for trusted sources
             is_trusted=0
-            if echo "${author}" | grep -qiE "^(github-actions\[bot\]|app/github-actions|dependabot\[bot\]|app/dependabot|app/copilot|copilot)"; then
+            if echo "${author}" | grep -qiE "^(github-actions\[bot\]|app/github-actions|dependabot\[bot\]|app/dependabot|app/copilot|copilot)" 2>/dev/null; then
               is_trusted=1
             elif [ "${author}" = "${{ github.repository_owner }}" ] && [ "${has_copilot_label}" -gt 0 ]; then
               is_trusted=1
@@ -688,6 +694,7 @@ jobs:
 
   agent-health-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     # Run on schedule or when manually triggered (unless skipped)
     if: |
       github.event_name == 'schedule' ||
@@ -914,6 +921,7 @@ jobs:
 
   pages-health-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     # Run on schedule or when manually triggered (unless skipped)
     if: |
       github.event_name == 'schedule' ||
@@ -997,7 +1005,7 @@ jobs:
           echo ""
           echo "Check 4: GitHub Pages Deployment"
           pages_url="https://${{ github.repository_owner }}.github.io/Chained/"
-          if curl -s -o /dev/null -w "%{http_code}" "${pages_url}" | grep -q "200"; then
+          if curl -s -o /dev/null -w "%{http_code}" "${pages_url}" 2>/dev/null | grep -q "200" 2>/dev/null; then
             echo "✅ GitHub Pages is accessible at ${pages_url}"
           else
             echo "⚠️ GitHub Pages may not be accessible"

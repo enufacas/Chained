@@ -46,6 +46,7 @@ permissions:
 jobs:
   spawn-agent:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -78,7 +79,7 @@ jobs:
             local description="$3"
             
             # Check if label exists by checking for the exact name with word boundary
-            if gh label list --repo ${{ github.repository }} | grep -q "^${name}[[:space:]]"; then
+            if gh label list --repo ${{ github.repository }} 2>/dev/null | grep -q "^${name}[[:space:]]" 2>/dev/null; then
               echo "✓ Label '$name' already exists, skipping creation"
             else
               # Try to create the label, will fail if it exists

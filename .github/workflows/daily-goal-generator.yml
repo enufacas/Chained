@@ -19,6 +19,7 @@ permissions:
 jobs:
   generate-daily-goal:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -84,7 +85,7 @@ jobs:
           fi
           
           # Check if we already have a goal for today
-          if grep -q "### $TODAY" "$GOALS_FILE" && [ "${{ github.event.inputs.force_new_goal }}" != "true" ]; then
+          if grep -q "### $TODAY" "$GOALS_FILE" 2>/dev/null && [ "${{ github.event.inputs.force_new_goal }}" != "true" ]; then
             echo "goal_exists=true" >> $GITHUB_OUTPUT
             echo "Goal already exists for today: $TODAY"
           else

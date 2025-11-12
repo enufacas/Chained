@@ -30,6 +30,7 @@ permissions:
 jobs:
   kickoff:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -41,7 +42,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Check if kickoff issue exists
-          if gh issue list --state all --label "automated,completed" --search "System Kickoff Complete" --json title | grep -q "System Kickoff Complete"; then
+          if gh issue list --state all --label "automated,completed" --search "System Kickoff Complete" --json title 2>/dev/null | grep -q "System Kickoff Complete" 2>/dev/null; then
             echo "already_kicked_off=true" >> $GITHUB_OUTPUT
             echo "System already kicked off. Skipping."
           else
@@ -110,8 +111,8 @@ jobs:
           for label in "${!labels[@]}"; do
             IFS=':' read -r color description <<< "${labels[$label]}"
             
-            # Check if label exists
-            if gh label list | grep -q $'^'"${label}"$'\t'; then
+            # Check if label exists (handle grep failure gracefully)
+            if gh label list 2>/dev/null | grep -q $'^'"${label}"$'\t' 2>/dev/null; then
               echo "✓ Label '$label' already exists"
             else
               if gh label create "$label" --color "$color" --description "$description" 2>/dev/null; then

@@ -20,6 +20,7 @@ permissions:
 jobs:
   evaluate-agents:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -46,7 +47,7 @@ jobs:
             local color="$2"
             local description="$3"
             
-            if gh label list --repo ${{ github.repository }} | grep -q "^${name}"; then
+            if gh label list --repo ${{ github.repository }} 2>/dev/null | grep -q "^${name}" 2>/dev/null; then
               echo "✓ Label '$name' already exists"
             else
               gh label create "$name" --color "$color" --description "$description" --repo ${{ github.repository }} 2>/dev/null || echo "⚠️ Could not create label '$name'"
