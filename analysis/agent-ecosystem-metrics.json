@@ -1,0 +1,61 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-11-12T09:24:05.261065Z",
+    "generated_by": "investigate-champion (Ada Lovelace)",
+    "version": "1.0"
+  },
+  "summary_metrics": {
+    "total_agent_types": 24,
+    "active_agent_instances": 10,
+    "total_unique_tools": 23,
+    "average_tools_per_agent": 7.291666666666667
+  },
+  "archetype_distribution": {
+    "builder": 4,
+    "communicator": 4,
+    "guardian": 3,
+    "validator": 2,
+    "cleaner": 2,
+    "optimizer": 2,
+    "connector": 2,
+    "analyzer": 2,
+    "designer": 1,
+    "other": 2
+  },
+  "tool_usage_frequency": {
+    "view": 24,
+    "edit": 24,
+    "github-mcp-server-search_code": 24,
+    "bash": 17,
+    "github-mcp-server-get_file_contents": 17,
+    "github-mcp-server-web_search": 17,
+    "create": 13,
+    "codeql_checker": 6,
+    "playwright-browser_navigate": 4,
+    "playwright-browser_snapshot": 4,
+    "gh-advisory-database": 4,
+    "playwright-browser_take_screenshot": 2,
+    "playwright-browser_click": 2,
+    "playwright-browser_fill_form": 2,
+    "github-mcp-server-list_secret_scanning_alerts": 2,
+    "github-mcp-server-list_code_scanning_alerts": 2,
+    "github-mcp-server-list_issues": 2,
+    "github-mcp-server-search_issues": 2,
+    "github-mcp-server-pull_request_read": 2,
+    "github-mcp-server-issue_read": 2,
+    "playwright-browser_hover": 1,
+    "playwright-browser_evaluate": 1,
+    "github-mcp-server-list_commits": 1
+  },
+  "agents_by_tool_count": {
+    "4": 2,
+    "5": 4,
+    "6": 4,
+    "7": 2,
+    "8": 7,
+    "9": 1,
+    "10": 2,
+    "11": 1,
+    "13": 1
+  }
+}
