@@ -1,0 +1,276 @@
+name: "AI Pattern: Repetition Detector"
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Days to analyze (default: 30)'
+        required: false
+        default: '30'
+      threshold:
+        description: 'Uniqueness threshold (default: 30)'
+        required: false
+        default: '30'
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  detect-repetition:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Get full history for comprehensive analysis
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Configure Git
+        run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - name: Run Repetition Detector
+        id: detect
+        run: |
+          days="${{ inputs.days }}"
+          if [ -z "${days}" ]; then
+            days="30"
+          fi
+          
+          echo "Analyzing contributions from the last ${days} days..."
+          
+          python3 tools/repetition-detector.py \
+            -d . \
+            --since-days ${days} \
+            -o analysis/repetition-report.json
+          
+          # Check if repetition was detected
+          if [ $? -ne 0 ]; then
+            echo "repetition_detected=true" >> $GITHUB_OUTPUT
+          else
+            echo "repetition_detected=false" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "days=${days}" >> $GITHUB_OUTPUT
+
+      - name: Run Uniqueness Scorer
+        id: score
+        run: |
+          threshold="${{ inputs.threshold }}"
+          if [ -z "${threshold}" ]; then
+            threshold="30"
+          fi
+          
+          echo "Calculating uniqueness scores (threshold: ${threshold})..."
+          
+          python3 tools/uniqueness-scorer.py \
+            -d . \
+            --threshold ${threshold} \
+            --days 90 \
+            -o analysis/uniqueness-scores.json
+          
+          # Check if agents are below threshold
+          if [ $? -ne 0 ]; then
+            echo "below_threshold=true" >> $GITHUB_OUTPUT
+          else
+            echo "below_threshold=false" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "threshold=${threshold}" >> $GITHUB_OUTPUT
+
+      - name: Generate Diversity Suggestions
+        id: suggest
+        if: steps.detect.outputs.repetition_detected == 'true' || steps.score.outputs.below_threshold == 'true'
+        run: |
+          echo "Generating diversity suggestions..."
+          
+          python3 tools/diversity-suggester.py \
+            --repetition-report analysis/repetition-report.json \
+            -d . \
+            -o analysis/diversity-suggestions.md
+          
+          echo "suggestions_generated=true" >> $GITHUB_OUTPUT
+
+      - name: Extract Summary Statistics
+        id: stats
+        run: |
+          # Extract key metrics from reports
+          if [ -f analysis/repetition-report.json ]; then
+            total_agents=$(python3 -c "import json; d=json.load(open('analysis/repetition-report.json')); print(d['summary']['total_agents'])" 2>/dev/null || echo "0")
+            total_flags=$(python3 -c "import json; d=json.load(open('analysis/repetition-report.json')); print(len(d.get('repetition_flags', [])))" 2>/dev/null || echo "0")
+            echo "total_agents=${total_agents}" >> $GITHUB_OUTPUT
+            echo "total_flags=${total_flags}" >> $GITHUB_OUTPUT
+          else
+            echo "total_agents=0" >> $GITHUB_OUTPUT
+            echo "total_flags=0" >> $GITHUB_OUTPUT
+          fi
+          
+          if [ -f analysis/uniqueness-scores.json ]; then
+            avg_score=$(python3 -c "import json; d=json.load(open('analysis/uniqueness-scores.json')); print(d.get('summary', {}).get('average_score', 0))" 2>/dev/null || echo "0")
+            flagged_count=$(python3 -c "import json; d=json.load(open('analysis/uniqueness-scores.json')); print(len(d.get('flagged_agents', [])))" 2>/dev/null || echo "0")
+            echo "avg_score=${avg_score}" >> $GITHUB_OUTPUT
+            echo "flagged_count=${flagged_count}" >> $GITHUB_OUTPUT
+          else
+            echo "avg_score=0" >> $GITHUB_OUTPUT
+            echo "flagged_count=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post PR Comment
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ github.event.pull_request.number }}"
+          
+          # Create comment file
+          cat > /tmp/pr_comment.md << 'COMMENT_EOF'
+          ## 🎨 AI Pattern Repetition Analysis
+          
+          **Analysis Period:** Last ${{ steps.detect.outputs.days }} days
+          **Uniqueness Threshold:** ${{ steps.score.outputs.threshold }}
+          
+          ### Results:
+          - **Total Agents Analyzed:** ${{ steps.stats.outputs.total_agents }}
+          - **Average Uniqueness Score:** ${{ steps.stats.outputs.avg_score }}
+          - **Repetition Flags:** ${{ steps.stats.outputs.total_flags }}
+          - **Agents Below Threshold:** ${{ steps.stats.outputs.flagged_count }}
+          COMMENT_EOF
+          
+          if [ "${{ steps.suggest.outputs.suggestions_generated }}" = "true" ]; then
+            cat >> /tmp/pr_comment.md << 'COMMENT_EOF'
+          
+          ### ⚠️ Action Required
+          
+          Repetition patterns detected! Check the diversity suggestions for concrete recommendations.
+          
+          📄 See `analysis/diversity-suggestions.md` for detailed suggestions.
+          COMMENT_EOF
+          else
+            cat >> /tmp/pr_comment.md << 'COMMENT_EOF'
+          
+          ### ✅ All Clear
+          
+          No significant repetition detected. All agents show healthy diversity!
+          COMMENT_EOF
+          fi
+          
+          cat >> /tmp/pr_comment.md << 'COMMENT_EOF'
+          
+          ---
+          *Analysis reports available in `analysis/` directory*
+          COMMENT_EOF
+          
+          # Post comment
+          gh pr comment ${pr_number} --body-file /tmp/pr_comment.md || true
+
+      - name: Create Issue for Significant Repetition
+        if: steps.stats.outputs.total_flags != '0' && steps.stats.outputs.total_flags != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          total_flags="${{ steps.stats.outputs.total_flags }}"
+          
+          # Only create issue if flags are significant (more than 2)
+          if [ "${total_flags}" -gt 2 ]; then
+            cat > /tmp/issue_body.md << 'ISSUE_EOF'
+          ## AI Agent Repetition Detected
+          
+          The pattern repetition detection system has identified concerning patterns in AI agent contributions.
+          
+          ### Summary:
+          - **Repetition Flags:** TOTAL_FLAGS_PLACEHOLDER
+          - **Agents Flagged:** FLAGGED_COUNT_PLACEHOLDER
+          - **Average Uniqueness Score:** AVG_SCORE_PLACEHOLDER
+          - **Analysis Period:** Last DAYS_PLACEHOLDER days
+          
+          ### Impact:
+          Repetitive patterns may indicate:
+          - Agents falling into habitual approaches
+          - Lack of diversity in problem-solving strategies
+          - Potential for missed innovative solutions
+          - Risk of creating technical debt
+          
+          ### Action Items:
+          1. Review `analysis/diversity-suggestions.md` for specific recommendations
+          2. Examine flagged agents' recent contributions
+          3. Consider updating agent prompts to encourage diversity
+          4. Share successful diverse patterns with the team
+          
+          ### Reports:
+          - 📊 Repetition Report: `analysis/repetition-report.json`
+          - 🎯 Uniqueness Scores: `analysis/uniqueness-scores.json`
+          - 💡 Suggestions: `analysis/diversity-suggestions.md`
+          
+          ---
+          *Automatically generated by the AI Pattern Repetition Detector*
+          ISSUE_EOF
+            
+            # Replace placeholders
+            sed -i "s/TOTAL_FLAGS_PLACEHOLDER/${total_flags}/g" /tmp/issue_body.md
+            sed -i "s/FLAGGED_COUNT_PLACEHOLDER/${{ steps.stats.outputs.flagged_count }}/g" /tmp/issue_body.md
+            sed -i "s/AVG_SCORE_PLACEHOLDER/${{ steps.stats.outputs.avg_score }}/g" /tmp/issue_body.md
+            sed -i "s/DAYS_PLACEHOLDER/${{ steps.detect.outputs.days }}/g" /tmp/issue_body.md
+            
+            gh issue create \
+              --title "⚠️ AI Agent Repetition Alert: ${total_flags} patterns detected" \
+              --body-file /tmp/issue_body.md \
+              --label "ai-patterns,diversity,automated" || true
+          fi
+
+      - name: Commit Analysis Results
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add analysis files
+          git add analysis/repetition-report.json analysis/uniqueness-scores.json analysis/pattern-diversity.json || true
+          
+          if [ -f analysis/diversity-suggestions.md ]; then
+            git add analysis/diversity-suggestions.md
+          fi
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🤖 Update pattern repetition analysis" \
+                       -m "Analyzed: ${{ steps.stats.outputs.total_agents }} agents" \
+                       -m "Flags: ${{ steps.stats.outputs.total_flags }}" \
+                       -m "Average score: ${{ steps.stats.outputs.avg_score }}"
+            
+            git push || echo "Push failed, but analysis completed"
+          fi
+
+      - name: Upload Analysis Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: repetition-analysis-reports
+          path: |
+            analysis/repetition-report.json
+            analysis/uniqueness-scores.json
+            analysis/diversity-suggestions.md
+          retention-days: 30
+
+      - name: Log Activity
+        run: |
+          echo "=========================================="
+          echo "Pattern Repetition Analysis Complete"
+          echo "=========================================="
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "Agents analyzed: ${{ steps.stats.outputs.total_agents }}"
+          echo "Repetition flags: ${{ steps.stats.outputs.total_flags }}"
+          echo "Average uniqueness score: ${{ steps.stats.outputs.avg_score }}"
+          echo "Agents below threshold: ${{ steps.stats.outputs.flagged_count }}"
+          echo "=========================================="
