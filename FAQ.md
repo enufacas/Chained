@@ -348,6 +348,9 @@ The `workflow-monitor.yml` will automatically start tracking it.
 
 ### What do the different labels mean?
 
+**For comprehensive documentation on all labels, see [LABELS.md](./LABELS.md)** which includes detailed explanations, usage examples, and clarifies the critical "copilot" vs "copilot-assigned" distinction.
+
+**Quick reference:**
 - **ai-generated** - Issue was created by AI idea generator
 - **copilot-assigned** - Issue is assigned to Copilot for work
 - **copilot** - PR or content created by Copilot

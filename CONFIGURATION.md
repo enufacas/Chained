@@ -43,7 +43,9 @@ Enable GitHub Pages to publish the timeline:
 
 ## Labels
 
-The system uses these labels automatically:
+The system uses these labels automatically. **For comprehensive documentation on all labels, see [LABELS.md](./LABELS.md)** which includes detailed explanations, usage examples, and workflows.
+
+**Core labels:**
 - `ai-generated` - Issues created by the AI Idea Generator
 - `copilot-assigned` - Issues assigned to Copilot
 - `copilot` - PRs created by automated systems
@@ -52,6 +54,8 @@ The system uses these labels automatically:
 - `completed` - Finished tasks
 - `learning` - Insights and learnings
 - `progress-report` - Progress tracking issues
+
+**Note:** The difference between `copilot-assigned` (issue assigned TO Copilot) and `copilot` (content created BY Copilot) is critical for auto-merge functionality. See [LABELS.md](./LABELS.md) for details.
 
 ## Scheduled Workflows
 

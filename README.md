@@ -318,6 +318,8 @@ Visit the live site to see real-time statistics, timeline, learnings, and **the 
 - `workflow-monitor` - Schedule/execution problems
 - `ai-goal` - Daily AI goals and progress
 
+**For complete label documentation, see [LABELS.md](./LABELS.md)** - includes explanations of all 27+ labels and clarifies the "copilot" vs "copilot-assigned" confusion!
+
 ## 🤝 Contributing
 
 While Chained is designed to be autonomous, **external contributions are welcome and require manual review** for security!

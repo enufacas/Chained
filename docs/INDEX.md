@@ -11,7 +11,8 @@ New to Chained? Start here:
 3. **[QUICKSTART.md](../QUICKSTART.md)** - 5-minute setup guide
 4. **[FAQ.md](../FAQ.md)** - Frequently asked questions
 5. **[GLOSSARY.md](./GLOSSARY.md)** - ⭐ Terminology and definitions
-6. **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - ⭐ Problem solving guide
+6. **[LABELS.md](../LABELS.md)** - ⭐ **NEW!** Complete label reference guide
+7. **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - ⭐ Problem solving guide
 
 ## 🤖 Agent System
 
@@ -81,6 +82,7 @@ Technical documentation for developers:
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - ⭐ System architecture with visual diagrams
 - **[QUICK_REFERENCE.md](./QUICK_REFERENCE.md)** - ⭐ Command-line cheat sheet
+- **[LABELS.md](../LABELS.md)** - ⭐ **NEW!** Complete label reference guide (explains copilot vs copilot-assigned!)
 - **[MICRO_PROJECTS.md](./MICRO_PROJECTS.md)** - Specialized tools and projects
 - **[MONITORING.md](./MONITORING.md)** - System monitoring guide
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
