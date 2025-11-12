@@ -464,6 +464,11 @@ def main():
         default='text',
         help='Output format (default: text)'
     )
+    parser.add_argument(
+        '--learn',
+        action='store_true',
+        help='Enable active learning to identify patterns and make predictions'
+    )
     
     args = parser.parse_args()
     
@@ -502,6 +507,40 @@ def main():
         json.dump(results, f, indent=2)
     print(f"\n📁 Detailed analysis saved to: {analysis_file}")
     print(f"📊 Archaeology database updated: {archaeologist.archaeology_file}")
+    
+    # Run learning if requested
+    if args.learn:
+        print("\n" + "=" * 60)
+        print("🧠 Running Active Learning...")
+        print("=" * 60)
+        
+        try:
+            # Import learner
+            import importlib.util
+            learner_path = os.path.join(os.path.dirname(__file__), "archaeology-learner.py")
+            spec = importlib.util.spec_from_file_location("archaeology_learner", learner_path)
+            learner_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(learner_module)
+            ArchaeologyLearner = learner_module.ArchaeologyLearner
+            
+            # Initialize and run learner
+            learner = ArchaeologyLearner(repo_path=args.directory)
+            learn_results = learner.analyze_and_learn(max_commits=args.max_commits)
+            
+            # Generate learning report
+            learn_report = learner.generate_report()
+            
+            # Save learning report
+            learn_report_file = f"analysis/archaeology_learning_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.md"
+            with open(learn_report_file, 'w') as f:
+                f.write(learn_report)
+            
+            print(f"\n✅ Learning report saved to: {learn_report_file}")
+            print(f"📊 Patterns database updated: {learner.patterns_file}")
+            
+        except Exception as e:
+            print(f"\n⚠️ Learning failed: {e}", file=sys.stderr)
+            print("Continuing with basic archaeology only...")
 
 
 if __name__ == '__main__':
