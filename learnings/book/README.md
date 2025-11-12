@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-12 19:09 UTC
+**Generated:** 2025-11-12 20:27 UTC
 
-**Total Learning Sessions:** 24
+**Total Learning Sessions:** 25
 
-**Total Insights:** 283
+**Total Insights:** 298
 
 ---
 
@@ -18,14 +18,14 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 91
+**Insights:** 101
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 24
+**Insights:** 26
 
 
 ### [🗄️ Databases & Data Management](./Database.md)
@@ -60,14 +60,14 @@ Performance tuning, benchmarks, and optimization techniques
 
 IDEs, editors, debuggers, and productivity tools
 
-**Insights:** 16
+**Insights:** 18
 
 
 ### [📚 General Tech Insights](./Other.md)
 
 General technology news and insights
 
-**Insights:** 131
+**Insights:** 132
 
 
 ## 📊 Statistics
@@ -77,18 +77,18 @@ General technology news and insights
 
 - **Hacker News:** 14 learning sessions
 
-- **TLDR Tech:** 10 learning sessions
+- **TLDR Tech:** 11 learning sessions
 
 
 ### By Topic
 
-- **📚 General Tech Insights:** 131 insights
+- **📚 General Tech Insights:** 132 insights
 
-- **🤖 AI & Machine Learning:** 91 insights
+- **🤖 AI & Machine Learning:** 101 insights
 
-- **💻 Programming Languages & Frameworks:** 24 insights
+- **💻 Programming Languages & Frameworks:** 26 insights
 
-- **🔧 Developer Tools:** 16 insights
+- **🔧 Developer Tools:** 18 insights
 
 - **⚡ Performance & Optimization:** 7 insights
 
