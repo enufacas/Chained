@@ -159,7 +159,7 @@ jobs:
           - **Used Quota**: ${{ steps.usage.outputs.used }} / ${{ steps.usage.outputs.quota }} requests
           - **Remaining Quota**: ${{ steps.usage.outputs.remaining }} requests
           - **Burn Rate**: ${{ steps.usage.outputs.burn_rate }} requests/day
-          - **Status**: ${{ steps.usage.outputs.is_safe == 'true' && '✅ Safe' || '⚠️ Warning' }}
+          - **Status**: ${{ fromJSON('["⚠️ Warning", "✅ Safe"]')[steps.usage.outputs.is_safe == 'true' && 1 || 0] }}
           - **Recommended Mode**: ${{ steps.usage.outputs.mode }}
           - **Applied Mode**: ${{ steps.update.outputs.mode_used }}
 
@@ -243,5 +243,5 @@ jobs:
           echo "- **Remaining Quota**: ${{ steps.usage.outputs.remaining }} requests" >> $GITHUB_STEP_SUMMARY
           echo "- **Burn Rate**: ${{ steps.usage.outputs.burn_rate }} req/day" >> $GITHUB_STEP_SUMMARY
           echo "- **Mode**: ${{ steps.update.outputs.mode_used }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Status**: ${{ steps.usage.outputs.is_safe == 'true' && '✅ Safe' || '⚠️ Warning' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ fromJSON('["⚠️ Warning", "✅ Safe"]')[steps.usage.outputs.is_safe == 'true' && 1 || 0] }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Changes**: ${{ steps.changes.outputs.has_changes }}" >> $GITHUB_STEP_SUMMARY
