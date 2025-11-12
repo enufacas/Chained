@@ -1,135 +1,95 @@
 {
-  "timestamp": "2025-11-12T01:35:00+00:00",
+  "timestamp": "2025-11-12T01:35:00.200980+00:00",
   "source": "TLDR Tech",
   "learnings": [
     {
-      "title": "iPhone Air rumors suggest Apple may be simplifying product line",
-      "description": "Reports indicate Apple's iPhone Air initiative may not meet expectations, with analysts questioning the market need for yet another iPhone variant.",
-      "url": "https://tldr.tech/tech",
+      "title": "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "Anthropic and OpenAI financial details leaked in industry report",
-      "description": "Financial performance data for major AI companies Anthropic and OpenAI has been disclosed, revealing insights into the economics of large language model development.",
-      "url": "https://tldr.tech/ai",
+      "title": "Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "Career guide: Becoming a compiler engineer in 2025",
-      "description": "A comprehensive guide on the skills, knowledge, and career path needed to become a compiler engineer, covering LLVM, optimization techniques, and language design.",
-      "url": "https://tldr.tech/tech",
+      "title": "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "GitHub Copilot adoption surges among enterprise developers",
-      "description": "Enterprise adoption of AI-powered coding assistants like GitHub Copilot continues to grow, with productivity gains being reported across various organizations.",
-      "url": "https://tldr.tech/ai",
+      "title": "Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "Rust foundation announces new initiatives for 2025",
-      "description": "The Rust Foundation has outlined plans for language improvements, tooling enhancements, and ecosystem growth in the coming year.",
-      "url": "https://tldr.tech/tech",
+      "title": "Low cost MacBook \ud83d\udcbb, Google AI data centers \ud83d\udef0\ufe0f, inside xAI \ud83e\udd16",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "CI/CD pipeline optimization techniques gaining traction",
-      "description": "New approaches to optimizing continuous integration and deployment pipelines are helping teams reduce build times and improve deployment reliability.",
-      "url": "https://tldr.tech/devops",
+      "title": "Grok Code Remote \ud83d\udc68\u200d\ud83d\udcbb , GPT-5.1 on OpenRouter \ud83e\udd16, Moonshot AI AMA \ud83d\udcac",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "WebAssembly adoption accelerates in cloud-native applications",
-      "description": "WebAssembly (WASM) is seeing increased adoption for cloud-native applications, offering improved performance and security benefits.",
-      "url": "https://tldr.tech/tech",
+      "title": "Nano Banana 2 leaks \ud83c\udf4c, GPT-5-Codex-Mini \ud83d\udc68\u200d\ud83d\udcbb, nested learning \ud83e\udde0",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "Machine learning model optimization strategies for production",
-      "description": "Best practices for optimizing ML models for production deployment, including quantization, pruning, and efficient inference techniques.",
-      "url": "https://tldr.tech/ai",
+      "title": "Sam on OpenAI finances \ud83d\udcb0, GPT-5.1 \ud83e\udd16, Anthropic $350B valuation \ud83d\udcc8",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "Python 3.13 beta introduces performance improvements",
-      "description": "The upcoming Python 3.13 release includes significant performance optimizations and new language features that developers are eagerly anticipating.",
-      "url": "https://tldr.tech/tech",
+      "title": "Gemini 3 this month \u2728, OpenAI CFO comments \ud83d\udcb0, Snapchat + Perplexity \ud83e\udd1d",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "Kubernetes security best practices updated for 2025",
-      "description": "The Cloud Native Computing Foundation has released updated security guidelines for Kubernetes deployments, addressing recent vulnerabilities.",
-      "url": "https://tldr.tech/devops",
+      "title": "Anthropic $70B projection \ud83d\udcb0, Nano Banana 2 \ud83c\udf4c, beyond standard LLMs \ud83e\udde0\u00a0",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "Developer productivity tools: IDE extensions vs standalone apps",
-      "description": "Analysis of the tradeoffs between IDE-integrated tools and standalone applications for developer productivity and workflow optimization.",
-      "url": "https://tldr.tech/tech",
+      "title": "Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependencies \ud83e\udd80",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "LLM context window improvements reshape application design",
-      "description": "Larger context windows in modern LLMs are enabling new application architectures and use cases previously thought impractical.",
-      "url": "https://tldr.tech/ai",
+      "title": "Better Software \ud83d\udcac, Cloud Security AI \u2601\ufe0f, Code Research \ud83e\udde0",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "Infrastructure as Code: Terraform vs Pulumi in 2025",
-      "description": "Comparison of leading IaC tools shows evolving preferences based on team size, cloud provider, and programming language expertise.",
-      "url": "https://tldr.tech/devops",
+      "title": "AWS DynamoDB Outage \u2601\ufe0f, Grafana Mimir \ud83c\udd95, AI Platform At Pinterest \ud83e\uddf7",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "API design patterns for modern microservices architectures",
-      "description": "Emerging patterns for API design in microservices, including event-driven approaches, GraphQL federation, and gRPC streaming.",
-      "url": "https://tldr.tech/tech",
+      "title": "Secret Scanner Upgrade \ud83e\udd10, BGP Zombies \ud83e\udddf, Agentic IaaC \u2728",
+      "description": "",
       "source": "TLDR"
     },
     {
-      "title": "Security vulnerability disclosure: NPM package ecosystem",
-      "description": "Recent security audit reveals vulnerabilities in popular NPM packages, prompting discussions about supply chain security.",
-      "url": "https://tldr.tech/tech",
+      "title": "GitHub\u2019s Agent HQ \ud83c\udfe2, OpenAI\u2019s Security Researcher \ud83e\udd77, AWS To Bare Metal \ud83d\udcbe",
+      "description": "",
       "source": "TLDR"
     }
   ],
   "trends": [
-    "AI/ML: Anthropic and OpenAI financial details leaked in industry report",
-    "AI/ML: GitHub Copilot adoption surges among enterprise developers",
-    "AI/ML: Machine learning model optimization strategies for production",
-    "AI/ML: LLM context window improvements reshape application design",
-    "Programming: Career guide: Becoming a compiler engineer in 2025",
-    "Programming: Rust foundation announces new initiatives for 2025",
-    "Programming: Python 3.13 beta introduces performance improvements",
-    "Tech News: iPhone Air rumors suggest Apple may be simplifying product line",
-    "DevOps: CI/CD pipeline optimization techniques gaining traction",
-    "DevOps: Kubernetes security best practices updated for 2025",
-    "DevOps: Infrastructure as Code: Terraform vs Pulumi in 2025",
-    "Security: Security vulnerability disclosure: NPM package ecosystem"
-  ],
-  "topics": {
-    "AI/ML": [
-      "Anthropic and OpenAI financial details leaked in industry report",
-      "GitHub Copilot adoption surges among enterprise developers",
-      "Machine learning model optimization strategies for production",
-      "LLM context window improvements reshape application design"
-    ],
-    "Programming": [
-      "Career guide: Becoming a compiler engineer in 2025",
-      "Rust foundation announces new initiatives for 2025",
-      "WebAssembly adoption accelerates in cloud-native applications",
-      "Python 3.13 beta introduces performance improvements",
-      "Developer productivity tools: IDE extensions vs standalone apps",
-      "API design patterns for modern microservices architectures"
-    ],
-    "DevOps": [
-      "CI/CD pipeline optimization techniques gaining traction",
-      "Kubernetes security best practices updated for 2025",
-      "Infrastructure as Code: Terraform vs Pulumi in 2025"
-    ],
-    "Tech News": [
-      "iPhone Air rumors suggest Apple may be simplifying product line",
-      "Security vulnerability disclosure: NPM package ecosystem"
-    ]
-  }
+    "AI/ML: iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
+    "Programming: Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+    "AI/ML: Low cost MacBook \ud83d\udcbb, Google AI data centers \ud83d\udef0\ufe0f, inside xAI \ud83e\udd16",
+    "AI/ML: Grok Code Remote \ud83d\udc68\u200d\ud83d\udcbb , GPT-5.1 on OpenRouter \ud83e\udd16, Moonshot AI AMA \ud83d\udcac",
+    "AI/ML: Nano Banana 2 leaks \ud83c\udf4c, GPT-5-Codex-Mini \ud83d\udc68\u200d\ud83d\udcbb, nested learning \ud83e\udde0",
+    "AI/ML: Sam on OpenAI finances \ud83d\udcb0, GPT-5.1 \ud83e\udd16, Anthropic $350B valuation \ud83d\udcc8",
+    "AI/ML: Gemini 3 this month \u2728, OpenAI CFO comments \ud83d\udcb0, Snapchat + Perplexity \ud83e\udd1d",
+    "AI/ML: Anthropic $70B projection \ud83d\udcb0, Nano Banana 2 \ud83c\udf4c, beyond standard LLMs \ud83e\udde0\u00a0",
+    "AI/ML: Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependencies \ud83e\udd80",
+    "AI/ML: Better Software \ud83d\udcac, Cloud Security AI \u2601\ufe0f, Code Research \ud83e\udde0",
+    "AI/ML: AWS DynamoDB Outage \u2601\ufe0f, Grafana Mimir \ud83c\udd95, AI Platform At Pinterest \ud83e\uddf7",
+    "AI/ML: GitHub\u2019s Agent HQ \ud83c\udfe2, OpenAI\u2019s Security Researcher \ud83e\udd77, AWS To Bare Metal \ud83d\udcbe"
+  ]
 }
