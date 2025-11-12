@@ -169,8 +169,8 @@ TIME         WORKFLOW                    ACTION
 10:06    ├─ Auto Label PR ───────────► Labels Copilot PR
          │  (immediate + every 10m)
          │
-10:15    ├─ Auto Review & Merge ─────► Reviews AI code
-         │  (every 15 min)               Approves and merges
+10:05    ├─ Auto Review & Merge ─────► Reviews AI code
+         │  (event trigger + hourly)     Approves and merges
          │
 10:30    ├─ Issue Auto-Close ────────► Closes completed issue
          │  (every 30 min)

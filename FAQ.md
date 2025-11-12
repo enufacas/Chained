@@ -8,10 +8,10 @@
 
 1. ✅ **Issue created** → Auto-assigned to Copilot (within seconds)
 2. ✅ **Copilot creates PR** → Typically within a few minutes
-3. ✅ **PR auto-merged** → Within 15 minutes via `auto-review-merge.yml`
+3. ✅ **PR auto-merged** → Immediately via event trigger, or within 1 hour via scheduled sweep
 4. ✅ **Issue closed** → Automatically when PR merges
 
-**Timeline:** From issue creation to merged PR typically takes **15-30 minutes** total, with no human intervention required.
+**Timeline:** From issue creation to merged PR typically takes **5-15 minutes** total, with no human intervention required.
 
 **Requirements:** This requires the `COPILOT_PAT` secret to be configured. See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for setup.
 
@@ -49,7 +49,7 @@ The system operates fully autonomously when configured correctly:
 1. **Issue Created** → Event trigger runs `copilot-graphql-assign.yml` immediately
 2. **Automatic Assignment** → Workflow assigns issue to Copilot using PAT
 3. **Copilot Works** → Copilot analyzes issue, writes code, creates PR (typically within minutes)
-4. **Wait up to 15 minutes** → `auto-review-merge.yml` runs on schedule, reviews and merges the PR, and closes the completed issue
+4. **PR Event Trigger** → When PR is created/updated, `auto-review-merge.yml` runs immediately and merges (or within 1 hour via scheduled sweep as backup)
 
 **Key Insight:** With PAT configured, the entire flow is automated! No manual steps required.
 
@@ -133,7 +133,7 @@ The system is designed to be **delay-tolerant**:
 ### How often do workflows actually run?
 
 **Core Automation Workflows:**
-- `auto-review-merge.yml`: Every 15 minutes
+- `auto-review-merge.yml`: Every hour (also event-triggered for immediate response)
 - `issue-to-pr.yml`: Every 30 minutes
 - `auto-close-issues.yml`: Every 30 minutes
 
@@ -295,12 +295,15 @@ on:
 ```
 
 **Cron syntax:**
+- `0 * * * *` - Every hour
 - `*/15 * * * *` - Every 15 minutes
 - `*/30 * * * *` - Every 30 minutes
 - `0 */6 * * *` - Every 6 hours
 - `0 9 * * *` - Daily at 9 AM UTC
 
 **Recommendations:**
+- Event triggers are preferred for immediate response
+- Use scheduled runs as backup/catch-all mechanisms
 - Don't go below 5-minute intervals (may hit rate limits)
 - Consider Actions minutes usage for frequent schedules
 - Balance responsiveness with resource consumption

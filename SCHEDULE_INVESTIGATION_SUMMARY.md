@@ -24,14 +24,15 @@ The autonomous system uses **passive polling via scheduled workflows**, not acti
    - Creates branch and PR
    - Adds "in-progress" label
 
-3. **Auto Review & Merge** (Cron Schedule - Every 15 minutes)
-   - `auto-review-merge.yml` polls for PRs with "copilot" label
+3. **Auto Review & Merge** (Event-triggered + Hourly Sweep)
+   - `auto-review-merge.yml` triggers immediately on PR events (opened/synchronize/reopened/ready_for_review)
+   - Also runs hourly as backup sweep for any missed PRs
    - Reviews, approves, and merges
    - Deletes branch
    - Closes related issues
    - Adds "completed" label
 
-**Total Time:** 15-45 minutes depending on when scheduled workflows catch the work.
+**Total Time:** 5-15 minutes (immediate event trigger) or up to 60 minutes (backup sweep) depending on timing.
 
 ### Schedule Reliability
 
@@ -170,7 +171,7 @@ gh workflow run "workflow-name.yml"
 ## Schedule Frequencies
 
 ### Critical Automation Workflows
-- `auto-review-merge.yml`: Every 15 minutes (includes issue closing)
+- `auto-review-merge.yml`: Every hour + event-triggered (includes issue closing)
 - `issue-to-pr.yml`: Every 30 minutes
 
 ### Learning Workflows

@@ -11,7 +11,7 @@ const WORKFLOW_SCHEDULES = {
     'Learning from TLDR Tech': { cron: '0 8,20 * * *', description: 'Twice daily at 8:00 AM and 8:00 PM UTC' },
     'Learning from Hacker News': { cron: '0 7,13,19 * * *', description: 'Three times daily at 7:00 AM, 1:00 PM, and 7:00 PM UTC' },
     'AI Friend Daily': { cron: '0 9 * * *', description: 'Daily at 9:00 AM UTC' },
-    'Auto Review and Merge': { cron: '*/15 * * * *', description: 'Every 15 minutes' },
+    'Auto Review and Merge': { cron: '0 * * * *', description: 'Every hour (also event-triggered for immediate response)' },
     'System Monitor': { cron: '0 */6 * * *', description: 'Every 6 hours (timeline updates, progress tracking, workflow monitoring)' },
 };
 

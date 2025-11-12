@@ -52,12 +52,14 @@ Successfully reduced from **15 workflows to 10 workflows** (33% reduction) while
 
 **New State**: Single comprehensive workflow
 - Includes PR labeling as first step
-- Schedules: Every 15 minutes (optimized from two separate timers)
-- Triggers: PR events + schedule
+- Schedules: Every hour + event-triggered (optimized from two separate timers)
+- Triggers: PR events (immediate) + hourly schedule (backup)
 
 **Benefits**:
-- Reduced timer overhead (one 15-min schedule vs 10-min + 15-min)
+- Reduced timer overhead (one hourly schedule vs 10-min + 15-min)
 - Atomic operation: label then review in single run
+- Event triggers provide immediate response
+- 75% reduction in scheduled runs
 - Better coordination between labeling and review
 
 ### 4. System Monitor (New Consolidated Workflow)
@@ -115,7 +117,7 @@ Successfully reduced from **15 workflows to 10 workflows** (33% reduction) while
 - **10:00 UTC**: AI Idea Generator (after learning workflows)
 
 ### Frequent Schedules
-- **Every 15 minutes**: Auto Review and Merge (includes PR labeling)
+- **Every hour**: Auto Review and Merge (includes PR labeling, also event-triggered)
 - **Every 6 hours**: Timeline Update
 - **Every 12 hours**: Progress Tracking + Workflow Monitoring (consolidated)
 

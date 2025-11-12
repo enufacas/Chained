@@ -60,7 +60,7 @@ The autonomous system runs on these schedules:
 - **Smart Idea Generator**: Daily at 10 AM UTC
 - **Learn from TLDR**: 2x daily (8 AM, 8 PM UTC)
 - **Learn from Hacker News**: 3x daily (7 AM, 1 PM, 7 PM UTC)
-- **Auto Review & Merge**: Every 15 minutes
+- **Auto Review & Merge**: Every hour (event-triggered for immediate response)
 - **Issue to PR**: Every 30 minutes
 - **Auto Close Issues**: Every 30 minutes
 - **Timeline Updater**: Every 6 hours

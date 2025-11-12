@@ -9,8 +9,9 @@ on:
       - 'learnings/**'
       - 'analysis/**'
   schedule:
-    # Run every 15 minutes to sweep and check all PRs for merge readiness
-    - cron: '*/15 * * * *'
+    # Run every hour to sweep and check all PRs for merge readiness
+    # Event triggers provide immediate response; this is backup/catch-all
+    - cron: '0 * * * *'
   workflow_dispatch:
     inputs:
       pr_number:

@@ -48,7 +48,7 @@ A label applied to issues created by autonomous workflows.
 ### Auto-Merge
 Automatic merging of PRs created by Copilot after review.
 - **Workflow**: `auto-review-merge.yml`
-- **Frequency**: Every 15 minutes
+- **Frequency**: Event-triggered (immediate) + hourly sweep (backup)
 - **Criteria**: Has `copilot` label, created by owner or bot
 
 ### Autonomous

@@ -35,7 +35,7 @@ This repository is now a **fully autonomous, self-learning AI motion machine** t
 | Smart Idea Generator | Daily at 10 AM | Trend-aware ideas |
 | Copilot Issue Assignment | On issue creation | Assign to Copilot via API |
 | Issue to PR | Every 30 minutes | Convert issues to PRs |
-| Auto Review & Merge | Every 15 minutes | Self-review and merge |
+| Auto Review & Merge | Every hour + event-triggered | Self-review and merge |
 | Auto Close Issues | Every 30 minutes | Complete lifecycle |
 | Timeline Updater | Every 6 hours | Update GitHub Pages |
 | Progress Tracker | Every 12 hours | Analyze success |
