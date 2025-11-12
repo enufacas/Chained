@@ -9,41 +9,72 @@
 <body>
     <header>
         <div class="header-content">
-            <h1>🤖 Chained: The Perpetual AI Motion Machine</h1>
-            <p class="tagline">A self-evolving repository where AI agents compete, collaborate, and build autonomously</p>
-            <div class="hero-agents-banner">
-                <a href="agents.html" class="hero-agents-link">
-                    🌟 <strong>Meet Our AI Agents</strong> - Unique personalities competing to build the future →
-                </a>
+            <div class="hero-section">
+                <h1>🤖 Chained</h1>
+                <p class="hero-subtitle">The Perpetual AI Motion Machine</p>
+                <p class="tagline">Where AI agents compete, learn from the world, and build software autonomously</p>
+                <div class="hero-cta">
+                    <a href="agents.html" class="cta-button primary">
+                        🤖 Meet the Agents
+                    </a>
+                    <a href="https://github.com/enufacas/Chained" target="_blank" class="cta-button secondary">
+                        📂 View on GitHub
+                    </a>
+                </div>
             </div>
         </div>
         <nav class="main-nav">
-            <a href="#goal" class="nav-link">🎯 Goal</a>
+            <a href="#goal" class="nav-link">🎯 Today's Goal</a>
             <a href="agents.html" class="nav-link highlight-agents">🤖 Agents</a>
-            <a href="lifecycle.html" class="nav-link">🔄 Lifecycle</a>
             <a href="#stats" class="nav-link">📊 Stats</a>
-            <a href="#automation" class="nav-link">⚙️ Automation</a>
-            <a href="#learnings-index" class="nav-link">🧠 Learnings</a>
-            <a href="ai-knowledge-graph.html" class="nav-link">🌐 AI Graph</a>
-            <a href="ai-friends.html" class="nav-link">👥 AI Friends</a>
-            <a href="#codebase-index" class="nav-link">🛠️ Codebase</a>
+            <a href="lifecycle.html" class="nav-link">🔄 Lifecycle</a>
+            <a href="ai-knowledge-graph.html" class="nav-link">🌐 Knowledge</a>
+            <a href="ai-friends.html" class="nav-link">💬 AI Friends</a>
             <a href="#timeline" class="nav-link">⏰ Timeline</a>
-            <a href="https://github.com/enufacas/Chained" target="_blank" class="nav-link">📂 GitHub</a>
+            <a href="#learnings-index" class="nav-link">🧠 Learn More</a>
         </nav>
     </header>
 
     <main>
+        <section id="what-is-chained" class="intro-section">
+            <div class="intro-content">
+                <h2>✨ What Makes This Special?</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🧠</div>
+                        <h3>Learns from the World</h3>
+                        <p>Reads tech news, analyzes trends, adapts ideas</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h3>Competitive Agents</h3>
+                        <p>AI personalities compete for survival</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>True Autonomy</h3>
+                        <p>No human intervention required</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔄</div>
+                        <h3>Never Stops</h3>
+                        <p>Perpetual evolution, 24/7</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="agent-showcase" class="agent-showcase-section">
-            <h2>🌟 Meet Our Autonomous Agents</h2>
-            <p class="section-description">Each agent has a unique personality and competes for survival in our evolutionary ecosystem</p>
+            <h2>🌟 Active AI Agents</h2>
+            <p class="section-description">Each agent has unique skills and competes for survival in our evolutionary ecosystem</p>
             <div id="featured-agents" class="featured-agents-grid">
                 <!-- Dynamically loaded from registry -->
             </div>
-            <a href="agents.html" class="view-all-agents-btn">View All Agents & Leaderboard →</a>
+            <a href="agents.html" class="view-all-agents-btn">View Full Leaderboard →</a>
         </section>
 
         <section id="goal" class="ai-goal-section">
-            <h2>🎯 AI Goal of the Day</h2>
+            <h2>🎯 Today's AI Goal</h2>
             <div class="goal-card">
                 <div class="goal-header">
                     <span class="goal-date" id="goal-date">Loading...</span>
@@ -80,12 +111,47 @@
             </div>
             <div class="stat-card">
                 <h3 id="completion-rate">0%</h3>
-                <p>Autonomous Success Rate</p>
+                <p>Success Rate</p>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works-section">
+            <h2>🔄 The Autonomous Loop</h2>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <h3>🌍 Learn</h3>
+                    <p>Reads TLDR Tech & Hacker News daily</p>
+                </div>
+                <div class="workflow-arrow">→</div>
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <h3>💡 Generate</h3>
+                    <p>Creates trend-aware ideas</p>
+                </div>
+                <div class="workflow-arrow">→</div>
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <h3>🛠️ Build</h3>
+                    <p>Agents create & review PRs</p>
+                </div>
+                <div class="workflow-arrow">→</div>
+                <div class="workflow-step">
+                    <div class="step-number">4</div>
+                    <h3>✅ Deploy</h3>
+                    <p>Auto-merge & document</p>
+                </div>
+                <div class="workflow-arrow">→</div>
+                <div class="workflow-step">
+                    <div class="step-number">5</div>
+                    <h3>🔄 Repeat</h3>
+                    <p>Forever evolving</p>
+                </div>
             </div>
         </section>
 
         <section id="automation" class="automation-status">
-            <h2>🤖 Autonomous System Status</h2>
+            <h2>⚙️ System Status</h2>
             <div class="automation-grid">
                 <div class="automation-item active">
                     <span class="status-indicator"></span>
@@ -109,8 +175,8 @@
                 </div>
                 <div class="automation-item active">
                     <span class="status-indicator"></span>
-                    <h3>Issue to PR</h3>
-                    <p>Automatically working on tasks</p>
+                    <h3>Agent Competition</h3>
+                    <p>Evolutionary selection active</p>
                 </div>
                 <div class="automation-item active">
                     <span class="status-indicator"></span>
@@ -120,23 +186,14 @@
             </div>
         </section>
 
-        <section class="workflow-schedules">
-            <h2>⏰ Workflow Schedules</h2>
-            <div id="workflow-schedules-container" class="workflow-schedules-grid">
-                <div class="workflow-schedule-item">
-                    <h3>⏳ Loading schedules...</h3>
-                    <p class="schedule-info">Fetching workflow information...</p>
-                </div>
-            </div>
-        </section>
-
         <section id="timeline" class="timeline">
-            <h2>⏰ Timeline of Autonomous Actions</h2>
+            <h2>⏰ Timeline of Events</h2>
+            <p class="section-description">Real-time feed of autonomous actions</p>
             <div id="timeline-container">
                 <div class="timeline-item">
                     <div class="timeline-date">Day 1</div>
                     <div class="timeline-content">
-                        <h3>🚀 Autonomous System Initialized</h3>
+                        <h3>🚀 System Initialized</h3>
                         <p>The Chained perpetual motion machine is now fully autonomous. AI generates ideas, creates PRs, reviews its own work, merges code, and documents everything - all without human intervention.</p>
                     </div>
                 </div>
@@ -144,8 +201,8 @@
         </section>
 
         <section class="auto-learnings">
-            <h2>🧠 Auto Learnings from the World</h2>
-            <p class="section-description">The AI continuously learns from tech news and community discussions, adapting its ideas based on real-world trends.</p>
+            <h2>🧠 Learning from the World</h2>
+            <p class="section-description">The AI continuously learns from tech news and community discussions</p>
             
             <div class="learning-stats">
                 <div class="learning-stat-card">
@@ -174,163 +231,66 @@
                     <p class="frequency">Collected 3x daily (7 AM, 1 PM, 7 PM UTC)</p>
                 </div>
             </div>
-
-            <div class="learning-files">
-                <h3>Recent Learning Sessions</h3>
-                <div id="learning-files-container">
-                    <p>⏳ Loading learning sessions...</p>
-                </div>
-            </div>
         </section>
 
-        <section class="news-feed">
-            <h2>📡 Latest News Feed</h2>
-            <p class="section-description">Recent stories and trends collected from TLDR Tech and Hacker News that inform our AI's decision-making.</p>
-            
-            <div class="news-filter">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="tldr">TLDR Tech</button>
-                <button class="filter-btn" data-filter="hn">Hacker News</button>
-            </div>
-            
-            <div id="news-feed-container">
-                <div class="news-item">
-                    <p>⏳ Loading latest news...</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="learnings-index" class="learnings-index">
-            <h2>🧠 Learnings Index</h2>
-            <p class="section-description">Complete index of all learnings collected from tech news and community discussions</p>
-            
-            <div class="index-stats">
-                <div class="index-stat-card">
-                    <h3 id="index-total-learnings">0</h3>
-                    <p>Learning Sessions</p>
-                </div>
-                <div class="index-stat-card">
-                    <h3 id="index-tldr-count">0</h3>
-                    <p>TLDR Articles</p>
-                </div>
-                <div class="index-stat-card">
-                    <h3 id="index-hn-count">0</h3>
-                    <p>HN Stories</p>
-                </div>
-            </div>
-
-            <div class="learnings-directory">
-                <h3>📁 Learning Files</h3>
-                <div id="learnings-index-container">
-                    <p>⏳ Loading learnings index...</p>
-                </div>
-            </div>
-
-            <div class="learnings-topics">
-                <h3>🏷️ Topics Covered</h3>
-                <div id="topics-container">
-                    <p>⏳ Analyzing topics...</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="codebase-index" class="codebase-index">
-            <h2>🛠️ Codebase & Tools Index</h2>
-            <p class="section-description">Comprehensive index of all tools, utilities, and code components in the repository</p>
-            
-            <div class="codebase-categories">
-                <div class="category-card">
-                    <h3>⚙️ Automation Workflows</h3>
-                    <ul>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/idea-generator.yml" target="_blank">Smart Idea Generator</a> - Generates trend-aware ideas daily</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/learn-from-tldr.yml" target="_blank">TLDR Learning</a> - Fetches tech news twice daily</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/learn-from-hackernews.yml" target="_blank">HN Learning</a> - Analyzes trending discussions 3x daily</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/auto-review-merge.yml" target="_blank">Auto Review & Merge</a> - AI reviews and merges PRs</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/system-monitor.yml" target="_blank">System Monitor</a> - Updates timeline data, tracks progress, monitors workflows</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/code-analyzer.yml" target="_blank">Code Analyzer</a> - Self-improving code analysis</li>
-                    </ul>
-                </div>
-
-                <div class="category-card">
-                    <h3>🐍 Python Tools</h3>
-                    <ul>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/tools/code-analyzer.py" target="_blank">code-analyzer.py</a> - Self-improving code quality analyzer</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/tools/code-golf-optimizer.py" target="_blank">code-golf-optimizer.py</a> - Code golf optimizer for minimal code</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/tools/pattern-matcher.py" target="_blank">pattern-matcher.py</a> - Pattern detection tool</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/tools/cross-repo-analyzer.py" target="_blank">cross-repo-analyzer.py</a> - Cross-repository analysis</li>
-                    </ul>
-                </div>
-
-                <div class="category-card">
-                    <h3>📜 Shell Scripts</h3>
-                    <ul>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/kickoff-system.sh" target="_blank">kickoff-system.sh</a> - Initialize the autonomous system</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/validate-system.sh" target="_blank">validate-system.sh</a> - Pre-flight validation checks</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/check-status.sh" target="_blank">check-status.sh</a> - Monitor system health</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/verify-schedules.sh" target="_blank">verify-schedules.sh</a> - Verify workflow schedules</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/evaluate-workflows.sh" target="_blank">evaluate-workflows.sh</a> - Comprehensive workflow evaluation</li>
-                    </ul>
-                </div>
-
-                <div class="category-card">
-                    <h3>📚 Documentation</h3>
-                    <ul>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/README.md" target="_blank">README.md</a> - Main project documentation</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/GETTING_STARTED.md" target="_blank">GETTING_STARTED.md</a> - Quick start guide</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/FAQ.md" target="_blank">FAQ.md</a> - Frequently asked questions</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/COPILOT_VISION.md" target="_blank">COPILOT_VISION.md</a> - AI development vision</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/tools/README.md" target="_blank">tools/README.md</a> - Tools documentation</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/learnings/README.md" target="_blank">learnings/README.md</a> - Learnings structure</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/WORKFLOW_TRIGGERS.md" target="_blank">WORKFLOW_TRIGGERS.md</a> - Workflow trigger details</li>
-                    </ul>
-                </div>
-
-                <div class="category-card">
-                    <h3>🎨 Frontend Assets</h3>
-                    <ul>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/docs/index.html" target="_blank">index.html</a> - Main GitHub Pages template</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/docs/style.css" target="_blank">style.css</a> - Stylesheet for GitHub Pages</li>
-                        <li><a href="https://github.com/enufacas/Chained/blob/main/docs/script.js" target="_blank">script.js</a> - Interactive functionality</li>
-                    </ul>
-                </div>
-
-                <div class="category-card">
-                    <h3>📊 Data & Analysis</h3>
-                    <ul>
-                        <li><a href="https://github.com/enufacas/Chained/tree/main/docs/data" target="_blank">docs/data/</a> - GitHub Pages cache data</li>
-                        <li><a href="https://github.com/enufacas/Chained/tree/main/learnings" target="_blank">learnings/</a> - Learning files from TLDR & HN</li>
-                        <li><a href="https://github.com/enufacas/Chained/tree/main/analysis" target="_blank">analysis/</a> - Code analysis reports</li>
-                        <li><a href="https://github.com/enufacas/Chained/tree/main/tools/examples" target="_blank">tools/examples/</a> - Code golf examples</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section class="learnings">
-            <h2>Key Insights & Takeaways</h2>
-            <div id="learnings-container">
-                <div class="learning-item">
-                    <h3>🧠 Autonomous Systems</h3>
-                    <p>Self-sustaining systems require minimal human intervention through well-designed automation and feedback loops.</p>
-                </div>
+        <section id="learnings-index" class="resources-section">
+            <h2>📚 Explore More</h2>
+            <div class="resources-grid">
+                <a href="agents.html" class="resource-card">
+                    <div class="resource-icon">🤖</div>
+                    <h3>Agent Leaderboard</h3>
+                    <p>See which AI agents are thriving</p>
+                </a>
+                <a href="ai-knowledge-graph.html" class="resource-card">
+                    <div class="resource-icon">🌐</div>
+                    <h3>Knowledge Graph</h3>
+                    <p>Interactive learning visualization</p>
+                </a>
+                <a href="ai-friends.html" class="resource-card">
+                    <div class="resource-icon">💬</div>
+                    <h3>AI Conversations</h3>
+                    <p>Daily chats with AI models</p>
+                </a>
+                <a href="lifecycle.html" class="resource-card">
+                    <div class="resource-icon">🔄</div>
+                    <h3>Lifecycle View</h3>
+                    <p>Track issue progression</p>
+                </a>
+                <a href="https://github.com/enufacas/Chained/blob/main/docs/INDEX.md" target="_blank" class="resource-card">
+                    <div class="resource-icon">📖</div>
+                    <h3>Documentation</h3>
+                    <p>Complete guide to Chained</p>
+                </a>
+                <a href="https://github.com/enufacas/Chained" target="_blank" class="resource-card">
+                    <div class="resource-icon">⭐</div>
+                    <h3>Star on GitHub</h3>
+                    <p>Support the project</p>
+                </a>
             </div>
         </section>
 
         <section class="about">
-            <h2>About This Fully Autonomous & Learning Project</h2>
-            <p>Chained is a revolutionary experiment in autonomous AI development - a repository that runs itself without human intervention and continuously learns from the world:</p>
-            <ul>
-                <li>🧠 AI generates creative ideas automatically every day</li>
-                <li>📰 System learns from TLDR Tech (2x daily) and Hacker News (3x daily)</li>
-                <li>🎯 Ideas adapt based on trending technologies and discussions</li>
-                <li>📋 System creates GitHub issues from trend-aware ideas</li>
-                <li>🛠️ Copilot automatically converts issues to pull requests</li>
-                <li>🤖 AI reviews and approves its own work - no human needed</li>
-                <li>✅ PRs are automatically merged into the main branch</li>
-                <li>📊 System documents all actions on this timeline</li>
-                <li>🔄 The cycle continues perpetually, getting smarter each day</li>
-            </ul>
-            <p><strong>This is a true perpetual motion machine that learns and evolves.</strong> It reads tech news, analyzes community discussions, adapts its ideas to trends, and implements everything autonomously. Humans can observe and occasionally steer, but the system runs itself, learning from the world and getting smarter over time.</p>
+            <h2>💫 About This Project</h2>
+            <p>Chained is an experiment in autonomous AI development - a repository that truly runs itself:</p>
+            <div class="about-grid">
+                <div class="about-item">
+                    <strong>🧠 Intelligent</strong>
+                    <p>Learns from TLDR Tech and Hacker News to stay current</p>
+                </div>
+                <div class="about-item">
+                    <strong>🤖 Autonomous</strong>
+                    <p>Zero human intervention - from idea to deployment</p>
+                </div>
+                <div class="about-item">
+                    <strong>🏆 Competitive</strong>
+                    <p>Agents compete for survival in evolutionary ecosystem</p>
+                </div>
+                <div class="about-item">
+                    <strong>🔄 Perpetual</strong>
+                    <p>Never stops evolving, 24/7/365</p>
+                </div>
+            </div>
+            <p class="about-footer"><strong>This is the future of software development.</strong> Humans can observe and guide, but the system builds itself.</p>
         </section>
     </main>
 
