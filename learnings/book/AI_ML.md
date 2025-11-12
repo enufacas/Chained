@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 89
+**Total Insights:** 91
 
 **Last Updated:** 2025-11-12
 
@@ -10,6 +10,34 @@
 
 
 ## 📰 From Hacker News
+
+
+### Yann LeCun to depart Meta and launch AI startup focused on 'world models'
+
+**Community Score:** 725 upvotes
+
+**Link:** https://www.nasdaq.com/articles/metas-chief-ai-scientist-yann-lecun-depart-and-launch-ai-start-focused-world-models
+
+
+**Content Summary:**
+
+AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA Markets META Meta's Chief AI Scientist Yann LeCun To Depart And Launch AI Start-Up Focused On 'World Models' November 11, 2025 — 04:42 pm EST Written by RTTNews.com for RTTNews -> (RTTNews) - Meta's (META) chief artificial intelligence scient...
+
+---
+
+
+### Pakistani newspaper mistakenly prints AI prompt with the article
+
+**Community Score:** 422 upvotes
+
+**Link:** https://twitter.com/omar_quraishi/status/1988518627859951986
+
+
+**Content Summary:**
+
+JavaScript is not available. We’ve detected that JavaScript is disabled in this browser. Please enable JavaScript or switch to a supported browser to continue using x.com. You can see a list of supported browsers in our Help Center. Help Center Terms of Service Privacy Policy Cookie Policy Imprint Ads info © 2025 X Corp. Something went wrong, but don’t fret — let’s give it another shot. Try again Some privacy related extensions may cause issues on x.com. Please disable them and try again.
+
+---
 
 
 ### Yann LeCun to depart Meta and launch AI startup focused on 'world models'
@@ -213,24 +241,6 @@ Hi! We’re LateNiteSoft, and we’ve been wo...
 **Community Score:** 156 upvotes
 
 **Link:** https://arxiv.org/abs/2510.21890
-
----
-
-
-### Email verification protocol
-
-**Community Score:** 143 upvotes
-
-**Link:** https://github.com/WICG/email-verification-protocol
-
----
-
-
-### AI isn't replacing jobs. AI spending is
-
-**Community Score:** 299 upvotes
-
-**Link:** https://www.fastcompany.com/91435192/chatgpt-llm-openai-jobs-amazon
 
 ---
 

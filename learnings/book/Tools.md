@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 15
+**Total Insights:** 16
 
 **Last Updated:** 2025-11-12
 
@@ -10,6 +10,20 @@
 
 
 ## 📰 From Hacker News
+
+
+### Waymo robotaxis are now giving rides on freeways in LA, SF and Phoenix
+
+**Community Score:** 181 upvotes
+
+**Link:** https://techcrunch.com/2025/11/12/waymo-robotaxis-are-now-giving-rides-on-freeways-in-these-3-cities/
+
+
+**Content Summary:**
+
+Sixteen years ago, engineers working on the Google self-driving project conducted their first autonomous vehicle tests on the freeway that connects Silicon Valley to San Francisco. The company would eventually become Waymo, autonomous vehicle testing would expand — fanning out to other cities. Eventually, the company launched commercial robotaxi services in Phoenix, San Francisco, and Los Angeles. Other cities soon followed. But freeways, despite some of that early testing, would remain out of r...
+
+---
 
 
 ### Pikaday: A friendly guide to front-end date pickers

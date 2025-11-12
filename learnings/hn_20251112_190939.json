@@ -1,0 +1,116 @@
+{
+  "timestamp": "2025-11-12T19:09:39.293258+00:00",
+  "source": "Hacker News",
+  "learnings": [
+    {
+      "title": "The last-ever penny will be minted today in Philadelphia",
+      "url": "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "score": 197,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Steam Machine",
+      "url": "https://store.steampowered.com/sale/steammachine",
+      "score": 287,
+      "source": "Hacker News",
+      "content": "Login Store Home Discovery Queue Wishlist Points Shop News Stats Community Home Discussions Workshop Market Broadcasts About Support Change language Get the Steam Mobile App View desktop website \u00a9 Valve Corporation. All rights reserved. All trademarks are property of their respective owners in the US and other countries. Privacy Policy | Legal | Accessibility | Steam Subscriber Agreement | Refunds STORE Home Discovery Queue Wishlist Points Shop News Stats COMMUNITY Home Discussions Workshop Market Broadcasts About SUPPORT Install Steam login | language \u7b80\u4f53\u4e2d\u6587 (Simplified Chinese) \u7e41\u9ad4\u4e2d\u6587 (Traditional Chinese) \u65e5\u672c\u8a9e (Japanese) \ud55c\uad6d\uc5b4 (Korean) \u0e44\u0e17\u0e22 (Thai) \u0411\u044a\u043b\u0433\u0430\u0440\u0441\u043a\u0438 (Bulgarian) \u010ce\u0161tina (Czech) Dansk (Danish) Deutsch (German) Espa\u00f1ol - Espa\u00f1a (Spanish - Spain) Espa\u00f1ol - Latinoam\u00e9rica (Spanish - Latin America) \u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac (Greek) Fran\u00e7ais (French) Italiano (Italian) Bahasa Indonesia (Indonesian) Magyar (Hungarian) Nederlands (Dutch) Norsk (Norwegian) Polski (Polish) Portugu\u00eas (Portuguese - Portugal) Portugu\u00eas - Brasil (Portuguese - Brazil) Rom\u00e2n\u0103 (Romanian) \u0420\u0443\u0441\u0441\u043a\u0438\u0439 (Russian) Suomi (Finnish) Svenska (Swedish) T\u00fcrk\u00e7e (Turkish) Ti\u1ebfng Vi\u1ec7t (Vietnamese) \u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430 (Ukrainian) Report a translation problem \u00a9 2025 Valve Corporation. All rights reserved. All trademarks are property of their respective owners in the US and other countries. VAT included in all prices where applicable. Privacy Policy | Legal | Accessibility | Steam Subscriber Agreement | Refunds | Cookies View mobile website About Valve | Jobs | Steamworks | Steam Distribution | Support | Recycling | Gift Cards | | |"
+    },
+    {
+      "title": "Learn Prolog Now",
+      "url": "https://lpn.swi-prolog.org/lpnpage.php?pageid=top",
+      "score": 167,
+      "source": "Hacker News",
+      "content": "This version of Learn Prolog Now! embeds SWI SH , SWI-Prolog for SHaring. The current version rewrites the Learn Prolog Now! HTML on the fly, recognising source code and example queries. It is not yet good at recognising the relations between source code fragments and queries. Also Learn Prolog Now! needs some updating to be more compatible with SWI-Prolog. All sources are on GitHub: LearnPrologNow LPN SWISH Proxy SWISH Learn Prolog Now! by Patrick Blackburn , Johan Bos , and Kristina Striegnitz > LPN! Home Free Online Version Paperback English Paperback Fran\u00e7ais Teaching Prolog Prolog Implementations Prolog Manuals Prolog Links Thanks! Contact us Tweets by @learnprolognow Learn Prolog Now! is an introductory course to programming in Prolog . The online version has been available since 2001, and now there is also a throughly revised version available in book form . We wanted to do two things with this course. First, we wanted to provide a text that was relatively self contained, a text that would permit someone with little or no knowledge of computing to pick up the basics of Prolog with the minimum of fuss. We also wanted the text to be clear enough to make it useful for self study. We believe that if you read the text, and do the associated exercises, you will gain a useful partial entry to the world of Prolog. But only a partial entry, and this brings us to our second point. We want to emphasize the practical aspects of Prolog. Prolog is something you do. You can't learn a programming language simply by reading about it, and if you really want to get the most out of this course, we strongly advise you to get hold of a Prolog interpreter (you'll find pointers to some nice ones on this website) and work through all the Practical Sessions that we provide. And of course, don't stop with what we provide. The more you program, the better you'll get.... We hope you enjoy the course. And whether you're using this book to teach yourself Prolog, or you're using it as the b\n\n[Content truncated...]"
+    },
+    {
+      "title": "Steam Frame",
+      "url": "https://store.steampowered.com/sale/steamframe",
+      "score": 183,
+      "source": "Hacker News"
+    },
+    {
+      "title": "Yt-dlp: External JavaScript runtime now required for full YouTube support",
+      "url": "https://github.com/yt-dlp/yt-dlp/issues/15012",
+      "score": 665,
+      "source": "Hacker News",
+      "content": "yt-dlp / yt-dlp Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 10.8k Star 135k [Announcement] External JavaScript runtime now required for full YouTube support #15012 New issue Copy link New issue Copy link Open Open [Announcement] External JavaScript runtime now required for full YouTube support #15012 Copy link Labels discussion/announcement Description bashonly opened on Nov 12, 2025 Issue body actions This is a follow-up to #14404 , which announced that yt-dlp will soon require an external JavaScript runtime (e.g. Deno) in order to fully support downloading from YouTube. With the release of yt-dlp version 2025.11.12 , external JavaScript runtime support has arrived. All users who intend to use yt-dlp with YouTube are strongly encouraged to install one of the supported JS runtimes. The following JavaScript runtimes are currently supported ( in order of recommendation, from strongest to weakest ): Deno recommended for most users https://deno.com/ https://github.com/denoland/deno note: if downloading from Deno's GitHub releases , get deno not denort minimum Deno version supported by yt-dlp: 2.0.0 the latest version of Deno is strongly recommended Node https://nodejs.org/ minimum Node version supported by yt-dlp: 20.0.0 if using Node, the latest version (25+) is strongly recommended for security reasons QuickJS https://bellard.org/quickjs/ minimum QuickJS version supported by yt-dlp: 2023-12-9 if using QuickJS, version 2025-4-26 or later is strongly recommended for performance reasons QuickJS-ng https://quickjs-ng.github.io/quickjs/ all versions are supported by yt-dlp; however, upstream QuickJS is recommended instead for performance reasons Bun https://bun.com/ minimum Bun version supported by yt-dlp: 1.0.31 if using Bun, the latest version is strongly recommended Note that only deno is enabled by default; all others are disabled by default for security reasons. See \n\n[Content truncated...]"
+    },
+    {
+      "title": "Fighting the New York Times' invasion of user privacy",
+      "url": "https://openai.com/index/fighting-nyt-user-privacy-invasion",
+      "score": 160,
+      "source": "Hacker News"
+    },
+    {
+      "title": ".NET 10",
+      "url": "https://devblogs.microsoft.com/dotnet/announcing-dotnet-10/",
+      "score": 399,
+      "source": "Hacker News",
+      "content": "Today, we are excited to announce the launch of .NET 10, the most productive, modern, secure, intelligent, and performant release of .NET yet. It\u2019s the result of another year of effort from thousands of developers around the world. This release includes thousands of performance, security, and functional improvements across the entire .NET stack-from languages and developer tools to workloads-enabling you to build with a unified platform and easily infuse your apps with AI. Important .NET 10 is a Long Term Support (LTS) release and will be supported for three years until November 10, 2028. We strongly recommend that production applications upgrade to .NET 10 to take advantage of the extended support window, significant performance improvements, and new capabilities. Downloads of .NET 10 and updates to Visual Studio 2026 and the C# Dev Kit for Visual Studio Code are available now. Download .NET 10 Get Visual Studio 2026 The .NET team, our partners, and the .NET community are showcasing what\u2019s new in .NET 10 at .NET Conf 2025 . Watch the sessions to see all of the excitement including the keynote . A Thriving .NET Community .NET 10 wouldn\u2019t be possible without our amazing community. Thank you to everyone who contributed issues, pull requests, code reviews, and feedback to make this release happen. The .NET ecosystem continues to flourish with over 478,000 packages on NuGet that have been downloaded over 800 billion times. Thousands of companies worldwide including H&R Block, Geocaching, Chipotle, Fidelity, and many more , along with products and services here at Microsoft like Xbox, Bing, Microsoft Graph, Azure Cosmos DB, Microsoft Exchange, Microsoft Teams, and Microsoft Copilot, trust .NET to build their most critical applications. Unparalleled Performance \u2013 Faster Apps, Lower Memory .NET 10 is the fastest .NET yet with improvements across the runtime, workloads, and languages. Stephen Toub\u2019s performance improvements deep dive highlights the latest optimizations. Key\n\n[Content truncated...]"
+    },
+    {
+      "title": "Waymo robotaxis are now giving rides on freeways in LA, SF and Phoenix",
+      "url": "https://techcrunch.com/2025/11/12/waymo-robotaxis-are-now-giving-rides-on-freeways-in-these-3-cities/",
+      "score": 181,
+      "source": "Hacker News",
+      "content": "Sixteen years ago, engineers working on the Google self-driving project conducted their first autonomous vehicle tests on the freeway that connects Silicon Valley to San Francisco. The company would eventually become Waymo, autonomous vehicle testing would expand \u2014 fanning out to other cities. Eventually, the company launched commercial robotaxi services in Phoenix, San Francisco, and Los Angeles. Other cities soon followed. But freeways, despite some of that early testing, would remain out of reach. Until today. Waymo said Wednesday it will begin offering robotaxi rides that use freeways across San Francisco, Phoenix, and Los Angeles, a critical expansion for the company that it says will reduce ride times by up to 50%. That stat could help attract a whole new group of users who need to travel between the many towns and suburbs within the greater San Francisco Bay Area or quicken commutes across the sprawling Los Angeles and Phoenix metro areas. Using freeways is also essential for Waymo to offer rides to and from the San Francisco Airport, a location the company is currently testing in. The service won\u2019t be offered to all Waymo riders at first, the company said. Waymo riders who want to experience freeway rides can note their preference in the Waymo app. Once the rider hails a ride, they may be matched with a freeway trip, according to the company. The company\u2019s robotaxi routes will now stretch to San Jose, an expansion that will create a unified 260-mile service area across the Peninsula, according to Waymo. The company said it will also begin curbside drop off and pick up service at the San Jose Mineta International Airport. It already offers curbside service to the Sky Harbor Phoenix International Airport . Techcrunch event Join the Disrupt 2026 Waitlist Add yourself to the Disrupt 2026 waitlist to be first in line when Early Bird tickets drop. Past Disrupts have brought Google Cloud, Netflix, Microsoft, Box, Phia, a16z, ElevenLabs, Wayve, Hugging Face, Elad Gi\n\n[Content truncated...]"
+    },
+    {
+      "title": "What happened to Transmeta, the last big dotcom IPO",
+      "url": "https://dfarq.homeip.net/what-happened-to-transmeta-the-last-big-dotcom-ipo/",
+      "score": 164,
+      "source": "Hacker News",
+      "content": "What happened to Transmeta, the last big dotcom IPO Dave Farquhar Retro Computing November 7, 2025 November 7, 2025 2 Comments Transmeta was the last big IPO of the dotcom era , launching Nov 7, 2000. Some analysts call its $273 million IPO the last successful tech IPO until the Google IPO in 2004 . Transmeta didn\u2019t completely fit in to the dotcom era, because they were a hardware company. But they were still a technology company, and if their plans had gone well, they would have sold their product to dotcoms, but it didn\u2019t work out that way for them. In this blog post we explore what happened to Transmeta. Was Transmeta truly the last of the dotcoms? Transmeta was a CPU company, a pure technology play as investors cooled on Internet companies. Its IPO feels like the end of the dotcom era, even though the line feels a bit fuzzy.. I\u2019ve heard Transmeta called the last successful IPO of the dotcom era, or the last of the big dotcom IPOs. But it\u2019s an oversimplification to say there weren\u2019t any successful technology IPOs between Transmeta and Google. One very notable exception is Paypal, who ran an IPO in February 2002 that raised $70.2 million. The Register even hailed Paypal as the return of the Internet IPO. And it wasn\u2019t just that dotcom IPOs grew scarce after November 2000. On February 7, 2002, Forbes stated that only 34 IPOs in total launched between September 11, 2001 and February 6, 2002, compared to 87 in the same-year-earlier period, and 240 between September 11, 1999 and February 6, 2000. That date is significant. Any bad news can spook investors, and the 9/11 attack did, in fact, spook investors. So where the dotcom-era ended is a fuzzy line, but it makes sense to draw the line at Transmeta. Technology IPOs and particularly Internet IPOs became much more scarce after Transmeta, and the size of the IPOs shrunk too. The distinction of Transmeta being a technology stock, rather than an Internet stock, also suggests investors were already cooling on Internet stoc\n\n[Content truncated...]"
+    },
+    {
+      "title": "Yann LeCun to depart Meta and launch AI startup focused on 'world models'",
+      "url": "https://www.nasdaq.com/articles/metas-chief-ai-scientist-yann-lecun-depart-and-launch-ai-start-focused-world-models",
+      "score": 725,
+      "source": "Hacker News",
+      "content": "AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA Markets META Meta's Chief AI Scientist Yann LeCun To Depart And Launch AI Start-Up Focused On 'World Models' November 11, 2025 \u2014 04:42 pm EST Written by RTTNews.com for RTTNews -> (RTTNews) - Meta's (META) chief artificial intelligence scientist, Yann LeCun, plans to leave the company to launch his own AI start-up, marking a major shift inside Meta as CEO Mark Zuckerberg doubles down on \"superintelligence\" initiatives to compete with OpenAI and Google, according to people familiar with the matter. LeCun, a Turing Award-winning pioneer of modern AI, has begun early fundraising discussions for his new venture, which will focus on developing \"world models,\" next-generation systems designed to learn from visual and spatial data rather than text. These models aim to replicate human reasoning and understanding of the physical world, a project LeCun has said could take a decade to mature. LeCun's exit comes amid an internal overhaul of Meta's AI strategy. Zuckerberg has shifted Meta's Fundamental AI Research Lab - FAIR, which LeCun founded in 2013, away from long-term research toward commercial AI products and large language models - LLMs. The move follows the underwhelming release of Meta's Llama 4 model, which lagged behind rival offerings from Anthropic, Google, and OpenAI. To accelerate progress, Zuckerberg recently hired Alexandr Wang, founder of Scale AI, paying $14.3 billion for a 49 percent stake in his company and appointing him to lead Meta's new Superintelligence division, to which LeCun now reports. The CEO also formed an elite team called TBD Lab, offering $100 million pay packages to lure top AI talent from competitors. LeCun has publicly disagreed with Zuckerberg's heavy reliance on LLMs, calling them \"us\n\n[Content truncated...]"
+    },
+    {
+      "title": "Pakistani newspaper mistakenly prints AI prompt with the article",
+      "url": "https://twitter.com/omar_quraishi/status/1988518627859951986",
+      "score": 422,
+      "source": "Hacker News",
+      "content": "JavaScript is not available. We\u2019ve detected that JavaScript is disabled in this browser. Please enable JavaScript or switch to a supported browser to continue using x.com. You can see a list of supported browsers in our Help Center. Help Center Terms of Service Privacy Policy Cookie Policy Imprint Ads info \u00a9 2025 X Corp. Something went wrong, but don\u2019t fret \u2014 let\u2019s give it another shot. Try again Some privacy related extensions may cause issues on x.com. Please disable them and try again."
+    },
+    {
+      "title": "Laptops with Stickers",
+      "url": "https://stickertop.art/main/",
+      "score": 588,
+      "source": "Hacker News",
+      "content": "Main Jack Aug 18, 2025 \u2022 21 min read Welcome to stickertop.art Discover a unique collection of laptops adorned with creative stickers from around the world. This project celebrates the art and culture of laptop personalization each laptop tells a story through its stickers and gives us a glimpse of the personality of the owners."
+    },
+    {
+      "title": "Bluetooth 6.2 \u2013 more responsive, improves security, USB comms, and testing",
+      "url": "https://www.cnx-software.com/2025/11/05/bluetooth-6-2-gets-more-responsive-improves-security-usb-communication-and-testing-capabilities/",
+      "score": 215,
+      "source": "Hacker News",
+      "content": "Posted on November 5, 2025 November 5, 2025 by Jean-Luc Aufranc (CNXSoft) - 4 Comments on Bluetooth 6.2 gets more responsive, improves security, USB communication, and testing capabilities Bluetooth 6.2 gets more responsive, improves security, USB communication, and testing capabilities Bluetooth 6.2 specification has just been released with a range of new features to enhance responsiveness with shorter connection intervals, strengthen security against amplitude-based RF attacks, and improve communication with a new \u201cBulk Serialization Mode\u201d that\u2019s especially useful for USB Bluetooth LE audio applications. The new Bluetooth Core 6.2 specification also introduces various BLE Test Mode enhancements. If you feel like Bluetooth specifications are released more often than in the past, that\u2019s normal because the Bluetooth SIG switched to a bi-annual release schedule. For instance, the Bluetooth 6.1 specification was just published last May, or about 6 months ago\u2026 Bluetooth 6.2 highlights: Bluetooth Shorter Connection Intervals (SCI) reduce the minimum Bluetooth LE connection interval from 7.5 ms to just 375 \u00b5s for faster responsiveness. The change will especially impact high-performance HID devices, real-time human-machine interfaces (HMIs), and latency-sensitive sensors. AR/VR and gaming applications will particularly benefit from the lower latency. Bluetooth Channel Sounding Amplitude-based Attack Resilience adds protections against sophisticated amplitude-based RF attacks. Devices for the automotive, smart home, and industrial markets will become less prone to relay and spoofing threats with the changes. Bluetooth HCI USB LE Isochronous Support gets Bulk Serialization Mode , a new mechanism for standardizing isochronous data transmission over USB. With this update, host-controller interface (HCI) packet handling will be simplified, and it also streamlines LE Audio integration in Bluetooth USB devices. Bluetooth LE Test Mode Enhancements enable a unified control protocol\n\n[Content truncated...]"
+    },
+    {
+      "title": "X5.1 solar flare, G4 geomagnetic storm watch",
+      "url": "https://www.spaceweatherlive.com/en/news/view/593/20251111-x5-1-solar-flare-g4-geomagnetic-storm-watch.html",
+      "score": 379,
+      "source": "Hacker News",
+      "content": "SpaceWeatherLive .com Real-time auroral and solar activity X5.1 solar flare, G4 geomagnetic storm watch Tuesday, 11 November 2025 19:07 UTC Here she blows! Sunspot region 4274 produced its strongest solar flare thus far since it appeared on the east limb and the sixth strongest solar flare of the current solar cycle. An impressive long duration and highly eruptive X5.1 (R3-strong) solar flare peaked this morning at 10:04 UTC. It became quickly clear that the eruption would be followed by an impressive coronal mass ejection (CME). The resulting coronal wave following the solar explosion as well as the coronal dimming observed as the CME was propelled into space were of a spectacular magnitude as can be seen in the animation below provided by halocme . Another eruption from AR12474, associated with an X5.1 flare. It has become a full halo CME. I am truly impressed by how fast and global this coronal wave is. The CME will arrive on November 13, but because of earlier CMEs it will be challenging to isolate the ICME from this. pic.twitter.com/H6eNjzQUGz \u2014 Halo CME (@halocme) November 11, 2025 Taking a look at coronagraph imagery provided by GOES-19 CCOR-1 we see the gorgeous fast halo coronal mass ejection as it propagates away from the Sun. It doesn't take a rocket scientist to come to the conclusion that this plasma cloud of course has an earth-directed component and it is pretty clear that this will be a strong impact when it arrives at our planet. This rightfully so prompted the NOAA SWPC to issue a G4 or greater geomagnetic storm watch for tomorrow as the cloud could impact our planet as early as 16 UTC on 12 November. Not only is the CME fast but it will also travel trough an area with high ambient solar wind speed and low density thanks to two other CMEs released earlier by this region. More about that below. Coronal mass ejection launched during today's X5.1 solar flare as captured by the coronagraph from GOES-19. If the solar wind and interplanetary magnetic fie\n\n[Content truncated...]"
+    }
+  ],
+  "topics": {
+    "Programming": [
+      "Yt-dlp: External JavaScript runtime now required for full YouTube support"
+    ],
+    "AI/ML": [
+      "Yann LeCun to depart Meta and launch AI startup focused on 'world models'",
+      "Pakistani newspaper mistakenly prints AI prompt with the article"
+    ],
+    "Security": [
+      "Bluetooth 6.2 \u2013 more responsive, improves security, USB comms, and testing"
+    ]
+  },
+  "total_stories": 14,
+  "security_validated": true,
+  "version": "2.0"
+}
