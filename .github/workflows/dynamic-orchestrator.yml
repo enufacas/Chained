@@ -46,26 +46,48 @@ jobs:
         id: usage
         env:
           GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
           COPILOT_MONTHLY_QUOTA: ${{ vars.COPILOT_MONTHLY_QUOTA || '1500' }}
           COPILOT_REQUESTS_USED: ${{ vars.COPILOT_REQUESTS_USED || github.event.inputs.update_usage || '300' }}
           COPILOT_RESET_DAY: ${{ vars.COPILOT_RESET_DAY || '1' }}
         run: |
           cd tools
-          python3 copilot-usage-tracker.py --json > /tmp/usage.json
+          
+          # Extract organization from repository
+          ORG=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f1)
+          echo "Organization: $ORG"
+          
+          # Fetch usage with organization parameter
+          python3 copilot-usage-tracker.py --org "$ORG" --json > /tmp/usage.json
           
           # Extract values for GitHub Actions
           REMAINING=$(jq -r '.stats.remaining' /tmp/usage.json)
+          USED=$(jq -r '.stats.used' /tmp/usage.json)
+          QUOTA=$(jq -r '.stats.total_quota' /tmp/usage.json)
           MODE=$(jq -r '.stats.recommended_mode' /tmp/usage.json)
           BURN_RATE=$(jq -r '.stats.current_burn_rate' /tmp/usage.json)
           IS_SAFE=$(jq -r '.stats.is_safe' /tmp/usage.json)
           
           echo "remaining=$REMAINING" >> $GITHUB_OUTPUT
+          echo "used=$USED" >> $GITHUB_OUTPUT
+          echo "quota=$QUOTA" >> $GITHUB_OUTPUT
           echo "mode=$MODE" >> $GITHUB_OUTPUT
           echo "burn_rate=$BURN_RATE" >> $GITHUB_OUTPUT
           echo "is_safe=$IS_SAFE" >> $GITHUB_OUTPUT
           
           # Print human-readable status
-          python3 copilot-usage-tracker.py
+          python3 copilot-usage-tracker.py --org "$ORG"
+
+      - name: Update repository variables
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Update repository variables with latest usage data
+          gh variable set COPILOT_REQUESTS_USED --body "${{ steps.usage.outputs.used }}"
+          gh variable set COPILOT_MONTHLY_QUOTA --body "${{ steps.usage.outputs.quota }}"
+          echo "✓ Updated repository variables with latest usage data"
+          echo "  - COPILOT_REQUESTS_USED: ${{ steps.usage.outputs.used }}"
+          echo "  - COPILOT_MONTHLY_QUOTA: ${{ steps.usage.outputs.quota }}"
 
       - name: Update workflow schedules
         id: update
@@ -117,6 +139,7 @@ jobs:
           git commit -m "🎛️ Update workflow schedules to $MODE mode
 
           Automatic schedule adjustment based on API usage:
+          - Used: ${{ steps.usage.outputs.used }} / ${{ steps.usage.outputs.quota }}
           - Remaining quota: ${{ steps.usage.outputs.remaining }}
           - Burn rate: ${{ steps.usage.outputs.burn_rate }} req/day
           - Mode: $MODE
@@ -132,6 +155,7 @@ jobs:
 
           ### 📊 Current Usage Statistics
 
+          - **Used Quota**: ${{ steps.usage.outputs.used }} / ${{ steps.usage.outputs.quota }} requests
           - **Remaining Quota**: ${{ steps.usage.outputs.remaining }} requests
           - **Burn Rate**: ${{ steps.usage.outputs.burn_rate }} requests/day
           - **Status**: ${{ steps.usage.outputs.is_safe == 'true' && '✅ Safe' || '⚠️ Warning' }}
@@ -214,6 +238,7 @@ jobs:
         run: |
           echo "## Orchestration Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Used Quota**: ${{ steps.usage.outputs.used }} / ${{ steps.usage.outputs.quota }} requests" >> $GITHUB_STEP_SUMMARY
           echo "- **Remaining Quota**: ${{ steps.usage.outputs.remaining }} requests" >> $GITHUB_STEP_SUMMARY
           echo "- **Burn Rate**: ${{ steps.usage.outputs.burn_rate }} req/day" >> $GITHUB_STEP_SUMMARY
           echo "- **Mode**: ${{ steps.update.outputs.mode_used }}" >> $GITHUB_STEP_SUMMARY

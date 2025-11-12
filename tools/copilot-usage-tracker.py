@@ -82,15 +82,116 @@ class CopilotUsageTracker:
             print(f"Error fetching rate limit: {e}", file=sys.stderr)
             return None
     
-    def estimate_copilot_usage(self) -> UsageStats:
+    def get_copilot_usage_from_api(self, org: str) -> Optional[Dict[str, Any]]:
+        """
+        Get Copilot usage information from GitHub API.
+        
+        Args:
+            org: Organization name
+            
+        Returns:
+            Dictionary with usage information or None if unavailable
+        """
+        try:
+            # Try to get Copilot metrics from the API
+            metrics = self.client.get(f"/orgs/{org}/copilot/metrics")
+            
+            # Extract premium requests data from the last available day
+            if not metrics or not isinstance(metrics, list) or len(metrics) == 0:
+                print(f"No Copilot metrics data available from API", file=sys.stderr)
+                return None
+            
+            # Get the most recent day's data
+            latest = metrics[0] if isinstance(metrics, list) else metrics
+            
+            # Extract premium requests information
+            result = {
+                'date': latest.get('date'),
+                'total_premium_requests': 0,
+                'has_data': False
+            }
+            
+            # Sum up premium requests across all breakdowns
+            for breakdown in latest.get('breakdown', []):
+                premium_requests = breakdown.get('premium_requests_count', 0)
+                result['total_premium_requests'] += premium_requests
+                if premium_requests > 0:
+                    result['has_data'] = True
+            
+            return result if result['has_data'] else None
+            
+        except Exception as e:
+            print(f"Error fetching Copilot metrics from API: {e}", file=sys.stderr)
+            return None
+    
+    def _aggregate_monthly_usage(self, org: str, reset_day: int) -> int:
+        """
+        Aggregate premium requests from the current billing period.
+        
+        Args:
+            org: Organization name
+            reset_day: Day of month when quota resets
+            
+        Returns:
+            Total premium requests used in current billing period
+        """
+        try:
+            # Get metrics from GitHub API
+            metrics = self.client.get(f"/orgs/{org}/copilot/metrics")
+            
+            if not metrics or not isinstance(metrics, list):
+                print(f"No metrics data available from API", file=sys.stderr)
+                return 0
+            
+            # Calculate billing period start date
+            now = datetime.now(timezone.utc)
+            if now.day >= reset_day:
+                # Current billing period started on reset_day of current month
+                period_start = datetime(now.year, now.month, reset_day, tzinfo=timezone.utc)
+            else:
+                # Current billing period started on reset_day of last month
+                if now.month == 1:
+                    period_start = datetime(now.year - 1, 12, reset_day, tzinfo=timezone.utc)
+                else:
+                    period_start = datetime(now.year, now.month - 1, reset_day, tzinfo=timezone.utc)
+            
+            # Aggregate premium requests from the billing period
+            total_premium_requests = 0
+            for day_data in metrics:
+                # Parse the date from the metric
+                metric_date_str = day_data.get('date')
+                if not metric_date_str:
+                    continue
+                
+                try:
+                    metric_date = datetime.fromisoformat(metric_date_str.replace('Z', '+00:00'))
+                except:
+                    continue
+                
+                # Only count metrics from current billing period
+                if metric_date >= period_start:
+                    # Sum premium requests across all breakdowns for this day
+                    for breakdown in day_data.get('breakdown', []):
+                        total_premium_requests += breakdown.get('premium_requests_count', 0)
+            
+            return total_premium_requests
+            
+        except Exception as e:
+            print(f"Error aggregating monthly usage: {e}", file=sys.stderr)
+            return 0
+    
+    def estimate_copilot_usage(self, org: Optional[str] = None) -> UsageStats:
         """
         Estimate Copilot usage based on available information.
         
-        Since GitHub doesn't expose Copilot-specific quotas via API,
-        we estimate based on:
+        Fetches actual usage from GitHub Copilot API if available, otherwise
+        falls back to estimates based on:
         1. User-provided quota info (1500 for Pro+)
         2. Historical usage tracking
         3. Workflow execution counts
+        
+        Args:
+            org: Organization name (defaults to GITHUB_REPOSITORY owner)
         
         Returns:
             UsageStats with current usage estimates
@@ -115,18 +216,39 @@ class CopilotUsageTracker:
         
         days_until_reset = (reset_date - now).total_seconds() / 86400
         
+        # Determine organization
+        if not org:
+            # Try to get from GITHUB_REPOSITORY env var (format: owner/repo)
+            github_repo = os.environ.get('GITHUB_REPOSITORY', '')
+            if '/' in github_repo:
+                org = github_repo.split('/')[0]
+        
         # Load usage history
         history = self._load_history()
         
+        # Try to get actual usage from API
+        api_data = None
+        if org:
+            api_data = self.get_copilot_usage_from_api(org)
+        
         # Calculate used requests
-        # Priority: environment variable (for updates) > history > default
-        env_used = os.environ.get('COPILOT_REQUESTS_USED')
-        if env_used:
-            # Environment variable set - use it (allows manual updates)
-            used = int(env_used)
+        # Priority: API data > environment variable > history > default
+        if api_data and api_data.get('has_data'):
+            # Use API data - sum all premium requests from metrics
+            # Note: The API returns daily data, we need to aggregate for the billing period
+            used = self._aggregate_monthly_usage(org, reset_day)
+            print(f"Using actual Copilot usage from API: {used} requests", file=sys.stderr)
         else:
-            # Use history if available, otherwise default
-            used = history.get('current_used', 300)
+            env_used = os.environ.get('COPILOT_REQUESTS_USED')
+            if env_used:
+                # Environment variable set - use it (allows manual updates)
+                used = int(env_used)
+                print(f"Using usage from environment variable: {used} requests", file=sys.stderr)
+            else:
+                # Use history if available, otherwise default
+                used = history.get('current_used', 300)
+                print(f"Using usage from history: {used} requests", file=sys.stderr)
+        
         remaining = total_quota - used
         
         # Calculate burn rate (requests per day)
@@ -327,6 +449,10 @@ def main():
         help='GitHub token (or use COPILOT_PAT/GITHUB_TOKEN env var)'
     )
     parser.add_argument(
+        '--org',
+        help='Organization name (or use GITHUB_REPOSITORY env var)'
+    )
+    parser.add_argument(
         '--quota',
         type=int,
         help='Total monthly quota (default: 1500 for Pro+)'
@@ -367,7 +493,7 @@ def main():
     
     if args.json:
         # JSON output
-        stats = tracker.estimate_copilot_usage()
+        stats = tracker.estimate_copilot_usage(org=args.org)
         mode = args.mode or stats.recommended_mode
         frequencies = tracker.get_workflow_frequencies(mode)
         
