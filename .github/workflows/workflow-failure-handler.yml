@@ -1,4 +1,4 @@
-name: Workflow Failure Handler
+name: "System: Workflow Failure Handler"
 
 on:
   # Disabled: workflow_run trigger commented out to disable automatic failure handling
