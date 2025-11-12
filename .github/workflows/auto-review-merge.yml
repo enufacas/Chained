@@ -281,6 +281,10 @@ jobs:
                     echo "🏷️  Removing spawn-pending label from issue #${linked_issue}..."
                     gh issue edit ${linked_issue} --repo ${{ github.repository }} --remove-label "spawn-pending" 2>&1 || echo "⚠️ Could not remove spawn-pending label (may not exist)"
                     
+                    # Add copilot label to indicate Copilot involvement
+                    echo "🏷️  Adding copilot label to issue #${linked_issue}..."
+                    gh issue edit ${linked_issue} --repo ${{ github.repository }} --add-label "copilot" 2>&1 || echo "⚠️ Could not add copilot label"
+                    
                     # Add comment to the work issue that the spawn is complete
                     gh issue comment ${linked_issue} --body "✅ **Agent Spawn Complete**
                     
@@ -290,6 +294,7 @@ jobs:
                     - ✅ Spawn PR merged
                     - ✅ Agent is now active
                     - ✅ Removed \`spawn-pending\` label
+                    - ✅ Added \`copilot\` label
                     - ✅ This issue is now ready to be worked on
                     
                     **Next Steps:**
