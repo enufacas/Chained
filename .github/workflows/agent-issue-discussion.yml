@@ -52,6 +52,9 @@ jobs:
             ISSUE_NUMBER="${{ github.event.issue.number }}"
           fi
           
+          # Convert to integer (remove decimal if present, e.g., "432.0" -> "432")
+          ISSUE_NUMBER=$(printf "%.0f" "$ISSUE_NUMBER")
+          
           echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
           
           # Get issue details
