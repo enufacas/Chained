@@ -1,0 +1,221 @@
+name: "Orchestrator: Dynamic Scheduling"
+
+on:
+  schedule:
+    # Check and adjust schedules daily at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Force a specific scheduling mode'
+        required: false
+        type: choice
+        options:
+          - auto
+          - aggressive
+          - normal
+          - conservative
+        default: 'auto'
+      update_usage:
+        description: 'Update current usage count'
+        required: false
+        type: number
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  orchestrate-schedules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd tools
+          pip install -r ../requirements.txt 2>/dev/null || echo "No requirements file, using standard library"
+
+      - name: Check current usage
+        id: usage
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          COPILOT_MONTHLY_QUOTA: ${{ vars.COPILOT_MONTHLY_QUOTA || '1500' }}
+          COPILOT_REQUESTS_USED: ${{ vars.COPILOT_REQUESTS_USED || github.event.inputs.update_usage || '300' }}
+          COPILOT_RESET_DAY: ${{ vars.COPILOT_RESET_DAY || '1' }}
+        run: |
+          cd tools
+          python3 copilot-usage-tracker.py --json > /tmp/usage.json
+          
+          # Extract values for GitHub Actions
+          REMAINING=$(jq -r '.stats.remaining' /tmp/usage.json)
+          MODE=$(jq -r '.stats.recommended_mode' /tmp/usage.json)
+          BURN_RATE=$(jq -r '.stats.current_burn_rate' /tmp/usage.json)
+          IS_SAFE=$(jq -r '.stats.is_safe' /tmp/usage.json)
+          
+          echo "remaining=$REMAINING" >> $GITHUB_OUTPUT
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+          echo "burn_rate=$BURN_RATE" >> $GITHUB_OUTPUT
+          echo "is_safe=$IS_SAFE" >> $GITHUB_OUTPUT
+          
+          # Print human-readable status
+          python3 copilot-usage-tracker.py
+
+      - name: Update workflow schedules
+        id: update
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          cd tools
+          
+          # Determine mode
+          if [ "${{ github.event.inputs.mode }}" != "" ] && [ "${{ github.event.inputs.mode }}" != "auto" ]; then
+            MODE="${{ github.event.inputs.mode }}"
+            echo "Using forced mode: $MODE"
+          else
+            MODE="${{ steps.usage.outputs.mode }}"
+            echo "Using recommended mode: $MODE"
+          fi
+          
+          # Update workflows
+          python3 workflow-orchestrator.py --mode "$MODE"
+          
+          echo "mode_used=$MODE" >> $GITHUB_OUTPUT
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if git diff --quiet .github/workflows/; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No schedule changes needed"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Schedule changes detected"
+          fi
+
+      - name: Create PR for schedule updates
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="orchestrator/schedule-update-$(date +%Y%m%d-%H%M%S)"
+          MODE="${{ steps.update.outputs.mode_used }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git add .github/workflows/
+          git add tools/analysis/copilot_usage_history.json
+          
+          git commit -m "🎛️ Update workflow schedules to $MODE mode
+
+          Automatic schedule adjustment based on API usage:
+          - Remaining quota: ${{ steps.usage.outputs.remaining }}
+          - Burn rate: ${{ steps.usage.outputs.burn_rate }} req/day
+          - Mode: $MODE
+          - Safe: ${{ steps.usage.outputs.is_safe }}"
+          
+          git push origin "$BRANCH_NAME"
+          
+          # Create detailed PR description
+          cat > /tmp/pr-body.md << 'EOF'
+          ## 🎛️ Dynamic Schedule Update
+
+          The workflow orchestrator has automatically adjusted workflow schedules based on current API usage.
+
+          ### 📊 Current Usage Statistics
+
+          - **Remaining Quota**: ${{ steps.usage.outputs.remaining }} requests
+          - **Burn Rate**: ${{ steps.usage.outputs.burn_rate }} requests/day
+          - **Status**: ${{ steps.usage.outputs.is_safe == 'true' && '✅ Safe' || '⚠️ Warning' }}
+          - **Recommended Mode**: ${{ steps.usage.outputs.mode }}
+          - **Applied Mode**: ${{ steps.update.outputs.mode_used }}
+
+          ### 🔄 Schedule Changes
+
+          This PR updates the cron schedules for the following workflows:
+          - Learning: TLDR Tech
+          - Learning: Hacker News
+          - Idea Generation
+          - AI Friend Daily
+          - Agent Spawner
+
+          ### 📋 Mode Details
+
+          **${{ steps.update.outputs.mode_used }} Mode** optimizes workflow frequency to:
+          - Maximize productivity within API budget
+          - Prevent quota exhaustion
+          - Adapt to current burn rate
+
+          ### 🎯 Why This Matters
+
+          Dynamic scheduling allows the system to:
+          - 🚀 Be aggressive when quota allows (spawn more ideas/code)
+          - 🎯 Run normally when on track
+          - 🛡️ Be conservative when approaching limits
+
+          This enables the AI to learn and generate ideas at the optimal rate based on available resources.
+
+          ---
+
+          *This PR was automatically created by the Dynamic Workflow Orchestrator.*
+          EOF
+          
+          gh pr create \
+            --title "🎛️ Update Workflow Schedules: $MODE Mode" \
+            --body-file /tmp/pr-body.md \
+            --label "automated,orchestrator,workflow-optimization" \
+            --base main \
+            --head "$BRANCH_NAME"
+
+      - name: Create usage report issue
+        if: steps.usage.outputs.is_safe == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "⚠️ API Usage Warning - Approaching Quota Limit" \
+            --body "## API Usage Alert
+
+          The dynamic workflow orchestrator has detected that we may exceed our API quota.
+
+          ### Current Statistics
+
+          - **Remaining**: ${{ steps.usage.outputs.remaining }} requests
+          - **Burn Rate**: ${{ steps.usage.outputs.burn_rate }} requests/day
+          - **Mode**: ${{ steps.usage.outputs.mode }}
+
+          ### Actions Taken
+
+          - Automatically switched to **${{ steps.usage.outputs.mode }}** mode
+          - Reduced workflow frequencies to conserve quota
+          - Will monitor daily and adjust as needed
+
+          ### Recommendations
+
+          Consider:
+          1. Manually reducing workflow triggers if needed
+          2. Waiting for quota reset
+          3. Upgrading to higher tier if available
+
+          ---
+
+          *This issue was automatically created by the Workflow Orchestrator.*" \
+            --label "monitoring,orchestrator,warning"
+
+      - name: Summary
+        run: |
+          echo "## Orchestration Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Remaining Quota**: ${{ steps.usage.outputs.remaining }} requests" >> $GITHUB_STEP_SUMMARY
+          echo "- **Burn Rate**: ${{ steps.usage.outputs.burn_rate }} req/day" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mode**: ${{ steps.update.outputs.mode_used }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ steps.usage.outputs.is_safe == 'true' && '✅ Safe' || '⚠️ Warning' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Changes**: ${{ steps.changes.outputs.has_changes }}" >> $GITHUB_STEP_SUMMARY
