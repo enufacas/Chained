@@ -60,7 +60,21 @@ class WorkflowOrchestrator:
             repo_root: Root directory of the repository
             dry_run: If True, don't actually modify files
         """
-        self.repo_root = repo_root or os.getcwd()
+        if repo_root:
+            self.repo_root = repo_root
+        else:
+            # Detect repository root by looking for .git directory
+            # Start from current directory and walk up
+            current = os.getcwd()
+            while current != '/':
+                if os.path.exists(os.path.join(current, '.git')):
+                    self.repo_root = current
+                    break
+                current = os.path.dirname(current)
+            else:
+                # Fallback to current directory if .git not found
+                self.repo_root = os.getcwd()
+        
         self.dry_run = dry_run
         self.tracker = CopilotUsageTracker()
         self.backup_dir = os.path.join(self.repo_root, '.github', 'workflow-backups')
