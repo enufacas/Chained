@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 14
+**Total Insights:** 16
 
 **Last Updated:** 2025-11-12
 
@@ -85,6 +85,16 @@
 
 
 ## 📰 From TLDR Tech
+
+
+### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻
+
+---
+
+
+### Apple Gemini deal terms 💰, Amazon layoff turmoil 💼, compiler targets 👨‍💻
+
+---
 
 
 ### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻

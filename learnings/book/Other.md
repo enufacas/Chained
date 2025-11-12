@@ -2,7 +2,7 @@
 
 > General technology news and insights
 
-**Total Insights:** 87
+**Total Insights:** 88
 
 **Last Updated:** 2025-11-12
 
@@ -191,6 +191,11 @@
 
 
 ## 📰 From TLDR Tech
+
+
+### Secret Scanner Upgrade 🤐, BGP Zombies 🧟, Agentic IaaC ✨
+
+---
 
 
 ### Secret Scanner Upgrade 🤐, BGP Zombies 🧟, Agentic IaaC ✨
