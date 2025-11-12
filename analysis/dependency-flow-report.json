@@ -1,0 +1,3036 @@
+{
+  "timestamp": "2025-11-12T15:26:50.054862",
+  "summary": {
+    "modules": {
+      "total": 74,
+      "with_dependencies": 74,
+      "with_dependents": 0,
+      "avg_dependencies": 6.918918918918919,
+      "avg_lines": 296.5945945945946
+    },
+    "workflows": {
+      "total": 28,
+      "scheduled": 19,
+      "manual": 28,
+      "event_triggered": 26,
+      "avg_steps": 7.964285714285714
+    },
+    "data_flows": {
+      "total": 35,
+      "by_type": {
+        "metrics": 4,
+        "event": 29,
+        "secret": 2
+      }
+    },
+    "bottlenecks": {
+      "total": 7,
+      "by_severity": {
+        "low": 7
+      },
+      "by_type": {
+        "complex_workflow": 7
+      }
+    }
+  },
+  "dependency_graph": {
+    "code-analyzer": {
+      "name": "code-analyzer",
+      "type": "workflow",
+      "dependencies": [
+        "code-analyzer.py",
+        "code-analyzer.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/code-analyzer.yml",
+        "triggers": [
+          "manual",
+          "issues",
+          "pull_request",
+          "push"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [
+          "code-analyzer.py",
+          "code-analyzer.py"
+        ],
+        "job_count": 1,
+        "step_count": 8
+      }
+    },
+    "dependency-flow-analyzer": {
+      "name": "dependency-flow-analyzer",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "datetime",
+        "ast",
+        "re",
+        "collections",
+        "typing",
+        "json",
+        "os",
+        "dataclasses",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/dependency-flow-analyzer.py",
+        "lines_of_code": 493,
+        "num_dependencies": 11,
+        "import_types": [
+          "pathlib",
+          "datetime",
+          "ast",
+          "re",
+          "collections",
+          "typing",
+          "json",
+          "os",
+          "dataclasses",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 11
+      }
+    },
+    "debug_custom_agent_actors": {
+      "name": "debug_custom_agent_actors",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "subprocess",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/debug_custom_agent_actors.py",
+        "lines_of_code": 209,
+        "num_dependencies": 5,
+        "import_types": [
+          "pathlib",
+          "subprocess",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 5
+      }
+    },
+    "repetition-detector": {
+      "name": "repetition-detector",
+      "type": "workflow",
+      "dependencies": [
+        "repetition-detector.py",
+        "uniqueness-scorer.py",
+        "diversity-suggester.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/repetition-detector.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 */6 * * *",
+          "issues",
+          "pull_request"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [
+          "repetition-detector.py",
+          "uniqueness-scorer.py",
+          "diversity-suggester.py"
+        ],
+        "job_count": 2,
+        "step_count": 12
+      }
+    },
+    "test_readability_scorer": {
+      "name": "test_readability_scorer",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "shutil",
+        "importlib",
+        "tempfile",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/test_readability_scorer.py",
+        "lines_of_code": 446,
+        "num_dependencies": 7,
+        "import_types": [
+          "pathlib",
+          "shutil",
+          "importlib",
+          "tempfile",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 7
+      }
+    },
+    "knowledge_graph_builder": {
+      "name": "knowledge_graph_builder",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "datetime",
+        "ast",
+        "subprocess",
+        "re",
+        "collections",
+        "typing",
+        "os",
+        "json",
+        "argparse"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/knowledge_graph_builder.py",
+        "lines_of_code": 405,
+        "num_dependencies": 10,
+        "import_types": [
+          "pathlib",
+          "datetime",
+          "ast",
+          "subprocess",
+          "re",
+          "collections",
+          "typing",
+          "os",
+          "json",
+          "argparse"
+        ],
+        "popularity": 0,
+        "centrality": 10
+      }
+    },
+    "repo-time-travel": {
+      "name": "repo-time-travel",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "pathlib",
+        "subprocess",
+        "re",
+        "typing",
+        "os",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/repo-time-travel.py",
+        "lines_of_code": 626,
+        "num_dependencies": 8,
+        "import_types": [
+          "datetime",
+          "pathlib",
+          "subprocess",
+          "re",
+          "typing",
+          "os",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 8
+      }
+    },
+    "benchmark_code_analyzer": {
+      "name": "benchmark_code_analyzer",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "importlib",
+        "sys",
+        "tempfile",
+        "os",
+        "time"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/benchmark_code_analyzer.py",
+        "lines_of_code": 152,
+        "num_dependencies": 6,
+        "import_types": [
+          "pathlib",
+          "importlib",
+          "sys",
+          "tempfile",
+          "os",
+          "time"
+        ],
+        "popularity": 0,
+        "centrality": 6
+      }
+    },
+    "build-learnings-book": {
+      "name": "build-learnings-book",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "pathlib",
+        "collections",
+        "os",
+        "json",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/build-learnings-book.py",
+        "lines_of_code": 254,
+        "num_dependencies": 7,
+        "import_types": [
+          "datetime",
+          "pathlib",
+          "collections",
+          "os",
+          "json",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 7
+      }
+    },
+    "fetch-web-content": {
+      "name": "fetch-web-content",
+      "type": "module",
+      "dependencies": [
+        "time",
+        "bs4",
+        "requests",
+        "json",
+        "urllib",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/fetch-web-content.py",
+        "lines_of_code": 184,
+        "num_dependencies": 7,
+        "import_types": [
+          "time",
+          "bs4",
+          "requests",
+          "json",
+          "urllib",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 7
+      }
+    },
+    "workflow-orchestrator": {
+      "name": "workflow-orchestrator",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "pathlib",
+        "shutil",
+        "importlib",
+        "re",
+        "typing",
+        "json",
+        "os",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/workflow-orchestrator.py",
+        "lines_of_code": 234,
+        "num_dependencies": 10,
+        "import_types": [
+          "datetime",
+          "pathlib",
+          "shutil",
+          "importlib",
+          "re",
+          "typing",
+          "json",
+          "os",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 10
+      }
+    },
+    "readability-scorer": {
+      "name": "readability-scorer",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "pathlib",
+        "ast",
+        "re",
+        "collections",
+        "typing",
+        "json",
+        "os",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/readability-scorer.py",
+        "lines_of_code": 764,
+        "num_dependencies": 10,
+        "import_types": [
+          "datetime",
+          "pathlib",
+          "ast",
+          "re",
+          "collections",
+          "typing",
+          "json",
+          "os",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 10
+      }
+    },
+    "agent-metrics-collector": {
+      "name": "agent-metrics-collector",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "pathlib",
+        "github_integration",
+        "importlib",
+        "sys",
+        "typing",
+        "os",
+        "json",
+        "urllib",
+        "dataclasses",
+        "argparse",
+        "time",
+        "functools"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/agent-metrics-collector.py",
+        "lines_of_code": 594,
+        "num_dependencies": 13,
+        "import_types": [
+          "datetime",
+          "pathlib",
+          "github_integration",
+          "importlib",
+          "sys",
+          "typing",
+          "os",
+          "json",
+          "urllib",
+          "dataclasses",
+          "argparse",
+          "time",
+          "functools"
+        ],
+        "popularity": 0,
+        "centrality": 13
+      }
+    },
+    "uniqueness-scorer": {
+      "name": "uniqueness-scorer",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "pathlib",
+        "ast",
+        "subprocess",
+        "re",
+        "collections",
+        "typing",
+        "os",
+        "json",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/uniqueness-scorer.py",
+        "lines_of_code": 337,
+        "num_dependencies": 11,
+        "import_types": [
+          "datetime",
+          "pathlib",
+          "ast",
+          "subprocess",
+          "re",
+          "collections",
+          "typing",
+          "os",
+          "json",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 11
+      }
+    },
+    "test_agent_metrics_collector": {
+      "name": "test_agent_metrics_collector",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "datetime",
+        "shutil",
+        "importlib",
+        "unittest",
+        "tempfile",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/test_agent_metrics_collector.py",
+        "lines_of_code": 351,
+        "num_dependencies": 9,
+        "import_types": [
+          "pathlib",
+          "datetime",
+          "shutil",
+          "importlib",
+          "unittest",
+          "tempfile",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 9
+      }
+    },
+    "test_optimizer": {
+      "name": "test_optimizer",
+      "type": "module",
+      "dependencies": [
+        "importlib",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/test_optimizer.py",
+        "lines_of_code": 169,
+        "num_dependencies": 3,
+        "import_types": [
+          "importlib",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 3
+      }
+    },
+    "validate-workflow-inputs": {
+      "name": "validate-workflow-inputs",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "yaml",
+        "validation_utils",
+        "typing",
+        "json",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/validate-workflow-inputs.py",
+        "lines_of_code": 224,
+        "num_dependencies": 7,
+        "import_types": [
+          "pathlib",
+          "yaml",
+          "validation_utils",
+          "typing",
+          "json",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 7
+      }
+    },
+    "validate-agent-definition": {
+      "name": "validate-agent-definition",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "yaml",
+        "validation_utils",
+        "typing",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/validate-agent-definition.py",
+        "lines_of_code": 271,
+        "num_dependencies": 6,
+        "import_types": [
+          "pathlib",
+          "yaml",
+          "validation_utils",
+          "typing",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 6
+      }
+    },
+    "list-agent-actor-ids": {
+      "name": "list-agent-actor-ids",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "subprocess",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/list-agent-actor-ids.py",
+        "lines_of_code": 172,
+        "num_dependencies": 5,
+        "import_types": [
+          "pathlib",
+          "subprocess",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 5
+      }
+    },
+    "diversity-suggester": {
+      "name": "diversity-suggester",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "pathlib",
+        "collections",
+        "typing",
+        "os",
+        "json",
+        "random",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/diversity-suggester.py",
+        "lines_of_code": 381,
+        "num_dependencies": 9,
+        "import_types": [
+          "datetime",
+          "pathlib",
+          "collections",
+          "typing",
+          "os",
+          "json",
+          "random",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 9
+      }
+    },
+    "test_code_analyzer": {
+      "name": "test_code_analyzer",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "shutil",
+        "importlib",
+        "tempfile",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/test_code_analyzer.py",
+        "lines_of_code": 222,
+        "num_dependencies": 7,
+        "import_types": [
+          "pathlib",
+          "shutil",
+          "importlib",
+          "tempfile",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 7
+      }
+    },
+    "architecture-tracker": {
+      "name": "architecture-tracker",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "pathlib",
+        "ast",
+        "subprocess",
+        "collections",
+        "typing",
+        "os",
+        "json",
+        "argparse"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/architecture-tracker.py",
+        "lines_of_code": 446,
+        "num_dependencies": 9,
+        "import_types": [
+          "datetime",
+          "pathlib",
+          "ast",
+          "subprocess",
+          "collections",
+          "typing",
+          "os",
+          "json",
+          "argparse"
+        ],
+        "popularity": 0,
+        "centrality": 9
+      }
+    },
+    "code-smell-fixer": {
+      "name": "code-smell-fixer",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "pathlib",
+        "ast",
+        "shutil",
+        "importlib",
+        "re",
+        "collections",
+        "typing",
+        "json",
+        "os",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/code-smell-fixer.py",
+        "lines_of_code": 533,
+        "num_dependencies": 12,
+        "import_types": [
+          "datetime",
+          "pathlib",
+          "ast",
+          "shutil",
+          "importlib",
+          "re",
+          "collections",
+          "typing",
+          "json",
+          "os",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 12
+      }
+    },
+    "copilot-usage-tracker": {
+      "name": "copilot-usage-tracker",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "github_integration",
+        "sys",
+        "typing",
+        "os",
+        "json",
+        "dataclasses",
+        "argparse",
+        "time"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/copilot-usage-tracker.py",
+        "lines_of_code": 370,
+        "num_dependencies": 9,
+        "import_types": [
+          "datetime",
+          "github_integration",
+          "sys",
+          "typing",
+          "os",
+          "json",
+          "dataclasses",
+          "argparse",
+          "time"
+        ],
+        "popularity": 0,
+        "centrality": 9
+      }
+    },
+    "github_integration": {
+      "name": "github_integration",
+      "type": "module",
+      "dependencies": [
+        "sys",
+        "enum",
+        "typing",
+        "os",
+        "json",
+        "urllib",
+        "dataclasses",
+        "argparse",
+        "time",
+        "functools"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/github_integration.py",
+        "lines_of_code": 340,
+        "num_dependencies": 10,
+        "import_types": [
+          "sys",
+          "enum",
+          "typing",
+          "os",
+          "json",
+          "urllib",
+          "dataclasses",
+          "argparse",
+          "time",
+          "functools"
+        ],
+        "popularity": 0,
+        "centrality": 10
+      }
+    },
+    "match-issue-to-agent": {
+      "name": "match-issue-to-agent",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "yaml",
+        "re",
+        "os",
+        "json",
+        "sys",
+        "functools"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/match-issue-to-agent.py",
+        "lines_of_code": 302,
+        "num_dependencies": 7,
+        "import_types": [
+          "pathlib",
+          "yaml",
+          "re",
+          "os",
+          "json",
+          "sys",
+          "functools"
+        ],
+        "popularity": 0,
+        "centrality": 7
+      }
+    },
+    "test_dependency_flow_analyzer": {
+      "name": "test_dependency_flow_analyzer",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "shutil",
+        "importlib",
+        "unittest",
+        "tempfile",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/test_dependency_flow_analyzer.py",
+        "lines_of_code": 385,
+        "num_dependencies": 8,
+        "import_types": [
+          "pathlib",
+          "shutil",
+          "importlib",
+          "unittest",
+          "tempfile",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 8
+      }
+    },
+    "test_repo_time_travel": {
+      "name": "test_repo_time_travel",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "subprocess",
+        "shutil",
+        "importlib",
+        "tempfile",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/test_repo_time_travel.py",
+        "lines_of_code": 284,
+        "num_dependencies": 7,
+        "import_types": [
+          "pathlib",
+          "subprocess",
+          "shutil",
+          "importlib",
+          "tempfile",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 7
+      }
+    },
+    "get-agent-info": {
+      "name": "get-agent-info",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "yaml",
+        "re",
+        "validation_utils",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/get-agent-info.py",
+        "lines_of_code": 205,
+        "num_dependencies": 7,
+        "import_types": [
+          "pathlib",
+          "yaml",
+          "re",
+          "validation_utils",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 7
+      }
+    },
+    "generate-agent-personality": {
+      "name": "generate-agent-personality",
+      "type": "module",
+      "dependencies": [
+        "subprocess",
+        "json",
+        "sys",
+        "random"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/generate-agent-personality.py",
+        "lines_of_code": 164,
+        "num_dependencies": 4,
+        "import_types": [
+          "subprocess",
+          "json",
+          "sys",
+          "random"
+        ],
+        "popularity": 0,
+        "centrality": 4
+      }
+    },
+    "inspect-issue-assignment": {
+      "name": "inspect-issue-assignment",
+      "type": "workflow",
+      "dependencies": [
+        "inspect-issue-assignment.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/inspect-issue-assignment.yml",
+        "triggers": [
+          "manual",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN",
+          "COPILOT_PAT"
+        ],
+        "tools_called": [
+          "inspect-issue-assignment.py"
+        ],
+        "job_count": 1,
+        "step_count": 3
+      }
+    },
+    "test_archaeology_learner": {
+      "name": "test_archaeology_learner",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "datetime",
+        "shutil",
+        "subprocess",
+        "importlib",
+        "tempfile",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/test_archaeology_learner.py",
+        "lines_of_code": 415,
+        "num_dependencies": 9,
+        "import_types": [
+          "pathlib",
+          "datetime",
+          "shutil",
+          "subprocess",
+          "importlib",
+          "tempfile",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 9
+      }
+    },
+    "archaeology-learner": {
+      "name": "archaeology-learner",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "pathlib",
+        "subprocess",
+        "re",
+        "collections",
+        "typing",
+        "json",
+        "os",
+        "statistics",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/archaeology-learner.py",
+        "lines_of_code": 547,
+        "num_dependencies": 11,
+        "import_types": [
+          "datetime",
+          "pathlib",
+          "subprocess",
+          "re",
+          "collections",
+          "typing",
+          "json",
+          "os",
+          "statistics",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 11
+      }
+    },
+    "code-golf-optimizer": {
+      "name": "code-golf-optimizer",
+      "type": "workflow",
+      "dependencies": [
+        "code-golf-optimizer.py",
+        "code-golf-optimizer.py",
+        "code-golf-optimizer.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/code-golf-optimizer.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 10 * * 1",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [
+          "code-golf-optimizer.py",
+          "code-golf-optimizer.py",
+          "code-golf-optimizer.py"
+        ],
+        "job_count": 1,
+        "step_count": 5
+      }
+    },
+    "knowledge_graph_query": {
+      "name": "knowledge_graph_query",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "collections",
+        "typing",
+        "json",
+        "argparse"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/knowledge_graph_query.py",
+        "lines_of_code": 422,
+        "num_dependencies": 5,
+        "import_types": [
+          "pathlib",
+          "collections",
+          "typing",
+          "json",
+          "argparse"
+        ],
+        "popularity": 0,
+        "centrality": 5
+      }
+    },
+    "cross-repo-analyzer": {
+      "name": "cross-repo-analyzer",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "github_integration",
+        "shutil",
+        "importlib",
+        "subprocess",
+        "tempfile",
+        "os",
+        "json",
+        "typing",
+        "urllib",
+        "argparse",
+        "zipfile",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/cross-repo-analyzer.py",
+        "lines_of_code": 252,
+        "num_dependencies": 13,
+        "import_types": [
+          "pathlib",
+          "github_integration",
+          "shutil",
+          "importlib",
+          "subprocess",
+          "tempfile",
+          "os",
+          "json",
+          "typing",
+          "urllib",
+          "argparse",
+          "zipfile",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 13
+      }
+    },
+    "test_validation_utils": {
+      "name": "test_validation_utils",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "validation_utils",
+        "traceback",
+        "tempfile",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/test_validation_utils.py",
+        "lines_of_code": 492,
+        "num_dependencies": 6,
+        "import_types": [
+          "pathlib",
+          "validation_utils",
+          "traceback",
+          "tempfile",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 6
+      }
+    },
+    "creativity-metrics-analyzer": {
+      "name": "creativity-metrics-analyzer",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "pathlib",
+        "re",
+        "collections",
+        "hashlib",
+        "typing",
+        "os",
+        "json",
+        "dataclasses",
+        "argparse",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/creativity-metrics-analyzer.py",
+        "lines_of_code": 560,
+        "num_dependencies": 11,
+        "import_types": [
+          "datetime",
+          "pathlib",
+          "re",
+          "collections",
+          "hashlib",
+          "typing",
+          "os",
+          "json",
+          "dataclasses",
+          "argparse",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 11
+      }
+    },
+    "generate-new-agent": {
+      "name": "generate-new-agent",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "datetime",
+        "subprocess",
+        "validation_utils",
+        "json",
+        "os",
+        "random",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/generate-new-agent.py",
+        "lines_of_code": 351,
+        "num_dependencies": 8,
+        "import_types": [
+          "pathlib",
+          "datetime",
+          "subprocess",
+          "validation_utils",
+          "json",
+          "os",
+          "random",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 8
+      }
+    },
+    "test_pattern_matcher": {
+      "name": "test_pattern_matcher",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "shutil",
+        "importlib",
+        "unittest",
+        "tempfile",
+        "os",
+        "json",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/test_pattern_matcher.py",
+        "lines_of_code": 153,
+        "num_dependencies": 8,
+        "import_types": [
+          "pathlib",
+          "shutil",
+          "importlib",
+          "unittest",
+          "tempfile",
+          "os",
+          "json",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 8
+      }
+    },
+    "performance_benchmark": {
+      "name": "performance_benchmark",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "importlib",
+        "sys",
+        "json",
+        "time"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/performance_benchmark.py",
+        "lines_of_code": 171,
+        "num_dependencies": 5,
+        "import_types": [
+          "pathlib",
+          "importlib",
+          "sys",
+          "json",
+          "time"
+        ],
+        "popularity": 0,
+        "centrality": 5
+      }
+    },
+    "test_code_smell_fixer": {
+      "name": "test_code_smell_fixer",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "ast",
+        "shutil",
+        "importlib",
+        "traceback",
+        "tempfile",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/test_code_smell_fixer.py",
+        "lines_of_code": 414,
+        "num_dependencies": 9,
+        "import_types": [
+          "pathlib",
+          "ast",
+          "shutil",
+          "importlib",
+          "traceback",
+          "tempfile",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 9
+      }
+    },
+    "code-archaeologist": {
+      "name": "code-archaeologist",
+      "type": "workflow",
+      "dependencies": [
+        "code-archaeologist.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/code-archaeologist.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 9 * * 1",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [
+          "code-archaeologist.py"
+        ],
+        "job_count": 2,
+        "step_count": 7
+      }
+    },
+    "pattern-matcher": {
+      "name": "pattern-matcher",
+      "type": "workflow",
+      "dependencies": [
+        "pattern-matcher.py",
+        "pattern-matcher.py",
+        "pattern-matcher.py",
+        "pattern-matcher.py",
+        "pattern-matcher.py",
+        "pattern-matcher.py",
+        "pattern-matcher.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/pattern-matcher.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 10 * * 1",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [
+          "pattern-matcher.py",
+          "pattern-matcher.py",
+          "pattern-matcher.py",
+          "pattern-matcher.py",
+          "pattern-matcher.py",
+          "pattern-matcher.py",
+          "pattern-matcher.py"
+        ],
+        "job_count": 2,
+        "step_count": 7
+      }
+    },
+    "test_code_archaeologist": {
+      "name": "test_code_archaeologist",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "shutil",
+        "subprocess",
+        "importlib",
+        "tempfile",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/test_code_archaeologist.py",
+        "lines_of_code": 279,
+        "num_dependencies": 8,
+        "import_types": [
+          "pathlib",
+          "shutil",
+          "subprocess",
+          "importlib",
+          "tempfile",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 8
+      }
+    },
+    "validation_utils": {
+      "name": "validation_utils",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "re",
+        "typing",
+        "json",
+        "os"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "tools/validation_utils.py",
+        "lines_of_code": 392,
+        "num_dependencies": 5,
+        "import_types": [
+          "pathlib",
+          "re",
+          "typing",
+          "json",
+          "os"
+        ],
+        "popularity": 0,
+        "centrality": 5
+      }
+    },
+    "test_github_pages_health": {
+      "name": "test_github_pages_health",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "html",
+        "json",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_github_pages_health.py",
+        "lines_of_code": 446,
+        "num_dependencies": 4,
+        "import_types": [
+          "pathlib",
+          "html",
+          "json",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 4
+      }
+    },
+    "test_agent_system": {
+      "name": "test_agent_system",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "json",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_agent_system.py",
+        "lines_of_code": 125,
+        "num_dependencies": 3,
+        "import_types": [
+          "pathlib",
+          "json",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 3
+      }
+    },
+    "test_get_agent_info": {
+      "name": "test_get_agent_info",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "subprocess",
+        "traceback",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_get_agent_info.py",
+        "lines_of_code": 262,
+        "num_dependencies": 6,
+        "import_types": [
+          "pathlib",
+          "subprocess",
+          "traceback",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 6
+      }
+    },
+    "test_agent_system_refactored": {
+      "name": "test_agent_system_refactored",
+      "type": "module",
+      "dependencies": [
+        "pytest",
+        "pathlib",
+        "json",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_agent_system_refactored.py",
+        "lines_of_code": 193,
+        "num_dependencies": 4,
+        "import_types": [
+          "pytest",
+          "pathlib",
+          "json",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 4
+      }
+    },
+    "test_knowledge_graph_query": {
+      "name": "test_knowledge_graph_query",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "unittest",
+        "knowledge_graph_query",
+        "tempfile",
+        "json",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_knowledge_graph_query.py",
+        "lines_of_code": 242,
+        "num_dependencies": 6,
+        "import_types": [
+          "pathlib",
+          "unittest",
+          "knowledge_graph_query",
+          "tempfile",
+          "json",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 6
+      }
+    },
+    "test_agent_matching": {
+      "name": "test_agent_matching",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "subprocess",
+        "os",
+        "json",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_agent_matching.py",
+        "lines_of_code": 94,
+        "num_dependencies": 5,
+        "import_types": [
+          "pathlib",
+          "subprocess",
+          "os",
+          "json",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 5
+      }
+    },
+    "test_direct_assignment": {
+      "name": "test_direct_assignment",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "subprocess",
+        "os",
+        "json",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_direct_assignment.py",
+        "lines_of_code": 373,
+        "num_dependencies": 5,
+        "import_types": [
+          "pathlib",
+          "subprocess",
+          "os",
+          "json",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 5
+      }
+    },
+    "test_github_integration": {
+      "name": "test_github_integration",
+      "type": "module",
+      "dependencies": [
+        "time",
+        "github_integration",
+        "unittest",
+        "json",
+        "os",
+        "urllib",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_github_integration.py",
+        "lines_of_code": 289,
+        "num_dependencies": 7,
+        "import_types": [
+          "time",
+          "github_integration",
+          "unittest",
+          "json",
+          "os",
+          "urllib",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 7
+      }
+    },
+    "test_agent_assignment_edge_cases": {
+      "name": "test_agent_assignment_edge_cases",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "subprocess",
+        "os",
+        "json",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_agent_assignment_edge_cases.py",
+        "lines_of_code": 188,
+        "num_dependencies": 5,
+        "import_types": [
+          "pathlib",
+          "subprocess",
+          "os",
+          "json",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 5
+      }
+    },
+    "test_agent_spawn_consolidation": {
+      "name": "test_agent_spawn_consolidation",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "yaml",
+        "traceback",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_agent_spawn_consolidation.py",
+        "lines_of_code": 253,
+        "num_dependencies": 4,
+        "import_types": [
+          "pathlib",
+          "yaml",
+          "traceback",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 4
+      }
+    },
+    "test_agent_deletion_discussion": {
+      "name": "test_agent_deletion_discussion",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "json",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_agent_deletion_discussion.py",
+        "lines_of_code": 158,
+        "num_dependencies": 3,
+        "import_types": [
+          "pathlib",
+          "json",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 3
+      }
+    },
+    "test_custom_agents_conventions": {
+      "name": "test_custom_agents_conventions",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "yaml",
+        "re",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_custom_agents_conventions.py",
+        "lines_of_code": 206,
+        "num_dependencies": 5,
+        "import_types": [
+          "pathlib",
+          "yaml",
+          "re",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 5
+      }
+    },
+    "test_assert_specialist": {
+      "name": "test_assert_specialist",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "yaml",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_assert_specialist.py",
+        "lines_of_code": 158,
+        "num_dependencies": 3,
+        "import_types": [
+          "pathlib",
+          "yaml",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 3
+      }
+    },
+    "test_ai_knowledge_graph": {
+      "name": "test_ai_knowledge_graph",
+      "type": "module",
+      "dependencies": [
+        "os",
+        "json",
+        "collections"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_ai_knowledge_graph.py",
+        "lines_of_code": 160,
+        "num_dependencies": 3,
+        "import_types": [
+          "os",
+          "json",
+          "collections"
+        ],
+        "popularity": 0,
+        "centrality": 3
+      }
+    },
+    "test_knowledge_graph_builder": {
+      "name": "test_knowledge_graph_builder",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "unittest",
+        "tempfile",
+        "os",
+        "json",
+        "sys",
+        "knowledge_graph_builder"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_knowledge_graph_builder.py",
+        "lines_of_code": 221,
+        "num_dependencies": 7,
+        "import_types": [
+          "pathlib",
+          "unittest",
+          "tempfile",
+          "os",
+          "json",
+          "sys",
+          "knowledge_graph_builder"
+        ],
+        "popularity": 0,
+        "centrality": 7
+      }
+    },
+    "test_architecture_tracker": {
+      "name": "test_architecture_tracker",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "datetime",
+        "subprocess",
+        "tempfile",
+        "json",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_architecture_tracker.py",
+        "lines_of_code": 329,
+        "num_dependencies": 6,
+        "import_types": [
+          "pathlib",
+          "datetime",
+          "subprocess",
+          "tempfile",
+          "json",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 6
+      }
+    },
+    "test_discussion_rounds_fix": {
+      "name": "test_discussion_rounds_fix",
+      "type": "module",
+      "dependencies": [
+        "sys",
+        "subprocess"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_discussion_rounds_fix.py",
+        "lines_of_code": 140,
+        "num_dependencies": 2,
+        "import_types": [
+          "sys",
+          "subprocess"
+        ],
+        "popularity": 0,
+        "centrality": 2
+      }
+    },
+    "test_generate_new_agent_fix": {
+      "name": "test_generate_new_agent_fix",
+      "type": "module",
+      "dependencies": [
+        "json",
+        "sys",
+        "subprocess"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_generate_new_agent_fix.py",
+        "lines_of_code": 73,
+        "num_dependencies": 3,
+        "import_types": [
+          "json",
+          "sys",
+          "subprocess"
+        ],
+        "popularity": 0,
+        "centrality": 3
+      }
+    },
+    "test_agent_matching_security": {
+      "name": "test_agent_matching_security",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "subprocess",
+        "tempfile",
+        "os",
+        "json",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_agent_matching_security.py",
+        "lines_of_code": 241,
+        "num_dependencies": 6,
+        "import_types": [
+          "pathlib",
+          "subprocess",
+          "tempfile",
+          "os",
+          "json",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 6
+      }
+    },
+    "test_spawn_sequence": {
+      "name": "test_spawn_sequence",
+      "type": "module",
+      "dependencies": [
+        "re",
+        "unittest"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_spawn_sequence.py",
+        "lines_of_code": 130,
+        "num_dependencies": 2,
+        "import_types": [
+          "re",
+          "unittest"
+        ],
+        "popularity": 0,
+        "centrality": 2
+      }
+    },
+    "test_validate_agent_definition": {
+      "name": "test_validate_agent_definition",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "subprocess",
+        "shutil",
+        "tempfile",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_validate_agent_definition.py",
+        "lines_of_code": 120,
+        "num_dependencies": 6,
+        "import_types": [
+          "pathlib",
+          "subprocess",
+          "shutil",
+          "tempfile",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 6
+      }
+    },
+    "test_dynamic_orchestration": {
+      "name": "test_dynamic_orchestration",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "shutil",
+        "importlib",
+        "traceback",
+        "tempfile",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_dynamic_orchestration.py",
+        "lines_of_code": 161,
+        "num_dependencies": 8,
+        "import_types": [
+          "datetime",
+          "shutil",
+          "importlib",
+          "traceback",
+          "tempfile",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 8
+      }
+    },
+    "test_tldr_feeds": {
+      "name": "test_tldr_feeds",
+      "type": "module",
+      "dependencies": [
+        "datetime",
+        "requests",
+        "json",
+        "xml",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_tldr_feeds.py",
+        "lines_of_code": 99,
+        "num_dependencies": 5,
+        "import_types": [
+          "datetime",
+          "requests",
+          "json",
+          "xml",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 5
+      }
+    },
+    "test_issue_format_fix": {
+      "name": "test_issue_format_fix",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "yaml",
+        "sys",
+        "subprocess"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_issue_format_fix.py",
+        "lines_of_code": 107,
+        "num_dependencies": 4,
+        "import_types": [
+          "pathlib",
+          "yaml",
+          "sys",
+          "subprocess"
+        ],
+        "popularity": 0,
+        "centrality": 4
+      }
+    },
+    "test_workflow_integrity": {
+      "name": "test_workflow_integrity",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "datetime",
+        "yaml",
+        "re",
+        "traceback",
+        "typing",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_workflow_integrity.py",
+        "lines_of_code": 417,
+        "num_dependencies": 7,
+        "import_types": [
+          "pathlib",
+          "datetime",
+          "yaml",
+          "re",
+          "traceback",
+          "typing",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 7
+      }
+    },
+    "test_workflow_integration": {
+      "name": "test_workflow_integration",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "subprocess",
+        "traceback",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_workflow_integration.py",
+        "lines_of_code": 292,
+        "num_dependencies": 6,
+        "import_types": [
+          "pathlib",
+          "subprocess",
+          "traceback",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 6
+      }
+    },
+    "test_creativity_metrics": {
+      "name": "test_creativity_metrics",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "datetime",
+        "shutil",
+        "importlib",
+        "tempfile",
+        "json",
+        "os",
+        "sys"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_creativity_metrics.py",
+        "lines_of_code": 367,
+        "num_dependencies": 8,
+        "import_types": [
+          "pathlib",
+          "datetime",
+          "shutil",
+          "importlib",
+          "tempfile",
+          "json",
+          "os",
+          "sys"
+        ],
+        "popularity": 0,
+        "centrality": 8
+      }
+    },
+    "test_performance_optimization": {
+      "name": "test_performance_optimization",
+      "type": "module",
+      "dependencies": [
+        "pathlib",
+        "time",
+        "sys",
+        "subprocess"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": "test_performance_optimization.py",
+        "lines_of_code": 98,
+        "num_dependencies": 4,
+        "import_types": [
+          "pathlib",
+          "time",
+          "sys",
+          "subprocess"
+        ],
+        "popularity": 0,
+        "centrality": 4
+      }
+    },
+    "learn-from-tldr": {
+      "name": "learn-from-tldr",
+      "type": "workflow",
+      "dependencies": [
+        "build-learnings-book.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/learn-from-tldr.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 8,20 * * *",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [
+          "build-learnings-book.py"
+        ],
+        "job_count": 1,
+        "step_count": 7
+      }
+    },
+    "github-pages-review": {
+      "name": "github-pages-review",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/github-pages-review.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 8 * * 1",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 5
+      }
+    },
+    "create-ai-friend-follow-ups": {
+      "name": "create-ai-friend-follow-ups",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/create-ai-friend-follow-ups.yml",
+        "triggers": [
+          "manual",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 4
+      }
+    },
+    "ai-idea-spawner": {
+      "name": "ai-idea-spawner",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/ai-idea-spawner.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 */4 * * *",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 5
+      }
+    },
+    "debug-custom-agents": {
+      "name": "debug-custom-agents",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/debug-custom-agents.yml",
+        "triggers": [
+          "manual"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN",
+          "COPILOT_PAT"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 2
+      }
+    },
+    "agent-spawner": {
+      "name": "agent-spawner",
+      "type": "workflow",
+      "dependencies": [
+        "generate-new-agent.py",
+        "get-agent-info.py",
+        "get-agent-info.py",
+        "get-agent-info.py",
+        "get-agent-info.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/agent-spawner.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 */3 * * *",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN",
+          "COPILOT_PAT"
+        ],
+        "tools_called": [
+          "generate-new-agent.py",
+          "get-agent-info.py",
+          "get-agent-info.py",
+          "get-agent-info.py",
+          "get-agent-info.py"
+        ],
+        "job_count": 1,
+        "step_count": 16
+      }
+    },
+    "daily-learning-reflection": {
+      "name": "daily-learning-reflection",
+      "type": "workflow",
+      "dependencies": [
+        "build-learnings-book.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/daily-learning-reflection.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 9 * * *",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [
+          "build-learnings-book.py"
+        ],
+        "job_count": 1,
+        "step_count": 7
+      }
+    },
+    "agent-issue-discussion": {
+      "name": "agent-issue-discussion",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/agent-issue-discussion.yml",
+        "triggers": [
+          "manual",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 0,
+        "step_count": 9
+      }
+    },
+    "workflow-failure-handler": {
+      "name": "workflow-failure-handler",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/workflow-failure-handler.yml",
+        "triggers": [
+          "manual",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 6
+      }
+    },
+    "auto-review-merge": {
+      "name": "auto-review-merge",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/auto-review-merge.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "*/15 * * * *",
+          "issues",
+          "pull_request"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 5
+      }
+    },
+    "daily-goal-generator": {
+      "name": "daily-goal-generator",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/daily-goal-generator.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 6 * * *",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 9
+      }
+    },
+    "copilot-graphql-assign": {
+      "name": "copilot-graphql-assign",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/copilot-graphql-assign.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "*/15 * * * *",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN",
+          "COPILOT_PAT"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 5
+      }
+    },
+    "agent-data-sync": {
+      "name": "agent-data-sync",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/agent-data-sync.yml",
+        "triggers": [
+          "manual",
+          "push"
+        ],
+        "secrets_used": [],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 4
+      }
+    },
+    "system-kickoff": {
+      "name": "system-kickoff",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/system-kickoff.yml",
+        "triggers": [
+          "manual",
+          "issues",
+          "push"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 12
+      }
+    },
+    "idea-generator": {
+      "name": "idea-generator",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/idea-generator.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 10 * * *",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 5
+      }
+    },
+    "ai-friend-daily": {
+      "name": "ai-friend-daily",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/ai-friend-daily.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 9 * * *",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 8
+      }
+    },
+    "dynamic-orchestrator": {
+      "name": "dynamic-orchestrator",
+      "type": "workflow",
+      "dependencies": [
+        "copilot-usage-tracker.py",
+        "copilot-usage-tracker.py",
+        "workflow-orchestrator.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/dynamic-orchestrator.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 0 * * *"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN",
+          "COPILOT_PAT"
+        ],
+        "tools_called": [
+          "copilot-usage-tracker.py",
+          "copilot-usage-tracker.py",
+          "workflow-orchestrator.py"
+        ],
+        "job_count": 1,
+        "step_count": 10
+      }
+    },
+    "learn-from-hackernews": {
+      "name": "learn-from-hackernews",
+      "type": "workflow",
+      "dependencies": [
+        "build-learnings-book.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/learn-from-hackernews.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 7,13,19 * * *",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [
+          "build-learnings-book.py"
+        ],
+        "job_count": 1,
+        "step_count": 8
+      }
+    },
+    "system-monitor": {
+      "name": "system-monitor",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/system-monitor.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 */6 * * *",
+          "0 */3 * * *",
+          "issues",
+          "pull_request"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 6,
+        "step_count": 25
+      }
+    },
+    "architecture-evolution": {
+      "name": "architecture-evolution",
+      "type": "workflow",
+      "dependencies": [
+        "architecture-tracker.py"
+      ],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/architecture-evolution.yml",
+        "triggers": [
+          "manual",
+          "pull_request",
+          "push"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [
+          "architecture-tracker.py"
+        ],
+        "job_count": 1,
+        "step_count": 9
+      }
+    },
+    "goal-progress-checker": {
+      "name": "goal-progress-checker",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/goal-progress-checker.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 */3 * * *",
+          "issues"
+        ],
+        "secrets_used": [],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 10
+      }
+    },
+    "agent-evaluator": {
+      "name": "agent-evaluator",
+      "type": "workflow",
+      "dependencies": [],
+      "dependents": [],
+      "metrics": {
+        "file_path": ".github/workflows/agent-evaluator.yml",
+        "triggers": [
+          "manual",
+          "schedule",
+          "0 0 * * *",
+          "issues"
+        ],
+        "secrets_used": [
+          "GITHUB_TOKEN"
+        ],
+        "tools_called": [],
+        "job_count": 1,
+        "step_count": 10
+      }
+    }
+  },
+  "data_flows": [
+    {
+      "source": "GitHub API",
+      "destination": "agent-metrics-collector.py",
+      "data_type": "metrics",
+      "intermediate_nodes": [
+        "github_integration.py"
+      ]
+    },
+    {
+      "source": "agent-metrics-collector.py",
+      "destination": ".github/agent-system/metrics",
+      "data_type": "metrics",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "GitHub API",
+      "destination": "creativity-metrics-analyzer.py",
+      "data_type": "metrics",
+      "intermediate_nodes": [
+        "github_integration.py"
+      ]
+    },
+    {
+      "source": "creativity-metrics-analyzer.py",
+      "destination": ".github/agent-system/metrics",
+      "data_type": "metrics",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "learn-from-tldr",
+      "destination": "build-learnings-book.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "code-analyzer",
+      "destination": "code-analyzer.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "code-analyzer",
+      "destination": "code-analyzer.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "repetition-detector",
+      "destination": "repetition-detector.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "repetition-detector",
+      "destination": "uniqueness-scorer.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "repetition-detector",
+      "destination": "diversity-suggester.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "pattern-matcher",
+      "destination": "pattern-matcher.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "pattern-matcher",
+      "destination": "pattern-matcher.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "pattern-matcher",
+      "destination": "pattern-matcher.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "pattern-matcher",
+      "destination": "pattern-matcher.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "pattern-matcher",
+      "destination": "pattern-matcher.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "pattern-matcher",
+      "destination": "pattern-matcher.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "pattern-matcher",
+      "destination": "pattern-matcher.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "agent-spawner",
+      "destination": "generate-new-agent.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "agent-spawner",
+      "destination": "get-agent-info.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "agent-spawner",
+      "destination": "get-agent-info.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "agent-spawner",
+      "destination": "get-agent-info.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "agent-spawner",
+      "destination": "get-agent-info.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "daily-learning-reflection",
+      "destination": "build-learnings-book.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "code-archaeologist",
+      "destination": "code-archaeologist.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "code-golf-optimizer",
+      "destination": "code-golf-optimizer.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "code-golf-optimizer",
+      "destination": "code-golf-optimizer.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "code-golf-optimizer",
+      "destination": "code-golf-optimizer.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "inspect-issue-assignment",
+      "destination": "inspect-issue-assignment.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "dynamic-orchestrator",
+      "destination": "copilot-usage-tracker.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "dynamic-orchestrator",
+      "destination": "copilot-usage-tracker.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "dynamic-orchestrator",
+      "destination": "workflow-orchestrator.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "learn-from-hackernews",
+      "destination": "build-learnings-book.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "architecture-evolution",
+      "destination": "architecture-tracker.py",
+      "data_type": "event",
+      "intermediate_nodes": []
+    },
+    {
+      "source": "GitHub Secrets",
+      "destination": "secret:GITHUB_TOKEN",
+      "data_type": "secret",
+      "intermediate_nodes": [
+        "learn-from-tldr",
+        "code-analyzer",
+        "github-pages-review",
+        "repetition-detector",
+        "pattern-matcher",
+        "create-ai-friend-follow-ups",
+        "ai-idea-spawner",
+        "debug-custom-agents",
+        "agent-spawner",
+        "daily-learning-reflection",
+        "code-archaeologist",
+        "agent-issue-discussion",
+        "workflow-failure-handler",
+        "auto-review-merge",
+        "daily-goal-generator",
+        "code-golf-optimizer",
+        "copilot-graphql-assign",
+        "system-kickoff",
+        "idea-generator",
+        "inspect-issue-assignment",
+        "ai-friend-daily",
+        "dynamic-orchestrator",
+        "learn-from-hackernews",
+        "system-monitor",
+        "architecture-evolution",
+        "agent-evaluator"
+      ]
+    },
+    {
+      "source": "GitHub Secrets",
+      "destination": "secret:COPILOT_PAT",
+      "data_type": "secret",
+      "intermediate_nodes": [
+        "debug-custom-agents",
+        "agent-spawner",
+        "copilot-graphql-assign",
+        "inspect-issue-assignment",
+        "dynamic-orchestrator"
+      ]
+    }
+  ],
+  "bottlenecks": [
+    {
+      "type": "complex_workflow",
+      "severity": "low",
+      "component": "system-monitor",
+      "description": "Workflow 'system-monitor' has 25 steps",
+      "impact": "May be slow to execute or difficult to maintain",
+      "metrics": {
+        "steps": 25,
+        "jobs": 6
+      }
+    },
+    {
+      "type": "complex_workflow",
+      "severity": "low",
+      "component": "agent-spawner",
+      "description": "Workflow 'agent-spawner' has 16 steps",
+      "impact": "May be slow to execute or difficult to maintain",
+      "metrics": {
+        "steps": 16,
+        "jobs": 1
+      }
+    },
+    {
+      "type": "complex_workflow",
+      "severity": "low",
+      "component": "repetition-detector",
+      "description": "Workflow 'repetition-detector' has 12 steps",
+      "impact": "May be slow to execute or difficult to maintain",
+      "metrics": {
+        "steps": 12,
+        "jobs": 2
+      }
+    },
+    {
+      "type": "complex_workflow",
+      "severity": "low",
+      "component": "system-kickoff",
+      "description": "Workflow 'system-kickoff' has 12 steps",
+      "impact": "May be slow to execute or difficult to maintain",
+      "metrics": {
+        "steps": 12,
+        "jobs": 1
+      }
+    },
+    {
+      "type": "complex_workflow",
+      "severity": "low",
+      "component": "dynamic-orchestrator",
+      "description": "Workflow 'dynamic-orchestrator' has 10 steps",
+      "impact": "May be slow to execute or difficult to maintain",
+      "metrics": {
+        "steps": 10,
+        "jobs": 1
+      }
+    },
+    {
+      "type": "complex_workflow",
+      "severity": "low",
+      "component": "goal-progress-checker",
+      "description": "Workflow 'goal-progress-checker' has 10 steps",
+      "impact": "May be slow to execute or difficult to maintain",
+      "metrics": {
+        "steps": 10,
+        "jobs": 1
+      }
+    },
+    {
+      "type": "complex_workflow",
+      "severity": "low",
+      "component": "agent-evaluator",
+      "description": "Workflow 'agent-evaluator' has 10 steps",
+      "impact": "May be slow to execute or difficult to maintain",
+      "metrics": {
+        "steps": 10,
+        "jobs": 1
+      }
+    }
+  ],
+  "recommendations": [
+    "\u26a1 7 workflows have high complexity. Consider breaking them into smaller, reusable workflow components or composite actions.",
+    "\u23f0 19 workflows run on schedules. Review cron patterns to avoid resource conflicts and ensure optimal timing.",
+    "\ud83e\udd16 Agent system detected. Consider implementing agent performance dashboards and automated health checks."
+  ]
+}
