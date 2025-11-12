@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 20
+**Total Insights:** 16
 
 **Last Updated:** 2025-11-12
 
@@ -172,6 +172,16 @@ The Platform Powering Auth, Identity, and Security for AI Products (Sponsor)
 Enterprise customers expect more than a login screen. They demand SSO, directory sync, granular permissions, and detailed audit logs, all built to strict compliance standards.
 WorkOS
 gives growing teams these enterprise foundations without slowing development:- Modular APIs for authentication and access control- A hosted Admin Portal that simplifies customer setup- Built-in security and compliance features enterprises r...
+
+---
+
+
+### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻
+
+---
+
+
+### Apple Gemini deal terms 💰, Amazon layoff turmoil 💼, compiler targets 👨‍💻
 
 ---
 

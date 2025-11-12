@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 86
+**Total Insights:** 73
 
 **Last Updated:** 2025-11-12
 

@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 14
+**Total Insights:** 11
 
 **Last Updated:** 2025-11-12
 
@@ -153,6 +153,11 @@ Summarize user logs from the last 24 hours
 Onboard you to a new part of your codebase
 Download Warp for free
 and get bonus credits for your fir...
+
+---
+
+
+### Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 
 
 ---
 

@@ -2,7 +2,7 @@
 
 > General technology news and insights
 
-**Total Insights:** 111
+**Total Insights:** 88
 
 **Last Updated:** 2025-11-12
 
@@ -452,6 +452,11 @@ Scaling HNSWs
 Octopus Deploy's 2025 Platform Engineering Pulse Report
 reveals how organizations across industries adopt platforms, measure their performance, and connect their efforts to long-term funding.Learn which metrics matter most—DORA, MONK, or both—and how top teams navigate the “J-curve” to maturity.Use this report as a benchmark to evaluate your own platform strategy and see where you stand.
 Read the report →
+
+---
+
+
+### Secret Scanner Upgrade 🤐, BGP Zombies 🧟, Agentic IaaC ✨
 
 ---
 
