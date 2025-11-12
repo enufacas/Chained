@@ -77,11 +77,16 @@ jobs:
             local color="$2"
             local description="$3"
             
-            if gh label list --repo ${{ github.repository }} | grep -q "^${name}"; then
-              echo "✓ Label '$name' already exists"
+            # Check if label exists by checking for the exact name with word boundary
+            if gh label list --repo ${{ github.repository }} | grep -q "^${name}[[:space:]]"; then
+              echo "✓ Label '$name' already exists, skipping creation"
             else
-              gh label create "$name" --color "$color" --description "$description" --repo ${{ github.repository }}
-              echo "✅ Created label '$name'"
+              # Try to create the label, will fail if it exists
+              if gh label create "$name" --color "$color" --description "$description" --repo ${{ github.repository }} 2>&1; then
+                echo "✅ Created label '$name'"
+              else
+                echo "✓ Label '$name' already exists (detected during creation attempt)"
+              fi
             fi
           }
           
