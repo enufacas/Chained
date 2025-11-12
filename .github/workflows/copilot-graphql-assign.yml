@@ -12,15 +12,6 @@ on:
         description: 'Issue number to assign to Copilot (leave empty to process all open issues)'
         required: false
         type: string
-      assignment_method:
-        description: 'Assignment method: graphql (default), cli, or auto (try CLI first, fallback to GraphQL)'
-        required: false
-        type: choice
-        default: 'auto'
-        options:
-          - auto
-          - graphql
-          - cli
 
 permissions:
   issues: write
@@ -80,7 +71,6 @@ jobs:
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
           GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
           INPUT_ISSUE_NUMBER: ${{ inputs.issue_number }}
-          INPUT_ASSIGNMENT_METHOD: ${{ inputs.assignment_method }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           # Execute the Copilot assignment script (extracted to avoid GitHub Actions expression length limits)
