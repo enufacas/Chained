@@ -39,3 +39,9 @@ __pycache__/
 *$py.class
 *.so
 .Python
+
+# Workflow backups created by workflow-orchestrator
+.github/workflow-backups/
+
+# Accidentally created nested tools directory
+tools/tools/
