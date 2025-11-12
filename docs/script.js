@@ -979,6 +979,81 @@ function formatSpecialization(spec) {
     ).join(' ');
 }
 
+// Load workflow status for System Status section
+async function loadWorkflowStatus() {
+    try {
+        const workflowsResponse = await fetch('data/workflows.json');
+        if (!workflowsResponse.ok) {
+            console.log('Workflows data not available yet');
+            return;
+        }
+        
+        const workflows = await workflowsResponse.json();
+        
+        // Map workflow names to their display counterparts
+        const workflowMapping = {
+            'AI Idea Spawner': 'Smart Idea Generator',
+            'Idea Generator': 'Smart Idea Generator',
+            'Learn from TLDR Tech': 'Learning from TLDR',
+            'Learn from Hacker News': 'Learning from HN',
+            'Auto Review and Merge': 'Auto Review & Merge',
+            'Agent Spawner': 'Agent Competition',
+            'Agent Evaluator': 'Agent Competition',
+            'AI Friend: Daily Conversation': 'AI Friend Daily'
+        };
+        
+        // Group workflows by name and find most recent run
+        const workflowMap = new Map();
+        workflows.forEach(workflow => {
+            const displayName = workflowMapping[workflow.name] || workflow.name;
+            if (!workflowMap.has(displayName) || 
+                new Date(workflow.createdAt) > new Date(workflowMap.get(displayName).createdAt)) {
+                workflowMap.set(displayName, workflow);
+            }
+        });
+        
+        // Update each automation item
+        const automationItems = document.querySelectorAll('#workflow-status-grid .automation-item');
+        automationItems.forEach(item => {
+            const title = item.querySelector('h3').textContent.trim();
+            const workflowData = workflowMap.get(title);
+            const lastActivityElem = item.querySelector('.last-activity');
+            
+            if (!lastActivityElem) return;
+            
+            if (workflowData) {
+                const lastRunDate = new Date(workflowData.createdAt);
+                const timeAgo = getTimeAgo(lastRunDate);
+                
+                if (workflowData.status === 'completed') {
+                    if (workflowData.conclusion === 'success') {
+                        lastActivityElem.textContent = `✅ Last run: ${timeAgo}`;
+                        lastActivityElem.style.color = 'var(--success-color)';
+                    } else if (workflowData.conclusion === 'failure') {
+                        lastActivityElem.textContent = `❌ Last run: ${timeAgo}`;
+                        lastActivityElem.style.color = '#ef4444';
+                    } else {
+                        lastActivityElem.textContent = `⚠️ Last run: ${timeAgo}`;
+                        lastActivityElem.style.color = 'var(--text-muted)';
+                    }
+                } else if (workflowData.status === 'in_progress') {
+                    lastActivityElem.textContent = `🔄 Running now (${timeAgo})`;
+                    lastActivityElem.style.color = 'var(--accent-color)';
+                    item.classList.add('active');
+                }
+            } else {
+                lastActivityElem.textContent = '⏰ Scheduled';
+                lastActivityElem.style.color = 'var(--text-muted)';
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error loading workflow status:', error);
+    }
+}
+
 // Load featured agents when page loads
 fetchFeaturedAgents();
+// Load workflow status
+loadWorkflowStatus();
 
