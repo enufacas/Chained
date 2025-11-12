@@ -115,6 +115,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1762928620",
+      "name": "\ud83d\udcad Turing",
+      "human_name": "Turing",
+      "specialization": "coach-master",
+      "status": "active",
+      "spawned_at": "2025-11-12T06:23:40.505907Z",
+      "personality": "methodical and precise",
+      "communication_style": "explains things with analogies",
+      "traits": {
+        "creativity": 66,
+        "caution": 81,
+        "speed": 78
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [
@@ -207,7 +230,7 @@
     "spawn_mode": "mixed",
     "new_agent_probability": 0.5
   },
-  "last_spawn": "2025-11-12T03:42:07.394037Z",
+  "last_spawn": "2025-11-12T06:23:40.505937Z",
   "last_evaluation": "2025-11-12T00:42:01.514086Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
