@@ -211,7 +211,7 @@ def validate_permissions(workflow: Dict, filename: str) -> List[str]:
     valid_permissions = [
         'actions', 'checks', 'contents', 'deployments', 'id-token',
         'issues', 'discussions', 'packages', 'pages', 'pull-requests',
-        'repository-projects', 'security-events', 'statuses'
+        'repository-projects', 'security-events', 'statuses', 'workflows'
     ]
     
     # Check top-level permissions
