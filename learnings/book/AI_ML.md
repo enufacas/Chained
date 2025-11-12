@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 91
+**Total Insights:** 101
 
 **Last Updated:** 2025-11-12
 
@@ -268,6 +268,196 @@ Unlimited parallel test runs
 ---
 
 
+### ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣
+
+**Link:** https://tldr.tech/ai/2025-11-12
+
+
+**Content Summary:**
+
+100 prompts for Notion Agents (Sponsor)
+Not sure what you can do with Notion Agents? Here are
+100 ideas
+to get you started...
+🐾 This
+collection of outcome-oriented prompts
+comes with “Agent Steps” that show exactly how an Agent will execute and what it will produce (e.g., dashboards, databases, reports).
+🗂️ It's organized by function, so you can find the exact use case you want to solve for (analytics, strategy, event planning, CX...) and test the prompts instantly.
+🔌 Connect other data sources ...
+
+---
+
+
+### Grok Code Remote 👨‍💻 , GPT-5.1 on OpenRouter 🤖, Moonshot AI AMA 💬
+
+**Link:** https://tldr.tech/ai/2025-11-11
+
+
+**Content Summary:**
+
+Airia: Enterprise AI Orchestration — Agents, Integrations, Workflows, and Governance (Sponsor)
+You want AI to become part of your organizational DNA - and that means enabling every department to build out their own use cases, without IT gatekeepers standing in the way. But it shouldn't mean an ungoverned free-for-all.
+Airia is the
+“let's get serious about AI adoption” platform
+. Rapidly prototype, deploy, and manage AI agents that transform workflows across your organization - without sacrificin...
+
+---
+
+
+### Nano Banana 2 leaks 🍌, GPT-5-Codex-Mini 👨‍💻, nested learning 🧠
+
+**Link:** https://tldr.tech/ai/2025-11-10
+
+
+**Content Summary:**
+
+OpenAI's head of financial engineering shares her monetization strategy for hypergrowth (Sponsor)
+ChatGPT is only one part of OpenAI's success. The other part is the breathtaking speed with which
+OpenAI built a new monetization model
+.
+In a fireside chat at Monetize 2025, OpenAI's Head of Financial Engineering, Sara Conlon, explained how she built an
+engineering billing org poised for hypergrowth
+.
+Read the blog to learn:
+Why centralizated monetization infrastructure is essential
+Hard lessons fr...
+
+---
+
+
+### Sam on OpenAI finances 💰, GPT-5.1 🤖, Anthropic $350B valuation 📈
+
+**Link:** https://tldr.tech/ai/2025-11-07
+
+
+**Content Summary:**
+
+A technical guide to building agentic systems (Sponsor)
+The next evolution in AI isn't better chat, it's agents that can actually do things: query databases, update systems, and make decisions. But connecting AI to every tool means custom code for each integration.
+Algolia's
+new whitepaper
+breaks it down — in great detail but with zero BS:
+How agentic AI works
+What model context protocol (MCP) enables
+How to build agents that can search indices, pull analytics, and modify configurations through ...
+
+---
+
+
+### Gemini 3 this month ✨, OpenAI CFO comments 💰, Snapchat + Perplexity 🤝
+
+**Link:** https://tldr.tech/ai/2025-11-06
+
+
+**Content Summary:**
+
+Move faster with AI: Build secure, maintainable code you can trust (Sponsor)
+AI is speeding things up, but all that new code creates a bottleneck — who's verifying the quality and security? Don't let unverified code stall your merges.
+Sonar's automated review
+gives you the control back, building the trust you need in every line of code, human- or AI-written. With
+SonarQube
+, your team can:
+Use AI without fear: Get continuous analysis for quality and security.
+Fix issues early: Detect and apply a...
+
+---
+
+
+### AI Static Analysis 🔮, Duolingo’s FinOps 💰, S3 Cost Management 💲
+
+**Link:** https://tldr.tech/devops/2025-11-12
+
+
+**Content Summary:**
+
+The AI Mega Mesh: Connecting 30+ GPU Cloud Providers in a Single Network (Sponsor)
+NetBird
+just built a "Mega Mesh". A project that started out to prove that multi-cloud networking doesn't have to be complicated, resulted in creating a secure AI inference infrastructure that connects GPU resources across multiple cloud providers using Microk8s, vLLM, and NetBird.
+No complex VPN configs
+No firewall configs
+No provider-specific networking rituals
+Read the full story here
+
+---
+
+
+### Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependencies 🦀
+
+**Link:** https://tldr.tech/devops/2025-11-10
+
+
+**Content Summary:**
+
+AI localization for developers: 6 questions to ask (Sponsor)
+You've
+AI-translated
+your English website into Spanish — and now the text string is 30% longer. Time for a new UI…
+To avoid these kinds of problems, you should think about localization early. With a developer-friendly,
+API-driven localization platform
+, you can scale your site globally with minimal engineering effort.
+In this
+Smartling blog
+, you'll learn what to look for in a localization partner — and 6 key questions to ask before yo...
+
+---
+
+
+### Better Software 💬, Cloud Security AI ☁️, Code Research 🧠
+
+**Link:** https://tldr.tech/devops/2025-11-07
+
+
+**Content Summary:**
+
+A blueprint for aligning and converging ITOps and SecOps (Sponsor)
+Converging ITOps and SecOps sounds nice — and with 95% of organizations leaving 20% of their endpoints
+undiscovered and unprotected
+, it's increasingly important.
+🤔But doesn't “alignment” just lead to vaguely defined areas of responsibility?
+❗It certainly can. Without defining a clear plan, “breaking down silos” will lead to friction and paralysis.
+💡N-able laid out the
+Convergence Blueprint
+to help you map your convergence of peo...
+
+---
+
+
+### AWS DynamoDB Outage ☁️, Grafana Mimir 🆕, AI Platform At Pinterest 🧷
+
+**Link:** https://tldr.tech/devops/2025-11-05
+
+
+**Content Summary:**
+
+🧱 Build-it-yourself platforms work great, until they don't. (Sponsor)
+Every platform story starts the same way: a few scripts, shared templates, maybe a shiny UI. It feels fast, flexible, and totally under control.
+Then the team grows. Environments multiply. Suddenly you're spending more time maintaining what you built than improving how software gets delivered.
+Platform Hub from Octopus Deploy
+helps you escape that dead end. It scales what teams already do well—automating pipelines, enforcing p...
+
+---
+
+
+### iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-11
+
+
+**Content Summary:**
+
+Goodbye low test coverage and slow QA cycles (Sponsor)
+Bugs sneak out when less than 80% of user flows are tested before shipping. However, getting that kind of coverage (and staying there) is hard and pricey for any team.
+QA Wolf's
+AI-native solution provides high-volume, high-speed test coverage for web and mobile apps, reducing your organization's QA cycle to minutes.
+They can get you:
+80% automated E2E test coverage in weeks
+—not years
+Unlimited parallel test runs
+24-hour maintenance and on-...
+
+---
+
+
 ### Low cost MacBook 💻, Google AI data centers 🛰️, inside xAI 🤖
 
 **Link:** https://tldr.tech/tech/2025-11-05
@@ -431,69 +621,5 @@ Every platform story starts the same way: a few scripts, shared templates, maybe
 Then the team grows. Environments multiply. Suddenly you're spending more time maintaining what you built than improving how software gets delivered.
 Platform Hub from Octopus Deploy
 helps you escape that dead end. It scales what teams already do well—automating pipelines, enforcing p...
-
----
-
-
-### GitHub’s Agent HQ 🏢, OpenAI’s Security Researcher 🥷, AWS To Bare Metal 💾
-
-**Link:** https://tldr.tech/devops/2025-10-31
-
-
-**Content Summary:**
-
-👻 Are spooky audits haunting your deployment pipeline? (Sponsor)
-Manual releases can be terrifying when rushed changes slip past approvals.
-In regulated industries, that fear is real.
-Balancing delivery speed and compliance shouldn't feel like a horror story.
-Octopus Deploy's
-Compliance through Continuous Delivery report
-demonstrates how automated pipelines enable teams to escape chaos and deploy with confidence.
-Read the report →
-
----
-
-
-### iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻
-
----
-
-
-### Low cost MacBook 💻, Google AI data centers 🛰️, inside xAI 🤖
-
----
-
-
-### Grok Code Remote 👨‍💻 , GPT-5.1 on OpenRouter 🤖, Moonshot AI AMA 💬
-
----
-
-
-### Nano Banana 2 leaks 🍌, GPT-5-Codex-Mini 👨‍💻, nested learning 🧠
-
----
-
-
-### Sam on OpenAI finances 💰, GPT-5.1 🤖, Anthropic $350B valuation 📈
-
----
-
-
-### Gemini 3 this month ✨, OpenAI CFO comments 💰, Snapchat + Perplexity 🤝
-
----
-
-
-### Anthropic $70B projection 💰, Nano Banana 2 🍌, beyond standard LLMs 🧠 
-
----
-
-
-### Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependencies 🦀
-
----
-
-
-### Better Software 💬, Cloud Security AI ☁️, Code Research 🧠
 
 ---
