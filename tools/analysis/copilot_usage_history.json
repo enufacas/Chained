@@ -1,6 +1,6 @@
 {
-  "current_used": 300,
-  "last_check": "2025-11-12T03:03:42.744380+00:00",
+  "current_used": 200,
+  "last_check": "2025-11-12T03:10:15.680376+00:00",
   "timeline": [
     {
       "timestamp": "2025-11-12T02:59:56.193300+00:00",
@@ -70,6 +70,20 @@
       "used": 300,
       "remaining": 1200,
       "burn_rate": 26.96,
+      "mode": "aggressive"
+    },
+    {
+      "timestamp": "2025-11-12T03:09:42.530808+00:00",
+      "used": 200,
+      "remaining": 1300,
+      "burn_rate": 17.97,
+      "mode": "aggressive"
+    },
+    {
+      "timestamp": "2025-11-12T03:10:15.680382+00:00",
+      "used": 200,
+      "remaining": 1300,
+      "burn_rate": 17.97,
       "mode": "aggressive"
     }
   ]
