@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 73
+**Total Insights:** 89
 
 **Last Updated:** 2025-11-12
 
@@ -10,6 +10,48 @@
 
 
 ## 📰 From Hacker News
+
+
+### Yann LeCun to depart Meta and launch AI startup focused on 'world models'
+
+**Community Score:** 426 upvotes
+
+**Link:** https://www.nasdaq.com/articles/metas-chief-ai-scientist-yann-lecun-depart-and-launch-ai-start-focused-world-models
+
+
+**Content Summary:**
+
+AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA Markets META Meta's Chief AI Scientist Yann LeCun To Depart And Launch AI Start-Up Focused On 'World Models' November 11, 2025 — 04:42 pm EST Written by RTTNews.com for RTTNews -> (RTTNews) - Meta's (META) chief artificial intelligence scient...
+
+---
+
+
+### Pakistani newspaper mistakenly prints AI prompt with the article
+
+**Community Score:** 122 upvotes
+
+**Link:** https://twitter.com/omar_quraishi/status/1988518627859951986
+
+
+**Content Summary:**
+
+JavaScript is not available. We’ve detected that JavaScript is disabled in this browser. Please enable JavaScript or switch to a supported browser to continue using x.com. You can see a list of supported browsers in our Help Center. Help Center Terms of Service Privacy Policy Cookie Policy Imprint Ads info © 2025 X Corp. Something went wrong, but don’t fret — let’s give it another shot. Try again Some privacy related extensions may cause issues on x.com. Please disable them and try again.
+
+---
+
+
+### We ran over 600 image generations to compare AI image models
+
+**Community Score:** 174 upvotes
+
+**Link:** https://latenitesoft.com/blog/evaluating-frontier-ai-image-generation-models/
+
+
+**Content Summary:**
+
+Blog We ran over 600 image generations to compare AI models tl:dr; We’ve been making photo apps for iOS for long enough that we have gray hairs now, and using our experience we ran over 600 image generations to compare which AI models work best for which image edits. If you want, you can jump right to the image comparisons , or the conclusion , but promise us you won’t presumptuous comments on Hacker News until you’ve also read the background! Background Hi! We’re LateNiteSoft, and we’ve been wo...
+
+---
 
 
 ### We ran over 600 image generations to compare AI image models
@@ -189,33 +231,6 @@ Hi! We’re LateNiteSoft, and we’ve been wo...
 **Community Score:** 299 upvotes
 
 **Link:** https://www.fastcompany.com/91435192/chatgpt-llm-openai-jobs-amazon
-
----
-
-
-### Largest cargo sailboat completes first Atlantic crossing
-
-**Community Score:** 351 upvotes
-
-**Link:** https://www.marineinsight.com/shipping-news/worlds-largest-cargo-sailboat-completes-historic-first-atlantic-crossing/
-
----
-
-
-### Reverse engineering Codex CLI to get GPT-5-Codex-Mini to draw me a pelican
-
-**Community Score:** 129 upvotes
-
-**Link:** https://simonwillison.net/2025/Nov/9/gpt-5-codex-mini/
-
----
-
-
-### Marko – A declarative, HTML‑based language
-
-**Community Score:** 339 upvotes
-
-**Link:** https://markojs.com/
 
 ---
 

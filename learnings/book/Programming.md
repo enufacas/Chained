@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 16
+**Total Insights:** 23
 
 **Last Updated:** 2025-11-12
 
@@ -10,6 +10,43 @@
 
 
 ## 📰 From Hacker News
+
+
+### Yt-dlp: External JavaScript runtime now required for full YouTube support
+
+**Community Score:** 133 upvotes
+
+**Link:** https://github.com/yt-dlp/yt-dlp/issues/15012
+
+
+**Content Summary:**
+
+yt-dlp / yt-dlp Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 10.8k Star 135k [Announcement] External JavaScript runtime now required for full YouTube support #15012 New issue Copy link New issue Copy link Open Open [Announcement] External JavaScript runtime now required for full YouTube support #15012 Copy link Labels discussion/announcement Description bashonly opened on Nov 12, 2025 Issue body...
+
+---
+
+
+### Please donate to keep Network Time Protocol up – Goal 1k
+
+**Community Score:** 163 upvotes
+
+**Link:** https://www.ntp.org/
+
+
+**Content Summary:**
+
+Show Your Support by Donating Today! 2025 Goal: $395 of $1,000 Welcome to the home of the Network Time Protocol (NTP) Project. The NTP Project conducts Research and Development in NTP, a protocol designed to synchronize the clocks of computers over a network to a common timebase. NTP is what ensures the reliability of billions of devices around the world, under the sea, and even in space. Accurate timekeeping is vital to the many applications which have revolutionized and are essential to our da...
+
+---
+
+
+### FFmpeg to Google: Fund us or stop sending bugs
+
+**Community Score:** 964 upvotes
+
+**Link:** https://thenewstack.io/ffmpeg-to-google-fund-us-or-stop-sending-bugs/
+
+---
 
 
 ### FFmpeg to Google: Fund us or stop sending bugs
@@ -172,16 +209,6 @@ The Platform Powering Auth, Identity, and Security for AI Products (Sponsor)
 Enterprise customers expect more than a login screen. They demand SSO, directory sync, granular permissions, and detailed audit logs, all built to strict compliance standards.
 WorkOS
 gives growing teams these enterprise foundations without slowing development:- Modular APIs for authentication and access control- A hosted Admin Portal that simplifies customer setup- Built-in security and compliance features enterprises r...
-
----
-
-
-### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻
-
----
-
-
-### Apple Gemini deal terms 💰, Amazon layoff turmoil 💼, compiler targets 👨‍💻
 
 ---
 
