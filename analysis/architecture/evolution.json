@@ -159,6 +159,22 @@
       },
       "component_count": 6,
       "file_count": 233
+    },
+    {
+      "timestamp": "2025-11-13T02:44:19.282424",
+      "commit": "7271731687ab79c07c5a521c5ae4f71571fd9484",
+      "commit_message": "Merge pull request #565 from enufacas/copilot/fix-yaml-syntax-error\n\nFix YAML syntax error in architecture-evolution workflow",
+      "metrics": {
+        "total_components": 7,
+        "total_files": 251,
+        "total_lines": 86389,
+        "total_dependencies": 0,
+        "external_libraries": 29,
+        "coupling_score": 0.0,
+        "complexity_score": 0.8604482071713148
+      },
+      "component_count": 6,
+      "file_count": 251
     }
   ]
 }
