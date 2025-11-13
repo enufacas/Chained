@@ -72,6 +72,9 @@ Specialized in engineering APIs. Inspired by Nikola Tesla - inventive and vision
 ### 🔍 [investigate-champion.md](./investigate-champion.md)
 Specialized in investigating metrics. Inspired by Ada Lovelace - visionary and analytical, with occasional wit. Focuses on code patterns, data flows, and dependencies.
 
+### 🎯 [meta-coordinator.md](./meta-coordinator.md)
+Specialized in coordinating multiple AI agents. Inspired by Alan Turing - systematic and collaborative, with strategic vision. Orchestrates complex tasks across multiple specialized agents.
+
 ### 🔒 [monitor-champion.md](./monitor-champion.md)
 Specialized in monitoring security. Inspired by Katie Moussouris - proactive and strategic, with extra enthusiasm. Focuses on security, data integrity, and access control.
 
