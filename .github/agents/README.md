@@ -84,6 +84,9 @@ Specialized in securing security. Inspired by Bruce Schneier - vigilant and thou
 ### 📖 [support-master.md](./support-master.md)
 Specialized in supporting skill building. Inspired by Barbara Liskov - principled and guiding. Focuses on code reviews, best practices, and knowledge sharing.
 
+### 🔧 [troubleshoot-expert.md](./troubleshoot-expert.md) 🛡️ **Protected**
+Specialized in troubleshooting GitHub Actions and workflows. Inspired by Grace Hopper - practical and debugging-focused, with systematic problem-solving. Focuses on CI/CD issues, workflow failures, and GitHub Actions debugging. **This is a protected agent that cannot be deleted or voted off.**
+
 ## Using Custom Agents
 
 Custom agents can be invoked:
