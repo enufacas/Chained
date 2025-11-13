@@ -1,0 +1,748 @@
+{
+  "timestamp": "2025-11-13T06:31:22.347057",
+  "summary": {
+    "total_workflows": 29,
+    "scheduled_workflows": 21,
+    "event_triggered": 9,
+    "manual_only": 4
+  },
+  "schedule_analysis": {
+    "custom_schedule": [
+      [
+        "Learning: TLDR Tech",
+        "0 8,20 * * *"
+      ],
+      [
+        "Learning: Hacker News",
+        "0 7,13,19 * * *"
+      ]
+    ],
+    "daily_at_8:0": [
+      [
+        "Documentation: GitHub Pages Review",
+        "0 8 * * 1"
+      ]
+    ],
+    "every_6_hours": [
+      [
+        "AI Pattern: Repetition Detector",
+        "0 */6 * * *"
+      ],
+      [
+        "System: Monitor",
+        "0 */6 * * *"
+      ]
+    ],
+    "daily_at_10:0": [
+      [
+        "Code Quality: Pattern Matcher",
+        "0 10 * * 1"
+      ],
+      [
+        "Code Quality: Golf Optimizer",
+        "0 10 * * 1"
+      ],
+      [
+        "Idea Generation: Smart Generator",
+        "0 10 * * *"
+      ]
+    ],
+    "every_4_hours": [
+      [
+        "Idea Generation: AI-Focused Spawner",
+        "0 */4 * * *"
+      ]
+    ],
+    "every_3_hours": [
+      [
+        "Agent System: Spawner",
+        "0 */3 * * *"
+      ],
+      [
+        "System: Monitor",
+        "0 */3 * * *"
+      ],
+      [
+        "Idea Generation: Progress Checker",
+        "0 */3 * * *"
+      ]
+    ],
+    "daily_at_9:0": [
+      [
+        "Learning: Daily Reflection",
+        "0 9 * * *"
+      ],
+      [
+        "Code Quality: Archaeologist",
+        "0 9 * * 1"
+      ],
+      [
+        "AI Friend: Daily Conversation",
+        "0 9 * * *"
+      ]
+    ],
+    "every_15_minutes": [
+      [
+        "Automation: Auto Review & Merge",
+        "*/15 * * * *"
+      ],
+      [
+        "Automation: Copilot Assignment",
+        "*/15 * * * *"
+      ]
+    ],
+    "daily_at_6:0": [
+      [
+        "Idea Generation: Daily Goals",
+        "0 6 * * *"
+      ]
+    ],
+    "every_2_hours": [
+      [
+        "Chained TV Episode Generator",
+        "0 */2 * * *"
+      ]
+    ],
+    "daily_at_0:0": [
+      [
+        "Orchestrator: Dynamic Scheduling",
+        "0 0 * * *"
+      ],
+      [
+        "Agent System: Evaluator",
+        "0 0 * * *"
+      ]
+    ],
+    "every_12_hours": [
+      [
+        "Architecture Evolution Tracker",
+        "0 */12 * * *"
+      ]
+    ]
+  },
+  "trigger_analysis": {
+    "schedule": [
+      "Learning: TLDR Tech",
+      "Documentation: GitHub Pages Review",
+      "AI Pattern: Repetition Detector",
+      "Code Quality: Pattern Matcher",
+      "Idea Generation: AI-Focused Spawner",
+      "Agent System: Spawner",
+      "Learning: Daily Reflection",
+      "Code Quality: Archaeologist",
+      "Automation: Auto Review & Merge",
+      "Idea Generation: Daily Goals",
+      "Code Quality: Golf Optimizer",
+      "Automation: Copilot Assignment",
+      "Chained TV Episode Generator",
+      "Idea Generation: Smart Generator",
+      "AI Friend: Daily Conversation",
+      "Orchestrator: Dynamic Scheduling",
+      "Learning: Hacker News",
+      "System: Monitor",
+      "Architecture Evolution Tracker",
+      "Idea Generation: Progress Checker",
+      "Agent System: Evaluator"
+    ],
+    "workflow_dispatch": [
+      "Learning: TLDR Tech",
+      "Code Quality: Analyzer",
+      "Documentation: GitHub Pages Review",
+      "AI Pattern: Repetition Detector",
+      "Code Quality: Pattern Matcher",
+      "AI Friend: Create Follow-ups",
+      "Idea Generation: AI-Focused Spawner",
+      "Agent System: Debug Custom Agents",
+      "Agent System: Spawner",
+      "Learning: Daily Reflection",
+      "Code Quality: Archaeologist",
+      "Agent System: Issue Discussion",
+      "System: Workflow Failure Handler",
+      "Automation: Auto Review & Merge",
+      "Idea Generation: Daily Goals",
+      "Code Quality: Golf Optimizer",
+      "Automation: Copilot Assignment",
+      "Agent System: Data Sync",
+      "Chained TV Episode Generator",
+      "System: Kickoff",
+      "Idea Generation: Smart Generator",
+      "Agent System: Inspect Assignment",
+      "AI Friend: Daily Conversation",
+      "Orchestrator: Dynamic Scheduling",
+      "Learning: Hacker News",
+      "System: Monitor",
+      "Architecture Evolution Tracker",
+      "Idea Generation: Progress Checker",
+      "Agent System: Evaluator"
+    ],
+    "push": [
+      "Code Quality: Analyzer",
+      "Agent System: Data Sync",
+      "System: Kickoff"
+    ],
+    "pull_request": [
+      "Code Quality: Analyzer",
+      "AI Pattern: Repetition Detector",
+      "Automation: Auto Review & Merge",
+      "System: Monitor"
+    ],
+    "issues": [
+      "Agent System: Issue Discussion",
+      "Automation: Copilot Assignment",
+      "System: Monitor"
+    ]
+  },
+  "conflicts": [
+    {
+      "type": "trigger_overload",
+      "severity": "low",
+      "trigger": "schedule",
+      "workflows": [
+        "Learning: TLDR Tech",
+        "Documentation: GitHub Pages Review",
+        "AI Pattern: Repetition Detector",
+        "Code Quality: Pattern Matcher",
+        "Idea Generation: AI-Focused Spawner",
+        "Agent System: Spawner",
+        "Learning: Daily Reflection",
+        "Code Quality: Archaeologist",
+        "Automation: Auto Review & Merge",
+        "Idea Generation: Daily Goals",
+        "Code Quality: Golf Optimizer",
+        "Automation: Copilot Assignment",
+        "Chained TV Episode Generator",
+        "Idea Generation: Smart Generator",
+        "AI Friend: Daily Conversation",
+        "Orchestrator: Dynamic Scheduling",
+        "Learning: Hacker News",
+        "System: Monitor",
+        "Architecture Evolution Tracker",
+        "Idea Generation: Progress Checker",
+        "Agent System: Evaluator"
+      ],
+      "count": 21,
+      "recommendation": "Multiple workflows trigger on schedule - ensure this is intentional"
+    },
+    {
+      "type": "trigger_overload",
+      "severity": "low",
+      "trigger": "workflow_dispatch",
+      "workflows": [
+        "Learning: TLDR Tech",
+        "Code Quality: Analyzer",
+        "Documentation: GitHub Pages Review",
+        "AI Pattern: Repetition Detector",
+        "Code Quality: Pattern Matcher",
+        "AI Friend: Create Follow-ups",
+        "Idea Generation: AI-Focused Spawner",
+        "Agent System: Debug Custom Agents",
+        "Agent System: Spawner",
+        "Learning: Daily Reflection",
+        "Code Quality: Archaeologist",
+        "Agent System: Issue Discussion",
+        "System: Workflow Failure Handler",
+        "Automation: Auto Review & Merge",
+        "Idea Generation: Daily Goals",
+        "Code Quality: Golf Optimizer",
+        "Automation: Copilot Assignment",
+        "Agent System: Data Sync",
+        "Chained TV Episode Generator",
+        "System: Kickoff",
+        "Idea Generation: Smart Generator",
+        "Agent System: Inspect Assignment",
+        "AI Friend: Daily Conversation",
+        "Orchestrator: Dynamic Scheduling",
+        "Learning: Hacker News",
+        "System: Monitor",
+        "Architecture Evolution Tracker",
+        "Idea Generation: Progress Checker",
+        "Agent System: Evaluator"
+      ],
+      "count": 29,
+      "recommendation": "Multiple workflows trigger on workflow_dispatch - ensure this is intentional"
+    }
+  ],
+  "workflow_list": [
+    {
+      "id": "agent-data-sync",
+      "name": "Agent System: Data Sync",
+      "file": "agent-data-sync.yml",
+      "triggers": [
+        "workflow_dispatch",
+        "push"
+      ],
+      "schedules": [],
+      "concurrency": {}
+    },
+    {
+      "id": "agent-evaluator",
+      "name": "Agent System: Evaluator",
+      "file": "agent-evaluator.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 0 * * *",
+        "0 0 * * *",
+        "0 0 * * *",
+        "0 0 * * *",
+        "0 0 * * *",
+        "0 0 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "agent-issue-discussion",
+      "name": "Agent System: Issue Discussion",
+      "file": "agent-issue-discussion.yml",
+      "triggers": [
+        "workflow_dispatch",
+        "issues"
+      ],
+      "schedules": [],
+      "concurrency": {}
+    },
+    {
+      "id": "agent-spawner",
+      "name": "Agent System: Spawner",
+      "file": "agent-spawner.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 */3 * * *",
+        "0 */3 * * *",
+        "0 */3 * * *",
+        "0 */3 * * *",
+        "0 */3 * * *",
+        "0 */3 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "ai-friend-daily",
+      "name": "AI Friend: Daily Conversation",
+      "file": "ai-friend-daily.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 9 * * *",
+        "0 9 * * *",
+        "0 9 * * *",
+        "0 9 * * *",
+        "0 9 * * *",
+        "0 9 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "ai-idea-spawner",
+      "name": "Idea Generation: AI-Focused Spawner",
+      "file": "ai-idea-spawner.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 */4 * * *",
+        "0 */4 * * *",
+        "0 */4 * * *",
+        "0 */4 * * *",
+        "0 */4 * * *",
+        "0 */4 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "architecture-evolution",
+      "name": "Architecture Evolution Tracker",
+      "file": "architecture-evolution.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 */12 * * *",
+        "0 */12 * * *",
+        "0 */12 * * *",
+        "0 */12 * * *",
+        "0 */12 * * *",
+        "0 */12 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "auto-review-merge",
+      "name": "Automation: Auto Review & Merge",
+      "file": "auto-review-merge.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch",
+        "pull_request"
+      ],
+      "schedules": [
+        "*/15 * * * *",
+        "*/15 * * * *",
+        "*/15 * * * *",
+        "*/15 * * * *",
+        "*/15 * * * *",
+        "*/15 * * * *"
+      ],
+      "concurrency": {
+        "group": "${{ github.event_name == 'schedule' && 'auto-review-scheduled' || format('auto-review-pr-{0}', github.event.pull_request.number) }}",
+        "cancel-in-progress": true
+      }
+    },
+    {
+      "id": "chained_tv",
+      "name": "Chained TV Episode Generator",
+      "file": "chained_tv.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 */2 * * *",
+        "0 */2 * * *",
+        "0 */2 * * *",
+        "0 */2 * * *",
+        "0 */2 * * *",
+        "0 */2 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "code-analyzer",
+      "name": "Code Quality: Analyzer",
+      "file": "code-analyzer.yml",
+      "triggers": [
+        "workflow_dispatch",
+        "pull_request",
+        "push"
+      ],
+      "schedules": [],
+      "concurrency": {}
+    },
+    {
+      "id": "code-archaeologist",
+      "name": "Code Quality: Archaeologist",
+      "file": "code-archaeologist.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 9 * * 1",
+        "0 9 * * 1",
+        "0 9 * * 1",
+        "0 9 * * 1",
+        "0 9 * * 1",
+        "0 9 * * 1"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "code-golf-optimizer",
+      "name": "Code Quality: Golf Optimizer",
+      "file": "code-golf-optimizer.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 10 * * 1",
+        "0 10 * * 1",
+        "0 10 * * 1",
+        "0 10 * * 1",
+        "0 10 * * 1",
+        "0 10 * * 1"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "copilot-graphql-assign",
+      "name": "Automation: Copilot Assignment",
+      "file": "copilot-graphql-assign.yml",
+      "triggers": [
+        "schedule",
+        "issues",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "*/15 * * * *",
+        "*/15 * * * *",
+        "*/15 * * * *",
+        "*/15 * * * *",
+        "*/15 * * * *",
+        "*/15 * * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "create-ai-friend-follow-ups",
+      "name": "AI Friend: Create Follow-ups",
+      "file": "create-ai-friend-follow-ups.yml",
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "schedules": [],
+      "concurrency": {}
+    },
+    {
+      "id": "daily-goal-generator",
+      "name": "Idea Generation: Daily Goals",
+      "file": "daily-goal-generator.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 6 * * *",
+        "0 6 * * *",
+        "0 6 * * *",
+        "0 6 * * *",
+        "0 6 * * *",
+        "0 6 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "daily-learning-reflection",
+      "name": "Learning: Daily Reflection",
+      "file": "daily-learning-reflection.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 9 * * *",
+        "0 9 * * *",
+        "0 9 * * *",
+        "0 9 * * *",
+        "0 9 * * *",
+        "0 9 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "debug-custom-agents",
+      "name": "Agent System: Debug Custom Agents",
+      "file": "debug-custom-agents.yml",
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "schedules": [],
+      "concurrency": {}
+    },
+    {
+      "id": "dynamic-orchestrator",
+      "name": "Orchestrator: Dynamic Scheduling",
+      "file": "dynamic-orchestrator.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 0 * * *",
+        "0 0 * * *",
+        "0 0 * * *",
+        "0 0 * * *",
+        "0 0 * * *",
+        "0 0 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "github-pages-review",
+      "name": "Documentation: GitHub Pages Review",
+      "file": "github-pages-review.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 8 * * 1",
+        "0 8 * * 1",
+        "0 8 * * 1",
+        "0 8 * * 1",
+        "0 8 * * 1",
+        "0 8 * * 1"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "goal-progress-checker",
+      "name": "Idea Generation: Progress Checker",
+      "file": "goal-progress-checker.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 */3 * * *",
+        "0 */3 * * *",
+        "0 */3 * * *",
+        "0 */3 * * *",
+        "0 */3 * * *",
+        "0 */3 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "idea-generator",
+      "name": "Idea Generation: Smart Generator",
+      "file": "idea-generator.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 10 * * *",
+        "0 10 * * *",
+        "0 10 * * *",
+        "0 10 * * *",
+        "0 10 * * *",
+        "0 10 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "inspect-issue-assignment",
+      "name": "Agent System: Inspect Assignment",
+      "file": "inspect-issue-assignment.yml",
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "schedules": [],
+      "concurrency": {}
+    },
+    {
+      "id": "learn-from-hackernews",
+      "name": "Learning: Hacker News",
+      "file": "learn-from-hackernews.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 7,13,19 * * *",
+        "0 7,13,19 * * *",
+        "0 7,13,19 * * *",
+        "0 7,13,19 * * *",
+        "0 7,13,19 * * *",
+        "0 7,13,19 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "learn-from-tldr",
+      "name": "Learning: TLDR Tech",
+      "file": "learn-from-tldr.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 8,20 * * *",
+        "0 8,20 * * *",
+        "0 8,20 * * *",
+        "0 8,20 * * *",
+        "0 8,20 * * *",
+        "0 8,20 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "pattern-matcher",
+      "name": "Code Quality: Pattern Matcher",
+      "file": "pattern-matcher.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "schedules": [
+        "0 10 * * 1",
+        "0 10 * * 1",
+        "0 10 * * 1",
+        "0 10 * * 1",
+        "0 10 * * 1",
+        "0 10 * * 1"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "repetition-detector",
+      "name": "AI Pattern: Repetition Detector",
+      "file": "repetition-detector.yml",
+      "triggers": [
+        "schedule",
+        "workflow_dispatch",
+        "pull_request"
+      ],
+      "schedules": [
+        "0 */6 * * *",
+        "0 */6 * * *",
+        "0 */6 * * *",
+        "0 */6 * * *",
+        "0 */6 * * *",
+        "0 */6 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "system-kickoff",
+      "name": "System: Kickoff",
+      "file": "system-kickoff.yml",
+      "triggers": [
+        "workflow_dispatch",
+        "push"
+      ],
+      "schedules": [],
+      "concurrency": {}
+    },
+    {
+      "id": "system-monitor",
+      "name": "System: Monitor",
+      "file": "system-monitor.yml",
+      "triggers": [
+        "schedule",
+        "issues",
+        "workflow_dispatch",
+        "pull_request"
+      ],
+      "schedules": [
+        "0 */6 * * *",
+        "0 */3 * * *",
+        "0 */6 * * *",
+        "0 */3 * * *",
+        "0 */6 * * *",
+        "0 */3 * * *",
+        "0 */6 * * *",
+        "0 */3 * * *",
+        "0 */6 * * *",
+        "0 */3 * * *",
+        "0 */6 * * *",
+        "0 */3 * * *"
+      ],
+      "concurrency": {}
+    },
+    {
+      "id": "workflow-failure-handler",
+      "name": "System: Workflow Failure Handler",
+      "file": "workflow-failure-handler.yml",
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "schedules": [],
+      "concurrency": {}
+    }
+  ],
+  "recommendations": [
+    "\ud83d\udca1 Multiple daily workflows detected. Consider staggering their execution times throughout the day for better resource distribution.",
+    "\ud83d\udd27 Many workflows lack concurrency control. Adding concurrency groups can prevent duplicate runs and save resources."
+  ]
+}
