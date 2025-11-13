@@ -2,29 +2,6 @@
   "version": "2.0.0",
   "agents": [
     {
-      "id": "agent-1762898916",
-      "name": "\ud83d\udcc8 null",
-      "human_name": "null",
-      "specialization": "accelerate-master",
-      "status": "active",
-      "spawned_at": "2025-11-11T22:08:37.060887Z",
-      "personality": "null",
-      "communication_style": "null",
-      "traits": {
-        "creativity": 67,
-        "caution": 78,
-        "speed": 48
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.30685795043217107
-      },
-      "contributions": []
-    },
-    {
       "id": "agent-1762910779",
       "name": "\ud83e\uddf9 Robert Martin",
       "human_name": "Robert Martin",
@@ -39,11 +16,11 @@
         "speed": 77
       },
       "metrics": {
-        "issues_resolved": 0,
+        "issues_resolved": 1,
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.43324999999999997
       },
       "contributions": []
     },
@@ -62,11 +39,11 @@
         "speed": 98
       },
       "metrics": {
-        "issues_resolved": 0,
+        "issues_resolved": 1,
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.43324999999999997
       },
       "contributions": []
     },
@@ -85,11 +62,11 @@
         "speed": 78
       },
       "metrics": {
-        "issues_resolved": 0,
+        "issues_resolved": 2,
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.43324999999999997
       },
       "contributions": []
     },
@@ -108,34 +85,11 @@
         "speed": 95
       },
       "metrics": {
-        "issues_resolved": 0,
+        "issues_resolved": 2,
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1762996355",
-      "name": "\ud83d\udea8 Bruce Schneier",
-      "human_name": "Bruce Schneier",
-      "specialization": "secure-specialist",
-      "status": "active",
-      "spawned_at": "2025-11-13T01:12:35.553722Z",
-      "personality": "vigilant and thoughtful, with a philosophical bent",
-      "communication_style": "thinks like an attacker",
-      "traits": {
-        "creativity": 67,
-        "caution": 64,
-        "speed": 83
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.43324999999999997
       },
       "contributions": []
     }
@@ -161,6 +115,6 @@
     ]
   },
   "last_spawn": "2025-11-13T01:12:35.553759Z",
-  "last_evaluation": "2025-11-12T00:42:01.514086Z",
+  "last_evaluation": "2025-11-13T22:47:41.700770Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
