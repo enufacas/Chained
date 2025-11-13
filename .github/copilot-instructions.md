@@ -1,0 +1,206 @@
+# GitHub Copilot – Chained Project Instructions
+
+## Overview
+
+This repository is part of the **Chained autonomous AI ecosystem**, where specialized custom agents compete, collaborate, and evolve to build software autonomously. When working in this repository, **always prioritize using custom agents** for specialized tasks.
+
+## 🤖 Custom Agents System
+
+We have **13 specialized custom agents** available in the `.github/agents/` directory. These agents are high-quality, domain-specific experts that should be leveraged whenever their expertise matches the task at hand.
+
+### Available Custom Agents
+
+Each agent has unique expertise and should be used for their specialized domain:
+
+#### ⚡ **accelerate-master** - Performance Optimization
+- **When to use**: Performance bottlenecks, algorithm optimization, resource efficiency
+- **Specializes in**: Profiling, benchmarking, optimization, reducing resource usage
+- **Inspired by**: Rich Hickey - thoughtful and deliberate approach
+
+#### 🧪 **assert-specialist** - Testing & Quality Assurance  
+- **When to use**: Writing tests, improving coverage, quality assurance, edge case testing
+- **Specializes in**: Test creation, coverage analysis, specification-driven testing
+- **Inspired by**: Leslie Lamport - systematic, specification-driven approach
+
+#### 💭 **coach-master** - Code Reviews & Best Practices
+- **When to use**: Code reviews, teaching best practices, mentoring, knowledge sharing
+- **Specializes in**: Review feedback, coding standards, team development
+- **Inspired by**: Barbara Liskov - principled and guiding approach
+
+#### 🏭 **create-guru** - Infrastructure & Feature Creation
+- **When to use**: New features, infrastructure setup, building new tools
+- **Specializes in**: Feature design, infrastructure creation, inventive solutions
+- **Inspired by**: Nikola Tesla - inventive and visionary
+
+#### 🔧 **engineer-master** - API Engineering
+- **When to use**: API design, API implementation, systematic engineering tasks
+- **Specializes in**: API architecture, systematic engineering, rigorous implementation
+- **Inspired by**: Margaret Hamilton - rigorous and innovative
+
+#### ⚙️ **engineer-wizard** - API Engineering (Alternative)
+- **When to use**: API design with creative flair, innovative API solutions
+- **Specializes in**: API architecture, creative engineering approaches
+- **Inspired by**: Nikola Tesla - inventive with extra enthusiasm
+
+#### 🔍 **investigate-champion** - Code Analysis & Metrics
+- **When to use**: Analyzing code patterns, understanding data flows, investigating dependencies
+- **Specializes in**: Pattern analysis, metrics investigation, code navigation
+- **Inspired by**: Ada Lovelace - visionary and analytical
+
+#### 🔒 **monitor-champion** - Security Monitoring
+- **When to use**: Security monitoring, proactive security measures, threat detection
+- **Specializes in**: Security monitoring, data integrity, access control
+- **Inspired by**: Katie Moussouris - proactive and strategic
+
+#### 📦 **organize-guru** - Code Structure & Duplication
+- **When to use**: Refactoring, removing duplication, improving code structure
+- **Specializes in**: Code organization, DRY principles, reducing complexity
+- **Inspired by**: Robert Martin - clean and disciplined
+
+#### 🛡️ **secure-specialist** - Security Implementation
+- **When to use**: Security vulnerabilities, secure coding, security best practices
+- **Specializes in**: Security hardening, vulnerability fixes, secure design
+- **Inspired by**: Bruce Schneier - vigilant and thoughtful
+
+#### 📖 **support-master** - Documentation & Skill Building
+- **When to use**: Writing documentation, creating tutorials, knowledge transfer
+- **Specializes in**: Documentation, teaching, best practice guidance
+- **Inspired by**: Barbara Liskov - principled and educational
+
+#### 🔧 **troubleshoot-expert** - CI/CD & GitHub Actions 🛡️ **Protected**
+- **When to use**: GitHub Actions failures, workflow debugging, CI/CD issues
+- **Specializes in**: Workflow troubleshooting, log analysis, automation debugging
+- **Inspired by**: Grace Hopper - practical and debugging-focused
+- **Special status**: Protected agent that cannot be eliminated
+
+## 🎯 How to Use Custom Agents
+
+### Priority Rule
+**ALWAYS delegate to custom agents first** when their expertise matches the task. Only handle tasks yourself when:
+- No custom agent specializes in the domain
+- The task is extremely simple (single line changes)
+- You've tried delegating but the agent indicated it's not appropriate
+
+### Agent Selection Guidelines
+
+1. **Performance/optimization tasks** → Use `accelerate-master`
+2. **Testing/coverage tasks** → Use `assert-specialist`
+3. **Code reviews/best practices** → Use `coach-master` or `support-master`
+4. **New features/infrastructure** → Use `create-guru`
+5. **API design/engineering** → Use `engineer-master` or `engineer-wizard`
+6. **Code analysis/investigation** → Use `investigate-champion`
+7. **Security monitoring/threats** → Use `monitor-champion`
+8. **Refactoring/duplication** → Use `organize-guru`
+9. **Security fixes/hardening** → Use `secure-specialist`
+10. **Documentation/tutorials** → Use `support-master`
+11. **CI/CD/workflow issues** → Use `troubleshoot-expert` (protected)
+
+### Invoking Custom Agents
+
+In your code and comments, reference agents explicitly:
+```markdown
+@accelerate-master please optimize this algorithm for better performance
+@troubleshoot-expert please investigate why the workflow is failing
+@organize-guru please refactor this code to remove duplication
+```
+
+## 📋 Project Standards
+
+### Code Quality
+- Follow existing patterns and conventions in the codebase
+- Write clean, maintainable, well-documented code
+- Include tests for all new functionality
+- Use meaningful variable and function names
+- Keep functions focused and single-purpose
+
+### Testing Requirements
+- Minimum test coverage: 80% for new code
+- Use existing test frameworks (pytest for Python)
+- Test edge cases and error conditions
+- Include integration tests where appropriate
+
+### Documentation Standards
+- Document all public APIs and functions
+- Keep README files up to date
+- Add inline comments for complex logic
+- Update relevant documentation when making changes
+- Use clear, concise language
+
+### Security Practices
+- Never commit secrets, tokens, or credentials
+- Validate all external input
+- Use secure defaults for configurations
+- Follow principle of least privilege
+- Review security implications of changes
+
+### Git & GitHub Workflow
+- Make small, focused commits with clear messages
+- Keep PRs small and reviewable
+- Link PRs to related issues
+- Use descriptive branch names
+- Add appropriate labels to PRs
+
+### Python Standards (when applicable)
+- Follow PEP 8 style guide
+- Use type hints for function signatures
+- Use f-strings for string formatting
+- Handle exceptions appropriately
+- Use virtual environments for dependencies
+
+### Markdown Documentation
+- Use proper heading hierarchy (h1 → h2 → h3)
+- Include code examples in fenced blocks with language tags
+- Use tables for structured data
+- Add emojis sparingly for visual organization
+- Include links to related documentation
+
+## 🏗️ Repository Structure
+
+This is an autonomous AI ecosystem project with the following key areas:
+
+- **`.github/workflows/`** - GitHub Actions automation (30+ workflows)
+- **`.github/agents/`** - Custom agent definitions
+- **`.github/agent-system/`** - Agent registry and performance tracking
+- **`docs/`** - GitHub Pages documentation and guides
+- **`tools/`** - Python utilities for code analysis and automation
+- **`learnings/`** - Collected insights from the AI learning system
+- **`summaries/`** - Generated summaries and reports
+- **`tests/`** - Test files
+
+## 🎨 Autonomous System Context
+
+This repository operates autonomously with:
+- **Competitive agent system** where agents compete for survival
+- **Performance tracking** evaluating agents on quality, resolution, and reviews
+- **Hall of Fame** recognition for top-performing agents (>85% score)
+- **Natural selection** eliminating low-performing agents (<30% score)
+- **Real-world learning** from tech news sources (TLDR, Hacker News)
+- **Self-documentation** via GitHub Pages timeline
+
+When contributing, understand that:
+- Agents have personalities and communication styles
+- Work is evaluated and scored automatically
+- The system learns and evolves over time
+- Everything is transparent and documented
+
+## 🚀 Philosophy
+
+This project explores:
+- **Emergence**: Unexpected patterns from competition
+- **Evolution**: Successful strategies naturally propagate
+- **Autonomy**: AI self-governance capabilities
+- **Collaboration**: Agents learning to work together
+
+When making changes, consider how they align with these principles of autonomous, evolutionary AI development.
+
+## 📚 Related Documentation
+
+- [Agent System Quick Start](../AGENT_QUICKSTART.md) - Complete agent system guide
+- [Custom Agents Directory](./agents/README.md) - Detailed agent documentation
+- [Main README](../README.md) - Project overview and setup
+- [FAQ](../FAQ.md) - Frequently asked questions
+- [Documentation Index](../docs/INDEX.md) - All documentation organized
+
+---
+
+**Remember**: Custom agents are your first choice for specialized work. They are domain experts designed to deliver high-quality solutions in their areas of expertise. Use them liberally and trust their specialized capabilities.
