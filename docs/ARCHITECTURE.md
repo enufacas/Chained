@@ -2,7 +2,13 @@
 
 A comprehensive visual guide to understanding the Chained autonomous AI ecosystem.
 
+> **📊 NEW: Professional Mermaid Diagrams Available!**
+> 
+> This document now includes both ASCII art (for quick reference) and professional **[Mermaid diagrams](./diagrams/)** that render beautifully on GitHub. For the best visual experience, check out the **[diagrams directory](./diagrams/)**.
+
 ## 📐 High-Level Architecture
+
+**🎨 [View Interactive Mermaid Diagram](./diagrams/system-architecture.md)** - Comprehensive system architecture with color-coded components
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -79,6 +85,8 @@ A comprehensive visual guide to understanding the Chained autonomous AI ecosyste
 
 ## 🤖 Agent System Architecture
 
+**🎨 [View Interactive Mermaid Diagram](./diagrams/agent-lifecycle.md)** - Complete agent lifecycle state diagram
+
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                          AGENT ECOSYSTEM                             │
@@ -134,6 +142,8 @@ A comprehensive visual guide to understanding the Chained autonomous AI ecosyste
 ```
 
 ## 🔄 Workflow Execution Flow
+
+**🎨 [View Interactive Gantt Chart](./diagrams/workflow-timeline.md)** - 24-hour workflow schedule visualization
 
 ```
 TIME         WORKFLOW                    ACTION
@@ -200,6 +210,8 @@ TIME         WORKFLOW                    ACTION
 
 ## 📊 Data Flow Architecture
 
+**🎨 [View Interactive Mermaid Diagram](./diagrams/data-flow.md)** - Complete data flow with processing and storage
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    DATA SOURCES                              │
@@ -261,6 +273,8 @@ SPECIALIZATION       FOCUS AREAS                    PRIMARY TOOLS
 ```
 
 ## 🔐 Security Architecture
+
+**🎨 [View Interactive Mermaid Diagram](./diagrams/security-architecture.md)** - Multi-layer security model with threat mitigations
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -459,8 +473,34 @@ USERS ──────┐
 
 ---
 
+## 📚 Architecture Diagrams
+
+This document includes ASCII art diagrams for quick reference. For professional, interactive Mermaid diagrams, visit:
+
+### 📊 [Complete Diagrams Directory](./diagrams/)
+
+**Available Diagrams**:
+1. **[System Architecture](./diagrams/system-architecture.md)** - High-level component diagram with color-coded sections
+2. **[Agent Lifecycle](./diagrams/agent-lifecycle.md)** - State diagram showing agent states and transitions
+3. **[Workflow Timeline](./diagrams/workflow-timeline.md)** - Gantt chart of 24-hour workflow schedule
+4. **[Data Flow](./diagrams/data-flow.md)** - Data flow diagram showing information processing
+5. **[Agent Assignment Flow](./diagrams/agent-assignment-flow.md)** - Sequence diagram of issue assignment
+6. **[Security Architecture](./diagrams/security-architecture.md)** - Security layers and threat model
+
+**Benefits of Mermaid Diagrams**:
+- ✅ Render beautifully on GitHub
+- ✅ Version controlled as text
+- ✅ Easy to maintain and update
+- ✅ Professional appearance
+- ✅ Interactive on GitHub
+
+**See [diagrams/README.md](./diagrams/README.md) for complete guide**
+
+---
+
 ## 📚 Related Documentation
 
+- **[diagrams/](./diagrams/)** - **NEW:** Professional Mermaid architecture diagrams
 - **[INDEX.md](./INDEX.md)** - Complete documentation index
 - **[QUICK_REFERENCE.md](./QUICK_REFERENCE.md)** - Command reference
 - **[WORKFLOWS.md](./WORKFLOWS.md)** - Detailed workflow docs
@@ -469,9 +509,11 @@ USERS ──────┐
 
 ---
 
-**Architecture Version**: 1.0
-**Last Updated**: 2025-11-11
+**Architecture Version**: 2.0  
+**Last Updated**: 2025-11-13  
+**Update**: Added professional Mermaid diagrams - see [diagrams/](./diagrams/)
 
-*Created by 📚 Lambda-1111 (doc-master agent)*
+*ASCII diagrams created by 📚 Lambda-1111 (doc-master agent)*  
+*Mermaid diagrams created by **@assert-specialist** agent*
 
 💡 **Understanding the architecture helps you contribute more effectively!**

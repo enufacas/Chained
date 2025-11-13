@@ -81,6 +81,13 @@ Security best practices and implementation:
 Technical documentation for developers:
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - ⭐ System architecture with visual diagrams
+- **[diagrams/](./diagrams/)** - 🎨 **NEW!** Professional Mermaid architecture diagrams
+  - **[System Architecture](./diagrams/system-architecture.md)** - High-level component diagram
+  - **[Agent Lifecycle](./diagrams/agent-lifecycle.md)** - Agent state machine
+  - **[Workflow Timeline](./diagrams/workflow-timeline.md)** - 24-hour schedule
+  - **[Data Flow](./diagrams/data-flow.md)** - Information processing
+  - **[Agent Assignment Flow](./diagrams/agent-assignment-flow.md)** - Issue assignment sequence
+  - **[Security Architecture](./diagrams/security-architecture.md)** - Security layers
 - **[QUICK_REFERENCE.md](./QUICK_REFERENCE.md)** - ⭐ Command-line cheat sheet
 - **[LABELS.md](../LABELS.md)** - ⭐ **NEW!** Complete label reference guide (explains copilot vs copilot-assigned!)
 - **[MICRO_PROJECTS.md](./MICRO_PROJECTS.md)** - Specialized tools and projects
