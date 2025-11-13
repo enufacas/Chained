@@ -11,25 +11,18 @@ import yaml
 import re
 from pathlib import Path
 
+# Add tools directory to path for imports
+TOOLS_DIR = Path(__file__).parent.resolve()
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+
 # Import validation utilities
-try:
-    from validation_utils import (
-        ValidationError,
-        validate_agent_name,
-        validate_file_path,
-        safe_file_read
-    )
-except ImportError:
-    # Fallback if validation_utils is not available
-    class ValidationError(Exception):
-        pass
-    def validate_agent_name(name):
-        return name
-    def validate_file_path(path, base=None):
-        return Path(path)
-    def safe_file_read(path, encoding='utf-8'):
-        with open(path, 'r', encoding=encoding) as f:
-            return f.read()
+from validation_utils import (
+    ValidationError,
+    validate_agent_name,
+    validate_file_path,
+    safe_file_read
+)
 
 AGENTS_DIR = Path(".github/agents")
 
