@@ -1,17 +1,22 @@
 {
-  "timestamp": "2025-11-13T02:47:03.612784",
-  "commit": "7271731687ab79c07c5a521c5ae4f71571fd9484",
+  "timestamp": "2025-11-13T12:55:24.179309",
+  "commit": "013b185510ba81b737af235e84b5f8941d274dbc",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 79,
-        "line_count": 29574,
+        "file_count": 99,
+        "line_count": 38081,
         "files": [
           "API_COORDINATION_HUB_QUICKSTART.md",
           "API_COORDINATION_HUB_README.md",
           "CODE_ARCHAEOLOGIST.md",
           "CODE_SMELL_FIXER_README.md",
           "DEPENDENCY_ANALYZER_README.md",
+          "INTELLIGENT_LEARNING_QUICKREF.md",
+          "INTELLIGENT_LEARNING_SYSTEM.md",
+          "META_AGENT_COORDINATOR_README.md",
+          "NL_TO_CODE_TRANSLATOR_README.md",
+          "PARADIGM_TRANSLATOR_README.md",
           "PATTERN_MATCHER.md",
           "PERFORMANCE_OPTIMIZATION.md",
           "READABILITY_SCORER.md",
@@ -19,6 +24,8 @@
           "README.md",
           "REPETITION_DETECTION_README.md",
           "SHELL_COMMON_README.md",
+          "TEST_FETCH_WEB_CONTENT_SECURITY_README.md",
+          "WORKFLOW_HARMONIZER_README.md",
           "agent-metrics-collector.py",
           "anti-patterns.js",
           "anti-patterns.py",
@@ -28,6 +35,7 @@
           "archaeology.json",
           "architecture-tracker.py",
           "assign-copilot-to-issue.sh",
+          "assign-mentor.py",
           "backup.sh",
           "benchmark_code_analyzer.py",
           "build-learnings-book.py",
@@ -44,24 +52,16 @@
           "dependency-flow-analyzer.py",
           "direct-assign-example.sh",
           "diversity-suggester.py",
+          "dynamic-agent-spawner.py",
+          "evaluate-mentorship.py",
+          "extract-agent-knowledge.py",
           "factorial.js",
-          "fetch-web-content.py",
-          "fibonacci.py",
-          "generate-agent-personality.py",
-          "generate-new-agent.py",
-          "get-agent-info.py",
-          "github_integration.py",
-          "github_integration_examples.py",
-          "inspect-issue-assignment.py",
-          "knowledge_graph_builder.py",
-          "knowledge_graph_query.py",
-          "list-agent-actor-ids.py",
-          "match-issue-to-agent.py"
+          "fetch-web-content.py"
         ]
       },
       "docs": {
-        "file_count": 101,
-        "line_count": 34034,
+        "file_count": 128,
+        "line_count": 39234,
         "files": [
           ".nojekyll",
           "ACTOR_ID_SYSTEM.md",
@@ -95,6 +95,7 @@
           "KNOWLEDGE_GRAPH.md",
           "LEARNINGS_BOOK_SYSTEM.md",
           "LEARNING_SYSTEM.md",
+          "MENTORSHIP_SYSTEM.md",
           "MICRO_PROJECTS.md",
           "MONITORING.md",
           "PAT_PERMISSIONS_GUIDE.md",
@@ -106,13 +107,12 @@
           "README.md",
           "README.md",
           "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
           "SECURITY_BEST_PRACTICES.md",
           "SECURITY_IMPLEMENTATION.md",
-          "SOLID_PRINCIPLES_GUIDE.md",
-          "TROUBLESHOOTING.md",
-          "VALIDATION_BEST_PRACTICES.md",
-          "WORKFLOWS.md",
-          "agent-1762824870.json"
+          "SOLID_PRINCIPLES_GUIDE.md"
         ]
       },
       ".github/workflows": {
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 23,
-        "line_count": 11435,
+        "file_count": 24,
+        "line_count": 11857,
         "files": [
           "README.md",
           "README.md",
@@ -151,12 +151,13 @@
           "snapshot_2025-11-12T06-42-25.json",
           "snapshot_2025-11-12T06-42-50.json",
           "snapshot_2025-11-12T06-44-23.json",
-          "snapshot_2025-11-12T06-45-21.json"
+          "snapshot_2025-11-12T06-45-21.json",
+          "snapshot_2025-11-13T02-47-03.json"
         ]
       },
       "learnings": {
-        "file_count": 46,
-        "line_count": 11003,
+        "file_count": 57,
+        "line_count": 14223,
         "files": [
           "AI_ML.md",
           "Database.md",
@@ -170,6 +171,10 @@
           "Web.md",
           "analysis_20251110_071202.md",
           "analysis_20251111_202712.md",
+          "analysis_20251113_071144.json",
+          "analysis_20251113_083312.json",
+          "coaching_review_20251113.md",
+          "coaching_session_summary_20251113.md",
           "hn_20251109_070959.json",
           "hn_20251109_131719.json",
           "hn_20251109_190715.json",
@@ -184,7 +189,13 @@
           "hn_20251112_071146.json",
           "hn_20251112_132742.json",
           "hn_20251112_190939.json",
+          "hn_20251113_071144.json",
           "index.json",
+          "investigation_hn_20251113.md",
+          "investigation_summary_20251113.md",
+          "paradigm_translator_implementation.md",
+          "reflection_20251113.md",
+          "reflection_template_enhancement.md",
           "security_analysis_20251111.md",
           "security_analysis_20251111_132512.md",
           "security_analysis_20251111_190905.md",
@@ -197,13 +208,7 @@
           "tldr_20251109_202403.json",
           "tldr_20251110_045615.json",
           "tldr_20251110_083423.json",
-          "tldr_20251110_202854.json",
-          "tldr_20251111_083243.json",
-          "tldr_20251111_202712.json",
-          "tldr_20251112_013500.json",
-          "tldr_20251112_055507.json",
-          "tldr_20251112_083402.json",
-          "tldr_20251112_202758.json"
+          "tldr_20251110_202854.json"
         ]
       },
       "root_tests": {
@@ -216,14 +221,18 @@
       }
     },
     "files_by_type": {},
-    "total_files": 251,
-    "total_lines": 86389
+    "total_files": 310,
+    "total_lines": 103738
   },
   "dependencies": {
     "internal_imports": {
       "code-analyzer.py": [],
+      "extract-agent-knowledge.py": [],
+      "workflow_harmonizer.py": [],
       "dependency-flow-analyzer.py": [],
       "debug_custom_agent_actors.py": [],
+      "thematic-analyzer.py": [],
+      "dynamic-agent-spawner.py": [],
       "repetition-detector.py": [],
       "knowledge_graph_builder.py": [],
       "repo-time-travel.py": [],
@@ -236,6 +245,7 @@
       "uniqueness-scorer.py": [],
       "validate-workflow-inputs.py": [],
       "validate-agent-definition.py": [],
+      "nl-to-code-translator.py": [],
       "list-agent-actor-ids.py": [],
       "diversity-suggester.py": [],
       "api_coordination_hub.py": [],
@@ -247,30 +257,37 @@
       "get-agent-info.py": [],
       "generate-agent-personality.py": [],
       "inspect-issue-assignment.py": [],
+      "intelligent-content-parser.py": [],
       "archaeology-learner.py": [],
       "code-golf-optimizer.py": [],
       "knowledge_graph_query.py": [],
+      "assign-mentor.py": [],
+      "evaluate-mentorship.py": [],
       "cross-repo-analyzer.py": [],
+      "paradigm-translator.py": [],
       "creativity-metrics-analyzer.py": [],
       "generate-new-agent.py": [],
       "performance_benchmark.py": [],
+      "meta_agent_coordinator.py": [],
       "code-archaeologist.py": [],
       "pattern-matcher.py": [],
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 28,
-      "sys": 33,
-      "json": 33,
-      "re": 18,
-      "ast": 8,
-      "datetime": 19,
-      "pathlib": 30,
-      "typing": 25,
-      "collections": 15,
+      "os": 34,
+      "sys": 38,
+      "json": 42,
+      "re": 26,
+      "ast": 9,
+      "datetime": 26,
+      "pathlib": 38,
+      "typing": 35,
+      "collections": 18,
       "functools": 5,
-      "argparse": 26,
-      "dataclasses": 8,
+      "argparse": 34,
+      "dataclasses": 17,
+      "traceback": 2,
+      "yaml": 5,
       "subprocess": 13,
       "hashlib": 2,
       "time": 7,
@@ -279,13 +296,15 @@
       "requests": 1,
       "bs4": 1,
       "urllib": 7,
+      "ipaddress": 1,
+      "socket": 1,
+      "validation_utils": 5,
       "shutil": 3,
       "github_integration": 3,
-      "yaml": 4,
-      "validation_utils": 4,
+      "enum": 5,
       "random": 3,
       "threading": 1,
-      "enum": 2,
+      "unicodedata": 1,
       "statistics": 1,
       "zipfile": 1
     },
@@ -293,17 +312,17 @@
   },
   "metrics": {
     "total_components": 7,
-    "total_files": 251,
-    "total_lines": 86389,
+    "total_files": 310,
+    "total_lines": 103738,
     "total_dependencies": 0,
-    "external_libraries": 29,
+    "external_libraries": 33,
     "coupling_score": 0.0,
-    "complexity_score": 0.8604482071713148
+    "complexity_score": 0.8365967741935484
   },
   "components": {
     "learning_system": {
-      "file_count": 46,
-      "line_count": 11377,
+      "file_count": 50,
+      "line_count": 14607,
       "files": [
         "AI_ML.md",
         "Database.md",
@@ -316,35 +335,31 @@
         "Web.md",
         "analysis_20251110_071202.md",
         "analysis_20251111_202712.md",
+        "analysis_20251113_071144.json",
+        "analysis_20251113_083312.json",
         "archaeology-learner.py",
+        "coaching_review_20251113.md",
+        "coaching_session_summary_20251113.md",
         "hn_20251109_070959.json",
         "hn_20251109_131719.json",
         "hn_20251109_190715.json",
-        "hn_20251110_045612.json",
-        "hn_20251110_071202.json",
-        "hn_20251110_132539.json",
-        "hn_20251110_190906.json",
-        "hn_20251111_071151.json"
+        "hn_20251110_045612.json"
       ]
     },
     "agent_system": {
-      "file_count": 9,
-      "line_count": 3574,
+      "file_count": 5,
+      "line_count": 2140,
       "files": [
-        "agent-1762824870.json",
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json",
         "agent-metrics-collector.py",
-        "generate-agent-personality.py",
-        "generate-new-agent.py",
-        "get-agent-info.py",
-        "list-agent-actor-ids.py",
-        "match-issue-to-agent.py"
+        "dynamic-agent-spawner.py",
+        "extract-agent-knowledge.py"
       ]
     },
     "analysis_tools": {
-      "file_count": 30,
-      "line_count": 14801,
+      "file_count": 29,
+      "line_count": 14545,
       "files": [
         "README.md",
         "agent-ecosystem-investigation.md",
@@ -365,12 +380,12 @@
         "dependency-flow-analyzer.py",
         "dependency-flow-report.json",
         "evolution.json",
-        "knowledge_graph_builder.py"
+        "latest.json"
       ]
     },
     "documentation": {
-      "file_count": 43,
-      "line_count": 34034,
+      "file_count": 40,
+      "line_count": 39234,
       "files": [
         ".nojekyll",
         "ACTOR_ID_SYSTEM.md",
@@ -404,28 +419,28 @@
     },
     "tools": {
       "file_count": 49,
-      "line_count": 29574,
+      "line_count": 38081,
       "files": [
         "API_COORDINATION_HUB_QUICKSTART.md",
         "API_COORDINATION_HUB_README.md",
         "CODE_ARCHAEOLOGIST.md",
         "CODE_SMELL_FIXER_README.md",
         "DEPENDENCY_ANALYZER_README.md",
+        "INTELLIGENT_LEARNING_QUICKREF.md",
+        "INTELLIGENT_LEARNING_SYSTEM.md",
+        "META_AGENT_COORDINATOR_README.md",
+        "NL_TO_CODE_TRANSLATOR_README.md",
+        "PARADIGM_TRANSLATOR_README.md",
         "PATTERN_MATCHER.md",
         "PERFORMANCE_OPTIMIZATION.md",
         "READABILITY_SCORER.md",
         "README.md",
         "REPETITION_DETECTION_README.md",
         "SHELL_COMMON_README.md",
+        "TEST_FETCH_WEB_CONTENT_SECURITY_README.md",
+        "WORKFLOW_HARMONIZER_README.md",
         "agent-metrics-collector.py",
-        "anti-patterns.js",
-        "anti-patterns.py",
-        "api_coordination_hub.py",
-        "api_coordination_hub_examples.py",
-        "archaeology-learner.py",
-        "archaeology.json",
-        "architecture-tracker.py",
-        "assign-copilot-to-issue.sh"
+        "anti-patterns.js"
       ]
     }
   }
