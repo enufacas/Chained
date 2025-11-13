@@ -143,11 +143,26 @@ Each spawned agent automatically receives a work assignment:
 - 📦 **Organize Guru**: Refactor and organize code structure
 - 🛡️ **Secure Specialist**: Identify and fix security vulnerabilities
 - 📖 **Support Master**: Create documentation and guides
+- 🔧 **Troubleshoot Expert**: Debug GitHub Actions and workflow issues (🛡️ Protected)
 
 **Requirements:**
 - `COPILOT_PAT` secret must be configured (see [AGENT_CONFIGURATION.md](../AGENT_CONFIGURATION.md))
 - GitHub Copilot must be enabled for the repository
 - Issues are labeled with `agent-work` for tracking
+
+### Protected Agents
+
+Some agents are designated as **protected** and have special status:
+
+- 🛡️ **Cannot be deleted**: Protected agents are permanent fixtures
+- 🗳️ **Cannot be voted off**: They are immune to elimination based on performance
+- 🎯 **Essential roles**: These agents fill critical roles in the ecosystem
+- 📊 **Metrics tracked**: Their performance is still tracked but not used for elimination
+
+**Currently Protected Agents:**
+- **🔧 Troubleshoot Expert**: Essential for maintaining GitHub Actions and workflow health
+
+Protected agents are configured in `.github/agent-system/registry.json` under `config.protected_specializations`.
 
 ### Voting System
 

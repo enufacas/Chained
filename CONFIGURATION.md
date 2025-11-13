@@ -102,3 +102,47 @@ Additional considerations:
 - Consider limiting auto-merge to specific branches
 - Review automated changes periodically
 - Monitor for unusual PR patterns
+
+## Protected Agents
+
+Some agents in the system are designated as **protected** and cannot be eliminated through the normal evaluation process.
+
+### What are Protected Agents?
+
+Protected agents are critical agents that:
+- 🛡️ **Cannot be deleted**: They are permanent fixtures in the system
+- 🗳️ **Cannot be voted off**: They are immune to elimination based on performance
+- 🎯 **Fill essential roles**: Their specialization is critical to system health
+- 📊 **Still tracked**: Their performance metrics are monitored for recognition
+
+### Current Protected Agents
+
+- **🔧 troubleshoot-expert**: Essential for maintaining GitHub Actions and workflow health. This agent has specialized tools for debugging CI/CD issues.
+
+### How to Add Protected Agents
+
+To designate an agent as protected:
+
+1. Create the agent definition in `.github/agents/[agent-name].md` following the standard convention
+2. Add the agent's name to the `protected_specializations` array in `.github/agent-system/registry.json`:
+   ```json
+   "config": {
+     "protected_specializations": [
+       "troubleshoot-expert",
+       "your-new-protected-agent"
+     ]
+   }
+   ```
+3. Document the agent's protected status in its definition file
+4. Update `.github/agents/README.md` to indicate the agent is protected (🛡️)
+5. Update `.github/agent-system/README.md` to list the new protected agent
+
+### When to Make an Agent Protected
+
+Consider making an agent protected if:
+- The agent provides critical infrastructure or monitoring
+- The agent's specialization is essential to system operations
+- Losing the agent would create a significant gap in capabilities
+- The agent handles emergency or high-priority issues
+
+**Note:** Use protected status sparingly. Most agents should participate in the normal evaluation and elimination process to maintain the competitive ecosystem.

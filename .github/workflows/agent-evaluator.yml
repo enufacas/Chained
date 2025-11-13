@@ -109,6 +109,16 @@ jobs:
           for agent in active_agents:
               agent_id = agent['id']
               agent_name = agent['name']
+              specialization = agent.get('specialization', '')
+              
+              # Check if this agent is protected
+              protected_specializations = registry['config'].get('protected_specializations', [])
+              is_protected = specialization in protected_specializations
+              
+              if is_protected:
+                  print(f"\n{agent_name}: 🛡️ PROTECTED (cannot be eliminated)")
+                  maintained.append(agent)
+                  continue
               
               if use_real_metrics:
                   # Use real GitHub activity metrics
