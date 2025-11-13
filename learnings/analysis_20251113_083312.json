@@ -1,0 +1,413 @@
+{
+  "timestamp": "2025-11-13T08:33:12.341179",
+  "analysis_period_days": 7,
+  "total_learnings_analyzed": 314,
+  "top_technologies": [
+    {
+      "name": "agents",
+      "category": "AI/ML",
+      "mention_count": 14,
+      "sources": [
+        "Hacker News",
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 81.0,
+      "sample_titles": [
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+        "Marble: A Multimodal World Model",
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "agents"
+      ]
+    },
+    {
+      "name": "ai",
+      "category": "AI/ML",
+      "mention_count": 54,
+      "sources": [
+        "Hacker News",
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 81.0,
+      "sample_titles": [
+        "Low cost MacBook \ud83d\udcbb, Google AI data centers \ud83d\udef0\ufe0f, inside xAI \ud83e\udd16",
+        "Grok Code Remote \ud83d\udc68\u200d\ud83d\udcbb , GPT-5.1 on OpenRouter \ud83e\udd16, Moonshot AI AMA \ud83d\udcac",
+        "Better Software \ud83d\udcac, Cloud Security AI \u2601\ufe0f, Code Research \ud83e\udde0"
+      ],
+      "keywords": [
+        "ai"
+      ]
+    },
+    {
+      "name": "gpt",
+      "category": "AI/ML",
+      "mention_count": 22,
+      "sources": [
+        "Hacker News",
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 81.0,
+      "sample_titles": [
+        "Grok Code Remote \ud83d\udc68\u200d\ud83d\udcbb , GPT-5.1 on OpenRouter \ud83e\udd16, Moonshot AI AMA \ud83d\udcac",
+        "Nano Banana 2 leaks \ud83c\udf4c, GPT-5-Codex-Mini \ud83d\udc68\u200d\ud83d\udcbb, nested learning \ud83e\udde0",
+        "Sam on OpenAI finances \ud83d\udcb0, GPT-5.1 \ud83e\udd16, Anthropic $350B valuation \ud83d\udcc8"
+      ],
+      "keywords": [
+        "gpt"
+      ]
+    },
+    {
+      "name": "cloud",
+      "category": "DevOps",
+      "mention_count": 14,
+      "sources": [
+        "Hacker News",
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 81.0,
+      "sample_titles": [
+        "Better Software \ud83d\udcac, Cloud Security AI \u2601\ufe0f, Code Research \ud83e\udde0",
+        "Better Software \ud83d\udcac, Cloud Security AI \u2601\ufe0f, Code Research \ud83e\udde0",
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "cloud"
+      ]
+    },
+    {
+      "name": "security",
+      "category": "Security",
+      "mention_count": 31,
+      "sources": [
+        "Hacker News",
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 81.0,
+      "sample_titles": [
+        "Better Software \ud83d\udcac, Cloud Security AI \u2601\ufe0f, Code Research \ud83e\udde0",
+        "GitHub\u2019s Agent HQ \ud83c\udfe2, OpenAI\u2019s Security Researcher \ud83e\udd77, AWS To Bare Metal \ud83d\udcbe",
+        "Google will allow users to sideload Android apps without verification"
+      ],
+      "keywords": [
+        "security"
+      ]
+    },
+    {
+      "name": "gemini",
+      "category": "AI/ML",
+      "mention_count": 16,
+      "sources": [
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 78.0,
+      "sample_titles": [
+        "Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb",
+        "Gemini 3 this month \u2728, OpenAI CFO comments \ud83d\udcb0, Snapchat + Perplexity \ud83e\udd1d",
+        "Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "gemini"
+      ]
+    },
+    {
+      "name": "aws",
+      "category": "DevOps",
+      "mention_count": 13,
+      "sources": [
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 78.0,
+      "sample_titles": [
+        "AWS DynamoDB Outage \u2601\ufe0f, Grafana Mimir \ud83c\udd95, AI Platform At Pinterest \ud83e\uddf7",
+        "GitHub\u2019s Agent HQ \ud83c\udfe2, OpenAI\u2019s Security Researcher \ud83e\udd77, AWS To Bare Metal \ud83d\udcbe",
+        "OpenAI AWS $38B deal \ud83d\udcb0, Facebook Dating \u2764\ufe0f, htmx 4 \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "aws"
+      ]
+    },
+    {
+      "name": "html",
+      "category": "Web",
+      "mention_count": 8,
+      "sources": [
+        "Hacker News"
+      ],
+      "momentum": 0.0,
+      "score": 58.0,
+      "sample_titles": [
+        "Marko \u2013 A declarative, HTML\u2011based language",
+        "Learn Prolog Now",
+        "Marko \u2013 A declarative, HTML\u2011based language"
+      ],
+      "keywords": [
+        "html"
+      ]
+    },
+    {
+      "name": "javascript",
+      "category": "Languages",
+      "mention_count": 8,
+      "sources": [
+        "Hacker News"
+      ],
+      "momentum": 0.0,
+      "score": 58.0,
+      "sample_titles": [
+        "Yt-dlp: External JavaScript runtime now required for full YouTube support",
+        "Yt-dlp: External JavaScript runtime now required for full YouTube support",
+        "Pakistani newspaper mistakenly prints AI prompt with the article"
+      ],
+      "keywords": [
+        "javascript"
+      ]
+    },
+    {
+      "name": "r",
+      "category": "Languages",
+      "mention_count": 8,
+      "sources": [
+        "Hacker News"
+      ],
+      "momentum": 0.0,
+      "score": 58.0,
+      "sample_titles": [
+        ".NET 10",
+        ".NET 10",
+        "My fan worked fine, so I gave it WiFi"
+      ],
+      "keywords": [
+        "r"
+      ]
+    }
+  ],
+  "top_companies": [
+    {
+      "name": "Google",
+      "category": "Company",
+      "mention_count": 16,
+      "sources": [
+        "Hacker News",
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 81.0,
+      "sample_titles": [
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+        "Low cost MacBook \ud83d\udcbb, Google AI data centers \ud83d\udef0\ufe0f, inside xAI \ud83e\udd16",
+        "Google will allow users to sideload Android apps without verification"
+      ],
+      "keywords": [
+        "google"
+      ]
+    },
+    {
+      "name": "Openai",
+      "category": "Company",
+      "mention_count": 24,
+      "sources": [
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 78.0,
+      "sample_titles": [
+        "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
+        "Sam on OpenAI finances \ud83d\udcb0, GPT-5.1 \ud83e\udd16, Anthropic $350B valuation \ud83d\udcc8",
+        "Gemini 3 this month \u2728, OpenAI CFO comments \ud83d\udcb0, Snapchat + Perplexity \ud83e\udd1d"
+      ],
+      "keywords": [
+        "openai"
+      ]
+    },
+    {
+      "name": "Anthropic",
+      "category": "Company",
+      "mention_count": 17,
+      "sources": [
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 78.0,
+      "sample_titles": [
+        "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
+        "Sam on OpenAI finances \ud83d\udcb0, GPT-5.1 \ud83e\udd16, Anthropic $350B valuation \ud83d\udcc8",
+        "Anthropic $70B projection \ud83d\udcb0, Nano Banana 2 \ud83c\udf4c, beyond standard LLMs \ud83e\udde0\u00a0"
+      ],
+      "keywords": [
+        "anthropic"
+      ]
+    },
+    {
+      "name": "Apple",
+      "category": "Company",
+      "mention_count": 12,
+      "sources": [
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 78.0,
+      "sample_titles": [
+        "Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+        "Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb",
+        "Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0"
+      ],
+      "keywords": [
+        "apple"
+      ]
+    },
+    {
+      "name": "Aws",
+      "category": "Company",
+      "mention_count": 13,
+      "sources": [
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 78.0,
+      "sample_titles": [
+        "AWS DynamoDB Outage \u2601\ufe0f, Grafana Mimir \ud83c\udd95, AI Platform At Pinterest \ud83e\uddf7",
+        "GitHub\u2019s Agent HQ \ud83c\udfe2, OpenAI\u2019s Security Researcher \ud83e\udd77, AWS To Bare Metal \ud83d\udcbe",
+        "OpenAI AWS $38B deal \ud83d\udcb0, Facebook Dating \u2764\ufe0f, htmx 4 \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "aws"
+      ]
+    },
+    {
+      "name": "Nvidia",
+      "category": "Company",
+      "mention_count": 8,
+      "sources": [
+        "Hacker News",
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 61.0,
+      "sample_titles": [
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+        "SoftBank sells its entire stake in Nvidia",
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "nvidia"
+      ]
+    },
+    {
+      "name": "Cloudflare",
+      "category": "Company",
+      "mention_count": 7,
+      "sources": [
+        "Hacker News",
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 56.0,
+      "sample_titles": [
+        "Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependencies \ud83e\udd80",
+        "Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependencies \ud83e\udd80",
+        "Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependencies \ud83e\udd80"
+      ],
+      "keywords": [
+        "cloudflare"
+      ]
+    },
+    {
+      "name": "Amazon",
+      "category": "Company",
+      "mention_count": 6,
+      "sources": [
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 48.0,
+      "sample_titles": [
+        "Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb",
+        "Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb",
+        "Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "amazon"
+      ]
+    },
+    {
+      "name": "Github",
+      "category": "Company",
+      "mention_count": 5,
+      "sources": [
+        "TLDR"
+      ],
+      "momentum": 0.0,
+      "score": 43.0,
+      "sample_titles": [
+        "GitHub\u2019s Agent HQ \ud83c\udfe2, OpenAI\u2019s Security Researcher \ud83e\udd77, AWS To Bare Metal \ud83d\udcbe",
+        "GitHub\u2019s Agent HQ \ud83c\udfe2, OpenAI\u2019s Security Researcher \ud83e\udd77, AWS To Bare Metal \ud83d\udcbe",
+        "GitHub\u2019s Agent HQ \ud83c\udfe2, OpenAI\u2019s Security Researcher \ud83e\udd77, AWS To Bare Metal \ud83d\udcbe"
+      ],
+      "keywords": [
+        "github"
+      ]
+    },
+    {
+      "name": "Meta",
+      "category": "Company",
+      "mention_count": 3,
+      "sources": [
+        "Hacker News"
+      ],
+      "momentum": 0.0,
+      "score": 33.0,
+      "sample_titles": [
+        "Meta replaces WhatsApp for Windows with web wrapper that uses 1 GB RAM when idle",
+        "Yann LeCun to depart Meta and launch AI startup focused on 'world models'",
+        "Yann LeCun to depart Meta and launch AI startup focused on 'world models'"
+      ],
+      "keywords": [
+        "meta"
+      ]
+    }
+  ],
+  "top_frameworks": [],
+  "notable_personalities": [
+    {
+      "name": "Elon Musk",
+      "mention_count": 6,
+      "context": [
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "relevance_score": 60
+    },
+    {
+      "name": "Mark Zuckerberg",
+      "mention_count": 2,
+      "context": [
+        "I Am Mark Zuckerberg",
+        "I Am Mark Zuckerberg"
+      ],
+      "relevance_score": 20
+    },
+    {
+      "name": "Yann Lecun",
+      "mention_count": 2,
+      "context": [
+        "Yann LeCun to depart Meta and launch AI startup focused on 'world models'",
+        "Yann LeCun to depart Meta and launch AI startup focused on 'world models'"
+      ],
+      "relevance_score": 20
+    }
+  ],
+  "emerging_topics": [],
+  "hot_themes": [
+    "ai-agents",
+    "cloud-infrastructure"
+  ]
+}
