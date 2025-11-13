@@ -62,7 +62,7 @@ jobs:
             gh pr create \
               --title "📺 New Chained TV Episode - ${PR_DATE}" \
               --body "## 📺 New Chained TV Episode"$'\n\n'"This PR adds a new Chained TV episode generated from recent repository activity."$'\n\n'"### Changes"$'\n'"- Updated \`docs/episodes/latest.json\`"$'\n'"- Added timestamped episode file in \`docs/episodes/\`"$'\n\n'"---"$'\n'"*🤖 Automated episode generation workflow*" \
-              --label "chained-tv,automated" \
+              --label "chained-tv,automated,copilot" \
               --base main \
               --head "$BRANCH_NAME"
             

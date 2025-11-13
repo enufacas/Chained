@@ -80,17 +80,35 @@ You can also trigger generation manually:
 
 ## 👁️ Viewing
 
-To watch episodes, open the viewer:
+To watch episodes:
 
-**Local**: Open `../tv.html` in a browser (with a local server)
+**Latest Episode**: Visit https://enufacas.github.io/Chained/tv.html
 
-**GitHub Pages**: Visit https://enufacas.github.io/Chained/tv.html
+**Episode Archive**: Browse all episodes by date at https://enufacas.github.io/Chained/episodes.html
+
+**Specific Episode**: Use `tv.html?episode=episode-YYYYMMDD-HHMM.json` to view a particular episode
 
 The viewer features:
 - Animated scene transitions
 - Character avatars with glowing effects
 - Speech bubbles with dialogue
+- Episode archive with day-by-day browsing
 - Responsive design for all devices
+
+## 🏷️ Auto-Merge Requirements
+
+For Chained TV PRs to automatically merge, they must have these labels:
+- `chained-tv` ✓
+- `automated` ✓
+- `copilot` ✓ (added November 2025)
+
+The workflow now automatically adds all three labels. If you have old PRs that aren't merging, run:
+
+```bash
+bash scripts/cleanup-chained-tv-prs.sh
+```
+
+This will add the `copilot` label to existing PRs and close stale ones (>24 hours old).
 
 ## 📊 Activity Mapping
 
