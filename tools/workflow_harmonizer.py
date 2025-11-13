@@ -94,17 +94,24 @@ class WorkflowHarmonizer:
         
         minute, hour, day, month, weekday = parts[:5]
         
-        # Determine frequency
+        # Determine frequency (check in order of specificity)
+        # Check for minute-based intervals first
         if minute.startswith('*/'):
             interval = minute[2:]
             return f"every_{interval}_minutes"
+        # Check for hour-based intervals
         elif hour.startswith('*/'):
             interval = hour[2:]
             return f"every_{interval}_hours"
+        # Check for weekly schedules (weekday specified and not *)
+        elif weekday.isdigit() and weekday != '*':
+            return f"weekly_on_day_{weekday}"
+        # Check for monthly schedules (day of month specified and not *)
+        elif day.isdigit() and day != '*':
+            return "custom_schedule"  # Monthly or more complex
+        # Daily schedules (specific hour and minute)
         elif hour.isdigit() and minute.isdigit():
             return f"daily_at_{hour}:{minute}"
-        elif weekday.isdigit():
-            return f"weekly_on_day_{weekday}"
         else:
             return "custom_schedule"
     
