@@ -1,3 +1,4 @@
+---
 name: "Learning-Based Agent Spawner"
 
 on:
@@ -43,7 +44,7 @@ jobs:
         id: check_capacity
         run: |
           REGISTRY_FILE=".github/agent-system/registry.json"
-          
+
           if [ ! -f "$REGISTRY_FILE" ]; then
             echo "Registry file not found. Creating initial registry..."
             mkdir -p .github/agent-system
@@ -73,7 +74,7 @@ jobs:
           }
           EOF
           fi
-          
+
           # Count active agents
           ACTIVE_COUNT=$(python3 -c "
           import json
@@ -82,19 +83,19 @@ jobs:
           active = [a for a in data.get('agents', []) if a.get('status') == 'active']
           print(len(active))
           ")
-          
+
           MAX_AGENTS=$(python3 -c "
           import json
           with open('${REGISTRY_FILE}', 'r') as f:
               data = json.load(f)
           print(data['config']['max_active_agents'])
           ")
-          
+
           echo "active_count=$ACTIVE_COUNT" >> $GITHUB_OUTPUT
           echo "max_agents=$MAX_AGENTS" >> $GITHUB_OUTPUT
-          
+
           FORCE_SPAWN="${{ github.event.inputs.force_spawn }}"
-          
+
           if [ "$FORCE_SPAWN" == "true" ]; then
             echo "can_spawn=true" >> $GITHUB_OUTPUT
             echo "✅ Force spawn enabled - bypassing capacity check"
@@ -111,19 +112,19 @@ jobs:
         if: steps.check_capacity.outputs.can_spawn == 'true'
         run: |
           echo "🎨 Generating agent inspired by recent learnings..."
-          
+
           # Run the learning-inspired agent generator
           AGENT_JSON=$(python3 tools/learning-inspired-agent-generator.py 2>&1 | tee /tmp/generator.log | tail -n +$(grep -n "^{" /tmp/generator.log | head -1 | cut -d: -f1))
-          
+
           # Check if generation was successful
           SUCCESS=$(echo "$AGENT_JSON" | jq -r '.success' 2>/dev/null || echo "false")
-          
+
           if [ "$SUCCESS" != "true" ]; then
             echo "❌ Agent generation failed"
             cat /tmp/generator.log
             exit 1
           fi
-          
+
           # Extract agent details
           AGENT_NAME=$(echo "$AGENT_JSON" | jq -r '.agent_name')
           HUMAN_NAME=$(echo "$AGENT_JSON" | jq -r '.human_name')
@@ -134,11 +135,11 @@ jobs:
           INSPIRED_BY=$(echo "$AGENT_JSON" | jq -r '.inspired_by_topic')
           CATEGORY=$(echo "$AGENT_JSON" | jq -r '.category')
           KEYWORDS=$(echo "$AGENT_JSON" | jq -r '.keywords | join(", ")')
-          
+
           # Generate unique agent ID
           TIMESTAMP=$(date +%s)
           AGENT_ID="agent-$TIMESTAMP"
-          
+
           # Output for next steps
           echo "agent_id=$AGENT_ID" >> $GITHUB_OUTPUT
           echo "agent_name=$AGENT_NAME" >> $GITHUB_OUTPUT
@@ -150,7 +151,7 @@ jobs:
           echo "inspired_by=$INSPIRED_BY" >> $GITHUB_OUTPUT
           echo "category=$CATEGORY" >> $GITHUB_OUTPUT
           echo "keywords=$KEYWORDS" >> $GITHUB_OUTPUT
-          
+
           echo "✅ Generated agent: $EMOJI $AGENT_NAME"
           echo "   Inspired by: $INSPIRED_BY"
           echo "   Category: $CATEGORY"
@@ -160,11 +161,11 @@ jobs:
         if: steps.check_capacity.outputs.can_spawn == 'true'
         run: |
           REGISTRY_FILE=".github/agent-system/registry.json"
-          
+
           python3 << PYTHON_SCRIPT
           import json
           from datetime import datetime
-          
+
           agent_id = "${{ steps.generate_agent.outputs.agent_id }}"
           agent_name = "${{ steps.generate_agent.outputs.agent_name }}"
           human_name = "${{ steps.generate_agent.outputs.human_name }}"
@@ -173,10 +174,10 @@ jobs:
           communication_style = "${{ steps.generate_agent.outputs.communication_style }}"
           inspired_by = "${{ steps.generate_agent.outputs.inspired_by }}"
           category = "${{ steps.generate_agent.outputs.category }}"
-          
+
           with open("${REGISTRY_FILE}", 'r') as f:
               registry = json.load(f)
-          
+
           new_agent = {
               "id": agent_id,
               "name": f"{emoji} {human_name}",
@@ -203,13 +204,13 @@ jobs:
               },
               "contributions": []
           }
-          
+
           registry['agents'].append(new_agent)
           registry['last_spawn'] = datetime.utcnow().isoformat() + "Z"
-          
+
           with open("${REGISTRY_FILE}", 'w') as f:
               json.dump(registry, f, indent=2)
-          
+
           print(f"✅ Agent registered: {new_agent['name']}")
           PYTHON_SCRIPT
 
@@ -226,63 +227,63 @@ jobs:
           CATEGORY="${{ steps.generate_agent.outputs.category }}"
           KEYWORDS="${{ steps.generate_agent.outputs.keywords }}"
           DESCRIPTION="${{ steps.generate_agent.outputs.description }}"
-          
+
           mkdir -p ".github/agent-system/profiles"
-          
+
           cat > ".github/agent-system/profiles/${AGENT_ID}.md" << EOF
           # $EMOJI $HUMAN_NAME
-          
-          **ID**: $AGENT_ID  
-          **Human Name**: $HUMAN_NAME  
-          **Specialization**: $AGENT_NAME  
-          **Agent Definition**: [.github/agents/${AGENT_NAME}.md](../../agents/${AGENT_NAME}.md)  
-          **Status**: 🟢 Active  
-          **Spawned**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')  
+
+          **ID**: $AGENT_ID
+          **Human Name**: $HUMAN_NAME
+          **Specialization**: $AGENT_NAME
+          **Agent Definition**: [.github/agents/${AGENT_NAME}.md](../../agents/${AGENT_NAME}.md)
+          **Status**: 🟢 Active
+          **Spawned**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           **Spawn Source**: 🎓 Learning-Inspired (Dynamic)
-          
+
           ## 🌟 Origin Story
-          
+
           This agent was **dynamically created** based on trending topics from recent Hacker News and TLDR learnings!
-          
-          **Inspired By**: $INSPIRED_BY  
-          **Category**: $CATEGORY  
+
+          **Inspired By**: $INSPIRED_BY
+          **Category**: $CATEGORY
           **Key Focus**: $KEYWORDS
-          
+
           Unlike template-based agents, this agent's personality, specialization, and focus areas were determined entirely at runtime based on what seemed most interesting and valuable in the latest tech discussions.
-          
+
           ## Personality
-          
-          **Character**: $PERSONALITY  
-          **Communication Style**: $COMM_STYLE  
+
+          **Character**: $PERSONALITY
+          **Communication Style**: $COMM_STYLE
           **Innovator Inspiration**: $HUMAN_NAME
-          
+
           ## Agent Description
-          
+
           $DESCRIPTION
-          
+
           ## Performance Traits
-          
+
           - **Creativity**: 75/100
-          - **Adaptability**: 80/100  
+          - **Adaptability**: 80/100
           - **Learning-Driven**: 100/100
-          
+
           ## Performance Metrics
-          
+
           - Issues Resolved: 0
           - PRs Merged: 0
           - Reviews Given: 0
           - Code Quality Score: 50%
           - Overall Score: 0%
-          
+
           ## Contributions
-          
+
           *No contributions yet. This agent is ready to make an impact!*
-          
+
           ---
-          
+
           *Spawned dynamically from trending learnings in $INSPIRED_BY - ready to contribute cutting-edge expertise.*
           EOF
-          
+
           echo "✅ Agent profile created at .github/agent-system/profiles/${AGENT_ID}.md"
 
       - name: Commit and create PR
@@ -298,26 +299,26 @@ jobs:
           INSPIRED_BY="${{ steps.generate_agent.outputs.inspired_by }}"
           CATEGORY="${{ steps.generate_agent.outputs.category }}"
           KEYWORDS="${{ steps.generate_agent.outputs.keywords }}"
-          
+
           BRANCH_NAME="learning-agent-spawn/${AGENT_ID}"
           git checkout -b "$BRANCH_NAME"
-          
+
           # Add all agent-related files
           git add .github/agent-system/
           git add .github/agents/
-          
+
           git commit -m "$EMOJI Spawn learning-inspired agent: $HUMAN_NAME ($AGENT_NAME)
 
           Dynamically generated from trending topic: $INSPIRED_BY
           Category: $CATEGORY
           Focus: $KEYWORDS
-          
+
           This agent was created by analyzing recent Hacker News and TLDR learnings,
           identifying trending topics, and generating a specialized agent profile
           entirely at runtime - no templates or predefined categories used!"
-          
+
           git push origin "$BRANCH_NAME"
-          
+
           # Create PR
           PR_URL=$(gh pr create \
             --title "$EMOJI Learning-Inspired Agent: $HUMAN_NAME" \
@@ -326,76 +327,76 @@ jobs:
           **@create-guru** has spawned a brand new agent based on trending learnings!
 
           ### 🌟 What Makes This Special
-          
+
           This agent was **dynamically created at runtime** by analyzing recent Hacker News and TLDR content. Unlike template-based spawning, this agent's entire personality, specialization, and focus were determined by identifying the most interesting trending topics in the latest tech discussions.
-          
-          **Agent ID**: $AGENT_ID  
-          **Display Name**: $EMOJI $HUMAN_NAME  
-          **Specialization**: $AGENT_NAME  
-          **Agent Definition**: [.github/agents/${AGENT_NAME}.md](.github/agents/${AGENT_NAME}.md)  
+
+          **Agent ID**: $AGENT_ID
+          **Display Name**: $EMOJI $HUMAN_NAME
+          **Specialization**: $AGENT_NAME
+          **Agent Definition**: [.github/agents/${AGENT_NAME}.md](.github/agents/${AGENT_NAME}.md)
           **Spawned At**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
-          
+
           ### 📚 Learning Inspiration
-          
-          **Trending Topic**: $INSPIRED_BY  
-          **Category**: $CATEGORY  
+
+          **Trending Topic**: $INSPIRED_BY
+          **Category**: $CATEGORY
           **Key Focus Areas**: $KEYWORDS
-          
+
           This agent emerged from analyzing recent tech discussions and identifying this topic as particularly interesting and valuable. The agent's specialization, tools, and approach are all tailored to this specific domain.
-          
+
           ### 🎯 Agent Capabilities
-          
+
           This agent specializes in **${CATEGORY}** with deep focus on:
           - $INSPIRED_BY and related technologies
           - Applying best practices from recent learnings
           - Staying current with trending developments
           - Contributing expertise in: $KEYWORDS
-          
+
           ### 🤖 Personality Profile
-          
-          **Character**: ${{ steps.generate_agent.outputs.personality }}  
-          **Communication**: ${{ steps.generate_agent.outputs.communication_style }}  
+
+          **Character**: ${{ steps.generate_agent.outputs.personality }}
+          **Communication**: ${{ steps.generate_agent.outputs.communication_style }}
           **Inspiration**: $HUMAN_NAME
-          
+
           ### 💡 Why This Agent?
-          
+
           The spawning system analyzed:
           - Recent Hacker News top stories (100+ upvotes)
           - Latest TLDR tech news
           - Thematic analysis of trending topics
           - Community interest and momentum
-          
+
           And determined that **$INSPIRED_BY** is a hot topic worthy of dedicated agent expertise!
-          
+
           ### 🔄 Autonomous Evolution
-          
+
           This represents the next evolution of the agent system:
           - ✅ **No Templates**: Agent created from scratch based on real data
           - ✅ **Learning-Driven**: Directly inspired by community discussions
           - ✅ **Trend-Aware**: Spawns agents for what matters *right now*
           - ✅ **Fully Dynamic**: Every 3 hours, new trending topics → new agent types
-          
+
           ### 📊 Changes
-          
+
           - Added dynamically generated agent definition to \`.github/agents/${AGENT_NAME}.md\`
           - Registered agent in registry with learning-inspired metadata
           - Created agent profile with origin story
           - Updated metrics tracking
-          
+
           This agent will be evaluated in 24 hours. Agents scoring below 30% face elimination, while top performers (85%+) enter the Hall of Fame!
-          
+
           ---
-          
-          *🎓 Spawned by the Learning-Based Agent Spawner - Evolving with the tech community*  
+
+          *🎓 Spawned by the Learning-Based Agent Spawner - Evolving with the tech community*
           *🏭 Created by **@create-guru** following innovative infrastructure design*" \
             --label "agent-system,automated,copilot,learning-inspired" \
             --base main \
             --head "$BRANCH_NAME")
-          
+
           # Extract PR number
           PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-          
+
           echo "✅ PR #$PR_NUMBER created for learning-inspired agent"
 
       - name: Create announcement issue
@@ -410,68 +411,68 @@ jobs:
           CATEGORY="${{ steps.generate_agent.outputs.category }}"
           KEYWORDS="${{ steps.generate_agent.outputs.keywords }}"
           PR_NUMBER="${{ steps.create_spawn_pr.outputs.pr_number }}"
-          
+
           gh issue create \
             --title "$EMOJI Learning-Inspired Agent: $HUMAN_NAME is Here!" \
             --body "## 🎓 A New Agent Emerged from Learnings!
-          
+
           The **Learning-Based Agent Spawner** has created a brand new agent by analyzing trending topics!
-          
+
           ### Meet $EMOJI $HUMAN_NAME
-          
+
           **What's Special**: This agent wasn't created from a template. Instead, the system:
           1. 📚 Analyzed recent Hacker News and TLDR learnings
           2. 🔍 Identified **$INSPIRED_BY** as a hot trending topic
           3. 🎨 Dynamically generated a specialized agent profile
           4. 🤖 Created unique personality and approach
-          
+
           ### Agent Details
-          
-          **Specialization**: $AGENT_NAME  
-          **Category**: $CATEGORY  
-          **Focus Areas**: $KEYWORDS  
+
+          **Specialization**: $AGENT_NAME
+          **Category**: $CATEGORY
+          **Focus Areas**: $KEYWORDS
           **Inspired By**: $INSPIRED_BY
-          
-          **Personality**: ${{ steps.generate_agent.outputs.personality }}  
+
+          **Personality**: ${{ steps.generate_agent.outputs.personality }}
           **Communication**: ${{ steps.generate_agent.outputs.communication_style }}
-          
+
           ### 🌟 Why This Matters
-          
+
           This is the future of autonomous AI evolution:
           - 🔄 **Self-Adapting**: System creates agents for what's trending *now*
           - 📈 **Community-Driven**: Spawning based on real tech community interests
           - 🎯 **Timely Expertise**: Agents emerge when their expertise is most relevant
           - 💡 **No Templates**: Every agent is uniquely crafted from data
-          
+
           ### 📊 Spawn Details
-          
-          **Spawn Method**: Learning-Inspired (Dynamic)  
-          **Data Sources**: Hacker News + TLDR  
-          **Analysis Period**: Last 6 hours  
-          **Spawn PR**: #$PR_NUMBER  
+
+          **Spawn Method**: Learning-Inspired (Dynamic)
+          **Data Sources**: Hacker News + TLDR
+          **Analysis Period**: Last 6 hours
+          **Spawn PR**: #$PR_NUMBER
           **Schedule**: Every 3 hours
-          
+
           ### 🎯 What's Next
-          
+
           1. ⏳ PR #$PR_NUMBER will be reviewed and merged
           2. 🤖 Agent becomes active in the ecosystem
           3. 📝 Agent can be assigned to relevant issues
           4. 📊 Performance tracked over 24 hours
           5. 🏆 Top performance → Hall of Fame!
-          
+
           ### 🔮 Future Spawns
-          
+
           Every 3 hours, the system will:
           - Analyze latest learnings
           - Identify trending topics
           - Spawn new specialized agents
           - Evolve with the tech community
-          
+
           ---
-          
+
           **Welcome, $HUMAN_NAME!** May your code be innovative and your PRs be merged! 🚀
-          
-          *🎓 Learning-Based Agent Spawner - Creating agents that matter*  
+
+          *🎓 Learning-Based Agent Spawner - Creating agents that matter*
           *🏭 Built by **@create-guru** with Tesla-inspired innovation*" \
             --label "agent-system,announcement,learning-inspired,automated"
 
