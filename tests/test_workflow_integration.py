@@ -196,15 +196,18 @@ def test_agent_specialization_coverage():
     print("\n🧪 Testing agent specialization coverage")
     print("-" * 60)
     
+    # Map common issue types to actual agents in the repository
+    # Based on agent definitions in .github/agents/
     required_specializations = [
-        ('Bug fixing', ['bug-hunter']),
-        ('Security issues', ['security-guardian']),
-        ('Documentation', ['doc-master']),
-        ('Testing', ['test-champion']),
-        ('Performance', ['performance-optimizer']),
-        ('Features', ['feature-architect']),
-        ('Integration', ['integration-specialist']),
-        ('UX/UI', ['ux-enhancer']),
+        ('Security issues', ['secure-specialist', 'monitor-champion']),
+        ('Documentation', ['support-master', 'coach-master']),
+        ('Testing', ['assert-specialist']),
+        ('Performance', ['accelerate-master']),
+        ('Features', ['create-guru', 'engineer-master', 'engineer-wizard']),
+        ('Code structure', ['organize-guru']),
+        ('Investigation', ['investigate-champion']),
+        ('Multi-agent coordination', ['meta-coordinator']),
+        ('CI/CD troubleshooting', ['troubleshoot-expert']),
     ]
     
     # Get all agents
@@ -285,7 +288,7 @@ def test_json_output_format():
     
     test_commands = [
         ['python3', 'tools/match-issue-to-agent.py', 'Test issue', 'Test body'],
-        ['python3', 'tools/get-agent-info.py', 'info', 'test-champion'],
+        ['python3', 'tools/get-agent-info.py', 'info', 'assert-specialist'],  # Use an actual agent
     ]
     
     passed = 0
@@ -319,8 +322,8 @@ def main():
     print("🧪 Chained Workflow Integration Tests")
     print("=" * 60)
     
-    # Change to repo root
-    repo_root = Path(__file__).parent
+    # Change to repo root (parent of tests directory)
+    repo_root = Path(__file__).parent.parent
     os.chdir(repo_root)
     print(f"Working directory: {os.getcwd()}")
     
