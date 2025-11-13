@@ -425,6 +425,7 @@ jobs:
         id: assign_mentor
         if: steps.check_capacity.outputs.can_spawn == 'true'
         run: |
+          set +e  # Disable exit on error for this step to handle mentor unavailability gracefully
           AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
           SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
           
