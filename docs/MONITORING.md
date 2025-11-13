@@ -5,7 +5,7 @@
 Run the status checker script anytime:
 
 ```bash
-./check-status.sh
+./scripts/check-status.sh
 ```
 
 This will show:
@@ -21,7 +21,7 @@ This will show:
 **New!** To verify that your cron schedules are actually running:
 
 ```bash
-./verify-schedules.sh
+./scripts/verify-schedules.sh
 ```
 
 This tool checks:
@@ -60,7 +60,7 @@ The repository includes helper scripts to manage the autonomous system:
 - Provides actionable recommendations
 
 ```bash
-./verify-schedules.sh
+./scripts/verify-schedules.sh
 ```
 
 **Use this when:** You want to verify your cron schedules are actually executing.
@@ -75,7 +75,7 @@ Comprehensive workflow state evaluation:
 - YAML syntax validation
 
 ```bash
-./evaluate-workflows.sh
+./scripts/evaluate-workflows.sh
 ```
 
 ### validate-system.sh
@@ -88,7 +88,7 @@ Pre-flight validation script that checks:
 - YAML syntax validation (if yamllint available)
 
 ```bash
-./validate-system.sh
+./scripts/validate-system.sh
 ```
 
 ### kickoff-system.sh
@@ -100,7 +100,7 @@ Initialize and start the perpetual motion machine:
 - Optionally triggers initial workflows
 
 ```bash
-./kickoff-system.sh
+./scripts/kickoff-system.sh
 ```
 
 ### check-status.sh
@@ -113,7 +113,7 @@ Monitor the system's health and progress:
 - Success metrics
 
 ```bash
-./check-status.sh
+./scripts/check-status.sh
 ```
 
 ---

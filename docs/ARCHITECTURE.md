@@ -333,17 +333,21 @@ Chained/
 │
 ├── tools/                         # Utility scripts
 │
-├── test_*.py                      # Test suites (10+ files)
+├── tests/                         # Test suites (29+ test files)
+│   └── test_*.py
 │
-├── *.sh                          # Shell scripts
+├── scripts/                       # Shell scripts and demos
 │   ├── validate-system.sh
 │   ├── kickoff-system.sh
-│   └── check-status.sh
+│   ├── check-status.sh
+│   └── *.sh
+│
+├── summaries/                     # Implementation summaries & docs
+│   └── *.md                       # Task completions, security summaries
 │
 ├── README.md                      # Main project README
 ├── FAQ.md                         # Frequently asked questions
-├── GETTING_STARTED.md             # Setup guide
-└── *.md                          # Implementation summaries
+└── GETTING_STARTED.md             # Setup guide
 
 ```
 

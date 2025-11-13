@@ -6,7 +6,7 @@
 set -e
 
 # Load shared library
-source "$(dirname "$0")/tools/shell-common.sh"
+source "$(dirname "$0")/../tools/shell-common.sh"
 
 echo "📊 Chained System Status"
 echo "========================"

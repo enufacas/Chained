@@ -180,7 +180,7 @@ Test files and testing documentation:
 **🔧 I want to understand workflows:**
 1. Read [WORKFLOWS.md](./WORKFLOWS.md)
 2. Check `.github/workflows/` directory
-3. Run `./evaluate-workflows.sh`
+3. Run `./scripts/evaluate-workflows.sh`
 
 **🔒 I'm concerned about security:**
 1. Read [SECURITY_BEST_PRACTICES.md](./SECURITY_BEST_PRACTICES.md)
@@ -206,11 +206,11 @@ Test files and testing documentation:
 **Setting up the system:**
 - [GETTING_STARTED.md](../GETTING_STARTED.md)
 - [COPILOT_SETUP.md](../COPILOT_SETUP.md)
-- `./validate-system.sh`
+- `./scripts/validate-system.sh`
 
 **Monitoring system health:**
 - [MONITORING.md](./MONITORING.md)
-- `./check-status.sh`
+- `./scripts/check-status.sh`
 - GitHub Pages dashboard
 
 **Troubleshooting:**

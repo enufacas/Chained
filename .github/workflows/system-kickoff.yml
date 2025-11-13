@@ -73,7 +73,7 @@ jobs:
         run: |
           echo "Running pre-flight validation..."
           chmod +x validate-system.sh
-          ./validate-system.sh || {
+          ./scripts/validate-system.sh || {
             echo "validation_failed=true" >> $GITHUB_OUTPUT
             exit 0  # Don't fail the job, just mark validation failed
           }
@@ -249,7 +249,7 @@ jobs:
 
           **Check Status:**
           \`\`\`bash
-          ./check-status.sh
+          ./scripts/check-status.sh
           \`\`\`
 
           ---

@@ -238,13 +238,13 @@ All workflows support manual triggering via GitHub's Actions tab:
 
 ```bash
 # Check workflow schedules
-./verify-schedules.sh
+./scripts/verify-schedules.sh
 
 # Evaluate workflow state
 ./evaluate-workflows.sh
 
 # Check system status
-./check-status.sh
+./scripts/check-status.sh
 ```
 
 ### Via GitHub

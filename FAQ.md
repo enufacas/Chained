@@ -100,7 +100,7 @@ See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for complete setup instru
 - GitHub doesn't guarantee exact execution times
 - During high load, delays can be longer
 
-**How to verify:** Use `./verify-schedules.sh` to check if workflows are running on time.
+**How to verify:** Use `./scripts/verify-schedules.sh` to check if workflows are running on time.
 
 ### What happens if a scheduled workflow doesn't run?
 
@@ -150,7 +150,7 @@ The system is designed to be **delay-tolerant**:
 - `progress-tracker.yml`: Every 12 hours
 - `workflow-monitor.yml`: Every 12 hours
 
-**To verify actual run times:** Run `./verify-schedules.sh`
+**To verify actual run times:** Run `./scripts/verify-schedules.sh`
 
 ### What if I need faster turnaround?
 
@@ -172,7 +172,7 @@ However, be aware that:
 
 1. **Run the verification script:**
    ```bash
-   ./verify-schedules.sh
+   ./scripts/verify-schedules.sh
    ```
    Shows when each workflow last ran and if it's on schedule.
 
@@ -191,7 +191,7 @@ However, be aware that:
 
 5. **Run the status script:**
    ```bash
-   ./check-status.sh
+   ./scripts/check-status.sh
    ```
    Shows recent workflow runs and metrics.
 
@@ -202,7 +202,7 @@ However, be aware that:
 1. **Wait 10-20 minutes** - Minor delays are normal
 2. **Check the Actions tab** - See if the workflow ran late
 3. **Look for errors** - Check if the workflow failed rather than not running
-4. **Check for 60-day deactivation** - Run `./verify-schedules.sh` to see if repository is inactive
+4. **Check for 60-day deactivation** - Run `./scripts/verify-schedules.sh` to see if repository is inactive
 5. **Manually trigger** - Go to Actions → Select workflow → "Run workflow"
 
 ### My schedules haven't run in days. What's wrong?
@@ -221,7 +221,7 @@ However, be aware that:
 4. **Permission issues** - Workflow doesn't have required permissions
    - **Solution:** Review workflow permissions in the YAML file
 
-**Quick check:** Run `./verify-schedules.sh` to diagnose.
+**Quick check:** Run `./scripts/verify-schedules.sh` to diagnose.
 
 ### How do I manually trigger a workflow?
 
@@ -268,7 +268,7 @@ GitHub automatically disables scheduled workflows in public repositories that ha
 
 **To check your status:**
 ```bash
-./verify-schedules.sh
+./scripts/verify-schedules.sh
 ```
 
 **To prevent deactivation:**
@@ -343,7 +343,7 @@ The `workflow-monitor.yml` will automatically start tracking it.
 
 **Quick check:**
 ```bash
-./check-status.sh
+./scripts/check-status.sh
 ```
 
 ### What do the different labels mean?
@@ -365,7 +365,7 @@ The `workflow-monitor.yml` will automatically start tracking it.
 
 1. **Read the issue** - It contains diagnostic information
 2. **Check the Actions tab** - Review recent workflow runs
-3. **Run verification** - `./verify-schedules.sh` for current status
+3. **Run verification** - `./scripts/verify-schedules.sh` for current status
 4. **Take recommended actions** - The issue provides specific guidance
 5. **Close when resolved** - System will reopen if problems persist
 
@@ -379,8 +379,8 @@ The `workflow-monitor.yml` will automatically start tracking it.
 1. Fork or clone the repository
 2. Enable Actions in your repository settings
 3. Enable GitHub Pages (Settings → Pages → /docs)
-4. Run `./validate-system.sh` to verify setup
-5. Run `./kickoff-system.sh` or merge to main to start
+4. Run `./scripts/validate-system.sh` to verify setup
+5. Run `./scripts/kickoff-system.sh` or merge to main to start
 
 ### Does this work with private repositories?
 
@@ -452,9 +452,9 @@ See the Contributing section in README.md.
 - [GETTING_STARTED.md](./GETTING_STARTED.md) - Setup instructions
 
 **Tools:**
-- `./check-status.sh` - System status overview
-- `./verify-schedules.sh` - Schedule verification
-- `./validate-system.sh` - Pre-flight checks
+- `./scripts/check-status.sh` - System status overview
+- `./scripts/verify-schedules.sh` - Schedule verification
+- `./scripts/validate-system.sh` - Pre-flight checks
 
 ### Something's not covered here. What should I do?
 
@@ -468,7 +468,7 @@ See the Contributing section in README.md.
 **Key Takeaways:**
 
 ✅ **Schedules are reliable** - GitHub Actions cron schedules work well with minor delays
-✅ **Trust but verify** - Use `./verify-schedules.sh` to confirm execution
+✅ **Trust but verify** - Use `./scripts/verify-schedules.sh` to confirm execution
 ✅ **System is self-healing** - Monitoring detects and reports issues
 ✅ **Manual fallback** - You can always trigger workflows manually
 ✅ **Delay-tolerant** - Small timing variations don't break the cycle

@@ -89,7 +89,7 @@ This test checks:
 The test is integrated into the system validation script:
 
 ```bash
-./validate-system.sh
+./scripts/validate-system.sh
 ```
 
 This runs the custom agents convention test as part of the overall system validation, ensuring that conventions are checked before deployment.
@@ -170,7 +170,7 @@ You are a specialized Bug Hunter agent, part of the Chained autonomous AI ecosys
 
 1. **Developer creates or modifies agent**: Edit files in `.github/agents/`
 2. **Run local validation**: `python3 test_custom_agents_conventions.py`
-3. **System validation**: `./validate-system.sh`
+3. **System validation**: `./scripts/validate-system.sh`
 4. **Commit changes**: Conventions are verified in CI/CD
 5. **Deploy**: Agents are available in GitHub Copilot
 
