@@ -1,11 +1,9 @@
 name: "Architecture Evolution Tracker"
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [closed]
+  schedule:
+    # Run every 12 hours
+    - cron: '0 */12 * * *'
   workflow_dispatch:
 
 permissions:
@@ -15,11 +13,6 @@ permissions:
 jobs:
   track-architecture:
     runs-on: ubuntu-latest
-    # Only run on merge to main or manual trigger
-    if: |
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
-      github.event_name == 'workflow_dispatch'
     
     steps:
       - name: Checkout repository
@@ -153,34 +146,6 @@ jobs:
             
             echo "✅ PR created for architecture evolution tracking"
           fi
-
-      - name: Create PR comment with architecture summary
-        if: github.event_name == 'pull_request'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pr_number="${{ github.event.pull_request.number }}"
-          
-          # Create summary comment
-          cat << 'EOF' > /tmp/architecture-comment.md
-          ## 🏗️ Architecture Evolution Update
-          
-          The architecture has been analyzed and tracked!
-          
-          ### Current Metrics
-          - **Files:** ${{ steps.track.outputs.total_files }}
-          - **Lines:** ${{ steps.track.outputs.total_lines }}
-          - **Components:** ${{ steps.track.outputs.total_components }}
-          - **Snapshots:** ${{ steps.summary.outputs.snapshot_count }}
-          
-          ### 📊 View Evolution
-          Check out the [Architecture Evolution Dashboard](https://enufacas.github.io/Chained/architecture-evolution.html) to see how the system is evolving over time!
-          
-          ---
-          *Automated by the Architecture Evolution Tracker*
-          EOF
-          
-          gh pr comment ${pr_number} --body-file /tmp/architecture-comment.md || true
 
       - name: Log activity
         run: |
