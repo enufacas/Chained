@@ -2,7 +2,7 @@
 
 > General technology news and insights
 
-**Total Insights:** 142
+**Total Insights:** 148
 
 **Last Updated:** 2025-11-13
 
@@ -10,6 +10,80 @@
 
 
 ## 📰 From Hacker News
+
+
+### Zed is our office
+
+**Community Score:** 262 upvotes
+
+**Link:** https://zed.dev/blog/zed-is-our-office
+
+
+**Content Summary:**
+
+It's Monday, 12 PM ET, and the entire Zed Industries team is piled into our weekly all-hands meeting. Some teammates jot down their schedule deviations, while others detail what they intend to focus on for the week. Nathan just wrapped up top-of-mind announcements and Morgan is sharing trends from our metrics and covering operational updates. Meanwhile I'm preparing user quotes from the last week to share out, and others add topics to the Discussions section. Throughout the meeting, screens are ...
+
+---
+
+
+### Blender Lab
+
+**Community Score:** 144 upvotes
+
+**Link:** https://www.blender.org/news/introducing-blender-lab/
+
+
+**Content Summary:**
+
+Introducing Blender Lab November 7th, 2025 News Francesco Siddi Give Back to Blender Help funding Blender in 2026 If Blender helped you with your projects this year, we're asking you to help us back. For the past year, you've had access to professional 3D software, completely free. No subscriptions, no licenses, no limits. Blender has been there for your projects, your learning, your art, your business. Today, we're asking for $5. That's it. If every active Blender user contributed $5 this month...
+
+---
+
+
+### Android developer verification: Early access starts
+
+**Community Score:** 1245 upvotes
+
+**Link:** https://android-developers.googleblog.com/2025/11/android-developer-verification-early.html
+
+
+**Content Summary:**
+
+☰ Android Developers Blog The latest Android and Google Play news for app and game developers. 🔍 Android Developers → Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News More | 12 November 2025 Android developer verification: Early access starts now as we continue to build with your feedback Share this post LinkedIn Twitter Facebook Email Copy link Link copied to clipboard Posted by Matthew Forsythe Di...
+
+---
+
+
+### Human Fovea Detector
+
+**Community Score:** 403 upvotes
+
+**Link:** https://www.shadertoy.com/view/4dsXzM
+
+---
+
+
+### Steam Machine
+
+**Community Score:** 2527 upvotes
+
+**Link:** https://store.steampowered.com/sale/steammachine
+
+---
+
+
+### Homebrew no longer allows bypassing Gatekeeper for unsigned/unnotarized software
+
+**Community Score:** 314 upvotes
+
+**Link:** https://github.com/Homebrew/brew/issues/20755
+
+
+**Content Summary:**
+
+Homebrew / brew Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 10.7k Star 45.4k Removing support for --no-quarantine for casks #20755 New issue Copy link New issue Copy link Closed Feature #20973 Closed Removing support for --no-quarantine for casks #20755 Feature #20973 Copy link Description p-linnane opened on Sep 23, 2025 Issue body actions Verification This issue's title and/or description do ...
+
+---
 
 
 ### Steam Machine
@@ -179,90 +253,6 @@ This version of Learn Prolog Now! embeds SWI SH , SWI-Prolog for SHaring. The cu
 **Community Score:** 183 upvotes
 
 **Link:** https://store.steampowered.com/sale/steamframe
-
----
-
-
-### .NET 10
-
-**Community Score:** 399 upvotes
-
-**Link:** https://devblogs.microsoft.com/dotnet/announcing-dotnet-10/
-
-
-**Content Summary:**
-
-Today, we are excited to announce the launch of .NET 10, the most productive, modern, secure, intelligent, and performant release of .NET yet. It’s the result of another year of effort from thousands of developers around the world. This release includes thousands of performance, security, and functional improvements across the entire .NET stack-from languages and developer tools to workloads-enabling you to build with a unified platform and easily infuse your apps with AI. Important .NET 10 is a...
-
----
-
-
-### What happened to Transmeta, the last big dotcom IPO
-
-**Community Score:** 164 upvotes
-
-**Link:** https://dfarq.homeip.net/what-happened-to-transmeta-the-last-big-dotcom-ipo/
-
-
-**Content Summary:**
-
-What happened to Transmeta, the last big dotcom IPO Dave Farquhar Retro Computing November 7, 2025 November 7, 2025 2 Comments Transmeta was the last big IPO of the dotcom era , launching Nov 7, 2000. Some analysts call its $273 million IPO the last successful tech IPO until the Google IPO in 2004 . Transmeta didn’t completely fit in to the dotcom era, because they were a hardware company. But they were still a technology company, and if their plans had gone well, they would have sold their prod...
-
----
-
-
-### Laptops with Stickers
-
-**Community Score:** 588 upvotes
-
-**Link:** https://stickertop.art/main/
-
-
-**Content Summary:**
-
-Main Jack Aug 18, 2025 • 21 min read Welcome to stickertop.art Discover a unique collection of laptops adorned with creative stickers from around the world. This project celebrates the art and culture of laptop personalization each laptop tells a story through its stickers and gives us a glimpse of the personality of the owners.
-
----
-
-
-### X5.1 solar flare, G4 geomagnetic storm watch
-
-**Community Score:** 379 upvotes
-
-**Link:** https://www.spaceweatherlive.com/en/news/view/593/20251111-x5-1-solar-flare-g4-geomagnetic-storm-watch.html
-
-
-**Content Summary:**
-
-SpaceWeatherLive .com Real-time auroral and solar activity X5.1 solar flare, G4 geomagnetic storm watch Tuesday, 11 November 2025 19:07 UTC Here she blows! Sunspot region 4274 produced its strongest solar flare thus far since it appeared on the east limb and the sixth strongest solar flare of the current solar cycle. An impressive long duration and highly eruptive X5.1 (R3-strong) solar flare peaked this morning at 10:04 UTC. It became quickly clear that the eruption would be followed by an impr...
-
----
-
-
-### Laptops with Stickers
-
-**Community Score:** 475 upvotes
-
-**Link:** https://stickertop.art/main/
-
-
-**Content Summary:**
-
-Main Jack Aug 18, 2025 • 12 min read Welcome to stickertop.art Discover a unique collection of laptops adorned with creative stickers from around the world. This project celebrates the art and culture of laptop personalization each laptop tells a story through its stickers and gives us a glimpse of the personality of the owners.
-
----
-
-
-### X5.1 solar flare, G4 geomagnetic storm watch
-
-**Community Score:** 352 upvotes
-
-**Link:** https://www.spaceweatherlive.com/en/news/view/593/20251111-x5-1-solar-flare-g4-geomagnetic-storm-watch.html
-
-
-**Content Summary:**
-
-X5.1 solar flare, G4 geomagnetic storm watch Tuesday, 11 November 2025 19:07 UTC Here she blows! Sunspot region 4274 produced its strongest solar flare thus far since it appeared on the east limb and the sixth strongest solar flare of the current solar cycle. An impressive long duration and highly eruptive X5.1 (R3-strong) solar flare peaked this morning at 10:04 UTC. It became quickly clear that the eruption would be followed by an impressive coronal mass ejection (CME). The resulting coronal w...
 
 ---
 
