@@ -404,6 +404,122 @@ jobs:
           
           PYTHON_SCRIPT
 
+      - name: Parse and clean learnings
+        id: parse
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          sys.path.insert(0, 'tools')
+          
+          # Import the intelligent parser
+          import importlib.util
+          spec = importlib.util.spec_from_file_location('parser', 'tools/intelligent-content-parser.py')
+          parser_module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(parser_module)
+          
+          parser = parser_module.IntelligentContentParser()
+          
+          # Find most recent HN file
+          import glob
+          files = glob.glob('learnings/hn_*.json')
+          if not files:
+              print("No learning file found")
+              sys.exit(0)
+          
+          learning_file = max(files, key=os.path.getctime)
+          print(f"Parsing: {learning_file}")
+          
+          # Load and parse
+          with open(learning_file, 'r') as f:
+              data = json.load(f)
+          
+          learnings = data.get('learnings', [])
+          print(f"Input learnings: {len(learnings)}")
+          
+          # Parse and clean
+          cleaned, stats = parser.parse_learnings(learnings)
+          
+          print(f"Cleaned learnings: {len(cleaned)}")
+          print(f"Acceptance rate: {stats['acceptance_rate']:.1%}")
+          
+          # Update data
+          data['learnings'] = cleaned
+          data['parsing_stats'] = stats
+          data['parsed_version'] = '1.0'
+          
+          # Save cleaned version
+          with open(learning_file, 'w') as f:
+              json.dump(data, f, indent=2)
+          
+          print(f"✓ Saved cleaned learnings to {learning_file}")
+          
+          # Output stats
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"cleaned_count={len(cleaned)}\n")
+              f.write(f"rejected_count={stats['rejected']}\n")
+              f.write(f"acceptance_rate={stats['acceptance_rate']:.1%}\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Analyze trends
+        id: analyze
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          sys.path.insert(0, 'tools')
+          
+          # Import the thematic analyzer
+          import importlib.util
+          spec = importlib.util.spec_from_file_location('analyzer', 'tools/thematic-analyzer.py')
+          analyzer_module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(analyzer_module)
+          
+          analyzer = analyzer_module.ThematicAnalyzer(lookback_days=7)
+          
+          # Load learnings from directory
+          learnings = analyzer.load_learnings_from_files('learnings')
+          
+          print(f"Analyzing {len(learnings)} learnings from last 7 days")
+          
+          # Perform analysis
+          analysis = analyzer.analyze_learnings(learnings)
+          
+          # Save analysis
+          os.makedirs('learnings', exist_ok=True)
+          from datetime import datetime
+          timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+          analysis_file = f'learnings/analysis_{timestamp}.json'
+          
+          # Convert to dict
+          from dataclasses import asdict
+          analysis_data = asdict(analysis)
+          
+          with open(analysis_file, 'w') as f:
+              json.dump(analysis_data, f, indent=2)
+          
+          print(f"✓ Saved analysis to {analysis_file}")
+          
+          # Output summary
+          print(f"\nTop technologies:")
+          for tech in analysis.top_technologies[:5]:
+              print(f"  - {tech.name} (score: {tech.score:.1f}, mentions: {tech.mention_count})")
+          
+          print(f"\nHot themes for agent spawning:")
+          for theme in analysis.hot_themes:
+              print(f"  - {theme}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"analysis_file={analysis_file}\n")
+              f.write(f"hot_themes={','.join(analysis.hot_themes)}\n")
+              f.write(f"theme_count={len(analysis.hot_themes)}\n")
+          
+          PYTHON_SCRIPT
+
       - name: Create learning issue
         if: steps.fetch.outputs.has_learnings == 'true'
         env:
@@ -415,8 +531,11 @@ jobs:
 
           **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           **High-Quality Stories:** ${{ steps.fetch.outputs.learning_count }}
+          **After Filtering:** ${{ steps.parse.outputs.cleaned_count }}
+          **Acceptance Rate:** ${{ steps.parse.outputs.acceptance_rate }}
           **Topics Covered:** ${{ steps.fetch.outputs.topic_count }}
           **New Ideas Generated:** ${{ steps.fetch.outputs.idea_count }}
+          **Hot Themes:** ${{ steps.analyze.outputs.theme_count }}
 
           ### 🏆 Top Story
 
@@ -438,9 +557,16 @@ jobs:
           - ⚡ **Performance**: Optimization techniques and benchmarking
           - 🌟 **Open Source**: GitHub projects and OSS community insights
 
+          ### 🎯 Hot Themes Identified
+
+          ${{ steps.analyze.outputs.hot_themes }}
+
+          These themes are being monitored for potential new agent creation.
+
           ### 🔗 Learning Resources
 
           - **Learning File:** [\`${{ steps.fetch.outputs.learning_file }}\`](https://github.com/enufacas/Chained/blob/main/${{ steps.fetch.outputs.learning_file }})
+          - **Analysis File:** [\`${{ steps.analyze.outputs.analysis_file }}\`](https://github.com/enufacas/Chained/blob/main/${{ steps.analyze.outputs.analysis_file }})
           - **Learnings Directory:** [Browse all learnings](https://github.com/enufacas/Chained/tree/main/learnings)
           - **Learnings Documentation:** [README](https://github.com/enufacas/Chained/blob/main/learnings/README.md)
 
@@ -453,10 +579,19 @@ jobs:
           - Found discussions on performance and security
           - Generated actionable ideas based on trends
 
+          ### ✨ Quality Improvements
+
+          - ✅ Filtered out low-quality and promotional content
+          - ✅ Cleaned malformed text and special characters
+          - ✅ Validated content quality with ${{ steps.parse.outputs.acceptance_rate }} acceptance
+          - ✅ Analyzed thematic trends across all sources
+
           ### 🎯 Actions Taken
           - ✅ Analyzed top 30 trending Hacker News stories
           - ✅ Filtered for high-quality content (100+ upvotes)
+          - ✅ Intelligently parsed and cleaned content
           - ✅ Categorized by technical topics
+          - ✅ Performed thematic analysis
           - ✅ Extracted insights and patterns
           - ✅ Generated ${{ steps.fetch.outputs.idea_count }} new project ideas
           - ✅ Saved to learnings database
@@ -469,10 +604,11 @@ jobs:
           - 📈 Feature implementation approaches
           - 🎓 Best practices and coding patterns
           - 🔍 Areas for deeper research and exploration
+          - 🤖 Potential spawning of specialized agents
 
           ---
 
-          *This learning was automatically collected by the Hacker News Learning workflow. The AI continuously learns from the tech community to stay current with industry trends and discussions.*" \
+          *This learning was automatically collected by the Hacker News Learning workflow with intelligent content parsing. The AI continuously learns from the tech community to stay current with industry trends and discussions.*" \
             --label "learning,automated,copilot" || echo "Issue creation skipped or failed"
 
       - name: Update learning index
