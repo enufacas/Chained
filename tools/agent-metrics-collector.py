@@ -26,6 +26,7 @@ Usage:
 
 import json
 import os
+import re
 import sys
 import time
 from datetime import datetime, timedelta, timezone
@@ -205,6 +206,111 @@ class MetricsCollector:
             'creativity': 0.15
         }
     
+    def _get_agent_specialization(self, agent_id: str) -> Optional[str]:
+        """
+        Get the specialization for an agent from the registry.
+        
+        Args:
+            agent_id: Agent identifier
+            
+        Returns:
+            Specialization name or None
+        """
+        try:
+            if REGISTRY_FILE.exists():
+                with open(REGISTRY_FILE, 'r') as f:
+                    registry = json.load(f)
+                    
+                    # Check active agents
+                    for agent in registry.get('agents', []):
+                        if agent.get('id') == agent_id:
+                            return agent.get('specialization')
+                    
+                    # Check hall of fame
+                    for agent in registry.get('hall_of_fame', []):
+                        if agent.get('id') == agent_id:
+                            return agent.get('specialization')
+        except Exception as e:
+            print(f"⚠️  Warning: Could not get specialization for {agent_id}: {e}", file=sys.stderr)
+        
+        return None
+    
+    def _find_issues_assigned_to_agent(
+        self,
+        agent_id: str,
+        since_days: int
+    ) -> List[Dict]:
+        """
+        Find issues assigned to this agent via COPILOT_AGENT comment.
+        
+        This method searches for issues that contain the agent's specialization
+        in a COPILOT_AGENT comment, which is how custom agents are assigned.
+        
+        Args:
+            agent_id: Agent identifier
+            since_days: Look back period
+            
+        Returns:
+            List of issues assigned to this agent
+        """
+        assigned_issues = []
+        specialization = self._get_agent_specialization(agent_id)
+        
+        if not specialization:
+            print(f"⚠️  Warning: No specialization found for {agent_id}", file=sys.stderr)
+            return assigned_issues
+        
+        print(f"🔍 Looking for issues assigned to agent {agent_id} (specialization: {specialization})", file=sys.stderr)
+        
+        try:
+            since_date = (datetime.now(timezone.utc) - timedelta(days=since_days)).isoformat()
+            
+            # Search for all issues with agent-work label created in timeframe
+            issues = self._search_issues(
+                agent_id,
+                'is:issue',
+                'label:agent-work',
+                f'created:>={since_date}'
+            )
+            
+            print(f"📋 Found {len(issues)} total agent-work issues in timeframe", file=sys.stderr)
+            
+            # Filter issues by checking body for COPILOT_AGENT comment
+            for issue in issues:
+                issue_number = issue.get('number')
+                if not issue_number:
+                    continue
+                
+                # Fetch full issue details to get body
+                try:
+                    issue_details = self.github.get(f'/repos/{self.repo}/issues/{issue_number}')
+                    if not issue_details:
+                        continue
+                    
+                    body = issue_details.get('body', '')
+                    
+                    # Check for COPILOT_AGENT comment with this agent's specialization
+                    # Format: <!-- COPILOT_AGENT:specialization_name -->
+                    pattern = rf'<!--\s*COPILOT_AGENT:\s*{re.escape(specialization)}\s*-->'
+                    if re.search(pattern, body, re.IGNORECASE):
+                        assigned_issues.append(issue_details)
+                        print(f"  ✅ Issue #{issue_number} assigned to {specialization}", file=sys.stderr)
+                    else:
+                        # Log first 100 chars of body to help debug
+                        body_preview = body[:100].replace('\n', ' ')
+                        print(f"  ⏭️  Issue #{issue_number} not for {specialization} (body: {body_preview}...)", file=sys.stderr)
+                        
+                except Exception as e:
+                    print(f"⚠️  Warning: Error fetching issue {issue_number}: {e}", file=sys.stderr)
+                    continue
+            
+            print(f"✅ Found {len(assigned_issues)} issues assigned to {agent_id}", file=sys.stderr)
+        
+        except Exception as e:
+            print(f"⚠️  Warning: Error finding assigned issues for {agent_id}: {e}", file=sys.stderr)
+        
+        return assigned_issues
+    
     def collect_agent_activity(
         self,
         agent_id: str,
@@ -212,6 +318,8 @@ class MetricsCollector:
     ) -> AgentActivity:
         """
         Collect GitHub activity for an agent.
+        
+        This method now uses COPILOT_AGENT comments to attribute work to agents.
         
         Args:
             agent_id: Agent identifier
@@ -226,44 +334,71 @@ class MetricsCollector:
         since_date = (datetime.now(timezone.utc) - timedelta(days=since_days)).isoformat()
         
         try:
-            # Search for issues created by agent
-            issues_created = self._search_issues(
-                agent_id,
-                'is:issue',
-                f'author:{self._get_agent_github_user(agent_id)}',
-                f'created:>={since_date}'
-            )
-            activity.issues_created = len(issues_created)
+            # Find issues assigned to this agent via COPILOT_AGENT comment
+            assigned_issues = self._find_issues_assigned_to_agent(agent_id, since_days)
+            activity.issues_created = len(assigned_issues)
             
-            # Search for issues resolved by agent (closed PRs that reference issues)
-            issues_resolved = self._search_issues(
-                agent_id,
-                'is:issue',
-                'is:closed',
-                f'assignee:{self._get_agent_github_user(agent_id)}'
-            )
-            activity.issues_resolved = len(issues_resolved)
+            # Count resolved issues (closed ones)
+            resolved_issues = [issue for issue in assigned_issues if issue.get('state') == 'closed']
+            activity.issues_resolved = len(resolved_issues)
             
-            # Search for PRs created by agent
-            prs_created = self._search_issues(
-                agent_id,
-                'is:pr',
-                f'author:{self._get_agent_github_user(agent_id)}',
-                f'created:>={since_date}'
-            )
-            activity.prs_created = len(prs_created)
+            # Find PRs that close issues assigned to this agent
+            # We need to look for PRs that reference the assigned issues
+            prs_for_agent = []
+            for issue in assigned_issues:
+                issue_number = issue.get('number')
+                try:
+                    # Get timeline to find linked PRs
+                    timeline = self.github.get(
+                        f'/repos/{self.repo}/issues/{issue_number}/timeline',
+                        headers={'Accept': 'application/vnd.github.mockingbird-preview+json'}
+                    )
+                    
+                    if timeline:
+                        for event in timeline:
+                            if event.get('event') == 'cross-referenced':
+                                source = event.get('source', {})
+                                if source.get('type') == 'issue' and source.get('issue', {}).get('pull_request'):
+                                    pr_data = source.get('issue')
+                                    if pr_data not in prs_for_agent:
+                                        prs_for_agent.append(pr_data)
+                except Exception as e:
+                    print(f"⚠️  Warning: Error fetching timeline for issue {issue_number}: {e}", file=sys.stderr)
+            
+            activity.prs_created = len(prs_for_agent)
             
             # Count merged PRs
-            prs_merged = [pr for pr in prs_created if pr.get('pull_request', {}).get('merged_at')]
+            prs_merged = [pr for pr in prs_for_agent if pr.get('pull_request', {}).get('merged_at')]
             activity.prs_merged = len(prs_merged)
             
-            # Search for reviews given by agent
+            # Search for reviews given by agent (using github-actions bot)
+            # This is a fallback - reviews are harder to attribute to specific agents
             reviews = self._get_reviews_by_agent(agent_id, since_days)
             activity.reviews_given = len(reviews)
             
-            # Get comments made
-            comments = self._get_comments_by_agent(agent_id, since_days)
-            activity.comments_made = len(comments)
+            # Get comments made by agent on assigned issues
+            comments_count = 0
+            for issue in assigned_issues:
+                issue_number = issue.get('number')
+                try:
+                    comments = self.github.get(f'/repos/{self.repo}/issues/{issue_number}/comments')
+                    if comments:
+                        # Count comments by copilot or github-actions bot on these issues
+                        agent_user = self._get_agent_github_user(agent_id)
+                        agent_comments = [c for c in comments if c.get('user', {}).get('login') == agent_user]
+                        comments_count += len(agent_comments)
+                except Exception:
+                    pass
+            activity.comments_made = comments_count
+            
+            # Log activity summary
+            print(f"📊 Activity summary for {agent_id}:", file=sys.stderr)
+            print(f"  - Issues assigned: {activity.issues_created}", file=sys.stderr)
+            print(f"  - Issues resolved: {activity.issues_resolved}", file=sys.stderr)
+            print(f"  - PRs created: {activity.prs_created}", file=sys.stderr)
+            print(f"  - PRs merged: {activity.prs_merged}", file=sys.stderr)
+            print(f"  - Reviews given: {activity.reviews_given}", file=sys.stderr)
+            print(f"  - Comments made: {activity.comments_made}", file=sys.stderr)
             
         except Exception as e:
             print(f"⚠️  Warning: Error collecting activity for {agent_id}: {e}", file=sys.stderr)
