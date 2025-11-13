@@ -197,7 +197,7 @@ jobs:
           gh pr create \
             --title "🎛️ Update Workflow Schedules: $MODE Mode" \
             --body-file /tmp/pr-body.md \
-            --label "automated,orchestrator,workflow-optimization" \
+            --label "automated,orchestrator,workflow-optimization,copilot" \
             --base main \
             --head "$BRANCH_NAME"
 

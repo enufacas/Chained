@@ -93,7 +93,7 @@ jobs:
             gh pr create \
               --title "📊 Sync agent data to GitHub Pages - ${PR_DATE}" \
               --body "## Agent Data Sync"$'\n\n'"This PR syncs agent registry data from \`.github/agent-system/registry.json\` to the \`docs/data/\` directory for GitHub Pages."$'\n\n'"### Changes"$'\n'"- Updated \`docs/data/agent-registry.json\`"$'\n'"- Updated individual agent data files in \`docs/data/agents/\`"$'\n\n'"---"$'\n'"*🤖 Automated data sync workflow*" \
-              --label "agent-system,automated" \
+              --label "agent-system,automated,copilot" \
               --base main \
               --head "$BRANCH_NAME"
             

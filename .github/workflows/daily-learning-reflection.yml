@@ -231,7 +231,7 @@ jobs:
             
             ---
             *This PR was automatically created by the Daily Learning Reflection workflow and will be auto-merged.*" \
-              --label "automated,learning,reflection" \
+              --label "automated,learning,reflection,copilot" \
               --base main \
               --head "${branch_name}"
             
