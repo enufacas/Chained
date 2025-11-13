@@ -64,22 +64,8 @@ jobs:
               echo "   Created: ${pr_created}"
               
               # Close the PR with a comment
-              gh pr close ${pr_num} \
-                --comment "🧹 **Automatic Cleanup**
-
-This Chained TV PR has been automatically closed as part of routine maintenance.
-
-**Reason:** PR is older than ${DAYS_OLD} days
-**Created:** ${pr_created}
-**Status:** Episodes are ephemeral - newer episodes have been generated
-
-**Note:** The episode data was either:
-- Already merged in a newer PR
-- Superseded by more recent episodes
-- Part of the continuous episode generation cycle
-
----
-*Automated cleanup by the Chained TV maintenance workflow*" || echo "⚠️ Failed to close PR #${pr_num}"
+              echo "Automatic Cleanup: This Chained TV PR has been closed. Episodes are ephemeral and newer episodes have been generated." | \
+                gh pr close ${pr_num} --comment-file - || echo "⚠️ Failed to close PR #${pr_num}"
               
               # Delete the branch
               if git ls-remote --exit-code --heads origin "${branch_name}" >/dev/null 2>&1; then
