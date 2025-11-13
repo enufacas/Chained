@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 18
+**Total Insights:** 19
 
 **Last Updated:** 2025-11-13
 
@@ -10,6 +10,20 @@
 
 
 ## 📰 From Hacker News
+
+
+### GitHub Partial Outage
+
+**Community Score:** 125 upvotes
+
+**Link:** https://www.githubstatus.com/incidents/1jw8ltnr1qrj
+
+
+**Content Summary:**
+
+GitHub Octicon logo x Get email notifications whenever GitHub creates , updates or resolves an incident. Email address: Enter OTP: Resend OTP in: seconds Didn't receive the OTP? Resend OTP By subscribing you agree to our Privacy Policy . This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply. Get text message notifications whenever GitHub creates or resolves an incident. Country code: Afghanistan (+93) Albania (+355) Algeria (+213) American Samoa (+1) Andorr...
+
+---
 
 
 ### Waymo robotaxis are now giving rides on freeways in LA, SF and Phoenix

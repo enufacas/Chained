@@ -2,7 +2,7 @@
 
 > Security vulnerabilities, encryption, authentication, and privacy
 
-**Total Insights:** 6
+**Total Insights:** 8
 
 **Last Updated:** 2025-11-13
 
@@ -10,6 +10,34 @@
 
 
 ## 📰 From Hacker News
+
+
+### Checkout.com hacked, refuses ransom payment, donates to security labs
+
+**Community Score:** 425 upvotes
+
+**Link:** https://www.checkout.com/blog/protecting-our-merchants-standing-up-to-extortion
+
+
+**Content Summary:**
+
+Sign in Get in touch Resource center Search Text Link Thank you! Your submission has been received! Oops! Something went wrong while submitting the form. Topic Region Perspectives Protecting our Merchants: Standing up to Extortion Our statement detailing an incident concerning a legacy system. We outline our commitment to transparency, accountability, and planned investment in cyber security research. Link to the author's page Mariano Albera November 12, 2025 Link to the author's page What’s ins...
+
+---
+
+
+### Reverse Engineering Yaesu FT-70D Firmware Encryption
+
+**Community Score:** 117 upvotes
+
+**Link:** https://landaire.net/reversing-yaesu-firmware-encryption/
+
+
+**Content Summary:**
+
+This article dives into my full methodology for reverse engineering the tool mentioned in this article. It's a bit longer but is intended to be accessible to folks who aren't necessarily advanced reverse-engineers. Click on any of the images to view at its original resolution. # Background Ham radios are a fun way of learning how the radio spectrum works, and more importantly: they're embedded devices that may run weird chips/firmware! I got curious how easy it'd be to hack my Yaesu FT-70D, so I...
+
+---
 
 
 ### Fighting the New York Times' invasion of user privacy
