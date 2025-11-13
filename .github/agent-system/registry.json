@@ -2,29 +2,6 @@
   "version": "2.0.0",
   "agents": [
     {
-      "id": "agent-1762852654",
-      "name": "\ud83d\udcda Lambda-1111",
-      "specialization": "doc-master",
-      "status": "active",
-      "spawned_at": "2025-11-11T09:17:34.213288Z",
-      "traits": {
-        "creativity": 95,
-        "caution": 61,
-        "speed": 82
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.7088469654840746
-      },
-      "contributions": [],
-      "human_name": "Lambda",
-      "personality": "methodical and precise",
-      "communication_style": "clear and professional"
-    },
-    {
       "id": "agent-1762898916",
       "name": "\ud83d\udcc8 null",
       "human_name": "null",
@@ -44,29 +21,6 @@
         "reviews_given": 0,
         "code_quality_score": 0.5,
         "overall_score": 0.30685795043217107
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1762901537",
-      "name": "\ud83d\udd0c Shannon",
-      "human_name": "Shannon",
-      "specialization": "integration-specialist",
-      "status": "active",
-      "spawned_at": "2025-11-11T22:52:18.015043Z",
-      "personality": "calm and thoughtful",
-      "communication_style": "gets straight to the point",
-      "traits": {
-        "creativity": 52,
-        "caution": 85,
-        "speed": 92
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.3566804676883876
       },
       "contributions": []
     },
@@ -140,29 +94,6 @@
       "contributions": []
     },
     {
-      "id": "agent-1762950740",
-      "name": "\ud83d\uddbc\ufe0f Dieter Rams",
-      "human_name": "Dieter Rams",
-      "specialization": "blueprint-master",
-      "status": "active",
-      "spawned_at": "2025-11-12T12:32:20.646681Z",
-      "personality": "minimalist and principled, with a philosophical bent",
-      "communication_style": "designs with less is more philosophy",
-      "traits": {
-        "creativity": 74,
-        "caution": 42,
-        "speed": 63
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
       "id": "agent-1762960673",
       "name": "\ud83c\udfaf Liskov",
       "human_name": "Liskov",
@@ -175,29 +106,6 @@
         "creativity": 78,
         "caution": 75,
         "speed": 95
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1762982078",
-      "name": "\ud83d\udd17 Knuth",
-      "human_name": "Knuth",
-      "specialization": "coordinate-wizard",
-      "status": "active",
-      "spawned_at": "2025-11-12T21:14:38.427759Z",
-      "personality": "analytical and logical",
-      "communication_style": "gets straight to the point",
-      "traits": {
-        "creativity": 80,
-        "caution": 57,
-        "speed": 71
       },
       "metrics": {
         "issues_resolved": 0,
@@ -232,81 +140,8 @@
       "contributions": []
     }
   ],
-  "hall_of_fame": [
-    {
-      "id": "agent-1762824870",
-      "name": "\ud83d\udd17 Omega-1111",
-      "specialization": "coordinate-wizard",
-      "status": "hall_of_fame",
-      "spawned_at": "2025-11-11T01:34:30.671088Z",
-      "traits": {
-        "creativity": 56,
-        "caution": 43,
-        "speed": 54
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 1.0
-      },
-      "contributions": [],
-      "human_name": "Omega",
-      "personality": "methodical and precise",
-      "communication_style": "clear and professional",
-      "promoted_at": "2025-11-12T00:42:01.513783Z"
-    },
-    {
-      "id": "agent-1762832596",
-      "name": "\ud83e\uddea Zeta-1111",
-      "specialization": "validate-wizard",
-      "status": "hall_of_fame",
-      "spawned_at": "2025-11-11T03:45:09.660Z",
-      "traits": {
-        "creativity": 45,
-        "caution": 78,
-        "speed": 62
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 1.0
-      },
-      "contributions": [],
-      "human_name": "Zeta",
-      "personality": "methodical and precise",
-      "communication_style": "clear and professional",
-      "promoted_at": "2025-11-12T00:42:01.513841Z"
-    },
-    {
-      "id": "agent-1762842252",
-      "name": "\ud83e\uddd9 Iota-1111",
-      "specialization": "validate-wizard",
-      "status": "hall_of_fame",
-      "spawned_at": "2025-11-11T06:24:12.222136Z",
-      "traits": {
-        "creativity": 57,
-        "caution": 95,
-        "speed": 54
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.9867047965775735
-      },
-      "contributions": [],
-      "human_name": "Iota",
-      "personality": "methodical and precise",
-      "communication_style": "clear and professional",
-      "promoted_at": "2025-11-12T00:42:01.513887Z"
-    }
-  ],
-  "system_lead": "agent-1762824870",
+  "hall_of_fame": [],
+  "system_lead": null,
   "config": {
     "spawn_interval_hours": 3,
     "max_active_agents": 10,

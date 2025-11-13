@@ -170,11 +170,12 @@ class GitAnalyzer:
     def extract_agent_from_commit(self, commit_message: str) -> str:
         """Extract agent name from commit message"""
         # Look for agent mentions in commit messages
+        # All agents are inspired by legendary computer scientists
         agents = [
-            'feature-architect', 'doc-master', 'bug-hunter', 'code-poet',
-            'coach-master', 'security-guardian', 'performance-optimizer',
-            'refactor-wizard', 'create-guru', 'engineer-master',
-            'integration-specialist', 'monitor-champion', 'assert-specialist'
+            'accelerate-master', 'assert-specialist', 'coach-master',
+            'create-guru', 'engineer-master', 'engineer-wizard',
+            'investigate-champion', 'monitor-champion', 'organize-guru',
+            'secure-specialist', 'support-master'
         ]
         
         msg_lower = commit_message.lower()

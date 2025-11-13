@@ -39,8 +39,8 @@ def test_validate_agent_name():
     """Test agent name validation."""
     print("Testing validate_agent_name()...")
     
-    # Valid names
-    assert validate_agent_name("bug-hunter") == "bug-hunter"
+    # Valid names - using human-named agents
+    assert validate_agent_name("accelerate-master") == "accelerate-master"
     assert validate_agent_name("test_agent") == "test_agent"
     assert validate_agent_name("Agent123") == "Agent123"
     assert validate_agent_name("  spaced  ") == "spaced"

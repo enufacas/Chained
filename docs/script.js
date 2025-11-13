@@ -955,21 +955,19 @@ function getAgentEmoji(agent) {
     if (emojiMatch) return emojiMatch[1];
     
     // Default emoji based on specialization
+    // All agents are inspired by legendary computer scientists
     const emojiMap = {
-        'bug-hunter': '🐛',
-        'code-poet': '🎨',
-        'coordinate-wizard': '🔗',
-        'doc-master': '📚',
-        'feature-architect': '🏗️',
-        'integration-specialist': '🔌',
-        'performance-optimizer': '⚡',
-        'refactor-wizard': '♻️',
-        'security-guardian': '🛡️',
-        'teach-wizard': '📝',
-        'test-champion': '✅',
-        'ux-enhancer': '✨',
-        'validate-pro': '🔍',
-        'validate-wizard': '🧙'
+        'accelerate-master': '⚡',
+        'assert-specialist': '🧪',
+        'coach-master': '💭',
+        'create-guru': '🏭',
+        'engineer-master': '🔧',
+        'engineer-wizard': '⚙️',
+        'investigate-champion': '🔍',
+        'monitor-champion': '🔒',
+        'organize-guru': '📦',
+        'secure-specialist': '🛡️',
+        'support-master': '📖'
     };
     
     return emojiMap[agent.specialization] || '🤖';

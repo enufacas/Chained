@@ -114,117 +114,127 @@ def get_agent_info(agent_name):
     return parse_agent_file(str(filepath))
 
 # Define keyword patterns for each agent specialization
+# All agents are inspired by legendary computer scientists and engineers
 AGENT_PATTERNS = {
-    'bug-hunter': {
-        'keywords': [
-            'bug', 'error', 'crash', 'fail', 'broken', 'issue', 'problem',
-            'not working', 'exception', 'stacktrace', 'debug', 'fix',
-            'regression', 'edge case', 'null pointer', 'undefined'
-        ],
-        'patterns': [
-            r'\berror\b', r'\bcrash', r'\bfail', r'\bbug\b', r'\bbroken\b',
-            r'\bnot work', r'\bexception\b', r'\bstack\s*trace\b'
-        ]
-    },
-    'feature-architect': {
-        'keywords': [
-            'feature', 'new', 'add', 'implement', 'create', 'build',
-            'enhancement', 'improve', 'design', 'architecture', 'system',
-            'integration', 'capability', 'functionality'
-        ],
-        'patterns': [
-            r'\bfeature\b', r'\bnew\b', r'\badd\b', r'\bimplement',
-            r'\bcreate\b', r'\bbuild\b', r'\benhance', r'\bdesign\b'
-        ]
-    },
-    'doc-master': {
-        'keywords': [
-            'documentation', 'docs', 'readme', 'comment', 'explain',
-            'clarify', 'guide', 'tutorial', 'example', 'docstring',
-            'api doc', 'manual', 'help', 'instructions'
-        ],
-        'patterns': [
-            r'\bdoc', r'\breadme\b', r'\bguide\b', r'\btutorial\b',
-            r'\bexample', r'\bcomment', r'\bexplain\b'
-        ]
-    },
-    'test-champion': {
-        'keywords': [
-            'test', 'testing', 'coverage', 'unit test', 'integration test',
-            'e2e', 'spec', 'assertion', 'mock', 'validate', 'verification',
-            'quality assurance', 'qa'
-        ],
-        'patterns': [
-            r'\btest', r'\bcoverage\b', r'\bunit\b', r'\bintegration\b',
-            r'\bvalidat', r'\bverif', r'\bqa\b'
-        ]
-    },
-    'performance-optimizer': {
+    'accelerate-master': {
         'keywords': [
             'performance', 'slow', 'optimize', 'speed', 'latency',
             'throughput', 'efficiency', 'memory', 'cpu', 'bottleneck',
-            'scalability', 'fast', 'faster'
+            'scalability', 'fast', 'faster', 'algorithm', 'accelerate'
         ],
         'patterns': [
             r'\bperformance\b', r'\bslow\b', r'\boptimi', r'\bspeed\b',
-            r'\blatency\b', r'\bmemory\b', r'\bbottleneck\b'
+            r'\blatency\b', r'\bmemory\b', r'\bbottleneck\b', r'\balgorithm\b'
         ]
     },
-    'security-guardian': {
+    'assert-specialist': {
+        'keywords': [
+            'test', 'testing', 'coverage', 'unit test', 'integration test',
+            'e2e', 'spec', 'assertion', 'mock', 'validate', 'verification',
+            'quality assurance', 'qa', 'assert', 'specification'
+        ],
+        'patterns': [
+            r'\btest', r'\bcoverage\b', r'\bunit\b', r'\bintegration\b',
+            r'\bvalidat', r'\bverif', r'\bqa\b', r'\bassert'
+        ]
+    },
+    'coach-master': {
+        'keywords': [
+            'review', 'code review', 'best practices', 'mentor', 'guide',
+            'coaching', 'teaching', 'feedback', 'standards', 'conventions',
+            'principles', 'patterns', 'learning', 'knowledge sharing'
+        ],
+        'patterns': [
+            r'\breview\b', r'\bmentor', r'\bguide\b', r'\bcoach',
+            r'\bbest practice', r'\bfeedback\b', r'\bstandard', r'\bpattern'
+        ]
+    },
+    'create-guru': {
+        'keywords': [
+            'feature', 'new', 'create', 'build', 'implement', 'infrastructure',
+            'system', 'innovative', 'groundbreaking', 'visionary', 'invention',
+            'capability', 'functionality', 'creative'
+        ],
+        'patterns': [
+            r'\bfeature\b', r'\bnew\b', r'\bcreate\b', r'\bbuild\b',
+            r'\binfrastructure\b', r'\binnovative\b', r'\bvision'
+        ]
+    },
+    'engineer-master': {
+        'keywords': [
+            'api', 'endpoint', 'service', 'engineering', 'systematic',
+            'rigorous', 'architecture', 'design', 'implementation',
+            'rest', 'graphql', 'http', 'backend'
+        ],
+        'patterns': [
+            r'\bapi\b', r'\bendpoint\b', r'\bservice\b', r'\bengine',
+            r'\barchitecture\b', r'\bdesign\b', r'\brest\b', r'\bhttp\b'
+        ]
+    },
+    'engineer-wizard': {
+        'keywords': [
+            'api', 'service', 'engineering', 'innovative', 'creative',
+            'bold', 'visionary', 'endpoint', 'integration', 'system',
+            'inventive', 'groundbreaking'
+        ],
+        'patterns': [
+            r'\bapi\b', r'\bservice\b', r'\bengine', r'\binnovative\b',
+            r'\bintegrat', r'\binventive\b', r'\bbold\b'
+        ]
+    },
+    'investigate-champion': {
+        'keywords': [
+            'investigate', 'analyze', 'metrics', 'data', 'pattern',
+            'flow', 'dependency', 'trace', 'research', 'explore',
+            'diagnostic', 'analysis', 'insight', 'understanding'
+        ],
+        'patterns': [
+            r'\binvestigat', r'\banalyz', r'\bmetric', r'\bdata\b',
+            r'\bpattern', r'\bflow\b', r'\bdependenc', r'\btrace\b'
+        ]
+    },
+    'monitor-champion': {
+        'keywords': [
+            'security', 'monitor', 'surveillance', 'access control',
+            'authentication', 'authorization', 'audit', 'compliance',
+            'data integrity', 'privacy', 'protection', 'watch'
+        ],
+        'patterns': [
+            r'\bsecur', r'\bmonitor', r'\baccess\b', r'\bauth',
+            r'\baudit\b', r'\bintegrity\b', r'\bprotect', r'\bwatch\b'
+        ]
+    },
+    'organize-guru': {
+        'keywords': [
+            'refactor', 'clean', 'organize', 'structure', 'duplicate',
+            'complexity', 'simplify', 'solid', 'principles', 'discipline',
+            'maintainable', 'reorganize', 'consolidate'
+        ],
+        'patterns': [
+            r'\brefactor', r'\bclean\b', r'\borganiz', r'\bstructure\b',
+            r'\bduplicate', r'\bcomplex', r'\bsimplif', r'\bsolid\b'
+        ]
+    },
+    'secure-specialist': {
         'keywords': [
             'security', 'vulnerability', 'exploit', 'attack', 'xss',
-            'sql injection', 'csrf', 'authentication', 'authorization',
-            'encryption', 'secure', 'sanitize', 'validate input'
+            'sql injection', 'csrf', 'encryption', 'secure', 'sanitize',
+            'threat', 'risk', 'defense', 'protection', 'safety'
         ],
         'patterns': [
             r'\bsecur', r'\bvulner', r'\bexploit\b', r'\battack\b',
-            r'\bxss\b', r'\binjection\b', r'\bauth', r'\bencrypt'
+            r'\bxss\b', r'\binjection\b', r'\bencrypt', r'\bthreat\b'
         ]
     },
-    'code-poet': {
+    'support-master': {
         'keywords': [
-            'refactor', 'clean', 'readable', 'maintainable', 'code quality',
-            'style', 'formatting', 'conventions', 'best practices',
-            'elegant', 'simplify', 'clarity'
+            'support', 'help', 'guide', 'mentor', 'review', 'feedback',
+            'learning', 'skill', 'knowledge', 'best practices', 'coaching',
+            'principles', 'standards', 'teaching'
         ],
         'patterns': [
-            r'\brefactor\b', r'\bclean\b', r'\breadable\b', r'\bmaintain',
-            r'\bcode quality\b', r'\bstyle\b', r'\bformat', r'\belegant\b'
-        ]
-    },
-    'refactor-wizard': {
-        'keywords': [
-            'refactor', 'restructure', 'reorganize', 'duplicate',
-            'technical debt', 'complexity', 'simplify', 'decompose',
-            'extract', 'consolidate', 'improve structure'
-        ],
-        'patterns': [
-            r'\brefactor', r'\brestructur', r'\breorganiz', r'\bduplicate',
-            r'\btechnical debt\b', r'\bcomplex', r'\bsimplif', r'\bextract\b'
-        ]
-    },
-    'integration-specialist': {
-        'keywords': [
-            'integration', 'api', 'webhook', 'external', 'third-party',
-            'service', 'endpoint', 'http', 'rest', 'graphql', 'connect',
-            'interface', 'plugin', 'stripe', 'paypal', 'payment', 'oauth'
-        ],
-        'patterns': [
-            r'\bintegrat', r'\bapi\b', r'\bwebhook\b', r'\bexternal\b',
-            r'\bthird.?party\b', r'\bservice\b', r'\bendpoint\b', r'\bhttp\b',
-            r'\bstripe\b', r'\bpaypal\b', r'\bpayment\b', r'\boauth\b'
-        ]
-    },
-    'ux-enhancer': {
-        'keywords': [
-            'ui', 'ux', 'user interface', 'user experience', 'design',
-            'usability', 'accessibility', 'a11y', 'responsive', 'layout',
-            'css', 'styling', 'visual', 'polish', 'colors', 'theme'
-        ],
-        'patterns': [
-            r'\bui\b', r'\bux\b', r'\buser interface\b', r'\buser experience\b',
-            r'\busabilit', r'\baccessibilit', r'\ba11y\b', r'\bresponsive\b',
-            r'\bdesign\b', r'\bcolors?\b', r'\btheme\b', r'\blayout\b'
+            r'\bsupport\b', r'\bhelp\b', r'\bguide\b', r'\bmentor',
+            r'\breview\b', r'\bfeedback\b', r'\blearn', r'\bskill\b'
         ]
     }
 }
@@ -320,9 +330,9 @@ def match_issue_to_agent(title, body=""):
     
     # Find the best match
     if not scores or max(scores.values()) == 0:
-        # No clear match, default to feature-architect for general issues
+        # No clear match, default to create-guru for general issues
         return {
-            'agent': 'feature-architect',
+            'agent': 'create-guru',
             'score': 0,
             'confidence': 'low',
             'reason': 'No specific keywords matched, using default agent'
@@ -373,7 +383,7 @@ def main():
     except Exception as e:
         print(json.dumps({
             'error': str(e),
-            'agent': 'feature-architect',
+            'agent': 'create-guru',
             'score': 0,
             'confidence': 'low',
             'reason': 'Error processing input, using default agent'
