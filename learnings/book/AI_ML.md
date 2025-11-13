@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 103
+**Total Insights:** 105
 
 **Last Updated:** 2025-11-13
 
@@ -10,6 +10,29 @@
 
 
 ## 📰 From Hacker News
+
+
+### GPT-5.1: A smarter, more conversational ChatGPT
+
+**Community Score:** 413 upvotes
+
+**Link:** https://openai.com/index/gpt-5-1/
+
+---
+
+
+### Marble: A Multimodal World Model
+
+**Community Score:** 230 upvotes
+
+**Link:** https://www.worldlabs.ai/blog/marble-world-model
+
+
+**Content Summary:**
+
+November 12, 2025 Marble, our frontier multimodal world model, is available to everyone starting today Marble: A Multimodal World Model Spatial intelligence is the next frontier in AI, demanding powerful world models to realize its full potential. World models should reconstruct, generate, and simulate 3D worlds; and allow both humans and agents to interact with them. Spatially intelligent world models will transform a wide variety of industries over the coming years. Two months ago we shared a ...
+
+---
 
 
 ### Marble: A Multimodal World Model
@@ -228,24 +251,6 @@ Hi! We’re LateNiteSoft, and we’ve been wo...
 **Community Score:** 170 upvotes
 
 **Link:** https://arxiv.org/abs/2510.21890
-
----
-
-
-### Email verification protocol
-
-**Community Score:** 164 upvotes
-
-**Link:** https://github.com/WICG/email-verification-protocol
-
----
-
-
-### LLM policy?
-
-**Community Score:** 145 upvotes
-
-**Link:** https://github.com/opencontainers/runc/issues/4990
 
 ---
 

@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 18
+**Total Insights:** 19
 
 **Last Updated:** 2025-11-13
 
@@ -10,6 +10,20 @@
 
 
 ## 📰 From Hacker News
+
+
+### Digital ID, a new way to create and present an ID in Apple Wallet
+
+**Community Score:** 125 upvotes
+
+**Link:** https://www.apple.com/newsroom/2025/11/apple-introduces-digital-id-a-new-way-to-create-and-present-an-id-in-apple-wallet/
+
+
+**Content Summary:**
+
+UPDATE November 12, 2025 Apple introduces Digital ID, a new way to create and present an ID in Apple Wallet Digital ID offers a secure and private way for users to create an ID in Apple Wallet using information from their U.S. passport, and present their ID with iPhone or Apple Watch Available today, Digital ID is a new way for users to create an ID in Apple Wallet using information from their U.S. passport, and present it with the security and privacy of iPhone or Apple Watch. Apple today annou...
+
+---
 
 
 ### Waymo robotaxis are now giving rides on freeways in LA, SF and Phoenix

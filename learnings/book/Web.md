@@ -2,7 +2,7 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 6
+**Total Insights:** 7
 
 **Last Updated:** 2025-11-13
 
@@ -10,6 +10,13 @@
 
 
 ## 📰 From Hacker News
+
+
+### Launch HN: JSX Tool (YC F25) – A Browser Dev-Panel IDE for React
+
+**Community Score:** 103 upvotes
+
+---
 
 
 ### Meta replaces WhatsApp for Windows with web wrapper that uses 1 GB RAM when idle

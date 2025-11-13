@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 28
+**Total Insights:** 31
 
 **Last Updated:** 2025-11-13
 
@@ -10,6 +10,48 @@
 
 
 ## 📰 From Hacker News
+
+
+### Google will allow users to sideload Android apps without verification
+
+**Community Score:** 1127 upvotes
+
+**Link:** https://android-developers.googleblog.com/2025/11/android-developer-verification-early.html
+
+
+**Content Summary:**
+
+☰ Android Developers Blog The latest Android and Google Play news for app and game developers. 🔍 Android Developers → Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News More | 12 November 2025 Android developer verification: Early access starts now as we continue to build with your feedback Share this post LinkedIn Twitter Facebook Email Copy link Link copied to clipboard Posted by Matthew Forsythe Di...
+
+---
+
+
+### Mergiraf: Syntax-Aware Merging for Git
+
+**Community Score:** 118 upvotes
+
+**Link:** https://lwn.net/SubscriberLink/1042355/434ad706cc594276/
+
+
+**Content Summary:**
+
+LWN .net News from the source Content Weekly Edition Archives Search Kernel Security Events calendar Unread comments LWN FAQ Write for us Edition Return to the Front page User: Password: | | Subscribe / Log in / New account Mergiraf: syntax-aware merging for Git By Daroc Alden October 31, 2025 The idea of automatic syntax-aware merging in version-control systems goes back to 2005 or earlier , but initial implementations were often language-specific and slow. Mergiraf is a merge-conflict resolver...
+
+---
+
+
+### Yt-dlp: External JavaScript runtime now required for full YouTube support
+
+**Community Score:** 1003 upvotes
+
+**Link:** https://github.com/yt-dlp/yt-dlp/issues/15012
+
+
+**Content Summary:**
+
+yt-dlp / yt-dlp Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 10.8k Star 135k [Announcement] External JavaScript runtime now required for full YouTube support #15012 New issue Copy link New issue Copy link Open Open [Announcement] External JavaScript runtime now required for full YouTube support #15012 Copy link Labels discussion/announcement Description bashonly opened on Nov 12, 2025 Issue body...
+
+---
 
 
 ### Google will allow users to sideload Android apps without verification
