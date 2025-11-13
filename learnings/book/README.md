@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-12 20:46 UTC
+**Generated:** 2025-11-13 07:11 UTC
 
-**Total Learning Sessions:** 25
+**Total Learning Sessions:** 27
 
-**Total Insights:** 298
+**Total Insights:** 314
 
 ---
 
@@ -18,14 +18,14 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 101
+**Insights:** 103
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 26
+**Insights:** 28
 
 
 ### [🗄️ Databases & Data Management](./Database.md)
@@ -39,14 +39,14 @@ SQL, NoSQL, data storage, and data engineering
 
 Web technologies, browsers, APIs, and frontend frameworks
 
-**Insights:** 5
+**Insights:** 6
 
 
 ### [🔒 Security & Privacy](./Security.md)
 
 Security vulnerabilities, encryption, authentication, and privacy
 
-**Insights:** 5
+**Insights:** 6
 
 
 ### [⚡ Performance & Optimization](./Performance.md)
@@ -67,7 +67,7 @@ IDEs, editors, debuggers, and productivity tools
 
 General technology news and insights
 
-**Insights:** 132
+**Insights:** 142
 
 
 ## 📊 Statistics
@@ -75,26 +75,28 @@ General technology news and insights
 
 ### By Source
 
-- **Hacker News:** 14 learning sessions
+- **Hacker News:** 15 learning sessions
 
 - **TLDR Tech:** 11 learning sessions
+
+- **Unknown:** 1 learning sessions
 
 
 ### By Topic
 
-- **📚 General Tech Insights:** 132 insights
+- **📚 General Tech Insights:** 142 insights
 
-- **🤖 AI & Machine Learning:** 101 insights
+- **🤖 AI & Machine Learning:** 103 insights
 
-- **💻 Programming Languages & Frameworks:** 26 insights
+- **💻 Programming Languages & Frameworks:** 28 insights
 
 - **🔧 Developer Tools:** 18 insights
 
 - **⚡ Performance & Optimization:** 7 insights
 
-- **🔒 Security & Privacy:** 5 insights
+- **🔒 Security & Privacy:** 6 insights
 
-- **🌐 Web Development:** 5 insights
+- **🌐 Web Development:** 6 insights
 
 - **🗄️ Databases & Data Management:** 4 insights
 

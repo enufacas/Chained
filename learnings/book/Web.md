@@ -2,14 +2,28 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 5
+**Total Insights:** 6
 
-**Last Updated:** 2025-11-12
+**Last Updated:** 2025-11-13
 
 ---
 
 
 ## 📰 From Hacker News
+
+
+### Meta replaces WhatsApp for Windows with web wrapper that uses 1 GB RAM when idle
+
+**Community Score:** 103 upvotes
+
+**Link:** https://www.windowslatest.com/2025/11/12/meta-just-killed-native-whatsapp-on-windows-11-now-it-opens-webview-uses-1gb-ram-all-the-time/
+
+
+**Content Summary:**
+
+Home Windows 11 Windows 11 Meta just killed native WhatsApp on Windows 11, now it opens WebView, uses 1GB RAM all the time By Mayank Parmar - November 12, 2025 0 WhatsApp on Windows 11 has just got a ‘major’ upgrade, and you’re probably going to hate it because it simply loads web.whatsapp.com in a WebView2 container. This means WhatsApp on Windows 11 is cooked, and it’s back to being absolute garbage in terms of performance. WhatsApp is one of those Windows apps that went from being a web wrapp...
+
+---
 
 
 ### .NET MAUI is coming to Linux and the browser
