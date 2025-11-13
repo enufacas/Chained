@@ -207,6 +207,47 @@ gh run list --workflow=auto-review-merge.yml --limit 5
 
 ---
 
+### Issue: "Workflow fails with 'could not add label' error"
+
+**Symptoms:**
+- Workflows complete successfully but fail at PR creation
+- Error: `could not add label: 'label-name' not found`
+- Specific workflows affected:
+  - Chained TV Episode Generator
+  - Code Quality: Analyzer
+
+**Root Cause:**
+Workflows attempt to apply GitHub labels that don't exist in the repository.
+
+**Solution:**
+
+Run the automated fix script:
+```bash
+./scripts/create-missing-labels.sh
+```
+
+Or create labels manually at: `https://github.com/{owner}/{repo}/labels`
+
+**Required Labels:**
+- `chained-tv` (Medium Purple #7B68EE) - For TV episode PRs
+- `code-quality` (Green #0E8A16) - For code analysis PRs
+- `automated` (Yellow #FBCA04) - For all automated PRs
+- `ai-generated` (Light Purple #D4C5F9) - For AI-generated content
+
+**Verification:**
+```bash
+# List existing labels
+gh label list
+
+# Verify workflows pass after label creation
+gh run list --workflow=chained_tv.yml --limit 1
+gh run list --workflow=code-analyzer.yml --limit 1
+```
+
+**Reference:** [Workflow Health Fix Documentation](./workflow-health-fix-20251113.md)
+
+---
+
 ### Issue: "Timeline not updating"
 
 **Symptoms:**

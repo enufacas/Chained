@@ -17,6 +17,9 @@ This directory contains shell scripts and utility programs for managing and moni
 ### Data Management
 - **`manual-data-refresh.sh`** - Manually refresh system data
 
+### Repository Setup
+- **`create-missing-labels.sh`** - Create missing repository labels required by automated workflows
+
 ### Demonstrations
 - **`demo-archaeology-learning.sh`** - Demonstrate archaeology learning features
 - **`demo-time-travel.py`** - Python script demonstrating time-travel debugging features
