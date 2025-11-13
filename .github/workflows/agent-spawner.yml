@@ -416,6 +416,38 @@ jobs:
           print(f"✅ Agent {agent_name} registered successfully!")
           PYTHON_SCRIPT
 
+      - name: Assign mentor
+        id: assign_mentor
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
+          
+          echo "🎓 Checking for available mentors..."
+          
+          # Try to assign a mentor
+          MENTOR_OUTPUT=$(python3 tools/assign-mentor.py "$AGENT_ID" --specialization "$SPECIALIZATION" --json 2>&1)
+          MENTOR_EXIT_CODE=$?
+          
+          if [ $MENTOR_EXIT_CODE -eq 0 ]; then
+            echo "has_mentor=true" >> $GITHUB_OUTPUT
+            
+            MENTOR_NAME=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_name')
+            MENTOR_ID=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_id')
+            MENTOR_SPEC=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_specialization')
+            MATCH_TYPE=$(echo "$MENTOR_OUTPUT" | jq -r '.matching_type')
+            
+            echo "mentor_name=$MENTOR_NAME" >> $GITHUB_OUTPUT
+            echo "mentor_id=$MENTOR_ID" >> $GITHUB_OUTPUT
+            echo "mentor_specialization=$MENTOR_SPEC" >> $GITHUB_OUTPUT
+            echo "match_type=$MATCH_TYPE" >> $GITHUB_OUTPUT
+            
+            echo "✅ Mentor assigned: $MENTOR_NAME ($MATCH_TYPE match)"
+          else
+            echo "has_mentor=false" >> $GITHUB_OUTPUT
+            echo "⚠️  No mentor available - agent will proceed independently"
+          fi
+
       - name: Create agent profile
         if: steps.check_capacity.outputs.can_spawn == 'true'
         run: |
@@ -431,6 +463,29 @@ jobs:
           # Get mission from convention-compliant agent definition
           AGENT_DESCRIPTION=$(python3 tools/get-agent-info.py description "$SPECIALIZATION")
           
+          # Build mentorship section if mentor assigned
+          HAS_MENTOR="${{ steps.assign_mentor.outputs.has_mentor }}"
+          if [ "$HAS_MENTOR" == "true" ]; then
+            MENTOR_SECTION="
+          ## 🎓 Mentorship
+          
+          **Mentor**: ${{ steps.assign_mentor.outputs.mentor_name }}  
+          **Mentor ID**: ${{ steps.assign_mentor.outputs.mentor_id }}  
+          **Mentor Specialization**: ${{ steps.assign_mentor.outputs.mentor_specialization }}  
+          **Match Type**: ${{ steps.assign_mentor.outputs.match_type }}  
+          
+          This agent has been paired with a Hall of Fame mentor for accelerated learning and knowledge transfer.
+          "
+          else
+            MENTOR_SECTION="
+          ## 🎓 Mentorship
+          
+          **Status**: No mentor assigned  
+          
+          This agent will develop independently. Mentorship becomes available when Hall of Fame agents (score > 85%) have capacity.
+          "
+          fi
+          
           cat > ".github/agent-system/profiles/${AGENT_ID}.md" << EOF
           # $AGENT_NAME
           
@@ -440,6 +495,7 @@ jobs:
           **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](../.github/agents/${SPECIALIZATION}.md)  
           **Status**: 🟢 Active  
           **Spawned**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          $MENTOR_SECTION
           
           ## Personality
           
@@ -517,6 +573,32 @@ jobs:
             NEW_AGENT_INFO=""
           fi
           
+          # Build mentorship info if mentor assigned
+          HAS_MENTOR="${{ steps.assign_mentor.outputs.has_mentor }}"
+          if [ "$HAS_MENTOR" == "true" ]; then
+            MENTORSHIP_INFO="### 🎓 Mentorship Assignment
+          
+          **Mentor**: ${{ steps.assign_mentor.outputs.mentor_name }}  
+          **Mentor Specialization**: ${{ steps.assign_mentor.outputs.mentor_specialization }}  
+          **Match Type**: ${{ steps.assign_mentor.outputs.match_type }}
+          
+          This agent has been paired with a Hall of Fame mentor for accelerated learning! The mentor will guide the agent through:
+          - Best practices and successful patterns
+          - Specialization-specific techniques
+          - Code quality standards
+          - Knowledge transfer from proven expertise
+          
+          "
+          else
+            MENTORSHIP_INFO="### 🎓 Mentorship Status
+          
+          **Status**: No mentor currently available
+          
+          This agent will develop independently. Mentorship becomes available when Hall of Fame agents (score > 85%) have capacity.
+          
+          "
+          fi
+          
           PR_URL=$(gh pr create \
             --title "$EMOJI New Agent Spawned: $HUMAN_NAME" \
             --body "## 🎉 Meet $HUMAN_NAME!
@@ -530,7 +612,7 @@ jobs:
           **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](.github/agents/${SPECIALIZATION}.md)  
           **Spawned At**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           
-          ${NEW_AGENT_INFO}### Personality Profile
+          ${NEW_AGENT_INFO}${MENTORSHIP_INFO}### Personality Profile
           
           **Character**: $PERSONALITY  
           **Communication Style**: $COMM_STYLE

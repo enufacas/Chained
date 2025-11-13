@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0",
+  "active_mentorships": [],
+  "completed_mentorships": [],
+  "mentor_capacity": {},
+  "mentorship_metrics": {
+    "total_mentorships": 0,
+    "active_mentorships": 0,
+    "completed_mentorships": 0,
+    "success_rate": 0.0,
+    "avg_mentee_improvement": 0.0
+  },
+  "config": {
+    "max_mentees_per_mentor": 3,
+    "mentorship_duration_days": 14,
+    "success_threshold_improvement": 0.15,
+    "hall_of_fame_mentor_requirement": 0.85
+  },
+  "last_updated": null
+}
