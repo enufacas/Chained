@@ -77,8 +77,9 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            # Create a new branch for the PR
-            BRANCH_NAME="agent-data-sync/$(date +%Y%m%d-%H%M%S)"
+            # Create a new branch for the PR with unique name using run ID
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="agent-data-sync/${TIMESTAMP}-${{ github.run_id }}"
             git checkout -b "$BRANCH_NAME"
             
             # Commit changes
@@ -87,9 +88,10 @@ jobs:
             # Push branch
             git push origin "$BRANCH_NAME"
             
-            # Create PR
+            # Create PR with consistent date formatting
+            PR_DATE=$(date +%Y-%m-%d)
             gh pr create \
-              --title "📊 Sync agent data to GitHub Pages - $(date +%Y-%m-%d)" \
+              --title "📊 Sync agent data to GitHub Pages - ${PR_DATE}" \
               --body "## Agent Data Sync
 
 This PR syncs agent registry data from \`.github/agent-system/registry.json\` to the \`docs/data/\` directory for GitHub Pages.
