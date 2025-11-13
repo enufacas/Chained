@@ -1,0 +1,811 @@
+{
+  "version": "1.0.0",
+  "coordinations": [
+    {
+      "id": "coord-issue-9-1763008497",
+      "task_id": "issue-9",
+      "created_at": "2025-11-13T04:34:57.299347+00:00",
+      "plan": {
+        "task_id": "issue-9",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-9-subtask-1",
+            "description": "Api work: Design and implement API endpoints for: Implement rate limiting for API endpoints",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": null,
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-9-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "engineer-wizard",
+          "engineer-master"
+        ]
+      },
+      "assignments": {},
+      "status": "active"
+    },
+    {
+      "id": "coord-issue-11-1763008497",
+      "task_id": "issue-11",
+      "created_at": "2025-11-13T04:34:57.299892+00:00",
+      "plan": {
+        "task_id": "issue-11",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-11-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Simple test task",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-11-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "issue-11-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-avg-test-1-1763008497",
+      "task_id": "avg-test-1",
+      "created_at": "2025-11-13T04:34:57.306095+00:00",
+      "plan": {
+        "task_id": "avg-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "avg-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task with multiple agents",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "avg-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "avg-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-stat-test-1-1763008497",
+      "task_id": "stat-test-1",
+      "created_at": "2025-11-13T04:34:57.306673+00:00",
+      "plan": {
+        "task_id": "stat-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "stat-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task for statistics",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "stat-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "stat-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-issue-9-1763008561",
+      "task_id": "issue-9",
+      "created_at": "2025-11-13T04:36:01.488333+00:00",
+      "plan": {
+        "task_id": "issue-9",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-9-subtask-1",
+            "description": "Api work: Design and implement API endpoints for: Implement rate limiting for API endpoints",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": null,
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-9-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "engineer-master",
+          "engineer-wizard"
+        ]
+      },
+      "assignments": {},
+      "status": "active"
+    },
+    {
+      "id": "coord-issue-11-1763008561",
+      "task_id": "issue-11",
+      "created_at": "2025-11-13T04:36:01.489123+00:00",
+      "plan": {
+        "task_id": "issue-11",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-11-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Simple test task",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-11-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "issue-11-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-avg-test-1-1763008561",
+      "task_id": "avg-test-1",
+      "created_at": "2025-11-13T04:36:01.495596+00:00",
+      "plan": {
+        "task_id": "avg-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "avg-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task with multiple agents",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "avg-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "avg-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-stat-test-1-1763008561",
+      "task_id": "stat-test-1",
+      "created_at": "2025-11-13T04:36:01.496371+00:00",
+      "plan": {
+        "task_id": "stat-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "stat-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task for statistics",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "stat-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "stat-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-issue-9-1763008594",
+      "task_id": "issue-9",
+      "created_at": "2025-11-13T04:36:34.827571+00:00",
+      "plan": {
+        "task_id": "issue-9",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-9-subtask-1",
+            "description": "Api work: Design and implement API endpoints for: Implement rate limiting for API endpoints",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": null,
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-9-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "engineer-master",
+          "engineer-wizard"
+        ]
+      },
+      "assignments": {},
+      "status": "active"
+    },
+    {
+      "id": "coord-issue-11-1763008594",
+      "task_id": "issue-11",
+      "created_at": "2025-11-13T04:36:34.828483+00:00",
+      "plan": {
+        "task_id": "issue-11",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-11-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Simple test task",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-11-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "issue-11-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-avg-test-1-1763008594",
+      "task_id": "avg-test-1",
+      "created_at": "2025-11-13T04:36:34.835237+00:00",
+      "plan": {
+        "task_id": "avg-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "avg-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task with multiple agents",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "avg-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "avg-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-stat-test-1-1763008594",
+      "task_id": "stat-test-1",
+      "created_at": "2025-11-13T04:36:34.836162+00:00",
+      "plan": {
+        "task_id": "stat-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "stat-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task for statistics",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "stat-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "stat-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-issue-9-1763008627",
+      "task_id": "issue-9",
+      "created_at": "2025-11-13T04:37:07.237593+00:00",
+      "plan": {
+        "task_id": "issue-9",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-9-subtask-1",
+            "description": "Api work: Design and implement API endpoints for: Implement rate limiting for API endpoints",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": null,
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-9-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "engineer-wizard",
+          "engineer-master"
+        ]
+      },
+      "assignments": {},
+      "status": "active"
+    },
+    {
+      "id": "coord-issue-11-1763008627",
+      "task_id": "issue-11",
+      "created_at": "2025-11-13T04:37:07.238643+00:00",
+      "plan": {
+        "task_id": "issue-11",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-11-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Simple test task",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-11-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "issue-11-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-avg-test-1-1763008627",
+      "task_id": "avg-test-1",
+      "created_at": "2025-11-13T04:37:07.245555+00:00",
+      "plan": {
+        "task_id": "avg-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "avg-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task with multiple agents",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "avg-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "avg-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-stat-test-1-1763008627",
+      "task_id": "stat-test-1",
+      "created_at": "2025-11-13T04:37:07.246630+00:00",
+      "plan": {
+        "task_id": "stat-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "stat-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task for statistics",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "stat-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "stat-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-issue-9-1763008636",
+      "task_id": "issue-9",
+      "created_at": "2025-11-13T04:37:16.197442+00:00",
+      "plan": {
+        "task_id": "issue-9",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-9-subtask-1",
+            "description": "Api work: Design and implement API endpoints for: Implement rate limiting for API endpoints",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": null,
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-9-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "engineer-wizard",
+          "engineer-master"
+        ]
+      },
+      "assignments": {},
+      "status": "active"
+    },
+    {
+      "id": "coord-issue-11-1763008636",
+      "task_id": "issue-11",
+      "created_at": "2025-11-13T04:37:16.198696+00:00",
+      "plan": {
+        "task_id": "issue-11",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-11-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Simple test task",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-11-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "issue-11-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-avg-test-1-1763008636",
+      "task_id": "avg-test-1",
+      "created_at": "2025-11-13T04:37:16.205494+00:00",
+      "plan": {
+        "task_id": "avg-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "avg-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task with multiple agents",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "avg-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "avg-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-stat-test-1-1763008636",
+      "task_id": "stat-test-1",
+      "created_at": "2025-11-13T04:37:16.206686+00:00",
+      "plan": {
+        "task_id": "stat-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "stat-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task for statistics",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "stat-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "stat-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    }
+  ],
+  "statistics": {
+    "total_coordinations": 20,
+    "successful_coordinations": 0,
+    "failed_coordinations": 0,
+    "avg_agents_per_task": 0.75
+  }
+}
