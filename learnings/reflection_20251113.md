@@ -1,3 +1,4 @@
+
 ## 🧠 Daily Learning Reflection
 
 **Date:** 2025-11-13
@@ -6,9 +7,9 @@
 
 ### 📖 Topics Reflected Upon:
 
-1. .NET MAUI is coming to Linux and the browser
-2. Avalonia as a cross-platform UI framework backend
-3. Visualize FastAPI endpoints with FastAPI-Voyager
+1. Meta replaces WhatsApp for Windows with web wrapper that uses 1 GB RAM when idle
+2. Visualize FastAPI endpoints with FastAPI-Voyager
+3. .NET MAUI is coming to Linux and the browser
 
 ### 💡 Key Takeaways:
 
