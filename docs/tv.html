@@ -426,6 +426,11 @@
         <header>
             <h1>📺 Chained TV</h1>
             <div class="subtitle">Automated Repository Stories</div>
+            <div style="margin-top: 20px;">
+                <a href="episodes.html" style="color: #667eea; text-decoration: none; font-size: 1rem; padding: 8px 16px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border: 1px solid rgba(102, 126, 234, 0.3);">
+                    📚 Browse All Episodes
+                </a>
+            </div>
         </header>
 
         <div class="view-toggle">
@@ -458,12 +463,16 @@
         let episodeIndex = null;
         let currentEpisode = null;
 
-        // Fetch and display the latest episode
-        async function loadEpisode(filename = 'latest.json') {
+        // Fetch and display the latest episode or a specific episode
+        async function loadEpisode(filename = null) {
             const appDiv = document.getElementById('app');
 
             try {
-                const response = await fetch(`./episodes/${filename}`);
+                // Check if a specific episode is requested via URL parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const episodeFile = filename || urlParams.get('episode') || 'latest.json';
+                
+                const response = await fetch(`./episodes/${episodeFile}`);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -483,7 +492,7 @@
                         </p>
                         <p style="margin-top: 20px; color: #aaa;">
                             Episodes are generated every 2 hours from repository activity.
-                            Check back soon!
+                            Check back soon or <a href="episodes.html" style="color: #667eea;">browse the archive</a>!
                         </p>
                     </div>
                 `;

@@ -425,14 +425,17 @@ jobs:
         id: assign_mentor
         if: steps.check_capacity.outputs.can_spawn == 'true'
         run: |
+          set +e  # Disable exit on error for this step to handle mentor unavailability gracefully
           AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
           SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
           
           echo "🎓 Checking for available mentors..."
           
-          # Try to assign a mentor
+          # Try to assign a mentor (allow script to fail gracefully)
+          set +e  # Don't exit on error
           MENTOR_OUTPUT=$(python3 tools/assign-mentor.py "$AGENT_ID" --specialization "$SPECIALIZATION" --json 2>&1)
           MENTOR_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
           
           if [ $MENTOR_EXIT_CODE -eq 0 ] && [ -n "$MENTOR_OUTPUT" ]; then
             # Verify the output is valid JSON
