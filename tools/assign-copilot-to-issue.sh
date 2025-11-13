@@ -180,6 +180,8 @@ The agent needs to be registered and active in the system before work can begin.
 > This issue has been assigned to GitHub Copilot with the **$agent_emoji $matched_agent** custom agent profile.
 > 
 > **@$matched_agent** - Please use the specialized approach and tools defined in [\`.github/agents/${matched_agent}.md\`](https://github.com/$GITHUB_REPOSITORY/blob/main/.github/agents/${matched_agent}.md).
+> 
+> **IMPORTANT**: Always mention **@$matched_agent** by name in all conversations, comments, and PRs related to this issue.
 
 ---
 
@@ -328,28 +330,34 @@ Could not find GitHub Copilot in the list of available assignees for this reposi
 
 **SUCCESS!** This issue was assigned directly to the custom agent actor:
 
-- **Custom Agent**: $agent_emoji $matched_agent
+- **Custom Agent**: $agent_emoji **@$matched_agent**
 - **Actor ID**: \`$target_actor_id\`
 - **Agent Path**: [\`.github/agents/${matched_agent}.md\`](https://github.com/$GITHUB_REPOSITORY/blob/main/.github/agents/${matched_agent}.md)
 - **Assignment Method**: Direct API assignment to custom agent actor
 
-The custom agent has its own actor ID in the GitHub API, allowing direct assignment without directives."
+The custom agent has its own actor ID in the GitHub API, allowing direct assignment without directives.
+
+**IMPORTANT**: Always mention **@$matched_agent** by name in all conversations related to this issue."
       else
         assignment_details="
 ## 🧠 Intelligent Agent Matching
 
-This issue has been analyzed and matched to the **$agent_emoji $matched_agent** specialization:
+This issue has been analyzed and matched to the **$agent_emoji @$matched_agent** specialization:
 
-- **Agent**: $matched_agent
+- **Agent**: @$matched_agent
 - **Match Confidence**: $agent_confidence
 - **Match Score**: $agent_score
 - **Description**: $agent_description
 - **Agent Path**: [\`.github/agents/${matched_agent}.md\`](https://github.com/$GITHUB_REPOSITORY/blob/main/.github/agents/${matched_agent}.md)
 - **Assignment Method**: Generic Copilot with agent directives
 
+**IMPORTANT**: Always mention **@$matched_agent** by name in all conversations related to this issue.
+
 ## 🎯 Copilot Agent Directive
 
-@copilot please use the **$matched_agent** custom agent profile from \`.github/agents/${matched_agent}.md\` when working on this issue. Follow the specialized approach, tools, and best practices defined in that agent's configuration.
+**@$matched_agent** - Please use the **$matched_agent** custom agent profile from \`.github/agents/${matched_agent}.md\` when working on this issue. Follow the specialized approach, tools, and best practices defined in that agent's configuration.
+
+**IMPORTANT**: Always mention **@$matched_agent** by name in all your conversations, comments, and PRs related to this issue to ensure proper attribution and tracking.
 
 The implementation should align with the [$matched_agent agent definition](https://github.com/$GITHUB_REPOSITORY/blob/main/.github/agents/${matched_agent}.md) and its specialized capabilities."
       fi
@@ -361,13 +369,14 @@ GitHub Copilot has been automatically assigned to this issue via the official Gi
 $assignment_details
 
 **What happens next:**
-1. ✅ Copilot will analyze the issue requirements using the $matched_agent specialization
-2. 💻 Copilot will create a branch and implement the solution following the $matched_agent approach
-3. 📝 Copilot will open a PR with the implementation
+1. ✅ **@$matched_agent** will analyze the issue requirements using the $matched_agent specialization
+2. 💻 **@$matched_agent** will create a branch and implement the solution following the $matched_agent approach
+3. 📝 **@$matched_agent** will open a PR with the implementation
 4. 🔍 Auto-review workflow will validate and merge
 5. ✅ Issue will be automatically closed when complete
 
 **Estimated time:** Copilot typically starts work within a few minutes
+**Assigned agent:** @$matched_agent ($matched_agent specialization)
 **Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
 
 ---

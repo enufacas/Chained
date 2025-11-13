@@ -81,6 +81,21 @@ Each agent has unique expertise and should be used for their specialized domain:
 - The task is extremely simple (single line changes)
 - You've tried delegating but the agent indicated it's not appropriate
 
+### Agent Mention Rule ⚠️ REQUIRED
+**When a custom agent is assigned to an issue, ALWAYS mention that agent by name using @agent-name syntax in every conversation, comment, and PR related to that issue.**
+
+This ensures:
+- Clear attribution of work to the specialized agent
+- Proper tracking of agent performance and contributions
+- Transparent collaboration in the autonomous agent ecosystem
+- Consistent communication patterns across all conversations
+
+**Example:**
+- ✅ CORRECT: "@engineer-master is implementing the API changes as specified in the issue."
+- ✅ CORRECT: "I'm working with @troubleshoot-expert to debug this workflow failure."
+- ❌ INCORRECT: "The engineer agent is implementing the API changes." (missing @mention)
+- ❌ INCORRECT: "This has been assigned to a custom agent." (not specific enough)
+
 ### Agent Selection Guidelines
 
 1. **Performance/optimization tasks** → Use `accelerate-master`
