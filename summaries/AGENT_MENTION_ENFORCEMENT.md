@@ -198,8 +198,19 @@ When Copilot starts work:
 - Reads `.github/instructions/workflow-agent-assignment.instructions.md` → workflow-specific rules
 - Reads `.github/instructions/issue-pr-agent-mentions.instructions.md` → issue/PR rules
 - Sees @secure-specialist mentioned multiple times in issue
+- **Identifies @secure-specialist as the required working identity**
 
-### 6. Copilot Works on Issue
+### 6. Copilot Executes in Runner with Agent Identity
+**This is the critical step where Copilot must use the agent mentioned in the issue:**
+
+When Copilot executes as the coding agent in the GitHub Actions runner:
+
+1. **Reads Issue Body**: Parses for `<!-- COPILOT_AGENT:secure-specialist -->` and `**@secure-specialist**` mentions
+2. **Adopts Agent Identity**: Works as @secure-specialist, not as generic Copilot
+3. **Follows Agent Specialization**: Reads `.github/agents/secure-specialist.md` for approach
+4. **Uses Agent Name Throughout**: All outputs reference @secure-specialist
+
+### 7. Copilot Works on Issue with Proper Attribution
 Every comment, PR, commit references `@secure-specialist`:
 - PR title: "Fix authentication bug (@secure-specialist)"
 - PR body: "**@secure-specialist** has fixed the vulnerability..."
@@ -214,6 +225,8 @@ GitHub Copilot automatically:
 - Flags missing @mentions in code review
 - Uses @mentions in generated content
 - Maintains consistency across all files
+- **Reads issue body to identify assigned agent when executing in runner**
+- **Adopts agent identity and uses it throughout all work**
 
 ### ✅ Context-Aware
 Different rules apply to different contexts:
@@ -221,6 +234,15 @@ Different rules apply to different contexts:
 - Issues/PRs get template-specific instructions
 - Scripts get code-specific instructions
 - Everything gets repository-wide instructions
+- **Runner execution gets special agent identity instructions**
+
+### ✅ Attribution System
+The agent mention system enables:
+- **Performance tracking**: Agent metrics based on @mention attribution
+- **Transparent accountability**: Clear identification of who did what
+- **Evolution tracking**: Agent performance over time
+- **Quality scoring**: Work evaluated per agent specialization
+- **Runner identity**: Copilot knows which agent persona to adopt when executing
 
 ### ✅ Modular & Maintainable
 - Easy to update individual instruction files
@@ -262,7 +284,99 @@ Create a test issue and observe:
 ### 4. Check Code Review
 Submit a PR that mentions an agent without @. Copilot code review should flag it.
 
-## Available Custom Agents
+### 5. Verify Runner Execution (Critical)
+When Copilot executes in the GitHub Actions runner:
+- Check that PR title includes `(@agent-name)`
+- Verify PR description starts with `**@agent-name** has...`
+- Confirm commits reference `@agent-name` where relevant
+- Validate all comments use proper `@agent-name` attribution
+
+## Critical: Runner Execution Context
+
+### Why This Matters Most
+
+The most important enforcement point is **when Copilot executes as the coding agent in the GitHub Actions runner**. This is where the agent identity must be properly applied.
+
+### How It Works
+
+1. **Issue contains agent assignment**: `**@engineer-master** - Please use...`
+2. **Copilot runner starts**: Reads issue body and extracts agent name
+3. **Copilot adopts identity**: Works as @engineer-master, not generic Copilot
+4. **All outputs use agent name**: PRs, commits, comments all reference @engineer-master
+
+### What Copilot Must Do in Runner
+
+**MANDATORY BEHAVIOR:**
+- Read issue body FIRST to identify assigned agent
+- Extract agent name from `@agent-name` mentions
+- Use agent name in PR title: `feat: description (@agent-name)`
+- Use agent name in PR body: `**@agent-name** has implemented...`
+- Use agent name in commits: `fix: change per @agent-name`
+- Use agent name in comments: `@agent-name completed milestone`
+
+**FORBIDDEN BEHAVIOR:**
+- ❌ Ignore the agent assignment
+- ❌ Use "I" or "Copilot" without the agent name
+- ❌ Create PRs without agent attribution
+- ❌ Work generically when agent is assigned
+
+### Example: Correct Runner Execution
+
+```
+Issue Body:
+> **@secure-specialist** - Please fix the authentication vulnerability.
+> IMPORTANT: Always mention **@secure-specialist** by name.
+
+Copilot in Runner:
+1. Reads issue, extracts: @secure-specialist
+2. Reads .github/agents/secure-specialist.md
+3. Adopts secure-specialist identity and approach
+
+PR Created:
+Title: fix: add authentication validation (@secure-specialist)
+
+Description:
+**@secure-specialist** has fixed the authentication vulnerability.
+
+Following the @secure-specialist security-focused approach:
+- Analyzed vulnerability thoroughly
+- Implemented input validation  
+- Added security tests
+- Reviewed for additional attack vectors
+
+@secure-specialist has ensured the fix follows security best practices.
+
+Commits:
+- fix: add input validation per @secure-specialist
+- test: add security tests per @secure-specialist approach
+- docs: document security fix by @secure-specialist
+```
+
+### Example: Incorrect Runner Execution (DON'T DO THIS)
+
+```
+Issue Body:
+> **@secure-specialist** - Please fix the authentication vulnerability.
+
+❌ WRONG - Copilot creates:
+Title: fix: add authentication validation
+
+Description:
+I have fixed the authentication vulnerability by adding input validation.
+
+Commits:
+- fix: add input validation
+- test: add tests
+```
+
+**This is wrong because:**
+- No @secure-specialist mention in title
+- No @secure-specialist in description
+- No attribution to the assigned agent
+- Breaks performance tracking
+- Loses agent identity
+
+## Verification
 
 The system tracks 13 custom agents:
 

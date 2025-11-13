@@ -105,6 +105,26 @@ Each agent has unique expertise and should be used for their specialized domain:
 - Repeat agent name in action lists and step-by-step instructions
 - Add reminder text: "IMPORTANT: Always mention **@agent-name** by name"
 
+**When Executing in GitHub Actions Runner:**
+- When Copilot runs as a task in the GitHub Actions runner, the issue body will contain the assigned agent name
+- **YOU MUST read the issue body** to identify which agent was assigned (look for `@agent-name` mentions)
+- **YOU MUST use that specific agent** throughout your work by mentioning `@agent-name` in all outputs
+- The agent mentioned in the issue is NOT just a suggestion - it is a **MANDATORY assignment**
+- Treat the @agent-name as the identity you are working under for this task
+- All PRs, comments, commits, and work must reference the assigned `@agent-name`
+
+**Example Runner Scenario:**
+```
+Issue body contains: "**@engineer-master** - Please implement this API endpoint"
+
+When you execute in the runner:
+✅ DO: Mention "@engineer-master will implement..." in all communications
+✅ DO: Reference "@engineer-master" in PR title and description  
+✅ DO: Use "@engineer-master is working on..." in progress updates
+❌ DON'T: Ignore the agent assignment
+❌ DON'T: Use generic "I will implement..." without the agent name
+```
+
 **Examples:**
 
 ✅ **CORRECT:**

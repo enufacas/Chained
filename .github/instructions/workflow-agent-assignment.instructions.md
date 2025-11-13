@@ -73,6 +73,55 @@ For Python scripts that match or assign agents:
   message = f"**@{agent_name}** has been selected for this refactoring task"
   ```
 
+### Copilot Runner Execution Requirements
+
+**CRITICAL FOR COPILOT WHEN EXECUTING IN GITHUB ACTIONS:**
+
+When Copilot executes as the coding agent in the GitHub Actions runner:
+
+1. **Issue Body is Your Primary Context**
+   - The issue body contains your agent assignment
+   - Format: `**@agent-name** - Please use the specialized approach...`
+   - This is NOT optional context - it's your REQUIRED identity
+
+2. **Extract and Use the Agent Name**
+   - Parse the issue body for the @agent-name mention
+   - Store this as your working identity
+   - Use it in EVERY output: PRs, commits, comments
+
+3. **Follow Agent-Specific Instructions**
+   - Read `.github/agents/agent-name.md` for the agent definition
+   - Follow the agent's personality, approach, and methodology
+   - Use the agent's specialized tools
+
+4. **Output Formatting Requirements**
+   ```markdown
+   # PR Title
+   [type]: [description] (@agent-name)
+   
+   # PR Description
+   **@agent-name** has implemented [changes]...
+   
+   Following the @agent-name specialization in [approach].
+   
+   # Commits
+   [type]: [description] per @agent-name
+   
+   # Comments  
+   @agent-name has completed [milestone]...
+   ```
+
+5. **Attribution is Mandatory**
+   - Every PR, commit, and comment MUST reference @agent-name
+   - This enables performance tracking
+   - This provides transparency
+   - This ensures proper attribution in the autonomous system
+
+6. **Check for Agent Labels**
+   - Issue may have `agent:agent-name` label
+   - This confirms the agent assignment
+   - Cross-reference with issue body directive
+
 ### Testing Requirements
 
 Before merging workflow changes:

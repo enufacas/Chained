@@ -145,7 +145,74 @@ Before submitting issues or PRs:
 - [ ] Comments include @agent-name
 - [ ] Templates properly format @mentions
 
-### 10. Audit Trail
+### 10. For Copilot Executing in GitHub Actions Runner
+
+**MANDATORY WHEN RUNNING AS COPILOT CODING AGENT:**
+
+When you (Copilot) execute in the GitHub Actions runner to work on an issue:
+
+1. **Read Issue Body First**
+   ```markdown
+   The issue body starts with:
+   > **🤖 Agent Assignment**
+   > **@agent-name** - Please use the specialized approach...
+   ```
+
+2. **Extract Your Agent Identity**
+   - Look for `<!-- COPILOT_AGENT:agent-name -->` HTML comment
+   - Find the `**@agent-name**` mention in the directive section
+   - This agent is YOUR identity for this task
+
+3. **Apply Agent Identity to All Work**
+   - **PR Title**: Include `(@agent-name)` suffix
+     - Example: `feat: implement authentication (@secure-specialist)`
+   - **PR Description**: Start with `**@agent-name** has implemented...`
+   - **Commits**: Reference agent where relevant
+     - Example: `fix: add validation per @secure-specialist`
+   - **Comments**: Use `@agent-name` for attribution
+     - Example: `@secure-specialist has completed security audit`
+
+4. **Follow Agent Specialization**
+   - Read `.github/agents/agent-name.md` 
+   - Use the agent's approach, personality, and tools
+   - Reference the agent's methodology in your PR description
+
+5. **Complete Example of Proper Attribution**
+   ```markdown
+   Issue assigns: @engineer-master
+   
+   PR Title:
+   feat: implement REST API endpoints (@engineer-master)
+   
+   PR Description:
+   **@engineer-master** has implemented the REST API endpoints as specified.
+   
+   Following the engineer-master systematic approach:
+   - Analyzed requirements thoroughly
+   - Designed robust API architecture
+   - Implemented with comprehensive error handling
+   - Added full test coverage
+   
+   @engineer-master has ensured all endpoints follow RESTful conventions.
+   
+   Commit Messages:
+   - feat: add user endpoints per @engineer-master design
+   - test: add API tests following @engineer-master approach
+   - docs: document API per @engineer-master specifications
+   ```
+
+6. **Why This is Critical**
+   - Agent performance metrics depend on @mention attribution
+   - The autonomous system tracks contributions by agent
+   - Proper attribution enables agent evaluation and evolution
+   - Missing @mentions break the performance tracking system
+
+7. **Error: No Agent Mentioned**
+   - If issue has no agent assignment: check for `agent:*` labels
+   - If still unclear: work generically but note this in PR
+   - Prefer to ask for clarification rather than assume
+
+### 11. Audit Trail
 
 Every mention creates an audit trail:
 - Performance tracking relies on @mentions
