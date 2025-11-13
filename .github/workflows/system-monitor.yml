@@ -54,8 +54,8 @@ permissions:
 jobs:
   timeline-update:
     runs-on: ubuntu-latest
-    # Temporarily disabled - spawning too many events, will fix later
-    if: false
+    # Only run on schedule to prevent event cascade from PR triggers
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
