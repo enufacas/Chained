@@ -75,25 +75,53 @@ jobs:
       - name: Get analysis statistics
         id: stats
         run: |
-          # Extract key metrics from patterns.json
-          if [ -f analysis/patterns.json ]; then
-            total_merges=$(python3 -c "import json; print(json.load(open('analysis/patterns.json')).get('total_merges_analyzed', 0))")
-            echo "total_merges=${total_merges}" >> $GITHUB_OUTPUT
-            
-            # Get top good pattern - use separate Python invocations
-            top_good_name=$(python3 -c "import json; d=json.load(open('analysis/patterns.json')); p=d.get('good_patterns',{}); print(max(p.items(), key=lambda x: x[1].get('correlation_with_success', 0))[0] if p else 'None')")
-            top_good_score=$(python3 -c "import json; d=json.load(open('analysis/patterns.json')); p=d.get('good_patterns',{}); print(f\"{max(p.items(), key=lambda x: x[1].get('correlation_with_success', 0))[1].get('correlation_with_success', 0):.2%}\" if p else '0.00%')")
-            echo "top_good=${top_good_name} (${top_good_score})" >> $GITHUB_OUTPUT
-            
-            # Get top bad pattern
-            top_bad_name=$(python3 -c "import json; d=json.load(open('analysis/patterns.json')); p=d.get('bad_patterns',{}); print(max(p.items(), key=lambda x: x[1].get('correlation_with_issues', 0))[0] if p else 'None')")
-            top_bad_score=$(python3 -c "import json; d=json.load(open('analysis/patterns.json')); p=d.get('bad_patterns',{}); print(f\"{max(p.items(), key=lambda x: x[1].get('correlation_with_issues', 0))[1].get('correlation_with_issues', 0):.2%}\" if p else '0.00%')")
-            echo "top_bad=${top_bad_name} (${top_bad_score})" >> $GITHUB_OUTPUT
-          else
-            echo "total_merges=0" >> $GITHUB_OUTPUT
-            echo "top_good=None" >> $GITHUB_OUTPUT
-            echo "top_bad=None" >> $GITHUB_OUTPUT
+          # Ensure analysis directory exists
+          mkdir -p analysis
+          
+          # Initialize patterns.json if missing
+          if [ ! -f analysis/patterns.json ]; then
+            echo '{"total_merges_analyzed": 0, "good_patterns": {}, "bad_patterns": {}}' > analysis/patterns.json
+            echo "✓ Initialized patterns.json"
           fi
+          
+          # Extract statistics using a proper Python script with error handling
+          python3 << 'PYEOF' >> $GITHUB_OUTPUT
+          import json
+          import sys
+          
+          try:
+              with open('analysis/patterns.json', 'r') as f:
+                  patterns = json.load(f)
+              
+              total_merges = patterns.get('total_merges_analyzed', 0)
+              
+              # Safe handling of potentially empty dictionaries
+              good_patterns = patterns.get('good_patterns', {})
+              if good_patterns:
+                  top_good_item = max(good_patterns.items(), 
+                                    key=lambda x: x[1].get('correlation_with_success', 0))
+                  top_good = f"{top_good_item[0]} ({top_good_item[1].get('correlation_with_success', 0):.2%})"
+              else:
+                  top_good = "None (0.00%)"
+              
+              bad_patterns = patterns.get('bad_patterns', {})
+              if bad_patterns:
+                  top_bad_item = max(bad_patterns.items(),
+                                   key=lambda x: x[1].get('correlation_with_issues', 0))
+                  top_bad = f"{top_bad_item[0]} ({top_bad_item[1].get('correlation_with_issues', 0):.2%})"
+              else:
+                  top_bad = "None (0.00%)"
+              
+              print(f"total_merges={total_merges}")
+              print(f"top_good={top_good}")
+              print(f"top_bad={top_bad}")
+              
+          except Exception as e:
+              print(f"Error: {e}", file=sys.stderr)
+              print("total_merges=0")
+              print("top_good=None")
+              print("top_bad=None")
+          PYEOF
 
       - name: Commit analysis results
         env:
