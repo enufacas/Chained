@@ -1,0 +1,195 @@
+{
+  "timestamp": "2025-11-13T19:09:09.116515+00:00",
+  "source": "Hacker News",
+  "learnings": [
+    {
+      "title": "Zed is our office",
+      "url": "https://zed.dev/blog/zed-is-our-office",
+      "score": 262,
+      "source": "Hacker News",
+      "content": "It's Monday, 12 PM ET, and the entire Zed Industries team is piled into our weekly all-hands meeting. Some teammates jot down their schedule deviations, while others detail what they intend to focus on for the week. Nathan just wrapped up top-of-mind announcements and Morgan is sharing trends from our metrics and covering operational updates. Meanwhile I'm preparing user quotes from the last week to share out, and others add topics to the Discussions section. Throughout the meeting, screens are being shared, various voices are popping in and out of the conversation, and our notes are growing rapidly as dozens of cursors are concurrently editing the same file in real-time. This entire meeting is taking place inside Zed. Our weekly \"all hands\" Monday meeting in Zed Our mission from the beginning has been to engineer an editor that will be: Responsive : The latency between keystroke and re-render should be imperceptible. Focused : The interface should offer minimal distractions and stay out of the code's way. Collaborative : Working with teammates should feel no different than sitting next to them in the office. Setting the first two properties aside, let's focus on collaboration. Collaboration Built into Zed's DNA We've been dreaming of building the ultimate collaborative editor for years. The roots of this vision go back to Nathan's early days at Pivotal Labs , where pair programming with two keyboards plugged into the same computer was the standard practice. We set out to recreate that seamless collaboration experience\u2014but for distributed teams. But wait... doesn't this technology already exist in other editors? Yes! If you've been a developer long enough, you might recall the teletype package for Atom \u2014both built by Zed's founders. Teletype enabled developers to share \"portals\" into their workspaces, which was an initial step towards Zed's collaborative vision. Despite attempts to make Atom\u2014an Electron application\u2014more responsive, it never reached the performance s\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "GitHub Partial Outage",
+      "url": "https://www.githubstatus.com/incidents/1jw8ltnr1qrj",
+      "score": 125,
+      "source": "Hacker News",
+      "content": "GitHub Octicon logo x Get email notifications whenever GitHub creates , updates or resolves an incident. Email address: Enter OTP: Resend OTP in: seconds Didn't receive the OTP? Resend OTP By subscribing you agree to our Privacy Policy . This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply. Get text message notifications whenever GitHub creates or resolves an incident. Country code: Afghanistan (+93) Albania (+355) Algeria (+213) American Samoa (+1) Andorra (+376) Angola (+244) Anguilla (+1) Antigua and Barbuda (+1) Argentina (+54) Armenia (+374) Aruba (+297) Australia/Cocos/Christmas Island (+61) Austria (+43) Azerbaijan (+994) Bahamas (+1) Bahrain (+973) Bangladesh (+880) Barbados (+1) Belarus (+375) Belgium (+32) Belize (+501) Benin (+229) Bermuda (+1) Bolivia (+591) Bosnia and Herzegovina (+387) Botswana (+267) Brazil (+55) Brunei (+673) Bulgaria (+359) Burkina Faso (+226) Burundi (+257) Cambodia (+855) Cameroon (+237) Canada (+1) Cape Verde (+238) Cayman Islands (+1) Central Africa (+236) Chad (+235) Chile (+56) China (+86) Colombia (+57) Comoros (+269) Congo (+242) Congo, Dem Rep (+243) Costa Rica (+506) Croatia (+385) Cyprus (+357) Czech Republic (+420) Denmark (+45) Djibouti (+253) Dominica (+1) Dominican Republic (+1) Egypt (+20) El Salvador (+503) Equatorial Guinea (+240) Estonia (+372) Ethiopia (+251) Faroe Islands (+298) Fiji (+679) Finland/Aland Islands (+358) France (+33) French Guiana (+594) French Polynesia (+689) Gabon (+241) Gambia (+220) Georgia (+995) Germany (+49) Ghana (+233) Gibraltar (+350) Greece (+30) Greenland (+299) Grenada (+1) Guadeloupe (+590) Guam (+1) Guatemala (+502) Guinea (+224) Guyana (+592) Haiti (+509) Honduras (+504) Hong Kong (+852) Hungary (+36) Iceland (+354) India (+91) Indonesia (+62) Iraq (+964) Ireland (+353) Israel (+972) Italy (+39) Jamaica (+1) Japan (+81) Jordan (+962) Kenya (+254) Korea, Republic of (+82) Kosovo (+383) Kuwait (+965) Kyrgyzstan (+996) Laos (+856) Latvia (+371)\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Checkout.com hacked, refuses ransom payment, donates to security labs",
+      "url": "https://www.checkout.com/blog/protecting-our-merchants-standing-up-to-extortion",
+      "score": 425,
+      "source": "Hacker News",
+      "content": "Sign in Get in touch Resource center Search Text Link Thank you! Your submission has been received! Oops! Something went wrong while submitting the form. Topic Region Perspectives Protecting our Merchants: Standing up to Extortion Our statement detailing an incident concerning a legacy system. We outline our commitment to transparency, accountability, and planned investment in cyber security research. Link to the author's page Mariano Albera November 12, 2025 Link to the author's page What\u2019s inside Link Share on social media Facebook Social Share Button Twitter Social Share Button Linkedin Social Share Button Email Share Button Copied! Categories Company News Tl;dr: Last week, we were targeted by a criminal extortion attempt. The attackers gained access to a legacy, third-party cloud file storage system. Our live payment processing platform was not impacted. No merchant funds or card numbers were accessed. We are donating the ransom amount to fund cybercrime research. Last week, Checkout.com was contacted by a criminal group known as \u201cShinyHunters\u201d, who claimed to have obtained data connected to Checkout.com and demanded a ransom. Upon investigation, we determined that this data was obtained by gaining unauthorized access to a legacy third-party cloud file storage system, used in 2020 and prior years. We estimate that this would affect less than 25% of our current merchant base. The system was used for internal operational documents and merchant onboarding materials at that time. This incident has not impacted our payment processing platform. The threat actors do not have, and never had, access to merchant funds or card numbers. The episode occurred when threat actors gained access to this third party legacy system which was not decommissioned properly. This was our mistake, and we take full responsibility. We are sorry. We regret that this incident has caused worry for our partners and people. We have begun the process to identify and contact those impacted and are\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Blender Lab",
+      "url": "https://www.blender.org/news/introducing-blender-lab/",
+      "score": 144,
+      "source": "Hacker News",
+      "content": "Introducing Blender Lab November 7th, 2025 News Francesco Siddi Give Back to Blender Help funding Blender in 2026 If Blender helped you with your projects this year, we're asking you to help us back. For the past year, you've had access to professional 3D software, completely free. No subscriptions, no licenses, no limits. Blender has been there for your projects, your learning, your art, your business. Today, we're asking for $5. That's it. If every active Blender user contributed $5 this month, Blender Foundation would meet its entire yearly funding goal for 2026. I already donated Remind me later Introducing an innovation space within the Blender project, where designers and developers can work together on challenging or future-facing projects, to keep Blender relevant in the years to come. Over the years, Blender has grown and matured into a powerful and complex piece of software. With its unstoppable release cycle, a massive, highly demanding, and diverse user community, natural technical debt, and complex technical dependencies, shipping new features and general improvements requires more and more effort and coordination. Software stability and reliability have become critical for individuals and companies. As a consequence, development efforts focus on those aspects, offering progressive improvements of existing functionality only when these are clear enhancements of what is already there. This makes it more challenging to innovate, think outside the box, experiment, and break things. To facilitate this essential aspect of product development, the Blender Foundation is establishing a new project: the Blender Lab. This is the innovation space where designers, developers, and researchers work together on challenging and future-facing projects that will help Blender stay relevant in the years to come. What is a lab activity? A lab activity is a project that brings innovation to the Blender project, and contributes to Blender Foundation\u2019s mission. The project sho\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "We cut our Mongo DB costs by 90% by moving to Hetzner",
+      "url": "https://prosopo.io/blog/we-cut-our-mongodb-costs-by-90-percent/",
+      "score": 136,
+      "source": "Hacker News",
+      "content": "Nov 12, 2025 \u22c5 3 min read We cut our Mongo DB costs by 90% by moving to Hetzner Chris Taylor Table of Contents Starting with MongoDB Atlas for *Free* but Scaling Costs Added Up Why We Chose Hetzner Migration Things You'll Need To Do Yourself Conclusion Running databases in the cloud can be convenient, but it can also get expensive fast. For the Prosopo team, MongoDB Atlas was initially a fast, reliable way to run a cloud database, but as our data grew, so did the bills. Over the last year, we realised that we were spending thousands of dollars per month on infrastructure that we could run more efficiently ourselves. We explored various options but ultimately decided to migrate our MongoDB deployment to Hetzner, a cost-effective cloud provider. Here's how we managed to cut our costs by 90% without sacrificing performance or reliability. Starting with MongoDB Atlas for Free but Scaling Costs Added Up When we first started building, MongoDB Atlas was an easy choice. Everything was set up for us, and we could focus on building our application without worrying about database management. The free tier was sufficient for our initial needs, and as we grew, scaling up was as simple as a few clicks. However, scaling came with a steep price tag. We went from paying $0 per month for a small database to over $3,000 per month for a few hundred GBs of data. The cost breakdown before we migrated looked roughly like this: Service Monthly Cost Atlas M40 Instance - AWS $1000 Atlas Continuous Cloud Backup Storage $700 Atlas AWS Data Transfer (Same Region) $10 Atlas AWS Data Transfer (Different Region) $1 Atlas AWS Data Transfer (Internet) $1,000 \u2757 Total + VAT $3000+ The more keen eyed among you will have noticed the huge cost associated with data transfer over the internet - its as much as the servers! We're building Prosopo to be resilient to outages, such as the recent massive AWS outage , so we use many different cloud providers. This means that a lot of our database traffic goes ov\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Android developer verification: Early access starts",
+      "url": "https://android-developers.googleblog.com/2025/11/android-developer-verification-early.html",
+      "score": 1245,
+      "source": "Hacker News",
+      "content": "\u2630 Android Developers Blog The latest Android and Google Play news for app and game developers. \ud83d\udd0d Android Developers \u2192 Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News More | 12 November 2025 Android developer verification: Early access starts now as we continue to build with your feedback Share this post LinkedIn Twitter Facebook Email Copy link Link copied to clipboard Posted by Matthew Forsythe Director - Product Management, Android App Safety We recently announced new developer verification requirements, which serve as an additional layer of defense in our ongoing effort to keep Android users safe. We know that security works best when it accounts for the diverse ways people use our tools. This is why we announced this change early: to gather input and ensure our solutions are balanced. We appreciate the community's engagement and have heard the early feedback \u2013 specifically from students and hobbyists who need an accessible path to learn, and from power users who are more comfortable with security risks. We are making changes to address the needs of both groups. To understand how these updates fit into our broader mission, it is important to first look at the specific threats we are tackling. Why verification is important Keeping users safe on Android is our top priority. Combating scams and digital fraud is not new for us \u2014 it has been a central focus of our work for years. From Scam Detection in Google Messages to Google Play Protect and real-time alerts for scam calls, we have consistently acted to keep our ecosystem safe . However, online scams and malware campaigns are becoming more aggressive. At the global scale of Android, this translates to real harm for people around the world \u2013 especially in rapidly digitizing regions where many are coming online for the first time. Technical safeguards are critical, but they cannot solve for every scenario where a user i\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Human Fovea Detector",
+      "url": "https://www.shadertoy.com/view/4dsXzM",
+      "score": 403,
+      "source": "Hacker News",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Steam Machine",
+      "url": "https://store.steampowered.com/sale/steammachine",
+      "score": 2527,
+      "source": "Hacker News",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Android 16 QPR1 is being pushed to the Android Open Source Project",
+      "url": "https://grapheneos.social/@GrapheneOS/115533432439509433",
+      "score": 217,
+      "source": "Hacker News",
+      "content": "To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Reverse Engineering Yaesu FT-70D Firmware Encryption",
+      "url": "https://landaire.net/reversing-yaesu-firmware-encryption/",
+      "score": 117,
+      "source": "Hacker News",
+      "content": "This article dives into my full methodology for reverse engineering the tool mentioned in this article. It's a bit longer but is intended to be accessible to folks who aren't necessarily advanced reverse-engineers. Click on any of the images to view at its original resolution. # Background Ham radios are a fun way of learning how the radio spectrum works, and more importantly: they're embedded devices that may run weird chips/firmware! I got curious how easy it'd be to hack my Yaesu FT-70D, so I started doing some research. The only existing resource I could find for Yaesu radios was someone who posted about custom firmware for their Yaesu FT1DR . The Reddit poster mentioned that if you go through the firmware update process via USB, the radio exposes its Renesas H8SX microcontroller and can have its flash modified using the Renesas SDK. This was a great start and looked promising, but the SDK wasn't trivial to configure and I wasn't sure if it could even dump the firmware... so I didn't use it for very long. # Other Avenues Yaesu provides a Windows application on their website that can be used to update a radio's firmware over USB: The zip contains the following files: 1.2 MB Wed Nov 8 14:34:38 2017 FT-70D_ver111(USA).exe 682 KB Tue Nov 14 00:00:00 2017 FT-70DR_DE_Firmware_Update_Information_ENG_1711-B.pdf 8 MB Mon Apr 23 00:00:00 2018 FT-70DR_DE_MAIN_Firmware_Ver_Up_Manual_ENG_1804-B.pdf 3.2 MB Fri Jan 6 17:54:44 2012 HMSEUSBDRIVER.exe 160 KB Sat Sep 17 15:14:16 2011 RComms.dll 61 KB Tue Oct 23 17:02:08 2012 RFP_USB_VB.dll 1.7 MB Fri Mar 29 11:54:02 2013 vcredist_x86.exe I'm going to assume that the file specific to the FT-70D, \"FT-70D_ver111(USA).exe\", will likely contain our firmware image. A PE file (.exe) can contain binary resources in the .rsrc section -- let's see what this file contains using XPEViewer : Resources fit into one of many different resource types , but a firmware image would likely be put into a custom type. What's this last entry, \"23\"? Expan\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Homebrew no longer allows bypassing Gatekeeper for unsigned/unnotarized software",
+      "url": "https://github.com/Homebrew/brew/issues/20755",
+      "score": 314,
+      "source": "Hacker News",
+      "content": "Homebrew / brew Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 10.7k Star 45.4k Removing support for --no-quarantine for casks #20755 New issue Copy link New issue Copy link Closed Feature #20973 Closed Removing support for --no-quarantine for casks #20755 Feature #20973 Copy link Description p-linnane opened on Sep 23, 2025 Issue body actions Verification This issue's title and/or description do not reference a single formula e.g. brew install wget . If they do, open an issue at https://github.com/Homebrew/homebrew-core/issues/new/choose instead. Provide a detailed description of the proposed feature --no-quarantine is used to forcibly bypass Gatekeeper, which is a built-in macOS security mechanism. This is used to run unsigned/unnotarized applications. macOS Tahoe is the final release to support Intel systems, and last year Apple updated macOS runtime protection to make it harder to override Gatekeeper. Macs with Apple silicon also don't \" permit native arm64 code to execute unless a valid signature is attached \". Finally, we are ending support for all casks that fail Gatekeeper checks on September 1st, 2026. With the above in mind, it's time to deprecate the --no-quarantine flag from brew . It intentionally bypasses macOS security mechanisms, which we already actively discourage. Deprecating now will give a decent lead time for users using it to come up with another solution or adjust their workflows. What is the motivation for the feature? Intel support is coming to an end from both Apple and Homebrew. This flag is primarily used to override a macOS security mechanism, which we do not want to encourage. Since we are requiring casks fulfill Gatekeeper checks next year, there is no reason to keep this flag. How will the feature be relevant to at least 90% of Homebrew users? We will provide a safer experience for our users, and stop making it easier to bypass OS-leve\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "GPT-5.1: A smarter, more conversational ChatGPT",
+      "url": "https://openai.com/index/gpt-5-1/",
+      "score": 513,
+      "source": "Hacker News",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Britain's railway privatization was an abject failure",
+      "url": "https://www.rosalux.de/en/news/id/53917/britains-railway-privatization-was-an-abject-failure",
+      "score": 417,
+      "source": "Hacker News",
+      "content": "Essay | 10/03/2025 Economic / Social Policy - Rosalux International - UK / Ireland - Commons / Social Infrastructure Britain\u2019s Railway Privatization Was an Abject Failure Sold off in the 1990s, the UK\u2019s railways are returning to public hands \u2014 but at what cost? Information Author Gareth Dennis , A commuter train waits to leave the station somewhere in London, 18 May 2023. Photo: IMAGO / Pond5 Images Liberalization of the railways has been a key tenet of European transport policy since the early 2000s, with proponents claiming that competition results in improved service quality and increased ridership. This is an instantly disprovable statement given that ridership was already on the rise across Europe prior to, rather than after, liberalization efforts, suggesting other effects are at play. Gareth Dennis is an award-winning railway engineer and writer. He is the author of the internationally bestselling book How The Railways Will Fix the Future and co-founder of the Campaign for Level Boarding. On the other hand, the case against fragmented and privatized operations focuses on three key arguments. The first is that railways are complex systems where commercial boundaries at engineering interfaces are a threat to safety and efficiency. The second is that railway operations are geographic monopolies where market conditions are \u2014 at best \u2014 contrived. The third is that railways are a public service that cannot fail \u2014 hence, introducing private interests into the railways is merely a way to sequester income into private hands while the state shoulders the financial risk. In other words, private interests\u2019 role is simply to extract profit that could otherwise be reinvested into the system. The United Kingdom was one of first countries in Europe to liberalize a significant portion of its railways (Northern Ireland\u2019s railways remained publicly owned and operated). As such, the aftermath of privatization is instructive in tracing liberalization\u2019s final destination. In short\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    }
+  ],
+  "topics": {
+    "AI/ML": [
+      "Nano Banana can be prompt engineered for nuanced AI image generation",
+      "GPT-5.1: A smarter, more conversational ChatGPT",
+      "Britain's railway privatization was an abject failure"
+    ],
+    "DevOps": [
+      "GitHub Partial Outage"
+    ],
+    "Security": [
+      "Checkout.com hacked, refuses ransom payment, donates to security labs",
+      "Reverse Engineering Yaesu FT-70D Firmware Encryption"
+    ],
+    "Programming": [
+      "We cut our Mongo DB costs by 90% by moving to Hetzner"
+    ],
+    "Open Source": [
+      "Android 16 QPR1 is being pushed to the Android Open Source Project"
+    ]
+  },
+  "total_stories": 14,
+  "security_validated": true,
+  "version": "2.0",
+  "parsing_stats": {
+    "total_input": 14,
+    "accepted": 13,
+    "rejected": 1,
+    "acceptance_rate": 0.9285714285714286,
+    "rejected_titles": [
+      {
+        "title": "Nano Banana can be prompt engineered for nuanced AI image generation",
+        "reason": "Failed quality assessment"
+      }
+    ]
+  },
+  "parsed_version": "1.0"
+}

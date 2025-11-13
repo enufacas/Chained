@@ -291,16 +291,21 @@ jobs:
             echo "🎲 Generating new random agent..."
             NEW_AGENT_JSON=$(python3 tools/generate-new-agent.py)
             
-            if [ $? -ne 0 ]; then
+            if [ $? -ne 0 ] || [ -z "$NEW_AGENT_JSON" ]; then
               echo "❌ Failed to generate new agent"
               exit 1
             fi
             
-            SPECIALIZATION=$(echo "$NEW_AGENT_JSON" | jq -r '.agent_name')
-            EMOJI=$(echo "$NEW_AGENT_JSON" | jq -r '.emoji')
-            HUMAN_NAME=$(echo "$NEW_AGENT_JSON" | jq -r '.human_name')
-            PERSONALITY=$(echo "$NEW_AGENT_JSON" | jq -r '.personality')
-            COMM_STYLE=$(echo "$NEW_AGENT_JSON" | jq -r '.communication_style')
+            SPECIALIZATION=$(echo "$NEW_AGENT_JSON" | jq -r '.agent_name' 2>/dev/null || echo "")
+            EMOJI=$(echo "$NEW_AGENT_JSON" | jq -r '.emoji' 2>/dev/null || echo "🤖")
+            HUMAN_NAME=$(echo "$NEW_AGENT_JSON" | jq -r '.human_name' 2>/dev/null || echo "Agent")
+            PERSONALITY=$(echo "$NEW_AGENT_JSON" | jq -r '.personality' 2>/dev/null || echo "analytical")
+            COMM_STYLE=$(echo "$NEW_AGENT_JSON" | jq -r '.communication_style' 2>/dev/null || echo "direct")
+            
+            if [ -z "$SPECIALIZATION" ]; then
+              echo "❌ Failed to extract agent data from JSON"
+              exit 1
+            fi
             
             echo "✅ Created new agent type: $SPECIALIZATION"
           else
@@ -420,29 +425,38 @@ jobs:
         id: assign_mentor
         if: steps.check_capacity.outputs.can_spawn == 'true'
         run: |
+          set +e  # Disable exit on error for this step to handle mentor unavailability gracefully
           AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
           SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
           
           echo "🎓 Checking for available mentors..."
           
-          # Try to assign a mentor
+          # Try to assign a mentor (allow script to fail gracefully)
+          set +e  # Don't exit on error
           MENTOR_OUTPUT=$(python3 tools/assign-mentor.py "$AGENT_ID" --specialization "$SPECIALIZATION" --json 2>&1)
           MENTOR_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
           
-          if [ $MENTOR_EXIT_CODE -eq 0 ]; then
-            echo "has_mentor=true" >> $GITHUB_OUTPUT
-            
-            MENTOR_NAME=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_name')
-            MENTOR_ID=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_id')
-            MENTOR_SPEC=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_specialization')
-            MATCH_TYPE=$(echo "$MENTOR_OUTPUT" | jq -r '.matching_type')
-            
-            echo "mentor_name=$MENTOR_NAME" >> $GITHUB_OUTPUT
-            echo "mentor_id=$MENTOR_ID" >> $GITHUB_OUTPUT
-            echo "mentor_specialization=$MENTOR_SPEC" >> $GITHUB_OUTPUT
-            echo "match_type=$MATCH_TYPE" >> $GITHUB_OUTPUT
-            
-            echo "✅ Mentor assigned: $MENTOR_NAME ($MATCH_TYPE match)"
+          if [ $MENTOR_EXIT_CODE -eq 0 ] && [ -n "$MENTOR_OUTPUT" ]; then
+            # Verify the output is valid JSON
+            if echo "$MENTOR_OUTPUT" | jq empty 2>/dev/null; then
+              echo "has_mentor=true" >> $GITHUB_OUTPUT
+              
+              MENTOR_NAME=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_name' 2>/dev/null || echo "Unknown")
+              MENTOR_ID=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_id' 2>/dev/null || echo "")
+              MENTOR_SPEC=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_specialization' 2>/dev/null || echo "")
+              MATCH_TYPE=$(echo "$MENTOR_OUTPUT" | jq -r '.matching_type' 2>/dev/null || echo "unknown")
+              
+              echo "mentor_name=$MENTOR_NAME" >> $GITHUB_OUTPUT
+              echo "mentor_id=$MENTOR_ID" >> $GITHUB_OUTPUT
+              echo "mentor_specialization=$MENTOR_SPEC" >> $GITHUB_OUTPUT
+              echo "match_type=$MATCH_TYPE" >> $GITHUB_OUTPUT
+              
+              echo "✅ Mentor assigned: $MENTOR_NAME ($MATCH_TYPE match)"
+            else
+              echo "has_mentor=false" >> $GITHUB_OUTPUT
+              echo "⚠️  Mentor assignment returned invalid JSON - agent will proceed independently"
+            fi
           else
             echo "has_mentor=false" >> $GITHUB_OUTPUT
             echo "⚠️  No mentor available - agent will proceed independently"

@@ -235,6 +235,25 @@ class MetricsCollector:
         
         return None
     
+    def _is_strict_pr_attribution_enabled(self) -> bool:
+        """
+        Check if strict PR attribution checking is enabled in config.
+        
+        Returns:
+            True if strict attribution is enabled, False otherwise
+        """
+        try:
+            if REGISTRY_FILE.exists():
+                with open(REGISTRY_FILE, 'r') as f:
+                    registry = json.load(f)
+                    # Default to True - we want strict attribution by default
+                    return registry.get('config', {}).get('strict_pr_attribution', True)
+        except Exception as e:
+            print(f"⚠️  Warning: Could not load config: {e}", file=sys.stderr)
+        
+        # Default to True for security and accuracy
+        return True
+    
     def _find_issues_assigned_to_agent(
         self,
         agent_id: str,
@@ -311,6 +330,123 @@ class MetricsCollector:
         
         return assigned_issues
     
+    def _extract_agent_mentions_from_text(self, text: str) -> List[str]:
+        """
+        Extract agent mentions from text (PR description, comments, etc.).
+        
+        Looks for @agent-name patterns where agent-name matches known specializations.
+        
+        Args:
+            text: Text to search for agent mentions
+            
+        Returns:
+            List of agent specializations mentioned
+        """
+        if not text:
+            return []
+        
+        # Pattern matches @agent-name format (e.g., @engineer-master, @bug-hunter)
+        # Agents are identified by their specialization names
+        pattern = r'@([a-z]+-[a-z]+(?:-[a-z]+)?)'
+        matches = re.findall(pattern, text.lower())
+        
+        return list(set(matches))  # Return unique mentions
+    
+    def _check_pr_agent_attribution(
+        self,
+        pr_number: int,
+        expected_specialization: str
+    ) -> bool:
+        """
+        Check if a PR was actually done by the expected agent.
+        
+        This examines:
+        1. PR description for @agent-name mentions
+        2. PR comments for @agent-name mentions
+        3. Commit messages for @agent-name mentions (future enhancement)
+        
+        Args:
+            pr_number: PR number to check
+            expected_specialization: The specialization we expect to see mentioned
+            
+        Returns:
+            True if the PR was attributed to the expected agent, False otherwise
+        """
+        try:
+            # Get PR details including description
+            pr_details = self.github.get(f'/repos/{self.repo}/pulls/{pr_number}')
+            if not pr_details:
+                return False
+            
+            pr_body = pr_details.get('body', '')
+            pr_title = pr_details.get('title', '')
+            
+            # Check PR title and description for agent mentions
+            title_mentions = self._extract_agent_mentions_from_text(pr_title)
+            body_mentions = self._extract_agent_mentions_from_text(pr_body)
+            
+            if expected_specialization in title_mentions or expected_specialization in body_mentions:
+                print(f"  ✅ PR #{pr_number} attributed to {expected_specialization} (title/description)", file=sys.stderr)
+                return True
+            
+            # Get PR comments
+            try:
+                comments = self.github.get(f'/repos/{self.repo}/issues/{pr_number}/comments')
+                if comments:
+                    for comment in comments:
+                        comment_body = comment.get('body', '')
+                        comment_mentions = self._extract_agent_mentions_from_text(comment_body)
+                        
+                        if expected_specialization in comment_mentions:
+                            print(f"  ✅ PR #{pr_number} attributed to {expected_specialization} (comments)", file=sys.stderr)
+                            return True
+            except Exception as e:
+                print(f"  ⚠️  Warning: Could not fetch comments for PR {pr_number}: {e}", file=sys.stderr)
+            
+            # If we get here, no clear attribution found
+            print(f"  ⚠️  PR #{pr_number} has no clear attribution to {expected_specialization}", file=sys.stderr)
+            return False
+            
+        except Exception as e:
+            print(f"⚠️  Warning: Error checking PR attribution for #{pr_number}: {e}", file=sys.stderr)
+            return False
+    
+    def _filter_prs_by_agent_attribution(
+        self,
+        prs: List[Dict],
+        expected_specialization: str,
+        strict_mode: bool = True
+    ) -> List[Dict]:
+        """
+        Filter PRs to only include those actually done by the expected agent.
+        
+        Args:
+            prs: List of PR data dictionaries
+            expected_specialization: The specialization to filter for
+            strict_mode: If True, only count PRs with clear attribution
+            
+        Returns:
+            Filtered list of PRs
+        """
+        if not strict_mode:
+            # In non-strict mode, accept all PRs (backward compatible behavior)
+            return prs
+        
+        print(f"🔍 Filtering {len(prs)} PRs for {expected_specialization} attribution...", file=sys.stderr)
+        
+        attributed_prs = []
+        for pr in prs:
+            pr_number = pr.get('number')
+            if not pr_number:
+                continue
+            
+            if self._check_pr_agent_attribution(pr_number, expected_specialization):
+                attributed_prs.append(pr)
+        
+        print(f"  📊 {len(attributed_prs)}/{len(prs)} PRs have clear attribution to {expected_specialization}", file=sys.stderr)
+        
+        return attributed_prs
+    
     def collect_agent_activity(
         self,
         agent_id: str,
@@ -364,6 +500,20 @@ class MetricsCollector:
                                         prs_for_agent.append(pr_data)
                 except Exception as e:
                     print(f"⚠️  Warning: Error fetching timeline for issue {issue_number}: {e}", file=sys.stderr)
+            
+            # Get agent specialization for attribution checking
+            specialization = self._get_agent_specialization(agent_id)
+            
+            # Check if strict PR attribution is enabled in config
+            strict_attribution = self._is_strict_pr_attribution_enabled()
+            
+            # Filter PRs to only those with clear agent attribution
+            if specialization and strict_attribution:
+                prs_for_agent = self._filter_prs_by_agent_attribution(
+                    prs_for_agent,
+                    specialization,
+                    strict_mode=True
+                )
             
             activity.prs_created = len(prs_for_agent)
             

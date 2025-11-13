@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 103
+**Total Insights:** 105
 
 **Last Updated:** 2025-11-13
 
@@ -10,6 +10,29 @@
 
 
 ## 📰 From Hacker News
+
+
+### GPT-5.1: A smarter, more conversational ChatGPT
+
+**Community Score:** 513 upvotes
+
+**Link:** https://openai.com/index/gpt-5-1/
+
+---
+
+
+### Britain's railway privatization was an abject failure
+
+**Community Score:** 417 upvotes
+
+**Link:** https://www.rosalux.de/en/news/id/53917/britains-railway-privatization-was-an-abject-failure
+
+
+**Content Summary:**
+
+Essay | 10/03/2025 Economic / Social Policy - Rosalux International - UK / Ireland - Commons / Social Infrastructure Britain’s Railway Privatization Was an Abject Failure Sold off in the 1990s, the UK’s railways are returning to public hands — but at what cost? Information Author Gareth Dennis , A commuter train waits to leave the station somewhere in London, 18 May 2023. Photo: IMAGO / Pond5 Images Liberalization of the railways has been a key tenet of European transport policy since the early ...
+
+---
 
 
 ### Marble: A Multimodal World Model
@@ -228,24 +251,6 @@ Hi! We’re LateNiteSoft, and we’ve been wo...
 **Community Score:** 170 upvotes
 
 **Link:** https://arxiv.org/abs/2510.21890
-
----
-
-
-### Email verification protocol
-
-**Community Score:** 164 upvotes
-
-**Link:** https://github.com/WICG/email-verification-protocol
-
----
-
-
-### LLM policy?
-
-**Community Score:** 145 upvotes
-
-**Link:** https://github.com/opencontainers/runc/issues/4990
 
 ---
 

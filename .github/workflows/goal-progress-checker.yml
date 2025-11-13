@@ -75,25 +75,25 @@ jobs:
           echo "Gathering progress data since $GOAL_DATE..."
           
           # Get recent commits (since goal date)
-          COMMIT_COUNT=$(git log --since="$GOAL_DATE 00:00:00" --oneline | wc -l)
+          COMMIT_COUNT=$(git log --since="$GOAL_DATE 00:00:00" --oneline 2>/dev/null | wc -l || echo "0")
           echo "Commits since goal: $COMMIT_COUNT"
           
-          # Get recent PRs
-          PR_COUNT=$(gh pr list --state all --search "created:>=$GOAL_DATE" --json number | jq 'length')
+          # Get recent PRs with error handling
+          PR_COUNT=$(gh pr list --state all --search "created:>=$GOAL_DATE" --json number 2>/dev/null | jq 'length' 2>/dev/null || echo "0")
           echo "PRs since goal: $PR_COUNT"
           
-          # Get recent issues
-          ISSUE_COUNT=$(gh issue list --state all --search "created:>=$GOAL_DATE" --json number | jq 'length')
+          # Get recent issues with error handling
+          ISSUE_COUNT=$(gh issue list --state all --search "created:>=$GOAL_DATE" --json number 2>/dev/null | jq 'length' 2>/dev/null || echo "0")
           echo "Issues since goal: $ISSUE_COUNT"
           
-          # Find goal-related issue
-          GOAL_ISSUE=$(gh issue list --label "ai-goal" --search "created:>=$GOAL_DATE" --json number,title --jq '.[0].number // ""')
+          # Find goal-related issue with error handling
+          GOAL_ISSUE=$(gh issue list --label "ai-goal" --search "created:>=$GOAL_DATE" --json number,title 2>/dev/null | jq -r '.[0].number // ""' 2>/dev/null || echo "")
           
           # Check if goal issue exists and get comments
           PROGRESS_NOTES=""
-          if [ -n "$GOAL_ISSUE" ]; then
+          if [ -n "$GOAL_ISSUE" ] && [ "$GOAL_ISSUE" != "null" ]; then
             echo "Found goal issue: #$GOAL_ISSUE"
-            COMMENT_COUNT=$(gh issue view "$GOAL_ISSUE" --json comments --jq '.comments | length')
+            COMMENT_COUNT=$(gh issue view "$GOAL_ISSUE" --json comments 2>/dev/null | jq '.comments | length' 2>/dev/null || echo "0")
             echo "Comments on goal issue: $COMMENT_COUNT"
             echo "goal_issue=$GOAL_ISSUE" >> $GITHUB_OUTPUT
           else

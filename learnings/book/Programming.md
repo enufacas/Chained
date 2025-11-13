@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 28
+**Total Insights:** 29
 
 **Last Updated:** 2025-11-13
 
@@ -10,6 +10,20 @@
 
 
 ## 📰 From Hacker News
+
+
+### We cut our Mongo DB costs by 90% by moving to Hetzner
+
+**Community Score:** 136 upvotes
+
+**Link:** https://prosopo.io/blog/we-cut-our-mongodb-costs-by-90-percent/
+
+
+**Content Summary:**
+
+Nov 12, 2025 ⋅ 3 min read We cut our Mongo DB costs by 90% by moving to Hetzner Chris Taylor Table of Contents Starting with MongoDB Atlas for *Free* but Scaling Costs Added Up Why We Chose Hetzner Migration Things You'll Need To Do Yourself Conclusion Running databases in the cloud can be convenient, but it can also get expensive fast. For the Prosopo team, MongoDB Atlas was initially a fast, reliable way to run a cloud database, but as our data grew, so did the bills. Over the last year, we re...
+
+---
 
 
 ### Google will allow users to sideload Android apps without verification

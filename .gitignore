@@ -43,6 +43,9 @@ __pycache__/
 # Workflow backups created by workflow-orchestrator
 .github/workflow-backups/
 
+# Lazy evaluation cache
+.cache/
+
 # Accidentally created nested tools directory
 tools/tools/
 
