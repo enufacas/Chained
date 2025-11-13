@@ -1,0 +1,20 @@
+[
+  {
+    "prompt_id": "bug_fix_systematic",
+    "issue_number": 123,
+    "success": true,
+    "resolution_time_hours": 4.5,
+    "agent_used": "engineer-master",
+    "error_type": null,
+    "timestamp": "2025-11-13T13:44:54.036333+00:00"
+  },
+  {
+    "prompt_id": "bug_fix_systematic",
+    "issue_number": 789,
+    "success": false,
+    "resolution_time_hours": 2.0,
+    "agent_used": "engineer-master",
+    "error_type": "test_failures",
+    "timestamp": "2025-11-13T13:44:54.038119+00:00"
+  }
+]

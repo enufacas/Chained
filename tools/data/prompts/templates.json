@@ -1,0 +1,68 @@
+{
+  "bug_fix_systematic": {
+    "template_id": "bug_fix_systematic",
+    "category": "bug_fix",
+    "template": "**@{agent}** - Please fix this bug using a systematic approach:\n\n1. **Analyze**: Reproduce and understand the bug's root cause\n2. **Plan**: Design the minimal fix that addresses the root cause\n3. **Implement**: Apply the fix with defensive programming\n4. **Validate**: Test the fix thoroughly, including edge cases\n5. **Document**: Add comments explaining the fix and any trade-offs\n\n**Key Principles:**\n- Make minimal, surgical changes\n- Add tests to prevent regression\n- Consider all failure modes\n- Follow existing code patterns\n\nIssue details:\n{issue_body}",
+    "success_count": 1,
+    "failure_count": 1,
+    "total_uses": 2,
+    "avg_resolution_time": 3.75,
+    "created_at": "2025-11-13T13:42:01.841962+00:00",
+    "last_used": "2025-11-13T13:44:54.032221+00:00"
+  },
+  "feature_rigorous": {
+    "template_id": "feature_rigorous",
+    "category": "feature",
+    "template": "**@{agent}** - Please implement this feature with rigorous engineering:\n\n1. **Requirements Analysis**: Understand all requirements and edge cases\n2. **Architecture Design**: Plan the implementation structure\n3. **Implementation**: Build with attention to detail and correctness\n4. **Comprehensive Testing**: Test all functionality including error conditions\n5. **Documentation**: Document the feature design and usage\n\n**Engineering Standards:**\n- Follow project conventions\n- Write clean, maintainable code\n- Include comprehensive tests\n- Handle all error conditions\n- Document design decisions\n\nFeature request:\n{issue_body}",
+    "success_count": 0,
+    "failure_count": 0,
+    "total_uses": 1,
+    "avg_resolution_time": 0.0,
+    "created_at": "2025-11-13T13:42:01.841974+00:00",
+    "last_used": "2025-11-13T13:44:54.035374+00:00"
+  },
+  "refactor_systematic": {
+    "template_id": "refactor_systematic",
+    "category": "refactor",
+    "template": "**@{agent}** - Please refactor this code systematically:\n\n1. **Understand Current State**: Analyze existing code patterns\n2. **Identify Issues**: Document code smells and technical debt\n3. **Plan Refactoring**: Design improvements with minimal risk\n4. **Execute**: Apply changes incrementally with tests\n5. **Validate**: Ensure no behavior changes (only structure)\n\n**Refactoring Principles:**\n- Preserve existing behavior\n- Make incremental changes\n- Keep tests passing\n- Improve readability and maintainability\n- Follow established patterns\n\nRefactoring target:\n{issue_body}",
+    "success_count": 0,
+    "failure_count": 0,
+    "total_uses": 0,
+    "avg_resolution_time": 0.0,
+    "created_at": "2025-11-13T13:42:01.841978+00:00",
+    "last_used": ""
+  },
+  "documentation_precise": {
+    "template_id": "documentation_precise",
+    "category": "documentation",
+    "template": "**@{agent}** - Please create precise documentation:\n\n1. **Understand Context**: Review the code/feature thoroughly\n2. **Identify Audience**: Determine who needs this documentation\n3. **Structure Content**: Organize information logically\n4. **Write Clearly**: Use clear, concise language with examples\n5. **Validate**: Ensure accuracy and completeness\n\n**Documentation Standards:**\n- Clear and concise language\n- Practical examples\n- Consistent formatting\n- Accurate technical details\n- Easy to navigate\n\nDocumentation needed for:\n{issue_body}",
+    "success_count": 0,
+    "failure_count": 0,
+    "total_uses": 0,
+    "avg_resolution_time": 0.0,
+    "created_at": "2025-11-13T13:42:01.841981+00:00",
+    "last_used": ""
+  },
+  "investigation_thorough": {
+    "template_id": "investigation_thorough",
+    "category": "investigation",
+    "template": "**@{agent}** - Please investigate this issue thoroughly:\n\n1. **Gather Data**: Collect all relevant information and logs\n2. **Analyze Patterns**: Look for trends and root causes\n3. **Form Hypothesis**: Develop theories about the issue\n4. **Test Theories**: Validate hypotheses with evidence\n5. **Report Findings**: Document conclusions and recommendations\n\n**Investigation Approach:**\n- Follow evidence\n- Document assumptions\n- Test theories rigorously\n- Provide clear conclusions\n- Recommend next steps\n\nInvestigation target:\n{issue_body}",
+    "success_count": 0,
+    "failure_count": 0,
+    "total_uses": 0,
+    "avg_resolution_time": 0.0,
+    "created_at": "2025-11-13T13:42:01.841983+00:00",
+    "last_used": ""
+  },
+  "security_defensive": {
+    "template_id": "security_defensive",
+    "category": "security",
+    "template": "**@{agent}** - Please address this security issue with defensive programming:\n\n1. **Threat Analysis**: Understand the security vulnerability\n2. **Impact Assessment**: Determine severity and scope\n3. **Design Fix**: Plan secure solution with defense in depth\n4. **Implement**: Apply fix with security best practices\n5. **Validate**: Test security measures thoroughly\n\n**Security Principles:**\n- Follow principle of least privilege\n- Validate all inputs\n- Use secure defaults\n- Handle errors securely\n- Document security decisions\n\nSecurity issue:\n{issue_body}",
+    "success_count": 0,
+    "failure_count": 0,
+    "total_uses": 0,
+    "avg_resolution_time": 0.0,
+    "created_at": "2025-11-13T13:42:01.841988+00:00",
+    "last_used": ""
+  }
+}
