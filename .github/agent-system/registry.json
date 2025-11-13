@@ -14,10 +14,10 @@
       },
       "metrics": {
         "issues_resolved": 0,
-        "prs_merged": 0,
+        "prs_merged": 42,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.7088469654840746
+        "code_quality_score": 0.504,
+        "overall_score": 0.3168919795221843
       },
       "contributions": [],
       "human_name": "Lambda",
@@ -40,10 +40,10 @@
       },
       "metrics": {
         "issues_resolved": 0,
-        "prs_merged": 0,
+        "prs_merged": 42,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.30685795043217107
+        "code_quality_score": 0.504,
+        "overall_score": 0.31295
       },
       "contributions": []
     },
@@ -63,33 +63,10 @@
       },
       "metrics": {
         "issues_resolved": 0,
-        "prs_merged": 0,
+        "prs_merged": 42,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.3566804676883876
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1762910779",
-      "name": "\ud83e\uddf9 Robert Martin",
-      "human_name": "Robert Martin",
-      "specialization": "organize-guru",
-      "status": "active",
-      "spawned_at": "2025-11-12T01:26:19.844461Z",
-      "personality": "clean and disciplined, with creative flair",
-      "communication_style": "follows SOLID principles",
-      "traits": {
-        "creativity": 72,
-        "caution": 42,
-        "speed": 77
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 0.504,
+        "overall_score": 0.31295
       },
       "contributions": []
     },
@@ -109,33 +86,10 @@
       },
       "metrics": {
         "issues_resolved": 0,
-        "prs_merged": 0,
+        "prs_merged": 42,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1762928620",
-      "name": "\ud83d\udcad Turing",
-      "human_name": "Turing",
-      "specialization": "coach-master",
-      "status": "active",
-      "spawned_at": "2025-11-12T06:23:40.505907Z",
-      "personality": "methodical and precise",
-      "communication_style": "explains things with analogies",
-      "traits": {
-        "creativity": 66,
-        "caution": 81,
-        "speed": 78
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 0.504,
+        "overall_score": 0.32820000000000005
       },
       "contributions": []
     },
@@ -155,10 +109,10 @@
       },
       "metrics": {
         "issues_resolved": 0,
-        "prs_merged": 0,
+        "prs_merged": 42,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 0.504,
+        "overall_score": 0.3462
       },
       "contributions": []
     },
@@ -178,10 +132,10 @@
       },
       "metrics": {
         "issues_resolved": 0,
-        "prs_merged": 0,
+        "prs_merged": 42,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 0.504,
+        "overall_score": 0.31295
       },
       "contributions": []
     },
@@ -201,10 +155,10 @@
       },
       "metrics": {
         "issues_resolved": 0,
-        "prs_merged": 0,
+        "prs_merged": 42,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 0.504,
+        "overall_score": 0.31295
       },
       "contributions": []
     }
@@ -300,6 +254,6 @@
     "new_agent_probability": 0.5
   },
   "last_spawn": "2025-11-12T21:14:38.427793Z",
-  "last_evaluation": "2025-11-12T00:42:01.514086Z",
+  "last_evaluation": "2025-11-13T00:49:32.575624Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
