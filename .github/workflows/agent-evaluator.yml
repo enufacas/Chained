@@ -64,133 +64,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python3 << 'PYTHON_SCRIPT'
-          import json
-          import subprocess
-          from datetime import datetime, timedelta
-          
-          REGISTRY_FILE = ".github/agent-system/registry.json"
-          
-          # Load registry
-          with open(REGISTRY_FILE, 'r') as f:
-              registry = json.load(f)
-          
-          active_agents = [a for a in registry.get('agents', []) if a.get('status') == 'active']
-          
-          if not active_agents:
-              print("No active agents to evaluate")
-              exit(0)
-          
-          print(f"📊 Evaluating {len(active_agents)} active agents...")
-          
-          promoted = []
-          eliminated = []
-          maintained = []
-          
-          # Import the real metrics collector
-          import sys
-          import importlib.util
-          sys.path.insert(0, 'tools')
-          try:
-              spec = importlib.util.spec_from_file_location(
-                  "agent_metrics_collector",
-                  "tools/agent-metrics-collector.py"
-              )
-              metrics_module = importlib.util.module_from_spec(spec)
-              spec.loader.exec_module(metrics_module)
-              MetricsCollector = metrics_module.MetricsCollector
-              collector = MetricsCollector()
-              use_real_metrics = True
-              print("✅ Using real GitHub metrics collector")
-          except Exception as e:
-              print(f"⚠️  Warning: Could not load metrics collector, using fallback: {e}")
-              use_real_metrics = False
-          
-          for agent in active_agents:
-              agent_id = agent['id']
-              agent_name = agent['name']
-              
-              if use_real_metrics:
-                  # Use real GitHub activity metrics
-                  try:
-                      metrics = collector.collect_metrics(agent_id, since_days=7)
-                      overall_score = metrics.scores.overall
-                      
-                      # Update all metrics from real data
-                      agent['metrics']['issues_resolved'] = metrics.activity.issues_resolved
-                      agent['metrics']['prs_merged'] = metrics.activity.prs_merged
-                      agent['metrics']['reviews_given'] = metrics.activity.reviews_given
-                      agent['metrics']['code_quality_score'] = metrics.scores.code_quality
-                      agent['metrics']['overall_score'] = overall_score
-                      
-                      print(f"\n{agent_name}: {overall_score:.2%} (real metrics)")
-                  except Exception as e:
-                      print(f"⚠️  Error collecting metrics for {agent_id}, using fallback: {e}")
-                      # Fallback to time-based scoring if metrics collection fails
-                      spawned = datetime.fromisoformat(agent['spawned_at'].replace('Z', '+00:00'))
-                      age_hours = (datetime.utcnow().replace(tzinfo=spawned.tzinfo) - spawned).total_seconds() / 3600
-                      overall_score = min(0.5, age_hours / 48.0)  # Conservative scoring for new agents
-                      agent['metrics']['overall_score'] = overall_score
-                      print(f"\n{agent_name}: {overall_score:.2%} (fallback)")
-              else:
-                  # Fallback: Use time-based scoring for new agents
-                  spawned = datetime.fromisoformat(agent['spawned_at'].replace('Z', '+00:00'))
-                  age_hours = (datetime.utcnow().replace(tzinfo=spawned.tzinfo) - spawned).total_seconds() / 3600
-                  overall_score = min(0.5, age_hours / 48.0)  # Conservative scoring
-                  agent['metrics']['overall_score'] = overall_score
-                  print(f"\n{agent_name}: {overall_score:.2%} (fallback)")
-              
-              elimination_threshold = registry['config']['elimination_threshold']
-              promotion_threshold = registry['config']['promotion_threshold']
-              
-              print(f"\n{agent_name}: {overall_score:.2%}")
-              
-              # Determine fate
-              if overall_score >= promotion_threshold:
-                  agent['status'] = 'hall_of_fame'
-                  agent['promoted_at'] = datetime.utcnow().isoformat() + 'Z'
-                  registry['hall_of_fame'].append(agent)
-                  promoted.append(agent)
-                  print(f"  🏆 PROMOTED to Hall of Fame!")
-              elif overall_score < elimination_threshold:
-                  agent['status'] = 'eliminated'
-                  agent['eliminated_at'] = datetime.utcnow().isoformat() + 'Z'
-                  agent['elimination_reason'] = f"Score {overall_score:.2%} below threshold {elimination_threshold:.2%}"
-                  eliminated.append(agent)
-                  print(f"  ❌ ELIMINATED (score too low)")
-              else:
-                  maintained.append(agent)
-                  print(f"  ✅ Maintained (active)")
-          
-          # Update registry
-          # Remove promoted/eliminated from active list
-          registry['agents'] = [a for a in registry['agents'] if a['status'] == 'active']
-          registry['last_evaluation'] = datetime.utcnow().isoformat() + 'Z'
-          
-          # Update system lead (highest scoring Hall of Fame member)
-          if registry['hall_of_fame']:
-              top_agent = max(registry['hall_of_fame'], key=lambda a: a['metrics']['overall_score'])
-              registry['system_lead'] = top_agent['id']
-              print(f"\n👑 System Lead: {top_agent['name']}")
-          
-          with open(REGISTRY_FILE, 'w') as f:
-              json.dump(registry, f, indent=2)
-          
-          # Output results
-          print(f"\n📊 Evaluation Summary:")
-          print(f"  🏆 Promoted: {len(promoted)}")
-          print(f"  ❌ Eliminated: {len(eliminated)}")
-          print(f"  ✅ Maintained: {len(maintained)}")
-          
-          # Save results for next steps
-          with open('/tmp/evaluation_results.json', 'w') as f:
-              json.dump({
-                  'promoted': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score']} for a in promoted],
-                  'eliminated': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score']} for a in eliminated],
-                  'maintained': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score']} for a in maintained]
-              }, f, indent=2)
-          
-          PYTHON_SCRIPT
+          # Run the elegant evaluation engine
+          python3 tools/agent_evaluator.py
           
           # Check if there are results to process
           if [ -f "/tmp/evaluation_results.json" ]; then
@@ -202,85 +77,15 @@ jobs:
       - name: Update agent profiles
         if: steps.evaluate.outputs.has_results == 'true'
         run: |
-          python3 << 'PYTHON_SCRIPT'
-          import json
-          import os
-          
-          with open('/tmp/evaluation_results.json', 'r') as f:
-              results = json.load(f)
-          
-          # Update profiles for eliminated agents
-          for agent in results.get('eliminated', []):
-              profile_path = f".github/agent-system/profiles/{agent['id']}.md"
-              if os.path.exists(profile_path):
-                  with open(profile_path, 'r') as f:
-                      content = f.read()
-                  
-                  # Update status
-                  content = content.replace('**Status**: 🟢 Active', f"**Status**: ❌ Eliminated (Score: {agent['score']:.2%})")
-                  
-                  with open(profile_path, 'w') as f:
-                      f.write(content)
-          
-          # Update profiles for promoted agents
-          for agent in results.get('promoted', []):
-              profile_path = f".github/agent-system/profiles/{agent['id']}.md"
-              if os.path.exists(profile_path):
-                  with open(profile_path, 'r') as f:
-                      content = f.read()
-                  
-                  # Update status
-                  content = content.replace('**Status**: 🟢 Active', f"**Status**: 🏆 Hall of Fame (Score: {agent['score']:.2%})")
-                  
-                  with open(profile_path, 'w') as f:
-                      f.write(content)
-          
-          print("✅ Agent profiles updated")
-          PYTHON_SCRIPT
+          # Use the elegant profile manager
+          python3 tools/profile_manager.py
 
       - name: Archive eliminated agents
         if: steps.evaluate.outputs.has_results == 'true'
         run: |
-          mkdir -p .github/agent-system/archive
-          mkdir -p .github/agent-system/archive/definitions
-          
-          python3 << 'PYTHON_SCRIPT'
-          import json
-          import shutil
-          import os
-          from pathlib import Path
-          
-          with open('/tmp/evaluation_results.json', 'r') as f:
-              results = json.load(f)
-          
-          with open('.github/agent-system/registry.json', 'r') as f:
-              registry = json.load(f)
-          
-          for agent in results.get('eliminated', []):
-              agent_id = agent['id']
-              
-              # Archive profile
-              profile_path = f".github/agent-system/profiles/{agent_id}.md"
-              archive_path = f".github/agent-system/archive/{agent_id}.md"
-              
-              if os.path.exists(profile_path):
-                  shutil.move(profile_path, archive_path)
-                  print(f"📦 Archived profile for {agent['name']}")
-              
-              # Find and note the agent definition (but don't remove it - keep for future spawns)
-              # Get specialization from registry
-              full_agent = next((a for a in registry.get('agents', []) if a.get('id') == agent_id), None)
-              if not full_agent:
-                  # Check eliminated list in registry for historical data
-                  continue
-              
-              specialization = full_agent.get('specialization', 'unknown')
-              agent_def_path = Path(f".github/agents/{specialization}.md")
-              
-              if agent_def_path.exists():
-                  print(f"  ℹ️  Agent definition {specialization}.md remains for future spawns")
-          
-          PYTHON_SCRIPT
+          # The profile manager handles archival too
+          # Already called in previous step
+          echo "✅ Archival handled by profile manager"
 
       - name: Commit changes
         if: steps.evaluate.outputs.has_results == 'true'
@@ -294,84 +99,10 @@ jobs:
           git commit -m "🔄 Daily agent evaluation and governance"
           git push origin "$BRANCH_NAME"
           
-          # Read results
-          PROMOTED_COUNT=$(python3 -c "
-          import json
-          with open('/tmp/evaluation_results.json', 'r') as f:
-              results = json.load(f)
-          print(len(results.get('promoted', [])))
-          ")
+          # Generate elegant PR body
+          PR_BODY=$(python3 tools/pr_body_generator.py)
           
-          ELIMINATED_COUNT=$(python3 -c "
-          import json
-          with open('/tmp/evaluation_results.json', 'r') as f:
-              results = json.load(f)
-          print(len(results.get('eliminated', [])))
-          ")
-          
-          MAINTAINED_COUNT=$(python3 -c "
-          import json
-          with open('/tmp/evaluation_results.json', 'r') as f:
-              results = json.load(f)
-          print(len(results.get('maintained', [])))
-          ")
-          
-          # Build PR body
-          PR_BODY="## 🏛️ Daily Agent Evaluation Results
-
-          The agent ecosystem has been evaluated based on performance metrics.
-
-          ### Summary
-
-          - 🏆 **Promoted to Hall of Fame**: $PROMOTED_COUNT agents
-          - ❌ **Eliminated**: $ELIMINATED_COUNT agents  
-          - ✅ **Maintained Active Status**: $MAINTAINED_COUNT agents
-
-          ### Details
-          "
-          
-          # Add promoted agents
-          if [ "$PROMOTED_COUNT" -gt 0 ]; then
-            PR_BODY="$PR_BODY
-
-          #### 🏆 Promoted to Hall of Fame
-          "
-            python3 << 'PYTHON_SCRIPT'
-          import json
-          with open('/tmp/evaluation_results.json', 'r') as f:
-              results = json.load(f)
-          for agent in results.get('promoted', []):
-              print(f"- **{agent['name']}** - Score: {agent['score']:.2%}")
-          PYTHON_SCRIPT
-          fi
-          
-          # Add eliminated agents
-          if [ "$ELIMINATED_COUNT" -gt 0 ]; then
-            PR_BODY="$PR_BODY
-
-          #### ❌ Eliminated
-          "
-            python3 << 'PYTHON_SCRIPT'
-          import json
-          with open('/tmp/evaluation_results.json', 'r') as f:
-              results = json.load(f)
-          for agent in results.get('eliminated', []):
-              print(f"- **{agent['name']}** - Score: {agent['score']:.2%} (below threshold)")
-          PYTHON_SCRIPT
-          fi
-          
-          PR_BODY="$PR_BODY
-
-          ### Changes
-
-          - Updated agent registry
-          - Modified agent profiles  
-          - Archived eliminated agents
-          - Updated system lead if applicable
-
-          ---
-          *🤖 Automated agent evaluation system - Survival of the fittest in action!*"
-          
+          # Create PR
           gh pr create \
             --title "🏛️ Daily Agent Evaluation - $(date +%Y-%m-%d)" \
             --body "$PR_BODY" \
@@ -386,100 +117,26 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python3 << 'PYTHON_SCRIPT'
-          import json
-          import subprocess
-          from datetime import datetime
-          
-          with open('/tmp/evaluation_results.json', 'r') as f:
-              results = json.load(f)
-          
-          with open('.github/agent-system/registry.json', 'r') as f:
-              registry = json.load(f)
-          
-          title = f"🏛️ Agent Evaluation Report - {datetime.utcnow().strftime('%Y-%m-%d')}"
-          
-          body = f"""## 📊 Daily Agent Evaluation Report
-
-          **Date**: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
-
-          ### Results Summary
-
-          - 🏆 **Promoted**: {len(results.get('promoted', []))} agents
-          - ❌ **Eliminated**: {len(results.get('eliminated', []))} agents
-          - ✅ **Maintained**: {len(results.get('maintained', []))} agents
-          - 📊 **Total Active**: {len([a for a in registry['agents'] if a['status'] == 'active'])} agents
-
-          ### Hall of Fame
-
-          """
-          
-          if registry.get('hall_of_fame'):
-              body += f"{len(registry['hall_of_fame'])} agents have earned their place:\n\n"
-              for hof_agent in sorted(registry['hall_of_fame'], key=lambda a: a['metrics']['overall_score'], reverse=True):
-                  score = hof_agent['metrics']['overall_score']
-                  is_lead = hof_agent['id'] == registry.get('system_lead')
-                  crown = "👑 " if is_lead else ""
-                  body += f"- {crown}**{hof_agent['name']}** - {score:.2%}\n"
-          else:
-              body += "*No agents in Hall of Fame yet*\n"
-          
-          body += "\n### System Lead\n\n"
-          
-          if registry.get('system_lead'):
-              lead = next((a for a in registry['hall_of_fame'] if a['id'] == registry['system_lead']), None)
-              if lead:
-                  body += f"👑 **{lead['name']}** is currently governing the agent ecosystem.\n"
-          else:
-              body += "*No system lead elected yet*\n"
-          
-          body += """
-          ### Performance Metrics
-
-          Agents are evaluated on:
-          - **Code Quality** (30%): Linting, best practices, maintainability
-          - **Issue Resolution** (20%): Issues completed, time to resolution
-          - **PR Success** (20%): PRs merged, review feedback
-          - **Peer Review** (15%): Reviews provided, quality of feedback
-          - **🎨 Creativity** (15%): Novel solutions, diverse approaches, impactful changes
-
-          ### Next Steps
-
-          - New agents will continue spawning every 3 hours
-          - Next evaluation in 24 hours
-          - Community feedback influences agent scores
-
-          ---
-          *🤖 Automated evaluation - May the best agents thrive!*
-          """
-          
-          # Create issue using gh CLI
-          result = subprocess.run(
-              ['gh', 'issue', 'create', '--title', title, '--body', body, '--label', 'agent-system,evaluation'],
-              capture_output=True,
-              text=True
-          )
-          
-          if result.returncode == 0:
-              print("✅ Evaluation report issue created")
-          else:
-              print(f"⚠️ Failed to create issue: {result.stderr}")
-          
-          PYTHON_SCRIPT
+          # Use the elegant report generator
+          python3 tools/report_generator.py
 
       - name: Summary
         run: |
           echo "🏛️ Agent Evaluation Complete!"
           echo ""
           if [ -f "/tmp/evaluation_results.json" ]; then
-            python3 << 'PYTHON_SCRIPT'
+            python3 << 'EOF'
           import json
-          with open('/tmp/evaluation_results.json', 'r') as f:
+          from pathlib import Path
+          
+          results_path = Path('/tmp/evaluation_results.json')
+          with open(results_path, 'r') as f:
               results = json.load(f)
+          
           print(f"Promoted: {len(results.get('promoted', []))}")
           print(f"Eliminated: {len(results.get('eliminated', []))}")
           print(f"Maintained: {len(results.get('maintained', []))}")
-          PYTHON_SCRIPT
+          EOF
           else
             echo "No agents to evaluate"
           fi

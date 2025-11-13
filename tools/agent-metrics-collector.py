@@ -160,50 +160,70 @@ class MetricsCollector:
         # Load scoring configuration from registry
         self.weights = self._load_scoring_weights()
         
-        # Initialize creativity analyzer
+        # Initialize creativity analyzer with elegant error handling
+        self.creativity_analyzer = None
+        self.creativity_available = False
+        
         try:
-            from pathlib import Path
-            import sys
-            import importlib.util
-            
-            # Handle hyphenated filename
-            analyzer_path = Path(__file__).parent / "creativity-metrics-analyzer.py"
-            spec = importlib.util.spec_from_file_location(
-                "creativity_metrics_analyzer",
-                analyzer_path
-            )
-            creativity_module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(creativity_module)
-            
-            CreativityAnalyzer = creativity_module.CreativityAnalyzer
-            self.creativity_analyzer = CreativityAnalyzer(repo=self.repo, github_token=github_token)
+            self.creativity_analyzer = self._initialize_creativity_analyzer(github_token)
             self.creativity_available = True
         except (ImportError, FileNotFoundError, AttributeError) as e:
             print(f"⚠️  Warning: Creativity analyzer not available: {e}", file=sys.stderr)
-            self.creativity_analyzer = None
-            self.creativity_available = False
         
         # Ensure metrics directory exists
         METRICS_DIR.mkdir(parents=True, exist_ok=True)
     
-    def _load_scoring_weights(self) -> Dict[str, float]:
-        """Load scoring weights from registry configuration"""
-        try:
-            if REGISTRY_FILE.exists():
-                with open(REGISTRY_FILE, 'r') as f:
-                    registry = json.load(f)
-                    return registry.get('config', {}).get('metrics_weight', {})
-        except Exception as e:
-            print(f"⚠️  Warning: Could not load scoring weights: {e}", file=sys.stderr)
+    def _initialize_creativity_analyzer(self, github_token: Optional[str]):
+        """
+        Initialize the creativity analyzer module.
         
-        # Default weights (updated to include creativity)
-        return {
+        Handles the complexity of loading a hyphenated Python module with grace.
+        Raises appropriate exceptions if initialization fails.
+        """
+        import importlib.util
+        
+        analyzer_path = Path(__file__).parent / "creativity-metrics-analyzer.py"
+        
+        spec = importlib.util.spec_from_file_location(
+            "creativity_metrics_analyzer",
+            analyzer_path
+        )
+        
+        creativity_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(creativity_module)
+        
+        CreativityAnalyzer = creativity_module.CreativityAnalyzer
+        return CreativityAnalyzer(repo=self.repo, github_token=github_token)
+    
+    def _load_scoring_weights(self) -> Dict[str, float]:
+        """
+        Load scoring weights from registry configuration.
+        
+        Returns default weights if registry is unavailable or missing configuration.
+        This ensures the system always has sensible defaults to fall back on.
+        """
+        default_weights = {
             'code_quality': 0.30,
             'issue_resolution': 0.20,
             'pr_success': 0.20,
             'peer_review': 0.15,
             'creativity': 0.15
         }
+        
+        try:
+            if not REGISTRY_FILE.exists():
+                return default_weights
+            
+            with open(REGISTRY_FILE, 'r') as f:
+                registry = json.load(f)
+                weights = registry.get('config', {}).get('metrics_weight', {})
+                
+                # Return configured weights if present, otherwise defaults
+                return weights if weights else default_weights
+                
+        except Exception as e:
+            print(f"⚠️  Warning: Could not load scoring weights: {e}", file=sys.stderr)
+            return default_weights
     
     def collect_agent_activity(
         self,
@@ -458,92 +478,153 @@ class MetricsCollector:
         """
         Calculate performance scores from activity data.
         
-        Scoring algorithm:
-        - Code Quality: Based on PR merge rate and code analysis (future)
-        - Issue Resolution: Issues resolved / issues created ratio
-        - PR Success: PRs merged / PRs created ratio
-        - Peer Review: Normalized review activity
-        - Creativity: Novel patterns, diversity, impact, learning (if available)
+        Each score component is calculated independently, then weighted
+        to produce an overall score. This approach is clear and maintainable.
         
         Args:
             activity: Agent activity data
             agent_id: Agent identifier
-            contributions: Optional list of contribution data for creativity analysis
+            contributions: Optional contribution data for creativity analysis
             
         Returns:
-            MetricsScore with calculated scores
+            MetricsScore with all component scores and weighted overall
         """
         scores = MetricsScore()
         
-        # Code Quality Score
-        # For now, based on PR merge success rate
-        # Future: Integrate with code-analyzer.py for static analysis
-        if activity.prs_created > 0:
-            merge_rate = activity.prs_merged / activity.prs_created
-            scores.code_quality = min(1.0, merge_rate * 1.2)  # Bonus for high merge rate
-        else:
-            scores.code_quality = 0.5  # Neutral score for new agents
+        # Calculate each component score
+        scores.code_quality = self._calculate_code_quality_score(activity)
+        scores.issue_resolution = self._calculate_issue_resolution_score(activity)
+        scores.pr_success = self._calculate_pr_success_score(activity)
+        scores.peer_review = self._calculate_peer_review_score(activity)
+        scores.creativity = self._calculate_creativity_score(agent_id, contributions)
         
-        # Issue Resolution Score
-        if activity.issues_created > 0:
-            resolution_rate = activity.issues_resolved / activity.issues_created
-            scores.issue_resolution = min(1.0, resolution_rate)
-        elif activity.issues_resolved > 0:
-            # Agent is resolving issues created by others - good!
-            scores.issue_resolution = min(1.0, activity.issues_resolved / 5.0)
-        else:
-            scores.issue_resolution = 0.0
-        
-        # PR Success Score
-        if activity.prs_created > 0:
-            pr_success_rate = activity.prs_merged / activity.prs_created
-            scores.pr_success = pr_success_rate
-        else:
-            scores.pr_success = 0.0
-        
-        # Peer Review Score
-        # Normalize to 0-1 based on reasonable review activity (5+ reviews = 1.0)
-        scores.peer_review = min(1.0, activity.reviews_given / 5.0)
-        
-        # Creativity Score
-        if self.creativity_available and contributions:
-            try:
-                creativity_metrics = self.creativity_analyzer.analyze_creativity(
-                    agent_id, 
-                    contributions
-                )
-                scores.creativity = creativity_metrics.score.overall
-            except Exception as e:
-                print(f"⚠️  Warning: Creativity analysis failed for {agent_id}: {e}", file=sys.stderr)
-                scores.creativity = 0.5  # Neutral score on error
-        else:
-            # Fallback: Use randomized trait from registry as baseline
-            try:
-                if REGISTRY_FILE.exists():
-                    with open(REGISTRY_FILE, 'r') as f:
-                        registry = json.load(f)
-                        agents = registry.get('agents', [])
-                        for agent in agents:
-                            if agent.get('id') == agent_id:
-                                # Convert 0-100 trait to 0-1 score
-                                creativity_trait = agent.get('traits', {}).get('creativity', 50)
-                                scores.creativity = creativity_trait / 100.0
-                                break
-                        else:
-                            scores.creativity = 0.5
-            except Exception:
-                scores.creativity = 0.5
-        
-        # Calculate weighted overall score
-        scores.overall = (
-            scores.code_quality * self.weights.get('code_quality', 0.30) +
-            scores.issue_resolution * self.weights.get('issue_resolution', 0.20) +
-            scores.pr_success * self.weights.get('pr_success', 0.20) +
-            scores.peer_review * self.weights.get('peer_review', 0.15) +
-            scores.creativity * self.weights.get('creativity', 0.15)
-        )
+        # Compute weighted overall score
+        scores.overall = self._calculate_overall_score(scores)
         
         return scores
+    
+    def _calculate_code_quality_score(self, activity: AgentActivity) -> float:
+        """
+        Calculate code quality score based on PR merge success rate.
+        
+        High merge rates indicate code that passes review and meets standards.
+        Future enhancement: Integrate static analysis metrics.
+        """
+        if activity.prs_created == 0:
+            return 0.5  # Neutral score for agents without PRs
+        
+        merge_rate = activity.prs_merged / activity.prs_created
+        return min(1.0, merge_rate * 1.2)  # Bonus for high merge rate
+    
+    def _calculate_issue_resolution_score(self, activity: AgentActivity) -> float:
+        """
+        Calculate issue resolution score.
+        
+        Rewards agents who resolve issues, especially those created by others.
+        """
+        if activity.issues_created > 0:
+            resolution_rate = activity.issues_resolved / activity.issues_created
+            return min(1.0, resolution_rate)
+        
+        if activity.issues_resolved > 0:
+            # Resolving others' issues is valuable - normalize to 0-1 scale
+            return min(1.0, activity.issues_resolved / 5.0)
+        
+        return 0.0
+    
+    def _calculate_pr_success_score(self, activity: AgentActivity) -> float:
+        """Calculate PR success score - simple and direct"""
+        if activity.prs_created == 0:
+            return 0.0
+        
+        return activity.prs_merged / activity.prs_created
+    
+    def _calculate_peer_review_score(self, activity: AgentActivity) -> float:
+        """
+        Calculate peer review score.
+        
+        Normalize to 0-1 based on reasonable review activity (5+ reviews = 1.0)
+        """
+        return min(1.0, activity.reviews_given / 5.0)
+    
+    def _calculate_creativity_score(
+        self,
+        agent_id: str,
+        contributions: Optional[List[Dict[str, Any]]]
+    ) -> float:
+        """
+        Calculate creativity score using advanced analysis or fallback to traits.
+        
+        Creativity is the hardest metric to quantify, so we use multiple approaches:
+        1. Advanced analysis if creativity analyzer is available
+        2. Agent's creativity trait from registry as fallback
+        3. Neutral 0.5 score if neither is available
+        """
+        # Try advanced creativity analysis first
+        if self.creativity_available and contributions:
+            score = self._analyze_creativity_advanced(agent_id, contributions)
+            if score is not None:
+                return score
+        
+        # Fallback to agent's creativity trait
+        return self._get_creativity_trait_score(agent_id)
+    
+    def _analyze_creativity_advanced(
+        self,
+        agent_id: str,
+        contributions: List[Dict[str, Any]]
+    ) -> Optional[float]:
+        """Perform advanced creativity analysis, returns None on failure"""
+        try:
+            creativity_metrics = self.creativity_analyzer.analyze_creativity(
+                agent_id,
+                contributions
+            )
+            return creativity_metrics.score.overall
+        except Exception as e:
+            print(f"⚠️  Warning: Creativity analysis failed for {agent_id}: {e}", file=sys.stderr)
+            return None
+    
+    def _get_creativity_trait_score(self, agent_id: str) -> float:
+        """
+        Get creativity score from agent's trait in registry.
+        
+        Returns 0.5 (neutral) if not found.
+        """
+        try:
+            if not REGISTRY_FILE.exists():
+                return 0.5
+            
+            with open(REGISTRY_FILE, 'r') as f:
+                registry = json.load(f)
+            
+            # Search for agent in both active and hall of fame
+            all_agents = registry.get('agents', []) + registry.get('hall_of_fame', [])
+            
+            for agent in all_agents:
+                if agent.get('id') == agent_id:
+                    # Convert 0-100 trait to 0-1 score
+                    creativity_trait = agent.get('traits', {}).get('creativity', 50)
+                    return creativity_trait / 100.0
+            
+            return 0.5
+            
+        except Exception:
+            return 0.5
+    
+    def _calculate_overall_score(self, scores: MetricsScore) -> float:
+        """
+        Calculate weighted overall score from component scores.
+        
+        Beautiful simplicity - weights times scores, summed.
+        """
+        return (
+            scores.code_quality * self.weights['code_quality'] +
+            scores.issue_resolution * self.weights['issue_resolution'] +
+            scores.pr_success * self.weights['pr_success'] +
+            scores.peer_review * self.weights['peer_review'] +
+            scores.creativity * self.weights['creativity']
+        )
     
     def collect_metrics(
         self,
