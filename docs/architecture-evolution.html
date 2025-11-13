@@ -251,6 +251,13 @@
 
         <div id="error" class="error" style="display: none;">
             <p>Failed to load architecture data. Please run the architecture tracker first.</p>
+            <p style="font-size: 0.9em; margin-top: 20px;">
+                <strong>Troubleshooting:</strong><br>
+                • Check your browser console for specific errors<br>
+                • Try disabling your ad blocker<br>
+                • Make sure JavaScript is enabled<br>
+                • <a href="architecture-evolution-debug.html" style="color: #00d4ff;">Run Diagnostic Page</a>
+            </p>
         </div>
 
         <div id="content" style="display: none;">
@@ -295,24 +302,58 @@
     </div>
 
     <div class="timeline-tooltip" id="tooltip"></div>
+    
+    <!-- Debug info -->
+    <div style="text-align: center; padding: 20px; color: var(--text-muted, #666); font-size: 0.8em;">
+        <p>Architecture Evolution Visualization v1.1 | 
+        <a href="architecture-evolution-debug.html" style="color: var(--primary, #00d4ff);">Debug Mode</a> | 
+        Page loaded: <span id="load-time"></span></p>
+    </div>
+
+    <script>
+        // Set load time
+        document.getElementById('load-time').textContent = new Date().toLocaleString();
+    </script>
 
     <script>
         // Check if required libraries are loaded
         function checkLibraries() {
+            const errors = [];
+            
             if (typeof d3 === 'undefined') {
                 console.error('D3.js failed to load');
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('error').innerHTML = '<p>Failed to load D3.js library. Please check your ad blocker or try a different browser.</p>';
-                return false;
+                errors.push('D3.js library');
+            } else {
+                console.log('D3.js loaded successfully, version:', d3.version);
             }
+            
             if (typeof mermaid === 'undefined') {
                 console.error('Mermaid failed to load');
+                errors.push('Mermaid library');
+            } else {
+                console.log('Mermaid loaded successfully');
+            }
+            
+            if (errors.length > 0) {
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('error').style.display = 'block';
-                document.getElementById('error').innerHTML = '<p>Failed to load Mermaid library. Please check your ad blocker or try a different browser.</p>';
+                document.getElementById('error').innerHTML = `
+                    <p><strong>Failed to load required libraries:</strong> ${errors.join(', ')}</p>
+                    <p style="font-size: 0.9em; margin-top: 20px;">
+                        <strong>Possible causes:</strong><br>
+                        • Ad blocker blocking CDN resources<br>
+                        • Corporate firewall blocking external scripts<br>
+                        • Network connectivity issues<br>
+                        • Browser security settings<br><br>
+                        <strong>Solutions:</strong><br>
+                        • Try disabling your ad blocker for this site<br>
+                        • Check browser console (F12) for specific errors<br>
+                        • <a href="architecture-evolution-debug.html" style="color: #00d4ff; text-decoration: underline;">Run Diagnostic Page</a>
+                    </p>
+                `;
                 return false;
             }
+            
             return true;
         }
 
@@ -354,39 +395,79 @@
 
         // Load data
         async function loadData() {
+            console.log('=== Architecture Evolution Page Loading ===');
+            console.log('1. Checking libraries...');
+            
             // Check if libraries are loaded
             if (!checkLibraries()) {
+                console.error('Library check failed, aborting');
                 return;
             }
 
+            console.log('2. Libraries OK, initializing Mermaid...');
             // Initialize Mermaid after confirming it's loaded
             initializeMermaid();
 
             try {
+                console.log('3. Fetching evolution.json...');
                 // Load evolution history
                 const evolutionResponse = await fetch('data/architecture/evolution.json');
-                if (!evolutionResponse.ok) throw new Error('Evolution data not found');
+                if (!evolutionResponse.ok) {
+                    throw new Error(`Evolution data not found (HTTP ${evolutionResponse.status})`);
+                }
                 evolutionData = await evolutionResponse.json();
+                console.log(`   ✓ Loaded ${evolutionData.snapshots?.length || 0} snapshots`);
 
+                console.log('4. Fetching latest.json...');
                 // Load latest snapshot
                 const latestResponse = await fetch('data/architecture/latest.json');
-                if (!latestResponse.ok) throw new Error('Latest snapshot not found');
+                if (!latestResponse.ok) {
+                    throw new Error(`Latest snapshot not found (HTTP ${latestResponse.status})`);
+                }
                 latestData = await latestResponse.json();
+                console.log(`   ✓ Loaded latest data with ${Object.keys(latestData.components || {}).length} components`);
 
+                console.log('5. Hiding loading, showing content...');
                 // Hide loading, show content
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
 
+                console.log('6. Rendering visualizations...');
                 // Render visualizations
                 renderMetrics();
+                console.log('   ✓ Metrics rendered');
+                
                 renderTimeline();
+                console.log('   ✓ Timeline rendered');
+                
                 renderComponents();
+                console.log('   ✓ Components rendered');
+                
                 renderDiagram();
+                console.log('   ✓ Diagram rendered');
+                
+                console.log('=== Page loaded successfully ===');
 
             } catch (error) {
                 console.error('Error loading data:', error);
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('error').style.display = 'block';
+                
+                let errorMsg = '<p><strong>Failed to load architecture data.</strong></p>';
+                errorMsg += `<p style="font-size: 0.9em;">Error: ${error.message}</p>`;
+                errorMsg += '<p style="font-size: 0.9em; margin-top: 20px;">';
+                errorMsg += '<strong>Possible causes:</strong><br>';
+                errorMsg += '• Data files not found (run tools/architecture-tracker.py)<br>';
+                errorMsg += '• Network error fetching data files<br>';
+                errorMsg += '• Invalid JSON in data files<br>';
+                errorMsg += '• GitHub Pages not deployed correctly<br><br>';
+                errorMsg += '<strong>Next steps:</strong><br>';
+                errorMsg += '• Check browser console (F12) for details<br>';
+                errorMsg += '• Verify data files exist in docs/data/architecture/<br>';
+                errorMsg += '• <a href="architecture-evolution-debug.html" style="color: #00d4ff; text-decoration: underline;">Run Diagnostic Page</a>';
+                errorMsg += '</p>';
+                
+                document.getElementById('error').innerHTML = errorMsg;
             }
         }
 
