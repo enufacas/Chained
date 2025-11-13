@@ -2,14 +2,42 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 26
+**Total Insights:** 28
 
-**Last Updated:** 2025-11-12
+**Last Updated:** 2025-11-13
 
 ---
 
 
 ## 📰 From Hacker News
+
+
+### Google will allow users to sideload Android apps without verification
+
+**Community Score:** 653 upvotes
+
+**Link:** https://android-developers.googleblog.com/2025/11/android-developer-verification-early.html
+
+
+**Content Summary:**
+
+☰ Android Developers Blog The latest Android and Google Play news for app and game developers. 🔍 Android Developers → Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News More | 12 November 2025 Android developer verification: Early access starts now as we continue to build with your feedback Share this post LinkedIn Twitter Facebook Email Copy link Link copied to clipboard Posted by Matthew Forsythe Di...
+
+---
+
+
+### Yt-dlp: External JavaScript runtime now required for full YouTube support
+
+**Community Score:** 939 upvotes
+
+**Link:** https://github.com/yt-dlp/yt-dlp/issues/15012
+
+
+**Content Summary:**
+
+yt-dlp / yt-dlp Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 10.8k Star 135k [Announcement] External JavaScript runtime now required for full YouTube support #15012 New issue Copy link New issue Copy link Open Open [Announcement] External JavaScript runtime now required for full YouTube support #15012 Copy link Labels discussion/announcement Description bashonly opened on Nov 12, 2025 Issue body...
+
+---
 
 
 ### Yt-dlp: External JavaScript runtime now required for full YouTube support

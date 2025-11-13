@@ -2,14 +2,37 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 101
+**Total Insights:** 103
 
-**Last Updated:** 2025-11-12
+**Last Updated:** 2025-11-13
 
 ---
 
 
 ## 📰 From Hacker News
+
+
+### Marble: A Multimodal World Model
+
+**Community Score:** 173 upvotes
+
+**Link:** https://www.worldlabs.ai/blog/marble-world-model
+
+
+**Content Summary:**
+
+November 12, 2025 Marble, our frontier multimodal world model, is available to everyone starting today Marble: A Multimodal World Model Spatial intelligence is the next frontier in AI, demanding powerful world models to realize its full potential. World models should reconstruct, generate, and simulate 3D worlds; and allow both humans and agents to interact with them. Spatially intelligent world models will transform a wide variety of industries over the coming years. Two months ago we shared a ...
+
+---
+
+
+### GPT-5.1: A smarter, more conversational ChatGPT
+
+**Community Score:** 295 upvotes
+
+**Link:** https://openai.com/index/gpt-5-1/
+
+---
 
 
 ### Yann LeCun to depart Meta and launch AI startup focused on 'world models'
@@ -223,24 +246,6 @@ Hi! We’re LateNiteSoft, and we’ve been wo...
 **Community Score:** 145 upvotes
 
 **Link:** https://github.com/opencontainers/runc/issues/4990
-
----
-
-
-### Marble Fountain
-
-**Community Score:** 572 upvotes
-
-**Link:** https://willmorrison.net/posts/marble-fountain/
-
----
-
-
-### The Principles of Diffusion Models
-
-**Community Score:** 156 upvotes
-
-**Link:** https://arxiv.org/abs/2510.21890
 
 ---
 

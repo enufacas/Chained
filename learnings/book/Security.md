@@ -2,14 +2,23 @@
 
 > Security vulnerabilities, encryption, authentication, and privacy
 
-**Total Insights:** 5
+**Total Insights:** 6
 
-**Last Updated:** 2025-11-12
+**Last Updated:** 2025-11-13
 
 ---
 
 
 ## 📰 From Hacker News
+
+
+### Fighting the New York Times' invasion of user privacy
+
+**Community Score:** 326 upvotes
+
+**Link:** https://openai.com/index/fighting-nyt-user-privacy-invasion
+
+---
 
 
 ### Fighting the New York Times' invasion of user privacy
