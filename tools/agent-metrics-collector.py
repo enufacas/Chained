@@ -260,6 +260,8 @@ class MetricsCollector:
             print(f"⚠️  Warning: No specialization found for {agent_id}", file=sys.stderr)
             return assigned_issues
         
+        print(f"🔍 Looking for issues assigned to agent {agent_id} (specialization: {specialization})", file=sys.stderr)
+        
         try:
             since_date = (datetime.now(timezone.utc) - timedelta(days=since_days)).isoformat()
             
@@ -270,6 +272,8 @@ class MetricsCollector:
                 'label:agent-work',
                 f'created:>={since_date}'
             )
+            
+            print(f"📋 Found {len(issues)} total agent-work issues in timeframe", file=sys.stderr)
             
             # Filter issues by checking body for COPILOT_AGENT comment
             for issue in issues:
@@ -290,10 +294,17 @@ class MetricsCollector:
                     pattern = rf'<!--\s*COPILOT_AGENT:\s*{re.escape(specialization)}\s*-->'
                     if re.search(pattern, body, re.IGNORECASE):
                         assigned_issues.append(issue_details)
+                        print(f"  ✅ Issue #{issue_number} assigned to {specialization}", file=sys.stderr)
+                    else:
+                        # Log first 100 chars of body to help debug
+                        body_preview = body[:100].replace('\n', ' ')
+                        print(f"  ⏭️  Issue #{issue_number} not for {specialization} (body: {body_preview}...)", file=sys.stderr)
                         
                 except Exception as e:
                     print(f"⚠️  Warning: Error fetching issue {issue_number}: {e}", file=sys.stderr)
                     continue
+            
+            print(f"✅ Found {len(assigned_issues)} issues assigned to {agent_id}", file=sys.stderr)
         
         except Exception as e:
             print(f"⚠️  Warning: Error finding assigned issues for {agent_id}: {e}", file=sys.stderr)
@@ -379,6 +390,15 @@ class MetricsCollector:
                 except Exception:
                     pass
             activity.comments_made = comments_count
+            
+            # Log activity summary
+            print(f"📊 Activity summary for {agent_id}:", file=sys.stderr)
+            print(f"  - Issues assigned: {activity.issues_created}", file=sys.stderr)
+            print(f"  - Issues resolved: {activity.issues_resolved}", file=sys.stderr)
+            print(f"  - PRs created: {activity.prs_created}", file=sys.stderr)
+            print(f"  - PRs merged: {activity.prs_merged}", file=sys.stderr)
+            print(f"  - Reviews given: {activity.reviews_given}", file=sys.stderr)
+            print(f"  - Comments made: {activity.comments_made}", file=sys.stderr)
             
         except Exception as e:
             print(f"⚠️  Warning: Error collecting activity for {agent_id}: {e}", file=sys.stderr)
