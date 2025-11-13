@@ -182,65 +182,60 @@ jobs:
           
           # Opinion templates based on specialization
           specialization_opinions = {
-              "bug-hunter": [
-                  "we should focus on edge cases and error handling",
-                  "this needs thorough testing for potential bugs",
-                  "I can help identify and fix any issues"
+              "accelerate-master": [
+                  "we should focus on performance and efficiency",
+                  "this needs careful optimization and deliberate design",
+                  "I can accelerate this with thoughtful algorithmic choices"
               ],
-              "code-poet": [
-                  "we should prioritize code readability and elegance",
-                  "this is an opportunity for beautiful, maintainable code",
-                  "I can craft a solution that's both functional and artistic"
+              "assert-specialist": [
+                  "we need comprehensive test coverage and specifications",
+                  "this requires systematic validation and edge case analysis",
+                  "I can ensure thorough assertion coverage"
               ],
-              "performance-optimizer": [
-                  "we need to consider performance implications",
-                  "this should be implemented with efficiency in mind",
-                  "I can optimize this for speed and resource usage"
+              "coach-master": [
+                  "we should guide this with principled best practices",
+                  "this needs clear code review and mentorship",
+                  "I can coach the team through solid implementation"
               ],
-              "doc-master": [
-                  "we should ensure comprehensive documentation",
-                  "this needs clear documentation for future maintainers",
-                  "I can create excellent documentation for this"
+              "create-guru": [
+                  "we should build innovative infrastructure",
+                  "this needs visionary design and creative solutions",
+                  "I can create groundbreaking features"
               ],
-              "test-champion": [
-                  "we need comprehensive test coverage for this",
-                  "this requires thorough testing strategy",
-                  "I can ensure robust test coverage"
+              "engineer-master": [
+                  "we need rigorous and systematic engineering",
+                  "this requires innovative yet structured approach",
+                  "I can engineer a rock-solid solution"
               ],
-              "security-guardian": [
-                  "we must consider security implications carefully",
-                  "this needs a security-first approach",
-                  "I can ensure this is implemented securely"
+              "engineer-wizard": [
+                  "we should approach this with inventive enthusiasm",
+                  "this needs visionary engineering and bold ideas",
+                  "I can engineer something truly innovative"
               ],
-              "feature-architect": [
-                  "we should design this with scalability in mind",
-                  "this needs solid architectural planning",
-                  "I can architect a robust solution"
+              "investigate-champion": [
+                  "we should analyze the patterns and data flows",
+                  "this needs visionary investigation of dependencies",
+                  "I can investigate the metrics thoroughly"
               ],
-              "refactor-wizard": [
-                  "we could refactor this for better maintainability",
-                  "this is an opportunity to improve code structure",
-                  "I can restructure this elegantly"
+              "monitor-champion": [
+                  "we must consider security proactively",
+                  "this needs strategic monitoring and access control",
+                  "I can ensure robust security monitoring"
               ],
-              "ux-enhancer": [
-                  "we should focus on user experience",
-                  "this needs to be intuitive and delightful",
-                  "I can make this user-friendly"
+              "organize-guru": [
+                  "we should eliminate duplication and complexity",
+                  "this needs clean, disciplined code structure",
+                  "I can organize this elegantly"
               ],
-              "validate-wizard": [
-                  "we need robust input validation",
-                  "this requires thorough validation logic",
-                  "I can ensure data integrity"
+              "secure-specialist": [
+                  "we must approach security thoughtfully",
+                  "this needs vigilant protection and philosophical consideration",
+                  "I can secure this comprehensively"
               ],
-              "coordinate-wizard": [
-                  "we should coordinate this across the system",
-                  "this needs integration with other components",
-                  "I can ensure smooth system integration"
-              ],
-              "teach-wizard": [
-                  "we should make this educational and clear",
-                  "this is a teaching opportunity",
-                  "I can document this for learning"
+              "support-master": [
+                  "we should guide with principled best practices",
+                  "this needs thorough review and knowledge sharing",
+                  "I can support the team with solid foundations"
               ]
           }
           

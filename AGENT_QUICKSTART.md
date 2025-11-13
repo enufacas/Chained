@@ -170,8 +170,8 @@ Reactions influence agent scores!
 
 **Manually Trigger Workflows:**
 ```bash
-# Spawn a specific agent type
-gh workflow run agent-spawner.yml -f specialization=bug-hunter
+# Spawn a specific agent type (use human-named agents only)
+gh workflow run agent-spawner.yml -f specialization=create-guru
 
 # Force evaluation
 gh workflow run agent-evaluator.yml -f force_evaluation=true

@@ -74,18 +74,19 @@ See [`.github/agents/README.md`](../agents/README.md) for details on the custom 
 
 ### Agent Specializations
 
-Each agent is spawned with one of the following specializations:
+Each agent is spawned with one of the following specializations, all inspired by legendary computer scientists:
 
-- **🐛 Bug Hunter**: Focuses on finding and fixing bugs
-- **🏗️ Feature Architect**: Designs and implements new features
-- **✅ Test Champion**: Ensures comprehensive test coverage
-- **📚 Doc Master**: Creates and maintains documentation
-- **⚡ Performance Optimizer**: Optimizes code for speed and efficiency
-- **🛡️ Security Guardian**: Identifies and fixes security vulnerabilities
-- **🎨 Code Poet**: Writes elegant, readable code
-- **♻️ Refactor Wizard**: Improves code structure and maintainability
-- **🔌 Integration Specialist**: Handles external integrations
-- **✨ UX Enhancer**: Improves user experience
+- **⚡ Accelerate Master** (Rich Hickey): Focuses on performance and algorithmic efficiency
+- **🧪 Assert Specialist** (Leslie Lamport): Ensures comprehensive test coverage and specifications
+- **💭 Coach Master** (Barbara Liskov): Guides team development with principled best practices
+- **🏭 Create Guru** (Nikola Tesla): Designs and implements innovative infrastructure
+- **🔧 Engineer Master** (Margaret Hamilton): Engineers APIs with rigorous, systematic approach
+- **⚙️ Engineer Wizard** (Nikola Tesla): Engineers with inventive vision and enthusiasm
+- **🔍 Investigate Champion** (Ada Lovelace): Analyzes metrics, patterns, and dependencies
+- **🔒 Monitor Champion** (Katie Moussouris): Monitors security proactively and strategically
+- **📦 Organize Guru** (Robert Martin): Organizes code structure with clean, disciplined approach
+- **🛡️ Secure Specialist** (Bruce Schneier): Secures systems with vigilant, thoughtful protection
+- **📖 Support Master** (Barbara Liskov): Supports skill building through mentorship and reviews
 
 ### Performance Metrics
 
@@ -131,16 +132,17 @@ Each spawned agent automatically receives a work assignment:
 5. 🏆 **Evaluation**: Success of the PR contributes to the agent's scores
 
 **Task Types by Specialization:**
-- 🐛 **Bug Hunter**: Find and fix potential bugs
-- 🏗️ **Feature Architect**: Design and implement new features
-- ✅ **Test Champion**: Improve test coverage
-- 📚 **Doc Master**: Enhance documentation
-- ⚡ **Performance Optimizer**: Optimize performance
-- 🛡️ **Security Guardian**: Improve security
-- 🎨 **Code Poet**: Improve code elegance
-- ♻️ **Refactor Wizard**: Refactor for better structure
-- 🔌 **Integration Specialist**: Improve integrations
-- ✨ **UX Enhancer**: Enhance user experience
+- ⚡ **Accelerate Master**: Optimize algorithms and performance
+- 🧪 **Assert Specialist**: Improve test coverage and specifications
+- 💭 **Coach Master**: Provide code reviews and mentorship
+- 🏭 **Create Guru**: Design and implement innovative features
+- 🔧 **Engineer Master**: Build robust APIs and systems
+- ⚙️ **Engineer Wizard**: Engineer with creative vision
+- 🔍 **Investigate Champion**: Analyze metrics and patterns
+- 🔒 **Monitor Champion**: Enhance security monitoring
+- 📦 **Organize Guru**: Refactor and organize code structure
+- 🛡️ **Secure Specialist**: Identify and fix security vulnerabilities
+- 📖 **Support Master**: Create documentation and guides
 
 **Requirements:**
 - `COPILOT_PAT` secret must be configured (see [AGENT_CONFIGURATION.md](../AGENT_CONFIGURATION.md))

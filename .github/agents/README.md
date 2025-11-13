@@ -49,62 +49,40 @@ For detailed information about configured MCP servers, see **[MCP_SERVERS_CONFIG
 
 ## Available Agents
 
+All agents are inspired by legendary computer scientists and engineers, bringing their wisdom and approach to software development.
+
+### ⚡ [accelerate-master.md](./accelerate-master.md)
+Specialized in accelerating algorithms. Inspired by Rich Hickey - thoughtful and deliberate, but more direct. Focuses on performance, efficiency, and resource usage.
+
 ### 🧪 [assert-specialist.md](./assert-specialist.md)
 Specialized in asserting coverage. Inspired by Leslie Lamport - specification-driven, with systematic approach. Focuses on tests, quality assurance, and edge cases.
-
-### 🐛 [bug-hunter.md](./bug-hunter.md)
-Specialized in finding and fixing bugs with precision. Focuses on edge cases, error handling, and defensive programming.
-
-### 🏗️ [feature-architect.md](./feature-architect.md)
-Specialized in designing and building innovative features. Focuses on architecture, scalability, and pushing boundaries.
-
-### ✅ [test-champion.md](./test-champion.md)
-Specialized in ensuring comprehensive test coverage. Focuses on quality assurance, edge cases, and validation.
-
-### 📚 [doc-master.md](./doc-master.md)
-Specialized in creating and maintaining documentation. Focuses on clarity, accessibility, and transforming complex concepts.
-
-### ⚡ [performance-optimizer.md](./performance-optimizer.md)
-Specialized in optimizing code performance. Focuses on speed, efficiency, and resource optimization.
-
-### 🛡️ [security-guardian.md](./security-guardian.md)
-Specialized in identifying and fixing security vulnerabilities. Focuses on protecting the codebase and security best practices.
-
-### 🎨 [code-poet.md](./code-poet.md)
-Specialized in writing elegant, readable code. Focuses on code craftsmanship, readability, and maintainability.
-
-### 🏭 [create-guru.md](./create-guru.md)
-Specialized in creating infrastructure. Inspired by Nikola Tesla - inventive and visionary. Focuses on features, infrastructure, and tools.
-
-### ♻️ [refactor-wizard.md](./refactor-wizard.md)
-Specialized in refactoring and improving code structure. Focuses on reducing duplication and simplifying complexity.
-
-### 🔌 [integration-specialist.md](./integration-specialist.md)
-Specialized in improving integrations and connections between systems. Focuses on reliability and error handling.
-
-### ✨ [ux-enhancer.md](./ux-enhancer.md)
-Specialized in improving user experience. Focuses on polish, usability, and visual design.
-
-### 👮 [validate-pro.md](./validate-pro.md)
-Specialized in validating security. Focuses on security, data integrity, and access control.
-
-### 📝 [teach-wizard.md](./teach-wizard.md)
-Specialized in teaching tutorials. Focuses on documentation, comments, and guides.
-
-### 📖 [support-master.md](./support-master.md)
-Specialized in supporting skill building. Inspired by Barbara Liskov - principled and guiding. Focuses on code reviews, best practices, and knowledge sharing.
 
 ### 💭 [coach-master.md](./coach-master.md)
 Specialized in coaching team development. Inspired by Barbara Liskov - principled and guiding, but more direct. Focuses on code reviews, best practices, and knowledge sharing.
 
-### 🔧 [coordinate-wizard.md](./coordinate-wizard.md)
-Specialized in coordinating APIs. Focuses on integrations, APIs, and services.
+### 🏭 [create-guru.md](./create-guru.md)
+Specialized in creating infrastructure. Inspired by Nikola Tesla - inventive and visionary. Focuses on features, infrastructure, and tools.
+
+### 🔧 [engineer-master.md](./engineer-master.md)
+Specialized in engineering APIs. Inspired by Margaret Hamilton - rigorous and innovative, with systematic approach. Focuses on features, infrastructure, and tools.
 
 ### ⚙️ [engineer-wizard.md](./engineer-wizard.md)
 Specialized in engineering APIs. Inspired by Nikola Tesla - inventive and visionary, with extra enthusiasm. Focuses on features, infrastructure, and tools.
 
-### ✔️ [validate-wizard.md](./validate-wizard.md)
-Specialized in ensuring comprehensive validation. Focuses on input validation, data integrity, and error handling across all system boundaries.
+### 🔍 [investigate-champion.md](./investigate-champion.md)
+Specialized in investigating metrics. Inspired by Ada Lovelace - visionary and analytical, with occasional wit. Focuses on code patterns, data flows, and dependencies.
+
+### 🔒 [monitor-champion.md](./monitor-champion.md)
+Specialized in monitoring security. Inspired by Katie Moussouris - proactive and strategic, with extra enthusiasm. Focuses on security, data integrity, and access control.
+
+### 📦 [organize-guru.md](./organize-guru.md)
+Specialized in organizing duplication. Inspired by Robert Martin - clean and disciplined, with creative flair. Focuses on code structure, duplication, and complexity.
+
+### 🛡️ [secure-specialist.md](./secure-specialist.md)
+Specialized in securing security. Inspired by Bruce Schneier - vigilant and thoughtful, with a philosophical bent. Focuses on security, data integrity, and access control.
+
+### 📖 [support-master.md](./support-master.md)
+Specialized in supporting skill building. Inspired by Barbara Liskov - principled and guiding. Focuses on code reviews, best practices, and knowledge sharing.
 
 ## Using Custom Agents
 

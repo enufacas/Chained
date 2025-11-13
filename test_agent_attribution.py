@@ -13,30 +13,31 @@ from pathlib import Path
 def test_copilot_agent_comment_parsing():
     """Test that COPILOT_AGENT comments can be parsed correctly"""
     
+    # Updated test cases to use human-named agents only
     test_cases = [
         {
-            'body': '<!-- COPILOT_AGENT:bug-hunter -->\nFix the bug',
-            'specialization': 'bug-hunter',
+            'body': '<!-- COPILOT_AGENT:accelerate-master -->\nOptimize performance',
+            'specialization': 'accelerate-master',
             'should_match': True
         },
         {
-            'body': '<!--COPILOT_AGENT:feature-architect-->\nAdd feature',
-            'specialization': 'feature-architect',
+            'body': '<!--COPILOT_AGENT:create-guru-->\nAdd feature',
+            'specialization': 'create-guru',
             'should_match': True
         },
         {
-            'body': '<!-- COPILOT_AGENT: doc-master -->\nUpdate docs',
-            'specialization': 'doc-master',
+            'body': '<!-- COPILOT_AGENT: support-master -->\nUpdate docs',
+            'specialization': 'support-master',
             'should_match': True
         },
         {
             'body': 'Just a regular issue without agent assignment',
-            'specialization': 'bug-hunter',
+            'specialization': 'coach-master',
             'should_match': False
         },
         {
-            'body': '<!-- COPILOT_AGENT:bug-hunter -->\nFix the bug',
-            'specialization': 'doc-master',
+            'body': '<!-- COPILOT_AGENT:secure-specialist -->\nFix security issue',
+            'specialization': 'support-master',
             'should_match': False
         },
     ]
