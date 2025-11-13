@@ -86,7 +86,7 @@ jobs:
             echo "🔗 View evolution: https://enufacas.github.io/Chained/architecture-evolution.html" >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Commit architecture data
+      - name: Commit and create PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -105,13 +105,47 @@ jobs:
           if git diff --staged --quiet; then
             echo "No architecture changes to commit"
           else
+            # Create a new branch for the PR with unique name using run ID
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="architecture-evolution/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            # Commit changes
             git commit -m "🏗️ Update architecture evolution tracking" \
                        -m "Files: ${{ steps.track.outputs.total_files }}" \
                        -m "Lines: ${{ steps.track.outputs.total_lines }}" \
                        -m "Components: ${{ steps.track.outputs.total_components }}" \
                        -m "Snapshots: ${{ steps.summary.outputs.snapshot_count }}"
             
-            git push
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR with consistent date formatting
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "🏗️ Update architecture evolution tracking - ${PR_DATE}" \
+              --body "## Architecture Evolution Update
+
+This PR updates the architecture evolution tracking data.
+
+### Metrics
+- **Files:** ${{ steps.track.outputs.total_files }}
+- **Lines:** ${{ steps.track.outputs.total_lines }}
+- **Components:** ${{ steps.track.outputs.total_components }}
+- **Snapshots:** ${{ steps.summary.outputs.snapshot_count }}
+
+### Changes
+- Updated architecture snapshots in \`analysis/architecture/\`
+- Updated architecture data in \`docs/data/architecture/\` for GitHub Pages
+- Updated Mermaid diagram if changed
+
+---
+*🤖 Automated architecture tracking workflow*" \
+              --label "architecture,automated" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ PR created for architecture evolution tracking"
           fi
 
       - name: Create PR comment with architecture summary
