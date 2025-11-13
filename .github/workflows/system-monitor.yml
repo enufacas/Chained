@@ -352,8 +352,9 @@ jobs:
           success_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "success")] | length')
           skipped_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "skipped")] | length')
           action_required_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "action_required")] | length')
+          neutral_runs=$(echo "$runs_json" | jq '[.[] | select(.conclusion == "neutral")] | length')
           
-          # Calculate completed runs (success + failure only, excluding skipped, cancelled, action_required)
+          # Calculate completed runs (success + failure only, excluding skipped, cancelled, action_required, neutral)
           completed_runs=$((success_runs + failed_runs))
           
           echo "Total runs (last 100): $total_runs"
@@ -364,6 +365,18 @@ jobs:
           echo "  - Cancelled: $cancelled_runs"
           echo "  - Skipped: $skipped_runs"
           echo "  - Action Required: $action_required_runs"
+          echo "  - Neutral: $neutral_runs"
+          echo ""
+          
+          # Analyze TRUE failures (exclude workflows that commonly skip)
+          # These workflows often skip due to conditional logic - not actual failures
+          SKIP_PATTERNS="NL to Code Translation Demo|translate"
+          
+          echo "Analyzing true workflow failures (excluding expected skips)..."
+          true_failures=$(echo "$runs_json" | jq -r --arg skip_patterns "$SKIP_PATTERNS" '[.[] | select(.conclusion == "failure") | select(.name | test($skip_patterns) | not)] | length')
+          
+          echo "  - Total failed runs: $failed_runs"
+          echo "  - True failures (excluding expected skips): $true_failures"
           echo ""
           
           # Analyze failed workflows by name
@@ -372,7 +385,12 @@ jobs:
           
           if [ -n "$failed_workflows" ]; then
             echo "$failed_workflows" | while IFS=: read -r workflow_name fail_count; do
-              echo "  - $workflow_name: $fail_count failure(s)"
+              # Check if this is an expected skip pattern
+              if echo "$workflow_name" | grep -qE "$SKIP_PATTERNS"; then
+                echo "  - $workflow_name: $fail_count failure(s) ⚠️ (often skips due to conditional logic)"
+              else
+                echo "  - $workflow_name: $fail_count failure(s)"
+              fi
             done
             
             # Save for later use in the issue
@@ -383,28 +401,36 @@ jobs:
           fi
           echo ""
           
-          # Calculate failure rate based on completed runs only
+          # Calculate failure rates
           if [ "$completed_runs" -gt 0 ]; then
-            failure_rate=$(awk "BEGIN {printf \"%.1f\", ($failed_runs/$completed_runs)*100}")
+            total_failure_rate=$(awk "BEGIN {printf \"%.1f\", ($failed_runs/$completed_runs)*100}")
+            true_failure_rate=$(awk "BEGIN {printf \"%.1f\", ($true_failures/$completed_runs)*100}")
           else
-            failure_rate="0.0"
+            total_failure_rate="0.0"
+            true_failure_rate="0.0"
           fi
           
-          echo "Failure rate (of completed runs): ${failure_rate}%"
+          echo "Total failure rate (of completed runs): ${total_failure_rate}%"
+          echo "True failure rate (excluding expected skips): ${true_failure_rate}%"
           echo ""
           
           # Set outputs
-          echo "failure_rate=${failure_rate}" >> $GITHUB_OUTPUT
+          echo "failure_rate=${total_failure_rate}" >> $GITHUB_OUTPUT
+          echo "true_failure_rate=${true_failure_rate}" >> $GITHUB_OUTPUT
           echo "failed_runs=${failed_runs}" >> $GITHUB_OUTPUT
+          echo "true_failures=${true_failures}" >> $GITHUB_OUTPUT
           echo "total_runs=${total_runs}" >> $GITHUB_OUTPUT
           echo "completed_runs=${completed_runs}" >> $GITHUB_OUTPUT
+          echo "skipped_runs=${skipped_runs}" >> $GITHUB_OUTPUT
           
-          # Determine if critical (more than 10 failures OR failure rate > 20%)
-          failure_rate_int=${failure_rate%.*}
-          if [ "$failed_runs" -gt 10 ] || [ "$failure_rate_int" -gt 20 ]; then
+          # Determine if critical based on TRUE failures (more than 5 true failures OR true failure rate > 15%)
+          true_failure_rate_int=${true_failure_rate%.*}
+          if [ "$true_failures" -gt 5 ] && [ "$true_failure_rate_int" -gt 15 ]; then
             echo "has_critical_failures=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Critical failures detected based on true failure rate"
           else
             echo "has_critical_failures=false" >> $GITHUB_OUTPUT
+            echo "✅ Workflow health is acceptable"
           fi
 
       - name: Create monitoring issue if needed
@@ -437,11 +463,20 @@ jobs:
             ### Current Status
             - **Total Workflow Runs:** ${{ steps.monitor.outputs.total_runs }} (last 100 sampled)
             - **Completed Runs:** ${{ steps.monitor.outputs.completed_runs }} (success + failure)
-            - **Failed Runs:** ${{ steps.monitor.outputs.failed_runs }}
-            - **Failure Rate:** ${{ steps.monitor.outputs.failure_rate }}% (of completed runs)
+            - **Skipped/Cancelled Runs:** ${{ steps.monitor.outputs.skipped_runs }}
+            - **Failed Runs (Total):** ${{ steps.monitor.outputs.failed_runs }}
+            - **True Failures:** ${{ steps.monitor.outputs.true_failures }} ⚠️
+            - **Total Failure Rate:** ${{ steps.monitor.outputs.failure_rate }}% (of completed runs)
+            - **True Failure Rate:** ${{ steps.monitor.outputs.true_failure_rate }}% ⚠️ (excluding expected skips)
             
             ### Failed Workflows Breakdown
             ${failed_breakdown}
+            
+            ### Understanding Failure Rates
+            
+            **Total Failures** include all workflows that returned a \"failure\" conclusion, including those that skip due to conditional logic (e.g., workflows triggered by labels but skipping if the wrong label is used).
+            
+            **True Failures** exclude workflows that commonly skip due to expected behavior. This metric better represents actual problems needing attention.
             
             ### Common Causes
             - **Workflow triggering**: Workflows trying to trigger other workflows (HTTP 403)
@@ -465,11 +500,20 @@ jobs:
             ### Health Summary
             - **Total Workflow Runs:** ${{ steps.monitor.outputs.total_runs }} (last 100 sampled)
             - **Completed Runs:** ${{ steps.monitor.outputs.completed_runs }} (success + failure)
-            - **Failed Runs:** ${{ steps.monitor.outputs.failed_runs }}
-            - **Failure Rate:** ${{ steps.monitor.outputs.failure_rate }}% (of completed runs)
+            - **Skipped/Cancelled Runs:** ${{ steps.monitor.outputs.skipped_runs }}
+            - **Failed Runs (Total):** ${{ steps.monitor.outputs.failed_runs }}
+            - **True Failures:** ${{ steps.monitor.outputs.true_failures }} ⚠️
+            - **Total Failure Rate:** ${{ steps.monitor.outputs.failure_rate }}% (of completed runs)
+            - **True Failure Rate:** ${{ steps.monitor.outputs.true_failure_rate }}% ⚠️ (excluding expected skips)
             
             ### Failed Workflows Breakdown
             ${failed_breakdown}
+            
+            ### Understanding Failure Rates
+            
+            **Total Failures** include all workflows that returned a \"failure\" conclusion, including those that skip due to conditional logic (e.g., workflows triggered by labels but skipping if the wrong label is used).
+            
+            **True Failures** exclude workflows that commonly skip due to expected behavior. This metric better represents actual problems needing attention.
             
             ### Common Causes & Solutions
             
@@ -492,13 +536,13 @@ jobs:
             ### Recommended Actions
             1. Review the failed workflows breakdown above
             2. Check the Actions tab for detailed error logs
-            3. Focus on workflows with multiple failures first
+            3. Focus on workflows with multiple TRUE failures first
             4. Verify secrets and permissions are configured correctly
             5. Consider if recent changes introduced the failures
             
             ### Monitoring
             This issue will be automatically updated with health checks every 12 hours.
-            Close this issue once all problems are resolved and failure rate drops below 20%.
+            Close this issue once all problems are resolved and TRUE failure rate drops below 15%.
             
             ---
             *This issue was automatically created by the System Monitor workflow.*" \
@@ -516,17 +560,23 @@ jobs:
           echo "Summary:"
           echo "  Total Runs: ${{ steps.monitor.outputs.total_runs }}"
           echo "  Completed Runs: ${{ steps.monitor.outputs.completed_runs }}"
-          echo "  Failed: ${{ steps.monitor.outputs.failed_runs }}"
-          echo "  Failure Rate: ${{ steps.monitor.outputs.failure_rate }}% (of completed runs)"
+          echo "  Skipped Runs: ${{ steps.monitor.outputs.skipped_runs }}"
+          echo "  Failed (Total): ${{ steps.monitor.outputs.failed_runs }}"
+          echo "  True Failures: ${{ steps.monitor.outputs.true_failures }}"
+          echo "  Total Failure Rate: ${{ steps.monitor.outputs.failure_rate }}% (of completed runs)"
+          echo "  True Failure Rate: ${{ steps.monitor.outputs.true_failure_rate }}%"
           echo ""
           
           if [ "${{ steps.monitor.outputs.has_critical_failures }}" = "true" ]; then
             echo "Status: ⚠️  ATTENTION NEEDED"
-            echo "High failure rate detected"
+            echo "High true failure rate detected"
           else
             echo "Status: ✅ HEALTHY"
             echo "All workflows operating normally"
           fi
+          echo ""
+          echo "Note: True failures exclude workflows that commonly skip due to"
+          echo "      conditional logic (e.g., label-triggered workflows)."
           echo ""
           echo "================================================================"
 
