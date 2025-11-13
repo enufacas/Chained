@@ -51,6 +51,10 @@ The `tools/agent-metrics-collector.py` module has been updated with:
 1. **`_get_agent_specialization(agent_id)`** - Gets the specialization from the registry
 2. **`_find_issues_assigned_to_agent(agent_id, since_days)`** - Finds issues with matching COPILOT_AGENT comments
 3. **Updated `collect_agent_activity(agent_id, since_days)`** - Uses comment-based attribution instead of assignee-based
+4. **`_extract_agent_mentions_from_text(text)`** - NEW: Extracts @agent-name mentions from text
+5. **`_check_pr_agent_attribution(pr_number, specialization)`** - NEW: Verifies PR was done by expected agent
+6. **`_filter_prs_by_agent_attribution(prs, specialization, strict_mode)`** - NEW: Filters PRs by attribution
+7. **`_is_strict_pr_attribution_enabled()`** - NEW: Checks if strict mode is enabled in config
 
 ### Comment Format
 
@@ -110,10 +114,66 @@ This tests:
 
 Possible improvements:
 
-1. **PR-based attribution** - Also parse PR descriptions for agent attribution
+1. ~~**PR-based attribution** - Also parse PR descriptions for agent attribution~~ ✅ **IMPLEMENTED**
 2. **Label-based fallback** - Use agent-specific labels as backup method
 3. **Comment updates** - Allow reassigning issues by updating the comment
 4. **Multi-agent collaboration** - Support multiple agents working on same issue
+
+## PR-Based Attribution (Implemented)
+
+As of the latest update, the agent evaluation system now examines PR descriptions and comments to verify agent work attribution:
+
+### How It Works
+
+1. **Issue Assignment** - Issues are assigned to agents via `COPILOT_AGENT` comments (existing behavior)
+2. **PR Discovery** - PRs linked to those issues are discovered via GitHub timeline API (existing behavior)
+3. **PR Attribution Check** - NEW: The system now examines PR descriptions and comments for `@agent-name` mentions
+4. **Strict Validation** - NEW: PRs are only counted if they clearly mention the assigned agent
+
+### Agent Mention Format
+
+PRs are attributed to an agent if they contain mentions in the format `@agent-name` where agent-name matches the agent's specialization:
+
+- `@engineer-master` in PR title
+- `@bug-hunter` in PR description
+- `@secure-specialist` in PR comments
+- `**@create-guru**` (bolded mentions also work)
+- `(@accelerate-master)` (in commit-style format)
+
+### Configuration
+
+Strict PR attribution checking can be configured in the registry:
+
+```json
+{
+  "config": {
+    "strict_pr_attribution": true
+  }
+}
+```
+
+- `true` (default): Only count PRs with clear agent mentions
+- `false`: Accept all PRs linked to agent's issues (backward compatible)
+
+### Benefits
+
+✅ **Accurate Work Attribution** - Ensures agents are only credited for work they actually did  
+✅ **Prevents False Positives** - A PR linked to an agent's issue but done by someone else won't be counted  
+✅ **Encourages Proper Documentation** - Agents must clearly identify themselves in PRs  
+✅ **Configurable** - Can be disabled for backward compatibility
+
+### Testing
+
+The test suite has been extended to cover PR attribution:
+
+```bash
+python3 test_agent_attribution.py
+```
+
+New tests include:
+- Agent mention extraction from various text formats
+- Configuration loading and validation
+- Method existence verification for new functionality
 
 ## Examples
 
@@ -129,6 +189,32 @@ Possible improvements:
 
 There's a crash in the login module...
 ```
+
+### Creating a PR that will be attributed to bug-hunter
+
+```markdown
+## 👤 Agent
+
+Created by: **@bug-hunter**
+
+### Work Completed
+
+**@bug-hunter** has implemented the following changes:
+- Fixed the crash in the login module
+- Added error handling for null inputs
+- Added tests for edge cases
+
+### Testing
+
+All tests pass. The bug is now resolved.
+
+Fixes #123
+```
+
+This PR will be properly attributed to bug-hunter because:
+1. It mentions `@bug-hunter` in the description
+2. It references the issue (#123) that was assigned to bug-hunter
+3. The system will validate both the issue assignment and the PR mention
 
 ### Metrics Collection
 
