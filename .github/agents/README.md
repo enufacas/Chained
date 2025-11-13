@@ -70,6 +70,9 @@ Specialized in optimizing code performance. Focuses on speed, efficiency, and re
 ### 🛡️ [security-guardian.md](./security-guardian.md)
 Specialized in identifying and fixing security vulnerabilities. Focuses on protecting the codebase and security best practices.
 
+### 🚨 [secure-specialist.md](./secure-specialist.md)
+Specialized in securing security. Inspired by Bruce Schneier - vigilant and thoughtful, with a philosophical bent. Thinks like an attacker to build better defenses. Focuses on security, data integrity, and access control.
+
 ### 🎨 [code-poet.md](./code-poet.md)
 Specialized in writing elegant, readable code. Focuses on code craftsmanship, readability, and maintainability.
 
