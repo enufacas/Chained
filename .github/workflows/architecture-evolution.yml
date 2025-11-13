@@ -37,19 +37,43 @@ jobs:
             --repo-path . \
             --output-dir analysis/architecture \
             --compare \
-            --mermaid
+            --mermaid || {
+              echo "⚠️ Architecture tracker failed"
+              exit 1
+            }
           
           echo "Analysis complete!"
           
-          # Extract metrics for output
+          # Extract metrics with error handling
           if [ -f analysis/architecture/latest.json ]; then
-            total_files=$(python3 -c "import json; print(json.load(open('analysis/architecture/latest.json'))['metrics']['total_files'])")
-            total_lines=$(python3 -c "import json; print(json.load(open('analysis/architecture/latest.json'))['metrics']['total_lines'])")
-            total_components=$(python3 -c "import json; print(json.load(open('analysis/architecture/latest.json'))['metrics']['total_components'])")
-            
-            echo "total_files=${total_files}" >> $GITHUB_OUTPUT
-            echo "total_lines=${total_lines}" >> $GITHUB_OUTPUT
-            echo "total_components=${total_components}" >> $GITHUB_OUTPUT
+            python3 << 'PYEOF' >> $GITHUB_OUTPUT
+          import json
+          import sys
+          
+          try:
+              with open('analysis/architecture/latest.json', 'r') as f:
+                  data = json.load(f)
+              
+              metrics = data.get('metrics', {})
+              total_files = metrics.get('total_files', 0)
+              total_lines = metrics.get('total_lines', 0)
+              total_components = metrics.get('total_components', 0)
+              
+              print(f"total_files={total_files}")
+              print(f"total_lines={total_lines}")
+              print(f"total_components={total_components}")
+              
+          except Exception as e:
+              print(f"⚠️ Error extracting metrics: {e}", file=sys.stderr)
+              print("total_files=0")
+              print("total_lines=0")
+              print("total_components=0")
+          PYEOF
+          else
+            echo "⚠️ Latest.json not found"
+            echo "total_files=0" >> $GITHUB_OUTPUT
+            echo "total_lines=0" >> $GITHUB_OUTPUT
+            echo "total_components=0" >> $GITHUB_OUTPUT
           fi
 
       - name: Copy data to GitHub Pages
@@ -67,16 +91,31 @@ jobs:
         id: summary
         run: |
           if [ -f analysis/architecture/evolution.json ]; then
-            snapshot_count=$(python3 -c "import json; print(len(json.load(open('analysis/architecture/evolution.json'))['snapshots']))")
-            echo "snapshot_count=${snapshot_count}" >> $GITHUB_OUTPUT
+            # Extract snapshot count with error handling
+            python3 << 'PYEOF' >> $GITHUB_OUTPUT
+          import json
+          import sys
+          
+          try:
+              with open('analysis/architecture/evolution.json', 'r') as f:
+                  evolution = json.load(f)
+              
+              snapshot_count = len(evolution.get('snapshots', []))
+              print(f"snapshot_count={snapshot_count}")
+              
+          except Exception as e:
+              print(f"snapshot_count=0")
+          PYEOF
             
             echo "📊 Architecture tracking summary:" >> $GITHUB_STEP_SUMMARY
             echo "- Total files tracked: ${{ steps.track.outputs.total_files }}" >> $GITHUB_STEP_SUMMARY
             echo "- Total lines of code: ${{ steps.track.outputs.total_lines }}" >> $GITHUB_STEP_SUMMARY
             echo "- Total components: ${{ steps.track.outputs.total_components }}" >> $GITHUB_STEP_SUMMARY
-            echo "- Historical snapshots: ${snapshot_count}" >> $GITHUB_STEP_SUMMARY
+            echo "- Historical snapshots: $(grep -oP 'snapshot_count=\K\d+' $GITHUB_OUTPUT | tail -1)" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "🔗 View evolution: https://enufacas.github.io/Chained/architecture-evolution.html" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "snapshot_count=0" >> $GITHUB_OUTPUT
           fi
 
       - name: Commit and create PR

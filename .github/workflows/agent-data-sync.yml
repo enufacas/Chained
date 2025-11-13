@@ -30,16 +30,27 @@ jobs:
           mkdir -p docs/data/agents
           
           if [ -f ".github/agent-system/registry.json" ]; then
+            # Validate JSON before processing
+            if ! python3 -c "import json; json.load(open('.github/agent-system/registry.json'))" 2>/dev/null; then
+              echo "⚠️ Invalid JSON in registry.json, skipping sync"
+              exit 0
+            fi
+            
             cp .github/agent-system/registry.json docs/data/agent-registry.json
             echo "✅ Synced agent registry to GitHub Pages"
             
-            # Extract individual agent data files using Python
-            python3 << 'EOF'
+            # Extract individual agent data files using Python with error handling
+            python3 << 'PYEOF'
           import json
           import os
+          import sys
           
-          with open('.github/agent-system/registry.json', 'r') as f:
-              registry = json.load(f)
+          try:
+              with open('.github/agent-system/registry.json', 'r') as f:
+                  registry = json.load(f)
+          except (FileNotFoundError, json.JSONDecodeError) as e:
+              print(f'⚠️ Error loading registry: {e}', file=sys.stderr)
+              sys.exit(0)
           
           agents_dir = 'docs/data/agents'
           os.makedirs(agents_dir, exist_ok=True)
@@ -48,22 +59,34 @@ jobs:
           if 'agents' in registry:
               for agent in registry['agents']:
                   agent_id = agent.get('id')
-                  if agent_id:
+                  if not agent_id:
+                      print(f'⚠️ Skipping agent without id: {agent.get("name", "unknown")}')
+                      continue
+                  
+                  try:
                       agent_file = os.path.join(agents_dir, f'{agent_id}.json')
                       with open(agent_file, 'w') as f:
                           json.dump(agent, f, indent=2, ensure_ascii=False)
                       print(f'✅ Created {agent_file}')
+                  except Exception as e:
+                      print(f'⚠️ Error creating {agent_id}.json: {e}', file=sys.stderr)
           
           # Sync hall of fame agents
           if 'hall_of_fame' in registry:
               for agent in registry['hall_of_fame']:
                   agent_id = agent.get('id')
-                  if agent_id:
+                  if not agent_id:
+                      print(f'⚠️ Skipping Hall of Fame agent without id: {agent.get("name", "unknown")}')
+                      continue
+                  
+                  try:
                       agent_file = os.path.join(agents_dir, f'{agent_id}.json')
                       with open(agent_file, 'w') as f:
                           json.dump(agent, f, indent=2, ensure_ascii=False)
                       print(f'✅ Created {agent_file} (Hall of Fame)')
-          EOF
+                  except Exception as e:
+                      print(f'⚠️ Error creating {agent_id}.json: {e}', file=sys.stderr)
+          PYEOF
             
           else
             echo "⚠️ Agent registry not found"
