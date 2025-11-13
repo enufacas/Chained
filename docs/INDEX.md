@@ -159,6 +159,13 @@ Historical documentation of major implementations:
 - **[COPILOT_AUTO_MERGE_IMPLEMENTATION.md](../COPILOT_AUTO_MERGE_IMPLEMENTATION.md)** - Auto-merge system
 - **[And many more...](../)** - See root directory for all summaries
 
+### Agent Evaluation Reports
+
+Coaching analysis and performance reviews by **@coach-master**:
+
+- **[Agent Evaluation Coaching - 2025-11-13](../AGENT_EVALUATION_COACHING_2025-11-13.md)** - ⭐ **NEW!** Comprehensive coaching analysis
+- **[Quick Summary](../summaries/agent-evaluation-2025-11-13-coaching.md)** - TL;DR version
+
 ## 🧪 Testing
 
 Test files and testing documentation:
