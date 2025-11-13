@@ -13,6 +13,23 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 import time
 import json
+import ipaddress
+import socket
+
+# Import validation utilities for security
+try:
+    from validation_utils import (
+        ValidationError,
+        validate_url as _validate_url_basic
+    )
+except ImportError:
+    # Fallback if validation_utils is not available
+    class ValidationError(Exception):
+        pass
+    def _validate_url_basic(url, field_name="URL"):
+        if not url or not isinstance(url, str):
+            raise ValidationError(f"{field_name} must be a non-empty string")
+        return url
 
 
 class WebContentFetcher:
@@ -26,9 +43,75 @@ class WebContentFetcher:
         self.session = requests.Session()
         self.session.headers.update({'User-Agent': self.user_agent})
     
+    def _validate_url_security(self, url):
+        """
+        Validate URL for security concerns including SSRF prevention.
+        
+        Args:
+            url: The URL to validate
+            
+        Returns:
+            The validated URL
+            
+        Raises:
+            ValidationError: If the URL is not safe to access
+        """
+        # Basic URL format validation
+        validated_url = _validate_url_basic(url, "URL")
+        
+        # Parse the URL
+        try:
+            parsed = urlparse(validated_url)
+        except Exception as e:
+            raise ValidationError(f"Failed to parse URL: {e}")
+        
+        # Only allow http and https schemes
+        if parsed.scheme not in ['http', 'https']:
+            raise ValidationError(
+                f"URL scheme '{parsed.scheme}' not allowed. Only http and https are permitted."
+            )
+        
+        # Check for empty hostname
+        if not parsed.hostname:
+            raise ValidationError("URL must have a valid hostname")
+        
+        # Prevent access to private/internal networks (SSRF protection)
+        try:
+            # Resolve hostname to IP
+            ip_str = socket.gethostbyname(parsed.hostname)
+            ip = ipaddress.ip_address(ip_str)
+            
+            # Block private, loopback, link-local, and reserved addresses
+            if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved:
+                raise ValidationError(
+                    f"Access to internal/private IP addresses is not allowed: {ip_str}"
+                )
+            
+            # Additional check for localhost variants
+            if parsed.hostname.lower() in ['localhost', '0.0.0.0', '127.0.0.1', '::1']:
+                raise ValidationError(
+                    "Access to localhost is not allowed for security reasons"
+                )
+                
+        except socket.gaierror:
+            # DNS resolution failed - might be intentional (e.g., testing)
+            # We'll allow it but the request will likely fail naturally
+            pass
+        except ValueError:
+            # IP address parsing failed - might be IPv6 or other format
+            # Do basic hostname check
+            hostname_lower = parsed.hostname.lower()
+            blocked_hosts = ['localhost', '0.0.0.0', '127.0.0.1']
+            if any(blocked in hostname_lower for blocked in blocked_hosts):
+                raise ValidationError(
+                    "Access to localhost is not allowed for security reasons"
+                )
+        
+        return validated_url
+    
     def fetch(self, url, max_retries=3):
         """
-        Fetch content from a URL with retry logic
+        Fetch content from a URL with retry logic and security validation
         
         Args:
             url: The URL to fetch
@@ -44,6 +127,13 @@ class WebContentFetcher:
             'title': None,
             'error': None
         }
+        
+        # Validate URL for security before attempting to fetch
+        try:
+            url = self._validate_url_security(url)
+        except ValidationError as e:
+            result['error'] = f'Security validation failed: {str(e)}'
+            return result
         
         # Skip certain domains that are problematic
         skip_domains = ['twitter.com', 'x.com', 'facebook.com', 'instagram.com']
