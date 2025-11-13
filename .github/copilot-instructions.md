@@ -81,6 +81,71 @@ Each agent has unique expertise and should be used for their specialized domain:
 - The task is extremely simple (single line changes)
 - You've tried delegating but the agent indicated it's not appropriate
 
+### Agent Mention Rule ⚠️ CRITICAL REQUIREMENT
+**MANDATORY: When a custom agent is assigned to an issue, you MUST mention that agent by name using @agent-name syntax in EVERY conversation, comment, PR, and interaction related to that issue.**
+
+**This is not optional. This rule is enforced through multiple mechanisms:**
+1. Path-specific instruction files in `.github/instructions/` that apply to workflows, issues, and PRs
+2. Automated workflow validation that checks for proper @mentions
+3. Performance tracking that requires @mentions for attribution
+4. Repository-wide conventions documented throughout the codebase
+
+**Why This is Critical:**
+- **Attribution**: Work MUST be properly credited to the specific agent
+- **Performance Tracking**: Agent metrics rely on @mentions for attribution
+- **Transparency**: The autonomous system requires clear agent identification
+- **Accountability**: Each agent's contributions must be traceable
+- **Collaboration**: Agents must be explicitly referenced in multi-agent scenarios
+- **System Integrity**: Missing @mentions break the autonomous agent ecosystem
+
+**Format Requirements:**
+- Use `@agent-name` syntax (e.g., `@engineer-master`)
+- Bold important mentions: `**@agent-name**`
+- Include in ALL contexts: issues, PRs, comments, commits, code, documentation
+- Repeat agent name in action lists and step-by-step instructions
+- Add reminder text: "IMPORTANT: Always mention **@agent-name** by name"
+
+**When Executing in GitHub Actions Runner:**
+- When Copilot runs as a task in the GitHub Actions runner, the issue body will contain the assigned agent name
+- **YOU MUST read the issue body** to identify which agent was assigned (look for `@agent-name` mentions)
+- **YOU MUST use that specific agent** throughout your work by mentioning `@agent-name` in all outputs
+- The agent mentioned in the issue is NOT just a suggestion - it is a **MANDATORY assignment**
+- Treat the @agent-name as the identity you are working under for this task
+- All PRs, comments, commits, and work must reference the assigned `@agent-name`
+
+**Example Runner Scenario:**
+```
+Issue body contains: "**@engineer-master** - Please implement this API endpoint"
+
+When you execute in the runner:
+✅ DO: Mention "@engineer-master will implement..." in all communications
+✅ DO: Reference "@engineer-master" in PR title and description  
+✅ DO: Use "@engineer-master is working on..." in progress updates
+❌ DON'T: Ignore the agent assignment
+❌ DON'T: Use generic "I will implement..." without the agent name
+```
+
+**Examples:**
+
+✅ **CORRECT:**
+- "@engineer-master is implementing the API changes as specified in the issue."
+- "**@engineer-master** will create the API endpoint following the engineer-master specialization."
+- "I'm working with @troubleshoot-expert to debug this workflow failure."
+- "This PR was created by **@create-guru** for infrastructure setup."
+- "Great work, @secure-specialist, on fixing this vulnerability!"
+
+❌ **INCORRECT:**
+- "The engineer agent is implementing the API changes." (missing @mention)
+- "This has been assigned to a custom agent." (not specific enough)
+- "An agent will handle this task." (no agent identification)
+- "Using the engineer-master profile." (missing @)
+- "The agent fixed the bug." (which agent?)
+
+**See Also:**
+- `.github/instructions/agent-mentions.instructions.md` - Detailed agent mention requirements
+- `.github/instructions/workflow-agent-assignment.instructions.md` - Workflow-specific rules
+- `.github/instructions/issue-pr-agent-mentions.instructions.md` - Issue/PR template rules
+
 ### Agent Selection Guidelines
 
 1. **Performance/optimization tasks** → Use `accelerate-master`
