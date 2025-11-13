@@ -6,19 +6,19 @@ A handy cheat sheet for common Chained operations and commands.
 
 ```bash
 # Validate your system is ready
-./validate-system.sh
+./scripts/validate-system.sh
 
 # Initialize and start the autonomous system
-./kickoff-system.sh
+./scripts/kickoff-system.sh
 
 # Check system status anytime
-./check-status.sh
+./scripts/check-status.sh
 
 # Verify workflow schedules
-./verify-schedules.sh
+./scripts/verify-schedules.sh
 
 # Evaluate workflow performance
-./evaluate-workflows.sh
+./scripts/evaluate-workflows.sh
 ```
 
 ## 🤖 Agent Operations
@@ -96,13 +96,13 @@ gh run view <run-id> --log
 
 ```bash
 # Quick status
-./check-status.sh
+./scripts/check-status.sh
 
 # Detailed evaluation
-./evaluate-workflows.sh
+./scripts/evaluate-workflows.sh
 
 # Verify schedules
-./verify-schedules.sh
+./scripts/verify-schedules.sh
 
 # Check GitHub Pages health
 python3 test_github_pages_health.py
@@ -340,7 +340,7 @@ gh issue create --title "Add feature X" --label enhancement
 # 5. Done! 🎉
 
 # Or monitor progress:
-./check-status.sh
+./scripts/check-status.sh
 ```
 
 ### Add a Learning
@@ -374,7 +374,7 @@ cat .github/agents/agent-name.md
 
 ```bash
 # Create an alias for status check
-echo "alias chained-status='cd /path/to/Chained && ./check-status.sh'" >> ~/.bashrc
+echo "alias chained-status='cd /path/to/Chained && ./scripts/check-status.sh'" >> ~/.bashrc
 
 # Watch workflow runs in real-time
 watch -n 30 'gh run list --limit 5'
@@ -405,13 +405,13 @@ find docs -name "*.md" -exec echo {} \; -exec head -1 {} \; -exec echo \;
 
 ```bash
 # 1. Validate system
-./validate-system.sh
+./scripts/validate-system.sh
 
 # 2. Check recent errors
 gh run list --limit 10 --status failure
 
 # 3. Re-kickoff system
-./kickoff-system.sh
+./scripts/kickoff-system.sh
 
 # 4. Check Copilot PAT
 gh secret list | grep COPILOT_PAT

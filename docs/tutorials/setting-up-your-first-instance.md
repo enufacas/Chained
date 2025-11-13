@@ -277,17 +277,17 @@ If you have GitHub CLI installed:
 
 3. Validate your setup:
    ```bash
-   ./validate-system.sh
+   ./scripts/validate-system.sh
    ```
 
 4. Start the system:
    ```bash
-   ./kickoff-system.sh
+   ./scripts/kickoff-system.sh
    ```
 
 5. Check status anytime:
    ```bash
-   ./check-status.sh
+   ./scripts/check-status.sh
    ```
 
 ---
@@ -399,7 +399,7 @@ Now sit back and watch the magic happen!
 
 **Check status locally**:
 ```bash
-./check-status.sh
+./scripts/check-status.sh
 ```
 
 Shows:

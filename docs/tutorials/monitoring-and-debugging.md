@@ -45,7 +45,7 @@ The fastest way to check system health.
 **Run it**:
 ```bash
 cd /path/to/Chained
-./check-status.sh
+./scripts/check-status.sh
 ```
 
 **What it shows**:
@@ -715,7 +715,7 @@ chmod +x .github/scripts/assign-copilot.sh
 **Daily routine**:
 ```bash
 # Morning check
-./check-status.sh
+./scripts/check-status.sh
 
 # Check for failures
 gh run list --limit 20 | grep -i failed

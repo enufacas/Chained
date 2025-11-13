@@ -39,7 +39,7 @@ If you have the repository locally and GitHub CLI authenticated:
 Run the validation script to check your system:
 
 ```bash
-./validate-system.sh
+./scripts/validate-system.sh
 ```
 
 This checks:
@@ -68,7 +68,7 @@ This additionally validates:
 Start the autonomous system:
 
 ```bash
-./kickoff-system.sh
+./scripts/kickoff-system.sh
 ```
 
 This will:
@@ -85,7 +85,7 @@ This will:
 Check the status anytime:
 
 ```bash
-./check-status.sh
+./scripts/check-status.sh
 ```
 
 This shows:
@@ -118,7 +118,7 @@ Once started, the system runs autonomously:
 - ✅ GitHub Pages updates
 
 ### If Something's Wrong:
-- Run `./validate-system.sh` to identify issues
+- Run `./scripts/validate-system.sh` to identify issues
 - Check [QUICKSTART.md](./QUICKSTART.md) for manual setup steps
 - Review [README.md](./README.md) for detailed documentation
 - Ensure GitHub repository settings are configured correctly
@@ -139,9 +139,9 @@ Once these are checked, **you can confidently kick things off!**
 ## Summary
 
 **Question:** How do we know it's going to work?
-**Answer:** Run `./validate-system.sh` - if it passes, it will work!
+**Answer:** Run `./scripts/validate-system.sh` - if it passes, it will work!
 
 **Question:** Can we kick things off now?
-**Answer:** Yes! Run `./kickoff-system.sh` to start the perpetual motion machine!
+**Answer:** Yes! Run `./scripts/kickoff-system.sh` to start the perpetual motion machine!
 
 Then sit back and watch the AI build itself. 🤖✨

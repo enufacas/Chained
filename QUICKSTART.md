@@ -26,7 +26,7 @@ Use our helper scripts for an automated experience:
 
 4. **Run the automated kickoff**
    ```bash
-   ./kickoff-system.sh
+   ./scripts/kickoff-system.sh
    ```
 
 The script will:
@@ -38,12 +38,12 @@ The script will:
 
 For a comprehensive workflow state check:
 ```bash
-./evaluate-workflows.sh
+./scripts/evaluate-workflows.sh
 ```
 
 Then monitor with:
 ```bash
-./check-status.sh
+./scripts/check-status.sh
 ```
 
 **Done! Your system is running.** Skip to [What to Expect](#what-to-expect) below.
@@ -147,13 +147,13 @@ After setup (automated or manual), use these scripts:
 
 ### Validate Configuration
 ```bash
-./validate-system.sh
+./scripts/validate-system.sh
 ```
 Checks all files, workflows, and configuration.
 
 ### Check System Status
 ```bash
-./check-status.sh
+./scripts/check-status.sh
 ```
 Shows workflow runs, issues, PRs, and success metrics.
 
@@ -173,14 +173,14 @@ gh api repos/:owner/:repo/pages
 ## Troubleshooting
 
 ### System validation fails?
-- ✅ Run `./validate-system.sh` to identify specific issues
+- ✅ Run `./scripts/validate-system.sh` to identify specific issues
 - ✅ Check error messages for missing files or configurations
 - ✅ Ensure you're in the repository root directory
 
 ### Workflows not creating issues/PRs?
 - ✅ Check workflow permissions are "Read and write"
 - ✅ Check "Allow GitHub Actions to create and approve pull requests" is enabled
-- ✅ Run `./check-status.sh` to see recent workflow runs
+- ✅ Run `./scripts/check-status.sh` to see recent workflow runs
 
 ### PRs not auto-merging?
 - ✅ Check branch protection has 0 required approvals

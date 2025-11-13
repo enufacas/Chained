@@ -478,7 +478,7 @@ If the workflow seems stuck:
 
 1. Check the **Actions** tab for workflow runs
 2. Review the **Issues** for error reports
-3. Run `./check-status.sh` to see system health
+3. Run `./scripts/check-status.sh` to see system health
 4. Check the [Troubleshooting Guide](../TROUBLESHOOTING.md)
 5. Look for `workflow-monitor` labeled issues
 

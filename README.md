@@ -155,9 +155,9 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
 
 ### Quick Status Checks
 ```bash
-./check-status.sh           # Overall system health
-./verify-schedules.sh       # Workflow schedules
-./evaluate-workflows.sh     # Comprehensive evaluation
+./scripts/check-status.sh           # Overall system health
+./scripts/verify-schedules.sh       # Workflow schedules
+./scripts/evaluate-workflows.sh     # Comprehensive evaluation
 ```
 
 ### Via GitHub Pages

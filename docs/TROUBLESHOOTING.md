@@ -22,13 +22,13 @@ Before diving into specific issues, run these quick checks:
 
 ```bash
 # 1. Validate system
-./validate-system.sh
+./scripts/validate-system.sh
 
 # 2. Check system status
-./check-status.sh
+./scripts/check-status.sh
 
 # 3. Verify workflow schedules
-./verify-schedules.sh
+./scripts/verify-schedules.sh
 
 # 4. Check recent workflow runs
 gh run list --limit 10
@@ -124,7 +124,7 @@ gh workflow run agent-spawner.yml
 
 1. Run kickoff to initialize:
    ```bash
-   ./kickoff-system.sh
+   ./scripts/kickoff-system.sh
    ```
 
 2. Check specific failures:
@@ -627,7 +627,7 @@ ls docs/ai-conversations/*.md
 2. **Read the FAQ:** [FAQ.md](../FAQ.md)
 3. **Search existing issues:** `gh issue list`
 4. **Check workflow logs:** `gh run list --status failure`
-5. **Verify system health:** `./check-status.sh`
+5. **Verify system health:** `./scripts/check-status.sh`
 
 ### How to Ask for Help
 
@@ -641,7 +641,7 @@ When creating an issue:
 2. **Include relevant information:**
    ```bash
    # System info
-   ./check-status.sh > status.txt
+   ./scripts/check-status.sh > status.txt
    
    # Recent workflow runs
    gh run list --limit 10 > runs.txt
@@ -673,7 +673,7 @@ gh issue create \
 
 ```bash
 # System health
-./check-status.sh
+./scripts/check-status.sh
 
 # Workflow status
 gh run list --limit 20
