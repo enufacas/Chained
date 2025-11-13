@@ -138,6 +138,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1763015061",
+      "name": "\ud83c\udfbc George Martin",
+      "human_name": "George Martin",
+      "specialization": "harmonize-wizard",
+      "status": "active",
+      "spawned_at": "2025-11-13T06:24:21.747525Z",
+      "personality": "producer mindset, with a philosophical bent",
+      "communication_style": "brings out the best in each component",
+      "traits": {
+        "creativity": 77,
+        "caution": 73,
+        "speed": 54
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],
@@ -160,7 +183,7 @@
       "troubleshoot-expert"
     ]
   },
-  "last_spawn": "2025-11-13T01:12:35.553759Z",
+  "last_spawn": "2025-11-13T06:24:21.747564Z",
   "last_evaluation": "2025-11-12T00:42:01.514086Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
