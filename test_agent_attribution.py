@@ -141,7 +141,11 @@ def test_metrics_collector_import():
         required_methods = [
             '_get_agent_specialization',
             '_find_issues_assigned_to_agent',
-            'collect_agent_activity'
+            'collect_agent_activity',
+            '_extract_agent_mentions_from_text',
+            '_check_pr_agent_attribution',
+            '_filter_prs_by_agent_attribution',
+            '_is_strict_pr_attribution_enabled'
         ]
         
         for method in required_methods:
@@ -161,6 +165,149 @@ def test_metrics_collector_import():
         return False
 
 
+def test_agent_mention_extraction():
+    """Test extraction of @agent-name mentions from text"""
+    
+    print("\n🧪 Testing Agent Mention Extraction")
+    print("=" * 60)
+    
+    try:
+        sys.path.insert(0, 'tools')
+        import importlib.util
+        
+        spec = importlib.util.spec_from_file_location(
+            "agent_metrics_collector",
+            "tools/agent-metrics-collector.py"
+        )
+        metrics_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(metrics_module)
+        
+        MetricsCollector = metrics_module.MetricsCollector
+        collector = MetricsCollector()
+        
+        test_cases = [
+            {
+                'text': '**@engineer-master** has implemented the API changes.',
+                'expected': ['engineer-master'],
+                'description': 'Single agent mention in bold'
+            },
+            {
+                'text': 'This PR was created by @bug-hunter to fix the issue.',
+                'expected': ['bug-hunter'],
+                'description': 'Agent mention in regular text'
+            },
+            {
+                'text': '@secure-specialist fixed this vulnerability. Thanks @secure-specialist!',
+                'expected': ['secure-specialist'],
+                'description': 'Multiple mentions of same agent'
+            },
+            {
+                'text': '@engineer-master and @assert-specialist worked together on this.',
+                'expected': ['engineer-master', 'assert-specialist'],
+                'description': 'Multiple different agents'
+            },
+            {
+                'text': 'No agent mentions here, just regular text.',
+                'expected': [],
+                'description': 'No agent mentions'
+            },
+            {
+                'text': 'Mentions @user123 but not an agent format.',
+                'expected': [],
+                'description': 'Non-agent username format'
+            },
+            {
+                'text': 'feat: implement feature (@create-guru)',
+                'expected': ['create-guru'],
+                'description': 'Agent mention in commit style'
+            }
+        ]
+        
+        passed = 0
+        failed = 0
+        
+        for test in test_cases:
+            text = test['text']
+            expected = sorted(test['expected'])
+            description = test['description']
+            
+            result = sorted(collector._extract_agent_mentions_from_text(text))
+            
+            if result == expected:
+                print(f"✅ {description}: {result}")
+                passed += 1
+            else:
+                print(f"❌ {description}")
+                print(f"   Expected: {expected}")
+                print(f"   Got: {result}")
+                failed += 1
+        
+        print("=" * 60)
+        print(f"Results: {passed} passed, {failed} failed")
+        
+        return failed == 0
+        
+    except Exception as e:
+        print(f"❌ Failed to test agent mention extraction: {e}")
+        import traceback
+        traceback.print_exc()
+        print("=" * 60)
+        return False
+
+
+def test_strict_attribution_config():
+    """Test that strict PR attribution config is readable"""
+    
+    print("\n🧪 Testing Strict Attribution Configuration")
+    print("=" * 60)
+    
+    registry_path = Path(".github/agent-system/registry.json")
+    
+    if not registry_path.exists():
+        print("⚠️  Registry file not found, skipping test")
+        return True
+    
+    try:
+        with open(registry_path, 'r') as f:
+            registry = json.load(f)
+        
+        strict_attr = registry.get('config', {}).get('strict_pr_attribution')
+        
+        if strict_attr is not None:
+            print(f"✅ strict_pr_attribution config found: {strict_attr}")
+            
+            # Test via metrics collector
+            sys.path.insert(0, 'tools')
+            import importlib.util
+            
+            spec = importlib.util.spec_from_file_location(
+                "agent_metrics_collector",
+                "tools/agent-metrics-collector.py"
+            )
+            metrics_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(metrics_module)
+            
+            MetricsCollector = metrics_module.MetricsCollector
+            collector = MetricsCollector()
+            
+            config_value = collector._is_strict_pr_attribution_enabled()
+            print(f"✅ Config readable via collector: {config_value}")
+            
+            print("=" * 60)
+            return True
+        else:
+            print("❌ strict_pr_attribution not found in config")
+            print("=" * 60)
+            return False
+            
+    except Exception as e:
+        print(f"❌ Failed to read config: {e}")
+        import traceback
+        traceback.print_exc()
+        print("=" * 60)
+        return False
+
+
 def main():
     """Run all tests"""
     
@@ -172,6 +319,8 @@ def main():
         ("COPILOT_AGENT Comment Parsing", test_copilot_agent_comment_parsing),
         ("Agent Registry Specializations", test_agent_specialization_in_registry),
         ("Metrics Collector Import", test_metrics_collector_import),
+        ("Agent Mention Extraction", test_agent_mention_extraction),
+        ("Strict Attribution Config", test_strict_attribution_config),
     ]
     
     results = []
