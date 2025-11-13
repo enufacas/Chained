@@ -13,31 +13,18 @@ import subprocess
 from pathlib import Path
 from datetime import datetime
 
+# Add tools directory to path for imports
+TOOLS_DIR = Path(__file__).parent.resolve()
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+
 # Import validation utilities
-try:
-    from validation_utils import (
-        ValidationError,
-        validate_agent_name,
-        validate_non_empty_string,
-        safe_file_write
-    )
-except ImportError:
-    # Fallback if validation_utils is not available
-    class ValidationError(Exception):
-        pass
-    def validate_agent_name(name):
-        if not name or not isinstance(name, str):
-            raise ValidationError("Invalid agent name")
-        return name
-    def validate_non_empty_string(s, field="value"):
-        if not s or not isinstance(s, str):
-            raise ValidationError(f"Invalid {field}")
-        return s
-    def safe_file_write(path, content, encoding='utf-8', create_dirs=False):
-        if create_dirs:
-            Path(path).parent.mkdir(parents=True, exist_ok=True)
-        with open(path, 'w', encoding=encoding) as f:
-            f.write(content)
+from validation_utils import (
+    ValidationError,
+    validate_agent_name,
+    validate_non_empty_string,
+    safe_file_write
+)
 
 AGENTS_DIR = Path(".github/agents")
 
