@@ -122,25 +122,31 @@ jobs:
             
             # Create PR with consistent date formatting
             PR_DATE=$(date +%Y-%m-%d)
+            
+            # Create PR body using printf to avoid YAML parsing issues
+            printf '%s\n' \
+              "## Architecture Evolution Update" \
+              "" \
+              "This PR updates the architecture evolution tracking data." \
+              "" \
+              "### Metrics" \
+              "- **Files:** ${{ steps.track.outputs.total_files }}" \
+              "- **Lines:** ${{ steps.track.outputs.total_lines }}" \
+              "- **Components:** ${{ steps.track.outputs.total_components }}" \
+              "- **Snapshots:** ${{ steps.summary.outputs.snapshot_count }}" \
+              "" \
+              "### Changes" \
+              "- Updated architecture snapshots in \`analysis/architecture/\`" \
+              "- Updated architecture data in \`docs/data/architecture/\` for GitHub Pages" \
+              "- Updated Mermaid diagram if changed" \
+              "" \
+              "---" \
+              "*🤖 Automated architecture tracking workflow*" \
+              > /tmp/pr-body.md
+            
             gh pr create \
               --title "🏗️ Update architecture evolution tracking - ${PR_DATE}" \
-              --body "## Architecture Evolution Update
-
-This PR updates the architecture evolution tracking data.
-
-### Metrics
-- **Files:** ${{ steps.track.outputs.total_files }}
-- **Lines:** ${{ steps.track.outputs.total_lines }}
-- **Components:** ${{ steps.track.outputs.total_components }}
-- **Snapshots:** ${{ steps.summary.outputs.snapshot_count }}
-
-### Changes
-- Updated architecture snapshots in \`analysis/architecture/\`
-- Updated architecture data in \`docs/data/architecture/\` for GitHub Pages
-- Updated Mermaid diagram if changed
-
----
-*🤖 Automated architecture tracking workflow*" \
+              --body-file /tmp/pr-body.md \
               --label "architecture,automated" \
               --base main \
               --head "$BRANCH_NAME"
