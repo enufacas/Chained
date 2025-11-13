@@ -49,3 +49,4 @@ tools/tools/
 # Test-generated metrics files (keep pattern_database.json but ignore test runs)
 .github/agent-system/metrics/creativity/test-agent*/
 .github/agent-system/metrics/creativity/test-*/
+workflow_health_report.json
