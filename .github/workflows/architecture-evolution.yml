@@ -179,7 +179,7 @@ jobs:
             gh pr create \
               --title "🏗️ Update architecture evolution tracking - ${PR_DATE}" \
               --body-file /tmp/pr-body.md \
-              --label "architecture,automated" \
+              --label "architecture,automated,copilot" \
               --base main \
               --head "$BRANCH_NAME"
             
