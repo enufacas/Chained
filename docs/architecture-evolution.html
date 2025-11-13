@@ -5,8 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Architecture Evolution - Chained</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <!-- Load D3.js with fallback -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js" 
+            integrity="sha512-M7nHCiNUOwFt6Us3r8alutZLm9qMt4s9951uo8jqO4UwJ1hziseL6O3ndFyigx6+LREfZqnhHxYjKRJ8ZQ69DQ==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer"
+            onerror="this.onerror=null; this.src='https://unpkg.com/d3@7.8.5/dist/d3.min.js';"></script>
+    <!-- Load Mermaid with fallback -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js" 
+            integrity="sha512-TvbUcy5r/y8QnEknWKP5w7RlEPBZGr7zFLusH3QqfKJwK3R+DXcced3AJ8s6PcQ+WVMr7HWXwKKPGKbR0sLxIw==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer"
+            onerror="this.onerror=null; this.src='https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js';"></script>
     <style>
         .evolution-container {
             max-width: 1400px;
@@ -287,19 +297,42 @@
     <div class="timeline-tooltip" id="tooltip"></div>
 
     <script>
-        // Initialize Mermaid
-        mermaid.initialize({ 
-            startOnLoad: true,
-            theme: 'dark',
-            themeVariables: {
-                primaryColor: '#00d4ff',
-                primaryTextColor: '#e0e0e0',
-                primaryBorderColor: '#00d4ff',
-                lineColor: '#666',
-                secondaryColor: '#1a1a2e',
-                tertiaryColor: '#0f0f1e'
+        // Check if required libraries are loaded
+        function checkLibraries() {
+            if (typeof d3 === 'undefined') {
+                console.error('D3.js failed to load');
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerHTML = '<p>Failed to load D3.js library. Please check your ad blocker or try a different browser.</p>';
+                return false;
             }
-        });
+            if (typeof mermaid === 'undefined') {
+                console.error('Mermaid failed to load');
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerHTML = '<p>Failed to load Mermaid library. Please check your ad blocker or try a different browser.</p>';
+                return false;
+            }
+            return true;
+        }
+
+        // Initialize Mermaid when loaded
+        function initializeMermaid() {
+            if (typeof mermaid !== 'undefined') {
+                mermaid.initialize({ 
+                    startOnLoad: true,
+                    theme: 'dark',
+                    themeVariables: {
+                        primaryColor: '#00d4ff',
+                        primaryTextColor: '#e0e0e0',
+                        primaryBorderColor: '#00d4ff',
+                        lineColor: '#666',
+                        secondaryColor: '#1a1a2e',
+                        tertiaryColor: '#0f0f1e'
+                    }
+                });
+            }
+        }
 
         let evolutionData = null;
         let latestData = null;
@@ -321,6 +354,14 @@
 
         // Load data
         async function loadData() {
+            // Check if libraries are loaded
+            if (!checkLibraries()) {
+                return;
+            }
+
+            // Initialize Mermaid after confirming it's loaded
+            initializeMermaid();
+
             try {
                 // Load evolution history
                 const evolutionResponse = await fetch('data/architecture/evolution.json');
@@ -642,8 +683,16 @@
             mermaid.init(undefined, diagramElement);
         }
 
-        // Load data on page load
-        loadData();
+        // Load data when page and scripts are ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                // Give scripts a moment to fully initialize
+                setTimeout(loadData, 100);
+            });
+        } else {
+            // DOM already loaded
+            setTimeout(loadData, 100);
+        }
     </script>
 </body>
 </html>
