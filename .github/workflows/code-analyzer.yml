@@ -108,12 +108,30 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
+            # Create a new branch for the PR with unique name using run ID
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="code-analysis/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            # Commit changes
             git commit -m "🤖 Update code analysis data after merge" \
                        -m "Analysis completed for directory: ${{ steps.analyze.outputs.target_dir }}" \
                        -m "Merge successful: ${{ steps.analyze.outputs.merge_success }}" \
                        -m "Total merges analyzed: ${{ steps.stats.outputs.total_merges }}"
             
-            git push
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "🤖 Update code analysis data - ${PR_DATE}" \
+              --body "## Code Analysis Update"$'\n\n'"This PR updates the code analysis data after a merge to main."$'\n\n'"### Analysis Summary"$'\n'"- **Directory analyzed**: ${{ steps.analyze.outputs.target_dir }}"$'\n'"- **Merge successful**: ${{ steps.analyze.outputs.merge_success }}"$'\n'"- **Total merges analyzed**: ${{ steps.stats.outputs.total_merges }}"$'\n'"- **Top good pattern**: ${{ steps.stats.outputs.top_good }}"$'\n'"- **Top bad pattern**: ${{ steps.stats.outputs.top_bad }}"$'\n\n'"---"$'\n'"*🤖 Automated code analysis workflow*" \
+              --label "code-quality,automated" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ PR created for code analysis update"
           fi
 
       - name: Create analysis summary comment
