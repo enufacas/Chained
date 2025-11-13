@@ -1051,14 +1051,28 @@ jobs:
             fi
           fi
           
-          # Check 4: Verify GitHub Pages is accessible (basic check)
+          # Check 4: Verify GitHub Pages is accessible (with retry logic)
           echo ""
           echo "Check 4: GitHub Pages Deployment"
           pages_url="https://${{ github.repository_owner }}.github.io/Chained/"
-          if curl -s -o /dev/null -w "%{http_code}" "${pages_url}" | grep -q "200"; then
-            echo "✅ GitHub Pages is accessible at ${pages_url}"
-          else
-            echo "⚠️ GitHub Pages may not be accessible"
+          
+          pages_accessible=0
+          for attempt in {1..3}; do
+            echo "  Attempt ${attempt}/3..."
+            http_code=$(curl -s -o /dev/null -w "%{http_code}" "${pages_url}" --connect-timeout 5 --max-time 10)
+            
+            if echo "${http_code}" | grep -q "200"; then
+              pages_accessible=1
+              echo "✅ GitHub Pages is accessible at ${pages_url} (HTTP ${http_code})"
+              break
+            else
+              echo "  ⚠️  Received HTTP ${http_code}"
+              [ ${attempt} -lt 3 ] && sleep 5
+            fi
+          done
+          
+          if [ ${pages_accessible} -eq 0 ]; then
+            echo "⚠️ GitHub Pages may not be accessible (after 3 attempts)"
             issues_found=$((issues_found + 1))
           fi
           
