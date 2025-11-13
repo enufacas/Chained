@@ -79,12 +79,8 @@ async function fetchStats() {
                 document.getElementById('total-completed').textContent = stats.completed || 0;
                 document.getElementById('completion-rate').textContent = (stats.completion_rate || 0) + '%';
                 
-                // Load timeline from cached data if available
-                const issuesResponse = await fetch('data/issues.json');
-                if (issuesResponse.ok) {
-                    const issues = await issuesResponse.json();
-                    loadTimeline(issues);
-                }
+                // Load timeline from cached data
+                loadTimeline();
                 
                 // Try to load learning stats
                 try {
@@ -128,28 +124,12 @@ async function fetchStats() {
         document.getElementById('total-completed').textContent = completed;
         document.getElementById('completion-rate').textContent = completionRate + '%';
         
-        // Load timeline from issues
-        loadTimeline(issues);
+        // Load timeline
+        loadTimeline();
     } catch (error) {
         console.error('Error fetching stats:', error);
         // Keep default values on error
     }
-}
-
-// Load timeline from issues and events
-function loadTimeline(issues) {
-    const timelineContainer = document.getElementById('timeline-container');
-    
-    // Sort issues by creation date (newest first)
-    const sortedIssues = issues.sort((a, b) => 
-        new Date(b.created_at) - new Date(a.created_at)
-    );
-    
-    // Add issues to timeline
-    sortedIssues.slice(0, 10).forEach(issue => {
-        const timelineItem = createTimelineItem(issue);
-        timelineContainer.appendChild(timelineItem);
-    });
 }
 
 // Load workflow schedules and display them
@@ -347,60 +327,83 @@ function getTimeUntil(date) {
     return `in ${days} day${days !== 1 ? 's' : ''}`;
 }
 
-// Load timeline from issues and events
-function loadTimeline(issues) {
+// Load timeline from issues and PRs
+async function loadTimeline(issues) {
     const timelineContainer = document.getElementById('timeline-container');
+    timelineContainer.innerHTML = ''; // Clear existing content
     
-    // Sort issues by creation date (newest first)
-    const sortedIssues = issues.sort((a, b) => 
-        new Date(b.created_at) - new Date(a.created_at)
-    );
-    
-    // Add issues to timeline
-    sortedIssues.slice(0, 10).forEach(issue => {
-        const timelineItem = createTimelineItem(issue);
-        timelineContainer.appendChild(timelineItem);
-    });
+    try {
+        // Fetch both issues and PRs from data files
+        const [issuesData, prsData] = await Promise.all([
+            fetch('data/issues.json').then(r => r.ok ? r.json() : []),
+            fetch('data/pulls.json').then(r => r.ok ? r.json() : [])
+        ]);
+        
+        // Combine and sort by date
+        const combined = [
+            ...issuesData.map(item => ({ ...item, type: 'issue' })),
+            ...prsData.map(item => ({ ...item, type: 'pr' }))
+        ];
+        
+        const sorted = combined.sort((a, b) => {
+            const dateA = new Date(a.createdAt || a.created_at);
+            const dateB = new Date(b.createdAt || b.created_at);
+            return dateB - dateA;
+        });
+        
+        // Display top 20 items
+        sorted.slice(0, 20).forEach(item => {
+            const listItem = createPRIssueListItem(item);
+            timelineContainer.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error('Error loading timeline:', error);
+        timelineContainer.innerHTML = '<p>Unable to load recent activity</p>';
+    }
 }
 
-// Create a timeline item from an issue
-function createTimelineItem(issue) {
-    const item = document.createElement('div');
-    item.className = 'timeline-item';
+// Create a clean PR/Issue list item
+function createPRIssueListItem(item) {
+    const div = document.createElement('div');
+    div.className = 'pr-issue-item';
     
-    const date = new Date(issue.created_at || issue.createdAt);
+    const date = new Date(item.createdAt || item.created_at);
     const dateStr = date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
         month: 'short', 
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
     });
     
-    const statusEmoji = issue.state === 'closed' ? '✅' : '🔄';
-    const isAutomated = issue.labels?.some(l => 
-        ['ai-generated', 'copilot', 'automated', 'copilot-assigned'].includes(l.name)
-    );
-    const automatedBadge = isAutomated ? ' 🤖' : '';
+    const isPR = item.type === 'pr';
+    const icon = isPR ? '🔀' : '📋';
+    const typeLabel = isPR ? 'PR' : 'Issue';
+    const number = item.number;
+    const state = item.state === 'MERGED' ? 'merged' : 
+                  item.state === 'CLOSED' ? 'closed' : 'open';
+    const stateIcon = state === 'merged' ? '✅' : 
+                      state === 'closed' ? '❌' : '🔵';
     
-    const labels = (issue.labels || []).map(label => 
-        `<span class="label" style="background-color: #${label.color}">${escapeHtml(label.name)}</span>`
-    ).join(' ');
+    const isBot = item.author?.is_bot || 
+                  (item.author?.login && item.author.login.includes('bot'));
+    const botBadge = isBot ? ' 🤖' : '';
     
-    const body = issue.body || 'No description';
-    const truncatedBody = body.length > 200 ? body.substring(0, 200) + '...' : body;
-    
-    item.innerHTML = `
-        <div class="timeline-date">${dateStr}</div>
-        <div class="timeline-content">
-            <h3>${statusEmoji}${automatedBadge} ${escapeHtml(issue.title)}</h3>
-            <p>${escapeHtml(truncatedBody)}</p>
-            ${labels ? `<div class="labels">${labels}</div>` : ''}
-            <a href="${issue.html_url || issue.url}" target="_blank">View Issue #${issue.number}</a>
+    div.innerHTML = `
+        <div class="pr-issue-header">
+            <span class="pr-issue-icon">${icon}</span>
+            <a href="${item.url}" target="_blank" class="pr-issue-title">
+                ${escapeHtml(item.title)}
+            </a>
+            <span class="pr-issue-meta">
+                ${stateIcon} ${typeLabel} #${number}${botBadge}
+            </span>
+        </div>
+        <div class="pr-issue-footer">
+            <span class="pr-issue-date">${dateStr}</span>
         </div>
     `;
     
-    return item;
+    return div;
 }
 
 // Load learnings from a special issue or file

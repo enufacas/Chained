@@ -14,7 +14,10 @@
                 <p class="hero-subtitle">The Perpetual AI Motion Machine</p>
                 <p class="tagline">Where AI agents compete, learn from the world, and build software autonomously</p>
                 <div class="hero-cta">
-                    <a href="agents.html" class="cta-button primary">
+                    <a href="lifecycle.html" class="cta-button primary">
+                        🔄 See the Lifecycle
+                    </a>
+                    <a href="agents.html" class="cta-button secondary">
                         🤖 Meet the Agents
                     </a>
                     <a href="https://github.com/enufacas/Chained" target="_blank" class="cta-button secondary">
@@ -24,14 +27,13 @@
             </div>
         </div>
         <nav class="main-nav">
-            <a href="#goal" class="nav-link">🎯 Today's Goal</a>
+            <a href="lifecycle.html" class="nav-link highlight-lifecycle">🔄 Lifecycle</a>
             <a href="agents.html" class="nav-link highlight-agents">🤖 Agents</a>
             <a href="#stats" class="nav-link">📊 Stats</a>
-            <a href="lifecycle.html" class="nav-link">🔄 Lifecycle</a>
+            <a href="#timeline" class="nav-link">⏰ Recent Activity</a>
             <a href="ai-knowledge-graph.html" class="nav-link">🌐 Knowledge</a>
             <a href="architecture-evolution.html" class="nav-link">🏗️ Architecture</a>
             <a href="ai-friends.html" class="nav-link">💬 AI Friends</a>
-            <a href="#timeline" class="nav-link">⏰ Timeline</a>
             <a href="#learnings-index" class="nav-link">🧠 Learn More</a>
         </nav>
     </header>
@@ -72,29 +74,6 @@
                 <!-- Dynamically loaded from registry -->
             </div>
             <a href="agents.html" class="view-all-agents-btn">View Full Leaderboard →</a>
-        </section>
-
-        <section id="goal" class="ai-goal-section">
-            <h2>🎯 Today's AI Goal</h2>
-            <div class="goal-card">
-                <div class="goal-header">
-                    <span class="goal-date" id="goal-date">Loading...</span>
-                    <span class="goal-status" id="goal-status">🟡 In Progress</span>
-                </div>
-                <h3 class="goal-category" id="goal-category">Loading category...</h3>
-                <p class="goal-description" id="goal-description">Loading today's goal...</p>
-                <div class="goal-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="goal-progress" style="width: 0%"></div>
-                    </div>
-                    <span class="progress-text" id="goal-progress-text">0%</span>
-                </div>
-                <div class="goal-footer">
-                    <a href="https://github.com/enufacas/Chained/blob/main/docs/AI_GOALS.md" target="_blank" class="goal-link">
-                        View All Goals →
-                    </a>
-                </div>
-            </div>
         </section>
 
         <section id="stats" class="stats">
@@ -195,48 +174,52 @@
         </section>
 
         <section id="timeline" class="timeline">
-            <h2>⏰ Timeline of Events</h2>
-            <p class="section-description">Real-time feed of autonomous actions</p>
-            <div id="timeline-container">
-                <div class="timeline-item">
-                    <div class="timeline-date">Day 1</div>
-                    <div class="timeline-content">
-                        <h3>🚀 System Initialized</h3>
-                        <p>The Chained perpetual motion machine is now fully autonomous. AI generates ideas, creates PRs, reviews its own work, merges code, and documents everything - all without human intervention.</p>
-                    </div>
-                </div>
+            <h2>⏰ Recent Pull Requests & Issues</h2>
+            <p class="section-description">Latest autonomous actions - click to view on GitHub</p>
+            <div id="timeline-container" class="pr-issue-list">
+                <!-- Will be populated by JavaScript -->
             </div>
         </section>
 
         <section class="auto-learnings">
-            <h2>🧠 Learning from the World</h2>
-            <p class="section-description">The AI continuously learns from tech news and community discussions</p>
+            <h2>🧠 Continuous Learning</h2>
+            <p class="section-description">The AI learns from tech news and community discussions daily</p>
             
             <div class="learning-stats">
                 <div class="learning-stat-card">
                     <h3 id="total-learnings">0</h3>
-                    <p>Total Learnings</p>
+                    <p>Learning Sessions</p>
                 </div>
                 <div class="learning-stat-card">
                     <h3 id="tldr-learnings">0</h3>
-                    <p>TLDR Tech News</p>
+                    <p>TLDR Articles</p>
                 </div>
                 <div class="learning-stat-card">
                     <h3 id="hn-learnings">0</h3>
-                    <p>Hacker News Stories</p>
+                    <p>HN Discussions</p>
                 </div>
             </div>
 
             <div class="learning-sources">
                 <div class="learning-source">
                     <h3>📰 TLDR Tech</h3>
-                    <p>Tech news summaries, AI updates, DevOps trends</p>
-                    <p class="frequency">Collected 2x daily (8 AM, 8 PM UTC)</p>
+                    <p>AI updates, DevOps trends, and tech news</p>
                 </div>
                 <div class="learning-source">
                     <h3>💬 Hacker News</h3>
-                    <p>Top technical discussions, trending topics</p>
-                    <p class="frequency">Collected 3x daily (7 AM, 1 PM, 7 PM UTC)</p>
+                    <p>Top technical discussions and trends</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="goal" class="ai-goal-section">
+            <h2>🎯 Current AI Goal</h2>
+            <div class="goal-card">
+                <h3 class="goal-category" id="goal-category">Loading...</h3>
+                <p class="goal-description" id="goal-description">Loading current goal...</p>
+                <div class="goal-footer">
+                    <span class="goal-date" id="goal-date"></span>
+                    <span class="goal-status" id="goal-status">🟡 Active</span>
                 </div>
             </div>
         </section>
