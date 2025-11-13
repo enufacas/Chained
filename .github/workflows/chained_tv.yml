@@ -1,0 +1,50 @@
+name: "Chained TV Episode Generator"
+
+on:
+  schedule:
+    # Run every 2 hours
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: read
+
+jobs:
+  generate-episode:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Generate episode
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python scripts/generate_episode.py
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "chained-bot"
+          git config user.email "chained-bot@example.com"
+          
+          git add docs/episodes/
+          
+          if git diff --staged --quiet; then
+            echo "No new episode to commit"
+          else
+            git commit -m "chore: new chained tv episode"
+            git push
+            echo "✅ New episode committed and pushed"
+          fi
