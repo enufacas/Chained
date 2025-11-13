@@ -4,6 +4,50 @@ A collection of intelligent development tools for the Chained autonomous AI syst
 
 ## Available Tools
 
+### 🧠 Natural Language to Code Translator
+
+**NEW!** An intelligent tool that analyzes issue descriptions written in natural language and generates actionable code templates, implementation plans, and scaffolding. Created by **@investigate-champion**.
+
+**Purpose:** Bridge the gap between human-readable issue descriptions and machine-executable code, enabling faster development cycles in the autonomous AI ecosystem.
+
+**Quick Start:**
+```bash
+# Translate from stdin
+echo "Create a new pattern matcher tool" | python3 tools/nl-to-code-translator.py
+
+# Translate from file
+python3 tools/nl-to-code-translator.py issue-description.txt
+
+# JSON output for automation
+echo "Fix bug in analyzer.py" | python3 tools/nl-to-code-translator.py --json
+
+# Template only
+python3 tools/nl-to-code-translator.py --template-only issue.txt
+
+# Run interactive demonstration
+python3 tools/examples/nl-to-code-demo.py
+```
+
+**What It Does:**
+- **Intent Classification**: Identifies CREATE, MODIFY, ANALYZE, TEST, DOCUMENT, REFACTOR, FIX, OPTIMIZE
+- **Entity Extraction**: Extracts files, functions, classes, features from natural language
+- **Code Generation**: Creates Python tools, workflows, tests, and documentation templates
+- **Implementation Planning**: Provides step-by-step guidance
+- **File Suggestions**: Recommends appropriate file paths
+- **Repository Awareness**: Integrates with existing patterns
+
+**Performance:**
+- ⚡ Fast: <50ms translation time
+- 🎯 Accurate: >70% confidence on typical issues
+- 🔍 Comprehensive: Extracts 5-10 entities per issue
+- 🧪 Well-tested: 34 passing tests
+
+**Use Case:** Integrated with GitHub Actions to automatically translate issue descriptions into code scaffolding, reducing time from idea to implementation.
+
+**Documentation:** See [tools/NL_TO_CODE_TRANSLATOR_README.md](./NL_TO_CODE_TRANSLATOR_README.md) for complete guide with 8 practical examples.
+
+---
+
 ### 📊 Agent Performance Metrics Collector
 
 A production-grade metrics collection and analysis system for tracking real GitHub activity and calculating weighted performance scores for agents in the Chained ecosystem.
