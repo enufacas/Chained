@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-11-13T02:47:03.612784",
-  "commit": "7271731687ab79c07c5a521c5ae4f71571fd9484",
+  "timestamp": "2025-11-13T02:53:55.214060",
+  "commit": "c21bbe9a984e6dd34e01864f078e8f6b7fc70eed",
   "structure": {
     "directories": {
       "tools": {
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 101,
-        "line_count": 34034,
+        "file_count": 103,
+        "line_count": 34488,
         "files": [
           ".nojekyll",
           "ACTOR_ID_SYSTEM.md",
@@ -106,13 +106,13 @@
           "README.md",
           "README.md",
           "README.md",
+          "README.md",
           "SECURITY_BEST_PRACTICES.md",
           "SECURITY_IMPLEMENTATION.md",
           "SOLID_PRINCIPLES_GUIDE.md",
           "TROUBLESHOOTING.md",
           "VALIDATION_BEST_PRACTICES.md",
-          "WORKFLOWS.md",
-          "agent-1762824870.json"
+          "WORKFLOWS.md"
         ]
       },
       ".github/workflows": {
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 23,
-        "line_count": 11435,
+        "file_count": 24,
+        "line_count": 11857,
         "files": [
           "README.md",
           "README.md",
@@ -151,7 +151,8 @@
           "snapshot_2025-11-12T06-42-25.json",
           "snapshot_2025-11-12T06-42-50.json",
           "snapshot_2025-11-12T06-44-23.json",
-          "snapshot_2025-11-12T06-45-21.json"
+          "snapshot_2025-11-12T06-45-21.json",
+          "snapshot_2025-11-13T02-47-03.json"
         ]
       },
       "learnings": {
@@ -216,8 +217,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 251,
-    "total_lines": 86389
+    "total_files": 254,
+    "total_lines": 87265
   },
   "dependencies": {
     "internal_imports": {
@@ -293,12 +294,12 @@
   },
   "metrics": {
     "total_components": 7,
-    "total_files": 251,
-    "total_lines": 86389,
+    "total_files": 254,
+    "total_lines": 87265,
     "total_dependencies": 0,
     "external_libraries": 29,
     "coupling_score": 0.0,
-    "complexity_score": 0.8604482071713148
+    "complexity_score": 0.8589074803149606
   },
   "components": {
     "learning_system": {
@@ -328,10 +329,9 @@
       ]
     },
     "agent_system": {
-      "file_count": 9,
-      "line_count": 3574,
+      "file_count": 8,
+      "line_count": 3232,
       "files": [
-        "agent-1762824870.json",
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json",
         "agent-metrics-collector.py",
@@ -343,8 +343,8 @@
       ]
     },
     "analysis_tools": {
-      "file_count": 30,
-      "line_count": 14801,
+      "file_count": 31,
+      "line_count": 15223,
       "files": [
         "README.md",
         "agent-ecosystem-investigation.md",
@@ -369,8 +369,8 @@
       ]
     },
     "documentation": {
-      "file_count": 43,
-      "line_count": 34034,
+      "file_count": 42,
+      "line_count": 34488,
       "files": [
         ".nojekyll",
         "ACTOR_ID_SYSTEM.md",
