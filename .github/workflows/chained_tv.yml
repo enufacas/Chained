@@ -33,6 +33,10 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           python scripts/generate_episode.py
+          
+      - name: Generate episode index
+        run: |
+          python scripts/generate_episode_index.py
 
       - name: Commit and create PR
         env:
@@ -62,7 +66,7 @@ jobs:
             gh pr create \
               --title "📺 New Chained TV Episode - ${PR_DATE}" \
               --body "## 📺 New Chained TV Episode"$'\n\n'"This PR adds a new Chained TV episode generated from recent repository activity."$'\n\n'"### Changes"$'\n'"- Updated \`docs/episodes/latest.json\`"$'\n'"- Added timestamped episode file in \`docs/episodes/\`"$'\n\n'"---"$'\n'"*🤖 Automated episode generation workflow*" \
-              --label "chained-tv,automated" \
+              --label "chained-tv,automated,copilot" \
               --base main \
               --head "$BRANCH_NAME"
             
