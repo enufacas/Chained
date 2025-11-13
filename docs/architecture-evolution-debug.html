@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Evolution - Debug Mode - Chained</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f1e;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        .debug-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            border-radius: 12px;
+            border: 1px solid #00d4ff;
+        }
+        h1 {
+            color: #00d4ff;
+            margin-top: 0;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #0f0f1e;
+            border-radius: 8px;
+            border-left: 3px solid #00d4ff;
+        }
+        .check {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #1a1a2e;
+            border-radius: 4px;
+        }
+        .check-icon {
+            width: 30px;
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        .info { color: #2196f3; }
+        pre {
+            background: #0a0a14;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .button {
+            background: #00d4ff;
+            color: #0f0f1e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #00b4d8;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔧 Architecture Evolution Page - Debug Mode</h1>
+        <p>This page diagnoses issues with the architecture-evolution.html page.</p>
+        
+        <div class="section">
+            <h2>1. Library Loading Tests</h2>
+            <div id="library-checks"></div>
+        </div>
+
+        <div class="section">
+            <h2>2. Data File Tests</h2>
+            <div id="data-checks"></div>
+            <button class="button" onclick="testDataFiles()">Test Data Files</button>
+        </div>
+
+        <div class="section">
+            <h2>3. Browser Information</h2>
+            <div id="browser-info"></div>
+        </div>
+
+        <div class="section">
+            <h2>4. Network Tests</h2>
+            <div id="network-tests"></div>
+            <button class="button" onclick="testCDNs()">Test CDN Connectivity</button>
+        </div>
+
+        <div class="section">
+            <h2>5. Console Logs</h2>
+            <pre id="console-logs">Console logs will appear here...</pre>
+        </div>
+
+        <div class="section">
+            <h2>Actions</h2>
+            <button class="button" onclick="window.location.href='architecture-evolution.html'">
+                Go to Architecture Evolution Page
+            </button>
+            <button class="button" onclick="location.reload()">Reload Debug Page</button>
+        </div>
+    </div>
+
+    <script>
+        // Capture console logs
+        const consoleLogs = [];
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn,
+            info: console.info
+        };
+
+        function captureLog(type, ...args) {
+            const timestamp = new Date().toISOString();
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            consoleLogs.push(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
+            updateConsoleLogs();
+            originalConsole[type](...args);
+        }
+
+        console.log = (...args) => captureLog('log', ...args);
+        console.error = (...args) => captureLog('error', ...args);
+        console.warn = (...args) => captureLog('warn', ...args);
+        console.info = (...args) => captureLog('info', ...args);
+
+        function updateConsoleLogs() {
+            document.getElementById('console-logs').textContent = consoleLogs.join('\n');
+        }
+
+        function addCheck(containerId, icon, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const check = document.createElement('div');
+            check.className = 'check';
+            check.innerHTML = `
+                <div class="check-icon ${type}">${icon}</div>
+                <div>${message}</div>
+            `;
+            container.appendChild(check);
+        }
+
+        // Test 1: Library Loading
+        console.log('Starting diagnostic tests...');
+        
+        // Load D3.js
+        const d3Script = document.createElement('script');
+        d3Script.src = 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js';
+        d3Script.integrity = 'sha512-M7nHCiNUOwFt6Us3r8alutZLm9qMt4s9951uo8jqO4UwJ1hziseL6O3ndFyigx6+LREfZqnhHxYjKRJ8ZQ69DQ==';
+        d3Script.crossOrigin = 'anonymous';
+        d3Script.onload = function() {
+            console.log('D3.js loaded successfully');
+            addCheck('library-checks', '✅', `D3.js v${d3.version} loaded successfully`, 'success');
+        };
+        d3Script.onerror = function(error) {
+            console.error('D3.js failed to load:', error);
+            addCheck('library-checks', '❌', 'D3.js failed to load from CDN', 'error');
+            
+            // Try fallback
+            const d3Fallback = document.createElement('script');
+            d3Fallback.src = 'https://unpkg.com/d3@7.8.5/dist/d3.min.js';
+            d3Fallback.onload = function() {
+                console.log('D3.js loaded from fallback CDN');
+                addCheck('library-checks', '⚠️', `D3.js loaded from fallback (unpkg)`, 'warning');
+            };
+            d3Fallback.onerror = function() {
+                console.error('D3.js fallback also failed');
+                addCheck('library-checks', '❌', 'D3.js fallback also failed - check ad blocker or firewall', 'error');
+            };
+            document.head.appendChild(d3Fallback);
+        };
+        document.head.appendChild(d3Script);
+
+        // Load Mermaid
+        const mermaidScript = document.createElement('script');
+        mermaidScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js';
+        mermaidScript.integrity = 'sha512-TvbUcy5r/y8QnEknWKP5w7RlEPBZGr7zFLusH3QqfKJwK3R+DXcced3AJ8s6PcQ+WVMr7HWXwKKPGKbR0sLxIw==';
+        mermaidScript.crossOrigin = 'anonymous';
+        mermaidScript.onload = function() {
+            console.log('Mermaid loaded successfully');
+            addCheck('library-checks', '✅', `Mermaid loaded successfully`, 'success');
+        };
+        mermaidScript.onerror = function(error) {
+            console.error('Mermaid failed to load:', error);
+            addCheck('library-checks', '❌', 'Mermaid failed to load from CDN', 'error');
+            
+            // Try fallback
+            const mermaidFallback = document.createElement('script');
+            mermaidFallback.src = 'https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js';
+            mermaidFallback.onload = function() {
+                console.log('Mermaid loaded from fallback CDN');
+                addCheck('library-checks', '⚠️', `Mermaid loaded from fallback (unpkg)`, 'warning');
+            };
+            mermaidFallback.onerror = function() {
+                console.error('Mermaid fallback also failed');
+                addCheck('library-checks', '❌', 'Mermaid fallback also failed - check ad blocker or firewall', 'error');
+            };
+            document.head.appendChild(mermaidFallback);
+        };
+        document.head.appendChild(mermaidScript);
+
+        // Test 2: Browser Info
+        function displayBrowserInfo() {
+            const info = {
+                'User Agent': navigator.userAgent,
+                'Platform': navigator.platform,
+                'Language': navigator.language,
+                'Online': navigator.onLine,
+                'Cookies Enabled': navigator.cookieEnabled,
+                'Screen Resolution': `${screen.width}x${screen.height}`,
+                'Viewport': `${window.innerWidth}x${window.innerHeight}`,
+                'Current URL': window.location.href,
+                'Referrer': document.referrer || 'None',
+                'Protocol': window.location.protocol
+            };
+
+            const container = document.getElementById('browser-info');
+            for (const [key, value] of Object.entries(info)) {
+                addCheck('browser-info', 'ℹ️', `${key}: ${value}`, 'info');
+            }
+        }
+        displayBrowserInfo();
+
+        // Test 3: Data Files
+        async function testDataFiles() {
+            const dataChecks = document.getElementById('data-checks');
+            dataChecks.innerHTML = '<p>Testing data files...</p>';
+
+            const files = [
+                'data/architecture/evolution.json',
+                'data/architecture/latest.json'
+            ];
+
+            for (const file of files) {
+                try {
+                    console.log(`Fetching ${file}...`);
+                    const response = await fetch(file);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    console.log(`${file} loaded successfully:`, data);
+                    
+                    let details = '';
+                    if (file.includes('evolution')) {
+                        details = ` (${data.snapshots?.length || 0} snapshots)`;
+                    } else if (file.includes('latest')) {
+                        details = ` (${Object.keys(data.components || {}).length} components)`;
+                    }
+                    
+                    addCheck('data-checks', '✅', `${file} loaded successfully${details}`, 'success');
+                } catch (error) {
+                    console.error(`Failed to load ${file}:`, error);
+                    addCheck('data-checks', '❌', `${file} failed: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // Test 4: CDN Connectivity
+        async function testCDNs() {
+            const networkTests = document.getElementById('network-tests');
+            networkTests.innerHTML = '<p>Testing CDN connectivity...</p>';
+
+            const cdns = [
+                { name: 'CDNjs (cloudflare)', url: 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js' },
+                { name: 'unpkg', url: 'https://unpkg.com/d3@7.8.5/dist/d3.min.js' },
+                { name: 'jsDelivr', url: 'https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js' }
+            ];
+
+            for (const cdn of cdns) {
+                try {
+                    console.log(`Testing ${cdn.name}...`);
+                    const response = await fetch(cdn.url, { method: 'HEAD', mode: 'no-cors' });
+                    addCheck('network-tests', '✅', `${cdn.name} is reachable`, 'success');
+                } catch (error) {
+                    console.error(`${cdn.name} test failed:`, error);
+                    addCheck('network-tests', '❌', `${cdn.name} is not reachable: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // Auto-run data file test after a delay
+        setTimeout(() => {
+            console.log('Auto-running data file test...');
+            testDataFiles();
+        }, 2000);
+
+        // Auto-run CDN test after library loading
+        setTimeout(() => {
+            console.log('Auto-running CDN test...');
+            testCDNs();
+        }, 3000);
+
+        console.log('Diagnostic page ready');
+    </script>
+</body>
+</html>
