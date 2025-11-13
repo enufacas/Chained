@@ -9,7 +9,7 @@ on:
 permissions:
   contents: write
   issues: read
-  pull-requests: read
+  pull-requests: write
 
 jobs:
   generate-episode:
@@ -34,7 +34,9 @@ jobs:
         run: |
           python scripts/generate_episode.py
 
-      - name: Commit and push changes
+      - name: Commit and create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "chained-bot"
           git config user.email "chained-bot@example.com"
@@ -44,7 +46,25 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new episode to commit"
           else
+            # Create a new branch for the PR with unique name using run ID
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="chained-tv-episode/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            # Commit changes
             git commit -m "chore: new chained tv episode"
-            git push
-            echo "✅ New episode committed and pushed"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR with consistent date formatting
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "📺 New Chained TV Episode - ${PR_DATE}" \
+              --body "## 📺 New Chained TV Episode"$'\n\n'"This PR adds a new Chained TV episode generated from recent repository activity."$'\n\n'"### Changes"$'\n'"- Updated \`docs/episodes/latest.json\`"$'\n'"- Added timestamped episode file in \`docs/episodes/\`"$'\n\n'"---"$'\n'"*🤖 Automated episode generation workflow*" \
+              --label "chained-tv,automated" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ PR created for new Chained TV episode"
           fi
