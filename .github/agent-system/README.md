@@ -83,6 +83,7 @@ Each agent is spawned with one of the following specializations, all inspired by
 - **🔧 Engineer Master** (Margaret Hamilton): Engineers APIs with rigorous, systematic approach
 - **⚙️ Engineer Wizard** (Nikola Tesla): Engineers with inventive vision and enthusiasm
 - **🔍 Investigate Champion** (Ada Lovelace): Analyzes metrics, patterns, and dependencies
+- **🎯 Meta-Coordinator** (Alan Turing): Coordinates multiple agents on complex tasks
 - **🔒 Monitor Champion** (Katie Moussouris): Monitors security proactively and strategically
 - **📦 Organize Guru** (Robert Martin): Organizes code structure with clean, disciplined approach
 - **🛡️ Secure Specialist** (Bruce Schneier): Secures systems with vigilant, thoughtful protection
@@ -232,9 +233,51 @@ This system explores:
 - **Autonomous governance**: Can AI agents self-organize effectively?
 - **Evolution**: Will successful traits propagate through the ecosystem?
 
+## Meta-Agent Coordination
+
+The system now includes a **Meta-Agent Coordinator** that can orchestrate multiple specialized agents working together on complex tasks:
+
+### 🎯 Key Capabilities
+
+- **Task Decomposition**: Automatically breaks down complex tasks into sub-tasks
+- **Intelligent Agent Selection**: Chooses the best agents based on specialization and performance
+- **Dependency Management**: Tracks dependencies and establishes execution order
+- **Parallel Execution**: Identifies opportunities for concurrent agent work
+- **Coordination Logging**: Maintains comprehensive logs of all coordinations
+
+### 📊 How It Works
+
+1. **Analyze**: Determine task complexity (simple, moderate, complex, highly complex)
+2. **Decompose**: Break task into sub-tasks for different specializations
+3. **Select**: Choose best-performing agents for each sub-task
+4. **Coordinate**: Establish execution order and track progress
+5. **Monitor**: Log results and collect statistics
+
+### 🛠️ Usage
+
+```bash
+# Analyze task complexity
+python3 tools/meta_agent_coordinator.py analyze \
+  --description "Build API with security and testing"
+
+# Create coordination plan
+python3 tools/meta_agent_coordinator.py coordinate \
+  --task-id "issue-123" \
+  --description "Complex task description..."
+```
+
+See [Meta-Agent Coordinator Documentation](../../tools/META_AGENT_COORDINATOR_README.md) for detailed usage.
+
+### 🔗 Integration
+
+- Reads from: `.github/agent-system/registry.json`
+- Writes to: `.github/agent-system/coordination_log.json`
+- Uses agent performance metrics for selection decisions
+- Tracks coordination success statistics
+
 ## Future Possibilities
 
-- 🤝 Agent collaboration on complex tasks
+- ✅ Agent coordination on complex tasks (Now implemented via Meta-Agent Coordinator!)
 - 🧬 Genetic algorithms for trait inheritance
 - 🗣️ Inter-agent communication protocols
 - 🎮 Gamification with agent personalities
