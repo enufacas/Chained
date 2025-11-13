@@ -155,7 +155,10 @@
       "creativity": 0.15
     },
     "spawn_mode": "mixed",
-    "new_agent_probability": 0.5
+    "new_agent_probability": 0.5,
+    "protected_specializations": [
+      "troubleshoot-expert"
+    ]
   },
   "last_spawn": "2025-11-13T01:12:35.553759Z",
   "last_evaluation": "2025-11-12T00:42:01.514086Z",
