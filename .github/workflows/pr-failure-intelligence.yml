@@ -1,0 +1,346 @@
+name: "AI: PR Failure Intelligence System"
+
+on:
+  # Run weekly alongside pr-failure-learning
+  schedule:
+    - cron: '30 0 * * 0'  # Every Sunday at 00:30 UTC (30 min after pr-failure-learning)
+  
+  # Run when pr-failure-learning completes
+  workflow_run:
+    workflows: ["System: PR Failure Learning"]
+    types: [completed]
+  
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      analyze_patterns:
+        description: 'Analyze code patterns'
+        required: false
+        type: boolean
+        default: true
+      generate_profiles:
+        description: 'Generate agent profiles'
+        required: false
+        type: boolean
+        default: true
+      predict_risks:
+        description: 'Generate risk predictions'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: write
+
+jobs:
+  intelligence-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Ensure directories exist
+        run: |
+          mkdir -p learnings/pr_intelligence/agent_profiles
+          echo "✅ Directories created"
+      
+      - name: Collect PR data for analysis
+        id: collect
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📊 Collecting PR data for pattern analysis..."
+          
+          # Create temporary data file for both successful and failed PRs
+          output_file="learnings/pr_intelligence/pr_history_$(date +%Y%m%d_%H%M%S).json"
+          
+          # Fetch recent PRs (both merged and closed)
+          gh pr list \
+            --state all \
+            --limit 100 \
+            --json number,title,state,mergedAt,closedAt,files,changedFiles,author \
+            > "${output_file}"
+          
+          # Count PRs collected
+          pr_count=$(cat "${output_file}" | jq 'length')
+          echo "Collected ${pr_count} PRs for analysis"
+          echo "output_file=${output_file}" >> $GITHUB_OUTPUT
+          echo "pr_count=${pr_count}" >> $GITHUB_OUTPUT
+      
+      - name: Analyze code patterns
+        if: ${{ inputs.analyze_patterns != false }}
+        id: patterns
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Analyzing code patterns from PR history..."
+          
+          input_file="${{ steps.collect.outputs.output_file }}"
+          output_file="learnings/pr_intelligence/code_patterns.json"
+          
+          # Transform PR data to expected format
+          cat "${input_file}" | jq '[
+            .[] | {
+              number: .number,
+              title: .title,
+              merged: (.mergedAt != null),
+              closed: (.closedAt != null),
+              changed_files: .changedFiles,
+              files: [.files[]? | .path],
+              author: .author.login
+            }
+          ]' > /tmp/pr_data_transformed.json
+          
+          # Run pattern analysis
+          python tools/pr-failure-intelligence.py \
+            --analyze-patterns \
+            --input /tmp/pr_data_transformed.json \
+            --output "${output_file}" \
+            --verbose
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ Pattern analysis complete: ${output_file}"
+            echo "patterns_file=${output_file}" >> $GITHUB_OUTPUT
+            
+            # Show summary
+            cat "${output_file}" | jq -r '.patterns[] | "  - \(.pattern_id): \(.success_rate * 100)% success"'
+          else
+            echo "⚠️ Pattern analysis failed"
+          fi
+      
+      - name: Generate agent profiles
+        if: ${{ inputs.generate_profiles != false }}
+        id: profiles
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "👤 Generating agent learning profiles..."
+          
+          # Get list of agents from registry
+          if [ -f ".github/agent-system/registry.json" ]; then
+            agents=$(cat .github/agent-system/registry.json | jq -r '.agents[].agent_id // empty')
+            
+            profile_count=0
+            for agent_id in $agents; do
+              echo "  Processing agent: ${agent_id}"
+              
+              # Collect agent-specific PR data
+              input_file="${{ steps.collect.outputs.output_file }}"
+              
+              # Create agent data structure
+              cat > /tmp/agent_data.json << EOF
+{
+  "specialization": "${agent_id}",
+  "total_prs": 0,
+  "successful_prs": 0,
+  "failures": [],
+  "successful_prs_data": []
+}
+EOF
+              
+              # Try to generate profile (may fail if no data)
+              if python tools/pr-failure-intelligence.py \
+                --generate-profile \
+                --agent "${agent_id}" \
+                --input /tmp/agent_data.json \
+                --verbose 2>/dev/null; then
+                echo "    ✓ Profile generated for ${agent_id}"
+                ((profile_count++))
+              else
+                echo "    ⊘ No data for ${agent_id}"
+              fi
+            done
+            
+            echo "profile_count=${profile_count}" >> $GITHUB_OUTPUT
+            echo "✅ Generated ${profile_count} agent profiles"
+          else
+            echo "⚠️ Agent registry not found"
+          fi
+      
+      - name: Generate intelligence summary
+        id: summary
+        run: |
+          echo "📝 Creating intelligence summary..."
+          
+          summary_file="learnings/pr_intelligence/intelligence_summary_$(date +%Y%m%d_%H%M%S).md"
+          
+          cat > "${summary_file}" << 'EOF'
+# PR Failure Intelligence Summary
+
+**Generated**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+**Run**: ${{ github.run_number }}
+
+## 📊 Analysis Results
+
+### Code Patterns Analyzed
+- **Total PRs analyzed**: ${{ steps.collect.outputs.pr_count }}
+- **Patterns identified**: $(cat learnings/pr_intelligence/code_patterns.json 2>/dev/null | jq '.total_patterns // 0')
+
+### Agent Profiles Generated
+- **Profiles created**: ${{ steps.profiles.outputs.profile_count }}
+- **Location**: `learnings/pr_intelligence/agent_profiles/`
+
+## 🎯 Key Insights
+
+### Success Patterns
+$(cat learnings/pr_intelligence/code_patterns.json 2>/dev/null | jq -r '
+  .patterns[]? 
+  | select(.success_rate > 0.7) 
+  | "- \(.description)"
+' || echo "No high-success patterns identified yet")
+
+### Risk Factors
+$(cat learnings/pr_intelligence/code_patterns.json 2>/dev/null | jq -r '
+  .patterns[]? 
+  | select(.success_rate < 0.5) 
+  | "- \(.description)"
+' || echo "No high-risk patterns identified yet")
+
+## 📚 Available Data
+
+- **Code Patterns**: `learnings/pr_intelligence/code_patterns.json`
+- **Agent Profiles**: `learnings/pr_intelligence/agent_profiles/*.json`
+- **PR History**: `${{ steps.collect.outputs.output_file }}`
+
+## 🚀 Using the Intelligence
+
+### For Agents
+```bash
+# Get proactive guidance
+python tools/pr-failure-intelligence.py --proactive-guidance --agent YOUR_AGENT_ID
+
+# Predict PR risk
+python tools/pr-failure-intelligence.py --predict-risk --input your_pr_data.json
+```
+
+### For Analysis
+```bash
+# View patterns
+cat learnings/pr_intelligence/code_patterns.json | jq '.patterns'
+
+# View agent profile
+cat learnings/pr_intelligence/agent_profiles/AGENT_ID.json
+```
+
+---
+
+*Built by **@engineer-master** - Systematic learning for intelligent code generation*
+EOF
+          
+          echo "summary_file=${summary_file}" >> $GITHUB_OUTPUT
+          echo "✅ Summary created: ${summary_file}"
+      
+      - name: Commit intelligence data
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add learnings/pr_intelligence/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            # Create unique branch name
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="pr-intelligence/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            git commit -m "🧠 Update PR failure intelligence data" \
+                       -m "Enhanced AI learning system with predictive capabilities." \
+                       -m "" \
+                       -m "Files updated:" \
+                       -m "- Code pattern analysis" \
+                       -m "- Agent learning profiles" \
+                       -m "- Intelligence summary" \
+                       -m "" \
+                       -m "Analysis summary:" \
+                       -m "- PRs analyzed: ${{ steps.collect.outputs.pr_count }}" \
+                       -m "- Agent profiles: ${{ steps.profiles.outputs.profile_count }}" \
+                       -m "" \
+                       -m "Generated by: @engineer-master PR Failure Intelligence System"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "🧠 Update PR failure intelligence data - ${PR_DATE}" \
+              --body "## PR Failure Intelligence Update"$'\n\n'"**@engineer-master** has updated the PR failure intelligence system with new analysis and predictive insights."$'\n\n'"### Changes"$'\n'"- 📊 Code pattern analysis from ${{ steps.collect.outputs.pr_count }} PRs"$'\n'"- 👤 Generated ${{ steps.profiles.outputs.profile_count }} agent learning profiles"$'\n'"- 📝 Created intelligence summary"$'\n\n'"### Intelligence Files"$'\n'"- **Patterns**: \`learnings/pr_intelligence/code_patterns.json\`"$'\n'"- **Profiles**: \`learnings/pr_intelligence/agent_profiles/\`"$'\n'"- **Summary**: \`${{ steps.summary.outputs.summary_file }}\`"$'\n\n'"### Using the Intelligence"$'\n\n'"```bash"$'\n'"# Get proactive guidance for an agent"$'\n'"python tools/pr-failure-intelligence.py --proactive-guidance --agent AGENT_ID"$'\n\n'"# Predict risk for a proposed PR"$'\n'"python tools/pr-failure-intelligence.py --predict-risk --input pr_data.json"$'\n\n'"# View code patterns"$'\n'"cat learnings/pr_intelligence/code_patterns.json | jq"$'\n'"```"$'\n\n'"---"$'\n'"*Built by **@engineer-master** - Systematic learning, intelligent guidance*" \
+              --label "ai-system,automated,agent:engineer-master" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ PR created for intelligence data update"
+          fi
+      
+      - name: Create issue for high-risk patterns
+        if: success() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if there are high-risk patterns
+          high_risk_count=$(cat learnings/pr_intelligence/code_patterns.json 2>/dev/null | \
+            jq '[.patterns[]? | select(.success_rate < 0.5)] | length' || echo "0")
+          
+          if [ "${high_risk_count}" -gt "0" ]; then
+            echo "⚠️ Found ${high_risk_count} high-risk patterns"
+            
+            # Create issue to track high-risk patterns
+            gh issue create \
+              --title "🚨 High-Risk Patterns Detected in PR Intelligence Analysis" \
+              --body "## High-Risk Pattern Alert"$'\n\n'"The PR Failure Intelligence system has identified patterns with low success rates."$'\n\n'"### Detected Patterns"$'\n\n'"$(cat learnings/pr_intelligence/code_patterns.json | jq -r '.patterns[]? | select(.success_rate < 0.5) | "- **\(.pattern_id)**: \(.description) (\(.success_rate * 100)% success)"')"$'\n\n'"### Recommendations"$'\n\n'"1. Review agents exhibiting these patterns"$'\n'"2. Update agent best practices"$'\n'"3. Add preventive checks to workflows"$'\n'"4. Monitor improvement over time"$'\n\n'"### Data Location"$'\n\n'"- **Full Analysis**: \`learnings/pr_intelligence/code_patterns.json\`"$'\n'"- **Agent Profiles**: \`learnings/pr_intelligence/agent_profiles/\`"$'\n\n'"---"$'\n'"*Generated by **@engineer-master** PR Failure Intelligence System*" \
+              --label "ai-system,high-priority,pattern-analysis"
+            
+            echo "✅ Created issue for high-risk patterns"
+          else
+            echo "✨ No high-risk patterns detected"
+          fi
+      
+      - name: Generate workflow summary
+        if: always()
+        run: |
+          echo "# 🧠 PR Failure Intelligence System" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "## 📊 Analysis Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **PRs Analyzed**: ${{ steps.collect.outputs.pr_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Agent Profiles Generated**: ${{ steps.profiles.outputs.profile_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -n "${{ steps.patterns.outputs.patterns_file }}" ]; then
+            echo "## 🎯 Code Patterns" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Patterns file: \`${{ steps.patterns.outputs.patterns_file }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "## 📚 Intelligence Files" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Code patterns: \`learnings/pr_intelligence/code_patterns.json\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Agent profiles: \`learnings/pr_intelligence/agent_profiles/\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Summary: \`${{ steps.summary.outputs.summary_file }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Built by **@engineer-master** - Systematic learning, intelligent guidance*" >> $GITHUB_STEP_SUMMARY
