@@ -5,10 +5,10 @@
     "template": "**@{agent}** - Please fix this bug using a systematic approach:\n\n1. **Analyze**: Reproduce and understand the bug's root cause\n2. **Plan**: Design the minimal fix that addresses the root cause\n3. **Implement**: Apply the fix with defensive programming\n4. **Validate**: Test the fix thoroughly, including edge cases\n5. **Document**: Add comments explaining the fix and any trade-offs\n\n**Key Principles:**\n- Make minimal, surgical changes\n- Add tests to prevent regression\n- Consider all failure modes\n- Follow existing code patterns\n\nIssue details:\n{issue_body}",
     "success_count": 1,
     "failure_count": 1,
-    "total_uses": 2,
+    "total_uses": 3,
     "avg_resolution_time": 3.75,
     "created_at": "2025-11-13T13:42:01.841962+00:00",
-    "last_used": "2025-11-13T13:44:54.032221+00:00"
+    "last_used": "2025-11-14T17:02:48.491804+00:00"
   },
   "feature_rigorous": {
     "template_id": "feature_rigorous",
