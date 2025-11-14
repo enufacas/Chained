@@ -1,0 +1,339 @@
+name: "Self-Documenting AI: Learn from Discussions"
+
+on:
+  issues:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to learn from'
+        required: true
+        type: number
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  learn-from-discussion:
+    runs-on: ubuntu-latest
+    # Only run on closed issues or manual trigger
+    if: |
+      (github.event_name == 'issues' && github.event.action == 'closed') ||
+      github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests
+      
+      - name: Get issue number
+        id: get_issue
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            ISSUE_NUMBER="${{ github.event.inputs.issue_number }}"
+          else
+            ISSUE_NUMBER="${{ github.event.issue.number }}"
+          fi
+          
+          # Convert to integer (remove decimal if present)
+          ISSUE_NUMBER=$(printf "%.0f" "$ISSUE_NUMBER")
+          
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          echo "📝 Processing issue #$ISSUE_NUMBER"
+      
+      - name: Fetch issue data
+        id: fetch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ steps.get_issue.outputs.issue_number }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import subprocess
+          
+          issue_number = os.environ['ISSUE_NUMBER']
+          
+          # Fetch issue details using gh CLI
+          result = subprocess.run(
+              ['gh', 'issue', 'view', issue_number, 
+               '--repo', '${{ github.repository }}',
+               '--json', 'number,title,body,labels,user,createdAt,comments'],
+              capture_output=True,
+              text=True
+          )
+          
+          if result.returncode != 0:
+              print(f"❌ Error fetching issue: {result.stderr}")
+              exit(1)
+          
+          issue_data = json.loads(result.stdout)
+          
+          # Save to file for learner
+          with open('/tmp/issue_data.json', 'w') as f:
+              json.dump(issue_data, f, indent=2)
+          
+          print(f"✅ Fetched issue #{issue_data['number']}: {issue_data['title']}")
+          print(f"   Comments: {len(issue_data.get('comments', []))}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"has_data=true\n")
+              f.write(f"comment_count={len(issue_data.get('comments', []))}\n")
+              f.write(f"issue_title={issue_data['title']}\n")
+          
+          PYTHON_SCRIPT
+      
+      - name: Analyze discussion
+        id: analyze
+        if: steps.fetch.outputs.has_data == 'true'
+        run: |
+          python3 tools/issue-discussion-learner.py /tmp/issue_data.json \
+            --output-dir learnings/discussions \
+            --generate-doc
+          
+          # Find the generated files
+          LATEST_JSON=$(ls -t learnings/discussions/discussion_issue_*.json | head -1)
+          LATEST_MD=$(ls -t learnings/discussions/discussion_issue_*.md | head -1)
+          
+          echo "json_file=$LATEST_JSON" >> $GITHUB_OUTPUT
+          echo "md_file=$LATEST_MD" >> $GITHUB_OUTPUT
+          
+          # Extract metrics from JSON
+          INSIGHTS=$(python3 -c "import json; data=json.load(open('$LATEST_JSON')); print(len(data['insights']))")
+          DECISIONS=$(python3 -c "import json; data=json.load(open('$LATEST_JSON')); print(len(data['key_decisions']))")
+          QUALITY=$(python3 -c "import json; data=json.load(open('$LATEST_JSON')); print(f\"{data['learning_quality']:.1%}\")")
+          
+          echo "insights=$INSIGHTS" >> $GITHUB_OUTPUT
+          echo "decisions=$DECISIONS" >> $GITHUB_OUTPUT
+          echo "quality=$QUALITY" >> $GITHUB_OUTPUT
+      
+      - name: Consolidate learnings
+        id: consolidate
+        if: steps.analyze.outputs.json_file != ''
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          sys.path.insert(0, 'tools')
+          
+          # Import learner (handle hyphenated filename)
+          import importlib.util
+          spec = importlib.util.spec_from_file_location(
+              "issue_discussion_learner",
+              "tools/issue-discussion-learner.py"
+          )
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          
+          learner = module.IssueDiscussionLearner('learnings/discussions')
+          summary = learner.consolidate_learnings(days=30)
+          
+          # Save consolidated summary
+          with open('learnings/discussions/consolidated_summary.json', 'w') as f:
+              json.dump(summary, f, indent=2)
+          
+          print(f"✅ Consolidated learnings from {summary['issues_analyzed']} issues")
+          print(f"   Total insights: {summary['total_insights']}")
+          print(f"   Total decisions: {summary['total_decisions']}")
+          
+          # Output top tags
+          if summary['top_tags']:
+              print(f"\n📊 Top tags:")
+              for tag, count in list(summary['top_tags'].items())[:5]:
+                  print(f"   - {tag}: {count}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"total_issues={summary['issues_analyzed']}\n")
+              f.write(f"total_insights={summary['total_insights']}\n")
+              top_tags = ','.join(list(summary['top_tags'].keys())[:3])
+              f.write(f"top_tags={top_tags}\n")
+          
+          PYTHON_SCRIPT
+      
+      - name: Update learnings index
+        if: steps.analyze.outputs.json_file != ''
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          from pathlib import Path
+          from datetime import datetime
+          
+          # Load all discussion learnings
+          discussions_dir = Path('learnings/discussions')
+          discussions = []
+          
+          for filepath in sorted(discussions_dir.glob('discussion_issue_*.json'), reverse=True):
+              try:
+                  with open(filepath, 'r') as f:
+                      data = json.load(f)
+                  
+                  discussions.append({
+                      'issue_number': data['issue_number'],
+                      'issue_title': data['issue_title'],
+                      'timestamp': data['timestamp'],
+                      'insights_count': len(data['insights']),
+                      'learning_quality': data['learning_quality'],
+                      'file': str(filepath.relative_to('learnings'))
+                  })
+              except Exception as e:
+                  print(f"Warning: Could not load {filepath}: {e}")
+          
+          # Create index
+          index = {
+              'last_updated': datetime.utcnow().isoformat(),
+              'total_discussions': len(discussions),
+              'discussions': discussions[:100]  # Keep last 100
+          }
+          
+          # Save index
+          with open('learnings/discussions/index.json', 'w') as f:
+              json.dump(index, f, indent=2)
+          
+          print(f"✅ Updated learnings index with {len(discussions)} discussions")
+          
+          PYTHON_SCRIPT
+      
+      - name: Create learning summary issue
+        if: steps.analyze.outputs.insights != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "🧠 Learning Summary: Issue #${{ steps.get_issue.outputs.issue_number }}" \
+            --body "## Self-Documenting AI Learning Report
+          
+          **Issue Analyzed:** #${{ steps.get_issue.outputs.issue_number }} - ${{ steps.fetch.outputs.issue_title }}
+          **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          **Comments Analyzed:** ${{ steps.fetch.outputs.comment_count }}
+          
+          ### 📊 Learning Metrics
+          
+          - **Insights Extracted:** ${{ steps.analyze.outputs.insights }}
+          - **Key Decisions:** ${{ steps.analyze.outputs.decisions }}
+          - **Learning Quality:** ${{ steps.analyze.outputs.quality }}
+          
+          ### 🎯 What the AI Learned
+          
+          The self-documenting AI analyzed the discussion and extracted valuable insights about:
+          - Technical implementations and decisions
+          - Process improvements and workflows
+          - Agent behavior and collaboration patterns
+          - Key decisions and their rationale
+          
+          ### 📚 Consolidated Knowledge
+          
+          **Total Issues Analyzed (Last 30 Days):** ${{ steps.consolidate.outputs.total_issues }}
+          **Total Insights Collected:** ${{ steps.consolidate.outputs.total_insights }}
+          **Top Topics:** ${{ steps.consolidate.outputs.top_tags }}
+          
+          ### 🔗 Resources
+          
+          - **Detailed Analysis:** [\`${{ steps.analyze.outputs.json_file }}\`](https://github.com/${{ github.repository }}/blob/main/${{ steps.analyze.outputs.json_file }})
+          - **Documentation:** [\`${{ steps.analyze.outputs.md_file }}\`](https://github.com/${{ github.repository }}/blob/main/${{ steps.analyze.outputs.md_file }})
+          - **All Learnings:** [Browse discussions](https://github.com/${{ github.repository }}/tree/main/learnings/discussions)
+          
+          ### ✨ How This Helps
+          
+          This self-documenting system:
+          - ✅ Automatically extracts knowledge from every discussion
+          - ✅ Identifies patterns and best practices
+          - ✅ Documents decisions for future reference
+          - ✅ Learns from successful approaches
+          - ✅ Improves agent coordination and behavior
+          
+          ### 🔄 Next Steps
+          
+          These learnings will:
+          - Influence future agent behavior and decisions
+          - Inform best practices and guidelines
+          - Guide similar issues and implementations
+          - Contribute to the collective knowledge base
+          
+          ---
+          
+          *Generated by **@engineer-master** - Self-Documenting AI System*
+          *The AI learns from every discussion to continuously improve.*" \
+            --label "learning,automated,self-documenting-ai" || echo "Issue creation skipped"
+      
+      - name: Create PR for learnings
+        if: steps.analyze.outputs.json_file != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add learnings/discussions/
+          
+          if git diff --staged --quiet; then
+            echo "No new learnings to commit"
+          else
+            # Create branch
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="learning/discussion-${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "${BRANCH_NAME}"
+            
+            git commit -m "🧠 Learn from issue #${{ steps.get_issue.outputs.issue_number }} discussion per @engineer-master"
+            git push origin "${BRANCH_NAME}"
+            
+            # Create PR
+            gh pr create \
+              --title "🧠 Learning: Issue #${{ steps.get_issue.outputs.issue_number }} Discussion (@engineer-master)" \
+              --body "## Self-Documenting AI Learning Update
+            
+            **@engineer-master** has analyzed the discussion from issue #${{ steps.get_issue.outputs.issue_number }}.
+            
+            ### Summary
+            - **Issue:** #${{ steps.get_issue.outputs.issue_number }} - ${{ steps.fetch.outputs.issue_title }}
+            - **Insights Extracted:** ${{ steps.analyze.outputs.insights }}
+            - **Key Decisions:** ${{ steps.analyze.outputs.decisions }}
+            - **Learning Quality:** ${{ steps.analyze.outputs.quality }}
+            
+            ### Changes
+            - Added discussion analysis and insights
+            - Generated self-documentation
+            - Updated consolidated learnings summary
+            - Updated learnings index
+            
+            ### Impact
+            This learning session extracted valuable knowledge from the discussion that will:
+            - Guide future similar implementations
+            - Document key decisions and rationale
+            - Improve agent collaboration patterns
+            - Contribute to the collective knowledge base
+            
+            ---
+            *Work by **@engineer-master** - Rigorous and systematic approach to learning*
+            *Self-documenting AI continuously improves from every discussion*" \
+              --label "automated,learning,self-documenting-ai,copilot" \
+              --base main \
+              --head "${BRANCH_NAME}"
+            
+            echo "✅ PR created successfully"
+          fi
+      
+      - name: Summary
+        if: steps.analyze.outputs.insights != ''
+        run: |
+          echo "✅ Self-documenting AI workflow complete!"
+          echo "📝 Issue: #${{ steps.get_issue.outputs.issue_number }}"
+          echo "💡 Insights: ${{ steps.analyze.outputs.insights }}"
+          echo "🎯 Decisions: ${{ steps.analyze.outputs.decisions }}"
+          echo "⭐ Quality: ${{ steps.analyze.outputs.quality }}"
+          echo ""
+          echo "The AI has learned from this discussion and will apply"
+          echo "these insights to future work. Knowledge is power! 🚀"
