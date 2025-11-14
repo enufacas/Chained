@@ -42,11 +42,9 @@ def main():
         if registry.update_agent(agent_data):
             print(f"✓ Successfully added/updated agent {agent_data['id']}")
             
-            # Update metadata - last_spawn timestamp
-            metadata = registry.get_metadata()
+            # Update metadata - last_spawn timestamp using atomic field update
             from datetime import datetime, timezone
-            metadata["last_spawn"] = datetime.now(timezone.utc).isoformat()
-            registry.update_metadata(metadata)
+            registry.update_metadata_field("last_spawn", datetime.now(timezone.utc).isoformat())
             
             print(f"✓ Updated last_spawn timestamp")
             sys.exit(0)

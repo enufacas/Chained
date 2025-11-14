@@ -1,0 +1,364 @@
+name: "Agent System: Multi-Agent Spawner"
+
+on:
+  schedule:
+    # Run every 3 hours
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      count:
+        description: 'Number of agents to spawn (default: 3, max: 10)'
+        required: false
+        type: number
+        default: 3
+      mode:
+        description: 'Spawning mode'
+        required: false
+        type: choice
+        default: 'mixed'
+        options:
+          - mixed  # 50% existing, 50% new random agents
+          - existing  # Only use existing agent definitions
+          - new  # Always create new random agents
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  check-capacity:
+    runs-on: ubuntu-latest
+    outputs:
+      can_spawn: ${{ steps.check.outputs.can_spawn }}
+      spawn_count: ${{ steps.check.outputs.spawn_count }}
+      active_count: ${{ steps.check.outputs.active_count }}
+      max_agents: ${{ steps.check.outputs.max_agents }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Check agent capacity
+        id: check
+        run: |
+          # Count active agents using registry manager
+          ACTIVE_COUNT=$(python3 tools/list_agents_from_registry.py --status active --format count)
+          
+          MAX_AGENTS=$(python3 -c "
+          import sys
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          registry = RegistryManager()
+          config = registry.get_config()
+          print(config['max_active_agents'])
+          ")
+          
+          # Determine how many agents we want to spawn
+          REQUESTED_COUNT="${{ github.event.inputs.count }}"
+          if [ -z "$REQUESTED_COUNT" ]; then
+            REQUESTED_COUNT=3
+          fi
+          
+          # Calculate how many we can actually spawn
+          AVAILABLE_SLOTS=$((MAX_AGENTS - ACTIVE_COUNT))
+          
+          if [ "$AVAILABLE_SLOTS" -le 0 ]; then
+            echo "can_spawn=false" >> $GITHUB_OUTPUT
+            echo "spawn_count=0" >> $GITHUB_OUTPUT
+            echo "⚠️ Maximum agent capacity reached ($ACTIVE_COUNT/$MAX_AGENTS)"
+          else
+            # Spawn the minimum of requested count and available slots
+            if [ "$AVAILABLE_SLOTS" -lt "$REQUESTED_COUNT" ]; then
+              SPAWN_COUNT=$AVAILABLE_SLOTS
+            else
+              SPAWN_COUNT=$REQUESTED_COUNT
+            fi
+            
+            echo "can_spawn=true" >> $GITHUB_OUTPUT
+            echo "spawn_count=$SPAWN_COUNT" >> $GITHUB_OUTPUT
+            echo "✅ Can spawn $SPAWN_COUNT agent(s) ($ACTIVE_COUNT/$MAX_AGENTS active)"
+          fi
+          
+          echo "active_count=$ACTIVE_COUNT" >> $GITHUB_OUTPUT
+          echo "max_agents=$MAX_AGENTS" >> $GITHUB_OUTPUT
+
+  spawn-agents:
+    needs: check-capacity
+    if: needs.check-capacity.outputs.can_spawn == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Create a matrix for the number of agents to spawn
+        agent_index: ${{ fromJson(format('[{0}]', join(range(1, fromJson(needs.check-capacity.outputs.spawn_count) + 1), ','))) }}
+      max-parallel: 3  # Spawn agents in parallel but limit concurrency
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch latest to avoid conflicts
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Ensure agent system labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🏷️ Checking and creating agent system labels..."
+          
+          create_label_if_missing() {
+            local name="$1"
+            local color="$2"
+            local description="$3"
+            
+            if gh label list --repo ${{ github.repository }} | grep -q "^${name}[[:space:]]"; then
+              echo "✓ Label '$name' already exists"
+            else
+              gh label create "$name" --color "$color" --description "$description" --repo ${{ github.repository }} 2>&1 || echo "✓ Label exists"
+            fi
+          }
+          
+          create_label_if_missing "agent-system" "7057ff" "Agent ecosystem activity"
+          create_label_if_missing "agent-work" "0e8a16" "Work assigned to agents"
+          create_label_if_missing "spawn-pending" "d4c5f9" "Waiting for agent spawn PR to merge"
+          create_label_if_missing "automated" "ededed" "Auto-generated content"
+          create_label_if_missing "copilot" "8b5cf6" "Copilot-related tasks"
+
+      - name: Pull latest changes
+        run: |
+          git pull origin main --rebase
+
+      - name: Generate agent DNA
+        id: generate_agent
+        run: |
+          TIMESTAMP=$(date +%s)${{ matrix.agent_index }}
+          AGENT_ID="agent-$TIMESTAMP"
+          
+          MODE="${{ github.event.inputs.mode }}"
+          if [ -z "$MODE" ]; then
+            MODE="mixed"
+          fi
+          
+          # Decide whether to create new agent or use existing
+          if [ "$MODE" == "new" ]; then
+            CREATE_NEW="true"
+          elif [ "$MODE" == "existing" ]; then
+            CREATE_NEW="false"
+          else
+            if [ $((RANDOM % 2)) -eq 0 ]; then
+              CREATE_NEW="true"
+            else
+              CREATE_NEW="false"
+            fi
+          fi
+          
+          echo "is_new_agent=$CREATE_NEW" >> $GITHUB_OUTPUT
+          
+          if [ "$CREATE_NEW" == "true" ]; then
+            echo "🎲 Generating new random agent..."
+            NEW_AGENT_JSON=$(python3 tools/generate-new-agent.py)
+            
+            if [ $? -ne 0 ] || [ -z "$NEW_AGENT_JSON" ]; then
+              echo "❌ Failed to generate new agent"
+              exit 1
+            fi
+            
+            SPECIALIZATION=$(echo "$NEW_AGENT_JSON" | jq -r '.agent_name' 2>/dev/null || echo "")
+            EMOJI=$(echo "$NEW_AGENT_JSON" | jq -r '.emoji' 2>/dev/null || echo "🤖")
+            HUMAN_NAME=$(echo "$NEW_AGENT_JSON" | jq -r '.human_name' 2>/dev/null || echo "Agent")
+            PERSONALITY=$(echo "$NEW_AGENT_JSON" | jq -r '.personality' 2>/dev/null || echo "analytical")
+            COMM_STYLE=$(echo "$NEW_AGENT_JSON" | jq -r '.communication_style' 2>/dev/null || echo "direct")
+          else
+            echo "📚 Using existing agent definition..."
+            SPECS=($(python3 tools/get-agent-info.py list))
+            RANDOM_INDEX=$((RANDOM % ${#SPECS[@]}))
+            SPECIALIZATION="${SPECS[$RANDOM_INDEX]}"
+            
+            EMOJI=$(python3 tools/get-agent-info.py emoji "$SPECIALIZATION")
+            
+            HUMAN_NAMES=("Ada" "Tesla" "Einstein" "Curie" "Turing" "Lovelace" "Darwin" "Newton" "Feynman" "Hopper" "Hamilton" "Liskov" "Dijkstra" "Knuth" "Shannon")
+            NAME_INDEX=$((RANDOM % ${#HUMAN_NAMES[@]}))
+            HUMAN_NAME="${HUMAN_NAMES[$NAME_INDEX]}"
+            
+            PERSONALITIES=("methodical and precise" "enthusiastic and energetic" "calm and thoughtful" "bold and innovative")
+            PERS_INDEX=$((RANDOM % ${#PERSONALITIES[@]}))
+            PERSONALITY="${PERSONALITIES[$PERS_INDEX]}"
+            
+            COMM_STYLES=("uses technical jargon" "explains with analogies" "gets to the point" "adds encouraging emojis")
+            COMM_INDEX=$((RANDOM % ${#COMM_STYLES[@]}))
+            COMM_STYLE="${COMM_STYLES[$COMM_INDEX]}"
+          fi
+          
+          AGENT_NAME="${EMOJI} ${HUMAN_NAME}"
+          CREATIVITY=$((50 + RANDOM % 50))
+          CAUTION=$((30 + RANDOM % 70))
+          SPEED=$((40 + RANDOM % 60))
+          
+          echo "agent_id=$AGENT_ID" >> $GITHUB_OUTPUT
+          echo "agent_name=$AGENT_NAME" >> $GITHUB_OUTPUT
+          echo "human_name=$HUMAN_NAME" >> $GITHUB_OUTPUT
+          echo "specialization=$SPECIALIZATION" >> $GITHUB_OUTPUT
+          echo "emoji=$EMOJI" >> $GITHUB_OUTPUT
+          echo "personality=$PERSONALITY" >> $GITHUB_OUTPUT
+          echo "communication_style=$COMM_STYLE" >> $GITHUB_OUTPUT
+          echo "creativity=$CREATIVITY" >> $GITHUB_OUTPUT
+          echo "caution=$CAUTION" >> $GITHUB_OUTPUT
+          echo "speed=$SPEED" >> $GITHUB_OUTPUT
+          
+          echo "🤖 Generated Agent ${{ matrix.agent_index }}/${{ needs.check-capacity.outputs.spawn_count }}:"
+          echo "  ID: $AGENT_ID"
+          echo "  Name: $AGENT_NAME"
+          echo "  Specialization: $SPECIALIZATION"
+
+      - name: Register agent
+        run: |
+          cat > /tmp/new_agent.json << EOF
+          {
+            "id": "${{ steps.generate_agent.outputs.agent_id }}",
+            "name": "${{ steps.generate_agent.outputs.agent_name }}",
+            "human_name": "${{ steps.generate_agent.outputs.human_name }}",
+            "specialization": "${{ steps.generate_agent.outputs.specialization }}",
+            "status": "active",
+            "spawned_at": "$(date -u +"%Y-%m-%dT%H:%M:%S.%6NZ")",
+            "personality": "${{ steps.generate_agent.outputs.personality }}",
+            "communication_style": "${{ steps.generate_agent.outputs.communication_style }}",
+            "traits": {
+              "creativity": ${{ steps.generate_agent.outputs.creativity }},
+              "caution": ${{ steps.generate_agent.outputs.caution }},
+              "speed": ${{ steps.generate_agent.outputs.speed }}
+            },
+            "metrics": {
+              "issues_resolved": 0,
+              "prs_merged": 0,
+              "reviews_given": 0,
+              "code_quality_score": 0.5,
+              "overall_score": 0.0
+            },
+            "contributions": []
+          }
+          EOF
+          
+          python3 tools/add_agent_to_registry.py /tmp/new_agent.json
+
+      - name: Create agent profile
+        run: |
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          HUMAN_NAME="${{ steps.generate_agent.outputs.human_name }}"
+          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
+          PERSONALITY="${{ steps.generate_agent.outputs.personality }}"
+          COMM_STYLE="${{ steps.generate_agent.outputs.communication_style }}"
+          
+          mkdir -p ".github/agent-system/profiles"
+          
+          AGENT_DESCRIPTION=$(python3 tools/get-agent-info.py description "$SPECIALIZATION")
+          
+          cat > ".github/agent-system/profiles/${AGENT_ID}.md" << EOF
+          # $AGENT_NAME
+          
+          **ID**: $AGENT_ID  
+          **Human Name**: $HUMAN_NAME  
+          **Specialization**: $SPECIALIZATION  
+          **Status**: 🟢 Active  
+          **Spawned**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')  
+          **Batch**: Multi-spawn agent ${{ matrix.agent_index }}/${{ needs.check-capacity.outputs.spawn_count }}
+          
+          ## Personality
+          
+          **Character**: $PERSONALITY  
+          **Communication Style**: $COMM_STYLE
+          
+          ## Performance Traits
+          
+          - **Creativity**: ${{ steps.generate_agent.outputs.creativity }}/100
+          - **Caution**: ${{ steps.generate_agent.outputs.caution }}/100
+          - **Speed**: ${{ steps.generate_agent.outputs.speed }}/100
+          
+          ## Mission
+          
+          $AGENT_DESCRIPTION
+          
+          ## Performance Metrics
+          
+          - Issues Resolved: 0
+          - PRs Merged: 0
+          - Reviews Given: 0
+          - Overall Score: 0%
+          
+          ---
+          
+          *Part of a multi-agent spawn batch - competing for excellence!*
+          EOF
+
+      - name: Commit and create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          EMOJI="${{ steps.generate_agent.outputs.emoji }}"
+          
+          # Pull latest changes before committing
+          git pull origin main --rebase
+          
+          BRANCH_NAME="agent-spawn/${AGENT_ID}"
+          git checkout -b "$BRANCH_NAME"
+          
+          git add .github/agent-system/
+          IS_NEW="${{ steps.generate_agent.outputs.is_new_agent }}"
+          if [ "$IS_NEW" == "true" ]; then
+            git add .github/agents/
+          fi
+          
+          git commit -m "$EMOJI Spawn agent ${{ matrix.agent_index }}/${{ needs.check-capacity.outputs.spawn_count }}: $AGENT_NAME"
+          git push origin "$BRANCH_NAME"
+          
+          gh pr create \
+            --title "$EMOJI Multi-Spawn: ${{ steps.generate_agent.outputs.human_name }} (${{ matrix.agent_index }}/${{ needs.check-capacity.outputs.spawn_count }})" \
+            --body "## 🎉 Multi-Agent Spawn: Agent ${{ matrix.agent_index }} of ${{ needs.check-capacity.outputs.spawn_count }}"$'\n\n'"**Agent**: $AGENT_NAME"$'\n'"**ID**: $AGENT_ID"$'\n'"**Specialization**: ${{ steps.generate_agent.outputs.specialization }}"$'\n\n'"Part of a batch spawn of ${{ needs.check-capacity.outputs.spawn_count }} agents to accelerate ecosystem growth!"$'\n\n'"---"$'\n'"*🤖 Automated multi-agent spawning*" \
+            --label "agent-system,automated,copilot" \
+            --base main \
+            --head "$BRANCH_NAME"
+
+  summary:
+    needs: [check-capacity, spawn-agents]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Summary
+        run: |
+          if [ "${{ needs.check-capacity.outputs.can_spawn }}" == "true" ]; then
+            echo "🎉 Multi-Agent Spawn Completed!"
+            echo ""
+            echo "Spawned: ${{ needs.check-capacity.outputs.spawn_count }} agents"
+            echo "Active before: ${{ needs.check-capacity.outputs.active_count }}"
+            echo "Capacity: ${{ needs.check-capacity.outputs.max_agents }}"
+            echo ""
+            echo "All spawn PRs created - waiting for auto-review and merge"
+          else
+            echo "⚠️ Could not spawn agents - capacity limit reached"
+            echo "Active: ${{ needs.check-capacity.outputs.active_count }}/${{ needs.check-capacity.outputs.max_agents }}"
+          fi

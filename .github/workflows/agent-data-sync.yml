@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - '.github/agent-system/agents/*.json'
-      - '.github/agent-system/metadata.json'
+      - '.github/agent-system/metadata/**'
       - '.github/agent-system/config.json'
       - '.github/agent-system/hall_of_fame.json'
     branches:
@@ -98,11 +98,15 @@ jobs:
                       print(f'✅ Created {agent_file} (Hall of Fame)')
                   except Exception as e:
                       print(f'⚠️ Error creating {agent_id}.json: {e}', file=sys.stderr)
+              
+              print(f"\n✅ Total synced: {len(consolidated['agents'])} agents, {len(consolidated['hall_of_fame'])} in Hall of Fame")
+              
+          except Exception as e:
+              print(f'❌ Error syncing agent data: {e}', file=sys.stderr)
+              import traceback
+              traceback.print_exc()
+              sys.exit(1)
           PYEOF
-            
-          else
-            echo "⚠️ Agent registry not found"
-          fi
 
       - name: Commit and create PR
         env:
