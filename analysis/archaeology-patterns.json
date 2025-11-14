@@ -1,18 +1,98 @@
 {
   "version": "1.0",
-  "last_updated": "2025-11-12T01:52:07.366277+00:00",
+  "last_updated": "2025-11-14T03:54:17.648267+00:00",
   "patterns": {
-    "success": [],
+    "success": [
+      {
+        "pattern_type": "success",
+        "commit_hash": "fad7eb7",
+        "timestamp": "2025-11-14T03:54:17+00:00",
+        "subject": "Refactor core module",
+        "files_changed": 1,
+        "file_types": [
+          ".py"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [
+            {
+              "commit": "5e73529",
+              "subject": "Improve core performance"
+            }
+          ],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": true,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "5e73529",
+        "timestamp": "2025-11-14T03:54:17+00:00",
+        "subject": "Improve core performance",
+        "files_changed": 1,
+        "file_types": [
+          ".py"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "b52a8ec",
+        "timestamp": "2025-11-14T03:54:17+00:00",
+        "subject": "Update core logic",
+        "files_changed": 1,
+        "file_types": [
+          ".py"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      }
+    ],
     "failure": [],
     "evolution": [
       {
         "pattern_type": "file_evolution",
-        "file": "analysis/archaeology-patterns.json",
-        "changes_count": 3,
-        "first_seen": "2025-11-12T01:44:42+00:00",
-        "last_seen": "2025-11-12T01:51:03+00:00",
+        "file": "core.py",
+        "changes_count": 4,
+        "first_seen": "2025-11-14T03:54:17+00:00",
+        "last_seen": "2025-11-14T03:54:17+00:00",
         "change_frequency": "very_frequent",
         "common_change_types": [
+          "refactor",
+          "maintenance",
           "feature"
         ]
       }
@@ -20,11 +100,18 @@
   },
   "insights": [
     {
+      "type": "success_rate",
+      "title": "Refactorings have high success rate",
+      "description": "Found 1 successful refactorings",
+      "confidence": "medium",
+      "actionable": true
+    },
+    {
       "type": "high_churn",
       "title": "High churn files need attention",
       "description": "Found 1 files with frequent changes",
       "files": [
-        "analysis/archaeology-patterns.json"
+        "core.py"
       ],
       "confidence": "high",
       "actionable": true
@@ -32,16 +119,23 @@
   ],
   "recommendations": [
     {
+      "priority": "medium",
+      "title": "Continue with incremental refactoring",
+      "description": "Historical data shows refactorings succeed frequently",
+      "action": "Schedule regular refactoring sessions",
+      "based_on": "Refactorings have high success rate"
+    },
+    {
       "priority": "high",
       "title": "Review high-churn files",
-      "description": "Files that change frequently may need refactoring: analysis/archaeology-patterns.json",
+      "description": "Files that change frequently may need refactoring: core.py",
       "action": "Create issues for stabilizing high-churn files",
       "based_on": "High churn files need attention"
     }
   ],
   "statistics": {
-    "total_patterns": 1,
+    "total_patterns": 4,
     "prediction_accuracy": 0.0,
-    "recommendations_generated": 1
+    "recommendations_generated": 2
   }
 }
