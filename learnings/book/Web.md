@@ -2,7 +2,7 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 9
+**Total Insights:** 15
 
 **Last Updated:** 2025-11-14
 
@@ -42,7 +42,64 @@ Deliver web apps with confidence 🚀
 ---
 
 
+### playcanvas/engine - Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+
+**Link:** https://github.com/playcanvas/engine
+
+
+Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+
+---
+
+
+### requestly/requestly - Free and open-source API Client & Interceptor.
+
+**Link:** https://github.com/requestly/requestly
+
+
+Free and open-source API Client & Interceptor.
+
+---
+
+
+### angular/angular - Deliver web apps with confidence 🚀
+
+**Link:** https://github.com/angular/angular
+
+
+Deliver web apps with confidence 🚀
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### The disguised return of EU Chat Control
+
+**Link:** https://reclaimthenet.org/the-disguised-return-of-the-eus-private-message-scanning-plot
+
+
+<a href="https:&#x2F;&#x2F;www.patrick-breyer.de&#x2F;en&#x2F;chat-control-2-0-through-the-back-door-breyer-warns-the-eu-is-playing-us-for-fools-now-theyre-scanning-our-texts-and-banning-teens&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.patrick-breyer.de&#x2F;en&#x2F;chat-control-2-0-through-th...</a>
+
+---
+
+
+### Structured Outputs on the Claude Developer Platform (API)
+
+**Link:** https://www.claude.com/blog/structured-outputs-on-the-claude-developer-platform
+
+---
+
+
+### Bitchat for Gaza – messaging without internet
+
+**Link:** https://updates.techforpalestine.org/bitchat-for-gaza-messaging-without-internet/
+
+
+<a href="https:&#x2F;&#x2F;bitchat.free&#x2F;" rel="nofollow">https:&#x2F;&#x2F;bitchat.free&#x2F;</a>
+
+---
 
 
 ### Meta replaces WhatsApp for Windows with web wrapper that uses 1 GB RAM when idle

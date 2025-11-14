@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 23
+**Total Insights:** 28
 
 **Last Updated:** 2025-11-14
 
@@ -22,7 +22,34 @@ A Git-compatible VCS that is both simple and powerful
 ---
 
 
+### jj-vcs/jj - A Git-compatible VCS that is both simple and powerful
+
+**Link:** https://github.com/jj-vcs/jj
+
+
+A Git-compatible VCS that is both simple and powerful
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### 'No One Lives Forever' turns 25 and you still can't buy it legitimately
+
+**Link:** https://www.techdirt.com/2025/11/13/no-one-lives-forever-turns-25-you-still-cant-buy-it-legitimately/
+
+---
+
+
+### Show HN: Dumbass Business Ideas
+
+**Link:** https://dumbassideas.com
+
+
+Discover hilariously terrible business ideas that probably shouldn&#x27;t exist. Get inspired by the worst startup concepts, share them with friends, and submit your own dumbass ideas!
+
+---
 
 
 ### Itiner-E – The Digital Atlas of Ancient Roads
@@ -198,6 +225,45 @@ inp...
 
 
 ## 📰 From TLDR Tech
+
+
+### SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-12
+
+
+**Content Summary:**
+
+Coffee Chat: Turn Supabase Events Into Automated Workflows (Sponsor)
+Modern apps run on data, APIs, and automation.... but making all of them work together is hard.
+Join Orkes for a
+Developer Coffee Chat on November 13 at 9 AM PST
+to see how
+Supabase and Orkes Conductor
+work together to build real-time, event-driven workflows in minutes.
+>> Learn how to trigger Supabase updates, automate downstream actions, and add orchestration without code.
+>> No slides! This is a live developer session showin...
+
+---
+
+
+### Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 
+
+**Link:** https://tldr.tech/tech/2025-11-10
+
+
+**Content Summary:**
+
+Beyond Commands: The Terminal of the Future (Sponsor)
+Warp fuses the terminal and IDE into one place, with AI agents built in. Edit files, review diffs, and ship code, all without leaving the platform that is trusted by over 600k developers and ranks ahead of Claude Code and Gemini CLI on Terminal-Bench.
+Ask Warp agents to:
+Debug your Docker build errors
+Summarize user logs from the last 24 hours
+Onboard you to a new part of your codebase
+Download Warp for free
+and get bonus credits for your fir...
+
+---
 
 
 ### SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻

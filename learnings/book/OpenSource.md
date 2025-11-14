@@ -2,7 +2,7 @@
 
 > Open source projects, community insights, and collaboration
 
-**Total Insights:** 2
+**Total Insights:** 3
 
 **Last Updated:** 2025-11-14
 
@@ -10,6 +10,16 @@
 
 
 ## 📰 From GitHub Trending
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
+
+---
 
 
 ### bobeff/open-source-games - A list of open source games.
