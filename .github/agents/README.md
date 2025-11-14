@@ -84,6 +84,9 @@ Specialized in organizing duplication. Inspired by Robert Martin - clean and dis
 ### 🛡️ [secure-specialist.md](./secure-specialist.md)
 Specialized in securing security. Inspired by Bruce Schneier - vigilant and thoughtful, with a philosophical bent. Focuses on security, data integrity, and access control.
 
+### 🎮 [steam-machine.md](./steam-machine.md) 🧬 **Learning-Based**
+Specialized in gaming platform infrastructure and hardware integration. Inspired by Grace Hopper - disciplined and focused. Created from trending topic 'Steam Machine' (score: 252.7). **Dynamically generated from Hacker News community learnings.**
+
 ### 📖 [support-master.md](./support-master.md)
 Specialized in supporting skill building. Inspired by Barbara Liskov - principled and guiding. Focuses on code reviews, best practices, and knowledge sharing.
 
