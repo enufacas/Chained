@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-11-14T10:33:38.057126",
+  "repository": "/home/runner/work/Chained/Chained/tools",
+  "analyses": {
+    "patterns": {
+      "score": 100.0,
+      "good_practices": 2849,
+      "anti_patterns": 268,
+      "by_category": {
+        "code": 3109,
+        "security": 8
+      },
+      "recommendations": [
+        "\ud83d\udd34 CRITICAL: 6 critical security issues detected. Address these immediately to prevent vulnerabilities.",
+        "\u26a0\ufe0f  268 anti-patterns detected. Most common: Long Functions (198), Deep Nesting (64), Hardcoded Secrets (4)",
+        "\u2705 2849 good practices found. Keep up the excellent work!",
+        "\ud83d\udd12 Security: 6 potential security issues found. Review and remediate to improve security posture.",
+        "\ud83c\udf1f Excellent! Score: 100.0/100. This repository follows strong best practices."
+      ]
+    },
+    "code_quality": {
+      "error": "Directory not found"
+    }
+  }
+}
