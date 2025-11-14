@@ -60,3 +60,4 @@ workflow_health_report.json
 
 # Registry lock files
 .github/agent-system/**/*.lock
+*.backup
