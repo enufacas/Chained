@@ -2,14 +2,64 @@
 
 > CI/CD, containers, orchestration, and infrastructure automation
 
-**Total Insights:** 1
+**Total Insights:** 6
 
 **Last Updated:** 2025-11-14
 
 ---
 
 
+## 📰 From GitHub Trending
+
+
+### serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly, and Fly.io
+
+**Link:** https://github.com/serverless-dns/serverless-dns
+
+
+The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly, and Fly.io
+
+---
+
+
+### traefik/traefik - The Cloud Native Application Proxy
+
+**Link:** https://github.com/traefik/traefik
+
+
+The Cloud Native Application Proxy
+
+---
+
+
+### milvus-io/milvus - Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
+
+**Link:** https://github.com/milvus-io/milvus
+
+
+Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
+
+---
+
+
+### kubernetes-sigs/headlamp - A Kubernetes web UI that is fully-featured, user-friendly and extensible
+
+**Link:** https://github.com/kubernetes-sigs/headlamp
+
+
+A Kubernetes web UI that is fully-featured, user-friendly and extensible
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### Kubernetes Ingress Nginx is retiring
+
+**Link:** https://www.kubernetes.dev/blog/2025/11/12/ingress-nginx-retirement/
+
+---
 
 
 ### Kubernetes Ingress Nginx is retiring
