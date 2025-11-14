@@ -1,0 +1,237 @@
+name: "A/B Testing: Experiment Manager"
+
+on:
+  schedule:
+    # Run daily to analyze active experiments
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - analyze_all
+          - list_experiments
+          - create_example
+        default: 'analyze_all'
+      experiment_id:
+        description: 'Experiment ID (for specific operations)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  manage-experiments:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: List Active Experiments
+        id: list
+        run: |
+          python3 tools/ab_testing_engine.py list active > /tmp/active_experiments.json
+          echo "Active Experiments:"
+          cat /tmp/active_experiments.json
+          
+          # Count active experiments
+          count=$(python3 -c "import json; data = json.load(open('/tmp/active_experiments.json')); print(len(data))")
+          echo "experiment_count=${count}" >> $GITHUB_OUTPUT
+
+      - name: Analyze Experiments
+        if: github.event.inputs.action == 'analyze_all' || github.event_name == 'schedule'
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import sys
+          
+          # Add tools to path
+          sys.path.insert(0, 'tools')
+          from ab_testing_engine import ABTestingEngine
+          
+          engine = ABTestingEngine()
+          
+          # Get all active experiments
+          active_experiments = engine.list_experiments(status="active")
+          
+          print(f"🔬 Analyzing {len(active_experiments)} active experiments...")
+          
+          results = []
+          for exp_summary in active_experiments:
+              exp_id = exp_summary["id"]
+              exp_name = exp_summary["name"]
+              
+              print(f"\n📊 Analyzing: {exp_name} ({exp_id})")
+              
+              try:
+                  analysis = engine.analyze_experiment(exp_id)
+                  
+                  if analysis["status"] == "insufficient_data":
+                      print(f"  ⏳ Status: Insufficient data")
+                      print(f"  📈 Samples: {analysis['current_samples']}")
+                  elif analysis["status"] == "analyzed":
+                      print(f"  ✅ Status: Analysis complete")
+                      
+                      if analysis["winner"]:
+                          winner_info = analysis["winner"]
+                          print(f"  🏆 Winner: {winner_info['variant']}")
+                          print(f"  📈 Improvement: {winner_info['improvement']:.2%}")
+                          print(f"  🎯 Confidence: {winner_info['confidence']}")
+                          
+                          results.append({
+                              "experiment_id": exp_id,
+                              "experiment_name": exp_name,
+                              "winner": winner_info["variant"],
+                              "improvement": winner_info["improvement"]
+                          })
+                      else:
+                          print(f"  ⚖️  No clear winner yet")
+              except Exception as e:
+                  print(f"  ❌ Error analyzing experiment: {e}")
+          
+          # Save results
+          if results:
+              with open('/tmp/winning_experiments.json', 'w') as f:
+                  json.dump(results, f, indent=2)
+              print(f"\n✅ Found {len(results)} experiments with clear winners")
+          else:
+              print(f"\n📊 No experiments have clear winners yet")
+          PYTHON_SCRIPT
+
+      - name: Create Example Experiment
+        if: github.event.inputs.action == 'create_example'
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import sys
+          sys.path.insert(0, 'tools')
+          from ab_testing_engine import ABTestingEngine
+          
+          engine = ABTestingEngine()
+          
+          # Create an example experiment
+          variants = {
+              "control": {
+                  "schedule": "*/15 * * * *",
+                  "description": "Current 15-minute schedule"
+              },
+              "variant_a": {
+                  "schedule": "*/10 * * * *",
+                  "description": "More frequent 10-minute schedule"
+              },
+              "variant_b": {
+                  "schedule": "*/20 * * * *",
+                  "description": "Less frequent 20-minute schedule"
+              }
+          }
+          
+          exp_id = engine.create_experiment(
+              name="Auto-Review Schedule Optimization",
+              description="Testing different schedule frequencies for auto-review-merge workflow to optimize for resource usage vs responsiveness",
+              variants=variants,
+              metrics=["execution_time", "success_rate", "resource_usage"],
+              workflow_name="auto-review-merge"
+          )
+          
+          print(f"✅ Created example experiment: {exp_id}")
+          print(f"📋 Experiment: Auto-Review Schedule Optimization")
+          print(f"🔬 Variants: {len(variants)}")
+          print(f"📊 Metrics: execution_time, success_rate, resource_usage")
+          PYTHON_SCRIPT
+
+      - name: Report Results
+        if: steps.list.outputs.experiment_count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if we have winning experiments
+          if [ -f /tmp/winning_experiments.json ]; then
+            winners=$(cat /tmp/winning_experiments.json)
+            winner_count=$(echo "$winners" | python3 -c "import json, sys; print(len(json.load(sys.stdin)))")
+            
+            if [ "$winner_count" -gt 0 ]; then
+              # Create issue to report winners
+              issue_body=$(cat << 'EOF'
+          ## 🏆 A/B Testing Results Available
+          
+          **@engineer-master** has completed analysis of active A/B testing experiments.
+          
+          ### Winning Experiments
+          
+          The following experiments have clear winners based on statistical analysis:
+          
+          EOF
+          )
+              
+              # Add winner details
+              echo "$winners" | python3 << 'PYTHON_SCRIPT' >> /tmp/issue_body.md
+          import json
+          import sys
+          
+          winners = json.load(sys.stdin)
+          
+          for result in winners:
+              exp_name = result["experiment_name"]
+              winner = result["winner"]
+              improvement = result["improvement"]
+              
+              print(f"#### {exp_name}")
+              print(f"- **Winner**: `{winner}`")
+              print(f"- **Improvement**: {improvement:.2%}")
+              print(f"- **Recommendation**: Consider rolling out the winning configuration")
+              print()
+          PYTHON_SCRIPT
+              
+              cat /tmp/issue_body.md >> /tmp/full_issue_body.md
+              echo "" >> /tmp/full_issue_body.md
+              echo "**IMPORTANT**: Always mention **@engineer-master** by name when discussing these results." >> /tmp/full_issue_body.md
+              echo "" >> /tmp/full_issue_body.md
+              echo "*Generated by @engineer-master A/B Testing System*" >> /tmp/full_issue_body.md
+              
+              # Create the issue
+              gh issue create \
+                --title "🏆 A/B Testing Winners Detected" \
+                --body-file /tmp/full_issue_body.md \
+                --label "automated,ab-testing,ai-generated" \
+                --repo ${{ github.repository }}
+              
+              echo "✅ Created issue with A/B testing results"
+            fi
+          fi
+
+      - name: Summary
+        run: |
+          echo "### 🔬 A/B Testing Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Active Experiments**: ${{ steps.list.outputs.experiment_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f /tmp/active_experiments.json ]; then
+            echo "#### Active Experiments" >> $GITHUB_STEP_SUMMARY
+            python3 << 'PYTHON_SCRIPT' >> $GITHUB_STEP_SUMMARY
+          import json
+          
+          with open('/tmp/active_experiments.json', 'r') as f:
+              experiments = json.load(f)
+          
+          if experiments:
+              print("| Experiment | Status | Variants | Total Samples |")
+              print("|------------|--------|----------|---------------|")
+              for exp in experiments:
+                  print(f"| {exp['name']} | {exp['status']} | {exp['variant_count']} | {exp['total_samples']} |")
+          else:
+              print("*No active experiments*")
+          PYTHON_SCRIPT
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "*Analysis by @engineer-master*" >> $GITHUB_STEP_SUMMARY

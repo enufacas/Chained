@@ -1,0 +1,186 @@
+name: "Example: A/B Testing Integration Demo"
+
+# This workflow demonstrates how to integrate A/B testing into an existing workflow.
+# It shows how to:
+# 1. Check for active experiments
+# 2. Select a variant to use
+# 3. Apply variant configuration
+# 4. Record performance samples
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run occasionally for demonstration
+    - cron: '0 */12 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  ab-testing-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Check for Active Experiment
+        id: check_experiment
+        run: |
+          # Check if there's an active experiment for this workflow
+          result=$(python3 tools/ab_testing_helper.py get-variant "ab-testing-demo" || echo '{"has_experiment": false}')
+          
+          echo "Experiment check result:"
+          echo "$result" | jq '.'
+          
+          # Extract values for use in subsequent steps
+          has_experiment=$(echo "$result" | jq -r '.has_experiment')
+          experiment_id=$(echo "$result" | jq -r '.experiment_id // ""')
+          variant=$(echo "$result" | jq -r '.variant // "control"')
+          
+          echo "has_experiment=${has_experiment}" >> $GITHUB_OUTPUT
+          echo "experiment_id=${experiment_id}" >> $GITHUB_OUTPUT
+          echo "variant=${variant}" >> $GITHUB_OUTPUT
+          
+          # Get variant configuration
+          if [ "$has_experiment" == "true" ]; then
+            config=$(echo "$result" | jq -c '.variant_config')
+            echo "variant_config=${config}" >> $GITHUB_OUTPUT
+            echo "✅ Active experiment found, using variant: ${variant}"
+          else
+            echo "ℹ️ No active experiment, using default configuration"
+          fi
+
+      - name: Apply Variant Configuration
+        id: apply_config
+        env:
+          VARIANT: ${{ steps.check_experiment.outputs.variant }}
+          VARIANT_CONFIG: ${{ steps.check_experiment.outputs.variant_config }}
+        run: |
+          echo "🔧 Applying configuration for variant: ${VARIANT}"
+          
+          if [ -n "${VARIANT_CONFIG}" ]; then
+            echo "Configuration: ${VARIANT_CONFIG}"
+            
+            # Example: Extract configuration values
+            # In a real workflow, you would use these to configure behavior
+            timeout=$(echo "${VARIANT_CONFIG}" | jq -r '.timeout // 300')
+            retries=$(echo "${VARIANT_CONFIG}" | jq -r '.max_retries // 3')
+            
+            echo "  Timeout: ${timeout}s"
+            echo "  Max Retries: ${retries}"
+            
+            # Export for use in job
+            echo "timeout=${timeout}" >> $GITHUB_OUTPUT
+            echo "retries=${retries}" >> $GITHUB_OUTPUT
+          else
+            # Default configuration
+            echo "  Using default configuration"
+            echo "timeout=300" >> $GITHUB_OUTPUT
+            echo "retries=3" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Execute Workflow Task (Demo)
+        id: task
+        env:
+          TIMEOUT: ${{ steps.apply_config.outputs.timeout }}
+          RETRIES: ${{ steps.apply_config.outputs.retries }}
+        run: |
+          echo "🚀 Executing task with configuration:"
+          echo "  Timeout: ${TIMEOUT}s"
+          echo "  Max Retries: ${RETRIES}"
+          
+          # Record start time
+          start_time=$(date +%s)
+          
+          # Simulate task execution
+          sleep 2
+          
+          # Calculate execution time
+          end_time=$(date +%s)
+          execution_time=$((end_time - start_time))
+          
+          # Simulate success rate (for demo, always 100%)
+          success_rate=1.0
+          
+          # Record metrics for use in next step
+          echo "execution_time=${execution_time}" >> $GITHUB_OUTPUT
+          echo "success_rate=${success_rate}" >> $GITHUB_OUTPUT
+          
+          echo "✅ Task completed in ${execution_time}s"
+
+      - name: Record A/B Test Sample
+        if: steps.check_experiment.outputs.has_experiment == 'true'
+        env:
+          EXPERIMENT_ID: ${{ steps.check_experiment.outputs.experiment_id }}
+          VARIANT: ${{ steps.check_experiment.outputs.variant }}
+          EXECUTION_TIME: ${{ steps.task.outputs.execution_time }}
+          SUCCESS_RATE: ${{ steps.task.outputs.success_rate }}
+        run: |
+          echo "📊 Recording A/B test sample"
+          echo "  Experiment: ${EXPERIMENT_ID}"
+          echo "  Variant: ${VARIANT}"
+          echo "  Execution Time: ${EXECUTION_TIME}s"
+          echo "  Success Rate: ${SUCCESS_RATE}"
+          
+          # Record the sample
+          python3 tools/ab_testing_helper.py record \
+            "${EXPERIMENT_ID}" \
+            "${VARIANT}" \
+            --metric execution_time="${EXECUTION_TIME}" \
+            --metric success_rate="${SUCCESS_RATE}" \
+            --metadata run_id="${{ github.run_id }}" \
+            --metadata workflow="${{ github.workflow }}" \
+            --metadata run_number="${{ github.run_number }}"
+          
+          echo "✅ Sample recorded successfully"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### 🔬 A/B Testing Demo Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check_experiment.outputs.has_experiment }}" == "true" ]; then
+            echo "**Status**: Active experiment detected" >> $GITHUB_STEP_SUMMARY
+            echo "**Experiment ID**: ${{ steps.check_experiment.outputs.experiment_id }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Variant Used**: ${{ steps.check_experiment.outputs.variant }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Performance Metrics**:" >> $GITHUB_STEP_SUMMARY
+            echo "- Execution Time: ${{ steps.task.outputs.execution_time }}s" >> $GITHUB_STEP_SUMMARY
+            echo "- Success Rate: ${{ steps.task.outputs.success_rate }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Status**: No active experiment" >> $GITHUB_STEP_SUMMARY
+            echo "Using default configuration" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "*A/B Testing by @engineer-master*" >> $GITHUB_STEP_SUMMARY
+
+# Integration Guide:
+#
+# To integrate A/B testing into your workflow:
+#
+# 1. Add the "Check for Active Experiment" step
+#    This determines if there's an active experiment and selects a variant
+#
+# 2. Add the "Apply Variant Configuration" step  
+#    This applies the variant's configuration to your workflow
+#
+# 3. Modify your task execution to use the variant configuration
+#    Access config values via ${{ steps.apply_config.outputs.* }}
+#
+# 4. Add the "Record A/B Test Sample" step
+#    This records performance metrics for analysis
+#
+# 5. Make sure to record metrics that matter for your workflow:
+#    - execution_time: How long the task took
+#    - success_rate: Percentage of successful executions
+#    - error_rate: Percentage of failures
+#    - resource_usage: CPU, memory, API calls, etc.
+#
+# See tools/AB_TESTING_README.md for complete documentation.
