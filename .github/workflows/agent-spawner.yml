@@ -554,35 +554,76 @@ jobs:
 
       - name: Commit and create PR
         id: create_spawn_pr
-        if: steps.check_capacity.outputs.can_spawn == 'true'
+        # Run if either agents were deleted OR a new agent was spawned
+        if: |
+          steps.check_capacity.outputs.can_spawn == 'true' || 
+          (steps.delete_agents.outputs.deleted_count && steps.delete_agents.outputs.deleted_count != '0')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
-          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
-          HUMAN_NAME="${{ steps.generate_agent.outputs.human_name }}"
-          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
-          EMOJI="${{ steps.generate_agent.outputs.emoji }}"
-          PERSONALITY="${{ steps.generate_agent.outputs.personality }}"
-          COMM_STYLE="${{ steps.generate_agent.outputs.communication_style }}"
-          IS_NEW="${{ steps.generate_agent.outputs.is_new_agent }}"
+          DELETED_COUNT="${{ steps.delete_agents.outputs.deleted_count }}"
+          CAN_SPAWN="${{ steps.check_capacity.outputs.can_spawn }}"
           
-          BRANCH_NAME="agent-spawn/${AGENT_ID}"
+          # Determine what changes were made
+          if [ "$CAN_SPAWN" == "true" ]; then
+            AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+            AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+            HUMAN_NAME="${{ steps.generate_agent.outputs.human_name }}"
+            SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
+            EMOJI="${{ steps.generate_agent.outputs.emoji }}"
+            PERSONALITY="${{ steps.generate_agent.outputs.personality }}"
+            COMM_STYLE="${{ steps.generate_agent.outputs.communication_style }}"
+            IS_NEW="${{ steps.generate_agent.outputs.is_new_agent }}"
+            HAS_SPAWN="true"
+          else
+            HAS_SPAWN="false"
+          fi
+          
+          # Create branch name based on operation type
+          if [ "$HAS_SPAWN" == "true" ]; then
+            BRANCH_NAME="agent-spawn/${AGENT_ID}"
+          else
+            BRANCH_NAME="agent-deletion/$(date +%Y%m%d-%H%M%S)"
+          fi
+          
           git checkout -b "$BRANCH_NAME"
           
-          # Add agent-system directory and .github/agents/ if new agent was created
+          # Add agent-system directory (always, for deletions and/or spawns)
           git add .github/agent-system/
-          if [ "$IS_NEW" == "true" ]; then
-            git add .github/agents/
-            git commit -m "$EMOJI Spawn new agent: $HUMAN_NAME ($SPECIALIZATION) + definition"
+          
+          # Build commit message based on what happened
+          if [ "$HAS_SPAWN" == "true" ] && [ -n "$DELETED_COUNT" ] && [ "$DELETED_COUNT" != "0" ]; then
+            # Both deletion and spawn
+            if [ "$IS_NEW" == "true" ]; then
+              git add .github/agents/
+              git commit -m "$EMOJI Deleted $DELETED_COUNT agent(s) and spawned new agent: $HUMAN_NAME ($SPECIALIZATION) + definition"
+            else
+              git commit -m "$EMOJI Deleted $DELETED_COUNT agent(s) and spawned new agent: $HUMAN_NAME ($SPECIALIZATION)"
+            fi
+          elif [ "$HAS_SPAWN" == "true" ]; then
+            # Spawn only
+            if [ "$IS_NEW" == "true" ]; then
+              git add .github/agents/
+              git commit -m "$EMOJI Spawn new agent: $HUMAN_NAME ($SPECIALIZATION) + definition"
+            else
+              git commit -m "$EMOJI Spawn new agent: $HUMAN_NAME ($SPECIALIZATION)"
+            fi
           else
-            git commit -m "$EMOJI Spawn new agent: $HUMAN_NAME ($SPECIALIZATION)"
+            # Deletion only
+            git commit -m "🗑️ Deleted $DELETED_COUNT agent(s)"
           fi
           git push origin "$BRANCH_NAME"
           
-          # Build PR body with conditional new agent info
-          if [ "$IS_NEW" == "true" ]; then
-            NEW_AGENT_INFO="### 🆕 Brand New Agent Type!
+          # Push the branch
+          git push origin "$BRANCH_NAME"
+          
+          # Build PR body based on operation type
+          if [ "$HAS_SPAWN" == "true" ]; then
+            # Build PR body for spawn (with optional deletion info)
+            
+            # Build PR body with conditional new agent info
+            if [ "$IS_NEW" == "true" ]; then
+              NEW_AGENT_INFO="### 🆕 Brand New Agent Type!
           
           This is a **newly generated agent specialization** that didn't exist before! The system has evolved to include this new type of agent with its own:
           - Convention-compliant definition in \`.github/agents/${SPECIALIZATION}.md\`
@@ -590,14 +631,14 @@ jobs:
           - Specialized mission and responsibilities
           
           "
-          else
-            NEW_AGENT_INFO=""
-          fi
-          
-          # Build mentorship info if mentor assigned
-          HAS_MENTOR="${{ steps.assign_mentor.outputs.has_mentor }}"
-          if [ "$HAS_MENTOR" == "true" ]; then
-            MENTORSHIP_INFO="### 🎓 Mentorship Assignment
+            else
+              NEW_AGENT_INFO=""
+            fi
+            
+            # Build mentorship info if mentor assigned
+            HAS_MENTOR="${{ steps.assign_mentor.outputs.has_mentor }}"
+            if [ "$HAS_MENTOR" == "true" ]; then
+              MENTORSHIP_INFO="### 🎓 Mentorship Assignment
           
           **Mentor**: ${{ steps.assign_mentor.outputs.mentor_name }}  
           **Mentor Specialization**: ${{ steps.assign_mentor.outputs.mentor_specialization }}  
@@ -610,19 +651,30 @@ jobs:
           - Knowledge transfer from proven expertise
           
           "
-          else
-            MENTORSHIP_INFO="### 🎓 Mentorship Status
+            else
+              MENTORSHIP_INFO="### 🎓 Mentorship Status
           
           **Status**: No mentor currently available
           
           This agent will develop independently. Mentorship becomes available when Hall of Fame agents (score > 85%) have capacity.
           
           "
-          fi
+            fi
+            
+            # Add deletion info if agents were deleted
+            if [ -n "$DELETED_COUNT" ] && [ "$DELETED_COUNT" != "0" ]; then
+              DELETION_INFO="### 🗑️ Agent Cleanup
           
-          PR_URL=$(gh pr create \
-            --title "$EMOJI New Agent Spawned: $HUMAN_NAME" \
-            --body "## 🎉 Meet $HUMAN_NAME!
+          Before spawning, **$DELETED_COUNT agent(s)** were deleted from the system.
+          
+          "
+            else
+              DELETION_INFO=""
+            fi
+            
+            PR_URL=$(gh pr create \
+              --title "$EMOJI New Agent Spawned: $HUMAN_NAME" \
+              --body "## 🎉 Meet $HUMAN_NAME!
           
           A new agent has joined our autonomous AI ecosystem!
           
@@ -633,7 +685,7 @@ jobs:
           **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](.github/agents/${SPECIALIZATION}.md)  
           **Spawned At**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           
-          ${NEW_AGENT_INFO}${MENTORSHIP_INFO}### Personality Profile
+          ${DELETION_INFO}${NEW_AGENT_INFO}${MENTORSHIP_INFO}### Personality Profile
           
           **Character**: $PERSONALITY  
           **Communication Style**: $COMM_STYLE
@@ -658,21 +710,58 @@ jobs:
           
           - Added agent to registry
           - Created agent profile${IS_NEW:+ (linked to new agent definition)}
-          - Updated metrics tracking
+          - Updated metrics tracking${DELETED_COUNT:+
+          - Deleted $DELETED_COUNT agent(s) and archived their profiles}
           
           This agent will be evaluated in 24 hours. Agents scoring below 30% face elimination, while top performers (85%+) enter the Hall of Fame!
           
           ---
           *🤖 Automated agent spawning system - Evolving autonomous AI ecosystem*" \
-            --label "agent-system,automated,copilot" \
-            --base main \
-            --head "$BRANCH_NAME")
+              --label "agent-system,automated,copilot" \
+              --base main \
+              --head "$BRANCH_NAME")
+          else
+            # Deletion-only PR
+            PR_URL=$(gh pr create \
+              --title "🗑️ Agent Deletion: $DELETED_COUNT agent(s) removed" \
+              --body "## 🗑️ Agent Cleanup Operation
+          
+          **Deleted**: $DELETED_COUNT agent(s)  
+          **Deleted At**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          
+          ### Changes
+          
+          - Removed $DELETED_COUNT agent(s) from active registry
+          - Archived agent profiles to \`.github/agent-system/archive/\`
+          - Agent definitions remain available for future spawns
+          
+          ### What Happens Next
+          
+          - The registry has been updated
+          - Agent profiles have been archived for record-keeping
+          - Agent definitions (specializations) remain in \`.github/agents/\` for future use
+          - Capacity freed for new agents to spawn
+          
+          ### Deletion Reason
+          
+          This was a manual deletion operation triggered by workflow dispatch with \`delete_mode='all'\` or \`delete_mode='specific'\`.
+          
+          ---
+          *🤖 Automated agent management system*" \
+              --label "agent-system,automated,copilot,deletion" \
+              --base main \
+              --head "$BRANCH_NAME")
+          fi
           
           # Extract PR number from URL
           PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           
-          echo "✅ PR #$PR_NUMBER created for agent $AGENT_NAME"
+          if [ "$HAS_SPAWN" == "true" ]; then
+            echo "✅ PR #$PR_NUMBER created for agent $AGENT_NAME"
+          else
+            echo "✅ PR #$PR_NUMBER created for deletion of $DELETED_COUNT agent(s)"
+          fi
 
       # NOTE: Issue creation removed to prevent circular dependencies
       # The spawn PR itself serves as sufficient announcement and tracking.
@@ -680,22 +769,52 @@ jobs:
       # from the existing issue queue.
 
       - name: Summary
-        if: steps.check_capacity.outputs.can_spawn == 'true'
+        # Run if PR was created (either spawn or deletion)
+        if: steps.create_spawn_pr.outputs.pr_number
         run: |
-          echo "🎉 Agent Spawn Initiated!"
-          echo ""
-          echo "Agent: ${{ steps.generate_agent.outputs.agent_name }}"
-          echo "Specialization: ${{ steps.generate_agent.outputs.specialization }}"
-          echo "ID: ${{ steps.generate_agent.outputs.agent_id }}"
-          echo "Spawn PR: #${{ steps.create_spawn_pr.outputs.pr_number }}"
-          echo ""
-          echo "Next steps:"
-          echo "1. Auto-review workflow will merge the spawn PR"
-          echo "2. Agent becomes active and can work on issues from the queue"
-          echo "3. Agent will be matched to issues based on specialization"
+          HAS_SPAWN="${{ steps.check_capacity.outputs.can_spawn }}"
+          DELETED_COUNT="${{ steps.delete_agents.outputs.deleted_count }}"
+          
+          if [ "$HAS_SPAWN" == "true" ] && [ -n "$DELETED_COUNT" ] && [ "$DELETED_COUNT" != "0" ]; then
+            echo "🎉 Agent Deletion + Spawn Complete!"
+            echo ""
+            echo "Deleted: $DELETED_COUNT agent(s)"
+            echo "Spawned: ${{ steps.generate_agent.outputs.agent_name }}"
+            echo "Specialization: ${{ steps.generate_agent.outputs.specialization }}"
+            echo "ID: ${{ steps.generate_agent.outputs.agent_id }}"
+            echo "PR: #${{ steps.create_spawn_pr.outputs.pr_number }}"
+            echo ""
+            echo "Next steps:"
+            echo "1. Auto-review workflow will merge the spawn PR"
+            echo "2. Agent becomes active and can work on issues from the queue"
+            echo "3. Agent will be matched to issues based on specialization"
+          elif [ "$HAS_SPAWN" == "true" ]; then
+            echo "🎉 Agent Spawn Initiated!"
+            echo ""
+            echo "Agent: ${{ steps.generate_agent.outputs.agent_name }}"
+            echo "Specialization: ${{ steps.generate_agent.outputs.specialization }}"
+            echo "ID: ${{ steps.generate_agent.outputs.agent_id }}"
+            echo "Spawn PR: #${{ steps.create_spawn_pr.outputs.pr_number }}"
+            echo ""
+            echo "Next steps:"
+            echo "1. Auto-review workflow will merge the spawn PR"
+            echo "2. Agent becomes active and can work on issues from the queue"
+            echo "3. Agent will be matched to issues based on specialization"
+          else
+            echo "🗑️ Agent Deletion Complete!"
+            echo ""
+            echo "Deleted: $DELETED_COUNT agent(s)"
+            echo "Deletion PR: #${{ steps.create_spawn_pr.outputs.pr_number }}"
+            echo ""
+            echo "Next steps:"
+            echo "1. Auto-review workflow will merge the deletion PR"
+            echo "2. Agent profiles archived for record-keeping"
+            echo "3. Capacity freed for new agents to spawn"
+          fi
 
       - name: Capacity limit reached
-        if: steps.check_capacity.outputs.can_spawn == 'false'
+        # Only show this if no deletion occurred and capacity is reached
+        if: steps.check_capacity.outputs.can_spawn == 'false' && (!steps.delete_agents.outputs.deleted_count || steps.delete_agents.outputs.deleted_count == '0')
         run: |
           echo "⚠️ Cannot spawn new agent - capacity limit reached"
           echo "Active agents: ${{ steps.check_capacity.outputs.active_count }}/${{ steps.check_capacity.outputs.max_agents }}"
