@@ -2,14 +2,54 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 30
+**Total Insights:** 35
 
 **Last Updated:** 2025-11-14
 
 ---
 
 
+## 📰 From GitHub Trending
+
+
+### davila7/claude-code-templates - CLI tool for configuring and monitoring Claude Code
+
+**Link:** https://github.com/davila7/claude-code-templates
+
+
+CLI tool for configuring and monitoring Claude Code
+
+---
+
+
+### jaywcjlove/awesome-mac -  Now we have become very big, Different from the original idea. Collect premium software in various
+
+**Link:** https://github.com/jaywcjlove/awesome-mac
+
+
+ Now we have become very big, Different from the original idea. Collect premium software in various categories.
+
+---
+
+
+### librespot-org/librespot - Open Source Spotify client library
+
+**Link:** https://github.com/librespot-org/librespot
+
+
+Open Source Spotify client library
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### Think in math, write in code (2019)
+
+**Link:** https://www.jmeiners.com/think-in-math/
+
+---
 
 
 ### Think in math, write in code (2019
@@ -244,6 +284,28 @@ in a new tab. When you're done, simply close that tab...
 
 
 ## 📰 From TLDR Tech
+
+
+### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-07
+
+
+**Content Summary:**
+
+Get $500 Google Cloud credits when you upgrade to Google Developer premium (Sponsor)
+Considering a
+Google Developer Premium membership
+? Google recently expanded the availability of its
+monthly membership plan
+so more people can experiment with the full breadth of Google's developer tools, including Gemini Code Assist.
+Sign up for a yearly membership to get benefits including:
+A 1-hour consultation with Google Cloud experts.
+$550 in GenAI & Cloud developer credits.
+Unlimited Google Skills.
+1500 ...
+
+---
 
 
 ### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻
