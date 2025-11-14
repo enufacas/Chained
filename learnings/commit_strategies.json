@@ -1,11 +1,31 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-14T04:52:56.256680+00:00",
+  "last_updated": "2025-11-14T04:54:27.800225+00:00",
   "repository": "tmpn5gt3bt3",
   "total_commits_analyzed": 2,
   "successful_merges": 0,
   "failed_merges": 0,
-  "patterns_identified": [],
+  "patterns_identified": [
+    {
+      "pattern_name": "conventional_commits",
+      "pattern_type": "message",
+      "description": "Conventional commit format",
+      "success_rate": 0.85,
+      "occurrence_count": 50,
+      "average_merge_time_hours": 2.0,
+      "common_attributes": {
+        "most_common_types": [
+          "feat",
+          "fix"
+        ]
+      },
+      "examples": [
+        "abc123",
+        "def456"
+      ],
+      "confidence_score": 0.9
+    }
+  ],
   "recommendations": [],
   "learning_history": []
 }
