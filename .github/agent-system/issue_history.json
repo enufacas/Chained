@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "updated_at": "2025-11-14T13:26:20.384108Z",
-  "total_issues": 5,
+  "updated_at": "2025-11-14T13:32:16.375278Z",
+  "total_issues": 8,
   "issues": [
     {
       "issue_number": 2,
@@ -65,6 +65,43 @@
       "solution_summary": "Added comprehensive test suite with 90% coverage",
       "agent_assigned": "assert-specialist",
       "resolved_at": "2025-11-14T13:26:20.383881Z",
+      "pr_number": null
+    },
+    {
+      "issue_number": 1,
+      "title": "API endpoint returning 500 errors",
+      "body": "The /users API endpoint is failing",
+      "labels": [
+        "bug",
+        "api"
+      ],
+      "solution_summary": "Fixed null pointer exception",
+      "agent_assigned": "engineer-master",
+      "resolved_at": "2025-11-14T13:32:16.272004Z",
+      "pr_number": null
+    },
+    {
+      "issue_number": 2,
+      "title": "Performance issue with database",
+      "body": "Queries are slow",
+      "labels": [
+        "performance"
+      ],
+      "solution_summary": "Added indexes and caching",
+      "agent_assigned": "accelerate-master",
+      "resolved_at": "2025-11-14T13:32:16.323084Z",
+      "pr_number": null
+    },
+    {
+      "issue_number": 3,
+      "title": "Add tests for authentication",
+      "body": "Need test coverage",
+      "labels": [
+        "testing"
+      ],
+      "solution_summary": "Added comprehensive tests",
+      "agent_assigned": "assert-specialist",
+      "resolved_at": "2025-11-14T13:32:16.375047Z",
       "pr_number": null
     }
   ]
