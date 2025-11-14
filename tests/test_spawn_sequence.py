@@ -105,21 +105,33 @@ class TestWorkflowIntegration(unittest.TestCase):
     """Test workflow integration points."""
 
     def test_label_creation_in_spawner(self):
-        """Test that spawn-pending label is created in agent-spawner."""
+        """Test that spawn-pending label definition exists in agent-spawner."""
         with open('.github/workflows/agent-spawner.yml', 'r') as f:
             spawner_content = f.read()
         
-        # Check label is defined
+        # Check label is defined (still needed for label system, even if not used for new issues)
         self.assertIn('create_label_if_missing "spawn-pending"', spawner_content)
         self.assertIn('Waiting for agent spawn PR to merge', spawner_content)
 
-    def test_label_added_to_issue(self):
-        """Test that spawn-pending label is added to work issues."""
+    def test_no_issue_creation_in_spawner(self):
+        """Test that agent-spawner no longer creates work issues."""
         with open('.github/workflows/agent-spawner.yml', 'r') as f:
             spawner_content = f.read()
         
-        # Check label is added when creating issue
-        self.assertIn('--label "agent-system,agent-work,spawn-pending"', spawner_content)
+        # Check that issue creation step has been removed
+        self.assertNotIn('- name: Create agent work and welcome issue', spawner_content)
+        # Check that the removal is documented
+        self.assertIn('Issue creation removed to prevent circular dependencies', spawner_content)
+
+    def test_no_announcement_issue_in_learning_spawner(self):
+        """Test that learning-based-agent-spawner no longer creates announcement issues."""
+        with open('.github/workflows/learning-based-agent-spawner.yml', 'r') as f:
+            spawner_content = f.read()
+        
+        # Check that announcement issue creation step has been removed
+        self.assertNotIn('- name: Create announcement issue', spawner_content)
+        # Check that the removal is documented
+        self.assertIn('Announcement issue creation removed to prevent circular dependencies', spawner_content)
 
     def test_label_removal_in_auto_review(self):
         """Test that spawn-pending label is removed after merge."""
@@ -173,14 +185,18 @@ class TestWorkflowIntegration(unittest.TestCase):
         self.assertIn('spawn_pr_number', script_content)
         self.assertIn('pr_state', script_content)
 
-    def test_assignment_trigger_after_merge(self):
-        """Test that auto-review triggers assignment after spawn merge."""
+    def test_assignment_no_longer_needed_after_spawn(self):
+        """Test that assignment workflow dispatch is no longer needed after spawn merge.
+        
+        Since we no longer create work issues during agent spawn, there's nothing to assign.
+        The agent will work on existing issues from the queue once spawned.
+        """
         with open('.github/workflows/auto-review-merge.yml', 'r') as f:
             auto_review_content = f.read()
         
-        # Check workflow dispatch to assignment workflow
-        self.assertIn('gh workflow run copilot-graphql-assign.yml', auto_review_content)
-        self.assertIn('issue_number="${linked_issue}"', auto_review_content)
+        # Check that auto-review-merge handles agent spawn PRs (for backwards compatibility)
+        # It should check for agent-system label
+        self.assertIn('agent-system', auto_review_content)
 
 
 def run_tests():
