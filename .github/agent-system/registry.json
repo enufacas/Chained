@@ -184,6 +184,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1763090317",
+      "name": "\ud83d\udc6e Katie Moussouris",
+      "human_name": "Katie Moussouris",
+      "specialization": "secure-wizard",
+      "status": "active",
+      "spawned_at": "2025-11-14T03:18:37.908377Z",
+      "personality": "proactive and strategic, with creative flair",
+      "communication_style": "closes security gaps",
+      "traits": {
+        "creativity": 68,
+        "caution": 58,
+        "speed": 84
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],
@@ -207,7 +230,7 @@
     ],
     "strict_pr_attribution": true
   },
-  "last_spawn": "2025-11-14T02:26:55.739741Z",
+  "last_spawn": "2025-11-14T03:18:37.908407Z",
   "last_evaluation": "2025-11-13T22:47:41.700770Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
