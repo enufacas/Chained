@@ -233,6 +233,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1763097820",
+      "name": "\ud83d\uddc2\ufe0f Martin Fowler",
+      "human_name": "Martin Fowler",
+      "specialization": "restructure-master",
+      "status": "active",
+      "spawned_at": "2025-11-14T05:23:40.396216Z",
+      "personality": "clarity-seeking and pragmatic, with a twist of humor",
+      "communication_style": "refactors with purpose",
+      "traits": {
+        "creativity": 76,
+        "caution": 82,
+        "speed": 82
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],
@@ -256,7 +279,7 @@
     ],
     "strict_pr_attribution": true
   },
-  "last_spawn": "2025-11-14T03:44:25.269379Z",
+  "last_spawn": "2025-11-14T05:23:40.396257Z",
   "last_evaluation": "2025-11-13T22:47:41.700770Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
