@@ -46,6 +46,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Ensure metrics directory exists
+        run: |
+          mkdir -p .github/agent-system/metrics/performance
+          mkdir -p .github/agent-system/metrics/performance/$(date +%Y-%m-%d)
+          echo "📁 Metrics directories created/verified"
+          ls -la .github/agent-system/metrics/performance/
+
       - name: Collect performance metrics
         id: collect
         run: |
