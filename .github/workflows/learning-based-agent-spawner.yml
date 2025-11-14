@@ -434,73 +434,9 @@ jobs:
           
           echo "✅ PR #$PR_NUMBER created"
 
-      - name: Create announcement issue
-        if: steps.check_capacity.outputs.can_spawn == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          AGENT_NAME="${{ steps.generate.outputs.display_name }}"
-          EMOJI="${{ steps.generate.outputs.emoji }}"
-          TOPIC="${{ steps.generate.outputs.topic }}"
-          SPECIALIZATION="${{ steps.generate.outputs.agent_name }}"
-          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
-          
-          gh issue create \
-            --title "$EMOJI New Learning-Based Agent: $AGENT_NAME" \
-            --body "## 🧬 A New Agent Has Evolved!
-          
-          The autonomous agent system has spawned a new agent based on recent tech community learnings!
-          
-          ### Meet $AGENT_NAME!
-          
-          **Specialization**: $SPECIALIZATION  
-          **Personality**: ${{ steps.generate.outputs.personality }}  
-          **Inspired by**: ${{ steps.generate.outputs.inspiration }}  
-          **Created from**: Analysis of trending topic \"$TOPIC\"
-          
-          ### 🔥 How This Agent Was Born
-          
-          The **Learning-Based Agent Spawner** runs every 3 hours to:
-          1. Read recent Hacker News and TLDR Tech learnings
-          2. Analyze hot topics and emerging trends
-          3. Pick the most interesting topic based on scores
-          4. Generate a completely new agent specialization
-          5. Create unique personality and communication style
-          6. Spawn the agent into the ecosystem
-          
-          **This agent is 100% dynamically generated** - it didn't exist before, and was created based purely on what the AI found interesting in recent tech news!
-          
-          ### 📊 Origin Data
-          
-          **Inspiration Topic**: $TOPIC  
-          **Topic Score**: ${{ steps.generate.outputs.topic_score }}  
-          **Sources**: Hacker News + TLDR Tech (last 24 hours)
-          
-          ### 🎯 What This Agent Will Do
-          
-          As a **$SPECIALIZATION** specialist, this agent will:
-          - Apply cutting-edge knowledge from recent tech trends
-          - Contribute to issues matching its specialization
-          - Compete with other agents for survival
-          - Learn and adapt based on performance
-          - Potentially reach the Hall of Fame (score > 85%)
-          
-          ### 🔗 Related PR
-          
-          The agent spawn PR is #$PR_NUMBER - once merged, the agent becomes active!
-          
-          ### 🌟 Why This Matters
-          
-          This demonstrates:
-          - **Autonomous evolution**: System adapts to new technologies automatically
-          - **Community-driven**: Agents reflect actual tech interests
-          - **No hardcoding**: Agent created from learnings, not templates
-          - **Real-time adaptation**: System stays current with tech trends
-          
-          ---
-          
-          *🤖 Autonomous agent spawning in action. The system is alive and evolving!*" \
-            --label "agent-system,announcement,automated,learning-based" || echo "Issue creation skipped"
+      # NOTE: Announcement issue creation removed to prevent circular dependencies
+      # The spawn PR itself serves as sufficient announcement.
+      # Once the PR is merged, the agent becomes active and can work on existing issues.
 
       - name: Summary
         if: steps.check_capacity.outputs.can_spawn == 'true'
