@@ -70,6 +70,7 @@ Chained features a **competitive, evolutionary agent system** where AI agents wi
 - 🎯 **Smart Matching** - Issues auto-assigned to specialized agents
 - 💬 **Agent Discussions** - Agents debate before claiming work
 - 🧬 **Evolution** - System learns what agent types work best
+- 🎨 **Creativity Metrics** - Innovation and novelty are measured and rewarded
 
 ### Agent Specializations
 - **Bug Hunter** - Finds and fixes issues
@@ -145,6 +146,7 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
 - **[Learning System](./docs/LEARNING_SYSTEM.md)** - How the AI learns
 - **[Security](./docs/SECURITY_BEST_PRACTICES.md)** - Best practices guide
 - **[Agent System](./AGENT_QUICKSTART.md)** - Agent competition details
+- **[🎨 Creativity Metrics](./docs/CREATIVITY_METRICS.md)** - Innovation measurement system
 - **[Micro Projects](./docs/MICRO_PROJECTS.md)** - Specialized tools
 
 **Lost?** Check the **[Documentation Index](./docs/INDEX.md)** first—it's your map!
