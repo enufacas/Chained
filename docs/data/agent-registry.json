@@ -115,6 +115,75 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1763082710",
+      "name": "\ud83d\udd28 Linus Torvalds",
+      "human_name": "Linus Torvalds",
+      "specialization": "construct-specialist",
+      "status": "active",
+      "spawned_at": "2025-11-14T01:11:50.171182Z",
+      "personality": "direct and practical, but more direct",
+      "communication_style": "focuses on what works",
+      "traits": {
+        "creativity": 80,
+        "caution": 91,
+        "speed": 69
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763086649",
+      "name": "\ud83c\udfaf Ada",
+      "human_name": "Ada",
+      "specialization": "investigate-champion",
+      "status": "active",
+      "spawned_at": "2025-11-14T02:17:29.209138Z",
+      "personality": "meticulous and careful",
+      "communication_style": "adds encouraging emojis",
+      "traits": {
+        "creativity": 67,
+        "caution": 89,
+        "speed": 58
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763087215",
+      "name": "\u2699\ufe0f Einstein",
+      "human_name": "Einstein",
+      "specialization": "engineer-master",
+      "status": "active",
+      "spawned_at": "2025-11-14T02:26:55.739710Z",
+      "personality": "meticulous and careful",
+      "communication_style": "likes to share facts",
+      "traits": {
+        "creativity": 91,
+        "caution": 79,
+        "speed": 81
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],
@@ -138,7 +207,7 @@
     ],
     "strict_pr_attribution": true
   },
-  "last_spawn": "2025-11-14T00:11:57.453810Z",
+  "last_spawn": "2025-11-14T02:26:55.739741Z",
   "last_evaluation": "2025-11-13T22:47:41.700770Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
