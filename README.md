@@ -134,6 +134,8 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
 - **[⚡ Quick Reference](./docs/QUICK_REFERENCE.md)** - Command cheat sheet
 - **[❓ FAQ](./FAQ.md)** - Frequently asked questions
 - **[🏗️ Architecture Guide](./docs/ARCHITECTURE.md)** - System design with diagrams
+- **[🤖 System Recreation Prompt](./SYSTEM_RECREATION_PROMPT.md)** - ⭐ **NEW!** Complete blueprint to recreate Chained from scratch
+- **[📖 System Recreation Guide](./SYSTEM_RECREATION_GUIDE.md)** - ⭐ **NEW!** How to use the recreation prompt
 
 ### Tutorials (Step-by-Step)
 1. [Understanding the Autonomous Workflow](./docs/tutorials/understanding-autonomous-workflow.md)
