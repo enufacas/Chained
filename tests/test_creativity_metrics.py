@@ -21,9 +21,13 @@ from datetime import datetime, timezone
 import importlib.util
 
 # Load the creativity analyzer module
+# Get the project root directory (parent of tests/)
+project_root = Path(__file__).parent.parent
+tools_path = project_root / "tools" / "creativity-metrics-analyzer.py"
+
 spec = importlib.util.spec_from_file_location(
     "creativity_metrics_analyzer",
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "tools", "creativity-metrics-analyzer.py")
+    str(tools_path)
 )
 creativity_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(creativity_module)
