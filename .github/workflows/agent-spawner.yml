@@ -817,124 +817,19 @@ jobs:
           echo "work_issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
           echo "✅ Combined welcome and work issue #$ISSUE_NUMBER created for agent $AGENT_NAME"
 
-      - name: Assign work issue to Copilot
-        if: steps.check_capacity.outputs.can_spawn == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
-        run: |
-          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
-          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
-          ISSUE_NUMBER="${{ steps.create_agent_work_issue.outputs.work_issue_number }}"
-          
-          echo "🤖 Attempting to assign issue #$ISSUE_NUMBER to GitHub Copilot..."
-          
-          # Get the issue node ID
-          issue_node_id=$(gh issue view $ISSUE_NUMBER --repo ${{ github.repository }} --json id --jq '.id')
-          
-          if [ -z "$issue_node_id" ]; then
-            echo "❌ Failed to get issue node ID"
-            exit 0
-          fi
-          
-          echo "📍 Issue node ID: $issue_node_id"
-          
-          # Get Copilot's actor ID
-          copilot_actor_id=$(gh api graphql -f query='
-            query($owner: String!, $repo: String!) {
-              repository(owner: $owner, name: $repo) {
-                suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
-                  nodes {
-                    login
-                    __typename
-                    ... on Bot { id }
-                    ... on User { id }
-                  }
-                }
-              }
-            }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" | jq -r '.data.repository.suggestedActors.nodes[] | select(.login | test("copilot"; "i")) | .id' | head -1)
-          
-          if [ -z "$copilot_actor_id" ]; then
-            echo "⚠️ Could not find Copilot actor ID"
-            echo "The work issue #$ISSUE_NUMBER was created but could not be assigned to Copilot."
-            echo "This may be because:"
-            echo "  - COPILOT_PAT is not configured"
-            echo "  - Copilot is not enabled for this repository"
-            echo "  - Copilot agent feature is not available"
-            
-            # Add a comment to the issue
-            gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "⚠️ **Agent Assignment Note**
-          
-          This issue was created for agent **$AGENT_NAME** but could not be automatically assigned to GitHub Copilot.
-          
-          **To enable Copilot assignment:**
-          1. Ensure COPILOT_PAT secret is configured
-          2. Verify Copilot is enabled for this repository
-          3. Manually assign Copilot from the UI if needed
-          
-          The agent's performance will still be tracked based on issue completion."
-            exit 0
-          fi
-          
-          echo "📍 Copilot actor ID: $copilot_actor_id"
-          
-          # Assign issue to Copilot using GraphQL API
-          mutation_result=$(gh api graphql -f query='
-            mutation($issueId: ID!, $actorId: ID!) {
-              replaceActorsForAssignable(input: {
-                assignableId: $issueId,
-                actorIds: [$actorId]
-              }) {
-                assignable {
-                  ... on Issue {
-                    id
-                    assignees(first: 10) {
-                      nodes {
-                        login
-                      }
-                    }
-                  }
-                }
-              }
-            }' -f issueId="$issue_node_id" -f actorId="$copilot_actor_id" 2>&1)
-          
-          if echo "$mutation_result" | jq -e '.data.replaceActorsForAssignable.assignable' > /dev/null 2>&1; then
-            echo "✅ Successfully assigned issue #$ISSUE_NUMBER to Copilot"
-            
-            # Add success comment
-            gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🤖 **Agent Task Assigned to Copilot**
-          
-          This issue has been automatically assigned to GitHub Copilot on behalf of agent **$AGENT_NAME**.
-          
-          **What happens next:**
-          1. ✅ Copilot will analyze the task requirements
-          2. 💻 Copilot will create a branch and implement the solution
-          3. 📝 Copilot will open a PR with the implementation
-          4. 🔍 The PR will be reviewed and merged
-          5. 📊 Agent **$AGENT_NAME** will receive credit for this contribution
-          
-          **Agent Specialization:** ${{ steps.generate_agent.outputs.specialization }}  
-          **Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
-          
-          ---
-          *🤖 This is an autonomous agent task. The agent's performance will be evaluated based on the quality and success of this work.*"
-          else
-            echo "⚠️ Failed to assign issue #$ISSUE_NUMBER to Copilot"
-            echo "Error: $mutation_result"
-            
-            # Add error comment
-            gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "⚠️ **Copilot Assignment Failed**
-          
-          Attempted to assign this issue to GitHub Copilot for agent **$AGENT_NAME**, but the assignment failed.
-          
-          **Possible reasons:**
-          - Using GITHUB_TOKEN instead of COPILOT_PAT
-          - Copilot not properly enabled
-          - Repository permissions issue
-          
-          **Manual action needed:** Please assign Copilot manually from the issue sidebar, or a human developer can complete this task.
-          
-          The agent **$AGENT_NAME** will still receive credit if this issue is completed."
-          fi
+      # NOTE: Assignment step removed to fix premature PR creation bug
+      # See: https://github.com/enufacas/Chained/issues/XXX
+      # 
+      # The spawn workflow should NOT assign Copilot immediately because:
+      # 1. The agent isn't registered yet (spawn PR not merged)
+      # 2. This causes Copilot to create empty PRs before the agent exists
+      # 3. The proper flow is: spawn PR merges → spawn-pending label removed → assignment workflow assigns Copilot
+      #
+      # Assignment will happen automatically after the spawn PR merges via:
+      # - auto-review-merge.yml removes spawn-pending label (lines 278-329)
+      # - copilot-graphql-assign.yml assigns Copilot (runs every 15 minutes)
+      #
+      # This ensures the agent is fully registered before Copilot starts working on the task.
 
       - name: Link PR to work issue
         if: steps.check_capacity.outputs.can_spawn == 'true'
@@ -965,13 +860,19 @@ jobs:
       - name: Summary
         if: steps.check_capacity.outputs.can_spawn == 'true'
         run: |
-          echo "🎉 Agent Spawning Complete!"
+          echo "🎉 Agent Spawn Initiated!"
           echo ""
           echo "Agent: ${{ steps.generate_agent.outputs.agent_name }}"
           echo "Specialization: ${{ steps.generate_agent.outputs.specialization }}"
           echo "ID: ${{ steps.generate_agent.outputs.agent_id }}"
+          echo "Spawn PR: #${{ steps.create_spawn_pr.outputs.pr_number }}"
+          echo "Work Issue: #${{ steps.create_agent_work_issue.outputs.work_issue_number }}"
           echo ""
-          echo "The agent is now active and ready to contribute!"
+          echo "Next steps:"
+          echo "1. Auto-review workflow will merge the spawn PR"
+          echo "2. spawn-pending label will be removed from work issue"
+          echo "3. Assignment workflow will assign Copilot to work issue"
+          echo "4. Agent will complete first task and demonstrate capabilities"
 
       - name: Capacity limit reached
         if: steps.check_capacity.outputs.can_spawn == 'false'
