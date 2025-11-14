@@ -200,12 +200,12 @@ jobs:
           print(f"  ❌ Eliminated: {len(eliminated)}")
           print(f"  ✅ Maintained: {len(maintained)}")
           
-          # Save results for next steps
+          # Save results for next steps (include specialization for archiving)
           with open('/tmp/evaluation_results.json', 'w') as f:
               json.dump({
-                  'promoted': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score']} for a in promoted],
-                  'eliminated': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score']} for a in eliminated],
-                  'maintained': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score']} for a in maintained]
+                  'promoted': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score'], 'specialization': a.get('specialization', 'unknown')} for a in promoted],
+                  'eliminated': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score'], 'specialization': a.get('specialization', 'unknown')} for a in eliminated],
+                  'maintained': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score'], 'specialization': a.get('specialization', 'unknown')} for a in maintained]
               }, f, indent=2)
           
           PYTHON_SCRIPT
@@ -276,6 +276,7 @@ jobs:
           
           for agent in results.get('eliminated', []):
               agent_id = agent['id']
+              agent_name = agent['name']
               
               # Archive profile
               profile_path = f".github/agent-system/profiles/{agent_id}.md"
@@ -283,20 +284,17 @@ jobs:
               
               if os.path.exists(profile_path):
                   shutil.move(profile_path, archive_path)
-                  print(f"📦 Archived profile for {agent['name']}")
+                  print(f"📦 Archived profile for {agent_name}")
               
               # Find and note the agent definition (but don't remove it - keep for future spawns)
-              # Get specialization from registry
-              full_agent = next((a for a in registry.get('agents', []) if a.get('id') == agent_id), None)
-              if not full_agent:
-                  # Check eliminated list in registry for historical data
-                  continue
-              
-              specialization = full_agent.get('specialization', 'unknown')
+              # Get specialization from evaluation results (already includes it)
+              specialization = agent.get('specialization', 'unknown')
               agent_def_path = Path(f".github/agents/{specialization}.md")
               
               if agent_def_path.exists():
                   print(f"  ℹ️  Agent definition {specialization}.md remains for future spawns")
+              else:
+                  print(f"  ⚠️  Agent definition {specialization}.md not found")
           
           PYTHON_SCRIPT
 
