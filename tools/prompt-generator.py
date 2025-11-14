@@ -5,6 +5,8 @@ Self-Improving Prompt Generator
 Generates optimized prompts for GitHub Copilot interactions and learns from outcomes.
 Tracks performance metrics to continuously improve prompt quality.
 
+Enhanced by @engineer-master with learning integration and self-improvement capabilities.
+
 Part of the Chained autonomous AI ecosystem.
 Created by @engineer-master - systematic engineering approach inspired by Margaret Hamilton.
 """
@@ -16,6 +18,13 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 from pathlib import Path
+
+# Import learning integration if available
+try:
+    from prompt_learning_integration import PromptLearningIntegrator
+    LEARNING_INTEGRATION_AVAILABLE = True
+except ImportError:
+    LEARNING_INTEGRATION_AVAILABLE = False
 
 
 @dataclass
@@ -81,7 +90,7 @@ class PromptGenerator:
     - Agent-specific optimizations
     """
     
-    def __init__(self, data_dir: str = "tools/data/prompts"):
+    def __init__(self, data_dir: str = "tools/data/prompts", enable_learning: bool = True):
         """Initialize the prompt generator"""
         self.data_dir = Path(data_dir)
         self.data_dir.mkdir(parents=True, exist_ok=True)
@@ -93,6 +102,15 @@ class PromptGenerator:
         self.templates: Dict[str, PromptTemplate] = {}
         self.outcomes: List[PromptOutcome] = []
         self.insights: Dict[str, Any] = {}
+        
+        # Initialize learning integration
+        self.learning_integrator = None
+        if enable_learning and LEARNING_INTEGRATION_AVAILABLE:
+            try:
+                self.learning_integrator = PromptLearningIntegrator()
+                self._refresh_learnings()
+            except Exception as e:
+                print(f"Warning: Could not initialize learning integration: {e}")
         
         self._load_data()
         self._initialize_default_templates()
@@ -286,7 +304,8 @@ Security issue:
         issue_body: str,
         category: str,
         agent: str = "engineer-master",
-        learning_context: Optional[List[str]] = None
+        learning_context: Optional[List[str]] = None,
+        enable_learning_enhancement: bool = True
     ) -> Tuple[str, str]:
         """
         Generate an optimized prompt for a given issue.
@@ -295,7 +314,8 @@ Security issue:
             issue_body: The issue description
             category: Issue category (bug_fix, feature, etc.)
             agent: The agent name to use (default: engineer-master)
-            learning_context: Recent learnings to incorporate
+            learning_context: Recent learnings to incorporate (optional)
+            enable_learning_enhancement: Whether to auto-enhance with learnings
         
         Returns:
             Tuple of (prompt, template_id)
@@ -309,9 +329,9 @@ Security issue:
             issue_body=issue_body
         )
         
-        # Enhance with learning context if available
-        if learning_context:
-            prompt = self._enhance_with_learnings(prompt, learning_context)
+        # Enhance with learning context if enabled
+        if enable_learning_enhancement:
+            prompt = self._enhance_with_learnings(prompt, learning_context, category)
         
         # Update template usage
         template.total_uses += 1
@@ -362,22 +382,67 @@ Follow best practices and the systematic approach defined in your agent profile.
         
         return self.templates[template_id]
     
+    def _refresh_learnings(self, days: int = 7):
+        """Refresh learnings from external sources"""
+        if not self.learning_integrator:
+            return
+        
+        try:
+            # Extract new learnings
+            new_insights = self.learning_integrator.extract_learnings_from_tldr(days)
+            
+            # Analyze trends
+            self.learning_integrator.analyze_trending_topics(days)
+            
+            # Update insights
+            stats = self.learning_integrator.get_learning_statistics()
+            self.insights["learning_integration"] = {
+                "last_refresh": datetime.now(timezone.utc).isoformat(),
+                "total_insights": stats["total_insights"],
+                "categories": stats["categories"]
+            }
+        except Exception as e:
+            print(f"Warning: Could not refresh learnings: {e}")
+    
     def _enhance_with_learnings(
         self,
         prompt: str,
-        learning_context: List[str]
+        learning_context: Optional[List[str]],
+        category: str = "feature"
     ) -> str:
         """Enhance prompt with recent learnings"""
-        if not learning_context:
-            return prompt
+        # Use provided context or get from learning integrator
+        if learning_context:
+            learning_section = "\n\n**Recent Relevant Learnings:**\n"
+            for idx, learning in enumerate(learning_context[:3], 1):
+                learning_section += f"{idx}. {learning}\n"
+            
+            learning_section += "\nConsider these recent insights when approaching this task.\n"
+            
+            return prompt + learning_section
         
-        learning_section = "\n\n**Recent Relevant Learnings:**\n"
-        for idx, learning in enumerate(learning_context[:3], 1):
-            learning_section += f"{idx}. {learning}\n"
+        # Get learnings from integrator if available
+        if self.learning_integrator:
+            try:
+                # Get relevant insights
+                insights = self.learning_integrator.get_relevant_insights(
+                    prompt_category=category,
+                    limit=3,
+                    min_relevance=0.6
+                )
+                
+                if insights:
+                    learning_section = "\n\n**Recent Relevant Learnings:**\n"
+                    for idx, insight in enumerate(insights, 1):
+                        learning_section += f"{idx}. {insight.title}\n"
+                    
+                    learning_section += "\nConsider these recent insights from the tech community when approaching this task.\n"
+                    
+                    return prompt + learning_section
+            except Exception as e:
+                print(f"Warning: Could not enhance with learnings: {e}")
         
-        learning_section += "\nConsider these recent insights when approaching this task.\n"
-        
-        return prompt + learning_section
+        return prompt
     
     def record_outcome(
         self,
@@ -567,6 +632,142 @@ Follow best practices and the systematic approach defined in your agent profile.
         self._save_data()
         
         return optimization_suggestions
+    
+    def evolve_template(self, template_id: str, mutation_type: str = "enhance") -> Optional[PromptTemplate]:
+        """
+        Create an evolved version of a template based on performance data.
+        
+        Args:
+            template_id: The template to evolve
+            mutation_type: Type of evolution ("enhance", "simplify", "focus")
+        
+        Returns:
+            New evolved PromptTemplate or None if evolution not possible
+        """
+        if template_id not in self.templates:
+            return None
+        
+        base_template = self.templates[template_id]
+        
+        # Only evolve templates with sufficient data
+        if base_template.total_uses < 10:
+            return None
+        
+        # Create variation based on mutation type
+        new_template_id = f"{template_id}_{mutation_type}_v2"
+        
+        # Don't create duplicates
+        if new_template_id in self.templates:
+            return None
+        
+        # Generate evolved template text based on performance insights
+        evolved_text = self._mutate_template_text(
+            base_template.template,
+            mutation_type,
+            base_template.category
+        )
+        
+        if not evolved_text:
+            return None
+        
+        # Create new template
+        new_template = PromptTemplate(
+            template_id=new_template_id,
+            category=base_template.category,
+            template=evolved_text,
+            created_at=datetime.now(timezone.utc).isoformat()
+        )
+        
+        self.templates[new_template_id] = new_template
+        self._save_data()
+        
+        return new_template
+    
+    def _mutate_template_text(self, base_text: str, mutation_type: str, category: str) -> Optional[str]:
+        """Mutate template text based on mutation type and learnings"""
+        if mutation_type == "enhance":
+            # Add more specific guidance based on category
+            if category == "bug_fix":
+                addition = "\n**Additional Debugging Steps:**\n- Check logs for stack traces\n- Verify input validation\n- Review recent code changes\n"
+                return base_text + addition
+            elif category == "feature":
+                addition = "\n**Feature Development Best Practices:**\n- Start with minimal viable implementation\n- Add comprehensive tests from the start\n- Document API contracts clearly\n"
+                return base_text + addition
+        
+        elif mutation_type == "simplify":
+            # Remove less important sections for faster execution
+            lines = base_text.split('\n')
+            # Keep first 60% of lines (remove verbose explanations)
+            simplified = '\n'.join(lines[:int(len(lines) * 0.6)])
+            return simplified if len(simplified) > 100 else None
+        
+        elif mutation_type == "focus":
+            # Emphasize the most critical aspects based on learnings
+            if "**Key Principles:**" in base_text:
+                # Already has focus section
+                return None
+            
+            focus_section = "\n**CRITICAL FOCUS AREAS:**\n- Test your changes thoroughly\n- Follow existing patterns strictly\n- Document all assumptions\n"
+            return base_text + focus_section
+        
+        return None
+    
+    def enable_ab_testing(self, template_id_a: str, template_id_b: str) -> Dict[str, Any]:
+        """
+        Enable A/B testing between two templates.
+        
+        Args:
+            template_id_a: First template to test
+            template_id_b: Second template to test
+        
+        Returns:
+            A/B test configuration
+        """
+        if template_id_a not in self.templates or template_id_b not in self.templates:
+            return {"error": "One or both templates not found"}
+        
+        ab_test_config = {
+            "test_id": f"ab_{template_id_a}_vs_{template_id_b}",
+            "template_a": template_id_a,
+            "template_b": template_id_b,
+            "start_date": datetime.now(timezone.utc).isoformat(),
+            "status": "active",
+            "results": {
+                "a_uses": 0,
+                "b_uses": 0,
+                "a_success": 0,
+                "b_success": 0
+            }
+        }
+        
+        # Store in insights
+        if "ab_tests" not in self.insights:
+            self.insights["ab_tests"] = []
+        
+        self.insights["ab_tests"].append(ab_test_config)
+        self._save_data()
+        
+        return ab_test_config
+    
+    def get_ab_test_results(self, test_id: str) -> Optional[Dict[str, Any]]:
+        """Get results of an A/B test"""
+        if "ab_tests" not in self.insights:
+            return None
+        
+        for test in self.insights["ab_tests"]:
+            if test["test_id"] == test_id:
+                # Calculate current results
+                template_a = self.templates.get(test["template_a"])
+                template_b = self.templates.get(test["template_b"])
+                
+                if template_a and template_b:
+                    test["results"]["a_effectiveness"] = template_a.effectiveness_score
+                    test["results"]["b_effectiveness"] = template_b.effectiveness_score
+                    test["results"]["winner"] = "a" if template_a.effectiveness_score > template_b.effectiveness_score else "b"
+                
+                return test
+        
+        return None
 
 
 def main():
@@ -578,7 +779,7 @@ def main():
     )
     parser.add_argument(
         "command",
-        choices=["generate", "record", "report", "optimize"],
+        choices=["generate", "record", "report", "optimize", "evolve", "ab-test", "refresh-learnings"],
         help="Command to execute"
     )
     parser.add_argument("--issue-body", help="Issue body for prompt generation")
@@ -589,6 +790,12 @@ def main():
     parser.add_argument("--success", action="store_true", help="Task succeeded")
     parser.add_argument("--resolution-time", type=float, help="Resolution time in hours")
     parser.add_argument("--error-type", help="Error type if failed")
+    parser.add_argument("--template-id", help="Template ID for evolution")
+    parser.add_argument("--mutation", default="enhance", choices=["enhance", "simplify", "focus"], help="Mutation type")
+    parser.add_argument("--template-a", help="First template for A/B testing")
+    parser.add_argument("--template-b", help="Second template for A/B testing")
+    parser.add_argument("--test-id", help="A/B test ID")
+    parser.add_argument("--days", type=int, default=7, help="Days to look back for learnings")
     
     args = parser.parse_args()
     
@@ -634,6 +841,46 @@ def main():
             print(json.dumps(suggestions, indent=2))
         else:
             print("No optimization suggestions at this time")
+    
+    elif args.command == "evolve":
+        if not args.template_id:
+            print("Error: --template-id required for evolve")
+            return 1
+        
+        new_template = generator.evolve_template(args.template_id, args.mutation)
+        if new_template:
+            print(f"Created evolved template: {new_template.template_id}")
+            print(f"Category: {new_template.category}")
+            print(f"\nTemplate text preview:")
+            print(new_template.template[:300] + "...")
+        else:
+            print(f"Could not evolve template {args.template_id}")
+    
+    elif args.command == "ab-test":
+        if args.test_id:
+            # Get test results
+            results = generator.get_ab_test_results(args.test_id)
+            if results:
+                print(json.dumps(results, indent=2))
+            else:
+                print(f"Test {args.test_id} not found")
+        elif args.template_a and args.template_b:
+            # Start new test
+            config = generator.enable_ab_testing(args.template_a, args.template_b)
+            print(json.dumps(config, indent=2))
+        else:
+            print("Error: Provide --test-id to view results or --template-a and --template-b to start test")
+            return 1
+    
+    elif args.command == "refresh-learnings":
+        if generator.learning_integrator:
+            print(f"Refreshing learnings from last {args.days} days...")
+            generator._refresh_learnings(args.days)
+            stats = generator.learning_integrator.get_learning_statistics()
+            print(f"Total insights: {stats['total_insights']}")
+            print(f"Categories: {stats['categories']}")
+        else:
+            print("Learning integration not available")
     
     return 0
 
