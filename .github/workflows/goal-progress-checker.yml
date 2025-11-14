@@ -131,6 +131,8 @@ jobs:
 
       - name: Update progress in goals file
         if: steps.check_goal.outputs.has_goal == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           GOALS_FILE="docs/AI_GOALS.md"
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
@@ -151,10 +153,27 @@ jobs:
           if git diff --quiet "$GOALS_FILE"; then
             echo "No changes to commit"
           else
+            # Create a new branch for the PR with unique name using run ID
+            TIMESTAMP_BRANCH=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="goal-progress/${TIMESTAMP_BRANCH}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
             git add "$GOALS_FILE"
             git commit -m "📊 Goal progress update: $STATUS"
-            git push
-            echo "✅ Progress update committed"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "📊 Goal progress update - ${PR_DATE}" \
+              --body "## Goal Progress Update"$'\n\n'"**Status**: $STATUS ($PROGRESS% complete)"$'\n\n'"### Activity"$'\n'"- Commits: $COMMITS"$'\n'"- PRs: $PRS"$'\n'"- Issues: $ISSUES"$'\n\n'"---"$'\n'"*🤖 Automated goal progress tracking*" \
+              --label "documentation,automated" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ PR created for goal progress update"
           fi
 
       - name: Comment on goal issue

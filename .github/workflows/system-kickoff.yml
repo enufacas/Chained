@@ -160,6 +160,8 @@ jobs:
 
       - name: Commit initialization changes
         if: steps.check.outputs.already_kicked_off != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -167,9 +169,27 @@ jobs:
           if git diff --quiet && git diff --cached --quiet; then
             echo "No changes to commit"
           else
+            # Create a new branch for the PR with unique name using run ID
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="system-kickoff/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
             git add learnings/
             git commit -m "Initialize learnings directory [automated]" || echo "Nothing to commit"
-            git push || echo "Nothing to push"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "🚀 Initialize learnings directory - ${PR_DATE}" \
+              --body "## System Kickoff - Learnings Initialization"$'\n\n'"This PR initializes the learnings directory for the autonomous system."$'\n\n'"### Changes"$'\n'"- Created learnings directory structure"$'\n'"- Added README with usage instructions"$'\n\n'"---"$'\n'"*🤖 Automated system kickoff workflow*" \
+              --label "automated,system" \
+              --base main \
+              --head "$BRANCH_NAME" || echo "PR creation failed or already exists"
+            
+            echo "✅ PR created for learnings initialization"
           fi
 
       - name: Verify scheduled workflows
