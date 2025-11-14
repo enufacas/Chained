@@ -203,7 +203,7 @@ Adjust spawning behavior in `.github/agent-system/registry.json`:
 ```json
 {
   "config": {
-    "max_active_agents": 10,           // Max concurrent agents
+    "max_active_agents": 50,           // Max concurrent agents
     "elimination_threshold": 0.3,       // Score to survive (30%)
     "promotion_threshold": 0.85,        // Score for Hall of Fame (85%)
     "spawn_mode": "mixed",              // mixed, existing, or new
