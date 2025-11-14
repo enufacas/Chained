@@ -13,6 +13,13 @@ on:
         required: false
         type: string
 
+# Prevent multiple concurrent runs of this workflow
+# This prevents race conditions where multiple workflow instances
+# try to assign Copilot to the same issue simultaneously
+concurrency:
+  group: copilot-assignment-${{ github.event.issue.number || 'scheduled' }}
+  cancel-in-progress: false
+
 permissions:
   issues: write
   contents: read

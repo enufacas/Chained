@@ -60,14 +60,33 @@ for issue_number in $issue_numbers; do
   # Get current assignees
   assignees=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json assignees --jq '.assignees[].login')
   
-  # Check if any assignee matches Copilot patterns
+  # FIRST CHECK: Skip if already assigned to Copilot (primary race condition guard)
+  # The assignee is set immediately via GraphQL API, so this prevents duplicate assignments
   if echo "$assignees" | grep -qE 'copilot|github-copilot'; then
     echo "✓ Issue #$issue_number already assigned to Copilot"
     already_assigned_count=$((already_assigned_count + 1))
     continue
   fi
   
+  # SECOND CHECK: Skip if copilot-assigned label exists (secondary guard)
+  # This label is added early in the assignment process as an additional safety check
+  if echo "$issue_labels" | grep -q "copilot-assigned"; then
+    echo "✓ Issue #$issue_number has copilot-assigned label, likely in-progress assignment"
+    already_assigned_count=$((already_assigned_count + 1))
+    continue
+  fi
+  
   echo "📝 Issue #$issue_number not yet assigned to Copilot"
+  
+  # IMMEDIATELY add copilot-assigned label to claim this issue and prevent race conditions
+  # This acts as a lock mechanism - other concurrent runs will see this label and skip
+  echo "🔒 Adding copilot-assigned label to claim issue #$issue_number..."
+  if gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --add-label "copilot-assigned" 2>/dev/null; then
+    echo "✓ Added copilot-assigned label to issue #$issue_number (claimed for assignment)"
+  else
+    echo "⚠️  Could not add copilot-assigned label (insufficient permissions or repository restrictions)"
+    echo "⚠️  Proceeding with assignment anyway, but race conditions may occur"
+  fi
   
   # Check if this is an agent spawn work issue waiting for spawn PR to merge
   issue_body=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json body --jq '.body // ""')
@@ -143,17 +162,9 @@ The agent needs to be registered and active in the system before work can begin.
   echo "   Score: $agent_score | Confidence: $agent_confidence"
   echo "   Description: $agent_description"
   
-  # Add copilot-assigned label and agent-specific label
-  labels=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')
-  if ! echo "$labels" | grep -q "copilot-assigned"; then
-    if gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --add-label "copilot-assigned" 2>/dev/null; then
-      echo "✓ Added copilot-assigned label to issue #$issue_number"
-    else
-      echo "⚠️  Could not add copilot-assigned label (insufficient permissions or repository restrictions)"
-    fi
-  fi
-  
   # Add agent-specific label to help Copilot identify which custom agent to use
+  # Note: copilot-assigned label was already added earlier to claim the issue
+  labels=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')
   agent_label="agent:$matched_agent"
   if ! echo "$labels" | grep -q "$agent_label"; then
     # Create label if it doesn't exist (will fail silently if it already exists)
