@@ -80,13 +80,16 @@ class RegistryManager:
         self.config_file = self.base_path / "config.json"
         self.hall_of_fame_file = self.base_path / "hall_of_fame.json"
         self.metadata_file = self.base_path / "metadata.json"
+        self.metadata_dir = self.base_path / "metadata"
         self.legacy_registry_file = self.base_path / "registry.json"
         
         # Create distributed directory structure if needed
         self.agents_dir.mkdir(parents=True, exist_ok=True)
+        self.metadata_dir.mkdir(parents=True, exist_ok=True)
         
         # Detect which mode we're in
         self._mode = self._detect_mode()
+        self._metadata_mode = self._detect_metadata_mode()
         
     def _detect_mode(self) -> str:
         """
@@ -100,6 +103,19 @@ class RegistryManager:
             return "distributed"
         # Otherwise use legacy mode
         return "legacy"
+    
+    def _detect_metadata_mode(self) -> str:
+        """
+        Detect whether we're using distributed metadata or single file.
+        
+        Returns:
+            "distributed" if metadata directory has files, "single_file" otherwise
+        """
+        # If metadata directory has .txt files, use distributed mode
+        if self.metadata_dir.exists() and len(list(self.metadata_dir.glob("*.txt"))) > 0:
+            return "distributed"
+        # Otherwise use single file mode
+        return "single_file"
     
     def _read_legacy_registry(self) -> Dict[str, Any]:
         """Read the legacy single-file registry"""
@@ -318,19 +334,45 @@ class RegistryManager:
     def get_metadata(self) -> Dict[str, Any]:
         """Get registry metadata (version, last_spawn, last_evaluation, etc.)"""
         if self._mode == "distributed":
-            if self.metadata_file.exists():
-                try:
-                    with open(self.metadata_file, 'r') as f:
-                        return json.load(f)
-                except (json.JSONDecodeError, IOError):
-                    pass
-            return {
-                "version": "2.0.0",
-                "last_spawn": None,
-                "last_evaluation": None,
-                "system_lead": None,
-                "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
-            }
+            if self._metadata_mode == "distributed":
+                # Read from individual files in metadata directory
+                metadata = {
+                    "version": "2.0.0",
+                    "last_spawn": None,
+                    "last_evaluation": None,
+                    "system_lead": None,
+                    "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
+                }
+                
+                # Read each field from individual files
+                for field in ["version", "last_spawn", "last_evaluation", "system_lead", "specializations_note"]:
+                    field_file = self.metadata_dir / f"{field}.txt"
+                    if field_file.exists():
+                        try:
+                            with open(field_file, 'r') as f:
+                                value = f.read().strip()
+                                # Handle null/None values
+                                if value and value.lower() != "null" and value.lower() != "none":
+                                    metadata[field] = value
+                        except IOError:
+                            pass
+                
+                return metadata
+            else:
+                # Read from single metadata.json file
+                if self.metadata_file.exists():
+                    try:
+                        with open(self.metadata_file, 'r') as f:
+                            return json.load(f)
+                    except (json.JSONDecodeError, IOError):
+                        pass
+                return {
+                    "version": "2.0.0",
+                    "last_spawn": None,
+                    "last_evaluation": None,
+                    "system_lead": None,
+                    "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
+                }
         else:
             registry = self._read_legacy_registry()
             return {
@@ -344,13 +386,29 @@ class RegistryManager:
     def update_metadata(self, metadata: Dict[str, Any]) -> bool:
         """Update registry metadata"""
         if self._mode == "distributed":
-            try:
-                with self._lock_file(self.metadata_file):
-                    with open(self.metadata_file, 'w') as f:
-                        json.dump(metadata, f, indent=2)
-                return True
-            except IOError:
-                return False
+            if self._metadata_mode == "distributed":
+                # Write to individual files in metadata directory
+                try:
+                    for field, value in metadata.items():
+                        field_file = self.metadata_dir / f"{field}.txt"
+                        with open(field_file, 'w') as f:
+                            # Write value as string, handling None
+                            if value is None:
+                                f.write("null")
+                            else:
+                                f.write(str(value))
+                    return True
+                except IOError:
+                    return False
+            else:
+                # Write to single metadata.json file
+                try:
+                    with self._lock_file(self.metadata_file):
+                        with open(self.metadata_file, 'w') as f:
+                            json.dump(metadata, f, indent=2)
+                    return True
+                except IOError:
+                    return False
         else:
             try:
                 with self._lock_file(self.legacy_registry_file):
@@ -361,6 +419,36 @@ class RegistryManager:
                 return True
             except (IOError, json.JSONDecodeError):
                 return False
+    
+    def update_metadata_field(self, field: str, value: Any) -> bool:
+        """
+        Update a single metadata field atomically.
+        This is the preferred method for concurrent updates.
+        
+        Args:
+            field: Field name (e.g., "last_spawn", "last_evaluation")
+            value: Field value (will be converted to string for distributed mode)
+            
+        Returns:
+            True if successful, False otherwise
+        """
+        if self._mode == "distributed" and self._metadata_mode == "distributed":
+            # Atomic update of individual field file
+            field_file = self.metadata_dir / f"{field}.txt"
+            try:
+                with open(field_file, 'w') as f:
+                    if value is None:
+                        f.write("null")
+                    else:
+                        f.write(str(value))
+                return True
+            except IOError:
+                return False
+        else:
+            # Fall back to full metadata update
+            metadata = self.get_metadata()
+            metadata[field] = value
+            return self.update_metadata(metadata)
     
     def get_hall_of_fame(self) -> List[Dict[str, Any]]:
         """Get hall of fame entries"""
@@ -466,6 +554,54 @@ class RegistryManager:
             print(f"Migration failed: {e}")
             return False
     
+    def migrate_metadata_to_distributed(self) -> bool:
+        """
+        Migrate metadata from single file to distributed format.
+        
+        Returns:
+            True if successful, False otherwise
+        """
+        if self._metadata_mode == "distributed":
+            print("Metadata already in distributed mode")
+            return True
+        
+        print("Migrating metadata from single file to distributed format...")
+        
+        try:
+            # Read current metadata
+            metadata = self.get_metadata()
+            
+            # Create backup of metadata.json if it exists
+            if self.metadata_file.exists():
+                backup_file = self.metadata_file.with_suffix('.json.backup')
+                shutil.copy2(self.metadata_file, backup_file)
+                print(f"Created backup: {backup_file}")
+            
+            # Create metadata directory
+            self.metadata_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Write each field to individual file
+            for field, value in metadata.items():
+                field_file = self.metadata_dir / f"{field}.txt"
+                with open(field_file, 'w') as f:
+                    if value is None:
+                        f.write("null")
+                    else:
+                        f.write(str(value))
+                print(f"Created {field_file.name}")
+            
+            # Update metadata mode
+            self._metadata_mode = "distributed"
+            
+            print("Metadata migration completed successfully!")
+            print(f"You can safely delete {self.metadata_file} after verification")
+            
+            return True
+            
+        except Exception as e:
+            print(f"Metadata migration failed: {e}")
+            return False
+    
     def get_mode(self) -> str:
         """Get current registry mode"""
         return self._mode
@@ -476,7 +612,7 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description="Agent Registry Manager")
-    parser.add_argument("command", choices=["migrate", "list", "get", "mode"],
+    parser.add_argument("command", choices=["migrate", "migrate-metadata", "list", "get", "mode"],
                        help="Command to execute")
     parser.add_argument("--agent-id", help="Agent ID (for 'get' command)")
     parser.add_argument("--status", help="Filter agents by status")
@@ -487,6 +623,10 @@ def main():
     
     if args.command == "migrate":
         success = registry.migrate_to_distributed()
+        sys.exit(0 if success else 1)
+    
+    elif args.command == "migrate-metadata":
+        success = registry.migrate_metadata_to_distributed()
         sys.exit(0 if success else 1)
     
     elif args.command == "list":
@@ -506,6 +646,7 @@ def main():
     
     elif args.command == "mode":
         print(f"Current mode: {registry.get_mode()}")
+        print(f"Metadata mode: {registry._metadata_mode}")
 
 
 if __name__ == "__main__":

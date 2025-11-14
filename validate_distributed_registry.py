@@ -22,13 +22,27 @@ def test_registry_structure():
     
     base_path = Path('.github/agent-system')
     agents_path = base_path / 'agents'
+    metadata_path = base_path / 'metadata'
     
     checks = [
         (agents_path.exists(), f"Agents directory exists: {agents_path}"),
         ((base_path / 'config.json').exists(), "Config file exists"),
-        ((base_path / 'metadata.json').exists(), "Metadata file exists"),
         ((base_path / 'hall_of_fame.json').exists(), "Hall of fame file exists"),
     ]
+    
+    # Check for metadata - either single file or distributed
+    has_metadata_file = (base_path / 'metadata.json').exists()
+    has_metadata_dir = metadata_path.exists() and len(list(metadata_path.glob('*.txt'))) > 0
+    
+    if has_metadata_dir:
+        checks.append((True, f"Distributed metadata directory exists: {metadata_path}"))
+        metadata_files = list(metadata_path.glob('*.txt'))
+        print(f"   ✅ Distributed metadata directory exists with {len(metadata_files)} field files")
+    elif has_metadata_file:
+        checks.append((True, "Metadata file exists (single file mode)"))
+        print(f"   ⚠️  Using single metadata.json file (consider migrating to distributed)")
+    else:
+        checks.append((False, "No metadata found"))
     
     for check, msg in checks:
         if check:
