@@ -108,11 +108,11 @@
         "speed": 84
       },
       "metrics": {
-        "issues_resolved": 0,
+        "issues_resolved": 1,
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.43324999999999997
       },
       "contributions": []
     }
@@ -139,6 +139,6 @@
     "strict_pr_attribution": true
   },
   "last_spawn": "2025-11-14T00:11:57.453810Z",
-  "last_evaluation": "2025-11-13T22:47:41.700770Z",
+  "last_evaluation": "2025-11-14T00:51:43.238833Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
