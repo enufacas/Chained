@@ -3,7 +3,10 @@ name: "Agent System: Data Sync"
 on:
   push:
     paths:
-      - '.github/agent-system/registry.json'
+      - '.github/agent-system/agents/*.json'
+      - '.github/agent-system/metadata.json'
+      - '.github/agent-system/config.json'
+      - '.github/agent-system/hall_of_fame.json'
     branches:
       - main
   workflow_dispatch:
@@ -18,6 +21,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
       - name: Configure git
         run: |
@@ -29,35 +37,40 @@ jobs:
           mkdir -p docs/data
           mkdir -p docs/data/agents
           
-          if [ -f ".github/agent-system/registry.json" ]; then
-            # Validate JSON before processing
-            if ! python3 -c "import json; json.load(open('.github/agent-system/registry.json'))" 2>/dev/null; then
-              echo "⚠️ Invalid JSON in registry.json, skipping sync"
-              exit 0
-            fi
-            
-            cp .github/agent-system/registry.json docs/data/agent-registry.json
-            echo "✅ Synced agent registry to GitHub Pages"
-            
-            # Extract individual agent data files using Python with error handling
-            python3 << 'PYEOF'
+          # Use registry manager to build a consolidated registry for docs
+          python3 << 'PYEOF'
           import json
           import os
           import sys
           
+          # Use registry manager
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          
           try:
-              with open('.github/agent-system/registry.json', 'r') as f:
-                  registry = json.load(f)
-          except (FileNotFoundError, json.JSONDecodeError) as e:
-              print(f'⚠️ Error loading registry: {e}', file=sys.stderr)
-              sys.exit(0)
-          
-          agents_dir = 'docs/data/agents'
-          os.makedirs(agents_dir, exist_ok=True)
-          
-          # Sync active agents
-          if 'agents' in registry:
-              for agent in registry['agents']:
+              registry = RegistryManager()
+              
+              # Build consolidated registry for backward compatibility
+              consolidated = {
+                  "version": "2.0.0",
+                  "agents": registry.list_agents(),
+                  "hall_of_fame": registry.get_hall_of_fame(),
+                  "config": registry.get_config(),
+                  **registry.get_metadata()
+              }
+              
+              # Write consolidated registry for docs
+              with open('docs/data/agent-registry.json', 'w') as f:
+                  json.dump(consolidated, f, indent=2)
+              
+              print("✅ Synced agent registry to GitHub Pages")
+              
+              # Sync individual agent data files
+              agents_dir = 'docs/data/agents'
+              os.makedirs(agents_dir, exist_ok=True)
+              
+              # Sync active agents
+              for agent in consolidated['agents']:
                   agent_id = agent.get('id')
                   if not agent_id:
                       print(f'⚠️ Skipping agent without id: {agent.get("name", "unknown")}')
@@ -70,10 +83,9 @@ jobs:
                       print(f'✅ Created {agent_file}')
                   except Exception as e:
                       print(f'⚠️ Error creating {agent_id}.json: {e}', file=sys.stderr)
-          
-          # Sync hall of fame agents
-          if 'hall_of_fame' in registry:
-              for agent in registry['hall_of_fame']:
+              
+              # Sync hall of fame agents
+              for agent in consolidated['hall_of_fame']:
                   agent_id = agent.get('id')
                   if not agent_id:
                       print(f'⚠️ Skipping Hall of Fame agent without id: {agent.get("name", "unknown")}')

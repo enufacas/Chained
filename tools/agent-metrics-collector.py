@@ -28,13 +28,24 @@ import json
 import os
 import re
 import sys
+from pathlib import Path
+
+# Add tools directory to path for registry manager
+sys.path.insert(0, str(Path(__file__).parent))
+
 import time
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, asdict
 from functools import lru_cache
 import argparse
+
+# Import registry manager
+try:
+    from registry_manager import RegistryManager
+    REGISTRY_MANAGER_AVAILABLE = True
+except ImportError:
+    REGISTRY_MANAGER_AVAILABLE = False
 
 # Import GitHub integration utilities
 try:
@@ -72,7 +83,6 @@ except ImportError:
                 return None
 
 # Constants
-REGISTRY_FILE = Path(".github/agent-system/registry.json")
 METRICS_DIR = Path(".github/agent-system/metrics")
 DEFAULT_LOOKBACK_DAYS = 7
 
@@ -190,10 +200,10 @@ class MetricsCollector:
     def _load_scoring_weights(self) -> Dict[str, float]:
         """Load scoring weights from registry configuration"""
         try:
-            if REGISTRY_FILE.exists():
-                with open(REGISTRY_FILE, 'r') as f:
-                    registry = json.load(f)
-                    return registry.get('config', {}).get('metrics_weight', {})
+            if REGISTRY_MANAGER_AVAILABLE:
+                registry = RegistryManager()
+                config = registry.get_config()
+                return config.get('metrics_weight', {})
         except Exception as e:
             print(f"⚠️  Warning: Could not load scoring weights: {e}", file=sys.stderr)
         
@@ -217,19 +227,17 @@ class MetricsCollector:
             Specialization name or None
         """
         try:
-            if REGISTRY_FILE.exists():
-                with open(REGISTRY_FILE, 'r') as f:
-                    registry = json.load(f)
+            if REGISTRY_MANAGER_AVAILABLE:
+                registry = RegistryManager()
+                agent = registry.get_agent(agent_id)
+                if agent:
+                    return agent.get('specialization')
                     
-                    # Check active agents
-                    for agent in registry.get('agents', []):
-                        if agent.get('id') == agent_id:
-                            return agent.get('specialization')
-                    
-                    # Check hall of fame
-                    for agent in registry.get('hall_of_fame', []):
-                        if agent.get('id') == agent_id:
-                            return agent.get('specialization')
+                # Check hall of fame too
+                hall_of_fame = registry.get_hall_of_fame()
+                for agent in hall_of_fame:
+                    if agent.get('id') == agent_id:
+                        return agent.get('specialization')
         except Exception as e:
             print(f"⚠️  Warning: Could not get specialization for {agent_id}: {e}", file=sys.stderr)
         
@@ -243,11 +251,10 @@ class MetricsCollector:
             True if strict attribution is enabled, False otherwise
         """
         try:
-            if REGISTRY_FILE.exists():
-                with open(REGISTRY_FILE, 'r') as f:
-                    registry = json.load(f)
-                    # Default to True - we want strict attribution by default
-                    return registry.get('config', {}).get('strict_pr_attribution', True)
+            if REGISTRY_MANAGER_AVAILABLE:
+                registry = RegistryManager()
+                config = registry.get_config()
+                return config.get('strict_pr_attribution', True)  # Default to True
         except Exception as e:
             print(f"⚠️  Warning: Could not load config: {e}", file=sys.stderr)
         
@@ -935,15 +942,13 @@ class MetricsCollector:
         """
         results = {}
         
-        if not REGISTRY_FILE.exists():
-            print("❌ Registry file not found", file=sys.stderr)
-            return results
-        
         try:
-            with open(REGISTRY_FILE, 'r') as f:
-                registry = json.load(f)
-            
-            active_agents = [a for a in registry.get('agents', []) if a.get('status') == 'active']
+            if REGISTRY_MANAGER_AVAILABLE:
+                registry = RegistryManager()
+                active_agents = registry.list_agents(status='active')
+            else:
+                print("❌ Registry manager not available", file=sys.stderr)
+                return results
             
             print(f"📊 Evaluating {len(active_agents)} active agents...", file=sys.stderr)
             
@@ -953,22 +958,13 @@ class MetricsCollector:
                     metrics = self.collect_metrics(agent_id, since_days)
                     results[agent_id] = metrics
                     
-                    # Update registry with new metrics
-                    agent['metrics']['issues_resolved'] = metrics.activity.issues_resolved
-                    agent['metrics']['prs_merged'] = metrics.activity.prs_merged
-                    agent['metrics']['reviews_given'] = metrics.activity.reviews_given
-                    agent['metrics']['code_quality_score'] = metrics.scores.code_quality
-                    agent['metrics']['creativity_score'] = metrics.scores.creativity
-                    agent['metrics']['overall_score'] = metrics.scores.overall
+                    print(f"✅ Collected metrics for {agent_id}: score={metrics.scores.overall:.2%}", file=sys.stderr)
                 
                 except Exception as e:
                     print(f"❌ Error evaluating {agent_id}: {e}", file=sys.stderr)
             
-            # Save updated registry
-            with open(REGISTRY_FILE, 'w') as f:
-                json.dump(registry, f, indent=2)
-            
-            print(f"✅ Evaluation complete! Updated {len(results)} agents.", file=sys.stderr)
+            print(f"✅ Evaluation complete! Collected metrics for {len(results)} agents.", file=sys.stderr)
+            print(f"ℹ️  Note: Registry updates are handled by the evaluator workflow", file=sys.stderr)
         
         except Exception as e:
             print(f"❌ Error in evaluation: {e}", file=sys.stderr)

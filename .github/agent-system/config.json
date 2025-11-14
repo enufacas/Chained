@@ -1,0 +1,19 @@
+{
+  "spawn_interval_hours": 3,
+  "max_active_agents": 50,
+  "elimination_threshold": 0.3,
+  "promotion_threshold": 0.85,
+  "metrics_weight": {
+    "code_quality": 0.3,
+    "issue_resolution": 0.2,
+    "pr_success": 0.2,
+    "peer_review": 0.15,
+    "creativity": 0.15
+  },
+  "spawn_mode": "mixed",
+  "new_agent_probability": 0.5,
+  "protected_specializations": [
+    "troubleshoot-expert"
+  ],
+  "strict_pr_attribution": true
+}

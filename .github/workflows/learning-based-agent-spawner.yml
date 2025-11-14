@@ -12,11 +12,6 @@ on:
         type: boolean
         default: false
 
-# CRITICAL: Prevent concurrent registry modifications
-# Only one workflow that modifies registry.json can run at a time
-concurrency:
-  group: agent-registry-updates
-  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -73,31 +68,17 @@ jobs:
         id: check_capacity
         if: steps.check_learnings.outputs.has_learnings == 'true'
         run: |
-          REGISTRY_FILE=".github/agent-system/registry.json"
-          
-          if [ ! -f "$REGISTRY_FILE" ]; then
-            echo "⚠️ Registry file not found, assuming can spawn"
-            echo "can_spawn=true" >> $GITHUB_OUTPUT
-            echo "active_count=0" >> $GITHUB_OUTPUT
-            echo "max_agents=50" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          # Count active agents
-          ACTIVE_COUNT=$(python3 -c "
-          import json
-          with open('${REGISTRY_FILE}', 'r') as f:
-              data = json.load(f)
-          active = [a for a in data.get('agents', []) if a.get('status') == 'active']
-          print(len(active))
-          ")
+          # Count active agents using new registry manager
+          ACTIVE_COUNT=$(python3 tools/list_agents_from_registry.py --status active --format count 2>/dev/null || echo "0")
           
           MAX_AGENTS=$(python3 -c "
-          import json
-          with open('${REGISTRY_FILE}', 'r') as f:
-              data = json.load(f)
-          print(data.get('config', {}).get('max_active_agents', 50))
-          ")
+          import sys
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          registry = RegistryManager()
+          config = registry.get_config()
+          print(config.get('max_active_agents', 50))
+          " 2>/dev/null || echo "50")
           
           echo "active_count=$ACTIVE_COUNT" >> $GITHUB_OUTPUT
           echo "max_agents=$MAX_AGENTS" >> $GITHUB_OUTPUT
@@ -176,83 +157,39 @@ jobs:
           
           echo "📝 Registering agent in system: $AGENT_ID"
           
-          # Ensure registry exists
-          if [ ! -f "$REGISTRY_FILE" ]; then
-            mkdir -p .github/agent-system
-            cat > "$REGISTRY_FILE" << 'EOF'
+          
+          # Create agent data JSON
+          cat > /tmp/new_agent.json << EOF
           {
-            "version": "2.0.0",
-            "agents": [],
-            "hall_of_fame": [],
-            "system_lead": null,
-            "config": {
-              "spawn_interval_hours": 3,
-              "max_active_agents": 50,
-              "elimination_threshold": 0.3,
-              "promotion_threshold": 0.85,
-              "spawn_mode": "learning-based",
-              "metrics_weight": {
-                "code_quality": 0.3,
-                "issue_resolution": 0.25,
-                "pr_success": 0.25,
-                "peer_review": 0.2
-              }
+            "id": "$AGENT_ID",
+            "name": "${{ steps.generate.outputs.emoji }} ${{ steps.generate.outputs.display_name }}",
+            "human_name": "${{ steps.generate.outputs.human_name }}",
+            "specialization": "${{ steps.generate.outputs.agent_name }}",
+            "status": "active",
+            "spawned_at": "$(date -u +"%Y-%m-%dT%H:%M:%S.%6NZ")",
+            "spawn_method": "learning-based",
+            "inspiration_topic": "${{ steps.generate.outputs.topic }}",
+            "topic_score": ${{ steps.generate.outputs.topic_score }},
+            "personality": "${{ steps.generate.outputs.personality }}",
+            "communication_style": "${{ steps.generate.outputs.communication_style }}",
+            "traits": {
+              "creativity": 75,
+              "caution": 60,
+              "speed": 70
             },
-            "last_spawn": null,
-            "last_evaluation": null
+            "metrics": {
+              "issues_resolved": 0,
+              "prs_merged": 0,
+              "reviews_given": 0,
+              "code_quality_score": 0.5,
+              "overall_score": 0.0
+            },
+            "contributions": []
           }
           EOF
-          fi
           
-          python3 << PYTHON_SCRIPT
-          import json
-          from datetime import datetime
-          
-          agent_id = "$AGENT_ID"
-          agent_name = "${{ steps.generate.outputs.display_name }}"
-          human_name = "${{ steps.generate.outputs.human_name }}"
-          specialization = "${{ steps.generate.outputs.agent_name }}"
-          personality = "${{ steps.generate.outputs.personality }}"
-          communication_style = "${{ steps.generate.outputs.communication_style }}"
-          
-          with open("${REGISTRY_FILE}", 'r') as f:
-              registry = json.load(f)
-          
-          new_agent = {
-              "id": agent_id,
-              "name": f"${{ steps.generate.outputs.emoji }} {agent_name}",
-              "human_name": human_name,
-              "specialization": specialization,
-              "status": "active",
-              "spawned_at": datetime.utcnow().isoformat() + "Z",
-              "spawn_method": "learning-based",
-              "inspiration_topic": "${{ steps.generate.outputs.topic }}",
-              "topic_score": ${{ steps.generate.outputs.topic_score }},
-              "personality": personality,
-              "communication_style": communication_style,
-              "traits": {
-                  "creativity": 75,
-                  "caution": 60,
-                  "speed": 70
-              },
-              "metrics": {
-                  "issues_resolved": 0,
-                  "prs_merged": 0,
-                  "reviews_given": 0,
-                  "code_quality_score": 0.5,
-                  "overall_score": 0.0
-              },
-              "contributions": []
-          }
-          
-          registry['agents'].append(new_agent)
-          registry['last_spawn'] = datetime.utcnow().isoformat() + "Z"
-          
-          with open("${REGISTRY_FILE}", 'w') as f:
-              json.dump(registry, f, indent=2)
-          
-          print(f"✅ Agent {agent_name} registered successfully!")
-          PYTHON_SCRIPT
+          # Add agent to registry using helper script
+          python3 tools/add_agent_to_registry.py /tmp/new_agent.json
           
           echo "agent_id=$AGENT_ID" >> $GITHUB_OUTPUT
 

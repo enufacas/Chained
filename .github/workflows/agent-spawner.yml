@@ -38,11 +38,6 @@ on:
         type: number
         default: 1
 
-# CRITICAL: Prevent concurrent registry modifications
-# Only one workflow that modifies registry.json can run at a time
-concurrency:
-  group: agent-registry-updates
-  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -115,76 +110,66 @@ jobs:
         run: |
           DELETE_MODE="${{ github.event.inputs.delete_mode }}"
           DELETE_AGENT_IDS="${{ github.event.inputs.delete_agent_ids }}"
-          REGISTRY_FILE=".github/agent-system/registry.json"
           
           echo "🗑️ Delete mode: $DELETE_MODE"
           
           python3 << 'PYTHON_SCRIPT'
           import json
           import os
+          import sys
           import shutil
           from datetime import datetime
+          from pathlib import Path
+          
+          # Add tools directory to path
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
           
           delete_mode = os.environ.get('DELETE_MODE', 'none')
           delete_agent_ids_str = os.environ.get('DELETE_AGENT_IDS', '')
-          REGISTRY_FILE = ".github/agent-system/registry.json"
           
-          # Load registry
-          with open(REGISTRY_FILE, 'r') as f:
-              registry = json.load(f)
-          
+          # Use registry manager
+          registry = RegistryManager()
           deleted_agents = []
           
           if delete_mode == 'all':
               # Delete all active agents
-              for agent in registry['agents']:
-                  if agent.get('status') == 'active':
-                      agent['status'] = 'deleted'
-                      agent['deleted_at'] = datetime.utcnow().isoformat() + 'Z'
-                      agent['deletion_reason'] = 'Manual deletion - all agents'
-                      deleted_agents.append(agent)
-                      
-                      # Archive profile
-                      profile_path = f".github/agent-system/profiles/{agent['id']}.md"
-                      archive_path = f".github/agent-system/archive/{agent['id']}.md"
-                      if os.path.exists(profile_path):
-                          os.makedirs('.github/agent-system/archive', exist_ok=True)
-                          shutil.move(profile_path, archive_path)
-                      
-                      print(f"🗑️ Deleted agent: {agent['name']} ({agent['id']})")
-              
-              # Remove all deleted agents from active list
-              registry['agents'] = [a for a in registry['agents'] if a.get('status') != 'deleted']
+              agents = registry.list_agents(status='active')
+              for agent in agents:
+                  agent_id = agent['id']
+                  
+                  # Archive profile
+                  profile_path = Path(f".github/agent-system/profiles/{agent_id}.md")
+                  archive_path = Path(f".github/agent-system/archive/{agent_id}.md")
+                  if profile_path.exists():
+                      archive_path.parent.mkdir(parents=True, exist_ok=True)
+                      shutil.move(str(profile_path), str(archive_path))
+                  
+                  # Delete from registry
+                  registry.delete_agent(agent_id)
+                  deleted_agents.append(agent)
+                  print(f"🗑️ Deleted agent: {agent['name']} ({agent_id})")
               
           elif delete_mode == 'specific' and delete_agent_ids_str:
               # Delete specific agents by ID
               delete_ids = [id.strip() for id in delete_agent_ids_str.split(',') if id.strip()]
               
               for agent_id in delete_ids:
-                  agent = next((a for a in registry['agents'] if a['id'] == agent_id), None)
+                  agent = registry.get_agent(agent_id)
                   if agent and agent.get('status') == 'active':
-                      agent['status'] = 'deleted'
-                      agent['deleted_at'] = datetime.utcnow().isoformat() + 'Z'
-                      agent['deletion_reason'] = f'Manual deletion - specific ID: {agent_id}'
-                      deleted_agents.append(agent)
-                      
                       # Archive profile
-                      profile_path = f".github/agent-system/profiles/{agent['id']}.md"
-                      archive_path = f".github/agent-system/archive/{agent['id']}.md"
-                      if os.path.exists(profile_path):
-                          os.makedirs('.github/agent-system/archive', exist_ok=True)
-                          shutil.move(profile_path, archive_path)
+                      profile_path = Path(f".github/agent-system/profiles/{agent_id}.md")
+                      archive_path = Path(f".github/agent-system/archive/{agent_id}.md")
+                      if profile_path.exists():
+                          archive_path.parent.mkdir(parents=True, exist_ok=True)
+                          shutil.move(str(profile_path), str(archive_path))
                       
-                      print(f"🗑️ Deleted agent: {agent['name']} ({agent['id']})")
+                      # Delete from registry
+                      registry.delete_agent(agent_id)
+                      deleted_agents.append(agent)
+                      print(f"🗑️ Deleted agent: {agent['name']} ({agent_id})")
                   else:
                       print(f"⚠️ Agent {agent_id} not found or not active")
-              
-              # Remove deleted agents from active list
-              registry['agents'] = [a for a in registry['agents'] if a.get('status') != 'deleted']
-          
-          # Save updated registry
-          with open(REGISTRY_FILE, 'w') as f:
-              json.dump(registry, f, indent=2)
           
           print(f"\n✅ Deleted {len(deleted_agents)} agent(s)")
           
@@ -204,52 +189,16 @@ jobs:
       - name: Check agent capacity
         id: check_capacity
         run: |
-          REGISTRY_FILE=".github/agent-system/registry.json"
-          
-          if [ ! -f "$REGISTRY_FILE" ]; then
-            echo "Registry file not found. Creating initial registry..."
-            mkdir -p .github/agent-system
-            cat > "$REGISTRY_FILE" << 'EOF'
-          {
-            "version": "2.0.0",
-            "agents": [],
-            "hall_of_fame": [],
-            "system_lead": null,
-            "config": {
-              "spawn_interval_hours": 3,
-              "max_active_agents": 50,
-              "elimination_threshold": 0.3,
-              "promotion_threshold": 0.85,
-              "spawn_mode": "mixed",
-              "new_agent_probability": 0.5,
-              "metrics_weight": {
-                "code_quality": 0.3,
-                "issue_resolution": 0.25,
-                "pr_success": 0.25,
-                "peer_review": 0.2
-              }
-            },
-            "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory",
-            "last_spawn": null,
-            "last_evaluation": null
-          }
-          EOF
-          fi
-          
-          # Count active agents
-          ACTIVE_COUNT=$(python3 -c "
-          import json
-          with open('${REGISTRY_FILE}', 'r') as f:
-              data = json.load(f)
-          active = [a for a in data.get('agents', []) if a.get('status') == 'active']
-          print(len(active))
-          ")
+          # Count active agents using new registry manager
+          ACTIVE_COUNT=$(python3 tools/list_agents_from_registry.py --status active --format count)
           
           MAX_AGENTS=$(python3 -c "
-          import json
-          with open('${REGISTRY_FILE}', 'r') as f:
-              data = json.load(f)
-          print(data['config']['max_active_agents'])
+          import sys
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          registry = RegistryManager()
+          config = registry.get_config()
+          print(config['max_active_agents'])
           ")
           
           echo "active_count=$ACTIVE_COUNT" >> $GITHUB_OUTPUT
@@ -378,54 +327,35 @@ jobs:
       - name: Register agent
         if: steps.check_capacity.outputs.can_spawn == 'true'
         run: |
-          REGISTRY_FILE=".github/agent-system/registry.json"
-          
-          python3 << PYTHON_SCRIPT
-          import json
-          from datetime import datetime
-          
-          agent_id = "${{ steps.generate_agent.outputs.agent_id }}"
-          agent_name = "${{ steps.generate_agent.outputs.agent_name }}"
-          human_name = "${{ steps.generate_agent.outputs.human_name }}"
-          specialization = "${{ steps.generate_agent.outputs.specialization }}"
-          personality = "${{ steps.generate_agent.outputs.personality }}"
-          communication_style = "${{ steps.generate_agent.outputs.communication_style }}"
-          
-          with open("${REGISTRY_FILE}", 'r') as f:
-              registry = json.load(f)
-          
-          new_agent = {
-              "id": agent_id,
-              "name": agent_name,
-              "human_name": human_name,
-              "specialization": specialization,
-              "status": "active",
-              "spawned_at": datetime.utcnow().isoformat() + "Z",
-              "personality": personality,
-              "communication_style": communication_style,
-              "traits": {
-                  "creativity": ${{ steps.generate_agent.outputs.creativity }},
-                  "caution": ${{ steps.generate_agent.outputs.caution }},
-                  "speed": ${{ steps.generate_agent.outputs.speed }}
-              },
-              "metrics": {
-                  "issues_resolved": 0,
-                  "prs_merged": 0,
-                  "reviews_given": 0,
-                  "code_quality_score": 0.5,
-                  "overall_score": 0.0
-              },
-              "contributions": []
+          # Create agent data JSON
+          cat > /tmp/new_agent.json << EOF
+          {
+            "id": "${{ steps.generate_agent.outputs.agent_id }}",
+            "name": "${{ steps.generate_agent.outputs.agent_name }}",
+            "human_name": "${{ steps.generate_agent.outputs.human_name }}",
+            "specialization": "${{ steps.generate_agent.outputs.specialization }}",
+            "status": "active",
+            "spawned_at": "$(date -u +"%Y-%m-%dT%H:%M:%S.%6NZ")",
+            "personality": "${{ steps.generate_agent.outputs.personality }}",
+            "communication_style": "${{ steps.generate_agent.outputs.communication_style }}",
+            "traits": {
+              "creativity": ${{ steps.generate_agent.outputs.creativity }},
+              "caution": ${{ steps.generate_agent.outputs.caution }},
+              "speed": ${{ steps.generate_agent.outputs.speed }}
+            },
+            "metrics": {
+              "issues_resolved": 0,
+              "prs_merged": 0,
+              "reviews_given": 0,
+              "code_quality_score": 0.5,
+              "overall_score": 0.0
+            },
+            "contributions": []
           }
+          EOF
           
-          registry['agents'].append(new_agent)
-          registry['last_spawn'] = datetime.utcnow().isoformat() + "Z"
-          
-          with open("${REGISTRY_FILE}", 'w') as f:
-              json.dump(registry, f, indent=2)
-          
-          print(f"✅ Agent {agent_name} registered successfully!")
-          PYTHON_SCRIPT
+          # Add agent to registry using helper script
+          python3 tools/add_agent_to_registry.py /tmp/new_agent.json
 
       - name: Assign mentor
         id: assign_mentor
