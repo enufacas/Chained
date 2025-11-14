@@ -173,15 +173,24 @@ class GitAnalyzer:
         # All agents are inspired by legendary computer scientists
         agents = [
             'accelerate-master', 'assert-specialist', 'coach-master',
-            'create-guru', 'engineer-master', 'engineer-wizard',
-            'investigate-champion', 'monitor-champion', 'organize-guru',
-            'secure-specialist', 'support-master'
+            'construct-specialist', 'create-guru', 'engineer-master', 
+            'engineer-wizard', 'investigate-champion', 'meta-coordinator',
+            'monitor-champion', 'organize-guru', 'secure-ninja',
+            'secure-specialist', 'support-master', 'troubleshoot-expert'
         ]
         
         msg_lower = commit_message.lower()
         for agent in agents:
             if agent in msg_lower:
                 return agent
+        
+        # Also look for @agent mentions
+        import re
+        match = re.search(r'@([\w-]+(?:master|specialist|champion|guru|wizard|ninja|expert|coordinator))', msg_lower)
+        if match:
+            agent_name = match.group(1)
+            if agent_name in agents:
+                return agent_name
         
         return 'unknown'
     
@@ -251,6 +260,137 @@ class GitAnalyzer:
             return []
 
 
+class PatternAnalyzer:
+    """Analyzes code patterns, quality metrics, and error patterns"""
+    
+    def __init__(self, repo_path: str):
+        self.repo_path = Path(repo_path)
+        self.git_analyzer = GitAnalyzer(repo_path)
+    
+    def analyze_error_fix_patterns(self, files: List[str]) -> Dict[str, List[Dict[str, Any]]]:
+        """Analyze patterns in error fixes from git history"""
+        error_patterns = defaultdict(list)
+        
+        for filepath in files[:20]:  # Limit to avoid long processing
+            try:
+                history = self.git_analyzer.get_file_history(filepath, limit=30)
+                
+                for commit in history:
+                    msg = commit['message'].lower()
+                    
+                    # Detect error-related commits
+                    if any(keyword in msg for keyword in ['fix', 'bug', 'error', 'issue', 'crash', 'fail']):
+                        error_type = self._classify_error(msg)
+                        error_patterns[filepath].append({
+                            'date': commit['date'],
+                            'type': error_type,
+                            'message': commit['message'][:100],
+                            'hash': commit['hash'][:8]
+                        })
+            except Exception as e:
+                continue
+        
+        return dict(error_patterns)
+    
+    def _classify_error(self, commit_message: str) -> str:
+        """Classify the type of error from commit message"""
+        msg = commit_message.lower()
+        
+        if any(kw in msg for kw in ['security', 'vulnerability', 'exploit', 'injection']):
+            return 'security'
+        elif any(kw in msg for kw in ['performance', 'slow', 'optimize', 'speed']):
+            return 'performance'
+        elif any(kw in msg for kw in ['crash', 'exception', 'null', 'undefined']):
+            return 'runtime_error'
+        elif any(kw in msg for kw in ['syntax', 'typo', 'lint']):
+            return 'syntax'
+        elif any(kw in msg for kw in ['test', 'failing']):
+            return 'test_failure'
+        else:
+            return 'general_bug'
+    
+    def analyze_refactoring_history(self, files: List[str]) -> Dict[str, int]:
+        """Track refactoring patterns across files"""
+        refactoring_counts = defaultdict(int)
+        
+        for filepath in files[:20]:  # Limit for performance
+            try:
+                history = self.git_analyzer.get_file_history(filepath, limit=30)
+                
+                for commit in history:
+                    msg = commit['message'].lower()
+                    if any(kw in msg for kw in ['refactor', 'restructure', 'reorganize', 'cleanup', 'improve']):
+                        refactoring_counts[filepath] += 1
+            except Exception as e:
+                continue
+        
+        return dict(refactoring_counts)
+    
+    def calculate_code_complexity(self, code_analysis: List[Dict]) -> Dict[str, Dict[str, float]]:
+        """Calculate complexity metrics for files"""
+        complexity = {}
+        
+        for item in code_analysis:
+            filepath = item['filepath']
+            
+            # Simple complexity metrics
+            num_functions = len(item['functions'])
+            num_classes = len(item['classes'])
+            lines = item['lines_of_code']
+            num_imports = len(item['imports'])
+            
+            # Complexity score (higher = more complex)
+            if lines > 0:
+                complexity_score = (
+                    (num_functions * 2 + num_classes * 5 + num_imports) / lines * 100
+                )
+            else:
+                complexity_score = 0
+            
+            complexity[filepath] = {
+                'complexity_score': round(complexity_score, 2),
+                'functions': num_functions,
+                'classes': num_classes,
+                'lines': lines,
+                'avg_function_size': round(lines / num_functions, 1) if num_functions > 0 else 0
+            }
+        
+        return complexity
+    
+    def identify_code_smells(self, code_analysis: List[Dict]) -> Dict[str, List[str]]:
+        """Identify potential code smells"""
+        smells = {}
+        
+        for item in code_analysis:
+            filepath = item['filepath']
+            file_smells = []
+            
+            # Large file
+            if item['lines_of_code'] > 500:
+                file_smells.append('large_file')
+            
+            # Too many functions
+            if len(item['functions']) > 20:
+                file_smells.append('too_many_functions')
+            
+            # God class (many methods)
+            for cls in item['classes']:
+                if len(cls.get('methods', [])) > 15:
+                    file_smells.append('god_class')
+                    break
+            
+            # Low cohesion (many imports relative to size)
+            if item['lines_of_code'] > 0:
+                import_ratio = len(item['imports']) / item['lines_of_code'] * 100
+                if import_ratio > 10:
+                    file_smells.append('high_coupling')
+            
+            if file_smells:
+                smells[filepath] = file_smells
+        
+        return smells
+
+
 class TestCoverageAnalyzer:
     """Analyzes test coverage and maps tests to code"""
     
@@ -301,6 +441,7 @@ class KnowledgeGraphBuilder:
         self.code_analyzer = CodeAnalyzer(self.repo_path)
         self.git_analyzer = GitAnalyzer(self.repo_path)
         self.test_analyzer = TestCoverageAnalyzer(self.repo_path)
+        self.pattern_analyzer = PatternAnalyzer(self.repo_path)
     
     def build_graph(self) -> Dict[str, Any]:
         """Build complete knowledge graph"""
@@ -321,6 +462,18 @@ class KnowledgeGraphBuilder:
         print("🏗️ Building dependency graph...")
         dependencies = self._build_dependency_graph(code_analysis)
         
+        print("🎯 Analyzing error patterns...")
+        error_patterns = self.pattern_analyzer.analyze_error_fix_patterns(files)
+        
+        print("🔄 Tracking refactoring history...")
+        refactoring_history = self.pattern_analyzer.analyze_refactoring_history(files)
+        
+        print("📈 Calculating complexity metrics...")
+        complexity_metrics = self.pattern_analyzer.calculate_code_complexity(code_analysis)
+        
+        print("🔎 Identifying code smells...")
+        code_smells = self.pattern_analyzer.identify_code_smells(code_analysis)
+        
         print("✨ Generating relationships...")
         relationships = self._generate_relationships(
             code_analysis, dependencies, test_mapping, 
@@ -336,9 +489,18 @@ class KnowledgeGraphBuilder:
                 'total_test_files': len(test_files),
                 'total_relationships': len(relationships)
             },
-            'nodes': self._create_nodes(code_analysis, test_files, contributor_analysis),
+            'nodes': self._create_nodes(code_analysis, test_files, contributor_analysis, 
+                                       complexity_metrics, code_smells, refactoring_history),
             'relationships': relationships,
-            'statistics': self._generate_statistics(code_analysis, relationships, contributor_analysis)
+            'statistics': self._generate_statistics(code_analysis, relationships, contributor_analysis),
+            'patterns': {
+                'error_fixes': error_patterns,
+                'refactorings': refactoring_history,
+                'code_smells': code_smells
+            },
+            'metrics': {
+                'complexity': complexity_metrics
+            }
         }
         
         return graph
@@ -370,9 +532,14 @@ class KnowledgeGraphBuilder:
         return {k: list(v) for k, v in dependencies.items()}
     
     def _create_nodes(self, code_analysis: List[Dict], test_files: List[str], 
-                     contributor_analysis: Dict) -> List[Dict[str, Any]]:
+                     contributor_analysis: Dict, complexity_metrics: Dict = None,
+                     code_smells: Dict = None, refactoring_history: Dict = None) -> List[Dict[str, Any]]:
         """Create graph nodes"""
         nodes = []
+        
+        complexity_metrics = complexity_metrics or {}
+        code_smells = code_smells or {}
+        refactoring_history = refactoring_history or {}
         
         # File nodes
         for item in code_analysis:
@@ -382,7 +549,12 @@ class KnowledgeGraphBuilder:
             # Get contributors
             contributors = list(contributor_analysis['file_contributors'].get(filepath, {}).keys())
             
-            nodes.append({
+            # Get complexity and quality metrics
+            complexity = complexity_metrics.get(filepath, {})
+            smells = code_smells.get(filepath, [])
+            refactor_count = refactoring_history.get(filepath, 0)
+            
+            node = {
                 'id': filepath,
                 'type': 'test_file' if is_test else 'code_file',
                 'label': Path(filepath).name,
@@ -392,7 +564,23 @@ class KnowledgeGraphBuilder:
                 'lines_of_code': item['lines_of_code'],
                 'imports': len(item['imports']),
                 'contributors': contributors[:5]  # Top 5 contributors
-            })
+            }
+            
+            # Add complexity metrics if available
+            if complexity:
+                node['complexity_score'] = complexity.get('complexity_score', 0)
+                node['avg_function_size'] = complexity.get('avg_function_size', 0)
+            
+            # Add quality indicators
+            if smells:
+                node['code_smells'] = smells
+                node['quality_issues'] = len(smells)
+            
+            # Add refactoring history
+            if refactor_count > 0:
+                node['refactoring_count'] = refactor_count
+            
+            nodes.append(node)
         
         # Agent nodes
         for agent, files in contributor_analysis['agent_contributions'].items():

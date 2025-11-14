@@ -354,11 +354,247 @@ class KnowledgeGraphQuery:
         """Get graph metadata"""
         return self.graph.get('metadata', {})
     
+    def get_patterns(self) -> Dict[str, Any]:
+        """Get identified patterns"""
+        return self.graph.get('patterns', {})
+    
+    def get_metrics(self) -> Dict[str, Any]:
+        """Get calculated metrics"""
+        return self.graph.get('metrics', {})
+    
+    # === Predictive Intelligence ===
+    
+    def predict_bug_likelihood(self, filepath: str) -> Dict[str, Any]:
+        """Predict likelihood of bugs in a file based on patterns"""
+        node = self.nodes_by_id.get(filepath)
+        if not node:
+            return {"error": "File not found"}
+        
+        risk_score = 0
+        risk_factors = []
+        
+        # Complexity risk
+        complexity = node.get('complexity_score', 0)
+        if complexity > 10:
+            risk_score += 3
+            risk_factors.append(f"High complexity ({complexity:.1f})")
+        elif complexity > 5:
+            risk_score += 1
+            risk_factors.append(f"Moderate complexity ({complexity:.1f})")
+        
+        # Code smells
+        smells = node.get('code_smells', [])
+        if smells:
+            risk_score += len(smells)
+            risk_factors.append(f"Code smells detected: {', '.join(smells)}")
+        
+        # Large file risk
+        lines = node.get('lines_of_code', 0)
+        if lines > 500:
+            risk_score += 2
+            risk_factors.append(f"Large file ({lines} lines)")
+        
+        # High coupling risk
+        imports = node.get('imports', 0)
+        if imports > 10:
+            risk_score += 1
+            risk_factors.append(f"High coupling ({imports} imports)")
+        
+        # Historical refactoring (indicates troubled area)
+        refactor_count = node.get('refactoring_count', 0)
+        if refactor_count > 3:
+            risk_score += 2
+            risk_factors.append(f"Frequently refactored ({refactor_count} times)")
+        
+        # Error pattern history
+        patterns = self.get_patterns()
+        error_fixes = patterns.get('error_fixes', {})
+        if filepath in error_fixes:
+            error_count = len(error_fixes[filepath])
+            risk_score += min(error_count, 3)
+            risk_factors.append(f"Historical errors ({error_count} fixes)")
+        
+        # Calculate likelihood
+        if risk_score >= 8:
+            likelihood = "high"
+        elif risk_score >= 4:
+            likelihood = "medium"
+        else:
+            likelihood = "low"
+        
+        return {
+            'file': filepath,
+            'likelihood': likelihood,
+            'risk_score': risk_score,
+            'risk_factors': risk_factors,
+            'recommendation': self._get_bug_likelihood_recommendation(likelihood, risk_factors)
+        }
+    
+    def _get_bug_likelihood_recommendation(self, likelihood: str, factors: List[str]) -> str:
+        """Generate recommendation based on bug likelihood"""
+        if likelihood == "high":
+            return "⚠️ High risk: Consider refactoring, adding tests, or breaking into smaller modules"
+        elif likelihood == "medium":
+            return "⚡ Medium risk: Review code quality and consider improvements"
+        else:
+            return "✅ Low risk: Code appears healthy"
+    
+    def suggest_expert_agent(self, filepath: str) -> Dict[str, Any]:
+        """Suggest which agent should handle work on this file"""
+        node = self.nodes_by_id.get(filepath)
+        if not node:
+            return {"error": "File not found"}
+        
+        # Find agents who worked on this file
+        agents_worked_on = self.which_agent_worked_on(filepath)
+        
+        # Find agents with expertise in related areas
+        expertise_needed = []
+        if 'test' in filepath:
+            expertise_needed.append('testing')
+        if 'workflow' in filepath or '.github' in filepath:
+            expertise_needed.append('automation')
+        if 'agent' in filepath:
+            expertise_needed.append('agent-system')
+        if node.get('code_smells'):
+            expertise_needed.append('refactoring')
+        if node.get('complexity_score', 0) > 8:
+            expertise_needed.append('optimization')
+        
+        suggestions = []
+        
+        # Prioritize agents who have worked on this file
+        for agent_data in agents_worked_on:
+            suggestions.append({
+                'agent': agent_data['agent'],
+                'reason': f"Previously worked on this file",
+                'confidence': 'high',
+                'expertise': agent_data.get('expertise', [])
+            })
+        
+        # Find agents with matching expertise
+        for expertise in expertise_needed:
+            expert_agents = self.find_expert_agents(expertise)
+            for agent_data in expert_agents[:2]:  # Top 2
+                if not any(s['agent'] == agent_data['agent'] for s in suggestions):
+                    suggestions.append({
+                        'agent': agent_data['agent'],
+                        'reason': f"Expert in {expertise}",
+                        'confidence': 'medium',
+                        'expertise': agent_data.get('expertise', [])
+                    })
+        
+        return {
+            'file': filepath,
+            'suggestions': suggestions[:3],  # Top 3 suggestions
+            'needed_expertise': expertise_needed
+        }
+    
+    def identify_technical_debt(self, min_score: int = 5) -> List[Dict[str, Any]]:
+        """Identify files with technical debt"""
+        debt_files = []
+        
+        for node in self.nodes_by_type.get('code_file', []):
+            debt_score = 0
+            debt_indicators = []
+            
+            # Code smells
+            smells = node.get('code_smells', [])
+            if smells:
+                debt_score += len(smells) * 2
+                debt_indicators.extend(smells)
+            
+            # High complexity
+            complexity = node.get('complexity_score', 0)
+            if complexity > 10:
+                debt_score += 3
+                debt_indicators.append('high_complexity')
+            
+            # Large file
+            if node.get('lines_of_code', 0) > 500:
+                debt_score += 2
+                debt_indicators.append('large_file')
+            
+            # No tests
+            tests = self.what_tests_cover(node['id'])
+            if not tests:
+                debt_score += 2
+                debt_indicators.append('no_test_coverage')
+            
+            # Frequent errors
+            patterns = self.get_patterns()
+            error_fixes = patterns.get('error_fixes', {})
+            if node['id'] in error_fixes and len(error_fixes[node['id']]) > 2:
+                debt_score += 3
+                debt_indicators.append('error_prone')
+            
+            if debt_score >= min_score:
+                debt_files.append({
+                    'file': node['id'],
+                    'label': node['label'],
+                    'debt_score': debt_score,
+                    'indicators': debt_indicators,
+                    'lines': node.get('lines_of_code', 0),
+                    'priority': 'high' if debt_score >= 10 else 'medium'
+                })
+        
+        # Sort by debt score
+        debt_files.sort(key=lambda x: x['debt_score'], reverse=True)
+        return debt_files
+    
+    def find_optimization_opportunities(self) -> List[Dict[str, Any]]:
+        """Find files that could benefit from optimization"""
+        opportunities = []
+        
+        metrics = self.get_metrics()
+        complexity_data = metrics.get('complexity', {})
+        
+        for filepath, complexity in complexity_data.items():
+            node = self.nodes_by_id.get(filepath)
+            if not node:
+                continue
+            
+            opportunity_reasons = []
+            
+            # Large average function size
+            if complexity.get('avg_function_size', 0) > 50:
+                opportunity_reasons.append('Large functions that could be split')
+            
+            # High function count
+            if complexity.get('functions', 0) > 20:
+                opportunity_reasons.append('Many functions, consider modularization')
+            
+            # High complexity score
+            if complexity.get('complexity_score', 0) > 8:
+                opportunity_reasons.append('High complexity, simplification needed')
+            
+            # Files that change frequently together (might indicate coupling)
+            changes_with = self.files_changed_together(filepath, min_weight=5)
+            if len(changes_with) > 3:
+                opportunity_reasons.append(f'High coupling with {len(changes_with)} files')
+            
+            if opportunity_reasons:
+                opportunities.append({
+                    'file': filepath,
+                    'label': node['label'],
+                    'opportunities': opportunity_reasons,
+                    'complexity': complexity
+                })
+        
+        return opportunities[:10]  # Top 10
+    
     # === Interactive Query ===
     
     def query(self, query_string: str) -> Any:
         """Natural language-style query parser"""
         query_lower = query_string.lower()
+        
+        # Check for predictive/analytical queries (no file needed)
+        if 'technical debt' in query_lower or 'debt' in query_lower:
+            return self.identify_technical_debt()
+        
+        if 'optimization' in query_lower and 'opportunit' in query_lower:
+            return self.find_optimization_opportunities()
         
         # Extract file path from query
         words = query_string.split()
@@ -369,10 +605,24 @@ class KnowledgeGraphQuery:
                 break
         
         if not potential_file:
-            return {"error": "No file specified in query"}
+            # Check for general queries
+            if 'central' in query_lower or 'important' in query_lower:
+                return self.find_central_files()
+            elif 'complex' in query_lower:
+                return self.find_complex_files()
+            elif 'orphan' in query_lower:
+                return self.find_orphan_files()
+            else:
+                return {"error": "No file specified in query"}
         
         # Route to appropriate query
-        if 'import' in query_lower and 'what' in query_lower:
+        if 'bug' in query_lower and ('likelihood' in query_lower or 'risk' in query_lower):
+            return self.predict_bug_likelihood(potential_file)
+        
+        elif 'expert' in query_lower or 'suggest agent' in query_lower or 'who should' in query_lower:
+            return self.suggest_expert_agent(potential_file)
+        
+        elif 'import' in query_lower and 'what' in query_lower:
             if 'imports' in query_lower or 'does' in query_lower:
                 return self.what_does_import(potential_file)
             else:
