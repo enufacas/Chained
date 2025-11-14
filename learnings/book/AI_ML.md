@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 131
+**Total Insights:** 133
 
 **Last Updated:** 2025-11-14
 
@@ -113,6 +113,34 @@ Collection of publicly available IPTV channels from all over the world
 
 
 ## 📰 From Hacker News
+
+
+### Disrupting the first reported AI-orchestrated cyber espionage campaign
+
+**Community Score:** 299 upvotes
+
+**Link:** https://www.anthropic.com/news/disrupting-AI-espionage
+
+
+**Content Summary:**
+
+Policy Disrupting the first reported AI-orchestrated cyber espionage campaign Nov 13, 2025 ● 7 min read Read the report We recently argued that an inflection point had been reached in cybersecurity: a point at which AI models had become genuinely useful for cybersecurity operations, both for good and for ill. This was based on systematic evaluations showing cyber capabilities doubling in six months; we’d also been tracking real-world cyberattacks, observing how malicious actors were using AI cap...
+
+---
+
+
+### SlopStop: Community-driven AI slop detection in Kagi Search
+
+**Community Score:** 499 upvotes
+
+**Link:** https://blog.kagi.com/slopstop
+
+
+**Content Summary:**
+
+Introducing SlopStop: Community-driven AI slop detection in Kagi Search 12 Nov, 2025 Your collective defense against AI-generated spam and content farms We made it our mission to prevent the web from becoming useless and a harmful space. That’s why today, Kagi Search introduces the first community-driven system to detect and downrank deceptive AI-generated text, images, and video inside search results. It’s 2025, and the internet we loved is drowning in AI-generated noise. Content farms exploiti...
+
+---
 
 
 ### Show HN: Pegma, the free and open-source version of the classic Peg solitaire
@@ -316,52 +344,6 @@ JavaScript is not available. We’ve detected that JavaScript is disabled in thi
 **Content Summary:**
 
 Blog We ran over 600 image generations to compare AI models tl:dr; We’ve been making photo apps for iOS for long enough that we have gray hairs now, and using our experience we ran over 600 image generations to compare which AI models work best for which image edits. If you want, you can jump right to the image comparisons , or the conclusion , but promise us you won’t presumptuous comments on Hacker News until you’ve also read the background! Background Hi! We’re LateNiteSoft, and we’ve been wo...
-
----
-
-
-### We ran over 600 image generations to compare AI image models
-
-**Community Score:** 135 upvotes
-
-**Link:** https://latenitesoft.com/blog/evaluating-frontier-ai-image-generation-models/
-
-
-**Content Summary:**
-
-Blog
-We ran over 600 image generations to compare AI models
-tl:dr;
-We’ve been making photo apps for iOS for long enough that we have gray hairs now, and using our experience we ran over 600 image generations to compare which AI models work best for which image edits. If you want, you can jump right to the
-image comparisons
-, or the
-conclusion
-, but promise us you won’t presumptuous comments on Hacker News until you’ve also read the background!
-Background
-Hi! We’re LateNiteSoft, and we’ve been wo...
-
----
-
-
-### We ran over 600 image generations to compare AI image models
-
-**Community Score:** 133 upvotes
-
-**Link:** https://latenitesoft.com/blog/evaluating-frontier-ai-image-generation-models/
-
-
-**Content Summary:**
-
-Blog
-We ran over 600 image generations to compare AI models
-tl:dr;
-We’ve been making photo apps for iOS for long enough that we have gray hairs now, and using our experience we ran over 600 image generations to compare which AI models work best for which image edits. If you want, you can jump right to the
-image comparisons
-, or the
-conclusion
-, but promise us you won’t presumptuous comments on Hacker News until you’ve also read the background!
-Background
-Hi! We’re LateNiteSoft, and we’ve been wo...
 
 ---
 

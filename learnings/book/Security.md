@@ -2,7 +2,7 @@
 
 > Security vulnerabilities, encryption, authentication, and privacy
 
-**Total Insights:** 9
+**Total Insights:** 10
 
 **Last Updated:** 2025-11-14
 
@@ -10,6 +10,20 @@
 
 
 ## 📰 From Hacker News
+
+
+### Checkout.com hacked, refuses ransom payment, donates to security labs
+
+**Community Score:** 596 upvotes
+
+**Link:** https://www.checkout.com/blog/protecting-our-merchants-standing-up-to-extortion
+
+
+**Content Summary:**
+
+Sign in Get in touch Resource center Search Text Link Thank you! Your submission has been received! Oops! Something went wrong while submitting the form. Topic Region Perspectives Protecting our Merchants: Standing up to Extortion Our statement detailing an incident concerning a legacy system. We outline our commitment to transparency, accountability, and planned investment in cyber security research. Link to the author's page Mariano Albera November 12, 2025 Link to the author's page What’s ins...
+
+---
 
 
 ### Checkout.com hacked, refuses ransom payment, donates to security labs
