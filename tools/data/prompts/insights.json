@@ -45,5 +45,20 @@
   },
   "common_failures": {
     "test_failures": 1
-  }
+  },
+  "ab_tests": [
+    {
+      "test_id": "ab_bug_fix_systematic_vs_feature_rigorous",
+      "template_a": "bug_fix_systematic",
+      "template_b": "feature_rigorous",
+      "start_date": "2025-11-14T16:57:29.239479+00:00",
+      "status": "active",
+      "results": {
+        "a_uses": 0,
+        "b_uses": 0,
+        "a_success": 0,
+        "b_success": 0
+      }
+    }
+  ]
 }
