@@ -590,8 +590,24 @@ async function createCodebaseGraph() {
                     <p><strong>Functions:</strong> ${d.functions || 0}</p>
                     <p><strong>Classes:</strong> ${d.classes || 0}</p>
                     <p><strong>Lines:</strong> ${d.lines_of_code || 0}</p>
-                    <p><strong>Path:</strong> ${d.filepath}</p>
                 `;
+                
+                // Add complexity metrics if available
+                if (d.complexity_score) {
+                    tooltipContent += `<p><strong>Complexity:</strong> ${d.complexity_score.toFixed(1)}</p>`;
+                }
+                
+                // Add code quality warnings
+                if (d.code_smells && d.code_smells.length > 0) {
+                    tooltipContent += `<p><strong>⚠️ Issues:</strong> ${d.code_smells.join(', ')}</p>`;
+                }
+                
+                // Add refactoring count
+                if (d.refactoring_count > 0) {
+                    tooltipContent += `<p><strong>🔄 Refactorings:</strong> ${d.refactoring_count}</p>`;
+                }
+                
+                tooltipContent += `<p><strong>Path:</strong> ${d.filepath}</p>`;
             }
             
             codebaseTooltip.style("opacity", 1)
@@ -621,6 +637,9 @@ async function createCodebaseGraph() {
         
         // Update insights
         updateCodebaseInsights(nodes, stats, graphData.relationships);
+        
+        // Show quality insights in console
+        showQualityInsights(graphData);
         
         // Store for filtering
         window.codebaseNodes = nodes;
@@ -680,6 +699,55 @@ function updateCodebaseInsights(nodes, stats, relationships) {
     } else {
         expertiseList.innerHTML = '<li>No agent data available yet</li>';
     }
+}
+
+// Enhanced insights with quality metrics
+function showQualityInsights(graphData) {
+    // Show complexity insights
+    const complexFiles = graphData.nodes
+        .filter(n => n.type === 'code_file' && n.complexity_score > 5)
+        .sort((a, b) => b.complexity_score - a.complexity_score)
+        .slice(0, 5);
+    
+    if (complexFiles.length > 0) {
+        console.log('🔍 Most Complex Files:');
+        complexFiles.forEach(f => {
+            console.log(`  ${f.label}: ${f.complexity_score} (${f.functions} functions)`);
+        });
+    }
+    
+    // Show files with code smells
+    const filesWithSmells = graphData.nodes
+        .filter(n => n.code_smells && n.code_smells.length > 0);
+    
+    if (filesWithSmells.length > 0) {
+        console.log('\n⚠️ Files with Code Smells:');
+        filesWithSmells.slice(0, 5).forEach(f => {
+            console.log(`  ${f.label}: ${f.code_smells.join(', ')}`);
+        });
+    }
+    
+    // Show refactoring history
+    const refactoredFiles = graphData.nodes
+        .filter(n => n.refactoring_count > 0)
+        .sort((a, b) => b.refactoring_count - a.refactoring_count)
+        .slice(0, 5);
+    
+    if (refactoredFiles.length > 0) {
+        console.log('\n🔄 Frequently Refactored:');
+        refactoredFiles.forEach(f => {
+            console.log(`  ${f.label}: ${f.refactoring_count} refactorings`);
+        });
+    }
+    
+    // Summary statistics
+    const avgComplexity = graphData.nodes
+        .filter(n => n.complexity_score)
+        .reduce((sum, n) => sum + n.complexity_score, 0) / 
+        graphData.nodes.filter(n => n.complexity_score).length;
+    
+    console.log(`\n📊 Average Complexity: ${avgComplexity.toFixed(2)}`);
+    console.log(`📊 Files with Issues: ${filesWithSmells.length}`);
 }
 
 function filterCodebase(filterType) {

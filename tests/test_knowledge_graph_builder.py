@@ -109,14 +109,18 @@ class TestGitAnalyzer(unittest.TestCase):
         """Test agent extraction from commit messages"""
         analyzer = GitAnalyzer('.')
         
-        # Test with agent mentions
+        # Test with agent mentions (use current agent names)
         self.assertEqual(
-            analyzer.extract_agent_from_commit("feature-architect: Add new feature"),
-            'feature-architect'
+            analyzer.extract_agent_from_commit("engineer-master: Add new feature"),
+            'engineer-master'
         )
         self.assertEqual(
-            analyzer.extract_agent_from_commit("bug-hunter fixed critical issue"),
-            'bug-hunter'
+            analyzer.extract_agent_from_commit("investigate-champion fixed critical issue"),
+            'investigate-champion'
+        )
+        self.assertEqual(
+            analyzer.extract_agent_from_commit("@secure-specialist added security fix"),
+            'secure-specialist'
         )
         self.assertEqual(
             analyzer.extract_agent_from_commit("Regular commit message"),
