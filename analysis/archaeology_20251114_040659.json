@@ -1,8 +1,6 @@
 {
-  "version": "1.0.0",
-  "last_updated": "2025-11-14T04:06:59.230999+00:00",
-  "repository": "tmp_hj4w711",
-  "total_commits_analyzed": 6,
+  "timestamp": "2025-11-14T04:06:59.126285+00:00",
+  "commits_analyzed": 6,
   "architectural_decisions": [
     {
       "type": "explicit_decision",
@@ -30,7 +28,6 @@
     }
   ],
   "technical_debt": [],
-  "legacy_patterns": [],
   "code_evolution": {
     "major_refactors": [],
     "feature_additions": [
@@ -87,30 +84,23 @@
       }
     ]
   },
-  "decision_timeline": [
-    {
-      "timestamp": "2025-11-14T03:54:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "efcbe7c"
+  "statistics": {
+    "total_commits": 6,
+    "by_category": {
+      "feature": 3,
+      "maintenance": 3
     },
-    {
-      "timestamp": "2025-11-14T04:00:21+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "081aca1"
+    "by_author": {
+      "copilot-swe-agent[bot]": 5,
+      "github-actions[bot]": 1
     },
-    {
-      "timestamp": "2025-11-14T04:03:14+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "f4cac56"
-    },
-    {
-      "timestamp": "2025-11-14T04:06:36+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "a854e33"
+    "files_most_changed": {
+      "ARCHAEOLOGY_ENHANCEMENT_IMPLEMENTATION_SUMMARY.md": 1,
+      "analysis/archaeology-patterns.json": 4,
+      "tools/ARCHAEOLOGY_ENHANCED_README.md": 1,
+      "tools/archaeology-integration.py": 1,
+      "tools/archaeology-learner.py": 1,
+      "tools/test_archaeology_learner_enhanced.py": 1
     }
-  ]
+  }
 }
