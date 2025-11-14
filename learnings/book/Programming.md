@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 35
+**Total Insights:** 36
 
 **Last Updated:** 2025-11-14
 
@@ -43,6 +43,20 @@ Open Source Spotify client library
 
 
 ## 📰 From Hacker News
+
+
+### Think in math, write in code (2019
+
+**Community Score:** 178 upvotes
+
+**Link:** https://www.jmeiners.com/think-in-math/
+
+
+**Content Summary:**
+
+Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss programming languages. We not only debate their technical merits and aesthetic qualities, but they become integrated into our personal identities, along with the values and traits that we associate with them. Some even defend a form of Linguistic Determinism that thinking is confined to what the language makes typable. Since we spend so much time writing code, a keen interest in language design is justified. However...
+
+---
 
 
 ### Think in math, write in code (2019)
