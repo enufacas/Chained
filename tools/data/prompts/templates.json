@@ -16,10 +16,10 @@
     "template": "**@{agent}** - Please implement this feature with rigorous engineering:\n\n1. **Requirements Analysis**: Understand all requirements and edge cases\n2. **Architecture Design**: Plan the implementation structure\n3. **Implementation**: Build with attention to detail and correctness\n4. **Comprehensive Testing**: Test all functionality including error conditions\n5. **Documentation**: Document the feature design and usage\n\n**Engineering Standards:**\n- Follow project conventions\n- Write clean, maintainable code\n- Include comprehensive tests\n- Handle all error conditions\n- Document design decisions\n\nFeature request:\n{issue_body}",
     "success_count": 0,
     "failure_count": 0,
-    "total_uses": 1,
+    "total_uses": 2,
     "avg_resolution_time": 0.0,
     "created_at": "2025-11-13T13:42:01.841974+00:00",
-    "last_used": "2025-11-13T13:44:54.035374+00:00"
+    "last_used": "2025-11-14T16:57:19.192166+00:00"
   },
   "refactor_systematic": {
     "template_id": "refactor_systematic",

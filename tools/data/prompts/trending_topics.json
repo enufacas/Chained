@@ -1,0 +1,95 @@
+{
+  "last_updated": "2025-11-14T16:58:49.375337+00:00",
+  "analysis_period_days": 7,
+  "total_insights": 40,
+  "top_keywords": [
+    {
+      "keyword": "openai",
+      "count": 17
+    },
+    {
+      "keyword": "your",
+      "count": 13
+    },
+    {
+      "keyword": "that",
+      "count": 13
+    },
+    {
+      "keyword": "with",
+      "count": 11
+    },
+    {
+      "keyword": "anthropic",
+      "count": 8
+    },
+    {
+      "keyword": "without",
+      "count": 7
+    },
+    {
+      "keyword": "platform",
+      "count": 6
+    },
+    {
+      "keyword": "deploy",
+      "count": 5
+    },
+    {
+      "keyword": "data",
+      "count": 5
+    },
+    {
+      "keyword": "gemini",
+      "count": 5
+    },
+    {
+      "keyword": "what",
+      "count": 5
+    },
+    {
+      "keyword": "gpt-5",
+      "count": 4
+    },
+    {
+      "keyword": "nano",
+      "count": 4
+    },
+    {
+      "keyword": "they",
+      "count": 4
+    },
+    {
+      "keyword": "when",
+      "count": 4
+    },
+    {
+      "keyword": "compiler",
+      "count": 3
+    },
+    {
+      "keyword": "becoming",
+      "count": 3
+    },
+    {
+      "keyword": "chatgpt",
+      "count": 3
+    },
+    {
+      "keyword": "analysis",
+      "count": 3
+    },
+    {
+      "keyword": "state",
+      "count": 3
+    }
+  ],
+  "category_distribution": {
+    "ai_ml": 28,
+    "feature": 5,
+    "bug_fix": 3,
+    "refactor": 1,
+    "devops": 2,
+    "investigation": 1
+  }
+}
