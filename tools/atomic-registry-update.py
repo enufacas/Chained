@@ -301,7 +301,7 @@ class AtomicRegistryUpdater:
             "system_lead": None,
             "config": {
                 "spawn_interval_hours": 3,
-                "max_active_agents": 10,
+                "max_active_agents": 50,
                 "elimination_threshold": 0.3,
                 "promotion_threshold": 0.85,
                 "spawn_mode": "mixed",

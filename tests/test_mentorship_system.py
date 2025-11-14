@@ -131,7 +131,7 @@ MOCK_REGISTRY = {
     ],
     "config": {
         "spawn_interval_hours": 3,
-        "max_active_agents": 10
+        "max_active_agents": 50
     }
 }
 

@@ -100,7 +100,7 @@ Located in `.github/agent-system/registry.json`:
 {
   "config": {
     "spawn_interval_hours": 3,        // How often agents spawn
-    "max_active_agents": 10,          // Max concurrent agents
+    "max_active_agents": 50,          // Max concurrent agents
     "elimination_threshold": 0.3,     // Score to avoid elimination (30%)
     "promotion_threshold": 0.85,      // Score for Hall of Fame (85%)
     "metrics_weight": {
@@ -140,7 +140,7 @@ git push
 
 **Fewer Active Agents**:
 ```json
-"max_active_agents": 5,  // Reduce from 10 to 5
+"max_active_agents": 25,  // Reduce from 50 to 25
 ```
 
 **Easier Survival**:

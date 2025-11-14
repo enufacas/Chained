@@ -183,7 +183,7 @@ Edit `.github/agent-system/registry.json`:
 {
   "config": {
     "spawn_interval_hours": 3,      // How often agents spawn
-    "max_active_agents": 10,        // Max concurrent agents
+    "max_active_agents": 50,        // Max concurrent agents
     "elimination_threshold": 0.3,   // Score to avoid elimination
     "promotion_threshold": 0.85     // Score for Hall of Fame
   }
