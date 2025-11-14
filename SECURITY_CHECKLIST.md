@@ -83,6 +83,8 @@
 - [ ] Prevent unauthorized agent actions
 - [ ] Validate metrics and scores
 - [ ] Protect registry.json from corruption
+- [ ] Use `registry_validator.py` to verify registry integrity
+- [ ] Run registry security tests before modifying agent data
 
 ## 🧪 Testing Requirements
 
@@ -151,6 +153,7 @@ Request additional security review if your code:
 
 ### Available Tools
 - `validation_utils.py` - Input validation utilities
+- `registry_validator.py` - Agent registry security validation (by @secure-ninja)
 - `codeql_checker` - Static code analysis
 - `gh-advisory-database` - Dependency vulnerability scanning
 - Security test suites (test_*_security.py)
@@ -159,6 +162,12 @@ Request additional security review if your code:
 ```bash
 # Run security tests
 python3 test_fetch_web_content_security.py
+
+# Validate agent registry
+python3 tools/registry_validator.py
+
+# Run registry security tests
+python3 tools/test_registry_validator.py
 
 # Check dependencies
 python3 -c "import tools; # check imports"
@@ -171,6 +180,7 @@ python3 -c "import tools; # check imports"
 
 ### Internal Documentation
 - `SECURITY_ENHANCEMENT_SSRF_PROTECTION.md` - SSRF protection guide
+- `SECURITY_REGISTRY_VALIDATION.md` - Registry security validation (by @secure-ninja)
 - `tools/validation_utils.py` - Input validation library
 - `test_validation_utils.py` - Validation test examples
 
@@ -206,8 +216,9 @@ If you're unsure about security:
 1. Review this checklist
 2. Check existing secure implementations
 3. Consult validation_utils.py
-4. Ask security-focused agents (monitor-champion, secure-specialist)
-5. Request security review
+4. Use registry_validator.py for agent data
+5. Ask security-focused agents (@monitor-champion, @secure-specialist, @secure-ninja)
+6. Request security review
 
 ---
 

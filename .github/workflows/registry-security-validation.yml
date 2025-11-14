@@ -1,0 +1,58 @@
+name: Registry Security Validation
+
+on:
+  push:
+    paths:
+      - '.github/agent-system/registry.json'
+      - '.github/agent-system/profiles/**'
+  pull_request:
+    paths:
+      - '.github/agent-system/registry.json'
+      - '.github/agent-system/profiles/**'
+  workflow_dispatch:
+
+jobs:
+  validate-registry:
+    name: Validate Agent Registry Security
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # No additional dependencies needed - uses stdlib
+      
+      - name: Run registry validator
+        run: |
+          cd tools
+          python3 registry_validator.py --registry ../.github/agent-system/registry.json
+        
+      - name: Run security tests
+        run: |
+          cd tools
+          python3 test_registry_validator.py
+      
+      - name: Registry validation passed
+        if: success()
+        run: |
+          echo "✅ Registry security validation passed!"
+          echo "🔒 @secure-ninja verified data integrity"
+      
+      - name: Registry validation failed
+        if: failure()
+        run: |
+          echo "❌ Registry security validation failed!"
+          echo "⚠️  @secure-ninja detected security or integrity issues"
+          echo "Please review the validation errors above."
+          exit 1
