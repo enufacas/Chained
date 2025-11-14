@@ -33,6 +33,10 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           python scripts/generate_episode.py
+          
+      - name: Generate episode index
+        run: |
+          python scripts/generate_episode_index.py
 
       - name: Commit and create PR
         env:

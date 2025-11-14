@@ -52,6 +52,119 @@
             margin-top: 10px;
         }
 
+        .content-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .episode-list-date {
+            margin-bottom: 20px;
+        }
+
+        .date-header {
+            font-weight: bold;
+            color: #888;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .episode-list-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .episode-list-item:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .episode-list-item.active {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .episode-list-title {
+            font-size: 0.95rem;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .episode-list-time {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .view-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .view-toggle button {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            color: #fff;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-toggle button:hover {
+            background: rgba(102, 126, 234, 0.3);
+        }
+
+        .view-toggle button.active {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 992px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+                max-height: 300px;
+            }
+        }
+
         .episode-info {
             background: rgba(255, 255, 255, 0.05);
             padding: 20px;
@@ -320,8 +433,22 @@
             </div>
         </header>
 
-        <div id="app">
-            <div class="loading">Loading latest episode</div>
+        <div class="view-toggle">
+            <button id="btnLatest" class="active" onclick="showLatest()">Latest Episode</button>
+            <button id="btnArchive" onclick="showArchive()">Episode Archive</button>
+        </div>
+
+        <div class="content-wrapper">
+            <div id="sidebar" class="sidebar" style="display: none;">
+                <h2>📚 Episodes</h2>
+                <div id="episodeList">
+                    <div class="loading">Loading episodes</div>
+                </div>
+            </div>
+
+            <div id="app" class="main-content">
+                <div class="loading">Loading latest episode</div>
+            </div>
         </div>
 
         <footer>
@@ -331,14 +458,19 @@
     </div>
 
     <script>
+        // Global state
+        let currentView = 'latest';
+        let episodeIndex = null;
+        let currentEpisode = null;
+
         // Fetch and display the latest episode or a specific episode from URL parameter
-        async function loadEpisode() {
+        async function loadEpisode(filename = null) {
             const appDiv = document.getElementById('app');
 
             try {
                 // Check if a specific episode is requested via URL parameter
                 const urlParams = new URLSearchParams(window.location.search);
-                const episodeFile = urlParams.get('episode') || 'latest.json';
+                const episodeFile = filename || urlParams.get('episode') || 'latest.json';
                 
                 const response = await fetch(`./episodes/${episodeFile}`);
                 
@@ -347,6 +479,7 @@
                 }
 
                 const episode = await response.json();
+                currentEpisode = episode;
                 displayEpisode(episode);
             } catch (error) {
                 console.error('Error loading episode:', error);
@@ -363,6 +496,105 @@
                         </p>
                     </div>
                 `;
+            }
+        }
+
+        // Load episode index
+        async function loadEpisodeIndex() {
+            try {
+                const response = await fetch('./episodes/index.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                episodeIndex = await response.json();
+                displayEpisodeList();
+            } catch (error) {
+                console.error('Error loading episode index:', error);
+                document.getElementById('episodeList').innerHTML = `
+                    <div class="error" style="padding: 15px; font-size: 0.9rem;">
+                        Could not load episode list
+                    </div>
+                `;
+            }
+        }
+
+        // Display episode list in sidebar
+        function displayEpisodeList() {
+            const listDiv = document.getElementById('episodeList');
+            
+            if (!episodeIndex || !episodeIndex.dates || episodeIndex.dates.length === 0) {
+                listDiv.innerHTML = '<p style="color: #888;">No episodes available</p>';
+                return;
+            }
+
+            let html = '';
+            
+            episodeIndex.dates.forEach(dateGroup => {
+                const formattedDate = new Date(dateGroup.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                html += `
+                    <div class="episode-list-date">
+                        <div class="date-header">${formattedDate}</div>
+                `;
+
+                dateGroup.episodes.forEach(episode => {
+                    const episodeTime = new Date(episode.date).toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    html += `
+                        <div class="episode-list-item" onclick="loadEpisodeByFilename('${episode.filename}')">
+                            <div class="episode-list-title">${escapeHtml(episode.title)}</div>
+                            <div class="episode-list-time">${episodeTime} • ${episode.scene_count} scenes</div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+            });
+
+            listDiv.innerHTML = html;
+        }
+
+        // Load episode by filename
+        function loadEpisodeByFilename(filename) {
+            loadEpisode(filename);
+            
+            // Update active state in list
+            document.querySelectorAll('.episode-list-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            event.currentTarget.classList.add('active');
+        }
+
+        // Show latest episode view
+        function showLatest() {
+            currentView = 'latest';
+            document.getElementById('btnLatest').classList.add('active');
+            document.getElementById('btnArchive').classList.remove('active');
+            document.getElementById('sidebar').style.display = 'none';
+            loadEpisode('latest.json');
+        }
+
+        // Show archive view
+        function showArchive() {
+            currentView = 'archive';
+            document.getElementById('btnArchive').classList.add('active');
+            document.getElementById('btnLatest').classList.remove('active');
+            document.getElementById('sidebar').style.display = 'block';
+            
+            // Load the latest episode by default in archive view
+            if (episodeIndex && episodeIndex.dates.length > 0 && episodeIndex.dates[0].episodes.length > 0) {
+                const latestEpisode = episodeIndex.dates[0].episodes[0];
+                loadEpisodeByFilename(latestEpisode.filename);
             }
         }
 
@@ -458,7 +690,8 @@
         }
 
         // Load episode on page load
-        loadEpisode();
+        loadEpisode('latest.json');
+        loadEpisodeIndex();
     </script>
 </body>
 </html>

@@ -1,0 +1,124 @@
+name: "Cleanup: Chained TV PRs"
+
+on:
+  schedule:
+    # Run daily at 3 AM UTC to clean up old Chained TV PRs
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      days_old:
+        description: 'Close PRs older than this many days'
+        required: false
+        default: '7'
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  cleanup-old-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Clean up old Chained TV PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🧹 Cleaning up old Chained TV PRs..."
+          
+          # Get days threshold (default 7 days for scheduled runs)
+          DAYS_OLD="${{ inputs.days_old || '7' }}"
+          echo "Closing PRs older than ${DAYS_OLD} days"
+          
+          # Calculate cutoff date
+          CUTOFF_DATE=$(date -u -d "${DAYS_OLD} days ago" +%Y-%m-%dT%H:%M:%SZ)
+          echo "Cutoff date: ${CUTOFF_DATE}"
+          
+          # Get all open PRs with chained-tv label
+          pr_list=$(gh pr list \
+            --repo ${{ github.repository }} \
+            --state open \
+            --label "chained-tv" \
+            --json number,title,createdAt,headRefName,labels \
+            --jq '.[]')
+          
+          if [ -z "${pr_list}" ]; then
+            echo "ℹ️ No open Chained TV PRs found"
+            exit 0
+          fi
+          
+          # Process each PR
+          closed_count=0
+          echo "${pr_list}" | jq -c '.' | while read -r pr; do
+            pr_num=$(echo "${pr}" | jq -r '.number')
+            pr_title=$(echo "${pr}" | jq -r '.title')
+            pr_created=$(echo "${pr}" | jq -r '.createdAt')
+            branch_name=$(echo "${pr}" | jq -r '.headRefName')
+            
+            # Check if PR is older than cutoff
+            if [[ "${pr_created}" < "${CUTOFF_DATE}" ]]; then
+              echo "🗑️ Closing stale PR #${pr_num}: ${pr_title}"
+              echo "   Created: ${pr_created}"
+              
+              # Close the PR with a comment
+              echo "Automatic Cleanup: This Chained TV PR has been closed. Episodes are ephemeral and newer episodes have been generated." | \
+                gh pr close ${pr_num} --comment-file - || echo "⚠️ Failed to close PR #${pr_num}"
+              
+              # Delete the branch
+              if git ls-remote --exit-code --heads origin "${branch_name}" >/dev/null 2>&1; then
+                echo "   Deleting branch: ${branch_name}"
+                git push origin --delete "${branch_name}" 2>&1 || echo "⚠️ Could not delete branch ${branch_name}"
+              fi
+              
+              closed_count=$((closed_count + 1))
+            else
+              echo "✓ Keeping recent PR #${pr_num}: ${pr_title}"
+            fi
+          done
+          
+          echo ""
+          echo "✅ Cleanup complete"
+          echo "   Closed ${closed_count} old Chained TV PR(s)"
+
+      - name: Clean up merged PR branches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🧹 Cleaning up branches from merged Chained TV PRs..."
+          
+          # Get merged PRs with chained-tv label from the last 30 days
+          pr_list=$(gh pr list \
+            --repo ${{ github.repository }} \
+            --state merged \
+            --label "chained-tv" \
+            --limit 100 \
+            --json number,headRefName)
+          
+          if [ -z "${pr_list}" ] || [ "${pr_list}" = "[]" ]; then
+            echo "ℹ️ No merged Chained TV PRs found"
+            exit 0
+          fi
+          
+          # Delete branches for merged PRs
+          deleted_count=0
+          echo "${pr_list}" | jq -r '.[].headRefName' | while read -r branch_name; do
+            if [ -n "${branch_name}" ]; then
+              if git ls-remote --exit-code --heads origin "${branch_name}" >/dev/null 2>&1; then
+                echo "🗑️ Deleting merged branch: ${branch_name}"
+                git push origin --delete "${branch_name}" 2>&1 || echo "⚠️ Could not delete branch ${branch_name}"
+                deleted_count=$((deleted_count + 1))
+              fi
+            fi
+          done
+          
+          echo ""
+          echo "✅ Branch cleanup complete"
+          echo "   Deleted ${deleted_count} merged branch(es)"
+
+      - name: Log cleanup activity
+        run: |
+          echo "Chained TV PR cleanup completed"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
