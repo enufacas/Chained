@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-14 13:24 UTC
+**Generated:** 2025-11-14 19:09 UTC
 
-**Total Learning Sessions:** 44
+**Total Learning Sessions:** 46
 
-**Total Insights:** 424
+**Total Insights:** 434
 
 ---
 
@@ -18,7 +18,7 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 133
+**Insights:** 135
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
@@ -39,7 +39,7 @@ CI/CD, containers, orchestration, and infrastructure automation
 
 SQL, NoSQL, data storage, and data engineering
 
-**Insights:** 8
+**Insights:** 9
 
 
 ### [🌐 Web Development](./Web.md)
@@ -81,7 +81,7 @@ Open source projects, community insights, and collaboration
 
 General technology news and insights
 
-**Insights:** 188
+**Insights:** 195
 
 
 ## 📊 Statistics
@@ -89,20 +89,20 @@ General technology news and insights
 
 ### By Source
 
-- **Hacker News:** 19 learning sessions
+- **Hacker News:** 20 learning sessions
 
 - **TLDR Tech:** 15 learning sessions
 
-- **Unknown:** 9 learning sessions
+- **Unknown:** 10 learning sessions
 
 - **GitHub Trending:** 1 learning sessions
 
 
 ### By Topic
 
-- **📚 General Tech Insights:** 188 insights
+- **📚 General Tech Insights:** 195 insights
 
-- **🤖 AI & Machine Learning:** 133 insights
+- **🤖 AI & Machine Learning:** 135 insights
 
 - **💻 Programming Languages & Frameworks:** 36 insights
 
@@ -110,11 +110,11 @@ General technology news and insights
 
 - **🔒 Security & Privacy:** 10 insights
 
+- **🗄️ Databases & Data Management:** 9 insights
+
 - **🌐 Web Development:** 9 insights
 
 - **⚡ Performance & Optimization:** 9 insights
-
-- **🗄️ Databases & Data Management:** 8 insights
 
 - **🚀 DevOps & Infrastructure:** 6 insights
 

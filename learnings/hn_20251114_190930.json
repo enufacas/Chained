@@ -1,0 +1,150 @@
+{
+  "timestamp": "2025-11-14T19:09:30.722224+00:00",
+  "source": "Hacker News",
+  "learnings": [
+    {
+      "title": "Not even a month passed and Chat Control is back in the EU",
+      "url": "https://reclaimthenet.org/the-disguised-return-of-the-eus-private-message-scanning-plot",
+      "score": 124,
+      "source": "Hacker News",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Incus-OS: Immutable Linux OS to run Incus as a hypervisor",
+      "url": "https://linuxcontainers.org/incus-os/",
+      "score": 102,
+      "source": "Hacker News",
+      "content": "Menu Close menu IncusOS Introduction Go to Table of Contents What's IncusOS? \u00b6 IncusOS is an immutable OS solely designed around safely and reliably running Incus. It uses modern security features like UEFI Secure Boot and TPM to provide a safe boot experience and seamless full disk encryption. Updates are applied atomically using an A/B scheme allowing for an easy revert in case of problems. The system itself is completely locked down with no local or remote shell, only an authenticated REST API to access Incus and manage the OS through it. IncusOS is ideal for anyone who's focused on building and running infrastructure on top of Incus and wants the underlying infrastructure to be reliable and easy to update. All IncusOS servers are guaranteed to be running bit for bit the same software, eliminating any deployment variance and making it trivial to scale or re-deploy even large number of servers. Core features \u00b6 Main design features: Boot safety (UEFI Secure Boot and TPM 2.0 measurements) Full disk encryption (TPM backed LUKS and ZFS encryption) Immutable (A/B partition scheme, all OS partitions read-only and signed) Locked down (API only management) Designed for modern Intel/AMD or ARM systems Storage features: Automatic local ZFS pool Support for complex ZFS pool creation on additional disks Fiber Channel & Multipath support NVME-over-TCP support iSCSI support Clustered LVM support (on top of Fiber Channel, NVME-over-TCP or iSCSI) Ceph support for software defined storage (Linstor coming soon) Network features: Automatic VLAN-aware bridging making it easy to attach instances to any interface Link aggregation support (both passive and negotiated) LLDP support Support for enterprise proxy servers (including Kerberos authentication) Robust NTP support Remote logging support through syslog (UDP, TCP, TLS) OVS/OVN support for software defined networking Native support for Tailscale (Netbird coming soon) Management features: Central management through Operations Center \n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "AGI fantasy is a blocker to actual engineering",
+      "url": "https://www.tomwphillips.co.uk/2025/11/agi-fantasy-is-a-blocker-to-actual-engineering/",
+      "score": 416,
+      "source": "Hacker News",
+      "content": "AGI fantasy is a blocker to actual engineering 14 Nov 2025 Reading Empire of AI by Karen Hao , I was struck by how people associated with OpenAI believe in AGI. They really do think someone, perhaps them, will build AGI, and that it will lead to either the flourishing or destruction of humanity. Elon Musk founded OpenAI because he thought Demis Hassabis was an evil genius who would build AGI first: \u2026Musk would regularly characterise Hassabis as a supervillain who needed to be stopped. Musk would make unequivocally clear that OpenAI was the good to DeepMind\u2019s evil. \u2026 \u201cHe literally made a video game where an evil genius tries to create AI to take over the world,\u201d Musk shouted [at an OpenAI off-site], referring to Hassabis\u2019s 2004 title Evil Genius , \u201cand fucking people don\u2019t see it. Fucking people don\u2019t see it! And Larry [Page]? Larry thinks he controls Demis but he\u2019s too busy fucking windsurfing to realize that Demis is gathering the power.\u201d OpenAI\u2019s co-founder and chief scientist Ilya Sutskever regularly told audiences and employees to \u201cfeel the AGI\u201d. At a company off-site in Yosemite in September 2022, employees gathered around a firepit: In the pit, [Sutskever] had placed a wooden effigy that he\u2019d commissioned from a local artist, and began a dramatic performance. This effigy, he explained represented a good, aligned AGI that OpenAI had built, only to discover it was actually lying and deceitful. OpenAI\u2019s duty, he said, was to destroy it. \u2026 Sutskever doused the effigy in lighter fluid and lit on fire. I think it\u2019s remarkable that what was until recently sci-fi fantasy has become a mainstream view in Silicon Valley. Hao writes that GPT-2 was a bet on the \u201cpure language\u201d hypothesis, that asserts that since we communicate through language, then AGI should emerge from training a model solely on language. This is contrast to the \u201cgrounding\u201d hypothesis, that asserts an AGI needs to perceive the world. Successfully scaling GPT to GPT-2 convinced enough people at OpenAI th\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Honda: 2 years of ml vs 1 month of prompting - heres what we learned",
+      "url": "https://www.levs.fyi/blog/2-years-of-ml-vs-1-month-of-prompting/",
+      "score": 232,
+      "source": "Hacker News",
+      "content": "\u2190 2 Years of ML vs. 1 Month of Prompting November 7, 2025 Recalls at major automakers cost hundreds of millions of dollars a year. It\u2019s a huge issue. To mitigate it, our company created an analytics department solely focused on categorizing warranty claims into actionable problems. For decades, this team has relied on SQL queries to classify warranty data. But vehicles\u2014and the language used to describe them\u2014have evolved. SQL struggles with semantics, negations, and contextual nuance. Here\u2019s a fictional example of a claim we might see in the wild: \u201cCustomer reports oil on driveway, thought engine leak. Detailed inspection found no engine leaks. Traced oil to spill during last oil change. Oil on subframe dripping to ground. Cleaned subframe, verified no leaks from engine or drain plug. Customer advised.\u201d An oversimplified SQL query that might try and capture this scenario: SELECT claim_id , claim_text , CASE WHEN ( ( LOWER ( claim_text ) LIKE '%leak%' OR LOWER ( claim_text ) LIKE '%leaking%' OR LOWER ( claim_text ) LIKE '%seep%' AND ( LOWER ( claim_text ) LIKE '%oil%' OR LOWER ( claim_text ) LIKE '%fluid%' AND LOWER ( claim_text ) NOT LIKE '%no leak%' AND LOWER ( claim_text ) NOT LIKE '%not leaking%' ) THEN 1 ELSE 0 END AS is_leak FROM warranty_claims ; What we can gather from this example is that the leak came from a service oil spill\u2014not the vehicle. Yet this query would still flag it as a leak. In production, these types of queries balloon into hundreds\u2014if not thousands\u2014of similar clauses. Over the years, the team created thousands of classification buckets. Many of these legacy buckets still siphon off claims today\u2014creating unnecessary work for analysts and slowing down the detection of new issues. The classification project In 2023, the company launched a major initiative to automate warranty classification using supervised models. Here\u2019s how that went: Data Collection: The first challenge was establishing a ground truth. Each team member had different mental mod\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Operating Margins",
+      "url": "https://fi-le.net/margin/",
+      "score": 222,
+      "source": "Hacker News",
+      "content": "T he Fiefdom of Files Operating Margins 3rd of November 2025 D ivide a company's income by its revenue, and you get the operating margin. For some volume of sales that comes into the business, it gives an idea of what percentage is left as cash in the end. Barring some accounting shenanigans regarding where the bottom line is. The size of margins is often cited to explain how businesses behave: \"Amazon was incentivized to move to cloud hosting and AWS as a higher-margin business than retail, whereas Google could not have been the first mover in hosting because advertising has higher margins.\" It's a compelling story, though hard to prove definitively as an important part of the company's behavior. Here, let's instead look at some cold hard empirical data about operating margins of real companies. Using everyone's favorite website as the source, we get yearly operating margins of >10,000 public companies alongside business categories and market caps. We look at the last available year, 2025, and cluster by category. To summarize a category, we can straightforwardly take the median margin over all companies in the category. This produces some counterintuitive results, with for example Semiconductors showing a mediocre median margin of 10%. While this is a perfectly meaningful result, it obscures the fact that the category is dominated by a few large outlier companies with very high margins. And of course it's no coincidence that companies with high margins are the largest; those margins are what allowed them to grow in the first place, while their size conversely gives them pricing power and thus higher margins. We therefore also put in an average margin weighted by market cap. Using the weighted average, Semiconductors sits at an exceptional 42%. Here is an interactive plot of median vs weighted average margins for each category, where the size of the dot is the total market cap of companies in the category. The bulk of the companies sit at around a margin of 10%, bu\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Oracle hit hard in Wall Street's tech sell-off over its AI bet",
+      "url": "https://www.ft.com/content/583e9391-bdd0-433e-91e0-b1b93038d51e",
+      "score": 160,
+      "source": "Hacker News",
+      "content": "Oracle hit hard in Wall Street\u2019s tech sell-off over its huge AI bet Subscribe to unlock this article Try unlimited access Only $1 for 4 weeks Then $75 per month. Complete digital access to quality FT journalism on any device. Cancel anytime during your trial. Keep reading for $1 Explore more offers. FT Edit $49 per year Access to eight surprising articles a day, hand-picked by FT editors. For seamless reading, access content via the FT Edit page on FT.com and receive the FT Edit newsletter. Select What's included FT Edit: Access on iOS and web Standard Digital $45 per month Essential digital access to quality FT journalism on any device. Pay a year upfront and save 20%. Select What's included Global news & analysis Expert opinion FT App on Android & iOS FT Edit: Access on iOS and web FirstFT: the day's biggest stories 20+ curated newsletters Follow topics & set alerts with myFT FT Videos & Podcasts 10 monthly gift articles to share Premium Digital Complete coverage $75 per month Complete digital access to quality FT journalism with expert analysis from industry leaders. Pay a year upfront and save 20%. Select What's included Global news & analysis Expert opinion FT App on Android & iOS FT Edit: Access on iOS and web FirstFT: the day's biggest stories 20+ curated newsletters Follow topics & set alerts with myFT FT Videos & Podcasts 20 monthly gift articles to share Lex: FT's flagship investment column 15+ Premium newsletters by leading experts FT Digital Edition: our digitised print edition Check whether you already have access via your university or organisation. Terms & Conditions apply Explore our full range of subscriptions. For individuals Discover all the plans currently available in your country Digital Print Print + Digital For multiple readers Digital access for organisations. Includes exclusive features and content. FT Professional Why the FT? See why over a million readers pay to read the Financial Times. Find out why",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "You misunderstand what it means to be poor",
+      "url": "https://blog.ctms.me/posts/2025-11-14-being-poor-or-being-broke/",
+      "score": 245,
+      "source": "Hacker News",
+      "content": "You misunderstand what it means to be poor Posted on Nov 14, 2025 The more I speak about being poor, the more I realize how fundamentally other folks misunderstand what it means to be poor versus being broke. The advice folks will give comes from a good place. However, I would like to give some examples to help everyone understand most advice from non-poor folks isn\u2019t helpful. Everyone has experienced being broke. Being broke sucks. You are watching every dollar spent, finding wayys to trim or make things stretch until the next payday. The difference is when you are broke you have some money . You can afford to put gas in your car, but not enough to do that repair. Money is tight, but you can get the basics at the grocery store. You can\u2019t afford to go to the movies, but will stay home and watch what\u2019s new on Netflix. Being broke sucks. You are watching every dollar spent, finding ways to trim or make things stretch until the next payday. When you are poor that next payday brings no relief. It is like an endless runner game. No matter how fast you run or how high you jump you can never see the finish line. No matter how tired you are the ground keeps moving. There is no room for errors as the punishment for mistakes is astronomical. When you hit an obstacle you don\u2019t restart from the last checkpoint, you go back to the beginning. There is this mindset from folks that poor people must not be smart. I mean, you\u2019re smart and you\u2019re not poor! The problem must be a skill issue! Learn the skills to do it yourself and you\u2019ll be able to pull yourself up. The other mindset is poor people are lazy. Quit complaining and do it yourself! Just get a better job! Get a second job! There\u2019s money out there, you just have to go get it. The last is these folks think they understand what it is like to be poor. Hey, I was a broke college student and I get being poor! I had a rough patch, it will pass. Let\u2019s start at the top. I have a van that is falling apart. It needs a lot of work that \n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Winamp clone in Swift for OS/X",
+      "url": "https://github.com/mgreenwood1001/winamp",
+      "score": 109,
+      "source": "Hacker News",
+      "content": "mgreenwood1001 / winamp Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 1 Star 107 Winamp clone in swift for OS/X License MIT license 107 stars 1 fork Branches Tags Activity Star Notifications You must be signed in to change notification settings mgreenwood1001/winamp About Winamp clone in swift for OS/X Resources Readme License MIT license Uh oh! There was an error while loading. Please reload this page . Activity Stars 107 stars Watchers 0 watching Forks 1 fork Report repository Releases 5 Winamp v1.0.6 Latest Nov 11, 2025 + 4 releases Sponsor this project Uh oh! There was an error while loading. Please reload this page . buymeacoffee.com/ mgreenwood Packages 0 No packages published Contributors 2 mgreenwood1001 Matt Greenwood github-actions[bot] Languages Swift 96.9% Shell 3.1%",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "Nvidia is gearing up to sell servers instead of just GPUs and components",
+      "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/jp-morgan-says-nvidia-is-gearing-up-to-sell-entire-ai-servers-instead-of-just-ai-gpus-and-componentry-jensens-master-plan-of-vertical-integration-will-boost-profits-purportedly-starting-with-vera-rubin",
+      "score": 130,
+      "source": "Hacker News",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "RegreSQL: Regression Testing for PostgreSQL Queries",
+      "url": "https://boringsql.com/posts/regresql-testing-queries/",
+      "score": 132,
+      "source": "Hacker News",
+      "content": "Home \u00bb Posts \u00bb RegreSQL: Regression Testing for PostgreSQL Queries RegreSQL: Regression Testing for PostgreSQL Queries 2025-11-13 \u00b7 10 min \u00b7 Radim Marek Table of Contents Introduction Basic regression testing Performance regression testing ORM enters the room Test Data Management RegreSQL future TL;DR - RegreSQL brings PostgreSQL's regression testing methodology to your application queries, catching both correctness bugs and performance regressions before production. As puzzling as it might seem, the common problem with production changes is the ever-present \"AHA\" moment when things start slowing down or crashing straight away. Testing isn't easy as it is, but there's a widespread practice gap when it comes to testing SQL queries. Some might pretend to \"fix it\" by using ORMs to abstract away the problem. Others treat SQL as \"just glue code\" that doesn't deserve systematic testing. Most settle for integration tests that verify the application layer works, never actually testing whether their queries will survive the next schema change or index modification. For PostgreSQL development itself, the project has a robust regression test suite that has been preventing disasters in core development for decades. The database itself knows how to test SQL systematically - we just don't use those same techniques for our own queries. Enter RegreSQL , a tool originally created by Dimitri Fontaine for The Art of PostgreSQL book (which is excellent for understanding and mastering PostgreSQL as a database system), designed to bring the same regression testing framework to our application queries. I've been trying to use it for some time, but due to missing features and limitations gave up several times. Until now. I decided to fork the project and spend the time needed to take it to the next level. Introduction # The RegreSQL promise starts with the biggest strength and perceived weakness of SQL queries. They are just strings. And unless you use something like sqlc (for Go), PG'OCam\n\n[Content truncated...]",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    }
+  ],
+  "topics": {
+    "AI/ML": [
+      "Honda: 2 years of ml vs 1 month of prompting - heres what we learned",
+      "I think nobody wants AI in Firefox, Mozilla",
+      "Oracle hit hard in Wall Street's tech sell-off over its AI bet"
+    ],
+    "Database": [
+      "RegreSQL: Regression Testing for PostgreSQL Queries"
+    ]
+  },
+  "total_stories": 11,
+  "security_validated": true,
+  "version": "2.0",
+  "parsing_stats": {
+    "total_input": 11,
+    "accepted": 10,
+    "rejected": 1,
+    "acceptance_rate": 0.9090909090909091,
+    "rejected_titles": [
+      {
+        "title": "I think nobody wants AI in Firefox, Mozilla",
+        "reason": "Failed quality assessment"
+      }
+    ]
+  },
+  "parsed_version": "1.0"
+}
