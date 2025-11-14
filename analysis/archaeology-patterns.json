@@ -1,19 +1,18 @@
 {
   "version": "1.0",
-  "last_updated": "2025-11-14T04:02:45.944138+00:00",
+  "last_updated": "2025-11-14T04:04:51.616462+00:00",
   "patterns": {
     "success": [],
     "failure": [],
     "evolution": [
       {
         "pattern_type": "file_evolution",
-        "file": "core.py",
-        "changes_count": 4,
-        "first_seen": "2025-11-14T04:02:45+00:00",
-        "last_seen": "2025-11-14T04:02:45+00:00",
+        "file": "analysis/archaeology-patterns.json",
+        "changes_count": 3,
+        "first_seen": "2025-11-14T03:54:44+00:00",
+        "last_seen": "2025-11-14T04:03:14+00:00",
         "change_frequency": "very_frequent",
         "common_change_types": [
-          "refactor",
           "maintenance",
           "feature"
         ]
@@ -26,7 +25,7 @@
       "title": "High churn files need attention",
       "description": "Found 1 files with frequent changes",
       "files": [
-        "core.py"
+        "analysis/archaeology-patterns.json"
       ],
       "confidence": "high",
       "actionable": true
@@ -36,7 +35,7 @@
     {
       "priority": "high",
       "title": "Review high-churn files",
-      "description": "Files that change frequently may need refactoring: core.py",
+      "description": "Files that change frequently may need refactoring: analysis/archaeology-patterns.json",
       "action": "Create issues for stabilizing high-churn files",
       "based_on": "High churn files need attention"
     }
