@@ -2,7 +2,7 @@
 
 > General technology news and insights
 
-**Total Insights:** 188
+**Total Insights:** 195
 
 **Last Updated:** 2025-11-14
 
@@ -53,6 +53,94 @@ Node Version Manager - POSIX-compliant bash script to manage multiple active nod
 
 
 ## 📰 From Hacker News
+
+
+### Not even a month passed and Chat Control is back in the EU
+
+**Community Score:** 124 upvotes
+
+**Link:** https://reclaimthenet.org/the-disguised-return-of-the-eus-private-message-scanning-plot
+
+---
+
+
+### Incus-OS: Immutable Linux OS to run Incus as a hypervisor
+
+**Community Score:** 102 upvotes
+
+**Link:** https://linuxcontainers.org/incus-os/
+
+
+**Content Summary:**
+
+Menu Close menu IncusOS Introduction Go to Table of Contents What's IncusOS? ¶ IncusOS is an immutable OS solely designed around safely and reliably running Incus. It uses modern security features like UEFI Secure Boot and TPM to provide a safe boot experience and seamless full disk encryption. Updates are applied atomically using an A/B scheme allowing for an easy revert in case of problems. The system itself is completely locked down with no local or remote shell, only an authenticated REST AP...
+
+---
+
+
+### AGI fantasy is a blocker to actual engineering
+
+**Community Score:** 416 upvotes
+
+**Link:** https://www.tomwphillips.co.uk/2025/11/agi-fantasy-is-a-blocker-to-actual-engineering/
+
+
+**Content Summary:**
+
+AGI fantasy is a blocker to actual engineering 14 Nov 2025 Reading Empire of AI by Karen Hao , I was struck by how people associated with OpenAI believe in AGI. They really do think someone, perhaps them, will build AGI, and that it will lead to either the flourishing or destruction of humanity. Elon Musk founded OpenAI because he thought Demis Hassabis was an evil genius who would build AGI first: …Musk would regularly characterise Hassabis as a supervillain who needed to be stopped. Musk would...
+
+---
+
+
+### Operating Margins
+
+**Community Score:** 222 upvotes
+
+**Link:** https://fi-le.net/margin/
+
+
+**Content Summary:**
+
+T he Fiefdom of Files Operating Margins 3rd of November 2025 D ivide a company's income by its revenue, and you get the operating margin. For some volume of sales that comes into the business, it gives an idea of what percentage is left as cash in the end. Barring some accounting shenanigans regarding where the bottom line is. The size of margins is often cited to explain how businesses behave: "Amazon was incentivized to move to cloud hosting and AWS as a higher-margin business than retail, whe...
+
+---
+
+
+### You misunderstand what it means to be poor
+
+**Community Score:** 245 upvotes
+
+**Link:** https://blog.ctms.me/posts/2025-11-14-being-poor-or-being-broke/
+
+
+**Content Summary:**
+
+You misunderstand what it means to be poor Posted on Nov 14, 2025 The more I speak about being poor, the more I realize how fundamentally other folks misunderstand what it means to be poor versus being broke. The advice folks will give comes from a good place. However, I would like to give some examples to help everyone understand most advice from non-poor folks isn’t helpful. Everyone has experienced being broke. Being broke sucks. You are watching every dollar spent, finding wayys to trim or m...
+
+---
+
+
+### Winamp clone in Swift for OS/X
+
+**Community Score:** 109 upvotes
+
+**Link:** https://github.com/mgreenwood1001/winamp
+
+
+**Content Summary:**
+
+mgreenwood1001 / winamp Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 1 Star 107 Winamp clone in swift for OS/X License MIT license 107 stars 1 fork Branches Tags Activity Star Notifications You must be signed in to change notification settings mgreenwood1001/winamp About Winamp clone in swift for OS/X Resources Readme License MIT license Uh oh! There was an error while loading. Please reload thi...
+
+---
+
+
+### Nvidia is gearing up to sell servers instead of just GPUs and components
+
+**Community Score:** 130 upvotes
+
+**Link:** https://www.tomshardware.com/tech-industry/artificial-intelligence/jp-morgan-says-nvidia-is-gearing-up-to-sell-entire-ai-servers-instead-of-just-ai-gpus-and-componentry-jensens-master-plan-of-vertical-integration-will-boost-profits-purportedly-starting-with-vera-rubin
+
+---
 
 
 ### Operating Margins
@@ -212,55 +300,6 @@ It's Monday, 12 PM ET, and the entire Zed Industries team is piled into our week
 ### Hooked on Sonics: Experimenting with Sound in 19th-Century Popular Science
 
 **Link:** https://publicdomainreview.org/essay/science-of-sound/
-
----
-
-
-### Sarah Mason, inventor of the continuity script, first script supervisor
-
-**Link:** https://wfpp.columbia.edu/pioneer/ccp-sarah-y-mason/
-
----
-
-
-### How to Get a North Korea / Antarctica VPS
-
-**Link:** https://blog.lyc8503.net/en/post/asn-5-worldwide-servers/
-
----
-
-
-### OpenMANET Wi-Fi HaLow open-source project for Raspberry Pi–based MANET radios
-
-**Link:** https://openmanet.net/
-
----
-
-
-### 'The Dream Factory' Review: A Building and Its Bard
-
-**Link:** https://www.wsj.com/arts-culture/books/the-dream-factory-review-a-building-and-its-bard-6d79ce43
-
----
-
-
-### A Brutal Look at Balanced Parentheses, Computing Machines, and Pushdown Automata
-
-**Link:** https://raganwald.com/2019/02/14/i-love-programming-and-programmers.html
-
----
-
-
-### Blender Lab
-
-**Link:** https://www.blender.org/news/introducing-blender-lab/
-
----
-
-
-### Why do we need dithering?
-
-**Link:** https://typefully.com/DanHollick/why-do-we-need-dithering-Ut7oD4k
 
 ---
 

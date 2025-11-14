@@ -2,7 +2,7 @@
 
 > SQL, NoSQL, data storage, and data engineering
 
-**Total Insights:** 8
+**Total Insights:** 9
 
 **Last Updated:** 2025-11-14
 
@@ -10,6 +10,20 @@
 
 
 ## 📰 From Hacker News
+
+
+### RegreSQL: Regression Testing for PostgreSQL Queries
+
+**Community Score:** 132 upvotes
+
+**Link:** https://boringsql.com/posts/regresql-testing-queries/
+
+
+**Content Summary:**
+
+Home » Posts » RegreSQL: Regression Testing for PostgreSQL Queries RegreSQL: Regression Testing for PostgreSQL Queries 2025-11-13 · 10 min · Radim Marek Table of Contents Introduction Basic regression testing Performance regression testing ORM enters the room Test Data Management RegreSQL future TL;DR - RegreSQL brings PostgreSQL's regression testing methodology to your application queries, catching both correctness bugs and performance regressions before production. As puzzling as it might seem...
+
+---
 
 
 ### 650GB of Data (Delta Lake on S3). Polars vs. DuckDB vs. Daft vs. Spark

@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 133
+**Total Insights:** 135
 
 **Last Updated:** 2025-11-14
 
@@ -113,6 +113,34 @@ Collection of publicly available IPTV channels from all over the world
 
 
 ## 📰 From Hacker News
+
+
+### Honda: 2 years of ml vs 1 month of prompting - heres what we learned
+
+**Community Score:** 232 upvotes
+
+**Link:** https://www.levs.fyi/blog/2-years-of-ml-vs-1-month-of-prompting/
+
+
+**Content Summary:**
+
+← 2 Years of ML vs. 1 Month of Prompting November 7, 2025 Recalls at major automakers cost hundreds of millions of dollars a year. It’s a huge issue. To mitigate it, our company created an analytics department solely focused on categorizing warranty claims into actionable problems. For decades, this team has relied on SQL queries to classify warranty data. But vehicles—and the language used to describe them—have evolved. SQL struggles with semantics, negations, and contextual nuance. Here’s a fi...
+
+---
+
+
+### Oracle hit hard in Wall Street's tech sell-off over its AI bet
+
+**Community Score:** 160 upvotes
+
+**Link:** https://www.ft.com/content/583e9391-bdd0-433e-91e0-b1b93038d51e
+
+
+**Content Summary:**
+
+Oracle hit hard in Wall Street’s tech sell-off over its huge AI bet Subscribe to unlock this article Try unlimited access Only $1 for 4 weeks Then $75 per month. Complete digital access to quality FT journalism on any device. Cancel anytime during your trial. Keep reading for $1 Explore more offers. FT Edit $49 per year Access to eight surprising articles a day, hand-picked by FT editors. For seamless reading, access content via the FT Edit page on FT.com and receive the FT Edit newsletter. Sele...
+
+---
 
 
 ### Disrupting the first reported AI-orchestrated cyber espionage campaign
@@ -316,34 +344,6 @@ JavaScript is not available. We’ve detected that JavaScript is disabled in thi
 **Content Summary:**
 
 AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA Markets META Meta's Chief AI Scientist Yann LeCun To Depart And Launch AI Start-Up Focused On 'World Models' November 11, 2025 — 04:42 pm EST Written by RTTNews.com for RTTNews -> (RTTNews) - Meta's (META) chief artificial intelligence scient...
-
----
-
-
-### Pakistani newspaper mistakenly prints AI prompt with the article
-
-**Community Score:** 122 upvotes
-
-**Link:** https://twitter.com/omar_quraishi/status/1988518627859951986
-
-
-**Content Summary:**
-
-JavaScript is not available. We’ve detected that JavaScript is disabled in this browser. Please enable JavaScript or switch to a supported browser to continue using x.com. You can see a list of supported browsers in our Help Center. Help Center Terms of Service Privacy Policy Cookie Policy Imprint Ads info © 2025 X Corp. Something went wrong, but don’t fret — let’s give it another shot. Try again Some privacy related extensions may cause issues on x.com. Please disable them and try again.
-
----
-
-
-### We ran over 600 image generations to compare AI image models
-
-**Community Score:** 174 upvotes
-
-**Link:** https://latenitesoft.com/blog/evaluating-frontier-ai-image-generation-models/
-
-
-**Content Summary:**
-
-Blog We ran over 600 image generations to compare AI models tl:dr; We’ve been making photo apps for iOS for long enough that we have gray hairs now, and using our experience we ran over 600 image generations to compare which AI models work best for which image edits. If you want, you can jump right to the image comparisons , or the conclusion , but promise us you won’t presumptuous comments on Hacker News until you’ve also read the background! Background Hi! We’re LateNiteSoft, and we’ve been wo...
 
 ---
 
