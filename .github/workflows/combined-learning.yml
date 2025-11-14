@@ -1,0 +1,520 @@
+name: "Learning: Combined Sources"
+
+on:
+  schedule:
+    # Run twice daily - morning and evening
+    - cron: '0 8,20 * * *'
+  workflow_dispatch:
+    inputs:
+      include_github_trending:
+        description: 'Include GitHub trending repos'
+        required: false
+        type: boolean
+        default: true
+      include_tldr:
+        description: 'Include TLDR Tech'
+        required: false
+        type: boolean
+        default: true
+      include_hackernews:
+        description: 'Include Hacker News'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  combined-learning:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install beautifulsoup4 requests feedparser lxml html5lib
+
+      - name: Fetch GitHub Trending Repos
+        id: github_trending
+        if: github.event.inputs.include_github_trending != 'false'
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          from datetime import datetime, timezone
+          
+          print("🔥 Fetching GitHub Trending Repositories...")
+          
+          # Import the fetcher
+          import sys
+          sys.path.insert(0, 'tools')
+          
+          # Import module with dashes in name
+          import importlib.util
+          spec = importlib.util.spec_from_file_location('fetcher', 'tools/fetch-github-trending.py')
+          fetcher_module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(fetcher_module)
+          GitHubTrendingFetcher = fetcher_module.GitHubTrendingFetcher
+          
+          fetcher = GitHubTrendingFetcher()
+          
+          # Fetch trending repos for multiple popular languages
+          languages = ['python', 'javascript', 'go', 'rust', 'typescript']
+          
+          all_repos = []
+          language_results = fetcher.fetch_multiple_languages(
+              languages, 
+              since='daily',
+              max_per_lang=5
+          )
+          
+          # Flatten results
+          for lang, repos in language_results.items():
+              for repo in repos:
+                  repo['trending_language_filter'] = lang
+                  all_repos.append(repo)
+          
+          # Also fetch overall trending (any language)
+          overall_repos = fetcher.fetch_trending(language=None, since='daily', max_repos=10)
+          for repo in overall_repos:
+              repo['trending_language_filter'] = 'all'
+              # Avoid duplicates
+              if not any(r['full_name'] == repo['full_name'] for r in all_repos):
+                  all_repos.append(repo)
+          
+          print(f"✓ Fetched {len(all_repos)} trending repositories")
+          
+          # Convert to learnings format
+          learnings = []
+          for repo in all_repos:
+              learning = {
+                  'title': f"{repo['full_name']} - {repo.get('description', 'No description')[:100]}",
+                  'description': repo.get('description', ''),
+                  'url': repo['url'],
+                  'source': 'GitHub Trending',
+                  'metadata': {
+                      'full_name': repo['full_name'],
+                      'language': repo.get('language', 'Unknown'),
+                      'stars': repo.get('stars', 0),
+                      'forks': repo.get('forks', 0),
+                      'stars_today': repo.get('stars_period_count', 0),
+                      'trending_filter': repo.get('trending_language_filter', 'all')
+                  }
+              }
+              learnings.append(learning)
+          
+          # Save to file
+          os.makedirs('learnings', exist_ok=True)
+          timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+          filename = f'learnings/github_trending_{timestamp}.json'
+          
+          data = {
+              'timestamp': datetime.now(timezone.utc).isoformat(),
+              'source': 'GitHub Trending',
+              'learnings': learnings,
+              'repository_count': len(all_repos)
+          }
+          
+          with open(filename, 'w') as f:
+              json.dump(data, f, indent=2)
+          
+          print(f"✓ Saved to {filename}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"has_repos=true\n")
+              f.write(f"repo_count={len(all_repos)}\n")
+              f.write(f"learning_file={filename}\n")
+              if learnings:
+                  f.write(f"sample_repo={learnings[0]['title']}\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Fetch TLDR Tech
+        id: tldr
+        if: github.event.inputs.include_tldr != 'false'
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import requests
+          import json
+          import time
+          from datetime import datetime, timezone
+          from bs4 import BeautifulSoup
+          import os
+          
+          print("📰 Fetching TLDR Tech content...")
+          
+          class WebContentFetcher:
+              def __init__(self):
+                  self.session = requests.Session()
+                  self.session.headers.update({
+                      'User-Agent': 'Mozilla/5.0 (compatible; ChainedAI/1.0)'
+                  })
+              
+              def fetch(self, url):
+                  try:
+                      response = self.session.get(url, timeout=10, allow_redirects=True)
+                      if response.status_code == 200:
+                          soup = BeautifulSoup(response.text, 'html.parser')
+                          for element in soup(['script', 'style', 'nav', 'footer', 'iframe']):
+                              element.decompose()
+                          content = soup.find('article') or soup.find('main') or soup.find('body')
+                          if content:
+                              text = content.get_text(separator='\n', strip=True)
+                              lines = [line.strip() for line in text.split('\n') if line.strip()]
+                              text = '\n'.join(lines)
+                              if len(text) > 2000:
+                                  text = text[:2000] + '\n\n[Content truncated...]'
+                              return text
+                  except Exception as e:
+                      print(f"  Warning: Could not fetch content from {url}: {e}")
+                  return None
+          
+          fetcher = WebContentFetcher()
+          
+          # TLDR RSS feeds
+          rss_urls = [
+              'https://tldr.tech/api/rss/tech',
+              'https://tldr.tech/api/rss/ai',
+          ]
+          
+          learnings = []
+          
+          for rss_url in rss_urls:
+              try:
+                  response = requests.get(rss_url, timeout=10)
+                  if response.status_code == 200:
+                      from xml.etree import ElementTree as ET
+                      root = ET.fromstring(response.content)
+                      
+                      for item in root.findall('.//item')[:5]:
+                          title = item.find('title')
+                          desc = item.find('description')
+                          link = item.find('link')
+                          
+                          if title is not None and title.text:
+                              learning = {
+                                  'title': title.text,
+                                  'description': desc.text if desc is not None else '',
+                                  'source': 'TLDR'
+                              }
+                              
+                              if link is not None and link.text:
+                                  learning['url'] = link.text
+                                  content = fetcher.fetch(link.text)
+                                  if content:
+                                      learning['content'] = content
+                                  time.sleep(0.5)
+                              
+                              learnings.append(learning)
+                      
+                      print(f"✓ Fetched from {rss_url}")
+              except Exception as e:
+                  print(f"✗ Error fetching {rss_url}: {e}")
+          
+          # Save learnings
+          os.makedirs('learnings', exist_ok=True)
+          timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+          filename = f'learnings/tldr_{timestamp}.json'
+          
+          with open(filename, 'w') as f:
+              json.dump({
+                  'timestamp': datetime.now(timezone.utc).isoformat(),
+                  'source': 'TLDR Tech',
+                  'learnings': learnings
+              }, f, indent=2)
+          
+          print(f"✓ Saved {len(learnings)} learnings to {filename}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"has_learnings={str(len(learnings) > 0).lower()}\n")
+              f.write(f"learning_count={len(learnings)}\n")
+              f.write(f"learning_file={filename}\n")
+              if learnings:
+                  f.write(f"sample_learning={learnings[0]['title']}\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Fetch Hacker News
+        id: hackernews
+        if: github.event.inputs.include_hackernews != 'false'
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import requests
+          import json
+          from datetime import datetime, timezone
+          import os
+          import time
+          
+          print("🗞️ Fetching Hacker News stories...")
+          
+          # Fetch top stories
+          response = requests.get('https://hacker-news.firebaseio.com/v0/topstories.json', timeout=10)
+          top_story_ids = response.json()[:30]  # Top 30 stories
+          
+          learnings = []
+          
+          for story_id in top_story_ids:
+              try:
+                  story_response = requests.get(f'https://hacker-news.firebaseio.com/v0/item/{story_id}.json', timeout=10)
+                  story = story_response.json()
+                  
+                  if story and story.get('title'):
+                      learning = {
+                          'title': story['title'],
+                          'description': story.get('text', ''),
+                          'url': story.get('url', f"https://news.ycombinator.com/item?id={story_id}"),
+                          'source': 'Hacker News',
+                          'metadata': {
+                              'score': story.get('score', 0),
+                              'by': story.get('by', 'unknown'),
+                              'descendants': story.get('descendants', 0)  # comment count
+                          }
+                      }
+                      learnings.append(learning)
+                  
+                  time.sleep(0.1)  # Rate limiting
+              except Exception as e:
+                  print(f"Warning: Failed to fetch story {story_id}: {e}")
+                  continue
+          
+          # Save learnings
+          os.makedirs('learnings', exist_ok=True)
+          timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+          filename = f'learnings/hn_{timestamp}.json'
+          
+          with open(filename, 'w') as f:
+              json.dump({
+                  'timestamp': datetime.now(timezone.utc).isoformat(),
+                  'source': 'Hacker News',
+                  'learnings': learnings
+              }, f, indent=2)
+          
+          print(f"✓ Saved {len(learnings)} learnings to {filename}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"has_stories=true\n")
+              f.write(f"story_count={len(learnings)}\n")
+              f.write(f"learning_file={filename}\n")
+              if learnings:
+                  f.write(f"sample_story={learnings[0]['title']}\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Analyze combined learnings
+        id: analyze
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import glob
+          from datetime import datetime, timezone
+          from collections import Counter
+          
+          print("🔍 Analyzing combined learnings...")
+          
+          # Find all recent learning files (from this run)
+          all_learnings = []
+          sources = []
+          
+          # Get files created in the last few minutes
+          for pattern in ['learnings/github_trending_*.json', 'learnings/tldr_*.json', 'learnings/hn_*.json']:
+              files = glob.glob(pattern)
+              # Sort by modification time and get the most recent
+              if files:
+                  files.sort(key=os.path.getmtime, reverse=True)
+                  # Take the most recent file for this source
+                  recent_file = files[0]
+                  with open(recent_file, 'r') as f:
+                      data = json.load(f)
+                      learnings = data.get('learnings', [])
+                      all_learnings.extend(learnings)
+                      sources.append({
+                          'name': data.get('source', 'Unknown'),
+                          'count': len(learnings),
+                          'file': recent_file
+                      })
+          
+          print(f"✓ Loaded {len(all_learnings)} learnings from {len(sources)} sources")
+          
+          # Analyze topics
+          tech_keywords = {
+              'AI/ML': ['ai', 'ml', 'llm', 'gpt', 'machine learning', 'neural', 'copilot'],
+              'Web Dev': ['javascript', 'typescript', 'react', 'vue', 'web', 'frontend'],
+              'Backend': ['api', 'backend', 'server', 'database', 'postgres', 'redis'],
+              'DevOps': ['docker', 'kubernetes', 'ci/cd', 'github actions', 'deployment'],
+              'Languages': ['python', 'go', 'rust', 'java', 'c++'],
+              'Security': ['security', 'vulnerability', 'exploit', 'authentication', 'encryption']
+          }
+          
+          topic_counts = Counter()
+          for learning in all_learnings:
+              title_lower = learning.get('title', '').lower()
+              desc_lower = learning.get('description', '').lower()
+              combined = f"{title_lower} {desc_lower}"
+              
+              for topic, keywords in tech_keywords.items():
+                  if any(kw in combined for kw in keywords):
+                      topic_counts[topic] += 1
+          
+          # Create summary
+          summary = {
+              'timestamp': datetime.now(timezone.utc).isoformat(),
+              'total_learnings': len(all_learnings),
+              'sources': sources,
+              'top_topics': [{'topic': t, 'count': c} for t, c in topic_counts.most_common(5)],
+              'analysis_type': 'combined'
+          }
+          
+          # Save analysis
+          timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+          analysis_file = f'learnings/combined_analysis_{timestamp}.json'
+          
+          with open(analysis_file, 'w') as f:
+              json.dump(summary, f, indent=2)
+          
+          print(f"✓ Saved analysis to {analysis_file}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"total_learnings={len(all_learnings)}\n")
+              f.write(f"source_count={len(sources)}\n")
+              f.write(f"analysis_file={analysis_file}\n")
+              if topic_counts:
+                  top_topic = topic_counts.most_common(1)[0]
+                  f.write(f"top_topic={top_topic[0]}\n")
+                  f.write(f"top_topic_count={top_topic[1]}\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Create combined learning issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "🧠 Combined Learning Session - $(date +%Y-%m-%d)" \
+            --body "## 🧠 Combined Learning Session
+
+          **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          **Total Learnings:** ${{ steps.analyze.outputs.total_learnings }}
+          **Sources:** ${{ steps.analyze.outputs.source_count }}
+
+          ### 📚 Sources Included
+
+          - 🔥 **GitHub Trending:** ${{ steps.github_trending.outputs.repo_count || 0 }} repositories
+          - 📰 **TLDR Tech:** ${{ steps.tldr.outputs.learning_count || 0 }} articles
+          - 🗞️ **Hacker News:** ${{ steps.hackernews.outputs.story_count || 0 }} stories
+
+          ### 🎯 Top Topic
+
+          **${{ steps.analyze.outputs.top_topic }}** (${{ steps.analyze.outputs.top_topic_count }} mentions)
+
+          ### 📊 Sample Learnings
+
+          **GitHub Trending:**
+          ${{ steps.github_trending.outputs.sample_repo || 'N/A' }}
+
+          **TLDR Tech:**
+          ${{ steps.tldr.outputs.sample_learning || 'N/A' }}
+
+          **Hacker News:**
+          ${{ steps.hackernews.outputs.sample_story || 'N/A' }}
+
+          ### 🔗 Resources
+
+          - **Analysis:** [\`${{ steps.analyze.outputs.analysis_file }}\`](https://github.com/enufacas/Chained/blob/main/${{ steps.analyze.outputs.analysis_file }})
+          - **All Learnings:** [Browse learnings](https://github.com/enufacas/Chained/tree/main/learnings)
+
+          ### 🎯 What's New
+
+          This combined learning workflow brings together insights from:
+          - GitHub trending repositories (what developers are building)
+          - TLDR Tech newsletters (curated tech news)
+          - Hacker News stories (community discussions)
+
+          All in one unified learning session!
+
+          ---
+
+          *This combined learning session was automatically created by the Combined Learning workflow.*" \
+            --label "learning,automated,copilot" || echo "Issue creation skipped or failed"
+
+      - name: Create PR for learnings
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Rebuild learnings book
+          echo "Rebuilding learnings book..."
+          python3 tools/build-learnings-book.py || echo "Book building skipped"
+          
+          git add learnings/
+          
+          if git diff --staged --quiet; then
+            echo "No new learnings to commit"
+          else
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="learning/combined-${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "${BRANCH_NAME}"
+            
+            git commit -m "🧠 Combined Learning Session - $(date -u +%Y-%m-%d)"
+            git push origin "${BRANCH_NAME}"
+            
+            gh pr create \
+              --title "🧠 Combined Learning Session - $(date -u +%Y-%m-%d)" \
+              --body "## 🧠 Combined Learning Update
+
+            **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+            **Total Learnings:** ${{ steps.analyze.outputs.total_learnings }}
+            **Sources:** ${{ steps.analyze.outputs.source_count }}
+
+            ### 📚 What's Included
+
+            - 🔥 GitHub Trending: ${{ steps.github_trending.outputs.repo_count || 0 }} repositories
+            - 📰 TLDR Tech: ${{ steps.tldr.outputs.learning_count || 0 }} articles  
+            - 🗞️ Hacker News: ${{ steps.hackernews.outputs.story_count || 0 }} stories
+
+            ### 🎯 Top Topic
+
+            **${{ steps.analyze.outputs.top_topic }}** with ${{ steps.analyze.outputs.top_topic_count }} mentions
+
+            ### 📊 Highlights
+
+            This PR consolidates learnings from multiple sources:
+            - Trending GitHub repositories showing what developers are building
+            - TLDR Tech articles for curated tech news
+            - Hacker News stories for community insights
+
+            All analyzed and categorized for easy discovery!
+
+            ---
+            *This PR was automatically created by the Combined Learning workflow and will be auto-merged.*" \
+              --label "automated,learning,copilot" \
+              --base main \
+              --head "${BRANCH_NAME}"
+            
+            echo "✅ PR created successfully"
+          fi
+
+      - name: Log summary
+        run: |
+          echo "===================="
+          echo "Combined Learning Complete"
+          echo "===================="
+          echo "Total learnings: ${{ steps.analyze.outputs.total_learnings }}"
+          echo "Sources: ${{ steps.analyze.outputs.source_count }}"
+          echo "Top topic: ${{ steps.analyze.outputs.top_topic }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
