@@ -147,10 +147,6 @@ jobs:
           create_label_if_missing "automated" "ededed" "Auto-generated content"
           create_label_if_missing "copilot" "8b5cf6" "Copilot-related tasks"
 
-      - name: Pull latest changes
-        run: |
-          git pull origin main --rebase
-
       - name: Generate agent DNA
         id: generate_agent
         run: |
@@ -321,9 +317,7 @@ jobs:
           AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
           EMOJI="${{ steps.generate_agent.outputs.emoji }}"
           
-          # Pull latest changes before committing
-          git pull origin main --rebase
-          
+          # Create unique branch (no rebase needed since each agent uses unique files)
           BRANCH_NAME="agent-spawn/${AGENT_ID}"
           git checkout -b "$BRANCH_NAME"
           
