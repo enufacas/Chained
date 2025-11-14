@@ -102,6 +102,23 @@ jobs:
         agent_index: ${{ fromJson(format('[{0}]', join(range(1, fromJson(needs.check-capacity.outputs.spawn_count) + 1), ','))) }}
       max-parallel: 3  # Spawn agents in parallel but limit concurrency
     steps:
+      - name: Validate spawn configuration
+        run: |
+          SPAWN_COUNT="${{ needs.check-capacity.outputs.spawn_count }}"
+          AGENT_INDEX="${{ matrix.agent_index }}"
+          
+          if [ -z "$SPAWN_COUNT" ] || [ "$SPAWN_COUNT" -le 0 ]; then
+            echo "❌ Invalid spawn count: $SPAWN_COUNT"
+            exit 1
+          fi
+          
+          if [ -z "$AGENT_INDEX" ] || [ "$AGENT_INDEX" -le 0 ]; then
+            echo "❌ Invalid agent index: $AGENT_INDEX"
+            exit 1
+          fi
+          
+          echo "✅ Spawning agent $AGENT_INDEX of $SPAWN_COUNT"
+      
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
