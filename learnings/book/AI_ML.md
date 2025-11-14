@@ -2,14 +2,42 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 105
+**Total Insights:** 107
 
-**Last Updated:** 2025-11-13
+**Last Updated:** 2025-11-14
 
 ---
 
 
 ## 📰 From Hacker News
+
+
+### Disrupting the first reported AI-orchestrated cyber espionage campaign
+
+**Community Score:** 229 upvotes
+
+**Link:** https://www.anthropic.com/news/disrupting-AI-espionage
+
+
+**Content Summary:**
+
+Policy Disrupting the first reported AI-orchestrated cyber espionage campaign Nov 13, 2025 ● 7 min read Read the report We recently argued that an inflection point had been reached in cybersecurity: a point at which AI models had become genuinely useful for cybersecurity operations, both for good and for ill. This was based on systematic evaluations showing cyber capabilities doubling in six months; we’d also been tracking real-world cyberattacks, observing how malicious actors were using AI cap...
+
+---
+
+
+### SlopStop: Community-driven AI slop detection in Kagi Search
+
+**Community Score:** 400 upvotes
+
+**Link:** https://blog.kagi.com/slopstop
+
+
+**Content Summary:**
+
+Introducing SlopStop: Community-driven AI slop detection in Kagi Search 12 Nov, 2025 Your collective defense against AI-generated spam and content farms We made it our mission to prevent the web from becoming useless and a harmful space. That’s why today, Kagi Search introduces the first community-driven system to detect and downrank deceptive AI-generated text, images, and video inside search results. It’s 2025, and the internet we loved is drowning in AI-generated noise. Content farms exploiti...
+
+---
 
 
 ### GPT-5.1: A smarter, more conversational ChatGPT
@@ -231,24 +259,6 @@ Hi! We’re LateNiteSoft, and we’ve been wo...
 ### The Principles of Diffusion Models
 
 **Community Score:** 201 upvotes
-
-**Link:** https://arxiv.org/abs/2510.21890
-
----
-
-
-### Marble Fountain
-
-**Community Score:** 636 upvotes
-
-**Link:** https://willmorrison.net/posts/marble-fountain/
-
----
-
-
-### The Principles of Diffusion Models
-
-**Community Score:** 170 upvotes
 
 **Link:** https://arxiv.org/abs/2510.21890
 
