@@ -2,14 +2,23 @@
 
 > SQL, NoSQL, data storage, and data engineering
 
-**Total Insights:** 4
+**Total Insights:** 5
 
-**Last Updated:** 2025-11-13
+**Last Updated:** 2025-11-14
 
 ---
 
 
 ## 📰 From Hacker News
+
+
+### 650GB of Data (Delta Lake on S3). Polars vs. DuckDB vs. Daft vs. Spark
+
+**Community Score:** 156 upvotes
+
+**Link:** https://dataengineeringcentral.substack.com/p/650gb-of-data-delta-lake-on-s3-polars
+
+---
 
 
 ### Perkeep – Personal storage system for life

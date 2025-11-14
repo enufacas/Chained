@@ -2,14 +2,28 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 29
+**Total Insights:** 30
 
-**Last Updated:** 2025-11-13
+**Last Updated:** 2025-11-14
 
 ---
 
 
 ## 📰 From Hacker News
+
+
+### Think in math, write in code (2019
+
+**Community Score:** 140 upvotes
+
+**Link:** https://www.jmeiners.com/think-in-math/
+
+
+**Content Summary:**
+
+Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss programming languages. We not only debate their technical merits and aesthetic qualities, but they become integrated into our personal identities, along with the values and traits that we associate with them. Some even defend a form of Linguistic Determinism that thinking is confined to what the language makes typable. Since we spend so much time writing code, a keen interest in language design is justified. However...
+
+---
 
 
 ### We cut our Mongo DB costs by 90% by moving to Hetzner

@@ -2,14 +2,126 @@
 
 > General technology news and insights
 
-**Total Insights:** 148
+**Total Insights:** 156
 
-**Last Updated:** 2025-11-13
+**Last Updated:** 2025-11-14
 
 ---
 
 
 ## 📰 From Hacker News
+
+
+### OpenMANET Wi-Fi HaLow open-source project for Raspberry Pi–based MANET radios
+
+**Community Score:** 102 upvotes
+
+**Link:** https://openmanet.net/
+
+
+**Content Summary:**
+
+OpenMANET is an open-source project for building Raspberry Pi–based MANET radios on Wi-Fi HaLow (915 MHz) using Morse Micro chipsets. A MANET (Mobile Ad-Hoc Network) is a self-forming wireless mesh where each node connects directly without centralized infrastructure. This technology is especially useful in the civilian space for search and rescue, disaster response, airsoft events, and any disconnected communications scenario. Designed to be budget-friendly with excellent long-range performance....
+
+---
+
+
+### Blender Lab
+
+**Community Score:** 226 upvotes
+
+**Link:** https://www.blender.org/news/introducing-blender-lab/
+
+
+**Content Summary:**
+
+Introducing Blender Lab November 7th, 2025 News Francesco Siddi Give Back to Blender Help funding Blender in 2026 If Blender helped you with your projects this year, we're asking you to help us back. For the past year, you've had access to professional 3D software, completely free. No subscriptions, no licenses, no limits. Blender has been there for your projects, your learning, your art, your business. Today, we're asking for $5. That's it. If every active Blender user contributed $5 this month...
+
+---
+
+
+### Blue Origin lands New Glenn rocket booster on second try
+
+**Community Score:** 319 upvotes
+
+**Link:** https://techcrunch.com/2025/11/13/blue-origin-lands-new-glenn-rocket-booster-on-second-try/
+
+
+**Content Summary:**
+
+Jeff Bezos’ Blue Origin has landed the booster of its New Glenn mega-rocket on a drone ship in the Atlantic Ocean on just its second attempt — making it the second company to perform such a feat, following Elon Musk’s SpaceX. It’s an accomplishment that will help the new rocket system become an option to send larger payloads to space, the moon, and beyond. Thursday’s launch wasn’t just about the landing attempt, though. Roughly 34 minutes after takeoff, the upper stage of New Glenn successfully ...
+
+---
+
+
+### SIMA 2: An agent that plays, reasons, and learns with you in virtual 3D worlds
+
+**Community Score:** 189 upvotes
+
+**Link:** https://deepmind.google/blog/sima-2-an-agent-that-plays-reasons-and-learns-with-you-in-virtual-3d-worlds/
+
+
+**Content Summary:**
+
+Genie 3: a general purpose world model that can generate a diversity of interactive environments August 2025 Google DeepMind keyboard_arrow_right Learn more
+
+---
+
+
+### Steam Machine
+
+**Community Score:** 2700 upvotes
+
+**Link:** https://store.steampowered.com/sale/steammachine
+
+
+**Content Summary:**
+
+Login Store Home Discovery Queue Wishlist Points Shop News Stats Community Home Discussions Workshop Market Broadcasts About Support Change language Get the Steam Mobile App View desktop website © Valve Corporation. All rights reserved. All trademarks are property of their respective owners in the US and other countries. Privacy Policy | Legal | Accessibility | Steam Subscriber Agreement | Refunds STORE Home Discovery Queue Wishlist Points Shop News Stats COMMUNITY Home Discussions Workshop Mark...
+
+---
+
+
+### Android developer verification: Early access starts
+
+**Community Score:** 1303 upvotes
+
+**Link:** https://android-developers.googleblog.com/2025/11/android-developer-verification-early.html
+
+
+**Content Summary:**
+
+☰ Android Developers Blog The latest Android and Google Play news for app and game developers. 🔍 Android Developers → Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News More | 12 November 2025 Android developer verification: Early access starts now as we continue to build with your feedback Share this post LinkedIn Twitter Facebook Email Copy link Link copied to clipboard Posted by Matthew Forsythe Di...
+
+---
+
+
+### Zed is our office
+
+**Community Score:** 529 upvotes
+
+**Link:** https://zed.dev/blog/zed-is-our-office
+
+
+**Content Summary:**
+
+It's Monday, 12 PM ET, and the entire Zed Industries team is piled into our weekly all-hands meeting. Some teammates jot down their schedule deviations, while others detail what they intend to focus on for the week. Nathan just wrapped up top-of-mind announcements and Morgan is sharing trends from our metrics and covering operational updates. Meanwhile I'm preparing user quotes from the last week to share out, and others add topics to the Discussions section. Throughout the meeting, screens are ...
+
+---
+
+
+### Heartbeats in Distributed Systems
+
+**Community Score:** 129 upvotes
+
+**Link:** https://arpitbhayani.me/blogs/heartbeats-in-distributed-systems/
+
+
+**Content Summary:**
+
+Heartbeats in Distributed Systems Arpit Bhayani curious, tinkerer, and explorer In distributed systems, one of the fundamental challenges is knowing whether a node or service is alive and functioning properly. Unlike monolithic applications, where everything runs in a single process, distributed systems span multiple machines, networks, and data centers. This becomes even glaring when the nodes are geographically separated. This is where heartbeat mechanisms come into play. Imagine a cluster of ...
+
+---
 
 
 ### Zed is our office
@@ -151,108 +263,6 @@ About Project Euler What is Project Euler? Project Euler is a series of challeng
 **Content Summary:**
 
 This version of Learn Prolog Now! embeds SWI SH , SWI-Prolog for SHaring. The current version rewrites the Learn Prolog Now! HTML on the fly, recognising source code and example queries. It is not yet good at recognising the relations between source code fragments and queries. Also Learn Prolog Now! needs some updating to be more compatible with SWI-Prolog. All sources are on GitHub: LearnPrologNow LPN SWISH Proxy SWISH Learn Prolog Now! by Patrick Blackburn , Johan Bos , and Kristina Striegnitz...
-
----
-
-
-### Valve is about to win the console generation
-
-**Community Score:** 178 upvotes
-
-**Link:** https://xeiaso.net/blog/2025/valve-is-about-to-win-the-console-generation/
-
-
-**Content Summary:**
-
-Making sure you're not a bot! Loading... Please wait a moment while we ensure the security of your connection.
-
----
-
-
-### GLP-1 drugs linked to lower death rates in colon cancer patients
-
-**Community Score:** 115 upvotes
-
-**Link:** https://today.ucsd.edu/story/glp-1-drugs-linked-to-dramatically-lower-death-rates-in-colon-cancer-patients
-
-
-**Content Summary:**
-
-Research Alerts More Research Alerts GLP-1 Drugs Linked to Dramatically Lower Death Rates in Colon Cancer Patients Colon cancer patients taking GLP-1 medications were less than half as likely to die within five years compared to those who weren’t on the drugs (15.5% vs. 37.1%) Story by: Lizelda Lopez - llopez2@ucsd.edu Published Date November 11, 2025 Story by: Lizelda Lopez - llopez2@ucsd.edu Topics covered: Colon Cancer GLP-1 Medication Share This: Article Content A new University of Californi...
-
----
-
-
-### Homebrew no longer allows bypassing Gatekeeper for unsigned/unnotarized software
-
-**Community Score:** 194 upvotes
-
-**Link:** https://github.com/Homebrew/brew/issues/20755
-
-
-**Content Summary:**
-
-Homebrew / brew Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 10.7k Star 45.4k Removing support for --no-quarantine #20755 New issue Copy link New issue Copy link Closed Feature #20973 Closed Removing support for --no-quarantine #20755 Feature #20973 Copy link Description p-linnane opened on Sep 23, 2025 Issue body actions Verification This issue's title and/or description do not reference a sing...
-
----
-
-
-### Voyager 1 is a light-day away by November 2026
-
-**Community Score:** 188 upvotes
-
-**Link:** https://www.iflscience.com/on-november-13-2026-voyager-will-reach-one-full-light-day-away-from-earth-81432
-
-
-**Content Summary:**
-
-For the first time in humanity's long history, a human-made object will soon be a full light-day away from our home planet. The rest of this article is behind a paywall. Please sign in or subscribe to access the full content. Space, as they say, is pretty big, and human-made objects are slow. The record speed any human has ever traveled was set by Apollo 10 back in 1969, and has not been broken since. The fastest human spaceflight remains 39,937.7 kilometers per hour (24,816.1 miles per hour), a...
-
----
-
-
-### The last-ever penny will be minted today in Philadelphia
-
-**Community Score:** 197 upvotes
-
-**Link:** https://www.cnn.com/2025/11/12/business/last-penny-minted
-
----
-
-
-### Steam Machine
-
-**Community Score:** 287 upvotes
-
-**Link:** https://store.steampowered.com/sale/steammachine
-
-
-**Content Summary:**
-
-Login Store Home Discovery Queue Wishlist Points Shop News Stats Community Home Discussions Workshop Market Broadcasts About Support Change language Get the Steam Mobile App View desktop website © Valve Corporation. All rights reserved. All trademarks are property of their respective owners in the US and other countries. Privacy Policy | Legal | Accessibility | Steam Subscriber Agreement | Refunds STORE Home Discovery Queue Wishlist Points Shop News Stats COMMUNITY Home Discussions Workshop Mark...
-
----
-
-
-### Learn Prolog Now
-
-**Community Score:** 167 upvotes
-
-**Link:** https://lpn.swi-prolog.org/lpnpage.php?pageid=top
-
-
-**Content Summary:**
-
-This version of Learn Prolog Now! embeds SWI SH , SWI-Prolog for SHaring. The current version rewrites the Learn Prolog Now! HTML on the fly, recognising source code and example queries. It is not yet good at recognising the relations between source code fragments and queries. Also Learn Prolog Now! needs some updating to be more compatible with SWI-Prolog. All sources are on GitHub: LearnPrologNow LPN SWISH Proxy SWISH Learn Prolog Now! by Patrick Blackburn , Johan Bos , and Kristina Striegnitz...
-
----
-
-
-### Steam Frame
-
-**Community Score:** 183 upvotes
-
-**Link:** https://store.steampowered.com/sale/steamframe
 
 ---
 
