@@ -12,11 +12,6 @@ on:
         type: boolean
         default: false
 
-# CRITICAL: Prevent concurrent registry modifications
-# Only one workflow that modifies registry.json can run at a time
-concurrency:
-  group: agent-registry-updates
-  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -73,15 +68,17 @@ jobs:
           python3 << 'PYTHON_SCRIPT'
           import json
           import subprocess
+          import sys
           from datetime import datetime, timedelta
           
-          REGISTRY_FILE = ".github/agent-system/registry.json"
+          # Use registry manager
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
           
-          # Load registry
-          with open(REGISTRY_FILE, 'r') as f:
-              registry = json.load(f)
+          registry = RegistryManager()
           
-          active_agents = [a for a in registry.get('agents', []) if a.get('status') == 'active']
+          # Get active agents
+          active_agents = registry.list_agents(status='active')
           
           if not active_agents:
               print("No active agents to evaluate")
@@ -94,9 +91,7 @@ jobs:
           maintained = []
           
           # Import the real metrics collector
-          import sys
           import importlib.util
-          sys.path.insert(0, 'tools')
           try:
               spec = importlib.util.spec_from_file_location(
                   "agent_metrics_collector",
@@ -112,13 +107,18 @@ jobs:
               print(f"⚠️  Warning: Could not load metrics collector, using fallback: {e}")
               use_real_metrics = False
           
+          # Get config
+          config = registry.get_config()
+          protected_specializations = config.get('protected_specializations', [])
+          elimination_threshold = config['elimination_threshold']
+          promotion_threshold = config['promotion_threshold']
+          
           for agent in active_agents:
               agent_id = agent['id']
               agent_name = agent['name']
               specialization = agent.get('specialization', '')
               
               # Check if this agent is protected
-              protected_specializations = registry['config'].get('protected_specializations', [])
               is_protected = specialization in protected_specializations
               
               if is_protected:
@@ -158,16 +158,16 @@ jobs:
                   agent['metrics']['overall_score'] = overall_score
                   print(f"\n{agent_name}: {overall_score:.2%} (fallback)")
               
-              elimination_threshold = registry['config']['elimination_threshold']
-              promotion_threshold = registry['config']['promotion_threshold']
-              
               print(f"\n{agent_name}: {overall_score:.2%}")
               
               # Determine fate
               if overall_score >= promotion_threshold:
                   agent['status'] = 'hall_of_fame'
                   agent['promoted_at'] = datetime.utcnow().isoformat() + 'Z'
-                  registry['hall_of_fame'].append(agent)
+                  # Add to hall of fame
+                  hall_of_fame = registry.get_hall_of_fame()
+                  hall_of_fame.append(agent)
+                  registry.update_hall_of_fame(hall_of_fame)
                   promoted.append(agent)
                   print(f"  🏆 PROMOTED to Hall of Fame!")
               elif overall_score < elimination_threshold:
@@ -179,20 +179,26 @@ jobs:
               else:
                   maintained.append(agent)
                   print(f"  ✅ Maintained (active)")
+              
+              # Update agent in registry
+              registry.update_agent(agent)
           
-          # Update registry
-          # Remove promoted/eliminated from active list
-          registry['agents'] = [a for a in registry['agents'] if a['status'] == 'active']
-          registry['last_evaluation'] = datetime.utcnow().isoformat() + 'Z'
+          # Delete eliminated agents
+          for agent in eliminated:
+              registry.delete_agent(agent['id'])
+          
+          # Update metadata
+          metadata = registry.get_metadata()
+          metadata['last_evaluation'] = datetime.utcnow().isoformat() + 'Z'
           
           # Update system lead (highest scoring Hall of Fame member)
-          if registry['hall_of_fame']:
-              top_agent = max(registry['hall_of_fame'], key=lambda a: a['metrics']['overall_score'])
-              registry['system_lead'] = top_agent['id']
+          hall_of_fame = registry.get_hall_of_fame()
+          if hall_of_fame:
+              top_agent = max(hall_of_fame, key=lambda a: a.get('metrics', {}).get('overall_score', 0))
+              metadata['system_lead'] = top_agent['id']
               print(f"\n👑 System Lead: {top_agent['name']}")
           
-          with open(REGISTRY_FILE, 'w') as f:
-              json.dump(registry, f, indent=2)
+          registry.update_metadata(metadata)
           
           # Output results
           print(f"\n📊 Evaluation Summary:")
@@ -266,13 +272,17 @@ jobs:
           import json
           import shutil
           import os
+          import sys
           from pathlib import Path
+          
+          # Use registry manager
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
           
           with open('/tmp/evaluation_results.json', 'r') as f:
               results = json.load(f)
           
-          with open('.github/agent-system/registry.json', 'r') as f:
-              registry = json.load(f)
+          registry = RegistryManager()
           
           for agent in results.get('eliminated', []):
               agent_id = agent['id']
@@ -405,13 +415,17 @@ jobs:
           python3 << 'PYTHON_SCRIPT'
           import json
           import subprocess
+          import sys
           from datetime import datetime
+          
+          # Use registry manager
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
           
           with open('/tmp/evaluation_results.json', 'r') as f:
               results = json.load(f)
           
-          with open('.github/agent-system/registry.json', 'r') as f:
-              registry = json.load(f)
+          registry = RegistryManager()
           
           title = f"🏛️ Agent Evaluation Report - {datetime.utcnow().strftime('%Y-%m-%d')}"
           
