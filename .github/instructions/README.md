@@ -70,6 +70,43 @@ applyTo:
   - ".github/PULL_REQUEST_TEMPLATE/**"
 ```
 
+### 4. `branch-protection.instructions.md` 🆕
+**Applies to:** All workflow files
+- **CRITICAL**: Enforces PR-based workflow for all changes
+- Prohibits direct pushes to main branch
+- Provides patterns for creating PRs from workflows
+- Migration guide for existing workflows
+- Explains branch protection rationale
+
+**Scope:**
+```yaml
+applyTo:
+  - ".github/workflows/**/*.yml"
+  - ".github/workflows/*.yml"
+  - "**/*.yml"
+  - "**/*.yaml"
+```
+
+### 5. `agent-issue-updates.instructions.md` 🆕
+**Applies to:** All workflow files and agent-related code
+- **CRITICAL**: Requires issue updates before removing WIP status
+- Mandates progress comments on issues
+- Provides templates for issue update comments
+- Ensures transparency in agent work
+- Defines timing and content requirements
+
+**Scope:**
+```yaml
+applyTo:
+  - ".github/workflows/**/*.yml"
+  - ".github/workflows/*.yml"
+  - ".github/workflows/copilot-*.yml"
+  - ".github/workflows/*-agent-*.yml"
+  - ".github/workflows/agent-*.yml"
+  - "tools/**/*.py"
+  - "tools/**/*.sh"
+```
+
 ## File Format
 
 Each instruction file follows this structure:

@@ -205,6 +205,22 @@ In your code and comments, reference agents explicitly:
 - Use descriptive branch names
 - Add appropriate labels to PRs
 
+### Branch Protection (CRITICAL)
+- **NEVER push directly to main** - The main branch is protected
+- **ALWAYS create a PR** for any changes to the repository
+- **ALWAYS create a unique branch** with timestamp and run ID
+- **ALWAYS use PR-based workflow** even for automated changes
+- See `.github/instructions/branch-protection.instructions.md` for details
+- Workflows violating this rule will be rejected in code review
+
+### Agent Communication (CRITICAL)
+- **ALWAYS comment on the issue** when work is complete
+- **ALWAYS include @agent-name** attribution in issue updates
+- **ALWAYS post issue update BEFORE** removing WIP status from PR
+- **ALWAYS reference the PR number** in the issue comment
+- See `.github/instructions/agent-issue-updates.instructions.md` for details
+- This ensures transparency and keeps stakeholders informed
+
 ### Python Standards (when applicable)
 - Follow PEP 8 style guide
 - Use type hints for function signatures
@@ -260,11 +276,19 @@ When making changes, consider how they align with these principles of autonomous
 
 ## 📚 Related Documentation
 
+### Core Documentation
 - [Agent System Quick Start](../AGENT_QUICKSTART.md) - Complete agent system guide
 - [Custom Agents Directory](./agents/README.md) - Detailed agent documentation
 - [Main README](../README.md) - Project overview and setup
 - [FAQ](../FAQ.md) - Frequently asked questions
 - [Documentation Index](../docs/INDEX.md) - All documentation organized
+
+### Path-Specific Instructions
+- [Branch Protection Rules](./instructions/branch-protection.instructions.md) - PR-based workflow requirements
+- [Agent Issue Updates](./instructions/agent-issue-updates.instructions.md) - Communication requirements
+- [Agent Mentions](./instructions/agent-mentions.instructions.md) - Agent attribution format
+- [Workflow Agent Assignment](./instructions/workflow-agent-assignment.instructions.md) - Workflow-specific rules
+- [Issue/PR Agent Mentions](./instructions/issue-pr-agent-mentions.instructions.md) - Template requirements
 
 ---
 
