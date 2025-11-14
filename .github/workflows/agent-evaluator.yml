@@ -12,6 +12,12 @@ on:
         type: boolean
         default: false
 
+# CRITICAL: Prevent concurrent registry modifications
+# Only one workflow that modifies registry.json can run at a time
+concurrency:
+  group: agent-registry-updates
+  cancel-in-progress: false
+
 permissions:
   contents: write
   issues: write
