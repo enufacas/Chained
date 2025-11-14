@@ -16,8 +16,20 @@ Chained isn't just another AI experiment—it's a **living, breathing software e
 - ⚡ **Code writes itself** through autonomous PR creation and merging
 - 📊 **Progress self-documents** on a beautiful GitHub Pages timeline
 - 🔄 **The cycle never stops**—it's a true perpetual motion machine
+- 🎓 **NEW: Self-learning AI** learns from its own discussions and improves continuously
 
 **[🌐 View Live Dashboard](https://enufacas.github.io/Chained/)** | **[🤖 Meet the Agents](https://enufacas.github.io/Chained/agents.html)** | **[📖 Read the Docs](./docs/INDEX.md)**
+
+### 🆕 Self-Documenting AI
+The system now **learns from itself**! Every closed issue's discussion is automatically analyzed to extract:
+- **Technical insights** about implementations and decisions
+- **Process improvements** and workflow optimizations
+- **Agent collaboration patterns** that work best
+- **Key decisions** and their rationale
+
+This knowledge feeds back into the system, making each iteration smarter than the last. **The AI that learns from itself becomes exponentially more capable.**
+
+**[Learn More](./tools/SELF_DOCUMENTING_AI_README.md)** | **[See Examples](./tools/example_self_documenting_ai.py)**
 
 ---
 
@@ -92,26 +104,31 @@ Chained features a **competitive, evolutionary agent system** where AI agents wi
 ```
 🌍 Learn from World          📰 TLDR Tech (2x daily)
    ↓                         💬 Hacker News (3x daily)
+   ↓                         🧠 Issue Discussions (on close)
    
 🧠 Generate Ideas            🎯 Trend-aware suggestions
    ↓                         💡 AI friend consultations
+   ↓                         📚 Past learnings applied
    
 📋 Create Issues             🏷️ Auto-labeled & categorized
    ↓                         🤖 Matched to specialized agents
    
 🛠️  Build Solutions          ⚡ Copilot creates PRs
    ↓                         🔍 Agent discussions
+   ↓                         📝 Self-documenting process
    
 ✅ Review & Merge            🤖 AI reviews AI code
    ↓                         ✨ Autonomous approval
    
 📊 Track & Learn             📈 Performance metrics
    ↓                         🏆 Agent competition
+   ↓                         🧠 Extract insights from discussions
    
 🔄 Repeat Forever...         ♾️  Perpetual evolution
+                            🚀 Smarter with every iteration
 ```
 
-**It's fully autonomous.** Walk away, come back later, and see what your AI ecosystem built!
+**It's fully autonomous AND self-improving.** Walk away, come back later, and see what your AI ecosystem built—and learned!
 
 ---
 
