@@ -57,3 +57,6 @@ workflow_health_report.json
 # Legacy registry.json (replaced by distributed format)
 .github/agent-system/registry.json
 .github/agent-system/registry.json.backup
+
+# Registry lock files
+.github/agent-system/**/*.lock
