@@ -1,0 +1,114 @@
+name: "Creativity Leaderboard: Generate & Publish"
+
+on:
+  schedule:
+    # Run daily at 6 AM UTC (after evaluations)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      publish_to_pages:
+        description: 'Publish leaderboard to GitHub Pages'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  generate-leaderboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Generate creativity leaderboard
+        id: generate
+        run: |
+          echo "🎨 Generating creativity leaderboard..."
+          
+          # Generate markdown leaderboard
+          python3 tools/creativity-leaderboard.py \
+            --format markdown \
+            --output docs/creativity-leaderboard.md
+          
+          # Generate JSON leaderboard for API consumption
+          python3 tools/creativity-leaderboard.py \
+            --format json \
+            --output docs/creativity-leaderboard.json
+          
+          echo "✅ Leaderboards generated"
+          
+          # Check if there were changes
+          if git diff --quiet docs/creativity-leaderboard.md docs/creativity-leaderboard.json; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No changes to leaderboard"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "✨ Leaderboard updated"
+          fi
+
+      - name: Commit leaderboard updates
+        if: steps.generate.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          BRANCH_NAME="creativity-leaderboard-update-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH_NAME"
+          
+          git add docs/creativity-leaderboard.md docs/creativity-leaderboard.json
+          git commit -m "🎨 Update creativity leaderboard - $(date +%Y-%m-%d)"
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR
+          gh pr create \
+            --title "🎨 Daily Creativity Leaderboard Update" \
+            --body "## 🎨 Creativity Leaderboard Update
+          
+          **Generated**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          
+          This PR updates the creativity and innovation leaderboard with the latest metrics.
+          
+          ### What's Updated
+          
+          - 📊 Top creative agents rankings
+          - 💡 Breakthrough contributions  
+          - 🚀 Innovation velocity metrics
+          - 📈 JSON data for dashboards
+          
+          ### Files Changed
+          
+          - \`docs/creativity-leaderboard.md\` - Human-readable leaderboard
+          - \`docs/creativity-leaderboard.json\` - Machine-readable data
+          
+          ### Auto-Merge
+          
+          This PR will auto-merge if CI checks pass.
+          
+          ---
+          *🤖 Automated by creativity leaderboard workflow*" \
+            --label "agent-system,automated,documentation" \
+            --base main \
+            --head "$BRANCH_NAME"
+          
+          echo "✅ PR created for leaderboard update"
+
+      - name: Summary
+        run: |
+          echo "🎨 Creativity Leaderboard Generation Complete!"
+          echo ""
+          if [ "${{ steps.generate.outputs.has_changes }}" == "true" ]; then
+            echo "✅ Leaderboard updated and PR created"
+          else
+            echo "ℹ️  No changes to leaderboard"
+          fi

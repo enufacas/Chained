@@ -137,9 +137,11 @@ jobs:
                       agent['metrics']['prs_merged'] = metrics.activity.prs_merged
                       agent['metrics']['reviews_given'] = metrics.activity.reviews_given
                       agent['metrics']['code_quality_score'] = metrics.scores.code_quality
+                      agent['metrics']['creativity_score'] = metrics.scores.creativity
                       agent['metrics']['overall_score'] = overall_score
                       
                       print(f"\n{agent_name}: {overall_score:.2%} (real metrics)")
+                      print(f"  🎨 Creativity: {metrics.scores.creativity:.2%}")
                   except Exception as e:
                       print(f"⚠️  Error collecting metrics for {agent_id}, using fallback: {e}")
                       # Fallback to time-based scoring if metrics collection fails
