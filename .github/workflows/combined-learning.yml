@@ -398,6 +398,14 @@ jobs:
           
           PYTHON_SCRIPT
 
+      - name: Store branch name for issue
+        id: branch_info
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="learning/combined-${TIMESTAMP}-${{ github.run_id }}"
+          echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+          echo "workflow_run_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
+
       - name: Create combined learning issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -433,8 +441,11 @@ jobs:
 
           ### 🔗 Resources
 
-          - **Analysis:** [\`${{ steps.analyze.outputs.analysis_file }}\`](https://github.com/enufacas/Chained/blob/main/${{ steps.analyze.outputs.analysis_file }})
-          - **All Learnings:** [Browse learnings](https://github.com/enufacas/Chained/tree/main/learnings)
+          - **Analysis:** [\`${{ steps.analyze.outputs.analysis_file }}\`](https://github.com/enufacas/Chained/blob/${{ steps.branch_info.outputs.branch_name }}/${{ steps.analyze.outputs.analysis_file }})
+          - **All Learnings:** [Browse learnings](https://github.com/enufacas/Chained/tree/${{ steps.branch_info.outputs.branch_name }}/learnings)
+          - **Workflow Run:** [View execution details](${{ steps.branch_info.outputs.workflow_run_url }})
+
+          > **Note:** Learning files will be available in the PR branch immediately and on main after PR merge.
 
           ### 🎯 What's New
 
@@ -466,8 +477,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new learnings to commit"
           else
-            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-            BRANCH_NAME="learning/combined-${TIMESTAMP}-${{ github.run_id }}"
+            BRANCH_NAME="${{ steps.branch_info.outputs.branch_name }}"
             git checkout -b "${BRANCH_NAME}"
             
             git commit -m "🧠 Combined Learning Session - $(date -u +%Y-%m-%d)"
