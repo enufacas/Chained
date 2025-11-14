@@ -275,6 +275,27 @@ class TestRealKnowledgeGraph(unittest.TestCase):
             
             # Should have at least one file it tests (or empty list is ok)
             self.assertIsInstance(coverage, list)
+    
+    def test_real_graph_has_patterns(self):
+        """Test that patterns are available in real graph"""
+        if self.kgq is None:
+            self.skipTest("Real graph not available")
+        
+        patterns = self.kgq.get_patterns()
+        
+        # Should have pattern data
+        self.assertIsInstance(patterns, dict)
+        # May or may not have specific keys depending on analysis
+    
+    def test_real_graph_has_metrics(self):
+        """Test that metrics are available in real graph"""
+        if self.kgq is None:
+            self.skipTest("Real graph not available")
+        
+        metrics = self.kgq.get_metrics()
+        
+        # Should have metrics data
+        self.assertIsInstance(metrics, dict)
 
 
 class TestQueryEdgeCases(unittest.TestCase):
@@ -323,6 +344,141 @@ class TestQueryEdgeCases(unittest.TestCase):
             self.assertIn('error', result)
         finally:
             Path(temp_path).unlink()
+
+
+class TestPredictiveIntelligence(unittest.TestCase):
+    """Test predictive intelligence features"""
+    
+    @classmethod
+    def setUpClass(cls):
+        """Set up test graph with enhanced metrics"""
+        cls.test_graph = {
+            'metadata': {'generated_at': '2025-11-12T00:00:00', 'total_files': 3},
+            'nodes': [
+                {
+                    'id': 'complex_file.py', 'type': 'code_file', 'label': 'complex_file.py',
+                    'functions': 25, 'classes': 3, 'lines_of_code': 600, 'imports': 15,
+                    'complexity_score': 12.5, 'code_smells': ['large_file', 'too_many_functions'],
+                    'refactoring_count': 5, 'filepath': 'complex_file.py'
+                },
+                {
+                    'id': 'simple_file.py', 'type': 'code_file', 'label': 'simple_file.py',
+                    'functions': 3, 'classes': 0, 'lines_of_code': 50, 'imports': 2,
+                    'complexity_score': 2.0, 'filepath': 'simple_file.py'
+                },
+                {
+                    'id': 'agent:investigate-champion', 'type': 'agent', 
+                    'label': 'investigate-champion', 'files_worked_on': 1, 
+                    'expertise': ['analysis', 'metrics']
+                }
+            ],
+            'relationships': [
+                {'source': 'agent:investigate-champion', 'target': 'complex_file.py', 
+                 'type': 'worked_on', 'weight': 1}
+            ],
+            'statistics': {'total_nodes': 3, 'total_relationships': 1},
+            'patterns': {
+                'error_fixes': {
+                    'complex_file.py': [
+                        {'type': 'runtime_error', 'date': '2025-11-10'},
+                        {'type': 'security', 'date': '2025-11-11'}
+                    ]
+                },
+                'refactorings': {'complex_file.py': 5},
+                'code_smells': {'complex_file.py': ['large_file', 'too_many_functions']}
+            },
+            'metrics': {
+                'complexity': {
+                    'complex_file.py': {
+                        'complexity_score': 12.5,
+                        'functions': 25,
+                        'avg_function_size': 24.0
+                    },
+                    'simple_file.py': {
+                        'complexity_score': 2.0,
+                        'functions': 3,
+                        'avg_function_size': 16.7
+                    }
+                }
+            }
+        }
+        
+        cls.temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+        json.dump(cls.test_graph, cls.temp_file)
+        cls.temp_file.close()
+        
+        cls.kgq = KnowledgeGraphQuery(cls.temp_file.name)
+    
+    @classmethod
+    def tearDownClass(cls):
+        """Clean up temporary file"""
+        Path(cls.temp_file.name).unlink()
+    
+    def test_predict_bug_likelihood_high_risk(self):
+        """Test bug likelihood prediction for high-risk file"""
+        result = self.kgq.predict_bug_likelihood('complex_file.py')
+        
+        self.assertIn('likelihood', result)
+        self.assertIn('risk_score', result)
+        self.assertIn('risk_factors', result)
+        
+        # Complex file should have high or medium risk
+        self.assertIn(result['likelihood'], ['high', 'medium'])
+        self.assertGreater(result['risk_score'], 0)
+        self.assertGreater(len(result['risk_factors']), 0)
+    
+    def test_predict_bug_likelihood_low_risk(self):
+        """Test bug likelihood prediction for low-risk file"""
+        result = self.kgq.predict_bug_likelihood('simple_file.py')
+        
+        self.assertIn('likelihood', result)
+        # Simple file should have low or medium risk
+        self.assertIn(result['likelihood'], ['low', 'medium'])
+    
+    def test_suggest_expert_agent(self):
+        """Test expert agent suggestion"""
+        result = self.kgq.suggest_expert_agent('complex_file.py')
+        
+        self.assertIn('suggestions', result)
+        self.assertIsInstance(result['suggestions'], list)
+        
+        # Should suggest investigate-champion who worked on it
+        if result['suggestions']:
+            self.assertIn('agent', result['suggestions'][0])
+    
+    def test_identify_technical_debt(self):
+        """Test technical debt identification"""
+        result = self.kgq.identify_technical_debt(min_score=3)
+        
+        self.assertIsInstance(result, list)
+        
+        # complex_file.py should be identified as having debt
+        if result:
+            self.assertIn('debt_score', result[0])
+            self.assertIn('indicators', result[0])
+    
+    def test_find_optimization_opportunities(self):
+        """Test optimization opportunity detection"""
+        result = self.kgq.find_optimization_opportunities()
+        
+        self.assertIsInstance(result, list)
+        
+        # Should find opportunities
+        if result:
+            self.assertIn('opportunities', result[0])
+    
+    def test_natural_language_query_technical_debt(self):
+        """Test natural language query for technical debt"""
+        result = self.kgq.query("Show technical debt")
+        
+        self.assertIsInstance(result, list)
+    
+    def test_natural_language_query_bug_risk(self):
+        """Test natural language query for bug risk"""
+        result = self.kgq.query("What is the bug likelihood for complex_file.py?")
+        
+        self.assertIsInstance(result, dict)
+        self.assertIn('likelihood', result)
 
 
 def main():
