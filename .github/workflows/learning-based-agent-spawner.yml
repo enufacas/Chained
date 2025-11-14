@@ -110,8 +110,8 @@ jobs:
         run: |
           echo "🤖 Generating agent from recent learnings..."
           
-          # Run the learning-inspired agent generator
-          AGENT_JSON=$(python3 tools/generate-learning-inspired-agent.py 2>&1)
+          # Run the learning-inspired agent generator (stderr goes to console, stdout captured)
+          AGENT_JSON=$(python3 tools/generate-learning-inspired-agent.py)
           
           # Check if generation was successful
           if [ $? -ne 0 ]; then
