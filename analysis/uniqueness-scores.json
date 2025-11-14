@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2025-11-14T03:55:27.003339+00:00",
+    "generated_at": "2025-11-14T04:08:53.721509+00:00",
     "repository": ".",
     "threshold": 30.0,
     "total_agents_analyzed": 2
@@ -8,18 +8,25 @@
   "scores": {
     "copilot-swe-agent": {
       "agent_id": "copilot-swe-agent",
-      "overall_score": 15.0,
+      "overall_score": 91.0,
       "metrics": {
-        "structural_uniqueness": 50.0,
-        "approach_diversity": 0.0,
-        "innovation_index": 0
+        "structural_uniqueness": 70.0,
+        "approach_diversity": 100.0,
+        "innovation_index": 100.0
       },
       "details": {
-        "total_contributions": 1,
-        "unique_approaches": 0,
-        "unique_file_types": 0,
-        "approaches_used": [],
-        "file_types_used": []
+        "total_contributions": 3,
+        "unique_approaches": 1,
+        "unique_file_types": 4,
+        "approaches_used": [
+          "feature_addition"
+        ],
+        "file_types_used": [
+          ".py",
+          ".json",
+          ".md",
+          ".yml"
+        ]
       }
     },
     "github-actions": {
@@ -41,19 +48,14 @@
   },
   "flagged_agents": [
     {
-      "agent_id": "copilot-swe-agent",
-      "score": 15.0,
-      "reason": "low approach diversity (0.0); low innovation index (0.0)"
-    },
-    {
       "agent_id": "github-actions",
       "score": 15.0,
       "reason": "low approach diversity (0.0); low innovation index (0.0)"
     }
   ],
   "summary": {
-    "average_score": 15.0,
-    "agents_below_threshold": 2,
-    "agents_above_threshold": 0
+    "average_score": 53.0,
+    "agents_below_threshold": 1,
+    "agents_above_threshold": 1
   }
 }
