@@ -1,0 +1,188 @@
+name: "Performance: Metrics Collection"
+
+# Automatically collect performance metrics on schedule and workflow completion
+# Created by @assert-specialist for comprehensive performance monitoring
+
+on:
+  schedule:
+    # Collect metrics every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_run:
+    workflows: ["Agent System: Evaluator", "System: Monitor", "Agent System: Spawner"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      generate_report:
+        description: 'Generate performance report'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  collect-performance-metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install psutil
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Collect performance metrics
+        id: collect
+        run: |
+          echo "📊 Collecting performance metrics..."
+          
+          # Collect current metrics
+          python3 tools/performance-metrics-collector.py --collect --json > /tmp/metrics.json
+          
+          # Parse metrics for summary
+          memory_percent=$(jq -r '.resource_metrics.memory_percent' /tmp/metrics.json)
+          cpu_percent=$(jq -r '.resource_metrics.cpu_percent' /tmp/metrics.json)
+          disk_percent=$(jq -r '.resource_metrics.disk_percent' /tmp/metrics.json)
+          
+          echo "memory_percent=${memory_percent}" >> $GITHUB_OUTPUT
+          echo "cpu_percent=${cpu_percent}" >> $GITHUB_OUTPUT
+          echo "disk_percent=${disk_percent}" >> $GITHUB_OUTPUT
+          
+          echo "✅ Metrics collected successfully"
+
+      - name: Generate performance report
+        if: github.event.inputs.generate_report == 'true' || github.event_name == 'workflow_dispatch'
+        run: |
+          echo "📈 Generating performance report..."
+          python3 tools/performance-metrics-collector.py --report
+
+      - name: Check for threshold violations
+        id: check_violations
+        continue-on-error: true
+        run: |
+          echo "🔍 Checking for threshold violations..."
+          
+          # Get trend analysis
+          python3 tools/performance-metrics-collector.py --analyze --json > /tmp/trends.json
+          
+          # Check for violations
+          violations=$(jq -r '.threshold_violations | length' /tmp/trends.json)
+          
+          if [ "$violations" -gt "0" ]; then
+            echo "⚠️  Found $violations threshold violation(s)"
+            echo "violations_found=true" >> $GITHUB_OUTPUT
+            echo "violation_count=$violations" >> $GITHUB_OUTPUT
+            
+            # Show violations
+            jq -r '.threshold_violations[] | "  - \(.type): \(.value) > \(.threshold)"' /tmp/trends.json
+          else
+            echo "✅ No threshold violations detected"
+            echo "violations_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create PR for metrics update
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if there are changes to commit
+          git add .github/agent-system/metrics/performance/
+          
+          if git diff --staged --quiet; then
+            echo "No metrics changes to commit"
+            exit 0
+          fi
+          
+          # Create unique branch name
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="performance-metrics/${TIMESTAMP}-${{ github.run_id }}"
+          
+          # Checkout new branch
+          git checkout -b "$BRANCH_NAME"
+          
+          # Commit changes
+          git commit -m "perf: collect performance metrics (automated)
+
+          Performance Snapshot:
+          - Memory: ${{ steps.collect.outputs.memory_percent }}%
+          - CPU: ${{ steps.collect.outputs.cpu_percent }}%
+          - Disk: ${{ steps.collect.outputs.disk_percent }}%
+          
+          Automated collection by @assert-specialist's performance metrics system."
+          
+          # Push to new branch
+          git push origin "$BRANCH_NAME"
+          
+          # Create pull request
+          VIOLATIONS_NOTE=""
+          if [ "${{ steps.check_violations.outputs.violations_found }}" = "true" ]; then
+            VIOLATIONS_NOTE="
+          
+          ## ⚠️ Threshold Violations
+          
+          Detected ${{ steps.check_violations.outputs.violation_count }} threshold violation(s).
+          Review the metrics to identify performance issues.
+          "
+          fi
+          
+          gh pr create \
+            --title "perf: performance metrics update - $(date +%Y-%m-%d)" \
+            --body "## 📊 Performance Metrics Collection
+          
+          Automated performance metrics collection by **@assert-specialist**'s monitoring system.
+          
+          ### Current Metrics
+          
+          - **Memory Usage**: ${{ steps.collect.outputs.memory_percent }}%
+          - **CPU Usage**: ${{ steps.collect.outputs.cpu_percent }}%
+          - **Disk Usage**: ${{ steps.collect.outputs.disk_percent }}%
+          ${VIOLATIONS_NOTE}
+          
+          ### Details
+          
+          - **Collected At**: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+          - **Workflow**: ${{ github.workflow }}
+          - **Run ID**: ${{ github.run_id }}
+          
+          This PR contains updated performance metrics for trend analysis and monitoring.
+          
+          **@assert-specialist** - Systematic performance monitoring" \
+            --label "automated,performance,metrics" \
+            --base main \
+            --head "$BRANCH_NAME"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 📊 Performance Metrics Collection Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Collected by**: @assert-specialist" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### System Metrics" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Memory: ${{ steps.collect.outputs.memory_percent }}%" >> $GITHUB_STEP_SUMMARY
+          echo "- CPU: ${{ steps.collect.outputs.cpu_percent }}%" >> $GITHUB_STEP_SUMMARY
+          echo "- Disk: ${{ steps.collect.outputs.disk_percent }}%" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check_violations.outputs.violations_found }}" = "true" ]; then
+            echo "### ⚠️ Violations" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Found ${{ steps.check_violations.outputs.violation_count }} threshold violation(s)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No threshold violations" >> $GITHUB_STEP_SUMMARY
+          fi

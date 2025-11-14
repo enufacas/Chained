@@ -1,0 +1,47 @@
+{
+  "timestamp": "2025-11-14T06:45:34.245287+00:00",
+  "workflow_metrics": [
+    {
+      "workflow_name": "demo-workflow",
+      "execution_time_ms": 1234.56,
+      "status": "success",
+      "timestamp": "2025-11-14T06:45:34.144582+00:00",
+      "run_id": 99999
+    }
+  ],
+  "api_metrics": [
+    {
+      "endpoint": "/api/agents",
+      "response_time_ms": 123.45,
+      "status_code": 200,
+      "timestamp": "2025-11-14T06:45:34.144661+00:00"
+    }
+  ],
+  "resource_metrics": {
+    "memory_used_mb": 1539.48828125,
+    "memory_percent": 9.6,
+    "cpu_percent": 0.0,
+    "disk_used_gb": 54.414512634277344,
+    "disk_percent": 76.0,
+    "timestamp": "2025-11-14T06:45:34.245157+00:00"
+  },
+  "throughput_metrics": [
+    {
+      "operation_type": "agent_matching",
+      "operations_count": 500,
+      "time_window_seconds": 5.0,
+      "operations_per_second": 100.0,
+      "timestamp": "2025-11-14T06:45:34.245229+00:00"
+    }
+  ],
+  "metadata": {
+    "collector_version": "1.0.0",
+    "thresholds": {
+      "workflow_execution_time_ms": 30000,
+      "api_response_time_ms": 5000,
+      "memory_usage_mb": 1024,
+      "cpu_usage_percent": 80.0,
+      "storage_usage_percent": 85.0
+    }
+  }
+}

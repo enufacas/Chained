@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-11-14T06:45:07.484277+00:00",
+  "workflow_metrics": [],
+  "api_metrics": [],
+  "resource_metrics": {
+    "memory_used_mb": 1525.59375,
+    "memory_percent": 9.5,
+    "cpu_percent": 2.4,
+    "disk_used_gb": 54.414485931396484,
+    "disk_percent": 76.0,
+    "timestamp": "2025-11-14T06:45:07.484254+00:00"
+  },
+  "throughput_metrics": [],
+  "metadata": {
+    "collector_version": "1.0.0",
+    "thresholds": {
+      "workflow_execution_time_ms": 30000,
+      "api_response_time_ms": 5000,
+      "memory_usage_mb": 1024,
+      "cpu_usage_percent": 80.0,
+      "storage_usage_percent": 85.0
+    }
+  }
+}
