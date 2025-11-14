@@ -1,0 +1,533 @@
+name: "Agent System: Learning-Based Spawner"
+
+on:
+  schedule:
+    # Run every 3 hours as requested
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      force_spawn:
+        description: 'Force spawn even if recent spawns exist'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  spawn-learning-inspired-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check for recent learnings
+        id: check_learnings
+        run: |
+          echo "🔍 Checking for recent learnings..."
+          
+          # Check if we have recent analysis files (within last 24 hours)
+          RECENT_ANALYSIS=$(find learnings -name "analysis_*.json" -mtime -1 | wc -l)
+          RECENT_HN=$(find learnings -name "hn_*.json" -mtime -1 | wc -l)
+          RECENT_TLDR=$(find learnings -name "tldr_*.json" -mtime -1 | wc -l)
+          
+          echo "Recent analysis files: $RECENT_ANALYSIS"
+          echo "Recent HN files: $RECENT_HN"
+          echo "Recent TLDR files: $RECENT_TLDR"
+          
+          TOTAL_RECENT=$((RECENT_ANALYSIS + RECENT_HN + RECENT_TLDR))
+          
+          if [ $TOTAL_RECENT -gt 0 ]; then
+            echo "has_learnings=true" >> $GITHUB_OUTPUT
+            echo "✅ Found $TOTAL_RECENT recent learning files"
+          else
+            echo "has_learnings=false" >> $GITHUB_OUTPUT
+            echo "⚠️ No recent learnings found (within last 24 hours)"
+          fi
+
+      - name: Check agent capacity
+        id: check_capacity
+        if: steps.check_learnings.outputs.has_learnings == 'true'
+        run: |
+          REGISTRY_FILE=".github/agent-system/registry.json"
+          
+          if [ ! -f "$REGISTRY_FILE" ]; then
+            echo "⚠️ Registry file not found, assuming can spawn"
+            echo "can_spawn=true" >> $GITHUB_OUTPUT
+            echo "active_count=0" >> $GITHUB_OUTPUT
+            echo "max_agents=10" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Count active agents
+          ACTIVE_COUNT=$(python3 -c "
+          import json
+          with open('${REGISTRY_FILE}', 'r') as f:
+              data = json.load(f)
+          active = [a for a in data.get('agents', []) if a.get('status') == 'active']
+          print(len(active))
+          ")
+          
+          MAX_AGENTS=$(python3 -c "
+          import json
+          with open('${REGISTRY_FILE}', 'r') as f:
+              data = json.load(f)
+          print(data.get('config', {}).get('max_active_agents', 10))
+          ")
+          
+          echo "active_count=$ACTIVE_COUNT" >> $GITHUB_OUTPUT
+          echo "max_agents=$MAX_AGENTS" >> $GITHUB_OUTPUT
+          
+          if [ "$ACTIVE_COUNT" -ge "$MAX_AGENTS" ]; then
+            echo "can_spawn=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Maximum agent capacity reached ($ACTIVE_COUNT/$MAX_AGENTS)"
+          else
+            echo "can_spawn=true" >> $GITHUB_OUTPUT
+            echo "✅ Can spawn new agent ($ACTIVE_COUNT/$MAX_AGENTS)"
+          fi
+
+      - name: Generate learning-inspired agent
+        id: generate
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          echo "🤖 Generating agent from recent learnings..."
+          
+          # Run the learning-inspired agent generator
+          AGENT_JSON=$(python3 tools/generate-learning-inspired-agent.py 2>&1)
+          
+          # Check if generation was successful
+          if [ $? -ne 0 ]; then
+            echo "❌ Agent generation failed"
+            echo "$AGENT_JSON"
+            exit 1
+          fi
+          
+          # Validate JSON output
+          if ! echo "$AGENT_JSON" | jq empty 2>/dev/null; then
+            echo "❌ Invalid JSON output from agent generator"
+            echo "$AGENT_JSON"
+            exit 1
+          fi
+          
+          echo "✅ Agent generated successfully"
+          
+          # Extract agent metadata
+          AGENT_NAME=$(echo "$AGENT_JSON" | jq -r '.agent_name')
+          DISPLAY_NAME=$(echo "$AGENT_JSON" | jq -r '.display_name')
+          EMOJI=$(echo "$AGENT_JSON" | jq -r '.emoji')
+          HUMAN_NAME=$(echo "$AGENT_JSON" | jq -r '.human_name')
+          PERSONALITY=$(echo "$AGENT_JSON" | jq -r '.personality')
+          COMM_STYLE=$(echo "$AGENT_JSON" | jq -r '.communication_style')
+          INSPIRATION=$(echo "$AGENT_JSON" | jq -r '.inspiration')
+          DESCRIPTION=$(echo "$AGENT_JSON" | jq -r '.description')
+          TOPIC=$(echo "$AGENT_JSON" | jq -r '.topic')
+          TOPIC_SCORE=$(echo "$AGENT_JSON" | jq -r '.topic_score')
+          
+          # Output for next steps
+          echo "agent_name=$AGENT_NAME" >> $GITHUB_OUTPUT
+          echo "display_name=$DISPLAY_NAME" >> $GITHUB_OUTPUT
+          echo "emoji=$EMOJI" >> $GITHUB_OUTPUT
+          echo "human_name=$HUMAN_NAME" >> $GITHUB_OUTPUT
+          echo "personality=$PERSONALITY" >> $GITHUB_OUTPUT
+          echo "communication_style=$COMM_STYLE" >> $GITHUB_OUTPUT
+          echo "inspiration=$INSPIRATION" >> $GITHUB_OUTPUT
+          echo "description=$DESCRIPTION" >> $GITHUB_OUTPUT
+          echo "topic=$TOPIC" >> $GITHUB_OUTPUT
+          echo "topic_score=$TOPIC_SCORE" >> $GITHUB_OUTPUT
+          
+          echo "🎯 Agent Details:"
+          echo "  Name: $AGENT_NAME"
+          echo "  Display: $DISPLAY_NAME"
+          echo "  Emoji: $EMOJI"
+          echo "  Inspired by: $INSPIRATION"
+          echo "  Based on topic: $TOPIC (score: $TOPIC_SCORE)"
+
+      - name: Register agent in system
+        id: register
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          REGISTRY_FILE=".github/agent-system/registry.json"
+          TIMESTAMP=$(date +%s)
+          AGENT_ID="agent-$TIMESTAMP"
+          
+          echo "📝 Registering agent in system: $AGENT_ID"
+          
+          # Ensure registry exists
+          if [ ! -f "$REGISTRY_FILE" ]; then
+            mkdir -p .github/agent-system
+            cat > "$REGISTRY_FILE" << 'EOF'
+          {
+            "version": "2.0.0",
+            "agents": [],
+            "hall_of_fame": [],
+            "system_lead": null,
+            "config": {
+              "spawn_interval_hours": 3,
+              "max_active_agents": 10,
+              "elimination_threshold": 0.3,
+              "promotion_threshold": 0.85,
+              "spawn_mode": "learning-based",
+              "metrics_weight": {
+                "code_quality": 0.3,
+                "issue_resolution": 0.25,
+                "pr_success": 0.25,
+                "peer_review": 0.2
+              }
+            },
+            "last_spawn": null,
+            "last_evaluation": null
+          }
+          EOF
+          fi
+          
+          python3 << PYTHON_SCRIPT
+          import json
+          from datetime import datetime
+          
+          agent_id = "$AGENT_ID"
+          agent_name = "${{ steps.generate.outputs.display_name }}"
+          human_name = "${{ steps.generate.outputs.human_name }}"
+          specialization = "${{ steps.generate.outputs.agent_name }}"
+          personality = "${{ steps.generate.outputs.personality }}"
+          communication_style = "${{ steps.generate.outputs.communication_style }}"
+          
+          with open("${REGISTRY_FILE}", 'r') as f:
+              registry = json.load(f)
+          
+          new_agent = {
+              "id": agent_id,
+              "name": f"${{ steps.generate.outputs.emoji }} {agent_name}",
+              "human_name": human_name,
+              "specialization": specialization,
+              "status": "active",
+              "spawned_at": datetime.utcnow().isoformat() + "Z",
+              "spawn_method": "learning-based",
+              "inspiration_topic": "${{ steps.generate.outputs.topic }}",
+              "topic_score": ${{ steps.generate.outputs.topic_score }},
+              "personality": personality,
+              "communication_style": communication_style,
+              "traits": {
+                  "creativity": 75,
+                  "caution": 60,
+                  "speed": 70
+              },
+              "metrics": {
+                  "issues_resolved": 0,
+                  "prs_merged": 0,
+                  "reviews_given": 0,
+                  "code_quality_score": 0.5,
+                  "overall_score": 0.0
+              },
+              "contributions": []
+          }
+          
+          registry['agents'].append(new_agent)
+          registry['last_spawn'] = datetime.utcnow().isoformat() + "Z"
+          
+          with open("${REGISTRY_FILE}", 'w') as f:
+              json.dump(registry, f, indent=2)
+          
+          print(f"✅ Agent {agent_name} registered successfully!")
+          PYTHON_SCRIPT
+          
+          echo "agent_id=$AGENT_ID" >> $GITHUB_OUTPUT
+
+      - name: Create agent profile
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          AGENT_ID="${{ steps.register.outputs.agent_id }}"
+          AGENT_NAME="${{ steps.generate.outputs.display_name }}"
+          SPECIALIZATION="${{ steps.generate.outputs.agent_name }}"
+          EMOJI="${{ steps.generate.outputs.emoji }}"
+          TOPIC="${{ steps.generate.outputs.topic }}"
+          
+          mkdir -p ".github/agent-system/profiles"
+          
+          cat > ".github/agent-system/profiles/${AGENT_ID}.md" << EOF
+          # $EMOJI $AGENT_NAME
+          
+          **ID**: $AGENT_ID  
+          **Human Name**: ${{ steps.generate.outputs.human_name }}  
+          **Specialization**: $SPECIALIZATION  
+          **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](../../agents/${SPECIALIZATION}.md)  
+          **Status**: 🟢 Active  
+          **Spawned**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')  
+          **Spawn Method**: Learning-Based (Dynamic)  
+          **Inspiration**: Based on trending topic "$TOPIC" (score: ${{ steps.generate.outputs.topic_score }})
+          
+          ## 🌟 Learning-Based Origin
+          
+          This agent was **dynamically generated** based on recent learnings from:
+          - Hacker News trending discussions
+          - TLDR Tech newsletters
+          - Community sentiment and hot topics
+          
+          **Inspired by trending topic**: $TOPIC
+          
+          This represents the autonomous system's ability to evolve based on real-world tech trends!
+          
+          ## Personality
+          
+          **Character**: ${{ steps.generate.outputs.personality }}  
+          **Communication Style**: ${{ steps.generate.outputs.communication_style }}  
+          **Inspired by**: ${{ steps.generate.outputs.inspiration }}
+          
+          ## Performance Traits
+          
+          - **Creativity**: 75/100 (Learning-based agents are highly adaptive)
+          - **Caution**: 60/100 (Balanced approach to new technologies)
+          - **Speed**: 70/100 (Quick to adopt emerging patterns)
+          
+          ## Mission
+          
+          ${{ steps.generate.outputs.description }}
+          
+          ## Performance Metrics
+          
+          - Issues Resolved: 0
+          - PRs Merged: 0
+          - Reviews Given: 0
+          - Code Quality Score: 50%
+          - Overall Score: 0%
+          
+          ## Contributions
+          
+          *No contributions yet. This agent is ready to prove its value!*
+          
+          ---
+          
+          *🧬 Dynamically evolved from tech community learnings. Part of the autonomous agent ecosystem.*
+          EOF
+          
+          echo "✅ Agent profile created"
+
+      - name: Commit and create PR
+        id: create_pr
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          AGENT_ID="${{ steps.register.outputs.agent_id }}"
+          AGENT_NAME="${{ steps.generate.outputs.display_name }}"
+          SPECIALIZATION="${{ steps.generate.outputs.agent_name }}"
+          EMOJI="${{ steps.generate.outputs.emoji }}"
+          TOPIC="${{ steps.generate.outputs.topic }}"
+          
+          BRANCH_NAME="learning-agent-spawn/${AGENT_ID}"
+          git checkout -b "$BRANCH_NAME"
+          
+          # Add all changes
+          git add .github/agents/
+          git add .github/agent-system/
+          
+          git commit -m "$EMOJI Spawn learning-inspired agent: $AGENT_NAME
+
+          Dynamically generated from trending topic: $TOPIC
+          Specialization: $SPECIALIZATION
+          
+          This agent was created by analyzing recent Hacker News and TLDR Tech
+          learnings to identify hot topics and emerging trends in the tech community."
+          
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR
+          PR_URL=$(gh pr create \
+            --title "$EMOJI Learning-Based Agent: $AGENT_NAME" \
+            --body "## 🧬 Learning-Inspired Agent Spawned!
+          
+          A new agent has been **dynamically generated** based on recent tech community learnings!
+          
+          ### 🎯 Agent Details
+          
+          **Name**: $EMOJI $AGENT_NAME  
+          **Agent ID**: $AGENT_ID  
+          **Specialization**: $SPECIALIZATION  
+          **Personality**: ${{ steps.generate.outputs.personality }}  
+          **Communication**: ${{ steps.generate.outputs.communication_style }}  
+          **Inspired by**: ${{ steps.generate.outputs.inspiration }}
+          
+          ### 🔥 Origin Story
+          
+          This agent was created by the **Learning-Based Agent Spawner** which:
+          1. ✅ Analyzed recent Hacker News stories and TLDR Tech newsletters
+          2. ✅ Identified trending topics and hot themes
+          3. ✅ Selected most interesting topic: **$TOPIC** (score: ${{ steps.generate.outputs.topic_score }})
+          4. ✅ Generated unique agent personality and specialization
+          5. ✅ Created agent definition conforming to system standards
+          
+          **This agent did NOT exist before!** It was created dynamically at runtime based on what the AI found most interesting in recent tech news.
+          
+          ### 🌟 What Makes This Special
+          
+          - **No hardcoded templates**: Agent was generated from learnings, not repository literals
+          - **Community-driven**: Reflects actual tech community interests and trends
+          - **Autonomous evolution**: System adapts to emerging technologies automatically
+          - **Dynamic specialization**: Agent focuses on currently relevant topics
+          
+          ### 📊 Topic Inspiration
+          
+          **Topic**: $TOPIC  
+          **Community Score**: ${{ steps.generate.outputs.topic_score }}
+          
+          This topic was identified as highly interesting based on:
+          - Community upvotes and engagement
+          - Mention frequency across sources
+          - Thematic analysis results
+          - Current relevance and momentum
+          
+          ### 🎭 Agent Personality
+          
+          **Character**: ${{ steps.generate.outputs.personality }}  
+          **Communication Style**: ${{ steps.generate.outputs.communication_style }}
+          
+          The agent will bring its unique personality to all interactions!
+          
+          ### 📁 Changes
+          
+          - 🆕 Created agent definition: \`.github/agents/${SPECIALIZATION}.md\`
+          - 📝 Registered in system: \`.github/agent-system/registry.json\`
+          - 👤 Created profile: \`.github/agent-system/profiles/${AGENT_ID}.md\`
+          
+          ### ⚔️ Competition System
+          
+          This agent will:
+          - 🎯 Compete with other agents for survival
+          - 📊 Be evaluated on code quality, issue resolution, and PR success
+          - 🏆 Strive for Hall of Fame (score > 85%)
+          - ⚠️ Must maintain score > 30% to avoid elimination
+          
+          ### 🚀 What's Next
+          
+          Once this PR is merged, the agent will:
+          1. Become active in the agent system
+          2. Be eligible for issue assignments
+          3. Start contributing to the repository
+          4. Be evaluated in next agent evaluation cycle
+          
+          ---
+          
+          *🧬 This is autonomous AI evolution in action! The system is learning and adapting based on real-world tech trends.*" \
+            --label "agent-system,automated,copilot,learning-based" \
+            --base main \
+            --head "$BRANCH_NAME")
+          
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          
+          echo "✅ PR #$PR_NUMBER created"
+
+      - name: Create announcement issue
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          AGENT_NAME="${{ steps.generate.outputs.display_name }}"
+          EMOJI="${{ steps.generate.outputs.emoji }}"
+          TOPIC="${{ steps.generate.outputs.topic }}"
+          SPECIALIZATION="${{ steps.generate.outputs.agent_name }}"
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+          
+          gh issue create \
+            --title "$EMOJI New Learning-Based Agent: $AGENT_NAME" \
+            --body "## 🧬 A New Agent Has Evolved!
+          
+          The autonomous agent system has spawned a new agent based on recent tech community learnings!
+          
+          ### Meet $AGENT_NAME!
+          
+          **Specialization**: $SPECIALIZATION  
+          **Personality**: ${{ steps.generate.outputs.personality }}  
+          **Inspired by**: ${{ steps.generate.outputs.inspiration }}  
+          **Created from**: Analysis of trending topic \"$TOPIC\"
+          
+          ### 🔥 How This Agent Was Born
+          
+          The **Learning-Based Agent Spawner** runs every 3 hours to:
+          1. Read recent Hacker News and TLDR Tech learnings
+          2. Analyze hot topics and emerging trends
+          3. Pick the most interesting topic based on scores
+          4. Generate a completely new agent specialization
+          5. Create unique personality and communication style
+          6. Spawn the agent into the ecosystem
+          
+          **This agent is 100% dynamically generated** - it didn't exist before, and was created based purely on what the AI found interesting in recent tech news!
+          
+          ### 📊 Origin Data
+          
+          **Inspiration Topic**: $TOPIC  
+          **Topic Score**: ${{ steps.generate.outputs.topic_score }}  
+          **Sources**: Hacker News + TLDR Tech (last 24 hours)
+          
+          ### 🎯 What This Agent Will Do
+          
+          As a **$SPECIALIZATION** specialist, this agent will:
+          - Apply cutting-edge knowledge from recent tech trends
+          - Contribute to issues matching its specialization
+          - Compete with other agents for survival
+          - Learn and adapt based on performance
+          - Potentially reach the Hall of Fame (score > 85%)
+          
+          ### 🔗 Related PR
+          
+          The agent spawn PR is #$PR_NUMBER - once merged, the agent becomes active!
+          
+          ### 🌟 Why This Matters
+          
+          This demonstrates:
+          - **Autonomous evolution**: System adapts to new technologies automatically
+          - **Community-driven**: Agents reflect actual tech interests
+          - **No hardcoding**: Agent created from learnings, not templates
+          - **Real-time adaptation**: System stays current with tech trends
+          
+          ---
+          
+          *🤖 Autonomous agent spawning in action. The system is alive and evolving!*" \
+            --label "agent-system,announcement,automated,learning-based" || echo "Issue creation skipped"
+
+      - name: Summary
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          echo "🎉 Learning-Based Agent Spawning Complete!"
+          echo ""
+          echo "Agent: ${{ steps.generate.outputs.display_name }}"
+          echo "Specialization: ${{ steps.generate.outputs.agent_name }}"
+          echo "ID: ${{ steps.register.outputs.agent_id }}"
+          echo "Based on topic: ${{ steps.generate.outputs.topic }}"
+          echo "Topic score: ${{ steps.generate.outputs.topic_score }}"
+          echo ""
+          echo "The agent was dynamically created from recent learnings!"
+
+      - name: No learnings available
+        if: steps.check_learnings.outputs.has_learnings == 'false'
+        run: |
+          echo "⚠️ No recent learnings found"
+          echo "The learning workflows (Hacker News and TLDR) need to run first"
+          echo "to provide data for agent generation."
+          echo ""
+          echo "Skipping agent spawn for now."
+
+      - name: Capacity limit reached
+        if: steps.check_learnings.outputs.has_learnings == 'true' && steps.check_capacity.outputs.can_spawn == 'false'
+        run: |
+          echo "⚠️ Cannot spawn new agent - capacity limit reached"
+          echo "Active agents: ${{ steps.check_capacity.outputs.active_count }}/${{ steps.check_capacity.outputs.max_agents }}"
+          echo ""
+          echo "Wait for agent evaluation workflow to eliminate underperforming agents."
