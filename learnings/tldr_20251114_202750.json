@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-11-14T20:27:50.764152+00:00",
+  "source": "TLDR Tech",
+  "learnings": [],
+  "trends": [
+    "AI/ML: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+    "AI/ML: GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb",
+    "AI/ML: iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
+    "Programming: Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c",
+    "AI/ML: MSFT OpenAI docs leak \ud83d\udcc4, GPT-5.1 \ud83e\udd16, Anthropic\u2019s $50B Bet \ud83d\udcb0",
+    "AI/ML: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+    "AI/ML: Grok Code Remote \ud83d\udc68\u200d\ud83d\udcbb , GPT-5.1 on OpenRouter \ud83e\udd16, Moonshot AI AMA \ud83d\udcac",
+    "AI/ML: Nano Banana 2 leaks \ud83c\udf4c, GPT-5-Codex-Mini \ud83d\udc68\u200d\ud83d\udcbb, nested learning \ud83e\udde0",
+    "AI/ML: AI Static Analysis \ud83d\udd2e, Duolingo\u2019s FinOps \ud83d\udcb0, S3 Cost Management \ud83d\udcb2",
+    "AI/ML: Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependencies \ud83e\udd80",
+    "AI/ML: Better Software \ud83d\udcac, Cloud Security AI \u2601\ufe0f, Code Research \ud83e\udde0",
+    "AI/ML: AWS DynamoDB Outage \u2601\ufe0f, Grafana Mimir \ud83c\udd95, AI Platform At Pinterest \ud83e\uddf7"
+  ],
+  "parsing_stats": {
+    "total_input": 15,
+    "accepted": 0,
+    "rejected": 15,
+    "acceptance_rate": 0.0,
+    "rejected_titles": [
+      {
+        "title": "Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+        "reason": "Failed quality assessment"
+      },
+      {
+        "title": "GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb",
+        "reason": "Failed quality assessment"
+      },
+      {
+        "title": "SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb",
+        "reason": "Failed quality assessment"
+      },
+      {
+        "title": "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
+        "reason": "Failed quality assessment"
+      },
+      {
+        "title": "Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+        "reason": "Failed quality assessment"
+      }
+    ]
+  },
+  "parsed_version": "1.0"
+}
