@@ -2,7 +2,7 @@
 
 > SQL, NoSQL, data storage, and data engineering
 
-**Total Insights:** 5
+**Total Insights:** 8
 
 **Last Updated:** 2025-11-14
 
@@ -10,6 +10,29 @@
 
 
 ## 📰 From Hacker News
+
+
+### 650GB of Data (Delta Lake on S3). Polars vs. DuckDB vs. Daft vs. Spark
+
+**Community Score:** 208 upvotes
+
+**Link:** https://dataengineeringcentral.substack.com/p/650gb-of-data-delta-lake-on-s3-polars
+
+---
+
+
+### RegreSQL: Regression Testing for PostgreSQL Queries
+
+**Link:** https://boringsql.com/posts/regresql-testing-queries/
+
+---
+
+
+### 650GB of Data (Delta Lake on S3). Polars vs. DuckDB vs. Daft vs. Spark
+
+**Link:** https://dataengineeringcentral.substack.com/p/650gb-of-data-delta-lake-on-s3-polars
+
+---
 
 
 ### 650GB of Data (Delta Lake on S3). Polars vs. DuckDB vs. Daft vs. Spark

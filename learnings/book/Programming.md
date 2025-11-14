@@ -2,14 +2,68 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 30
+**Total Insights:** 36
 
 **Last Updated:** 2025-11-14
 
 ---
 
 
+## 📰 From GitHub Trending
+
+
+### davila7/claude-code-templates - CLI tool for configuring and monitoring Claude Code
+
+**Link:** https://github.com/davila7/claude-code-templates
+
+
+CLI tool for configuring and monitoring Claude Code
+
+---
+
+
+### jaywcjlove/awesome-mac -  Now we have become very big, Different from the original idea. Collect premium software in various
+
+**Link:** https://github.com/jaywcjlove/awesome-mac
+
+
+ Now we have become very big, Different from the original idea. Collect premium software in various categories.
+
+---
+
+
+### librespot-org/librespot - Open Source Spotify client library
+
+**Link:** https://github.com/librespot-org/librespot
+
+
+Open Source Spotify client library
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### Think in math, write in code (2019
+
+**Community Score:** 178 upvotes
+
+**Link:** https://www.jmeiners.com/think-in-math/
+
+
+**Content Summary:**
+
+Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss programming languages. We not only debate their technical merits and aesthetic qualities, but they become integrated into our personal identities, along with the values and traits that we associate with them. Some even defend a form of Linguistic Determinism that thinking is confined to what the language makes typable. Since we spend so much time writing code, a keen interest in language design is justified. However...
+
+---
+
+
+### Think in math, write in code (2019)
+
+**Link:** https://www.jmeiners.com/think-in-math/
+
+---
 
 
 ### Think in math, write in code (2019
@@ -244,6 +298,28 @@ in a new tab. When you're done, simply close that tab...
 
 
 ## 📰 From TLDR Tech
+
+
+### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-07
+
+
+**Content Summary:**
+
+Get $500 Google Cloud credits when you upgrade to Google Developer premium (Sponsor)
+Considering a
+Google Developer Premium membership
+? Google recently expanded the availability of its
+monthly membership plan
+so more people can experiment with the full breadth of Google's developer tools, including Gemini Code Assist.
+Sign up for a yearly membership to get benefits including:
+A 1-hour consultation with Google Cloud experts.
+$550 in GenAI & Cloud developer credits.
+Unlimited Google Skills.
+1500 ...
+
+---
 
 
 ### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻

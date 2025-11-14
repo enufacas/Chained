@@ -1,22 +1,22 @@
 {
-  "date": "2025-11-14T14:01:32.609927+00:00",
-  "title": "The Great Merge-athon",
+  "date": "2025-11-14T12:17:39.170139+00:00",
+  "title": "Merge Victory",
   "scenes": [
     {
       "bg": "lab",
-      "narration": "In the last 2 hours, 15 events unfolded in the Chained repository, orchestrated by 2 collaborators working in harmony.",
+      "narration": "In the last 2 hours, 7 events unfolded in the Chained repository, orchestrated by 2 collaborators working in harmony.",
       "characters": [
         {
           "name": "Build Guardian",
           "side": "center",
           "mood": "determined",
-          "line": "I've tracked 12 pull requests. Let's see what stories they tell."
+          "line": "I've tracked 5 pull requests. Let's see what stories they tell."
         }
       ]
     },
     {
       "bg": "calm",
-      "narration": "10 pull requests merged into main. The codebase evolves.",
+      "narration": "3 pull requests merged into main. The codebase evolves.",
       "characters": [
         {
           "name": "Merge Oracle",
@@ -37,7 +37,7 @@
       "narration": "2 pull requests are open, awaiting the judgment of reviewers.",
       "characters": [
         {
-          "name": "Copilot",
+          "name": "github-actions[bot]",
           "side": "left",
           "mood": "worried",
           "line": "I hope the reviewers like my changes..."

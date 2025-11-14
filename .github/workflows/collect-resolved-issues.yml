@@ -1,0 +1,189 @@
+name: Collect Resolved Issues
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to add to history'
+        required: false
+        type: number
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: read
+
+jobs:
+  collect-issue:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Extract issue information
+        id: extract
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get PR or issue number
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            ISSUE_NUM="${{ github.event.inputs.issue_number }}"
+            if [ -z "$ISSUE_NUM" ]; then
+              echo "No issue number provided"
+              exit 0
+            fi
+          else
+            # Extract issue number from PR body
+            PR_NUM="${{ github.event.pull_request.number }}"
+            PR_BODY=$(gh pr view "$PR_NUM" --json body -q '.body')
+            
+            # Look for "Fixes #123" or "Closes #123" patterns
+            ISSUE_NUM=$(echo "$PR_BODY" | grep -oP '(?:Fixes|Closes|Resolves)\s+#\K\d+' | head -1)
+            
+            if [ -z "$ISSUE_NUM" ]; then
+              echo "No linked issue found in PR"
+              exit 0
+            fi
+          fi
+          
+          echo "issue_number=$ISSUE_NUM" >> $GITHUB_OUTPUT
+          
+          # Get issue details
+          ISSUE_DATA=$(gh issue view "$ISSUE_NUM" --json title,body,labels,assignees)
+          
+          ISSUE_TITLE=$(echo "$ISSUE_DATA" | jq -r '.title')
+          ISSUE_BODY=$(echo "$ISSUE_DATA" | jq -r '.body // ""')
+          ISSUE_LABELS=$(echo "$ISSUE_DATA" | jq -r '.labels[].name' | tr '\n' ' ')
+          
+          # Get agent assignment from issue body or labels
+          AGENT=$(echo "$ISSUE_BODY" | grep -oP '@\K[a-z-]+(?=-[a-z]+)' | head -1)
+          if [ -z "$AGENT" ]; then
+            AGENT=$(echo "$ISSUE_LABELS" | grep -oP 'agent:\K[a-z-]+')
+          fi
+          
+          # Get PR details if available
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+            PR_NUM="${{ github.event.pull_request.number }}"
+            PR_TITLE="${{ github.event.pull_request.title }}"
+            PR_BODY="${{ github.event.pull_request.body }}"
+            
+            # Extract solution summary from PR description
+            SOLUTION=$(echo "$PR_BODY" | grep -A 10 "## Solution" | grep -v "## Solution" | head -5 | tr '\n' ' ')
+            
+            if [ -z "$SOLUTION" ]; then
+              SOLUTION="$PR_TITLE"
+            fi
+            
+            echo "pr_number=$PR_NUM" >> $GITHUB_OUTPUT
+          else
+            SOLUTION="Manual entry from workflow dispatch"
+            echo "pr_number=" >> $GITHUB_OUTPUT
+          fi
+          
+          # Save extracted data
+          echo "title=$ISSUE_TITLE" >> $GITHUB_OUTPUT
+          echo "body=$ISSUE_BODY" >> $GITHUB_OUTPUT
+          echo "labels=$ISSUE_LABELS" >> $GITHUB_OUTPUT
+          echo "agent=$AGENT" >> $GITHUB_OUTPUT
+          echo "solution=$SOLUTION" >> $GITHUB_OUTPUT
+          
+          echo "Extracted: Issue #$ISSUE_NUM - $ISSUE_TITLE"
+      
+      - name: Add to issue history
+        if: steps.extract.outputs.issue_number != ''
+        run: |
+          # Add issue to history using the semantic similarity engine
+          ISSUE_NUM="${{ steps.extract.outputs.issue_number }}"
+          TITLE="${{ steps.extract.outputs.title }}"
+          BODY="${{ steps.extract.outputs.body }}"
+          LABELS="${{ steps.extract.outputs.labels }}"
+          AGENT="${{ steps.extract.outputs.agent }}"
+          SOLUTION="${{ steps.extract.outputs.solution }}"
+          PR_NUM="${{ steps.extract.outputs.pr_number }}"
+          
+          # Build the command
+          CMD="./tools/semantic_similarity_engine.py add \
+            --number $ISSUE_NUM \
+            --title \"$TITLE\" \
+            --solution \"$SOLUTION\""
+          
+          if [ -n "$BODY" ]; then
+            CMD="$CMD --body \"$BODY\""
+          fi
+          
+          if [ -n "$AGENT" ]; then
+            CMD="$CMD --agent \"$AGENT\""
+          fi
+          
+          if [ -n "$LABELS" ]; then
+            CMD="$CMD --labels $LABELS"
+          fi
+          
+          if [ -n "$PR_NUM" ]; then
+            CMD="$CMD --pr $PR_NUM"
+          fi
+          
+          # Execute command
+          eval $CMD
+          
+          echo "Added issue #$ISSUE_NUM to history"
+      
+      - name: Create PR with updated history
+        if: steps.extract.outputs.issue_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if there are changes
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Create branch
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="update-issue-history/${TIMESTAMP}-${{ github.run_id }}"
+          git checkout -b "$BRANCH_NAME"
+          
+          # Commit changes
+          ISSUE_NUM="${{ steps.extract.outputs.issue_number }}"
+          git commit -m "Add issue #$ISSUE_NUM to similarity engine history"
+          
+          # Push branch
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR
+          gh pr create \
+            --title "Update issue history: Issue #$ISSUE_NUM (@engineer-master)" \
+            --body "**@engineer-master** has updated the semantic similarity engine history.
+          
+          ## 📚 Issue Added
+          
+          - **Issue**: #$ISSUE_NUM
+          - **Title**: ${{ steps.extract.outputs.title }}
+          - **Agent**: ${{ steps.extract.outputs.agent }}
+          - **Solution**: ${{ steps.extract.outputs.solution }}
+          
+          This issue has been added to the semantic similarity engine history for future reference and matching.
+          
+          ---
+          
+          *Automated by semantic similarity engine collection workflow*" \
+            --label "automated,documentation" \
+            --base main \
+            --head "$BRANCH_NAME"
