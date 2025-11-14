@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 135
+**Total Insights:** 160
 
 **Last Updated:** 2025-11-14
 
@@ -112,7 +112,182 @@ Collection of publicly available IPTV channels from all over the world
 ---
 
 
+### sansan0/TrendRadar - 🎯 告别信息过载，AI 助你看懂新闻资讯热点，简单的舆情监控分析 - 多平台热点聚合+基于 MCP 的AI分析工具。监控35个平台（抖音、知乎、B站、华尔街见闻、财联社等），智能筛选+自动推送+AI对
+
+**Link:** https://github.com/sansan0/TrendRadar
+
+
+🎯 告别信息过载，AI 助你看懂新闻资讯热点，简单的舆情监控分析 - 多平台热点聚合+基于 MCP 的AI分析工具。监控35个平台（抖音、知乎、B站、华尔街见闻、财联社等），智能筛选+自动推送+AI对话分析（用自然语言深度挖掘新闻：趋势追踪、情感分析、相似检索等13种工具）。支持企业微信/飞书/钉钉/Telegram/邮件/ntfy推送，30秒网页部署，1分钟手机通知，无需编程。支持Docker部署⭐ 让算法为你服务，用AI理解热点
+
+---
+
+
+### yeongpin/cursor-free-vip - [Support 0.49.x]（Reset Cursor AI MachineID & Bypass Higher Token Limit） Cursor Ai ，自动重置机器ID ， 免费升级使用
+
+**Link:** https://github.com/yeongpin/cursor-free-vip
+
+
+[Support 0.49.x]（Reset Cursor AI MachineID & Bypass Higher Token Limit） Cursor Ai ，自动重置机器ID ， 免费升级使用Pro功能: You've reached your trial request limit. / Too many free trial accounts used on this machine. Please upgrade to pro. We have this limit in place to prevent abuse. Please let us know if you believe this is a mistake.
+
+---
+
+
+### volcengine/verl - verl: Volcano Engine Reinforcement Learning for LLMs
+
+**Link:** https://github.com/volcengine/verl
+
+
+verl: Volcano Engine Reinforcement Learning for LLMs
+
+---
+
+
+### GibsonAI/Memori - Open-Source Memory Engine for LLMs, AI Agents & Multi-Agent Systems
+
+**Link:** https://github.com/GibsonAI/Memori
+
+
+Open-Source Memory Engine for LLMs, AI Agents & Multi-Agent Systems
+
+---
+
+
+### WordPress/gutenberg - The Block Editor project for WordPress and beyond. Plugin is available from the official repository.
+
+**Link:** https://github.com/WordPress/gutenberg
+
+
+The Block Editor project for WordPress and beyond. Plugin is available from the official repository.
+
+---
+
+
+### google/adk-go - An open-source, code-first Go toolkit for building, evaluating, and deploying sophisticated AI agent
+
+**Link:** https://github.com/google/adk-go
+
+
+An open-source, code-first Go toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
+
+---
+
+
+### beclab/Olares - Olares: An Open-Source Personal Cloud to Reclaim Your Data
+
+**Link:** https://github.com/beclab/Olares
+
+
+Olares: An Open-Source Personal Cloud to Reclaim Your Data
+
+---
+
+
+### greenbone/openvas-scanner - This repository contains the scanner component for Greenbone Community Edition.
+
+**Link:** https://github.com/greenbone/openvas-scanner
+
+
+This repository contains the scanner component for Greenbone Community Edition.
+
+---
+
+
+### ai-dynamo/dynamo - A Datacenter Scale Distributed Inference Serving Framework
+
+**Link:** https://github.com/ai-dynamo/dynamo
+
+
+A Datacenter Scale Distributed Inference Serving Framework
+
+---
+
+
+### iptv-org/iptv - Collection of publicly available IPTV channels from all over the world
+
+**Link:** https://github.com/iptv-org/iptv
+
+
+Collection of publicly available IPTV channels from all over the world
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### AI World Clocks
+
+**Link:** https://clocks.brianmoore.com/
+
+
+&quot;Every minute, a new clock is rendered by nine different AI models.&quot;
+
+---
+
+
+### Show HN: Tiny Diffusion – A character-level text diffusion model from scratch
+
+**Link:** https://github.com/nathan-barry/tiny-diffusion
+
+
+This is a character-level language diffusion model for text generation.<p>The model is a modified version of Nanochat&#x27;s GPT implementation and is trained on Tiny Shakespeare!<p>It is only 10.7 million parameters, so you can try it out locally.
+
+---
+
+
+### RetailReady (YC W24) Is Hiring
+
+**Link:** https://www.ycombinator.com/companies/retailready/jobs/kGHAith-support-engineer
+
+---
+
+
+### Honda: 2 years of ml vs 1 month of prompting - heres what we learned
+
+**Link:** https://www.levs.fyi/blog/2-years-of-ml-vs-1-month-of-prompting/
+
+---
+
+
+### Magit manuals are available online again
+
+**Link:** https://github.com/magit/magit/issues/5472
+
+---
+
+
+### Show HN: Chirp – Local Windows dictation with ParakeetV3 no executable required
+
+**Link:** https://github.com/Whamp/chirp
+
+
+I’ve been working in fairly locked‑down Windows environments where I’m allowed to run Python, but not install or launch new `.exe` files. In addition the built-in windows dictations are blocked (the only good one isn&#x27;t local anyway). At the same time, I really wanted accurate, fast dictation without sending audio to a cloud service, and without needing a GPU. Most speech‑to‑text setups I tried either required special launchers, GPU access, or were awkward to run day‑to‑day.<p>To scratch that itch, I built Chirp, a Windows dictation app that runs fully locally, uses NVIDIA’s ParakeetV3 model, and is managed end‑to‑end with `uv`. If you can run Python on your machine, you should be able to run Chirp—no additional executables required.<p>Under the hood, Chirp uses the Parakeet TDT 0.6B v3 ONNX bundle. ParakeetV3 has accuracy in the same ballpark as Whisper‑large‑v3 (multilingual WER ~4.9 vs ~5.0 in the open ASR leaderboard), but it’s much faster and happy on CPU.<p>The flow is:
+- One‑time setup that downloads and prepares the ONNX model:
+  - `uv run python -m chirp.setup`
+- A long‑running CLI process:
+  - `uv run python -m chirp.main`
+- A global hotkey that starts&#x2F;stops recording and injects text into the active window.<p>A few details that might be interesting technically:<p>- <i>Local‑only STT:</i> Everything runs on your machine using ONNX Runtime; by default it uses CPU providers, with optional GPU providers if your environment allows.<p>- <i>Config‑driven behavior:</i> A `config.toml` file controls the global hotkey, model choice, quantization (`int8` option), language, ONNX providers, and threading. There’s also a simple `[word_overrides]` map so you can fix tokens that the model consistently mishears.<p>- <i>Post‑processing pipeline:</i> After recognition, there’s an optional “style guide” step where you can specify prompts like “sentence case” or “prepend: &gt;&gt;” for the final text.<p>- <i>No clipboard gymnastics required on Windows:</i> The app types directly into the focused window; there are options for clipboard‑based pasting and cleanup behavior for platforms where that makes more sense.<p>- <i>Audio feedback:</i> Start&#x2F;stop sounds (configurable) let you know when the mic is actually recording.<p>So far I’ve mainly tested this on my own Windows machines with English dictation and CPU‑only setups. There are probably plenty of rough edges (different keyboard layouts, language settings, corporate IT policies, etc.), and I’d love feedback from people who:<p>- Work in restricted corporate environments and need local dictation.
+- Have experience with Parakeet&#x2F;Whisper or ONNX Runtime and see obvious ways to improve performance or robustness.
+- Want specific features (e.g., better multi‑language support, more advanced post‑processing, or integrations with their editor&#x2F;IDE).<p>Repo is here:  
+`<a href="https:&#x2F;&#x2F;github.com&#x2F;Whamp&#x2F;chirp" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;Whamp&#x2F;chirp</a>`<p>If you try it, I’d be very interested in:<p>- CPU usage and latency on your hardware,
+- How well it behaves with your keyboard layout and applications,
+- Any weird failure cases or usability annoyances you run into.<p>Happy to answer questions and dig into technical details in the comments.
+
+---
+
+
+### Linear Algebra Explains Why Some Words Are Effectively Untranslatable
+
+**Link:** https://aethermug.com/posts/linear-algebra-explains-why-some-words-are-effectively-untranslatable
+
+---
+
+
+### I think nobody wants AI in Firefox, Mozilla
+
+**Link:** https://manualdousuario.net/en/mozilla-firefox-window-ai/
+
+---
 
 
 ### Honda: 2 years of ml vs 1 month of prompting - heres what we learned
@@ -246,109 +421,135 @@ Policy Disrupting the first reported AI-orchestrated cyber espionage campaign No
 ---
 
 
-### SlopStop: Community-driven AI slop detection in Kagi Search
-
-**Community Score:** 400 upvotes
-
-**Link:** https://blog.kagi.com/slopstop
-
-
-**Content Summary:**
-
-Introducing SlopStop: Community-driven AI slop detection in Kagi Search 12 Nov, 2025 Your collective defense against AI-generated spam and content farms We made it our mission to prevent the web from becoming useless and a harmful space. That’s why today, Kagi Search introduces the first community-driven system to detect and downrank deceptive AI-generated text, images, and video inside search results. It’s 2025, and the internet we loved is drowning in AI-generated noise. Content farms exploiti...
-
----
-
-
-### GPT-5.1: A smarter, more conversational ChatGPT
-
-**Community Score:** 513 upvotes
-
-**Link:** https://openai.com/index/gpt-5-1/
-
----
-
-
-### Britain's railway privatization was an abject failure
-
-**Community Score:** 417 upvotes
-
-**Link:** https://www.rosalux.de/en/news/id/53917/britains-railway-privatization-was-an-abject-failure
-
-
-**Content Summary:**
-
-Essay | 10/03/2025 Economic / Social Policy - Rosalux International - UK / Ireland - Commons / Social Infrastructure Britain’s Railway Privatization Was an Abject Failure Sold off in the 1990s, the UK’s railways are returning to public hands — but at what cost? Information Author Gareth Dennis , A commuter train waits to leave the station somewhere in London, 18 May 2023. Photo: IMAGO / Pond5 Images Liberalization of the railways has been a key tenet of European transport policy since the early ...
-
----
-
-
-### Marble: A Multimodal World Model
-
-**Community Score:** 173 upvotes
-
-**Link:** https://www.worldlabs.ai/blog/marble-world-model
-
-
-**Content Summary:**
-
-November 12, 2025 Marble, our frontier multimodal world model, is available to everyone starting today Marble: A Multimodal World Model Spatial intelligence is the next frontier in AI, demanding powerful world models to realize its full potential. World models should reconstruct, generate, and simulate 3D worlds; and allow both humans and agents to interact with them. Spatially intelligent world models will transform a wide variety of industries over the coming years. Two months ago we shared a ...
-
----
-
-
-### GPT-5.1: A smarter, more conversational ChatGPT
-
-**Community Score:** 295 upvotes
-
-**Link:** https://openai.com/index/gpt-5-1/
-
----
-
-
-### Yann LeCun to depart Meta and launch AI startup focused on 'world models'
-
-**Community Score:** 725 upvotes
-
-**Link:** https://www.nasdaq.com/articles/metas-chief-ai-scientist-yann-lecun-depart-and-launch-ai-start-focused-world-models
-
-
-**Content Summary:**
-
-AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA Markets META Meta's Chief AI Scientist Yann LeCun To Depart And Launch AI Start-Up Focused On 'World Models' November 11, 2025 — 04:42 pm EST Written by RTTNews.com for RTTNews -> (RTTNews) - Meta's (META) chief artificial intelligence scient...
-
----
-
-
-### Pakistani newspaper mistakenly prints AI prompt with the article
-
-**Community Score:** 422 upvotes
-
-**Link:** https://twitter.com/omar_quraishi/status/1988518627859951986
-
-
-**Content Summary:**
-
-JavaScript is not available. We’ve detected that JavaScript is disabled in this browser. Please enable JavaScript or switch to a supported browser to continue using x.com. You can see a list of supported browsers in our Help Center. Help Center Terms of Service Privacy Policy Cookie Policy Imprint Ads info © 2025 X Corp. Something went wrong, but don’t fret — let’s give it another shot. Try again Some privacy related extensions may cause issues on x.com. Please disable them and try again.
-
----
-
-
-### Yann LeCun to depart Meta and launch AI startup focused on 'world models'
-
-**Community Score:** 426 upvotes
-
-**Link:** https://www.nasdaq.com/articles/metas-chief-ai-scientist-yann-lecun-depart-and-launch-ai-start-focused-world-models
-
-
-**Content Summary:**
-
-AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA AAPL TSLA AMZN META AMD NVDA PEP COST ADBE GOOG AMGN HON INTC INTU NFLX ADP SBUX MRNA Markets META Meta's Chief AI Scientist Yann LeCun To Depart And Launch AI Start-Up Focused On 'World Models' November 11, 2025 — 04:42 pm EST Written by RTTNews.com for RTTNews -> (RTTNews) - Meta's (META) chief artificial intelligence scient...
-
----
-
-
 ## 📰 From TLDR Tech
+
+
+### Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 
+
+**Link:** https://tldr.tech/tech/2025-11-14
+
+
+**Content Summary:**
+
+Stability or and innovation in payments technology (Sponsor)
+Why pick one?
+With Marqeta, launch payments experiences without choosing between innovation and scale.
+Marqeta
+combines the scale and reliability of proven payments infrastructure with the flexibility and innovation of a modern platform—so you can move faster, reduce risk, and grow with confidence.
+From optimizing spend and cash flow to building seamless, rewards-driven customer experiences, Marqeta's solutions have you covered. When i...
+
+---
+
+
+### GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-13
+
+
+**Content Summary:**
+
+Your fast path to production MCP (Sponsor)
+Gram is the MCP cloud.
+Create, host, and scale MCP servers
+without the hassle.
+Create an agent tool library by defining tools with our lightweight TypeScript framework, importing your APIs, or uploading an existing MCP server. Curate tools into custom toolsets and deploy them as MCP servers.
+MCP servers hosted on
+Gram
+work out of the box with your favorite MCP clients and agent frameworks: Claude, Cursor, OpenAI, Langchain, and more. Scale from zero to ...
+
+---
+
+
+### iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-11
+
+
+**Content Summary:**
+
+Goodbye low test coverage and slow QA cycles (Sponsor)
+Bugs sneak out when less than 80% of user flows are tested before shipping. However, getting that kind of coverage (and staying there) is hard and pricey for any team.
+QA Wolf's
+AI-native solution provides high-volume, high-speed test coverage for web and mobile apps, reducing your organization's QA cycle to minutes.
+They can get you:
+80% automated E2E test coverage in weeks
+—not years
+Unlimited parallel test runs
+24-hour maintenance and on-...
+
+---
+
+
+### MSFT OpenAI docs leak 📄, GPT-5.1 🤖, Anthropic’s $50B Bet 💰
+
+**Link:** https://tldr.tech/ai/2025-11-13
+
+
+**Content Summary:**
+
+Get access to the most performant Kimi K2 Thinking API (Sponsor)
+This week, Baseten released Kimi K2 Thinking on Model APIs. Kimi K2 Thinking rivals the leading closed-source agentic models and is engineered for complex reasoning and agentic workflows.With Baseten's API you can get an LLM that is smarter, faster and cheaper. The Kimi K2 Thinking API is built for production workloads with high uptime, scalability, and performance stability:
+🧨 Blistering TTFT at 0.3 seconds
+⚡140+ tokens per second...
+
+---
+
+
+### ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣
+
+**Link:** https://tldr.tech/ai/2025-11-12
+
+
+**Content Summary:**
+
+100 prompts for Notion Agents (Sponsor)
+Not sure what you can do with Notion Agents? Here are
+100 ideas
+to get you started...
+🐾 This
+collection of outcome-oriented prompts
+comes with “Agent Steps” that show exactly how an Agent will execute and what it will produce (e.g., dashboards, databases, reports).
+🗂️ It's organized by function, so you can find the exact use case you want to solve for (analytics, strategy, event planning, CX...) and test the prompts instantly.
+🔌 Connect other data sources ...
+
+---
+
+
+### Grok Code Remote 👨‍💻 , GPT-5.1 on OpenRouter 🤖, Moonshot AI AMA 💬
+
+**Link:** https://tldr.tech/ai/2025-11-11
+
+
+**Content Summary:**
+
+Airia: Enterprise AI Orchestration — Agents, Integrations, Workflows, and Governance (Sponsor)
+You want AI to become part of your organizational DNA - and that means enabling every department to build out their own use cases, without IT gatekeepers standing in the way. But it shouldn't mean an ungoverned free-for-all.
+Airia is the
+“let's get serious about AI adoption” platform
+. Rapidly prototype, deploy, and manage AI agents that transform workflows across your organization - without sacrificin...
+
+---
+
+
+### Nano Banana 2 leaks 🍌, GPT-5-Codex-Mini 👨‍💻, nested learning 🧠
+
+**Link:** https://tldr.tech/ai/2025-11-10
+
+
+**Content Summary:**
+
+OpenAI's head of financial engineering shares her monetization strategy for hypergrowth (Sponsor)
+ChatGPT is only one part of OpenAI's success. The other part is the breathtaking speed with which
+OpenAI built a new monetization model
+.
+In a fireside chat at Monetize 2025, OpenAI's Head of Financial Engineering, Sara Conlon, explained how she built an
+engineering billing org poised for hypergrowth
+.
+Read the blog to learn:
+Why centralizated monetization infrastructure is essential
+Hard lessons fr...
+
+---
 
 
 ### GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻
@@ -592,136 +793,5 @@ SonarQube
 , your team can:
 Use AI without fear: Get continuous analysis for quality and security.
 Fix issues early: Detect and apply a...
-
----
-
-
-### AI Static Analysis 🔮, Duolingo’s FinOps 💰, S3 Cost Management 💲
-
-**Link:** https://tldr.tech/devops/2025-11-12
-
-
-**Content Summary:**
-
-The AI Mega Mesh: Connecting 30+ GPU Cloud Providers in a Single Network (Sponsor)
-NetBird
-just built a "Mega Mesh". A project that started out to prove that multi-cloud networking doesn't have to be complicated, resulted in creating a secure AI inference infrastructure that connects GPU resources across multiple cloud providers using Microk8s, vLLM, and NetBird.
-No complex VPN configs
-No firewall configs
-No provider-specific networking rituals
-Read the full story here
-
----
-
-
-### Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependencies 🦀
-
-**Link:** https://tldr.tech/devops/2025-11-10
-
-
-**Content Summary:**
-
-AI localization for developers: 6 questions to ask (Sponsor)
-You've
-AI-translated
-your English website into Spanish — and now the text string is 30% longer. Time for a new UI…
-To avoid these kinds of problems, you should think about localization early. With a developer-friendly,
-API-driven localization platform
-, you can scale your site globally with minimal engineering effort.
-In this
-Smartling blog
-, you'll learn what to look for in a localization partner — and 6 key questions to ask before yo...
-
----
-
-
-### Better Software 💬, Cloud Security AI ☁️, Code Research 🧠
-
-**Link:** https://tldr.tech/devops/2025-11-07
-
-
-**Content Summary:**
-
-A blueprint for aligning and converging ITOps and SecOps (Sponsor)
-Converging ITOps and SecOps sounds nice — and with 95% of organizations leaving 20% of their endpoints
-undiscovered and unprotected
-, it's increasingly important.
-🤔But doesn't “alignment” just lead to vaguely defined areas of responsibility?
-❗It certainly can. Without defining a clear plan, “breaking down silos” will lead to friction and paralysis.
-💡N-able laid out the
-Convergence Blueprint
-to help you map your convergence of peo...
-
----
-
-
-### AWS DynamoDB Outage ☁️, Grafana Mimir 🆕, AI Platform At Pinterest 🧷
-
-**Link:** https://tldr.tech/devops/2025-11-05
-
-
-**Content Summary:**
-
-🧱 Build-it-yourself platforms work great, until they don't. (Sponsor)
-Every platform story starts the same way: a few scripts, shared templates, maybe a shiny UI. It feels fast, flexible, and totally under control.
-Then the team grows. Environments multiply. Suddenly you're spending more time maintaining what you built than improving how software gets delivered.
-Platform Hub from Octopus Deploy
-helps you escape that dead end. It scales what teams already do well—automating pipelines, enforcing p...
-
----
-
-
-### iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻
-
-**Link:** https://tldr.tech/tech/2025-11-11
-
-
-**Content Summary:**
-
-Goodbye low test coverage and slow QA cycles (Sponsor)
-Bugs sneak out when less than 80% of user flows are tested before shipping. However, getting that kind of coverage (and staying there) is hard and pricey for any team.
-QA Wolf's
-AI-native solution provides high-volume, high-speed test coverage for web and mobile apps, reducing your organization's QA cycle to minutes.
-They can get you:
-80% automated E2E test coverage in weeks
-—not years
-Unlimited parallel test runs
-24-hour maintenance and on-...
-
----
-
-
-### Low cost MacBook 💻, Google AI data centers 🛰️, inside xAI 🤖
-
-**Link:** https://tldr.tech/tech/2025-11-05
-
-
-**Content Summary:**
-
-Goodbye low test coverage and slow QA cycles (Sponsor)
-Bugs sneak out when less than 80% of user flows are tested before shipping. However, getting that kind of coverage (and staying there) is hard and pricey for any team.
-QA Wolf's
-AI-native solution provides high-volume, high-speed test coverage for web and mobile apps, reducing your organization's QA cycle to minutes.
-They can get you:
-80% automated E2E test coverage in weeks
-—not years
-Unlimited parallel test runs
-24-hour maintenance and on-...
-
----
-
-
-### Grok Code Remote 👨‍💻 , GPT-5.1 on OpenRouter 🤖, Moonshot AI AMA 💬
-
-**Link:** https://tldr.tech/ai/2025-11-11
-
-
-**Content Summary:**
-
-Airia: Enterprise AI Orchestration — Agents, Integrations, Workflows, and Governance (Sponsor)
-You want AI to become part of your organizational DNA - and that means enabling every department to build out their own use cases, without IT gatekeepers standing in the way. But it shouldn't mean an ungoverned free-for-all.
-Airia is the
-“let's get serious about AI adoption” platform
-. Rapidly prototype, deploy, and manage AI agents that transform workflows across your organization - without sacrificin...
 
 ---
