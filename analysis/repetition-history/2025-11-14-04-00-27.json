@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "generated_at": "2025-11-14T03:55:19.875962+00:00",
+    "repository": ".",
+    "analysis_period_days": 30,
+    "since_date": "2025-10-15T03:55:19.870113+00:00"
+  },
+  "summary": {
+    "total_agents": 2,
+    "total_contributions": 2,
+    "agents": [
+      "copilot-swe-agent",
+      "github-actions"
+    ]
+  },
+  "commit_message_patterns": {},
+  "code_similarity": {},
+  "file_sequence_patterns": {},
+  "solution_approaches": {},
+  "repetition_flags": []
+}

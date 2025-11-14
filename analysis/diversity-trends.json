@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "generated_at": "2025-11-14T04:02:06.950343",
+    "analysis_period_days": 2,
+    "snapshots_analyzed": 2,
+    "earliest_snapshot": "2025-11-14T04:00:27",
+    "latest_snapshot": "2025-11-14T04:00:36"
+  },
+  "diversity_trend": {
+    "trend": "stable",
+    "change": 0.0,
+    "current_score": 100.0,
+    "previous_score": 100.0,
+    "data_points": [
+      {
+        "timestamp": "2025-11-14 04:00:27",
+        "score": 100.0,
+        "agents": 2,
+        "flags": 0
+      },
+      {
+        "timestamp": "2025-11-14 04:00:36",
+        "score": 100.0,
+        "agents": 2,
+        "flags": 0
+      }
+    ],
+    "average_score": 100.0,
+    "score_stdev": 0.0
+  },
+  "agent_trends": {
+    "copilot-swe-agent": {
+      "trend": "stable",
+      "current_avg_flags": 0,
+      "previous_avg_flags": 0,
+      "total_data_points": 2,
+      "history": [
+        {
+          "timestamp": "2025-11-14 04:00:27",
+          "flags": 0,
+          "total_contributions": 1
+        },
+        {
+          "timestamp": "2025-11-14 04:00:36",
+          "flags": 0,
+          "total_contributions": 1
+        }
+      ]
+    },
+    "github-actions": {
+      "trend": "stable",
+      "current_avg_flags": 0,
+      "previous_avg_flags": 0,
+      "total_data_points": 2,
+      "history": [
+        {
+          "timestamp": "2025-11-14 04:00:27",
+          "flags": 0,
+          "total_contributions": 1
+        },
+        {
+          "timestamp": "2025-11-14 04:00:36",
+          "flags": 0,
+          "total_contributions": 1
+        }
+      ]
+    }
+  },
+  "innovation_trend": {
+    "trend": "stable",
+    "change": 0.0,
+    "current_average": 0.0,
+    "previous_average": 0.0,
+    "data_points": [
+      {
+        "timestamp": "2025-11-14 04:00:27",
+        "index": 0.0,
+        "unique_approaches": 0,
+        "total_contributions": 2
+      },
+      {
+        "timestamp": "2025-11-14 04:00:36",
+        "index": 0.0,
+        "unique_approaches": 0,
+        "total_contributions": 2
+      }
+    ]
+  },
+  "recommendations": []
+}
