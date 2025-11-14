@@ -1,0 +1,203 @@
+name: "System: PR Failure Learning"
+
+on:
+  # Run weekly to collect and analyze PR failures
+  schedule:
+    - cron: '0 0 * * 0'  # Every Sunday at midnight UTC
+  
+  # Run when PRs are closed (both merged and unmerged)
+  pull_request:
+    types: [closed]
+  
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      since_days:
+        description: 'Number of days to look back'
+        required: false
+        default: '30'
+      analyze_only:
+        description: 'Only analyze existing data without collecting new failures'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: write
+
+jobs:
+  learn-from-failures:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Collect PR failures
+        if: ${{ !inputs.analyze_only }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          since_days="${{ inputs.since_days || '30' }}"
+          echo "📊 Collecting PR failures from last ${since_days} days..."
+          python tools/pr-failure-learner.py --collect --since ${since_days} --verbose
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ Successfully collected PR failure data"
+          else
+            echo "⚠️ Failed to collect PR failures"
+            exit 1
+          fi
+      
+      - name: Analyze failure patterns
+        id: analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Analyzing PR failure patterns..."
+          
+          output_file="learnings/pr_failure_analysis_$(date +%Y%m%d_%H%M%S).json"
+          python tools/pr-failure-learner.py --analyze --output "${output_file}" --verbose
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ Analysis complete: ${output_file}"
+            echo "output_file=${output_file}" >> $GITHUB_OUTPUT
+            
+            # Display summary
+            echo ""
+            echo "📈 Analysis Summary:"
+            cat "${output_file}" | jq -r '.patterns[] | "  - \(.pattern_type): \(.occurrences) occurrences"'
+          else
+            echo "⚠️ Analysis failed"
+            exit 1
+          fi
+      
+      - name: Generate improvement suggestions
+        id: suggest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "💡 Generating improvement suggestions..."
+          
+          suggestions_file="learnings/pr_improvement_suggestions_$(date +%Y%m%d_%H%M%S).json"
+          python tools/pr-failure-learner.py --suggest --verbose > "${suggestions_file}"
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ Suggestions generated: ${suggestions_file}"
+            echo "suggestions_file=${suggestions_file}" >> $GITHUB_OUTPUT
+            
+            # Display top suggestions
+            echo ""
+            echo "💡 Top Improvement Suggestions:"
+            cat "${suggestions_file}" | jq -r 'to_entries | .[] | "  Agent: \(.key)\n    Failures: \(.value.total_failures)\n    Top suggestions: \(.value.improvements[0:2])"' | head -20
+          else
+            echo "⚠️ Suggestion generation failed"
+            exit 1
+          fi
+      
+      - name: Update agent metrics
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📊 Updating agent performance metrics with failure insights..."
+          
+          # For each agent with failures, create a note in their metrics directory
+          for agent_dir in .github/agent-system/metrics/agent-*; do
+            if [ -d "${agent_dir}" ]; then
+              agent_id=$(basename "${agent_dir}")
+              
+              # Get agent-specific suggestions
+              suggestions=$(python tools/pr-failure-learner.py --suggest --agent "${agent_id}" 2>/dev/null || echo "{}")
+              
+              if [ "${suggestions}" != "{}" ]; then
+                timestamp=$(date +%Y%m%d_%H%M%S)
+                echo "${suggestions}" > "${agent_dir}/pr_failure_insights_${timestamp}.json"
+                echo "  ✓ Updated insights for ${agent_id}"
+              fi
+            fi
+          done
+          
+          echo "✅ Agent metrics updated"
+      
+      - name: Commit learning data
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add learnings/pr_*.json
+          git add .github/agent-system/metrics/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "📊 Update PR failure learning data" \
+                       -m "Collected and analyzed PR failures to improve future code generation." \
+                       -m "Files updated:" \
+                       -m "- PR failure data" \
+                       -m "- Failure pattern analysis" \
+                       -m "- Agent-specific improvement suggestions" \
+                       -m "- Agent performance insights" \
+                       -m "" \
+                       -m "Generated by: @engineer-master PR Failure Learning System"
+            
+            git push
+            echo "✅ Learning data committed and pushed"
+          fi
+      
+      - name: Create learning summary
+        if: github.event_name == 'schedule' && success()
+        env:
+          ANALYSIS_FILE: ${{ steps.analyze.outputs.output_file }}
+          SUGGESTIONS_FILE: ${{ steps.suggest.outputs.suggestions_file }}
+        run: |
+          echo "📝 Creating learning summary..."
+          
+          # Extract key metrics for summary
+          total_failures=$(cat "${ANALYSIS_FILE}" | jq -r '.total_failures' 2>/dev/null || echo "0")
+          pattern_count=$(cat "${ANALYSIS_FILE}" | jq -r '.patterns | length' 2>/dev/null || echo "0")
+          
+          echo "Summary: Analyzed ${total_failures} failures, identified ${pattern_count} patterns"
+          echo "Files: ${ANALYSIS_FILE}, ${SUGGESTIONS_FILE}"
+          
+          # Summary is automatically available in workflow artifacts
+          echo "✅ Learning summary complete"
+      
+      - name: Generate workflow summary
+        if: always()
+        run: |
+          echo "# 📊 PR Failure Learning Workflow" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -n "${{ steps.analyze.outputs.output_file }}" ]; then
+            echo "## 📈 Analysis Results" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Analysis file: \`${{ steps.analyze.outputs.output_file }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ -n "${{ steps.suggest.outputs.suggestions_file }}" ]; then
+            echo "## 💡 Improvement Suggestions" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Suggestions file: \`${{ steps.suggest.outputs.suggestions_file }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Built by **@engineer-master** - Systematic learning from failures*" >> $GITHUB_STEP_SUMMARY
