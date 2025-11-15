@@ -536,51 +536,56 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Auto-merge learning PR
+      - name: Trigger Auto Review and Merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUMBER="${{ needs.combine-learnings.outputs.pr_number }}"
-          echo "🔄 Auto-merging PR #${PR_NUMBER}..."
+          echo "🔄 Triggering Auto Review & Merge workflow for PR #$PR_NUMBER..."
           
-          # Wait for GitHub to fully process the PR
-          sleep 5
+          # Trigger the auto-review-merge workflow with the specific PR number
+          gh workflow run auto-review-merge.yml \
+            --repo ${{ github.repository }} \
+            -f pr_number="$PR_NUMBER"
           
-          # Auto-approve the PR
-          echo "✅ Approving PR #${PR_NUMBER}..."
-          gh pr review ${PR_NUMBER} --approve --body "✅ Auto-approved by pipeline - Stage 2.5"
+          echo "✅ Auto-review workflow triggered for PR #$PR_NUMBER"
+
+      - name: Wait for PR to be merged
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.combine-learnings.outputs.pr_number }}"
+          echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
           
-          # Try auto-merge first
-          echo "Enabling auto-merge for PR #${PR_NUMBER}..."
-          gh pr merge ${PR_NUMBER} --auto --squash || echo "⚠️ Auto-merge not available, will try direct merge..."
+          # Wait up to 5 minutes for the PR to be merged
+          MAX_WAIT=300  # 5 minutes
+          WAIT_INTERVAL=10  # Check every 10 seconds
+          ELAPSED=0
           
-          # Wait for PR to merge (timeout after 2 minutes)
-          echo "Waiting for PR to merge..."
-          for i in {1..24}; do
-            sleep 5
-            PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            # Check PR state
+            PR_STATE=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state --jq '.state')
             
             if [ "$PR_STATE" = "MERGED" ]; then
-              echo "✅ PR #${PR_NUMBER} merged successfully"
+              echo "✅ PR #$PR_NUMBER has been merged successfully!"
+              echo "🎉 Learning PR merged - continuing to world model update"
               exit 0
             elif [ "$PR_STATE" = "CLOSED" ]; then
-              echo "❌ PR #${PR_NUMBER} was closed without merging"
+              echo "⚠️ PR #$PR_NUMBER was closed without merging"
+              echo "This may indicate an issue with the auto-review process"
               exit 1
+            else
+              echo "⏳ PR #$PR_NUMBER is still $PR_STATE, waiting... (${ELAPSED}s elapsed)"
+              sleep $WAIT_INTERVAL
+              ELAPSED=$((ELAPSED + WAIT_INTERVAL))
             fi
-            
-            echo "  Waiting... (${i}/24) - State: ${PR_STATE}"
           done
           
-          # If still not merged after 2 minutes, try direct merge
-          PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
-          if [ "$PR_STATE" = "OPEN" ]; then
-            echo "⏰ Timeout reached, attempting direct merge..."
-            gh pr merge ${PR_NUMBER} --squash --admin || {
-              echo "❌ Failed to merge PR #${PR_NUMBER}"
-              exit 1
-            }
-            echo "✅ PR #${PR_NUMBER} merged via direct merge"
-          fi
+          # Timeout reached
+          echo "⏰ Timeout: PR #$PR_NUMBER was not merged within ${MAX_WAIT} seconds"
+          echo "ℹ️ The PR may still be processed by auto-review later"
+          echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          exit 1
 
   # ============================================================================
   # STAGE 3: WORLD MODEL UPDATE
@@ -703,51 +708,56 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Auto-merge world PR
+      - name: Trigger Auto Review and Merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUMBER="${{ needs.world-update.outputs.pr_number }}"
-          echo "🔄 Auto-merging PR #${PR_NUMBER}..."
+          echo "🔄 Triggering Auto Review & Merge workflow for PR #$PR_NUMBER..."
           
-          # Wait for GitHub to fully process the PR
-          sleep 5
+          # Trigger the auto-review-merge workflow with the specific PR number
+          gh workflow run auto-review-merge.yml \
+            --repo ${{ github.repository }} \
+            -f pr_number="$PR_NUMBER"
           
-          # Auto-approve the PR
-          echo "✅ Approving PR #${PR_NUMBER}..."
-          gh pr review ${PR_NUMBER} --approve --body "✅ Auto-approved by pipeline - Stage 3.5"
+          echo "✅ Auto-review workflow triggered for PR #$PR_NUMBER"
+
+      - name: Wait for PR to be merged
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.world-update.outputs.pr_number }}"
+          echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
           
-          # Try auto-merge first
-          echo "Enabling auto-merge for PR #${PR_NUMBER}..."
-          gh pr merge ${PR_NUMBER} --auto --squash || echo "⚠️ Auto-merge not available, will try direct merge..."
+          # Wait up to 5 minutes for the PR to be merged
+          MAX_WAIT=300  # 5 minutes
+          WAIT_INTERVAL=10  # Check every 10 seconds
+          ELAPSED=0
           
-          # Wait for PR to merge (timeout after 2 minutes)
-          echo "Waiting for PR to merge..."
-          for i in {1..24}; do
-            sleep 5
-            PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            # Check PR state
+            PR_STATE=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state --jq '.state')
             
             if [ "$PR_STATE" = "MERGED" ]; then
-              echo "✅ PR #${PR_NUMBER} merged successfully"
+              echo "✅ PR #$PR_NUMBER has been merged successfully!"
+              echo "🎉 World model PR merged - continuing to agent missions"
               exit 0
             elif [ "$PR_STATE" = "CLOSED" ]; then
-              echo "❌ PR #${PR_NUMBER} was closed without merging"
+              echo "⚠️ PR #$PR_NUMBER was closed without merging"
+              echo "This may indicate an issue with the auto-review process"
               exit 1
+            else
+              echo "⏳ PR #$PR_NUMBER is still $PR_STATE, waiting... (${ELAPSED}s elapsed)"
+              sleep $WAIT_INTERVAL
+              ELAPSED=$((ELAPSED + WAIT_INTERVAL))
             fi
-            
-            echo "  Waiting... (${i}/24) - State: ${PR_STATE}"
           done
           
-          # If still not merged after 2 minutes, try direct merge
-          PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
-          if [ "$PR_STATE" = "OPEN" ]; then
-            echo "⏰ Timeout reached, attempting direct merge..."
-            gh pr merge ${PR_NUMBER} --squash --admin || {
-              echo "❌ Failed to merge PR #${PR_NUMBER}"
-              exit 1
-            }
-            echo "✅ PR #${PR_NUMBER} merged via direct merge"
-          fi
+          # Timeout reached
+          echo "⏰ Timeout: PR #$PR_NUMBER was not merged within ${MAX_WAIT} seconds"
+          echo "ℹ️ The PR may still be processed by auto-review later"
+          echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          exit 1
 
   # ============================================================================
   # STAGE 4: AGENT MISSIONS
@@ -937,53 +947,56 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Auto-merge mission PR
+      - name: Trigger Auto Review and Merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUMBER="${{ needs.agent-missions.outputs.pr_number }}"
-          echo "🔄 Auto-merging PR #${PR_NUMBER}..."
+          echo "🔄 Triggering Auto Review & Merge workflow for PR #$PR_NUMBER..."
           
-          # Wait for GitHub to fully process the PR
-          sleep 5
+          # Trigger the auto-review-merge workflow with the specific PR number
+          gh workflow run auto-review-merge.yml \
+            --repo ${{ github.repository }} \
+            -f pr_number="$PR_NUMBER"
           
-          # Auto-approve the PR
-          echo "✅ Approving PR #${PR_NUMBER}..."
-          gh pr review ${PR_NUMBER} --approve --body "✅ Auto-approved by pipeline - Stage 4.5 - Pipeline complete!"
+          echo "✅ Auto-review workflow triggered for PR #$PR_NUMBER"
+
+      - name: Wait for PR to be merged
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.agent-missions.outputs.pr_number }}"
+          echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
           
-          # Try auto-merge first
-          echo "Enabling auto-merge for PR #${PR_NUMBER}..."
-          gh pr merge ${PR_NUMBER} --auto --squash || echo "⚠️ Auto-merge not available, will try direct merge..."
+          # Wait up to 5 minutes for the PR to be merged
+          MAX_WAIT=300  # 5 minutes
+          WAIT_INTERVAL=10  # Check every 10 seconds
+          ELAPSED=0
           
-          # Wait for PR to merge (timeout after 2 minutes)
-          echo "Waiting for PR to merge..."
-          for i in {1..24}; do
-            sleep 5
-            PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            # Check PR state
+            PR_STATE=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state --jq '.state')
             
             if [ "$PR_STATE" = "MERGED" ]; then
-              echo "✅ PR #${PR_NUMBER} merged successfully"
+              echo "✅ PR #$PR_NUMBER has been merged successfully!"
               echo "🎉 Pipeline complete - all PRs merged!"
               exit 0
             elif [ "$PR_STATE" = "CLOSED" ]; then
-              echo "❌ PR #${PR_NUMBER} was closed without merging"
+              echo "⚠️ PR #$PR_NUMBER was closed without merging"
+              echo "This may indicate an issue with the auto-review process"
               exit 1
+            else
+              echo "⏳ PR #$PR_NUMBER is still $PR_STATE, waiting... (${ELAPSED}s elapsed)"
+              sleep $WAIT_INTERVAL
+              ELAPSED=$((ELAPSED + WAIT_INTERVAL))
             fi
-            
-            echo "  Waiting... (${i}/24) - State: ${PR_STATE}"
           done
           
-          # If still not merged after 2 minutes, try direct merge
-          PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
-          if [ "$PR_STATE" = "OPEN" ]; then
-            echo "⏰ Timeout reached, attempting direct merge..."
-            gh pr merge ${PR_NUMBER} --squash --admin || {
-              echo "❌ Failed to merge PR #${PR_NUMBER}"
-              exit 1
-            }
-            echo "✅ PR #${PR_NUMBER} merged via direct merge"
-            echo "🎉 Pipeline complete - all PRs merged!"
-          fi
+          # Timeout reached
+          echo "⏰ Timeout: PR #$PR_NUMBER was not merged within ${MAX_WAIT} seconds"
+          echo "ℹ️ The PR may still be processed by auto-review later"
+          echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          exit 1
 
   # ============================================================================
   # STAGE 5: SELF-REINFORCEMENT (Optional)

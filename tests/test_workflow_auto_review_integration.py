@@ -15,7 +15,8 @@ def test_workflow_has_auto_review_trigger():
     """Verify workflows have auto-review trigger steps"""
     workflows = [
         '.github/workflows/agent-spawner.yml',
-        '.github/workflows/learning-based-agent-spawner.yml'
+        '.github/workflows/learning-based-agent-spawner.yml',
+        '.github/workflows/autonomous-pipeline.yml'
     ]
     
     for workflow_path in workflows:
@@ -27,6 +28,7 @@ def test_workflow_has_auto_review_trigger():
         # Find the job that creates spawn PRs
         found_trigger = False
         found_wait = False
+        jobs_with_triggers = []
         
         for job_name, job in workflow['jobs'].items():
             if 'steps' not in job:
@@ -37,6 +39,7 @@ def test_workflow_has_auto_review_trigger():
             # Check for auto-review trigger step
             if any('Trigger Auto Review' in name for name in step_names):
                 found_trigger = True
+                jobs_with_triggers.append(job_name)
                 print(f"  ✓ Found 'Trigger Auto Review and Merge' step in job '{job_name}'")
             
             # Check for wait step
@@ -51,6 +54,15 @@ def test_workflow_has_auto_review_trigger():
         if not found_wait:
             print(f"  ❌ ERROR: Missing 'Wait for PR to be merged' step in {workflow_path}")
             return False
+        
+        # For autonomous-pipeline, verify all merge jobs have the steps
+        if 'autonomous-pipeline' in workflow_path:
+            merge_jobs = [name for name in workflow['jobs'].keys() if 'merge' in name.lower()]
+            if merge_jobs:
+                print(f"  ℹ️  Merge jobs in autonomous-pipeline: {', '.join(merge_jobs)}")
+                for merge_job in merge_jobs:
+                    if merge_job not in jobs_with_triggers:
+                        print(f"  ⚠️  Warning: Merge job '{merge_job}' missing auto-review trigger")
     
     return True
 
@@ -59,7 +71,8 @@ def test_workflow_syntax():
     """Verify workflow YAML syntax is valid"""
     workflows = [
         '.github/workflows/agent-spawner.yml',
-        '.github/workflows/learning-based-agent-spawner.yml'
+        '.github/workflows/learning-based-agent-spawner.yml',
+        '.github/workflows/autonomous-pipeline.yml'
     ]
     
     for workflow_path in workflows:
