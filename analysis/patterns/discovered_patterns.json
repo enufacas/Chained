@@ -1,0 +1,700 @@
+{
+  "timestamp": "2025-11-15T03:06:06.008574+00:00",
+  "total_features": 1934,
+  "total_patterns": 11,
+  "patterns": [
+    {
+      "pattern_id": "pattern_0",
+      "pattern_name": "Well-Documented Simple Small ClassDef",
+      "pattern_type": "cluster",
+      "cluster_id": 0,
+      "centroid": [
+        0.14052287581699346,
+        0.0,
+        0.09496510468594217,
+        0.0029411764705882353,
+        0.00028499772001823985,
+        0.0029088558500323207,
+        0.00784313725490196,
+        0.005337690631808278,
+        0.9705882352941176,
+        0.0,
+        0.0,
+        0.0,
+        0.35010893246187363,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "occurrences": 204,
+      "confidence": 0.46445693408773375,
+      "support": 0.10548086866597725,
+      "examples": [
+        {
+          "file": "tools/prompt-generator.py",
+          "line": 31,
+          "type": "ClassDef",
+          "code_snippet": "class PromptTemplate:\n    \"\"\"Represents a prompt template with metadata\"\"\"\n    template_id: str\n    "
+        },
+        {
+          "file": "tools/test_semantic_similarity_engine.py",
+          "line": 410,
+          "type": "ClassDef",
+          "code_snippet": "class TestIntegration(unittest.TestCase):\n    \"\"\"Integration tests for the similarity engine.\"\"\"\n   "
+        },
+        {
+          "file": "tools/test_issue_discussion_learner.py",
+          "line": 358,
+          "type": "ClassDef",
+          "code_snippet": "class TestIntegration:\n    \"\"\"Integration tests for the complete workflow.\"\"\"\n    \n    @pytest.fixtu"
+        },
+        {
+          "file": "tools/test_ab_testing_engine.py",
+          "line": 421,
+          "type": "ClassDef",
+          "code_snippet": "class TestEdgeCases(unittest.TestCase):\n    \"\"\"Test edge cases and error conditions.\"\"\"\n    \n    def"
+        },
+        {
+          "file": "tools/lazy-workflow-evaluator.py",
+          "line": 74,
+          "type": "ClassDef",
+          "code_snippet": "class LazyWorkflowNode:\n    \"\"\"\n    Represents a computation that can be lazily evaluated.\n    \n    "
+        }
+      ],
+      "description": "Pattern with 204 occurrences. Primarily ClassDef nodes. Average complexity: 0.1, average size: 0.5 lines. Generally well-documented. ",
+      "category": "well-documented",
+      "silhouette_score": 0.0,
+      "inertia": 0.0
+    },
+    {
+      "pattern_id": "pattern_1",
+      "pattern_name": "Well-Documented Simple Small FunctionDef",
+      "pattern_type": "cluster",
+      "cluster_id": 1,
+      "centroid": [
+        0.05688806888068881,
+        0.0,
+        0.09875539433360435,
+        0.05492883500263574,
+        0.013258388397837467,
+        0.07369936336726006,
+        0.17416974169741697,
+        0.13915539155391554,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.3046330463304633,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "occurrences": 271,
+      "confidence": 0.3213887363991043,
+      "support": 0.14012409513960702,
+      "examples": [
+        {
+          "file": "tools/validate-agent-definition.py",
+          "line": 65,
+          "type": "FunctionDef",
+          "code_snippet": "def print_info(text: str) -> None:\n    \"\"\"Print info message.\"\"\"\n    print(f\"{Colors.BLUE}\u2139\ufe0f  {text}"
+        },
+        {
+          "file": "tools/semantic_similarity_engine.py",
+          "line": 39,
+          "type": "FunctionDef",
+          "code_snippet": "    def from_dict(data: dict) -> 'IssueRecord':\n        \"\"\"Create IssueRecord from dictionary.\"\"\"\n  "
+        },
+        {
+          "file": "tools/cross-repo-pattern-matcher.py",
+          "line": 98,
+          "type": "FunctionDef",
+          "code_snippet": "    def get_patterns(self) -> List[Pattern]:\n        \"\"\"Get the list of patterns this detector handl"
+        },
+        {
+          "file": "tools/validate-agent-definition.py",
+          "line": 57,
+          "type": "FunctionDef",
+          "code_snippet": "def print_error(text: str) -> None:\n    \"\"\"Print error message.\"\"\"\n    print(f\"{Colors.RED}\u274c {text}{"
+        },
+        {
+          "file": "tools/knowledge_graph_query.py",
+          "line": 361,
+          "type": "FunctionDef",
+          "code_snippet": "    def get_metrics(self) -> Dict[str, Any]:\n        \"\"\"Get calculated metrics\"\"\"\n        return sel"
+        }
+      ],
+      "description": "Pattern with 271 occurrences. Primarily FunctionDef nodes. Average complexity: 1.9, average size: 13.4 lines. Generally well-documented. Uses type hints. ",
+      "category": "well-documented",
+      "silhouette_score": 0.0,
+      "inertia": 0.0
+    },
+    {
+      "pattern_id": "pattern_2",
+      "pattern_name": "Well-Documented Moderate Medium FunctionDef",
+      "pattern_type": "cluster",
+      "cluster_id": 2,
+      "centroid": [
+        0.2727272727272727,
+        0.0,
+        0.10978428351309708,
+        0.17705627705627705,
+        0.08412614517265679,
+        0.2057109557109557,
+        0.20454545454545456,
+        0.3826599326599327,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.42272727272727273,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "occurrences": 132,
+      "confidence": 0.30122650011578134,
+      "support": 0.06825232678386763,
+      "examples": [
+        {
+          "file": "tools/agent-metrics-collector.py",
+          "line": 936,
+          "type": "FunctionDef",
+          "code_snippet": "    def evaluate_all_agents(self, since_days: int = DEFAULT_LOOKBACK_DAYS) -> Dict[str, AgentMetrics"
+        },
+        {
+          "file": "tools/creativity-metrics-analyzer.py",
+          "line": 123,
+          "type": "FunctionDef",
+          "code_snippet": "    def _load_pattern_database(self) -> Dict[str, Set[str]]:\n        \"\"\"\n        Load historical pat"
+        },
+        {
+          "file": "tools/agent-metrics-collector.py",
+          "line": 914,
+          "type": "FunctionDef",
+          "code_snippet": "    def load_latest_metrics(self, agent_id: str) -> Optional[AgentMetrics]:\n        \"\"\"Load the most"
+        },
+        {
+          "file": "tools/issue-discussion-learner.py",
+          "line": 108,
+          "type": "FunctionDef",
+          "code_snippet": "    def _load_known_patterns(self) -> Dict[str, List[str]]:\n        \"\"\"\n        Load known discussio"
+        },
+        {
+          "file": "tools/validate-agent-definition.py",
+          "line": 180,
+          "type": "FunctionDef",
+          "code_snippet": "def validate_agent_file(filepath: Path) -> Tuple[bool, Dict]:\n    \"\"\"\n    Validate a single agent de"
+        }
+      ],
+      "description": "Pattern with 132 occurrences. Primarily FunctionDef nodes. Average complexity: 6.2, average size: 37.4 lines. Generally well-documented. Uses type hints. Includes error handling. ",
+      "category": "well-documented",
+      "silhouette_score": 0.0,
+      "inertia": 0.0
+    },
+    {
+      "pattern_id": "pattern_3",
+      "pattern_name": "Basic Simple Small Module",
+      "pattern_type": "cluster",
+      "cluster_id": 3,
+      "centroid": [
+        0.28530092592592593,
+        0.0,
+        0.263653483992467,
+        0.029960317460317458,
+        0.014373385012919897,
+        0.03819444444444445,
+        0.011111111111111112,
+        0.04506172839506173,
+        0.0,
+        0.04861111111111111,
+        0.027777777777777776,
+        0.041666666666666664,
+        0.02700617283950617,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "occurrences": 144,
+      "confidence": 0.7000838080313049,
+      "support": 0.07445708376421924,
+      "examples": [
+        {
+          "file": "tools/lazy_workflow_loader.py",
+          "line": 0,
+          "type": "Module",
+          "code_snippet": ""
+        },
+        {
+          "file": "tools/example_comprehensive_analysis.py",
+          "line": 0,
+          "type": "Module",
+          "code_snippet": ""
+        },
+        {
+          "file": "tools/example_self_documenting_ai.py",
+          "line": 0,
+          "type": "Module",
+          "code_snippet": ""
+        },
+        {
+          "file": "tools/unsupervised_pattern_learner.py",
+          "line": 0,
+          "type": "Module",
+          "code_snippet": ""
+        },
+        {
+          "file": "tools/nl-to-code-translator.py",
+          "line": 0,
+          "type": "Module",
+          "code_snippet": ""
+        }
+      ],
+      "description": "Pattern with 144 occurrences. Primarily Module nodes. Average complexity: 1.0, average size: 7.0 lines. ",
+      "category": "simple-function",
+      "silhouette_score": 0.0,
+      "inertia": 0.0
+    },
+    {
+      "pattern_id": "pattern_4",
+      "pattern_name": "Basic Simple Small FunctionDef",
+      "pattern_type": "cluster",
+      "cluster_id": 4,
+      "centroid": [
+        0.012318840579710144,
+        0.0,
+        0.0632277081798084,
+        0.03453416149068323,
+        0.003033367037411527,
+        0.026612517916865745,
+        0.12782608695652176,
+        0.09140096618357488,
+        0.0,
+        0.4956521739130435,
+        0.0,
+        0.017391304347826087,
+        0.21410628019323671,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "occurrences": 115,
+      "confidence": 0.37622940253023673,
+      "support": 0.0594622543950362,
+      "examples": [
+        {
+          "file": "tools/test_api_coordination_hub.py",
+          "line": 354,
+          "type": "FunctionDef",
+          "code_snippet": "        def failing_call():\n            raise Exception(\"API error\")"
+        },
+        {
+          "file": "tools/test_api_coordination_hub.py",
+          "line": 403,
+          "type": "FunctionDef",
+          "code_snippet": "        def slow_call():\n            time.sleep(0.01)\n            return \"ok\""
+        },
+        {
+          "file": "tools/test_lazy_workflow_evaluator.py",
+          "line": 93,
+          "type": "FunctionDef",
+          "code_snippet": "    def my_compute():\n        return 42"
+        },
+        {
+          "file": "tools/test_api_coordination_hub.py",
+          "line": 376,
+          "type": "FunctionDef",
+          "code_snippet": "        def api_call():\n            return \"success\""
+        },
+        {
+          "file": "tools/test_api_coordination_hub.py",
+          "line": 555,
+          "type": "FunctionDef",
+          "code_snippet": "        def get_user():\n            return {'user': 'test'}"
+        }
+      ],
+      "description": "Pattern with 115 occurrences. Primarily FunctionDef nodes. Average complexity: 1.2, average size: 4.8 lines. ",
+      "category": "simple-function",
+      "silhouette_score": 0.0,
+      "inertia": 0.0
+    },
+    {
+      "pattern_id": "pattern_5",
+      "pattern_name": "Well-Documented Simple Medium FunctionDef",
+      "pattern_type": "cluster",
+      "cluster_id": 5,
+      "centroid": [
+        0.08009893455098933,
+        0.0,
+        0.13102701029332095,
+        0.054337899543379,
+        0.015556971434639482,
+        0.12368909629183601,
+        0.06872146118721462,
+        0.1759005580923389,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.5439370877727042,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "occurrences": 438,
+      "confidence": 0.35915441341892507,
+      "support": 0.2264736297828335,
+      "examples": [
+        {
+          "file": "tools/test_cross_repo_pattern_matcher.py",
+          "line": 306,
+          "type": "FunctionDef",
+          "code_snippet": "def test_confidence_calculation():\n    \"\"\"Test that confidence scores are reasonable\"\"\"\n    print(\"\\"
+        },
+        {
+          "file": "tools/test_api_coordination_hub.py",
+          "line": 385,
+          "type": "FunctionDef",
+          "code_snippet": "    def test_health_status_tracking(self):\n        \"\"\"Test health status is tracked\"\"\"\n        self."
+        },
+        {
+          "file": "tools/test_paradigm_translator.py",
+          "line": 269,
+          "type": "FunctionDef",
+          "code_snippet": "def test_translation_result_str():\n    \"\"\"Test TranslationResult string representation\"\"\"\n    result"
+        },
+        {
+          "file": "tools/test_api_coordination_hub.py",
+          "line": 326,
+          "type": "FunctionDef",
+          "code_snippet": "    def test_rate_limit_enforcement(self):\n        \"\"\"Test rate limit is enforced\"\"\"\n        self.hu"
+        },
+        {
+          "file": "tools/test_optimizer.py",
+          "line": 36,
+          "type": "FunctionDef",
+          "code_snippet": "def test_python_docstring_removal():\n    \"\"\"Test that docstrings are removed\"\"\"\n    optimizer = Code"
+        }
+      ],
+      "description": "Pattern with 438 occurrences. Primarily FunctionDef nodes. Average complexity: 1.9, average size: 22.5 lines. Generally well-documented. ",
+      "category": "well-documented",
+      "silhouette_score": 0.0,
+      "inertia": 0.0
+    },
+    {
+      "pattern_id": "pattern_6",
+      "pattern_name": "Well-Documented Moderate Large FunctionDef",
+      "pattern_type": "cluster",
+      "cluster_id": 6,
+      "centroid": [
+        0.26515151515151514,
+        0.0,
+        0.2563944530046225,
+        0.28259740259740257,
+        0.1949260042283298,
+        0.33511488511488513,
+        0.2545454545454545,
+        0.4424242424242424,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.42,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "occurrences": 110,
+      "confidence": 0.3251007263932705,
+      "support": 0.05687693898655636,
+      "examples": [
+        {
+          "file": "tools/pr-failure-intelligence.py",
+          "line": 434,
+          "type": "FunctionDef",
+          "code_snippet": "    def predict_failure_risk(self, pr_data: Dict[str, Any]) -> FailureRiskScore:\n        \"\"\"\n       "
+        },
+        {
+          "file": "tools/workflow-orchestrator.py",
+          "line": 166,
+          "type": "FunctionDef",
+          "code_snippet": "    def update_all_workflows(self, mode: Optional[str] = None) -> Dict[str, bool]:\n        \"\"\"\n     "
+        },
+        {
+          "file": "tools/knowledge_graph_query.py",
+          "line": 367,
+          "type": "FunctionDef",
+          "code_snippet": "    def predict_bug_likelihood(self, filepath: str) -> Dict[str, Any]:\n        \"\"\"Predict likelihood"
+        },
+        {
+          "file": "tools/evaluate-mentorship.py",
+          "line": 276,
+          "type": "FunctionDef",
+          "code_snippet": "    def track_mentee_progress(\n        self, \n        mentee_id: str\n    ) -> Optional[Dict[str, Any"
+        },
+        {
+          "file": "tools/archaeology-learner.py",
+          "line": 268,
+          "type": "FunctionDef",
+          "code_snippet": "    def learn_evolution_patterns(self, max_commits: int = 500) -> List[Dict]:\n        \"\"\"Learn how c"
+        }
+      ],
+      "description": "Pattern with 110 occurrences. Primarily FunctionDef nodes. Average complexity: 9.9, average size: 61.0 lines. Generally well-documented. Uses type hints. ",
+      "category": "well-documented",
+      "silhouette_score": 0.0,
+      "inertia": 0.0
+    },
+    {
+      "pattern_id": "pattern_7",
+      "pattern_name": "Well-Documented Moderate Large FunctionDef",
+      "pattern_type": "cluster",
+      "cluster_id": 7,
+      "centroid": [
+        0.21396396396396397,
+        0.0,
+        0.21102458390593984,
+        0.18429858429858428,
+        0.1199455269222711,
+        0.2959112959112959,
+        0.08018018018018018,
+        0.31631631631631635,
+        0.990990990990991,
+        0.27927927927927926,
+        0.3333333333333333,
+        0.0,
+        0.10650650650650652,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "occurrences": 111,
+      "confidence": 0.53722667725939,
+      "support": 0.05739400206825233,
+      "examples": [
+        {
+          "file": "tools/dependency-flow-analyzer.py",
+          "line": 586,
+          "type": "FunctionDef",
+          "code_snippet": "def main():\n    \"\"\"CLI entry point\"\"\"\n    parser = argparse.ArgumentParser(\n        description='Dep"
+        },
+        {
+          "file": "tools/meta_agent_coordinator.py",
+          "line": 697,
+          "type": "FunctionDef",
+          "code_snippet": "def main():\n    \"\"\"Command-line interface for meta-agent coordinator\"\"\"\n    import argparse\n    \n   "
+        },
+        {
+          "file": "tools/cross-repo-pattern-matcher.py",
+          "line": 1082,
+          "type": "FunctionDef",
+          "code_snippet": "def main():\n    \"\"\"CLI entry point\"\"\"\n    parser = argparse.ArgumentParser(\n        description='Cro"
+        },
+        {
+          "file": "tools/workflow-orchestrator.py",
+          "line": 270,
+          "type": "FunctionDef",
+          "code_snippet": "def main():\n    \"\"\"Main entry point\"\"\"\n    import argparse\n    \n    parser = argparse.ArgumentParser"
+        },
+        {
+          "file": "tools/copilot-usage-tracker.py",
+          "line": 442,
+          "type": "FunctionDef",
+          "code_snippet": "def main():\n    \"\"\"Main entry point\"\"\"\n    import argparse\n    \n    parser = argparse.ArgumentParser"
+        }
+      ],
+      "description": "Pattern with 111 occurrences. Primarily FunctionDef nodes. Average complexity: 6.5, average size: 53.9 lines. Generally well-documented. ",
+      "category": "well-documented",
+      "silhouette_score": 0.0,
+      "inertia": 0.0
+    },
+    {
+      "pattern_id": "pattern_8",
+      "pattern_name": "Well-Documented Simple Medium FunctionDef",
+      "pattern_type": "cluster",
+      "cluster_id": 8,
+      "centroid": [
+        0.1395833333333333,
+        0.0,
+        0.14909200968523004,
+        0.11285714285714285,
+        0.05137043189368771,
+        0.1637951334379906,
+        0.25535714285714284,
+        0.27341269841269844,
+        1.0,
+        1.0,
+        0.0,
+        0.0035714285714285713,
+        0.49174603174603176,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "occurrences": 280,
+      "confidence": 0.32496564092391056,
+      "support": 0.14477766287487073,
+      "examples": [
+        {
+          "file": "tools/meta_agent_coordinator.py",
+          "line": 343,
+          "type": "FunctionDef",
+          "code_snippet": "    def _calculate_priority(self, category: str, all_categories: List[str]) -> int:\n        \"\"\"Calcu"
+        },
+        {
+          "file": "tools/copilot-usage-tracker.py",
+          "line": 344,
+          "type": "FunctionDef",
+          "code_snippet": "    def get_workflow_frequencies(self, mode: Optional[str] = None) -> Dict[str, str]:\n        \"\"\"\n  "
+        },
+        {
+          "file": "tools/validation_utils.py",
+          "line": 404,
+          "type": "FunctionDef",
+          "code_snippet": "def validate_list_non_empty(value: Any, field_name: str = \"value\") -> list:\n    \"\"\"\n    Validate tha"
+        },
+        {
+          "file": "tools/validation_utils.py",
+          "line": 157,
+          "type": "FunctionDef",
+          "code_snippet": "def validate_non_empty_string(value: Any, field_name: str = \"value\") -> str:\n    \"\"\"\n    Validate th"
+        },
+        {
+          "file": "tools/commit-strategy-learner.py",
+          "line": 235,
+          "type": "FunctionDef",
+          "code_snippet": "    def _is_conventional_commit(self, message: str) -> Tuple[bool, Optional[str]]:\n        \"\"\"\n     "
+        }
+      ],
+      "description": "Pattern with 280 occurrences. Primarily FunctionDef nodes. Average complexity: 4.0, average size: 29.8 lines. Generally well-documented. Uses type hints. ",
+      "category": "well-documented",
+      "silhouette_score": 0.0,
+      "inertia": 0.0
+    },
+    {
+      "pattern_id": "pattern_9",
+      "pattern_name": "Well-Documented Simple Medium FunctionDef",
+      "pattern_type": "cluster",
+      "cluster_id": 9,
+      "centroid": [
+        0.15374677002583978,
+        0.0,
+        0.12048351070818553,
+        0.10321151716500554,
+        0.02055164954029205,
+        0.18187239117471674,
+        0.04108527131782946,
+        0.2597760551248923,
+        0.9922480620155039,
+        0.0,
+        1.0,
+        0.0,
+        0.4618432385874246,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "occurrences": 129,
+      "confidence": 0.3548641022556162,
+      "support": 0.06670113753877974,
+      "examples": [
+        {
+          "file": "tools/test_archaeology_learner_enhanced.py",
+          "line": 245,
+          "type": "FunctionDef",
+          "code_snippet": "def test_knowledge_base_search():\n    \"\"\"Test searching the knowledge base\"\"\"\n    test_repo = create"
+        },
+        {
+          "file": "tools/test_archaeology_learner_enhanced.py",
+          "line": 175,
+          "type": "FunctionDef",
+          "code_snippet": "def test_find_similar_changes():\n    \"\"\"Test finding similar historical changes\"\"\"\n    test_repo = c"
+        },
+        {
+          "file": "tools/test_code_smell_fixer.py",
+          "line": 443,
+          "type": "FunctionDef",
+          "code_snippet": "def test_preserves_working_code():\n    \"\"\"Test that fixer doesn't break working code\"\"\"\n    with tem"
+        },
+        {
+          "file": "tools/test_repo_time_travel.py",
+          "line": 277,
+          "type": "FunctionDef",
+          "code_snippet": "def test_navigate_to_commit():\n    \"\"\"Test navigating to a specific commit\"\"\"\n    test_repo = create"
+        },
+        {
+          "file": "tools/test_validation_utils.py",
+          "line": 270,
+          "type": "FunctionDef",
+          "code_snippet": "def test_safe_file_operations():\n    \"\"\"Test safe file read/write operations.\"\"\"\n    print(\"Testing "
+        }
+      ],
+      "description": "Pattern with 129 occurrences. Primarily FunctionDef nodes. Average complexity: 3.6, average size: 33.1 lines. Generally well-documented. Includes error handling. ",
+      "category": "well-documented",
+      "silhouette_score": 0.0,
+      "inertia": 0.0
+    },
+    {
+      "pattern_id": "anomaly_0",
+      "pattern_name": "Anomalous Code Pattern",
+      "pattern_type": "anomaly",
+      "cluster_id": -1,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "occurrences": 96,
+      "confidence": 0.8,
+      "support": 0.04963805584281282,
+      "examples": [
+        {
+          "file": "tools/validate-agent-definition.py",
+          "line": 37,
+          "type": "ClassDef",
+          "code_snippet": "class Colors:\n    GREEN = '\\033[92m'\n    RED = '\\033[91m'\n    YELLOW = '\\033[93m'\n    BLUE = '\\033[9"
+        },
+        {
+          "file": "tools/test_commit_strategy_learner.py",
+          "line": 440,
+          "type": "FunctionDef",
+          "code_snippet": "    def tearDown(self):\n        \"\"\"Clean up\"\"\"\n        shutil.rmtree(self.test_dir)"
+        },
+        {
+          "file": "tools/api_coordination_hub.py",
+          "line": 449,
+          "type": "FunctionDef",
+          "code_snippet": "        def decorator(func: Callable) -> Callable:\n            @wraps(func)\n            def wrapper("
+        },
+        {
+          "file": "tools/list_agents_from_registry.py",
+          "line": 21,
+          "type": "FunctionDef",
+          "code_snippet": "def main():\n    import argparse\n    \n    parser = argparse.ArgumentParser(description=\"List agents f"
+        },
+        {
+          "file": "tools/fetch-web-content.py",
+          "line": 27,
+          "type": "ClassDef",
+          "code_snippet": "    class ValidationError(Exception):\n        pass"
+        }
+      ],
+      "description": "Code elements that significantly deviate from common patterns",
+      "category": "anomaly",
+      "silhouette_score": 0.0,
+      "inertia": 0.0
+    }
+  ]
+}
