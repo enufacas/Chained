@@ -556,9 +556,24 @@ class MetricsCollector:
                                     pr_data = source.get('issue')
                                     pr_number = pr_data.get('number')
                                     if pr_number and pr_number not in pr_numbers_from_issues:
-                                        prs_for_agent.append(pr_data)
-                                        pr_numbers_from_issues.add(pr_number)
-                                        print(f"  ✅ Found PR #{pr_number} via timeline for issue #{issue_number}", file=sys.stderr)
+                                        # Fetch full PR details to get accurate merge status
+                                        try:
+                                            full_pr = self.github.get(f'/repos/{self.repo}/pulls/{pr_number}')
+                                            if full_pr:
+                                                prs_for_agent.append(full_pr)
+                                                pr_numbers_from_issues.add(pr_number)
+                                                merge_status = "merged" if full_pr.get('merged_at') else "open/closed"
+                                                print(f"  ✅ Found PR #{pr_number} ({merge_status}) via timeline for issue #{issue_number}", file=sys.stderr)
+                                            else:
+                                                # Fallback to partial data if full fetch fails
+                                                prs_for_agent.append(pr_data)
+                                                pr_numbers_from_issues.add(pr_number)
+                                                print(f"  ⚠️  Found PR #{pr_number} (partial data) via timeline for issue #{issue_number}", file=sys.stderr)
+                                        except Exception as e:
+                                            # Fallback to partial data on error
+                                            prs_for_agent.append(pr_data)
+                                            pr_numbers_from_issues.add(pr_number)
+                                            print(f"  ⚠️  Found PR #{pr_number} (error fetching details: {e}) via timeline for issue #{issue_number}", file=sys.stderr)
                 except Exception as e:
                     print(f"⚠️  Warning: Timeline API failed for issue {issue_number}: {e}", file=sys.stderr)
                 
@@ -604,7 +619,26 @@ class MetricsCollector:
             activity.prs_created = len(prs_for_agent)
             
             # Count merged PRs
-            prs_merged = [pr for pr in prs_for_agent if pr.get('pull_request', {}).get('merged_at')]
+            # Note: PRs from different API sources have different structures:
+            # - Timeline API: PRs have 'pull_request' nested object
+            # - Search API: PRs are direct objects with merged_at field
+            # - Git fallback: PRs have merged_at set to True
+            prs_merged = []
+            for pr in prs_for_agent:
+                # Check multiple possible structures for merge status
+                if pr.get('source') == 'git_log':
+                    # Git fallback PRs are assumed merged
+                    prs_merged.append(pr)
+                elif pr.get('merged_at'):
+                    # Direct merged_at field (from search API or fetched PR details)
+                    prs_merged.append(pr)
+                elif pr.get('pull_request', {}).get('merged_at'):
+                    # Nested pull_request object (from timeline cross-reference)
+                    prs_merged.append(pr)
+                elif pr.get('state') == 'closed' and pr.get('merged', False):
+                    # Alternative: closed + merged flag
+                    prs_merged.append(pr)
+            
             activity.prs_merged = len(prs_merged)
             
             print(f"  ✅ {len(prs_merged)} PRs were merged", file=sys.stderr)
