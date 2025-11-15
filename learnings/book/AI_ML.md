@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 191
+**Total Insights:** 216
 
 **Last Updated:** 2025-11-15
 
@@ -215,6 +215,65 @@ Collection of publicly available IPTV channels from all over the world
 ## 📰 From Hacker News
 
 
+### Llmdeathcount.com
+
+**Link:** https://llmdeathcount.com/
+
+---
+
+
+### I implemented an ISO 42001-certified AI Governance program in 6 months
+
+**Link:** https://beabytes.com/iso42001-certified-ai-governance/
+
+---
+
+
+### Trellis AI (YC W24) Is Hiring: Streamline access to life-saving therapies
+
+**Link:** https://www.ycombinator.com/companies/trellis-ai/jobs/f4GWvH0-forward-deployed-engineer-full-time
+
+---
+
+
+### AI World Clocks
+
+**Link:** https://clocks.brianmoore.com/
+
+
+&quot;Every minute, a new clock is rendered by nine different AI models.&quot;
+
+---
+
+
+### Strap Rail
+
+**Link:** https://www.construction-physics.com/p/strap-rail
+
+---
+
+
+### Streaming AI agent desktops with gaming protocols
+
+**Link:** https://blog.helix.ml/p/technical-deep-dive-on-streaming
+
+---
+
+
+### A new Google model is nearly perfect on automated handwriting recognition
+
+**Link:** https://generativehistory.substack.com/p/has-google-quietly-solved-two-of
+
+---
+
+
+### An Antivenom Cocktail, Made by a Llama
+
+**Link:** https://www.asimov.press/p/broad-antivenom
+
+---
+
+
 ### AI World Clocks
 
 **Community Score:** 1089 upvotes
@@ -326,95 +385,6 @@ This is a character-level language diffusion model for text generation.<p>The mo
 **Community Score:** 274 upvotes
 
 **Link:** https://generativehistory.substack.com/p/has-google-quietly-solved-two-of
-
----
-
-
-### All praise to the lunch ladies
-
-**Community Score:** 169 upvotes
-
-**Link:** https://bittersoutherner.com/issue-no-12/all-praise-to-the-lunch-ladies
-
-
-**Content Summary:**
-
-Better South / Better Word All Praise to the Lunch Ladies Blessed are the women who watch over America’s children. Words by Jennifer Justus | Photos by Houston Cofield Portaits featured in this story were taken at Peabody High School and Trenton Elementary School in Trenton, Tennessee. November 4, 2025 Granny won me over with the government cheese. As a child, maybe 4 or 5 years old, when I’d visit her on occasional Sundays in Blue Ridge, Georgia, she’d slice me off a little treat — an orange re...
-
----
-
-
-### Show HN: Tiny Diffusion – A character-level text diffusion model from scratch
-
-**Community Score:** 118 upvotes
-
-**Link:** https://github.com/nathan-barry/tiny-diffusion
-
-
-**Content Summary:**
-
-nathan-barry / tiny-diffusion Public Notifications You must be signed in to change notification settings Fork 34 Star 324 A character-level language diffusion model trained on Tiny Shakespeare License MIT license 324 stars 34 forks Branches Tags Activity Star Notifications You must be signed in to change notification settings nathan-barry/tiny-diffusion About A character-level language diffusion model trained on Tiny Shakespeare Resources Readme License MIT license Uh oh! There was an error whil...
-
----
-
-
-### AI World Clocks
-
-**Link:** https://clocks.brianmoore.com/
-
-
-&quot;Every minute, a new clock is rendered by nine different AI models.&quot;
-
----
-
-
-### Show HN: Tiny Diffusion – A character-level text diffusion model from scratch
-
-**Link:** https://github.com/nathan-barry/tiny-diffusion
-
-
-This is a character-level language diffusion model for text generation.<p>The model is a modified version of Nanochat&#x27;s GPT implementation and is trained on Tiny Shakespeare!<p>It is only 10.7 million parameters, so you can try it out locally.
-
----
-
-
-### RetailReady (YC W24) Is Hiring
-
-**Link:** https://www.ycombinator.com/companies/retailready/jobs/kGHAith-support-engineer
-
----
-
-
-### Honda: 2 years of ml vs 1 month of prompting - heres what we learned
-
-**Link:** https://www.levs.fyi/blog/2-years-of-ml-vs-1-month-of-prompting/
-
----
-
-
-### Magit manuals are available online again
-
-**Link:** https://github.com/magit/magit/issues/5472
-
----
-
-
-### Show HN: Chirp – Local Windows dictation with ParakeetV3 no executable required
-
-**Link:** https://github.com/Whamp/chirp
-
-
-I’ve been working in fairly locked‑down Windows environments where I’m allowed to run Python, but not install or launch new `.exe` files. In addition the built-in windows dictations are blocked (the only good one isn&#x27;t local anyway). At the same time, I really wanted accurate, fast dictation without sending audio to a cloud service, and without needing a GPU. Most speech‑to‑text setups I tried either required special launchers, GPU access, or were awkward to run day‑to‑day.<p>To scratch that itch, I built Chirp, a Windows dictation app that runs fully locally, uses NVIDIA’s ParakeetV3 model, and is managed end‑to‑end with `uv`. If you can run Python on your machine, you should be able to run Chirp—no additional executables required.<p>Under the hood, Chirp uses the Parakeet TDT 0.6B v3 ONNX bundle. ParakeetV3 has accuracy in the same ballpark as Whisper‑large‑v3 (multilingual WER ~4.9 vs ~5.0 in the open ASR leaderboard), but it’s much faster and happy on CPU.<p>The flow is:
-- One‑time setup that downloads and prepares the ONNX model:
-  - `uv run python -m chirp.setup`
-- A long‑running CLI process:
-  - `uv run python -m chirp.main`
-- A global hotkey that starts&#x2F;stops recording and injects text into the active window.<p>A few details that might be interesting technically:<p>- <i>Local‑only STT:</i> Everything runs on your machine using ONNX Runtime; by default it uses CPU providers, with optional GPU providers if your environment allows.<p>- <i>Config‑driven behavior:</i> A `config.toml` file controls the global hotkey, model choice, quantization (`int8` option), language, ONNX providers, and threading. There’s also a simple `[word_overrides]` map so you can fix tokens that the model consistently mishears.<p>- <i>Post‑processing pipeline:</i> After recognition, there’s an optional “style guide” step where you can specify prompts like “sentence case” or “prepend: &gt;&gt;” for the final text.<p>- <i>No clipboard gymnastics required on Windows:</i> The app types directly into the focused window; there are options for clipboard‑based pasting and cleanup behavior for platforms where that makes more sense.<p>- <i>Audio feedback:</i> Start&#x2F;stop sounds (configurable) let you know when the mic is actually recording.<p>So far I’ve mainly tested this on my own Windows machines with English dictation and CPU‑only setups. There are probably plenty of rough edges (different keyboard layouts, language settings, corporate IT policies, etc.), and I’d love feedback from people who:<p>- Work in restricted corporate environments and need local dictation.
-- Have experience with Parakeet&#x2F;Whisper or ONNX Runtime and see obvious ways to improve performance or robustness.
-- Want specific features (e.g., better multi‑language support, more advanced post‑processing, or integrations with their editor&#x2F;IDE).<p>Repo is here:  
-`<a href="https:&#x2F;&#x2F;github.com&#x2F;Whamp&#x2F;chirp" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;Whamp&#x2F;chirp</a>`<p>If you try it, I’d be very interested in:<p>- CPU usage and latency on your hardware,
-- How well it behaves with your keyboard layout and applications,
-- Any weird failure cases or usability annoyances you run into.<p>Happy to answer questions and dig into technical details in the comments.
 
 ---
 
@@ -678,6 +648,23 @@ Hard lessons fr...
 ---
 
 
+### Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 
+
+**Link:** https://tldr.tech/tech/2025-11-14
+
+
+**Content Summary:**
+
+Stability or and innovation in payments technology (Sponsor)
+Why pick one?
+With Marqeta, launch payments experiences without choosing between innovation and scale.
+Marqeta
+combines the scale and reliability of proven payments infrastructure with the flexibility and innovation of a modern platform—so you can move faster, reduce risk, and grow with confidence.
+From optimizing spend and cash flow to building seamless, rewards-driven customer experiences, Marqeta's solutions have you covered. When i...
+
+---
+
+
 ### GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻
 
 **Link:** https://tldr.tech/tech/2025-11-13
@@ -764,26 +751,5 @@ You want AI to become part of your organizational DNA - and that means enabling 
 Airia is the
 “let's get serious about AI adoption” platform
 . Rapidly prototype, deploy, and manage AI agents that transform workflows across your organization - without sacrificin...
-
----
-
-
-### Nano Banana 2 leaks 🍌, GPT-5-Codex-Mini 👨‍💻, nested learning 🧠
-
-**Link:** https://tldr.tech/ai/2025-11-10
-
-
-**Content Summary:**
-
-OpenAI's head of financial engineering shares her monetization strategy for hypergrowth (Sponsor)
-ChatGPT is only one part of OpenAI's success. The other part is the breathtaking speed with which
-OpenAI built a new monetization model
-.
-In a fireside chat at Monetize 2025, OpenAI's Head of Financial Engineering, Sara Conlon, explained how she built an
-engineering billing org poised for hypergrowth
-.
-Read the blog to learn:
-Why centralizated monetization infrastructure is essential
-Hard lessons fr...
 
 ---

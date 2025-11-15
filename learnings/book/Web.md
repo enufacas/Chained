@@ -2,7 +2,7 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 19
+**Total Insights:** 23
 
 **Last Updated:** 2025-11-15
 
@@ -102,7 +102,47 @@ Deliver web apps with confidence 🚀
 ---
 
 
+### playcanvas/engine - Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+
+**Link:** https://github.com/playcanvas/engine
+
+
+Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+
+---
+
+
+### requestly/requestly - Free and open-source API Client & Interceptor.
+
+**Link:** https://github.com/requestly/requestly
+
+
+Free and open-source API Client & Interceptor.
+
+---
+
+
+### angular/angular - Deliver web apps with confidence 🚀
+
+**Link:** https://github.com/angular/angular
+
+
+Deliver web apps with confidence 🚀
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### HipKittens: Fast and furious AMD kernels
+
+**Link:** https://hazyresearch.stanford.edu/blog/2025-11-09-hk
+
+
+Related post: <a href="https:&#x2F;&#x2F;hazyresearch.stanford.edu&#x2F;blog&#x2F;2025-11-09-amd-brr" rel="nofollow">https:&#x2F;&#x2F;hazyresearch.stanford.edu&#x2F;blog&#x2F;2025-11-09-amd-brr</a>
+
+---
 
 
 ### The disguised return of EU Chat Control
