@@ -30,10 +30,21 @@ jobs:
         run: |
           python3 scripts/update_agent.py
       
+      - name: Sync world data to docs
+        run: |
+          # Ensure docs/world directory exists
+          mkdir -p docs/world
+          
+          # Copy world data files to docs for GitHub Pages
+          cp world/world_state.json docs/world/
+          cp world/knowledge.json docs/world/
+          
+          echo "✅ Synced world data to docs/world for GitHub Pages"
+      
       - name: Check for changes
         id: check_changes
         run: |
-          git add world/
+          git add world/ docs/world/
           if git diff --staged --quiet; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
             echo "No changes to commit"
