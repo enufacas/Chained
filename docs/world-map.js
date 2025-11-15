@@ -1,202 +1,129 @@
 /**
- * Chained World Map - Simplified self-contained version
- * Using simple SVG-based visualization (no external dependencies)
+ * Chained World Map - Leaflet Implementation
+ * Real-time Agent Explorer with Interactive Mapping
+ * @investigate-champion implementation
  */
 
+let map = null;
 let worldState = null;
 let knowledge = null;
-let selectedFeature = null;
+let agentMarkers = null;
+let agentLocations = {}; // Map agent names to locations
 
-// Map projection helpers (simple Mercator-like)
-function projectLonLat(lon, lat) {
-    // Simple equirectangular projection
-    const x = (lon + 180) * (800 / 360);
-    const y = (90 - lat) * (400 / 180);
-    return { x, y };
-}
+// Default locations for agents (diverse global distribution)
+const DEFAULT_AGENT_LOCATIONS = {
+    // Performance & Optimization
+    'accelerate-master': { lat: 37.7749, lng: -122.4194, city: 'San Francisco, CA' },
+    'accelerate-specialist': { lat: 47.6062, lng: -122.3321, city: 'Seattle, WA' },
+    
+    // Testing & Quality
+    'assert-specialist': { lat: 40.7128, lng: -74.0060, city: 'New York, NY' },
+    'assert-whiz': { lat: 42.3601, lng: -71.0589, city: 'Boston, MA' },
+    'validator-pro': { lat: 41.8781, lng: -87.6298, city: 'Chicago, IL' },
+    'edge-cases-pro': { lat: 30.2672, lng: -97.7431, city: 'Austin, TX' },
+    
+    // Infrastructure & Creation
+    'create-guru': { lat: 37.7749, lng: -122.4194, city: 'San Francisco, CA' },
+    'create-champion': { lat: 47.6062, lng: -122.3321, city: 'Seattle, WA' },
+    'infrastructure-specialist': { lat: 47.6740, lng: -122.1215, city: 'Redmond, WA' },
+    'construct-specialist': { lat: 45.5152, lng: -122.6784, city: 'Portland, OR' },
+    
+    // Engineering & APIs
+    'engineer-master': { lat: 51.5074, lng: -0.1278, city: 'London, UK' },
+    'engineer-wizard': { lat: 48.8566, lng: 2.3522, city: 'Paris, France' },
+    'develop-specialist': { lat: 52.5200, lng: 13.4050, city: 'Berlin, Germany' },
+    
+    // Integration & Communication
+    'bridge-master': { lat: 35.6762, lng: 139.6503, city: 'Tokyo, Japan' },
+    'integrate-specialist': { lat: 37.5665, lng: 126.9780, city: 'Seoul, South Korea' },
+    
+    // Investigation & Analysis
+    'investigate-champion': { lat: 35.2271, lng: -80.8431, city: 'Charlotte, NC' },
+    'investigate-specialist': { lat: 33.4484, lng: -112.0740, city: 'Phoenix, AZ' },
+    
+    // Organization & Structure
+    'organize-guru': { lat: 39.9042, lng: 116.4074, city: 'Beijing, China' },
+    'organize-specialist': { lat: 31.2304, lng: 121.4737, city: 'Shanghai, China' },
+    'organize-expert': { lat: 22.3193, lng: 114.1694, city: 'Hong Kong' },
+    'simplify-pro': { lat: 1.3521, lng: 103.8198, city: 'Singapore' },
+    'restructure-master': { lat: -33.8688, lng: 151.2093, city: 'Sydney, Australia' },
+    'refactor-champion': { lat: -37.8136, lng: 144.9631, city: 'Melbourne, Australia' },
+    
+    // Security
+    'secure-specialist': { lat: 47.6062, lng: -122.3321, city: 'Seattle, WA' },
+    'secure-ninja': { lat: 32.7767, lng: -96.7970, city: 'Dallas, TX' },
+    'secure-pro': { lat: 37.3382, lng: -121.8863, city: 'San Jose, CA' },
+    'monitor-champion': { lat: 38.9072, lng: -77.0369, city: 'Washington, DC' },
+    
+    // Documentation & Support
+    'clarify-champion': { lat: 49.2827, lng: -123.1207, city: 'Vancouver, Canada' },
+    'document-ninja': { lat: 43.6532, lng: -79.3832, city: 'Toronto, Canada' },
+    'communicator-maestro': { lat: 45.5017, lng: -73.5673, city: 'Montreal, Canada' },
+    'support-master': { lat: 51.5074, lng: -0.1278, city: 'London, UK' },
+    
+    // Coordination & Workflow
+    'coordinate-wizard': { lat: 55.7558, lng: 37.6173, city: 'Moscow, Russia' },
+    'align-wizard': { lat: 52.3676, lng: 4.9041, city: 'Amsterdam, Netherlands' },
+    'meta-coordinator': { lat: 50.1109, lng: 8.6821, city: 'Frankfurt, Germany' },
+    
+    // Coaching & Mentorship
+    'coach-master': { lat: 59.3293, lng: 18.0686, city: 'Stockholm, Sweden' },
+    'coach-wizard': { lat: 60.1699, lng: 24.9384, city: 'Helsinki, Finland' },
+    'guide-wizard': { lat: 55.6761, lng: 12.5683, city: 'Copenhagen, Denmark' },
+    
+    // Innovation & Exploration
+    'pioneer-pro': { lat: -23.5505, lng: -46.6333, city: 'São Paulo, Brazil' },
+    'pioneer-sage': { lat: -22.9068, lng: -43.1729, city: 'Rio de Janeiro, Brazil' },
+    'steam-machine': { lat: 19.4326, lng: -99.1332, city: 'Mexico City, Mexico' },
+    
+    // Specialized
+    'tools-analyst': { lat: 28.6139, lng: 77.2090, city: 'New Delhi, India' },
+    'cloud-architect': { lat: 12.9716, lng: 77.5946, city: 'Bangalore, India' },
+    'troubleshoot-expert': { lat: 47.6062, lng: -122.3321, city: 'Seattle, WA' }
+};
 
-// Initialize simple SVG map
+// Initialize Leaflet map
 function initMap() {
     const mapDiv = document.getElementById('map');
     
-    // Create SVG element
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '100%');
-    svg.setAttribute('height', '100%');
-    svg.setAttribute('viewBox', '0 0 800 400');
-    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-    svg.style.background = '#1a2332';
-    svg.style.borderRadius = '12px';
+    // Create Leaflet map
+    map = L.map('map', {
+        center: [20, 0],
+        zoom: 2,
+        minZoom: 2,
+        maxZoom: 18,
+        worldCopyJump: true
+    });
     
-    // Create world outline (simple rectangle with grid)
-    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
-    pattern.setAttribute('id', 'grid');
-    pattern.setAttribute('width', '40');
-    pattern.setAttribute('height', '40');
-    pattern.setAttribute('patternUnits', 'userSpaceOnUse');
+    // Add OpenStreetMap tile layer (dark theme)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }).addTo(map);
     
-    const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line1.setAttribute('x1', '40');
-    line1.setAttribute('y1', '0');
-    line1.setAttribute('x2', '40');
-    line1.setAttribute('y2', '40');
-    line1.setAttribute('stroke', 'rgba(255,255,255,0.1)');
-    line1.setAttribute('stroke-width', '1');
+    // Initialize marker cluster group
+    agentMarkers = L.markerClusterGroup({
+        iconCreateFunction: function(cluster) {
+            const count = cluster.getChildCount();
+            let size = 'small';
+            if (count > 10) size = 'large';
+            else if (count > 5) size = 'medium';
+            
+            return L.divIcon({
+                html: `<div><span>${count}</span></div>`,
+                className: `marker-cluster marker-cluster-${size}`,
+                iconSize: L.point(40, 40)
+            });
+        },
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true
+    });
     
-    const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line2.setAttribute('x1', '0');
-    line2.setAttribute('y1', '40');
-    line2.setAttribute('x2', '40');
-    line2.setAttribute('y2', '40');
-    line2.setAttribute('stroke', 'rgba(255,255,255,0.1)');
-    line2.setAttribute('stroke-width', '1');
-    
-    pattern.appendChild(line1);
-    pattern.appendChild(line2);
-    defs.appendChild(pattern);
-    svg.appendChild(defs);
-    
-    // Background
-    const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    background.setAttribute('width', '800');
-    background.setAttribute('height', '400');
-    background.setAttribute('fill', 'url(#grid)');
-    svg.appendChild(background);
-    
-    // Add continents (simplified shapes)
-    drawContinents(svg);
-    
-    // Store SVG for later use
-    mapDiv.innerHTML = '';
-    mapDiv.appendChild(svg);
+    map.addLayer(agentMarkers);
     
     return true;
-}
-
-// Draw world map using a more realistic approach with better geographic accuracy
-function drawContinents(svg) {
-    // Using a simplified but more accurate world map projection
-    // Based on equirectangular projection with better continent shapes
-    const continents = [
-        // North America - more accurate coastline
-        { 
-            path: 'M 50,80 L 60,65 L 75,58 L 95,55 L 115,52 L 135,50 L 155,52 L 170,55 L 185,60 L 195,68 L 205,78 L 212,90 L 218,105 L 220,120 L 220,135 L 218,150 L 214,165 L 208,178 L 200,188 L 190,196 L 178,202 L 165,206 L 150,208 L 135,207 L 120,204 L 108,199 L 98,192 L 88,183 L 80,172 L 72,158 L 66,142 L 62,125 L 58,108 L 56,92 Z M 70,70 L 80,75 L 88,82 L 92,90 L 90,98 L 85,92 L 78,85 Z',
-            color: '#34495e'
-        },
-        // Greenland
-        {
-            path: 'M 230,40 L 245,38 L 258,40 L 268,45 L 273,52 L 275,62 L 273,72 L 268,80 L 260,85 L 248,88 L 238,87 L 228,82 L 222,74 L 220,64 L 222,54 Z',
-            color: '#34495e'
-        },
-        // South America - more detailed
-        { 
-            path: 'M 185,205 L 195,202 L 207,203 L 218,207 L 227,214 L 234,224 L 238,236 L 240,250 L 240,265 L 238,280 L 234,293 L 228,304 L 220,312 L 210,318 L 198,320 L 186,319 L 176,315 L 168,308 L 162,298 L 158,286 L 156,272 L 156,258 L 158,244 L 162,230 L 168,218 L 176,210 Z',
-            color: '#34495e'
-        },
-        // Europe - better detail
-        { 
-            path: 'M 375,70 L 388,68 L 402,68 L 415,70 L 428,73 L 440,77 L 452,82 L 463,88 L 472,96 L 478,106 L 481,117 L 481,128 L 478,138 L 472,146 L 463,152 L 452,156 L 440,158 L 428,158 L 415,156 L 402,152 L 390,146 L 380,138 L 372,128 L 368,117 L 367,106 L 369,95 L 372,84 Z M 410,72 L 420,75 L 428,80 L 432,87 L 430,94 L 424,90 L 416,84 Z',
-            color: '#34495e'
-        },
-        // Africa - more realistic shape
-        { 
-            path: 'M 380,140 L 393,138 L 407,139 L 420,142 L 432,147 L 443,154 L 453,163 L 461,174 L 467,187 L 470,201 L 471,216 L 470,231 L 467,246 L 461,260 L 453,272 L 443,282 L 432,289 L 420,293 L 407,294 L 393,292 L 382,287 L 373,280 L 366,270 L 361,258 L 358,244 L 357,229 L 358,214 L 361,199 L 366,185 L 373,172 L 377,160 Z',
-            color: '#34495e'
-        },
-        // Asia - much larger and more detailed
-        { 
-            path: 'M 470,55 L 490,52 L 512,51 L 535,52 L 558,55 L 580,60 L 602,66 L 623,74 L 643,84 L 661,96 L 677,110 L 690,126 L 700,143 L 707,161 L 710,180 L 710,199 L 707,217 L 700,233 L 690,247 L 677,258 L 661,266 L 643,271 L 623,274 L 602,274 L 580,271 L 558,266 L 535,258 L 512,247 L 490,233 L 473,217 L 462,199 L 456,180 L 453,161 L 453,143 L 456,126 L 462,110 L 468,96 Z M 720,90 L 735,88 L 745,92 L 748,102 L 743,110 L 732,108 Z M 485,60 L 495,65 L 502,72 L 505,82 L 502,90 L 495,85 L 488,78 Z',
-            color: '#34495e'
-        },
-        // Australia - better proportions
-        { 
-            path: 'M 620,260 L 638,258 L 655,260 L 671,265 L 686,272 L 698,281 L 707,292 L 712,305 L 713,318 L 710,330 L 703,339 L 693,345 L 680,348 L 665,348 L 650,345 L 636,339 L 624,330 L 616,318 L 612,305 L 611,292 L 613,279 Z',
-            color: '#34495e'
-        },
-        // Antarctica - bottom of map
-        { 
-            path: 'M 30,355 L 770,355 L 768,365 L 760,373 L 745,378 L 720,381 L 680,383 L 630,384 L 570,383 L 500,382 L 430,383 L 370,384 L 320,383 L 280,381 L 255,378 L 240,373 L 232,365 Z',
-            color: '#34495e'
-        },
-        // Southeast Asia / Indonesia
-        {
-            path: 'M 630,210 L 640,209 L 650,211 L 658,215 L 663,221 L 665,228 L 663,235 L 658,240 L 650,243 L 640,243 L 632,240 L 626,235 L 624,228 L 626,221 Z M 670,215 L 678,214 L 685,217 L 688,223 L 686,229 L 680,231 L 673,229 Z',
-            color: '#34495e'
-        },
-        // Japan
-        {
-            path: 'M 735,125 L 742,123 L 748,125 L 752,130 L 752,137 L 748,143 L 742,145 L 735,143 L 731,137 L 731,130 Z',
-            color: '#34495e'
-        },
-        // New Zealand
-        {
-            path: 'M 755,310 L 762,309 L 768,312 L 770,318 L 768,325 L 762,328 L 755,327 L 751,323 L 750,318 Z M 758,330 L 764,329 L 768,332 L 769,338 L 766,343 L 761,344 L 756,342 L 754,337 Z',
-            color: '#34495e'
-        },
-        // Iceland
-        {
-            path: 'M 335,50 L 343,49 L 349,52 L 351,58 L 349,64 L 343,66 L 335,65 L 331,61 L 330,55 Z',
-            color: '#34495e'
-        },
-        // UK and Ireland
-        {
-            path: 'M 360,85 L 365,84 L 370,86 L 372,91 L 370,96 L 365,98 L 360,97 L 357,93 Z M 352,88 L 356,87 L 359,90 L 358,94 L 355,96 L 351,95 L 349,91 Z',
-            color: '#34495e'
-        },
-        // Madagascar
-        {
-            path: 'M 485,265 L 490,264 L 494,267 L 495,273 L 494,280 L 490,285 L 485,286 L 481,283 L 480,277 L 481,271 Z',
-            color: '#34495e'
-        }
-    ];
-    
-    // Draw ocean/water background first
-    const oceanRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    oceanRect.setAttribute('x', '0');
-    oceanRect.setAttribute('y', '0');
-    oceanRect.setAttribute('width', '800');
-    oceanRect.setAttribute('height', '400');
-    oceanRect.setAttribute('fill', '#1a2838');
-    svg.appendChild(oceanRect);
-    
-    // Draw grid lines for latitude/longitude reference
-    for (let i = 50; i < 800; i += 80) {
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', i);
-        line.setAttribute('y1', '0');
-        line.setAttribute('x2', i);
-        line.setAttribute('y2', '400');
-        line.setAttribute('stroke', '#2d3748');
-        line.setAttribute('stroke-width', '1');
-        line.setAttribute('opacity', '0.3');
-        svg.appendChild(line);
-    }
-    
-    for (let i = 50; i < 400; i += 50) {
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', '0');
-        line.setAttribute('y1', i);
-        line.setAttribute('x2', '800');
-        line.setAttribute('y2', i);
-        line.setAttribute('stroke', '#2d3748');
-        line.setAttribute('stroke-width', '1');
-        line.setAttribute('opacity', '0.3');
-        svg.appendChild(line);
-    }
-    
-    // Draw continents with better styling
-    continents.forEach(continent => {
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', continent.path);
-        path.setAttribute('fill', continent.color);
-        path.setAttribute('stroke', '#4a5568');
-        path.setAttribute('stroke-width', '1.5');
-        path.setAttribute('opacity', '0.95');
-        // Add subtle shadow effect
-        path.setAttribute('filter', 'drop-shadow(2px 2px 3px rgba(0,0,0,0.4))');
-        svg.appendChild(path);
-    });
 }
 
 // Load world data
@@ -215,273 +142,185 @@ async function loadWorldData() {
     }
 }
 
-// Clear all map features
-function clearMapFeatures() {
-    const svg = document.querySelector('#map svg');
-    if (!svg) return;
-    
-    // Remove all circles and markers (keep background and continents)
-    const elements = svg.querySelectorAll('.region-circle, .agent-marker, .popup-group');
-    elements.forEach(el => el.remove());
-}
-
-// Render regions on map
-function renderRegions() {
-    if (!worldState || !worldState.regions) return;
-    
-    const svg = document.querySelector('#map svg');
-    if (!svg) return;
-    
-    worldState.regions.forEach(region => {
-        const ideaCount = region.idea_count || 0;
-        const pos = projectLonLat(region.lng, region.lat);
-        
-        // Size circle by idea count
-        const radius = Math.max(3, Math.min(30, ideaCount * 5 + 5));
-        
-        // Color by idea density
-        const color = ideaCount > 0 ? '#0891b2' : '#4b5563';
-        
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', pos.x);
-        circle.setAttribute('cy', pos.y);
-        circle.setAttribute('r', radius);
-        circle.setAttribute('fill', color);
-        circle.setAttribute('fill-opacity', '0.4');
-        circle.setAttribute('stroke', color);
-        circle.setAttribute('stroke-width', '2');
-        circle.classList.add('region-circle');
-        circle.style.cursor = 'pointer';
-        
-        // Add click handler
-        circle.addEventListener('click', () => showRegionPopup(region, pos));
-        circle.addEventListener('mouseenter', function() {
-            this.setAttribute('fill-opacity', '0.6');
-        });
-        circle.addEventListener('mouseleave', function() {
-            this.setAttribute('fill-opacity', '0.4');
-        });
-        
-        svg.appendChild(circle);
-    });
-}
-
-// Render agents on map
-function renderAgents() {
-    if (!worldState || !worldState.agents) return;
-    
-    const svg = document.querySelector('#map svg');
-    if (!svg) return;
-    
-    worldState.agents.forEach(agent => {
-        const region = getRegionById(agent.location_region_id);
-        if (!region) return;
-        
-        const pos = projectLonLat(region.lng, region.lat);
-        
-        // Create agent marker group
-        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        group.classList.add('agent-marker');
-        group.style.cursor = 'pointer';
-        
-        // Background circle
-        const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        bgCircle.setAttribute('cx', pos.x);
-        bgCircle.setAttribute('cy', pos.y);
-        bgCircle.setAttribute('r', '12');
-        bgCircle.setAttribute('fill', '#0891b2');
-        bgCircle.setAttribute('stroke', '#fff');
-        bgCircle.setAttribute('stroke-width', '2');
-        group.appendChild(bgCircle);
-        
-        // Robot emoji as text
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', pos.x);
-        text.setAttribute('y', pos.y + 5);
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('font-size', '16');
-        text.textContent = '🤖';
-        group.appendChild(text);
-        
-        // Add click handler
-        group.addEventListener('click', () => showAgentPopup(agent, region, pos));
-        group.addEventListener('mouseenter', function() {
-            bgCircle.setAttribute('r', '14');
-        });
-        group.addEventListener('mouseleave', function() {
-            bgCircle.setAttribute('r', '12');
-        });
-        
-        svg.appendChild(group);
-    });
-}
-
-// Show region popup
-function showRegionPopup(region, pos) {
-    hidePopup();
-    
-    const svg = document.querySelector('#map svg');
-    if (!svg) return;
-    
-    const ideas = getIdeasForRegion(region.id);
-    
-    const lines = [
-        { text: region.label, size: '14', bold: true },
-        { text: `💡 Ideas: ${region.idea_count || 0}`, size: '12' }
-    ];
-    
-    if (ideas.length > 0) {
-        lines.push({ text: 'Recent Ideas:', size: '11', bold: true });
-        ideas.slice(0, 3).forEach((idea, i) => {
-            const title = idea.title.length > 30 ? idea.title.substring(0, 30) + '...' : idea.title;
-            lines.push({ text: `• ${title}`, size: '10', indent: 15 });
-        });
+// Get agent location (from world state or defaults)
+function getAgentLocation(agentLabel) {
+    // PRIORITY 1: Check if agent has location in world state (source of truth)
+    if (worldState && worldState.regions) {
+        const agent = worldState.agents.find(a => a.label === agentLabel);
+        if (agent && agent.location_region_id) {
+            const region = worldState.regions.find(r => r.id === agent.location_region_id);
+            if (region) {
+                return {
+                    lat: region.lat,
+                    lng: region.lng,
+                    city: region.label
+                };
+            }
+        }
     }
     
-    createPopup(svg, pos.x, pos.y, lines);
+    // PRIORITY 2: Fall back to default locations for inactive agents
+    const agentKey = findAgentKey(agentLabel);
+    if (agentKey && DEFAULT_AGENT_LOCATIONS[agentKey]) {
+        return DEFAULT_AGENT_LOCATIONS[agentKey];
+    }
+    
+    // PRIORITY 3: Default to Charlotte, NC if no location found
+    return { lat: 35.2271, lng: -80.8431, city: 'Charlotte, NC' };
 }
 
-// Show agent popup
-function showAgentPopup(agent, region, pos) {
-    hidePopup();
+// Find agent key from label (fuzzy matching)
+function findAgentKey(label) {
+    // Extract meaningful words from label
+    const labelLower = label.toLowerCase();
     
-    const svg = document.querySelector('#map svg');
-    if (!svg) return;
+    // Direct mapping for known patterns
+    const nameMap = {
+        'robert martin': 'organize-guru',
+        'tesla': 'create-guru',
+        'turing': 'meta-coordinator',
+        'liskov': 'coach-master',
+        'moxie marlinspike': 'secure-ninja',
+        'linus torvalds': 'construct-specialist',
+        'ada': 'investigate-champion',
+        'einstein': 'pioneer-sage',
+        'martin fowler': 'organize-specialist',
+        'steam machine': 'steam-machine'
+    };
     
-    const idea = agent.current_idea_id ? getIdeaById(agent.current_idea_id) : null;
+    // Check direct mappings
+    for (const [key, value] of Object.entries(nameMap)) {
+        if (labelLower.includes(key)) {
+            return value;
+        }
+    }
+    
+    // Try to match by emoji or keywords
+    if (labelLower.includes('🧹') || labelLower.includes('clean')) return 'organize-guru';
+    if (labelLower.includes('🧪') || labelLower.includes('test')) return 'assert-specialist';
+    if (labelLower.includes('💭') || labelLower.includes('think')) return 'meta-coordinator';
+    if (labelLower.includes('🎯') || labelLower.includes('target')) return 'investigate-champion';
+    if (labelLower.includes('🔒') || labelLower.includes('secur')) return 'secure-specialist';
+    if (labelLower.includes('🔨') || labelLower.includes('build')) return 'construct-specialist';
+    if (labelLower.includes('⚙️') || labelLower.includes('engineer')) return 'engineer-master';
+    if (labelLower.includes('📖') || labelLower.includes('document')) return 'document-ninja';
+    
+    return null;
+}
+
+// Create custom agent marker icon
+function createAgentIcon(agent) {
     const score = agent.metrics?.overall_score || 0;
-    const specialization = agent.specialization || 'general';
+    let color = '#6b7280'; // gray
+    if (score >= 0.85) color = '#10b981'; // green for hall of fame
+    else if (score >= 0.5) color = '#0891b2'; // cyan for good
+    else if (score >= 0.3) color = '#f59e0b'; // amber for ok
+    else color = '#ef4444'; // red for at risk
     
-    // Determine score color
-    let scoreColor = '#666';
-    if (score >= 0.85) scoreColor = '#10b981'; // green
-    else if (score >= 0.5) scoreColor = '#0891b2'; // cyan
-    else if (score >= 0.3) scoreColor = '#f59e0b'; // amber
-    else scoreColor = '#ef4444'; // red
-    
-    const lines = [
-        { text: `🤖 ${agent.label}`, size: '14', bold: true },
-        { text: `🏷️ ${specialization}`, size: '11' },
-        { text: `📍 ${region.label}`, size: '11' },
-        { text: `📊 ${agent.status}`, size: '11' },
-        { text: `⭐ Score: ${(score * 100).toFixed(0)}%`, size: '11', color: scoreColor },
-        { text: `📈 ${agent.metrics?.issues_resolved || 0} issues | ${agent.metrics?.prs_merged || 0} PRs`, size: '10' }
-    ];
-    
-    if (idea) {
-        const title = idea.title.length > 28 ? idea.title.substring(0, 28) + '...' : idea.title;
-        lines.push({ text: `💡 ${title}`, size: '10' });
-    }
-    
-    if (agent.path && agent.path.length > 0) {
-        lines.push({ text: `🗺️ ${agent.path.length} stops remaining`, size: '10' });
-    }
-    
-    createPopup(svg, pos.x, pos.y, lines);
+    return L.divIcon({
+        html: `<div style="background-color: ${color}; border: 2px solid white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">🤖</div>`,
+        className: 'agent-marker-icon',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+        popupAnchor: [0, -12]
+    });
 }
 
-// Create popup with better positioning and formatting
-function createPopup(svg, x, y, lines) {
-    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    group.classList.add('popup-group');
+// Render all agents on map
+function renderAgents() {
+    if (!worldState || !worldState.agents || !map) return;
     
-    // Adjust position to keep popup in view
-    const viewBox = svg.viewBox.baseVal;
-    const popupWidth = 240;
-    const popupHeight = Math.max(120, lines.length * 20 + 40); // Dynamic height based on content
+    // Clear existing markers
+    agentMarkers.clearLayers();
     
-    // Calculate popup position to stay within bounds
-    let popupX = x - popupWidth / 2;
-    let popupY = y - popupHeight - 20; // Position above the marker
+    // Get all agent definitions
+    const allAgentKeys = Object.keys(DEFAULT_AGENT_LOCATIONS);
     
-    // Keep popup within SVG bounds
-    if (popupX < 10) popupX = 10;
-    if (popupX + popupWidth > viewBox.width - 10) popupX = viewBox.width - popupWidth - 10;
-    if (popupY < 10) popupY = y + 30; // If no room above, show below
+    // Track which agents are in world state
+    const activeAgents = new Set(worldState.agents.map(a => a.label));
     
-    // Background
-    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    bg.setAttribute('x', popupX);
-    bg.setAttribute('y', popupY);
-    bg.setAttribute('width', popupWidth);
-    bg.setAttribute('height', popupHeight);
-    bg.setAttribute('rx', '8');
-    bg.setAttribute('fill', 'white');
-    bg.setAttribute('stroke', '#0891b2');
-    bg.setAttribute('stroke-width', '2');
-    bg.setAttribute('filter', 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))');
-    group.appendChild(bg);
-    
-    // Close button
-    const closeBtn = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    closeBtn.setAttribute('x', popupX + popupWidth - 20);
-    closeBtn.setAttribute('y', popupY + 20);
-    closeBtn.setAttribute('font-size', '16');
-    closeBtn.setAttribute('fill', '#666');
-    closeBtn.setAttribute('cursor', 'pointer');
-    closeBtn.setAttribute('font-weight', 'bold');
-    closeBtn.textContent = '✖';
-    closeBtn.addEventListener('click', hidePopup);
-    group.appendChild(closeBtn);
-    
-    // Content - create text element with tspan children
-    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', popupX + 10);
-    text.setAttribute('y', popupY + 25);
-    text.setAttribute('fill', '#000');
-    
-    // Add each line as a tspan element
-    lines.forEach((line, index) => {
-        const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-        tspan.setAttribute('x', popupX + (line.indent || 10));
-        tspan.setAttribute('dy', index === 0 ? '0' : '1.4em');
-        tspan.setAttribute('font-size', line.size || '11');
-        if (line.bold) tspan.setAttribute('font-weight', 'bold');
-        if (line.color) tspan.setAttribute('fill', line.color);
-        tspan.textContent = line.text;
-        text.appendChild(tspan);
+    // Render active agents from world state
+    worldState.agents.forEach(agent => {
+        const location = getAgentLocation(agent.label);
+        const icon = createAgentIcon(agent);
+        
+        const marker = L.marker([location.lat, location.lng], { icon });
+        
+        // Create popup content
+        const score = agent.metrics?.overall_score || 0;
+        const specialization = agent.specialization || 'general';
+        const idea = agent.current_idea_id ? getIdeaById(agent.current_idea_id) : null;
+        
+        const popupContent = `
+            <div style="min-width: 200px;">
+                <h3 style="margin: 0 0 8px 0; color: #0891b2; font-size: 16px;">🤖 ${agent.label}</h3>
+                <p style="margin: 4px 0; font-size: 13px;"><strong>🏷️ Specialization:</strong> ${specialization}</p>
+                <p style="margin: 4px 0; font-size: 13px;"><strong>📍 Location:</strong> ${location.city}</p>
+                <p style="margin: 4px 0; font-size: 13px;"><strong>📊 Status:</strong> ${agent.status}</p>
+                <p style="margin: 4px 0; font-size: 13px;"><strong>⭐ Score:</strong> ${(score * 100).toFixed(0)}%</p>
+                <p style="margin: 4px 0; font-size: 13px;"><strong>📈 Metrics:</strong> ${agent.metrics?.issues_resolved || 0} issues | ${agent.metrics?.prs_merged || 0} PRs</p>
+                ${idea ? `<p style="margin: 4px 0; font-size: 13px;"><strong>💡 Current Idea:</strong> ${idea.title}</p>` : ''}
+                ${agent.path && agent.path.length > 0 ? `<p style="margin: 4px 0; font-size: 13px;"><strong>🗺️ Journey:</strong> ${agent.path.length} stops remaining</p>` : ''}
+            </div>
+        `;
+        
+        marker.bindPopup(popupContent);
+        agentMarkers.addLayer(marker);
     });
     
-    group.appendChild(text);
-    
-    // Pointer triangle pointing to the marker
-    const pointerY = popupY + popupHeight;
-    const pointer = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-    
-    // Point to the marker position
-    if (popupY < y) {
-        // Popup is above marker - pointer points down
-        pointer.setAttribute('points', `${x},${y} ${x - 10},${pointerY} ${x + 10},${pointerY}`);
-    } else {
-        // Popup is below marker - pointer points up
-        pointer.setAttribute('points', `${x},${y} ${x - 10},${popupY} ${x + 10},${popupY}`);
-    }
-    pointer.setAttribute('fill', 'white');
-    pointer.setAttribute('stroke', '#0891b2');
-    pointer.setAttribute('stroke-width', '2');
-    group.appendChild(pointer);
-    
-    svg.appendChild(group);
-}
-
-// Hide popup
-function hidePopup() {
-    const popups = document.querySelectorAll('.popup-group');
-    popups.forEach(p => p.remove());
+    // Add placeholder markers for inactive agents
+    allAgentKeys.forEach(agentKey => {
+        // Check if this agent is already rendered
+        const existingLabel = worldState.agents.find(a => {
+            const key = findAgentKey(a.label);
+            return key === agentKey;
+        });
+        
+        if (!existingLabel) {
+            const location = DEFAULT_AGENT_LOCATIONS[agentKey];
+            
+            // Create gray marker for inactive agent
+            const icon = L.divIcon({
+                html: '<div style="background-color: #4b5563; border: 2px solid white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; opacity: 0.5; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">💤</div>',
+                className: 'agent-marker-icon-inactive',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10],
+                popupAnchor: [0, -10]
+            });
+            
+            const marker = L.marker([location.lat, location.lng], { icon });
+            
+            const popupContent = `
+                <div style="min-width: 180px;">
+                    <h3 style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">💤 ${agentKey}</h3>
+                    <p style="margin: 4px 0; font-size: 12px; color: #9ca3af;"><strong>Status:</strong> Not yet spawned</p>
+                    <p style="margin: 4px 0; font-size: 12px; color: #9ca3af;"><strong>📍 Location:</strong> ${location.city}</p>
+                    <p style="margin: 4px 0; font-size: 12px; color: #9ca3af;"><em>This agent will activate when spawned by the system.</em></p>
+                </div>
+            `;
+            
+            marker.bindPopup(popupContent);
+            agentMarkers.addLayer(marker);
+        }
+    });
 }
 
 // Update sidebar
 function updateSidebar() {
     if (!worldState) return;
     
+    // Count total agents (active + inactive)
+    const totalAgents = Object.keys(DEFAULT_AGENT_LOCATIONS).length;
+    const activeAgents = worldState.agents?.length || 0;
+    
     // Update metrics
     document.getElementById('tick-value').textContent = worldState.tick || 0;
     document.getElementById('ideas-value').textContent = worldState.metrics?.total_ideas || 0;
     document.getElementById('regions-value').textContent = worldState.metrics?.total_regions || 0;
-    document.getElementById('agents-value').textContent = worldState.agents?.length || 0;
+    document.getElementById('agents-value').textContent = `${activeAgents}/${totalAgents}`;
     document.getElementById('hof-value').textContent = worldState.metrics?.hall_of_fame_count || 0;
     
-    // Update scoring thresholds with color coding
+    // Update scoring thresholds
     const promotionThreshold = worldState.metrics?.promotion_threshold || 0.85;
     const eliminationThreshold = worldState.metrics?.elimination_threshold || 0.3;
     document.getElementById('promotion-threshold').innerHTML = 
@@ -492,30 +331,28 @@ function updateSidebar() {
     // Update agents list
     const agentsList = document.getElementById('agents-list');
     if (worldState.agents && worldState.agents.length > 0) {
-        // Sort by overall score descending
         const sortedAgents = [...worldState.agents].sort((a, b) => 
             (b.metrics?.overall_score || 0) - (a.metrics?.overall_score || 0)
         );
         
         agentsList.innerHTML = sortedAgents.map(agent => {
-            const region = getRegionById(agent.location_region_id);
+            const location = getAgentLocation(agent.label);
             const idea = agent.current_idea_id ? getIdeaById(agent.current_idea_id) : null;
             const score = agent.metrics?.overall_score || 0;
             const specialization = agent.specialization || 'general';
             
-            // Color code by score
             let scoreColor = '#666';
-            if (score >= 0.85) scoreColor = '#10b981'; // green for hall of fame
-            else if (score >= 0.5) scoreColor = '#0891b2'; // cyan for good
-            else if (score >= 0.3) scoreColor = '#f59e0b'; // amber for ok
-            else scoreColor = '#ef4444'; // red for at risk
+            if (score >= 0.85) scoreColor = '#10b981';
+            else if (score >= 0.5) scoreColor = '#0891b2';
+            else if (score >= 0.3) scoreColor = '#f59e0b';
+            else scoreColor = '#ef4444';
             
             return `
-                <div class="agent-card">
+                <div class="agent-card" onclick="focusAgent('${agent.label}')">
                     <div class="agent-name">${agent.label}</div>
                     <div class="agent-info">
                         🏷️ ${specialization}<br>
-                        📍 ${region ? region.label : 'Unknown'}<br>
+                        📍 ${location.city}<br>
                         📊 ${agent.status}<br>
                         ⭐ Score: <span style="color: ${scoreColor}; font-weight: bold;">${(score * 100).toFixed(0)}%</span><br>
                         📈 Resolved: ${agent.metrics?.issues_resolved || 0} | PRs: ${agent.metrics?.prs_merged || 0}<br>
@@ -537,7 +374,7 @@ function updateSidebar() {
         );
         
         regionsList.innerHTML = sortedRegions.slice(0, 10).map(region => `
-            <div class="region-item" onclick="zoomToRegion('${region.id}')">
+            <div class="region-item" onclick="focusRegion(${region.lat}, ${region.lng})">
                 <div class="region-name">${region.label}</div>
                 <div class="region-count">💡 ${region.idea_count || 0} ideas</div>
             </div>
@@ -548,46 +385,22 @@ function updateSidebar() {
 }
 
 // Helper functions
-function getRegionById(regionId) {
-    if (!worldState || !worldState.regions) return null;
-    return worldState.regions.find(r => r.id === regionId);
-}
-
 function getIdeaById(ideaId) {
     if (!knowledge || !knowledge.ideas) return null;
     return knowledge.ideas.find(i => i.id === ideaId);
 }
 
-function getIdeasForRegion(regionId) {
-    if (!knowledge || !knowledge.ideas) return [];
-    return knowledge.ideas.filter(idea => 
-        idea.inspiration_regions?.some(r => r.region_id === regionId)
-    );
+function focusAgent(agentLabel) {
+    const location = getAgentLocation(agentLabel);
+    if (map && location) {
+        map.setView([location.lat, location.lng], 10);
+    }
 }
 
-function zoomToRegion(regionId) {
-    const region = getRegionById(regionId);
-    if (!region) return;
-    
-    // Highlight the region briefly
-    const svg = document.querySelector('#map svg');
-    if (!svg) return;
-    
-    const circles = svg.querySelectorAll('.region-circle');
-    circles.forEach(circle => {
-        const cx = parseFloat(circle.getAttribute('cx'));
-        const cy = parseFloat(circle.getAttribute('cy'));
-        const pos = projectLonLat(region.lng, region.lat);
-        
-        if (Math.abs(cx - pos.x) < 1 && Math.abs(cy - pos.y) < 1) {
-            circle.setAttribute('stroke-width', '4');
-            circle.setAttribute('fill-opacity', '0.8');
-            setTimeout(() => {
-                circle.setAttribute('stroke-width', '2');
-                circle.setAttribute('fill-opacity', '0.4');
-            }, 1000);
-        }
-    });
+function focusRegion(lat, lng) {
+    if (map) {
+        map.setView([lat, lng], 8);
+    }
 }
 
 // Refresh world data
@@ -599,8 +412,6 @@ async function refreshWorldData() {
     const success = await loadWorldData();
     
     if (success) {
-        clearMapFeatures();
-        renderRegions();
         renderAgents();
         updateSidebar();
         button.textContent = '✅ Refreshed!';
@@ -623,7 +434,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const success = await loadWorldData();
     if (success) {
-        renderRegions();
         renderAgents();
         updateSidebar();
     } else {
