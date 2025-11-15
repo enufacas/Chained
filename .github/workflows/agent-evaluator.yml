@@ -112,6 +112,8 @@ jobs:
           protected_specializations = config.get('protected_specializations', [])
           elimination_threshold = config['elimination_threshold']
           promotion_threshold = config['promotion_threshold']
+          grace_period_hours = config.get('new_agent_grace_period_hours', 48)
+          minimum_score = config.get('new_agent_minimum_score', 0.40)
           
           for agent in active_agents:
               agent_id = agent['id']
@@ -125,6 +127,14 @@ jobs:
                   print(f"\n{agent_name}: 🛡️ PROTECTED (cannot be eliminated)")
                   maintained.append(agent)
                   continue
+              
+              # Check if agent is in grace period (new agent protection)
+              spawned = datetime.fromisoformat(agent['spawned_at'].replace('Z', '+00:00'))
+              age_hours = (datetime.utcnow().replace(tzinfo=spawned.tzinfo) - spawned).total_seconds() / 3600
+              in_grace_period = age_hours < grace_period_hours
+              
+              if in_grace_period:
+                  print(f"\n{agent_name}: 🆕 IN GRACE PERIOD ({age_hours:.1f}h / {grace_period_hours}h)")
               
               if use_real_metrics:
                   # Use real GitHub activity metrics
@@ -157,6 +167,12 @@ jobs:
                   overall_score = min(0.5, age_hours / 48.0)  # Conservative scoring
                   agent['metrics']['overall_score'] = overall_score
                   print(f"\n{agent_name}: {overall_score:.2%} (fallback)")
+              
+              # Apply grace period protection: ensure minimum score
+              if in_grace_period and overall_score < minimum_score:
+                  print(f"   🆕 Grace period: Boosting from {overall_score:.2%} to {minimum_score:.2%}")
+                  overall_score = minimum_score
+                  agent['metrics']['overall_score'] = overall_score
               
               print(f"\n{agent_name}: {overall_score:.2%}")
               
@@ -215,6 +231,16 @@ jobs:
               }, f, indent=2)
           
           PYTHON_SCRIPT
+
+      - name: Sync agent registry to GitHub Pages
+        run: |
+          # Create docs/data/agents directory if it doesn't exist
+          mkdir -p docs/data/agents
+          
+          # Copy registry to GitHub Pages
+          cp .github/agent-system/registry.json docs/data/agents/agent-registry.json
+          
+          echo "✅ Agent registry synced to GitHub Pages (docs/data/agents/agent-registry.json)"
           
           # Check if there are results to process
           if [ -f "/tmp/evaluation_results.json" ]; then
@@ -317,6 +343,7 @@ jobs:
           git checkout -b "$BRANCH_NAME"
           
           git add .github/agent-system/
+          git add docs/data/agents/agent-registry.json
           git commit -m "🔄 Daily agent evaluation and governance"
           git push origin "$BRANCH_NAME"
           

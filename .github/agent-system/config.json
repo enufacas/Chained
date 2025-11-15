@@ -2,7 +2,7 @@
   "spawn_interval_hours": 3,
   "max_active_agents": 50,
   "elimination_threshold": 0.3,
-  "promotion_threshold": 0.85,
+  "promotion_threshold": 0.65,
   "metrics_weight": {
     "code_quality": 0.3,
     "issue_resolution": 0.2,
@@ -15,5 +15,7 @@
   "protected_specializations": [
     "troubleshoot-expert"
   ],
-  "strict_pr_attribution": true
+  "strict_pr_attribution": true,
+  "new_agent_grace_period_hours": 48,
+  "new_agent_minimum_score": 0.40
 }
