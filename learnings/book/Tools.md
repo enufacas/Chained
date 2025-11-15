@@ -2,9 +2,9 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 28
+**Total Insights:** 36
 
-**Last Updated:** 2025-11-14
+**Last Updated:** 2025-11-15
 
 ---
 
@@ -32,7 +32,66 @@ A Git-compatible VCS that is both simple and powerful
 ---
 
 
+### jj-vcs/jj - A Git-compatible VCS that is both simple and powerful
+
+**Link:** https://github.com/jj-vcs/jj
+
+
+A Git-compatible VCS that is both simple and powerful
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### 'No One Lives Forever' turns 25 and you still can't buy it legitimately
+
+**Link:** https://www.techdirt.com/2025/11/13/no-one-lives-forever-turns-25-you-still-cant-buy-it-legitimately/
+
+---
+
+
+### Ohm Editor
+
+**Link:** https://ohmjs.org/editor/
+
+---
+
+
+### Lawmakers want to ban VPNs and have no idea what they're doing
+
+**Link:** https://www.eff.org/deeplinks/2025/11/lawmakers-want-ban-vpns-and-they-have-no-idea-what-theyre-doing
+
+---
+
+
+### No One Lives Forever' turns 25 and you still can't buy it legitimately
+
+**Community Score:** 222 upvotes
+
+**Link:** https://www.techdirt.com/2025/11/13/no-one-lives-forever-turns-25-you-still-cant-buy-it-legitimately/
+
+
+**Content Summary:**
+
+Arianity (profile) says: November 13, 2025 at 8:24 pm Maybe we’ll be able to play this game legitimately by the time Bobby Bonilla stops making his million and change per year. Ahh, a refreshing bit of optimism in these dark times!
+
+---
+
+
+### Lawmakers want to ban VPNs and have no idea what they're doing
+
+**Community Score:** 139 upvotes
+
+**Link:** https://www.eff.org/deeplinks/2025/11/lawmakers-want-ban-vpns-and-they-have-no-idea-what-theyre-doing
+
+
+**Content Summary:**
+
+Remember when you thought age verification laws couldn't get any worse ? Well, lawmakers in Wisconsin , Michigan , and beyond are about to blow you away. It's unfortunately no longer enough to force websites to check your government-issued ID before you can access certain content, because politicians have now discovered that people are using Virtual Private Networks (VPNs) to protect their privacy and bypass these invasive laws. Their solution? Entirely ban the use of VPNs. Yes, really. As of th...
+
+---
 
 
 ### 'No One Lives Forever' turns 25 and you still can't buy it legitimately
@@ -225,6 +284,45 @@ inp...
 
 
 ## 📰 From TLDR Tech
+
+
+### SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-12
+
+
+**Content Summary:**
+
+Coffee Chat: Turn Supabase Events Into Automated Workflows (Sponsor)
+Modern apps run on data, APIs, and automation.... but making all of them work together is hard.
+Join Orkes for a
+Developer Coffee Chat on November 13 at 9 AM PST
+to see how
+Supabase and Orkes Conductor
+work together to build real-time, event-driven workflows in minutes.
+>> Learn how to trigger Supabase updates, automate downstream actions, and add orchestration without code.
+>> No slides! This is a live developer session showin...
+
+---
+
+
+### Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 
+
+**Link:** https://tldr.tech/tech/2025-11-10
+
+
+**Content Summary:**
+
+Beyond Commands: The Terminal of the Future (Sponsor)
+Warp fuses the terminal and IDE into one place, with AI agents built in. Edit files, review diffs, and ship code, all without leaving the platform that is trusted by over 600k developers and ranks ahead of Claude Code and Gemini CLI on Terminal-Bench.
+Ask Warp agents to:
+Debug your Docker build errors
+Summarize user logs from the last 24 hours
+Onboard you to a new part of your codebase
+Download Warp for free
+and get bonus credits for your fir...
+
+---
 
 
 ### SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻

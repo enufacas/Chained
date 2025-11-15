@@ -1,10 +1,10 @@
 {
-  "date": "2025-11-15T10:01:21.554332+00:00",
+  "date": "2025-11-15T08:10:36.781279+00:00",
   "title": "The Great Merge-athon",
   "scenes": [
     {
       "bg": "lab",
-      "narration": "In the last 2 hours, 29 events unfolded in the Chained repository, orchestrated by 3 collaborators working in harmony.",
+      "narration": "In the last 2 hours, 28 events unfolded in the Chained repository, orchestrated by 3 collaborators working in harmony.",
       "characters": [
         {
           "name": "Build Guardian",
@@ -16,13 +16,13 @@
     },
     {
       "bg": "calm",
-      "narration": "14 pull requests merged into main. The codebase evolves.",
+      "narration": "11 pull requests merged into main. The codebase evolves.",
       "characters": [
         {
           "name": "Merge Oracle",
           "side": "left",
           "mood": "smug",
-          "line": "The merge is complete. Well done, Copilot."
+          "line": "The merge is complete. Well done, github-actions[bot]."
         },
         {
           "name": "Team (2 devs)",
@@ -34,10 +34,10 @@
     },
     {
       "bg": "night",
-      "narration": "6 pull requests are open, awaiting the judgment of reviewers.",
+      "narration": "9 pull requests are open, awaiting the judgment of reviewers.",
       "characters": [
         {
-          "name": "github-actions[bot]",
+          "name": "Copilot",
           "side": "left",
           "mood": "worried",
           "line": "I hope the reviewers like my changes..."
@@ -52,13 +52,13 @@
     },
     {
       "bg": "calm",
-      "narration": "7 issues closed. The bug hunters have been busy.",
+      "narration": "3 issues closed. The bug hunters have been busy.",
       "characters": [
         {
           "name": "Issue Hunter",
           "side": "center",
           "mood": "happy",
-          "line": "Mission accomplished! 7 bug(s) eliminated."
+          "line": "Mission accomplished! 3 bug(s) eliminated."
         }
       ]
     }

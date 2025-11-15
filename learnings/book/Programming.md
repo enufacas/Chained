@@ -2,9 +2,9 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 41
+**Total Insights:** 48
 
-**Last Updated:** 2025-11-14
+**Last Updated:** 2025-11-15
 
 ---
 
@@ -72,7 +72,65 @@ Open Source Spotify client library
 ---
 
 
+### davila7/claude-code-templates - CLI tool for configuring and monitoring Claude Code
+
+**Link:** https://github.com/davila7/claude-code-templates
+
+
+CLI tool for configuring and monitoring Claude Code
+
+---
+
+
+### jaywcjlove/awesome-mac -  Now we have become very big, Different from the original idea. Collect premium software in various
+
+**Link:** https://github.com/jaywcjlove/awesome-mac
+
+
+ Now we have become very big, Different from the original idea. Collect premium software in various categories.
+
+---
+
+
+### librespot-org/librespot - Open Source Spotify client library
+
+**Link:** https://github.com/librespot-org/librespot
+
+
+Open Source Spotify client library
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### So, you want to design your own language? (2017)
+
+**Link:** https://cs.lmu.edu/~ray/notes/languagedesignnotes/
+
+---
+
+
+### AMD GPUs Go Brrr
+
+**Link:** https://hazyresearch.stanford.edu/blog/2025-11-09-amd-brr
+
+---
+
+
+### Go's Sweet 16
+
+**Community Score:** 142 upvotes
+
+**Link:** https://go.dev/blog/16years
+
+
+**Content Summary:**
+
+The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 This past Monday, November 10th, we celebrated the 16th anniversary of Go’s open source release ! We released Go 1.24 in February and Go 1.25 in August , following our now well-established and dependable release cadence. Continuing our mission to build the most productive language platform for building production systems, these releases included new APIs for building robust and reliable software, significant advances in ...
+
+---
 
 
 ### Meeting notes between Forgejo and the Dutch government via Git commits
@@ -298,34 +356,28 @@ in a new tab. When you're done, simply close that tab...
 ---
 
 
-### JVM exceptions are weird: a decompiler perspective
-
-**Community Score:** 136 upvotes
-
-**Link:** https://purplesyringa.moe/blog/jvm-exceptions-are-weird-a-decompiler-perspective/
-
----
-
-
-### JVM exceptions are weird: a decompiler perspective
-
-**Community Score:** 111 upvotes
-
-**Link:** https://purplesyringa.moe/blog/jvm-exceptions-are-weird-a-decompiler-perspective/
-
----
-
-
-### Opencloud – An alternative to Nextcloud written in Go
-
-**Community Score:** 138 upvotes
-
-**Link:** https://github.com/opencloud-eu/opencloud
-
----
-
-
 ## 📰 From TLDR Tech
+
+
+### Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌
+
+**Link:** https://tldr.tech/ai/2025-11-14
+
+
+**Content Summary:**
+
+Traditional Browsers are Going Extinct (and that's a good thing) (Sponsor)
+Forget passive browsing with no added context—
+Norton Neo
+is the world's first safe, AI-native browser, making every interaction faster, safer, and more efficient.
+Zero-prompt productivity: AI that truly works for you
+Configurable memory, unique to you
+Private and safe by design
+Context-aware, smart tab grouping
+Try Norton Neo here and join the future
+.
+
+---
 
 
 ### Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌
