@@ -1,0 +1,609 @@
+{
+  "insights": {
+    "insight_1023_980a9ec17ffd": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:engineer-master -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\u2699\ufe0f engineer-master** custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:17Z"
+    },
+    "insight_1023_b08f0c4280f3": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "process",
+      "content": "> \n> **@engineer-master** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:20:17Z"
+    },
+    "insight_1023_ce6ef2141722": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/engineer-master",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:17Z"
+    },
+    "insight_1023_36ff538e11b9": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "process",
+      "content": "com/enufacas/Chained/actions/workflows/world-update",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T15:20:17Z"
+    },
+    "insight_1023_1a5e836f86e2": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udd1d Collaboration Suggestions for @engineer-master\n\nBased on the content of this issue, here are some agents who might be able to help:\n\n### \ud83c\udfaf Recommended Collaborators\n\n\n**1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:40Z"
+    },
+    "insight_1023_033bbc281241": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "50)\n\n\n### \ud83d\udcda Collaboration Details\n\n- **Type:** `consultation`\n- **Primary category:** AI_ML\n- **All categories:** AI_ML, DevOps\n\n### \ud83d\ude80 How to Request Collaboration\n\nTo request help from any of these agents, you can:\n\n1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent",
+        "ai",
+        "ml"
+      ],
+      "timestamp": "2025-11-15T15:20:40Z"
+    },
+    "insight_1023_4522d9cc7277": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "**Mention them** in a comment: `@agent-name, could you help with",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:40Z"
+    },
+    "insight_1023_1b222dc57849": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "**Create a collaboration request** using the Agent Collaboration Manager\n3",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:40Z"
+    },
+    "insight_1023_10a0cb2d7d63": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "**Add labels** like `collaboration-request` and tag the helper\n\n### \ud83d\udca1 Why These Suggestions",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:20:40Z"
+    },
+    "insight_1023_8805e10684ab": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "These agents were selected based on:\n- \u2705 Expertise in relevant learning categories\n- \u2705 Investment levels and specializations\n- \u2705 Availability and collaboration history\n- \u2705 Match with the collaboration type needed\n\n\n**Note:** 4 total potential helpers were found",
+      "confidence": 0.9,
+      "tags": [
+        "agent",
+        "ai",
+        "learning"
+      ],
+      "timestamp": "2025-11-15T15:20:40Z"
+    },
+    "insight_1023_685810331f18": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "---\n\n*\ud83e\udd16 Automated collaboration suggestions via Agent Collaboration Manager*",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:40Z"
+    },
+    "insight_1023_033aa01b3558": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the **\u2699\ufe0f @engineer-master** specialization:\n\n- **Agent**: @engineer-master\n- **Match Confidence**: low\n- **Match Score**: 1\n- **Description**: Specialized agent for engineering APIs",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_18df5709ff44": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "process",
+      "content": "Inspired by 'Margaret Hamilton' - rigorous and innovative, with systematic approach",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_20a6f603c303": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_9a5ab7dfbd43": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/engineer-master",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_16399dd4ab61": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@engineer-master** by name in all conversations related to this issue",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_f57beb75f409": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@engineer-master** - Please use the **engineer-master** custom agent profile from `",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_a5bc0b2abcba": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_b26d1edc65a5": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [engineer-master agent definition](https://github",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_f20018741e9e": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **@engineer-master** will analyze the issue requirements using the engineer-master specialization\n2",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_c061407e5f91": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@engineer-master** will create a branch and implement the solution following the engineer-master approach\n3",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_a895af21bb4b": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@engineer-master** will open a PR with the implementation\n4",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_e50378f61583": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_334e5ca5cf84": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** @engineer-master (engineer-master specialization)\n**Assigned at:** 2025-11-15 15:20:40 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:41Z"
+    },
+    "insight_1023_312456313226": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udd1d Collaboration Suggestions for @engineer-master\n\nBased on the content of this issue, here are some agents who might be able to help:\n\n### \ud83c\udfaf Recommended Collaborators\n\n\n**1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:44Z"
+    },
+    "insight_1023_b02e49ded165": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "50)\n\n\n### \ud83d\udcda Collaboration Details\n\n- **Type:** `consultation`\n- **Primary category:** AI_ML\n- **All categories:** AI_ML, DevOps\n\n### \ud83d\ude80 How to Request Collaboration\n\nTo request help from any of these agents, you can:\n\n1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent",
+        "ai",
+        "ml"
+      ],
+      "timestamp": "2025-11-15T15:20:44Z"
+    },
+    "insight_1023_cafc00b7b858": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "**Mention them** in a comment: `@agent-name, could you help with",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:44Z"
+    },
+    "insight_1023_9c1fe0ae11b2": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "**Create a collaboration request** using the Agent Collaboration Manager\n3",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:44Z"
+    },
+    "insight_1023_d5e7af39d8aa": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "**Add labels** like `collaboration-request` and tag the helper\n\n### \ud83d\udca1 Why These Suggestions",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:20:44Z"
+    },
+    "insight_1023_90854f673f85": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "These agents were selected based on:\n- \u2705 Expertise in relevant learning categories\n- \u2705 Investment levels and specializations\n- \u2705 Availability and collaboration history\n- \u2705 Match with the collaboration type needed\n\n\n**Note:** 4 total potential helpers were found",
+      "confidence": 0.9,
+      "tags": [
+        "agent",
+        "ai",
+        "learning"
+      ],
+      "timestamp": "2025-11-15T15:20:44Z"
+    },
+    "insight_1023_db29a630c97b": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "---\n\n*\ud83e\udd16 Automated collaboration suggestions via Agent Collaboration Manager*",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:44Z"
+    },
+    "insight_1023_391dc4cef181": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udd1d Collaboration Suggestions for @engineer-master\n\nBased on the content of this issue, here are some agents who might be able to help:\n\n### \ud83c\udfaf Recommended Collaborators\n\n\n**1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:49Z"
+    },
+    "insight_1023_cd42fd7d9d54": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "50)\n\n\n### \ud83d\udcda Collaboration Details\n\n- **Type:** `consultation`\n- **Primary category:** AI_ML\n- **All categories:** AI_ML, DevOps\n\n### \ud83d\ude80 How to Request Collaboration\n\nTo request help from any of these agents, you can:\n\n1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent",
+        "ai",
+        "ml"
+      ],
+      "timestamp": "2025-11-15T15:20:49Z"
+    },
+    "insight_1023_c3aa7911156b": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "**Mention them** in a comment: `@agent-name, could you help with",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:49Z"
+    },
+    "insight_1023_188441571714": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "**Create a collaboration request** using the Agent Collaboration Manager\n3",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:49Z"
+    },
+    "insight_1023_e189b78b973e": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "**Add labels** like `collaboration-request` and tag the helper\n\n### \ud83d\udca1 Why These Suggestions",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:20:49Z"
+    },
+    "insight_1023_a60610bd019a": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "These agents were selected based on:\n- \u2705 Expertise in relevant learning categories\n- \u2705 Investment levels and specializations\n- \u2705 Availability and collaboration history\n- \u2705 Match with the collaboration type needed\n\n\n**Note:** 4 total potential helpers were found",
+      "confidence": 0.9,
+      "tags": [
+        "agent",
+        "ai",
+        "learning"
+      ],
+      "timestamp": "2025-11-15T15:20:49Z"
+    },
+    "insight_1023_52fa151679bb": {
+      "issue_number": 1023,
+      "issue_title": "Failing pipeline ",
+      "insight_type": "agent_behavior",
+      "content": "---\n\n*\ud83e\udd16 Automated collaboration suggestions via Agent Collaboration Manager*",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:20:49Z"
+    }
+  },
+  "connections": [
+    {
+      "source_insight_id": "insight_1023_9a5ab7dfbd43",
+      "target_insight_id": "insight_1023_ce6ef2141722",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.429611+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_9a5ab7dfbd43",
+      "target_insight_id": "insight_1023_ce6ef2141722",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.429785+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_9a5ab7dfbd43",
+      "target_insight_id": "insight_1023_ce6ef2141722",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.430479+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_9a5ab7dfbd43",
+      "target_insight_id": "insight_1023_ce6ef2141722",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.431123+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_312456313226",
+      "target_insight_id": "insight_1023_1a5e836f86e2",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.433303+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_b02e49ded165",
+      "target_insight_id": "insight_1023_033bbc281241",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.433850+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_cafc00b7b858",
+      "target_insight_id": "insight_1023_4522d9cc7277",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.434193+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_9c1fe0ae11b2",
+      "target_insight_id": "insight_1023_1b222dc57849",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.434556+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_d5e7af39d8aa",
+      "target_insight_id": "insight_1023_10a0cb2d7d63",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.434960+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_90854f673f85",
+      "target_insight_id": "insight_1023_8805e10684ab",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.435599+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_db29a630c97b",
+      "target_insight_id": "insight_1023_685810331f18",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.435997+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_391dc4cef181",
+      "target_insight_id": "insight_1023_1a5e836f86e2",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.436596+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_391dc4cef181",
+      "target_insight_id": "insight_1023_312456313226",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.436605+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_cd42fd7d9d54",
+      "target_insight_id": "insight_1023_033bbc281241",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.437256+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_cd42fd7d9d54",
+      "target_insight_id": "insight_1023_b02e49ded165",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.437263+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_c3aa7911156b",
+      "target_insight_id": "insight_1023_4522d9cc7277",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.437743+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_c3aa7911156b",
+      "target_insight_id": "insight_1023_cafc00b7b858",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.437754+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_188441571714",
+      "target_insight_id": "insight_1023_1b222dc57849",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.438175+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_188441571714",
+      "target_insight_id": "insight_1023_9c1fe0ae11b2",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.438187+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_e189b78b973e",
+      "target_insight_id": "insight_1023_10a0cb2d7d63",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.438703+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_e189b78b973e",
+      "target_insight_id": "insight_1023_d5e7af39d8aa",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.438712+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_a60610bd019a",
+      "target_insight_id": "insight_1023_8805e10684ab",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.439848+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_a60610bd019a",
+      "target_insight_id": "insight_1023_90854f673f85",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.439874+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_52fa151679bb",
+      "target_insight_id": "insight_1023_685810331f18",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.440433+00:00"
+    },
+    {
+      "source_insight_id": "insight_1023_52fa151679bb",
+      "target_insight_id": "insight_1023_db29a630c97b",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:38:58.440444+00:00"
+    }
+  ],
+  "metadata": {
+    "created": "2025-11-15T15:38:58.425695+00:00",
+    "last_updated": "2025-11-15T15:38:58.440453+00:00",
+    "total_insights": 38,
+    "total_connections": 25
+  }
+}
