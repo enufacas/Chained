@@ -285,7 +285,7 @@ jobs:
             git commit -m "📚 Self-reinforcement learning - $(date -u +%Y-%m-%d)"
             git push origin "$BRANCH_NAME"
             
-            gh pr create --title "📚 Self-Reinforcement Learning - $(date -u +%Y-%m-%d)" --body "Self-reinforcement learning automated by @meta-coordinator. Collected insights from closed issues and PRs. Top pattern: ${{ steps.generate_doc.outputs.top_pattern }}, Top location: ${{ steps.generate_doc.outputs.top_location }}. This learning will be combined with other sources and integrated into the world model." --label "automated,learning,ai-generated" --base main --head "$BRANCH_NAME"
+            gh pr create --title "📚 Self-Reinforcement Learning - $(date -u +%Y-%m-%d)" --body "Self-reinforcement learning automated by @meta-coordinator. Collected insights from closed issues and PRs. Top pattern: ${{ steps.generate_doc.outputs.top_pattern }}, Top location: ${{ steps.generate_doc.outputs.top_location }}. This learning will be combined with other sources and integrated into the world model." --label "automated,learning,ai-generated,copilot" --base main --head "$BRANCH_NAME"
           fi
       
       - name: Log summary

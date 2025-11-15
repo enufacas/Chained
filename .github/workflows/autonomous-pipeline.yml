@@ -511,7 +511,7 @@ jobs:
 
             Next stages: Merge → World Update → Agent Missions
             " \
-              --label "automated,learning,pipeline,auto-merge" \
+              --label "automated,learning,pipeline,auto-merge,copilot" \
               --base main \
               --head "$BRANCH_NAME")
             
@@ -725,7 +725,7 @@ jobs:
 
           Next stages: Merge → Agent Missions
           " \
-            --label "automated,world-model,pipeline,auto-merge" \
+            --label "automated,world-model,pipeline,auto-merge,copilot" \
             --base main \
             --head "$BRANCH_NAME")
           
@@ -1004,7 +1004,7 @@ jobs:
 
             **Note:** This PR will be auto-merged by the next pipeline stage to complete the cycle.
             " \
-              --label "automated,agent-mission,pipeline,auto-merge" \
+              --label "automated,agent-mission,pipeline,auto-merge,copilot" \
               --base main \
               --head "$BRANCH_NAME")
             

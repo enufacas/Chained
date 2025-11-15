@@ -292,7 +292,7 @@ jobs:
             git commit -m "chore: agent missions created - ${{ steps.select_agents.outputs.mission_count }} missions"
             git push origin "$BRANCH_NAME"
             
-            gh pr create --title "🎯 Agent Missions - $(date +%Y-%m-%d)" --body "Agent missions automated by @meta-coordinator. Created ${{ steps.select_agents.outputs.mission_count }} new missions, moved agents to mission locations, updated world tick, and created GitHub issues for each mission." --label "automated,agent-mission,world-model" --base main --head "$BRANCH_NAME"
+            gh pr create --title "🎯 Agent Missions - $(date +%Y-%m-%d)" --body "Agent missions automated by @meta-coordinator. Created ${{ steps.select_agents.outputs.mission_count }} new missions, moved agents to mission locations, updated world tick, and created GitHub issues for each mission." --label "automated,agent-mission,world-model,copilot" --base main --head "$BRANCH_NAME"
           fi
       
       - name: Log summary
