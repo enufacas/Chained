@@ -179,7 +179,7 @@ jobs:
             gh pr create \
               --title "📊 Goal progress update - ${PR_DATE}" \
               --body "## Goal Progress Update"$'\n\n'"**Status**: $STATUS ($PROGRESS% complete)"$'\n\n'"### Activity"$'\n'"- Commits: $COMMITS"$'\n'"- PRs: $PRS"$'\n'"- Issues: $ISSUES"$'\n\n'"---"$'\n'"*🤖 Automated goal progress tracking*" \
-              --label "automated" \
+              --label "automated,copilot" \
               --base main \
               --head "$BRANCH_NAME" || echo "✅ PR created (some labels may not exist)"
             

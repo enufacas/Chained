@@ -301,7 +301,7 @@ jobs:
             gh pr create \
               --title "🧠 Update PR failure intelligence data - ${PR_DATE}" \
               --body "## PR Failure Intelligence Update"$'\n\n'"**@engineer-master** has updated the PR failure intelligence system with new analysis and predictive insights."$'\n\n'"### Changes"$'\n'"- 📊 Code pattern analysis from ${{ steps.collect.outputs.pr_count }} PRs"$'\n'"- 👤 Generated ${{ steps.profiles.outputs.profile_count }} agent learning profiles"$'\n'"- 📝 Created intelligence summary"$'\n\n'"### Intelligence Files"$'\n'"- **Patterns**: \`learnings/pr_intelligence/code_patterns.json\`"$'\n'"- **Profiles**: \`learnings/pr_intelligence/agent_profiles/\`"$'\n'"- **Summary**: \`${{ steps.summary.outputs.summary_file }}\`"$'\n\n'"### Using the Intelligence"$'\n\n'"```bash"$'\n'"# Get proactive guidance for an agent"$'\n'"python tools/pr-failure-intelligence.py --proactive-guidance --agent AGENT_ID"$'\n\n'"# Predict risk for a proposed PR"$'\n'"python tools/pr-failure-intelligence.py --predict-risk --input pr_data.json"$'\n\n'"# View code patterns"$'\n'"cat learnings/pr_intelligence/code_patterns.json | jq"$'\n'"```"$'\n\n'"---"$'\n'"*Built by **@engineer-master** - Systematic learning, intelligent guidance*" \
-              --label "ai-system,automated,agent:engineer-master" \
+              --label "ai-system,automated,agent:engineer-master,copilot" \
               --base main \
               --head "$BRANCH_NAME"
             

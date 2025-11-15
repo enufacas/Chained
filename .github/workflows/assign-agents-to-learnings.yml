@@ -407,7 +407,7 @@ jobs:
             gh pr create \
               --title "📊 Agent investments: Learning assignments - ${PR_DATE}" \
               --body-file /tmp/pr_body.txt \
-              --label "agent-system,automated,investment-tracker" \
+              --label "agent-system,automated,investment-tracker,copilot" \
               --base main \
               --head "$BRANCH_NAME"
             
