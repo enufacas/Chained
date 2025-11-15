@@ -2,7 +2,7 @@
 
 > Performance tuning, benchmarks, and optimization techniques
 
-**Total Insights:** 13
+**Total Insights:** 16
 
 **Last Updated:** 2025-11-15
 
@@ -52,7 +52,34 @@ A fast reverse proxy to help you expose a local server behind a NAT or firewall 
 ---
 
 
+### HKUDS/LightRAG - [EMNLP2025] "LightRAG: Simple and Fast Retrieval-Augmented Generation"
+
+**Link:** https://github.com/HKUDS/LightRAG
+
+
+[EMNLP2025] "LightRAG: Simple and Fast Retrieval-Augmented Generation"
+
+---
+
+
+### fatedier/frp - A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.
+
+**Link:** https://github.com/fatedier/frp
+
+
+A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### HipKittens: Fast and furious AMD kernels
+
+**Link:** https://hazyresearch.stanford.edu/blog/2025-11-09-hk
+
+---
 
 
 ### HipKittens: Fast and furious AMD kernels

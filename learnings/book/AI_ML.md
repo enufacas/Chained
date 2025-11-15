@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 164
+**Total Insights:** 188
 
 **Last Updated:** 2025-11-15
 
@@ -217,6 +217,61 @@ Collection of publicly available IPTV channels from all over the world
 
 ### AI World Clocks
 
+**Link:** https://clocks.brianmoore.com/
+
+
+&quot;Every minute, a new clock is rendered by nine different AI models.&quot;
+
+---
+
+
+### A new Google model is nearly perfect on automated handwriting recognition
+
+**Link:** https://generativehistory.substack.com/p/has-google-quietly-solved-two-of
+
+---
+
+
+### No Leak, No Problem – Bypassing ASLR with a ROP Chain to Gain RCE
+
+**Link:** https://modzero.com/en/blog/no-leak-no-problem/
+
+---
+
+
+### All praise to the lunch ladies
+
+**Link:** https://bittersoutherner.com/issue-no-12/all-praise-to-the-lunch-ladies
+
+---
+
+
+### GEN-0 / Embodied Foundation Models That Scale with Physical Interaction
+
+**Link:** https://generalistai.com/blog/nov-04-2025-GEN-0
+
+---
+
+
+### Show HN: Tiny Diffusion – A character-level text diffusion model from scratch
+
+**Link:** https://github.com/nathan-barry/tiny-diffusion
+
+
+This is a character-level language diffusion model for text generation.<p>The model is a modified version of Nanochat&#x27;s GPT implementation and is trained on Tiny Shakespeare!<p>It is only 10.7 million parameters, so you can try it out locally.
+
+---
+
+
+### Mentra (YC W25) Is Hiring: Head of Growth to Make Smart Glasses Mainstream
+
+**Link:** https://www.ycombinator.com/companies/mentra/jobs/2YbQCRw-make-smart-glasses-mainstream-head-of-growth
+
+---
+
+
+### AI World Clocks
+
 **Community Score:** 934 upvotes
 
 **Link:** https://clocks.brianmoore.com/
@@ -355,83 +410,135 @@ I’ve been working in fairly locked‑down Windows environments where I’m all
 ---
 
 
-### Oracle hit hard in Wall Street's tech sell-off over its AI bet
-
-**Community Score:** 160 upvotes
-
-**Link:** https://www.ft.com/content/583e9391-bdd0-433e-91e0-b1b93038d51e
-
-
-**Content Summary:**
-
-Oracle hit hard in Wall Street’s tech sell-off over its huge AI bet Subscribe to unlock this article Try unlimited access Only $1 for 4 weeks Then $75 per month. Complete digital access to quality FT journalism on any device. Cancel anytime during your trial. Keep reading for $1 Explore more offers. FT Edit $49 per year Access to eight surprising articles a day, hand-picked by FT editors. For seamless reading, access content via the FT Edit page on FT.com and receive the FT Edit newsletter. Sele...
-
----
-
-
-### Disrupting the first reported AI-orchestrated cyber espionage campaign
-
-**Community Score:** 299 upvotes
-
-**Link:** https://www.anthropic.com/news/disrupting-AI-espionage
-
-
-**Content Summary:**
-
-Policy Disrupting the first reported AI-orchestrated cyber espionage campaign Nov 13, 2025 ● 7 min read Read the report We recently argued that an inflection point had been reached in cybersecurity: a point at which AI models had become genuinely useful for cybersecurity operations, both for good and for ill. This was based on systematic evaluations showing cyber capabilities doubling in six months; we’d also been tracking real-world cyberattacks, observing how malicious actors were using AI cap...
-
----
-
-
-### SlopStop: Community-driven AI slop detection in Kagi Search
-
-**Community Score:** 499 upvotes
-
-**Link:** https://blog.kagi.com/slopstop
-
-
-**Content Summary:**
-
-Introducing SlopStop: Community-driven AI slop detection in Kagi Search 12 Nov, 2025 Your collective defense against AI-generated spam and content farms We made it our mission to prevent the web from becoming useless and a harmful space. That’s why today, Kagi Search introduces the first community-driven system to detect and downrank deceptive AI-generated text, images, and video inside search results. It’s 2025, and the internet we loved is drowning in AI-generated noise. Content farms exploiti...
-
----
-
-
-### Show HN: Pegma, the free and open-source version of the classic Peg solitaire
-
-**Link:** https://pegma.vercel.app
-
-
-Discover Pegma, the free and open-source version of the classic Peg solitaire game! Pegma offers a clean, minimal design and smooth gameplay across multiple platforms.<p>Key features:<p>Fully open-source code available on GitHub, inviting community contributions and transparency<p>Custom-designed font created by the developer to enhance the game’s unique style<p>Cross-platform support: play on iOS, Android, or directly in your web browser<p>Lightweight, intuitive interface that stays true to the timeless puzzle mechanics<p>Try it now:<p>Website: <a href="https:&#x2F;&#x2F;pegma.vercel.app" rel="nofollow">https:&#x2F;&#x2F;pegma.vercel.app</a><p>GitHub: <a href="https:&#x2F;&#x2F;github.com&#x2F;khlebobul&#x2F;pegma" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;khlebobul&#x2F;pegma</a><p>App Store: <a href="https:&#x2F;&#x2F;apps.apple.com&#x2F;ru&#x2F;app&#x2F;pegma-peg-solitaire&#x2F;id6754343848">https:&#x2F;&#x2F;apps.apple.com&#x2F;ru&#x2F;app&#x2F;pegma-peg-solitaire&#x2F;id67543438...</a><p>Google Play: <a href="https:&#x2F;&#x2F;play.google.com&#x2F;store&#x2F;apps&#x2F;details?id=com.khlebobul.pegma">https:&#x2F;&#x2F;play.google.com&#x2F;store&#x2F;apps&#x2F;details?id=com.khlebobul....</a><p>If you appreciate open-source projects and classic brain teasers, Pegma is definitely worth checking out!
-
----
-
-
-### Nano Banana can be prompt engineered for nuanced AI image generation
-
-**Link:** https://minimaxir.com/2025/11/nano-banana-prompts/
-
----
-
-
-### Disrupting the first reported AI-orchestrated cyber espionage campaign
-
-**Link:** https://www.anthropic.com/news/disrupting-AI-espionage
-
----
-
-
-### Launch HN: Tweeks (YC W25) – Browser extension to deshittify the web
-
-**Link:** https://www.tweeks.io/onboarding
-
-
-Hey HN! We’re Jason &amp; Matt and we’re building Tweeks (<a href="https:&#x2F;&#x2F;tweeks.io">https:&#x2F;&#x2F;tweeks.io</a>), a browser extension that lets you modify any website in your browser to add functionality, filter&#x2F;highlight, re-theme, reorganize, de-clutter, etc. If you’ve used Violentmonkey&#x2F;Tampermonkey, Tweeks is like a next‑generation userscript manager. Instead of digging through selectors and hand‑writing custom JS&#x2F;CSS, describe what you want in natural language and Tweeks plans + generates your edits and applies them.<p>The modern web is so full of clutter and junk (banners, modals, feeds, and recommendations you didn’t ask for). Even a simple google search is guarded by multiple ads, an AI overview, a trending searches module, etc. before you even see the first real blue link.<p>Every day there&#x27;s a new Lovable-like product (make it simple to build your own website&#x2F;app) or a new agentic browser (AI agents click around and browse the web for you), but we built Tweeks to serve the middle ground: most of our time spent on the web is on someone else&#x27;s site (not our own), and we don&#x27;t want to offload everything to an agentic browser. We want to be able to shape the entire web to our own preferences as we browse.<p>I spent years working on recommendation systems and relevance at Pinterest, and understand how well-meaning recommendations and A&#x2F;B tests can lead to website enshittification. No one sets out to make UX worse, but optimizing for an “average” user is not the same as optimizing for each individual user.<p>I’ve also been hacking “page fixers” as long as I can remember: remove a login wall here, collapse cookie banners there, add missing filters&#x2F;highlights (first with F12&#x2F;inspect element and eventually graduated to advanced GreaseMonkey userscripts). Tweeks started as a weekend prototype that turned simple requests into page edits but unexpectedly grew into something people kept asking to share. We hope you’ll like it too!<p>How it works: Open the Tweeks extension, type your request (e.g. “hide cookie banners and add a price&#x2F;quality score”), and submit. Upon submission, the page structure is captured, an AI agent reviews the structure, plans changes, and returns deterministic transformations (selectors, layout tweaks, styles, and small scripts) that run locally. Your modifications persist across page loads and can be enabled&#x2F;disabled, modified, and shared.<p>Here are a bunch of one‑shot examples from early users:<p><i>Youtube</i>: Remove Youtube Shorts. Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=aL7i89BdO9o" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=aL7i89BdO9o</a>. Try it yourself: <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;bcd8bc32b8034b79a78a8564">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;bcd8bc32b8034b79a78a8564</a><p><i>Hacker News</i>: Filter posts by title&#x2F;url or points&#x2F;comments, modify header and text size. Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=cD5Ei8bMmUk" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=cD5Ei8bMmUk</a>. Try it yourself: <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;97e72c6de5c14906a1351abd">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;97e72c6de5c14906a1351abd</a> (filter), <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;6f51f96c877a4998bda8e781">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;6f51f96c877a4998bda8e781</a> (header + text).<p><i>LinkedIn</i>: Keep track of cool people (extracts author data and send a POST request to a server). Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=WDO4DRXQoTU" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=WDO4DRXQoTU</a><p><i>Reddit</i>: Remove sidebar and add a countdown timer that shows a blocking modal when time is up. Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=kBIkQ9j_u94" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=kBIkQ9j_u94</a>. Try it yourself: <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;e1daa0c5edd441dca5a150c8">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;e1daa0c5edd441dca5a150c8</a> (sidebar), <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;c321c9b6018a4221bd06fdab">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;c321c9b6018a4221bd06fdab</a> (timer).<p><i>New York Times Games</i>: Add a Strands helper that finds all possible words. Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=hJ75jSATg3Q" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=hJ75jSATg3Q</a>. Try it yourself: <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;7a955c910812467eaa36f569">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;7a955c910812467eaa36f569</a><p><i>Theming</i>: Retheme Google to be a 1970s CLI terminal. Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;shorts&#x2F;V-CG5CbYJb4" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;shorts&#x2F;V-CG5CbYJb4</a> (oops sorry a youtube short snuck back in there). Try it yourself: <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;8c8c0953f6984163922c4da7">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;8c8c0953f6984163922c4da7</a>.<p>We just opened access at <a href="https:&#x2F;&#x2F;tweeks.io">https:&#x2F;&#x2F;tweeks.io</a>. It’s currently free, but each use costs tokens so we&#x27;ll likely need to cap usage to prevent abuse. We&#x27;re more interested in early feedback than your money, so if you manage to hit the cap, message us at contact@trynextbyte.com or <a href="https:&#x2F;&#x2F;discord.gg&#x2F;WucN6wpJw2" rel="nofollow">https:&#x2F;&#x2F;discord.gg&#x2F;WucN6wpJw2</a>, tell us how you&#x27;re using it&#x2F;what features you want next, and we&#x27;ll happily reset it for you.<p>Btw if you do anything interesting with it, feel free to make a shareable link (go to ‘Library’ and press ‘share’ after generating) and include it in the comments below. It’s fun to see the different things people are coming up with!<p>We&#x27;re rapidly shipping improvements and would love your feedback and comments. Thanks for reading!
-
----
-
-
 ## 📰 From TLDR Tech
+
+
+### Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 
+
+**Link:** https://tldr.tech/tech/2025-11-14
+
+
+**Content Summary:**
+
+Stability or and innovation in payments technology (Sponsor)
+Why pick one?
+With Marqeta, launch payments experiences without choosing between innovation and scale.
+Marqeta
+combines the scale and reliability of proven payments infrastructure with the flexibility and innovation of a modern platform—so you can move faster, reduce risk, and grow with confidence.
+From optimizing spend and cash flow to building seamless, rewards-driven customer experiences, Marqeta's solutions have you covered. When i...
+
+---
+
+
+### GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-13
+
+
+**Content Summary:**
+
+Your fast path to production MCP (Sponsor)
+Gram is the MCP cloud.
+Create, host, and scale MCP servers
+without the hassle.
+Create an agent tool library by defining tools with our lightweight TypeScript framework, importing your APIs, or uploading an existing MCP server. Curate tools into custom toolsets and deploy them as MCP servers.
+MCP servers hosted on
+Gram
+work out of the box with your favorite MCP clients and agent frameworks: Claude, Cursor, OpenAI, Langchain, and more. Scale from zero to ...
+
+---
+
+
+### iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻
+
+**Link:** https://tldr.tech/tech/2025-11-11
+
+
+**Content Summary:**
+
+Goodbye low test coverage and slow QA cycles (Sponsor)
+Bugs sneak out when less than 80% of user flows are tested before shipping. However, getting that kind of coverage (and staying there) is hard and pricey for any team.
+QA Wolf's
+AI-native solution provides high-volume, high-speed test coverage for web and mobile apps, reducing your organization's QA cycle to minutes.
+They can get you:
+80% automated E2E test coverage in weeks
+—not years
+Unlimited parallel test runs
+24-hour maintenance and on-...
+
+---
+
+
+### MSFT OpenAI docs leak 📄, GPT-5.1 🤖, Anthropic’s $50B Bet 💰
+
+**Link:** https://tldr.tech/ai/2025-11-13
+
+
+**Content Summary:**
+
+Get access to the most performant Kimi K2 Thinking API (Sponsor)
+This week, Baseten released Kimi K2 Thinking on Model APIs. Kimi K2 Thinking rivals the leading closed-source agentic models and is engineered for complex reasoning and agentic workflows.With Baseten's API you can get an LLM that is smarter, faster and cheaper. The Kimi K2 Thinking API is built for production workloads with high uptime, scalability, and performance stability:
+🧨 Blistering TTFT at 0.3 seconds
+⚡140+ tokens per second...
+
+---
+
+
+### ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣
+
+**Link:** https://tldr.tech/ai/2025-11-12
+
+
+**Content Summary:**
+
+100 prompts for Notion Agents (Sponsor)
+Not sure what you can do with Notion Agents? Here are
+100 ideas
+to get you started...
+🐾 This
+collection of outcome-oriented prompts
+comes with “Agent Steps” that show exactly how an Agent will execute and what it will produce (e.g., dashboards, databases, reports).
+🗂️ It's organized by function, so you can find the exact use case you want to solve for (analytics, strategy, event planning, CX...) and test the prompts instantly.
+🔌 Connect other data sources ...
+
+---
+
+
+### Grok Code Remote 👨‍💻 , GPT-5.1 on OpenRouter 🤖, Moonshot AI AMA 💬
+
+**Link:** https://tldr.tech/ai/2025-11-11
+
+
+**Content Summary:**
+
+Airia: Enterprise AI Orchestration — Agents, Integrations, Workflows, and Governance (Sponsor)
+You want AI to become part of your organizational DNA - and that means enabling every department to build out their own use cases, without IT gatekeepers standing in the way. But it shouldn't mean an ungoverned free-for-all.
+Airia is the
+“let's get serious about AI adoption” platform
+. Rapidly prototype, deploy, and manage AI agents that transform workflows across your organization - without sacrificin...
+
+---
+
+
+### Nano Banana 2 leaks 🍌, GPT-5-Codex-Mini 👨‍💻, nested learning 🧠
+
+**Link:** https://tldr.tech/ai/2025-11-10
+
+
+**Content Summary:**
+
+OpenAI's head of financial engineering shares her monetization strategy for hypergrowth (Sponsor)
+ChatGPT is only one part of OpenAI's success. The other part is the breathtaking speed with which
+OpenAI built a new monetization model
+.
+In a fireside chat at Monetize 2025, OpenAI's Head of Financial Engineering, Sara Conlon, explained how she built an
+engineering billing org poised for hypergrowth
+.
+Read the blog to learn:
+Why centralizated monetization infrastructure is essential
+Hard lessons fr...
+
+---
 
 
 ### Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 
@@ -669,139 +776,5 @@ engineering billing org poised for hypergrowth
 Read the blog to learn:
 Why centralizated monetization infrastructure is essential
 Hard lessons fr...
-
----
-
-
-### Sam on OpenAI finances 💰, GPT-5.1 🤖, Anthropic $350B valuation 📈
-
-**Link:** https://tldr.tech/ai/2025-11-07
-
-
-**Content Summary:**
-
-A technical guide to building agentic systems (Sponsor)
-The next evolution in AI isn't better chat, it's agents that can actually do things: query databases, update systems, and make decisions. But connecting AI to every tool means custom code for each integration.
-Algolia's
-new whitepaper
-breaks it down — in great detail but with zero BS:
-How agentic AI works
-What model context protocol (MCP) enables
-How to build agents that can search indices, pull analytics, and modify configurations through ...
-
----
-
-
-### iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻
-
-**Link:** https://tldr.tech/tech/2025-11-11
-
-
-**Content Summary:**
-
-Goodbye low test coverage and slow QA cycles (Sponsor)
-Bugs sneak out when less than 80% of user flows are tested before shipping. However, getting that kind of coverage (and staying there) is hard and pricey for any team.
-QA Wolf's
-AI-native solution provides high-volume, high-speed test coverage for web and mobile apps, reducing your organization's QA cycle to minutes.
-They can get you:
-80% automated E2E test coverage in weeks
-—not years
-Unlimited parallel test runs
-24-hour maintenance and on-...
-
----
-
-
-### ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣
-
-**Link:** https://tldr.tech/ai/2025-11-12
-
-
-**Content Summary:**
-
-100 prompts for Notion Agents (Sponsor)
-Not sure what you can do with Notion Agents? Here are
-100 ideas
-to get you started...
-🐾 This
-collection of outcome-oriented prompts
-comes with “Agent Steps” that show exactly how an Agent will execute and what it will produce (e.g., dashboards, databases, reports).
-🗂️ It's organized by function, so you can find the exact use case you want to solve for (analytics, strategy, event planning, CX...) and test the prompts instantly.
-🔌 Connect other data sources ...
-
----
-
-
-### Grok Code Remote 👨‍💻 , GPT-5.1 on OpenRouter 🤖, Moonshot AI AMA 💬
-
-**Link:** https://tldr.tech/ai/2025-11-11
-
-
-**Content Summary:**
-
-Airia: Enterprise AI Orchestration — Agents, Integrations, Workflows, and Governance (Sponsor)
-You want AI to become part of your organizational DNA - and that means enabling every department to build out their own use cases, without IT gatekeepers standing in the way. But it shouldn't mean an ungoverned free-for-all.
-Airia is the
-“let's get serious about AI adoption” platform
-. Rapidly prototype, deploy, and manage AI agents that transform workflows across your organization - without sacrificin...
-
----
-
-
-### Nano Banana 2 leaks 🍌, GPT-5-Codex-Mini 👨‍💻, nested learning 🧠
-
-**Link:** https://tldr.tech/ai/2025-11-10
-
-
-**Content Summary:**
-
-OpenAI's head of financial engineering shares her monetization strategy for hypergrowth (Sponsor)
-ChatGPT is only one part of OpenAI's success. The other part is the breathtaking speed with which
-OpenAI built a new monetization model
-.
-In a fireside chat at Monetize 2025, OpenAI's Head of Financial Engineering, Sara Conlon, explained how she built an
-engineering billing org poised for hypergrowth
-.
-Read the blog to learn:
-Why centralizated monetization infrastructure is essential
-Hard lessons fr...
-
----
-
-
-### Sam on OpenAI finances 💰, GPT-5.1 🤖, Anthropic $350B valuation 📈
-
-**Link:** https://tldr.tech/ai/2025-11-07
-
-
-**Content Summary:**
-
-A technical guide to building agentic systems (Sponsor)
-The next evolution in AI isn't better chat, it's agents that can actually do things: query databases, update systems, and make decisions. But connecting AI to every tool means custom code for each integration.
-Algolia's
-new whitepaper
-breaks it down — in great detail but with zero BS:
-How agentic AI works
-What model context protocol (MCP) enables
-How to build agents that can search indices, pull analytics, and modify configurations through ...
-
----
-
-
-### Gemini 3 this month ✨, OpenAI CFO comments 💰, Snapchat + Perplexity 🤝
-
-**Link:** https://tldr.tech/ai/2025-11-06
-
-
-**Content Summary:**
-
-Move faster with AI: Build secure, maintainable code you can trust (Sponsor)
-AI is speeding things up, but all that new code creates a bottleneck — who's verifying the quality and security? Don't let unverified code stall your merges.
-Sonar's automated review
-gives you the control back, building the trust you need in every line of code, human- or AI-written. With
-SonarQube
-, your team can:
-Use AI without fear: Get continuous analysis for quality and security.
-Fix issues early: Detect and apply a...
 
 ---

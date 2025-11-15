@@ -1,0 +1,44 @@
+{
+  "timestamp": "2025-11-15T08:23:43.400284+00:00",
+  "total_learnings": 68,
+  "sources": [
+    {
+      "name": "GitHub Trending",
+      "count": 28,
+      "file": "learnings/github_trending_20251115_082329.json"
+    },
+    {
+      "name": "TLDR Tech",
+      "count": 10,
+      "file": "learnings/tldr_20251115_082336.json"
+    },
+    {
+      "name": "Hacker News",
+      "count": 30,
+      "file": "learnings/hn_20251115_082343.json"
+    }
+  ],
+  "top_topics": [
+    {
+      "topic": "AI/ML",
+      "count": 22
+    },
+    {
+      "topic": "Languages",
+      "count": 5
+    },
+    {
+      "topic": "Backend",
+      "count": 4
+    },
+    {
+      "topic": "Web Dev",
+      "count": 3
+    },
+    {
+      "topic": "DevOps",
+      "count": 2
+    }
+  ],
+  "analysis_type": "combined"
+}
