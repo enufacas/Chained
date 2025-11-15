@@ -1,0 +1,203 @@
+name: "CI: Workflow Validation"
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**/*.yml'
+      - '.github/workflows/**/*.yaml'
+      - 'tools/validate-workflows.py'
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      workflow_file:
+        description: 'Specific workflow file to validate (optional)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate-workflows:
+    runs-on: ubuntu-latest
+    name: Validate Changed Workflows
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history to compare changes
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install pyyaml
+      
+      - name: Get changed workflow files
+        id: changed-files
+        run: |
+          echo "Getting changed workflow files..."
+          
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            # For PR events, compare against base branch
+            base_sha="${{ github.event.pull_request.base.sha }}"
+            head_sha="${{ github.event.pull_request.head.sha }}"
+            
+            # Get list of changed files
+            git diff --name-only "$base_sha" "$head_sha" > /tmp/all_changed_files.txt
+            
+            # Filter for workflow files
+            grep -E '^\.github/workflows/.*\.(yml|yaml)$' /tmp/all_changed_files.txt > /tmp/changed_workflows.txt || true
+            
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            # For manual dispatch, validate specific file or all
+            if [ -n "${{ github.event.inputs.workflow_file }}" ]; then
+              echo "${{ github.event.inputs.workflow_file }}" > /tmp/changed_workflows.txt
+            else
+              # Validate all workflow files
+              find .github/workflows -name "*.yml" -o -name "*.yaml" > /tmp/changed_workflows.txt
+            fi
+          fi
+          
+          # Show what will be validated
+          if [ -s /tmp/changed_workflows.txt ]; then
+            echo "📋 Workflow files to validate:"
+            cat /tmp/changed_workflows.txt
+            echo ""
+            echo "count=$(wc -l < /tmp/changed_workflows.txt)" >> $GITHUB_OUTPUT
+          else
+            echo "ℹ️  No workflow files changed"
+            echo "count=0" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Validate workflow syntax and patterns
+        if: steps.changed-files.outputs.count > 0
+        id: validate
+        run: |
+          echo "🔍 Running workflow validation..."
+          
+          # Run validation on changed files
+          if python3 tools/validate-workflows.py --changed-files /tmp/changed_workflows.txt; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "✅ All workflow validations passed!"
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "❌ Workflow validation failed!"
+            exit 1
+          fi
+      
+      - name: Test workflow file syntax with GitHub Actions
+        if: steps.changed-files.outputs.count > 0
+        run: |
+          echo "🔧 Testing workflow YAML syntax..."
+          
+          # Use actionlint if available, otherwise just yamllint
+          if command -v actionlint &> /dev/null; then
+            while IFS= read -r workflow_file; do
+              if [ -f "$workflow_file" ]; then
+                echo "Checking $workflow_file with actionlint..."
+                actionlint "$workflow_file" || true
+              fi
+            done < /tmp/changed_workflows.txt
+          else
+            echo "ℹ️  actionlint not available, using yamllint..."
+            while IFS= read -r workflow_file; do
+              if [ -f "$workflow_file" ]; then
+                echo "Checking $workflow_file with yamllint..."
+                yamllint -d relaxed "$workflow_file" || true
+              fi
+            done < /tmp/changed_workflows.txt
+          fi
+      
+      - name: Run changed workflows (dry-run)
+        if: steps.changed-files.outputs.count > 0 && github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          echo "🧪 Testing if changed workflows can be triggered..."
+          echo ""
+          echo "ℹ️  Note: This is a dry-run check. Workflows with workflow_dispatch"
+          echo "    can be manually tested after merge."
+          echo ""
+          
+          while IFS= read -r workflow_file; do
+            if [ -f "$workflow_file" ]; then
+              workflow_name=$(basename "$workflow_file")
+              echo "📄 Checking triggers for: $workflow_name"
+              
+              # Check if workflow has workflow_dispatch trigger
+              if grep -q "workflow_dispatch:" "$workflow_file"; then
+                echo "  ✅ Can be manually triggered with workflow_dispatch"
+              fi
+              
+              # Check if workflow has pull_request trigger
+              if grep -q "pull_request:" "$workflow_file"; then
+                echo "  ✅ Triggers on pull_request events"
+              fi
+              
+              # Check if workflow has schedule trigger
+              if grep -q "schedule:" "$workflow_file"; then
+                echo "  ✅ Runs on schedule"
+              fi
+              
+              echo ""
+            fi
+          done < /tmp/changed_workflows.txt
+      
+      - name: Post validation summary
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const changedCount = ${{ steps.changed-files.outputs.count }};
+            const validationStatus = '${{ steps.validate.outputs.status }}';
+            
+            if (changedCount === 0) {
+              console.log('No workflow files changed, skipping comment');
+              return;
+            }
+            
+            let body = '## 🔍 Workflow Validation Results\n\n';
+            
+            if (validationStatus === 'success') {
+              body += '✅ **All workflow validations passed!**\n\n';
+              body += `Validated ${changedCount} workflow file(s).\n\n`;
+              body += '### Checks Performed\n';
+              body += '- ✅ YAML syntax validation\n';
+              body += '- ✅ Required workflow structure\n';
+              body += '- ✅ Prohibited patterns (direct push to main)\n';
+              body += '- ✅ PR-based workflow pattern compliance\n';
+            } else {
+              body += '❌ **Workflow validation failed!**\n\n';
+              body += 'Please review the validation errors above and fix the issues.\n\n';
+              body += '### Common Issues\n';
+              body += '- Direct `git push` without branch specification\n';
+              body += '- Direct push to main branch\n';
+              body += '- YAML syntax errors\n';
+              body += '- Missing required workflow fields\n\n';
+              body += '### How to Fix\n';
+              body += '1. Review the error messages in the workflow run\n';
+              body += '2. Fix the issues in your workflow files\n';
+              body += '3. Push the changes - validation will run again\n';
+            }
+            
+            body += '\n---\n*Automated validation by workflow-validation.yml*';
+            
+            // Post comment on PR
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+      
+      - name: Fail if validation failed
+        if: steps.validate.outputs.status == 'failure'
+        run: |
+          echo "❌ Workflow validation failed. Please fix the issues above."
+          exit 1
