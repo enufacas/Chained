@@ -9,28 +9,59 @@ let markers = {
 };
 let worldState = null;
 let knowledge = null;
+let agentIcon = null;
 
-// Custom marker icons
-const agentIcon = L.icon({
-    iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="18" fill="#0891b2" stroke="#fff" stroke-width="3"/>
-            <text x="20" y="28" font-size="20" text-anchor="middle" fill="#fff">🤖</text>
-        </svg>
-    `),
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-    popupAnchor: [0, -40]
-});
+// Initialize agent icon (only if Leaflet is available)
+function initAgentIcon() {
+    if (typeof L === 'undefined') return null;
+    
+    return L.icon({
+        iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+                <circle cx="20" cy="20" r="18" fill="#0891b2" stroke="#fff" stroke-width="3"/>
+                <text x="20" y="28" font-size="20" text-anchor="middle" fill="#fff">🤖</text>
+            </svg>
+        `),
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
+    });
+}
 
 // Initialize map
 function initMap() {
-    map = L.map('map').setView([30, 0], 2);
+    // Check if Leaflet is available
+    if (typeof L === 'undefined') {
+        console.error('Leaflet library failed to load');
+        const mapDiv = document.getElementById('map');
+        mapDiv.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: var(--bg-color, #0f0f1e); border-radius: 12px; padding: 2rem; text-align: center;">
+                <div>
+                    <h3 style="color: var(--primary-color, #0891b2); margin-bottom: 1rem;">⚠️ Map Library Not Available</h3>
+                    <p style="color: var(--text-muted, #b0b0b0);">The interactive map couldn't load, but you can still view agent and region data in the sidebar.</p>
+                    <p style="color: var(--text-muted, #b0b0b0); margin-top: 1rem; font-size: 0.9rem;">Please check your network connection or ad blocker settings.</p>
+                </div>
+            </div>
+        `;
+        return false;
+    }
     
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 18
-    }).addTo(map);
+    try {
+        // Initialize the icon now that we know L is available
+        agentIcon = initAgentIcon();
+        
+        map = L.map('map').setView([30, 0], 2);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+        
+        return true;
+    } catch (error) {
+        console.error('Error initializing map:', error);
+        return false;
+    }
 }
 
 // Load world data
@@ -51,6 +82,7 @@ async function loadWorldData() {
 
 // Clear all markers
 function clearMarkers() {
+    if (!map) return;
     markers.regions.forEach(m => map.removeLayer(m));
     markers.agents.forEach(m => map.removeLayer(m));
     markers.regions = [];
@@ -59,7 +91,7 @@ function clearMarkers() {
 
 // Render regions on map
 function renderRegions() {
-    if (!worldState || !worldState.regions) return;
+    if (!worldState || !worldState.regions || !map) return;
     
     worldState.regions.forEach(region => {
         const ideaCount = region.idea_count || 0;
@@ -104,7 +136,7 @@ function renderRegions() {
 
 // Render agents on map
 function renderAgents() {
-    if (!worldState || !worldState.agents) return;
+    if (!worldState || !worldState.agents || !map) return;
     
     worldState.agents.forEach(agent => {
         const region = getRegionById(agent.location_region_id);
@@ -217,6 +249,7 @@ function getIdeasForRegion(regionId) {
 }
 
 function zoomToRegion(regionId) {
+    if (!map) return;
     const region = getRegionById(regionId);
     if (region) {
         map.setView([region.lat, region.lng], 6);
@@ -233,8 +266,10 @@ async function refreshWorldData() {
     
     if (success) {
         clearMarkers();
-        renderRegions();
-        renderAgents();
+        if (map) {
+            renderRegions();
+            renderAgents();
+        }
         updateSidebar();
         button.textContent = '✅ Refreshed!';
         setTimeout(() => {
@@ -252,12 +287,14 @@ async function refreshWorldData() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
-    initMap();
+    const mapInitialized = initMap();
     
     const success = await loadWorldData();
     if (success) {
-        renderRegions();
-        renderAgents();
+        if (mapInitialized) {
+            renderRegions();
+            renderAgents();
+        }
         updateSidebar();
     } else {
         document.getElementById('agents-list').innerHTML = 
