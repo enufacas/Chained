@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-15 08:23 UTC
+**Generated:** 2025-11-15 13:17 UTC
 
-**Total Learning Sessions:** 59
+**Total Learning Sessions:** 63
 
-**Total Insights:** 587
+**Total Insights:** 600
 
 ---
 
@@ -18,7 +18,7 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 188
+**Insights:** 191
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
@@ -60,14 +60,14 @@ Security vulnerabilities, encryption, authentication, and privacy
 
 Performance tuning, benchmarks, and optimization techniques
 
-**Insights:** 16
+**Insights:** 17
 
 
 ### [🔧 Developer Tools](./Tools.md)
 
 IDEs, editors, debuggers, and productivity tools
 
-**Insights:** 36
+**Insights:** 38
 
 
 ### [🌟 Open Source & Community](./OpenSource.md)
@@ -81,7 +81,7 @@ Open source projects, community insights, and collaboration
 
 General technology news and insights
 
-**Insights:** 242
+**Insights:** 249
 
 
 ## 📊 Statistics
@@ -89,28 +89,28 @@ General technology news and insights
 
 ### By Source
 
-- **Hacker News:** 23 learning sessions
+- **Hacker News:** 24 learning sessions
 
-- **TLDR Tech:** 18 learning sessions
+- **TLDR Tech:** 19 learning sessions
 
-- **Unknown:** 15 learning sessions
+- **Unknown:** 17 learning sessions
 
 - **GitHub Trending:** 3 learning sessions
 
 
 ### By Topic
 
-- **📚 General Tech Insights:** 242 insights
+- **📚 General Tech Insights:** 249 insights
 
-- **🤖 AI & Machine Learning:** 188 insights
+- **🤖 AI & Machine Learning:** 191 insights
 
 - **💻 Programming Languages & Frameworks:** 48 insights
 
-- **🔧 Developer Tools:** 36 insights
+- **🔧 Developer Tools:** 38 insights
 
 - **🌐 Web Development:** 19 insights
 
-- **⚡ Performance & Optimization:** 16 insights
+- **⚡ Performance & Optimization:** 17 insights
 
 - **🚀 DevOps & Infrastructure:** 14 insights
 
