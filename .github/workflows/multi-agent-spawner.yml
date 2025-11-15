@@ -375,6 +375,40 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        if: needs.check-capacity.outputs.can_spawn == 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        if: needs.check-capacity.outputs.can_spawn == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        if: needs.check-capacity.outputs.can_spawn == 'true'
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Update last_spawn timestamp
+        if: needs.check-capacity.outputs.can_spawn == 'true'
+        run: |
+          echo "📅 Updating last_spawn timestamp after all agents spawned..."
+          python3 tools/update_last_spawn.py
+          
+          # Commit and push the last_spawn update
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if git diff --quiet .github/agent-system/metadata/last_spawn.txt; then
+            echo "✓ No changes to last_spawn.txt"
+          else
+            git add .github/agent-system/metadata/last_spawn.txt
+            git commit -m "Update last_spawn after spawning ${{ needs.check-capacity.outputs.spawn_count }} agents"
+            git push || echo "⚠️ Failed to push last_spawn update (non-critical)"
+          fi
+
       - name: Summary
         run: |
           if [ "${{ needs.check-capacity.outputs.can_spawn }}" == "true" ]; then
