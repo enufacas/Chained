@@ -1,0 +1,59 @@
+{
+  "time": "2025-11-15T03:30:43Z",
+  "tick": 2,
+  "agents": [
+    {
+      "id": "chained-explorer-1",
+      "label": "Chained Explorer",
+      "location_region_id": "US:San Francisco",
+      "status": "traveling",
+      "path": [
+        "US:Redmond"
+      ],
+      "current_idea_id": "idea:1"
+    }
+  ],
+  "regions": [
+    {
+      "id": "US:San Francisco",
+      "label": "San Francisco",
+      "lat": 37.7749,
+      "lng": -122.4194,
+      "idea_count": 1
+    },
+    {
+      "id": "US:Seattle",
+      "label": "Seattle",
+      "lat": 47.6062,
+      "lng": -122.3321,
+      "idea_count": 0
+    },
+    {
+      "id": "US:New York",
+      "label": "New York",
+      "lat": 40.7128,
+      "lng": -74.006,
+      "idea_count": 0
+    },
+    {
+      "id": "US:Redmond",
+      "label": "Redmond",
+      "lat": 47.674,
+      "lng": -122.1215,
+      "idea_count": 1
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "description": "Explore global inspiration patterns and collect innovative ideas from tech companies worldwide.",
+      "priority": 0.9,
+      "progress": 0.0
+    }
+  ],
+  "metrics": {
+    "total_ideas": 1,
+    "total_regions": 4,
+    "ticks_completed": 2
+  }
+}
