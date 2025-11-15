@@ -74,53 +74,127 @@ function initMap() {
     return true;
 }
 
-// Draw simplified continent outlines with more realistic shapes
+// Draw world map using a more realistic approach with better geographic accuracy
 function drawContinents(svg) {
+    // Using a simplified but more accurate world map projection
+    // Based on equirectangular projection with better continent shapes
     const continents = [
-        // North America - improved shape
+        // North America - more accurate coastline
         { 
-            path: 'M 80,60 Q 90,50 110,55 L 140,50 Q 160,48 175,55 L 200,60 Q 215,65 220,80 L 225,100 Q 228,120 225,140 L 220,160 Q 215,175 205,185 L 190,195 Q 175,200 160,198 L 140,195 Q 125,192 115,185 L 100,175 Q 85,160 82,145 L 80,120 Q 78,90 80,60 Z', 
-            color: '#2d3748' 
+            path: 'M 50,80 L 60,65 L 75,58 L 95,55 L 115,52 L 135,50 L 155,52 L 170,55 L 185,60 L 195,68 L 205,78 L 212,90 L 218,105 L 220,120 L 220,135 L 218,150 L 214,165 L 208,178 L 200,188 L 190,196 L 178,202 L 165,206 L 150,208 L 135,207 L 120,204 L 108,199 L 98,192 L 88,183 L 80,172 L 72,158 L 66,142 L 62,125 L 58,108 L 56,92 Z M 70,70 L 80,75 L 88,82 L 92,90 L 90,98 L 85,92 L 78,85 Z',
+            color: '#34495e'
         },
-        // South America - improved shape  
-        { 
-            path: 'M 185,200 Q 195,195 205,200 L 220,210 Q 228,220 230,235 L 232,250 Q 233,265 230,280 L 225,295 Q 218,305 208,310 L 195,312 Q 185,310 178,305 L 170,295 Q 165,280 165,265 L 167,245 Q 170,225 175,210 Q 180,200 185,200 Z', 
-            color: '#2d3748' 
+        // Greenland
+        {
+            path: 'M 230,40 L 245,38 L 258,40 L 268,45 L 273,52 L 275,62 L 273,72 L 268,80 L 260,85 L 248,88 L 238,87 L 228,82 L 222,74 L 220,64 L 222,54 Z',
+            color: '#34495e'
         },
-        // Europe - improved shape
+        // South America - more detailed
         { 
-            path: 'M 380,75 Q 395,70 410,72 L 435,75 Q 455,78 470,85 L 485,95 Q 492,105 490,118 L 485,132 Q 478,142 465,145 L 445,147 Q 425,145 410,140 L 390,132 Q 378,120 376,105 L 375,90 Q 377,80 380,75 Z', 
-            color: '#2d3748' 
+            path: 'M 185,205 L 195,202 L 207,203 L 218,207 L 227,214 L 234,224 L 238,236 L 240,250 L 240,265 L 238,280 L 234,293 L 228,304 L 220,312 L 210,318 L 198,320 L 186,319 L 176,315 L 168,308 L 162,298 L 158,286 L 156,272 L 156,258 L 158,244 L 162,230 L 168,218 L 176,210 Z',
+            color: '#34495e'
         },
-        // Africa - improved shape
+        // Europe - better detail
         { 
-            path: 'M 385,145 Q 395,142 410,145 L 430,150 Q 445,155 455,165 L 465,180 Q 470,195 470,210 L 468,230 Q 465,245 458,258 L 448,270 Q 435,278 420,280 L 405,278 Q 390,272 382,262 L 375,245 Q 372,225 375,205 L 380,185 Q 383,165 385,145 Z', 
-            color: '#2d3748' 
+            path: 'M 375,70 L 388,68 L 402,68 L 415,70 L 428,73 L 440,77 L 452,82 L 463,88 L 472,96 L 478,106 L 481,117 L 481,128 L 478,138 L 472,146 L 463,152 L 452,156 L 440,158 L 428,158 L 415,156 L 402,152 L 390,146 L 380,138 L 372,128 L 368,117 L 367,106 L 369,95 L 372,84 Z M 410,72 L 420,75 L 428,80 L 432,87 L 430,94 L 424,90 L 416,84 Z',
+            color: '#34495e'
         },
-        // Asia - improved larger shape
+        // Africa - more realistic shape
         { 
-            path: 'M 475,60 Q 495,55 520,58 L 555,62 Q 585,65 610,70 L 640,78 Q 665,88 685,102 L 705,120 Q 718,138 720,158 L 718,178 Q 712,195 698,208 L 675,220 Q 650,228 625,230 L 595,228 Q 565,223 540,215 L 515,205 Q 495,192 485,175 L 478,155 Q 475,135 475,115 L 475,90 Q 475,70 475,60 Z', 
-            color: '#2d3748' 
+            path: 'M 380,140 L 393,138 L 407,139 L 420,142 L 432,147 L 443,154 L 453,163 L 461,174 L 467,187 L 470,201 L 471,216 L 470,231 L 467,246 L 461,260 L 453,272 L 443,282 L 432,289 L 420,293 L 407,294 L 393,292 L 382,287 L 373,280 L 366,270 L 361,258 L 358,244 L 357,229 L 358,214 L 361,199 L 366,185 L 373,172 L 377,160 Z',
+            color: '#34495e'
         },
-        // Australia - improved shape
+        // Asia - much larger and more detailed
         { 
-            path: 'M 620,265 Q 635,262 650,265 L 675,270 Q 695,275 708,285 L 715,300 Q 717,312 710,322 L 698,330 Q 680,333 665,332 L 645,328 Q 630,320 622,308 L 618,290 Q 618,275 620,265 Z', 
-            color: '#2d3748' 
+            path: 'M 470,55 L 490,52 L 512,51 L 535,52 L 558,55 L 580,60 L 602,66 L 623,74 L 643,84 L 661,96 L 677,110 L 690,126 L 700,143 L 707,161 L 710,180 L 710,199 L 707,217 L 700,233 L 690,247 L 677,258 L 661,266 L 643,271 L 623,274 L 602,274 L 580,271 L 558,266 L 535,258 L 512,247 L 490,233 L 473,217 L 462,199 L 456,180 L 453,161 L 453,143 L 456,126 L 462,110 L 468,96 Z M 720,90 L 735,88 L 745,92 L 748,102 L 743,110 L 732,108 Z M 485,60 L 495,65 L 502,72 L 505,82 L 502,90 L 495,85 L 488,78 Z',
+            color: '#34495e'
         },
-        // Antarctica - add bottom continent
+        // Australia - better proportions
         { 
-            path: 'M 50,360 L 750,360 Q 745,370 735,375 L 700,380 Q 650,382 600,380 L 500,378 Q 400,380 300,378 L 200,380 Q 150,382 100,378 L 65,373 Q 55,368 50,360 Z', 
-            color: '#2d3748' 
+            path: 'M 620,260 L 638,258 L 655,260 L 671,265 L 686,272 L 698,281 L 707,292 L 712,305 L 713,318 L 710,330 L 703,339 L 693,345 L 680,348 L 665,348 L 650,345 L 636,339 L 624,330 L 616,318 L 612,305 L 611,292 L 613,279 Z',
+            color: '#34495e'
+        },
+        // Antarctica - bottom of map
+        { 
+            path: 'M 30,355 L 770,355 L 768,365 L 760,373 L 745,378 L 720,381 L 680,383 L 630,384 L 570,383 L 500,382 L 430,383 L 370,384 L 320,383 L 280,381 L 255,378 L 240,373 L 232,365 Z',
+            color: '#34495e'
+        },
+        // Southeast Asia / Indonesia
+        {
+            path: 'M 630,210 L 640,209 L 650,211 L 658,215 L 663,221 L 665,228 L 663,235 L 658,240 L 650,243 L 640,243 L 632,240 L 626,235 L 624,228 L 626,221 Z M 670,215 L 678,214 L 685,217 L 688,223 L 686,229 L 680,231 L 673,229 Z',
+            color: '#34495e'
+        },
+        // Japan
+        {
+            path: 'M 735,125 L 742,123 L 748,125 L 752,130 L 752,137 L 748,143 L 742,145 L 735,143 L 731,137 L 731,130 Z',
+            color: '#34495e'
+        },
+        // New Zealand
+        {
+            path: 'M 755,310 L 762,309 L 768,312 L 770,318 L 768,325 L 762,328 L 755,327 L 751,323 L 750,318 Z M 758,330 L 764,329 L 768,332 L 769,338 L 766,343 L 761,344 L 756,342 L 754,337 Z',
+            color: '#34495e'
+        },
+        // Iceland
+        {
+            path: 'M 335,50 L 343,49 L 349,52 L 351,58 L 349,64 L 343,66 L 335,65 L 331,61 L 330,55 Z',
+            color: '#34495e'
+        },
+        // UK and Ireland
+        {
+            path: 'M 360,85 L 365,84 L 370,86 L 372,91 L 370,96 L 365,98 L 360,97 L 357,93 Z M 352,88 L 356,87 L 359,90 L 358,94 L 355,96 L 351,95 L 349,91 Z',
+            color: '#34495e'
+        },
+        // Madagascar
+        {
+            path: 'M 485,265 L 490,264 L 494,267 L 495,273 L 494,280 L 490,285 L 485,286 L 481,283 L 480,277 L 481,271 Z',
+            color: '#34495e'
         }
     ];
     
+    // Draw ocean/water background first
+    const oceanRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    oceanRect.setAttribute('x', '0');
+    oceanRect.setAttribute('y', '0');
+    oceanRect.setAttribute('width', '800');
+    oceanRect.setAttribute('height', '400');
+    oceanRect.setAttribute('fill', '#1a2838');
+    svg.appendChild(oceanRect);
+    
+    // Draw grid lines for latitude/longitude reference
+    for (let i = 50; i < 800; i += 80) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', i);
+        line.setAttribute('y1', '0');
+        line.setAttribute('x2', i);
+        line.setAttribute('y2', '400');
+        line.setAttribute('stroke', '#2d3748');
+        line.setAttribute('stroke-width', '1');
+        line.setAttribute('opacity', '0.3');
+        svg.appendChild(line);
+    }
+    
+    for (let i = 50; i < 400; i += 50) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', '0');
+        line.setAttribute('y1', i);
+        line.setAttribute('x2', '800');
+        line.setAttribute('y2', i);
+        line.setAttribute('stroke', '#2d3748');
+        line.setAttribute('stroke-width', '1');
+        line.setAttribute('opacity', '0.3');
+        svg.appendChild(line);
+    }
+    
+    // Draw continents with better styling
     continents.forEach(continent => {
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', continent.path);
         path.setAttribute('fill', continent.color);
-        path.setAttribute('stroke', '#1a2332');
-        path.setAttribute('stroke-width', '2');
-        path.setAttribute('opacity', '0.8');
+        path.setAttribute('stroke', '#4a5568');
+        path.setAttribute('stroke-width', '1.5');
+        path.setAttribute('opacity', '0.95');
+        // Add subtle shadow effect
+        path.setAttribute('filter', 'drop-shadow(2px 2px 3px rgba(0,0,0,0.4))');
         svg.appendChild(path);
     });
 }
