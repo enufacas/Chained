@@ -1,0 +1,222 @@
+name: "Self-Documenting AI: Enhanced Learning"
+
+on:
+  issues:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to analyze'
+        required: true
+        type: number
+      live_analysis:
+        description: 'Perform live analysis (true/false)'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: write
+
+jobs:
+  enhanced-learning:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest  # For testing if needed
+      
+      - name: Get issue number
+        id: get_issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            ISSUE_NUMBER="${{ github.event.inputs.issue_number }}"
+            LIVE_ANALYSIS="${{ github.event.inputs.live_analysis }}"
+          else
+            ISSUE_NUMBER="${{ github.event.issue.number }}"
+            LIVE_ANALYSIS="false"
+          fi
+          
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          echo "live_analysis=$LIVE_ANALYSIS" >> $GITHUB_OUTPUT
+          
+          echo "✅ Processing issue #$ISSUE_NUMBER"
+      
+      - name: Fetch issue data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
+          
+          # Fetch complete issue data including comments
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}" \
+            > /tmp/issue_base.json
+          
+          # Fetch comments
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/comments" \
+            > /tmp/issue_comments.json
+          
+          # Combine into single file
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          
+          with open('/tmp/issue_base.json', 'r') as f:
+              issue_data = json.load(f)
+          
+          with open('/tmp/issue_comments.json', 'r') as f:
+              comments = json.load(f)
+          
+          issue_data['comments'] = comments
+          
+          with open('/tmp/issue_data.json', 'w') as f:
+              json.dump(issue_data, f, indent=2)
+          
+          print(f"✅ Fetched issue data with {len(comments)} comments")
+          PYTHON_SCRIPT
+      
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Run enhanced learning analysis
+        id: analyze
+        run: |
+          ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
+          LIVE_ANALYSIS="${{ steps.get_issue.outputs.live_analysis }}"
+          
+          # Create learnings directory
+          mkdir -p learnings/discussions
+          
+          # Run enhanced learner
+          if [ "$LIVE_ANALYSIS" == "true" ]; then
+            echo "🔄 Performing live analysis..."
+            python3 tools/enhanced-discussion-learner.py /tmp/issue_data.json \
+              --output-dir learnings/discussions \
+              --live-analysis
+          else
+            echo "🔍 Performing full enhanced analysis..."
+            python3 tools/enhanced-discussion-learner.py /tmp/issue_data.json \
+              --output-dir learnings/discussions
+          fi
+          
+          echo "analysis_complete=true" >> $GITHUB_OUTPUT
+      
+      - name: Create PR with learnings
+        if: steps.analyze.outputs.analysis_complete == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="self-documenting-ai/${TIMESTAMP}-${GITHUB_RUN_ID}"
+          
+          # Check for changes
+          git add learnings/
+          
+          if git diff --staged --quiet; then
+            echo "ℹ️ No new learnings to commit"
+            exit 0
+          fi
+          
+          # Create branch
+          git checkout -b "$BRANCH_NAME"
+          
+          # Commit changes
+          git commit -m "feat: enhanced learning from issue #${ISSUE_NUMBER} (@engineer-master)
+
+**@engineer-master** has analyzed issue #${ISSUE_NUMBER} using the enhanced self-documenting AI system.
+
+## Learning Enhancements
+
+- Advanced pattern recognition
+- Knowledge graph connections
+- Real-time learning insights
+- Proactive suggestions
+
+The AI system continuously learns from every discussion, improving its capabilities over time."
+          
+          # Push branch
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR
+          gh pr create \
+            --title "📚 Enhanced Learning: Issue #${ISSUE_NUMBER} (@engineer-master)" \
+            --body "## 🧠 Enhanced Self-Documenting AI Learning
+
+**@engineer-master** has completed enhanced analysis of issue #${ISSUE_NUMBER}.
+
+### What Was Learned
+
+This PR contains learnings extracted using the **Enhanced Self-Documenting AI** system with:
+
+✨ **Advanced Pattern Recognition**
+- Detects complex discussion patterns
+- Identifies collaboration success stories
+- Recognizes decision-making processes
+
+🔗 **Knowledge Graph Connections**
+- Links related insights across discussions
+- Builds semantic connections
+- Enables discovery of related learnings
+
+📡 **Real-Time Learning**
+- Live analysis during active discussions
+- Proactive suggestions for documentation
+- Related past discussion recommendations
+
+🎯 **Proactive Suggestions**
+- Context-aware recommendations
+- Best practice reminders
+- Related insight discovery
+
+### Files Added
+
+- Discussion analysis (JSON)
+- Enhanced documentation (Markdown)
+- Knowledge graph connections
+- Enhancement metadata
+
+### Impact
+
+The AI system becomes smarter with each discussion, continuously improving its ability to:
+- Understand technical concepts
+- Recognize effective collaboration
+- Suggest relevant insights
+- Connect related knowledge
+
+---
+
+*Following **@engineer-master**'s systematic approach: rigorous analysis, defensive programming, and comprehensive validation.*
+
+Closes #${ISSUE_NUMBER}" \
+            --label "automated,self-documenting-ai,learning" \
+            --base main \
+            --head "$BRANCH_NAME"
+          
+          echo "✅ Created PR for enhanced learnings"
+      
+      - name: Summary
+        run: |
+          echo "✅ Enhanced self-documenting AI workflow complete!"
+          echo "Issue #${{ steps.get_issue.outputs.issue_number }} analyzed with advanced learning"
