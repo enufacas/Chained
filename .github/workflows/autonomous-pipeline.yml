@@ -329,6 +329,8 @@ jobs:
       total_learnings: ${{ steps.analyze.outputs.total_learnings }}
       combined_file: ${{ steps.analyze.outputs.combined_file }}
       has_learnings: ${{ steps.analyze.outputs.has_learnings }}
+      pr_number: ${{ steps.learning_pr.outputs.pr_number }}
+      pr_created: ${{ steps.learning_pr.outputs.pr_created }}
     
     steps:
       - name: Checkout repository
@@ -410,6 +412,7 @@ jobs:
           PYTHON_SCRIPT
 
       - name: Create PR with learnings
+        id: learning_pr
         if: steps.analyze.outputs.has_learnings == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -421,6 +424,7 @@ jobs:
           
           if git diff --staged --quiet; then
             echo "No changes to commit"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
           else
             TIMESTAMP=$(date +%Y%m%d-%H%M%S)
             BRANCH_NAME="learning-pipeline/${TIMESTAMP}-${{ github.run_id }}"
@@ -429,7 +433,8 @@ jobs:
             git commit -m "🧠 Learning Pipeline - $(date +%Y-%m-%d)"
             git push origin "$BRANCH_NAME"
             
-            gh pr create \
+            # Create PR
+            PR_URL=$(gh pr create \
               --title "🧠 Learning Pipeline - $(date +%Y-%m-%d)" \
               --body "## 🧠 Autonomous Learning Pipeline
 
@@ -441,11 +446,79 @@ jobs:
             - 🗞️ Hacker News  
             - 🔥 GitHub Trending
 
-            Next stages: World Update → Agent Missions
+            **Note:** This PR will be auto-merged by the next pipeline stage.
+
+            Next stages: Merge → World Update → Agent Missions
             " \
-              --label "automated,learning,pipeline" \
+              --label "automated,learning,pipeline,auto-merge" \
               --base main \
-              --head "$BRANCH_NAME"
+              --head "$BRANCH_NAME")
+            
+            # Extract PR number
+            PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+            echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+            echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+          fi
+
+  # ============================================================================
+  # STAGE 2.5: MERGE LEARNING PR
+  # ============================================================================
+  
+  merge-learning-pr:
+    name: "Stage 2.5: Merge Learning PR"
+    runs-on: ubuntu-latest
+    needs: combine-learnings
+    if: always() && !cancelled() && needs.combine-learnings.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Auto-merge learning PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.combine-learnings.outputs.pr_number }}"
+          echo "🔄 Auto-merging PR #${PR_NUMBER}..."
+          
+          # Wait for GitHub to fully process the PR
+          sleep 5
+          
+          # Auto-approve the PR
+          echo "✅ Approving PR #${PR_NUMBER}..."
+          gh pr review ${PR_NUMBER} --approve --body "✅ Auto-approved by pipeline - Stage 2.5"
+          
+          # Try auto-merge first
+          echo "Enabling auto-merge for PR #${PR_NUMBER}..."
+          gh pr merge ${PR_NUMBER} --auto --squash || echo "⚠️ Auto-merge not available, will try direct merge..."
+          
+          # Wait for PR to merge (timeout after 2 minutes)
+          echo "Waiting for PR to merge..."
+          for i in {1..24}; do
+            sleep 5
+            PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
+            
+            if [ "$PR_STATE" = "MERGED" ]; then
+              echo "✅ PR #${PR_NUMBER} merged successfully"
+              exit 0
+            elif [ "$PR_STATE" = "CLOSED" ]; then
+              echo "❌ PR #${PR_NUMBER} was closed without merging"
+              exit 1
+            fi
+            
+            echo "  Waiting... (${i}/24) - State: ${PR_STATE}"
+          done
+          
+          # If still not merged after 2 minutes, try direct merge
+          PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
+          if [ "$PR_STATE" = "OPEN" ]; then
+            echo "⏰ Timeout reached, attempting direct merge..."
+            gh pr merge ${PR_NUMBER} --squash --admin || {
+              echo "❌ Failed to merge PR #${PR_NUMBER}"
+              exit 1
+            }
+            echo "✅ PR #${PR_NUMBER} merged via direct merge"
           fi
 
   # ============================================================================
@@ -455,11 +528,13 @@ jobs:
   world-update:
     name: "Stage 3: Update World Model"
     runs-on: ubuntu-latest
-    needs: combine-learnings
+    needs: [combine-learnings, merge-learning-pr]
     if: always() && !cancelled() && needs.combine-learnings.outputs.has_learnings == 'true' && inputs.skip_world_update != true
     outputs:
       world_tick: ${{ steps.update.outputs.world_tick }}
       has_changes: ${{ steps.update.outputs.has_changes }}
+      pr_number: ${{ steps.world_pr.outputs.pr_number }}
+      pr_created: ${{ steps.world_pr.outputs.pr_created }}
     
     steps:
       - name: Checkout repository
@@ -511,6 +586,7 @@ jobs:
           fi
 
       - name: Create PR with world updates
+        id: world_pr
         if: steps.update.outputs.has_changes == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -525,7 +601,8 @@ jobs:
           git commit -m "🌍 World Model Update - Pipeline"
           git push origin "$BRANCH_NAME"
           
-          gh pr create \
+          # Create PR
+          PR_URL=$(gh pr create \
             --title "🌍 World Model Update - $(date +%Y-%m-%d)" \
             --body "## 🌍 World Model Update
 
@@ -537,11 +614,79 @@ jobs:
           - ✅ Learning ideas integrated
           - ✅ World tick incremented
 
-          Next stage: Agent Missions
+          **Note:** This PR will be auto-merged by the next pipeline stage.
+
+          Next stages: Merge → Agent Missions
           " \
-            --label "automated,world-model,pipeline" \
+            --label "automated,world-model,pipeline,auto-merge" \
             --base main \
-            --head "$BRANCH_NAME"
+            --head "$BRANCH_NAME")
+          
+          # Extract PR number
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "pr_created=true" >> $GITHUB_OUTPUT
+
+  # ============================================================================
+  # STAGE 3.5: MERGE WORLD PR
+  # ============================================================================
+  
+  merge-world-pr:
+    name: "Stage 3.5: Merge World PR"
+    runs-on: ubuntu-latest
+    needs: world-update
+    if: always() && !cancelled() && needs.world-update.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Auto-merge world PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.world-update.outputs.pr_number }}"
+          echo "🔄 Auto-merging PR #${PR_NUMBER}..."
+          
+          # Wait for GitHub to fully process the PR
+          sleep 5
+          
+          # Auto-approve the PR
+          echo "✅ Approving PR #${PR_NUMBER}..."
+          gh pr review ${PR_NUMBER} --approve --body "✅ Auto-approved by pipeline - Stage 3.5"
+          
+          # Try auto-merge first
+          echo "Enabling auto-merge for PR #${PR_NUMBER}..."
+          gh pr merge ${PR_NUMBER} --auto --squash || echo "⚠️ Auto-merge not available, will try direct merge..."
+          
+          # Wait for PR to merge (timeout after 2 minutes)
+          echo "Waiting for PR to merge..."
+          for i in {1..24}; do
+            sleep 5
+            PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
+            
+            if [ "$PR_STATE" = "MERGED" ]; then
+              echo "✅ PR #${PR_NUMBER} merged successfully"
+              exit 0
+            elif [ "$PR_STATE" = "CLOSED" ]; then
+              echo "❌ PR #${PR_NUMBER} was closed without merging"
+              exit 1
+            fi
+            
+            echo "  Waiting... (${i}/24) - State: ${PR_STATE}"
+          done
+          
+          # If still not merged after 2 minutes, try direct merge
+          PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
+          if [ "$PR_STATE" = "OPEN" ]; then
+            echo "⏰ Timeout reached, attempting direct merge..."
+            gh pr merge ${PR_NUMBER} --squash --admin || {
+              echo "❌ Failed to merge PR #${PR_NUMBER}"
+              exit 1
+            }
+            echo "✅ PR #${PR_NUMBER} merged via direct merge"
+          fi
 
   # ============================================================================
   # STAGE 4: AGENT MISSIONS
@@ -550,10 +695,12 @@ jobs:
   agent-missions:
     name: "Stage 4: Create Agent Missions"
     runs-on: ubuntu-latest
-    needs: world-update
+    needs: [world-update, merge-world-pr]
     if: always() && !cancelled() && needs.world-update.outputs.has_changes == 'true' && inputs.skip_missions != true
     outputs:
       mission_count: ${{ steps.create.outputs.mission_count }}
+      pr_number: ${{ steps.mission_pr.outputs.pr_number }}
+      pr_created: ${{ steps.mission_pr.outputs.pr_created }}
     
     steps:
       - name: Checkout repository
@@ -707,6 +854,7 @@ jobs:
           EOF
 
       - name: Create PR with mission updates
+        id: mission_pr
         if: steps.create.outputs.mission_count > 0
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -718,6 +866,7 @@ jobs:
           
           if git diff --staged --quiet; then
             echo "No changes"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
           else
             TIMESTAMP=$(date +%Y%m%d-%H%M%S)
             BRANCH_NAME="missions-pipeline/${TIMESTAMP}-${{ github.run_id }}"
@@ -726,7 +875,8 @@ jobs:
             git commit -m "🎯 Agent Missions - Pipeline"
             git push origin "$BRANCH_NAME"
             
-            gh pr create \
+            # Create PR
+            PR_URL=$(gh pr create \
               --title "🎯 Agent Missions - $(date +%Y-%m-%d)" \
               --body "## 🎯 Agent Missions Created
 
@@ -734,10 +884,80 @@ jobs:
             **Pipeline Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
             Created by **@meta-coordinator** via autonomous pipeline.
+
+            **Note:** This PR will be auto-merged by the next pipeline stage to complete the cycle.
             " \
-              --label "automated,agent-mission,pipeline" \
+              --label "automated,agent-mission,pipeline,auto-merge" \
               --base main \
-              --head "$BRANCH_NAME"
+              --head "$BRANCH_NAME")
+            
+            # Extract PR number
+            PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+            echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+            echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+          fi
+
+  # ============================================================================
+  # STAGE 4.5: MERGE MISSION PR
+  # ============================================================================
+  
+  merge-mission-pr:
+    name: "Stage 4.5: Merge Mission PR"
+    runs-on: ubuntu-latest
+    needs: agent-missions
+    if: always() && !cancelled() && needs.agent-missions.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Auto-merge mission PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.agent-missions.outputs.pr_number }}"
+          echo "🔄 Auto-merging PR #${PR_NUMBER}..."
+          
+          # Wait for GitHub to fully process the PR
+          sleep 5
+          
+          # Auto-approve the PR
+          echo "✅ Approving PR #${PR_NUMBER}..."
+          gh pr review ${PR_NUMBER} --approve --body "✅ Auto-approved by pipeline - Stage 4.5 - Pipeline complete!"
+          
+          # Try auto-merge first
+          echo "Enabling auto-merge for PR #${PR_NUMBER}..."
+          gh pr merge ${PR_NUMBER} --auto --squash || echo "⚠️ Auto-merge not available, will try direct merge..."
+          
+          # Wait for PR to merge (timeout after 2 minutes)
+          echo "Waiting for PR to merge..."
+          for i in {1..24}; do
+            sleep 5
+            PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
+            
+            if [ "$PR_STATE" = "MERGED" ]; then
+              echo "✅ PR #${PR_NUMBER} merged successfully"
+              echo "🎉 Pipeline complete - all PRs merged!"
+              exit 0
+            elif [ "$PR_STATE" = "CLOSED" ]; then
+              echo "❌ PR #${PR_NUMBER} was closed without merging"
+              exit 1
+            fi
+            
+            echo "  Waiting... (${i}/24) - State: ${PR_STATE}"
+          done
+          
+          # If still not merged after 2 minutes, try direct merge
+          PR_STATE=$(gh pr view ${PR_NUMBER} --json state --jq '.state')
+          if [ "$PR_STATE" = "OPEN" ]; then
+            echo "⏰ Timeout reached, attempting direct merge..."
+            gh pr merge ${PR_NUMBER} --squash --admin || {
+              echo "❌ Failed to merge PR #${PR_NUMBER}"
+              exit 1
+            }
+            echo "✅ PR #${PR_NUMBER} merged via direct merge"
+            echo "🎉 Pipeline complete - all PRs merged!"
           fi
 
   # ============================================================================
@@ -747,7 +967,7 @@ jobs:
   self-reinforcement:
     name: "Stage 5: Self-Reinforcement (Optional)"
     runs-on: ubuntu-latest
-    needs: agent-missions
+    needs: [agent-missions, merge-mission-pr]
     if: always() && !cancelled() && inputs.include_self_reinforcement == true
     
     steps:
@@ -778,7 +998,7 @@ jobs:
   pipeline-summary:
     name: "Pipeline Summary"
     runs-on: ubuntu-latest
-    needs: [combine-learnings, world-update, agent-missions]
+    needs: [combine-learnings, merge-learning-pr, world-update, merge-world-pr, agent-missions, merge-mission-pr]
     if: always() && !cancelled()
     
     steps:

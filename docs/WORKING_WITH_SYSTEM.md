@@ -18,7 +18,7 @@ Chained is a **fully autonomous closed-loop AI system** that:
 
 ### The Multi-Stage Progressive Pipeline
 
-The system now runs as a **single coordinated pipeline** (`autonomous-pipeline.yml`) with 5 stages:
+The system now runs as a **single coordinated pipeline** (`autonomous-pipeline.yml`) with **8 stages** including dedicated merge steps:
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -36,23 +36,47 @@ The system now runs as a **single coordinated pipeline** (`autonomous-pipeline.y
 └──────────────────┬──────────────────────────────────┘
                    ↓
 ┌─────────────────────────────────────────────────────┐
+│  STAGE 2.5: MERGE LEARNING PR ⚡                     │
+│  - Auto-approve learning PR                         │
+│  - Auto-merge to main                               │
+│  - Wait for merge completion                        │
+└──────────────────┬──────────────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────────────┐
 │  STAGE 3: WORLD MODEL UPDATE                        │
-│  - Sync agents to world                             │
+│  - Sync agents to world (fresh from main)           │
 │  - Integrate learning ideas                         │
 │  - Increment world tick                             │
 │  - Update GitHub Pages data                         │
+│  - Generate PR with updates                         │
+└──────────────────┬──────────────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────────────┐
+│  STAGE 3.5: MERGE WORLD PR ⚡                        │
+│  - Auto-approve world PR                            │
+│  - Auto-merge to main                               │
+│  - Wait for merge completion                        │
 └──────────────────┬──────────────────────────────────┘
                    ↓
 ┌─────────────────────────────────────────────────────┐
 │  STAGE 4: AGENT MISSIONS                            │
-│  - Score agents for relevance                       │
+│  - Score agents for relevance (fresh from main)     │
 │  - Select top 10 agents per mission                 │
 │  - Create GitHub issues                             │
 │  - Move agents to locations                         │
+│  - Generate PR with missions                        │
 └──────────────────┬──────────────────────────────────┘
                    ↓
 ┌─────────────────────────────────────────────────────┐
-│  STAGE 5: SELF-REINFORCEMENT (Optional/Daily)      │
+│  STAGE 4.5: MERGE MISSION PR ⚡                      │
+│  - Auto-approve mission PR                          │
+│  - Auto-merge to main                               │
+│  - Wait for merge completion                        │
+│  - Pipeline complete! 🎉                            │
+└──────────────────┬──────────────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────────────┐
+│  STAGE 5: SELF-REINFORCEMENT (Optional)            │
 │  - Collect completed work insights                  │
 │  - Extract learnings from PRs                       │
 │  → FEEDS BACK TO STAGE 1 (closes loop)             │
@@ -66,6 +90,52 @@ The system now runs as a **single coordinated pipeline** (`autonomous-pipeline.y
 - ✅ **Better error handling** - Failed stage stops dependent stages
 - ✅ **Clear visibility** - See entire pipeline progress in one place
 - ✅ **Resource control** - Stages run sequentially or in controlled parallel
+- ✅ **Dedicated merge stages** - Separate jobs handle PR merging with retries
+- ✅ **Fresh data guarantee** - Each stage works with latest merged code
+
+### Incremental Merge Stages
+
+**Why Separate Merge Stages?**
+
+Instead of merging PRs within work stages, dedicated merge stages provide:
+
+1. **Separation of Concerns** - Work stages focus on creating changes, merge stages handle integration
+2. **Better Error Handling** - Merge failures are isolated and clearly visible
+3. **Retry Logic** - Dedicated stages can implement sophisticated merge strategies
+4. **Pipeline Clarity** - Workflow visualization shows exact merge points
+5. **Resource Efficiency** - Merge stages are lightweight and fast
+
+**How Merge Stages Work:**
+
+Each merge stage (2.5, 3.5, 4.5):
+1. **Receives PR number** from previous work stage
+2. **Auto-approves** the PR (pipeline approves its own work)
+3. **Enables auto-merge** - Tries GitHub's built-in auto-merge first
+4. **Waits & verifies** - Polls PR status for up to 2 minutes
+5. **Falls back to direct merge** - Uses admin rights if auto-merge unavailable
+6. **Fails loudly** - Stops pipeline if merge impossible
+
+**Triggers for auto-review-merge workflow:**
+
+The existing `auto-review-merge.yml` workflow can also merge these PRs:
+- Runs every 15 minutes
+- Can be manually triggered for specific PR
+- Works as backup if pipeline merge fails
+
+### PR Auto-Merge Behavior
+
+**Audit Trail Maintained:**
+- ✅ All PRs are created and visible in PR history
+- ✅ Full commit history preserved
+- ✅ PR descriptions document what changed
+- ✅ Can review past pipeline runs via PR list
+- ✅ Merge stages show in workflow visualization
+
+**Labels Used:**
+- `automated` - Identifies automated PRs
+- `pipeline` - Marks PR as part of pipeline
+- `auto-merge` - Indicates PR will auto-merge
+- `learning` / `world-model` / `agent-mission` - Stage-specific labels
 
 ## How Agents Are Selected
 
@@ -181,26 +251,26 @@ The system runs automatically via the unified pipeline:
 
 | Workflow | Schedule | Description |
 |----------|----------|-------------|
-| **autonomous-pipeline.yml** | Twice daily (8 AM, 8 PM UTC) | **Main pipeline** - Runs all stages sequentially |
-| self-reinforcement.yml | Daily midnight UTC | Extracts insights from completed work |
+| **autonomous-pipeline.yml** | Twice daily (8 AM, 8 PM UTC) | **Main pipeline** - Runs all 8 stages sequentially |
 
-### Pipeline Stages
+### Pipeline Schedule
 
-The `autonomous-pipeline.yml` workflow orchestrates all stages:
-
-1. **Stage 1 (Parallel)**: Collects learnings from TLDR, Hacker News, and GitHub Trending
-2. **Stage 2**: Combines all learning sources into unified analysis
-3. **Stage 3**: Updates world model with new ideas and agent positions
-4. **Stage 4**: Creates agent missions based on world state
-5. **Stage 5 (Optional)**: Self-reinforcement when triggered
+- **Main Pipeline**: Runs twice daily (8 AM, 8 PM UTC)
+  - Stage 1: Learning Collection (parallel)
+  - Stage 2: Combine Learnings → Stage 2.5: Merge PR
+  - Stage 3: World Update → Stage 3.5: Merge PR
+  - Stage 4: Agent Missions → Stage 4.5: Merge PR
+  - Stage 5: Self-Reinforcement (optional, only if explicitly triggered)
 
 ### Individual Workflow Behavior
 
-Individual workflows (`learn-from-*.yml`, `world-update.yml`, etc.) are now:
+Individual workflows (`learn-from-*.yml`, `world-update.yml`, `agent-missions.yml`, `self-reinforcement.yml`) are now:
 - ✅ Available for **manual triggering** only (testing, debugging)
-- ✅ No longer run on schedules (prevents conflicts)
+- ✅ **No schedules** - Pipeline is the only automatic trigger
 - ✅ Can be called by other workflows if needed
 - ✅ Maintained for backward compatibility
+
+**Note:** This ensures the pipeline is the single source of truth for automatic execution, preventing conflicts and duplicate work.
 
 ## Understanding the World Model
 

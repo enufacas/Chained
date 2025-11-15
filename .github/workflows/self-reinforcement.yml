@@ -1,9 +1,8 @@
 name: "Self-Reinforcement Learning"
 
+# NOTE: This workflow is now part of the autonomous-pipeline.yml (optional stage)
+# It can still be triggered manually for testing or standalone use
 on:
-  schedule:
-    # Run daily to collect insights
-    - cron: '0 0 * * *'
   workflow_dispatch:
 
 permissions:
