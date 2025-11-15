@@ -1,67 +1,104 @@
 /**
- * Chained World Map - Real-time visualization of agents and ideas
+ * Chained World Map - Simplified self-contained version
+ * Using simple SVG-based visualization (no external dependencies)
  */
 
-let map;
-let markers = {
-    regions: [],
-    agents: []
-};
 let worldState = null;
 let knowledge = null;
-let agentIcon = null;
+let selectedFeature = null;
 
-// Initialize agent icon (only if Leaflet is available)
-function initAgentIcon() {
-    if (typeof L === 'undefined') return null;
-    
-    return L.icon({
-        iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-                <circle cx="20" cy="20" r="18" fill="#0891b2" stroke="#fff" stroke-width="3"/>
-                <text x="20" y="28" font-size="20" text-anchor="middle" fill="#fff">🤖</text>
-            </svg>
-        `),
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-        popupAnchor: [0, -40]
-    });
+// Map projection helpers (simple Mercator-like)
+function projectLonLat(lon, lat) {
+    // Simple equirectangular projection
+    const x = (lon + 180) * (800 / 360);
+    const y = (90 - lat) * (400 / 180);
+    return { x, y };
 }
 
-// Initialize map
+// Initialize simple SVG map
 function initMap() {
-    // Check if Leaflet is available
-    if (typeof L === 'undefined') {
-        console.error('Leaflet library failed to load');
-        const mapDiv = document.getElementById('map');
-        mapDiv.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: var(--bg-color, #0f0f1e); border-radius: 12px; padding: 2rem; text-align: center;">
-                <div>
-                    <h3 style="color: var(--primary-color, #0891b2); margin-bottom: 1rem;">⚠️ Map Library Not Available</h3>
-                    <p style="color: var(--text-muted, #b0b0b0);">The interactive map couldn't load, but you can still view agent and region data in the sidebar.</p>
-                    <p style="color: var(--text-muted, #b0b0b0); margin-top: 1rem; font-size: 0.9rem;">Please check your network connection or ad blocker settings.</p>
-                </div>
-            </div>
-        `;
-        return false;
-    }
+    const mapDiv = document.getElementById('map');
     
-    try {
-        // Initialize the icon now that we know L is available
-        agentIcon = initAgentIcon();
-        
-        map = L.map('map').setView([30, 0], 2);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 18
-        }).addTo(map);
-        
-        return true;
-    } catch (error) {
-        console.error('Error initializing map:', error);
-        return false;
-    }
+    // Create SVG element
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('height', '100%');
+    svg.setAttribute('viewBox', '0 0 800 400');
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.style.background = '#1a2332';
+    svg.style.borderRadius = '12px';
+    
+    // Create world outline (simple rectangle with grid)
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
+    pattern.setAttribute('id', 'grid');
+    pattern.setAttribute('width', '40');
+    pattern.setAttribute('height', '40');
+    pattern.setAttribute('patternUnits', 'userSpaceOnUse');
+    
+    const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line1.setAttribute('x1', '40');
+    line1.setAttribute('y1', '0');
+    line1.setAttribute('x2', '40');
+    line1.setAttribute('y2', '40');
+    line1.setAttribute('stroke', 'rgba(255,255,255,0.1)');
+    line1.setAttribute('stroke-width', '1');
+    
+    const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line2.setAttribute('x1', '0');
+    line2.setAttribute('y1', '40');
+    line2.setAttribute('x2', '40');
+    line2.setAttribute('y2', '40');
+    line2.setAttribute('stroke', 'rgba(255,255,255,0.1)');
+    line2.setAttribute('stroke-width', '1');
+    
+    pattern.appendChild(line1);
+    pattern.appendChild(line2);
+    defs.appendChild(pattern);
+    svg.appendChild(defs);
+    
+    // Background
+    const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    background.setAttribute('width', '800');
+    background.setAttribute('height', '400');
+    background.setAttribute('fill', 'url(#grid)');
+    svg.appendChild(background);
+    
+    // Add continents (simplified shapes)
+    drawContinents(svg);
+    
+    // Store SVG for later use
+    mapDiv.innerHTML = '';
+    mapDiv.appendChild(svg);
+    
+    return true;
+}
+
+// Draw simplified continent outlines
+function drawContinents(svg) {
+    const continents = [
+        // North America
+        { path: 'M 100,100 L 120,90 L 180,95 L 200,110 L 210,150 L 190,170 L 150,175 L 120,160 Z', color: '#2d3748' },
+        // South America
+        { path: 'M 200,210 L 215,200 L 230,220 L 235,270 L 215,285 L 205,275 L 195,240 Z', color: '#2d3748' },
+        // Europe
+        { path: 'M 380,90 L 420,85 L 450,100 L 440,130 L 400,135 L 375,120 Z', color: '#2d3748' },
+        // Africa
+        { path: 'M 390,150 L 420,145 L 450,180 L 455,240 L 430,260 L 400,250 L 385,200 Z', color: '#2d3748' },
+        // Asia
+        { path: 'M 470,80 L 580,75 L 650,90 L 680,130 L 700,160 L 680,190 L 620,200 L 550,180 L 480,150 L 455,120 Z', color: '#2d3748' },
+        // Australia
+        { path: 'M 630,270 L 680,265 L 710,285 L 700,310 L 660,315 L 625,295 Z', color: '#2d3748' }
+    ];
+    
+    continents.forEach(continent => {
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', continent.path);
+        path.setAttribute('fill', continent.color);
+        path.setAttribute('stroke', '#1a2332');
+        path.setAttribute('stroke-width', '2');
+        svg.appendChild(path);
+    });
 }
 
 // Load world data
@@ -80,103 +117,207 @@ async function loadWorldData() {
     }
 }
 
-// Clear all markers
-function clearMarkers() {
-    if (!map) return;
-    markers.regions.forEach(m => map.removeLayer(m));
-    markers.agents.forEach(m => map.removeLayer(m));
-    markers.regions = [];
-    markers.agents = [];
+// Clear all map features
+function clearMapFeatures() {
+    const svg = document.querySelector('#map svg');
+    if (!svg) return;
+    
+    // Remove all circles and markers (keep background and continents)
+    const elements = svg.querySelectorAll('.region-circle, .agent-marker, .popup-group');
+    elements.forEach(el => el.remove());
 }
 
 // Render regions on map
 function renderRegions() {
-    if (!worldState || !worldState.regions || !map) return;
+    if (!worldState || !worldState.regions) return;
+    
+    const svg = document.querySelector('#map svg');
+    if (!svg) return;
     
     worldState.regions.forEach(region => {
         const ideaCount = region.idea_count || 0;
+        const pos = projectLonLat(region.lng, region.lat);
         
-        // Size circle by idea count (min 5000, max 50000)
-        const radius = Math.max(5000, Math.min(50000, ideaCount * 10000));
+        // Size circle by idea count
+        const radius = Math.max(3, Math.min(30, ideaCount * 5 + 5));
         
         // Color by idea density
         const color = ideaCount > 0 ? '#0891b2' : '#4b5563';
         
-        const circle = L.circle([region.lat, region.lng], {
-            radius: radius,
-            color: color,
-            fillColor: color,
-            fillOpacity: 0.3,
-            weight: 2
-        }).addTo(map);
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', pos.x);
+        circle.setAttribute('cy', pos.y);
+        circle.setAttribute('r', radius);
+        circle.setAttribute('fill', color);
+        circle.setAttribute('fill-opacity', '0.4');
+        circle.setAttribute('stroke', color);
+        circle.setAttribute('stroke-width', '2');
+        circle.classList.add('region-circle');
+        circle.style.cursor = 'pointer';
         
-        // Create popup content
-        const ideas = getIdeasForRegion(region.id);
-        let popupContent = `
-            <div style="color: #000;">
-                <h3 style="margin: 0 0 10px 0;">${region.label}</h3>
-                <p><strong>💡 Ideas:</strong> ${ideaCount}</p>
-        `;
+        // Add click handler
+        circle.addEventListener('click', () => showRegionPopup(region, pos));
+        circle.addEventListener('mouseenter', function() {
+            this.setAttribute('fill-opacity', '0.6');
+        });
+        circle.addEventListener('mouseleave', function() {
+            this.setAttribute('fill-opacity', '0.4');
+        });
         
-        if (ideas.length > 0) {
-            popupContent += '<div style="max-height: 150px; overflow-y: auto; margin-top: 10px;">';
-            popupContent += '<strong>Recent Ideas:</strong><ul style="margin: 5px 0; padding-left: 20px;">';
-            ideas.slice(0, 5).forEach(idea => {
-                popupContent += `<li style="margin: 3px 0; font-size: 0.9em;">${idea.title}</li>`;
-            });
-            popupContent += '</ul></div>';
-        }
-        
-        popupContent += '</div>';
-        circle.bindPopup(popupContent);
-        
-        markers.regions.push(circle);
+        svg.appendChild(circle);
     });
 }
 
 // Render agents on map
 function renderAgents() {
-    if (!worldState || !worldState.agents || !map) return;
+    if (!worldState || !worldState.agents) return;
+    
+    const svg = document.querySelector('#map svg');
+    if (!svg) return;
     
     worldState.agents.forEach(agent => {
         const region = getRegionById(agent.location_region_id);
         if (!region) return;
         
-        const marker = L.marker([region.lat, region.lng], {
-            icon: agentIcon
-        }).addTo(map);
+        const pos = projectLonLat(region.lng, region.lat);
         
-        // Create popup content
-        const idea = agent.current_idea_id ? getIdeaById(agent.current_idea_id) : null;
-        let popupContent = `
-            <div style="color: #000;">
-                <h3 style="margin: 0 0 10px 0;">🤖 ${agent.label}</h3>
-                <p><strong>Location:</strong> ${region.label}</p>
-                <p><strong>Status:</strong> ${agent.status}</p>
-        `;
+        // Create agent marker group
+        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        group.classList.add('agent-marker');
+        group.style.cursor = 'pointer';
         
-        if (idea) {
-            popupContent += `<p><strong>Exploring:</strong> ${idea.title}</p>`;
-        }
+        // Background circle
+        const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        bgCircle.setAttribute('cx', pos.x);
+        bgCircle.setAttribute('cy', pos.y);
+        bgCircle.setAttribute('r', '12');
+        bgCircle.setAttribute('fill', '#0891b2');
+        bgCircle.setAttribute('stroke', '#fff');
+        bgCircle.setAttribute('stroke-width', '2');
+        group.appendChild(bgCircle);
         
-        if (agent.path && agent.path.length > 0) {
-            popupContent += `<p><strong>Path remaining:</strong> ${agent.path.length} stops</p>`;
-            popupContent += '<div style="font-size: 0.9em; margin-top: 5px;">Next stops:<ul style="margin: 5px 0; padding-left: 20px;">';
-            agent.path.slice(0, 3).forEach(regionId => {
-                const r = getRegionById(regionId);
-                if (r) popupContent += `<li>${r.label}</li>`;
-            });
-            if (agent.path.length > 3) {
-                popupContent += `<li>...and ${agent.path.length - 3} more</li>`;
-            }
-            popupContent += '</ul></div>';
-        }
+        // Robot emoji as text
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', pos.x);
+        text.setAttribute('y', pos.y + 5);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-size', '16');
+        text.textContent = '🤖';
+        group.appendChild(text);
         
-        popupContent += '</div>';
-        marker.bindPopup(popupContent);
+        // Add click handler
+        group.addEventListener('click', () => showAgentPopup(agent, region, pos));
+        group.addEventListener('mouseenter', function() {
+            bgCircle.setAttribute('r', '14');
+        });
+        group.addEventListener('mouseleave', function() {
+            bgCircle.setAttribute('r', '12');
+        });
         
-        markers.agents.push(marker);
+        svg.appendChild(group);
     });
+}
+
+// Show region popup
+function showRegionPopup(region, pos) {
+    hidePopup();
+    
+    const svg = document.querySelector('#map svg');
+    if (!svg) return;
+    
+    const ideas = getIdeasForRegion(region.id);
+    
+    let content = `<tspan x="10" dy="1.2em" font-weight="bold" font-size="14">${region.label}</tspan>`;
+    content += `<tspan x="10" dy="1.4em" font-size="12">💡 Ideas: ${region.idea_count || 0}</tspan>`;
+    
+    if (ideas.length > 0) {
+        content += `<tspan x="10" dy="1.4em" font-size="11" font-weight="bold">Recent Ideas:</tspan>`;
+        ideas.slice(0, 3).forEach((idea, i) => {
+            const title = idea.title.length > 30 ? idea.title.substring(0, 30) + '...' : idea.title;
+            content += `<tspan x="15" dy="1.3em" font-size="10">• ${title}</tspan>`;
+        });
+    }
+    
+    createPopup(svg, pos.x, pos.y, content);
+}
+
+// Show agent popup
+function showAgentPopup(agent, region, pos) {
+    hidePopup();
+    
+    const svg = document.querySelector('#map svg');
+    if (!svg) return;
+    
+    const idea = agent.current_idea_id ? getIdeaById(agent.current_idea_id) : null;
+    
+    let content = `<tspan x="10" dy="1.2em" font-weight="bold" font-size="14">🤖 ${agent.label}</tspan>`;
+    content += `<tspan x="10" dy="1.4em" font-size="12">📍 ${region.label}</tspan>`;
+    content += `<tspan x="10" dy="1.3em" font-size="12">📊 ${agent.status}</tspan>`;
+    
+    if (idea) {
+        const title = idea.title.length > 30 ? idea.title.substring(0, 30) + '...' : idea.title;
+        content += `<tspan x="10" dy="1.3em" font-size="11">💡 ${title}</tspan>`;
+    }
+    
+    if (agent.path && agent.path.length > 0) {
+        content += `<tspan x="10" dy="1.3em" font-size="11">🗺️ ${agent.path.length} stops remaining</tspan>`;
+    }
+    
+    createPopup(svg, pos.x, pos.y, content);
+}
+
+// Create popup
+function createPopup(svg, x, y, content) {
+    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    group.classList.add('popup-group');
+    
+    // Background
+    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bg.setAttribute('x', x - 100);
+    bg.setAttribute('y', y - 150);
+    bg.setAttribute('width', '200');
+    bg.setAttribute('height', '140');
+    bg.setAttribute('rx', '8');
+    bg.setAttribute('fill', 'white');
+    bg.setAttribute('stroke', '#0891b2');
+    bg.setAttribute('stroke-width', '2');
+    bg.setAttribute('filter', 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))');
+    group.appendChild(bg);
+    
+    // Close button
+    const closeBtn = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    closeBtn.setAttribute('x', x + 85);
+    closeBtn.setAttribute('y', y - 130);
+    closeBtn.setAttribute('font-size', '18');
+    closeBtn.setAttribute('fill', '#666');
+    closeBtn.setAttribute('cursor', 'pointer');
+    closeBtn.textContent = '✖';
+    closeBtn.addEventListener('click', hidePopup);
+    group.appendChild(closeBtn);
+    
+    // Content
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x - 90);
+    text.setAttribute('y', y - 145);
+    text.setAttribute('fill', '#000');
+    text.innerHTML = content;
+    group.appendChild(text);
+    
+    // Pointer
+    const pointer = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    pointer.setAttribute('points', `${x},${y - 10} ${x - 8},${y - 18} ${x + 8},${y - 18}`);
+    pointer.setAttribute('fill', 'white');
+    pointer.setAttribute('stroke', '#0891b2');
+    pointer.setAttribute('stroke-width', '2');
+    group.appendChild(pointer);
+    
+    svg.appendChild(group);
+}
+
+// Hide popup
+function hidePopup() {
+    const popups = document.querySelectorAll('.popup-group');
+    popups.forEach(p => p.remove());
 }
 
 // Update sidebar
@@ -249,11 +390,28 @@ function getIdeasForRegion(regionId) {
 }
 
 function zoomToRegion(regionId) {
-    if (!map) return;
     const region = getRegionById(regionId);
-    if (region) {
-        map.setView([region.lat, region.lng], 6);
-    }
+    if (!region) return;
+    
+    // Highlight the region briefly
+    const svg = document.querySelector('#map svg');
+    if (!svg) return;
+    
+    const circles = svg.querySelectorAll('.region-circle');
+    circles.forEach(circle => {
+        const cx = parseFloat(circle.getAttribute('cx'));
+        const cy = parseFloat(circle.getAttribute('cy'));
+        const pos = projectLonLat(region.lng, region.lat);
+        
+        if (Math.abs(cx - pos.x) < 1 && Math.abs(cy - pos.y) < 1) {
+            circle.setAttribute('stroke-width', '4');
+            circle.setAttribute('fill-opacity', '0.8');
+            setTimeout(() => {
+                circle.setAttribute('stroke-width', '2');
+                circle.setAttribute('fill-opacity', '0.4');
+            }, 1000);
+        }
+    });
 }
 
 // Refresh world data
@@ -265,11 +423,9 @@ async function refreshWorldData() {
     const success = await loadWorldData();
     
     if (success) {
-        clearMarkers();
-        if (map) {
-            renderRegions();
-            renderAgents();
-        }
+        clearMapFeatures();
+        renderRegions();
+        renderAgents();
         updateSidebar();
         button.textContent = '✅ Refreshed!';
         setTimeout(() => {
@@ -287,14 +443,12 @@ async function refreshWorldData() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
-    const mapInitialized = initMap();
+    initMap();
     
     const success = await loadWorldData();
     if (success) {
-        if (mapInitialized) {
-            renderRegions();
-            renderAgents();
-        }
+        renderRegions();
+        renderAgents();
         updateSidebar();
     } else {
         document.getElementById('agents-list').innerHTML = 
