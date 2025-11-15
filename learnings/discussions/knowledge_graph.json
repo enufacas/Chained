@@ -1,0 +1,344 @@
+{
+  "insights": {
+    "insight_1082_3b5f9b167b26": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf investigate-champion** custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_9f88c16225e7": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "> \n> **@investigate-champion** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_0db7d6c68e35": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_878035e8ee0a": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "---\n\n## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_48a50cd1b5b0": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "**Detection Time:** 2025-11-15 21:11:21 UTC\n  \n  ### Health Summary\n  - **Total Workflow Runs:** 100 (last 100 sampled)\n  - **Completed Runs:** 49 (success + failure)\n  - **Failed Runs:** 11\n  - **Failure Rate:** 22",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_6ca9dc4d3de3": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "technical",
+      "content": "4% (of completed runs)\n  \n  ### Failed Workflows Breakdown\n  - **Agent Investment**:  Update from PR Merges:1 failure(s)\n- **Code Quality**:  Analyzer:6 failure(s)\n- **Self-Documenting AI**:  Enhanced Learning:1 failure(s)\n- **System**:  PR Failure Learning:3 failure(s)\n  \n  ### Common Causes & Solutions\n  \n  #### 1",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "agent",
+        "ai",
+        "learning"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_18f256c5692a": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Workflow Triggering (HTTP 403)\n  **Symptom:** Workflows fail when trying to trigger other workflows\n  **Solution:** Remove `gh workflow run` commands; rely on scheduled triggers instead\n  \n  #### 2",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_61bc2796dd35": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Missing Secrets\n  **Symptom:** Workflows requiring COPILOT_PAT fail or skip steps\n  **Solution:** Configure required secrets in repository settings\n  \n  #### 3",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_1ddbd6a66c5d": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "External Dependencies\n  **Symptom:** Workflows calling external APIs fail intermittently\n  **Solution:** Add retry logic and graceful error handling\n  \n  #### 4",
+      "confidence": 0.7,
+      "tags": [
+        "api",
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_9688a294be89": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Configuration Issues\n  **Symptom:** Workflows fail due to missing files or permissions\n  **Solution:** Verify workflow configurations and file dependencies\n  \n  ### Recommended Actions\n  1",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_ee240fdc01ff": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Review the failed workflows breakdown above\n  2",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_5ee6146336bb": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Focus on workflows with multiple failures first\n  4",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_0778b04c4484": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "decision",
+      "content": "Close this issue once all problems are resolved and failure rate drops below 20%",
+      "confidence": 0.6,
+      "tags": [
+        "ai"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_28d8f24bf1d9": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "---\n  *This issue was automatically created by the System Monitor workflow",
+      "confidence": 0.6,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-15T21:11:22Z"
+    },
+    "insight_1082_0f9c861b3c6a": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the **\ud83c\udfaf @investigate-champion** specialization:\n\n- **Agent**: @investigate-champion\n- **Match Confidence**: high\n- **Match Score**: 6\n- **Description**: Specialized agent for investigating metrics",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_da3a71ded3ee": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "technical",
+      "content": "Focuses on code patterns, data flows, and dependencies",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_f8f144d1aac1": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_74767c7ba51a": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_09e6a97b61b3": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@investigate-champion** by name in all conversations related to this issue",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_9cfa51cf0b3b": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@investigate-champion** - Please use the **investigate-champion** custom agent profile from `",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_c5b7f5b34294": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_ac1d9e1b1487": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [investigate-champion agent definition](https://github",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_db99a0038f9e": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **@investigate-champion** will analyze the issue requirements using the investigate-champion specialization\n2",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_767097bd194e": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@investigate-champion** will create a branch and implement the solution following the investigate-champion approach\n3",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_40dc0aa8e819": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@investigate-champion** will open a PR with the implementation\n4",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_1d9ec3505602": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-15T21:17:19Z"
+    },
+    "insight_1082_71a7f095f57d": {
+      "issue_number": 1082,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** @investigate-champion (investigate-champion specialization)\n**Assigned at:** 2025-11-15 21:17:19 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T21:17:19Z"
+    }
+  },
+  "connections": [
+    {
+      "source_insight_id": "insight_1082_74767c7ba51a",
+      "target_insight_id": "insight_1082_0db7d6c68e35",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T21:18:28.426411+00:00"
+    },
+    {
+      "source_insight_id": "insight_1082_74767c7ba51a",
+      "target_insight_id": "insight_1082_0db7d6c68e35",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T21:18:28.426613+00:00"
+    },
+    {
+      "source_insight_id": "insight_1082_74767c7ba51a",
+      "target_insight_id": "insight_1082_0db7d6c68e35",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T21:18:28.427431+00:00"
+    },
+    {
+      "source_insight_id": "insight_1082_74767c7ba51a",
+      "target_insight_id": "insight_1082_0db7d6c68e35",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T21:18:28.428227+00:00"
+    }
+  ],
+  "metadata": {
+    "created": "2025-11-15T21:18:28.422536+00:00",
+    "last_updated": "2025-11-15T21:18:28.430240+00:00",
+    "total_insights": 27,
+    "total_connections": 4
+  }
+}
