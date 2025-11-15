@@ -65,6 +65,7 @@ except ImportError:
         def get(self, endpoint, params=None, headers=None):
             """Minimal fallback implementation with support for custom headers"""
             import urllib.request
+            import urllib.error
             import urllib.parse
             
             url = f"https://api.github.com{endpoint}"
@@ -86,7 +87,14 @@ except ImportError:
             try:
                 with urllib.request.urlopen(req, timeout=10) as response:
                     return json.loads(response.read().decode('utf-8'))
+            except urllib.error.HTTPError as e:
+                # Log HTTP errors with details for debugging
+                print(f"⚠️  GitHub API HTTP {e.code}: {e.reason} for {endpoint}", file=sys.stderr)
+                if e.code == 403:
+                    print(f"⚠️  API rate limit or authentication issue. Check GITHUB_TOKEN.", file=sys.stderr)
+                return None
             except Exception as e:
+                print(f"⚠️  GitHub API error for {endpoint}: {e}", file=sys.stderr)
                 return None
 
 # Constants
@@ -175,6 +183,9 @@ class MetricsCollector:
         self.repo = repo or os.environ.get('GITHUB_REPOSITORY', 'enufacas/Chained')
         self.cache_size = cache_size
         
+        # Check GitHub API connectivity
+        self._check_github_api_access()
+        
         # Load scoring configuration from registry
         self.weights = self._load_scoring_weights()
         
@@ -203,6 +214,33 @@ class MetricsCollector:
         
         # Ensure metrics directory exists
         METRICS_DIR.mkdir(parents=True, exist_ok=True)
+    
+    def _check_github_api_access(self) -> bool:
+        """
+        Check if GitHub API is accessible with current token.
+        
+        Returns:
+            True if API is accessible, False otherwise
+        """
+        try:
+            # Simple API call to check connectivity
+            result = self.github.get('/rate_limit')
+            if result:
+                rate = result.get('rate', {})
+                remaining = rate.get('remaining', 0)
+                limit = rate.get('limit', 0)
+                print(f"✅ GitHub API accessible. Rate limit: {remaining}/{limit}", file=sys.stderr)
+                
+                if remaining < 100:
+                    print(f"⚠️  Warning: Low rate limit remaining ({remaining})", file=sys.stderr)
+                
+                return True
+            else:
+                print(f"⚠️  Warning: GitHub API not accessible. PR attribution may be inaccurate.", file=sys.stderr)
+                return False
+        except Exception as e:
+            print(f"⚠️  Warning: Could not check GitHub API access: {e}", file=sys.stderr)
+            return False
     
     def _load_scoring_weights(self) -> Dict[str, float]:
         """Load scoring weights from registry configuration"""
@@ -546,6 +584,18 @@ class MetricsCollector:
                 except Exception as e:
                     print(f"⚠️  Warning: Search API failed for issue {issue_number}: {e}", file=sys.stderr)
             
+            # Method 3: Git-based fallback when GitHub API is unavailable
+            # Parse commit messages to find PR references for issues
+            if len(prs_for_agent) == 0 and len(assigned_issues) > 0:
+                print(f"🔧 GitHub API yielded no PRs, trying git-based fallback...", file=sys.stderr)
+                git_prs = self._find_prs_via_git(agent_id, assigned_issues)
+                for pr_info in git_prs:
+                    pr_number = pr_info.get('number')
+                    if pr_number and pr_number not in pr_numbers_from_issues:
+                        prs_for_agent.append(pr_info)
+                        pr_numbers_from_issues.add(pr_number)
+                        print(f"  ✅ Found PR #{pr_number} via git log for issue #{pr_info.get('issue_number')}", file=sys.stderr)
+            
             # PRs found via issue timeline or search are already implicitly attributed to the agent
             # because the issue was assigned to them. No additional filtering needed.
             # This fixes the bug where agents weren't getting credit for their PRs.
@@ -592,6 +642,93 @@ class MetricsCollector:
             print(f"⚠️  Warning: Error collecting activity for {agent_id}: {e}", file=sys.stderr)
         
         return activity
+    
+    def _find_prs_via_git(self, agent_id: str, assigned_issues: List[Dict]) -> List[Dict]:
+        """
+        Fallback method to find PRs using git log when GitHub API is unavailable.
+        
+        This method:
+        1. Parses commit messages for issue references (Fixes #123, Closes #456, etc.)
+        2. Extracts PR numbers from merge commits
+        3. Returns PR info for PRs that resolved assigned issues
+        
+        Args:
+            agent_id: Agent identifier
+            assigned_issues: List of issues assigned to this agent
+            
+        Returns:
+            List of PR info dictionaries
+        """
+        import subprocess
+        import re
+        
+        prs_found = []
+        
+        # Extract issue numbers from assigned issues
+        issue_numbers = {issue.get('number') for issue in assigned_issues if issue.get('number')}
+        if not issue_numbers:
+            return prs_found
+        
+        try:
+            # Get git log with commit messages
+            # Look for merge commits and issue references
+            result = subprocess.run(
+                ['git', 'log', '--merges', '--grep', '#[0-9]', '--oneline', '-n', '500'],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                cwd='.'
+            )
+            
+            if result.returncode != 0:
+                print(f"⚠️  Git log failed: {result.stderr}", file=sys.stderr)
+                return prs_found
+            
+            # Parse merge commits to find PR numbers and issue references
+            # Format: "Merge pull request #123 from branch"
+            # Or commits like: "Fix #456: Description"
+            merge_pr_pattern = re.compile(r'Merge pull request #(\d+)')
+            issue_ref_patterns = [
+                re.compile(r'(?:Fix|Fixes|Close|Closes|Resolve|Resolves)\s+#(\d+)', re.IGNORECASE),
+                re.compile(r'#(\d+)'),  # Fallback: any #number
+            ]
+            
+            lines = result.stdout.strip().split('\n')
+            for line in lines:
+                if not line.strip():
+                    continue
+                    
+                # Try to find PR number from merge commit
+                merge_match = merge_pr_pattern.search(line)
+                if merge_match:
+                    pr_number = int(merge_match.group(1))
+                    
+                    # Check if this merge commit mentions any of our issues
+                    for pattern in issue_ref_patterns:
+                        issue_matches = pattern.findall(line)
+                        for issue_num_str in issue_matches:
+                            issue_num = int(issue_num_str)
+                            if issue_num in issue_numbers:
+                                # Found a PR that closed one of our issues!
+                                pr_info = {
+                                    'number': pr_number,
+                                    'issue_number': issue_num,
+                                    'pull_request': {
+                                        'merged_at': True  # Assume merged if in git log
+                                    },
+                                    'state': 'closed',
+                                    'source': 'git_log'
+                                }
+                                prs_found.append(pr_info)
+                                print(f"    🔍 Git log: PR #{pr_number} → Issue #{issue_num}", file=sys.stderr)
+                                break  # Found match for this PR, move to next line
+        
+        except subprocess.TimeoutExpired:
+            print(f"⚠️  Git log timeout", file=sys.stderr)
+        except Exception as e:
+            print(f"⚠️  Error parsing git log: {e}", file=sys.stderr)
+        
+        return prs_found
     
     def _get_agent_github_user(self, agent_id: str) -> str:
         """

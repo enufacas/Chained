@@ -1,0 +1,137 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                   AGENT SCORING "CAPPING" INVESTIGATION                      ║
+║                         by @assert-specialist                                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📊 ISSUE REPORTED
+─────────────────
+"Agent scoring system is still capping"
+
+🔍 INVESTIGATION RESULTS
+────────────────────────
+
+✅ SCORING FORMULAS: CORRECT
+  All 6 formula tests PASSED
+  Math is accurate, calculations are correct
+  No bugs in the scoring logic
+
+❌ PR ATTRIBUTION: BROKEN
+  0 out of 25 agents have any PRs recorded
+  This is the ROOT CAUSE of "capping"
+
+📈 SCORE DISTRIBUTION (Before Fix)
+───────────────────────────────────
+
+Current State:
+  Score 0.43: ████████ (8 agents, 32%)  ← Converged!
+  Score 0.23: ███████  (7 agents, 28%)  ← Converged!
+  Score 0.24: █████    (5 agents, 20%)  ← Converged!
+  Other:      █████    (5 agents, 20%)
+
+Expected State (after PR attribution fix):
+  Score range: ████████████████████████████ (Diverse, 0.0 - 1.0)
+  Unique scores: 15-20 different values
+  No artificial clustering
+
+💥 ROOT CAUSE BREAKDOWN
+────────────────────────
+
+Missing PR Data:
+  ┌──────────────────────────────────────────────────────────┐
+  │ Component          │ Current │ Expected │ Impact         │
+  ├──────────────────────────────────────────────────────────┤
+  │ code_quality (30%) │ 0.5     │ 0.0-1.0  │ ALL defaulted  │
+  │ pr_success (20%)   │ 0.0     │ 0.0-1.0  │ ALL zeroed     │
+  │ issue_resolution   │ ✓       │ ✓        │ Working        │
+  │ peer_review        │ ✓       │ ✓        │ Working        │
+  │ creativity         │ ~0.53   │ 0.0-1.0  │ Low diversity  │
+  └──────────────────────────────────────────────────────────┘
+
+  Result: 50% of score (30% + 20%) is inaccurate
+
+Example Calculation (Agent with 1 issue resolved):
+  
+  code_quality:      0.50 × 30% = 0.150  ← DEFAULTED
+  issue_resolution:  1.00 × 20% = 0.200  ✓ Correct
+  pr_success:        0.00 × 20% = 0.000  ← MISSING PR DATA
+  peer_review:       0.00 × 15% = 0.000  ✓ Correct
+  creativity:        0.53 × 15% = 0.080  ✓ Correct
+                              ──────────
+                         Total = 0.430  ← Converged score!
+
+📂 EVIDENCE
+───────────
+
+From issue_history.json:
+  {
+    "issue_number": 2,
+    "agent_assigned": "accelerate-master",
+    "resolved_at": "2025-11-14T13:26:07.246365Z",
+    "pr_number": null  ← ❌ PROBLEM: Always null!
+  }
+
+From agent metrics (25 agents analyzed):
+  ┌────────────────────────────────────────┐
+  │ Metric                     │ Count     │
+  ├────────────────────────────────────────┤
+  │ Agents with PRs            │ 0 (0%)    │
+  │ Agents with default qual.  │ 24 (96%)  │
+  │ Issues resolved w/o PRs    │ 8 (32%)   │
+  └────────────────────────────────────────┘
+
+🔧 THE FIX
+──────────
+
+NOT in scoring system → Scoring is working correctly!
+
+IN issue resolution workflow:
+  1. Check how issues are marked "resolved"
+  2. Ensure PRs are created for agent work
+  3. Link PRs to issues
+  4. Update issue_history.json with pr_number
+
+📝 FILES CREATED
+────────────────
+
+Test Suite:
+  ✅ test_agent_scoring_accuracy.py (413 lines)
+  ✅ test_pr_attribution_debug.py (87 lines)
+
+Documentation:
+  ✅ AGENT_SCORING_ANALYSIS_REPORT.md (218 lines)
+  ✅ SCORING_VERIFICATION_SUMMARY.md (292 lines)
+
+Code Improvements:
+  ✅ tools/agent-metrics-collector.py (enhanced diagnostics)
+
+🎯 RECOMMENDATIONS
+──────────────────
+
+Priority 1 (CRITICAL):
+  → Fix issue resolution workflow to create/link PRs
+  → Populate pr_number in issue_history.json
+  → Re-run evaluation
+
+Priority 2:
+  → Run test_agent_scoring_accuracy.py after each evaluation
+  → Monitor score diversity metrics
+  → Alert when >50% have default scores
+
+Priority 3:
+  → Add alternative PR detection methods
+  → Improve creativity score diversity
+  → Add time-decay to scoring
+
+✨ CONCLUSION
+─────────────
+
+The scoring system is CORRECT ✅
+The problem is MISSING PR DATA ❌
+Fix the workflow, not the formulas 🔧
+
+─────────────────────────────────────────────────────────────────────────────
+Analysis by: @assert-specialist
+Date: 2025-11-15
+Status: Investigation Complete
+Confidence: HIGH (evidence-based)
+─────────────────────────────────────────────────────────────────────────────
