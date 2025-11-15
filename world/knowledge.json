@@ -168,7 +168,7 @@
     {
       "id": "idea:15",
       "title": "DevOps: Cloud Innovation",
-      "summary": "Exploring cloud trends with 18 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs...",
+      "summary": "Exploring cloud trends with 38 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs...",
       "patterns": [
         "cloud",
         "devops"
@@ -217,155 +217,13 @@
         }
       ],
       "source": "learning_analysis",
-      "mention_count": 18,
-      "created_at": "2025-11-15T06:58:50Z"
+      "mention_count": 38,
+      "created_at": "2025-11-15T15:23:15Z"
     },
     {
       "id": "idea:16",
-      "title": "Security: Security Innovation",
-      "summary": "Exploring security trends with 37 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs...",
-      "patterns": [
-        "security",
-        "security"
-      ],
-      "companies": [
-        {
-          "name": "Cloudflare",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        },
-        {
-          "name": "CrowdStrike",
-          "city": "Austin",
-          "country": "US",
-          "lat": 30.2672,
-          "lng": -97.7431
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 0.5
-        },
-        {
-          "region_id": "US:Austin",
-          "lat": 30.2672,
-          "lng": -97.7431,
-          "weight": 0.5
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 37,
-      "created_at": "2025-11-15T06:58:50Z"
-    },
-    {
-      "id": "idea:17",
-      "title": "DevOps: Aws Innovation",
-      "summary": "Exploring aws trends with 14 mentions. We cut our Mongo DB costs by 90% by moving to Hetzner...",
-      "patterns": [
-        "aws",
-        "devops"
-      ],
-      "companies": [
-        {
-          "name": "Tech Hub",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 1.0
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 14,
-      "created_at": "2025-11-15T06:58:50Z"
-    },
-    {
-      "id": "idea:18",
-      "title": "AI/ML: Gpt Innovation",
-      "summary": "Exploring gpt trends with 23 mentions. GPT-5.1: A smarter, more conversational ChatGPT...",
-      "patterns": [
-        "gpt",
-        "ai/ml"
-      ],
-      "companies": [
-        {
-          "name": "Tech Hub",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 1.0
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 23,
-      "created_at": "2025-11-15T06:58:50Z"
-    },
-    {
-      "id": "idea:19",
-      "title": "AI/ML: Agents Innovation",
-      "summary": "Exploring agents trends with 15 mentions. Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻...",
-      "patterns": [
-        "agents",
-        "ai/ml"
-      ],
-      "companies": [
-        {
-          "name": "OpenAI",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        },
-        {
-          "name": "Microsoft",
-          "city": "Redmond",
-          "country": "US",
-          "lat": 47.674,
-          "lng": -122.1215
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 0.5
-        },
-        {
-          "region_id": "US:Redmond",
-          "lat": 47.674,
-          "lng": -122.1215,
-          "weight": 0.5
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 15,
-      "created_at": "2025-11-15T06:58:50Z"
-    },
-    {
-      "id": "idea:20",
       "title": "AI/ML: Ai Innovation",
-      "summary": "Exploring ai trends with 56 mentions. Low cost MacBook 💻, Google AI data centers 🛰️, inside xAI 🤖...",
+      "summary": "Exploring ai trends with 104 mentions. sansan0/TrendRadar - 🎯 告别信息过载，AI 助你看懂新闻资讯热点，简单的舆情监控分析 - 多平台热点聚合+基于 MCP 的AI分析工具。监...",
       "patterns": [
         "ai",
         "ai/ml"
@@ -408,15 +266,57 @@
         }
       ],
       "source": "learning_analysis",
-      "mention_count": 56,
-      "created_at": "2025-11-15T06:58:50Z"
+      "mention_count": 104,
+      "created_at": "2025-11-15T15:23:15Z"
     },
     {
-      "id": "idea:21",
-      "title": "AI/ML: Gemini Innovation",
-      "summary": "Exploring gemini trends with 16 mentions. Apple Gemini deal terms 💰, Amazon layoff turmoil 💼, compiler targets 👨‍💻...",
+      "id": "idea:17",
+      "title": "AI/ML: Agents Innovation",
+      "summary": "Exploring agents trends with 38 mentions. GibsonAI/Memori - Open-Source Memory Engine for LLMs, AI Agents & Multi-Agent Sy...",
       "patterns": [
-        "gemini",
+        "agents",
+        "ai/ml"
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "Microsoft",
+          "city": "Redmond",
+          "country": "US",
+          "lat": 47.674,
+          "lng": -122.1215
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.5
+        },
+        {
+          "region_id": "US:Redmond",
+          "lat": 47.674,
+          "lng": -122.1215,
+          "weight": 0.5
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 38,
+      "created_at": "2025-11-15T15:23:15Z"
+    },
+    {
+      "id": "idea:18",
+      "title": "AI/ML: Claude Innovation",
+      "summary": "Exploring claude trends with 18 mentions. davila7/claude-code-templates - CLI tool for configuring and monitoring Claude C...",
+      "patterns": [
+        "claude",
         "ai/ml"
       ],
       "companies": [
@@ -437,13 +337,171 @@
         }
       ],
       "source": "learning_analysis",
+      "mention_count": 18,
+      "created_at": "2025-11-15T15:23:15Z"
+    },
+    {
+      "id": "idea:19",
+      "title": "Web: Api Innovation",
+      "summary": "Exploring api trends with 16 mentions. requestly/requestly - Free and open-source API Client & Interceptor....",
+      "patterns": [
+        "api",
+        "web"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
       "mention_count": 16,
-      "created_at": "2025-11-15T06:58:50Z"
+      "created_at": "2025-11-15T15:23:15Z"
+    },
+    {
+      "id": "idea:20",
+      "title": "Languages: Go Innovation",
+      "summary": "Exploring go trends with 22 mentions. Zed is our office...",
+      "patterns": [
+        "go",
+        "languages"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 22,
+      "created_at": "2025-11-15T15:23:15Z"
+    },
+    {
+      "id": "idea:21",
+      "title": "Security: Security Innovation",
+      "summary": "Exploring security trends with 44 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs...",
+      "patterns": [
+        "security",
+        "security"
+      ],
+      "companies": [
+        {
+          "name": "Cloudflare",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "CrowdStrike",
+          "city": "Austin",
+          "country": "US",
+          "lat": 30.2672,
+          "lng": -97.7431
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.5
+        },
+        {
+          "region_id": "US:Austin",
+          "lat": 30.2672,
+          "lng": -97.7431,
+          "weight": 0.5
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 44,
+      "created_at": "2025-11-15T15:23:15Z"
     },
     {
       "id": "idea:22",
+      "title": "DevOps: Aws Innovation",
+      "summary": "Exploring aws trends with 23 mentions. We cut our Mongo DB costs by 90% by moving to Hetzner...",
+      "patterns": [
+        "aws",
+        "devops"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 23,
+      "created_at": "2025-11-15T15:23:15Z"
+    },
+    {
+      "id": "idea:23",
+      "title": "AI/ML: Gpt Innovation",
+      "summary": "Exploring gpt trends with 41 mentions. GPT-5.1: A smarter, more conversational ChatGPT...",
+      "patterns": [
+        "gpt",
+        "ai/ml"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 41,
+      "created_at": "2025-11-15T15:23:15Z"
+    },
+    {
+      "id": "idea:24",
       "title": "Languages: Javascript Innovation",
-      "summary": "Exploring javascript trends with 9 mentions. Android 16 QPR1 is being pushed to the Android Open Source Project...",
+      "summary": "Exploring javascript trends with 13 mentions. Android 16 QPR1 is being pushed to the Android Open Source Project...",
       "patterns": [
         "javascript",
         "languages"
@@ -466,66 +524,8 @@
         }
       ],
       "source": "learning_analysis",
-      "mention_count": 9,
-      "created_at": "2025-11-15T06:58:50Z"
-    },
-    {
-      "id": "idea:23",
-      "title": "DevOps: Deployment Innovation",
-      "summary": "Exploring deployment trends with 8 mentions. We cut our Mongo DB costs by 90% by moving to Hetzner...",
-      "patterns": [
-        "deployment",
-        "devops"
-      ],
-      "companies": [
-        {
-          "name": "Tech Hub",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 1.0
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 8,
-      "created_at": "2025-11-15T06:58:50Z"
-    },
-    {
-      "id": "idea:24",
-      "title": "Web: Html Innovation",
-      "summary": "Exploring html trends with 8 mentions. Marko – A declarative, HTML‑based language...",
-      "patterns": [
-        "html",
-        "web"
-      ],
-      "companies": [
-        {
-          "name": "Tech Hub",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 1.0
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 8,
-      "created_at": "2025-11-15T06:58:50Z"
+      "mention_count": 13,
+      "created_at": "2025-11-15T15:23:15Z"
     }
   ]
 }
