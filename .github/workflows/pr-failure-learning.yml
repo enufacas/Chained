@@ -46,75 +46,88 @@ jobs:
       
       - name: Collect PR failures
         if: ${{ !inputs.analyze_only }}
+        continue-on-error: true
+        id: collect
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           since_days="${{ inputs.since_days || '30' }}"
           echo "📊 Collecting PR failures from last ${since_days} days..."
-          python tools/pr-failure-learner.py --collect --since ${since_days} --verbose
-          
-          if [ $? -eq 0 ]; then
+          if python tools/pr-failure-learner.py --collect --since ${since_days} --verbose 2>&1; then
             echo "✅ Successfully collected PR failure data"
+            echo "collect_success=true" >> $GITHUB_OUTPUT
           else
-            echo "⚠️ Failed to collect PR failures"
-            exit 1
+            echo "⚠️ Failed to collect PR failures, continuing with existing data"
+            echo "collect_success=false" >> $GITHUB_OUTPUT
           fi
       
       - name: Analyze failure patterns
         id: analyze
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "🔍 Analyzing PR failure patterns..."
           
           output_file="learnings/pr_failure_analysis_$(date +%Y%m%d_%H%M%S).json"
-          python tools/pr-failure-learner.py --analyze --output "${output_file}" --verbose
-          
-          if [ $? -eq 0 ]; then
+          if python tools/pr-failure-learner.py --analyze --output "${output_file}" --verbose 2>&1; then
             echo "✅ Analysis complete: ${output_file}"
             echo "output_file=${output_file}" >> $GITHUB_OUTPUT
+            echo "analyze_success=true" >> $GITHUB_OUTPUT
             
             # Display summary
             echo ""
             echo "📈 Analysis Summary:"
-            cat "${output_file}" | jq -r '.patterns[] | "  - \(.pattern_type): \(.occurrences) occurrences"'
+            if [ -f "${output_file}" ]; then
+              cat "${output_file}" | jq -r '.patterns[] | "  - \(.pattern_type): \(.occurrences) occurrences"' 2>/dev/null || echo "  No patterns data available"
+            fi
           else
-            echo "⚠️ Analysis failed"
-            exit 1
+            echo "⚠️ Analysis failed or no data available"
+            echo "analyze_success=false" >> $GITHUB_OUTPUT
           fi
       
       - name: Generate improvement suggestions
         id: suggest
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "💡 Generating improvement suggestions..."
           
           suggestions_file="learnings/pr_improvement_suggestions_$(date +%Y%m%d_%H%M%S).json"
-          python tools/pr-failure-learner.py --suggest --verbose > "${suggestions_file}"
-          
-          if [ $? -eq 0 ]; then
+          if python tools/pr-failure-learner.py --suggest --verbose 2>&1 > "${suggestions_file}"; then
             echo "✅ Suggestions generated: ${suggestions_file}"
             echo "suggestions_file=${suggestions_file}" >> $GITHUB_OUTPUT
+            echo "suggest_success=true" >> $GITHUB_OUTPUT
             
             # Display top suggestions
             echo ""
             echo "💡 Top Improvement Suggestions:"
-            cat "${suggestions_file}" | jq -r 'to_entries | .[] | "  Agent: \(.key)\n    Failures: \(.value.total_failures)\n    Top suggestions: \(.value.improvements[0:2])"' | head -20
+            if [ -f "${suggestions_file}" ]; then
+              cat "${suggestions_file}" | jq -r 'to_entries | .[] | "  Agent: \(.key)\n    Failures: \(.value.total_failures)\n    Top suggestions: \(.value.improvements[0:2])"' 2>/dev/null | head -20 || echo "  No suggestions data available"
+            fi
           else
-            echo "⚠️ Suggestion generation failed"
-            exit 1
+            echo "⚠️ Suggestion generation failed or no data available"
+            echo "suggest_success=false" >> $GITHUB_OUTPUT
           fi
       
       - name: Update agent metrics
-        if: success()
+        if: success() || steps.suggest.outputs.suggest_success == 'true'
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "📊 Updating agent performance metrics with failure insights..."
           
+          # Check if metrics directory exists
+          if [ ! -d ".github/agent-system/metrics" ]; then
+            echo "⚠️ Metrics directory does not exist, skipping agent metrics update"
+            exit 0
+          fi
+          
           # For each agent with failures, create a note in their metrics directory
+          updated_count=0
           for agent_dir in .github/agent-system/metrics/agent-*; do
             if [ -d "${agent_dir}" ]; then
               agent_id=$(basename "${agent_dir}")
@@ -122,15 +135,16 @@ jobs:
               # Get agent-specific suggestions
               suggestions=$(python tools/pr-failure-learner.py --suggest --agent "${agent_id}" 2>/dev/null || echo "{}")
               
-              if [ "${suggestions}" != "{}" ]; then
+              if [ "${suggestions}" != "{}" ] && [ -n "${suggestions}" ]; then
                 timestamp=$(date +%Y%m%d_%H%M%S)
                 echo "${suggestions}" > "${agent_dir}/pr_failure_insights_${timestamp}.json"
                 echo "  ✓ Updated insights for ${agent_id}"
+                ((updated_count++))
               fi
             fi
           done
           
-          echo "✅ Agent metrics updated"
+          echo "✅ Updated metrics for ${updated_count} agents"
       
       - name: Commit learning data
         if: success()
