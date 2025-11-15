@@ -1,0 +1,394 @@
+{
+  "version": "1.0",
+  "description": "Agent-to-Learning category mapping configuration for the Chained autonomous AI ecosystem",
+  "generated_by": "@investigate-champion",
+  "last_updated": "2025-11-15T07:35:00Z",
+  
+  "learning_categories": {
+    "AI_ML": {
+      "display_name": "AI & Machine Learning",
+      "keywords": ["ai", "ml", "machine learning", "neural", "llm", "gpt", "model", "training", "inference", "deep learning", "transformer", "embeddings", "agents", "chatbot", "nlp", "computer vision"],
+      "file_patterns": ["AI_ML.md"],
+      "priority_weight": 1.2
+    },
+    "Programming": {
+      "display_name": "Programming Languages & Frameworks",
+      "keywords": ["python", "javascript", "typescript", "rust", "go", "java", "c++", "framework", "library", "language", "compiler", "syntax", "functional", "oop"],
+      "file_patterns": ["Programming.md"],
+      "priority_weight": 1.0
+    },
+    "DevOps": {
+      "display_name": "DevOps & Infrastructure",
+      "keywords": ["ci/cd", "docker", "kubernetes", "terraform", "ansible", "deployment", "pipeline", "automation", "workflow", "github actions", "jenkins", "infrastructure"],
+      "file_patterns": ["DevOps.md"],
+      "priority_weight": 1.0
+    },
+    "Database": {
+      "display_name": "Databases & Data Management",
+      "keywords": ["database", "sql", "nosql", "postgres", "mysql", "mongodb", "redis", "data", "query", "index", "schema", "migration"],
+      "file_patterns": ["Database.md"],
+      "priority_weight": 1.0
+    },
+    "Web": {
+      "display_name": "Web Development",
+      "keywords": ["web", "frontend", "backend", "react", "vue", "angular", "api", "rest", "graphql", "http", "browser", "dom", "css", "html"],
+      "file_patterns": ["Web.md"],
+      "priority_weight": 1.0
+    },
+    "Security": {
+      "display_name": "Security & Privacy",
+      "keywords": ["security", "vulnerability", "exploit", "authentication", "encryption", "privacy", "xss", "sql injection", "ssrf", "oauth", "certificate", "malware"],
+      "file_patterns": ["Security.md"],
+      "priority_weight": 1.3
+    },
+    "Performance": {
+      "display_name": "Performance & Optimization",
+      "keywords": ["performance", "optimization", "speed", "latency", "throughput", "benchmark", "profiling", "caching", "memory", "cpu", "efficiency"],
+      "file_patterns": ["Performance.md"],
+      "priority_weight": 1.1
+    },
+    "Tools": {
+      "display_name": "Developer Tools",
+      "keywords": ["tool", "ide", "editor", "debugger", "vscode", "vim", "git", "testing", "linter", "formatter", "productivity"],
+      "file_patterns": ["Tools.md"],
+      "priority_weight": 0.9
+    },
+    "OpenSource": {
+      "display_name": "Open Source & Community",
+      "keywords": ["open source", "community", "github", "contribution", "license", "fork", "pull request", "collaboration"],
+      "file_patterns": ["OpenSource.md"],
+      "priority_weight": 0.8
+    },
+    "Other": {
+      "display_name": "General Tech Insights",
+      "keywords": ["technology", "tech", "innovation", "trend", "news"],
+      "file_patterns": ["Other.md"],
+      "priority_weight": 0.5
+    }
+  },
+
+  "agent_specializations": {
+    "accelerate-master": {
+      "focus_areas": ["performance", "optimization", "efficiency"],
+      "primary_categories": ["Performance", "Programming"],
+      "secondary_categories": ["DevOps", "Database"],
+      "keywords": ["benchmark", "profiling", "speed", "latency", "throughput", "algorithm", "optimization"],
+      "learning_affinity_score": 0.95
+    },
+    "accelerate-specialist": {
+      "focus_areas": ["performance", "optimization", "efficiency"],
+      "primary_categories": ["Performance", "Programming"],
+      "secondary_categories": ["DevOps"],
+      "keywords": ["optimization", "performance", "efficiency", "speed"],
+      "learning_affinity_score": 0.9
+    },
+    "align-wizard": {
+      "focus_areas": ["ci/cd", "workflows", "automation"],
+      "primary_categories": ["DevOps"],
+      "secondary_categories": ["Tools"],
+      "keywords": ["ci/cd", "github actions", "pipeline", "workflow", "automation"],
+      "learning_affinity_score": 0.85
+    },
+    "assert-specialist": {
+      "focus_areas": ["testing", "quality assurance", "edge cases"],
+      "primary_categories": ["Tools", "Programming"],
+      "secondary_categories": ["Security"],
+      "keywords": ["testing", "test", "coverage", "quality", "validation", "edge case"],
+      "learning_affinity_score": 0.9
+    },
+    "assert-whiz": {
+      "focus_areas": ["testing", "quality assurance", "edge cases"],
+      "primary_categories": ["Tools", "Programming"],
+      "secondary_categories": ["Security"],
+      "keywords": ["testing", "proof", "verification", "quality"],
+      "learning_affinity_score": 0.88
+    },
+    "bridge-master": {
+      "focus_areas": ["integrations", "apis", "services"],
+      "primary_categories": ["Programming", "Web"],
+      "secondary_categories": ["DevOps"],
+      "keywords": ["api", "integration", "service", "rest", "graphql", "microservice"],
+      "learning_affinity_score": 0.85
+    },
+    "clarify-champion": {
+      "focus_areas": ["documentation", "comments", "guides"],
+      "primary_categories": ["Tools", "Programming"],
+      "secondary_categories": ["OpenSource"],
+      "keywords": ["documentation", "tutorial", "guide", "comment", "readme"],
+      "learning_affinity_score": 0.8
+    },
+    "cloud-architect": {
+      "focus_areas": ["cloud", "infrastructure", "devops"],
+      "primary_categories": ["DevOps", "Performance"],
+      "secondary_categories": ["Security", "Database"],
+      "keywords": ["cloud", "aws", "azure", "gcp", "infrastructure", "scaling", "deployment"],
+      "learning_affinity_score": 0.92
+    },
+    "coach-master": {
+      "focus_areas": ["code reviews", "best practices", "knowledge sharing"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["OpenSource"],
+      "keywords": ["code review", "best practice", "pattern", "clean code", "mentoring"],
+      "learning_affinity_score": 0.85
+    },
+    "coach-wizard": {
+      "focus_areas": ["code reviews", "best practices", "knowledge sharing"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["OpenSource"],
+      "keywords": ["code review", "pattern", "architecture", "best practice"],
+      "learning_affinity_score": 0.83
+    },
+    "communicator-maestro": {
+      "focus_areas": ["documentation", "comments", "guides"],
+      "primary_categories": ["Tools", "Programming"],
+      "secondary_categories": ["OpenSource"],
+      "keywords": ["documentation", "tutorial", "explanation", "teaching"],
+      "learning_affinity_score": 0.8
+    },
+    "construct-specialist": {
+      "focus_areas": ["features", "infrastructure", "tools"],
+      "primary_categories": ["Programming", "DevOps"],
+      "secondary_categories": ["Tools"],
+      "keywords": ["feature", "system", "infrastructure", "build"],
+      "learning_affinity_score": 0.88
+    },
+    "coordinate-wizard": {
+      "focus_areas": ["workflows", "ci/cd", "automation"],
+      "primary_categories": ["DevOps", "Tools"],
+      "secondary_categories": ["Programming"],
+      "keywords": ["workflow", "orchestration", "automation", "coordination"],
+      "learning_affinity_score": 0.85
+    },
+    "create-champion": {
+      "focus_areas": ["features", "infrastructure", "tools"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["DevOps"],
+      "keywords": ["create", "build", "tool", "feature", "implementation"],
+      "learning_affinity_score": 0.87
+    },
+    "create-guru": {
+      "focus_areas": ["features", "infrastructure", "tools"],
+      "primary_categories": ["Programming", "DevOps"],
+      "secondary_categories": ["Tools", "AI_ML"],
+      "keywords": ["infrastructure", "feature", "innovation", "creative", "invention"],
+      "learning_affinity_score": 0.9
+    },
+    "develop-specialist": {
+      "focus_areas": ["features", "infrastructure", "tools"],
+      "primary_categories": ["Programming", "Web"],
+      "secondary_categories": ["DevOps"],
+      "keywords": ["api", "development", "feature", "implementation"],
+      "learning_affinity_score": 0.85
+    },
+    "document-ninja": {
+      "focus_areas": ["documentation", "comments", "guides"],
+      "primary_categories": ["Tools", "Programming"],
+      "secondary_categories": ["OpenSource"],
+      "keywords": ["documentation", "tutorial", "guide", "readme", "wiki"],
+      "learning_affinity_score": 0.82
+    },
+    "edge-cases-pro": {
+      "focus_areas": ["testing", "quality assurance", "edge cases"],
+      "primary_categories": ["Tools", "Programming"],
+      "secondary_categories": ["Security"],
+      "keywords": ["edge case", "testing", "validation", "safety", "reliability"],
+      "learning_affinity_score": 0.88
+    },
+    "engineer-master": {
+      "focus_areas": ["features", "infrastructure", "tools"],
+      "primary_categories": ["Programming", "Web"],
+      "secondary_categories": ["DevOps", "Database"],
+      "keywords": ["api", "engineering", "system design", "architecture", "rigorous"],
+      "learning_affinity_score": 0.92
+    },
+    "engineer-wizard": {
+      "focus_areas": ["features", "infrastructure", "tools"],
+      "primary_categories": ["Programming", "Web"],
+      "secondary_categories": ["AI_ML", "DevOps"],
+      "keywords": ["api", "innovation", "creative", "engineering", "invention"],
+      "learning_affinity_score": 0.9
+    },
+    "guide-wizard": {
+      "focus_areas": ["code reviews", "best practices", "knowledge sharing"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["OpenSource"],
+      "keywords": ["best practice", "teaching", "mentoring", "knowledge"],
+      "learning_affinity_score": 0.83
+    },
+    "infrastructure-specialist": {
+      "focus_areas": ["features", "infrastructure", "tools"],
+      "primary_categories": ["DevOps", "Programming"],
+      "secondary_categories": ["Security", "Database"],
+      "keywords": ["infrastructure", "deployment", "scaling", "system"],
+      "learning_affinity_score": 0.9
+    },
+    "integrate-specialist": {
+      "focus_areas": ["integrations", "apis", "services"],
+      "primary_categories": ["Programming", "Web"],
+      "secondary_categories": ["DevOps", "Database"],
+      "keywords": ["integration", "api", "data flow", "service", "connector"],
+      "learning_affinity_score": 0.87
+    },
+    "investigate-champion": {
+      "focus_areas": ["code patterns", "data flows", "dependencies"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["Performance", "Security", "Database"],
+      "keywords": ["analysis", "investigation", "pattern", "metrics", "dependency", "data flow"],
+      "learning_affinity_score": 0.95
+    },
+    "investigate-specialist": {
+      "focus_areas": ["code patterns", "data flows", "dependencies"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["Performance", "Database"],
+      "keywords": ["investigation", "pattern", "analysis", "metrics"],
+      "learning_affinity_score": 0.9
+    },
+    "meta-coordinator": {
+      "focus_areas": ["task decomposition", "agent orchestration", "multi-agent collaboration"],
+      "primary_categories": ["AI_ML", "Programming"],
+      "secondary_categories": ["DevOps", "Tools"],
+      "keywords": ["coordination", "orchestration", "multi-agent", "ai agents", "collaboration"],
+      "learning_affinity_score": 0.95
+    },
+    "monitor-champion": {
+      "focus_areas": ["security", "data integrity", "access control"],
+      "primary_categories": ["Security", "DevOps"],
+      "secondary_categories": ["Database", "Performance"],
+      "keywords": ["monitoring", "security", "integrity", "access control", "surveillance"],
+      "learning_affinity_score": 0.93
+    },
+    "organize-expert": {
+      "focus_areas": ["code structure", "duplication", "complexity"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["Performance"],
+      "keywords": ["refactoring", "clean code", "structure", "maintainability"],
+      "learning_affinity_score": 0.85
+    },
+    "organize-guru": {
+      "focus_areas": ["code structure", "duplication", "complexity"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["Performance"],
+      "keywords": ["refactoring", "duplication", "dry", "clean code", "organization"],
+      "learning_affinity_score": 0.87
+    },
+    "organize-specialist": {
+      "focus_areas": ["code structure", "duplication", "complexity"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["Performance"],
+      "keywords": ["structure", "organization", "refactoring", "clarity"],
+      "learning_affinity_score": 0.85
+    },
+    "pioneer-pro": {
+      "focus_areas": ["new technologies", "cutting-edge features", "experimental approaches"],
+      "primary_categories": ["AI_ML", "Programming"],
+      "secondary_categories": ["Tools", "Web"],
+      "keywords": ["innovation", "cutting-edge", "experimental", "new technology", "research"],
+      "learning_affinity_score": 0.92
+    },
+    "pioneer-sage": {
+      "focus_areas": ["new technologies", "cutting-edge features", "experimental approaches"],
+      "primary_categories": ["AI_ML", "Programming"],
+      "secondary_categories": ["Tools", "Web"],
+      "keywords": ["visionary", "future", "innovation", "new technology", "paradigm"],
+      "learning_affinity_score": 0.93
+    },
+    "refactor-champion": {
+      "focus_areas": ["code structure", "duplication", "complexity"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["Performance"],
+      "keywords": ["refactoring", "complexity", "clean code", "simplification"],
+      "learning_affinity_score": 0.88
+    },
+    "restructure-master": {
+      "focus_areas": ["code structure", "duplication", "complexity"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["Performance"],
+      "keywords": ["restructure", "refactoring", "clarity", "simplification"],
+      "learning_affinity_score": 0.87
+    },
+    "secure-ninja": {
+      "focus_areas": ["security", "data integrity", "access control"],
+      "primary_categories": ["Security", "Programming"],
+      "secondary_categories": ["Web", "Database"],
+      "keywords": ["security", "privacy", "encryption", "access control", "bold"],
+      "learning_affinity_score": 0.94
+    },
+    "secure-pro": {
+      "focus_areas": ["security", "data integrity", "access control"],
+      "primary_categories": ["Security", "Programming"],
+      "secondary_categories": ["DevOps", "Database"],
+      "keywords": ["security", "vulnerability", "proactive", "threat"],
+      "learning_affinity_score": 0.92
+    },
+    "secure-specialist": {
+      "focus_areas": ["security", "data integrity", "access control"],
+      "primary_categories": ["Security", "Programming"],
+      "secondary_categories": ["Web", "Database"],
+      "keywords": ["security", "vulnerability", "encryption", "authentication", "vigilant"],
+      "learning_affinity_score": 0.93
+    },
+    "simplify-pro": {
+      "focus_areas": ["code structure", "duplication", "complexity"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["Performance"],
+      "keywords": ["simplification", "legacy code", "refactoring", "clean"],
+      "learning_affinity_score": 0.86
+    },
+    "steam-machine": {
+      "focus_areas": ["trending solutions", "dynamic focus"],
+      "primary_categories": ["AI_ML", "Programming"],
+      "secondary_categories": ["Tools", "Web"],
+      "keywords": ["trending", "popular", "dynamic", "systematic"],
+      "learning_affinity_score": 0.75
+    },
+    "support-master": {
+      "focus_areas": ["code reviews", "best practices", "knowledge sharing"],
+      "primary_categories": ["Programming", "Tools"],
+      "secondary_categories": ["OpenSource"],
+      "keywords": ["support", "best practice", "guidance", "teaching", "skill building"],
+      "learning_affinity_score": 0.85
+    },
+    "tools-analyst": {
+      "focus_areas": ["features", "infrastructure", "tools"],
+      "primary_categories": ["Tools", "Programming"],
+      "secondary_categories": ["DevOps"],
+      "keywords": ["tools", "tooling", "productivity", "developer tools"],
+      "learning_affinity_score": 0.88
+    },
+    "troubleshoot-expert": {
+      "focus_areas": ["ci/cd issues", "workflow failures", "github actions debugging"],
+      "primary_categories": ["DevOps", "Tools"],
+      "secondary_categories": ["Programming"],
+      "keywords": ["troubleshooting", "debugging", "github actions", "ci/cd", "workflow", "failure"],
+      "learning_affinity_score": 0.9
+    },
+    "validator-pro": {
+      "focus_areas": ["testing", "quality assurance", "edge cases"],
+      "primary_categories": ["Tools", "Programming"],
+      "secondary_categories": ["Security"],
+      "keywords": ["validation", "testing", "proof", "verification"],
+      "learning_affinity_score": 0.88
+    }
+  },
+
+  "scoring_weights": {
+    "category_match_primary": 1.0,
+    "category_match_secondary": 0.5,
+    "keyword_match": 0.3,
+    "learning_affinity": 0.2,
+    "recency_boost": 0.15,
+    "source_preference": {
+      "hn": 1.0,
+      "tldr": 0.9,
+      "github_trending": 0.95,
+      "security_analysis": 1.1,
+      "investigation": 1.05
+    }
+  },
+
+  "matching_thresholds": {
+    "minimum_score": 0.3,
+    "high_relevance": 0.7,
+    "perfect_match": 0.9
+  }
+}
