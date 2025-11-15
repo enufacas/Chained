@@ -2,9 +2,9 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 28
+**Total Insights:** 30
 
-**Last Updated:** 2025-11-14
+**Last Updated:** 2025-11-15
 
 ---
 
@@ -33,6 +33,34 @@ A Git-compatible VCS that is both simple and powerful
 
 
 ## 📰 From Hacker News
+
+
+### No One Lives Forever' turns 25 and you still can't buy it legitimately
+
+**Community Score:** 222 upvotes
+
+**Link:** https://www.techdirt.com/2025/11/13/no-one-lives-forever-turns-25-you-still-cant-buy-it-legitimately/
+
+
+**Content Summary:**
+
+Arianity (profile) says: November 13, 2025 at 8:24 pm Maybe we’ll be able to play this game legitimately by the time Bobby Bonilla stops making his million and change per year. Ahh, a refreshing bit of optimism in these dark times!
+
+---
+
+
+### Lawmakers want to ban VPNs and have no idea what they're doing
+
+**Community Score:** 139 upvotes
+
+**Link:** https://www.eff.org/deeplinks/2025/11/lawmakers-want-ban-vpns-and-they-have-no-idea-what-theyre-doing
+
+
+**Content Summary:**
+
+Remember when you thought age verification laws couldn't get any worse ? Well, lawmakers in Wisconsin , Michigan , and beyond are about to blow you away. It's unfortunately no longer enough to force websites to check your government-issued ID before you can access certain content, because politicians have now discovered that people are using Virtual Private Networks (VPNs) to protect their privacy and bypass these invasive laws. Their solution? Entirely ban the use of VPNs. Yes, really. As of th...
+
+---
 
 
 ### 'No One Lives Forever' turns 25 and you still can't buy it legitimately

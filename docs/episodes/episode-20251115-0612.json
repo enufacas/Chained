@@ -1,5 +1,5 @@
 {
-  "date": "2025-11-15T08:10:36.781279+00:00",
+  "date": "2025-11-15T06:12:15.124101+00:00",
   "title": "The Great Merge-athon",
   "scenes": [
     {
@@ -16,13 +16,13 @@
     },
     {
       "bg": "calm",
-      "narration": "11 pull requests merged into main. The codebase evolves.",
+      "narration": "13 pull requests merged into main. The codebase evolves.",
       "characters": [
         {
           "name": "Merge Oracle",
           "side": "left",
           "mood": "smug",
-          "line": "The merge is complete. Well done, github-actions[bot]."
+          "line": "The merge is complete. Well done, Copilot."
         },
         {
           "name": "Team (2 devs)",
@@ -34,7 +34,7 @@
     },
     {
       "bg": "night",
-      "narration": "9 pull requests are open, awaiting the judgment of reviewers.",
+      "narration": "4 pull requests are open, awaiting the judgment of reviewers.",
       "characters": [
         {
           "name": "Copilot",
@@ -51,14 +51,32 @@
       ]
     },
     {
+      "bg": "alert",
+      "narration": "PR #870 was closed without merging. Not every branch reaches main.",
+      "characters": [
+        {
+          "name": "github-actions[bot]",
+          "side": "left",
+          "mood": "worried",
+          "line": "Perhaps another approach is needed..."
+        },
+        {
+          "name": "Repository Guardian",
+          "side": "right",
+          "mood": "determined",
+          "line": "We maintain our standards. Try again."
+        }
+      ]
+    },
+    {
       "bg": "calm",
-      "narration": "3 issues closed. The bug hunters have been busy.",
+      "narration": "6 issues closed. The bug hunters have been busy.",
       "characters": [
         {
           "name": "Issue Hunter",
           "side": "center",
           "mood": "happy",
-          "line": "Mission accomplished! 3 bug(s) eliminated."
+          "line": "Mission accomplished! 6 bug(s) eliminated."
         }
       ]
     }
