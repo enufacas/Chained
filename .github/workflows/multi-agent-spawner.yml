@@ -34,6 +34,7 @@ jobs:
       spawn_count: ${{ steps.check.outputs.spawn_count }}
       active_count: ${{ steps.check.outputs.active_count }}
       max_agents: ${{ steps.check.outputs.max_agents }}
+      matrix_json: ${{ steps.check.outputs.matrix_json }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -79,6 +80,7 @@ jobs:
           if [ "$AVAILABLE_SLOTS" -le 0 ]; then
             echo "can_spawn=false" >> $GITHUB_OUTPUT
             echo "spawn_count=0" >> $GITHUB_OUTPUT
+            echo "matrix_json={\"agent_index\":[]}" >> $GITHUB_OUTPUT
             echo "⚠️ Maximum agent capacity reached ($ACTIVE_COUNT/$MAX_AGENTS)"
           else
             # Spawn the minimum of requested count and available slots
@@ -90,6 +92,18 @@ jobs:
             
             echo "can_spawn=true" >> $GITHUB_OUTPUT
             echo "spawn_count=$SPAWN_COUNT" >> $GITHUB_OUTPUT
+            
+            # Generate matrix JSON array [1, 2, 3, ..., SPAWN_COUNT]
+            MATRIX_ARRAY="["
+            for i in $(seq 1 $SPAWN_COUNT); do
+              if [ $i -gt 1 ]; then
+                MATRIX_ARRAY="${MATRIX_ARRAY},"
+              fi
+              MATRIX_ARRAY="${MATRIX_ARRAY}${i}"
+            done
+            MATRIX_ARRAY="${MATRIX_ARRAY}]"
+            
+            echo "matrix_json={\"agent_index\":${MATRIX_ARRAY}}" >> $GITHUB_OUTPUT
             echo "✅ Can spawn $SPAWN_COUNT agent(s) ($ACTIVE_COUNT/$MAX_AGENTS active)"
           fi
           
@@ -101,9 +115,7 @@ jobs:
     if: needs.check-capacity.outputs.can_spawn == 'true'
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        # Create a matrix for the number of agents to spawn
-        agent_index: ${{ fromJson(format('[{0}]', join(range(1, fromJson(needs.check-capacity.outputs.spawn_count) + 1), ','))) }}
+      matrix: ${{ fromJson(needs.check-capacity.outputs.matrix_json) }}
       max-parallel: 3  # Spawn agents in parallel but limit concurrency
     steps:
       - name: Validate spawn configuration
