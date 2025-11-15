@@ -557,17 +557,17 @@ jobs:
           PR_NUMBER="${{ needs.combine-learnings.outputs.pr_number }}"
           echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
           
-          # Wait up to 5 minutes for the PR to be merged
-          MAX_WAIT=300  # 5 minutes
-          WAIT_INTERVAL=10  # Check every 10 seconds
+          # Wait up to 3 minutes with exponential backoff for the PR to be merged
+          MAX_WAIT=180  # 3 minutes (reduced from 5)
           ELAPSED=0
+          WAIT_INTERVAL=3  # Start with 3 seconds
           
           while [ $ELAPSED -lt $MAX_WAIT ]; do
             # Check PR state
             PR_STATE=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state --jq '.state')
             
             if [ "$PR_STATE" = "MERGED" ]; then
-              echo "✅ PR #$PR_NUMBER has been merged successfully!"
+              echo "✅ PR #$PR_NUMBER has been merged successfully in ${ELAPSED}s!"
               echo "🎉 Learning PR merged - continuing to world model update"
               exit 0
             elif [ "$PR_STATE" = "CLOSED" ]; then
@@ -575,9 +575,14 @@ jobs:
               echo "This may indicate an issue with the auto-review process"
               exit 1
             else
-              echo "⏳ PR #$PR_NUMBER is still $PR_STATE, waiting... (${ELAPSED}s elapsed)"
+              echo "⏳ PR #$PR_NUMBER is still $PR_STATE, waiting ${WAIT_INTERVAL}s... (${ELAPSED}s elapsed)"
               sleep $WAIT_INTERVAL
               ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+              
+              # Exponential backoff: double wait time, max 30 seconds
+              if [ $WAIT_INTERVAL -lt 30 ]; then
+                WAIT_INTERVAL=$((WAIT_INTERVAL * 2))
+              fi
             fi
           done
           
@@ -729,17 +734,17 @@ jobs:
           PR_NUMBER="${{ needs.world-update.outputs.pr_number }}"
           echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
           
-          # Wait up to 5 minutes for the PR to be merged
-          MAX_WAIT=300  # 5 minutes
-          WAIT_INTERVAL=10  # Check every 10 seconds
+          # Wait up to 3 minutes with exponential backoff for the PR to be merged
+          MAX_WAIT=180  # 3 minutes (reduced from 5)
           ELAPSED=0
+          WAIT_INTERVAL=3  # Start with 3 seconds
           
           while [ $ELAPSED -lt $MAX_WAIT ]; do
             # Check PR state
             PR_STATE=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state --jq '.state')
             
             if [ "$PR_STATE" = "MERGED" ]; then
-              echo "✅ PR #$PR_NUMBER has been merged successfully!"
+              echo "✅ PR #$PR_NUMBER has been merged successfully in ${ELAPSED}s!"
               echo "🎉 World model PR merged - continuing to agent missions"
               exit 0
             elif [ "$PR_STATE" = "CLOSED" ]; then
@@ -747,9 +752,14 @@ jobs:
               echo "This may indicate an issue with the auto-review process"
               exit 1
             else
-              echo "⏳ PR #$PR_NUMBER is still $PR_STATE, waiting... (${ELAPSED}s elapsed)"
+              echo "⏳ PR #$PR_NUMBER is still $PR_STATE, waiting ${WAIT_INTERVAL}s... (${ELAPSED}s elapsed)"
               sleep $WAIT_INTERVAL
               ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+              
+              # Exponential backoff: double wait time, max 30 seconds
+              if [ $WAIT_INTERVAL -lt 30 ]; then
+                WAIT_INTERVAL=$((WAIT_INTERVAL * 2))
+              fi
             fi
           done
           
@@ -968,17 +978,17 @@ jobs:
           PR_NUMBER="${{ needs.agent-missions.outputs.pr_number }}"
           echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
           
-          # Wait up to 5 minutes for the PR to be merged
-          MAX_WAIT=300  # 5 minutes
-          WAIT_INTERVAL=10  # Check every 10 seconds
+          # Wait up to 3 minutes with exponential backoff for the PR to be merged
+          MAX_WAIT=180  # 3 minutes (reduced from 5)
           ELAPSED=0
+          WAIT_INTERVAL=3  # Start with 3 seconds
           
           while [ $ELAPSED -lt $MAX_WAIT ]; do
             # Check PR state
             PR_STATE=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state --jq '.state')
             
             if [ "$PR_STATE" = "MERGED" ]; then
-              echo "✅ PR #$PR_NUMBER has been merged successfully!"
+              echo "✅ PR #$PR_NUMBER has been merged successfully in ${ELAPSED}s!"
               echo "🎉 Pipeline complete - all PRs merged!"
               exit 0
             elif [ "$PR_STATE" = "CLOSED" ]; then
@@ -986,9 +996,14 @@ jobs:
               echo "This may indicate an issue with the auto-review process"
               exit 1
             else
-              echo "⏳ PR #$PR_NUMBER is still $PR_STATE, waiting... (${ELAPSED}s elapsed)"
+              echo "⏳ PR #$PR_NUMBER is still $PR_STATE, waiting ${WAIT_INTERVAL}s... (${ELAPSED}s elapsed)"
               sleep $WAIT_INTERVAL
               ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+              
+              # Exponential backoff: double wait time, max 30 seconds
+              if [ $WAIT_INTERVAL -lt 30 ]; then
+                WAIT_INTERVAL=$((WAIT_INTERVAL * 2))
+              fi
             fi
           done
           
