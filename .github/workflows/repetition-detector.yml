@@ -51,10 +51,25 @@ jobs:
           
           echo "Analyzing contributions from the last ${days} days..."
           
+          # Create history directory if it doesn't exist
+          mkdir -p analysis/repetition-history
+          
+          # Generate timestamp for historical snapshot
+          TIMESTAMP=$(date -u +%Y-%m-%d-%H-%M-%S)
+          
+          # Run detector and save to both current and historical locations
           python3 tools/repetition-detector.py \
             -d . \
             --since-days ${days} \
             -o analysis/repetition-report.json
+          
+          # Save timestamped snapshot for trend analysis
+          cp analysis/repetition-report.json "analysis/repetition-history/${TIMESTAMP}.json"
+          
+          # Update latest symlink
+          cd analysis/repetition-history
+          ln -sf "${TIMESTAMP}.json" latest.json
+          cd ../..
           
           # Check if repetition was detected
           if [ $? -ne 0 ]; then
@@ -64,6 +79,7 @@ jobs:
           fi
           
           echo "days=${days}" >> $GITHUB_OUTPUT
+          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
 
       - name: Run Uniqueness Scorer
         id: score
@@ -102,6 +118,29 @@ jobs:
             -o analysis/diversity-suggestions.md
           
           echo "suggestions_generated=true" >> $GITHUB_OUTPUT
+
+      - name: Analyze Diversity Trends
+        id: trends
+        run: |
+          echo "Analyzing diversity trends from historical data..."
+          
+          python3 tools/trend-analyzer.py \
+            -d . \
+            --days 90 \
+            -o analysis/diversity-trends.json
+          
+          echo "trends_analyzed=true" >> $GITHUB_OUTPUT
+
+      - name: Generate Diversity Dashboard
+        id: dashboard
+        run: |
+          echo "Generating diversity dashboard..."
+          
+          python3 tools/diversity-dashboard.py \
+            -d . \
+            -o docs/diversity-dashboard.md
+          
+          echo "dashboard_generated=true" >> $GITHUB_OUTPUT
 
       - name: Extract Summary Statistics
         id: stats
@@ -237,11 +276,18 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Add analysis files
+          # Add analysis files (including historical snapshots)
           git add analysis/repetition-report.json analysis/uniqueness-scores.json analysis/pattern-diversity.json || true
+          git add analysis/repetition-history/ || true
+          git add analysis/diversity-trends.json || true
           
           if [ -f analysis/diversity-suggestions.md ]; then
             git add analysis/diversity-suggestions.md
+          fi
+          
+          # Add dashboard to docs
+          if [ -f docs/diversity-dashboard.md ]; then
+            git add docs/diversity-dashboard.md
           fi
           
           if git diff --staged --quiet; then
@@ -255,7 +301,9 @@ jobs:
             git commit -m "🤖 Update pattern repetition analysis" \
                        -m "Analyzed: ${{ steps.stats.outputs.total_agents }} agents" \
                        -m "Flags: ${{ steps.stats.outputs.total_flags }}" \
-                       -m "Average score: ${{ steps.stats.outputs.avg_score }}"
+                       -m "Average score: ${{ steps.stats.outputs.avg_score }}" \
+                       -m "Timestamp: ${{ steps.detect.outputs.timestamp }}" \
+                       -m "Dashboard updated: ${{ steps.dashboard.outputs.dashboard_generated }}"
             
             # Push branch
             git push origin "$BRANCH_NAME"
@@ -280,6 +328,9 @@ jobs:
             analysis/repetition-report.json
             analysis/uniqueness-scores.json
             analysis/diversity-suggestions.md
+            analysis/diversity-trends.json
+            analysis/repetition-history/*.json
+            docs/diversity-dashboard.md
           retention-days: 30
 
       - name: Log Activity
