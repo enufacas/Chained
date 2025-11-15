@@ -181,6 +181,10 @@ def test_priority_calculation():
         prioritizer = IssuePrioritizer(history_file=history_file)
         prioritizer.priority_state_file = state_file
         
+        # Reset to ensure clean state
+        prioritizer.issue_types['performance'].total_attempts = 0
+        prioritizer.issue_types['performance'].total_reward = 0.0
+        
         # Initial state - all types should get equal priority
         priority = prioritizer.calculate_priority('performance')
         assert 0.9 <= priority <= 1.0, f"Initial priority should be ~1.0, got {priority}"
