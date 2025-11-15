@@ -1,0 +1,450 @@
+name: "Agent Assignment: Match Agents to Learnings"
+
+on:
+  schedule:
+    # Run daily at 09:00 UTC
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      agent_filter:
+        description: 'Filter agents (all, unassigned, or specific agent ID)'
+        required: false
+        default: 'unassigned'
+        type: string
+      max_assignments:
+        description: 'Maximum number of assignments to create'
+        required: false
+        default: '5'
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  assign-agents:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # No additional dependencies needed for our modules
+      
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Find agents and match to learnings
+        id: match
+        env:
+          AGENT_FILTER: ${{ inputs.agent_filter || 'unassigned' }}
+          MAX_ASSIGNMENTS: ${{ inputs.max_assignments || '5' }}
+        run: |
+          python3 << 'PYEOF'
+          import json
+          import os
+          import sys
+          from datetime import datetime
+          
+          # Add tools directory to path
+          sys.path.insert(0, 'tools')
+          sys.path.insert(0, 'world')
+          
+          try:
+              from registry_manager import RegistryManager
+              from agent_learning_matcher import AgentLearningMatcher
+              from agent_investment_tracker import AgentInvestmentTracker
+              
+              print("=" * 70)
+              print("🤖 Agent-to-Learning Assignment System")
+              print("=" * 70)
+              print()
+              
+              # Initialize systems
+              print("📦 Initializing systems...")
+              registry = RegistryManager()
+              matcher = AgentLearningMatcher()
+              tracker = AgentInvestmentTracker()
+              print("✅ Systems initialized")
+              print()
+              
+              # Get configuration
+              agent_filter = os.getenv('AGENT_FILTER', 'unassigned')
+              max_assignments = int(os.getenv('MAX_ASSIGNMENTS', '5'))
+              
+              print(f"⚙️  Configuration:")
+              print(f"   - Agent filter: {agent_filter}")
+              print(f"   - Max assignments: {max_assignments}")
+              print()
+              
+              # Get all agents
+              all_agents = registry.list_agents()
+              print(f"📊 Found {len(all_agents)} total agents")
+              
+              # Filter agents based on criteria
+              target_agents = []
+              if agent_filter == 'all':
+                  target_agents = all_agents
+              elif agent_filter == 'unassigned':
+                  # Get agents with no issues resolved
+                  for agent in all_agents:
+                      issues_resolved = agent.get('metrics', {}).get('issues_resolved', 0)
+                      if issues_resolved == 0:
+                          target_agents.append(agent)
+                  print(f"🎯 Found {len(target_agents)} agents with no work assigned")
+              else:
+                  # Specific agent ID
+                  for agent in all_agents:
+                      if agent.get('id') == agent_filter:
+                          target_agents = [agent]
+                          break
+                  print(f"🎯 Targeting specific agent: {agent_filter}")
+              
+              if not target_agents:
+                  print("⚠️  No agents match the filter criteria")
+                  sys.exit(0)
+              
+              print()
+              
+              # Load recent learnings
+              from pathlib import Path
+              import glob
+              
+              learnings = []
+              learnings_dir = Path('learnings')
+              
+              # Load from JSON learning files
+              for learning_file in sorted(learnings_dir.glob('*.json'), reverse=True)[:20]:
+                  try:
+                      with open(learning_file) as f:
+                          data = json.load(f)
+                          # Handle different learning file formats
+                          if isinstance(data, list):
+                              learnings.extend(data[:5])  # Take first 5 from each file
+                          elif isinstance(data, dict) and 'items' in data:
+                              learnings.extend(data['items'][:5])
+                          elif isinstance(data, dict):
+                              learnings.append(data)
+                  except Exception as e:
+                      print(f"⚠️  Error loading {learning_file.name}: {e}")
+              
+              print(f"📚 Loaded {len(learnings)} recent learnings")
+              print()
+              
+              # Match agents to learnings
+              assignments = []
+              
+              for agent in target_agents[:max_assignments]:
+                  agent_id = agent.get('id')
+                  agent_name = agent.get('name', agent_id)
+                  
+                  print(f"🔍 Matching {agent_name}...")
+                  
+                  # Get agent specialization from config
+                  agent_spec = matcher.agents.get(agent_id, {})
+                  
+                  if not agent_spec:
+                      print(f"   ⚠️  No specialization found for {agent_id}, skipping")
+                      continue
+                  
+                  # Find best matching learnings
+                  matches = matcher.match_agent_to_learnings(agent_id, learnings, top_k=3)
+                  
+                  if matches:
+                      best_match = matches[0]
+                      learning, score, categories = best_match
+                      
+                      print(f"   ✅ Best match: {learning.get('title', 'Untitled')[:60]}...")
+                      print(f"      Score: {score:.3f}, Categories: {', '.join(categories)}")
+                      
+                      assignments.append({
+                          'agent_id': agent_id,
+                          'agent_name': agent_name,
+                          'learning': learning,
+                          'score': score,
+                          'categories': categories
+                      })
+                  else:
+                      print(f"   ⚠️  No suitable matches found")
+              
+              print()
+              print(f"✅ Created {len(assignments)} assignments")
+              
+              # Save assignments to file for next step
+              output_file = '/tmp/agent_assignments.json'
+              with open(output_file, 'w') as f:
+                  json.dump(assignments, f, indent=2)
+              
+              # Set output
+              print(f"assignments_count={len(assignments)}", file=sys.stderr)
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"assignments_count={len(assignments)}\n")
+                  f.write(f"has_assignments={'true' if assignments else 'false'}\n")
+              
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              sys.exit(1)
+          PYEOF
+      
+      - name: Create GitHub issues for assignments
+        if: steps.match.outputs.has_assignments == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYEOF'
+          import json
+          import os
+          import sys
+          import subprocess
+          
+          # Add world directory to path
+          sys.path.insert(0, 'world')
+          
+          try:
+              from agent_investment_tracker import AgentInvestmentTracker
+              
+              # Load assignments
+              with open('/tmp/agent_assignments.json') as f:
+                  assignments = json.load(f)
+              
+              print("=" * 70)
+              print("📝 Creating GitHub Issues for Assignments")
+              print("=" * 70)
+              print()
+              
+              # Initialize investment tracker
+              tracker = AgentInvestmentTracker()
+              
+              created_issues = []
+              
+              for assignment in assignments:
+                  agent_id = assignment['agent_id']
+                  agent_name = assignment['agent_name']
+                  learning = assignment['learning']
+                  score = assignment['score']
+                  categories = assignment['categories']
+                  
+                  # Build issue title
+                  title = f"🎓 Learning Task: {learning.get('title', 'Untitled')[:80]}"
+                  
+                  # Build issue body
+                  primary_category = categories[0] if categories else "General"
+                  learning_url = learning.get('url', learning.get('link', ''))
+                  learning_source = learning.get('source', 'unknown')
+                  
+                  body = f"""## 🎓 Learning Assignment for @{agent_id}
+
+**Agent:** {agent_name}
+**Match Score:** {score:.2f}
+**Primary Category:** {primary_category}
+**All Categories:** {', '.join(categories)}
+
+### 📚 Learning Content
+
+**Title:** {learning.get('title', 'Untitled')}
+
+**Description:**
+{learning.get('description', learning.get('content', 'No description available')[:500])}
+
+**Source:** {learning_source}
+{f"**URL:** {learning_url}" if learning_url else ""}
+
+### 🎯 Your Mission
+
+As **@{agent_id}**, you've been matched with this learning opportunity based on your specialization in **{primary_category}**.
+
+**What to do:**
+1. 📖 Review the learning content carefully
+2. 🔍 Identify how this relates to your specialization
+3. 💡 Propose an implementation, experiment, or analysis based on this learning
+4. 📝 Create a detailed plan in the comments
+5. 🚀 Implement your proposal (if approved)
+
+### 📊 Investment Tracking
+
+This assignment will be tracked in the **Agent Investment Tracker** system:
+- Category: `{primary_category}`
+- Initial investment level: `CURIOUS`
+- This is an opportunity to grow your expertise!
+
+### 🤝 Collaboration
+
+Feel free to request collaboration from other agents if this learning touches multiple specializations. Use the **Agent Collaboration Manager** to find helpers.
+
+---
+
+*🤖 Automated assignment via Agent-Learning Matcher*
+*Generated: {json.dumps(learning.get('date', 'unknown'))}*
+"""
+                  
+                  print(f"Creating issue for {agent_name}...")
+                  
+                  # Create the issue using gh CLI
+                  result = subprocess.run(
+                      [
+                          'gh', 'issue', 'create',
+                          '--title', title,
+                          '--body', body,
+                          '--label', f'agent:{agent_id}',
+                          '--label', 'learning-assignment',
+                          '--label', 'automated',
+                          '--label', f'category:{primary_category.lower()}'
+                      ],
+                      capture_output=True,
+                      text=True
+                  )
+                  
+                  if result.returncode == 0:
+                      issue_url = result.stdout.strip()
+                      print(f"   ✅ Created: {issue_url}")
+                      created_issues.append({
+                          'agent_id': agent_id,
+                          'issue_url': issue_url,
+                          'category': primary_category
+                      })
+                      
+                      # Record initial cultivation in investment tracker
+                      tracker.record_cultivation(
+                          agent_name=agent_id,
+                          category=primary_category,
+                          impact=0.3,  # Initial curiosity impact
+                          learning_id=learning.get('id', learning.get('title', 'unknown')),
+                          context=f"Assigned learning task via matcher (score: {score:.2f})"
+                      )
+                      print(f"   📊 Recorded cultivation event in tracker")
+                  else:
+                      print(f"   ❌ Failed to create issue: {result.stderr}")
+              
+              # Save tracker updates
+              if created_issues:
+                  tracker.save()
+                  print()
+                  print(f"✅ Created {len(created_issues)} issues and updated investment tracker")
+              
+              # Save created issues for PR body
+              with open('/tmp/created_issues.json', 'w') as f:
+                  json.dump(created_issues, f, indent=2)
+              
+          except Exception as e:
+              print(f"❌ Error creating issues: {e}")
+              import traceback
+              traceback.print_exc()
+              sys.exit(1)
+          PYEOF
+      
+      - name: Commit investment tracker updates
+        if: steps.match.outputs.has_assignments == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add world/agent_investments.json
+          
+          if git diff --staged --quiet; then
+            echo "No investment tracker changes to commit"
+          else
+            # Create unique branch name
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="agent-assignments/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            # Commit changes
+            git commit -m "📊 Update agent investments from learning assignments
+
+          - Recorded cultivation events for assigned agents
+          - Updated investment tracker with learning categories
+          - Automated via assign-agents-to-learnings workflow"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Build PR body with created issues
+            python3 << 'PYEOF'
+          import json
+          import os
+          
+          try:
+              with open('/tmp/created_issues.json') as f:
+                  issues = json.load(f)
+              
+              pr_body = """## 📊 Agent Investment Tracker Update
+
+          This PR updates the agent investment tracker with cultivation events from learning assignments.
+
+          ### 🎓 Learning Assignments Created
+
+          """
+              
+              for issue_info in issues:
+                  pr_body += f"- **@{issue_info['agent_id']}**: [{issue_info['category']}]({issue_info['issue_url']})\n"
+              
+              pr_body += """
+          ### 📈 Investment Updates
+
+          - Initial cultivation events recorded
+          - Investment levels initialized to `CURIOUS`
+          - Categories tracked for future growth
+
+          ---
+
+          *🤖 Automated workflow: assign-agents-to-learnings*
+          """
+              
+              # Save for next step
+              with open('/tmp/pr_body.txt', 'w') as f:
+                  f.write(pr_body)
+                  
+          except Exception as e:
+              print(f"Warning: Could not build PR body: {e}")
+              # Create default body
+              with open('/tmp/pr_body.txt', 'w') as f:
+                  f.write("Agent investment tracker update from learning assignments")
+          PYEOF
+            
+            # Create PR
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "📊 Agent investments: Learning assignments - ${PR_DATE}" \
+              --body-file /tmp/pr_body.txt \
+              --label "agent-system,automated,investment-tracker" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ PR created for investment tracker updates"
+          fi
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "======================================================================"
+          echo "📊 Assignment Summary"
+          echo "======================================================================"
+          
+          if [ -f /tmp/agent_assignments.json ]; then
+            python3 << 'PYEOF'
+          import json
+          assignments_count = len(json.load(open('/tmp/agent_assignments.json')))
+          print(f"✅ Matched {assignments_count} agents to learnings")
+          PYEOF
+          fi
+          
+          if [ -f /tmp/created_issues.json ]; then
+            python3 << 'PYEOF'
+          import json
+          issues = json.load(open('/tmp/created_issues.json'))
+          print(f"✅ Created {len(issues)} GitHub issues")
+          for issue in issues:
+              print(f"   - @{issue['agent_id']}: {issue['issue_url']}")
+          PYEOF
+          fi

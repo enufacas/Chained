@@ -1,0 +1,450 @@
+name: "Agent Investment: Update from PR Merges"
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  update-investments:
+    # Only run on merged PRs
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Analyze PR and update investments
+        id: analyze
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_LABELS: ${{ toJson(github.event.pull_request.labels) }}
+          PR_USER: ${{ github.event.pull_request.user.login }}
+        run: |
+          python3 << 'PYEOF'
+          import json
+          import os
+          import sys
+          import re
+          from datetime import datetime
+          
+          # Add world directory to path
+          sys.path.insert(0, 'world')
+          
+          try:
+              from agent_investment_tracker import (
+                  AgentInvestmentTracker,
+                  InvestmentLevel
+              )
+              from agent_learning_matcher import AgentLearningMatcher
+              
+              print("=" * 70)
+              print("📊 Agent Investment Tracker - PR Analysis")
+              print("=" * 70)
+              print()
+              
+              # Get PR details
+              pr_number = os.getenv('PR_NUMBER')
+              pr_title = os.getenv('PR_TITLE', '')
+              pr_body = os.getenv('PR_BODY', '')
+              pr_labels_json = os.getenv('PR_LABELS', '[]')
+              pr_user = os.getenv('PR_USER', '')
+              
+              print(f"🔍 Analyzing PR #{pr_number}")
+              print(f"   Title: {pr_title}")
+              print(f"   User: {pr_user}")
+              print()
+              
+              # Parse labels
+              try:
+                  pr_labels = [label['name'] for label in json.loads(pr_labels_json)]
+              except:
+                  pr_labels = []
+              
+              print(f"🏷️  Labels: {', '.join(pr_labels) if pr_labels else 'none'}")
+              
+              # Initialize systems
+              tracker = AgentInvestmentTracker()
+              matcher = AgentLearningMatcher()
+              
+              # Extract agent ID from labels
+              agent_id = None
+              for label in pr_labels:
+                  if label.startswith('agent:'):
+                      agent_id = label.split(':', 1)[1]
+                      break
+              
+              # Also try to extract from PR title or body
+              if not agent_id:
+                  # Look for @agent-name mentions
+                  agent_pattern = r'@([\w-]+(?:master|specialist|guru|champion|wizard|expert|ninja|pro))'
+                  matches = re.findall(agent_pattern, pr_title + ' ' + pr_body)
+                  if matches:
+                      agent_id = matches[0]
+              
+              if not agent_id:
+                  print("⚠️  No agent ID found in PR labels or content")
+                  print("   Skipping investment tracking")
+                  with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                      f.write("has_updates=false\n")
+                  sys.exit(0)
+              
+              print(f"🤖 Agent: @{agent_id}")
+              print()
+              
+              # Determine learning categories from PR content
+              combined_text = f"{pr_title} {pr_body}".lower()
+              
+              # Extract category labels
+              category_labels = []
+              for label in pr_labels:
+                  if label.startswith('category:'):
+                      category = label.split(':', 1)[1].title()
+                      # Map to learning category names
+                      category_map = {
+                          'ai': 'AI_ML',
+                          'ml': 'AI_ML',
+                          'devops': 'DevOps',
+                          'database': 'Database',
+                          'web': 'Web',
+                          'security': 'Security',
+                          'performance': 'Performance',
+                          'tools': 'Tools',
+                          'opensource': 'OpenSource'
+                      }
+                      mapped = category_map.get(category.lower(), category)
+                      category_labels.append(mapped)
+              
+              # Infer categories from content using matcher's category keywords
+              inferred_categories = []
+              for category, info in matcher.categories.items():
+                  keywords = info.get('keywords', [])
+                  keyword_matches = sum(1 for kw in keywords if kw in combined_text)
+                  if keyword_matches >= 2:  # At least 2 keyword matches
+                      inferred_categories.append((category, keyword_matches))
+              
+              # Sort by match count
+              inferred_categories.sort(key=lambda x: x[1], reverse=True)
+              top_inferred = [cat for cat, _ in inferred_categories[:3]]
+              
+              # Combine categories
+              all_categories = list(set(category_labels + top_inferred))
+              
+              if not all_categories:
+                  all_categories = ['Programming']  # Default category
+              
+              print(f"📚 Detected categories: {', '.join(all_categories)}")
+              print()
+              
+              # Determine impact level based on PR characteristics
+              impact = 0.5  # Base impact
+              
+              # Check if learning-related
+              if 'learning-assignment' in pr_labels or 'learning' in combined_text:
+                  impact += 0.2
+                  print("   🎓 Learning-related PR: +0.2 impact")
+              
+              # Check if substantial work
+              if 'enhancement' in pr_labels or 'feature' in pr_labels:
+                  impact += 0.15
+                  print("   ✨ Enhancement/feature: +0.15 impact")
+              
+              if 'bug' in pr_labels or 'fix' in combined_text:
+                  impact += 0.1
+                  print("   🐛 Bug fix: +0.1 impact")
+              
+              # Check for collaboration
+              if 'collaboration' in pr_labels or 'pair' in combined_text:
+                  impact += 0.1
+                  print("   🤝 Collaboration: +0.1 impact")
+              
+              # Cap impact at 1.0
+              impact = min(impact, 1.0)
+              
+              print(f"   💪 Total impact: {impact:.2f}")
+              print()
+              
+              # Record cultivation events for each category
+              cultivation_events = []
+              for category in all_categories:
+                  tracker.record_cultivation(
+                      agent_name=agent_id,
+                      category=category,
+                      impact=impact,
+                      learning_id=f"pr-{pr_number}",
+                      context=f"Merged PR #{pr_number}: {pr_title[:100]}"
+                  )
+                  cultivation_events.append(category)
+                  
+                  # Get investment details
+                  investments = tracker.get_agent_investments(agent_id)
+                  if category in investments:
+                      investment = investments[category]
+                      print(f"✅ Recorded cultivation for {category}")
+                      print(f"   Level: {investment.level.name} (score: {investment.score:.2f})")
+                  else:
+                      print(f"✅ Recorded cultivation for {category} (new category)")
+              
+              # Save tracker
+              tracker.save()
+              print()
+              print(f"💾 Saved investment tracker updates")
+              
+              # Identify opportunities for further cultivation
+              print()
+              print("🔍 Identifying cultivation opportunities...")
+              opportunities = tracker.suggest_cultivation_opportunities(
+                  agent_id,
+                  min_score=30.0,
+                  max_suggestions=3
+              )
+              
+              # Save data for next steps
+              output_data = {
+                  'agent_id': agent_id,
+                  'pr_number': pr_number,
+                  'categories': all_categories,
+                  'impact': impact,
+                  'opportunities': opportunities,
+                  'has_opportunities': len(opportunities) > 0
+              }
+              
+              with open('/tmp/investment_update.json', 'w') as f:
+                  json.dump(output_data, f, indent=2)
+              
+              # Set outputs
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write("has_updates=true\n")
+                  f.write(f"agent_id={agent_id}\n")
+                  f.write(f"has_opportunities={'true' if opportunities else 'false'}\n")
+              
+              print(f"✅ Analysis complete")
+              
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              sys.exit(1)
+          PYEOF
+      
+      - name: Post cultivation opportunities as issue comment
+        if: steps.analyze.outputs.has_opportunities == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          python3 << 'PYEOF'
+          import json
+          import os
+          import subprocess
+          import sys
+          
+          # Add world directory to path
+          sys.path.insert(0, 'world')
+          
+          try:
+              # Load analysis data
+              with open('/tmp/investment_update.json') as f:
+                  data = json.load(f)
+              
+              agent_id = data['agent_id']
+              pr_number = data['pr_number']
+              categories = data['categories']
+              impact = data['impact']
+              opportunities = data['opportunities']
+              
+              if not opportunities:
+                  print("No opportunities to post")
+                  sys.exit(0)
+              
+              # Build comment
+              comment = f"""## 🌱 Cultivation Opportunities for @{agent_id}
+
+          Great work on PR #{pr_number}! Your investment in **{', '.join(categories)}** has been updated.
+
+          ### 📊 Investment Summary
+
+          **Impact:** {impact:.2f}  
+          **Categories cultivated:** {len(categories)}
+
+          ### 🎯 Suggested Next Steps
+
+          Based on your current investments, here are some opportunities to grow your expertise:
+
+          """
+              
+              for i, opp in enumerate(opportunities, 1):
+                  category = opp['category']
+                  current_level = opp['current_level']
+                  next_level = opp['next_level']
+                  score = opp['score']
+                  gap = opp['gap_to_next']
+                  
+                  comment += f"""
+          **{i}. {category}**
+          - Current: `{current_level}` (score: {score:.1f})
+          - Next level: `{next_level}` (gap: {gap:.1f} points)
+          - 💡 Keep working on {category}-related tasks to advance!
+          """
+              
+              comment += """
+          ### 🤝 Consider Collaboration
+
+          You can use the **Agent Collaboration Manager** to find other agents working in these categories. Collaboration accelerates learning!
+
+          ---
+
+          *🤖 Automated cultivation tracking via Agent Investment Tracker*
+          """
+              
+              # Post comment using gh CLI
+              # First, try to find linked issue
+              pr_number_env = os.getenv('PR_NUMBER')
+              
+              result = subprocess.run(
+                  ['gh', 'pr', 'view', pr_number_env, '--json', 'body'],
+                  capture_output=True,
+                  text=True
+              )
+              
+              linked_issue = None
+              if result.returncode == 0:
+                  pr_data = json.loads(result.stdout)
+                  pr_body = pr_data.get('body', '')
+                  
+                  # Look for issue references
+                  import re
+                  issue_refs = re.findall(r'#(\d+)', pr_body)
+                  if issue_refs:
+                      linked_issue = issue_refs[0]
+              
+              # Post to PR
+              result = subprocess.run(
+                  ['gh', 'pr', 'comment', pr_number_env, '--body', comment],
+                  capture_output=True,
+                  text=True
+              )
+              
+              if result.returncode == 0:
+                  print(f"✅ Posted opportunities comment to PR #{pr_number}")
+              else:
+                  print(f"⚠️  Failed to post PR comment: {result.stderr}")
+              
+              # Also post to linked issue if found
+              if linked_issue:
+                  result = subprocess.run(
+                      ['gh', 'issue', 'comment', linked_issue, '--body', comment],
+                      capture_output=True,
+                      text=True
+                  )
+                  
+                  if result.returncode == 0:
+                      print(f"✅ Posted opportunities comment to issue #{linked_issue}")
+                  else:
+                      print(f"⚠️  Failed to post issue comment: {result.stderr}")
+              
+          except Exception as e:
+              print(f"⚠️  Error posting comment: {e}")
+              import traceback
+              traceback.print_exc()
+              # Don't fail the workflow for comment posting errors
+          PYEOF
+      
+      - name: Commit investment tracker changes
+        if: steps.analyze.outputs.has_updates == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add world/agent_investments.json
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            # Create unique branch name
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="investment-update/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            # Commit changes
+            git commit -m "📊 Update agent investments from PR #${{ github.event.pull_request.number }}
+
+          - Agent: @${{ steps.analyze.outputs.agent_id }}
+          - Recorded cultivation events
+          - Updated investment levels
+          - Automated via update-agent-investments workflow"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            python3 << 'PYEOF'
+          import json
+          import os
+          
+          try:
+              with open('/tmp/investment_update.json') as f:
+                  data = json.load(f)
+              
+              agent_id = data['agent_id']
+              categories = data['categories']
+              impact = data['impact']
+              pr_number = data['pr_number']
+              
+              pr_body = f"""## 📊 Agent Investment Update
+
+          Updated investments for **@{agent_id}** based on merged PR #{pr_number}.
+
+          ### 🌱 Cultivation Details
+
+          - **Categories:** {', '.join(categories)}
+          - **Impact:** {impact:.2f}
+          - **Source:** PR #{pr_number}
+
+          ### 📈 Investment Changes
+
+          Investment tracker has been updated with cultivation events for all categories.
+
+          ---
+
+          *🤖 Automated workflow: update-agent-investments*
+          """
+              
+              with open('/tmp/pr_body.txt', 'w') as f:
+                  f.write(pr_body)
+                  
+          except Exception as e:
+              print(f"Warning: {e}")
+              with open('/tmp/pr_body.txt', 'w') as f:
+                  f.write("Agent investment tracker update")
+          PYEOF
+            
+            # Create PR
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "📊 Investment update: @${{ steps.analyze.outputs.agent_id }} - ${PR_DATE}" \
+              --body-file /tmp/pr_body.txt \
+              --label "agent-system,automated,investment-tracker" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ PR created for investment updates"
+          fi

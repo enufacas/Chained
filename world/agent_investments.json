@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-11-15T08:06:01.977073",
+  "last_updated": "2025-11-15T08:22:24.887184",
   "version": "1.0",
   "investments": {
     "accelerate-master": {
@@ -200,6 +200,30 @@
             "learning_id": "ci-pipeline-implementation",
             "impact": 0.75,
             "context": "Learning work: ci-pipeline-implementation"
+          }
+        ]
+      },
+      "Web": {
+        "category": "Web",
+        "level": "LEARNING",
+        "score": 16.8,
+        "first_invested": "2025-11-15T08:21:26.896355",
+        "last_cultivated": "2025-11-15T08:22:24.887162",
+        "cultivation_count": 2,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-15T08:21:26.896364",
+            "category": "Web",
+            "learning_id": "test-pr-123",
+            "impact": 0.7,
+            "context": "Test PR merge"
+          },
+          {
+            "timestamp": "2025-11-15T08:22:24.887162",
+            "category": "Web",
+            "learning_id": "test-pr-123",
+            "impact": 0.7,
+            "context": "Test PR merge"
           }
         ]
       }
