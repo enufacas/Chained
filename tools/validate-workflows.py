@@ -86,6 +86,9 @@ class WorkflowValidator:
             # Check for PR-based workflow best practices
             self._check_pr_workflow_pattern(content, filepath.name)
             
+            # Check for script path triggers
+            self._check_script_path_triggers(workflow, content, filepath.name)
+            
             return len(self.errors) == 0
             
         except Exception as e:
@@ -142,6 +145,118 @@ class WorkflowValidator:
                     f"{filename}: Workflow commits and pushes changes but doesn't use "
                     "PR-based workflow pattern (gh pr create + branch checkout)"
                 )
+    
+    def _extract_script_dependencies(self, content: str) -> List[str]:
+        """Extract all script/tool dependencies from workflow content."""
+        dependencies = set()
+        
+        # Patterns to match script references
+        patterns = [
+            r'python3?\s+([^\s]+\.py)',  # python3 script.py
+            r'(?:bash|sh)\s+([^\s]+\.sh)',  # bash script.sh
+            r'\./((?:scripts|tools)/[^\s]+\.(?:py|sh))',  # ./scripts/script.sh
+            r'((?:tools|scripts)/[^\s\'"]+\.(?:py|sh))',  # Direct references
+        ]
+        
+        for pattern in patterns:
+            matches = re.findall(pattern, content)
+            for match in matches:
+                clean_match = match.strip()
+                if clean_match and (clean_match.startswith('tools/') or clean_match.startswith('scripts/')):
+                    dependencies.add(clean_match)
+        
+        return sorted(dependencies)
+    
+    def _check_script_path_triggers(self, workflow: Dict, content: str, filename: str) -> None:
+        """Check if workflow has proper path triggers for its script dependencies."""
+        # Extract script dependencies
+        scripts = self._extract_script_dependencies(content)
+        
+        if not scripts:
+            return  # No scripts, no need for path triggers
+        
+        # Get trigger configuration
+        on_config = workflow.get('on') or workflow.get(True)
+        
+        if not on_config:
+            return  # No triggers at all, can't check
+        
+        # Only check if workflow has pull_request trigger
+        if not isinstance(on_config, dict):
+            return
+        
+        pr_config = on_config.get('pull_request')
+        if not pr_config:
+            # No pull_request trigger, so path triggers not applicable
+            return
+        
+        # Workflow has pull_request trigger, check for path triggers
+        path_triggers = set()
+        
+        # Get paths from pull_request trigger
+        if isinstance(pr_config, dict):
+            paths = pr_config.get('paths', [])
+            if isinstance(paths, list):
+                path_triggers.update(paths)
+        
+        # Check push trigger too (for completeness)
+        push_config = on_config.get('push', {})
+        if isinstance(push_config, dict):
+            paths = push_config.get('paths', [])
+            if isinstance(paths, list):
+                path_triggers.update(paths)
+        
+        # If workflow has PR triggers but no path triggers at all, that's potentially an issue
+        # but we'll only report uncovered scripts
+        uncovered_scripts = []
+        for script in scripts:
+            covered = False
+            
+            # Check if any path trigger covers this script
+            for trigger in path_triggers:
+                # Handle glob patterns
+                trigger_base = trigger.rstrip('*').rstrip('/')
+                
+                # Check for exact match or prefix match
+                if script in trigger or script.startswith(trigger_base):
+                    covered = True
+                    break
+                
+                # Check for wildcards that would cover this script
+                if '**' in trigger:
+                    trigger_prefix = trigger.split('**')[0]
+                    if script.startswith(trigger_prefix):
+                        covered = True
+                        break
+            
+            if not covered:
+                uncovered_scripts.append(script)
+        
+        # Report uncovered scripts as errors only if there are path triggers defined
+        # (if no path triggers, the workflow will run on every PR anyway)
+        if uncovered_scripts and path_triggers:
+            self.errors.append(
+                f"{filename}: Workflow uses scripts {uncovered_scripts} but these are not "
+                f"covered by path triggers. Add these to the 'on.pull_request.paths' section:\n"
+                f"  Example:\n"
+                f"    on:\n"
+                f"      pull_request:\n"
+                f"        paths:\n" +
+                "".join(f"          - '{script}'\n" for script in uncovered_scripts[:3]) +
+                (f"          # ... and {len(uncovered_scripts) - 3} more\n" if len(uncovered_scripts) > 3 else "")
+            )
+        elif uncovered_scripts and not path_triggers:
+            # Workflow has PR trigger but no paths - recommend adding them for efficiency
+            self.warnings.append(
+                f"{filename}: Workflow uses scripts {scripts} and has pull_request trigger but no path filters. "
+                f"Consider adding path triggers to run only when scripts change:\n"
+                f"  Example:\n"
+                f"    on:\n"
+                f"      pull_request:\n"
+                f"        paths:\n" +
+                "".join(f"          - '{script}'\n" for script in scripts[:3]) +
+                (f"          # ... and {len(scripts) - 3} more\n" if len(scripts) > 3 else "")
+            )
     
     def validate_directory(self, dirpath: Path) -> Tuple[int, int]:
         """
