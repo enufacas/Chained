@@ -129,51 +129,94 @@ jobs:
           echo "  Progress: $PROGRESS%"
           echo "  Activity: $TOTAL_ACTIVITY events"
 
-      - name: Update progress in goals file
+      - name: Create issue for goal progress update
         if: steps.check_goal.outputs.has_goal == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          GOALS_FILE="docs/AI_GOALS.md"
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
           STATUS="${{ steps.gather_progress.outputs.status }}"
           PROGRESS="${{ steps.gather_progress.outputs.progress }}"
           COMMITS="${{ steps.gather_progress.outputs.commit_count }}"
           PRS="${{ steps.gather_progress.outputs.pr_count }}"
           ISSUES="${{ steps.gather_progress.outputs.issue_count }}"
+          GOAL="${{ steps.check_goal.outputs.goal }}"
+          CATEGORY="${{ steps.check_goal.outputs.category }}"
+          GOAL_DATE="${{ steps.check_goal.outputs.goal_date }}"
           
-          # Create progress update entry
-          PROGRESS_UPDATE="- **$TIMESTAMP**: Progress check - $STATUS ($PROGRESS% complete) - Activity: $COMMITS commits, $PRS PRs, $ISSUES issues"
+          # Check if there's already an open issue for today's goal progress update
+          TODAY=$(date +%Y-%m-%d)
+          EXISTING_ISSUE=$(gh issue list \
+            --label "goal-progress,automated" \
+            --search "📊 Goal progress update in:title is:open created:>=$TODAY" \
+            --json number \
+            --jq '.[0].number // ""' 2>/dev/null || echo "")
           
-          # Insert progress update after the "### Progress Updates" line
-          sed -i "/^### Progress Updates/a\\
-          $PROGRESS_UPDATE" "$GOALS_FILE"
-          
-          # Commit if there are changes
-          if git diff --quiet "$GOALS_FILE"; then
-            echo "No changes to commit"
+          if [ -n "$EXISTING_ISSUE" ]; then
+            echo "⏭️  Issue already exists for today's goal progress update: #$EXISTING_ISSUE"
+            echo "Skipping issue creation to avoid duplicates"
           else
-            # Create a new branch for the PR with unique name using run ID
-            TIMESTAMP_BRANCH=$(date +%Y%m%d-%H%M%S)
-            BRANCH_NAME="goal-progress/${TIMESTAMP_BRANCH}-${{ github.run_id }}"
-            git checkout -b "$BRANCH_NAME"
+            echo "Creating issue for goal progress update..."
             
-            git add "$GOALS_FILE"
-            git commit -m "📊 Goal progress update: $STATUS"
+            # Create temporary file for issue body to avoid YAML parsing issues
+            TEMP_BODY_FILE=$(mktemp)
+            cat > "$TEMP_BODY_FILE" <<'EOF'
+## Goal Progress Update Request
+
+**Goal**: ${GOAL}
+**Category**: ${CATEGORY}
+**Goal Date**: ${GOAL_DATE}
+**Timestamp**: ${TIMESTAMP}
+
+### Current Progress
+**Status**: ${STATUS} (${PROGRESS}% complete)
+
+### Activity Since Goal Set
+- 📝 **${COMMITS}** commits
+- 🔀 **${PRS}** pull requests
+- 🎫 **${ISSUES}** issues
+
+### Task
+Please update the `docs/AI_GOALS.md` file with this progress information.
+
+**Required Changes:**
+1. Add a progress update entry after the `### Progress Updates` line
+2. Use this format: `- **${TIMESTAMP}**: Progress check - ${STATUS} (${PROGRESS}% complete) - Activity: ${COMMITS} commits, ${PRS} PRs, ${ISSUES} issues`
+3. Create a PR with the changes
+
+**File to Update:**
+- `docs/AI_GOALS.md`
+
+**PR Title Format:**
+`📊 Goal progress update: ${STATUS}`
+
+---
+*🤖 This issue will be automatically assigned to Copilot for implementation*
+EOF
             
-            # Push branch
-            git push origin "$BRANCH_NAME"
+            # Substitute variables in the temp file
+            sed -i "s/\${GOAL}/${GOAL}/g" "$TEMP_BODY_FILE"
+            sed -i "s/\${CATEGORY}/${CATEGORY}/g" "$TEMP_BODY_FILE"
+            sed -i "s/\${GOAL_DATE}/${GOAL_DATE}/g" "$TEMP_BODY_FILE"
+            sed -i "s/\${TIMESTAMP}/${TIMESTAMP}/g" "$TEMP_BODY_FILE"
+            sed -i "s/\${STATUS}/${STATUS}/g" "$TEMP_BODY_FILE"
+            sed -i "s/\${PROGRESS}/${PROGRESS}/g" "$TEMP_BODY_FILE"
+            sed -i "s/\${COMMITS}/${COMMITS}/g" "$TEMP_BODY_FILE"
+            sed -i "s/\${PRS}/${PRS}/g" "$TEMP_BODY_FILE"
+            sed -i "s/\${ISSUES}/${ISSUES}/g" "$TEMP_BODY_FILE"
             
-            # Create PR
-            PR_DATE=$(date +%Y-%m-%d)
-            gh pr create \
-              --title "📊 Goal progress update - ${PR_DATE}" \
-              --body "## Goal Progress Update"$'\n\n'"**Status**: $STATUS ($PROGRESS% complete)"$'\n\n'"### Activity"$'\n'"- Commits: $COMMITS"$'\n'"- PRs: $PRS"$'\n'"- Issues: $ISSUES"$'\n\n'"---"$'\n'"*🤖 Automated goal progress tracking*" \
+            # Create issue that will be auto-assigned to Copilot
+            gh issue create \
+              --title "📊 Goal progress update - ${TODAY}" \
+              --body-file "$TEMP_BODY_FILE" \
+              --label "goal-progress" \
               --label "automated" \
-              --base main \
-              --head "$BRANCH_NAME" || echo "✅ PR created (some labels may not exist)"
+              --label "ai-generated"
             
-            echo "✅ PR created for goal progress update"
+            # Clean up temp file
+            rm "$TEMP_BODY_FILE"
+            
+            echo "✅ Issue created for goal progress update"
           fi
 
       - name: Comment on goal issue
