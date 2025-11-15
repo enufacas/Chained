@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 48
+**Total Insights:** 55
 
 **Last Updated:** 2025-11-15
 
@@ -102,7 +102,58 @@ Open Source Spotify client library
 ---
 
 
+### davila7/claude-code-templates - CLI tool for configuring and monitoring Claude Code
+
+**Link:** https://github.com/davila7/claude-code-templates
+
+
+CLI tool for configuring and monitoring Claude Code
+
+---
+
+
+### jaywcjlove/awesome-mac -  Now we have become very big, Different from the original idea. Collect premium software in various
+
+**Link:** https://github.com/jaywcjlove/awesome-mac
+
+
+ Now we have become very big, Different from the original idea. Collect premium software in various categories.
+
+---
+
+
+### librespot-org/librespot - Open Source Spotify client library
+
+**Link:** https://github.com/librespot-org/librespot
+
+
+Open Source Spotify client library
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### Boa: A standard-conforming embeddable JavaScript engine written in Rust
+
+**Link:** https://github.com/boa-dev/boa
+
+---
+
+
+### Designing a Language (2017)
+
+**Link:** https://cs.lmu.edu/~ray/notes/languagedesignnotes/
+
+---
+
+
+### Go's Sweet 16
+
+**Link:** https://go.dev/blog/16years
+
+---
 
 
 ### So, you want to design your own language? (2017)
@@ -329,34 +380,28 @@ in a new tab. When you're done, simply close that tab...
 ---
 
 
-### Omnilingual ASR: Advancing automatic speech recognition for 1600 languages
-
-**Community Score:** 110 upvotes
-
-**Link:** https://ai.meta.com/blog/omnilingual-asr-advancing-automatic-speech-recognition/?_fb_noscript=1
-
----
-
-
-### Vibe Code Warning – A personal casestudy
-
-**Community Score:** 279 upvotes
-
-**Link:** https://github.com/jackdoe/pico2-swd-riscv
-
----
-
-
-### Itiner-e: the Google Maps of Roman Roads
-
-**Community Score:** 128 upvotes
-
-**Link:** https://itiner-e.org/
-
----
-
-
 ## 📰 From TLDR Tech
+
+
+### Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌
+
+**Link:** https://tldr.tech/ai/2025-11-14
+
+
+**Content Summary:**
+
+Traditional Browsers are Going Extinct (and that's a good thing) (Sponsor)
+Forget passive browsing with no added context—
+Norton Neo
+is the world's first safe, AI-native browser, making every interaction faster, safer, and more efficient.
+Zero-prompt productivity: AI that truly works for you
+Configurable memory, unique to you
+Private and safe by design
+Context-aware, smart tab grouping
+Try Norton Neo here and join the future
+.
+
+---
 
 
 ### Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌

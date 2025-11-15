@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-15 13:17 UTC
+**Generated:** 2025-11-15 18:59 UTC
 
-**Total Learning Sessions:** 63
+**Total Learning Sessions:** 67
 
-**Total Insights:** 600
+**Total Insights:** 668
 
 ---
 
@@ -18,21 +18,21 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 191
+**Insights:** 216
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 48
+**Insights:** 55
 
 
 ### [🚀 DevOps & Infrastructure](./DevOps.md)
 
 CI/CD, containers, orchestration, and infrastructure automation
 
-**Insights:** 14
+**Insights:** 18
 
 
 ### [🗄️ Databases & Data Management](./Database.md)
@@ -46,7 +46,7 @@ SQL, NoSQL, data storage, and data engineering
 
 Web technologies, browsers, APIs, and frontend frameworks
 
-**Insights:** 19
+**Insights:** 23
 
 
 ### [🔒 Security & Privacy](./Security.md)
@@ -60,28 +60,28 @@ Security vulnerabilities, encryption, authentication, and privacy
 
 Performance tuning, benchmarks, and optimization techniques
 
-**Insights:** 17
+**Insights:** 19
 
 
 ### [🔧 Developer Tools](./Tools.md)
 
 IDEs, editors, debuggers, and productivity tools
 
-**Insights:** 38
+**Insights:** 42
 
 
 ### [🌟 Open Source & Community](./OpenSource.md)
 
 Open source projects, community insights, and collaboration
 
-**Insights:** 4
+**Insights:** 5
 
 
 ### [📚 General Tech Insights](./Other.md)
 
 General technology news and insights
 
-**Insights:** 249
+**Insights:** 270
 
 
 ## 📊 Statistics
@@ -89,36 +89,36 @@ General technology news and insights
 
 ### By Source
 
-- **Hacker News:** 24 learning sessions
+- **Hacker News:** 25 learning sessions
 
-- **TLDR Tech:** 19 learning sessions
+- **TLDR Tech:** 20 learning sessions
 
-- **Unknown:** 17 learning sessions
+- **Unknown:** 18 learning sessions
 
-- **GitHub Trending:** 3 learning sessions
+- **GitHub Trending:** 4 learning sessions
 
 
 ### By Topic
 
-- **📚 General Tech Insights:** 249 insights
+- **📚 General Tech Insights:** 270 insights
 
-- **🤖 AI & Machine Learning:** 191 insights
+- **🤖 AI & Machine Learning:** 216 insights
 
-- **💻 Programming Languages & Frameworks:** 48 insights
+- **💻 Programming Languages & Frameworks:** 55 insights
 
-- **🔧 Developer Tools:** 38 insights
+- **🔧 Developer Tools:** 42 insights
 
-- **🌐 Web Development:** 19 insights
+- **🌐 Web Development:** 23 insights
 
-- **⚡ Performance & Optimization:** 17 insights
+- **⚡ Performance & Optimization:** 19 insights
 
-- **🚀 DevOps & Infrastructure:** 14 insights
+- **🚀 DevOps & Infrastructure:** 18 insights
 
 - **🔒 Security & Privacy:** 10 insights
 
 - **🗄️ Databases & Data Management:** 10 insights
 
-- **🌟 Open Source & Community:** 4 insights
+- **🌟 Open Source & Community:** 5 insights
 
 
 ## 💡 How to Use This Book
