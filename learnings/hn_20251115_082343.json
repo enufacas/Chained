@@ -1,0 +1,336 @@
+{
+  "timestamp": "2025-11-15T08:23:43.346941+00:00",
+  "source": "Hacker News",
+  "learnings": [
+    {
+      "title": "So, you want to design your own language? (2017)",
+      "description": "",
+      "url": "https://cs.lmu.edu/~ray/notes/languagedesignnotes/",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 48,
+        "by": "veqq",
+        "descendants": 24
+      }
+    },
+    {
+      "title": "Spec-Driven Development: The Waterfall Strikes Back",
+      "description": "",
+      "url": "https://marmelab.com/blog/2025/11/12/spec-driven-development-waterfall-strikes-back.html",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 15,
+        "by": "vinhnx",
+        "descendants": 8
+      }
+    },
+    {
+      "title": "AI World Clocks",
+      "description": "&quot;Every minute, a new clock is rendered by nine different AI models.&quot;",
+      "url": "https://clocks.brianmoore.com/",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 971,
+        "by": "waxpancake",
+        "descendants": 305
+      }
+    },
+    {
+      "title": "The Internet Is Cool. Thank You, TCP",
+      "description": "",
+      "url": "https://cefboud.com/posts/tcp-deep-dive-internals/",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 18,
+        "by": "signa11",
+        "descendants": 1
+      }
+    },
+    {
+      "title": "L\u00f6b and M\u00f6b: Loops in Haskell",
+      "description": "",
+      "url": "https://github.com/quchen/articles/blob/master/loeb-moeb.md",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 24,
+        "by": "fanf2",
+        "descendants": 4
+      }
+    },
+    {
+      "title": "AMD GPUs Go Brrr",
+      "description": "",
+      "url": "https://hazyresearch.stanford.edu/blog/2025-11-09-amd-brr",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 77,
+        "by": "vinhnx",
+        "descendants": 8
+      }
+    },
+    {
+      "title": "SSL Configuration Generator",
+      "description": "",
+      "url": "https://ssl-config.mozilla.org/",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 148,
+        "by": "smartmic",
+        "descendants": 43
+      }
+    },
+    {
+      "title": "Unofficial Microsoft Teams client for Linux",
+      "description": "",
+      "url": "https://github.com/IsmaelMartinez/teams-for-linux",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 108,
+        "by": "basemi",
+        "descendants": 77
+      }
+    },
+    {
+      "title": "A new Google model is nearly perfect on automated handwriting recognition",
+      "description": "",
+      "url": "https://generativehistory.substack.com/p/has-google-quietly-solved-two-of",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 305,
+        "by": "scrlk",
+        "descendants": 175
+      }
+    },
+    {
+      "title": "HipKittens: Fast and furious AMD kernels",
+      "description": "",
+      "url": "https://hazyresearch.stanford.edu/blog/2025-11-09-hk",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 151,
+        "by": "dataminer",
+        "descendants": 55
+      }
+    },
+    {
+      "title": "Random Font \u2013 a typographic experiment exploring randomness [pdf]",
+      "description": "",
+      "url": "https://www.ilcovile.it/scritti/COVILE_834_Reprint_Random_Font.pdf",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 6,
+        "by": "misone",
+        "descendants": 2
+      }
+    },
+    {
+      "title": "'No One Lives Forever' turns 25 and you still can't buy it legitimately",
+      "description": "",
+      "url": "https://www.techdirt.com/2025/11/13/no-one-lives-forever-turns-25-you-still-cant-buy-it-legitimately/",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 242,
+        "by": "speckx",
+        "descendants": 117
+      }
+    },
+    {
+      "title": "No Leak, No Problem \u2013 Bypassing ASLR with a ROP Chain to Gain RCE",
+      "description": "",
+      "url": "https://modzero.com/en/blog/no-leak-no-problem/",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 68,
+        "by": "todsacerdoti",
+        "descendants": 4
+      }
+    },
+    {
+      "title": "Ohm Editor",
+      "description": "",
+      "url": "https://ohmjs.org/editor/",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 13,
+        "by": "andsoitis",
+        "descendants": 1
+      }
+    },
+    {
+      "title": "All praise to the lunch ladies",
+      "description": "",
+      "url": "https://bittersoutherner.com/issue-no-12/all-praise-to-the-lunch-ladies",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 176,
+        "by": "gmays",
+        "descendants": 97
+      }
+    },
+    {
+      "title": "Structured outputs on the Claude Developer Platform",
+      "description": "",
+      "url": "https://www.claude.com/blog/structured-outputs-on-the-claude-developer-platform",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 136,
+        "by": "adocomplete",
+        "descendants": 58
+      }
+    },
+    {
+      "title": "A race condition in Aurora RDS",
+      "description": "",
+      "url": "https://hightouch.com/blog/uncovering-a-race-condition-in-aurora-rds",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 217,
+        "by": "theanomaly",
+        "descendants": 68
+      }
+    },
+    {
+      "title": "Ucs-Detect",
+      "description": "",
+      "url": "https://ucs-detect.readthedocs.io/intro.html",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 11,
+        "by": "djoldman",
+        "descendants": 1
+      }
+    },
+    {
+      "title": "Lawmakers want to ban VPNs and have no idea what they're doing",
+      "description": "",
+      "url": "https://www.eff.org/deeplinks/2025/11/lawmakers-want-ban-vpns-and-they-have-no-idea-what-theyre-doing",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 182,
+        "by": "gslin",
+        "descendants": 87
+      }
+    },
+    {
+      "title": "Async Mutexes",
+      "description": "",
+      "url": "https://matklad.github.io/2025/11/04/on-async-mutexes.html",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 32,
+        "by": "ingve",
+        "descendants": 7
+      }
+    },
+    {
+      "title": "Meet Reservoir \u2013 The World's Smartest Water Heater",
+      "description": "",
+      "url": "https://www.reservoirhome.com/",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 16,
+        "by": "flakespancakes",
+        "descendants": 10
+      }
+    },
+    {
+      "title": "I can't recommend Grafana anymore",
+      "description": "",
+      "url": "https://henrikgerdes.me/blog/2025-11-grafana-mess/",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 150,
+        "by": "gpi",
+        "descendants": 52
+      }
+    },
+    {
+      "title": "Winamp clone in Swift for macOS",
+      "description": "",
+      "url": "https://github.com/mgreenwood1001/winamp",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 222,
+        "by": "hyperbole",
+        "descendants": 135
+      }
+    },
+    {
+      "title": "GEN-0 / Embodied Foundation Models That Scale with Physical Interaction",
+      "description": "",
+      "url": "https://generalistai.com/blog/nov-04-2025-GEN-0",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 51,
+        "by": "jackdoe",
+        "descendants": 5
+      }
+    },
+    {
+      "title": "Show HN: Tiny Diffusion \u2013 A character-level text diffusion model from scratch",
+      "description": "This is a character-level language diffusion model for text generation.<p>The model is a modified version of Nanochat&#x27;s GPT implementation and is trained on Tiny Shakespeare!<p>It is only 10.7 million parameters, so you can try it out locally.",
+      "url": "https://github.com/nathan-barry/tiny-diffusion",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 125,
+        "by": "nathan-barry",
+        "descendants": 15
+      }
+    },
+    {
+      "title": "Mentra (YC W25) Is Hiring: Head of Growth to Make Smart Glasses Mainstream",
+      "description": "",
+      "url": "https://www.ycombinator.com/companies/mentra/jobs/2YbQCRw-make-smart-glasses-mainstream-head-of-growth",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 1,
+        "by": "caydenpiercehax",
+        "descendants": 0
+      }
+    },
+    {
+      "title": "Manganese is Lyme disease's double-edge sword",
+      "description": "",
+      "url": "https://news.northwestern.edu/stories/2025/11/manganese-is-lyme-diseases-double-edge-sword",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 137,
+        "by": "gmays",
+        "descendants": 77
+      }
+    },
+    {
+      "title": "Hiring the Joker",
+      "description": "",
+      "url": "https://quarter--mile.com/hiring-the-joker",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 17,
+        "by": "surprisetalk",
+        "descendants": 15
+      }
+    },
+    {
+      "title": "The disguised return of EU Chat Control",
+      "description": "<a href=\"https:&#x2F;&#x2F;www.patrick-breyer.de&#x2F;en&#x2F;chat-control-2-0-through-the-back-door-breyer-warns-the-eu-is-playing-us-for-fools-now-theyre-scanning-our-texts-and-banning-teens&#x2F;\" rel=\"nofollow\">https:&#x2F;&#x2F;www.patrick-breyer.de&#x2F;en&#x2F;chat-control-2-0-through-th...</a>",
+      "url": "https://reclaimthenet.org/the-disguised-return-of-the-eus-private-message-scanning-plot",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 636,
+        "by": "egorfine",
+        "descendants": 258
+      }
+    },
+    {
+      "title": "Minisforum Stuffs Entire Arm Homelab in the MS-R1",
+      "description": "",
+      "url": "https://www.jeffgeerling.com/blog/2025/minisforum-stuffs-entire-arm-homelab-ms-r1",
+      "source": "Hacker News",
+      "metadata": {
+        "score": 86,
+        "by": "kencausey",
+        "descendants": 41
+      }
+    }
+  ]
+}

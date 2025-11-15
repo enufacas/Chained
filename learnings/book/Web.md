@@ -2,7 +2,7 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 15
+**Total Insights:** 19
 
 **Last Updated:** 2025-11-15
 
@@ -72,7 +72,47 @@ Deliver web apps with confidence 🚀
 ---
 
 
+### playcanvas/engine - Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+
+**Link:** https://github.com/playcanvas/engine
+
+
+Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+
+---
+
+
+### requestly/requestly - Free and open-source API Client & Interceptor.
+
+**Link:** https://github.com/requestly/requestly
+
+
+Free and open-source API Client & Interceptor.
+
+---
+
+
+### angular/angular - Deliver web apps with confidence 🚀
+
+**Link:** https://github.com/angular/angular
+
+
+Deliver web apps with confidence 🚀
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### The disguised return of EU Chat Control
+
+**Link:** https://reclaimthenet.org/the-disguised-return-of-the-eus-private-message-scanning-plot
+
+
+<a href="https:&#x2F;&#x2F;www.patrick-breyer.de&#x2F;en&#x2F;chat-control-2-0-through-the-back-door-breyer-warns-the-eu-is-playing-us-for-fools-now-theyre-scanning-our-texts-and-banning-teens&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.patrick-breyer.de&#x2F;en&#x2F;chat-control-2-0-through-th...</a>
+
+---
 
 
 ### The disguised return of EU Chat Control
