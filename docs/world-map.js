@@ -249,13 +249,18 @@ function showAgentPopup(agent, region, pos) {
     if (!svg) return;
     
     const idea = agent.current_idea_id ? getIdeaById(agent.current_idea_id) : null;
+    const score = agent.metrics?.overall_score || 0;
+    const specialization = agent.specialization || 'general';
     
     let content = `<tspan x="10" dy="1.2em" font-weight="bold" font-size="14">🤖 ${agent.label}</tspan>`;
-    content += `<tspan x="10" dy="1.4em" font-size="12">📍 ${region.label}</tspan>`;
+    content += `<tspan x="10" dy="1.4em" font-size="11">🏷️ ${specialization}</tspan>`;
+    content += `<tspan x="10" dy="1.3em" font-size="12">📍 ${region.label}</tspan>`;
     content += `<tspan x="10" dy="1.3em" font-size="12">📊 ${agent.status}</tspan>`;
+    content += `<tspan x="10" dy="1.3em" font-size="11">⭐ Score: ${(score * 100).toFixed(0)}%</tspan>`;
+    content += `<tspan x="10" dy="1.3em" font-size="10">📈 ${agent.metrics?.issues_resolved || 0} issues | ${agent.metrics?.prs_merged || 0} PRs</tspan>`;
     
     if (idea) {
-        const title = idea.title.length > 30 ? idea.title.substring(0, 30) + '...' : idea.title;
+        const title = idea.title.length > 25 ? idea.title.substring(0, 25) + '...' : idea.title;
         content += `<tspan x="10" dy="1.3em" font-size="11">💡 ${title}</tspan>`;
     }
     
@@ -271,12 +276,12 @@ function createPopup(svg, x, y, content) {
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     group.classList.add('popup-group');
     
-    // Background
+    // Background - increased height for more content
     const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    bg.setAttribute('x', x - 100);
-    bg.setAttribute('y', y - 150);
-    bg.setAttribute('width', '200');
-    bg.setAttribute('height', '140');
+    bg.setAttribute('x', x - 110);
+    bg.setAttribute('y', y - 180);
+    bg.setAttribute('width', '220');
+    bg.setAttribute('height', '170');
     bg.setAttribute('rx', '8');
     bg.setAttribute('fill', 'white');
     bg.setAttribute('stroke', '#0891b2');
@@ -286,8 +291,8 @@ function createPopup(svg, x, y, content) {
     
     // Close button
     const closeBtn = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    closeBtn.setAttribute('x', x + 85);
-    closeBtn.setAttribute('y', y - 130);
+    closeBtn.setAttribute('x', x + 95);
+    closeBtn.setAttribute('y', y - 160);
     closeBtn.setAttribute('font-size', '18');
     closeBtn.setAttribute('fill', '#666');
     closeBtn.setAttribute('cursor', 'pointer');
@@ -297,8 +302,8 @@ function createPopup(svg, x, y, content) {
     
     // Content
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', x - 90);
-    text.setAttribute('y', y - 145);
+    text.setAttribute('x', x - 100);
+    text.setAttribute('y', y - 175);
     text.setAttribute('fill', '#000');
     text.innerHTML = content;
     group.appendChild(text);
@@ -329,21 +334,47 @@ function updateSidebar() {
     document.getElementById('ideas-value').textContent = worldState.metrics?.total_ideas || 0;
     document.getElementById('regions-value').textContent = worldState.metrics?.total_regions || 0;
     document.getElementById('agents-value').textContent = worldState.agents?.length || 0;
+    document.getElementById('hof-value').textContent = worldState.metrics?.hall_of_fame_count || 0;
+    
+    // Update scoring thresholds with color coding
+    const promotionThreshold = worldState.metrics?.promotion_threshold || 0.85;
+    const eliminationThreshold = worldState.metrics?.elimination_threshold || 0.3;
+    document.getElementById('promotion-threshold').innerHTML = 
+        `<span style="color: #10b981;">${(promotionThreshold * 100).toFixed(0)}%</span>`;
+    document.getElementById('elimination-threshold').innerHTML = 
+        `<span style="color: #ef4444;">${(eliminationThreshold * 100).toFixed(0)}%</span>`;
     
     // Update agents list
     const agentsList = document.getElementById('agents-list');
     if (worldState.agents && worldState.agents.length > 0) {
-        agentsList.innerHTML = worldState.agents.map(agent => {
+        // Sort by overall score descending
+        const sortedAgents = [...worldState.agents].sort((a, b) => 
+            (b.metrics?.overall_score || 0) - (a.metrics?.overall_score || 0)
+        );
+        
+        agentsList.innerHTML = sortedAgents.map(agent => {
             const region = getRegionById(agent.location_region_id);
             const idea = agent.current_idea_id ? getIdeaById(agent.current_idea_id) : null;
+            const score = agent.metrics?.overall_score || 0;
+            const specialization = agent.specialization || 'general';
+            
+            // Color code by score
+            let scoreColor = '#666';
+            if (score >= 0.85) scoreColor = '#10b981'; // green for hall of fame
+            else if (score >= 0.5) scoreColor = '#0891b2'; // cyan for good
+            else if (score >= 0.3) scoreColor = '#f59e0b'; // amber for ok
+            else scoreColor = '#ef4444'; // red for at risk
             
             return `
                 <div class="agent-card">
                     <div class="agent-name">${agent.label}</div>
                     <div class="agent-info">
+                        🏷️ ${specialization}<br>
                         📍 ${region ? region.label : 'Unknown'}<br>
                         📊 ${agent.status}<br>
-                        ${idea ? `💡 ${idea.title.substring(0, 40)}...` : ''}
+                        ⭐ Score: <span style="color: ${scoreColor}; font-weight: bold;">${(score * 100).toFixed(0)}%</span><br>
+                        📈 Resolved: ${agent.metrics?.issues_resolved || 0} | PRs: ${agent.metrics?.prs_merged || 0}<br>
+                        ${idea ? `💡 ${idea.title.substring(0, 30)}...` : ''}
                         ${agent.path && agent.path.length > 0 ? `<br>🗺️ ${agent.path.length} stops remaining` : ''}
                     </div>
                 </div>
