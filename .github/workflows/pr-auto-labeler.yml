@@ -1,0 +1,256 @@
+name: "Automation: Smart PR Auto-Labeling"
+
+# Built by @assert-specialist with specification-driven approach
+# Analyzes PR content and automatically applies appropriate labels
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+    # Don't run on draft PRs to save resources
+    # Exclude certain paths that don't need labeling
+    paths-ignore:
+      - '.github/copilot-instructions.md'
+      - 'learnings/**'
+      - 'analysis/**'
+  
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to analyze and label'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+    # Skip if PR is draft
+    if: github.event.pull_request.draft == false || github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Get PR number
+        id: pr_number
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "pr_number=${{ inputs.pr_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Fetch PR data
+        id: pr_data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUM="${{ steps.pr_number.outputs.pr_number }}"
+          
+          echo "📊 Fetching PR data for #${PR_NUM}..."
+          
+          # Get PR details
+          PR_JSON=$(gh pr view ${PR_NUM} --json title,body,files,labels)
+          
+          echo "PR data fetched successfully"
+          echo "$PR_JSON" > /tmp/pr_data.json
+          
+          # Extract current labels
+          CURRENT_LABELS=$(echo "$PR_JSON" | jq -r '.labels[]?.name' | tr '\n' ',' | sed 's/,$//')
+          echo "current_labels=${CURRENT_LABELS}" >> $GITHUB_OUTPUT
+          
+          # Get changed files list
+          FILES=$(echo "$PR_JSON" | jq -r '.files[]?.path' | jq -R -s -c 'split("\n")[:-1]')
+          
+          # Create analyzer input
+          cat > /tmp/analyzer_input.json << EOFMARKER
+          {
+            "title": $(echo "$PR_JSON" | jq '.title'),
+            "body": $(echo "$PR_JSON" | jq '.body // ""'),
+            "files": ${FILES}
+          }
+          EOFMARKER
+          
+          echo "Analyzer input prepared"
+      
+      - name: Analyze PR content
+        id: analyze
+        run: |
+          echo "🔍 Analyzing PR content..."
+          
+          # Run analyzer
+          python3 tools/pr-content-analyzer.py \
+            --input /tmp/analyzer_input.json \
+            --output /tmp/analysis_result.json \
+            --verbose
+          
+          if [ $? -ne 0 ]; then
+            echo "❌ Analysis failed"
+            exit 1
+          fi
+          
+          # Extract suggested labels
+          SUGGESTED_LABELS=$(cat /tmp/analysis_result.json | jq -r '.labels | join(",")')
+          echo "suggested_labels=${SUGGESTED_LABELS}" >> $GITHUB_OUTPUT
+          
+          # Count labels
+          LABEL_COUNT=$(cat /tmp/analysis_result.json | jq '.labels | length')
+          echo "label_count=${LABEL_COUNT}" >> $GITHUB_OUTPUT
+          
+          echo "✅ Analysis complete: ${LABEL_COUNT} labels suggested"
+          echo "Labels: ${SUGGESTED_LABELS}"
+          
+          # Show confidence scores
+          echo "Confidence scores:"
+          cat /tmp/analysis_result.json | jq -r '.confidence_scores | to_entries[] | "  - \(.key): \(.value * 100 | round)%"'
+      
+      - name: Apply labels
+        id: apply_labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUM="${{ steps.pr_number.outputs.pr_number }}"
+          SUGGESTED="${{ steps.analyze.outputs.suggested_labels }}"
+          CURRENT="${{ steps.pr_data.outputs.current_labels }}"
+          
+          if [ -z "${SUGGESTED}" ]; then
+            echo "ℹ️ No labels suggested by analyzer"
+            exit 0
+          fi
+          
+          echo "🏷️ Applying labels to PR #${PR_NUM}..."
+          
+          # Convert to arrays
+          IFS=',' read -ra SUGGESTED_ARRAY <<< "$SUGGESTED"
+          IFS=',' read -ra CURRENT_ARRAY <<< "$CURRENT"
+          
+          # Filter out labels that are already present
+          NEW_LABELS=()
+          for label in "${SUGGESTED_ARRAY[@]}"; do
+            if [ -n "$label" ]; then
+              # Check if label already exists
+              found=false
+              for current in "${CURRENT_ARRAY[@]}"; do
+                if [ "$label" = "$current" ]; then
+                  found=true
+                  break
+                fi
+              done
+              
+              if [ "$found" = "false" ]; then
+                NEW_LABELS+=("$label")
+              else
+                echo "  ℹ️ Label '$label' already present"
+              fi
+            fi
+          done
+          
+          # Apply new labels
+          if [ ${#NEW_LABELS[@]} -gt 0 ]; then
+            for label in "${NEW_LABELS[@]}"; do
+              echo "  ➕ Adding label: $label"
+              gh pr edit ${PR_NUM} --add-label "$label" || echo "  ⚠️ Failed to add label: $label"
+            done
+            
+            echo "labels_added=${#NEW_LABELS[@]}" >> $GITHUB_OUTPUT
+            echo "✅ Applied ${#NEW_LABELS[@]} new label(s)"
+          else
+            echo "labels_added=0" >> $GITHUB_OUTPUT
+            echo "ℹ️ No new labels to add"
+          fi
+      
+      - name: Post comment with analysis
+        if: steps.analyze.outputs.label_count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUM="${{ steps.pr_number.outputs.pr_number }}"
+          
+          # Check if we already commented on this PR
+          EXISTING_COMMENT=$(gh pr view ${PR_NUM} --json comments --jq '.comments[] | select(.body | contains("🤖 Smart PR Auto-Labeling Analysis")) | .id' | head -1)
+          
+          if [ -n "${EXISTING_COMMENT}" ]; then
+            echo "ℹ️ Analysis comment already exists, skipping"
+            exit 0
+          fi
+          
+          # Create analysis comment
+          cat > /tmp/comment.md << 'EOFMARKER'
+          ## 🤖 Smart PR Auto-Labeling Analysis
+          
+          **@assert-specialist** has analyzed this PR and suggested the following labels:
+          
+          ### Suggested Labels
+          
+          EOFMARKER
+          
+          # Add label details
+          cat /tmp/analysis_result.json | jq -r '
+            .labels[] as $label | 
+            .confidence_scores[$label] as $score |
+            "- **\($label)**: \($score * 100 | round)% confidence"
+          ' >> /tmp/comment.md
+          
+          cat >> /tmp/comment.md << 'EOFMARKER'
+          
+          ### Analysis Details
+          
+          EOFMARKER
+          
+          # Add analysis details
+          cat /tmp/analysis_result.json | jq -r '
+            .analysis_details | 
+            "- **Files changed**: \(.files_changed)\n" +
+            "- **Labels suggested**: \(.labels_suggested)\n" +
+            "- **Rules evaluated**: \(.total_rules_evaluated)"
+          ' >> /tmp/comment.md
+          
+          cat >> /tmp/comment.md << 'EOFMARKER'
+          
+          ---
+          
+          *This is an automated analysis. Labels can be manually adjusted if needed.*
+          
+          *Built by **@assert-specialist** - Specification-driven, systematic labeling*
+          EOFMARKER
+          
+          # Post comment
+          gh pr comment ${PR_NUM} --body-file /tmp/comment.md
+          
+          echo "✅ Posted analysis comment on PR #${PR_NUM}"
+      
+      - name: Generate workflow summary
+        if: always()
+        run: |
+          echo "## 🏷️ Smart PR Auto-Labeling" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**PR**: #${{ steps.pr_number.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -n "${{ steps.analyze.outputs.label_count }}" ]; then
+            echo "### Analysis Results" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- **Labels suggested**: ${{ steps.analyze.outputs.label_count }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Labels applied**: ${{ steps.apply_labels.outputs.labels_added || 0 }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            if [ -f "/tmp/analysis_result.json" ]; then
+              echo "### Suggested Labels" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              cat /tmp/analysis_result.json | jq -r '.labels[] as $label | .confidence_scores[$label] as $score | "- **\($label)**: \($score * 100 | round)% confidence"' >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+          
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Built by **@assert-specialist** - Systematic, specification-driven approach*" >> $GITHUB_STEP_SUMMARY
