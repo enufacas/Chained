@@ -1,0 +1,777 @@
+{
+  "insights": {
+    "insight_1016_b48fba2fa314": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:support-master -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udcd6 support-master** custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_5227d60448e5": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "> \n> **@support-master** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_10dd09d31937": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/support-master",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_8067eecb6d08": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "---\n\n## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_27fded745a6e": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "**Detection Time:** 2025-11-15 15:12:25 UTC\n  \n  ### Health Summary\n  - **Total Workflow Runs:** 100 (last 100 sampled)\n  - **Completed Runs:** 41 (success + failure)\n  - **Failed Runs:** 23\n  - **Failure Rate:** 56",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_42d71cb7a348": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "1% (of completed runs)\n  \n  ### Failed Workflows Breakdown\n  - **",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_33b26fbb10cd": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "github/workflows/assign-agents-to-learnings",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "agent",
+        "learning"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_d340adb91aa9": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "github/workflows/goal-progress-checker",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_0de71178cfd3": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "github/workflows/self-documenting-ai-enhanced",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_fc389cea7cdd": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "github/workflows/world-update",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_79f394cffd99": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Workflow Triggering (HTTP 403)\n  **Symptom:** Workflows fail when trying to trigger other workflows\n  **Solution:** Remove `gh workflow run` commands; rely on scheduled triggers instead\n  \n  #### 2",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_2ebb226d645b": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Missing Secrets\n  **Symptom:** Workflows requiring COPILOT_PAT fail or skip steps\n  **Solution:** Configure required secrets in repository settings\n  \n  #### 3",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_e73830d45729": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "External Dependencies\n  **Symptom:** Workflows calling external APIs fail intermittently\n  **Solution:** Add retry logic and graceful error handling\n  \n  #### 4",
+      "confidence": 0.7,
+      "tags": [
+        "api",
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_b80483428bdd": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Configuration Issues\n  **Symptom:** Workflows fail due to missing files or permissions\n  **Solution:** Verify workflow configurations and file dependencies\n  \n  ### Recommended Actions\n  1",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_7777705cd678": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Review the failed workflows breakdown above\n  2",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_4d5c4c3703b9": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Focus on workflows with multiple failures first\n  4",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_d4bbc1bb9fcc": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "decision",
+      "content": "Close this issue once all problems are resolved and failure rate drops below 20%",
+      "confidence": 0.6,
+      "tags": [
+        "ai"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_964cef8c6976": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "---\n  *This issue was automatically created by the System Monitor workflow",
+      "confidence": 0.6,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-15T15:12:26Z"
+    },
+    "insight_1016_9b10526a8216": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the **\ud83d\udcd6 @support-master** specialization:\n\n- **Agent**: @support-master\n- **Match Confidence**: high\n- **Match Score**: 6\n- **Description**: Specialized agent for supporting skill building",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_16960f059aa0": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "technical",
+      "content": "Focuses on code reviews, best practices, and knowledge sharing",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_97166152ab2b": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_e3582a90fbf0": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/support-master",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_ad015d532dda": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@support-master** by name in all conversations related to this issue",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_90d084b648a7": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@support-master** - Please use the **support-master** custom agent profile from `",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_95449eca901d": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_31442abe5018": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [support-master agent definition](https://github",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_1e671946d0c5": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **@support-master** will analyze the issue requirements using the support-master specialization\n2",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_4923627757b6": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@support-master** will create a branch and implement the solution following the support-master approach\n3",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_d11e91d44247": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@support-master** will open a PR with the implementation\n4",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_ad23b8aeb49e": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_bf5c3170dc9b": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** @support-master (support-master specialization)\n**Assigned at:** 2025-11-15 15:19:27 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:28Z"
+    },
+    "insight_1016_302d8c41ce40": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udd1d Collaboration Suggestions for @support-master\n\nBased on the content of this issue, here are some agents who might be able to help:\n\n### \ud83c\udfaf Recommended Collaborators\n\n\n**1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:29Z"
+    },
+    "insight_1016_9a105ca7e287": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "50)\n\n\n### \ud83d\udcda Collaboration Details\n\n- **Type:** `debugging`\n- **Primary category:** AI_ML\n- **All categories:** AI_ML, Tools\n\n### \ud83d\ude80 How to Request Collaboration\n\nTo request help from any of these agents, you can:\n\n1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent",
+        "ai",
+        "ml"
+      ],
+      "timestamp": "2025-11-15T15:19:29Z"
+    },
+    "insight_1016_2ab1064dddbe": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "**Mention them** in a comment: `@agent-name, could you help with",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:29Z"
+    },
+    "insight_1016_b8fce164043d": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "**Create a collaboration request** using the Agent Collaboration Manager\n3",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:29Z"
+    },
+    "insight_1016_f59dac6f70eb": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "**Add labels** like `collaboration-request` and tag the helper\n\n### \ud83d\udca1 Why These Suggestions",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:19:29Z"
+    },
+    "insight_1016_a593f7dc5d88": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "These agents were selected based on:\n- \u2705 Expertise in relevant learning categories\n- \u2705 Investment levels and specializations\n- \u2705 Availability and collaboration history\n- \u2705 Match with the collaboration type needed\n\n\n**Note:** 5 total potential helpers were found",
+      "confidence": 0.9,
+      "tags": [
+        "agent",
+        "ai",
+        "learning"
+      ],
+      "timestamp": "2025-11-15T15:19:29Z"
+    },
+    "insight_1016_bdf4fac1ed64": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "---\n\n*\ud83e\udd16 Automated collaboration suggestions via Agent Collaboration Manager*",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:29Z"
+    },
+    "insight_1016_95a608406733": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udd1d Collaboration Suggestions for @support-master\n\nBased on the content of this issue, here are some agents who might be able to help:\n\n### \ud83c\udfaf Recommended Collaborators\n\n\n**1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:33Z"
+    },
+    "insight_1016_7ad7942780c3": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "50)\n\n\n### \ud83d\udcda Collaboration Details\n\n- **Type:** `debugging`\n- **Primary category:** Tools\n- **All categories:** Tools, AI_ML\n\n### \ud83d\ude80 How to Request Collaboration\n\nTo request help from any of these agents, you can:\n\n1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent",
+        "ai",
+        "ml"
+      ],
+      "timestamp": "2025-11-15T15:19:33Z"
+    },
+    "insight_1016_7b6349d2631e": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "**Mention them** in a comment: `@agent-name, could you help with",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:33Z"
+    },
+    "insight_1016_f837bfab807a": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "**Create a collaboration request** using the Agent Collaboration Manager\n3",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:33Z"
+    },
+    "insight_1016_cf41fcaea864": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "**Add labels** like `collaboration-request` and tag the helper\n\n### \ud83d\udca1 Why These Suggestions",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:19:33Z"
+    },
+    "insight_1016_f005f0d6e806": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "These agents were selected based on:\n- \u2705 Expertise in relevant learning categories\n- \u2705 Investment levels and specializations\n- \u2705 Availability and collaboration history\n- \u2705 Match with the collaboration type needed\n\n\n**Note:** 5 total potential helpers were found",
+      "confidence": 0.9,
+      "tags": [
+        "agent",
+        "ai",
+        "learning"
+      ],
+      "timestamp": "2025-11-15T15:19:33Z"
+    },
+    "insight_1016_85d4f6654d8c": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "---\n\n*\ud83e\udd16 Automated collaboration suggestions via Agent Collaboration Manager*",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:33Z"
+    },
+    "insight_1016_adbcb35df0c5": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udd1d Collaboration Suggestions for @support-master\n\nBased on the content of this issue, here are some agents who might be able to help:\n\n### \ud83c\udfaf Recommended Collaborators\n\n\n**1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:34Z"
+    },
+    "insight_1016_6c9eb31c488b": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "50)\n\n\n### \ud83d\udcda Collaboration Details\n\n- **Type:** `debugging`\n- **Primary category:** Tools\n- **All categories:** Tools, AI_ML\n\n### \ud83d\ude80 How to Request Collaboration\n\nTo request help from any of these agents, you can:\n\n1",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent",
+        "ai",
+        "ml"
+      ],
+      "timestamp": "2025-11-15T15:19:34Z"
+    },
+    "insight_1016_4f78d6bdf1a0": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "**Mention them** in a comment: `@agent-name, could you help with",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:34Z"
+    },
+    "insight_1016_85b355a5f8ef": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "**Create a collaboration request** using the Agent Collaboration Manager\n3",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:34Z"
+    },
+    "insight_1016_7521d956f797": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "**Add labels** like `collaboration-request` and tag the helper\n\n### \ud83d\udca1 Why These Suggestions",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T15:19:34Z"
+    },
+    "insight_1016_1b41dc713ce8": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "These agents were selected based on:\n- \u2705 Expertise in relevant learning categories\n- \u2705 Investment levels and specializations\n- \u2705 Availability and collaboration history\n- \u2705 Match with the collaboration type needed\n\n\n**Note:** 5 total potential helpers were found",
+      "confidence": 0.9,
+      "tags": [
+        "agent",
+        "ai",
+        "learning"
+      ],
+      "timestamp": "2025-11-15T15:19:34Z"
+    },
+    "insight_1016_56bc70658d36": {
+      "issue_number": 1016,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-15",
+      "insight_type": "agent_behavior",
+      "content": "---\n\n*\ud83e\udd16 Automated collaboration suggestions via Agent Collaboration Manager*",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T15:19:34Z"
+    }
+  },
+  "connections": [
+    {
+      "source_insight_id": "insight_1016_e3582a90fbf0",
+      "target_insight_id": "insight_1016_10dd09d31937",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.572968+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_e3582a90fbf0",
+      "target_insight_id": "insight_1016_10dd09d31937",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.573187+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_e3582a90fbf0",
+      "target_insight_id": "insight_1016_10dd09d31937",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.574114+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_e3582a90fbf0",
+      "target_insight_id": "insight_1016_10dd09d31937",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.574955+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_95a608406733",
+      "target_insight_id": "insight_1016_302d8c41ce40",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.581625+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_7ad7942780c3",
+      "target_insight_id": "insight_1016_9a105ca7e287",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.582436+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_7b6349d2631e",
+      "target_insight_id": "insight_1016_2ab1064dddbe",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.582955+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_f837bfab807a",
+      "target_insight_id": "insight_1016_b8fce164043d",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.583454+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_cf41fcaea864",
+      "target_insight_id": "insight_1016_f59dac6f70eb",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.584080+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_f005f0d6e806",
+      "target_insight_id": "insight_1016_a593f7dc5d88",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.585031+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_85d4f6654d8c",
+      "target_insight_id": "insight_1016_bdf4fac1ed64",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.585614+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_adbcb35df0c5",
+      "target_insight_id": "insight_1016_302d8c41ce40",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.586496+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_adbcb35df0c5",
+      "target_insight_id": "insight_1016_95a608406733",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.586505+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_6c9eb31c488b",
+      "target_insight_id": "insight_1016_9a105ca7e287",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.587468+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_6c9eb31c488b",
+      "target_insight_id": "insight_1016_7ad7942780c3",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.587478+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_4f78d6bdf1a0",
+      "target_insight_id": "insight_1016_2ab1064dddbe",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.588100+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_4f78d6bdf1a0",
+      "target_insight_id": "insight_1016_7b6349d2631e",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.588109+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_85b355a5f8ef",
+      "target_insight_id": "insight_1016_b8fce164043d",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.588701+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_85b355a5f8ef",
+      "target_insight_id": "insight_1016_f837bfab807a",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.588724+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_7521d956f797",
+      "target_insight_id": "insight_1016_f59dac6f70eb",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.589448+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_7521d956f797",
+      "target_insight_id": "insight_1016_cf41fcaea864",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.589456+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_1b41dc713ce8",
+      "target_insight_id": "insight_1016_a593f7dc5d88",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.590574+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_1b41dc713ce8",
+      "target_insight_id": "insight_1016_f005f0d6e806",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.590585+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_56bc70658d36",
+      "target_insight_id": "insight_1016_bdf4fac1ed64",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.591273+00:00"
+    },
+    {
+      "source_insight_id": "insight_1016_56bc70658d36",
+      "target_insight_id": "insight_1016_85d4f6654d8c",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T15:34:00.591282+00:00"
+    }
+  ],
+  "metadata": {
+    "created": "2025-11-15T15:34:00.567736+00:00",
+    "last_updated": "2025-11-15T15:34:00.591293+00:00",
+    "total_insights": 52,
+    "total_connections": 25
+  }
+}
