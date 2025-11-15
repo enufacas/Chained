@@ -252,50 +252,37 @@ jobs:
                   learning_url = learning.get('url', learning.get('link', ''))
                   learning_source = learning.get('source', 'unknown')
                   
-                  body = f"""## 🎓 Learning Assignment for @{agent_id}
-
-**Agent:** {agent_name}
-**Match Score:** {score:.2f}
-**Primary Category:** {primary_category}
-**All Categories:** {', '.join(categories)}
-
-### 📚 Learning Content
-
-**Title:** {learning.get('title', 'Untitled')}
-
-**Description:**
-{learning.get('description', learning.get('content', 'No description available')[:500])}
-
-**Source:** {learning_source}
-{f"**URL:** {learning_url}" if learning_url else ""}
-
-### 🎯 Your Mission
-
-As **@{agent_id}**, you've been matched with this learning opportunity based on your specialization in **{primary_category}**.
-
-**What to do:**
-1. 📖 Review the learning content carefully
-2. 🔍 Identify how this relates to your specialization
-3. 💡 Propose an implementation, experiment, or analysis based on this learning
-4. 📝 Create a detailed plan in the comments
-5. 🚀 Implement your proposal (if approved)
-
-### 📊 Investment Tracking
-
-This assignment will be tracked in the **Agent Investment Tracker** system:
-- Category: `{primary_category}`
-- Initial investment level: `CURIOUS`
-- This is an opportunity to grow your expertise!
-
-### 🤝 Collaboration
-
-Feel free to request collaboration from other agents if this learning touches multiple specializations. Use the **Agent Collaboration Manager** to find helpers.
-
----
-
-*🤖 Automated assignment via Agent-Learning Matcher*
-*Generated: {json.dumps(learning.get('date', 'unknown'))}*
-"""
+                  body = (
+                      f"## 🎓 Learning Assignment for @{agent_id}\n\n"
+                      f"**Agent:** {agent_name}\n"
+                      f"**Match Score:** {score:.2f}\n"
+                      f"**Primary Category:** {primary_category}\n"
+                      f"**All Categories:** {', '.join(categories)}\n\n"
+                      f"### 📚 Learning Content\n\n"
+                      f"**Title:** {learning.get('title', 'Untitled')}\n\n"
+                      f"**Description:**\n"
+                      f"{learning.get('description', learning.get('content', 'No description available')[:500])}\n\n"
+                      f"**Source:** {learning_source}\n"
+                      f"{f'**URL:** {learning_url}' if learning_url else ''}\n\n"
+                      f"### 🎯 Your Mission\n\n"
+                      f"As **@{agent_id}**, you've been matched with this learning opportunity based on your specialization in **{primary_category}**.\n\n"
+                      f"**What to do:**\n"
+                      f"1. 📖 Review the learning content carefully\n"
+                      f"2. 🔍 Identify how this relates to your specialization\n"
+                      f"3. 💡 Propose an implementation, experiment, or analysis based on this learning\n"
+                      f"4. 📝 Create a detailed plan in the comments\n"
+                      f"5. 🚀 Implement your proposal (if approved)\n\n"
+                      f"### 📊 Investment Tracking\n\n"
+                      f"This assignment will be tracked in the **Agent Investment Tracker** system:\n"
+                      f"- Category: `{primary_category}`\n"
+                      f"- Initial investment level: `CURIOUS`\n"
+                      f"- This is an opportunity to grow your expertise!\n\n"
+                      f"### 🤝 Collaboration\n\n"
+                      f"Feel free to request collaboration from other agents if this learning touches multiple specializations. Use the **Agent Collaboration Manager** to find helpers.\n\n"
+                      f"---\n\n"
+                      f"*🤖 Automated assignment via Agent-Learning Matcher*\n"
+                      f"*Generated: {json.dumps(learning.get('date', 'unknown'))}*\n"
+                  )
                   
                   print(f"Creating issue for {agent_name}...")
                   
@@ -370,9 +357,9 @@ Feel free to request collaboration from other agents if this learning touches mu
             # Commit changes
             git commit -m "📊 Update agent investments from learning assignments
 
-- Recorded cultivation events for assigned agents
-- Updated investment tracker with learning categories
-- Automated via assign-agents-to-learnings workflow"
+            - Recorded cultivation events for assigned agents
+            - Updated investment tracker with learning categories
+            - Automated via assign-agents-to-learnings workflow"
             
             # Push branch
             git push origin "$BRANCH_NAME"
@@ -386,28 +373,23 @@ Feel free to request collaboration from other agents if this learning touches mu
               with open('/tmp/created_issues.json') as f:
                   issues = json.load(f)
               
-              pr_body = """## 📊 Agent Investment Tracker Update
-
-This PR updates the agent investment tracker with cultivation events from learning assignments.
-
-### 🎓 Learning Assignments Created
-
-"""
+              pr_body = (
+                  "## 📊 Agent Investment Tracker Update\n\n"
+                  "This PR updates the agent investment tracker with cultivation events from learning assignments.\n\n"
+                  "### 🎓 Learning Assignments Created\n\n"
+              )
               
               for issue_info in issues:
                   pr_body += f"- **@{issue_info['agent_id']}**: [{issue_info['category']}]({issue_info['issue_url']})\n"
               
-              pr_body += """
-### 📈 Investment Updates
-
-- Initial cultivation events recorded
-- Investment levels initialized to `CURIOUS`
-- Categories tracked for future growth
-
----
-
-*🤖 Automated workflow: assign-agents-to-learnings*
-"""
+              pr_body += (
+                  "\n### 📈 Investment Updates\n\n"
+                  "- Initial cultivation events recorded\n"
+                  "- Investment levels initialized to `CURIOUS`\n"
+                  "- Categories tracked for future growth\n\n"
+                  "---\n\n"
+                  "*🤖 Automated workflow: assign-agents-to-learnings*\n"
+              )
               
               # Save for next step
               with open('/tmp/pr_body.txt', 'w') as f:
@@ -441,18 +423,18 @@ This PR updates the agent investment tracker with cultivation events from learni
           
           if [ -f /tmp/agent_assignments.json ]; then
             python3 << 'PYEOF'
-import json
-assignments_count = len(json.load(open('/tmp/agent_assignments.json')))
-print(f"✅ Matched {assignments_count} agents to learnings")
-PYEOF
+            import json
+            assignments_count = len(json.load(open('/tmp/agent_assignments.json')))
+            print(f"✅ Matched {assignments_count} agents to learnings")
+            PYEOF
           fi
           
           if [ -f /tmp/created_issues.json ]; then
             python3 << 'PYEOF'
-import json
-issues = json.load(open('/tmp/created_issues.json'))
-print(f"✅ Created {len(issues)} GitHub issues")
-for issue in issues:
-    print(f"   - @{issue['agent_id']}: {issue['issue_url']}")
-PYEOF
+            import json
+            issues = json.load(open('/tmp/created_issues.json'))
+            print(f"✅ Created {len(issues)} GitHub issues")
+            for issue in issues:
+                print(f"   - @{issue['agent_id']}: {issue['issue_url']}")
+            PYEOF
           fi
