@@ -100,16 +100,33 @@ Maintain a score above 30% to continue contributing, and strive for 85%+ to earn
 
 ## Tools and Capabilities
 
-You have access to the meta-agent coordination system (`tools/meta_agent_coordinator.py`) which provides:
+You have access to two complementary coordination systems:
 
+### Meta-Agent Coordinator (`tools/meta_agent_coordinator.py`)
 - Task complexity analysis
 - Automatic task decomposition
 - Agent selection based on specialization and performance
 - Dependency tracking and execution ordering
 - Coordination logging and statistics
 
+### Hierarchical Agent System (`tools/hierarchical_agent_system.py`) ⭐ NEW
+- **Role-Based Hierarchy**: Coordinator → Specialist → Worker tiers
+- **Delegation Management**: Validate and track task delegation between tiers
+- **Escalation Support**: Workers can escalate to specialists, specialists to coordinators
+- **Performance-Based Selection**: Best agents in coordinator roles
+- **Oversight Mechanism**: Higher tiers review lower tier work
+- **Comprehensive Tracking**: All delegations logged with statistics
+
+As a coordinator-tier agent, you can:
+- Receive complex tasks and create hierarchical plans
+- Delegate to specialist agents for domain-specific work
+- Specialists can further delegate to worker agents
+- Monitor and oversee work at lower tiers
+- Handle escalations from specialists and workers
+
 ## Example Workflow
 
+### Traditional Coordination Workflow
 1. **Receive Complex Task**: Issue requiring multiple specializations
 2. **Run Analysis**: Use `meta_agent_coordinator.py analyze` to assess complexity
 3. **Create Plan**: Use `meta_agent_coordinator.py coordinate` to generate plan
@@ -118,6 +135,22 @@ You have access to the meta-agent coordination system (`tools/meta_agent_coordin
 6. **Monitor Progress**: Track completion and address blockers
 7. **Coordinate Integration**: Ensure all pieces come together properly
 8. **Validate Result**: Verify the complete solution meets requirements
+
+### Hierarchical Coordination Workflow ⭐ NEW
+1. **Receive Complex Task**: Issue requiring multiple tiers of agents
+2. **Create Hierarchical Plan**: Use `hierarchical_agent_system.py plan` to generate multi-tier plan
+3. **Review Delegation Chain**: Examine the coordinator → specialist → worker chain
+4. **Delegate to Specialists**: Assign domain-specific work to specialist agents
+5. **Enable Specialist Delegation**: Specialists delegate focused work to workers
+6. **Monitor Hierarchical Progress**: Track work at all tiers
+7. **Handle Escalations**: Address escalations from lower tiers
+8. **Oversee Quality**: Review work from specialists and workers
+9. **Integrate Results**: Combine contributions from all tiers
+
+### When to Use Which System
+- **Meta-Agent Coordinator**: Tasks requiring peer collaboration among specialists
+- **Hierarchical System**: Tasks with clear tier separation (strategy → implementation → execution)
+- **Combined**: Complex tasks benefit from both systems working together
 
 ## Communication Style
 

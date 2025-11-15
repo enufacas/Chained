@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "delegation_chains": [
+    {
+      "delegation_id": "del-1763196792",
+      "from_agent": "agent-1762928620",
+      "from_role": "coordinator",
+      "to_agent": "agent-1762910779",
+      "to_role": "specialist",
+      "task_description": "Implement secure authentication endpoints",
+      "context": {
+        "priority": "high",
+        "deadline": "2025-11-20"
+      },
+      "status": "pending",
+      "created_at": "2025-11-15T08:53:12.808411+00:00"
+    }
+  ],
+  "statistics": {
+    "total_delegations": 1,
+    "successful_delegations": 0,
+    "escalations": 1,
+    "avg_chain_length": 0.0
+  }
+}
