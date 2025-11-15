@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 36
+**Total Insights:** 41
 
 **Last Updated:** 2025-11-14
 
@@ -42,7 +42,44 @@ Open Source Spotify client library
 ---
 
 
+### davila7/claude-code-templates - CLI tool for configuring and monitoring Claude Code
+
+**Link:** https://github.com/davila7/claude-code-templates
+
+
+CLI tool for configuring and monitoring Claude Code
+
+---
+
+
+### jaywcjlove/awesome-mac -  Now we have become very big, Different from the original idea. Collect premium software in various
+
+**Link:** https://github.com/jaywcjlove/awesome-mac
+
+
+ Now we have become very big, Different from the original idea. Collect premium software in various categories.
+
+---
+
+
+### librespot-org/librespot - Open Source Spotify client library
+
+**Link:** https://github.com/librespot-org/librespot
+
+
+Open Source Spotify client library
+
+---
+
+
 ## 📰 From Hacker News
+
+
+### Meeting notes between Forgejo and the Dutch government via Git commits
+
+**Link:** https://codeberg.org/forgejo/sustainability/pulls/137/files
+
+---
 
 
 ### Think in math, write in code (2019
@@ -288,16 +325,28 @@ in a new tab. When you're done, simply close that tab...
 ---
 
 
-### Valdi – A cross-platform UI framework that delivers native performance
+## 📰 From TLDR Tech
 
-**Community Score:** 480 upvotes
 
-**Link:** https://github.com/Snapchat/Valdi
+### Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌
+
+**Link:** https://tldr.tech/ai/2025-11-14
+
+
+**Content Summary:**
+
+Traditional Browsers are Going Extinct (and that's a good thing) (Sponsor)
+Forget passive browsing with no added context—
+Norton Neo
+is the world's first safe, AI-native browser, making every interaction faster, safer, and more efficient.
+Zero-prompt productivity: AI that truly works for you
+Configurable memory, unique to you
+Private and safe by design
+Context-aware, smart tab grouping
+Try Norton Neo here and join the future
+.
 
 ---
-
-
-## 📰 From TLDR Tech
 
 
 ### Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻

@@ -2,7 +2,7 @@
 
 > SQL, NoSQL, data storage, and data engineering
 
-**Total Insights:** 9
+**Total Insights:** 10
 
 **Last Updated:** 2025-11-14
 
@@ -10,6 +10,13 @@
 
 
 ## 📰 From Hacker News
+
+
+### RegreSQL: Regression Testing for PostgreSQL Queries
+
+**Link:** https://boringsql.com/posts/regresql-testing-queries/
+
+---
 
 
 ### RegreSQL: Regression Testing for PostgreSQL Queries
