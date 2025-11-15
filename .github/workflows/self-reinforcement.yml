@@ -1,0 +1,300 @@
+name: "Self-Reinforcement Learning"
+
+on:
+  schedule:
+    # Run daily to collect insights
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  self-reinforce:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests
+      
+      - name: Collect closed issues and PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'EOF'
+          import requests
+          import json
+          import os
+          from datetime import datetime, timezone, timedelta
+          
+          GITHUB_TOKEN = os.environ['GH_TOKEN']
+          REPO = os.environ['GITHUB_REPOSITORY']
+          
+          headers = {
+              'Authorization': f'token {GITHUB_TOKEN}',
+              'Accept': 'application/vnd.github.v3+json'
+          }
+          
+          print("🔄 Collecting closed issues and PRs for self-reinforcement")
+          
+          # Get closed issues from last 7 days
+          since_date = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+          
+          # Fetch closed issues
+          issues_url = f'https://api.github.com/repos/{REPO}/issues'
+          params = {
+              'state': 'closed',
+              'since': since_date,
+              'per_page': 100,
+              'labels': 'agent-mission,learning'
+          }
+          
+          response = requests.get(issues_url, headers=headers, params=params)
+          issues = response.json()
+          
+          print(f"Found {len(issues)} closed issues")
+          
+          # Fetch closed PRs
+          prs_url = f'https://api.github.com/repos/{REPO}/pulls'
+          pr_params = {
+              'state': 'closed',
+              'per_page': 100
+          }
+          
+          pr_response = requests.get(prs_url, headers=headers, params=pr_params)
+          prs = [pr for pr in pr_response.json() if pr.get('merged_at')]
+          
+          print(f"Found {len(prs)} merged PRs")
+          
+          # Extract insights
+          insights = {
+              'timestamp': datetime.now(timezone.utc).isoformat(),
+              'collection_period_days': 7,
+              'issues_analyzed': len(issues),
+              'prs_analyzed': len(prs),
+              'insights': []
+          }
+          
+          # Process issues
+          for issue in issues:
+              issue_number = issue['number']
+              issue_title = issue['title']
+              issue_body = issue.get('body', '')
+              labels = [label['name'] for label in issue.get('labels', [])]
+              
+              # Extract patterns
+              patterns = [label.replace('pattern-', '') for label in labels if label.startswith('pattern-')]
+              locations = [label.replace('location-', '') for label in labels if label.startswith('location-')]
+              
+              insight = {
+                  'type': 'issue',
+                  'number': issue_number,
+                  'title': issue_title,
+                  'labels': labels,
+                  'patterns': patterns,
+                  'locations': locations,
+                  'closed_at': issue.get('closed_at'),
+                  'url': issue['html_url']
+              }
+              
+              insights['insights'].append(insight)
+          
+          # Process PRs
+          for pr in prs:
+              pr_number = pr['number']
+              pr_title = pr['title']
+              pr_body = pr.get('body', '')
+              labels = [label['name'] for label in pr.get('labels', [])]
+              
+              insight = {
+                  'type': 'pr',
+                  'number': pr_number,
+                  'title': pr_title,
+                  'labels': labels,
+                  'merged_at': pr.get('merged_at'),
+                  'url': pr['html_url']
+              }
+              
+              insights['insights'].append(insight)
+          
+          # Save insights
+          os.makedirs('learnings', exist_ok=True)
+          timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+          filename = f'learnings/unsupervised_learning_{timestamp}.json'
+          
+          with open(filename, 'w') as f:
+              json.dump(insights, f, indent=2)
+          
+          print(f"\n✅ Saved {len(insights['insights'])} insights to {filename}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"has_insights=true\n")
+              f.write(f"insight_count={len(insights['insights'])}\n")
+              f.write(f"learning_file={filename}\n")
+          
+          EOF
+      
+      - name: Generate unsupervised learning document
+        id: generate_doc
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from collections import Counter
+          
+          # Find most recent unsupervised learning file
+          import glob
+          files = sorted(glob.glob('learnings/unsupervised_learning_*.json'), key=os.path.getmtime, reverse=True)
+          
+          if not files:
+              print("No unsupervised learning file found")
+              sys.exit(0)
+          
+          learning_file = files[0]
+          
+          with open(learning_file, 'r') as f:
+              data = json.load(f)
+          
+          insights = data.get('insights', [])
+          
+          print(f"📊 Analyzing {len(insights)} insights")
+          
+          # Analyze patterns
+          all_patterns = []
+          all_locations = []
+          
+          for insight in insights:
+              all_patterns.extend(insight.get('patterns', []))
+              all_locations.extend(insight.get('locations', []))
+          
+          pattern_counts = Counter(all_patterns)
+          location_counts = Counter(all_locations)
+          
+          # Generate markdown document
+          timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+          md_filename = f'learnings/UNSUPERVISED_LEARNING_COMPLETE_{timestamp}.md'
+          
+          with open(md_filename, 'w') as f:
+              f.write(f"# Unsupervised Learning Summary\n\n")
+              f.write(f"**Generated:** {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}\n")
+              f.write(f"**Analysis Period:** {data.get('collection_period_days', 7)} days\n\n")
+              
+              f.write(f"## 📊 Overview\n\n")
+              f.write(f"- **Issues Analyzed:** {data.get('issues_analyzed', 0)}\n")
+              f.write(f"- **PRs Analyzed:** {data.get('prs_analyzed', 0)}\n")
+              f.write(f"- **Total Insights:** {len(insights)}\n\n")
+              
+              f.write(f"## 🏷️ Top Patterns\n\n")
+              for pattern, count in pattern_counts.most_common(10):
+                  f.write(f"- **{pattern}**: {count} occurrences\n")
+              f.write(f"\n")
+              
+              f.write(f"## 🌍 Top Locations\n\n")
+              for location, count in location_counts.most_common(10):
+                  f.write(f"- **{location}**: {count} occurrences\n")
+              f.write(f"\n")
+              
+              f.write(f"## 📝 Key Insights\n\n")
+              
+              # Group by type
+              issues = [i for i in insights if i.get('type') == 'issue']
+              prs = [i for i in insights if i.get('type') == 'pr']
+              
+              f.write(f"### Closed Issues ({len(issues)})\n\n")
+              for issue in issues[:5]:
+                  f.write(f"- **{issue['title']}** ([#{issue['number']}]({issue['url']}))\n")
+                  if issue.get('patterns'):
+                      f.write(f"  - Patterns: {', '.join(issue['patterns'])}\n")
+              f.write(f"\n")
+              
+              f.write(f"### Merged PRs ({len(prs)})\n\n")
+              for pr in prs[:5]:
+                  f.write(f"- **{pr['title']}** ([#{pr['number']}]({pr['url']}))\n")
+              f.write(f"\n")
+              
+              f.write(f"## 💡 Learnings\n\n")
+              f.write(f"This unsupervised learning cycle identified patterns in closed work:\n\n")
+              
+              if pattern_counts:
+                  top_pattern = pattern_counts.most_common(1)[0]
+                  f.write(f"- **{top_pattern[0]}** emerged as the dominant pattern\n")
+              
+              if location_counts:
+                  top_location = location_counts.most_common(1)[0]
+                  f.write(f"- **{top_location[0]}** was the most active location\n")
+              
+              f.write(f"\n## 🔄 Next Steps\n\n")
+              f.write(f"These insights will be:\n")
+              f.write(f"1. Combined with other learning sources\n")
+              f.write(f"2. Integrated into the world model\n")
+              f.write(f"3. Used to create new agent missions\n\n")
+              
+              f.write(f"---\n\n")
+              f.write(f"*Generated by Self-Reinforcement Learning workflow*\n")
+          
+          print(f"✅ Generated learning document: {md_filename}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"md_file={md_filename}\n")
+              f.write(f"top_pattern={pattern_counts.most_common(1)[0][0] if pattern_counts else 'none'}\n")
+              f.write(f"top_location={location_counts.most_common(1)[0][0] if location_counts else 'none'}\n")
+          
+          EOF
+      
+      - name: Trigger combined learning workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔄 Triggering combined learning workflow to process unsupervised insights"
+          
+          gh workflow run combined-learning.yml \
+            --field include_github_trending=false \
+            --field include_tldr=false \
+            --field include_hackernews=false \
+            2>&1 || echo "Note: Combined learning trigger may not be immediate"
+      
+      - name: Create PR for self-reinforcement learnings
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add learnings/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="self-reinforcement/${TIMESTAMP}-${{ github.run_id }}"
+            
+            git checkout -b "$BRANCH_NAME"
+            git commit -m "📚 Self-reinforcement learning - $(date -u +%Y-%m-%d)"
+            git push origin "$BRANCH_NAME"
+            
+            gh pr create --title "📚 Self-Reinforcement Learning - $(date -u +%Y-%m-%d)" --body "Self-reinforcement learning automated by @meta-coordinator. Collected insights from closed issues and PRs. Top pattern: ${{ steps.generate_doc.outputs.top_pattern }}, Top location: ${{ steps.generate_doc.outputs.top_location }}. This learning will be combined with other sources and integrated into the world model." --label "automated,learning,ai-generated" --base main --head "$BRANCH_NAME"
+          fi
+      
+      - name: Log summary
+        run: |
+          echo "===================="
+          echo "Self-Reinforcement Complete"
+          echo "===================="
+          echo "Insights collected: ${{ steps.generate_doc.outputs.insight_count || 0 }}"
+          echo "Top pattern: ${{ steps.generate_doc.outputs.top_pattern || 'none' }}"
+          echo "Top location: ${{ steps.generate_doc.outputs.top_location || 'none' }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

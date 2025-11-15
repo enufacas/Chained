@@ -519,6 +519,16 @@ jobs:
             echo "✅ PR created successfully"
           fi
 
+      - name: Trigger world model update
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🌍 Triggering world model update workflow"
+          
+          gh workflow run world-update.yml 2>&1 || echo "Note: World update trigger may not be immediate"
+          
+          echo "✅ World update workflow triggered to process new learnings"
+      
       - name: Log summary
         run: |
           echo "===================="
@@ -527,4 +537,5 @@ jobs:
           echo "Total learnings: ${{ steps.analyze.outputs.total_learnings }}"
           echo "Sources: ${{ steps.analyze.outputs.source_count }}"
           echo "Top topic: ${{ steps.analyze.outputs.top_topic }}"
+          echo "Next: World model update → Agent missions"
           echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
