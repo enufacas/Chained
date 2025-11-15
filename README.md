@@ -243,10 +243,20 @@ While fully autonomous, **human contributions are welcome!** All external PRs re
 
 ### How to Contribute
 - 💡 **Suggest ideas** - Add to `idea-generator.yml`
-- 🔧 **Improve workflows** - Enhance automation
+- 🔧 **Improve workflows** - Enhance automation (see [Workflow Validation Guide](./WORKFLOW_VALIDATION_GUIDE.md))
 - 📝 **Write docs** - Help others understand
 - 🐛 **Fix issues** - Help where AI struggles
 - 🧠 **Share learnings** - Create issues with `learning` label
+
+### ⚠️ Workflow Changes
+
+**All workflow changes are automatically validated before merge!** When you modify `.github/workflows/` files:
+- ✅ YAML syntax is validated
+- ✅ Required structure is checked
+- ✅ Prohibited patterns are detected (e.g., direct push to main)
+- ✅ PR-based workflow pattern is enforced
+
+**Learn more**: [Workflow Validation Guide](./WORKFLOW_VALIDATION_GUIDE.md)
 
 **See [Security Implementation](./docs/SECURITY_IMPLEMENTATION.md)** for how external PRs are handled safely.
 

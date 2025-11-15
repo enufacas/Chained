@@ -1,0 +1,34 @@
+{
+  "agent_id": "agent-1763082710",
+  "timestamp": "2025-11-15T00:47:27.390857+00:00",
+  "activity": {
+    "issues_resolved": 1,
+    "issues_created": 1,
+    "prs_created": 0,
+    "prs_merged": 0,
+    "prs_closed": 0,
+    "reviews_given": 0,
+    "comments_made": 0,
+    "commits_made": 0
+  },
+  "scores": {
+    "code_quality": 0.5,
+    "issue_resolution": 1.0,
+    "pr_success": 0.0,
+    "peer_review": 0.0,
+    "creativity": 0.5316666666666666,
+    "overall": 0.42974999999999997
+  },
+  "metadata": {
+    "lookback_days": 7,
+    "repo": "enufacas/Chained",
+    "weights": {
+      "code_quality": 0.3,
+      "issue_resolution": 0.2,
+      "pr_success": 0.2,
+      "peer_review": 0.15,
+      "creativity": 0.15
+    },
+    "creativity_enabled": true
+  }
+}
