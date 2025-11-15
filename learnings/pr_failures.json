@@ -1,5 +1,516 @@
 {
-  "failures": [],
-  "last_updated": "2025-11-14T20:46:32.353704+00:00",
-  "total_count": 0
+  "failures": [
+    {
+      "pr_number": 39,
+      "title": "\ud83d\udcca Timeline Update - ",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-09T07:19:22Z",
+      "closed_at": "2025-11-09T14:20:42Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "completed",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 873,
+      "title": "Fix workflow health: add validation, retry logic, directory prep (@investigate-champion)",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:43:00Z",
+      "closed_at": "2025-11-15T04:18:53Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 881,
+      "title": "\ud83d\udcc8 Multi-Spawn: Edsger Dijkstra (6/10.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:54:21Z",
+      "closed_at": "2025-11-15T04:15:26Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 875,
+      "title": "\ud83d\udcad Multi-Spawn: Knuth (1/3.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:52:25Z",
+      "closed_at": "2025-11-15T04:15:22Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 879,
+      "title": "\ud83d\udd28 Multi-Spawn: Knuth (1/10.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:54:05Z",
+      "closed_at": "2025-11-15T04:15:03Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 882,
+      "title": "\ud83c\udfed Multi-Spawn: Newton (5/10.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:54:24Z",
+      "closed_at": "2025-11-15T04:14:58Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 884,
+      "title": "\ud83d\ude80 Multi-Spawn: Edsger Dijkstra (7/10.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:54:37Z",
+      "closed_at": "2025-11-15T04:14:53Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 890,
+      "title": "\ud83c\udf1f Learning-Based Agent: Steam Machine Specialist",
+      "author": "github-actions[bot]",
+      "agent_id": "agent-system",
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:57:51Z",
+      "closed_at": "2025-11-15T04:14:47Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot",
+        "agent-system",
+        "learning-based"
+      ]
+    },
+    {
+      "pr_number": 889,
+      "title": "\ud83c\udfaf Learning-Based Agent: Steam Machine Specialist",
+      "author": "github-actions[bot]",
+      "agent_id": "agent-system",
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:57:50Z",
+      "closed_at": "2025-11-15T04:14:40Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot",
+        "agent-system",
+        "learning-based"
+      ]
+    },
+    {
+      "pr_number": 885,
+      "title": "\ud83d\udd10 Multi-Spawn: Feynman (8/10.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:54:41Z",
+      "closed_at": "2025-11-15T04:13:51Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 886,
+      "title": "\ud83d\udea8 Multi-Spawn: Katie Moussouris (9/10.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:54:43Z",
+      "closed_at": "2025-11-15T04:13:46Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 883,
+      "title": "\ud83d\udd8c\ufe0f Multi-Spawn: Susan Kare (4/10.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:54:25Z",
+      "closed_at": "2025-11-15T04:13:42Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 880,
+      "title": "\ud83d\udd17 Multi-Spawn: Roy Fielding (3/10.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:54:05Z",
+      "closed_at": "2025-11-15T04:07:57Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 878,
+      "title": "\u270f\ufe0f Multi-Spawn: Jony Ive (2/10.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:54:05Z",
+      "closed_at": "2025-11-15T04:07:50Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 877,
+      "title": "\ud83d\udcad Multi-Spawn: Donald Knuth (2/3.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:52:28Z",
+      "closed_at": "2025-11-15T04:07:45Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 876,
+      "title": "\ud83d\udd12 Multi-Spawn: Ada (3/3.0)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:52:25Z",
+      "closed_at": "2025-11-15T04:07:38Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 869,
+      "title": "\ud83d\udcca Timeline Update - 2025-11-15 03:37:08 UTC",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:37:09Z",
+      "closed_at": "2025-11-15T04:05:05Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 868,
+      "title": "\ud83c\udfed New Agent Spawned: Margaret Hamilton",
+      "author": "github-actions[bot]",
+      "agent_id": "agent-system",
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:37:04Z",
+      "closed_at": "2025-11-15T04:04:59Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot",
+        "agent-system"
+      ]
+    },
+    {
+      "pr_number": 851,
+      "title": "\ud83d\udcda New Agent Spawned: Richard Feynman",
+      "author": "github-actions[bot]",
+      "agent_id": "agent-system",
+      "agent_specialization": null,
+      "created_at": "2025-11-14T21:14:21Z",
+      "closed_at": "2025-11-15T04:04:53Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot",
+        "agent-system"
+      ]
+    },
+    {
+      "pr_number": 827,
+      "title": "\ud83d\udcca Goal progress update - 2025-11-14",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-14T15:24:29Z",
+      "closed_at": "2025-11-15T04:04:36Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "documentation",
+        "automated"
+      ]
+    },
+    {
+      "pr_number": 853,
+      "title": "\ud83d\udcca Goal progress update - 2025-11-14",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-14T21:23:55Z",
+      "closed_at": "2025-11-15T04:04:27Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated"
+      ]
+    },
+    {
+      "pr_number": 861,
+      "title": "\ud83d\udcca Goal progress update - 2025-11-15",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T01:59:22Z",
+      "closed_at": "2025-11-15T04:04:21Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated"
+      ]
+    }
+  ],
+  "last_updated": "2025-11-15T04:31:50.375751+00:00",
+  "total_count": 22
 }
