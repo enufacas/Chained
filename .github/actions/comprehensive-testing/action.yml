@@ -1,0 +1,34 @@
+name: Comprehensive Testing
+description: Run all tests with coverage reporting
+inputs:
+  test-framework:
+    description: Testing framework (pytest, jest, unittest)
+    required: false
+    default: auto
+  coverage-threshold:
+    description: Minimum coverage percentage
+    required: false
+    default: '80'
+runs:
+  using: composite
+  steps:
+  - name: Auto-detect and run tests
+    shell: bash
+    run: "\n# Auto-detect testing framework\nif [ -f \"pytest.ini\" ] || [ -f \"pyproject.toml\"\
+      \ ] || command -v pytest &> /dev/null; then\n  echo \"Running pytest...\"\n\
+      \  pytest --cov=. --cov-report=term --cov-report=html\nelif [ -f \"package.json\"\
+      \ ] && grep -q \"jest\" package.json; then\n  echo \"Running jest...\"\n  npm\
+      \ test -- --coverage\nelif [ -d \"tests/\" ] || ls test_*.py 2>/dev/null; then\n\
+      \  echo \"Running unittest...\"\n  python -m unittest discover -v\nelse\n  echo\
+      \ \"No test framework detected\"\n  exit 1\nfi\n"
+  - name: Check coverage threshold
+    shell: bash
+    run: '
+
+      # This is a placeholder for coverage threshold checking
+
+      # In real implementation, parse coverage reports
+
+      echo "Coverage threshold: ${{ inputs.coverage-threshold }}%"
+
+      '

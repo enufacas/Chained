@@ -1,0 +1,13 @@
+name: Pip Deployment
+description: Deploy using pip
+inputs:
+  environment:
+    description: Deployment environment
+    required: false
+    default: production
+runs:
+  using: composite
+  steps:
+  - name: Deploy to pip
+    shell: bash
+    run: echo "Deploy to pip - ${{ inputs.environment }}"

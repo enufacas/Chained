@@ -1,0 +1,13 @@
+name: Automated Http Requests
+description: Reusable action for http_requests operations
+inputs:
+  options:
+    description: Additional options
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+  - name: Execute http_requests
+    shell: bash
+    run: 'echo "Executing http_requests with options: ${{ inputs.options }}"'

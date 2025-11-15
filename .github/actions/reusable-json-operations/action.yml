@@ -1,0 +1,13 @@
+name: Automated Json Operations
+description: Reusable action for json_operations operations
+inputs:
+  options:
+    description: Additional options
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+  - name: Execute json_operations
+    shell: bash
+    run: 'echo "Executing json_operations with options: ${{ inputs.options }}"'

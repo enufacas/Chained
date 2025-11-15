@@ -1,0 +1,41 @@
+name: Python Project Automation
+description: Automated Python linting, testing, and quality checks
+inputs:
+  python-version:
+    description: Python version to use
+    required: false
+    default: '3.11'
+  requirements-file:
+    description: Path to requirements file
+    required: false
+    default: requirements.txt
+  run-tests:
+    description: Whether to run tests
+    required: false
+    default: 'true'
+  run-lint:
+    description: Whether to run linting
+    required: false
+    default: 'true'
+runs:
+  using: composite
+  steps:
+  - name: Set up Python
+    uses: actions/setup-python@v4
+    with:
+      python-version: ${{ inputs.python-version }}
+  - name: Install dependencies
+    shell: bash
+    run: "\nif [ -f \"${{ inputs.requirements-file }}\" ]; then\n  pip install -r\
+      \ \"${{ inputs.requirements-file }}\"\nfi\n"
+  - name: Run linting
+    if: inputs.run-lint == 'true'
+    shell: bash
+    run: "\nif command -v flake8 &> /dev/null; then\n  flake8 . --count --select=E9,F63,F7,F82\
+      \ --show-source --statistics\nfi\nif command -v pylint &> /dev/null; then\n\
+      \  pylint **/*.py --disable=all --enable=E,F || true\nfi\n"
+  - name: Run tests
+    if: inputs.run-tests == 'true'
+    shell: bash
+    run: "\nif command -v pytest &> /dev/null; then\n  pytest -v\nelif [ -f \"test_*.py\"\
+      \ ] || [ -d \"tests/\" ]; then\n  python -m unittest discover\nfi\n"

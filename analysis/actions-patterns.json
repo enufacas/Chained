@@ -1,0 +1,254 @@
+{
+  "timestamp": "2025-11-15T13:33:39.998415+00:00",
+  "repo_path": ".",
+  "file_statistics": {
+    ".md": 542,
+    ".py": 204,
+    ".txt": 6,
+    ".json": 389,
+    ".sh": 19,
+    ".html": 12,
+    ".js": 9,
+    ".css": 1,
+    ".yml": 55,
+    ".backup": 1,
+    ".png": 3,
+    ".mmd": 2
+  },
+  "existing_workflows_count": 46,
+  "patterns_detected": 7,
+  "patterns": {
+    "testing_frameworks": [
+      {
+        "file": "tools/test_enhanced_discussion_learner.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tools/actions-pattern-analyzer.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tools/test_api_coordination_hub.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_ab_testing_engine.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/nl-to-code-translator.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_issue_discussion_learner.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tools/test_semantic_similarity_engine.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_fetch_web_content_security.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_commit_strategy_learner.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_pattern_matcher.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_pr_failure_learner.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_agent_system_refactored.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_protected_agents.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_dynamic_agent_spawner.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_knowledge_graph_query.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_thematic_analyzer.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_github_trending_fetcher.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_actions_generator.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_last_spawn_fix.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_lazy_evaluation_system.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_github_integration.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_exception_handling_fixes.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_intelligent_content_parser.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_chained_tv.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_knowledge_graph_builder.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_mentorship_system.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_meta_agent_coordinator.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_spawn_sequence.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_workflow_harmonizer.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_atomic_registry_updater.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_nl_to_code_translator.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_code_style_transfer.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_prompt_generator.py",
+        "framework": "unittest"
+      }
+    ],
+    "build_tools": [
+      "rollup",
+      "rollup"
+    ],
+    "workflow_triggers": {},
+    "repeated_operations": {
+      "regex_operations": 56,
+      "json_operations": 137,
+      "http_requests": 8,
+      "action:actions/checkout": 53,
+      "action:actions/setup-python": 43,
+      "python_scripts": 110,
+      "git_operations": 110,
+      "action:actions/setup-node": 3,
+      "action:actions/upload-artifact": 3
+    },
+    "test_directories": [
+      "tests"
+    ],
+    "test_files_count": 89,
+    "deployment_types": [
+      "pip"
+    ]
+  },
+  "recommendations": [
+    {
+      "priority": "high",
+      "title": "Abstract repeated regex_operations operation",
+      "description": "The operation \"regex_operations\" appears 56 times. Consider creating a reusable action.",
+      "pattern": "regex_operations",
+      "occurrences": 56,
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Abstract repeated json_operations operation",
+      "description": "The operation \"json_operations\" appears 137 times. Consider creating a reusable action.",
+      "pattern": "json_operations",
+      "occurrences": 137,
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Abstract repeated http_requests operation",
+      "description": "The operation \"http_requests\" appears 8 times. Consider creating a reusable action.",
+      "pattern": "http_requests",
+      "occurrences": 8,
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Abstract repeated python_scripts operation",
+      "description": "The operation \"python_scripts\" appears 110 times. Consider creating a reusable action.",
+      "pattern": "python_scripts",
+      "occurrences": 110,
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Abstract repeated git_operations operation",
+      "description": "The operation \"git_operations\" appears 110 times. Consider creating a reusable action.",
+      "pattern": "git_operations",
+      "occurrences": 110,
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Automated testing action",
+      "description": "Found 89 test files. Create a comprehensive testing action.",
+      "pattern": "testing",
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Python project automation",
+      "description": "Create actions for Python linting, testing, and packaging.",
+      "pattern": "python_automation",
+      "action_type": "composite"
+    },
+    {
+      "priority": "medium",
+      "title": "Deployment action for pip",
+      "description": "Automate pip deployment process.",
+      "pattern": "deployment_pip",
+      "action_type": "composite"
+    }
+  ],
+  "common_operations": {
+    "regex_operations": 56,
+    "json_operations": 137,
+    "http_requests": 8,
+    "action:actions/checkout": 53,
+    "action:actions/setup-python": 43,
+    "python_scripts": 110,
+    "git_operations": 110,
+    "action:actions/github-script": 1,
+    "action:actions/setup-node": 3,
+    "action:actions/upload-artifact": 3
+  }
+}
