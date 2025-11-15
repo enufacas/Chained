@@ -17,10 +17,15 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
+  actions: write
 
 jobs:
   evaluate-agents:
     runs-on: ubuntu-latest
+    outputs:
+      has_results: ${{ steps.check_results.outputs.has_results }}
+      pr_number: ${{ steps.create_pr.outputs.pr_number }}
+      pr_created: ${{ steps.create_pr.outputs.pr_created }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -249,8 +254,19 @@ jobs:
             echo "has_results=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Check for evaluation results
+        id: check_results
+        run: |
+          if [ -f "/tmp/evaluation_results.json" ]; then
+            echo "has_results=true" >> $GITHUB_OUTPUT
+            echo "✅ Evaluation results available"
+          else
+            echo "has_results=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No evaluation results"
+          fi
+
       - name: Update agent profiles
-        if: steps.evaluate.outputs.has_results == 'true'
+        if: steps.check_results.outputs.has_results == 'true'
         run: |
           python3 << 'PYTHON_SCRIPT'
           import json
@@ -289,7 +305,7 @@ jobs:
           PYTHON_SCRIPT
 
       - name: Archive eliminated agents
-        if: steps.evaluate.outputs.has_results == 'true'
+        if: steps.check_results.outputs.has_results == 'true'
         run: |
           mkdir -p .github/agent-system/archive
           mkdir -p .github/agent-system/archive/definitions
@@ -334,8 +350,9 @@ jobs:
           
           PYTHON_SCRIPT
 
-      - name: Commit changes
-        if: steps.evaluate.outputs.has_results == 'true'
+      - name: Create evaluation PR
+        id: create_pr
+        if: steps.check_results.outputs.has_results == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -425,17 +442,22 @@ jobs:
           ---
           *🤖 Automated agent evaluation system - Survival of the fittest in action!*"
           
-          gh pr create \
+          PR_URL=$(gh pr create \
             --title "🏛️ Daily Agent Evaluation - $(date +%Y-%m-%d)" \
             --body "$PR_BODY" \
-            --label "agent-system,evaluation,automated,copilot" \
+            --label "agent-system,evaluation,automated,copilot,auto-merge" \
             --base main \
-            --head "$BRANCH_NAME"
+            --head "$BRANCH_NAME")
           
-          echo "✅ Evaluation PR created"
+          # Extract PR number
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "pr_created=true" >> $GITHUB_OUTPUT
+          echo "✅ Evaluation PR created: #${PR_NUMBER}"
 
       - name: Create evaluation report issue
-        if: steps.evaluate.outputs.has_results == 'true'
+        if: steps.check_results.outputs.has_results == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -524,19 +546,358 @@ jobs:
           
           PYTHON_SCRIPT
 
+  # ============================================================================
+  # STAGE 2: MERGE EVALUATION PR
+  # ============================================================================
+  
+  merge-evaluation-pr:
+    name: "Stage 2: Merge Evaluation PR"
+    runs-on: ubuntu-latest
+    needs: evaluate-agents
+    if: always() && !cancelled() && needs.evaluate-agents.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger Auto Review and Merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.evaluate-agents.outputs.pr_number }}"
+          echo "🔄 Triggering Auto Review & Merge workflow for PR #$PR_NUMBER..."
+          
+          # Trigger the auto-review-merge workflow with the specific PR number
+          gh workflow run auto-review-merge.yml \
+            --repo ${{ github.repository }} \
+            -f pr_number="$PR_NUMBER"
+          
+          echo "✅ Auto-review workflow triggered for PR #$PR_NUMBER"
+
+      - name: Wait for PR to be merged
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.evaluate-agents.outputs.pr_number }}"
+          echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
+          
+          # Give auto-review-merge workflow time to start processing
+          echo "   Giving auto-review workflow 8 seconds to start..."
+          sleep 8
+          
+          # Wait up to 3 minutes with exponential backoff for the PR to be merged
+          MAX_WAIT=180  # 3 minutes
+          ELAPSED=8  # Already waited 8 seconds
+          WAIT_INTERVAL=3  # Start with 3 seconds
+          CHECK_COUNT=0
+          
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            CHECK_COUNT=$((CHECK_COUNT + 1))
+            
+            # Check PR state - use --json to get full state including merged status
+            PR_DATA=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state,mergedAt,closed)
+            PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+            MERGED_AT=$(echo "$PR_DATA" | jq -r '.mergedAt')
+            IS_CLOSED=$(echo "$PR_DATA" | jq -r '.closed')
+            
+            # Check if merged (mergedAt will be non-null if merged)
+            if [ "$MERGED_AT" != "null" ] && [ "$MERGED_AT" != "" ]; then
+              echo "✅ PR #$PR_NUMBER was merged successfully! (verified in ${ELAPSED}s after $CHECK_COUNT checks)"
+              echo "🎉 Evaluation PR merged - continuing to world model update"
+              exit 0
+            elif [ "$PR_STATE" = "MERGED" ]; then
+              echo "✅ PR #$PR_NUMBER has been merged successfully! (detected in ${ELAPSED}s after $CHECK_COUNT checks)"
+              echo "🎉 Evaluation PR merged - continuing to world model update"
+              exit 0
+            elif [ "$IS_CLOSED" = "true" ] && [ "$MERGED_AT" = "null" ]; then
+              echo "⚠️ PR #$PR_NUMBER was closed without merging"
+              echo "This may indicate an issue with the auto-review process"
+              exit 1
+            elif [ "$PR_STATE" = "CLOSED" ]; then
+              # Double-check if it was actually merged
+              MERGED_CHECK=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json mergedAt --jq '.mergedAt')
+              if [ "$MERGED_CHECK" != "null" ] && [ "$MERGED_CHECK" != "" ]; then
+                echo "✅ PR #$PR_NUMBER was merged successfully! (verified in ${ELAPSED}s)"
+                echo "🎉 Evaluation PR merged - continuing to world model update"
+                exit 0
+              else
+                echo "⚠️ PR #$PR_NUMBER was closed without merging"
+                exit 1
+              fi
+            fi
+            
+            # Still waiting - sleep and then update elapsed time
+            echo "   Check $CHECK_COUNT: PR #$PR_NUMBER is $PR_STATE, waiting ${WAIT_INTERVAL}s... (${ELAPSED}s elapsed)"
+            sleep $WAIT_INTERVAL
+            ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+            
+            # Exponential backoff: double wait time, max 30 seconds
+            if [ $WAIT_INTERVAL -lt 30 ]; then
+              WAIT_INTERVAL=$((WAIT_INTERVAL * 2))
+            fi
+          done
+          
+          # Timeout reached - do final check
+          echo "⏰ Timeout reached after ${ELAPSED}s"
+          FINAL_CHECK=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state,mergedAt --jq '{state: .state, mergedAt: .mergedAt}')
+          echo "Final PR state: $FINAL_CHECK"
+          
+          FINAL_MERGED=$(echo "$FINAL_CHECK" | jq -r '.mergedAt')
+          if [ "$FINAL_MERGED" != "null" ] && [ "$FINAL_MERGED" != "" ]; then
+            echo "✅ PR #$PR_NUMBER was actually merged! (confirmed on final check)"
+            exit 0
+          fi
+          
+          echo "❌ PR #$PR_NUMBER was not merged within ${MAX_WAIT} seconds"
+          echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          exit 1
+
+  # ============================================================================
+  # STAGE 3: SYNC TO WORLD MODEL
+  # ============================================================================
+  
+  sync-to-world:
+    name: "Stage 3: Sync Agents to World Model"
+    runs-on: ubuntu-latest
+    needs: [evaluate-agents, merge-evaluation-pr]
+    if: always() && !cancelled() && needs.evaluate-agents.outputs.has_results == 'true'
+    outputs:
+      has_changes: ${{ steps.world_sync.outputs.has_changes }}
+      pr_number: ${{ steps.world_pr.outputs.pr_number }}
+      pr_created: ${{ steps.world_pr.outputs.pr_created }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main  # Checkout main after evaluation PR is merged
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || echo "⚠️ No requirements.txt, continuing..."
+
+      - name: Sync agents to world model
+        id: world_sync
+        run: |
+          echo "🌍 Syncing agent evaluation results to world model..."
+          
+          # Sync agents from registry to world
+          if [ -f "world/sync_agents_to_world.py" ]; then
+            python3 world/sync_agents_to_world.py 2>&1 || echo "⚠️ Agent sync warning (continuing)"
+          else
+            echo "⚠️ world/sync_agents_to_world.py not found, skipping agent sync"
+          fi
+          
+          # Update agent state
+          if [ -f "scripts/update_agent.py" ]; then
+            python3 scripts/update_agent.py 2>&1 || echo "⚠️ Agent state update warning (continuing)"
+          else
+            echo "⚠️ scripts/update_agent.py not found, skipping state update"
+          fi
+          
+          # Sync to docs for GitHub Pages
+          mkdir -p docs/world
+          if [ -f "world/world_state.json" ]; then
+            cp world/world_state.json docs/world/
+            echo "✅ Synced world_state.json to docs/world/"
+          fi
+          if [ -f "world/knowledge.json" ]; then
+            cp world/knowledge.json docs/world/
+            echo "✅ Synced knowledge.json to docs/world/"
+          fi
+          
+          # Check for changes
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add world/ docs/world/ 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No world model changes needed"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "✅ World model updated with agent evaluation data"
+          fi
+
+      - name: Create PR with world updates
+        id: world_pr
+        if: steps.world_sync.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="agent-eval-world-sync/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git commit -m "🌍 World Model: Agent Evaluation Sync"
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR
+          PR_URL=$(gh pr create \
+            --title "🌍 World Model: Agent Evaluation Sync - $(date +%Y-%m-%d)" \
+            --body "## 🌍 World Model Sync: Agent Evaluation
+          
+          **Pipeline Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          Updates:
+          - ✅ Agent positions synchronized from evaluation
+          - ✅ Agent registry data reflected in world state
+          - ✅ World model updated for agent environment
+          
+          **Note:** This PR will be auto-merged by the next pipeline stage.
+          
+          This sync ensures agents have access to updated evaluation data in their world model environment.
+          " \
+            --label "automated,world-model,agent-system,auto-merge,copilot" \
+            --base main \
+            --head "$BRANCH_NAME")
+          
+          # Extract PR number
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "pr_created=true" >> $GITHUB_OUTPUT
+
+  # ============================================================================
+  # STAGE 4: MERGE WORLD MODEL PR
+  # ============================================================================
+  
+  merge-world-pr:
+    name: "Stage 4: Merge World Model PR"
+    runs-on: ubuntu-latest
+    needs: sync-to-world
+    if: always() && !cancelled() && needs.sync-to-world.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger Auto Review and Merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.sync-to-world.outputs.pr_number }}"
+          echo "🔄 Triggering Auto Review & Merge workflow for PR #$PR_NUMBER..."
+          
+          # Trigger the auto-review-merge workflow with the specific PR number
+          gh workflow run auto-review-merge.yml \
+            --repo ${{ github.repository }} \
+            -f pr_number="$PR_NUMBER"
+          
+          echo "✅ Auto-review workflow triggered for PR #$PR_NUMBER"
+
+      - name: Wait for PR to be merged
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.sync-to-world.outputs.pr_number }}"
+          echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
+          
+          # Give auto-review-merge workflow time to start processing
+          echo "   Giving auto-review workflow 8 seconds to start..."
+          sleep 8
+          
+          # Wait up to 3 minutes with exponential backoff for the PR to be merged
+          MAX_WAIT=180  # 3 minutes
+          ELAPSED=8  # Already waited 8 seconds
+          WAIT_INTERVAL=3  # Start with 3 seconds
+          CHECK_COUNT=0
+          
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            CHECK_COUNT=$((CHECK_COUNT + 1))
+            
+            # Check PR state - use --json to get full state including merged status
+            PR_DATA=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state,mergedAt,closed)
+            PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+            MERGED_AT=$(echo "$PR_DATA" | jq -r '.mergedAt')
+            IS_CLOSED=$(echo "$PR_DATA" | jq -r '.closed')
+            
+            # Check if merged (mergedAt will be non-null if merged)
+            if [ "$MERGED_AT" != "null" ] && [ "$MERGED_AT" != "" ]; then
+              echo "✅ PR #$PR_NUMBER was merged successfully! (verified in ${ELAPSED}s after $CHECK_COUNT checks)"
+              echo "🎉 World model PR merged - agent evaluation pipeline complete!"
+              exit 0
+            elif [ "$PR_STATE" = "MERGED" ]; then
+              echo "✅ PR #$PR_NUMBER has been merged successfully! (detected in ${ELAPSED}s after $CHECK_COUNT checks)"
+              echo "🎉 World model PR merged - agent evaluation pipeline complete!"
+              exit 0
+            elif [ "$IS_CLOSED" = "true" ] && [ "$MERGED_AT" = "null" ]; then
+              echo "⚠️ PR #$PR_NUMBER was closed without merging"
+              echo "This may indicate an issue with the auto-review process"
+              exit 1
+            elif [ "$PR_STATE" = "CLOSED" ]; then
+              # Double-check if it was actually merged
+              MERGED_CHECK=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json mergedAt --jq '.mergedAt')
+              if [ "$MERGED_CHECK" != "null" ] && [ "$MERGED_CHECK" != "" ]; then
+                echo "✅ PR #$PR_NUMBER was merged successfully! (verified in ${ELAPSED}s)"
+                echo "🎉 World model PR merged - agent evaluation pipeline complete!"
+                exit 0
+              else
+                echo "⚠️ PR #$PR_NUMBER was closed without merging"
+                exit 1
+              fi
+            fi
+            
+            # Still waiting - sleep and then update elapsed time
+            echo "   Check $CHECK_COUNT: PR #$PR_NUMBER is $PR_STATE, waiting ${WAIT_INTERVAL}s... (${ELAPSED}s elapsed)"
+            sleep $WAIT_INTERVAL
+            ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+            
+            # Exponential backoff: double wait time, max 30 seconds
+            if [ $WAIT_INTERVAL -lt 30 ]; then
+              WAIT_INTERVAL=$((WAIT_INTERVAL * 2))
+            fi
+          done
+          
+          # Timeout reached - do final check
+          echo "⏰ Timeout reached after ${ELAPSED}s"
+          FINAL_CHECK=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state,mergedAt --jq '{state: .state, mergedAt: .mergedAt}')
+          echo "Final PR state: $FINAL_CHECK"
+          
+          FINAL_MERGED=$(echo "$FINAL_CHECK" | jq -r '.mergedAt')
+          if [ "$FINAL_MERGED" != "null" ] && [ "$FINAL_MERGED" != "" ]; then
+            echo "✅ PR #$PR_NUMBER was actually merged! (confirmed on final check)"
+            exit 0
+          fi
+          
+          echo "❌ PR #$PR_NUMBER was not merged within ${MAX_WAIT} seconds"
+          echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          exit 1
+
+  # ============================================================================
+  # STAGE 5: SUMMARY
+  # ============================================================================
+
+  pipeline-summary:
+    name: "Stage 5: Pipeline Summary"
+    runs-on: ubuntu-latest
+    needs: [evaluate-agents, merge-evaluation-pr, sync-to-world, merge-world-pr]
+    if: always() && !cancelled()
+    
+    steps:
       - name: Summary
         run: |
-          echo "🏛️ Agent Evaluation Complete!"
+          echo "🏛️ Agent Evaluation Pipeline Complete!"
           echo ""
-          if [ -f "/tmp/evaluation_results.json" ]; then
-            python3 << 'PYTHON_SCRIPT'
-          import json
-          with open('/tmp/evaluation_results.json', 'r') as f:
-              results = json.load(f)
-          print(f"Promoted: {len(results.get('promoted', []))}")
-          print(f"Eliminated: {len(results.get('eliminated', []))}")
-          print(f"Maintained: {len(results.get('maintained', []))}")
-          PYTHON_SCRIPT
+          echo "Pipeline Stages:"
+          echo "  Stage 1: Agent Evaluation - ${{ needs.evaluate-agents.result }}"
+          echo "  Stage 2: Merge Evaluation PR - ${{ needs.merge-evaluation-pr.result }}"
+          echo "  Stage 3: Sync to World Model - ${{ needs.sync-to-world.result }}"
+          echo "  Stage 4: Merge World Model PR - ${{ needs.merge-world-pr.result }}"
+          echo ""
+          if [ "${{ needs.evaluate-agents.outputs.has_results }}" = "true" ]; then
+            echo "✅ Agent evaluation completed with results"
+            echo "   Evaluation PR: #${{ needs.evaluate-agents.outputs.pr_number }}"
+            if [ "${{ needs.sync-to-world.outputs.pr_created }}" = "true" ]; then
+              echo "   World Model PR: #${{ needs.sync-to-world.outputs.pr_number }}"
+            fi
           else
-            echo "No agents to evaluate"
+            echo "ℹ️ No agents to evaluate"
           fi
+          echo ""
+          echo "🎉 Multi-stage agent evaluation pipeline completed!"
