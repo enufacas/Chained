@@ -362,9 +362,9 @@ Feel free to request collaboration from other agents if this learning touches mu
             # Commit changes
             git commit -m "📊 Update agent investments from learning assignments
 
-          - Recorded cultivation events for assigned agents
-          - Updated investment tracker with learning categories
-          - Automated via assign-agents-to-learnings workflow"
+- Recorded cultivation events for assigned agents
+- Updated investment tracker with learning categories
+- Automated via assign-agents-to-learnings workflow"
             
             # Push branch
             git push origin "$BRANCH_NAME"
@@ -380,26 +380,26 @@ Feel free to request collaboration from other agents if this learning touches mu
               
               pr_body = """## 📊 Agent Investment Tracker Update
 
-          This PR updates the agent investment tracker with cultivation events from learning assignments.
+This PR updates the agent investment tracker with cultivation events from learning assignments.
 
-          ### 🎓 Learning Assignments Created
+### 🎓 Learning Assignments Created
 
-          """
+"""
               
               for issue_info in issues:
                   pr_body += f"- **@{issue_info['agent_id']}**: [{issue_info['category']}]({issue_info['issue_url']})\n"
               
               pr_body += """
-          ### 📈 Investment Updates
+### 📈 Investment Updates
 
-          - Initial cultivation events recorded
-          - Investment levels initialized to `CURIOUS`
-          - Categories tracked for future growth
+- Initial cultivation events recorded
+- Investment levels initialized to `CURIOUS`
+- Categories tracked for future growth
 
-          ---
+---
 
-          *🤖 Automated workflow: assign-agents-to-learnings*
-          """
+*🤖 Automated workflow: assign-agents-to-learnings*
+"""
               
               # Save for next step
               with open('/tmp/pr_body.txt', 'w') as f:
@@ -433,18 +433,18 @@ Feel free to request collaboration from other agents if this learning touches mu
           
           if [ -f /tmp/agent_assignments.json ]; then
             python3 << 'PYEOF'
-          import json
-          assignments_count = len(json.load(open('/tmp/agent_assignments.json')))
-          print(f"✅ Matched {assignments_count} agents to learnings")
-          PYEOF
+import json
+assignments_count = len(json.load(open('/tmp/agent_assignments.json')))
+print(f"✅ Matched {assignments_count} agents to learnings")
+PYEOF
           fi
           
           if [ -f /tmp/created_issues.json ]; then
             python3 << 'PYEOF'
-          import json
-          issues = json.load(open('/tmp/created_issues.json'))
-          print(f"✅ Created {len(issues)} GitHub issues")
-          for issue in issues:
-              print(f"   - @{issue['agent_id']}: {issue['issue_url']}")
-          PYEOF
+import json
+issues = json.load(open('/tmp/created_issues.json'))
+print(f"✅ Created {len(issues)} GitHub issues")
+for issue in issues:
+    print(f"   - @{issue['agent_id']}: {issue['issue_url']}")
+PYEOF
           fi
