@@ -183,6 +183,12 @@ class MetricsCollector:
         self.repo = repo or os.environ.get('GITHUB_REPOSITORY', 'enufacas/Chained')
         self.cache_size = cache_size
         
+        # Initialize caches for batch evaluation optimization
+        self._issue_cache: Dict[int, Dict] = {}  # issue_number -> issue_details
+        self._pr_cache: Dict[int, Dict] = {}  # pr_number -> pr_details
+        self._timeline_cache: Dict[int, List] = {}  # issue_number -> timeline events
+        self._api_call_count = 0  # Track API calls for monitoring
+        
         # Check GitHub API connectivity
         self._check_github_api_access()
         
@@ -233,6 +239,7 @@ class MetricsCollector:
                 
                 if remaining < 100:
                     print(f"⚠️  Warning: Low rate limit remaining ({remaining})", file=sys.stderr)
+                    print(f"⚠️  Consider reducing evaluation frequency or optimizing queries", file=sys.stderr)
                 
                 return True
             else:
@@ -241,6 +248,32 @@ class MetricsCollector:
         except Exception as e:
             print(f"⚠️  Warning: Could not check GitHub API access: {e}", file=sys.stderr)
             return False
+    
+    def clear_caches(self) -> None:
+        """
+        Clear all internal caches.
+        
+        This should be called between separate evaluation runs to ensure fresh data.
+        """
+        self._issue_cache.clear()
+        self._pr_cache.clear()
+        self._timeline_cache.clear()
+        self._api_call_count = 0
+        print("🔄 Caches cleared", file=sys.stderr)
+    
+    def get_api_stats(self) -> Dict[str, Any]:
+        """
+        Get statistics about API usage during this session.
+        
+        Returns:
+            Dictionary with API usage stats
+        """
+        return {
+            'api_calls': self._api_call_count,
+            'cached_issues': len(self._issue_cache),
+            'cached_prs': len(self._pr_cache),
+            'cached_timelines': len(self._timeline_cache)
+        }
     
     def _load_scoring_weights(self) -> Dict[str, float]:
         """Load scoring weights from registry configuration"""
@@ -288,6 +321,90 @@ class MetricsCollector:
         
         return None
     
+    def _batch_fetch_all_agent_issues(self, since_days: int) -> Dict[str, List[Dict]]:
+        """
+        Pre-fetch ALL agent-work issues once and distribute to agents.
+        
+        This is a critical optimization that reduces O(n*m) API calls to O(m) calls,
+        where n = number of agents and m = number of issues.
+        
+        Args:
+            since_days: Look back period
+            
+        Returns:
+            Dictionary mapping agent_id to list of assigned issues
+        """
+        print(f"🔄 Batch fetching all agent-work issues (last {since_days} days)...", file=sys.stderr)
+        
+        agent_issues_map = {}
+        since_date = (datetime.now(timezone.utc) - timedelta(days=since_days)).isoformat()
+        
+        try:
+            # Fetch all agent-work issues in a single search
+            all_issues = self._search_issues(
+                'batch_fetch',
+                'is:issue',
+                'label:agent-work',
+                f'created:>={since_date}'
+            )
+            self._api_call_count += 1
+            
+            print(f"📋 Found {len(all_issues)} total agent-work issues", file=sys.stderr)
+            
+            # Fetch full details for each issue (batched)
+            for issue in all_issues:
+                issue_number = issue.get('number')
+                if not issue_number:
+                    continue
+                
+                # Check cache first
+                if issue_number in self._issue_cache:
+                    issue_details = self._issue_cache[issue_number]
+                else:
+                    # Fetch if not cached
+                    issue_details = self.github.get(f'/repos/{self.repo}/issues/{issue_number}')
+                    self._api_call_count += 1
+                    if issue_details:
+                        self._issue_cache[issue_number] = issue_details
+                
+                if not issue_details:
+                    continue
+                
+                body = issue_details.get('body', '')
+                
+                # Extract COPILOT_AGENT assignment from body
+                # Format: <!-- COPILOT_AGENT:specialization_name -->
+                pattern = r'<!--\s*COPILOT_AGENT:\s*([a-z\-]+)\s*-->'
+                match = re.search(pattern, body, re.IGNORECASE)
+                
+                if match:
+                    specialization = match.group(1).lower()
+                    
+                    # Find which agent has this specialization
+                    try:
+                        if REGISTRY_MANAGER_AVAILABLE:
+                            registry = RegistryManager()
+                            active_agents = registry.list_agents(status='active')
+                            
+                            for agent in active_agents:
+                                if agent.get('specialization', '').lower() == specialization:
+                                    agent_id = agent['id']
+                                    if agent_id not in agent_issues_map:
+                                        agent_issues_map[agent_id] = []
+                                    agent_issues_map[agent_id].append(issue_details)
+                                    print(f"  ✅ Issue #{issue_number} → {agent['name']}", file=sys.stderr)
+                                    break
+                    except Exception as e:
+                        print(f"⚠️  Warning: Could not map issue {issue_number}: {e}", file=sys.stderr)
+            
+            print(f"✅ Distributed issues to {len(agent_issues_map)} agents", file=sys.stderr)
+            print(f"📊 API calls so far: {self._api_call_count}", file=sys.stderr)
+            
+        except Exception as e:
+            print(f"⚠️  Warning: Batch fetch failed: {e}", file=sys.stderr)
+        
+        return agent_issues_map
+    
     def _is_strict_pr_attribution_enabled(self) -> bool:
         """
         Check if strict PR attribution checking is enabled in config.
@@ -309,7 +426,9 @@ class MetricsCollector:
     def _find_issues_assigned_to_agent(
         self,
         agent_id: str,
-        since_days: int
+        since_days: int,
+        use_batch_cache: bool = False,
+        batch_cache: Optional[Dict[str, List[Dict]]] = None
     ) -> List[Dict]:
         """
         Find issues assigned to this agent via COPILOT_AGENT comment.
@@ -320,10 +439,17 @@ class MetricsCollector:
         Args:
             agent_id: Agent identifier
             since_days: Look back period
+            use_batch_cache: If True, use pre-fetched batch cache instead of searching
+            batch_cache: Pre-fetched issues map from batch operation
             
         Returns:
             List of issues assigned to this agent
         """
+        # Use batch cache if available (optimization for evaluate_all_agents)
+        if use_batch_cache and batch_cache is not None:
+            return batch_cache.get(agent_id, [])
+        
+        # Fallback to individual agent search (for single-agent metrics)
         assigned_issues = []
         specialization = self._get_agent_specialization(agent_id)
         
@@ -343,6 +469,7 @@ class MetricsCollector:
                 'label:agent-work',
                 f'created:>={since_date}'
             )
+            self._api_call_count += 1
             
             print(f"📋 Found {len(issues)} total agent-work issues in timeframe", file=sys.stderr)
             
@@ -352,28 +479,31 @@ class MetricsCollector:
                 if not issue_number:
                     continue
                 
-                # Fetch full issue details to get body
-                try:
-                    issue_details = self.github.get(f'/repos/{self.repo}/issues/{issue_number}')
-                    if not issue_details:
+                # Check cache first
+                if issue_number in self._issue_cache:
+                    issue_details = self._issue_cache[issue_number]
+                else:
+                    # Fetch full issue details to get body
+                    try:
+                        issue_details = self.github.get(f'/repos/{self.repo}/issues/{issue_number}')
+                        self._api_call_count += 1
+                        if issue_details:
+                            self._issue_cache[issue_number] = issue_details
+                    except Exception as e:
+                        print(f"⚠️  Warning: Error fetching issue {issue_number}: {e}", file=sys.stderr)
                         continue
-                    
-                    body = issue_details.get('body', '')
-                    
-                    # Check for COPILOT_AGENT comment with this agent's specialization
-                    # Format: <!-- COPILOT_AGENT:specialization_name -->
-                    pattern = rf'<!--\s*COPILOT_AGENT:\s*{re.escape(specialization)}\s*-->'
-                    if re.search(pattern, body, re.IGNORECASE):
-                        assigned_issues.append(issue_details)
-                        print(f"  ✅ Issue #{issue_number} assigned to {specialization}", file=sys.stderr)
-                    else:
-                        # Log first 100 chars of body to help debug
-                        body_preview = body[:100].replace('\n', ' ')
-                        print(f"  ⏭️  Issue #{issue_number} not for {specialization} (body: {body_preview}...)", file=sys.stderr)
-                        
-                except Exception as e:
-                    print(f"⚠️  Warning: Error fetching issue {issue_number}: {e}", file=sys.stderr)
+                
+                if not issue_details:
                     continue
+                
+                body = issue_details.get('body', '')
+                
+                # Check for COPILOT_AGENT comment with this agent's specialization
+                # Format: <!-- COPILOT_AGENT:specialization_name -->
+                pattern = rf'<!--\s*COPILOT_AGENT:\s*{re.escape(specialization)}\s*-->'
+                if re.search(pattern, body, re.IGNORECASE):
+                    assigned_issues.append(issue_details)
+                    print(f"  ✅ Issue #{issue_number} assigned to {specialization}", file=sys.stderr)
             
             print(f"✅ Found {len(assigned_issues)} issues assigned to {agent_id}", file=sys.stderr)
         
@@ -502,7 +632,9 @@ class MetricsCollector:
     def collect_agent_activity(
         self,
         agent_id: str,
-        since_days: int = DEFAULT_LOOKBACK_DAYS
+        since_days: int = DEFAULT_LOOKBACK_DAYS,
+        use_batch_cache: bool = False,
+        batch_cache: Optional[Dict[str, List[Dict]]] = None
     ) -> AgentActivity:
         """
         Collect GitHub activity for an agent.
@@ -512,6 +644,8 @@ class MetricsCollector:
         Args:
             agent_id: Agent identifier
             since_days: Look back this many days
+            use_batch_cache: If True, use pre-fetched batch cache
+            batch_cache: Pre-fetched issues map from batch operation
             
         Returns:
             AgentActivity object with collected data
@@ -522,8 +656,13 @@ class MetricsCollector:
         since_date = (datetime.now(timezone.utc) - timedelta(days=since_days)).isoformat()
         
         try:
-            # Find issues assigned to this agent via COPILOT_AGENT comment
-            assigned_issues = self._find_issues_assigned_to_agent(agent_id, since_days)
+            # Find issues assigned to this agent (using cache if available)
+            assigned_issues = self._find_issues_assigned_to_agent(
+                agent_id, 
+                since_days,
+                use_batch_cache=use_batch_cache,
+                batch_cache=batch_cache
+            )
             activity.issues_created = len(assigned_issues)
             
             # Count resolved issues (closed ones)
@@ -531,76 +670,96 @@ class MetricsCollector:
             activity.issues_resolved = len(resolved_issues)
             
             # Find PRs that close issues assigned to this agent
-            # We use multiple methods to ensure we find all relevant PRs:
-            # 1. Timeline API to find cross-referenced PRs
-            # 2. Search API to find PRs that mention issue numbers
+            # Optimization: Use multiple methods with smart fallbacks
             prs_for_agent = []
-            pr_numbers_from_issues = set()  # Track PRs found via issue timeline
+            pr_numbers_from_issues = set()
             
             for issue in assigned_issues:
                 issue_number = issue.get('number')
                 
-                # Method 1: Use timeline API to find linked PRs
-                try:
-                    # Get timeline to find linked PRs
-                    timeline = self.github.get(
-                        f'/repos/{self.repo}/issues/{issue_number}/timeline',
-                        headers={'Accept': 'application/vnd.github.mockingbird-preview+json'}
-                    )
-                    
-                    if timeline:
-                        for event in timeline:
-                            if event.get('event') == 'cross-referenced':
-                                source = event.get('source', {})
-                                if source.get('type') == 'issue' and source.get('issue', {}).get('pull_request'):
-                                    pr_data = source.get('issue')
-                                    pr_number = pr_data.get('number')
-                                    if pr_number and pr_number not in pr_numbers_from_issues:
-                                        # Fetch full PR details to get accurate merge status
-                                        try:
-                                            full_pr = self.github.get(f'/repos/{self.repo}/pulls/{pr_number}')
+                # Method 1: Check if issue body contains PR links (fastest)
+                # Many times PRs are mentioned directly in issue updates
+                body = issue.get('body', '')
+                pr_refs = re.findall(r'#(\d+)', body)
+                for pr_ref in pr_refs:
+                    pr_number = int(pr_ref)
+                    if pr_number != issue_number and pr_number not in pr_numbers_from_issues:
+                        # Verify it's actually a PR (check cache first)
+                        if pr_number in self._pr_cache:
+                            pr_data = self._pr_cache[pr_number]
+                            if pr_data.get('pull_request'):
+                                prs_for_agent.append(pr_data)
+                                pr_numbers_from_issues.add(pr_number)
+                                print(f"  ✅ Found PR #{pr_number} via issue body reference", file=sys.stderr)
+                
+                # Method 2: Use timeline API only if we haven't found PRs yet
+                # This is the expensive call - minimize its use
+                if len(prs_for_agent) == 0:
+                    try:
+                        # Check cache first
+                        if issue_number in self._timeline_cache:
+                            timeline = self._timeline_cache[issue_number]
+                        else:
+                            # Only fetch timeline if we haven't cached it yet
+                            timeline = self.github.get(
+                                f'/repos/{self.repo}/issues/{issue_number}/timeline',
+                                headers={'Accept': 'application/vnd.github.mockingbird-preview+json'}
+                            )
+                            self._api_call_count += 1
+                            if timeline:
+                                self._timeline_cache[issue_number] = timeline
+                        
+                        if timeline:
+                            for event in timeline:
+                                if event.get('event') == 'cross-referenced':
+                                    source = event.get('source', {})
+                                    if source.get('type') == 'issue' and source.get('issue', {}).get('pull_request'):
+                                        pr_data = source.get('issue')
+                                        pr_number = pr_data.get('number')
+                                        if pr_number and pr_number not in pr_numbers_from_issues:
+                                            # Check cache for full PR details
+                                            if pr_number in self._pr_cache:
+                                                full_pr = self._pr_cache[pr_number]
+                                            else:
+                                                try:
+                                                    full_pr = self.github.get(f'/repos/{self.repo}/pulls/{pr_number}')
+                                                    self._api_call_count += 1
+                                                    if full_pr:
+                                                        self._pr_cache[pr_number] = full_pr
+                                                except Exception as e:
+                                                    full_pr = pr_data  # Fallback to partial data
+                                            
                                             if full_pr:
                                                 prs_for_agent.append(full_pr)
                                                 pr_numbers_from_issues.add(pr_number)
                                                 merge_status = "merged" if full_pr.get('merged_at') else "open/closed"
                                                 print(f"  ✅ Found PR #{pr_number} ({merge_status}) via timeline for issue #{issue_number}", file=sys.stderr)
-                                            else:
-                                                # Fallback to partial data if full fetch fails
-                                                prs_for_agent.append(pr_data)
-                                                pr_numbers_from_issues.add(pr_number)
-                                                print(f"  ⚠️  Found PR #{pr_number} (partial data) via timeline for issue #{issue_number}", file=sys.stderr)
-                                        except Exception as e:
-                                            # Fallback to partial data on error
-                                            prs_for_agent.append(pr_data)
-                                            pr_numbers_from_issues.add(pr_number)
-                                            print(f"  ⚠️  Found PR #{pr_number} (error fetching details: {e}) via timeline for issue #{issue_number}", file=sys.stderr)
-                except Exception as e:
-                    print(f"⚠️  Warning: Timeline API failed for issue {issue_number}: {e}", file=sys.stderr)
+                    except Exception as e:
+                        print(f"⚠️  Warning: Timeline API failed for issue {issue_number}: {e}", file=sys.stderr)
                 
-                # Method 2: Search for PRs that mention this issue number
-                # This is a fallback in case timeline API doesn't work
-                try:
-                    # Search for PRs that mention this issue
-                    search_results = self._search_issues(
-                        agent_id,
-                        'is:pr',
-                        f'in:body #{issue_number}'
-                    )
-                    
-                    for pr in search_results:
-                        pr_number = pr.get('number')
-                        if pr_number and pr_number not in pr_numbers_from_issues:
-                            # Verify this PR actually mentions the issue (not just coincidental #number)
-                            pr_body = pr.get('body', '').lower()
-                            if f'#{issue_number}' in pr_body or f'closes #{issue_number}' in pr_body or f'fixes #{issue_number}' in pr_body:
-                                prs_for_agent.append(pr)
-                                pr_numbers_from_issues.add(pr_number)
-                                print(f"  ✅ Found PR #{pr_number} via search for issue #{issue_number}", file=sys.stderr)
-                except Exception as e:
-                    print(f"⚠️  Warning: Search API failed for issue {issue_number}: {e}", file=sys.stderr)
+                # Method 3: Search for PRs that mention this issue (fallback)
+                # Only use if timeline didn't work
+                if len(prs_for_agent) == 0:
+                    try:
+                        search_results = self._search_issues(
+                            agent_id,
+                            'is:pr',
+                            f'in:body #{issue_number}'
+                        )
+                        self._api_call_count += 1
+                        
+                        for pr in search_results:
+                            pr_number = pr.get('number')
+                            if pr_number and pr_number not in pr_numbers_from_issues:
+                                pr_body = pr.get('body', '').lower()
+                                if f'#{issue_number}' in pr_body or f'closes #{issue_number}' in pr_body or f'fixes #{issue_number}' in pr_body:
+                                    prs_for_agent.append(pr)
+                                    pr_numbers_from_issues.add(pr_number)
+                                    print(f"  ✅ Found PR #{pr_number} via search for issue #{issue_number}", file=sys.stderr)
+                    except Exception as e:
+                        print(f"⚠️  Warning: Search API failed for issue {issue_number}: {e}", file=sys.stderr)
             
-            # Method 3: Git-based fallback when GitHub API is unavailable
-            # Parse commit messages to find PR references for issues
+            # Method 4: Git-based fallback when GitHub API is unavailable
             if len(prs_for_agent) == 0 and len(assigned_issues) > 0:
                 print(f"🔧 GitHub API yielded no PRs, trying git-based fallback...", file=sys.stderr)
                 git_prs = self._find_prs_via_git(agent_id, assigned_issues)
@@ -609,42 +768,28 @@ class MetricsCollector:
                     if pr_number and pr_number not in pr_numbers_from_issues:
                         prs_for_agent.append(pr_info)
                         pr_numbers_from_issues.add(pr_number)
-                        print(f"  ✅ Found PR #{pr_number} via git log for issue #{pr_info.get('issue_number')}", file=sys.stderr)
+                        print(f"  ✅ Found PR #{pr_number} via git log", file=sys.stderr)
             
-            # PRs found via issue timeline or search are already implicitly attributed to the agent
-            # because the issue was assigned to them. No additional filtering needed.
-            # This fixes the bug where agents weren't getting credit for their PRs.
             print(f"📊 Found {len(prs_for_agent)} PRs linked to {len(assigned_issues)} assigned issues", file=sys.stderr)
             
             activity.prs_created = len(prs_for_agent)
             
             # Count merged PRs
-            # Note: PRs from different API sources have different structures:
-            # - Timeline API: PRs have 'pull_request' nested object
-            # - Search API: PRs are direct objects with merged_at field
-            # - Git fallback: PRs have merged_at set to True
             prs_merged = []
             for pr in prs_for_agent:
-                # Check multiple possible structures for merge status
                 if pr.get('source') == 'git_log':
-                    # Git fallback PRs are assumed merged
                     prs_merged.append(pr)
                 elif pr.get('merged_at'):
-                    # Direct merged_at field (from search API or fetched PR details)
                     prs_merged.append(pr)
                 elif pr.get('pull_request', {}).get('merged_at'):
-                    # Nested pull_request object (from timeline cross-reference)
                     prs_merged.append(pr)
                 elif pr.get('state') == 'closed' and pr.get('merged', False):
-                    # Alternative: closed + merged flag
                     prs_merged.append(pr)
             
             activity.prs_merged = len(prs_merged)
-            
             print(f"  ✅ {len(prs_merged)} PRs were merged", file=sys.stderr)
             
-            # Search for reviews given by agent (using github-actions bot)
-            # This is a fallback - reviews are harder to attribute to specific agents
+            # Search for reviews given by agent
             reviews = self._get_reviews_by_agent(agent_id, since_days)
             activity.reviews_given = len(reviews)
             
@@ -654,8 +799,8 @@ class MetricsCollector:
                 issue_number = issue.get('number')
                 try:
                     comments = self.github.get(f'/repos/{self.repo}/issues/{issue_number}/comments')
+                    self._api_call_count += 1
                     if comments:
-                        # Count comments by copilot or github-actions bot on these issues
                         agent_user = self._get_agent_github_user(agent_id)
                         agent_comments = [c for c in comments if c.get('user', {}).get('login') == agent_user]
                         comments_count += len(agent_comments)
@@ -671,6 +816,7 @@ class MetricsCollector:
             print(f"  - PRs merged: {activity.prs_merged}", file=sys.stderr)
             print(f"  - Reviews given: {activity.reviews_given}", file=sys.stderr)
             print(f"  - Comments made: {activity.comments_made}", file=sys.stderr)
+            print(f"  - API calls used: {self._api_call_count}", file=sys.stderr)
             
         except Exception as e:
             print(f"⚠️  Warning: Error collecting activity for {agent_id}: {e}", file=sys.stderr)
@@ -1042,7 +1188,9 @@ class MetricsCollector:
     def collect_metrics(
         self,
         agent_id: str,
-        since_days: int = DEFAULT_LOOKBACK_DAYS
+        since_days: int = DEFAULT_LOOKBACK_DAYS,
+        use_batch_cache: bool = False,
+        batch_cache: Optional[Dict[str, List[Dict]]] = None
     ) -> AgentMetrics:
         """
         Collect complete metrics snapshot for an agent.
@@ -1050,14 +1198,21 @@ class MetricsCollector:
         Args:
             agent_id: Agent identifier
             since_days: Look back period in days
+            use_batch_cache: If True, use pre-fetched batch cache
+            batch_cache: Pre-fetched issues map from batch operation
             
         Returns:
             Complete AgentMetrics object
         """
         print(f"📊 Collecting metrics for {agent_id}...", file=sys.stderr)
         
-        # Collect activity
-        activity = self.collect_agent_activity(agent_id, since_days)
+        # Collect activity (with batch cache if available)
+        activity = self.collect_agent_activity(
+            agent_id, 
+            since_days,
+            use_batch_cache=use_batch_cache,
+            batch_cache=batch_cache
+        )
         
         # Collect contributions for creativity analysis
         contributions = None
@@ -1077,7 +1232,8 @@ class MetricsCollector:
                 'lookback_days': since_days,
                 'repo': self.repo,
                 'weights': self.weights,
-                'creativity_enabled': self.creativity_available
+                'creativity_enabled': self.creativity_available,
+                'api_calls': self._api_call_count
             }
         )
         
@@ -1139,6 +1295,11 @@ class MetricsCollector:
         """
         Evaluate all active agents in the registry.
         
+        This method uses batch optimization to minimize API calls:
+        - Fetches all agent-work issues once
+        - Distributes them to agents
+        - Uses caching for repeated data access
+        
         Returns:
             Dictionary mapping agent_id to AgentMetrics
         """
@@ -1154,10 +1315,21 @@ class MetricsCollector:
             
             print(f"📊 Evaluating {len(active_agents)} active agents...", file=sys.stderr)
             
+            # OPTIMIZATION: Batch fetch all issues once, then distribute to agents
+            print(f"🚀 Starting batch optimization...", file=sys.stderr)
+            batch_cache = self._batch_fetch_all_agent_issues(since_days)
+            print(f"✅ Batch fetch complete. Starting agent evaluation...", file=sys.stderr)
+            
             for agent in active_agents:
                 agent_id = agent['id']
                 try:
-                    metrics = self.collect_metrics(agent_id, since_days)
+                    # Use batch cache to avoid redundant API calls
+                    metrics = self.collect_metrics(
+                        agent_id, 
+                        since_days,
+                        use_batch_cache=True,
+                        batch_cache=batch_cache
+                    )
                     results[agent_id] = metrics
                     
                     print(f"✅ Collected metrics for {agent_id}: score={metrics.scores.overall:.2%}", file=sys.stderr)
@@ -1166,6 +1338,7 @@ class MetricsCollector:
                     print(f"❌ Error evaluating {agent_id}: {e}", file=sys.stderr)
             
             print(f"✅ Evaluation complete! Collected metrics for {len(results)} agents.", file=sys.stderr)
+            print(f"📊 Total API calls used: {self._api_call_count}", file=sys.stderr)
             print(f"ℹ️  Note: Registry updates are handled by the evaluator workflow", file=sys.stderr)
         
         except Exception as e:
