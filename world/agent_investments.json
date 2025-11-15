@@ -1,0 +1,292 @@
+{
+  "last_updated": "2025-11-15T07:55:32.099938",
+  "version": "1.0",
+  "investments": {
+    "accelerate-master": {
+      "Performance": {
+        "category": "Performance",
+        "level": "LEARNING",
+        "score": 25.16,
+        "first_invested": "2025-11-10T10:00:00.000000",
+        "last_cultivated": "2025-11-15T07:54:04.075931",
+        "cultivation_count": 9,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-14T15:30:00.000000",
+            "category": "Performance",
+            "learning_id": "learning-perf-001",
+            "impact": 0.7,
+            "context": "Analyzed database optimization techniques"
+          },
+          {
+            "timestamp": "2025-11-13T09:15:00.000000",
+            "category": "Performance",
+            "learning_id": "learning-perf-002",
+            "impact": 0.6,
+            "context": "Reviewed caching strategies"
+          },
+          {
+            "timestamp": "2025-11-15T07:54:04.075931",
+            "category": "Performance",
+            "learning_id": "learn-db-perf-001",
+            "impact": 0.8,
+            "context": "Learning work: learn-db-perf-001"
+          }
+        ]
+      },
+      "Database": {
+        "category": "Database",
+        "level": "LEARNING",
+        "score": 15.566666666666666,
+        "first_invested": "2025-11-12T14:20:00.000000",
+        "last_cultivated": "2025-11-15T07:54:04.075340",
+        "cultivation_count": 4,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-13T11:45:00.000000",
+            "category": "Database",
+            "learning_id": "learning-db-001",
+            "impact": 0.5,
+            "context": "Explored MongoDB cost optimization"
+          },
+          {
+            "timestamp": "2025-11-15T07:54:04.075340",
+            "category": "Database",
+            "learning_id": "learn-db-perf-001",
+            "impact": 0.8,
+            "context": "Learning work: learn-db-perf-001"
+          }
+        ]
+      }
+    },
+    "secure-specialist": {
+      "Security": {
+        "category": "Security",
+        "level": "LEARNING",
+        "score": 27.553333333333335,
+        "first_invested": "2025-11-01T08:00:00.000000",
+        "last_cultivated": "2025-11-15T07:52:54.034735",
+        "cultivation_count": 25,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-14T16:20:00.000000",
+            "category": "Security",
+            "learning_id": "security-001",
+            "impact": 0.8,
+            "context": "Fixed authentication vulnerability"
+          },
+          {
+            "timestamp": "2025-11-13T14:30:00.000000",
+            "category": "Security",
+            "learning_id": "security-002",
+            "impact": 0.7,
+            "context": "Implemented input validation"
+          },
+          {
+            "timestamp": "2025-11-15T07:52:54.034735",
+            "category": "Security",
+            "learning_id": "sec-vuln-2025-001",
+            "impact": 0.8,
+            "context": "Fixed critical authentication vulnerability"
+          }
+        ]
+      },
+      "Web": {
+        "category": "Web",
+        "level": "CURIOUS",
+        "score": 7.120000000000001,
+        "first_invested": "2025-11-08T10:30:00.000000",
+        "last_cultivated": "2025-11-12T13:15:00.000000",
+        "cultivation_count": 5,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-12T13:15:00.000000",
+            "category": "Web",
+            "learning_id": "web-security-001",
+            "impact": 0.6,
+            "context": "Reviewed CORS security practices"
+          }
+        ]
+      }
+    },
+    "engineer-master": {
+      "Programming": {
+        "category": "Programming",
+        "level": "LEARNING",
+        "score": 29.4,
+        "first_invested": "2025-10-15T09:00:00.000000",
+        "last_cultivated": "2025-11-15T07:52:54.036640",
+        "cultivation_count": 43,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-14T17:45:00.000000",
+            "category": "Programming",
+            "learning_id": "prog-001",
+            "impact": 0.9,
+            "context": "Implemented REST API endpoints"
+          },
+          {
+            "timestamp": "2025-11-14T10:20:00.000000",
+            "category": "Programming",
+            "learning_id": "prog-002",
+            "impact": 0.8,
+            "context": "Refactored API architecture"
+          },
+          {
+            "timestamp": "2025-11-15T07:52:54.036640",
+            "category": "Programming",
+            "learning_id": "ci-pipeline-implementation",
+            "impact": 0.75,
+            "context": "Learning work: ci-pipeline-implementation"
+          }
+        ]
+      },
+      "DevOps": {
+        "category": "DevOps",
+        "level": "LEARNING",
+        "score": 17.35333333333333,
+        "first_invested": "2025-10-20T11:00:00.000000",
+        "last_cultivated": "2025-11-15T07:52:54.037203",
+        "cultivation_count": 17,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-13T14:30:00.000000",
+            "category": "DevOps",
+            "learning_id": "devops-001",
+            "impact": 0.7,
+            "context": "Configured CI/CD pipeline"
+          },
+          {
+            "timestamp": "2025-11-15T07:52:54.037203",
+            "category": "DevOps",
+            "learning_id": "ci-pipeline-implementation",
+            "impact": 0.75,
+            "context": "Learning work: ci-pipeline-implementation"
+          }
+        ]
+      },
+      "Tools": {
+        "category": "Tools",
+        "level": "CURIOUS",
+        "score": 9.0,
+        "first_invested": "2025-11-15T07:52:54.037726",
+        "last_cultivated": "2025-11-15T07:52:54.037732",
+        "cultivation_count": 1,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-15T07:52:54.037732",
+            "category": "Tools",
+            "learning_id": "ci-pipeline-implementation",
+            "impact": 0.75,
+            "context": "Learning work: ci-pipeline-implementation"
+          }
+        ]
+      }
+    },
+    "troubleshoot-expert": {
+      "DevOps": {
+        "category": "DevOps",
+        "level": "LEARNING",
+        "score": 20.4,
+        "first_invested": "2025-10-01T08:00:00.000000",
+        "last_cultivated": "2025-11-15T06:30:00.000000",
+        "cultivation_count": 58,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-15T06:30:00.000000",
+            "category": "DevOps",
+            "learning_id": "ci-cd-debug-001",
+            "impact": 0.9,
+            "context": "Fixed GitHub Actions workflow failure"
+          },
+          {
+            "timestamp": "2025-11-14T18:15:00.000000",
+            "category": "DevOps",
+            "learning_id": "ci-cd-debug-002",
+            "impact": 0.8,
+            "context": "Optimized workflow performance"
+          }
+        ]
+      },
+      "Tools": {
+        "category": "Tools",
+        "level": "CURIOUS",
+        "score": 8.4,
+        "first_invested": "2025-10-05T09:30:00.000000",
+        "last_cultivated": "2025-11-14T12:45:00.000000",
+        "cultivation_count": 22,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-14T12:45:00.000000",
+            "category": "Tools",
+            "learning_id": "tools-001",
+            "impact": 0.7,
+            "context": "Explored new debugging tools"
+          }
+        ]
+      }
+    },
+    "organize-guru": {
+      "Programming": {
+        "category": "Programming",
+        "level": "LEARNING",
+        "score": 20.4,
+        "first_invested": "2025-10-10T10:00:00.000000",
+        "last_cultivated": "2025-11-15T07:47:00.000000",
+        "cultivation_count": 35,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-15T07:47:00.000000",
+            "category": "Programming",
+            "learning_id": "investment-tracker-implementation",
+            "impact": 0.9,
+            "context": "Implemented agent investment tracking system"
+          },
+          {
+            "timestamp": "2025-11-14T16:30:00.000000",
+            "category": "Programming",
+            "learning_id": "refactoring-001",
+            "impact": 0.8,
+            "context": "Refactored code for better maintainability"
+          }
+        ]
+      },
+      "Tools": {
+        "category": "Tools",
+        "level": "CURIOUS",
+        "score": 7.120000000000001,
+        "first_invested": "2025-11-05T14:00:00.000000",
+        "last_cultivated": "2025-11-12T10:20:00.000000",
+        "cultivation_count": 7,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-12T10:20:00.000000",
+            "category": "Tools",
+            "learning_id": "tools-002",
+            "impact": 0.6,
+            "context": "Explored code analysis tools"
+          }
+        ]
+      }
+    },
+    "test-agent": {
+      "Programming": {
+        "category": "Programming",
+        "level": "CURIOUS",
+        "score": 9.6,
+        "first_invested": "2025-11-15T07:55:32.099916",
+        "last_cultivated": "2025-11-15T07:55:32.099924",
+        "cultivation_count": 1,
+        "cultivation_events": [
+          {
+            "timestamp": "2025-11-15T07:55:32.099924",
+            "category": "Programming",
+            "learning_id": null,
+            "impact": 0.8,
+            "context": ""
+          }
+        ]
+      }
+    }
+  }
+}
