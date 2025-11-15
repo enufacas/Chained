@@ -2,7 +2,7 @@
 
 > General technology news and insights
 
-**Total Insights:** 270
+**Total Insights:** 277
 
 **Last Updated:** 2025-11-15
 
@@ -175,6 +175,99 @@ Node Version Manager - POSIX-compliant bash script to manage multiple active nod
 ## 📰 From Hacker News
 
 
+### Linux on the Fujitsu Lifebook U729
+
+**Community Score:** 113 upvotes
+
+**Link:** https://borretti.me/article/linux-on-the-fujitsu-lifebook-u729
+
+
+**Content Summary:**
+
+This post describes my experience using Linux on the Fujitsu Lifebook U729 . The tl;dr is that it’s a delightful laptop, and Linux runs flawlessly, and all the hardware things I’ve needed run OOTB. The only difficulty I had was in disabling Secure Boot, but I figured out how to do it, which I explain below. Contents Background Troubleshooting Secure Boot Spyware Non-Problems BIOS Notes Links Background From early 2024 my daily driver was an M2 MacBook Air, until earlier this year I broke the scr...
+
+---
+
+
+### TCP, the workhorse of the internet
+
+**Community Score:** 221 upvotes
+
+**Link:** https://cefboud.com/posts/tcp-deep-dive-internals/
+
+---
+
+
+### Messing with scraper bots
+
+**Community Score:** 146 upvotes
+
+**Link:** https://herman.bearblog.dev/messing-with-bots/
+
+
+**Content Summary:**
+
+Messing with bots 13 Nov, 2025 As outlined in my previous two posts : scrapers are, inadvertently, DDoSing public websites. I've received a number of emails from people running small web services and blogs seeking advice on how to protect themselves. This post isn't about that. This post is about fighting back. When I published my last post, there was an interesting write-up doing the rounds about a guy who set up a Markov chain babbler to feed the scrapers endless streams of generated data. The...
+
+---
+
+
+### One Handed Keyboard
+
+**Community Score:** 113 upvotes
+
+**Link:** https://github.com/htx-studio/One-Handed-Keyboard
+
+
+**Content Summary:**
+
+htx-studio / One-Handed-Keyboard Public Notifications You must be signed in to change notification settings Fork 73 Star 934 License MIT license 934 stars 73 forks Branches Tags Activity Star Notifications You must be signed in to change notification settings htx-studio/One-Handed-Keyboard About No description, website, or topics provided. Resources Readme License MIT license Uh oh! There was an error while loading. Please reload this page . Activity Stars 934 stars Watchers 16 watching Forks 73...
+
+---
+
+
+### Lawmakers want to ban VPNs
+
+**Community Score:** 498 upvotes
+
+**Link:** https://www.eff.org/deeplinks/2025/11/lawmakers-want-ban-vpns-and-they-have-no-idea-what-theyre-doing
+
+
+**Content Summary:**
+
+Remember when you thought age verification laws couldn't get any worse ? Well, lawmakers in Wisconsin , Michigan , and beyond are about to blow you away. It's unfortunately no longer enough to force websites to check your government-issued ID before you can access certain content, because politicians have now discovered that people are using Virtual Private Networks (VPNs) to protect their privacy and bypass these invasive laws. Their solution? Entirely ban the use of VPNs. Yes, really. As of th...
+
+---
+
+
+### Unofficial Microsoft Teams client for Linux
+
+**Community Score:** 234 upvotes
+
+**Link:** https://github.com/IsmaelMartinez/teams-for-linux
+
+
+**Content Summary:**
+
+IsmaelMartinez / teams-for-linux Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 299 Star 4k Unofficial Microsoft Teams for Linux client License GPL-3.0 license 4k stars 299 forks Branches Tags Activity Star Notifications You must be signed in to change notification settings IsmaelMartinez/teams-for-linux About Unofficial Microsoft Teams for Linux client Topics electron microsoft linux teams Resour...
+
+---
+
+
+### SSL Configuration Generator
+
+**Community Score:** 221 upvotes
+
+**Link:** https://ssl-config.mozilla.org/
+
+
+**Content Summary:**
+
+moz://a SSL Configuration Generator SSL Config Generator Server Software Apache AWS ALB AWS ELB Caddy Coturn Dovecot Exim Go HAProxy Jetty lighttpd MySQL nginx Oracle HTTP Postfix PostgreSQL ProFTPD Redis Squid stunnel Tomcat Traefik Mozilla Configuration Modern Services with clients that support TLS 1.3 and don't need backward compatibility Intermediate General-purpose servers with a variety of clients, recommended for almost all systems Old Compatible with a number of very old clients, and sho...
+
+---
+
+
 ### Windhawk Windows classic theme mod for Windows 11
 
 **Link:** https://windhawk.net/mods/classic-theme-enable
@@ -262,71 +355,6 @@ Node Version Manager - POSIX-compliant bash script to manage multiple active nod
 ### How to tolerate annoying things
 
 **Link:** https://psyche.co/guides/how-to-respond-to-annoying-things-with-greater-ease
-
----
-
-
-### History and use of the Estes AstroCam 110
-
-**Link:** https://www.dembrudders.com/history-and-use-of-the-estes-astrocam-110.html
-
----
-
-
-### Löb and Möb: Loops in Haskell (2013)
-
-**Link:** https://github.com/quchen/articles/blob/master/loeb-moeb.md
-
----
-
-
-### Can text be made to sound more than just its words? (2022)
-
-**Link:** https://arxiv.org/abs/2202.10631
-
----
-
-
-### SSL Configuration Generator
-
-**Link:** https://ssl-config.mozilla.org/
-
----
-
-
-### The Internet Is Cool. Thank You, TCP
-
-**Community Score:** 114 upvotes
-
-**Link:** https://cefboud.com/posts/tcp-deep-dive-internals/
-
----
-
-
-### Unofficial Microsoft Teams client for Linux
-
-**Community Score:** 157 upvotes
-
-**Link:** https://github.com/IsmaelMartinez/teams-for-linux
-
-
-**Content Summary:**
-
-IsmaelMartinez / teams-for-linux Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 299 Star 4k Unofficial Microsoft Teams for Linux client License GPL-3.0 license 4k stars 299 forks Branches Tags Activity Star Notifications You must be signed in to change notification settings IsmaelMartinez/teams-for-linux About Unofficial Microsoft Teams for Linux client Topics electron microsoft linux teams Resour...
-
----
-
-
-### Spec-Driven Development: The Waterfall Strikes Back
-
-**Community Score:** 130 upvotes
-
-**Link:** https://marmelab.com/blog/2025/11/12/spec-driven-development-waterfall-strikes-back.html
-
-
-**Content Summary:**
-
-Spec-Driven Development: The Waterfall Strikes Back The Rise of Specification The Markdown Awakens Revenge of the Project Manager A New Hope Conclusion By François Zaninotto November 12, 2025 • 7 min read #agile #ai #architecture Spec-Driven Development (SDD) revives the old idea of heavy documentation before coding — an echo of the Waterfall era. While it promises structure for AI-driven programming, it risks burying agility under layers of Markdown. This post explores why a more iterative, nat...
 
 ---
 
