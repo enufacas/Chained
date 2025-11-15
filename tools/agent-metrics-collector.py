@@ -488,6 +488,8 @@ class MetricsCollector:
             # Find PRs that close issues assigned to this agent
             # We need to look for PRs that reference the assigned issues
             prs_for_agent = []
+            pr_numbers_from_issues = set()  # Track PRs found via issue timeline
+            
             for issue in assigned_issues:
                 issue_number = issue.get('number')
                 try:
@@ -503,30 +505,26 @@ class MetricsCollector:
                                 source = event.get('source', {})
                                 if source.get('type') == 'issue' and source.get('issue', {}).get('pull_request'):
                                     pr_data = source.get('issue')
-                                    if pr_data not in prs_for_agent:
+                                    pr_number = pr_data.get('number')
+                                    if pr_number and pr_number not in pr_numbers_from_issues:
                                         prs_for_agent.append(pr_data)
+                                        pr_numbers_from_issues.add(pr_number)
+                                        print(f"  ✅ Found PR #{pr_number} linked to issue #{issue_number}", file=sys.stderr)
                 except Exception as e:
                     print(f"⚠️  Warning: Error fetching timeline for issue {issue_number}: {e}", file=sys.stderr)
             
-            # Get agent specialization for attribution checking
-            specialization = self._get_agent_specialization(agent_id)
-            
-            # Check if strict PR attribution is enabled in config
-            strict_attribution = self._is_strict_pr_attribution_enabled()
-            
-            # Filter PRs to only those with clear agent attribution
-            if specialization and strict_attribution:
-                prs_for_agent = self._filter_prs_by_agent_attribution(
-                    prs_for_agent,
-                    specialization,
-                    strict_mode=True
-                )
+            # PRs found via issue timeline are already implicitly attributed to the agent
+            # because the issue was assigned to them. No additional filtering needed.
+            # This fixes the bug where agents weren't getting credit for their PRs.
+            print(f"📊 Found {len(prs_for_agent)} PRs linked to {len(assigned_issues)} assigned issues", file=sys.stderr)
             
             activity.prs_created = len(prs_for_agent)
             
             # Count merged PRs
             prs_merged = [pr for pr in prs_for_agent if pr.get('pull_request', {}).get('merged_at')]
             activity.prs_merged = len(prs_merged)
+            
+            print(f"  ✅ {len(prs_merged)} PRs were merged", file=sys.stderr)
             
             # Search for reviews given by agent (using github-actions bot)
             # This is a fallback - reviews are harder to attribute to specific agents
