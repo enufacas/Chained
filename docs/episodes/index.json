@@ -1,11 +1,17 @@
 {
-  "generated_at": "2025-11-15T00:40:45.424114+00:00",
-  "total_episodes": 15,
+  "generated_at": "2025-11-15T02:59:55.009637+00:00",
+  "total_episodes": 16,
   "dates": [
     {
       "date": "2025-11-15",
-      "episode_count": 1,
+      "episode_count": 2,
       "episodes": [
+        {
+          "filename": "episode-20251115-0259.json",
+          "title": "The Great Merge-athon",
+          "date": "2025-11-15T02:59:54.959048+00:00",
+          "scene_count": 3
+        },
         {
           "filename": "episode-20251115-0040.json",
           "title": "Code Review Chronicles",

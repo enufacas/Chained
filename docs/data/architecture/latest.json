@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-14T12:53:11.418891",
-  "commit": "8f3e0a19dce074ba00c9f1e8e34c4c23095044db",
+  "timestamp": "2025-11-15T01:56:25.810186",
+  "commit": "330ecbe57448875e6f4625cafd03a08dd99ef7a2",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 153,
-        "line_count": 61333,
+        "file_count": 165,
+        "line_count": 67183,
         "files": [
           "AB_TESTING_README.md",
           "API_COORDINATION_HUB_QUICKSTART.md",
@@ -32,12 +32,14 @@
           "PATTERN_MATCHER.md",
           "PERFORMANCE_OPTIMIZATION.md",
           "PROMPT_GENERATOR_README.md",
+          "PR_FAILURE_INTELLIGENCE_README.md",
           "PR_FAILURE_LEARNING_README.md",
           "READABILITY_SCORER.md",
           "README.md",
           "README.md",
           "REPETITION_DETECTION_README.md",
           "SELF_DOCUMENTING_AI_README.md",
+          "SEMANTIC_SIMILARITY_ENGINE_README.md",
           "SHELL_COMMON_README.md",
           "TEST_FETCH_WEB_CONTENT_SECURITY_README.md",
           "WORKFLOW_HARMONIZER_README.md",
@@ -54,14 +56,12 @@
           "archaeology.json",
           "architecture-tracker.py",
           "assign-copilot-to-issue.sh",
-          "assign-mentor.py",
-          "atomic-registry-update.py",
-          "backup.sh"
+          "assign-mentor.py"
         ]
       },
       "docs": {
-        "file_count": 174,
-        "line_count": 81051,
+        "file_count": 183,
+        "line_count": 82843,
         "files": [
           ".nojekyll",
           "ACTOR_ID_SYSTEM.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 32,
-        "line_count": 58965,
+        "file_count": 33,
+        "line_count": 59508,
         "files": [
           "README.md",
           "README.md",
@@ -160,12 +160,13 @@
           "snapshot_2025-11-13T02-47-03.json",
           "snapshot_2025-11-13T12-55-24.json",
           "snapshot_2025-11-14T02-00-44.json",
+          "snapshot_2025-11-14T12-53-11.json",
           "workflow-health-investigation.md"
         ]
       },
       "learnings": {
-        "file_count": 78,
-        "line_count": 19667,
+        "file_count": 95,
+        "line_count": 25682,
         "files": [
           "AI_ML.md",
           "Database.md",
@@ -187,12 +188,19 @@
           "analysis_20251113_202801.json",
           "analysis_20251114_071139.json",
           "analysis_20251114_083243.json",
+          "analysis_20251114_132406.json",
+          "analysis_20251114_190931.json",
+          "analysis_20251114_202751.json",
           "coaching_review_20251113.md",
           "coaching_session_summary_20251113.md",
+          "code_patterns.json",
           "combined_analysis_20251114_082735.json",
+          "combined_analysis_20251114_202246.json",
+          "combined_session_20251114_202246_response.md",
           "combined_session_20251114_response.md",
           "commit_strategies.json",
           "github_trending_20251114_082720.json",
+          "github_trending_20251114_202231.json",
           "hn_20251109_070959.json",
           "hn_20251109_131719.json",
           "hn_20251109_190715.json",
@@ -209,14 +217,7 @@
           "hn_20251112_190939.json",
           "hn_20251113_071144.json",
           "hn_20251113_190909.json",
-          "hn_20251114_071138.json",
-          "hn_20251114_082735.json",
-          "index.json",
-          "investigation_hn_20251113.md",
-          "investigation_hn_20251113_132711.md",
-          "investigation_hn_20251113_190909.md",
-          "investigation_hn_20251114.md",
-          "investigation_summary_20251113.md"
+          "hn_20251114_071138.json"
         ]
       },
       "root_tests": {
@@ -230,13 +231,14 @@
       }
     },
     "files_by_type": {},
-    "total_files": 440,
-    "total_lines": 221758
+    "total_files": 479,
+    "total_lines": 235958
   },
   "dependencies": {
     "internal_imports": {
       "code-analyzer.py": [],
       "pr-failure-learner.py": [],
+      "prompt_learning_integration.py": [],
       "extract-agent-knowledge.py": [],
       "example_cross_repo_pattern_matcher.py": [],
       "verify-registry-concurrency.py": [],
@@ -252,6 +254,7 @@
       "commit-strategy-learner.py": [],
       "repo-time-travel.py": [],
       "benchmark_code_analyzer.py": [],
+      "pr-failure-intelligence.py": [],
       "build-learnings-book.py": [],
       "fetch-web-content.py": [],
       "ab_testing_helper.py": [],
@@ -259,6 +262,7 @@
       "lazy-workflow-evaluator.py": [],
       "workflow-orchestrator.py": [],
       "readability-scorer.py": [],
+      "example_semantic_similarity.py": [],
       "agent-metrics-collector.py": [],
       "batch_update_agents.py": [],
       "uniqueness-scorer.py": [],
@@ -268,6 +272,7 @@
       "validate-agent-definition.py": [],
       "nl-to-code-translator.py": [],
       "lazy_workflow_loader.py": [],
+      "semantic_similarity_engine.py": [],
       "list-agent-actor-ids.py": [],
       "diversity-suggester.py": [],
       "api_coordination_hub.py": [],
@@ -277,6 +282,7 @@
       "copilot-usage-tracker.py": [],
       "github_integration.py": [],
       "creativity-leaderboard.py": [],
+      "enhanced_issue_matcher.py": [],
       "match-issue-to-agent.py": [],
       "lazy_evaluation_integration_example.py": [],
       "get-agent-info.py": [],
@@ -301,6 +307,7 @@
       "generate-learning-inspired-agent.py": [],
       "generate-new-agent.py": [],
       "performance_benchmark.py": [],
+      "validate-workflows.py": [],
       "cross-repo-pattern-matcher.py": [],
       "meta_agent_coordinator.py": [],
       "prompt-generator.py": [],
@@ -310,24 +317,24 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 54,
-      "sys": 61,
-      "json": 67,
-      "re": 35,
+      "os": 56,
+      "sys": 64,
+      "json": 72,
+      "re": 39,
       "ast": 11,
-      "datetime": 48,
-      "pathlib": 63,
-      "typing": 53,
-      "collections": 29,
+      "datetime": 51,
+      "pathlib": 69,
+      "typing": 57,
+      "collections": 31,
       "functools": 7,
-      "argparse": 53,
-      "dataclasses": 29,
+      "argparse": 58,
+      "dataclasses": 32,
       "github_integration": 4,
-      "traceback": 7,
+      "traceback": 8,
       "subprocess": 16,
       "importlib": 13,
       "random": 5,
-      "yaml": 9,
+      "yaml": 10,
       "hashlib": 5,
       "shutil": 5,
       "fcntl": 1,
@@ -347,29 +354,31 @@
       "pickle": 1,
       "enum": 7,
       "threading": 2,
+      "semantic_similarity_engine": 2,
       "registry_manager": 4,
+      "math": 3,
       "lazy_evaluation_system": 1,
-      "math": 2,
       "unicodedata": 1,
       "zipfile": 1,
       "psutil": 1,
-      "abc": 1
+      "abc": 1,
+      "prompt_learning_integration": 1
     },
     "module_graph": []
   },
   "metrics": {
     "total_components": 7,
-    "total_files": 440,
-    "total_lines": 221758,
+    "total_files": 479,
+    "total_lines": 235958,
     "total_dependencies": 0,
-    "external_libraries": 44,
+    "external_libraries": 46,
     "coupling_score": 0.0,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 50,
-      "line_count": 20067,
+      "line_count": 26089,
       "files": [
         "AI_ML.md",
         "Database.md",
@@ -390,12 +399,12 @@
         "analysis_20251113_202801.json",
         "analysis_20251114_071139.json",
         "analysis_20251114_083243.json",
-        "archaeology-learner.py"
+        "analysis_20251114_132406.json"
       ]
     },
     "agent_system": {
       "file_count": 3,
-      "line_count": 4084,
+      "line_count": 4013,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json",
@@ -403,8 +412,8 @@
       ]
     },
     "analysis_tools": {
-      "file_count": 33,
-      "line_count": 60165,
+      "file_count": 34,
+      "line_count": 60729,
       "files": [
         "README.md",
         "agent-ecosystem-investigation.md",
@@ -430,7 +439,7 @@
     },
     "documentation": {
       "file_count": 47,
-      "line_count": 81051,
+      "line_count": 82843,
       "files": [
         ".nojekyll",
         "ACTOR_ID_SYSTEM.md",
@@ -465,7 +474,7 @@
     },
     "tools": {
       "file_count": 49,
-      "line_count": 61333,
+      "line_count": 67183,
       "files": [
         "AB_TESTING_README.md",
         "API_COORDINATION_HUB_QUICKSTART.md",
