@@ -95,8 +95,10 @@ function initMap() {
         worldCopyJump: true
     });
     
-    // Add OpenStreetMap tile layer (dark theme)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    // Add OpenStreetMap tile layer (light theme for better visibility)
+    // Using CARTO Positron - a clean, light-colored map that provides excellent contrast
+    // with the dark UI theme, making markers and labels clearly visible
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 20
