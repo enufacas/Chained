@@ -5,7 +5,10 @@ on:
     paths:
       - '.github/workflows/**/*.yml'
       - '.github/workflows/**/*.yaml'
-      - 'tools/validate-workflows.py'
+      - 'tools/**/*.py'
+      - 'tools/**/*.sh'
+      - 'scripts/**/*.py'
+      - 'scripts/**/*.sh'
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
     inputs:
@@ -41,18 +44,77 @@ jobs:
       - name: Get changed workflow files
         id: changed-files
         run: |
-          echo "Getting changed workflow files..."
+          echo "Getting changed workflow files and their dependencies..."
           
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             # For PR events, compare against base branch
             base_sha="${{ github.event.pull_request.base.sha }}"
             head_sha="${{ github.event.pull_request.head.sha }}"
             
-            # Get list of changed files
+            # Get list of all changed files
             git diff --name-only "$base_sha" "$head_sha" > /tmp/all_changed_files.txt
             
-            # Filter for workflow files
-            grep -E '^\.github/workflows/.*\.(yml|yaml)$' /tmp/all_changed_files.txt > /tmp/changed_workflows.txt || true
+            echo "📋 All changed files:"
+            cat /tmp/all_changed_files.txt
+            echo ""
+            
+            # Filter for workflow files that were directly changed
+            grep -E '^\.github/workflows/.*\.(yml|yaml)$' /tmp/all_changed_files.txt > /tmp/directly_changed_workflows.txt || true
+            
+            # Filter for changed scripts/tools
+            grep -E '^(tools|scripts)/.*\.(py|sh)$' /tmp/all_changed_files.txt > /tmp/changed_scripts.txt || true
+            
+            # Find workflows that depend on changed scripts
+            if [ -s /tmp/changed_scripts.txt ]; then
+              echo "🔍 Changed scripts detected:"
+              cat /tmp/changed_scripts.txt
+              echo ""
+              echo "🔍 Finding workflows that use these scripts..."
+              
+              # Create Python script to find dependent workflows
+              python3 << 'PYTHON_FIND_DEPS'
+          import re
+          from pathlib import Path
+          
+          # Read changed scripts
+          with open('/tmp/changed_scripts.txt', 'r') as f:
+              changed_scripts = set(line.strip() for line in f if line.strip())
+          
+          print(f"Changed scripts: {changed_scripts}")
+          
+          # Find workflows that use these scripts
+          dependent_workflows = set()
+          workflows_dir = Path('.github/workflows')
+          
+          for workflow_file in workflows_dir.glob('*.yml'):
+              try:
+                  with open(workflow_file, 'r', encoding='utf-8') as f:
+                      content = f.read()
+                  
+                  # Check if any changed script is referenced in this workflow
+                  for script in changed_scripts:
+                      if script in content:
+                          dependent_workflows.add(str(workflow_file))
+                          print(f"  Found: {workflow_file.name} uses {script}")
+                          break
+              
+              except Exception as e:
+                  print(f"  Error checking {workflow_file}: {e}")
+          
+          # Write dependent workflows to file
+          with open('/tmp/dependent_workflows.txt', 'w') as f:
+              for wf in sorted(dependent_workflows):
+                  f.write(wf + '\n')
+          
+          print(f"\nTotal dependent workflows: {len(dependent_workflows)}")
+          PYTHON_FIND_DEPS
+              
+              # Combine directly changed and dependent workflows
+              cat /tmp/directly_changed_workflows.txt /tmp/dependent_workflows.txt 2>/dev/null | sort -u > /tmp/changed_workflows.txt || true
+            else
+              # No changed scripts, just use directly changed workflows
+              cp /tmp/directly_changed_workflows.txt /tmp/changed_workflows.txt 2>/dev/null || touch /tmp/changed_workflows.txt
+            fi
             
           elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             # For manual dispatch, validate specific file or all
@@ -71,7 +133,7 @@ jobs:
             echo ""
             echo "count=$(wc -l < /tmp/changed_workflows.txt)" >> $GITHUB_OUTPUT
           else
-            echo "ℹ️  No workflow files changed"
+            echo "ℹ️  No workflow files to validate"
             echo "count=0" >> $GITHUB_OUTPUT
           fi
       
@@ -172,6 +234,7 @@ jobs:
               body += '- ✅ Required workflow structure\n';
               body += '- ✅ Prohibited patterns (direct push to main)\n';
               body += '- ✅ PR-based workflow pattern compliance\n';
+              body += '- ✅ Script dependency path triggers\n';
             } else {
               body += '❌ **Workflow validation failed!**\n\n';
               body += 'Please review the validation errors above and fix the issues.\n\n';
@@ -179,8 +242,18 @@ jobs:
               body += '- Direct `git push` without branch specification\n';
               body += '- Direct push to main branch\n';
               body += '- YAML syntax errors\n';
-              body += '- Missing required workflow fields\n\n';
-              body += '### How to Fix\n';
+              body += '- Missing required workflow fields\n';
+              body += '- **Missing path triggers for script dependencies**\n\n';
+              body += '### How to Fix Script Dependency Issues\n';
+              body += 'If your workflow uses scripts from `tools/` or `scripts/`, add them to path triggers:\n';
+              body += '```yaml\n';
+              body += 'on:\n';
+              body += '  pull_request:\n';
+              body += '    paths:\n';
+              body += '      - \'.github/workflows/your-workflow.yml\'\n';
+              body += '      - \'tools/your-script.py\'\n';
+              body += '```\n\n';
+              body += '### General Fix Steps\n';
               body += '1. Review the error messages in the workflow run\n';
               body += '2. Fix the issues in your workflow files\n';
               body += '3. Push the changes - validation will run again\n';
