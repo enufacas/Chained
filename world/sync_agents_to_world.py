@@ -7,7 +7,7 @@ Synchronizes all agents from the registry into the world model with Charlotte, N
 import json
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any
 
 # Path constants
@@ -142,7 +142,7 @@ def sync_agents_to_world() -> Dict[str, Any]:
     
     # Update world state
     world_state['agents'] = world_agents
-    world_state['time'] = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    world_state['time'] = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     
     # Update metrics
     world_state['metrics']['active_agents'] = len([a for a in world_agents if a.get('status') == 'idle' or a.get('status') == 'traveling'])

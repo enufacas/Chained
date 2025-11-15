@@ -7,7 +7,7 @@ Converts learning analysis into geographic ideas for the world model.
 import json
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any
 from pathlib import Path
 
@@ -126,7 +126,7 @@ def create_idea_from_technology(tech: Dict[str, Any], idea_id_base: int) -> Dict
         'inspiration_regions': inspiration_regions,
         'source': 'learning_analysis',
         'mention_count': mention_count,
-        'created_at': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+        'created_at': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     }
     
     return idea
@@ -232,7 +232,7 @@ def sync_learnings_to_ideas(max_ideas: int = 10) -> Dict[str, Any]:
     
     # Update metrics
     world_state['metrics']['total_ideas'] = len(all_ideas)
-    world_state['time'] = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    world_state['time'] = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     
     # Save world state
     save_json_file(WORLD_STATE_PATH, world_state)
