@@ -400,33 +400,74 @@ jobs:
           PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
           echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
           
-          # Wait up to 5 minutes for the PR to be merged
-          MAX_WAIT=300  # 5 minutes
-          WAIT_INTERVAL=10  # Check every 10 seconds
-          ELAPSED=0
+          # Give auto-review-merge workflow time to start processing
+          echo "   Giving auto-review workflow 8 seconds to start..."
+          sleep 8
+          
+          # Wait up to 3 minutes with exponential backoff for the PR to be merged
+          MAX_WAIT=180  # 3 minutes
+          ELAPSED=8  # Already waited 8 seconds
+          WAIT_INTERVAL=3  # Start with 3 seconds
+          CHECK_COUNT=0
           
           while [ $ELAPSED -lt $MAX_WAIT ]; do
-            # Check PR state
-            PR_STATE=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state --jq '.state')
+            CHECK_COUNT=$((CHECK_COUNT + 1))
             
-            if [ "$PR_STATE" = "MERGED" ]; then
-              echo "✅ PR #$PR_NUMBER has been merged successfully!"
+            # Check PR state - use --json to get full state including merged status
+            PR_DATA=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state,mergedAt,closed)
+            PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+            MERGED_AT=$(echo "$PR_DATA" | jq -r '.mergedAt')
+            IS_CLOSED=$(echo "$PR_DATA" | jq -r '.closed')
+            
+            # Check if merged (mergedAt will be non-null if merged)
+            if [ "$MERGED_AT" != "null" ] && [ "$MERGED_AT" != "" ]; then
+              echo "✅ PR #$PR_NUMBER was merged successfully! (verified in ${ELAPSED}s after $CHECK_COUNT checks)"
               echo "🎉 Agent spawn complete - agent is now active"
               exit 0
-            elif [ "$PR_STATE" = "CLOSED" ]; then
+            elif [ "$PR_STATE" = "MERGED" ]; then
+              echo "✅ PR #$PR_NUMBER has been merged successfully! (detected in ${ELAPSED}s after $CHECK_COUNT checks)"
+              echo "🎉 Agent spawn complete - agent is now active"
+              exit 0
+            elif [ "$IS_CLOSED" = "true" ] && [ "$MERGED_AT" = "null" ]; then
               echo "⚠️ PR #$PR_NUMBER was closed without merging"
               echo "This may indicate an issue with the auto-review process"
               exit 1
-            else
-              echo "⏳ PR #$PR_NUMBER is still $PR_STATE, waiting... (${ELAPSED}s elapsed)"
-              sleep $WAIT_INTERVAL
-              ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+            elif [ "$PR_STATE" = "CLOSED" ]; then
+              # Double-check if it was actually merged
+              MERGED_CHECK=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json mergedAt --jq '.mergedAt')
+              if [ "$MERGED_CHECK" != "null" ] && [ "$MERGED_CHECK" != "" ]; then
+                echo "✅ PR #$PR_NUMBER was merged successfully! (verified in ${ELAPSED}s)"
+                echo "🎉 Agent spawn complete - agent is now active"
+                exit 0
+              else
+                echo "⚠️ PR #$PR_NUMBER was closed without merging"
+                exit 1
+              fi
+            fi
+            
+            # Still waiting - sleep and then update elapsed time
+            echo "   Check $CHECK_COUNT: PR #$PR_NUMBER is $PR_STATE, waiting ${WAIT_INTERVAL}s... (${ELAPSED}s elapsed)"
+            sleep $WAIT_INTERVAL
+            ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+            
+            # Exponential backoff: double wait time, max 30 seconds
+            if [ $WAIT_INTERVAL -lt 30 ]; then
+              WAIT_INTERVAL=$((WAIT_INTERVAL * 2))
             fi
           done
           
-          # Timeout reached
-          echo "⏰ Timeout: PR #$PR_NUMBER was not merged within ${MAX_WAIT} seconds"
-          echo "ℹ️ The PR may still be processed by auto-review later"
+          # Timeout reached - do final check
+          echo "⏰ Timeout reached after ${ELAPSED}s"
+          FINAL_CHECK=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state,mergedAt --jq '{state: .state, mergedAt: .mergedAt}')
+          echo "Final PR state: $FINAL_CHECK"
+          
+          FINAL_MERGED=$(echo "$FINAL_CHECK" | jq -r '.mergedAt')
+          if [ "$FINAL_MERGED" != "null" ] && [ "$FINAL_MERGED" != "" ]; then
+            echo "✅ PR #$PR_NUMBER was actually merged! (confirmed on final check)"
+            exit 0
+          fi
+          
+          echo "❌ PR #$PR_NUMBER was not merged within ${MAX_WAIT} seconds"
           echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
           exit 1
 

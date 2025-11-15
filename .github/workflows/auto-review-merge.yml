@@ -235,8 +235,8 @@ jobs:
                 *Part of the perpetual AI motion machine - no human review required.*"
               fi
               
-              # Wait for checks to complete or start (if any)
-              sleep 30
+              # Brief wait for GitHub to process the review/approval
+              sleep 5
               
               # Check if mergeable
               pr_data=$(gh pr view ${pr_num} --json mergeable)
