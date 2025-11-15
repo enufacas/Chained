@@ -1,14 +1,18 @@
 name: "Agent Collaboration: Suggest Helpers"
 
-on:
-  issues:
-    types: [opened, edited, labeled]
-  workflow_dispatch:
-    inputs:
-      issue_number:
-        description: 'Issue number to analyze for collaboration'
-        required: true
-        type: string
+# WORKFLOW DISABLED: 2025-11-15
+# This workflow has been turned off as requested in issue.
+# To re-enable: uncomment the 'on:' section below
+# 
+# on:
+#   issues:
+#     types: [opened, edited, labeled]
+#   workflow_dispatch:
+#     inputs:
+#       issue_number:
+#         description: 'Issue number to analyze for collaboration'
+#         required: true
+#         type: string
 
 permissions:
   contents: read
