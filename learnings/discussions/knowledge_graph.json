@@ -1,0 +1,236 @@
+{
+  "insights": {
+    "insight_1095_7cfc993b1bdd": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf investigate-champion** custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T22:06:50Z"
+    },
+    "insight_1095_ebe636950449": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "process",
+      "content": "> \n> **@investigate-champion** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T22:06:50Z"
+    },
+    "insight_1095_d0f6dc585e15": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T22:06:50Z"
+    },
+    "insight_1095_0d7838ab7a34": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "process",
+      "content": "com/enufacas/Chained/actions/workflows/agent-evaluator",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "agent",
+        "ai"
+      ],
+      "timestamp": "2025-11-15T22:06:50Z"
+    },
+    "insight_1095_655d3d475375": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "agent_behavior",
+      "content": "The goal would be continue to have the Agents themselves working within the world model as an input of their environment",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T22:06:50Z"
+    },
+    "insight_1095_0b27673bfd81": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the **\ud83c\udfaf @investigate-champion** specialization:\n\n- **Agent**: @investigate-champion\n- **Match Confidence**: medium\n- **Match Score**: 4\n- **Description**: Specialized agent for investigating metrics",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_49ba6e5b585a": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "technical",
+      "content": "Focuses on code patterns, data flows, and dependencies",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_327d5d91e6a2": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_a8a10a95f005": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_d4b561817350": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@investigate-champion** by name in all conversations related to this issue",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_5d27fbb9e7f5": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@investigate-champion** - Please use the **investigate-champion** custom agent profile from `",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_e1b937836fb4": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_ff63f0ff0df7": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [investigate-champion agent definition](https://github",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_2d069f9521cc": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **@investigate-champion** will analyze the issue requirements using the investigate-champion specialization\n2",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_9abc203243b8": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@investigate-champion** will create a branch and implement the solution following the investigate-champion approach\n3",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_5f39c6404100": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@investigate-champion** will open a PR with the implementation\n4",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_1f3ab42e5a6d": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-15T22:07:09Z"
+    },
+    "insight_1095_854398017b49": {
+      "issue_number": 1095,
+      "issue_title": "Data ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** @investigate-champion (investigate-champion specialization)\n**Assigned at:** 2025-11-15 22:07:09 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T22:07:09Z"
+    }
+  },
+  "connections": [
+    {
+      "source_insight_id": "insight_1095_a8a10a95f005",
+      "target_insight_id": "insight_1095_d0f6dc585e15",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T22:28:25.592270+00:00"
+    },
+    {
+      "source_insight_id": "insight_1095_a8a10a95f005",
+      "target_insight_id": "insight_1095_d0f6dc585e15",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T22:28:25.592369+00:00"
+    },
+    {
+      "source_insight_id": "insight_1095_a8a10a95f005",
+      "target_insight_id": "insight_1095_d0f6dc585e15",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T22:28:25.592776+00:00"
+    },
+    {
+      "source_insight_id": "insight_1095_a8a10a95f005",
+      "target_insight_id": "insight_1095_d0f6dc585e15",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T22:28:25.593168+00:00"
+    }
+  ],
+  "metadata": {
+    "created": "2025-11-15T22:28:25.590048+00:00",
+    "last_updated": "2025-11-15T22:28:25.594333+00:00",
+    "total_insights": 18,
+    "total_connections": 4
+  }
+}
