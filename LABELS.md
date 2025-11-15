@@ -4,6 +4,19 @@
 
 This document provides a comprehensive reference for all labels used in the Chained repository, explaining their purpose, usage, and relationships within the autonomous development cycle.
 
+## 🤖 Smart PR Auto-Labeling
+
+> **NEW**: This repository now features an intelligent PR auto-labeling system built by **@assert-specialist**!
+
+The system automatically analyzes PR content and applies relevant labels based on:
+- PR title and description keywords
+- Changed files and patterns
+- Confidence scoring (60%+ threshold)
+
+**📖 Full Documentation**: See [PR_AUTO_LABELING.md](docs/PR_AUTO_LABELING.md) for details.
+
+**Supported Auto-Labels**: `code-quality`, `testing`, `bug`, `enhancement`, `documentation`, `agent-system`, `workflow-optimization`, `security`, `performance`, `learning`, `pages-health`
+
 ---
 
 ## 📑 Table of Contents
