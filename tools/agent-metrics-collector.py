@@ -65,6 +65,7 @@ except ImportError:
         def get(self, endpoint, params=None, headers=None):
             """Minimal fallback implementation with support for custom headers"""
             import urllib.request
+            import urllib.error
             import urllib.parse
             
             url = f"https://api.github.com{endpoint}"
@@ -86,7 +87,14 @@ except ImportError:
             try:
                 with urllib.request.urlopen(req, timeout=10) as response:
                     return json.loads(response.read().decode('utf-8'))
+            except urllib.error.HTTPError as e:
+                # Log HTTP errors with details for debugging
+                print(f"⚠️  GitHub API HTTP {e.code}: {e.reason} for {endpoint}", file=sys.stderr)
+                if e.code == 403:
+                    print(f"⚠️  API rate limit or authentication issue. Check GITHUB_TOKEN.", file=sys.stderr)
+                return None
             except Exception as e:
+                print(f"⚠️  GitHub API error for {endpoint}: {e}", file=sys.stderr)
                 return None
 
 # Constants
@@ -175,6 +183,9 @@ class MetricsCollector:
         self.repo = repo or os.environ.get('GITHUB_REPOSITORY', 'enufacas/Chained')
         self.cache_size = cache_size
         
+        # Check GitHub API connectivity
+        self._check_github_api_access()
+        
         # Load scoring configuration from registry
         self.weights = self._load_scoring_weights()
         
@@ -203,6 +214,33 @@ class MetricsCollector:
         
         # Ensure metrics directory exists
         METRICS_DIR.mkdir(parents=True, exist_ok=True)
+    
+    def _check_github_api_access(self) -> bool:
+        """
+        Check if GitHub API is accessible with current token.
+        
+        Returns:
+            True if API is accessible, False otherwise
+        """
+        try:
+            # Simple API call to check connectivity
+            result = self.github.get('/rate_limit')
+            if result:
+                rate = result.get('rate', {})
+                remaining = rate.get('remaining', 0)
+                limit = rate.get('limit', 0)
+                print(f"✅ GitHub API accessible. Rate limit: {remaining}/{limit}", file=sys.stderr)
+                
+                if remaining < 100:
+                    print(f"⚠️  Warning: Low rate limit remaining ({remaining})", file=sys.stderr)
+                
+                return True
+            else:
+                print(f"⚠️  Warning: GitHub API not accessible. PR attribution may be inaccurate.", file=sys.stderr)
+                return False
+        except Exception as e:
+            print(f"⚠️  Warning: Could not check GitHub API access: {e}", file=sys.stderr)
+            return False
     
     def _load_scoring_weights(self) -> Dict[str, float]:
         """Load scoring weights from registry configuration"""
