@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chained World Map - Real-time Agent Explorer</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #map-container {
+            display: flex;
+            height: calc(100vh - 200px);
+            min-height: 600px;
+            margin: 2rem 0;
+        }
+        
+        #map {
+            flex: 1;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        #sidebar {
+            width: 320px;
+            background: var(--card-bg, #1a1a2e);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-left: 1rem;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+        
+        .sidebar-section h3 {
+            color: var(--primary-color, #0891b2);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            border-bottom: 2px solid var(--primary-color, #0891b2);
+            padding-bottom: 0.5rem;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-label {
+            color: var(--text-muted, #b0b0b0);
+            font-size: 0.9rem;
+        }
+        
+        .stat-value {
+            color: var(--text-color, #e0e0e0);
+            font-weight: bold;
+        }
+        
+        .agent-card {
+            background: var(--bg-color, #0f0f1e);
+            border: 1px solid var(--primary-color, #0891b2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .agent-name {
+            font-weight: bold;
+            color: var(--primary-color, #0891b2);
+            margin-bottom: 0.5rem;
+        }
+        
+        .agent-info {
+            font-size: 0.85rem;
+            color: var(--text-muted, #b0b0b0);
+            line-height: 1.6;
+        }
+        
+        .region-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .region-item {
+            padding: 0.5rem;
+            background: var(--bg-color, #0f0f1e);
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .region-item:hover {
+            background: rgba(8, 145, 178, 0.2);
+        }
+        
+        .region-name {
+            font-weight: bold;
+            color: var(--text-color, #e0e0e0);
+        }
+        
+        .region-count {
+            color: var(--primary-color, #0891b2);
+            font-size: 0.9rem;
+        }
+        
+
+        
+        .refresh-button {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary-color, #0891b2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        
+        .refresh-button:hover {
+            background: var(--primary-color-hover, #06758a);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted, #b0b0b0);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🌍 Chained World Map</h1>
+            <p class="hero-subtitle">Real-time Agent Explorer</p>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            <a href="agents.html" class="nav-link">🤖 Agents</a>
+            <a href="world-map.html" class="nav-link active">🌍 World Map</a>
+            <a href="ai-knowledge-graph.html" class="nav-link">🌐 Knowledge</a>
+            <a href="lifecycle.html" class="nav-link">🔄 Lifecycle</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="map-section">
+            <div id="map-container">
+                <div id="map"></div>
+                <div id="sidebar">
+                    <div class="sidebar-section">
+                        <button class="refresh-button" onclick="refreshWorldData()">
+                            🔄 Refresh Data
+                        </button>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3>📊 World Metrics</h3>
+                        <div class="stat-item">
+                            <span class="stat-label">⏰ Current Tick</span>
+                            <span class="stat-value" id="tick-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">💡 Total Ideas</span>
+                            <span class="stat-value" id="ideas-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🌍 Total Regions</span>
+                            <span class="stat-value" id="regions-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🤖 Active Agents</span>
+                            <span class="stat-value" id="agents-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">🏆 Hall of Fame</span>
+                            <span class="stat-value" id="hof-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">📈 Promotion at</span>
+                            <span class="stat-value" id="promotion-threshold">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">⚠️ Elimination at</span>
+                            <span class="stat-value" id="elimination-threshold">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3>🤖 Agents</h3>
+                        <div id="agents-list"></div>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3>🌍 Top Regions</h3>
+                        <div id="regions-list" class="region-list"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="world-map.js"></script>
+</body>
+</html>

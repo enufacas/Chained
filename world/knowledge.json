@@ -1,0 +1,531 @@
+{
+  "ideas": [
+    {
+      "title": "OpenAI Launches GPT-5 with Self-Healing CI Pipelines",
+      "summary": "OpenAI launches GPT-5 with self-healing CI pipelines that use ML to auto-fix failures. Microsoft and GitHub adopt the technology for CI systems.",
+      "patterns": [
+        "ci_automation",
+        "self_healing",
+        "ai_ml",
+        "devops"
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "hq_city": "San Francisco",
+          "hq_country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "Microsoft",
+          "hq_city": "Redmond",
+          "hq_country": "US",
+          "lat": 47.674,
+          "lng": -122.1215
+        },
+        {
+          "name": "GitHub",
+          "hq_city": "San Francisco",
+          "hq_country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.6666666666666666
+        },
+        {
+          "region_id": "US:Redmond",
+          "lat": 47.674,
+          "lng": -122.1215,
+          "weight": 0.3333333333333333
+        }
+      ],
+      "id": "idea:1"
+    },
+    {
+      "title": "TSMC Expands 3nm Production with AI-Powered Testing",
+      "summary": "TSMC expands 3nm production in Taiwan using AI-powered testing. Samsung monitors the competitive landscape.",
+      "patterns": [
+        "ai_ml",
+        "testing"
+      ],
+      "companies": [
+        {
+          "name": "TSMC",
+          "hq_city": "Hsinchu",
+          "hq_country": "TW",
+          "lat": 24.8138,
+          "lng": 120.9675
+        },
+        {
+          "name": "Samsung",
+          "hq_city": "Seoul",
+          "hq_country": "KR",
+          "lat": 37.5665,
+          "lng": 126.978
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "TW:Hsinchu",
+          "lat": 24.8138,
+          "lng": 120.9675,
+          "weight": 0.5
+        },
+        {
+          "region_id": "KR:Seoul",
+          "lat": 37.5665,
+          "lng": 126.978,
+          "weight": 0.5
+        }
+      ],
+      "id": "idea:2"
+    },
+    {
+      "title": "Alibaba and Tencent Partner on Distributed Cloud Infrastructure",
+      "summary": "Alibaba and Tencent partner on distributed cloud infrastructure with focus on performance and DevOps.",
+      "patterns": [
+        "distributed_systems",
+        "performance",
+        "devops"
+      ],
+      "companies": [
+        {
+          "name": "Alibaba",
+          "hq_city": "Hangzhou",
+          "hq_country": "CN",
+          "lat": 30.2741,
+          "lng": 120.1551
+        },
+        {
+          "name": "Tencent",
+          "hq_city": "Shenzhen",
+          "hq_country": "CN",
+          "lat": 22.5431,
+          "lng": 114.0579
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "CN:Hangzhou",
+          "lat": 30.2741,
+          "lng": 120.1551,
+          "weight": 0.5
+        },
+        {
+          "region_id": "CN:Shenzhen",
+          "lat": 22.5431,
+          "lng": 114.0579,
+          "weight": 0.5
+        }
+      ],
+      "id": "idea:3"
+    },
+    {
+      "title": "Spotify Launches AI Music Recommendations with DeepMind",
+      "summary": "Spotify and DeepMind collaborate on AI-powered music recommendations using neural networks and ML.",
+      "patterns": [
+        "ai_ml"
+      ],
+      "companies": [
+        {
+          "name": "Spotify",
+          "hq_city": "Stockholm",
+          "hq_country": "SE",
+          "lat": 59.3293,
+          "lng": 18.0686
+        },
+        {
+          "name": "DeepMind",
+          "hq_city": "London",
+          "hq_country": "GB",
+          "lat": 51.5074,
+          "lng": -0.1278
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "SE:Stockholm",
+          "lat": 59.3293,
+          "lng": 18.0686,
+          "weight": 0.5
+        },
+        {
+          "region_id": "GB:London",
+          "lat": 51.5074,
+          "lng": -0.1278,
+          "weight": 0.5
+        }
+      ],
+      "id": "idea:4"
+    },
+    {
+      "id": "idea:15",
+      "title": "DevOps: Cloud Innovation",
+      "summary": "Exploring cloud trends with 26 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs...",
+      "patterns": [
+        "cloud",
+        "devops"
+      ],
+      "companies": [
+        {
+          "name": "AWS",
+          "city": "Seattle",
+          "country": "US",
+          "lat": 47.6062,
+          "lng": -122.3321
+        },
+        {
+          "name": "Microsoft Azure",
+          "city": "Redmond",
+          "country": "US",
+          "lat": 47.674,
+          "lng": -122.1215
+        },
+        {
+          "name": "Google Cloud",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:Seattle",
+          "lat": 47.6062,
+          "lng": -122.3321,
+          "weight": 0.33
+        },
+        {
+          "region_id": "US:Redmond",
+          "lat": 47.674,
+          "lng": -122.1215,
+          "weight": 0.33
+        },
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.33
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 26,
+      "created_at": "2025-11-15T05:43:14Z"
+    },
+    {
+      "id": "idea:16",
+      "title": "AI/ML: Agents Innovation",
+      "summary": "Exploring agents trends with 25 mentions. Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻...",
+      "patterns": [
+        "agents",
+        "ai/ml"
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "Microsoft",
+          "city": "Redmond",
+          "country": "US",
+          "lat": 47.674,
+          "lng": -122.1215
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.5
+        },
+        {
+          "region_id": "US:Redmond",
+          "lat": 47.674,
+          "lng": -122.1215,
+          "weight": 0.5
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 25,
+      "created_at": "2025-11-15T05:43:14Z"
+    },
+    {
+      "id": "idea:17",
+      "title": "AI/ML: Ai Innovation",
+      "summary": "Exploring ai trends with 75 mentions. Low cost MacBook 💻, Google AI data centers 🛰️, inside xAI 🤖...",
+      "patterns": [
+        "ai",
+        "ai/ml"
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "DeepMind",
+          "city": "London",
+          "country": "GB",
+          "lat": 51.5074,
+          "lng": -0.1278
+        },
+        {
+          "name": "Anthropic",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.67
+        },
+        {
+          "region_id": "GB:London",
+          "lat": 51.5074,
+          "lng": -0.1278,
+          "weight": 0.33
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 75,
+      "created_at": "2025-11-15T05:43:14Z"
+    },
+    {
+      "id": "idea:18",
+      "title": "Languages: Go Innovation",
+      "summary": "Exploring go trends with 15 mentions. Zed is our office...",
+      "patterns": [
+        "go",
+        "languages"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 15,
+      "created_at": "2025-11-15T05:43:14Z"
+    },
+    {
+      "id": "idea:19",
+      "title": "Security: Security Innovation",
+      "summary": "Exploring security trends with 41 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs...",
+      "patterns": [
+        "security",
+        "security"
+      ],
+      "companies": [
+        {
+          "name": "Cloudflare",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "CrowdStrike",
+          "city": "Austin",
+          "country": "US",
+          "lat": 30.2672,
+          "lng": -97.7431
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.5
+        },
+        {
+          "region_id": "US:Austin",
+          "lat": 30.2672,
+          "lng": -97.7431,
+          "weight": 0.5
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 41,
+      "created_at": "2025-11-15T05:43:14Z"
+    },
+    {
+      "id": "idea:20",
+      "title": "DevOps: Aws Innovation",
+      "summary": "Exploring aws trends with 16 mentions. We cut our Mongo DB costs by 90% by moving to Hetzner...",
+      "patterns": [
+        "aws",
+        "devops"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 16,
+      "created_at": "2025-11-15T05:43:14Z"
+    },
+    {
+      "id": "idea:21",
+      "title": "AI/ML: Gpt Innovation",
+      "summary": "Exploring gpt trends with 29 mentions. GPT-5.1: A smarter, more conversational ChatGPT...",
+      "patterns": [
+        "gpt",
+        "ai/ml"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 29,
+      "created_at": "2025-11-15T05:43:14Z"
+    },
+    {
+      "id": "idea:22",
+      "title": "AI/ML: Gemini Innovation",
+      "summary": "Exploring gemini trends with 18 mentions. Apple Gemini deal terms 💰, Amazon layoff turmoil 💼, compiler targets 👨‍💻...",
+      "patterns": [
+        "gemini",
+        "ai/ml"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 18,
+      "created_at": "2025-11-15T05:43:14Z"
+    },
+    {
+      "id": "idea:23",
+      "title": "Web: Api Innovation",
+      "summary": "Exploring api trends with 10 mentions. Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependen...",
+      "patterns": [
+        "api",
+        "web"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 10,
+      "created_at": "2025-11-15T05:43:14Z"
+    },
+    {
+      "id": "idea:24",
+      "title": "DevOps: Deployment Innovation",
+      "summary": "Exploring deployment trends with 9 mentions. We cut our Mongo DB costs by 90% by moving to Hetzner...",
+      "patterns": [
+        "deployment",
+        "devops"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 9,
+      "created_at": "2025-11-15T05:43:14Z"
+    }
+  ]
+}

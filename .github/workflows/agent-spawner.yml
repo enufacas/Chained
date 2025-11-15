@@ -216,8 +216,10 @@ jobs:
         id: generate_agent
         if: steps.check_capacity.outputs.can_spawn == 'true'
         run: |
-          TIMESTAMP=$(date +%s)
-          AGENT_ID="agent-$TIMESTAMP"
+          # Use nanosecond precision + random component to avoid collisions
+          TIMESTAMP=$(date +%s%N)
+          RANDOM_SUFFIX=$((RANDOM * RANDOM % 100000))
+          AGENT_ID="agent-${TIMESTAMP}-${RANDOM_SUFFIX}"
           
           # Determine spawning mode
           MODE="${{ github.event.inputs.mode }}"
@@ -280,10 +282,13 @@ jobs:
             # Get emoji from convention-compliant agent definition
             EMOJI=$(python3 tools/get-agent-info.py emoji "$SPECIALIZATION")
             
-            # Generate human name for existing specialization
-            HUMAN_NAMES=("Ada" "Tesla" "Einstein" "Curie" "Turing" "Lovelace" "Darwin" "Newton" "Feynman" "Hopper" "Hamilton" "Liskov" "Dijkstra" "Knuth" "Shannon")
-            NAME_INDEX=$((RANDOM % ${#HUMAN_NAMES[@]}))
-            HUMAN_NAME="${HUMAN_NAMES[$NAME_INDEX]}"
+            # Generate unique human name for existing specialization
+            # Use helper script to get available names (not used by active agents)
+            HUMAN_NAME=$(python3 tools/get-available-human-names.py --format random --with-fallback)
+            if [ -z "$HUMAN_NAME" ]; then
+              echo "❌ Failed to generate unique human name"
+              exit 1
+            fi
             
             # Generate personality for existing agents
             PERSONALITIES=("methodical and precise" "enthusiastic and energetic" "calm and thoughtful" "bold and innovative" "meticulous and careful" "creative and artistic" "analytical and logical" "friendly and collaborative")
@@ -323,6 +328,27 @@ jobs:
           echo "  Communication: $COMM_STYLE"
           echo "  Is New Type: $CREATE_NEW"
           echo "  Traits: Creativity=$CREATIVITY, Caution=$CAUTION, Speed=$SPEED"
+
+      - name: Verify agent ID uniqueness
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          
+          # Check if agent ID already exists in registry
+          if python3 -c "
+          import sys
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          registry = RegistryManager()
+          agent = registry.get_agent('$AGENT_ID')
+          sys.exit(0 if agent is None else 1)
+          "; then
+            echo "✅ Agent ID is unique: $AGENT_ID"
+          else
+            echo "❌ ERROR: Agent ID already exists in registry: $AGENT_ID"
+            echo "This should not happen with improved random generation!"
+            exit 1
+          fi
 
       - name: Register agent
         if: steps.check_capacity.outputs.can_spawn == 'true'

@@ -42,11 +42,10 @@ def main():
         if registry.update_agent(agent_data):
             print(f"✓ Successfully added/updated agent {agent_data['id']}")
             
-            # Update metadata - last_spawn timestamp using atomic field update
-            from datetime import datetime, timezone
-            registry.update_metadata_field("last_spawn", datetime.now(timezone.utc).isoformat())
+            # Note: last_spawn timestamp is now updated by the parent workflow
+            # after all concurrent agent spawns complete to avoid merge conflicts
+            # when multiple agents are spawned in parallel
             
-            print(f"✓ Updated last_spawn timestamp")
             sys.exit(0)
         else:
             print(f"✗ Failed to add/update agent {agent_data['id']}")
