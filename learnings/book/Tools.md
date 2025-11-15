@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 42
+**Total Insights:** 43
 
 **Last Updated:** 2025-11-15
 
@@ -53,6 +53,20 @@ A Git-compatible VCS that is both simple and powerful
 
 
 ## 📰 From Hacker News
+
+
+### No One Lives Forever' turns 25 and you still can't buy it legitimately
+
+**Community Score:** 325 upvotes
+
+**Link:** https://www.techdirt.com/2025/11/13/no-one-lives-forever-turns-25-you-still-cant-buy-it-legitimately/
+
+
+**Content Summary:**
+
+Arianity (profile) says: November 13, 2025 at 8:24 pm Maybe we’ll be able to play this game legitimately by the time Bobby Bonilla stops making his million and change per year. Ahh, a refreshing bit of optimism in these dark times!
+
+---
 
 
 ### 'No One Lives Forever' turns 25 and you still can't buy it legitimately
@@ -288,15 +302,6 @@ inp...
 **Community Score:** 207 upvotes
 
 **Link:** https://torrentfreak.com/dns-provider-quad9-sees-piracy-blocking-orders-as-existential-threat/
-
----
-
-
-### Europe to decide if 6 GHz is shared between Wi-Fi and cellular networks
-
-**Community Score:** 149 upvotes
-
-**Link:** https://www.theregister.com/2025/11/09/europe_to_decide_if_6/
 
 ---
 

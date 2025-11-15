@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-15 18:59 UTC
+**Generated:** 2025-11-15 19:07 UTC
 
-**Total Learning Sessions:** 67
+**Total Learning Sessions:** 69
 
-**Total Insights:** 668
+**Total Insights:** 681
 
 ---
 
@@ -18,14 +18,14 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 216
+**Insights:** 218
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 55
+**Insights:** 57
 
 
 ### [🚀 DevOps & Infrastructure](./DevOps.md)
@@ -60,14 +60,14 @@ Security vulnerabilities, encryption, authentication, and privacy
 
 Performance tuning, benchmarks, and optimization techniques
 
-**Insights:** 19
+**Insights:** 20
 
 
 ### [🔧 Developer Tools](./Tools.md)
 
 IDEs, editors, debuggers, and productivity tools
 
-**Insights:** 42
+**Insights:** 43
 
 
 ### [🌟 Open Source & Community](./OpenSource.md)
@@ -81,7 +81,7 @@ Open source projects, community insights, and collaboration
 
 General technology news and insights
 
-**Insights:** 270
+**Insights:** 277
 
 
 ## 📊 Statistics
@@ -89,28 +89,28 @@ General technology news and insights
 
 ### By Source
 
-- **Hacker News:** 25 learning sessions
+- **Hacker News:** 26 learning sessions
 
 - **TLDR Tech:** 20 learning sessions
 
-- **Unknown:** 18 learning sessions
+- **Unknown:** 19 learning sessions
 
 - **GitHub Trending:** 4 learning sessions
 
 
 ### By Topic
 
-- **📚 General Tech Insights:** 270 insights
+- **📚 General Tech Insights:** 277 insights
 
-- **🤖 AI & Machine Learning:** 216 insights
+- **🤖 AI & Machine Learning:** 218 insights
 
-- **💻 Programming Languages & Frameworks:** 55 insights
+- **💻 Programming Languages & Frameworks:** 57 insights
 
-- **🔧 Developer Tools:** 42 insights
+- **🔧 Developer Tools:** 43 insights
 
 - **🌐 Web Development:** 23 insights
 
-- **⚡ Performance & Optimization:** 19 insights
+- **⚡ Performance & Optimization:** 20 insights
 
 - **🚀 DevOps & Infrastructure:** 18 insights
 

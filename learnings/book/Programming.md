@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 55
+**Total Insights:** 57
 
 **Last Updated:** 2025-11-15
 
@@ -133,6 +133,34 @@ Open Source Spotify client library
 
 
 ## 📰 From Hacker News
+
+
+### Designing a Language (2017
+
+**Community Score:** 145 upvotes
+
+**Link:** https://cs.lmu.edu/~ray/notes/languagedesignnotes/
+
+
+**Content Summary:**
+
+Language Design So, you want to design your own language? Of course you do. Or perhaps you are taking a class and are being forced to create a programming language under penalty of a bad grade. What kinds of things do you need to know? Designing a Language Of course you want to design (and implement!) your own programming language! It’s fun. It’s creative. It’s empowering. How do we do it? In a nutshell, the process is iterative, cycling between four phases: Doing the phases over and over is imp...
+
+---
+
+
+### Go's Sweet 16
+
+**Community Score:** 232 upvotes
+
+**Link:** https://go.dev/blog/16years
+
+
+**Content Summary:**
+
+The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 This past Monday, November 10th, we celebrated the 16th anniversary of Go’s open source release ! We released Go 1.24 in February and Go 1.25 in August , following our now well-established and dependable release cadence. Continuing our mission to build the most productive language platform for building production systems, these releases included new APIs for building robust and reliable software, significant advances in ...
+
+---
 
 
 ### Boa: A standard-conforming embeddable JavaScript engine written in Rust
@@ -341,41 +369,6 @@ RESUBSCRIPTION REQUIRED
 It seems that you've previously unsubscribed from our newsletter
 in the past. Click the button below to open the re-subscribe form
 in a new tab. When you're done, simply close that tab...
-
----
-
-
-### FFmpeg to Google: Fund us or stop sending bugs
-
-**Community Score:** 743 upvotes
-
-**Link:** https://thenewstack.io/ffmpeg-to-google-fund-us-or-stop-sending-bugs/
-
-
-**Content Summary:**
-
-TNS
-OK
-SUBSCRIBE
-Join our community of software engineering leaders and aspirational developers. Always
-stay in-the-know by getting the most important news and exclusive content delivered
-fresh to your inbox to learn more about at-scale software development.
-EMAIL ADDRESS
-REQUIRED
-SUBSCRIBE
-RESUBSCRIPTION REQUIRED
-It seems that you've previously unsubscribed from our newsletter
-in the past. Click the button below to open the re-subscribe form
-in a new tab. When you're done, simply close that tab...
-
----
-
-
-### Omnilingual ASR: Advancing automatic speech recognition for 1600 languages
-
-**Community Score:** 139 upvotes
-
-**Link:** https://ai.meta.com/blog/omnilingual-asr-advancing-automatic-speech-recognition/?_fb_noscript=1
 
 ---
 
