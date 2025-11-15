@@ -62,8 +62,8 @@ except ImportError:
         def __init__(self, token=None):
             self.token = token or os.environ.get('GITHUB_TOKEN', os.environ.get('GH_TOKEN'))
         
-        def get(self, endpoint, params=None):
-            """Minimal fallback implementation"""
+        def get(self, endpoint, params=None, headers=None):
+            """Minimal fallback implementation with support for custom headers"""
             import urllib.request
             import urllib.parse
             
@@ -74,7 +74,14 @@ except ImportError:
             req = urllib.request.Request(url)
             if self.token:
                 req.add_header('Authorization', f'token {self.token}')
+            
+            # Set default Accept header
             req.add_header('Accept', 'application/vnd.github.v3+json')
+            
+            # Override with custom headers if provided
+            if headers:
+                for key, value in headers.items():
+                    req.add_header(key, value)
             
             try:
                 with urllib.request.urlopen(req, timeout=10) as response:
@@ -486,12 +493,16 @@ class MetricsCollector:
             activity.issues_resolved = len(resolved_issues)
             
             # Find PRs that close issues assigned to this agent
-            # We need to look for PRs that reference the assigned issues
+            # We use multiple methods to ensure we find all relevant PRs:
+            # 1. Timeline API to find cross-referenced PRs
+            # 2. Search API to find PRs that mention issue numbers
             prs_for_agent = []
             pr_numbers_from_issues = set()  # Track PRs found via issue timeline
             
             for issue in assigned_issues:
                 issue_number = issue.get('number')
+                
+                # Method 1: Use timeline API to find linked PRs
                 try:
                     # Get timeline to find linked PRs
                     timeline = self.github.get(
@@ -509,11 +520,33 @@ class MetricsCollector:
                                     if pr_number and pr_number not in pr_numbers_from_issues:
                                         prs_for_agent.append(pr_data)
                                         pr_numbers_from_issues.add(pr_number)
-                                        print(f"  ✅ Found PR #{pr_number} linked to issue #{issue_number}", file=sys.stderr)
+                                        print(f"  ✅ Found PR #{pr_number} via timeline for issue #{issue_number}", file=sys.stderr)
                 except Exception as e:
-                    print(f"⚠️  Warning: Error fetching timeline for issue {issue_number}: {e}", file=sys.stderr)
+                    print(f"⚠️  Warning: Timeline API failed for issue {issue_number}: {e}", file=sys.stderr)
+                
+                # Method 2: Search for PRs that mention this issue number
+                # This is a fallback in case timeline API doesn't work
+                try:
+                    # Search for PRs that mention this issue
+                    search_results = self._search_issues(
+                        agent_id,
+                        'is:pr',
+                        f'in:body #{issue_number}'
+                    )
+                    
+                    for pr in search_results:
+                        pr_number = pr.get('number')
+                        if pr_number and pr_number not in pr_numbers_from_issues:
+                            # Verify this PR actually mentions the issue (not just coincidental #number)
+                            pr_body = pr.get('body', '').lower()
+                            if f'#{issue_number}' in pr_body or f'closes #{issue_number}' in pr_body or f'fixes #{issue_number}' in pr_body:
+                                prs_for_agent.append(pr)
+                                pr_numbers_from_issues.add(pr_number)
+                                print(f"  ✅ Found PR #{pr_number} via search for issue #{issue_number}", file=sys.stderr)
+                except Exception as e:
+                    print(f"⚠️  Warning: Search API failed for issue {issue_number}: {e}", file=sys.stderr)
             
-            # PRs found via issue timeline are already implicitly attributed to the agent
+            # PRs found via issue timeline or search are already implicitly attributed to the agent
             # because the issue was assigned to them. No additional filtering needed.
             # This fixes the bug where agents weren't getting credit for their PRs.
             print(f"📊 Found {len(prs_for_agent)} PRs linked to {len(assigned_issues)} assigned issues", file=sys.stderr)
