@@ -1,5 +1,5 @@
 {
-  "time": "2025-11-15T04:49:38Z",
+  "time": "2025-11-15T04:57:34Z",
   "tick": 2,
   "agents": [
     {
@@ -260,14 +260,14 @@
       "label": "San Francisco",
       "lat": 37.7749,
       "lng": -122.4194,
-      "idea_count": 1
+      "idea_count": 11
     },
     {
       "id": "US:Seattle",
       "label": "Seattle",
       "lat": 47.6062,
       "lng": -122.3321,
-      "idea_count": 0
+      "idea_count": 1
     },
     {
       "id": "US:New York",
@@ -281,7 +281,7 @@
       "label": "Redmond",
       "lat": 47.674,
       "lng": -122.1215,
-      "idea_count": 1
+      "idea_count": 3
     },
     {
       "id": "TW:Hsinchu",
@@ -323,6 +323,13 @@
       "label": "London",
       "lat": 51.5074,
       "lng": -0.1278,
+      "idea_count": 2
+    },
+    {
+      "id": "US:Austin",
+      "label": "Austin",
+      "lat": 30.2672,
+      "lng": -97.7431,
       "idea_count": 1
     }
   ],
@@ -335,7 +342,7 @@
     }
   ],
   "metrics": {
-    "total_ideas": 4,
+    "total_ideas": 14,
     "total_regions": 10,
     "ticks_completed": 2,
     "active_agents": 11,
