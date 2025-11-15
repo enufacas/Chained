@@ -5,7 +5,7 @@ on:
   schedule:
     - cron: '30 0 * * 0'  # Every Sunday at 00:30 UTC (30 min after pr-failure-learning)
   
-  # Run when pr-failure-learning completes
+  # Run when pr-failure-learning completes successfully
   workflow_run:
     workflows: ["System: PR Failure Learning"]
     types: [completed]
@@ -28,6 +28,11 @@ on:
         required: false
         type: boolean
         default: false
+
+# Prevent concurrent runs
+concurrency:
+  group: pr-failure-intelligence-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -58,6 +63,7 @@ jobs:
       
       - name: Collect PR data for analysis
         id: collect
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -67,17 +73,41 @@ jobs:
           # Create temporary data file for both successful and failed PRs
           output_file="learnings/pr_intelligence/pr_history_$(date +%Y%m%d_%H%M%S).json"
           
-          # Fetch recent PRs (both merged and closed)
-          gh pr list \
-            --state all \
-            --limit 100 \
-            --json number,title,state,mergedAt,closedAt,files,changedFiles,author \
-            > "${output_file}"
+          # Fetch with retry logic
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          SUCCESS=false
           
-          # Count PRs collected
-          pr_count=$(cat "${output_file}" | jq 'length')
-          echo "Collected ${pr_count} PRs for analysis"
-          echo "output_file=${output_file}" >> $GITHUB_OUTPUT
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ "$SUCCESS" = "false" ]; do
+            if [ $RETRY_COUNT -gt 0 ]; then
+              echo "⚠️  Retry attempt $RETRY_COUNT of $MAX_RETRIES"
+              sleep $((RETRY_COUNT * 10))
+            fi
+            
+            if gh pr list \
+              --state all \
+              --limit 100 \
+              --json number,title,state,mergedAt,closedAt,files,changedFiles,author \
+              > "${output_file}" 2>&1; then
+              SUCCESS=true
+            fi
+            
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+          done
+          
+          if [ "$SUCCESS" = "true" ]; then
+            # Count PRs collected
+            pr_count=$(cat "${output_file}" | jq 'length' 2>/dev/null || echo "0")
+            echo "✅ Collected ${pr_count} PRs for analysis"
+            echo "output_file=${output_file}" >> $GITHUB_OUTPUT
+            echo "pr_count=${pr_count}" >> $GITHUB_OUTPUT
+            echo "collection_success=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Failed to collect PR data after $MAX_RETRIES attempts"
+            echo "output_file=" >> $GITHUB_OUTPUT
+            echo "pr_count=0" >> $GITHUB_OUTPUT
+            echo "collection_success=false" >> $GITHUB_OUTPUT
+          fi
           echo "pr_count=${pr_count}" >> $GITHUB_OUTPUT
       
       - name: Analyze code patterns

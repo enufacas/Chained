@@ -22,6 +22,11 @@ on:
         type: boolean
         default: false
 
+# Prevent concurrent runs to avoid conflicts
+concurrency:
+  group: pr-failure-learning-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: read
@@ -46,19 +51,42 @@ jobs:
       
       - name: Collect PR failures
         if: ${{ !inputs.analyze_only }}
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           since_days="${{ inputs.since_days || '30' }}"
           echo "📊 Collecting PR failures from last ${since_days} days..."
-          python tools/pr-failure-learner.py --collect --since ${since_days} --verbose
           
-          if [ $? -eq 0 ]; then
-            echo "✅ Successfully collected PR failure data"
-          else
-            echo "⚠️ Failed to collect PR failures"
-            exit 1
+          # Create required directories
+          mkdir -p learnings/pr_intelligence/agent_profiles
+          
+          # Run with retry logic
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          SUCCESS=false
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ "$SUCCESS" = "false" ]; do
+            if [ $RETRY_COUNT -gt 0 ]; then
+              echo "⚠️  Retry attempt $RETRY_COUNT of $MAX_RETRIES"
+              sleep $((RETRY_COUNT * 10))  # Longer wait for API calls
+            fi
+            
+            if python tools/pr-failure-learner.py --collect --since ${since_days} --verbose 2>&1 | tee /tmp/collect_log.txt; then
+              SUCCESS=true
+              echo "✅ Successfully collected PR failure data"
+            else
+              echo "❌ Collection attempt failed"
+            fi
+            
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+          done
+          
+          if [ "$SUCCESS" != "true" ]; then
+            echo "⚠️ Failed to collect PR failures after $MAX_RETRIES attempts"
+            echo "Will proceed with existing data if available"
+            tail -20 /tmp/collect_log.txt || echo "No log available"
           fi
       
       - name: Analyze failure patterns
