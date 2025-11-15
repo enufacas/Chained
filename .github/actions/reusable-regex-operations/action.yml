@@ -1,0 +1,13 @@
+name: Automated Regex Operations
+description: Reusable action for regex_operations operations
+inputs:
+  options:
+    description: Additional options
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+  - name: Execute regex_operations
+    shell: bash
+    run: 'echo "Executing regex_operations with options: ${{ inputs.options }}"'
