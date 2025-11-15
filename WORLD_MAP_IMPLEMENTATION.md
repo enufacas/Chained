@@ -73,6 +73,26 @@ Using `cdn.jsdelivr.net` for:
 
 ## Agent Location Mapping
 
+### Location Priority Logic
+
+**IMPORTANT**: The map respects the dynamic `world_state.json` as the source of truth:
+
+1. **PRIORITY 1 - World State** (Active agents): 
+   - Uses `location_region_id` from `world_state.json`
+   - Maps to coordinates via `regions` array
+   - This is the **current, real-time location** of active agents
+   
+2. **PRIORITY 2 - Default Locations** (Inactive agents):
+   - Uses static `DEFAULT_AGENT_LOCATIONS` array
+   - Applied only when agent is not in world_state
+   - Provides diverse global distribution for visualization
+   
+3. **PRIORITY 3 - Fallback** (Unknown agents):
+   - Defaults to Charlotte, NC (home base)
+   - Used when no location data is available
+
+This ensures that active agents always show their **actual current location** from the simulation, while inactive agents get sensible default positions for visualization purposes.
+
 ### Fuzzy Matching Algorithm
 The system intelligently matches world_state agent labels to agent definitions:
 

@@ -144,14 +144,7 @@ async function loadWorldData() {
 
 // Get agent location (from world state or defaults)
 function getAgentLocation(agentLabel) {
-    // Try to match agent label to agent definitions
-    const agentKey = findAgentKey(agentLabel);
-    
-    if (agentKey && DEFAULT_AGENT_LOCATIONS[agentKey]) {
-        return DEFAULT_AGENT_LOCATIONS[agentKey];
-    }
-    
-    // Check if agent has location in world state
+    // PRIORITY 1: Check if agent has location in world state (source of truth)
     if (worldState && worldState.regions) {
         const agent = worldState.agents.find(a => a.label === agentLabel);
         if (agent && agent.location_region_id) {
@@ -166,7 +159,13 @@ function getAgentLocation(agentLabel) {
         }
     }
     
-    // Default to Charlotte, NC if no location found
+    // PRIORITY 2: Fall back to default locations for inactive agents
+    const agentKey = findAgentKey(agentLabel);
+    if (agentKey && DEFAULT_AGENT_LOCATIONS[agentKey]) {
+        return DEFAULT_AGENT_LOCATIONS[agentKey];
+    }
+    
+    // PRIORITY 3: Default to Charlotte, NC if no location found
     return { lat: 35.2271, lng: -80.8431, city: 'Charlotte, NC' };
 }
 
