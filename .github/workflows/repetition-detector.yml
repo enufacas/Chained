@@ -41,6 +41,11 @@ jobs:
         run: |
           git config --global --add safe.directory $GITHUB_WORKSPACE
 
+      - name: Prepare analysis directory
+        run: |
+          mkdir -p analysis
+          echo "✓ Analysis directory ready for reports"
+
       - name: Run Repetition Detector
         id: detect
         run: |

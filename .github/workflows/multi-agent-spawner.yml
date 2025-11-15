@@ -98,7 +98,12 @@ jobs:
 
   spawn-agents:
     needs: check-capacity
-    if: needs.check-capacity.outputs.can_spawn == 'true'
+    # Enhanced validation to prevent empty/null spawn_count from causing matrix generation failures
+    if: |
+      needs.check-capacity.outputs.can_spawn == 'true' &&
+      needs.check-capacity.outputs.spawn_count != '' &&
+      needs.check-capacity.outputs.spawn_count != '0' &&
+      needs.check-capacity.outputs.spawn_count != 'null'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -106,6 +111,20 @@ jobs:
         agent_index: ${{ fromJson(format('[{0}]', join(range(1, fromJson(needs.check-capacity.outputs.spawn_count) + 1), ','))) }}
       max-parallel: 3  # Spawn agents in parallel but limit concurrency
     steps:
+      - name: Validate capacity check outputs
+        run: |
+          if [ -z "${{ needs.check-capacity.outputs.spawn_count }}" ]; then
+            echo "❌ spawn_count is empty"
+            exit 1
+          fi
+          if [ -z "${{ needs.check-capacity.outputs.can_spawn }}" ]; then
+            echo "❌ can_spawn is empty"
+            exit 1
+          fi
+          echo "✅ Capacity check outputs valid"
+          echo "  spawn_count: ${{ needs.check-capacity.outputs.spawn_count }}"
+          echo "  can_spawn: ${{ needs.check-capacity.outputs.can_spawn }}"
+      
       - name: Validate spawn configuration
         run: |
           SPAWN_COUNT="${{ needs.check-capacity.outputs.spawn_count }}"

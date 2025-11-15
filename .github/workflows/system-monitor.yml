@@ -342,8 +342,24 @@ jobs:
           echo "🔍 Monitoring workflow health..."
           echo ""
           
-          # Get workflow runs from the last 100
-          runs_json=$(gh run list --limit 100 --json databaseId,name,status,conclusion,createdAt,displayTitle)
+          # Get workflow runs with retry logic to handle transient API failures
+          runs_json=""
+          for attempt in {1..3}; do
+            echo "Fetching workflow runs (attempt $attempt/3)..."
+            if runs_json=$(gh run list --limit 100 --json databaseId,name,status,conclusion,createdAt,displayTitle 2>&1); then
+              echo "✓ Successfully fetched workflow data"
+              break
+            else
+              echo "⚠️  Attempt $attempt failed: $runs_json"
+              [ $attempt -lt 3 ] && sleep 5
+            fi
+          done
+          
+          if [ -z "$runs_json" ]; then
+            echo "❌ Failed to fetch workflow data after 3 attempts"
+            echo "This may be due to GitHub API rate limiting or network issues"
+            exit 1
+          fi
           
           # Count all runs by conclusion type
           total_runs=$(echo "$runs_json" | jq '. | length')
