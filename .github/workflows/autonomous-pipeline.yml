@@ -35,12 +35,71 @@ permissions:
 
 jobs:
   # ============================================================================
+  # STAGE 0: SETUP - Ensure Required Labels
+  # ============================================================================
+  
+  ensure-labels:
+    name: "Stage 0: Ensure Required Labels"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Ensure required labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'EOF'
+          import requests
+          import os
+          
+          GITHUB_TOKEN = os.environ['GH_TOKEN']
+          REPO = os.environ['GITHUB_REPOSITORY']
+          
+          headers = {
+              'Authorization': f'token {GITHUB_TOKEN}',
+              'Accept': 'application/vnd.github.v3+json'
+          }
+          
+          required_labels = [
+              {'name': 'learning', 'color': '0E8A16', 'description': 'Learning-related'},
+              {'name': 'agent-mission', 'color': 'D93F0B', 'description': 'Agent mission'},
+              {'name': 'ai-generated', 'color': '1D76DB', 'description': 'AI-generated'},
+              {'name': 'automated', 'color': 'FBCA04', 'description': 'Automated'},
+              {'name': 'pipeline', 'color': '5319E7', 'description': 'Pipeline workflow'},
+              {'name': 'auto-merge', 'color': 'BFD4F2', 'description': 'Auto-merge eligible'},
+              {'name': 'world-model', 'color': '006B75', 'description': 'World model updates'},
+          ]
+          
+          url = f'https://api.github.com/repos/{REPO}/labels'
+          response = requests.get(url, headers=headers)
+          existing_labels = {label['name'].lower() for label in response.json()}
+          
+          for label in required_labels:
+              if label['name'].lower() not in existing_labels:
+                  requests.post(url, headers=headers, json=label)
+                  print(f"✓ Created label: {label['name']}")
+              else:
+                  print(f"✓ Label exists: {label['name']}")
+          
+          print("✅ All required labels ready")
+          EOF
+
+  # ============================================================================
   # STAGE 1: LEARNING COLLECTION (Parallel)
   # ============================================================================
   
   learn-tldr:
     name: "Stage 1a: Learn from TLDR"
     runs-on: ubuntu-latest
+    needs: ensure-labels
     if: inputs.skip_learning != true
     outputs:
       learning_count: ${{ steps.fetch.outputs.learning_count }}
@@ -161,6 +220,7 @@ jobs:
   learn-hackernews:
     name: "Stage 1b: Learn from Hacker News"
     runs-on: ubuntu-latest
+    needs: ensure-labels
     if: inputs.skip_learning != true
     outputs:
       story_count: ${{ steps.fetch.outputs.story_count }}
@@ -245,6 +305,7 @@ jobs:
   learn-github-trending:
     name: "Stage 1c: Learn from GitHub Trending"
     runs-on: ubuntu-latest
+    needs: ensure-labels
     if: inputs.skip_learning != true
     outputs:
       repo_count: ${{ steps.fetch.outputs.repo_count }}
@@ -716,42 +777,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests
-
-      - name: Ensure required labels
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python3 << 'EOF'
-          import requests
-          import os
-          
-          GITHUB_TOKEN = os.environ['GH_TOKEN']
-          REPO = os.environ['GITHUB_REPOSITORY']
-          
-          headers = {
-              'Authorization': f'token {GITHUB_TOKEN}',
-              'Accept': 'application/vnd.github.v3+json'
-          }
-          
-          required_labels = [
-              {'name': 'learning', 'color': '0E8A16', 'description': 'Learning-related'},
-              {'name': 'agent-mission', 'color': 'D93F0B', 'description': 'Agent mission'},
-              {'name': 'ai-generated', 'color': '1D76DB', 'description': 'AI-generated'},
-              {'name': 'automated', 'color': 'FBCA04', 'description': 'Automated'},
-              {'name': 'pipeline', 'color': '5319E7', 'description': 'Pipeline workflow'},
-          ]
-          
-          url = f'https://api.github.com/repos/{REPO}/labels'
-          response = requests.get(url, headers=headers)
-          existing_labels = {label['name'].lower() for label in response.json()}
-          
-          for label in required_labels:
-              if label['name'].lower() not in existing_labels:
-                  requests.post(url, headers=headers, json=label)
-                  print(f"✓ Created label: {label['name']}")
-          
-          print("✅ Labels ready")
-          EOF
 
       - name: Create missions
         id: create
