@@ -165,6 +165,41 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
 - **[🤖 System Recreation Prompt](./SYSTEM_RECREATION_PROMPT.md)** - ⭐ **NEW!** Complete blueprint to recreate Chained from scratch
 - **[📖 System Recreation Guide](./SYSTEM_RECREATION_GUIDE.md)** - ⭐ **NEW!** How to use the recreation prompt
 
+### 🌟 Autonomous System Documentation ⭐ **NEW!**
+**Complete guides for the closed-loop autonomous system:**
+
+- **[🏗️ Autonomous System Architecture](./AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - Complete system blueprint and design
+  - 5-stage autonomous loop explained
+  - Core components (Learning, World Model, Agents, Workflows)
+  - Critical constraints (branch protection, labels, agent limits, @mentions)
+  - Workflow orchestration patterns
+  - Integration points and best practices
+
+- **[🚀 Autonomous Loop Implementation](./AUTONOMOUS_LOOP_IMPLEMENTATION.md)** - Practical workflow examples
+  - Copy-paste-ready workflow templates
+  - Stage-by-stage implementation (Learning → World → Assignment → Reinforcement)
+  - Workflow chaining with `workflow_run` triggers
+  - Label creation patterns
+  - Testing and validation procedures
+
+- **[✅ Completion Questions Framework](./COMPLETION_QUESTIONS.md)** - Quality audit system
+  - 8 mandatory questions for every workflow
+  - Valid/invalid answer examples
+  - PR and issue body templates
+  - Automated validation scripts
+
+- **[🏷️ Label Management Guide](./LABELS.md)** - Complete label reference
+  - Naming conventions and categories
+  - Creation patterns (create before use!)
+  - Agent, category, location, status labels
+  - Bulk creation tool
+
+**Validation Tools:**
+- `tools/validate_agent_capacity.py` - Enforce 10-agent limit
+- `tools/create_labels.py` - Bulk label creation
+
+**These guides document the complete autonomous loop that makes Chained self-evolving and self-reinforcing!**
+
 ### Tutorials (Step-by-Step)
 1. [Understanding the Autonomous Workflow](./docs/tutorials/understanding-autonomous-workflow.md)
 2. [Setting Up Your First Instance](./docs/tutorials/setting-up-your-first-instance.md)
