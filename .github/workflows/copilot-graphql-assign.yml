@@ -12,12 +12,19 @@ on:
         description: 'Issue number to assign to Copilot (leave empty to process all open issues)'
         required: false
         type: string
+  workflow_run:
+    # Trigger after workflows that may create issues
+    workflows:
+      - "Idea Generation: Progress Checker"
+      - "World Model Update"
+    types:
+      - completed
 
 # Prevent multiple concurrent runs of this workflow
 # This prevents race conditions where multiple workflow instances
 # try to assign Copilot to the same issue simultaneously
 concurrency:
-  group: copilot-assignment-${{ github.event.issue.number || 'scheduled' }}
+  group: copilot-assignment-${{ github.event.issue.number || github.event.workflow_run.id || 'scheduled' }}
   cancel-in-progress: false
 
 permissions:
@@ -27,11 +34,12 @@ permissions:
 jobs:
   assign-to-copilot:
     runs-on: ubuntu-latest
-    # Only run if issue was just created, on schedule, or via workflow_dispatch
+    # Run on issue events, schedule, manual trigger, or after specific workflows
     if: |
       github.event_name == 'issues' ||
       github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch'
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     steps:
       - name: Check for PAT configuration
         env:

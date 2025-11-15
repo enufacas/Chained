@@ -83,6 +83,43 @@ See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for complete setup instru
 
 **TL;DR**: Fully automated with PAT, falls back to manual assignment without it.
 
+### How does Copilot assignment handle issues created by automated workflows?
+
+**The Challenge:** When workflows create issues using `GITHUB_TOKEN`, GitHub doesn't trigger the `issues: opened` event for other workflows (security feature to prevent infinite loops).
+
+**The Solution:** The copilot assignment workflow uses multiple trigger mechanisms:
+
+1. **Direct Event Trigger** (`issues: opened`):
+   - Catches manually created issues
+   - Catches issues created with PAT (non-GITHUB_TOKEN)
+
+2. **Workflow Run Trigger** (`workflow_run`):
+   - Triggers after specific workflows complete (e.g., goal-progress-checker, world-update)
+   - Catches issues created by automated workflows using GITHUB_TOKEN
+   - Only runs if the triggering workflow was successful
+
+3. **Scheduled Trigger** (`schedule`):
+   - Runs every 15 minutes as a safety net
+   - Processes any unassigned issues that may have been missed
+
+**What This Means:**
+- Issues created by **any** workflow will eventually get Copilot assigned
+- Direct triggers provide instant assignment (< 1 minute)
+- Workflow triggers provide near-instant assignment (< 2 minutes)
+- Scheduled triggers ensure no issue is missed (max 15 minute delay)
+
+**Example Flow:**
+```
+goal-progress-checker.yml creates issue
+    ↓
+workflow_run trigger fires copilot-graphql-assign.yml
+    ↓
+Copilot assigned within 1-2 minutes
+```
+
+**Fallback Safety:**
+If workflow_run somehow misses an issue, the 15-minute scheduled run will catch it.
+
 ### Can I trust the cron schedules to actually run?
 
 **Short Answer:** Mostly yes, with caveats.
