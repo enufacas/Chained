@@ -144,17 +144,17 @@ jobs:
           
           # Commit changes
           git commit -m "feat: enhanced learning from issue #${ISSUE_NUMBER} (@engineer-master)
-
-**@engineer-master** has analyzed issue #${ISSUE_NUMBER} using the enhanced self-documenting AI system.
-
-## Learning Enhancements
-
-- Advanced pattern recognition
-- Knowledge graph connections
-- Real-time learning insights
-- Proactive suggestions
-
-The AI system continuously learns from every discussion, improving its capabilities over time."
+          
+          The @engineer-master agent has analyzed issue #${ISSUE_NUMBER} using the enhanced self-documenting AI system.
+          
+          ## Learning Enhancements
+          
+          - Advanced pattern recognition
+          - Knowledge graph connections
+          - Real-time learning insights
+          - Proactive suggestions
+          
+          The AI system continuously learns from every discussion, improving its capabilities over time."
           
           # Push branch
           git push origin "$BRANCH_NAME"
@@ -163,53 +163,53 @@ The AI system continuously learns from every discussion, improving its capabilit
           gh pr create \
             --title "📚 Enhanced Learning: Issue #${ISSUE_NUMBER} (@engineer-master)" \
             --body "## 🧠 Enhanced Self-Documenting AI Learning
-
-**@engineer-master** has completed enhanced analysis of issue #${ISSUE_NUMBER}.
-
-### What Was Learned
-
-This PR contains learnings extracted using the **Enhanced Self-Documenting AI** system with:
-
-✨ **Advanced Pattern Recognition**
-- Detects complex discussion patterns
-- Identifies collaboration success stories
-- Recognizes decision-making processes
-
-🔗 **Knowledge Graph Connections**
-- Links related insights across discussions
-- Builds semantic connections
-- Enables discovery of related learnings
-
-📡 **Real-Time Learning**
-- Live analysis during active discussions
-- Proactive suggestions for documentation
-- Related past discussion recommendations
-
-🎯 **Proactive Suggestions**
-- Context-aware recommendations
-- Best practice reminders
-- Related insight discovery
-
-### Files Added
-
-- Discussion analysis (JSON)
-- Enhanced documentation (Markdown)
-- Knowledge graph connections
-- Enhancement metadata
-
-### Impact
-
-The AI system becomes smarter with each discussion, continuously improving its ability to:
-- Understand technical concepts
-- Recognize effective collaboration
-- Suggest relevant insights
-- Connect related knowledge
-
----
-
-*Following **@engineer-master**'s systematic approach: rigorous analysis, defensive programming, and comprehensive validation.*
-
-Closes #${ISSUE_NUMBER}" \
+          
+          The @engineer-master agent has completed enhanced analysis of issue #${ISSUE_NUMBER}.
+          
+          ### What Was Learned
+          
+          This PR contains learnings extracted using the **Enhanced Self-Documenting AI** system with:
+          
+          ✨ **Advanced Pattern Recognition**
+          - Detects complex discussion patterns
+          - Identifies collaboration success stories
+          - Recognizes decision-making processes
+          
+          🔗 **Knowledge Graph Connections**
+          - Links related insights across discussions
+          - Builds semantic connections
+          - Enables discovery of related learnings
+          
+          📡 **Real-Time Learning**
+          - Live analysis during active discussions
+          - Proactive suggestions for documentation
+          - Related past discussion recommendations
+          
+          🎯 **Proactive Suggestions**
+          - Context-aware recommendations
+          - Best practice reminders
+          - Related insight discovery
+          
+          ### Files Added
+          
+          - Discussion analysis (JSON)
+          - Enhanced documentation (Markdown)
+          - Knowledge graph connections
+          - Enhancement metadata
+          
+          ### Impact
+          
+          The AI system becomes smarter with each discussion, continuously improving its ability to:
+          - Understand technical concepts
+          - Recognize effective collaboration
+          - Suggest relevant insights
+          - Connect related knowledge
+          
+          ---
+          
+          *Following the @engineer-master systematic approach: rigorous analysis, defensive programming, and comprehensive validation.*
+          
+          Closes #${ISSUE_NUMBER}" \
             --label "automated,self-documenting-ai,learning" \
             --base main \
             --head "$BRANCH_NAME"
