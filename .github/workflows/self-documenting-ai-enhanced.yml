@@ -101,6 +101,7 @@ jobs:
       
       - name: Run enhanced learning analysis
         id: analyze
+        continue-on-error: true
         run: |
           ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
           LIVE_ANALYSIS="${{ steps.get_issue.outputs.live_analysis }}"
@@ -111,16 +112,26 @@ jobs:
           # Run enhanced learner
           if [ "$LIVE_ANALYSIS" == "true" ]; then
             echo "🔄 Performing live analysis..."
-            python3 tools/enhanced-discussion-learner.py /tmp/issue_data.json \
+            if python3 tools/enhanced-discussion-learner.py /tmp/issue_data.json \
               --output-dir learnings/discussions \
-              --live-analysis
+              --live-analysis 2>&1; then
+              echo "✅ Live analysis completed"
+              echo "analysis_complete=true" >> $GITHUB_OUTPUT
+            else
+              echo "⚠️ Live analysis had errors but continuing"
+              echo "analysis_complete=false" >> $GITHUB_OUTPUT
+            fi
           else
             echo "🔍 Performing full enhanced analysis..."
-            python3 tools/enhanced-discussion-learner.py /tmp/issue_data.json \
-              --output-dir learnings/discussions
+            if python3 tools/enhanced-discussion-learner.py /tmp/issue_data.json \
+              --output-dir learnings/discussions 2>&1; then
+              echo "✅ Full analysis completed"
+              echo "analysis_complete=true" >> $GITHUB_OUTPUT
+            else
+              echo "⚠️ Full analysis had errors but continuing"
+              echo "analysis_complete=false" >> $GITHUB_OUTPUT
+            fi
           fi
-          
-          echo "analysis_complete=true" >> $GITHUB_OUTPUT
       
       - name: Create PR with learnings
         if: steps.analyze.outputs.analysis_complete == 'true'

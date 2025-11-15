@@ -65,6 +65,7 @@ jobs:
       - name: Gather progress data
         id: gather_progress
         if: steps.check_goal.outputs.has_goal == 'true'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -80,10 +81,16 @@ jobs:
           
           # Get recent PRs with error handling
           PR_COUNT=$(gh pr list --state all --search "created:>=$GOAL_DATE" --json number 2>/dev/null | jq 'length' 2>/dev/null || echo "0")
+          if [ "$PR_COUNT" == "null" ] || [ -z "$PR_COUNT" ]; then
+            PR_COUNT="0"
+          fi
           echo "PRs since goal: $PR_COUNT"
           
           # Get recent issues with error handling
           ISSUE_COUNT=$(gh issue list --state all --search "created:>=$GOAL_DATE" --json number 2>/dev/null | jq 'length' 2>/dev/null || echo "0")
+          if [ "$ISSUE_COUNT" == "null" ] || [ -z "$ISSUE_COUNT" ]; then
+            ISSUE_COUNT="0"
+          fi
           echo "Issues since goal: $ISSUE_COUNT"
           
           # Find goal-related issue with error handling
@@ -91,9 +98,12 @@ jobs:
           
           # Check if goal issue exists and get comments
           PROGRESS_NOTES=""
-          if [ -n "$GOAL_ISSUE" ] && [ "$GOAL_ISSUE" != "null" ]; then
+          if [ -n "$GOAL_ISSUE" ] && [ "$GOAL_ISSUE" != "null" ] && [ "$GOAL_ISSUE" != "0" ]; then
             echo "Found goal issue: #$GOAL_ISSUE"
             COMMENT_COUNT=$(gh issue view "$GOAL_ISSUE" --json comments 2>/dev/null | jq '.comments | length' 2>/dev/null || echo "0")
+            if [ "$COMMENT_COUNT" == "null" ] || [ -z "$COMMENT_COUNT" ]; then
+              COMMENT_COUNT="0"
+            fi
             echo "Comments on goal issue: $COMMENT_COUNT"
             echo "goal_issue=$GOAL_ISSUE" >> $GITHUB_OUTPUT
           else

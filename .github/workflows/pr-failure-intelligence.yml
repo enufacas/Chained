@@ -5,11 +5,6 @@ on:
   schedule:
     - cron: '30 0 * * 0'  # Every Sunday at 00:30 UTC (30 min after pr-failure-learning)
   
-  # Run when pr-failure-learning completes
-  workflow_run:
-    workflows: ["System: PR Failure Learning"]
-    types: [completed]
-  
   # Manual trigger for testing
   workflow_dispatch:
     inputs:
@@ -58,6 +53,7 @@ jobs:
       
       - name: Collect PR data for analysis
         id: collect
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -68,21 +64,28 @@ jobs:
           output_file="learnings/pr_intelligence/pr_history_$(date +%Y%m%d_%H%M%S).json"
           
           # Fetch recent PRs (both merged and closed)
-          gh pr list \
+          if gh pr list \
             --state all \
             --limit 100 \
             --json number,title,state,mergedAt,closedAt,files,changedFiles,author \
-            > "${output_file}"
-          
-          # Count PRs collected
-          pr_count=$(cat "${output_file}" | jq 'length')
-          echo "Collected ${pr_count} PRs for analysis"
-          echo "output_file=${output_file}" >> $GITHUB_OUTPUT
-          echo "pr_count=${pr_count}" >> $GITHUB_OUTPUT
+            > "${output_file}" 2>&1; then
+            
+            # Count PRs collected
+            pr_count=$(cat "${output_file}" | jq 'length' 2>/dev/null || echo "0")
+            echo "Collected ${pr_count} PRs for analysis"
+            echo "output_file=${output_file}" >> $GITHUB_OUTPUT
+            echo "pr_count=${pr_count}" >> $GITHUB_OUTPUT
+            echo "collect_success=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Failed to collect PR data"
+            echo "pr_count=0" >> $GITHUB_OUTPUT
+            echo "collect_success=false" >> $GITHUB_OUTPUT
+          fi
       
       - name: Analyze code patterns
-        if: ${{ inputs.analyze_patterns != false }}
+        if: ${{ inputs.analyze_patterns != false && (steps.collect.outputs.collect_success == 'true' || steps.collect.outputs.output_file != '') }}
         id: patterns
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -91,8 +94,14 @@ jobs:
           input_file="${{ steps.collect.outputs.output_file }}"
           output_file="learnings/pr_intelligence/code_patterns.json"
           
+          # Check if input file exists
+          if [ ! -f "${input_file}" ]; then
+            echo "⚠️ Input file not found, skipping pattern analysis"
+            exit 0
+          fi
+          
           # Transform PR data to expected format
-          cat "${input_file}" | jq '[
+          if cat "${input_file}" | jq '[
             .[] | {
               number: .number,
               title: .title,
@@ -102,28 +111,36 @@ jobs:
               files: [.files[]? | .path],
               author: .author.login
             }
-          ]' > /tmp/pr_data_transformed.json
-          
-          # Run pattern analysis
-          python tools/pr-failure-intelligence.py \
-            --analyze-patterns \
-            --input /tmp/pr_data_transformed.json \
-            --output "${output_file}" \
-            --verbose
-          
-          if [ $? -eq 0 ]; then
-            echo "✅ Pattern analysis complete: ${output_file}"
-            echo "patterns_file=${output_file}" >> $GITHUB_OUTPUT
+          ]' > /tmp/pr_data_transformed.json 2>&1; then
             
-            # Show summary
-            cat "${output_file}" | jq -r '.patterns[] | "  - \(.pattern_id): \(.success_rate * 100)% success"'
+            # Run pattern analysis
+            if python tools/pr-failure-intelligence.py \
+              --analyze-patterns \
+              --input /tmp/pr_data_transformed.json \
+              --output "${output_file}" \
+              --verbose 2>&1; then
+              
+              echo "✅ Pattern analysis complete: ${output_file}"
+              echo "patterns_file=${output_file}" >> $GITHUB_OUTPUT
+              echo "patterns_success=true" >> $GITHUB_OUTPUT
+              
+              # Show summary
+              if [ -f "${output_file}" ]; then
+                cat "${output_file}" | jq -r '.patterns[] | "  - \(.pattern_id): \(.success_rate * 100)% success"' 2>/dev/null || echo "  No patterns data available"
+              fi
+            else
+              echo "⚠️ Pattern analysis failed"
+              echo "patterns_success=false" >> $GITHUB_OUTPUT
+            fi
           else
-            echo "⚠️ Pattern analysis failed"
+            echo "⚠️ Failed to transform PR data"
+            echo "patterns_success=false" >> $GITHUB_OUTPUT
           fi
       
       - name: Generate agent profiles
         if: ${{ inputs.generate_profiles != false }}
         id: profiles
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -244,7 +261,8 @@ jobs:
           echo "✅ Summary created: ${summary_file}"
       
       - name: Commit intelligence data
-        if: success()
+        if: success() || steps.patterns.outputs.patterns_success == 'true' || steps.profiles.outputs.profile_count != '0'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

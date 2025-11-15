@@ -27,16 +27,31 @@ jobs:
           pip install -r requirements.txt
       
       - name: Sync agents from registry to world
+        continue-on-error: true
         run: |
-          python3 world/sync_agents_to_world.py
+          if python3 world/sync_agents_to_world.py 2>&1; then
+            echo "✅ Successfully synced agents to world"
+          else
+            echo "⚠️ Failed to sync agents, but continuing workflow"
+          fi
       
       - name: Sync learnings to world ideas
+        continue-on-error: true
         run: |
-          python3 world/sync_learnings_to_ideas.py || echo "No learnings to sync (OK)"
+          if python3 world/sync_learnings_to_ideas.py 2>&1; then
+            echo "✅ Successfully synced learnings to ideas"
+          else
+            echo "⚠️ No learnings to sync or sync failed (OK - continuing)"
+          fi
       
       - name: Update agent state
+        continue-on-error: true
         run: |
-          python3 scripts/update_agent.py
+          if python3 scripts/update_agent.py 2>&1; then
+            echo "✅ Successfully updated agent state"
+          else
+            echo "⚠️ Failed to update agent state, but continuing workflow"
+          fi
       
       - name: Sync world data to docs
         run: |

@@ -46,6 +46,7 @@ jobs:
       
       - name: Find agents and match to learnings
         id: match
+        continue-on-error: true
         env:
           AGENT_FILTER: ${{ inputs.agent_filter || 'unassigned' }}
           MAX_ASSIGNMENTS: ${{ inputs.max_assignments || '5' }}
@@ -124,19 +125,26 @@ jobs:
               learnings_dir = Path('learnings')
               
               # Load from JSON learning files
-              for learning_file in sorted(learnings_dir.glob('*.json'), reverse=True)[:20]:
-                  try:
-                      with open(learning_file) as f:
-                          data = json.load(f)
-                          # Handle different learning file formats
-                          if isinstance(data, list):
-                              learnings.extend(data[:5])  # Take first 5 from each file
-                          elif isinstance(data, dict) and 'items' in data:
-                              learnings.extend(data['items'][:5])
-                          elif isinstance(data, dict):
-                              learnings.append(data)
-                  except Exception as e:
-                      print(f"⚠️  Error loading {learning_file.name}: {e}")
+              if learnings_dir.exists():
+                  learning_files = list(learnings_dir.glob('*.json'))
+                  if not learning_files:
+                      print("⚠️  No JSON learning files found in learnings/ directory")
+                  
+                  for learning_file in sorted(learning_files, reverse=True)[:20]:
+                      try:
+                          with open(learning_file) as f:
+                              data = json.load(f)
+                              # Handle different learning file formats
+                              if isinstance(data, list):
+                                  learnings.extend(data[:5])  # Take first 5 from each file
+                              elif isinstance(data, dict) and 'items' in data:
+                                  learnings.extend(data['items'][:5])
+                              elif isinstance(data, dict):
+                                  learnings.append(data)
+                      except Exception as e:
+                          print(f"⚠️  Error loading {learning_file.name}: {e}")
+              else:
+                  print("⚠️  Learnings directory does not exist, skipping learning files")
               
               print(f"📚 Loaded {len(learnings)} recent learnings")
               print()

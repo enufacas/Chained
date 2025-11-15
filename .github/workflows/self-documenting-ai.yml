@@ -53,6 +53,7 @@ jobs:
       
       - name: Fetch issue data
         id: fetch
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ steps.get_issue.outputs.issue_number }}
@@ -97,30 +98,43 @@ jobs:
       - name: Analyze discussion
         id: analyze
         if: steps.fetch.outputs.has_data == 'true'
+        continue-on-error: true
         run: |
-          python3 tools/issue-discussion-learner.py /tmp/issue_data.json \
+          if python3 tools/issue-discussion-learner.py /tmp/issue_data.json \
             --output-dir learnings/discussions \
-            --generate-doc
-          
-          # Find the generated files
-          LATEST_JSON=$(ls -t learnings/discussions/discussion_issue_*.json | head -1)
-          LATEST_MD=$(ls -t learnings/discussions/discussion_issue_*.md | head -1)
-          
-          echo "json_file=$LATEST_JSON" >> $GITHUB_OUTPUT
-          echo "md_file=$LATEST_MD" >> $GITHUB_OUTPUT
-          
-          # Extract metrics from JSON
-          INSIGHTS=$(python3 -c "import json; data=json.load(open('$LATEST_JSON')); print(len(data['insights']))")
-          DECISIONS=$(python3 -c "import json; data=json.load(open('$LATEST_JSON')); print(len(data['key_decisions']))")
-          QUALITY=$(python3 -c "import json; data=json.load(open('$LATEST_JSON')); print(f\"{data['learning_quality']:.1%}\")")
-          
-          echo "insights=$INSIGHTS" >> $GITHUB_OUTPUT
-          echo "decisions=$DECISIONS" >> $GITHUB_OUTPUT
-          echo "quality=$QUALITY" >> $GITHUB_OUTPUT
+            --generate-doc 2>&1; then
+            
+            # Find the generated files
+            LATEST_JSON=$(ls -t learnings/discussions/discussion_issue_*.json 2>/dev/null | head -1)
+            LATEST_MD=$(ls -t learnings/discussions/discussion_issue_*.md 2>/dev/null | head -1)
+            
+            if [ -n "$LATEST_JSON" ] && [ -f "$LATEST_JSON" ]; then
+              echo "json_file=$LATEST_JSON" >> $GITHUB_OUTPUT
+              echo "md_file=$LATEST_MD" >> $GITHUB_OUTPUT
+              
+              # Extract metrics from JSON
+              INSIGHTS=$(python3 -c "import json; data=json.load(open('$LATEST_JSON')); print(len(data.get('insights', [])))" 2>/dev/null || echo "0")
+              DECISIONS=$(python3 -c "import json; data=json.load(open('$LATEST_JSON')); print(len(data.get('key_decisions', [])))" 2>/dev/null || echo "0")
+              QUALITY=$(python3 -c "import json; data=json.load(open('$LATEST_JSON')); print(f\"{data.get('learning_quality', 0):.1%}\")" 2>/dev/null || echo "0%")
+              
+              echo "insights=$INSIGHTS" >> $GITHUB_OUTPUT
+              echo "decisions=$DECISIONS" >> $GITHUB_OUTPUT
+              echo "quality=$QUALITY" >> $GITHUB_OUTPUT
+              echo "analyze_success=true" >> $GITHUB_OUTPUT
+              echo "✅ Analysis completed successfully"
+            else
+              echo "⚠️ No output files generated"
+              echo "analyze_success=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "⚠️ Analysis failed"
+            echo "analyze_success=false" >> $GITHUB_OUTPUT
+          fi
       
       - name: Consolidate learnings
         id: consolidate
-        if: steps.analyze.outputs.json_file != ''
+        if: steps.analyze.outputs.json_file != '' && steps.analyze.outputs.analyze_success == 'true'
+        continue-on-error: true
         run: |
           python3 << 'PYTHON_SCRIPT'
           import json
