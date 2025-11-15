@@ -157,19 +157,40 @@ class DynamicAgentSpawner:
             json.dump(self.spawned_agents, f, indent=2)
     
     def _generate_agent_id(self, theme: str) -> str:
-        """Generate a file-safe agent ID from theme"""
+        """Generate a file-safe agent ID from theme with improved uniqueness"""
+        import random
+        
         # Convert to lowercase and replace non-alphanumeric
         agent_id = re.sub(r'[^a-z0-9]+', '-', theme.lower())
         agent_id = agent_id.strip('-')
         
-        # Ensure uniqueness
+        # Ensure uniqueness with multiple strategies
         base_id = agent_id
         counter = 1
-        while agent_id in self.existing_agents or agent_id in self.spawned_agents.get('spawned', {}):
-            agent_id = f"{base_id}-{counter}"
+        max_attempts = 100
+        
+        while counter < max_attempts:
+            # Try base name first
+            if counter == 1:
+                candidate_id = agent_id
+            # Then try with counter
+            elif counter <= 10:
+                candidate_id = f"{base_id}-{counter}"
+            # Then try with random suffixes
+            else:
+                random_suffix = random.randint(1000, 9999)
+                candidate_id = f"{base_id}-{random_suffix}"
+            
+            # Check against existing agents AND spawned agents
+            if (candidate_id not in self.existing_agents and 
+                candidate_id not in self.spawned_agents.get('spawned', {})):
+                return candidate_id
+            
             counter += 1
         
-        return agent_id
+        # Fallback: use timestamp for guaranteed uniqueness
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
+        return f"{base_id}-{timestamp}"
     
     def create_proposal(self, theme: str, trend_data: Dict[str, Any]) -> Optional[AgentProposal]:
         """

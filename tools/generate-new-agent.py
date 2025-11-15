@@ -128,8 +128,32 @@ def get_ai_personality(archetype_name):
         print(f"⚠️ Could not generate AI personality: {e}", file=sys.stderr)
         return None
 
-def generate_random_agent():
-    """Generate a new random agent definition with AI-inspired personality."""
+def get_existing_agent_names():
+    """Get list of existing agent names to avoid duplicates."""
+    existing_names = set()
+    
+    # Check agent files
+    if AGENTS_DIR.exists():
+        for agent_file in AGENTS_DIR.glob("*.md"):
+            if agent_file.stem != "README":
+                existing_names.add(agent_file.stem)
+    
+    return existing_names
+
+def generate_random_agent(excluded_names=None):
+    """
+    Generate a new random agent definition with AI-inspired personality.
+    
+    Args:
+        excluded_names: Optional set of names to exclude (in addition to existing agents)
+    """
+    # Get existing agents to avoid duplicates
+    existing_names = get_existing_agent_names()
+    
+    # Add any additional excluded names
+    if excluded_names:
+        existing_names = existing_names.union(excluded_names)
+    
     # Select random archetype
     archetype_name = random.choice(list(AGENT_ARCHETYPES.keys()))
     archetype = AGENT_ARCHETYPES[archetype_name]
@@ -149,10 +173,57 @@ def generate_random_agent():
         communication_style = "communicates clearly and effectively"
     
     # Generate agent name (kebab-case for file naming)
+    # Expanded suffix list for more variety
     verb = random.choice(archetype["verbs"])
     focus = random.choice(archetype["focus_areas"])
-    name_suffix = random.choice(["master", "expert", "specialist", "champion", "wizard", "guru", "ninja", "pro"])
-    agent_name = f"{verb.lower()}-{name_suffix}"
+    name_suffixes = [
+        "master", "expert", "specialist", "champion", "wizard", "guru", "ninja", "pro",
+        "ace", "virtuoso", "maven", "adept", "sage", "prodigy", "maestro", "whiz",
+        "chief", "lead", "architect", "engineer", "analyst", "officer", "director"
+    ]
+    name_suffix = random.choice(name_suffixes)
+    
+    # Generate unique name by trying different combinations
+    max_attempts = 100
+    attempt = 0
+    agent_name = None
+    
+    while attempt < max_attempts:
+        # Try different name patterns for variety
+        if attempt < 20:
+            # First 20 attempts: try simple patterns
+            name_pattern = random.choice([
+                f"{verb.lower()}-{name_suffix}",
+                f"{focus.replace(' ', '-')}-{name_suffix}",
+                f"{verb.lower()}-{focus.replace(' ', '-')}-{name_suffix}",
+                f"{archetype_name}-{name_suffix}"
+            ])
+        elif attempt < 50:
+            # Next 30 attempts: add archetype prefix
+            name_pattern = random.choice([
+                f"{archetype_name}-{verb.lower()}-{name_suffix}",
+                f"{focus.split()[0] if ' ' in focus else focus}-{name_suffix}",
+            ])
+        else:
+            # Final attempts: add random component for guaranteed uniqueness
+            random_component = random.randint(100, 999)
+            name_pattern = random.choice([
+                f"{verb.lower()}-{name_suffix}-{random_component}",
+                f"{focus.replace(' ', '-')}-{name_suffix}-{random_component}",
+                f"{archetype_name}-{name_suffix}-{random_component}"
+            ])
+        
+        if name_pattern not in existing_names:
+            agent_name = name_pattern
+            break
+        
+        attempt += 1
+    
+    # Fallback to guaranteed unique name with timestamp + random
+    if agent_name is None:
+        timestamp_id = int(datetime.now().timestamp() * 1000000)  # microseconds
+        random_comp = random.randint(1000, 9999)
+        agent_name = f"{verb.lower()}-{name_suffix}-{timestamp_id}-{random_comp}"
     
     # Select emoji
     emoji = random.choice(archetype["emoji_options"])
