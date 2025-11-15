@@ -1,0 +1,241 @@
+{
+  "insights": {
+    "insight_1075_0ad7c1309ff4": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf investigate-champion** custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T20:39:54Z"
+    },
+    "insight_1075_dd43e15432b9": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "process",
+      "content": "> \n> **@investigate-champion** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T20:39:54Z"
+    },
+    "insight_1075_89a909656a5c": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T20:39:54Z"
+    },
+    "insight_1075_16b5cabe46c6": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "com/enufacas/Chained/pull/1060 this did not actually do the fix",
+      "confidence": 0.6,
+      "tags": [
+        "ai"
+      ],
+      "timestamp": "2025-11-15T20:39:54Z"
+    },
+    "insight_1075_ec562105d226": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "Fix the reason the scoring is wrong",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T20:39:54Z"
+    },
+    "insight_1075_3aa6f5ec780b": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "Then also run the data fix script and capture those changes so I can merge both the fix and the fixed data as part of this PR",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-15T20:39:54Z"
+    },
+    "insight_1075_aa7b502a1f56": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the **\ud83c\udfaf @investigate-champion** specialization:\n\n- **Agent**: @investigate-champion\n- **Match Confidence**: medium\n- **Match Score**: 3\n- **Description**: Specialized agent for investigating metrics",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_10c2dd322c8a": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "Focuses on code patterns, data flows, and dependencies",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_417d5a2887f2": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_86aa99ad59f8": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_df018b16e3c5": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@investigate-champion** by name in all conversations related to this issue",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_308403d43578": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@investigate-champion** - Please use the **investigate-champion** custom agent profile from `",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_777c4cecd787": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_2748182e7172": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [investigate-champion agent definition](https://github",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_3fd2ac9e8071": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **@investigate-champion** will analyze the issue requirements using the investigate-champion specialization\n2",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_6be19b6a6825": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@investigate-champion** will create a branch and implement the solution following the investigate-champion approach\n3",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_dbe52f02196b": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@investigate-champion** will open a PR with the implementation\n4",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_9f133b426f2a": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z"
+    },
+    "insight_1075_31d358699d6a": {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** @investigate-champion (investigate-champion specialization)\n**Assigned at:** 2025-11-15 20:40:17 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z"
+    }
+  },
+  "connections": [
+    {
+      "source_insight_id": "insight_1075_86aa99ad59f8",
+      "target_insight_id": "insight_1075_89a909656a5c",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T21:00:10.579310+00:00"
+    },
+    {
+      "source_insight_id": "insight_1075_86aa99ad59f8",
+      "target_insight_id": "insight_1075_89a909656a5c",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T21:00:10.579427+00:00"
+    },
+    {
+      "source_insight_id": "insight_1075_86aa99ad59f8",
+      "target_insight_id": "insight_1075_89a909656a5c",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T21:00:10.579882+00:00"
+    },
+    {
+      "source_insight_id": "insight_1075_86aa99ad59f8",
+      "target_insight_id": "insight_1075_89a909656a5c",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-15T21:00:10.580348+00:00"
+    }
+  ],
+  "metadata": {
+    "created": "2025-11-15T21:00:10.577272+00:00",
+    "last_updated": "2025-11-15T21:00:10.581653+00:00",
+    "total_insights": 19,
+    "total_connections": 4
+  }
+}

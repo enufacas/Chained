@@ -1,0 +1,360 @@
+{
+  "issue_number": 1075,
+  "issue_title": "Fix the scoring system and historical data",
+  "issue_labels": [
+    "copilot-assigned",
+    "agent:investigate-champion"
+  ],
+  "total_comments": 1,
+  "participants": [
+    "enufacas"
+  ],
+  "duration_hours": 0.01,
+  "insights": [
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf investigate-champion** custom agent profile",
+      "context": "<!-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf investigate-champion** custom agent profile.\n> \n> **@investigate-",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-15T20:39:54Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "process",
+      "content": "> \n> **@investigate-champion** - Please use the specialized approach and tools defined in [`",
+      "context": "<!-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf investigate-champion** custom agent profile.\n> \n> **@investigate-",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-15T20:39:54Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "context": "<!-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf investigate-champion** custom agent profile.\n> \n> **@investigate-",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-15T20:39:54Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "context": "<!-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf investigate-champion** custom agent profile.\n> \n> **@investigate-",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-15T20:39:54Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "com/enufacas/Chained/pull/1060 this did not actually do the fix",
+      "context": "<!-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf investigate-champion** custom agent profile.\n> \n> **@investigate-",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-15T20:39:54Z",
+      "confidence": 0.6,
+      "tags": [
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "Fix the reason the scoring is wrong",
+      "context": "<!-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf investigate-champion** custom agent profile.\n> \n> **@investigate-",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-15T20:39:54Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "Then also run the data fix script and capture those changes so I can merge both the fix and the fixed data as part of this PR",
+      "context": "<!-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf investigate-champion** custom agent profile.\n> \n> **@investigate-",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-15T20:39:54Z",
+      "confidence": 0.7,
+      "tags": []
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the **\ud83c\udfaf @investigate-champion** specialization:\n\n- **Agent**: @investigate-champion\n- **Match Confidence**: medium\n- **Match Score**: 3\n- **Description**: Specialized agent for investigating metrics",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "Focuses on code patterns, data flows, and dependencies",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@investigate-champion** by name in all conversations related to this issue",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@investigate-champion** - Please use the **investigate-champion** custom agent profile from `",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [investigate-champion agent definition](https://github",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **@investigate-champion** will analyze the issue requirements using the investigate-champion specialization\n2",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.7,
+      "tags": []
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@investigate-champion** will create a branch and implement the solution following the investigate-champion approach\n3",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.7,
+      "tags": []
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@investigate-champion** will open a PR with the implementation\n4",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1075,
+      "issue_title": "Fix the scoring system and historical data",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** @investigate-champion (investigate-champion specialization)\n**Assigned at:** 2025-11-15 20:40:17 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-15T20:40:18Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ]
+    }
+  ],
+  "key_decisions": [],
+  "patterns_identified": [],
+  "learning_quality": 0.5,
+  "timestamp": "2025-11-15T21:00:10.578532+00:00"
+}
