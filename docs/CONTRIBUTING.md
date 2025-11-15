@@ -30,6 +30,18 @@ Before submitting a PR, please review:
 
 These guides will help you write code that meets our quality standards and speeds up the review process.
 
+### GitHub Pages Changes
+
+If you're contributing to GitHub Pages (files in `docs/`):
+
+- **[.github/instructions/github-pages-testing.instructions.md](../.github/instructions/github-pages-testing.instructions.md)** - ⭐ **REQUIRED** Testing checklist for pages
+  - Must render and test pages before submitting
+  - Must take screenshots for visual changes
+  - Must verify no console errors
+  - Must test interactive features
+
+**Why this matters**: GitHub Pages is our public face. All changes must be thoroughly tested to ensure professional quality.
+
 ## 📝 License
 
 This project is open source and available for educational and entertainment purposes.

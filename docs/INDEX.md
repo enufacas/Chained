@@ -95,6 +95,15 @@ Technical documentation for developers:
 - **[PERFORMANCE_METRICS.md](./PERFORMANCE_METRICS.md)** - ⭐ **NEW!** Performance metrics collection (@assert-specialist)
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
 
+### Path-Specific Instructions
+
+**⭐ New! GitHub Copilot path-scoped custom instructions:**
+
+- **[.github/instructions/](../.github/instructions/)** - Path-specific instruction files
+- **[github-pages-testing.instructions.md](../.github/instructions/github-pages-testing.instructions.md)** - ⭐ **NEW!** Testing requirements for GitHub Pages changes
+- **[branch-protection.instructions.md](../.github/instructions/branch-protection.instructions.md)** - PR-based workflow requirements
+- **[agent-mentions.instructions.md](../.github/instructions/agent-mentions.instructions.md)** - Agent attribution format
+
 ### Code Quality & Best Practices
 
 **⭐ New! Comprehensive coaching documentation from 💭 Turing (coach-master agent):**

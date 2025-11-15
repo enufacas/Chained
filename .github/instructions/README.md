@@ -107,6 +107,26 @@ applyTo:
   - "tools/**/*.sh"
 ```
 
+### 6. `github-pages-testing.instructions.md` 🆕
+**Applies to:** GitHub Pages files and related workflows
+- **CRITICAL**: Requires rendering and testing pages when making changes
+- Mandates use of Playwright for browser testing
+- Requires screenshots for visual changes
+- Provides comprehensive testing checklist
+- Ensures GitHub Pages quality and functionality
+
+**Scope:**
+```yaml
+applyTo:
+  - "docs/**/*.html"
+  - "docs/**/*.js"
+  - "docs/**/*.css"
+  - "docs/**/*.md"
+  - ".github/workflows/github-pages-review.yml"
+  - ".github/workflows/*pages*.yml"
+  - ".github/workflows/*docs*.yml"
+```
+
 ## File Format
 
 Each instruction file follows this structure:

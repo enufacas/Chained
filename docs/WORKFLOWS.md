@@ -377,13 +377,21 @@ When you modify any workflow file, the PR check validates:
 
 **File**: `.github/workflows/github-pages-review.yml`
 
-**Description**: Run weekly on Mondays at 8 AM UTC
+**Description**: Run weekly on Mondays at 8 AM UTC to ensure GitHub Pages health
 
 **Schedule**:
 - Weekly on Monday at 08:00 UTC
   - Cron: `0 8 * * 1`
 
 **Triggers**: manual
+
+**Testing Requirements**: All agents working on GitHub Pages must follow the testing requirements defined in `.github/instructions/github-pages-testing.instructions.md`, including:
+- Rendering pages locally or with Playwright
+- Visual verification with screenshots
+- Console error checking
+- Link validation
+
+**Related Documentation**: See [GitHub Pages Health Check](./GITHUB_PAGES_HEALTH_CHECK.md) for monitoring details.
 
 ---
 
