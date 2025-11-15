@@ -1,5 +1,213 @@
 {
-  "failures": [],
-  "last_updated": "2025-11-14T20:46:32.353704+00:00",
-  "total_count": 0
+  "failures": [
+    {
+      "pr_number": 872,
+      "title": "\ud83d\udcca Goal progress update - 2025-11-15",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:41:43Z",
+      "closed_at": "2025-11-15T15:04:13Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated"
+      ]
+    },
+    {
+      "pr_number": 963,
+      "title": "[WIP] Investigate workflow health issues reported on 2025-11-15",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T06:29:49Z",
+      "closed_at": "2025-11-15T15:04:01Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 954,
+      "title": "[WIP] Update goal progress status to 75% complete",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T06:07:00Z",
+      "closed_at": "2025-11-15T15:02:27Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 969,
+      "title": "[WIP] Fix display of outdated map implementation",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T07:02:59Z",
+      "closed_at": "2025-11-15T14:51:05Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 870,
+      "title": "\u2601\ufe0f Learning-Based Agent: Cloud Architect Specialist",
+      "author": "github-actions[bot]",
+      "agent_id": "agent-system",
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:38:26Z",
+      "closed_at": "2025-11-15T05:53:58Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot",
+        "agent-system",
+        "learning-based"
+      ]
+    },
+    {
+      "pr_number": 903,
+      "title": "\ud83d\udcca Sync agent data to GitHub Pages - 2025-11-15",
+      "author": "github-actions[bot]",
+      "agent_id": "agent-system",
+      "agent_specialization": null,
+      "created_at": "2025-11-15T04:30:48Z",
+      "closed_at": "2025-11-15T05:53:44Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot",
+        "agent-system"
+      ]
+    },
+    {
+      "pr_number": 902,
+      "title": "\ud83d\udcca Sync agent data to GitHub Pages - 2025-11-15",
+      "author": "github-actions[bot]",
+      "agent_id": "agent-system",
+      "agent_specialization": null,
+      "created_at": "2025-11-15T04:30:38Z",
+      "closed_at": "2025-11-15T05:53:05Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot",
+        "agent-system"
+      ]
+    },
+    {
+      "pr_number": 39,
+      "title": "\ud83d\udcca Timeline Update - ",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-09T07:19:22Z",
+      "closed_at": "2025-11-09T14:20:42Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "completed",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 873,
+      "title": "Fix workflow health: add validation, retry logic, directory prep (@investigate-champion)",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T03:43:00Z",
+      "closed_at": "2025-11-15T04:18:53Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    }
+  ],
+  "last_updated": "2025-11-15T15:04:23.042700+00:00",
+  "total_count": 9
 }
