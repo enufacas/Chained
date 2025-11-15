@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-14 20:22 UTC
+**Generated:** 2025-11-15 07:09 UTC
 
-**Total Learning Sessions:** 50
+**Total Learning Sessions:** 55
 
-**Total Insights:** 502
+**Total Insights:** 519
 
 ---
 
@@ -18,14 +18,14 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 160
+**Insights:** 164
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 41
+**Insights:** 42
 
 
 ### [🚀 DevOps & Infrastructure](./DevOps.md)
@@ -60,14 +60,14 @@ Security vulnerabilities, encryption, authentication, and privacy
 
 Performance tuning, benchmarks, and optimization techniques
 
-**Insights:** 12
+**Insights:** 13
 
 
 ### [🔧 Developer Tools](./Tools.md)
 
 IDEs, editors, debuggers, and productivity tools
 
-**Insights:** 28
+**Insights:** 30
 
 
 ### [🌟 Open Source & Community](./OpenSource.md)
@@ -81,7 +81,7 @@ Open source projects, community insights, and collaboration
 
 General technology news and insights
 
-**Insights:** 213
+**Insights:** 222
 
 
 ## 📊 Statistics
@@ -89,28 +89,28 @@ General technology news and insights
 
 ### By Source
 
-- **Hacker News:** 21 learning sessions
+- **Hacker News:** 22 learning sessions
 
-- **TLDR Tech:** 16 learning sessions
+- **TLDR Tech:** 17 learning sessions
 
-- **Unknown:** 11 learning sessions
+- **Unknown:** 14 learning sessions
 
 - **GitHub Trending:** 2 learning sessions
 
 
 ### By Topic
 
-- **📚 General Tech Insights:** 213 insights
+- **📚 General Tech Insights:** 222 insights
 
-- **🤖 AI & Machine Learning:** 160 insights
+- **🤖 AI & Machine Learning:** 164 insights
 
-- **💻 Programming Languages & Frameworks:** 41 insights
+- **💻 Programming Languages & Frameworks:** 42 insights
 
-- **🔧 Developer Tools:** 28 insights
+- **🔧 Developer Tools:** 30 insights
 
 - **🌐 Web Development:** 15 insights
 
-- **⚡ Performance & Optimization:** 12 insights
+- **⚡ Performance & Optimization:** 13 insights
 
 - **🔒 Security & Privacy:** 10 insights
 

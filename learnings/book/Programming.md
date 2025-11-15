@@ -2,9 +2,9 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 41
+**Total Insights:** 42
 
-**Last Updated:** 2025-11-14
+**Last Updated:** 2025-11-15
 
 ---
 
@@ -73,6 +73,20 @@ Open Source Spotify client library
 
 
 ## 📰 From Hacker News
+
+
+### Go's Sweet 16
+
+**Community Score:** 142 upvotes
+
+**Link:** https://go.dev/blog/16years
+
+
+**Content Summary:**
+
+The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 This past Monday, November 10th, we celebrated the 16th anniversary of Go’s open source release ! We released Go 1.24 in February and Go 1.25 in August , following our now well-established and dependable release cadence. Continuing our mission to build the most productive language platform for building production systems, these releases included new APIs for building robust and reliable software, significant advances in ...
+
+---
 
 
 ### Meeting notes between Forgejo and the Dutch government via Git commits
@@ -312,15 +326,6 @@ in a new tab. When you're done, simply close that tab...
 **Community Score:** 111 upvotes
 
 **Link:** https://purplesyringa.moe/blog/jvm-exceptions-are-weird-a-decompiler-perspective/
-
----
-
-
-### Opencloud – An alternative to Nextcloud written in Go
-
-**Community Score:** 138 upvotes
-
-**Link:** https://github.com/opencloud-eu/opencloud
 
 ---
 

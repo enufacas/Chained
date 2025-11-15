@@ -2,9 +2,9 @@
 
 > General technology news and insights
 
-**Total Insights:** 213
+**Total Insights:** 222
 
-**Last Updated:** 2025-11-14
+**Last Updated:** 2025-11-15
 
 ---
 
@@ -95,6 +95,127 @@ Node Version Manager - POSIX-compliant bash script to manage multiple active nod
 ## 📰 From Hacker News
 
 
+### SSL Configuration Generator
+
+**Community Score:** 137 upvotes
+
+**Link:** https://ssl-config.mozilla.org/
+
+
+**Content Summary:**
+
+moz://a SSL Configuration Generator SSL Config Generator Server Software Apache AWS ALB AWS ELB Caddy Coturn Dovecot Exim Go HAProxy Jetty lighttpd MySQL nginx Oracle HTTP Postfix PostgreSQL ProFTPD Redis Squid stunnel Tomcat Traefik Mozilla Configuration Modern Services with clients that support TLS 1.3 and don't need backward compatibility Intermediate General-purpose servers with a variety of clients, recommended for almost all systems Old Compatible with a number of very old clients, and sho...
+
+---
+
+
+### Structured outputs on the Claude Developer Platform
+
+**Community Score:** 128 upvotes
+
+**Link:** https://www.claude.com/blog/structured-outputs-on-the-claude-developer-platform
+
+
+**Content Summary:**
+
+Guide: Building AI agents for financial services Learn how teams at NBIM, Brex, and more build reliable AI agents with Claude on AWS Bedrock. Read more Read more Read more
+
+---
+
+
+### A race condition in Aurora RDS
+
+**Community Score:** 212 upvotes
+
+**Link:** https://hightouch.com/blog/uncovering-a-race-condition-in-aurora-rds
+
+
+**Content Summary:**
+
+Much of the developer world is familiar with the AWS outage in us-east-1 that occurred on October 20th due to a race condition bug inside a DNS management service. The backlog of events we needed to process from that outage on the 20th stretched our system to the limits, and so we decided to increase our headroom for event handling throughput. When we attempted that infrastructure upgrade on October 23rd, we ran into yet another race condition bug in Aurora RDS. This is the story of how we figur...
+
+---
+
+
+### I can't recommend Grafana anymore
+
+**Community Score:** 128 upvotes
+
+**Link:** https://henrikgerdes.me/blog/2025-11-grafana-mess/
+
+
+**Content Summary:**
+
+Published: 14/11/2025 6 minute read I can’t recommend Grafana anymore Disclaimer: This tells my personal experiences with Grafana products. It also incudes some facts but your experience may entirely vary and I would love to here your take. I started my work life at a small software company near my university. They develop, run websites and operate web services for multiple clients. Everyone had multiple responsibilities, and they heavily relied on interns and freshmen—which can be both bad and ...
+
+---
+
+
+### Winamp clone in Swift for macOS
+
+**Community Score:** 213 upvotes
+
+**Link:** https://github.com/mgreenwood1001/winamp
+
+
+**Content Summary:**
+
+mgreenwood1001 / winamp Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 6 Star 284 Winamp clone in swift for OS/X License MIT license 284 stars 6 forks Branches Tags Activity Star Notifications You must be signed in to change notification settings mgreenwood1001/winamp About Winamp clone in swift for OS/X Resources Readme License MIT license Uh oh! There was an error while loading. Please reload th...
+
+---
+
+
+### Manganese is Lyme disease's double-edge sword
+
+**Community Score:** 136 upvotes
+
+**Link:** https://news.northwestern.edu/stories/2025/11/manganese-is-lyme-diseases-double-edge-sword
+
+
+**Content Summary:**
+
+Northwestern graduation events set for 2026 October 28, 2025
+
+---
+
+
+### The disguised return of EU Chat Control
+
+**Community Score:** 600 upvotes
+
+**Link:** https://reclaimthenet.org/the-disguised-return-of-the-eus-private-message-scanning-plot
+
+---
+
+
+### Awk Technical Notes (2023
+
+**Community Score:** 123 upvotes
+
+**Link:** https://maximullaris.com/awk_tech_notes.html
+
+
+**Content Summary:**
+
+Volodymyr Gubarkov AWK technical notes March 2023 In the previous article Fascination with AWK we discussed why AWK is great for prototyping and is often the best alternative to the shell and Python. In this article I want to show you some interesting technical facts I learned about AWK. Lack of GC AWK was designed to not require a GC (garbage collector) for its implementation. By the way, just like sh/bash. (I learned this remarkable fact from the oilshell blog – rather interesting technical bl...
+
+---
+
+
+### Being poor vs. being broke
+
+**Community Score:** 462 upvotes
+
+**Link:** https://blog.ctms.me/posts/2025-11-14-being-poor-or-being-broke/
+
+
+**Content Summary:**
+
+You misunderstand what it means to be poor Posted on Nov 14, 2025 The more I speak about being poor, the more I realize how fundamentally other folks misunderstand what it means to be poor versus being broke. The advice folks will give comes from a good place. However, I would like to give some examples to help everyone understand most advice from non-poor folks isn’t helpful. Everyone has experienced being broke. Being broke sucks. You are watching every dollar spent, finding ways to trim or ma...
+
+---
+
+
 ### A race condition in Aurora RDS
 
 **Link:** https://hightouch.com/blog/uncovering-a-race-condition-in-aurora-rds
@@ -168,106 +289,6 @@ Node Version Manager - POSIX-compliant bash script to manage multiple active nod
 ### Operating Margins
 
 **Link:** https://fi-le.net/margin/
-
----
-
-
-### Being poor vs. being broke
-
-**Link:** https://blog.ctms.me/posts/2025-11-14-being-poor-or-being-broke/
-
----
-
-
-### Scientists Produce Powerhouse Pigment Behind Octopus Camouflage
-
-**Link:** https://today.ucsd.edu/story/scientists-produce-powerhouse-pigment-behind-octopus-camouflage
-
----
-
-
-### Nvidia is gearing up to sell servers instead of just GPUs and components
-
-**Link:** https://www.tomshardware.com/tech-industry/artificial-intelligence/jp-morgan-says-nvidia-is-gearing-up-to-sell-entire-ai-servers-instead-of-just-ai-gpus-and-componentry-jensens-master-plan-of-vertical-integration-will-boost-profits-purportedly-starting-with-vera-rubin
-
----
-
-
-### Not even a month passed and Chat Control is back in the EU
-
-**Community Score:** 124 upvotes
-
-**Link:** https://reclaimthenet.org/the-disguised-return-of-the-eus-private-message-scanning-plot
-
----
-
-
-### Incus-OS: Immutable Linux OS to run Incus as a hypervisor
-
-**Community Score:** 102 upvotes
-
-**Link:** https://linuxcontainers.org/incus-os/
-
-
-**Content Summary:**
-
-Menu Close menu IncusOS Introduction Go to Table of Contents What's IncusOS? ¶ IncusOS is an immutable OS solely designed around safely and reliably running Incus. It uses modern security features like UEFI Secure Boot and TPM to provide a safe boot experience and seamless full disk encryption. Updates are applied atomically using an A/B scheme allowing for an easy revert in case of problems. The system itself is completely locked down with no local or remote shell, only an authenticated REST AP...
-
----
-
-
-### AGI fantasy is a blocker to actual engineering
-
-**Community Score:** 416 upvotes
-
-**Link:** https://www.tomwphillips.co.uk/2025/11/agi-fantasy-is-a-blocker-to-actual-engineering/
-
-
-**Content Summary:**
-
-AGI fantasy is a blocker to actual engineering 14 Nov 2025 Reading Empire of AI by Karen Hao , I was struck by how people associated with OpenAI believe in AGI. They really do think someone, perhaps them, will build AGI, and that it will lead to either the flourishing or destruction of humanity. Elon Musk founded OpenAI because he thought Demis Hassabis was an evil genius who would build AGI first: …Musk would regularly characterise Hassabis as a supervillain who needed to be stopped. Musk would...
-
----
-
-
-### Operating Margins
-
-**Community Score:** 222 upvotes
-
-**Link:** https://fi-le.net/margin/
-
-
-**Content Summary:**
-
-T he Fiefdom of Files Operating Margins 3rd of November 2025 D ivide a company's income by its revenue, and you get the operating margin. For some volume of sales that comes into the business, it gives an idea of what percentage is left as cash in the end. Barring some accounting shenanigans regarding where the bottom line is. The size of margins is often cited to explain how businesses behave: "Amazon was incentivized to move to cloud hosting and AWS as a higher-margin business than retail, whe...
-
----
-
-
-### You misunderstand what it means to be poor
-
-**Community Score:** 245 upvotes
-
-**Link:** https://blog.ctms.me/posts/2025-11-14-being-poor-or-being-broke/
-
-
-**Content Summary:**
-
-You misunderstand what it means to be poor Posted on Nov 14, 2025 The more I speak about being poor, the more I realize how fundamentally other folks misunderstand what it means to be poor versus being broke. The advice folks will give comes from a good place. However, I would like to give some examples to help everyone understand most advice from non-poor folks isn’t helpful. Everyone has experienced being broke. Being broke sucks. You are watching every dollar spent, finding wayys to trim or m...
-
----
-
-
-### Winamp clone in Swift for OS/X
-
-**Community Score:** 109 upvotes
-
-**Link:** https://github.com/mgreenwood1001/winamp
-
-
-**Content Summary:**
-
-mgreenwood1001 / winamp Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 1 Star 107 Winamp clone in swift for OS/X License MIT license 107 stars 1 fork Branches Tags Activity Star Notifications You must be signed in to change notification settings mgreenwood1001/winamp About Winamp clone in swift for OS/X Resources Readme License MIT license Uh oh! There was an error while loading. Please reload thi...
 
 ---
 
