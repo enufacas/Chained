@@ -1,0 +1,27 @@
+{
+  "proactive_suggestions": [
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83d\udd28 Document the current state and desired improvements",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:coach-master -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has ..."
+  ],
+  "knowledge_connections": {
+    "insight_1067_d78a063fc5af": [
+      {
+        "target_id": "insight_1067_b07689ebccd9",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1067_b07689ebccd9": [
+      {
+        "target_id": "insight_1067_d78a063fc5af",
+        "similarity": 1.0
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 17,
+    "total_connections": 4,
+    "new_insights_added": 21
+  },
+  "timestamp": "2025-11-15T20:27:58.217755+00:00"
+}
