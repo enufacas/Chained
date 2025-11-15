@@ -152,7 +152,7 @@ jobs:
           PYTHON_SCRIPT
 
       - name: Upload TLDR learnings
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tldr-learnings
           path: learnings/tldr_*.json
@@ -236,7 +236,7 @@ jobs:
           PYTHON_SCRIPT
 
       - name: Upload HN learnings
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: hn-learnings
           path: learnings/hn_*.json
@@ -310,7 +310,7 @@ jobs:
           PYTHON_SCRIPT
 
       - name: Upload GitHub Trending learnings
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: github-learnings
           path: learnings/github_trending_*.json
@@ -342,7 +342,7 @@ jobs:
           python-version: '3.11'
 
       - name: Download all learning artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: learnings-artifacts
 
