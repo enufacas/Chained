@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "updated_at": "2025-11-15T16:48:48.924716+00:00",
+  "issue_types": {
+    "performance": {
+      "total_attempts": 3,
+      "total_reward": 0.8399999999999999,
+      "average_reward": 0.27999999999999997
+    },
+    "bug": {
+      "total_attempts": 3,
+      "total_reward": 0.8399999999999999,
+      "average_reward": 0.27999999999999997
+    },
+    "feature": {
+      "total_attempts": 1,
+      "total_reward": 0.27999999999999997,
+      "average_reward": 0.27999999999999997
+    },
+    "testing": {
+      "total_attempts": 1,
+      "total_reward": 0.27999999999999997,
+      "average_reward": 0.27999999999999997
+    },
+    "security": {
+      "total_attempts": 0,
+      "total_reward": 0.0,
+      "average_reward": 0.0
+    },
+    "documentation": {
+      "total_attempts": 0,
+      "total_reward": 0.0,
+      "average_reward": 0.0
+    },
+    "refactor": {
+      "total_attempts": 0,
+      "total_reward": 0.0,
+      "average_reward": 0.0
+    },
+    "infrastructure": {
+      "total_attempts": 0,
+      "total_reward": 0.0,
+      "average_reward": 0.0
+    }
+  }
+}
