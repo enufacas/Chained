@@ -333,47 +333,49 @@ class RegistryManager:
     
     def get_metadata(self) -> Dict[str, Any]:
         """Get registry metadata (version, last_spawn, last_evaluation, etc.)"""
-        if self._mode == "distributed":
-            if self._metadata_mode == "distributed":
-                # Read from individual files in metadata directory
-                metadata = {
-                    "version": "2.0.0",
-                    "last_spawn": None,
-                    "last_evaluation": None,
-                    "system_lead": None,
-                    "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
-                }
-                
-                # Read each field from individual files
-                for field in ["version", "last_spawn", "last_evaluation", "system_lead", "specializations_note"]:
-                    field_file = self.metadata_dir / f"{field}.txt"
-                    if field_file.exists():
-                        try:
-                            with open(field_file, 'r') as f:
-                                value = f.read().strip()
-                                # Handle null/None values
-                                if value and value.lower() != "null" and value.lower() != "none":
-                                    metadata[field] = value
-                        except IOError:
-                            pass
-                
-                return metadata
-            else:
-                # Read from single metadata.json file
-                if self.metadata_file.exists():
+        # If metadata is in distributed mode, read from individual files
+        # This works regardless of whether agents are in distributed or legacy mode
+        if self._metadata_mode == "distributed":
+            # Read from individual files in metadata directory
+            metadata = {
+                "version": "2.0.0",
+                "last_spawn": None,
+                "last_evaluation": None,
+                "system_lead": None,
+                "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
+            }
+            
+            # Read each field from individual files
+            for field in ["version", "last_spawn", "last_evaluation", "system_lead", "specializations_note"]:
+                field_file = self.metadata_dir / f"{field}.txt"
+                if field_file.exists():
                     try:
-                        with open(self.metadata_file, 'r') as f:
-                            return json.load(f)
-                    except (json.JSONDecodeError, IOError):
+                        with open(field_file, 'r') as f:
+                            value = f.read().strip()
+                            # Handle null/None values
+                            if value and value.lower() != "null" and value.lower() != "none":
+                                metadata[field] = value
+                    except IOError:
                         pass
-                return {
-                    "version": "2.0.0",
-                    "last_spawn": None,
-                    "last_evaluation": None,
-                    "system_lead": None,
-                    "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
-                }
+            
+            return metadata
+        elif self._mode == "distributed":
+            # Read from single metadata.json file
+            if self.metadata_file.exists():
+                try:
+                    with open(self.metadata_file, 'r') as f:
+                        return json.load(f)
+                except (json.JSONDecodeError, IOError):
+                    pass
+            return {
+                "version": "2.0.0",
+                "last_spawn": None,
+                "last_evaluation": None,
+                "system_lead": None,
+                "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
+            }
         else:
+            # Legacy mode - read from registry.json
             registry = self._read_legacy_registry()
             return {
                 "version": registry.get("version", "2.0.0"),
@@ -432,7 +434,9 @@ class RegistryManager:
         Returns:
             True if successful, False otherwise
         """
-        if self._mode == "distributed" and self._metadata_mode == "distributed":
+        # If metadata is in distributed mode, update the individual file directly
+        # This works regardless of whether agents are in distributed or legacy mode
+        if self._metadata_mode == "distributed":
             # Atomic update of individual field file
             field_file = self.metadata_dir / f"{field}.txt"
             try:
