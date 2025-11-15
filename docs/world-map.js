@@ -36,10 +36,10 @@ function initMap() {
 // Load world data
 async function loadWorldData() {
     try {
-        const stateResponse = await fetch('../world/world_state.json');
+        const stateResponse = await fetch('./world/world_state.json');
         worldState = await stateResponse.json();
         
-        const knowledgeResponse = await fetch('../world/knowledge.json');
+        const knowledgeResponse = await fetch('./world/knowledge.json');
         knowledge = await knowledgeResponse.json();
         
         return true;
