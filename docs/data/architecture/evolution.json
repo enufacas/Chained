@@ -223,6 +223,22 @@
       },
       "component_count": 6,
       "file_count": 440
+    },
+    {
+      "timestamp": "2025-11-15T01:56:25.810186",
+      "commit": "330ecbe57448875e6f4625cafd03a08dd99ef7a2",
+      "commit_message": "Add workflow validation PR check and fix YAML syntax errors (#855)\n\n* Initial plan\n\n* feat: add workflow validation PR check and fix pr-failure-intelligence.yml\n\n- Create tools/validate-workflows.py to validate workflow files\n- Fix YAML syntax errors in pr-failure-intelligence.yml\n- Add workflow-validation.yml PR check workflow\n- Validates YAML syntax, structure, and prohibited patterns\n- Prevents direct push to main branch pattern\n- All 43 workflows now pass validation\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n* docs: add comprehensive workflow validation documentation\n\n- Add WORKFLOW_VALIDATION_GUIDE.md with usage instructions\n- Add WORKFLOW_VALIDATION_IMPLEMENTATION.md with summary\n- Document validation checks and best practices\n- Include examples of fixing common errors\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n* docs: update README and WORKFLOWS.md with validation references\n\n- Add workflow validation section to docs/WORKFLOWS.md\n- Add workflow validation info to README contributing section\n- Reference WORKFLOW_VALIDATION_GUIDE.md in both files\n- Update workflow count from 33 to 44\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n---------\n\nCo-authored-by: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>",
+      "metrics": {
+        "total_components": 7,
+        "total_files": 479,
+        "total_lines": 235958,
+        "total_dependencies": 0,
+        "external_libraries": 46,
+        "coupling_score": 0.0,
+        "complexity_score": 1.0
+      },
+      "component_count": 6,
+      "file_count": 479
     }
   ]
 }
