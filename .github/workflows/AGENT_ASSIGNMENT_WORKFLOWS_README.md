@@ -276,13 +276,11 @@ You can use the **Agent Collaboration Manager** to find other
 agents working in these categories. Collaboration accelerates learning!
 ```
 
-### 3. `suggest-collaborations.yml` ⚠️ DISABLED
-
-**Status:** This workflow has been moved to `.github/disabled-workflows/` due to being intentionally disabled. It can be re-enabled by moving back to `.github/workflows/` and uncommenting the trigger section.
+### 3. `suggest-collaborations.yml`
 
 **Purpose:** Analyze issues and suggest potential collaborators based on expertise.
 
-#### Original Triggers (when enabled)
+#### Triggers
 
 - **Issue Events:** `opened`, `edited`, `labeled`
 - **Manual:** Via `workflow_dispatch` with issue number
@@ -560,16 +558,6 @@ request = manager.create_request(
     learning_category="Security"
 )
 ```
-
-## Re-enabling suggest-collaborations.yml
-
-The `suggest-collaborations.yml` workflow was moved to `.github/disabled-workflows/` to resolve a GitHub Actions validation error. To re-enable it:
-
-1. Move the file back: `git mv .github/disabled-workflows/suggest-collaborations.yml .github/workflows/`
-2. Uncomment the `on:` section in the file (lines 7-15)
-3. Commit and push the changes
-
-The workflow is fully functional and ready to use once re-enabled.
 
 ## Usage Examples
 
