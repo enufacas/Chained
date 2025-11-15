@@ -86,5 +86,33 @@
       "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
     ],
     "timestamp": "2025-11-15T10:25:31.721631+00:00"
+  },
+  {
+    "code": "# Generated code template for machine\n# Based on HN insights showing 6 mentions\n\nclass MachineTool:\n    '''Tool for working with machine'''\n    \n    def __init__(self):\n        self.name = 'machine'\n        self.initialized = True\n    \n    def process(self, data):\n        '''Process machine-related data'''\n        # TODO: Implement based on use case\n        return data",
+    "description": "Generated learned code: Tool related to machine",
+    "template_used": "machine_tool",
+    "confidence": 1.0,
+    "source_insights": [
+      "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "https://store.steampowered.com/sale/steammachine",
+      "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
+    ],
+    "timestamp": "2025-11-15T10:28:17.472800+00:00"
+  },
+  {
+    "code": "import json\nfrom collections import Counter\nfrom typing import List, Dict, Any\n\nclass DataPreprocessorAnalyzer:\n    '''Analyzer for data data'''\n    \n    def __init__(self, data_path: str):\n        self.data_path = data_path\n        self.data = []\n        self._load_data()\n    \n    def _load_data(self):\n        '''Load data from file'''\n        with open(self.data_path, 'r') as f:\n            self.data = json.load(f)\n    \n    def analyze_distribution(self, field: str) -> Dict[str, int]:\n        '''Analyze value distribution for a field'''\n        values = [item.get(field) for item in self.data if field in item]\n        return dict(Counter(values))\n    \n    def filter_by(self, field: str, value: Any) -> List[Dict]:\n        '''Filter data by field value'''\n        return [item for item in self.data if item.get(field) == value]\n    \n    def get_statistics(self) -> Dict[str, Any]:\n        '''Get basic statistics about the dataset'''\n        return {\n            'total_items': len(self.data),\n            'fields': list(self.data[0].keys()) if self.data else [],\n            'timestamp': '2025-11-15T10:28:17.473668+00:00'\n        }",
+    "description": "Generated data_processing code: Generate data analysis tool",
+    "template_used": "data_analyzer",
+    "confidence": 0.4,
+    "source_insights": [],
+    "timestamp": "2025-11-15T10:28:17.473668+00:00"
+  },
+  {
+    "code": "import requests\nimport time\nfrom functools import wraps\n\nclass CodeAPIAPI:\n    '''API wrapper for GitHub'''\n    \n    def __init__(self, api_key: str, rate_limit: int = 60):\n        self.api_key = api_key\n        self.rate_limit = rate_limit\n        self.last_request_time = 0\n    \n    def _rate_limit(func):\n        @wraps(func)\n        def wrapper(self, *args, **kwargs):\n            elapsed = time.time() - self.last_request_time\n            if elapsed < 1.0 / self.rate_limit:\n                time.sleep(1.0 / self.rate_limit - elapsed)\n            self.last_request_time = time.time()\n            return func(self, *args, **kwargs)\n        return wrapper\n    \n    @_rate_limit\n    def fetch(self, endpoint: str) -> dict:\n        '''Fetch data from API endpoint'''\n        headers = {'Authorization': f'Bearer {self.api_key}'}\n        response = requests.get(f'{self.base_url}/{endpoint}', headers=headers)\n        response.raise_for_status()\n        return response.json()",
+    "description": "Generated api code: Generate API wrapper with rate limiting",
+    "template_used": "api_wrapper",
+    "confidence": 0.2,
+    "source_insights": [],
+    "timestamp": "2025-11-15T10:28:17.474566+00:00"
   }
 ]
