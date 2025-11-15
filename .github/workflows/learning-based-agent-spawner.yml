@@ -377,6 +377,59 @@ jobs:
           
           echo "✅ PR #$PR_NUMBER created"
 
+      - name: Trigger Auto Review and Merge
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+          echo "🔄 Triggering Auto Review & Merge workflow for PR #$PR_NUMBER..."
+          
+          # Trigger the auto-review-merge workflow with the specific PR number
+          gh workflow run auto-review-merge.yml \
+            --repo ${{ github.repository }} \
+            -f pr_number="$PR_NUMBER"
+          
+          echo "✅ Auto-review workflow triggered for PR #$PR_NUMBER"
+
+      - name: Wait for PR to be merged
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+          echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
+          
+          # Wait up to 5 minutes for the PR to be merged
+          MAX_WAIT=300  # 5 minutes
+          WAIT_INTERVAL=10  # Check every 10 seconds
+          ELAPSED=0
+          
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            # Check PR state
+            PR_STATE=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state --jq '.state')
+            
+            if [ "$PR_STATE" = "MERGED" ]; then
+              echo "✅ PR #$PR_NUMBER has been merged successfully!"
+              echo "🎉 Agent spawn complete - agent is now active"
+              exit 0
+            elif [ "$PR_STATE" = "CLOSED" ]; then
+              echo "⚠️ PR #$PR_NUMBER was closed without merging"
+              echo "This may indicate an issue with the auto-review process"
+              exit 1
+            else
+              echo "⏳ PR #$PR_NUMBER is still $PR_STATE, waiting... (${ELAPSED}s elapsed)"
+              sleep $WAIT_INTERVAL
+              ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+            fi
+          done
+          
+          # Timeout reached
+          echo "⏰ Timeout: PR #$PR_NUMBER was not merged within ${MAX_WAIT} seconds"
+          echo "ℹ️ The PR may still be processed by auto-review later"
+          echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          exit 1
+
       # NOTE: Announcement issue creation removed to prevent circular dependencies
       # The spawn PR itself serves as sufficient announcement.
       # Once the PR is merged, the agent becomes active and can work on existing issues.
@@ -384,15 +437,22 @@ jobs:
       - name: Summary
         if: steps.check_capacity.outputs.can_spawn == 'true'
         run: |
-          echo "🎉 Learning-Based Agent Spawning Complete!"
+          echo "🎉 Learning-Based Agent Spawn Complete!"
           echo ""
           echo "Agent: ${{ steps.generate.outputs.display_name }}"
           echo "Specialization: ${{ steps.generate.outputs.agent_name }}"
           echo "ID: ${{ steps.register.outputs.agent_id }}"
           echo "Based on topic: ${{ steps.generate.outputs.topic }}"
           echo "Topic score: ${{ steps.generate.outputs.topic_score }}"
+          echo "Spawn PR: #${{ steps.create_pr.outputs.pr_number }} (MERGED)"
           echo ""
-          echo "The agent was dynamically created from recent learnings!"
+          echo "✅ Agent is now active and ready to work!"
+          echo ""
+          echo "The agent was dynamically created from recent learnings and is now:"
+          echo "- Registered in the agent system"
+          echo "- Available for issue assignments"
+          echo "- Ready to contribute code"
+          echo "- Competing in the performance system"
 
       - name: No learnings available
         if: steps.check_learnings.outputs.has_learnings == 'false'
