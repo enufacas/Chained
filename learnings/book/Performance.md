@@ -2,9 +2,9 @@
 
 > Performance tuning, benchmarks, and optimization techniques
 
-**Total Insights:** 12
+**Total Insights:** 13
 
-**Last Updated:** 2025-11-14
+**Last Updated:** 2025-11-15
 
 ---
 
@@ -53,6 +53,20 @@ A fast reverse proxy to help you expose a local server behind a NAT or firewall 
 
 
 ## 📰 From Hacker News
+
+
+### HipKittens: Fast and furious AMD kernels
+
+**Community Score:** 138 upvotes
+
+**Link:** https://hazyresearch.stanford.edu/blog/2025-11-09-hk
+
+
+**Content Summary:**
+
+Nov 11, 2025 · 8 min read HipKittens: Fast and Furious AMD Kernels William Hu , Drew Wadsworth , Chris Ré , Simran Arora Team : William Hu, Drew Wadsworth, Sean Siddens, Stanley Winata, Daniel Fu, Ryan Swann, Muhammad Osama, Christopher Ré, Simran Arora Links : Arxiv | Code AI is gated by hardware. We think that opening up AI’s compute landscape is one of the most important problems to be working on right now. Building towards this goal, we present HipKittens: SoTA AMD kernels and a collection o...
+
+---
 
 
 ### EDE: Small and Fast Desktop Environment (2014)
