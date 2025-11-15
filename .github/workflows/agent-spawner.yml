@@ -282,10 +282,13 @@ jobs:
             # Get emoji from convention-compliant agent definition
             EMOJI=$(python3 tools/get-agent-info.py emoji "$SPECIALIZATION")
             
-            # Generate human name for existing specialization
-            HUMAN_NAMES=("Ada" "Tesla" "Einstein" "Curie" "Turing" "Lovelace" "Darwin" "Newton" "Feynman" "Hopper" "Hamilton" "Liskov" "Dijkstra" "Knuth" "Shannon")
-            NAME_INDEX=$((RANDOM % ${#HUMAN_NAMES[@]}))
-            HUMAN_NAME="${HUMAN_NAMES[$NAME_INDEX]}"
+            # Generate unique human name for existing specialization
+            # Use helper script to get available names (not used by active agents)
+            HUMAN_NAME=$(python3 tools/get-available-human-names.py --format random --with-fallback)
+            if [ -z "$HUMAN_NAME" ]; then
+              echo "❌ Failed to generate unique human name"
+              exit 1
+            fi
             
             # Generate personality for existing agents
             PERSONALITIES=("methodical and precise" "enthusiastic and energetic" "calm and thoughtful" "bold and innovative" "meticulous and careful" "creative and artistic" "analytical and logical" "friendly and collaborative")
