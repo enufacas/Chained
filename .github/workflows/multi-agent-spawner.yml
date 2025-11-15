@@ -183,8 +183,10 @@ jobs:
       - name: Generate agent DNA
         id: generate_agent
         run: |
-          TIMESTAMP=$(date +%s)${{ matrix.agent_index }}
-          AGENT_ID="agent-$TIMESTAMP"
+          # Use nanosecond precision + matrix index + random component to avoid collisions
+          TIMESTAMP=$(date +%s%N)
+          RANDOM_SUFFIX=$((RANDOM * RANDOM % 100000))
+          AGENT_ID="agent-${TIMESTAMP}-${{ matrix.agent_index }}-${RANDOM_SUFFIX}"
           
           MODE="${{ github.event.inputs.mode }}"
           if [ -z "$MODE" ]; then
@@ -261,6 +263,30 @@ jobs:
           echo "  ID: $AGENT_ID"
           echo "  Name: $AGENT_NAME"
           echo "  Specialization: $SPECIALIZATION"
+
+      - name: Verify agent ID uniqueness
+        run: |
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          
+          # Check if agent ID already exists in registry
+          if python3 -c "
+          import sys
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          registry = RegistryManager()
+          agent = registry.get_agent('$AGENT_ID')
+          sys.exit(0 if agent is None else 1)
+          "; then
+            echo "✅ Agent ID is unique: $AGENT_ID"
+          else
+            echo "❌ ERROR: Agent ID already exists in registry: $AGENT_ID"
+            echo "Regenerating with additional randomness..."
+            # Add extra random component
+            EXTRA_RANDOM=$((RANDOM * RANDOM % 1000000))
+            NEW_AGENT_ID="${AGENT_ID}-${EXTRA_RANDOM}"
+            echo "agent_id=$NEW_AGENT_ID" >> $GITHUB_OUTPUT
+            echo "✅ Using unique ID: $NEW_AGENT_ID"
+          fi
 
       - name: Register agent
         run: |
