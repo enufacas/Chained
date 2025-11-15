@@ -904,7 +904,9 @@ jobs:
           
           missions = []
           for idea in recent_ideas:
+              idea_id = idea.get('id', 'unknown')
               idea_patterns = idea.get('patterns', [])
+              idea_regions = idea.get('inspiration_regions', [])
               
               # Score agents
               agent_scores = []
@@ -913,6 +915,7 @@ jobs:
                   agent_scores.append({
                       'agent_id': agent.get('id'),
                       'agent_name': agent.get('label', 'Unknown'),
+                      'specialization': agent.get('specialization', ''),
                       'score': score
                   })
               
@@ -921,10 +924,12 @@ jobs:
               top_agents = agent_scores[:10]
               
               missions.append({
+                  'idea_id': idea_id,
                   'idea_title': idea.get('title', 'Unknown'),
                   'idea_summary': idea.get('summary', '')[:200],
                   'patterns': idea_patterns,
-                  'agents': top_agents
+                  'agents': top_agents,
+                  'regions': [r.get('region_id', 'unknown') for r in idea_regions]
               })
           
           # Save missions

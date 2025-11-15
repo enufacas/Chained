@@ -18,24 +18,25 @@ def main():
     print(f"📝 Creating {len(missions)} mission issues")
     
     for i, mission in enumerate(missions, 1):
-        idea_title = mission['idea_title']
-        idea_summary = mission['idea_summary']
-        patterns = mission['patterns']
-        agents = mission['agents']
-        regions = mission['regions']
+        idea_title = mission.get('idea_title', 'Unknown Mission')
+        idea_summary = mission.get('idea_summary', '')
+        patterns = mission.get('patterns', [])
+        agents = mission.get('agents', [])
+        regions = mission.get('regions', [])
+        idea_id = mission.get('idea_id', 'unknown')
         
         # Build issue body
         agent_list = '\n'.join([
-            f"- **{a['agent_name']}** (@{a['specialization']}) - Score: {a['score']:.2f}"
+            f"- **{a.get('agent_name', 'Unknown')}** (@{a.get('specialization', 'unknown')}) - Score: {a.get('score', 0.0):.2f}"
             for a in agents
         ])
         
-        location_list = ', '.join(regions)
-        pattern_list = ', '.join(patterns)
+        location_list = ', '.join(regions) if regions else 'No specific location'
+        pattern_list = ', '.join(patterns) if patterns else 'General'
         
         issue_body = f"""## 🎯 Agent Mission: {idea_title}
 
-**Mission ID:** {mission['idea_id']}
+**Mission ID:** {idea_id}
 **Created:** {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}
 
 ### 📋 Mission Summary
