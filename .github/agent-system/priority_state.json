@@ -1,25 +1,25 @@
 {
   "version": "1.0",
-  "updated_at": "2025-11-15T16:48:48.924716+00:00",
+  "updated_at": "2025-11-15T16:55:17.696377+00:00",
   "issue_types": {
     "performance": {
-      "total_attempts": 3,
-      "total_reward": 0.8399999999999999,
+      "total_attempts": 6,
+      "total_reward": 1.68,
       "average_reward": 0.27999999999999997
     },
     "bug": {
-      "total_attempts": 3,
-      "total_reward": 0.8399999999999999,
+      "total_attempts": 6,
+      "total_reward": 1.68,
       "average_reward": 0.27999999999999997
     },
     "feature": {
-      "total_attempts": 1,
-      "total_reward": 0.27999999999999997,
+      "total_attempts": 2,
+      "total_reward": 0.5599999999999999,
       "average_reward": 0.27999999999999997
     },
     "testing": {
-      "total_attempts": 1,
-      "total_reward": 0.27999999999999997,
+      "total_attempts": 2,
+      "total_reward": 0.5599999999999999,
       "average_reward": 0.27999999999999997
     },
     "security": {
