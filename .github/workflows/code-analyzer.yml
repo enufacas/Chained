@@ -18,6 +18,11 @@ on:
         type: boolean
         default: false
 
+# Prevent concurrent runs to avoid conflicts
+concurrency:
+  group: code-analyzer-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: write
@@ -45,6 +50,7 @@ jobs:
 
       - name: Run Code Analyzer
         id: analyze
+        continue-on-error: true
         run: |
           # Determine if this was a successful merge
           merge_success="true"
@@ -61,16 +67,47 @@ jobs:
           echo "Analyzing directory: ${target_dir}"
           echo "Merge successful: ${merge_success}"
           
-          # Run analyzer with learning enabled
-          if [ "${merge_success}" = "true" ]; then
-            python3 tools/code-analyzer.py -d "${target_dir}" --learn --success -o analysis/latest_report.md
-          else
-            python3 tools/code-analyzer.py -d "${target_dir}" --learn --failure -o analysis/latest_report.md
-          fi
+          # Ensure analysis directory exists
+          mkdir -p analysis
           
-          # Save summary for later
-          echo "merge_success=${merge_success}" >> $GITHUB_OUTPUT
-          echo "target_dir=${target_dir}" >> $GITHUB_OUTPUT
+          # Run analyzer with learning enabled and retry logic
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          SUCCESS=false
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ "$SUCCESS" = "false" ]; do
+            if [ $RETRY_COUNT -gt 0 ]; then
+              echo "⚠️  Retry attempt $RETRY_COUNT of $MAX_RETRIES"
+              sleep $((RETRY_COUNT * 5))
+            fi
+            
+            if [ "${merge_success}" = "true" ]; then
+              if python3 tools/code-analyzer.py -d "${target_dir}" --learn --success -o analysis/latest_report.md 2>&1 | tee /tmp/analyzer_log.txt; then
+                SUCCESS=true
+              fi
+            else
+              if python3 tools/code-analyzer.py -d "${target_dir}" --learn --failure -o analysis/latest_report.md 2>&1 | tee /tmp/analyzer_log.txt; then
+                SUCCESS=true
+              fi
+            fi
+            
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+          done
+          
+          if [ "$SUCCESS" = "true" ]; then
+            echo "✅ Analysis completed successfully"
+            echo "merge_success=${merge_success}" >> $GITHUB_OUTPUT
+            echo "target_dir=${target_dir}" >> $GITHUB_OUTPUT
+            echo "analysis_complete=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Analysis failed after $MAX_RETRIES attempts"
+            echo "Last error log:"
+            tail -20 /tmp/analyzer_log.txt || echo "No log available"
+            echo "merge_success=${merge_success}" >> $GITHUB_OUTPUT
+            echo "target_dir=${target_dir}" >> $GITHUB_OUTPUT
+            echo "analysis_complete=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
 
       - name: Get analysis statistics
         id: stats

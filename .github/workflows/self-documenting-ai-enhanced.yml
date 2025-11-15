@@ -15,6 +15,11 @@ on:
         type: boolean
         default: false
 
+# Prevent concurrent runs to avoid git conflicts
+concurrency:
+  group: self-documenting-ai-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   issues: read
@@ -101,6 +106,7 @@ jobs:
       
       - name: Run enhanced learning analysis
         id: analyze
+        continue-on-error: true
         run: |
           ISSUE_NUMBER="${{ steps.get_issue.outputs.issue_number }}"
           LIVE_ANALYSIS="${{ steps.get_issue.outputs.live_analysis }}"
@@ -108,19 +114,45 @@ jobs:
           # Create learnings directory
           mkdir -p learnings/discussions
           
-          # Run enhanced learner
-          if [ "$LIVE_ANALYSIS" == "true" ]; then
-            echo "🔄 Performing live analysis..."
-            python3 tools/enhanced-discussion-learner.py /tmp/issue_data.json \
-              --output-dir learnings/discussions \
-              --live-analysis
-          else
-            echo "🔍 Performing full enhanced analysis..."
-            python3 tools/enhanced-discussion-learner.py /tmp/issue_data.json \
-              --output-dir learnings/discussions
-          fi
+          # Run enhanced learner with retry logic
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          SUCCESS=false
           
-          echo "analysis_complete=true" >> $GITHUB_OUTPUT
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ "$SUCCESS" = "false" ]; do
+            if [ $RETRY_COUNT -gt 0 ]; then
+              echo "⚠️  Retry attempt $RETRY_COUNT of $MAX_RETRIES"
+              sleep $((RETRY_COUNT * 5))  # Exponential backoff
+            fi
+            
+            if [ "$LIVE_ANALYSIS" == "true" ]; then
+              echo "🔄 Performing live analysis..."
+              if python3 tools/enhanced-discussion-learner.py /tmp/issue_data.json \
+                --output-dir learnings/discussions \
+                --live-analysis 2>&1 | tee /tmp/analysis_log.txt; then
+                SUCCESS=true
+              fi
+            else
+              echo "🔍 Performing full enhanced analysis..."
+              if python3 tools/enhanced-discussion-learner.py /tmp/issue_data.json \
+                --output-dir learnings/discussions 2>&1 | tee /tmp/analysis_log.txt; then
+                SUCCESS=true
+              fi
+            fi
+            
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+          done
+          
+          if [ "$SUCCESS" = "true" ]; then
+            echo "✅ Analysis completed successfully"
+            echo "analysis_complete=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Analysis failed after $MAX_RETRIES attempts"
+            echo "Last error log:"
+            tail -20 /tmp/analysis_log.txt || echo "No log available"
+            echo "analysis_complete=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
       
       - name: Create PR with learnings
         if: steps.analyze.outputs.analysis_complete == 'true'
@@ -139,84 +171,153 @@ jobs:
             exit 0
           fi
           
-          # Create branch
+          # Fetch latest main to reduce conflicts
+          git fetch origin main
+          git reset --soft origin/main
+          git add learnings/
+          
+          # Create branch from latest main
           git checkout -b "$BRANCH_NAME"
           
-          # Commit changes
-          git commit -m "feat: enhanced learning from issue #${ISSUE_NUMBER} (@engineer-master)
-
-**@engineer-master** has analyzed issue #${ISSUE_NUMBER} using the enhanced self-documenting AI system.
-
-## Learning Enhancements
-
-- Advanced pattern recognition
-- Knowledge graph connections
-- Real-time learning insights
-- Proactive suggestions
-
-The AI system continuously learns from every discussion, improving its capabilities over time."
+          # Commit changes (using here-doc to avoid YAML issues)
+          cat > /tmp/commit_msg.txt << 'COMMITMSG'
+          feat: enhanced learning from issue #${ISSUE_NUMBER} (@engineer-master)
           
-          # Push branch
-          git push origin "$BRANCH_NAME"
+          Engineer-master has analyzed issue using the enhanced self-documenting AI system.
           
-          # Create PR
-          gh pr create \
-            --title "📚 Enhanced Learning: Issue #${ISSUE_NUMBER} (@engineer-master)" \
-            --body "## 🧠 Enhanced Self-Documenting AI Learning
-
-**@engineer-master** has completed enhanced analysis of issue #${ISSUE_NUMBER}.
-
-### What Was Learned
-
-This PR contains learnings extracted using the **Enhanced Self-Documenting AI** system with:
-
-✨ **Advanced Pattern Recognition**
-- Detects complex discussion patterns
-- Identifies collaboration success stories
-- Recognizes decision-making processes
-
-🔗 **Knowledge Graph Connections**
-- Links related insights across discussions
-- Builds semantic connections
-- Enables discovery of related learnings
-
-📡 **Real-Time Learning**
-- Live analysis during active discussions
-- Proactive suggestions for documentation
-- Related past discussion recommendations
-
-🎯 **Proactive Suggestions**
-- Context-aware recommendations
-- Best practice reminders
-- Related insight discovery
-
-### Files Added
-
-- Discussion analysis (JSON)
-- Enhanced documentation (Markdown)
-- Knowledge graph connections
-- Enhancement metadata
-
-### Impact
-
-The AI system becomes smarter with each discussion, continuously improving its ability to:
-- Understand technical concepts
-- Recognize effective collaboration
-- Suggest relevant insights
-- Connect related knowledge
-
----
-
-*Following **@engineer-master**'s systematic approach: rigorous analysis, defensive programming, and comprehensive validation.*
-
-Closes #${ISSUE_NUMBER}" \
-            --label "automated,self-documenting-ai,learning" \
-            --base main \
-            --head "$BRANCH_NAME"
+          ## Learning Enhancements
           
-          echo "✅ Created PR for enhanced learnings"
+          - Advanced pattern recognition
+          - Knowledge graph connections
+          - Real-time learning insights
+          - Proactive suggestions
+          
+          The AI system continuously learns from every discussion, improving its capabilities over time.
+          COMMITMSG
+          
+          # Replace variable in commit message
+          sed -i "s/\${ISSUE_NUMBER}/${ISSUE_NUMBER}/g" /tmp/commit_msg.txt
+          git commit -F /tmp/commit_msg.txt
+          
+          # Push with retry logic
+          MAX_PUSH_RETRIES=3
+          PUSH_RETRY_COUNT=0
+          PUSH_SUCCESS=false
+          
+          while [ $PUSH_RETRY_COUNT -lt $MAX_PUSH_RETRIES ] && [ "$PUSH_SUCCESS" = "false" ]; do
+            if [ $PUSH_RETRY_COUNT -gt 0 ]; then
+              echo "⚠️  Push retry attempt $PUSH_RETRY_COUNT of $MAX_PUSH_RETRIES"
+              sleep $((PUSH_RETRY_COUNT * 3))
+            fi
+            
+            if git push origin "$BRANCH_NAME"; then
+              PUSH_SUCCESS=true
+            else
+              echo "❌ Push failed, will retry..."
+            fi
+            
+            PUSH_RETRY_COUNT=$((PUSH_RETRY_COUNT + 1))
+          done
+          
+          if [ "$PUSH_SUCCESS" != "true" ]; then
+            echo "❌ Failed to push branch after $MAX_PUSH_RETRIES attempts"
+            exit 1
+          fi
+          
+          echo "✅ Branch pushed successfully"
+          
+          # Create PR with retry logic
+          MAX_PR_RETRIES=3
+          PR_RETRY_COUNT=0
+          PR_SUCCESS=false
+          
+          while [ $PR_RETRY_COUNT -lt $MAX_PR_RETRIES ] && [ "$PR_SUCCESS" = "false" ]; do
+            if [ $PR_RETRY_COUNT -gt 0 ]; then
+              echo "⚠️  PR creation retry attempt $PR_RETRY_COUNT of $MAX_PR_RETRIES"
+              sleep $((PR_RETRY_COUNT * 5))
+            fi
+            
+            # Create PR body in a file to avoid YAML escaping issues
+            cat > /tmp/pr_body.md << 'PRBODY'
+            ## 🧠 Enhanced Self-Documenting AI Learning
+            
+            Engineer-master has completed enhanced analysis of the issue.
+            
+            ### What Was Learned
+            
+            This PR contains learnings extracted using the Enhanced Self-Documenting AI system.
+            
+            ✨ Advanced Pattern Recognition
+            - Detects complex discussion patterns
+            - Identifies collaboration success stories
+            - Recognizes decision-making processes
+            
+            🔗 Knowledge Graph Connections
+            - Links related insights across discussions
+            - Builds semantic connections
+            - Enables discovery of related learnings
+            
+            📡 Real-Time Learning
+            - Live analysis during active discussions
+            - Proactive suggestions for documentation
+            - Related past discussion recommendations
+            
+            🎯 Proactive Suggestions
+            - Context-aware recommendations
+            - Best practice reminders
+            - Related insight discovery
+            
+            ### Files Added
+            
+            - Discussion analysis (JSON)
+            - Enhanced documentation (Markdown)
+            - Knowledge graph connections
+            - Enhancement metadata
+            
+            ### Impact
+            
+            The AI system becomes smarter with each discussion, continuously improving its ability to:
+            - Understand technical concepts
+            - Recognize effective collaboration
+            - Suggest relevant insights
+            - Connect related knowledge
+            PRBODY
+            
+            # Add closing text with issue number
+            echo "" >> /tmp/pr_body.md
+            echo "---" >> /tmp/pr_body.md
+            echo "" >> /tmp/pr_body.md
+            echo "Closes #${ISSUE_NUMBER}" >> /tmp/pr_body.md
+            
+            if gh pr create \
+              --title "📚 Enhanced Learning: Issue #${ISSUE_NUMBER} (@engineer-master)" \
+              --body-file /tmp/pr_body.md \
+              --label "automated,self-documenting-ai,learning" \
+              --base main \
+              --head "$BRANCH_NAME" 2>&1; then
+              PR_SUCCESS=true
+              echo "✅ PR created successfully"
+            else
+              echo "❌ PR creation failed, will retry..."
+            fi
+            
+            PR_RETRY_COUNT=$((PR_RETRY_COUNT + 1))
+          done
+          
+          if [ "$PR_SUCCESS" != "true" ]; then
+            echo "❌ Failed to create PR after $MAX_PR_RETRIES attempts"
+            echo "Note: Branch $BRANCH_NAME was pushed successfully"
+            echo "You can manually create the PR from this branch"
+            exit 1
+          fi
       
       - name: Summary
+        if: always()
         run: |
-          echo "✅ Enhanced self-documenting AI workflow complete!"
-          echo "Issue #${{ steps.get_issue.outputs.issue_number }} analyzed with advanced learning"
+          if [ "${{ steps.analyze.outputs.analysis_complete }}" = "true" ]; then
+            echo "✅ Enhanced self-documenting AI workflow complete!"
+            echo "Issue #${{ steps.get_issue.outputs.issue_number }} analyzed with advanced learning"
+          else
+            echo "⚠️  Workflow completed with warnings"
+            echo "Some steps may have been skipped due to errors"
+          fi
