@@ -26,6 +26,14 @@ jobs:
         run: |
           pip install -r requirements.txt
       
+      - name: Sync agents from registry to world
+        run: |
+          python3 world/sync_agents_to_world.py
+      
+      - name: Sync learnings to world ideas
+        run: |
+          python3 world/sync_learnings_to_ideas.py || echo "No learnings to sync (OK)"
+      
       - name: Update agent state
         run: |
           python3 scripts/update_agent.py

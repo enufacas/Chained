@@ -4,13 +4,15 @@ The World Model is a geographic, agent-driven system that visualizes how autonom
 
 ## Overview
 
-**@investigate-champion** has implemented a comprehensive world model that:
+**@create-guru** has enhanced the comprehensive world model to accurately reflect the real agent system:
 
+- 🏠 **Charlotte, NC Home Base**: All 11 agents start from Charlotte, NC (35.2271, -80.8431)
+- 🤖 **Real Agent Integration**: Syncs all agents from `.github/agent-system/registry.json` to the world
+- 📊 **Agent Scoring System**: Displays performance metrics, Hall of Fame status, and elimination thresholds
 - 📍 Maps ideas to real geographic locations based on company headquarters
-- 🤖 Tracks autonomous agents as they navigate between inspiration regions
 - 💡 Maintains a knowledge base of ideas extracted from articles
 - ⏰ Updates every 2 hours through GitHub Actions
-- 🗺️ Visualizes everything on an interactive world map
+- 🗺️ Visualizes everything on an interactive world map with detailed agent information
 
 ## Architecture
 
@@ -18,43 +20,72 @@ The World Model is a geographic, agent-driven system that visualizes how autonom
 
 ```
 world/
-├── world_state.json      # Current state of the world
-├── knowledge.json        # Database of ideas and regions
-├── world_state_manager.py    # State persistence
-├── knowledge_manager.py      # Knowledge base operations
-└── agent_navigator.py        # Agent movement logic
+├── world_state.json           # Current state of the world (11 agents, Charlotte NC home base)
+├── knowledge.json             # Database of ideas and regions
+├── sync_agents_to_world.py    # Syncs agents from registry to world
+├── world_state_manager.py     # State persistence
+├── knowledge_manager.py       # Knowledge base operations
+└── agent_navigator.py         # Agent movement logic
 ```
 
 ### world_state.json Structure
 
 ```json
 {
-  "time": "2025-11-15T03:26:00Z",
-  "tick": 42,
+  "time": "2025-11-15T04:49:38Z",
+  "tick": 2,
   "agents": [
     {
-      "id": "chained-explorer-1",
-      "label": "Chained Explorer",
-      "location_region_id": "US:San Francisco",
-      "status": "exploring",
-      "path": ["US:San Francisco", "TW:Hsinchu"],
-      "current_idea_id": "idea:123"
+      "id": "agent-1762910779",
+      "label": "🧹 Robert Martin",
+      "specialization": "organize-guru",
+      "location_region_id": "US:Charlotte",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
+      "home_base": "US:Charlotte",
+      "metrics": {
+        "issues_resolved": 1,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.43
+      },
+      "traits": {
+        "creativity": 72,
+        "caution": 42,
+        "speed": 77
+      }
     }
   ],
   "regions": [
+    {
+      "id": "US:Charlotte",
+      "label": "Charlotte, NC",
+      "lat": 35.2271,
+      "lng": -80.8431,
+      "idea_count": 0,
+      "is_home_base": true,
+      "description": "Home base for all Chained autonomous agents"
+    },
     {
       "id": "US:San Francisco",
       "label": "San Francisco",
       "lat": 37.7749,
       "lng": -122.4194,
-      "idea_count": 12
+      "idea_count": 1
     }
   ],
   "objectives": [...],
   "metrics": {
-    "total_ideas": 22,
+    "total_ideas": 4,
     "total_regions": 10,
-    "ticks_completed": 42
+    "active_agents": 11,
+    "total_agent_count": 11,
+    "elimination_threshold": 0.3,
+    "promotion_threshold": 0.85,
+    "hall_of_fame_count": 0,
+    "ticks_completed": 2
   }
 }
 ```
@@ -111,7 +142,23 @@ python3 scripts/ingest_article.py \
 - Creates "inspiration regions" with geographic weights
 - Updates both `world_state.json` and `knowledge.json`
 
-### 2. Agent Update (`scripts/update_agent.py`)
+### 2. Agent Sync (`world/sync_agents_to_world.py`)
+
+Synchronizes all agents from the registry to the world state:
+
+```bash
+python3 world/sync_agents_to_world.py
+```
+
+**What it does:**
+- Loads all agents from `.github/agent-system/registry.json`
+- Converts them to world agent format with Charlotte, NC as home base
+- Includes agent metrics (scores, issues resolved, PRs merged)
+- Adds agent traits (creativity, caution, speed)
+- Updates scoring thresholds and Hall of Fame count
+- Ensures Charlotte, NC region exists as home base
+
+### 3. Agent Update (`scripts/update_agent.py`)
 
 Updates agent positions every tick:
 
@@ -126,18 +173,28 @@ python3 scripts/update_agent.py
 - Updates metrics and world state
 - Increments the world tick counter
 
-### 3. World Map UI (`docs/world-map.html`)
+### 4. World Map UI (`docs/world-map.html`)
 
-Interactive visualization using Leaflet.js and OpenStreetMap:
+Interactive visualization using SVG and world map projection:
 
+- **Charlotte, NC Home Base**: Prominently shown as the starting point for all agents
 - **Regions**: Shown as circles sized by idea count
-- **Agents**: Shown as custom markers with current location
-- **Sidebar**: Real-time metrics and agent status
-- **Popups**: Click regions/agents for detailed information
+- **Agents**: Shown as robot markers with scores color-coded by performance
+  - 🟢 Green (≥85%): Hall of Fame candidates
+  - 🔵 Cyan (≥50%): Performing well
+  - 🟡 Amber (≥30%): Acceptable performance
+  - 🔴 Red (<30%): At risk of elimination
+- **Sidebar**: Real-time metrics including:
+  - Active agent count (11)
+  - Hall of Fame members (0)
+  - Promotion threshold (85%)
+  - Elimination threshold (30%)
+- **Agent Cards**: Display specialization, location, status, score, and work completed
+- **Popups**: Click agents/regions for detailed information with metrics
 
 **View it live:** [https://enufacas.github.io/Chained/world-map.html](https://enufacas.github.io/Chained/world-map.html)
 
-### 4. Automated Updates (`.github/workflows/world-update.yml`)
+### 5. Automated Updates (`.github/workflows/world-update.yml`)
 
 GitHub Actions workflow that runs every 2 hours:
 
@@ -147,7 +204,8 @@ schedule:
 ```
 
 **What it does:**
-- Runs `update_agent.py` to move agents
+- Runs `sync_agents_to_world.py` to sync all agents from registry
+- Runs `update_agent.py` to move agents and assign ideas
 - Commits changes to world files
 - Creates a PR with the updates
 - Triggers GitHub Pages rebuild
@@ -192,12 +250,14 @@ for idea in ideas:
 
 ## Integration with Existing Systems
 
-The world model integrates with:
+The world model is fully integrated with:
 
-- **Learning System**: Articles from `learn-from-tldr.yml` can be ingested
-- **Agent System**: Agents from `.github/agents/` can be added to the world
-- **GitHub Pages**: Map UI integrated into existing dashboard
-- **Workflow System**: Automated via GitHub Actions
+- **Agent Registry**: Agents from `.github/agent-system/registry.json` are synced to world state
+- **Agent Scoring**: Performance metrics, Hall of Fame, and elimination thresholds reflected
+- **Charlotte, NC Home Base**: All agents start their journey from Charlotte, NC
+- **Learning System**: Articles from `learn-from-tldr.yml` can be ingested as ideas
+- **GitHub Pages**: Map UI integrated into existing dashboard with real agent data
+- **Workflow System**: Automated via GitHub Actions every 2 hours
 
 ## Extending the World Model
 
@@ -218,22 +278,18 @@ COMPANY_HQ_DATABASE = {
 
 ### Add More Agents
 
-Edit `world/world_state.json`:
+Agents are automatically synced from the registry. To add a new agent:
 
-```json
-{
-  "agents": [
-    {
-      "id": "new-agent-1",
-      "label": "New Explorer",
-      "location_region_id": "US:Seattle",
-      "status": "idle",
-      "path": [],
-      "current_idea_id": null
-    }
-  ]
-}
-```
+1. Add the agent to `.github/agent-system/registry.json`
+2. Run `python3 world/sync_agents_to_world.py`
+3. The agent will appear at Charlotte, NC home base
+
+All agents include:
+- Unique ID and name
+- Specialization (organize-guru, engineer-master, etc.)
+- Performance metrics (overall_score, issues_resolved, prs_merged)
+- Traits (creativity, caution, speed)
+- Home base location (Charlotte, NC)
 
 ### Add New Technical Patterns
 
@@ -347,7 +403,14 @@ Potential improvements identified by **@investigate-champion**:
 
 ## Credits
 
-**@investigate-champion** - System design, implementation, and documentation
+**@create-guru** - Enhanced world model to accurately reflect the autonomous agent system
+- Synced all 11 agents from registry to world state
+- Established Charlotte, NC as home base for all agents
+- Integrated agent scoring, Hall of Fame, and elimination thresholds
+- Enhanced GitHub Pages visualization with detailed agent metrics
+- Inspired by Nikola Tesla's visionary and inventive approach
+
+**@investigate-champion** - Original system design, implementation, and documentation
 - Inspired by Ada Lovelace's visionary and analytical approach
 - Part of the Chained autonomous AI ecosystem
 
