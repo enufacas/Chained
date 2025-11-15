@@ -74,21 +74,44 @@ function initMap() {
     return true;
 }
 
-// Draw simplified continent outlines
+// Draw simplified continent outlines with more realistic shapes
 function drawContinents(svg) {
     const continents = [
-        // North America
-        { path: 'M 100,100 L 120,90 L 180,95 L 200,110 L 210,150 L 190,170 L 150,175 L 120,160 Z', color: '#2d3748' },
-        // South America
-        { path: 'M 200,210 L 215,200 L 230,220 L 235,270 L 215,285 L 205,275 L 195,240 Z', color: '#2d3748' },
-        // Europe
-        { path: 'M 380,90 L 420,85 L 450,100 L 440,130 L 400,135 L 375,120 Z', color: '#2d3748' },
-        // Africa
-        { path: 'M 390,150 L 420,145 L 450,180 L 455,240 L 430,260 L 400,250 L 385,200 Z', color: '#2d3748' },
-        // Asia
-        { path: 'M 470,80 L 580,75 L 650,90 L 680,130 L 700,160 L 680,190 L 620,200 L 550,180 L 480,150 L 455,120 Z', color: '#2d3748' },
-        // Australia
-        { path: 'M 630,270 L 680,265 L 710,285 L 700,310 L 660,315 L 625,295 Z', color: '#2d3748' }
+        // North America - improved shape
+        { 
+            path: 'M 80,60 Q 90,50 110,55 L 140,50 Q 160,48 175,55 L 200,60 Q 215,65 220,80 L 225,100 Q 228,120 225,140 L 220,160 Q 215,175 205,185 L 190,195 Q 175,200 160,198 L 140,195 Q 125,192 115,185 L 100,175 Q 85,160 82,145 L 80,120 Q 78,90 80,60 Z', 
+            color: '#2d3748' 
+        },
+        // South America - improved shape  
+        { 
+            path: 'M 185,200 Q 195,195 205,200 L 220,210 Q 228,220 230,235 L 232,250 Q 233,265 230,280 L 225,295 Q 218,305 208,310 L 195,312 Q 185,310 178,305 L 170,295 Q 165,280 165,265 L 167,245 Q 170,225 175,210 Q 180,200 185,200 Z', 
+            color: '#2d3748' 
+        },
+        // Europe - improved shape
+        { 
+            path: 'M 380,75 Q 395,70 410,72 L 435,75 Q 455,78 470,85 L 485,95 Q 492,105 490,118 L 485,132 Q 478,142 465,145 L 445,147 Q 425,145 410,140 L 390,132 Q 378,120 376,105 L 375,90 Q 377,80 380,75 Z', 
+            color: '#2d3748' 
+        },
+        // Africa - improved shape
+        { 
+            path: 'M 385,145 Q 395,142 410,145 L 430,150 Q 445,155 455,165 L 465,180 Q 470,195 470,210 L 468,230 Q 465,245 458,258 L 448,270 Q 435,278 420,280 L 405,278 Q 390,272 382,262 L 375,245 Q 372,225 375,205 L 380,185 Q 383,165 385,145 Z', 
+            color: '#2d3748' 
+        },
+        // Asia - improved larger shape
+        { 
+            path: 'M 475,60 Q 495,55 520,58 L 555,62 Q 585,65 610,70 L 640,78 Q 665,88 685,102 L 705,120 Q 718,138 720,158 L 718,178 Q 712,195 698,208 L 675,220 Q 650,228 625,230 L 595,228 Q 565,223 540,215 L 515,205 Q 495,192 485,175 L 478,155 Q 475,135 475,115 L 475,90 Q 475,70 475,60 Z', 
+            color: '#2d3748' 
+        },
+        // Australia - improved shape
+        { 
+            path: 'M 620,265 Q 635,262 650,265 L 675,270 Q 695,275 708,285 L 715,300 Q 717,312 710,322 L 698,330 Q 680,333 665,332 L 645,328 Q 630,320 622,308 L 618,290 Q 618,275 620,265 Z', 
+            color: '#2d3748' 
+        },
+        // Antarctica - add bottom continent
+        { 
+            path: 'M 50,360 L 750,360 Q 745,370 735,375 L 700,380 Q 650,382 600,380 L 500,378 Q 400,380 300,378 L 200,380 Q 150,382 100,378 L 65,373 Q 55,368 50,360 Z', 
+            color: '#2d3748' 
+        }
     ];
     
     continents.forEach(continent => {
@@ -97,6 +120,7 @@ function drawContinents(svg) {
         path.setAttribute('fill', continent.color);
         path.setAttribute('stroke', '#1a2332');
         path.setAttribute('stroke-width', '2');
+        path.setAttribute('opacity', '0.8');
         svg.appendChild(path);
     });
 }
@@ -227,18 +251,20 @@ function showRegionPopup(region, pos) {
     
     const ideas = getIdeasForRegion(region.id);
     
-    let content = `<tspan x="10" dy="1.2em" font-weight="bold" font-size="14">${region.label}</tspan>`;
-    content += `<tspan x="10" dy="1.4em" font-size="12">💡 Ideas: ${region.idea_count || 0}</tspan>`;
+    const lines = [
+        { text: region.label, size: '14', bold: true },
+        { text: `💡 Ideas: ${region.idea_count || 0}`, size: '12' }
+    ];
     
     if (ideas.length > 0) {
-        content += `<tspan x="10" dy="1.4em" font-size="11" font-weight="bold">Recent Ideas:</tspan>`;
+        lines.push({ text: 'Recent Ideas:', size: '11', bold: true });
         ideas.slice(0, 3).forEach((idea, i) => {
             const title = idea.title.length > 30 ? idea.title.substring(0, 30) + '...' : idea.title;
-            content += `<tspan x="15" dy="1.3em" font-size="10">• ${title}</tspan>`;
+            lines.push({ text: `• ${title}`, size: '10', indent: 15 });
         });
     }
     
-    createPopup(svg, pos.x, pos.y, content);
+    createPopup(svg, pos.x, pos.y, lines);
 }
 
 // Show agent popup
@@ -252,36 +278,59 @@ function showAgentPopup(agent, region, pos) {
     const score = agent.metrics?.overall_score || 0;
     const specialization = agent.specialization || 'general';
     
-    let content = `<tspan x="10" dy="1.2em" font-weight="bold" font-size="14">🤖 ${agent.label}</tspan>`;
-    content += `<tspan x="10" dy="1.4em" font-size="11">🏷️ ${specialization}</tspan>`;
-    content += `<tspan x="10" dy="1.3em" font-size="12">📍 ${region.label}</tspan>`;
-    content += `<tspan x="10" dy="1.3em" font-size="12">📊 ${agent.status}</tspan>`;
-    content += `<tspan x="10" dy="1.3em" font-size="11">⭐ Score: ${(score * 100).toFixed(0)}%</tspan>`;
-    content += `<tspan x="10" dy="1.3em" font-size="10">📈 ${agent.metrics?.issues_resolved || 0} issues | ${agent.metrics?.prs_merged || 0} PRs</tspan>`;
+    // Determine score color
+    let scoreColor = '#666';
+    if (score >= 0.85) scoreColor = '#10b981'; // green
+    else if (score >= 0.5) scoreColor = '#0891b2'; // cyan
+    else if (score >= 0.3) scoreColor = '#f59e0b'; // amber
+    else scoreColor = '#ef4444'; // red
+    
+    const lines = [
+        { text: `🤖 ${agent.label}`, size: '14', bold: true },
+        { text: `🏷️ ${specialization}`, size: '11' },
+        { text: `📍 ${region.label}`, size: '11' },
+        { text: `📊 ${agent.status}`, size: '11' },
+        { text: `⭐ Score: ${(score * 100).toFixed(0)}%`, size: '11', color: scoreColor },
+        { text: `📈 ${agent.metrics?.issues_resolved || 0} issues | ${agent.metrics?.prs_merged || 0} PRs`, size: '10' }
+    ];
     
     if (idea) {
-        const title = idea.title.length > 25 ? idea.title.substring(0, 25) + '...' : idea.title;
-        content += `<tspan x="10" dy="1.3em" font-size="11">💡 ${title}</tspan>`;
+        const title = idea.title.length > 28 ? idea.title.substring(0, 28) + '...' : idea.title;
+        lines.push({ text: `💡 ${title}`, size: '10' });
     }
     
     if (agent.path && agent.path.length > 0) {
-        content += `<tspan x="10" dy="1.3em" font-size="11">🗺️ ${agent.path.length} stops remaining</tspan>`;
+        lines.push({ text: `🗺️ ${agent.path.length} stops remaining`, size: '10' });
     }
     
-    createPopup(svg, pos.x, pos.y, content);
+    createPopup(svg, pos.x, pos.y, lines);
 }
 
-// Create popup
-function createPopup(svg, x, y, content) {
+// Create popup with better positioning and formatting
+function createPopup(svg, x, y, lines) {
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     group.classList.add('popup-group');
     
-    // Background - increased height for more content
+    // Adjust position to keep popup in view
+    const viewBox = svg.viewBox.baseVal;
+    const popupWidth = 240;
+    const popupHeight = Math.max(120, lines.length * 20 + 40); // Dynamic height based on content
+    
+    // Calculate popup position to stay within bounds
+    let popupX = x - popupWidth / 2;
+    let popupY = y - popupHeight - 20; // Position above the marker
+    
+    // Keep popup within SVG bounds
+    if (popupX < 10) popupX = 10;
+    if (popupX + popupWidth > viewBox.width - 10) popupX = viewBox.width - popupWidth - 10;
+    if (popupY < 10) popupY = y + 30; // If no room above, show below
+    
+    // Background
     const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    bg.setAttribute('x', x - 110);
-    bg.setAttribute('y', y - 180);
-    bg.setAttribute('width', '220');
-    bg.setAttribute('height', '170');
+    bg.setAttribute('x', popupX);
+    bg.setAttribute('y', popupY);
+    bg.setAttribute('width', popupWidth);
+    bg.setAttribute('height', popupHeight);
     bg.setAttribute('rx', '8');
     bg.setAttribute('fill', 'white');
     bg.setAttribute('stroke', '#0891b2');
@@ -291,26 +340,48 @@ function createPopup(svg, x, y, content) {
     
     // Close button
     const closeBtn = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    closeBtn.setAttribute('x', x + 95);
-    closeBtn.setAttribute('y', y - 160);
-    closeBtn.setAttribute('font-size', '18');
+    closeBtn.setAttribute('x', popupX + popupWidth - 20);
+    closeBtn.setAttribute('y', popupY + 20);
+    closeBtn.setAttribute('font-size', '16');
     closeBtn.setAttribute('fill', '#666');
     closeBtn.setAttribute('cursor', 'pointer');
+    closeBtn.setAttribute('font-weight', 'bold');
     closeBtn.textContent = '✖';
     closeBtn.addEventListener('click', hidePopup);
     group.appendChild(closeBtn);
     
-    // Content
+    // Content - create text element with tspan children
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', x - 100);
-    text.setAttribute('y', y - 175);
+    text.setAttribute('x', popupX + 10);
+    text.setAttribute('y', popupY + 25);
     text.setAttribute('fill', '#000');
-    text.innerHTML = content;
+    
+    // Add each line as a tspan element
+    lines.forEach((line, index) => {
+        const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        tspan.setAttribute('x', popupX + (line.indent || 10));
+        tspan.setAttribute('dy', index === 0 ? '0' : '1.4em');
+        tspan.setAttribute('font-size', line.size || '11');
+        if (line.bold) tspan.setAttribute('font-weight', 'bold');
+        if (line.color) tspan.setAttribute('fill', line.color);
+        tspan.textContent = line.text;
+        text.appendChild(tspan);
+    });
+    
     group.appendChild(text);
     
-    // Pointer
+    // Pointer triangle pointing to the marker
+    const pointerY = popupY + popupHeight;
     const pointer = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-    pointer.setAttribute('points', `${x},${y - 10} ${x - 8},${y - 18} ${x + 8},${y - 18}`);
+    
+    // Point to the marker position
+    if (popupY < y) {
+        // Popup is above marker - pointer points down
+        pointer.setAttribute('points', `${x},${y} ${x - 10},${pointerY} ${x + 10},${pointerY}`);
+    } else {
+        // Popup is below marker - pointer points up
+        pointer.setAttribute('points', `${x},${y} ${x - 10},${popupY} ${x + 10},${popupY}`);
+    }
     pointer.setAttribute('fill', 'white');
     pointer.setAttribute('stroke', '#0891b2');
     pointer.setAttribute('stroke-width', '2');
