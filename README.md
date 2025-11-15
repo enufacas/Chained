@@ -17,8 +17,19 @@ Chained isn't just another AI experiment—it's a **living, breathing software e
 - 📊 **Progress self-documents** on a beautiful GitHub Pages timeline
 - 🔄 **The cycle never stops**—it's a true perpetual motion machine
 - 🎓 **NEW: Self-learning AI** learns from its own discussions and improves continuously
+- 🌍 **NEW: World Model** - Geographic visualization of agents exploring ideas across the globe
 
-**[🌐 View Live Dashboard](https://enufacas.github.io/Chained/)** | **[🤖 Meet the Agents](https://enufacas.github.io/Chained/agents.html)** | **[📖 Read the Docs](./docs/INDEX.md)**
+**[🌐 View Live Dashboard](https://enufacas.github.io/Chained/)** | **[🗺️ Explore World Map](https://enufacas.github.io/Chained/world-map.html)** | **[🤖 Meet the Agents](https://enufacas.github.io/Chained/agents.html)** | **[📖 Read the Docs](./docs/INDEX.md)**
+
+### 🌍 World Model - Geographic AI Exploration
+Watch autonomous agents **explore the world**! The system maps ideas to real geographic locations based on company headquarters and visualizes agents navigating between inspiration regions.
+
+- **Real-time map**: See agents move across continents
+- **Idea locations**: Companies and innovations mapped to cities
+- **Navigation paths**: Agents follow weighted routes between regions
+- **Autonomous updates**: World evolves every 2 hours automatically
+
+**[🗺️ View Live World Map](https://enufacas.github.io/Chained/world-map.html)** | **[📖 World Model Guide](./world/README.md)**
 
 ### 🆕 Self-Documenting AI
 The system now **learns from itself**! Every closed issue's discussion is automatically analyzed to extract:

@@ -1,0 +1,101 @@
+{
+  "time": "2025-11-15T03:33:21Z",
+  "tick": 2,
+  "agents": [
+    {
+      "id": "chained-explorer-1",
+      "label": "Chained Explorer",
+      "location_region_id": "US:San Francisco",
+      "status": "traveling",
+      "path": [
+        "US:Redmond"
+      ],
+      "current_idea_id": "idea:1"
+    }
+  ],
+  "regions": [
+    {
+      "id": "US:San Francisco",
+      "label": "San Francisco",
+      "lat": 37.7749,
+      "lng": -122.4194,
+      "idea_count": 1
+    },
+    {
+      "id": "US:Seattle",
+      "label": "Seattle",
+      "lat": 47.6062,
+      "lng": -122.3321,
+      "idea_count": 0
+    },
+    {
+      "id": "US:New York",
+      "label": "New York",
+      "lat": 40.7128,
+      "lng": -74.006,
+      "idea_count": 0
+    },
+    {
+      "id": "US:Redmond",
+      "label": "Redmond",
+      "lat": 47.674,
+      "lng": -122.1215,
+      "idea_count": 1
+    },
+    {
+      "id": "TW:Hsinchu",
+      "label": "Hsinchu",
+      "lat": 24.8138,
+      "lng": 120.9675,
+      "idea_count": 1
+    },
+    {
+      "id": "KR:Seoul",
+      "label": "Seoul",
+      "lat": 37.5665,
+      "lng": 126.978,
+      "idea_count": 1
+    },
+    {
+      "id": "CN:Hangzhou",
+      "label": "Hangzhou",
+      "lat": 30.2741,
+      "lng": 120.1551,
+      "idea_count": 1
+    },
+    {
+      "id": "CN:Shenzhen",
+      "label": "Shenzhen",
+      "lat": 22.5431,
+      "lng": 114.0579,
+      "idea_count": 1
+    },
+    {
+      "id": "SE:Stockholm",
+      "label": "Stockholm",
+      "lat": 59.3293,
+      "lng": 18.0686,
+      "idea_count": 1
+    },
+    {
+      "id": "GB:London",
+      "label": "London",
+      "lat": 51.5074,
+      "lng": -0.1278,
+      "idea_count": 1
+    }
+  ],
+  "objectives": [
+    {
+      "id": "o1",
+      "description": "Explore global inspiration patterns and collect innovative ideas from tech companies worldwide.",
+      "priority": 0.9,
+      "progress": 0.0
+    }
+  ],
+  "metrics": {
+    "total_ideas": 4,
+    "total_regions": 10,
+    "ticks_completed": 2
+  }
+}

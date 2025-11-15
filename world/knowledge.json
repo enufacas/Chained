@@ -1,0 +1,169 @@
+{
+  "ideas": [
+    {
+      "title": "OpenAI Launches GPT-5 with Self-Healing CI Pipelines",
+      "summary": "OpenAI launches GPT-5 with self-healing CI pipelines that use ML to auto-fix failures. Microsoft and GitHub adopt the technology for CI systems.",
+      "patterns": [
+        "ci_automation",
+        "self_healing",
+        "ai_ml",
+        "devops"
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "hq_city": "San Francisco",
+          "hq_country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "Microsoft",
+          "hq_city": "Redmond",
+          "hq_country": "US",
+          "lat": 47.674,
+          "lng": -122.1215
+        },
+        {
+          "name": "GitHub",
+          "hq_city": "San Francisco",
+          "hq_country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.6666666666666666
+        },
+        {
+          "region_id": "US:Redmond",
+          "lat": 47.674,
+          "lng": -122.1215,
+          "weight": 0.3333333333333333
+        }
+      ],
+      "id": "idea:1"
+    },
+    {
+      "title": "TSMC Expands 3nm Production with AI-Powered Testing",
+      "summary": "TSMC expands 3nm production in Taiwan using AI-powered testing. Samsung monitors the competitive landscape.",
+      "patterns": [
+        "ai_ml",
+        "testing"
+      ],
+      "companies": [
+        {
+          "name": "TSMC",
+          "hq_city": "Hsinchu",
+          "hq_country": "TW",
+          "lat": 24.8138,
+          "lng": 120.9675
+        },
+        {
+          "name": "Samsung",
+          "hq_city": "Seoul",
+          "hq_country": "KR",
+          "lat": 37.5665,
+          "lng": 126.978
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "TW:Hsinchu",
+          "lat": 24.8138,
+          "lng": 120.9675,
+          "weight": 0.5
+        },
+        {
+          "region_id": "KR:Seoul",
+          "lat": 37.5665,
+          "lng": 126.978,
+          "weight": 0.5
+        }
+      ],
+      "id": "idea:2"
+    },
+    {
+      "title": "Alibaba and Tencent Partner on Distributed Cloud Infrastructure",
+      "summary": "Alibaba and Tencent partner on distributed cloud infrastructure with focus on performance and DevOps.",
+      "patterns": [
+        "distributed_systems",
+        "performance",
+        "devops"
+      ],
+      "companies": [
+        {
+          "name": "Alibaba",
+          "hq_city": "Hangzhou",
+          "hq_country": "CN",
+          "lat": 30.2741,
+          "lng": 120.1551
+        },
+        {
+          "name": "Tencent",
+          "hq_city": "Shenzhen",
+          "hq_country": "CN",
+          "lat": 22.5431,
+          "lng": 114.0579
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "CN:Hangzhou",
+          "lat": 30.2741,
+          "lng": 120.1551,
+          "weight": 0.5
+        },
+        {
+          "region_id": "CN:Shenzhen",
+          "lat": 22.5431,
+          "lng": 114.0579,
+          "weight": 0.5
+        }
+      ],
+      "id": "idea:3"
+    },
+    {
+      "title": "Spotify Launches AI Music Recommendations with DeepMind",
+      "summary": "Spotify and DeepMind collaborate on AI-powered music recommendations using neural networks and ML.",
+      "patterns": [
+        "ai_ml"
+      ],
+      "companies": [
+        {
+          "name": "Spotify",
+          "hq_city": "Stockholm",
+          "hq_country": "SE",
+          "lat": 59.3293,
+          "lng": 18.0686
+        },
+        {
+          "name": "DeepMind",
+          "hq_city": "London",
+          "hq_country": "GB",
+          "lat": 51.5074,
+          "lng": -0.1278
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "SE:Stockholm",
+          "lat": 59.3293,
+          "lng": 18.0686,
+          "weight": 0.5
+        },
+        {
+          "region_id": "GB:London",
+          "lat": 51.5074,
+          "lng": -0.1278,
+          "weight": 0.5
+        }
+      ],
+      "id": "idea:4"
+    }
+  ]
+}
