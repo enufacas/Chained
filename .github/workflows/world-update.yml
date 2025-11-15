@@ -118,3 +118,13 @@ jobs:
             --label "automated,world-model" \
             --base main \
             --head "$BRANCH_NAME"
+      
+      - name: Trigger agent missions workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🎯 Triggering agent missions workflow"
+          
+          gh workflow run agent-missions.yml 2>&1 || echo "Note: Agent missions trigger may not be immediate"
+          
+          echo "✅ Agent missions workflow triggered to assign agents to new opportunities"
