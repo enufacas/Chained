@@ -1,0 +1,226 @@
+[
+  {
+    "template_id": "api_wrapper",
+    "category": "api",
+    "description": "Generate API wrapper with rate limiting",
+    "code_template": "\nimport requests\nimport time\nfrom functools import wraps\n\nclass {ClassName}API:\n    '''API wrapper for {api_name}'''\n    \n    def __init__(self, api_key: str, rate_limit: int = 60):\n        self.api_key = api_key\n        self.rate_limit = rate_limit\n        self.last_request_time = 0\n    \n    def _rate_limit(func):\n        @wraps(func)\n        def wrapper(self, *args, **kwargs):\n            elapsed = time.time() - self.last_request_time\n            if elapsed < 1.0 / self.rate_limit:\n                time.sleep(1.0 / self.rate_limit - elapsed)\n            self.last_request_time = time.time()\n            return func(self, *args, **kwargs)\n        return wrapper\n    \n    @_rate_limit\n    def fetch(self, endpoint: str) -> dict:\n        '''Fetch data from API endpoint'''\n        headers = {{'Authorization': f'Bearer {{self.api_key}}'}}\n        response = requests.get(f'{{self.base_url}}/{{endpoint}}', headers=headers)\n        response.raise_for_status()\n        return response.json()\n",
+    "keywords": [
+      "api",
+      "wrapper",
+      "rate limit",
+      "rest",
+      "http"
+    ],
+    "source_insights": [],
+    "usage_count": 5,
+    "created_at": "2025-11-15T10:25:31.705684+00:00"
+  },
+  {
+    "template_id": "data_analyzer",
+    "category": "data_processing",
+    "description": "Generate data analysis tool",
+    "code_template": "\nimport json\nfrom collections import Counter\nfrom typing import List, Dict, Any\n\nclass {ClassName}Analyzer:\n    '''Analyzer for {data_type} data'''\n    \n    def __init__(self, data_path: str):\n        self.data_path = data_path\n        self.data = []\n        self._load_data()\n    \n    def _load_data(self):\n        '''Load data from file'''\n        with open(self.data_path, 'r') as f:\n            self.data = json.load(f)\n    \n    def analyze_distribution(self, field: str) -> Dict[str, int]:\n        '''Analyze value distribution for a field'''\n        values = [item.get(field) for item in self.data if field in item]\n        return dict(Counter(values))\n    \n    def filter_by(self, field: str, value: Any) -> List[Dict]:\n        '''Filter data by field value'''\n        return [item for item in self.data if item.get(field) == value]\n    \n    def get_statistics(self) -> Dict[str, Any]:\n        '''Get basic statistics about the dataset'''\n        return {{\n            'total_items': len(self.data),\n            'fields': list(self.data[0].keys()) if self.data else [],\n            'timestamp': '{timestamp}'\n        }}\n",
+    "keywords": [
+      "data",
+      "analysis",
+      "statistics",
+      "json",
+      "processing"
+    ],
+    "source_insights": [],
+    "usage_count": 1,
+    "created_at": "2025-11-15T10:25:31.705700+00:00"
+  },
+  {
+    "template_id": "ml_model_wrapper",
+    "category": "ml",
+    "description": "Generate ML model wrapper with caching",
+    "code_template": "\nimport json\nimport hashlib\nfrom pathlib import Path\nfrom typing import Any, Dict, Optional\n\nclass {ClassName}Model:\n    '''ML model wrapper with caching for {model_name}'''\n    \n    def __init__(self, cache_dir: str = '.cache'):\n        self.cache_dir = Path(cache_dir)\n        self.cache_dir.mkdir(exist_ok=True)\n        self.model = None\n    \n    def _get_cache_key(self, input_data: str) -> str:\n        '''Generate cache key from input'''\n        return hashlib.md5(input_data.encode()).hexdigest()\n    \n    def _get_cached_result(self, cache_key: str) -> Optional[Dict]:\n        '''Retrieve cached result if available'''\n        cache_file = self.cache_dir / f'{{cache_key}}.json'\n        if cache_file.exists():\n            with open(cache_file, 'r') as f:\n                return json.load(f)\n        return None\n    \n    def _cache_result(self, cache_key: str, result: Dict):\n        '''Cache computation result'''\n        cache_file = self.cache_dir / f'{{cache_key}}.json'\n        with open(cache_file, 'w') as f:\n            json.dump(result, f)\n    \n    def predict(self, input_data: str) -> Dict[str, Any]:\n        '''Make prediction with caching'''\n        cache_key = self._get_cache_key(input_data)\n        \n        # Check cache first\n        cached = self._get_cached_result(cache_key)\n        if cached:\n            cached['from_cache'] = True\n            return cached\n        \n        # Compute result\n        result = self._compute_prediction(input_data)\n        \n        # Cache for future use\n        self._cache_result(cache_key, result)\n        result['from_cache'] = False\n        return result\n    \n    def _compute_prediction(self, input_data: str) -> Dict[str, Any]:\n        '''Perform actual model prediction'''\n        # TODO: Implement model-specific logic\n        return {{'prediction': 'placeholder', 'confidence': 0.0}}\n",
+    "keywords": [
+      "machine learning",
+      "ml",
+      "model",
+      "prediction",
+      "ai"
+    ],
+    "source_insights": [],
+    "usage_count": 1,
+    "created_at": "2025-11-15T10:25:31.705705+00:00"
+  },
+  {
+    "template_id": "monitoring_tool",
+    "category": "devops",
+    "description": "Generate monitoring and alerting tool",
+    "code_template": "\nimport time\nimport logging\nfrom typing import Dict, Callable, Any\nfrom dataclasses import dataclass\nfrom datetime import datetime, timezone\n\n@dataclass\nclass MetricThreshold:\n    name: str\n    threshold: float\n    comparison: str  # 'gt', 'lt', 'eq'\n    \nclass {ClassName}Monitor:\n    '''Monitoring tool for {system_name}'''\n    \n    def __init__(self, check_interval: int = 60):\n        self.check_interval = check_interval\n        self.thresholds: Dict[str, MetricThreshold] = {{}}\n        self.alerts_triggered: Dict[str, list] = {{}}\n        \n        logging.basicConfig(level=logging.INFO)\n        self.logger = logging.getLogger(__name__)\n    \n    def add_threshold(self, name: str, threshold: float, comparison: str = 'gt'):\n        '''Add monitoring threshold'''\n        self.thresholds[name] = MetricThreshold(name, threshold, comparison)\n        self.alerts_triggered[name] = []\n    \n    def check_metric(self, name: str, value: float) -> bool:\n        '''Check if metric exceeds threshold'''\n        if name not in self.thresholds:\n            return False\n        \n        threshold = self.thresholds[name]\n        \n        if threshold.comparison == 'gt' and value > threshold.threshold:\n            return True\n        elif threshold.comparison == 'lt' and value < threshold.threshold:\n            return True\n        elif threshold.comparison == 'eq' and value == threshold.threshold:\n            return True\n        \n        return False\n    \n    def alert(self, name: str, value: float):\n        '''Trigger alert for metric'''\n        timestamp = datetime.now(timezone.utc).isoformat()\n        alert = {{'metric': name, 'value': value, 'timestamp': timestamp}}\n        self.alerts_triggered[name].append(alert)\n        self.logger.warning(f'Alert: {{name}} = {{value}} at {{timestamp}}')\n    \n    def monitor(self, metrics_callback: Callable[[], Dict[str, float]]):\n        '''Start monitoring loop'''\n        self.logger.info(f'Starting monitor with {{len(self.thresholds)}} thresholds')\n        \n        while True:\n            metrics = metrics_callback()\n            \n            for name, value in metrics.items():\n                if self.check_metric(name, value):\n                    self.alert(name, value)\n            \n            time.sleep(self.check_interval)\n",
+    "keywords": [
+      "monitoring",
+      "devops",
+      "alerts",
+      "metrics",
+      "observability"
+    ],
+    "source_insights": [],
+    "usage_count": 1,
+    "created_at": "2025-11-15T10:25:31.705707+00:00"
+  },
+  {
+    "template_id": "steam_tool",
+    "category": "learned",
+    "description": "Tool related to steam",
+    "code_template": "\n# Generated code template for steam\n# Based on HN insights showing 8 mentions\n\nclass SteamTool:\n    '''Tool for working with steam'''\n    \n    def __init__(self):\n        self.name = 'steam'\n        self.initialized = True\n    \n    def process(self, data):\n        '''Process steam-related data'''\n        # TODO: Implement based on use case\n        return data\n",
+    "keywords": [
+      "steam"
+    ],
+    "source_insights": [
+      "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "https://store.steampowered.com/sale/steammachine",
+      "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
+    ],
+    "usage_count": 1,
+    "created_at": "2025-11-15T10:25:31.711927+00:00"
+  },
+  {
+    "template_id": "android_tool",
+    "category": "learned",
+    "description": "Tool related to android",
+    "code_template": "\n# Generated code template for android\n# Based on HN insights showing 7 mentions\n\nclass AndroidTool:\n    '''Tool for working with android'''\n    \n    def __init__(self):\n        self.name = 'android'\n        self.initialized = True\n    \n    def process(self, data):\n        '''Process android-related data'''\n        # TODO: Implement based on use case\n        return data\n",
+    "keywords": [
+      "android"
+    ],
+    "source_insights": [
+      "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "https://store.steampowered.com/sale/steammachine",
+      "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
+    ],
+    "usage_count": 1,
+    "created_at": "2025-11-15T10:25:31.711955+00:00"
+  },
+  {
+    "template_id": "developer_tool",
+    "category": "learned",
+    "description": "Tool related to developer",
+    "code_template": "\n# Generated code template for developer\n# Based on HN insights showing 7 mentions\n\nclass DeveloperTool:\n    '''Tool for working with developer'''\n    \n    def __init__(self):\n        self.name = 'developer'\n        self.initialized = True\n    \n    def process(self, data):\n        '''Process developer-related data'''\n        # TODO: Implement based on use case\n        return data\n",
+    "keywords": [
+      "developer"
+    ],
+    "source_insights": [
+      "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "https://store.steampowered.com/sale/steammachine",
+      "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
+    ],
+    "usage_count": 0,
+    "created_at": "2025-11-15T10:25:31.711964+00:00"
+  },
+  {
+    "template_id": "machine_tool",
+    "category": "learned",
+    "description": "Tool related to machine",
+    "code_template": "\n# Generated code template for machine\n# Based on HN insights showing 6 mentions\n\nclass MachineTool:\n    '''Tool for working with machine'''\n    \n    def __init__(self):\n        self.name = 'machine'\n        self.initialized = True\n    \n    def process(self, data):\n        '''Process machine-related data'''\n        # TODO: Implement based on use case\n        return data\n",
+    "keywords": [
+      "machine"
+    ],
+    "source_insights": [
+      "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "https://store.steampowered.com/sale/steammachine",
+      "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
+    ],
+    "usage_count": 0,
+    "created_at": "2025-11-15T10:25:31.711970+00:00"
+  },
+  {
+    "template_id": "world_tool",
+    "category": "learned",
+    "description": "Tool related to world",
+    "code_template": "\n# Generated code template for world\n# Based on HN insights showing 6 mentions\n\nclass WorldTool:\n    '''Tool for working with world'''\n    \n    def __init__(self):\n        self.name = 'world'\n        self.initialized = True\n    \n    def process(self, data):\n        '''Process world-related data'''\n        # TODO: Implement based on use case\n        return data\n",
+    "keywords": [
+      "world"
+    ],
+    "source_insights": [
+      "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "https://store.steampowered.com/sale/steammachine",
+      "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
+    ],
+    "usage_count": 0,
+    "created_at": "2025-11-15T10:25:31.711976+00:00"
+  },
+  {
+    "template_id": "diffusion_tool",
+    "category": "learned",
+    "description": "Tool related to diffusion",
+    "code_template": "\n# Generated code template for diffusion\n# Based on HN insights showing 6 mentions\n\nclass DiffusionTool:\n    '''Tool for working with diffusion'''\n    \n    def __init__(self):\n        self.name = 'diffusion'\n        self.initialized = True\n    \n    def process(self, data):\n        '''Process diffusion-related data'''\n        # TODO: Implement based on use case\n        return data\n",
+    "keywords": [
+      "diffusion"
+    ],
+    "source_insights": [
+      "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "https://store.steampowered.com/sale/steammachine",
+      "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
+    ],
+    "usage_count": 0,
+    "created_at": "2025-11-15T10:25:31.711985+00:00"
+  },
+  {
+    "template_id": "verification_tool",
+    "category": "learned",
+    "description": "Tool related to verification",
+    "code_template": "\n# Generated code template for verification\n# Based on HN insights showing 5 mentions\n\nclass VerificationTool:\n    '''Tool for working with verification'''\n    \n    def __init__(self):\n        self.name = 'verification'\n        self.initialized = True\n    \n    def process(self, data):\n        '''Process verification-related data'''\n        # TODO: Implement based on use case\n        return data\n",
+    "keywords": [
+      "verification"
+    ],
+    "source_insights": [
+      "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "https://store.steampowered.com/sale/steammachine",
+      "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
+    ],
+    "usage_count": 0,
+    "created_at": "2025-11-15T10:25:31.711991+00:00"
+  },
+  {
+    "template_id": "project_tool",
+    "category": "learned",
+    "description": "Tool related to project",
+    "code_template": "\n# Generated code template for project\n# Based on HN insights showing 5 mentions\n\nclass ProjectTool:\n    '''Tool for working with project'''\n    \n    def __init__(self):\n        self.name = 'project'\n        self.initialized = True\n    \n    def process(self, data):\n        '''Process project-related data'''\n        # TODO: Implement based on use case\n        return data\n",
+    "keywords": [
+      "project"
+    ],
+    "source_insights": [
+      "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "https://store.steampowered.com/sale/steammachine",
+      "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
+    ],
+    "usage_count": 0,
+    "created_at": "2025-11-15T10:25:31.711997+00:00"
+  },
+  {
+    "template_id": "being_tool",
+    "category": "learned",
+    "description": "Tool related to being",
+    "code_template": "\n# Generated code template for being\n# Based on HN insights showing 5 mentions\n\nclass BeingTool:\n    '''Tool for working with being'''\n    \n    def __init__(self):\n        self.name = 'being'\n        self.initialized = True\n    \n    def process(self, data):\n        '''Process being-related data'''\n        # TODO: Implement based on use case\n        return data\n",
+    "keywords": [
+      "being"
+    ],
+    "source_insights": [
+      "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "https://store.steampowered.com/sale/steammachine",
+      "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
+    ],
+    "usage_count": 0,
+    "created_at": "2025-11-15T10:25:31.712004+00:00"
+  },
+  {
+    "template_id": "source_tool",
+    "category": "learned",
+    "description": "Tool related to source",
+    "code_template": "\n# Generated code template for source\n# Based on HN insights showing 5 mentions\n\nclass SourceTool:\n    '''Tool for working with source'''\n    \n    def __init__(self):\n        self.name = 'source'\n        self.initialized = True\n    \n    def process(self, data):\n        '''Process source-related data'''\n        # TODO: Implement based on use case\n        return data\n",
+    "keywords": [
+      "source"
+    ],
+    "source_insights": [
+      "https://www.cnn.com/2025/11/12/business/last-penny-minted",
+      "https://store.steampowered.com/sale/steammachine",
+      "https://lpn.swi-prolog.org/lpnpage.php?pageid=top"
+    ],
+    "usage_count": 0,
+    "created_at": "2025-11-15T10:25:31.712010+00:00"
+  }
+]
