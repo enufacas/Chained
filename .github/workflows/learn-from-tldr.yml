@@ -1,9 +1,8 @@
 name: "Learning: TLDR Tech"
 
+# NOTE: This workflow is now part of the autonomous-pipeline.yml
+# It can still be triggered manually for testing or standalone use
 on:
-  schedule:
-    # Run twice daily - morning and evening
-    - cron: '0 8,20 * * *'
   workflow_dispatch:
 
 permissions:

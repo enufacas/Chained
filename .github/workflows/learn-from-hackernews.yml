@@ -1,9 +1,8 @@
 name: "Learning: Hacker News"
 
+# NOTE: This workflow is now part of the autonomous-pipeline.yml
+# It can still be triggered manually for testing or standalone use
 on:
-  schedule:
-    # Run three times daily - morning, afternoon, evening
-    - cron: '0 7,13,19 * * *'
   workflow_dispatch:
 
 permissions:

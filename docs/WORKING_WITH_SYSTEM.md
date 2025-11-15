@@ -16,23 +16,56 @@ Chained is a **fully autonomous closed-loop AI system** that:
 
 ## System Architecture
 
-### The 6-Stage Continuous Loop
+### The Multi-Stage Progressive Pipeline
+
+The system now runs as a **single coordinated pipeline** (`autonomous-pipeline.yml`) with 5 stages:
 
 ```
-1. LEARNING (learn-from-*.yml)
-   ↓
-2. COMBINE (combined-learning.yml)
-   ↓
-3. WORLD UPDATE (world-update.yml)
-   ↓
-4. AGENT MISSIONS (agent-missions.yml)
-   ↓
-5. WORK (agents/humans complete missions)
-   ↓
-6. SELF-REINFORCE (self-reinforcement.yml)
-   ↓
-   → BACK TO STEP 2 (closes loop)
+┌─────────────────────────────────────────────────────┐
+│  STAGE 1: LEARNING COLLECTION (Parallel)            │
+│  ├─ 1a. TLDR Tech                                   │
+│  ├─ 1b. Hacker News                                 │
+│  └─ 1c. GitHub Trending                             │
+└──────────────────┬──────────────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────────────┐
+│  STAGE 2: COMBINE LEARNINGS                         │
+│  - Merge all sources                                │
+│  - Create combined analysis                         │
+│  - Generate PR with learnings                       │
+└──────────────────┬──────────────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────────────┐
+│  STAGE 3: WORLD MODEL UPDATE                        │
+│  - Sync agents to world                             │
+│  - Integrate learning ideas                         │
+│  - Increment world tick                             │
+│  - Update GitHub Pages data                         │
+└──────────────────┬──────────────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────────────┐
+│  STAGE 4: AGENT MISSIONS                            │
+│  - Score agents for relevance                       │
+│  - Select top 10 agents per mission                 │
+│  - Create GitHub issues                             │
+│  - Move agents to locations                         │
+└──────────────────┬──────────────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────────────────┐
+│  STAGE 5: SELF-REINFORCEMENT (Optional/Daily)      │
+│  - Collect completed work insights                  │
+│  - Extract learnings from PRs                       │
+│  → FEEDS BACK TO STAGE 1 (closes loop)             │
+└─────────────────────────────────────────────────────┘
 ```
+
+**Key Benefits:**
+- ✅ **Single execution** - All stages in one workflow run
+- ✅ **Proper dependencies** - Each stage waits for previous to complete
+- ✅ **Shared artifacts** - Stages pass data efficiently
+- ✅ **Better error handling** - Failed stage stops dependent stages
+- ✅ **Clear visibility** - See entire pipeline progress in one place
+- ✅ **Resource control** - Stages run sequentially or in controlled parallel
 
 ## How Agents Are Selected
 
@@ -110,45 +143,64 @@ Each mission issue contains:
 
 ## How to Trigger Workflows Manually
 
-### Trigger Learning Collection
+### Trigger the Complete Pipeline
 ```bash
-# Collect TLDR tech news
-gh workflow run learn-from-tldr.yml
+# Run the entire autonomous pipeline
+gh workflow run autonomous-pipeline.yml
 
-# Collect Hacker News stories
-gh workflow run learn-from-hackernews.yml
+# Run with options
+gh workflow run autonomous-pipeline.yml \
+  -f skip_learning=false \
+  -f skip_world_update=false \
+  -f skip_missions=false \
+  -f include_self_reinforcement=true
 ```
 
-### Trigger Analysis & Missions
+### Trigger Individual Stages (for testing)
 ```bash
-# Combine all learnings
+# Individual learning sources (standalone mode)
+gh workflow run learn-from-tldr.yml
+gh workflow run learn-from-hackernews.yml
+
+# Combine learnings only
 gh workflow run combined-learning.yml
 
-# Update world model
+# Update world model only
 gh workflow run world-update.yml
 
-# Create agent missions
+# Create missions only
 gh workflow run agent-missions.yml
-```
 
-### Trigger Self-Reinforcement
-```bash
-# Extract insights from completed work
+# Self-reinforcement
 gh workflow run self-reinforcement.yml
 ```
 
 ## Automatic Triggers
 
-The system also runs automatically:
+The system runs automatically via the unified pipeline:
 
-| Workflow | Schedule | Trigger |
-|----------|----------|---------|
-| learn-from-tldr.yml | Twice daily (8 AM, 8 PM UTC) | Automatic |
-| learn-from-hackernews.yml | Twice daily (8 AM, 8 PM UTC) | Automatic |
-| combined-learning.yml | After learning OR manual | Chained from learning |
-| world-update.yml | After combined learning | Chained from combined |
-| agent-missions.yml | After world update | Chained from world |
-| self-reinforcement.yml | Daily midnight UTC | Automatic + chained |
+| Workflow | Schedule | Description |
+|----------|----------|-------------|
+| **autonomous-pipeline.yml** | Twice daily (8 AM, 8 PM UTC) | **Main pipeline** - Runs all stages sequentially |
+| self-reinforcement.yml | Daily midnight UTC | Extracts insights from completed work |
+
+### Pipeline Stages
+
+The `autonomous-pipeline.yml` workflow orchestrates all stages:
+
+1. **Stage 1 (Parallel)**: Collects learnings from TLDR, Hacker News, and GitHub Trending
+2. **Stage 2**: Combines all learning sources into unified analysis
+3. **Stage 3**: Updates world model with new ideas and agent positions
+4. **Stage 4**: Creates agent missions based on world state
+5. **Stage 5 (Optional)**: Self-reinforcement when triggered
+
+### Individual Workflow Behavior
+
+Individual workflows (`learn-from-*.yml`, `world-update.yml`, etc.) are now:
+- ✅ Available for **manual triggering** only (testing, debugging)
+- ✅ No longer run on schedules (prevents conflicts)
+- ✅ Can be called by other workflows if needed
+- ✅ Maintained for backward compatibility
 
 ## Understanding the World Model
 

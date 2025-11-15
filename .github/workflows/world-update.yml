@@ -1,9 +1,8 @@
 name: World Model Update
 
+# NOTE: This workflow is now part of the autonomous-pipeline.yml
+# It can still be triggered manually for testing or standalone use
 on:
-  schedule:
-    # Run every 2 hours
-    - cron: '0 */2 * * *'
   workflow_dispatch:  # Allow manual triggering
 
 permissions:
