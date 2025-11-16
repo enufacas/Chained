@@ -1,6 +1,6 @@
 {
   "time": "2025-11-16T06:15:39.124607+00:00",
-  "tick": 28,
+  "tick": 29,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -270,6 +270,30 @@
         "creativity": 76,
         "caution": 82,
         "speed": 82
+      }
+    },
+    {
+      "id": "agent-1763273977",
+      "label": "\u2601\ufe0f Guido van Rossum",
+      "specialization": "cloud-architect",
+      "location_region_id": "US:Seattle",
+      "status": "exploring",
+      "path": [
+        "US:Seattle"
+      ],
+      "current_idea_id": "idea:15",
+      "home_base": "US:Seattle",
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "traits": {
+        "creativity": 85,
+        "caution": 65,
+        "speed": 75
       }
     }
   ],
