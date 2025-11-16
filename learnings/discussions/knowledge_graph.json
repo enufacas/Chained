@@ -1,0 +1,154 @@
+{
+  "insights": {
+    "insight_1219_3886d69b49bd": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    },
+    "insight_1219_7fb24e8c16cf": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "**Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow Runs:** 100 (last 100 sampled)\n  - **Completed Runs:** 18 (success + failure)\n  - **Failed Runs:** 11\n  - **Failure Rate:** 61",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    },
+    "insight_1219_e572c1ef2c51": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "1% (of completed runs)\n  \n  ### Failed Workflows Breakdown\n  - **",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    },
+    "insight_1219_139549a3ad2b": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "github/workflows/ai-workflow-orchestrator-demo",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    },
+    "insight_1219_ffdf6f5e7217": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Workflow Triggering (HTTP 403)\n  **Symptom:** Workflows fail when trying to trigger other workflows\n  **Solution:** Remove `gh workflow run` commands; rely on scheduled triggers instead\n  \n  #### 2",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    },
+    "insight_1219_1b307caeb409": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Missing Secrets\n  **Symptom:** Workflows requiring COPILOT_PAT fail or skip steps\n  **Solution:** Configure required secrets in repository settings\n  \n  #### 3",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    },
+    "insight_1219_fde1a2bb0c15": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "External Dependencies\n  **Symptom:** Workflows calling external APIs fail intermittently\n  **Solution:** Add retry logic and graceful error handling\n  \n  #### 4",
+      "confidence": 0.7,
+      "tags": [
+        "api",
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    },
+    "insight_1219_cc72f7aa19ca": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Configuration Issues\n  **Symptom:** Workflows fail due to missing files or permissions\n  **Solution:** Verify workflow configurations and file dependencies\n  \n  ### Recommended Actions\n  1",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    },
+    "insight_1219_1520a788314f": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Review the failed workflows breakdown above\n  2",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    },
+    "insight_1219_235ad57fe235": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Focus on workflows with multiple failures first\n  4",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    },
+    "insight_1219_a31f2829b911": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "decision",
+      "content": "Close this issue once all problems are resolved and failure rate drops below 20%",
+      "confidence": 0.6,
+      "tags": [
+        "ai"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    },
+    "insight_1219_499683410d92": {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "---\n  *This issue was automatically created by the System Monitor workflow",
+      "confidence": 0.6,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z"
+    }
+  },
+  "connections": [],
+  "metadata": {
+    "created": "2025-11-16T06:29:13.865677+00:00",
+    "last_updated": "2025-11-16T06:29:13.867123+00:00",
+    "total_insights": 12,
+    "total_connections": 0
+  }
+}

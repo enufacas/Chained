@@ -1,0 +1,211 @@
+{
+  "issue_number": 1219,
+  "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+  "issue_labels": [
+    "bug",
+    "automated",
+    "workflow-monitor"
+  ],
+  "total_comments": 0,
+  "participants": [
+    "github-actions[bot]"
+  ],
+  "duration_hours": 0.0,
+  "insights": [
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "**Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow Runs:** 100 (last 100 sampled)\n  - **Completed Runs:** 18 (success + failure)\n  - **Failed Runs:** 11\n  - **Failure Rate:** 61",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "1% (of completed runs)\n  \n  ### Failed Workflows Breakdown\n  - **",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "github/workflows/ai-workflow-orchestrator-demo",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Workflow Triggering (HTTP 403)\n  **Symptom:** Workflows fail when trying to trigger other workflows\n  **Solution:** Remove `gh workflow run` commands; rely on scheduled triggers instead\n  \n  #### 2",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Missing Secrets\n  **Symptom:** Workflows requiring COPILOT_PAT fail or skip steps\n  **Solution:** Configure required secrets in repository settings\n  \n  #### 3",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "External Dependencies\n  **Symptom:** Workflows calling external APIs fail intermittently\n  **Solution:** Add retry logic and graceful error handling\n  \n  #### 4",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.7,
+      "tags": [
+        "api",
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Configuration Issues\n  **Symptom:** Workflows fail due to missing files or permissions\n  **Solution:** Verify workflow configurations and file dependencies\n  \n  ### Recommended Actions\n  1",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Review the failed workflows breakdown above\n  2",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Focus on workflows with multiple failures first\n  4",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "decision",
+      "content": "Close this issue once all problems are resolved and failure rate drops below 20%",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.6,
+      "tags": [
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1219,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "---\n  *This issue was automatically created by the System Monitor workflow",
+      "context": "## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention.\n  \n  **Detection Time:** 2025-11-16 06:26:53 UTC\n  \n  ### Health Summary\n  - **Total Workflow ",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-16T06:26:53Z",
+      "confidence": 0.6,
+      "tags": [
+        "workflow"
+      ]
+    }
+  ],
+  "key_decisions": [],
+  "patterns_identified": [],
+  "learning_quality": 0.395,
+  "timestamp": "2025-11-16T06:29:13.866064+00:00"
+}
