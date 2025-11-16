@@ -9,6 +9,10 @@ let worldState = null;
 let knowledge = null;
 let agentMarkers = null;
 let agentLocations = {}; // Map agent names to locations
+let allMarkers = []; // Store all marker references for filtering
+let searchQuery = ''; // Current search query
+let showActive = true; // Filter: show active agents
+let showInactive = true; // Filter: show inactive agents
 
 // Default locations for agents (diverse global distribution)
 const DEFAULT_AGENT_LOCATIONS = {
@@ -303,6 +307,45 @@ function createAgentIcon(agent) {
 let pathLayers = null;
 let regionLayers = null;
 
+// Filter and search functions
+function applyFilters() {
+    showActive = document.getElementById('filter-active').checked;
+    showInactive = document.getElementById('filter-inactive').checked;
+    if (map) {
+        renderAgents();
+    }
+    updateSidebar();
+}
+
+function setupSearch() {
+    const searchInput = document.getElementById('agent-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.toLowerCase();
+            if (map) {
+                renderAgents();
+            }
+            updateSidebar();
+        });
+    }
+}
+
+function matchesSearch(agentLabel) {
+    if (!searchQuery) return true;
+    return agentLabel.toLowerCase().includes(searchQuery);
+}
+
+function shouldShowAgent(agent, isActive) {
+    // Check search filter
+    if (!matchesSearch(agent.label || agent)) return false;
+    
+    // Check active/inactive filter
+    if (isActive && !showActive) return false;
+    if (!isActive && !showInactive) return false;
+    
+    return true;
+}
+
 // Render all agents on map
 function renderAgents() {
     if (!worldState || !worldState.agents || !map) return;
@@ -323,7 +366,14 @@ function renderAgents() {
     const activeAgents = new Set(worldState.agents.map(a => a.label));
     
     // Render active agents from world state
+    let visibleActiveCount = 0;
+    let visibleInactiveCount = 0;
+    
     worldState.agents.forEach(agent => {
+        // Apply filters
+        if (!shouldShowAgent(agent, true)) return;
+        visibleActiveCount++;
+        
         const location = getAgentLocation(agent.label);
         const icon = createAgentIcon(agent);
         
@@ -365,6 +415,10 @@ function renderAgents() {
         });
         
         if (!existingLabel) {
+            // Apply filters for inactive agents
+            if (!shouldShowAgent(agentKey, false)) return;
+            visibleInactiveCount++;
+            
             const location = DEFAULT_AGENT_LOCATIONS[agentKey];
             
             // Create gray marker for inactive agent
@@ -392,21 +446,29 @@ function renderAgents() {
         }
     });
     
+    // Update agent count display
+    const agentCountEl = document.getElementById('agent-count');
+    if (agentCountEl) {
+        agentCountEl.textContent = visibleActiveCount + visibleInactiveCount;
+    }
+    
     // Render region markers
     renderRegions();
 }
 
-// Draw agent movement path on map
+// Draw agent movement path on map with improved visualization
 function drawAgentPath(agent, currentLocation) {
     if (!agent.path || agent.path.length === 0 || !worldState.regions) return;
     
     const pathCoordinates = [[currentLocation.lat, currentLocation.lng]];
+    const pathRegions = [];
     
-    // Get coordinates for each region in the path
+    // Get coordinates and region info for each stop in the path
     agent.path.forEach(regionId => {
         const region = worldState.regions.find(r => r.id === regionId);
         if (region) {
             pathCoordinates.push([region.lat, region.lng]);
+            pathRegions.push(region);
         }
     });
     
@@ -418,45 +480,119 @@ function drawAgentPath(agent, currentLocation) {
     else if (score >= 0.3) pathColor = '#f59e0b';
     else pathColor = '#ef4444';
     
+    // Draw main path line with animation-like dashing
     const polyline = L.polyline(pathCoordinates, {
         color: pathColor,
-        weight: 2,
-        opacity: 0.6,
-        dashArray: '5, 10',
-        lineJoin: 'round'
+        weight: 3,
+        opacity: 0.7,
+        dashArray: '10, 8',
+        lineJoin: 'round',
+        lineCap: 'round'
     });
     
+    // Create detailed journey popup
+    const journeyStops = pathRegions.map((region, idx) => 
+        `<div style="padding: 4px 0; border-left: 3px solid ${pathColor}; padding-left: 8px; margin: 4px 0;">
+            <strong style="color: ${pathColor};">${idx + 1}.</strong> ${region.label}
+            ${region.idea_count ? `<br><small style="color: #9ca3af;">💡 ${region.idea_count} ideas here</small>` : ''}
+        </div>`
+    ).join('');
+    
     polyline.bindPopup(`
-        <div style="min-width: 150px;">
-            <h4 style="margin: 0 0 8px 0; color: ${pathColor};">${agent.label} Journey</h4>
-            <p style="margin: 4px 0; font-size: 12px;">📍 Current: ${currentLocation.city}</p>
-            <p style="margin: 4px 0; font-size: 12px;">🗺️ Remaining stops: ${agent.path.length}</p>
+        <div style="min-width: 200px; max-width: 280px;">
+            <h4 style="margin: 0 0 8px 0; color: ${pathColor}; border-bottom: 2px solid ${pathColor}; padding-bottom: 4px;">
+                🗺️ ${agent.label}'s Journey
+            </h4>
+            <p style="margin: 6px 0; font-size: 13px;">
+                <strong>📍 Current Location:</strong> ${currentLocation.city}
+            </p>
+            <p style="margin: 6px 0; font-size: 13px;">
+                <strong>🎯 Total Stops:</strong> ${agent.path.length}
+            </p>
+            <div style="margin-top: 8px; max-height: 200px; overflow-y: auto;">
+                <strong style="font-size: 12px; color: #9ca3af;">JOURNEY PATH:</strong>
+                ${journeyStops}
+            </div>
         </div>
     `);
     
     pathLayers.addLayer(polyline);
     
-    // Add small markers for waypoints
+    // Add numbered waypoint markers with better styling
     agent.path.forEach((regionId, index) => {
         const region = worldState.regions.find(r => r.id === regionId);
         if (region) {
-            const waypointMarker = L.circleMarker([region.lat, region.lng], {
-                radius: 4,
-                color: pathColor,
-                fillColor: pathColor,
-                fillOpacity: 0.5,
-                weight: 1
+            // Create custom numbered marker icon
+            const waypointIcon = L.divIcon({
+                html: `<div style="
+                    background: ${pathColor}; 
+                    color: white; 
+                    border: 2px solid white; 
+                    border-radius: 50%; 
+                    width: 24px; 
+                    height: 24px; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    font-weight: bold; 
+                    font-size: 11px;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+                    ">${index + 1}</div>`,
+                className: 'waypoint-marker',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12],
+                popupAnchor: [0, -12]
             });
             
+            const waypointMarker = L.marker([region.lat, region.lng], { icon: waypointIcon });
+            
+            // Calculate ETA (estimated time of arrival) - simple calculation
+            const stopsAway = index + 1;
+            const etaText = stopsAway === 1 ? 'Next stop' : `${stopsAway} stops away`;
+            
             waypointMarker.bindPopup(`
-                <div style="min-width: 120px;">
-                    <p style="margin: 0; font-size: 12px;"><strong>Stop ${index + 1}:</strong> ${region.label}</p>
+                <div style="min-width: 180px;">
+                    <h4 style="margin: 0 0 6px 0; color: ${pathColor}; font-size: 14px;">
+                        Stop #${index + 1}: ${region.label}
+                    </h4>
+                    <p style="margin: 4px 0; font-size: 12px; color: #9ca3af;">
+                        🎯 ${etaText}
+                    </p>
+                    ${region.idea_count ? `<p style="margin: 4px 0; font-size: 12px;">💡 ${region.idea_count} ideas active</p>` : ''}
+                    <p style="margin: 6px 0 0 0; font-size: 11px; color: #6b7280; font-style: italic;">
+                        Click ${agent.label}'s marker to see full journey
+                    </p>
                 </div>
             `);
             
             pathLayers.addLayer(waypointMarker);
         }
     });
+    
+    // Add direction arrow at the end of path for clarity
+    if (pathRegions.length > 0) {
+        const lastRegion = pathRegions[pathRegions.length - 1];
+        const arrowIcon = L.divIcon({
+            html: `<div style="
+                color: ${pathColor}; 
+                font-size: 20px;
+                text-shadow: 0 0 4px white, 0 0 8px white;
+                ">🎯</div>`,
+            className: 'path-destination',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+        
+        const destinationMarker = L.marker([lastRegion.lat, lastRegion.lng], { icon: arrowIcon });
+        destinationMarker.bindPopup(`
+            <div style="text-align: center;">
+                <p style="margin: 0; font-weight: bold; color: ${pathColor};">🎯 Final Destination</p>
+                <p style="margin: 4px 0 0 0; font-size: 12px;">${lastRegion.label}</p>
+            </div>
+        `);
+        
+        pathLayers.addLayer(destinationMarker);
+    }
 }
 
 // Render regions with idea counts
@@ -543,37 +679,59 @@ function updateSidebar() {
     // Update agents list
     const agentsList = document.getElementById('agents-list');
     if (worldState.agents && worldState.agents.length > 0) {
-        const sortedAgents = [...worldState.agents].sort((a, b) => 
-            (b.metrics?.overall_score || 0) - (a.metrics?.overall_score || 0)
-        );
+        const sortedAgents = [...worldState.agents]
+            .filter(agent => shouldShowAgent(agent, true))
+            .sort((a, b) => 
+                (b.metrics?.overall_score || 0) - (a.metrics?.overall_score || 0)
+            );
         
-        agentsList.innerHTML = sortedAgents.map(agent => {
-            const location = getAgentLocation(agent.label);
-            const idea = agent.current_idea_id ? getIdeaById(agent.current_idea_id) : null;
-            const score = agent.metrics?.overall_score || 0;
-            const specialization = agent.specialization || 'general';
-            
-            let scoreColor = '#666';
-            if (score >= 0.85) scoreColor = '#10b981';
-            else if (score >= 0.5) scoreColor = '#0891b2';
-            else if (score >= 0.3) scoreColor = '#f59e0b';
-            else scoreColor = '#ef4444';
-            
-            return `
-                <div class="agent-card" onclick="focusAgent('${agent.label}')">
-                    <div class="agent-name">${agent.label}</div>
-                    <div class="agent-info">
-                        🏷️ ${specialization}<br>
-                        📍 ${location.city}<br>
-                        📊 ${agent.status}<br>
-                        ⭐ Score: <span style="color: ${scoreColor}; font-weight: bold;">${(score * 100).toFixed(0)}%</span><br>
-                        📈 Resolved: ${agent.metrics?.issues_resolved || 0} | PRs: ${agent.metrics?.prs_merged || 0}<br>
-                        ${idea ? `💡 ${idea.title.substring(0, 30)}...` : ''}
-                        ${agent.path && agent.path.length > 0 ? `<br>🗺️ ${agent.path.length} stops remaining` : ''}
+        if (sortedAgents.length > 0) {
+            agentsList.innerHTML = sortedAgents.map(agent => {
+                const location = getAgentLocation(agent.label);
+                const idea = agent.current_idea_id ? getIdeaById(agent.current_idea_id) : null;
+                const score = agent.metrics?.overall_score || 0;
+                const specialization = agent.specialization || 'general';
+                
+                let scoreColor = '#666';
+                if (score >= 0.85) scoreColor = '#10b981';
+                else if (score >= 0.5) scoreColor = '#0891b2';
+                else if (score >= 0.3) scoreColor = '#f59e0b';
+                else scoreColor = '#ef4444';
+                
+                // Build journey information if path exists
+                let journeyInfo = '';
+                if (agent.path && agent.path.length > 0) {
+                    const nextRegion = worldState.regions?.find(r => r.id === agent.path[0]);
+                    const nextStop = nextRegion ? nextRegion.label : 'Unknown';
+                    journeyInfo = `<div style="margin-top: 6px; padding: 6px; background: rgba(8, 145, 178, 0.1); border-radius: 4px; border-left: 3px solid ${scoreColor};">
+                        <div style="font-size: 0.85rem; margin-bottom: 3px;">
+                            <strong>🗺️ Active Journey</strong>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">
+                            📍 Next: ${nextStop}<br>
+                            🎯 ${agent.path.length} stop${agent.path.length > 1 ? 's' : ''} remaining
+                        </div>
+                    </div>`;
+                }
+                
+                return `
+                    <div class="agent-card" onclick="focusAgent('${agent.label}')">
+                        <div class="agent-name">${agent.label}</div>
+                        <div class="agent-info">
+                            🏷️ ${specialization}<br>
+                            📍 ${location.city}<br>
+                            📊 ${agent.status}<br>
+                            ⭐ Score: <span style="color: ${scoreColor}; font-weight: bold;">${(score * 100).toFixed(0)}%</span><br>
+                            📈 Resolved: ${agent.metrics?.issues_resolved || 0} | PRs: ${agent.metrics?.prs_merged || 0}<br>
+                            ${idea ? `💡 ${idea.title.substring(0, 30)}...` : ''}
+                            ${journeyInfo}
+                        </div>
                     </div>
-                </div>
-            `;
-        }).join('');
+                `;
+            }).join('');
+        } else {
+            agentsList.innerHTML = '<p style="color: var(--text-muted);">No agents match filters</p>';
+        }
     } else {
         agentsList.innerHTML = '<p style="color: var(--text-muted);">No active agents</p>';
     }
@@ -643,6 +801,7 @@ async function refreshWorldData() {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
     initMap();
+    setupSearch(); // Setup search input handler
     
     const success = await loadWorldData();
     if (success) {
