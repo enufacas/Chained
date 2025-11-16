@@ -1,0 +1,90 @@
+{
+  "agent_id": "coach-master",
+  "last_updated": "2025-11-16T19:42:51.880253",
+  "total_memories": 3,
+  "stats": {
+    "total": 3,
+    "successful": 2,
+    "failed": 1,
+    "success_rate": 0.6666666666666666,
+    "oldest_memory": "2025-11-16T19:42:51.879178",
+    "newest_memory": "2025-11-16T19:42:51.879656"
+  },
+  "memories": [
+    {
+      "id": "f878879f118c06ffc5b3869a272e897a",
+      "timestamp": "2025-11-16T19:42:51.879178",
+      "agent_id": "coach-master",
+      "issue_number": 123,
+      "issue_title": "Add JWT authentication",
+      "issue_description": "Need to implement JWT-based authentication for API",
+      "issue_labels": [
+        "enhancement",
+        "security"
+      ],
+      "issue_url": "",
+      "solution_approach": "Implemented JWT with refresh tokens using PyJWT library",
+      "pr_number": 456,
+      "pr_url": "",
+      "outcome": "Successfully merged after security review",
+      "changes_summary": "",
+      "success": true,
+      "metadata": {
+        "time_taken_hours": 8,
+        "difficulty": "medium"
+      },
+      "access_count": 1,
+      "last_accessed": "2025-11-16T19:42:51.880248"
+    },
+    {
+      "id": "de88300a83fc14c951f20e91a8406d89",
+      "timestamp": "2025-11-16T19:42:51.879453",
+      "agent_id": "coach-master",
+      "issue_number": 124,
+      "issue_title": "Fix authentication bug",
+      "issue_description": "JWT tokens not validating correctly",
+      "issue_labels": [
+        "bug",
+        "security"
+      ],
+      "issue_url": "",
+      "solution_approach": "Fixed token validation logic, added expiration check",
+      "pr_number": 457,
+      "pr_url": "",
+      "outcome": "Bug fixed, tests added",
+      "changes_summary": "",
+      "success": true,
+      "metadata": {
+        "time_taken_hours": 2,
+        "difficulty": "low"
+      },
+      "access_count": 1,
+      "last_accessed": "2025-11-16T19:42:51.880242"
+    },
+    {
+      "id": "425413bebae98e54736749bc5ff63baf",
+      "timestamp": "2025-11-16T19:42:51.879656",
+      "agent_id": "coach-master",
+      "issue_number": 125,
+      "issue_title": "Add OAuth2 support",
+      "issue_description": "Integrate OAuth2 for third-party authentication",
+      "issue_labels": [
+        "enhancement",
+        "integration"
+      ],
+      "issue_url": "",
+      "solution_approach": "Attempted OAuth2 integration with Google/GitHub",
+      "pr_number": 458,
+      "pr_url": "",
+      "outcome": "PR closed - too complex for current scope",
+      "changes_summary": "",
+      "success": false,
+      "metadata": {
+        "time_taken_hours": 16,
+        "difficulty": "high"
+      },
+      "access_count": 1,
+      "last_accessed": "2025-11-16T19:42:51.880251"
+    }
+  ]
+}
