@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-11-16T08:00:28.689835+00:00",
+  "total_failures": 30,
+  "patterns": [
+    {
+      "pattern_type": "review_rejection",
+      "occurrences": 30,
+      "affected_agents": [
+        "engineer-master"
+      ],
+      "common_issues": [],
+      "suggested_improvements": [],
+      "confidence_score": 1.0
+    }
+  ],
+  "failure_type_distribution": {
+    "review_rejection": 30
+  }
+}
