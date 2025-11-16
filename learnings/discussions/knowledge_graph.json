@@ -1,0 +1,44 @@
+{
+  "insights": {
+    "insight_1390_e10a194c20ff": {
+      "issue_number": 1390,
+      "issue_title": "Duplicate missions",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:organize-guru -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83e\uddf9 Robert Martin** (@organize-guru) custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T19:44:55Z"
+    },
+    "insight_1390_09f0e4de2144": {
+      "issue_number": 1390,
+      "issue_title": "Duplicate missions",
+      "insight_type": "process",
+      "content": "> \n> **@organize-guru** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-16T19:44:55Z"
+    },
+    "insight_1390_7c43f7f90d27": {
+      "issue_number": 1390,
+      "issue_title": "Duplicate missions",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/organize-guru",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T19:44:55Z"
+    }
+  },
+  "connections": [],
+  "metadata": {
+    "created": "2025-11-16T20:03:05.199860+00:00",
+    "last_updated": "2025-11-16T20:03:05.200268+00:00",
+    "total_insights": 3,
+    "total_connections": 0
+  }
+}
