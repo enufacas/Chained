@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2025-11-16T18:35:44.673546+00:00",
+    "generated_at": "2025-11-16T18:37:31.550240+00:00",
     "repository": ".",
     "threshold": 30.0,
     "total_agents_analyzed": 2,
@@ -9,18 +9,22 @@
   "scores": {
     "copilot-swe-agent": {
       "agent_id": "copilot-swe-agent",
-      "overall_score": 15.0,
+      "overall_score": 34.5,
       "metrics": {
-        "structural_uniqueness": 50.0,
+        "structural_uniqueness": 65.0,
         "approach_diversity": 0.0,
-        "innovation_index": 0
+        "innovation_index": 50.0
       },
       "details": {
-        "total_contributions": 1,
+        "total_contributions": 2,
         "unique_approaches": 0,
-        "unique_file_types": 0,
+        "unique_file_types": 3,
         "approaches_used": [],
-        "file_types_used": []
+        "file_types_used": [
+          ".md",
+          ".json",
+          ".py"
+        ]
       }
     },
     "copilot": {
@@ -42,16 +46,10 @@
       }
     }
   },
-  "flagged_agents": [
-    {
-      "agent_id": "copilot-swe-agent",
-      "score": 15.0,
-      "reason": "low approach diversity (0.0); low innovation index (0.0)"
-    }
-  ],
+  "flagged_agents": [],
   "summary": {
-    "average_score": 42.5,
-    "agents_below_threshold": 1,
-    "agents_above_threshold": 1
+    "average_score": 52.25,
+    "agents_below_threshold": 0,
+    "agents_above_threshold": 2
   }
 }
