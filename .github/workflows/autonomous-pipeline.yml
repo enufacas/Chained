@@ -903,9 +903,14 @@ jobs:
           agents = world_state.get('agents', [])
           ideas = knowledge.get('ideas', [])
           
+          # **@align-wizard** Fix: Filter out ideas that already have missions created
           # Find recent learning-based ideas that haven't been assigned yet
-          recent_ideas = [idea for idea in ideas if idea.get('source') == 'learning_analysis'][:5]
+          learning_ideas = [idea for idea in ideas if idea.get('source') == 'learning_analysis']
+          ideas_without_missions = [idea for idea in learning_ideas if not idea.get('mission_created')]
+          recent_ideas = ideas_without_missions[:5]
           
+          print(f"Total learning ideas: {len(learning_ideas)}")
+          print(f"Ideas without missions: {len(ideas_without_missions)}")
           print(f"Processing {len(recent_ideas)} recent ideas")
           
           if not recent_ideas:
