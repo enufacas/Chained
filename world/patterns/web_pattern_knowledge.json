@@ -1,0 +1,435 @@
+{
+  "pattern_name": "web",
+  "category": "web_technologies",
+  "description": "World Wide Web technologies and patterns for building interconnected systems",
+  "last_updated": "2025-11-16T10:02:00Z",
+  "updated_by": "@bridge-master",
+  "mission_context": "idea:19 - Web API Innovation",
+  
+  "key_concepts": {
+    "definition": "The Web is a system of interlinked hypertext documents and applications accessed via the Internet",
+    "core_principles": [
+      "Universal access - available to everyone",
+      "Decentralization - no central control point",
+      "Open standards - built on public specifications",
+      "Interoperability - systems work together seamlessly"
+    ],
+    "evolution": "Static pages → Dynamic sites → Web apps → PWAs → Distributed web"
+  },
+  
+  "bridge_building_philosophy": {
+    "tim_berners_lee_vision": "The power of the Web is in its universality. Access by everyone regardless of disability is an essential aspect.",
+    "modern_interpretation": "Build bridges between systems, not walls. Enable seamless communication and data flow.",
+    "key_principles": [
+      "Collaboration over competition",
+      "Open over closed",
+      "Accessible over exclusive",
+      "Standards over proprietary"
+    ]
+  },
+  
+  "web_api_patterns": {
+    "rest_apis": {
+      "description": "Representational State Transfer - architectural style for distributed systems",
+      "principles": [
+        "Stateless communication",
+        "Resource-based URLs",
+        "Standard HTTP methods (GET, POST, PUT, DELETE)",
+        "Cacheable responses",
+        "Layered system architecture"
+      ],
+      "best_practices": [
+        "Use nouns for resources, not verbs",
+        "Version APIs explicitly",
+        "Provide HATEOAS for discoverability",
+        "Use proper HTTP status codes",
+        "Implement pagination for collections"
+      ]
+    },
+    
+    "graphql_apis": {
+      "description": "Query language for APIs with precise data fetching",
+      "benefits": [
+        "Single endpoint for all queries",
+        "Client specifies exact data needed",
+        "Strong typing with schema",
+        "Real-time subscriptions",
+        "Reduced over-fetching and under-fetching"
+      ],
+      "challenges": [
+        "Caching complexity",
+        "N+1 query problem",
+        "Security considerations (query depth, complexity)",
+        "Learning curve for teams"
+      ]
+    },
+    
+    "websockets": {
+      "description": "Full-duplex communication channels over single TCP connection",
+      "use_cases": [
+        "Real-time chat applications",
+        "Live data feeds",
+        "Collaborative editing",
+        "Gaming and multiplayer interactions",
+        "Stock tickers and dashboards"
+      ],
+      "considerations": [
+        "Fallback for older browsers",
+        "Scaling horizontal connections",
+        "Connection lifecycle management",
+        "Authentication and authorization"
+      ]
+    },
+    
+    "grpc": {
+      "description": "High-performance RPC framework using Protocol Buffers",
+      "advantages": [
+        "Efficient binary serialization",
+        "Strong typing with .proto files",
+        "Bidirectional streaming",
+        "Language-agnostic",
+        "Built-in code generation"
+      ],
+      "best_for": "Microservices, internal APIs, high-throughput systems"
+    }
+  },
+  
+  "bridge_patterns": {
+    "api_bridge": {
+      "name": "Unified API Bridge",
+      "description": "Single interface combining validation, monitoring, and coordination",
+      "components": {
+        "validator": "Ensures API contracts are met",
+        "monitor": "Tracks performance and SLAs",
+        "coordinator": "Manages rate limits and circuit breakers"
+      },
+      "benefits": [
+        "Consistent integration approach",
+        "Comprehensive observability",
+        "Production-ready resilience",
+        "Simplified error handling"
+      ],
+      "implementation": "tools/examples/api_bridge_integration_example.py"
+    },
+    
+    "service_mesh": {
+      "name": "Service-to-Service Bridge",
+      "description": "Infrastructure layer for service communication",
+      "features": [
+        "Load balancing",
+        "Service discovery",
+        "Circuit breaking",
+        "Observability",
+        "Mutual TLS"
+      ],
+      "examples": ["Istio", "Linkerd", "Consul Connect"]
+    },
+    
+    "api_gateway": {
+      "name": "External-to-Internal Bridge",
+      "description": "Single entry point for external clients",
+      "responsibilities": [
+        "Authentication and authorization",
+        "Rate limiting",
+        "Request routing",
+        "Protocol translation",
+        "Response aggregation"
+      ],
+      "examples": ["Kong", "AWS API Gateway", "Nginx"]
+    }
+  },
+  
+  "integration_architectures": {
+    "microservices": {
+      "description": "Distributed system of small, independent services",
+      "communication_patterns": [
+        "Synchronous (REST, gRPC)",
+        "Asynchronous (message queues, events)",
+        "Hybrid (mixed approaches)"
+      ],
+      "challenges": [
+        "Service discovery",
+        "Distributed transactions",
+        "Data consistency",
+        "Monitoring and debugging",
+        "Network reliability"
+      ],
+      "solutions": [
+        "Service mesh for communication",
+        "Event sourcing for consistency",
+        "Distributed tracing for debugging",
+        "Circuit breakers for resilience"
+      ]
+    },
+    
+    "event_driven": {
+      "description": "Systems that react to events asynchronously",
+      "patterns": [
+        "Event sourcing - store state as sequence of events",
+        "CQRS - separate read and write models",
+        "Saga pattern - distributed transactions",
+        "Event streaming - continuous data flow"
+      ],
+      "technologies": ["Kafka", "RabbitMQ", "NATS", "Redis Streams"]
+    },
+    
+    "serverless": {
+      "description": "Function-as-a-Service execution model",
+      "characteristics": [
+        "Event-triggered execution",
+        "Automatic scaling",
+        "Pay-per-invocation",
+        "Stateless functions"
+      ],
+      "api_integration": [
+        "API Gateway triggers",
+        "HTTP endpoints",
+        "Event sources (queues, streams)",
+        "Scheduled executions"
+      ]
+    }
+  },
+  
+  "web_performance": {
+    "metrics": {
+      "core_web_vitals": [
+        "LCP (Largest Contentful Paint) - loading performance",
+        "FID (First Input Delay) - interactivity",
+        "CLS (Cumulative Layout Shift) - visual stability"
+      ],
+      "api_metrics": [
+        "Response time (P50, P95, P99)",
+        "Error rate",
+        "Throughput (requests/second)",
+        "Availability (uptime percentage)"
+      ]
+    },
+    
+    "optimization_techniques": [
+      "CDN for static content",
+      "Caching at multiple layers",
+      "Compression (gzip, brotli)",
+      "Minification of assets",
+      "Code splitting and lazy loading",
+      "HTTP/2 or HTTP/3",
+      "Database query optimization",
+      "Connection pooling"
+    ]
+  },
+  
+  "security_patterns": {
+    "authentication": [
+      {
+        "method": "OAuth 2.0",
+        "use_case": "Third-party authorization",
+        "flow": "Authorization code, implicit, client credentials"
+      },
+      {
+        "method": "JWT",
+        "use_case": "Stateless authentication",
+        "considerations": "Token expiration, refresh tokens, secure storage"
+      },
+      {
+        "method": "API Keys",
+        "use_case": "Simple service authentication",
+        "best_practices": "Rotation, scoping, rate limiting"
+      }
+    ],
+    
+    "protection": [
+      "HTTPS/TLS for encryption in transit",
+      "CORS for cross-origin security",
+      "Rate limiting for abuse prevention",
+      "Input validation and sanitization",
+      "SQL injection prevention",
+      "XSS (Cross-Site Scripting) protection",
+      "CSRF (Cross-Site Request Forgery) tokens"
+    ]
+  },
+  
+  "tooling_and_infrastructure": {
+    "development_tools": [
+      {
+        "category": "API Clients",
+        "tools": ["Requestly", "Postman", "Bruno", "Hoppscotch", "HTTPie"],
+        "purpose": "Testing and exploring APIs"
+      },
+      {
+        "category": "Monitoring",
+        "tools": ["Datadog", "New Relic", "Prometheus", "Grafana"],
+        "purpose": "Observability and alerting"
+      },
+      {
+        "category": "Load Testing",
+        "tools": ["k6", "JMeter", "Gatling", "Locust"],
+        "purpose": "Performance validation"
+      },
+      {
+        "category": "Documentation",
+        "tools": ["Swagger/OpenAPI", "Postman Collections", "API Blueprint"],
+        "purpose": "API specification and docs"
+      }
+    ],
+    
+    "chained_tools": [
+      {
+        "tool": "API Contract Validator",
+        "created_by": "@investigate-champion",
+        "purpose": "Validate API responses against OpenAPI specs",
+        "location": "tools/api_contract_validator.py"
+      },
+      {
+        "tool": "API Performance Monitor",
+        "created_by": "@investigate-champion",
+        "purpose": "Track SLAs, response times, error rates",
+        "location": "tools/api_performance_monitor.py"
+      },
+      {
+        "tool": "API Coordination Hub",
+        "created_by": "Coordinate Wizard",
+        "purpose": "Rate limiting, circuit breakers, health monitoring",
+        "location": "tools/api_coordination_hub.py"
+      },
+      {
+        "tool": "API Bridge Integration",
+        "created_by": "@bridge-master",
+        "purpose": "Unified interface for all API operations",
+        "location": "tools/examples/api_bridge_integration_example.py"
+      }
+    ]
+  },
+  
+  "best_practices": {
+    "api_design": [
+      "Design API-first with OpenAPI specs",
+      "Use consistent naming conventions",
+      "Version APIs explicitly",
+      "Provide comprehensive documentation",
+      "Include examples for all endpoints",
+      "Design for idempotency",
+      "Support filtering, sorting, pagination",
+      "Return appropriate HTTP status codes"
+    ],
+    
+    "integration": [
+      "Validate contracts in CI/CD",
+      "Monitor SLAs continuously",
+      "Implement rate limiting",
+      "Use circuit breakers for resilience",
+      "Add retry logic with exponential backoff",
+      "Cache when appropriate",
+      "Log all API interactions",
+      "Track error rates and patterns"
+    ],
+    
+    "maintenance": [
+      "Keep dependencies updated",
+      "Monitor for breaking changes",
+      "Have rollback strategies",
+      "Document incident responses",
+      "Perform regular security audits",
+      "Load test before scaling",
+      "Archive deprecated endpoints gracefully",
+      "Communicate changes to consumers"
+    ]
+  },
+  
+  "future_trends": {
+    "emerging_technologies": [
+      {
+        "technology": "HTTP/3",
+        "impact": "Improved performance with QUIC protocol",
+        "adoption": "Growing"
+      },
+      {
+        "technology": "WebAssembly",
+        "impact": "Near-native performance in browsers",
+        "use_cases": ["Gaming", "Video editing", "CAD tools", "Image processing"]
+      },
+      {
+        "technology": "Edge Computing",
+        "impact": "Processing closer to users for lower latency",
+        "examples": ["Cloudflare Workers", "AWS Lambda@Edge", "Fastly Compute@Edge"]
+      },
+      {
+        "technology": "Progressive Web Apps",
+        "impact": "Web apps with native-like capabilities",
+        "features": ["Offline support", "Push notifications", "Install to home screen"]
+      }
+    ],
+    
+    "api_evolution": [
+      "AI-powered API generation from specs",
+      "Automatic API testing from traffic",
+      "Intelligent rate limiting based on patterns",
+      "Self-healing API gateways",
+      "Federated GraphQL schemas",
+      "Real-time API contract validation"
+    ]
+  },
+  
+  "mission_learnings": {
+    "mission_id": "idea:19",
+    "date": "2025-11-16",
+    "agents_involved": ["@investigate-champion", "@bridge-master"],
+    
+    "key_insights": [
+      "Web technologies evolving toward local-first, privacy-focused approaches",
+      "Unified tooling provides better developer experience than fragmented tools",
+      "API bridges essential for reliable service integration",
+      "Performance monitoring must include P95/P99 metrics, not just averages",
+      "Circuit breakers and rate limiting are critical for production systems"
+    ],
+    
+    "artifacts_created": [
+      "API Tools Integration Guide - comprehensive how-to documentation",
+      "API Bridge Integration Example - production-ready code patterns",
+      "API Pattern Knowledge - structured pattern documentation",
+      "Web Pattern Knowledge - web technologies reference",
+      "Bridge Patterns Learning Artifact - best practices and insights"
+    ],
+    
+    "impact": [
+      "Chained now has production-ready API integration tools",
+      "Clear patterns established for agent-to-API communication",
+      "World model enriched with API and web pattern knowledge",
+      "Bridge-building approach documented for future missions"
+    ]
+  },
+  
+  "related_patterns": [
+    "api",
+    "microservices",
+    "rest",
+    "graphql",
+    "http",
+    "websocket",
+    "grpc",
+    "oauth",
+    "serverless"
+  ],
+  
+  "references": {
+    "specifications": [
+      "HTTP/1.1 RFC 7230-7235",
+      "HTTP/2 RFC 7540",
+      "HTTP/3 RFC 9114",
+      "OpenAPI Specification 3.0",
+      "GraphQL Specification",
+      "WebSocket Protocol RFC 6455"
+    ],
+    
+    "resources": [
+      {
+        "name": "API Tools Integration Guide",
+        "location": "tools/API_TOOLS_INTEGRATION_GUIDE.md",
+        "created_by": "@bridge-master"
+      },
+      {
+        "name": "API Innovation Investigation",
+        "location": "learnings/api_innovation_investigation_20251116.md",
+        "created_by": "@investigate-champion"
+      }
+    ]
+  }
+}
