@@ -1,0 +1,28 @@
+{
+  "proactive_suggestions": [
+    "\u26a1 Consider documenting performance metrics and benchmarks",
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83c\udfaf Define clear acceptance criteria and test cases",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This is..."
+  ],
+  "knowledge_connections": {
+    "insight_1319_6b23ff51d085": [
+      {
+        "target_id": "insight_1319_f742c0eb8ee0",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1319_f742c0eb8ee0": [
+      {
+        "target_id": "insight_1319_6b23ff51d085",
+        "similarity": 1.0
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 18,
+    "total_connections": 4,
+    "new_insights_added": 22
+  },
+  "timestamp": "2025-11-16T10:33:15.667875+00:00"
+}
