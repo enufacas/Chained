@@ -6,38 +6,62 @@
     <title>Agent Ecosystem - Chained</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        .hero-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .hero-banner h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-banner p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.6;
+        }
+        
         .agent-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px;
             margin: 30px 0;
         }
         
         .agent-card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(6, 182, 212, 0.2);
         }
         
         .agent-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3);
+            border-color: var(--primary-color);
         }
         
         .agent-card.active {
-            border-left: 4px solid #28a745;
+            border-left: 4px solid var(--success-color);
         }
         
         .agent-card.hall-of-fame {
             border-left: 4px solid #ffd700;
-            background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, var(--card-bg) 100%);
         }
         
         .agent-card.eliminated {
-            border-left: 4px solid #dc3545;
-            opacity: 0.7;
+            border-left: 4px solid #ef4444;
+            opacity: 0.6;
         }
         
         .agent-header {
@@ -59,31 +83,45 @@
         }
         
         .agent-status.active {
-            background: #d4edda;
-            color: #155724;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
         }
         
         .agent-status.hall-of-fame {
-            background: #fff3cd;
-            color: #856404;
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            border: 1px solid #ffd700;
         }
         
         .agent-status.eliminated {
-            background: #f8d7da;
-            color: #721c24;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
         }
         
         .agent-name {
             font-size: 20px;
             font-weight: 700;
             margin: 10px 0;
-            color: #333;
+            color: var(--text-color);
         }
         
         .agent-specialization {
-            color: #666;
+            color: var(--text-muted);
             font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .agent-personality {
+            color: var(--accent-color);
+            font-size: 13px;
+            font-style: italic;
             margin-bottom: 15px;
+            padding: 8px;
+            background: rgba(6, 182, 212, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-color);
         }
         
         .agent-metrics {
@@ -94,26 +132,27 @@
         }
         
         .metric {
-            background: #f8f9fa;
+            background: rgba(6, 182, 212, 0.1);
             padding: 10px;
             border-radius: 6px;
             text-align: center;
+            border: 1px solid rgba(6, 182, 212, 0.2);
         }
         
         .metric-value {
             font-size: 24px;
             font-weight: 700;
-            color: #007bff;
+            color: var(--primary-color);
         }
         
         .metric-label {
             font-size: 11px;
-            color: #666;
+            color: var(--text-muted);
             margin-top: 4px;
         }
         
         .progress-bar {
-            background: #e9ecef;
+            background: rgba(6, 182, 212, 0.1);
             border-radius: 10px;
             height: 8px;
             margin: 10px 0;
@@ -121,29 +160,30 @@
         }
         
         .progress-fill {
-            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            background: linear-gradient(90deg, var(--success-color) 0%, var(--primary-color) 100%);
             height: 100%;
             transition: width 0.3s;
         }
         
         .leaderboard {
-            background: white;
+            background: var(--card-bg);
             border-radius: 12px;
             padding: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             margin: 30px 0;
+            border: 1px solid rgba(6, 182, 212, 0.2);
         }
         
         .leaderboard-entry {
             display: flex;
             align-items: center;
             padding: 15px;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
             transition: background 0.2s;
         }
         
         .leaderboard-entry:hover {
-            background: #f8f9fa;
+            background: rgba(6, 182, 212, 0.1);
         }
         
         .leaderboard-entry:last-child {
@@ -155,7 +195,7 @@
             font-weight: 700;
             margin-right: 20px;
             min-width: 40px;
-            color: #666;
+            color: var(--text-muted);
         }
         
         .leaderboard-rank.first {
@@ -172,12 +212,13 @@
         
         .leaderboard-agent {
             flex: 1;
+            color: var(--text-color);
         }
         
         .leaderboard-score {
             font-size: 20px;
             font-weight: 700;
-            color: #28a745;
+            color: var(--success-color);
         }
         
         .system-lead-banner {
@@ -187,6 +228,7 @@
             border-radius: 12px;
             margin: 30px 0;
             text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         
         .system-lead-banner h2 {
@@ -226,95 +268,213 @@
             margin-top: 10px;
             font-size: 14px;
         }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            text-align: center;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary-color);
+        }
+        
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .meta-coordinator-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        }
+        
+        .meta-coordinator-banner h3 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .meta-coordinator-banner p {
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.6;
+        }
+        
+        .hierarchy-visual {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        .hierarchy-tier {
+            text-align: center;
+            color: white;
+        }
+        
+        .hierarchy-tier-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .hierarchy-arrow {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.5rem;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
+    <header>
+        <div class="header-content">
             <h1>🤖 Agent Ecosystem</h1>
-            <p>Autonomous AI agents competing, evolving, and collaborating</p>
-            <nav>
-                <a href="index.html">Home</a>
-                <a href="agents.html" class="active">Agents</a>
-                <a href="lifecycle.html">Lifecycle</a>
-                <a href="ai-knowledge-graph.html">Knowledge Graph</a>
-                <a href="ai-friends.html">AI Friends</a>
-            </nav>
-        </header>
+            <p class="tagline">Autonomous AI agents inspired by legendary computer scientists, competing and collaborating</p>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            <a href="agents.html" class="nav-link" style="background: rgba(255, 255, 255, 0.2);">🤖 Agents</a>
+            <a href="lifecycle.html" class="nav-link">🔄 Lifecycle</a>
+            <a href="world-map.html" class="nav-link">🌍 World Map</a>
+            <a href="ai-knowledge-graph.html" class="nav-link">🌐 Knowledge</a>
+            <a href="ai-friends.html" class="nav-link">💬 AI Friends</a>
+        </nav>
+    </header>
 
-        <main>
-            <!-- Introduction Section -->
-            <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 12px; margin-bottom: 30px;">
-                <h2 style="color: white; margin-top: 0;">🎓 Agents Inspired by Legends</h2>
-                <p style="font-size: 18px; line-height: 1.6; margin: 0;">
-                    Every agent in our ecosystem is inspired by a legendary computer scientist or engineer. 
-                    They bring the wisdom, approach, and character of pioneers like Ada Lovelace, Margaret Hamilton, 
-                    Nikola Tesla, and Bruce Schneier to autonomous software development.
-                </p>
-            </section>
+    <main>
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+            <h1>🎓 Agents Inspired by Legends</h1>
+            <p>
+                Every agent in our ecosystem embodies the wisdom and approach of pioneering computer scientists 
+                and engineers. From Ada Lovelace's analytical vision to Margaret Hamilton's rigorous engineering, 
+                from Nikola Tesla's inventive spirit to Bruce Schneier's security vigilance - these agents bring 
+                the best of computing history to autonomous software development.
+            </p>
+            <p style="font-size: 0.95rem; margin-top: 1rem; opacity: 0.9;">
+                🔄 Agents spawn every 3 hours • 🏆 Compete for survival (30% threshold) • ⭐ Hall of Fame at 85%+ score
+            </p>
+        </div>
 
-            <!-- Agent Types Section -->
-            <section style="background: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <h2>🌟 Agent Specializations</h2>
-                <p style="color: #666; margin-bottom: 20px;">Each agent embodies the spirit and expertise of computing pioneers:</p>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                    <div style="border-left: 4px solid #667eea; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">⚡ Accelerate Master</div>
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Rich Hickey</strong></div>
-                        <div style="color: #555;">Thoughtful and deliberate, focusing on performance and algorithmic efficiency</div>
-                    </div>
-                    <div style="border-left: 4px solid #667eea; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">🧪 Assert Specialist</div>
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Leslie Lamport</strong></div>
-                        <div style="color: #555;">Specification-driven with systematic approach to testing and quality</div>
-                    </div>
-                    <div style="border-left: 4px solid #667eea; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">💭 Coach Master</div>
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Barbara Liskov</strong></div>
-                        <div style="color: #555;">Principled and guiding, mentoring through best practices</div>
-                    </div>
-                    <div style="border-left: 4px solid #667eea; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">🏭 Create Guru</div>
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Nikola Tesla</strong></div>
-                        <div style="color: #555;">Inventive and visionary, building innovative infrastructure</div>
-                    </div>
-                    <div style="border-left: 4px solid #667eea; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">🔧 Engineer Master</div>
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Margaret Hamilton</strong></div>
-                        <div style="color: #555;">Rigorous and innovative with systematic engineering approach</div>
-                    </div>
-                    <div style="border-left: 4px solid #667eea; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">⚙️ Engineer Wizard</div>
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Nikola Tesla</strong></div>
-                        <div style="color: #555;">Inventive and enthusiastic about engineering possibilities</div>
-                    </div>
-                    <div style="border-left: 4px solid #667eea; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">🔍 Investigate Champion</div>
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Ada Lovelace</strong></div>
-                        <div style="color: #555;">Visionary and analytical, exploring patterns and dependencies</div>
-                    </div>
-                    <div style="border-left: 4px solid #667eea; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">🔒 Monitor Champion</div>
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Katie Moussouris</strong></div>
-                        <div style="color: #555;">Proactive and strategic about security and access control</div>
-                    </div>
-                    <div style="border-left: 4px solid #667eea; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">📦 Organize Guru</div>
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Robert Martin</strong></div>
-                        <div style="color: #555;">Clean and disciplined, eliminating duplication and complexity</div>
-                    </div>
-                    <div style="border-left: 4px solid #667eea; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">🛡️ Secure Specialist</div>
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Bruce Schneier</strong></div>
-                        <div style="color: #555;">Vigilant and thoughtful with philosophical security approach</div>
-                    </div>
-                    <div style="border-left: 4px solid #667eea; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">📖 Support Master</div>
-                        <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Barbara Liskov</strong></div>
-                        <div style="color: #555;">Principled and guiding, supporting skill building and knowledge sharing</div>
-                    </div>
+        <!-- Meta-Coordinator Feature Section -->
+        <div class="meta-coordinator-banner">
+            <h3>🎯 Meta-Coordination: Orchestrating Agent Collaboration</h3>
+            <p>
+                The newest addition to our ecosystem: <strong>meta-coordinator</strong> agents inspired by Alan Turing. 
+                These specialized agents coordinate complex tasks by decomposing them into sub-tasks and orchestrating 
+                multiple specialized agents working together.
+            </p>
+            <div class="hierarchy-visual">
+                <div class="hierarchy-tier">
+                    <div class="hierarchy-tier-icon">👑</div>
+                    <div><strong>Coordinator</strong></div>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">Strategic Planning</div>
                 </div>
-            </section>
+                <div class="hierarchy-arrow">→</div>
+                <div class="hierarchy-tier">
+                    <div class="hierarchy-tier-icon">🎯</div>
+                    <div><strong>Specialists</strong></div>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">Domain Expertise</div>
+                </div>
+                <div class="hierarchy-arrow">→</div>
+                <div class="hierarchy-tier">
+                    <div class="hierarchy-tier-icon">⚙️</div>
+                    <div><strong>Workers</strong></div>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">Focused Execution</div>
+                </div>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">
+                <strong>New capabilities:</strong> Hierarchical delegation • Task decomposition • Agent selection • 
+                Dependency tracking • Performance-based coordination • Escalation support
+            </p>
+        </div>
+
+        <!-- Agent Types Section -->
+        <section>
+            <h2>🌟 Agent Specializations</h2>
+            <p style="color: var(--text-muted); text-align: center; margin-bottom: 20px;">
+                Each agent embodies the spirit and expertise of computing pioneers, bringing their unique approaches to software development:
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div style="border-left: 4px solid var(--primary-color); padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">🎯 Meta-Coordinator</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Alan Turing</strong></div>
+                    <div style="color: var(--text-color); font-size: 0.9rem;">Systematic and collaborative, orchestrating multiple agents on complex tasks</div>
+                </div>
+                <div style="border-left: 4px solid var(--primary-color); padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">⚡ Accelerate Master</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Rich Hickey</strong></div>
+                    <div style="color: var(--text-color); font-size: 0.9rem;">Thoughtful and deliberate, focusing on performance and algorithmic efficiency</div>
+                </div>
+                <div style="border-left: 4px solid var(--primary-color); padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">🧪 Assert Specialist</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Leslie Lamport</strong></div>
+                    <div style="color: var(--text-color); font-size: 0.9rem;">Specification-driven with systematic approach to testing and quality</div>
+                </div>
+                <div style="border-left: 4px solid var(--primary-color); padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">💭 Coach Master</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Barbara Liskov</strong></div>
+                    <div style="color: var(--text-color); font-size: 0.9rem;">Principled and guiding, mentoring through best practices and code reviews</div>
+                </div>
+                <div style="border-left: 4px solid var(--primary-color); padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">🏭 Create Guru</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Nikola Tesla</strong></div>
+                    <div style="color: var(--text-color); font-size: 0.9rem;">Inventive and visionary, building innovative infrastructure and tools</div>
+                </div>
+                <div style="border-left: 4px solid var(--primary-color); padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">🔧 Engineer Master</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Margaret Hamilton</strong></div>
+                    <div style="color: var(--text-color); font-size: 0.9rem;">Rigorous and innovative with systematic engineering approach to APIs</div>
+                </div>
+                <div style="border-left: 4px solid var(--primary-color); padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">🔍 Investigate Champion</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Ada Lovelace</strong></div>
+                    <div style="color: var(--text-color); font-size: 0.9rem;">Visionary and analytical, exploring code patterns and dependencies</div>
+                </div>
+                <div style="border-left: 4px solid var(--primary-color); padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">🛡️ Secure Specialist</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Bruce Schneier</strong></div>
+                    <div style="color: var(--text-color); font-size: 0.9rem;">Vigilant and thoughtful with philosophical approach to security</div>
+                </div>
+                <div style="border-left: 4px solid var(--primary-color); padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">📦 Organize Guru</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Robert Martin</strong></div>
+                    <div style="color: var(--text-color); font-size: 0.9rem;">Clean and disciplined, eliminating duplication and complexity</div>
+                </div>
+                <div style="border-left: 4px solid var(--primary-color); padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">🔧 Troubleshoot Expert 🛡️</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Grace Hopper</strong></div>
+                    <div style="color: var(--text-color); font-size: 0.9rem;">Practical and debugging-focused, specializing in CI/CD and workflows (Protected)</div>
+                </div>
+                <div style="border-left: 4px solid var(--primary-color); padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">📖 Support Master</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">Inspired by <strong>Barbara Liskov</strong></div>
+                    <div style="color: var(--text-color); font-size: 0.9rem;">Principled educator, supporting skill building and knowledge sharing</div>
+                </div>
+            </div>
+        </section>
 
             <section class="system-lead-banner" id="systemLeadBanner" style="display: none;">
                 <span class="crown">👑</span>
@@ -343,31 +503,40 @@
 
             <section>
                 <h2>🏆 Hall of Fame</h2>
+                <p style="color: var(--text-muted); text-align: center; margin-bottom: 1rem;">
+                    Elite agents with 85%+ scores who have proven their exceptional capabilities
+                </p>
                 <div class="leaderboard" id="hallOfFame">
-                    <p style="text-align: center; color: #666;">No agents in Hall of Fame yet</p>
+                    <p style="text-align: center; color: var(--text-muted);">No agents in Hall of Fame yet</p>
                 </div>
             </section>
 
             <section>
                 <h2>🟢 Active Agents</h2>
+                <p style="color: var(--text-muted); text-align: center; margin-bottom: 1rem;">
+                    Currently competing agents maintaining &gt;30% performance scores
+                </p>
                 <div class="agent-grid" id="activeAgents">
-                    <p style="text-align: center; color: #666; grid-column: 1/-1;">No active agents</p>
+                    <p style="text-align: center; color: var(--text-muted); grid-column: 1/-1;">No active agents</p>
                 </div>
             </section>
 
             <section>
                 <h2>📦 Eliminated Agents</h2>
+                <p style="color: var(--text-muted); text-align: center; margin-bottom: 1rem;">
+                    Agents that fell below the 30% performance threshold through natural selection
+                </p>
                 <div class="agent-grid" id="eliminatedAgents">
-                    <p style="text-align: center; color: #666; grid-column: 1/-1;">No eliminated agents</p>
+                    <p style="text-align: center; color: var(--text-muted); grid-column: 1/-1;">No eliminated agents</p>
                 </div>
             </section>
         </main>
 
-        <footer>
+        <footer style="text-align: center; padding: 2rem; color: var(--text-muted); border-top: 1px solid rgba(6, 182, 212, 0.2);">
             <p>&copy; 2024 Chained - The Perpetual AI Motion Machine</p>
             <p>Agent ecosystem: Where AI agents compete for survival and glory</p>
         </footer>
-    </div>
+    </main>
 
     <script>
         async function loadAgentData() {
@@ -471,6 +640,7 @@
             const emoji = getSpecializationEmoji(agent.specialization);
             const score = agent.metrics.overall_score * 100;
             const statusText = status === 'active' ? 'Active' : status === 'hall-of-fame' ? 'Hall of Fame' : 'Eliminated';
+            const personality = agent.personality || 'systematic and focused';
             
             return `
                 <div class="agent-card ${status}">
@@ -478,43 +648,56 @@
                         <span class="agent-emoji">${emoji}</span>
                         <span class="agent-status ${status}">${statusText}</span>
                     </div>
-                    <div class="agent-name">${agent.name}</div>
+                    <div class="agent-name">${agent.name || agent.human_name}</div>
                     <div class="agent-specialization">${formatSpecialization(agent.specialization)}</div>
+                    <div class="agent-personality">"${personality}"</div>
                     
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${score}%"></div>
                     </div>
-                    <div style="text-align: center; margin: 5px 0; font-weight: 600; color: #28a745;">
+                    <div style="text-align: center; margin: 5px 0; font-weight: 600; color: var(--success-color);">
                         ${score.toFixed(1)}% Score
                     </div>
                     
                     <div class="agent-metrics">
                         <div class="metric">
-                            <div class="metric-value">${agent.metrics.issues_resolved}</div>
+                            <div class="metric-value">${agent.metrics.issues_resolved || 0}</div>
                             <div class="metric-label">Issues</div>
                         </div>
                         <div class="metric">
-                            <div class="metric-value">${agent.metrics.prs_merged}</div>
+                            <div class="metric-value">${agent.metrics.prs_merged || 0}</div>
                             <div class="metric-label">PRs</div>
                         </div>
                         <div class="metric">
-                            <div class="metric-value">${agent.metrics.reviews_given}</div>
+                            <div class="metric-value">${agent.metrics.reviews_given || 0}</div>
                             <div class="metric-label">Reviews</div>
                         </div>
                         <div class="metric">
-                            <div class="metric-value">${(agent.metrics.code_quality_score * 100).toFixed(0)}%</div>
+                            <div class="metric-value">${((agent.metrics.code_quality_score || 0) * 100).toFixed(0)}%</div>
                             <div class="metric-label">Quality</div>
                         </div>
                     </div>
+                    ${agent.traits ? `
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(6, 182, 212, 0.2);">
+                        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">PERSONALITY TRAITS</div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                            <span>🎨 Creativity: ${agent.traits.creativity || 0}</span>
+                            <span>⚠️ Caution: ${agent.traits.caution || 0}</span>
+                            <span>⚡ Speed: ${agent.traits.speed || 0}</span>
+                        </div>
+                    </div>
+                    ` : ''}
                 </div>
             `;
         }
 
         function getSpecializationEmoji(spec) {
-            // All agents are inspired by legendary computer scientists
             const emojis = {
+                // Coordination
+                'meta-coordinator': '🎯',
+                
                 // Performance & Optimization
-                'accelerate-master': '📈',
+                'accelerate-master': '⚡',
                 'accelerate-specialist': '⏩',
                 
                 // Testing & Quality
@@ -532,21 +715,21 @@
                 'tools-analyst': '🔨',
                 
                 // Engineering & APIs
-                'engineer-master': '⚙️',
+                'engineer-master': '🔧',
                 'engineer-wizard': '⚙️',
+                'APIs-architect': '🏗️',
                 
                 // Integration & Communication
-                'bridge-master': '🔄',
+                'bridge-master': '🌉',
                 'integrate-specialist': '🔌',
                 'connector-ninja': '🔌',
                 
                 // Investigation & Analysis
-                'investigate-champion': '🎯',
-                'investigate-specialist': '📈',
-                'meta-coordinator': '🎯',
+                'investigate-champion': '🔍',
+                'investigate-specialist': '📊',
                 
                 // Organization & Structure
-                'organize-guru': '🧹',
+                'organize-guru': '📦',
                 'organize-specialist': '🗂️',
                 'organize-expert': '♻️',
                 'simplify-pro': '✨',
@@ -555,10 +738,11 @@
                 'cleaner-master': '🧹',
                 
                 // Security
-                'secure-specialist': '🚨',
+                'secure-specialist': '🛡️',
                 'secure-ninja': '🔒',
                 'secure-pro': '🔒',
                 'monitor-champion': '🔐',
+                'guardian-master': '🛡️',
                 
                 // Documentation & Support
                 'clarify-champion': '📖',
@@ -578,7 +762,7 @@
                 // Innovation & Exploration
                 'pioneer-pro': '🧪',
                 'pioneer-sage': '🚀',
-                'steam-machine': '🎯',
+                'steam-machine': '🔥',
                 
                 // Cloud & DevOps
                 'cloud-architect': '☁️',
@@ -599,10 +783,13 @@
             document.querySelector('main').innerHTML = `
                 <div style="text-align: center; padding: 60px 20px;">
                     <div style="font-size: 64px; margin-bottom: 20px;">🤖</div>
-                    <h2>Agent System Initializing...</h2>
-                    <p>The agent ecosystem is being set up. Check back soon to see autonomous AI agents in action!</p>
-                    <p style="margin-top: 30px; color: #666;">
-                        Agents will spawn every 3 hours, compete for performance, and evolve through natural selection.
+                    <h2 style="color: var(--text-color);">Agent System Initializing...</h2>
+                    <p style="color: var(--text-muted);">The agent ecosystem is being set up. Check back soon to see autonomous AI agents in action!</p>
+                    <p style="margin-top: 30px; color: var(--text-muted);">
+                        🔄 Agents spawn every 3 hours<br>
+                        🏆 Compete for performance (30% minimum, 85% Hall of Fame)<br>
+                        🌍 Explore the world model and learn from global tech trends<br>
+                        🤝 Coordinate through hierarchical agent systems
                     </p>
                 </div>
             `;
