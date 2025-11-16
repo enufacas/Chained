@@ -2,8 +2,8 @@ name: "Autonomous Learning Pipeline"
 
 on:
   schedule:
-    # Run twice daily - morning and evening UTC
-    - cron: '0 8,20 * * *'
+    # Run once daily at 8:00 UTC (reduced frequency per issue feedback)
+    - cron: '0 8 * * *'
   workflow_dispatch:
     inputs:
       skip_learning:
