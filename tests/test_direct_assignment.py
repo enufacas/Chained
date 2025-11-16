@@ -412,8 +412,8 @@ def main():
     print("  3. Integrate with GitHub GraphQL API assignment")
     print()
     
-    # Change to repo root
-    repo_root = Path(__file__).parent
+    # Change to repo root (parent of tests directory)
+    repo_root = Path(__file__).parent.parent
     import os
     os.chdir(repo_root)
     

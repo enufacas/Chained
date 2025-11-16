@@ -29,9 +29,9 @@ echo "Issue: #$issue_number"
 echo "Agent: $matched_agent"
 echo ""
 
-# Get agent info using match-issue-to-agent.py
-# We use a dummy title/body since we already know the agent
-agent_info=$(python3 tools/match-issue-to-agent.py "agent-mission" "" 2>/dev/null || echo '{}')
+# Get agent info using get-agent-info.py since we already know the agent
+# Use the matched_agent specialization to look up the correct agent
+agent_info=$(python3 tools/get-agent-info.py info "$matched_agent" 2>/dev/null || echo '{}')
 agent_emoji=$(echo "$agent_info" | jq -r ".emoji // \"🤖\"")
 agent_description=$(echo "$agent_info" | jq -r ".description // \"Specialized agent\"")
 
