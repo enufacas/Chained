@@ -325,6 +325,7 @@ class MetricsCollector:
         """
         Pre-fetch ALL agent-work issues once and distribute to agents.
         
+        OPTIMIZED: Uses search body to avoid fetching individual issues.
         This is a critical optimization that reduces O(n*m) API calls to O(m) calls,
         where n = number of agents and m = number of issues.
         
@@ -339,6 +340,23 @@ class MetricsCollector:
         agent_issues_map = {}
         since_date = (datetime.now(timezone.utc) - timedelta(days=since_days)).isoformat()
         
+        # Build agent specialization -> agent_id map for quick lookup
+        specialization_to_agent = {}
+        try:
+            if REGISTRY_MANAGER_AVAILABLE:
+                registry = RegistryManager()
+                active_agents = registry.list_agents(status='active')
+                for agent in active_agents:
+                    spec = agent.get('specialization', '').lower()
+                    if spec:
+                        specialization_to_agent[spec] = {
+                            'id': agent['id'],
+                            'name': agent['name']
+                        }
+        except Exception as e:
+            print(f"⚠️  Warning: Could not load agent registry: {e}", file=sys.stderr)
+            return agent_issues_map
+        
         try:
             # Fetch all agent-work issues in a single search
             all_issues = self._search_issues(
@@ -351,26 +369,35 @@ class MetricsCollector:
             
             print(f"📋 Found {len(all_issues)} total agent-work issues", file=sys.stderr)
             
-            # Fetch full details for each issue (batched)
+            # OPTIMIZATION: Search results already include body, use it directly
+            # Only fetch full details if body is missing
             for issue in all_issues:
                 issue_number = issue.get('number')
                 if not issue_number:
                     continue
                 
-                # Check cache first
-                if issue_number in self._issue_cache:
-                    issue_details = self._issue_cache[issue_number]
+                # Try to use body from search results first (much faster!)
+                body = issue.get('body', '')
+                
+                # If body is missing or truncated, fetch full details
+                if not body or len(body) < 50:  # Likely truncated
+                    # Check cache first
+                    if issue_number in self._issue_cache:
+                        issue_details = self._issue_cache[issue_number]
+                        body = issue_details.get('body', '')
+                    else:
+                        # Fetch if not cached
+                        issue_details = self.github.get(f'/repos/{self.repo}/issues/{issue_number}')
+                        self._api_call_count += 1
+                        if issue_details:
+                            self._issue_cache[issue_number] = issue_details
+                            body = issue_details.get('body', '')
+                            issue = issue_details  # Use full details
+                        else:
+                            continue
                 else:
-                    # Fetch if not cached
-                    issue_details = self.github.get(f'/repos/{self.repo}/issues/{issue_number}')
-                    self._api_call_count += 1
-                    if issue_details:
-                        self._issue_cache[issue_number] = issue_details
-                
-                if not issue_details:
-                    continue
-                
-                body = issue_details.get('body', '')
+                    # Cache the search result
+                    self._issue_cache[issue_number] = issue
                 
                 # Extract COPILOT_AGENT assignment from body
                 # Format: <!-- COPILOT_AGENT:specialization_name -->
@@ -380,22 +407,14 @@ class MetricsCollector:
                 if match:
                     specialization = match.group(1).lower()
                     
-                    # Find which agent has this specialization
-                    try:
-                        if REGISTRY_MANAGER_AVAILABLE:
-                            registry = RegistryManager()
-                            active_agents = registry.list_agents(status='active')
-                            
-                            for agent in active_agents:
-                                if agent.get('specialization', '').lower() == specialization:
-                                    agent_id = agent['id']
-                                    if agent_id not in agent_issues_map:
-                                        agent_issues_map[agent_id] = []
-                                    agent_issues_map[agent_id].append(issue_details)
-                                    print(f"  ✅ Issue #{issue_number} → {agent['name']}", file=sys.stderr)
-                                    break
-                    except Exception as e:
-                        print(f"⚠️  Warning: Could not map issue {issue_number}: {e}", file=sys.stderr)
+                    # Quick lookup in pre-built map
+                    agent_info = specialization_to_agent.get(specialization)
+                    if agent_info:
+                        agent_id = agent_info['id']
+                        if agent_id not in agent_issues_map:
+                            agent_issues_map[agent_id] = []
+                        agent_issues_map[agent_id].append(issue)
+                        print(f"  ✅ Issue #{issue_number} → {agent_info['name']}", file=sys.stderr)
             
             print(f"✅ Distributed issues to {len(agent_issues_map)} agents", file=sys.stderr)
             print(f"📊 API calls so far: {self._api_call_count}", file=sys.stderr)

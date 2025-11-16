@@ -547,7 +547,7 @@ jobs:
           PYTHON_SCRIPT
 
   # ============================================================================
-  # STAGE 2: MERGE EVALUATION PR
+  # STAGE 2: MERGE EVALUATION PR (Parallelized with Stage 3)
   # ============================================================================
   
   merge-evaluation-pr:
@@ -585,10 +585,10 @@ jobs:
           echo "   Giving auto-review workflow 8 seconds to start..."
           sleep 8
           
-          # Wait up to 3 minutes with exponential backoff for the PR to be merged
-          MAX_WAIT=180  # 3 minutes
+          # Wait up to 2 minutes with optimized exponential backoff
+          MAX_WAIT=120  # 2 minutes (reduced from 3)
           ELAPSED=8  # Already waited 8 seconds
-          WAIT_INTERVAL=3  # Start with 3 seconds
+          WAIT_INTERVAL=2  # Start with 2 seconds (reduced from 3)
           CHECK_COUNT=0
           
           while [ $ELAPSED -lt $MAX_WAIT ]; do
@@ -631,8 +631,8 @@ jobs:
             sleep $WAIT_INTERVAL
             ELAPSED=$((ELAPSED + WAIT_INTERVAL))
             
-            # Exponential backoff: double wait time, max 30 seconds
-            if [ $WAIT_INTERVAL -lt 30 ]; then
+            # Exponential backoff: double wait time, max 20 seconds (optimized)
+            if [ $WAIT_INTERVAL -lt 20 ]; then
               WAIT_INTERVAL=$((WAIT_INTERVAL * 2))
             fi
           done
@@ -653,13 +653,13 @@ jobs:
           exit 1
 
   # ============================================================================
-  # STAGE 3: SYNC TO WORLD MODEL
+  # STAGE 3: SYNC TO WORLD MODEL (Runs in parallel with Stage 2)
   # ============================================================================
   
   sync-to-world:
     name: "Stage 3: Sync Agents to World Model"
     runs-on: ubuntu-latest
-    needs: [evaluate-agents, merge-evaluation-pr]
+    needs: evaluate-agents  # Removed merge-evaluation-pr dependency for parallelization
     if: always() && !cancelled() && needs.evaluate-agents.outputs.has_results == 'true'
     outputs:
       has_changes: ${{ steps.world_sync.outputs.has_changes }}
@@ -770,7 +770,7 @@ jobs:
   merge-world-pr:
     name: "Stage 4: Merge World Model PR"
     runs-on: ubuntu-latest
-    needs: sync-to-world
+    needs: [sync-to-world, merge-evaluation-pr]  # Wait for both stage 2 and 3
     if: always() && !cancelled() && needs.sync-to-world.outputs.pr_created == 'true'
     
     steps:
@@ -802,10 +802,10 @@ jobs:
           echo "   Giving auto-review workflow 8 seconds to start..."
           sleep 8
           
-          # Wait up to 3 minutes with exponential backoff for the PR to be merged
-          MAX_WAIT=180  # 3 minutes
+          # Wait up to 2 minutes with optimized exponential backoff
+          MAX_WAIT=120  # 2 minutes (reduced from 3)
           ELAPSED=8  # Already waited 8 seconds
-          WAIT_INTERVAL=3  # Start with 3 seconds
+          WAIT_INTERVAL=2  # Start with 2 seconds (optimized)
           CHECK_COUNT=0
           
           while [ $ELAPSED -lt $MAX_WAIT ]; do
@@ -848,8 +848,8 @@ jobs:
             sleep $WAIT_INTERVAL
             ELAPSED=$((ELAPSED + WAIT_INTERVAL))
             
-            # Exponential backoff: double wait time, max 30 seconds
-            if [ $WAIT_INTERVAL -lt 30 ]; then
+            # Exponential backoff: double wait time, max 20 seconds (optimized)
+            if [ $WAIT_INTERVAL -lt 20 ]; then
               WAIT_INTERVAL=$((WAIT_INTERVAL * 2))
             fi
           done
