@@ -89,7 +89,8 @@ jobs:
               print("No active agents to evaluate")
               exit(0)
           
-          print(f"📊 Evaluating {len(active_agents)} active agents...")
+          total_agents = len(active_agents)
+          print(f"📊 Evaluating {total_agents} active agents...")
           
           promoted = []
           eliminated = []
@@ -120,10 +121,17 @@ jobs:
           grace_period_hours = config.get('new_agent_grace_period_hours', 48)
           minimum_score = config.get('new_agent_minimum_score', 0.40)
           
-          for agent in active_agents:
+          for idx, agent in enumerate(active_agents, 1):
+              # Progress logging
+              print(f"\n{'='*60}")
+              print(f"📊 Evaluating agent {idx}/{total_agents}")
+              print(f"{'='*60}")
               agent_id = agent['id']
               agent_name = agent['name']
               specialization = agent.get('specialization', '')
+              
+              print(f"Agent: {agent_name} ({agent_id})")
+              print(f"Specialization: {specialization}")
               
               # Check if this agent is protected
               is_protected = specialization in protected_specializations
