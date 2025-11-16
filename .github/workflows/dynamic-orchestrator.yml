@@ -194,12 +194,20 @@ jobs:
           *This PR was automatically created by the Dynamic Workflow Orchestrator.*
           EOF
           
+          # Create PR (with fallback if labels don't exist)
           gh pr create \
             --title "🎛️ Update Workflow Schedules: $MODE Mode" \
             --body-file /tmp/pr-body.md \
             --label "automated,orchestrator,workflow-optimization,copilot" \
             --base main \
-            --head "$BRANCH_NAME"
+            --head "$BRANCH_NAME" || {
+              echo "⚠️ PR creation with labels failed, retrying without labels..."
+              gh pr create \
+                --title "🎛️ Update Workflow Schedules: $MODE Mode" \
+                --body-file /tmp/pr-body.md \
+                --base main \
+                --head "$BRANCH_NAME"
+            }
 
       - name: Create usage report issue
         if: steps.usage.outputs.is_safe == 'false'

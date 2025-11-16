@@ -19,6 +19,7 @@ This directory contains shell scripts and utility programs for managing and moni
 
 ### Repository Setup
 - **`create-missing-labels.sh`** - Create missing repository labels required by automated workflows
+- **`fix-workflow-labels.sh`** - 🔧 **NEW** Quick fix for workflow label issues (by @troubleshoot-expert)
 
 ### Demonstrations
 - **`demo-archaeology-learning.sh`** - Demonstrate archaeology learning features
@@ -53,3 +54,24 @@ For more details on specific scripts, see:
 - [System Documentation](../docs/)
 - [Getting Started Guide](../GETTING_STARTED.md)
 - [Monitoring Guide](../docs/MONITORING.md)
+- **[Workflow Troubleshooting Guide](../.github/workflows/TROUBLESHOOTING.md)** - 🔧 **NEW** by @troubleshoot-expert
+
+## Troubleshooting
+
+If workflows are failing with label-related errors:
+
+1. **Quick Fix:**
+   ```bash
+   bash scripts/fix-workflow-labels.sh
+   ```
+
+2. **Or manually:**
+   ```bash
+   python3 tools/create_labels.py --all
+   ```
+
+3. **Or via GitHub Actions:**
+   - Go to Actions → "Maintenance: Ensure Repository Labels Exist"
+   - Click "Run workflow"
+
+See `.github/workflows/TROUBLESHOOTING.md` for comprehensive troubleshooting guidance.

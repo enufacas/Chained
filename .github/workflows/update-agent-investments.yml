@@ -437,14 +437,21 @@ jobs:
                   f.write("Agent investment tracker update")
           PYEOF
             
-            # Create PR
+            # Create PR (with fallback if labels don't exist)
             PR_DATE=$(date +%Y-%m-%d)
             gh pr create \
               --title "📊 Investment update: @${{ steps.analyze.outputs.agent_id }} - ${PR_DATE}" \
               --body-file /tmp/pr_body.txt \
               --label "agent-system,automated,investment-tracker" \
               --base main \
-              --head "$BRANCH_NAME"
+              --head "$BRANCH_NAME" || {
+                echo "⚠️ PR creation with labels failed, retrying without labels..."
+                gh pr create \
+                  --title "📊 Investment update: @${{ steps.analyze.outputs.agent_id }} - ${PR_DATE}" \
+                  --body-file /tmp/pr_body.txt \
+                  --base main \
+                  --head "$BRANCH_NAME"
+              }
             
             echo "✅ PR created for investment updates"
           fi

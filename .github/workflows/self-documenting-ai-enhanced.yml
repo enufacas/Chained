@@ -170,7 +170,7 @@ jobs:
           # Push branch
           git push origin "$BRANCH_NAME"
           
-          # Create PR
+          # Create PR (with fallback if labels don't exist)
           gh pr create \
             --title "📚 Enhanced Learning: Issue #${ISSUE_NUMBER} (@engineer-master)" \
             --body "## 🧠 Enhanced Self-Documenting AI Learning
@@ -223,6 +223,18 @@ jobs:
           Closes #${ISSUE_NUMBER}" \
             --label "automated,self-documenting-ai,learning" \
             --base main \
+            --head "$BRANCH_NAME" || {
+              echo "⚠️ PR creation with labels failed, retrying without labels..."
+              gh pr create \
+                --title "📚 Enhanced Learning: Issue #${ISSUE_NUMBER} (@engineer-master)" \
+                --body "## 🧠 Enhanced Self-Documenting AI Learning (Labels could not be applied)
+          
+          The @engineer-master agent has completed enhanced analysis of issue #${ISSUE_NUMBER}.
+          
+          Closes #${ISSUE_NUMBER}" \
+                --base main \
+                --head "$BRANCH_NAME"
+            }
             --head "$BRANCH_NAME"
           
           echo "✅ Created PR for enhanced learnings"

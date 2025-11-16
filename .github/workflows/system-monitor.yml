@@ -471,37 +471,65 @@ jobs:
             ### Failed Workflows Breakdown
             ${failed_breakdown}
             
+            ### 🔧 Quick Fix: Missing Labels (Most Common Issue)
+            
+            **If you see label-related errors**, run this quick fix:
+            
+            \`\`\`bash
+            # Option 1: Run locally
+            bash scripts/fix-workflow-labels.sh
+            
+            # Option 2: Trigger workflow manually
+            # Go to Actions → \"Maintenance: Ensure Repository Labels Exist\" → Run workflow
+            \`\`\`
+            
+            **@troubleshoot-expert** has added fallback logic to all workflows, so they'll create PRs without labels if needed.
+            
             ### Common Causes & Solutions
             
-            #### 1. Workflow Triggering (HTTP 403)
+            #### 1. Missing Repository Labels ⭐ MOST COMMON
+            **Symptom:** Workflows fail with \`could not add label: 'code-quality' not found\`
+            **Solution:** 
+            - Run \`bash scripts/fix-workflow-labels.sh\` to create labels
+            - Or trigger the \"Ensure Repository Labels Exist\" workflow manually
+            - Workflows now have fallback logic and won't fail completely
+            
+            #### 2. Workflow Triggering (HTTP 403)
             **Symptom:** Workflows fail when trying to trigger other workflows
             **Solution:** Remove \`gh workflow run\` commands; rely on scheduled triggers instead
             
-            #### 2. Missing Secrets
+            #### 3. Missing Secrets
             **Symptom:** Workflows requiring COPILOT_PAT fail or skip steps
             **Solution:** Configure required secrets in repository settings
             
-            #### 3. External Dependencies
+            #### 4. External Dependencies
             **Symptom:** Workflows calling external APIs fail intermittently
             **Solution:** Add retry logic and graceful error handling
             
-            #### 4. Configuration Issues
+            #### 5. Configuration Issues
             **Symptom:** Workflows fail due to missing files or permissions
             **Solution:** Verify workflow configurations and file dependencies
             
             ### Recommended Actions
-            1. Review the failed workflows breakdown above
-            2. Check the Actions tab for detailed error logs
-            3. Focus on workflows with multiple failures first
-            4. Verify secrets and permissions are configured correctly
-            5. Consider if recent changes introduced the failures
+            1. **First:** Check if label-related (see Quick Fix above)
+            2. Review the failed workflows breakdown above
+            3. Check the Actions tab for detailed error logs
+            4. Focus on workflows with multiple failures first
+            5. Verify secrets and permissions are configured correctly
+            6. Consider if recent changes introduced the failures
+            
+            ### Documentation
+            - 📖 **Troubleshooting Guide:** \`.github/workflows/TROUBLESHOOTING.md\`
+            - 🔧 **Quick Fix Script:** \`scripts/fix-workflow-labels.sh\`
+            - 🏷️ **Label Tool:** \`tools/create_labels.py\`
             
             ### Monitoring
             This issue will be automatically updated with health checks every 12 hours.
             Close this issue once all problems are resolved and failure rate drops below 20%.
             
             ---
-            *This issue was automatically created by the System Monitor workflow.*" \
+            *This issue was automatically created by the System Monitor workflow.*
+            *Fixes by **@troubleshoot-expert*** 🔧" \
               --label "workflow-monitor,automated,bug"
           fi
 

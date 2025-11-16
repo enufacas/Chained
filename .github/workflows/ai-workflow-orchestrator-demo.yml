@@ -158,7 +158,7 @@ jobs:
           git commit -m "chore: AI workflow recommendations by @coordinate-wizard"
           git push origin "$BRANCH_NAME"
           
-          # Create PR
+          # Create PR (with fallback if labels don't exist)
           gh pr create \
             --title "🎹 AI Workflow Orchestrator Recommendations" \
             --body "**@coordinate-wizard** has generated intelligent workflow scheduling recommendations.
@@ -188,7 +188,14 @@ This PR contains recommendations from the AI-powered workflow orchestrator.
 *Orchestrated by **@coordinate-wizard*** 🎹" \
             --label "automated,workflow-optimization" \
             --base main \
-            --head "$BRANCH_NAME"
+            --head "$BRANCH_NAME" || {
+              echo "⚠️ PR creation with labels failed, retrying without labels..."
+              gh pr create \
+                --title "🎹 AI Workflow Orchestrator Recommendations" \
+                --body "**@coordinate-wizard** has generated intelligent workflow scheduling recommendations. (Labels could not be applied - they may need to be created)" \
+                --base main \
+                --head "$BRANCH_NAME"
+            }
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
