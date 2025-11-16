@@ -3,7 +3,7 @@
   "name": "\ud83c\udfaf Ada",
   "human_name": "Ada",
   "specialization": "investigate-champion",
-  "status": "active",
+  "status": "hall_of_fame",
   "spawned_at": "2025-11-14T02:17:29.209138Z",
   "personality": "meticulous and careful",
   "communication_style": "adds encouraging emojis",
@@ -14,11 +14,12 @@
   },
   "metrics": {
     "issues_resolved": 2,
-    "prs_merged": 0,
+    "prs_merged": 1,
     "reviews_given": 0,
-    "code_quality_score": 0.5,
-    "overall_score": 0.42974999999999997,
-    "creativity_score": 0.5316666666666666
+    "code_quality_score": 1.0,
+    "overall_score": 0.77325,
+    "creativity_score": 0.48833333333333334
   },
-  "contributions": []
+  "contributions": [],
+  "promoted_at": "2025-11-16T00:52:47.560504Z"
 }
