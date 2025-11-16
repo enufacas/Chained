@@ -4,11 +4,15 @@ on:
   push:
     branches:
       - main
-    # Note: No 'paths' filters - we want to analyze ALL code changes.
+    paths-ignore:
+      - 'analysis/**'
+    # Skip when only analysis directory is updated to prevent infinite loop
     # The tools/code-analyzer.py script is a dependency, not a trigger condition.
   pull_request:
     types: [closed]
-    # Runs on PR close to analyze merged code
+    paths-ignore:
+      - 'analysis/**'
+    # Runs on PR close to analyze merged code, but skip analysis-only updates
   workflow_dispatch:
     inputs:
       directory:
