@@ -873,7 +873,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests
+          pip install requests PyYAML
 
       - name: Create missions
         id: create
