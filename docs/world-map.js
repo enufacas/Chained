@@ -226,13 +226,14 @@ async function loadWorldData() {
 
 // Get agent location (from world state or defaults)
 function getAgentLocation(agentLabel) {
-    // PRIORITY 1: Check if agent has location in world state (source of truth)
+    // Check if agent has location in world state
+    let worldStateLocation = null;
     if (worldState && worldState.agents && worldState.regions) {
         const agent = worldState.agents.find(a => a.label === agentLabel);
         if (agent && agent.location_region_id) {
             const region = worldState.regions.find(r => r.id === agent.location_region_id);
             if (region) {
-                return {
+                worldStateLocation = {
                     lat: region.lat,
                     lng: region.lng,
                     city: region.label,
@@ -242,13 +243,34 @@ function getAgentLocation(agentLabel) {
         }
     }
     
-    // PRIORITY 2: Fall back to default locations for inactive agents
+    // Get default location based on agent specialization
     const agentKey = findAgentKey(agentLabel);
-    if (agentKey && DEFAULT_AGENT_LOCATIONS[agentKey]) {
-        return DEFAULT_AGENT_LOCATIONS[agentKey];
+    const defaultLocation = agentKey && DEFAULT_AGENT_LOCATIONS[agentKey] 
+        ? DEFAULT_AGENT_LOCATIONS[agentKey] 
+        : null;
+    
+    // SMART PRIORITY: Use default location if world state shows Charlotte (spawn point)
+    // This distributes agents across tech hubs based on their specialization
+    // while respecting agents that have moved to other regions
+    if (worldStateLocation) {
+        const isCharlotte = worldStateLocation.region_id === 'US:Charlotte' || 
+                          (worldStateLocation.lat === 35.2271 && worldStateLocation.lng === -80.8431);
+        
+        // If agent is still in Charlotte (spawn point) and we have a better default location, use it
+        if (isCharlotte && defaultLocation) {
+            return defaultLocation;
+        }
+        
+        // Otherwise, use world state location (agent has moved)
+        return worldStateLocation;
     }
     
-    // PRIORITY 3: Default to Charlotte, NC if no location found
+    // Fall back to default location for inactive agents
+    if (defaultLocation) {
+        return defaultLocation;
+    }
+    
+    // Final fallback to Charlotte, NC if no location found
     return { lat: 35.2271, lng: -80.8431, city: 'Charlotte, NC' };
 }
 
@@ -257,17 +279,45 @@ function findAgentKey(label) {
     // Extract meaningful words from label
     const labelLower = label.toLowerCase();
     
-    // Direct mapping for known patterns
+    // Direct mapping for known patterns - prioritized by specificity
     const nameMap = {
         'robert martin': 'organize-guru',
+        'martin fowler': 'organize-specialist',
+        'linus torvalds': 'construct-specialist',
+        'moxie marlinspike': 'secure-ninja',
+        'bruce schneier': 'guardian-master',
+        'katie moussouris': 'monitor-champion',
+        'grace hopper': 'infrastructure-specialist',
+        'margaret hamilton': 'APIs-architect',
+        'tim berners-lee': 'bridge-master',
+        'vint cerf': 'connector-ninja',
+        'alan kay': 'pioneer-sage',
+        'ivan sutherland': 'pioneer-pro',
+        'donald knuth': 'guide-wizard',
+        'neil degrasse tyson': 'clarify-champion',
+        'richard feynman': 'communicator-maestro',
+        'quincy jones': 'coordinate-wizard',
+        'martha graham': 'align-wizard',
+        'grady booch': 'coach-wizard',
+        'michael feathers': 'cleaner-master',
+        'nancy leveson': 'edge-cases-pro',
+        'ada lovelace': 'investigate-specialist',
+        'marie curie': 'accelerate-master',
+        'charles darwin': 'pioneer-sage',
+        'einstein': 'pioneer-sage',
         'tesla': 'create-guru',
         'turing': 'meta-coordinator',
         'liskov': 'coach-master',
-        'moxie marlinspike': 'secure-ninja',
-        'linus torvalds': 'construct-specialist',
+        'dijkstra': 'validator-pro',
+        'knuth': 'assert-specialist',
+        'shannon': 'monitor-champion',
+        'feynman': 'communicator-maestro',
+        'hamilton': 'secure-ninja',
+        'hopper': 'troubleshoot-expert',
+        'darwin': 'pioneer-sage',
+        'lovelace': 'investigate-specialist',
+        'curie': 'accelerate-master',
         'ada': 'investigate-champion',
-        'einstein': 'pioneer-sage',
-        'martin fowler': 'organize-specialist',
         'steam machine': 'steam-machine'
     };
     
@@ -278,15 +328,46 @@ function findAgentKey(label) {
         }
     }
     
-    // Try to match by emoji or keywords
-    if (labelLower.includes('🧹') || labelLower.includes('clean')) return 'organize-guru';
-    if (labelLower.includes('🧪') || labelLower.includes('test')) return 'assert-specialist';
-    if (labelLower.includes('💭') || labelLower.includes('think')) return 'meta-coordinator';
-    if (labelLower.includes('🎯') || labelLower.includes('target')) return 'investigate-champion';
-    if (labelLower.includes('🔒') || labelLower.includes('secur')) return 'secure-specialist';
-    if (labelLower.includes('🔨') || labelLower.includes('build')) return 'construct-specialist';
-    if (labelLower.includes('⚙️') || labelLower.includes('engineer')) return 'engineer-master';
-    if (labelLower.includes('📖') || labelLower.includes('document')) return 'document-ninja';
+    // Try to match by emoji - more comprehensive mapping
+    if (labelLower.includes('🧹')) return 'organize-guru';
+    if (labelLower.includes('🧪')) return 'assert-specialist';
+    if (labelLower.includes('💭')) return 'meta-coordinator';
+    if (labelLower.includes('🎯')) return 'investigate-champion';
+    if (labelLower.includes('🔒')) return 'secure-specialist';
+    if (labelLower.includes('🚨')) return 'secure-specialist';
+    if (labelLower.includes('🔐')) return 'monitor-champion';
+    if (labelLower.includes('🔨')) return 'construct-specialist';
+    if (labelLower.includes('🏭')) return 'create-guru';
+    if (labelLower.includes('⚙️')) return 'engineer-master';
+    if (labelLower.includes('📖')) return 'document-ninja';
+    if (labelLower.includes('📝')) return 'document-ninja';
+    if (labelLower.includes('🎹')) return 'coordinate-wizard';
+    if (labelLower.includes('🎻')) return 'align-wizard';
+    if (labelLower.includes('☁️')) return 'cloud-architect';
+    if (labelLower.includes('🔌')) return 'connector-ninja';
+    if (labelLower.includes('🔄')) return 'bridge-master';
+    if (labelLower.includes('✨')) return 'simplify-pro';
+    if (labelLower.includes('♻️')) return 'organize-expert';
+    if (labelLower.includes('🗂️')) return 'organize-specialist';
+    if (labelLower.includes('✔️')) return 'validator-pro';
+    if (labelLower.includes('🎓')) return 'guide-wizard';
+    if (labelLower.includes('🚀')) return 'pioneer-sage';
+    if (labelLower.includes('🔬')) return 'edge-cases-pro';
+    if (labelLower.includes('📡')) return 'steam-machine';
+    if (labelLower.includes('🌟')) return 'steam-machine';
+    if (labelLower.includes('🛡️')) return 'guardian-master';
+    if (labelLower.includes('📈')) return 'accelerate-master';
+    if (labelLower.includes('🔧')) return 'troubleshoot-expert';
+    
+    // Keyword matching as last resort
+    if (labelLower.includes('clean')) return 'organize-guru';
+    if (labelLower.includes('test')) return 'assert-specialist';
+    if (labelLower.includes('secur')) return 'secure-specialist';
+    if (labelLower.includes('build')) return 'construct-specialist';
+    if (labelLower.includes('engineer')) return 'engineer-master';
+    if (labelLower.includes('document')) return 'document-ninja';
+    if (labelLower.includes('cloud')) return 'cloud-architect';
+    if (labelLower.includes('architect')) return 'APIs-architect';
     
     return null;
 }
