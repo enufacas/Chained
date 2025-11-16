@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-11-16T20:15:53.007462+00:00",
+  "timestamp": "2025-11-16T20:53:57.104772+00:00",
   "total_learnings": 746,
   "sources": {
     "tldr": 20,
@@ -1839,163 +1839,163 @@
     },
     {
       "source": "hackernews",
+      "title": "62 chapter open-source Zig book",
+      "url": "https://www.zigbook.net",
+      "score": 63,
+      "comments": 21,
+      "collected_at": "2025-11-16T20:53:33.832222+00:00"
+    },
+    {
+      "source": "hackernews",
       "title": "The fate of \"small\" open source",
       "url": "https://nolanlawson.com/2025/11/16/the-fate-of-small-open-source/",
-      "score": 42,
-      "comments": 10,
-      "collected_at": "2025-11-16T20:15:30.045618+00:00"
+      "score": 66,
+      "comments": 25,
+      "collected_at": "2025-11-16T20:53:33.947425+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "I have recordings proving Coinbase knew about breach 4 months before disclosure",
+      "url": "https://jonathanclark.com/posts/coinbase-breach-timeline.html",
+      "score": 47,
+      "comments": 6,
+      "collected_at": "2025-11-16T20:53:34.073570+00:00"
     },
     {
       "source": "hackernews",
       "title": "Heretic: Automatic censorship removal for language models",
       "url": "https://github.com/p-e-w/heretic",
-      "score": 268,
-      "comments": 80,
-      "collected_at": "2025-11-16T20:15:30.147258+00:00"
+      "score": 294,
+      "comments": 92,
+      "collected_at": "2025-11-16T20:53:34.214690+00:00"
     },
     {
       "source": "hackernews",
-      "title": "62 chapter open-source Zig book",
-      "url": "https://www.zigbook.net",
-      "score": 14,
-      "comments": 0,
-      "collected_at": "2025-11-16T20:15:30.351057+00:00"
+      "title": "Tracking users with favicons, even in incognito mode",
+      "url": "https://github.com/jonasstrehle/supercookie",
+      "score": 29,
+      "comments": 8,
+      "collected_at": "2025-11-16T20:53:34.327655+00:00"
     },
     {
       "source": "hackernews",
       "title": "Z3 API in Python: From Sudoku to N-Queens in Under 20 Lines",
       "url": "https://ericpony.github.io/z3py-tutorial/guide-examples.htm",
-      "score": 21,
+      "score": 36,
       "comments": 0,
-      "collected_at": "2025-11-16T20:15:30.483123+00:00"
+      "collected_at": "2025-11-16T20:53:34.463566+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Linux mode setting, from the comfort of OCaml",
+      "url": "https://roscidus.com/blog/blog/2025/11/16/libdrm-ocaml/",
+      "score": 16,
+      "comments": 0,
+      "collected_at": "2025-11-16T20:53:34.580884+00:00"
     },
     {
       "source": "hackernews",
       "title": "FPGA Based IBM-PC-XT",
       "url": "https://bit-hack.net/2025/11/10/fpga-based-ibm-pc-xt/",
-      "score": 96,
-      "comments": 17,
-      "collected_at": "2025-11-16T20:15:30.579355+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "AI is killing privacy. We can't let that happen",
-      "url": "https://www.fastcompany.com/91435189/ai-privacy-openai-tracking-apps",
-      "score": 63,
-      "comments": 43,
-      "collected_at": "2025-11-16T20:15:30.683604+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Fourier Transforms",
-      "url": "https://www.continuummechanics.org/fourierxforms.html",
-      "score": 55,
-      "comments": 7,
-      "collected_at": "2025-11-16T20:15:30.783612+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Brimstone: ES2025 JavaScript engine written in Rust",
-      "url": "https://github.com/Hans-Halverson/brimstone",
-      "score": 157,
-      "comments": 81,
-      "collected_at": "2025-11-16T20:15:30.891644+00:00"
+      "score": 108,
+      "comments": 19,
+      "collected_at": "2025-11-16T20:53:34.726985+00:00"
     },
     {
       "source": "hackernews",
       "title": "I finally understand Cloudflare Zero Trust tunnels",
       "url": "https://david.coffee/cloudflare-zero-trust-tunnels",
-      "score": 22,
-      "comments": 4,
-      "collected_at": "2025-11-16T20:15:31.001564+00:00"
+      "score": 39,
+      "comments": 13,
+      "collected_at": "2025-11-16T20:53:35.351903+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Fourier Transforms",
+      "url": "https://www.continuummechanics.org/fourierxforms.html",
+      "score": 66,
+      "comments": 10,
+      "collected_at": "2025-11-16T20:53:35.468686+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "What if you don't need MCP at all?",
+      "url": "https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/",
+      "score": 13,
+      "comments": 2,
+      "collected_at": "2025-11-16T20:53:35.588258+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Decoding Leibniz Notation (2024)",
+      "url": "https://www.spakhm.com/leibniz",
+      "score": 9,
+      "comments": 0,
+      "collected_at": "2025-11-16T20:53:35.763634+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Brimstone: ES2025 JavaScript engine written in Rust",
+      "url": "https://github.com/Hans-Halverson/brimstone",
+      "score": 169,
+      "comments": 84,
+      "collected_at": "2025-11-16T20:53:35.883811+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Anthropic\u2019s paper smells like bullshit",
+      "url": "https://djnn.sh/posts/anthropic-s-paper-smells-like-bullshit/",
+      "score": 731,
+      "comments": 220,
+      "collected_at": "2025-11-16T20:53:35.998643+00:00"
     },
     {
       "source": "hackernews",
       "title": "Garbage Collection Is Useful",
       "url": "https://dubroy.com/blog/garbage-collection-is-useful/",
-      "score": 90,
-      "comments": 15,
-      "collected_at": "2025-11-16T20:15:31.101242+00:00"
+      "score": 99,
+      "comments": 16,
+      "collected_at": "2025-11-16T20:53:36.113529+00:00"
     },
     {
       "source": "hackernews",
       "title": "De Bruijn Numerals",
       "url": "https://text.marvinborner.de/2023-08-22-22.html",
-      "score": 44,
+      "score": 52,
       "comments": 7,
-      "collected_at": "2025-11-16T20:15:31.197355+00:00"
+      "collected_at": "2025-11-16T20:53:36.226068+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Dark Pattern Games",
+      "url": "https://www.darkpattern.games",
+      "score": 7,
+      "comments": 0,
+      "collected_at": "2025-11-16T20:53:36.345183+00:00"
     },
     {
       "source": "hackernews",
       "title": "Holes (1970) [pdf]",
       "url": "https://rintintin.colorado.edu/~vancecd/phil375/Lewis1.pdf",
-      "score": 14,
-      "comments": 2,
-      "collected_at": "2025-11-16T20:15:31.299012+00:00"
+      "score": 20,
+      "comments": 3,
+      "collected_at": "2025-11-16T20:53:36.460471+00:00"
     },
     {
       "source": "hackernews",
-      "title": "Measuring the doppler shift of WWVB during a flight",
-      "url": "https://greatscottgadgets.com/2025/10-31-receiving-wwvb-with-hackrf-pro/",
-      "score": 95,
+      "title": "Your Land, My Land (Offrange) \u2013 Lithium vs. Lettuce in the Imperial Valley, CA",
+      "url": "https://ambrook.com/offrange/photo-essay/lithium-v-lettuce",
+      "score": 4,
       "comments": 0,
-      "collected_at": "2025-11-16T20:15:31.396356+00:00"
+      "collected_at": "2025-11-16T20:53:36.575215+00:00"
     },
     {
       "source": "hackernews",
       "title": "Waiting for SQL:202y: Group by All",
       "url": "http://peter.eisentraut.org/blog/2025/11/11/waiting-for-sql-202y-group-by-all",
-      "score": 18,
-      "comments": 4,
-      "collected_at": "2025-11-16T20:15:31.493627+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Running the \"Reflections on Trusting Trust\" Compiler (2023)",
-      "url": "https://research.swtch.com/nih",
-      "score": 95,
-      "comments": 4,
-      "collected_at": "2025-11-16T20:15:31.590869+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Anthropic's report smells a lot like bullshit",
-      "url": "https://djnn.sh/posts/anthropic-s-paper-smells-like-bullshit/",
-      "score": 708,
-      "comments": 215,
-      "collected_at": "2025-11-16T20:15:31.686068+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "The Man Who Keeps Predicting the Web's Death",
-      "url": "https://tedium.co/2025/10/25/web-dead-predictions-george-colony/",
-      "score": 13,
-      "comments": 0,
-      "collected_at": "2025-11-16T20:15:31.794391+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Vintage Large Language Models",
-      "url": "https://owainevans.github.io/talk-transcript.html",
-      "score": 42,
-      "comments": 13,
-      "collected_at": "2025-11-16T20:15:31.888406+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Three kinds of AI products work",
-      "url": "https://www.seangoedecke.com/ai-products/",
-      "score": 83,
-      "comments": 81,
-      "collected_at": "2025-11-16T20:15:31.985395+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Where Educational Technology Fails: A seventh-grader's perspective",
-      "url": "https://micahblachman.beehiiv.com/p/where-educational-technology-fails",
-      "score": 31,
-      "comments": 89,
-      "collected_at": "2025-11-16T20:15:32.081712+00:00"
+      "score": 22,
+      "comments": 5,
+      "collected_at": "2025-11-16T20:53:36.686278+00:00"
     },
     {
       "title": "Operating Margins",
@@ -4511,140 +4511,140 @@
       "title": "Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-14",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565365+00:00"
+      "collected_at": "2025-11-16T20:53:39.038034+00:00"
     },
     {
       "source": "tldr",
       "title": "GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-13",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565384+00:00"
+      "collected_at": "2025-11-16T20:53:39.038054+00:00"
     },
     {
       "source": "tldr",
       "title": "SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-12",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565390+00:00"
+      "collected_at": "2025-11-16T20:53:39.038060+00:00"
     },
     {
       "source": "tldr",
       "title": "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-11",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565394+00:00"
+      "collected_at": "2025-11-16T20:53:39.038064+00:00"
     },
     {
       "source": "tldr",
       "title": "Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc",
       "url": "https://tldr.tech/tech/2025-11-10",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565398+00:00"
+      "collected_at": "2025-11-16T20:53:39.038068+00:00"
     },
     {
       "source": "tldr",
       "title": "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-07",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565402+00:00"
+      "collected_at": "2025-11-16T20:53:39.038072+00:00"
     },
     {
       "source": "tldr",
       "title": "Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-06",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565406+00:00"
+      "collected_at": "2025-11-16T20:53:39.038075+00:00"
     },
     {
       "source": "tldr",
       "title": "Low cost MacBook \ud83d\udcbb, Google AI data centers \ud83d\udef0\ufe0f, inside xAI \ud83e\udd16",
       "url": "https://tldr.tech/tech/2025-11-05",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565409+00:00"
+      "collected_at": "2025-11-16T20:53:39.038079+00:00"
     },
     {
       "source": "tldr",
       "title": "OpenAI AWS $38B deal \ud83d\udcb0, Facebook Dating \u2764\ufe0f, htmx 4 \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-04",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565413+00:00"
+      "collected_at": "2025-11-16T20:53:39.038083+00:00"
     },
     {
       "source": "tldr",
       "title": "Gemini Siri \ud83d\udcf1, SpaceX datacenters \ud83d\udef0\ufe0f, GitHub immutable releases \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-03",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565416+00:00"
+      "collected_at": "2025-11-16T20:53:39.038087+00:00"
     },
     {
       "source": "tldr",
       "title": "Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c",
       "url": "https://tldr.tech/ai/2025-11-14",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565420+00:00"
+      "collected_at": "2025-11-16T20:53:39.038090+00:00"
     },
     {
       "source": "tldr",
       "title": "MSFT OpenAI docs leak \ud83d\udcc4, GPT-5.1 \ud83e\udd16, Anthropic\u2019s $50B Bet \ud83d\udcb0",
       "url": "https://tldr.tech/ai/2025-11-13",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565423+00:00"
+      "collected_at": "2025-11-16T20:53:39.038094+00:00"
     },
     {
       "source": "tldr",
       "title": "ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
       "url": "https://tldr.tech/ai/2025-11-12",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565427+00:00"
+      "collected_at": "2025-11-16T20:53:39.038097+00:00"
     },
     {
       "source": "tldr",
       "title": "Grok Code Remote \ud83d\udc68\u200d\ud83d\udcbb , GPT-5.1 on OpenRouter \ud83e\udd16, Moonshot AI AMA \ud83d\udcac",
       "url": "https://tldr.tech/ai/2025-11-11",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565430+00:00"
+      "collected_at": "2025-11-16T20:53:39.038101+00:00"
     },
     {
       "source": "tldr",
       "title": "Nano Banana 2 leaks \ud83c\udf4c, GPT-5-Codex-Mini \ud83d\udc68\u200d\ud83d\udcbb, nested learning \ud83e\udde0",
       "url": "https://tldr.tech/ai/2025-11-10",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565434+00:00"
+      "collected_at": "2025-11-16T20:53:39.038104+00:00"
     },
     {
       "source": "tldr",
       "title": "Sam on OpenAI finances \ud83d\udcb0, GPT-5.1 \ud83e\udd16, Anthropic $350B valuation \ud83d\udcc8",
       "url": "https://tldr.tech/ai/2025-11-07",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565437+00:00"
+      "collected_at": "2025-11-16T20:53:39.038108+00:00"
     },
     {
       "source": "tldr",
       "title": "Gemini 3 this month \u2728, OpenAI CFO comments \ud83d\udcb0, Snapchat + Perplexity \ud83e\udd1d",
       "url": "https://tldr.tech/ai/2025-11-06",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565441+00:00"
+      "collected_at": "2025-11-16T20:53:39.038111+00:00"
     },
     {
       "source": "tldr",
       "title": "Anthropic $70B projection \ud83d\udcb0, Nano Banana 2 \ud83c\udf4c, beyond standard LLMs \ud83e\udde0",
       "url": "https://tldr.tech/ai/2025-11-05",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565444+00:00"
+      "collected_at": "2025-11-16T20:53:39.038115+00:00"
     },
     {
       "source": "tldr",
       "title": "Anthropic\u2019s AGI timeline \u23f3, AWS + OpenAI \ud83e\udd1d, Qwen3-Max-Thinking \ud83e\udd16",
       "url": "https://tldr.tech/ai/2025-11-04",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565448+00:00"
+      "collected_at": "2025-11-16T20:53:39.038119+00:00"
     },
     {
       "source": "tldr",
       "title": "Anthropic $300B rumor \ud83d\udcb0, Siri\u2019s private Gemini model \ud83d\udcf1, Ilya\u2019s deposition \ud83e\uddd1\u200d\u2696\ufe0f",
       "url": "https://tldr.tech/ai/2025-11-03",
       "summary": "",
-      "collected_at": "2025-11-16T20:15:35.565451+00:00"
+      "collected_at": "2025-11-16T20:53:39.038122+00:00"
     },
     {
       "title": "Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
@@ -6226,8 +6226,8 @@
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 8632,
-      "forks_text": "8,632",
+      "forks": 8641,
+      "forks_text": "8,641",
       "stars_period": "1,137 stars today",
       "stars_period_count": 1137
     },
@@ -6240,8 +6240,8 @@
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 5087,
-      "forks_text": "5,087",
+      "forks": 5088,
+      "forks_text": "5,088",
       "stars_period": "192 stars today",
       "stars_period_count": 192
     },
@@ -6254,8 +6254,8 @@
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 3454,
-      "forks_text": "3,454",
+      "forks": 3455,
+      "forks_text": "3,455",
       "stars_period": "112 stars today",
       "stars_period_count": 112
     },
@@ -6506,8 +6506,8 @@
       "language": "TypeScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 16081,
-      "forks_text": "16,081",
+      "forks": 16082,
+      "forks_text": "16,082",
       "stars_period": "125 stars today",
       "stars_period_count": 125
     },
@@ -6548,8 +6548,8 @@
       "language": "TypeScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 465,
-      "forks_text": "465",
+      "forks": 466,
+      "forks_text": "466",
       "stars_period": "12 stars today",
       "stars_period_count": 12
     },
