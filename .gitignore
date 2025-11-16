@@ -1,64 +1,29 @@
-# Node modules and dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-package-lock.json
-yarn.lock
+# Temporary test files
+learnings/agent_memory/*.json
 
-# Build outputs
+# Build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.dylib
+*.egg
+*.egg-info/
 dist/
 build/
-*.log
 
-# IDE and editor files
+# IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+
+# OS
 .DS_Store
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-
-# Environment files
-.env
-.env.local
-.env.*.local
-
-# OS generated files
 Thumbs.db
-.DS_Store
 
-# Python cache files
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-
-# Workflow backups created by workflow-orchestrator
-.github/workflow-backups/
-
-# Lazy evaluation cache
-.cache/
-
-# Accidentally created nested tools directory
-tools/tools/
-
-# Test-generated metrics files (keep pattern_database.json but ignore test runs)
-.github/agent-system/metrics/creativity/test-agent*/
-.github/agent-system/metrics/creativity/test-*/
-workflow_health_report.json
-
-# Legacy registry.json (replaced by distributed format)
-.github/agent-system/registry.json
-.github/agent-system/registry.json.backup
-
-# Registry lock files
-.github/agent-system/**/*.lock
-*.backup
-world/__pycache__/
+# Logs
+*.log
