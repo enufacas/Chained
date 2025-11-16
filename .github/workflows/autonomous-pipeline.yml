@@ -960,6 +960,14 @@ jobs:
             echo "ℹ️ Mission issues tool not found, skipping issue creation"
           fi
 
+      - name: Upload mission assignments artifact
+        if: steps.create.outputs.mission_count > 0
+        uses: actions/upload-artifact@v4
+        with:
+          name: mission-assignments
+          path: created_missions.json
+          retention-days: 1
+
       - name: Update world state
         if: steps.create.outputs.mission_count > 0
         run: |
@@ -1155,6 +1163,12 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests
+      
+      - name: Download mission assignments artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mission-assignments
+        continue-on-error: true
       
       - name: Assign agents to mission issues
         env:
