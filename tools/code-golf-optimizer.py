@@ -4,14 +4,19 @@ AI Code Golf Optimizer - Minimize code while preserving functionality
 
 This tool analyzes code and suggests optimizations to reduce character count
 while maintaining correctness, perfect for code golf challenges.
+
+Enhanced with AI-powered pattern learning and adaptive optimization strategies.
 """
 
 import sys
 import re
 import argparse
 import json
-from typing import Dict, List, Tuple, Optional
+import os
+from typing import Dict, List, Tuple, Optional, Set
 from dataclasses import dataclass, asdict
+from datetime import datetime
+from collections import defaultdict
 
 
 @dataclass
@@ -24,15 +29,165 @@ class OptimizationResult:
     reduction_percentage: float
     optimizations_applied: List[str]
     language: str
+    pattern_scores: Optional[Dict[str, float]] = None
+    ai_suggestions: Optional[List[str]] = None
     
     def to_dict(self):
         return asdict(self)
 
 
-class CodeGolfOptimizer:
-    """Main optimizer class for multiple languages"""
+class PatternLearningEngine:
+    """AI-powered pattern learning system for optimization strategies"""
     
-    def __init__(self):
+    def __init__(self, storage_path: str = None):
+        if storage_path is None:
+            storage_path = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'data',
+                'code_golf_patterns.json'
+            )
+        self.storage_path = storage_path
+        self.patterns = self._load_patterns()
+        self.session_stats = defaultdict(lambda: {'applications': 0, 'total_reduction': 0})
+    
+    def _load_patterns(self) -> Dict:
+        """Load pattern effectiveness data from storage"""
+        if os.path.exists(self.storage_path):
+            try:
+                with open(self.storage_path, 'r') as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, IOError):
+                pass
+        
+        # Initialize with default pattern effectiveness scores
+        return {
+            'python': {
+                'comment_removal': {'effectiveness': 0.8, 'applications': 0, 'avg_reduction': 15.0},
+                'docstring_removal': {'effectiveness': 0.85, 'applications': 0, 'avg_reduction': 25.0},
+                'whitespace_reduction': {'effectiveness': 0.9, 'applications': 0, 'avg_reduction': 10.0},
+                'blank_line_removal': {'effectiveness': 0.75, 'applications': 0, 'avg_reduction': 5.0},
+                'boolean_simplification': {'effectiveness': 0.7, 'applications': 0, 'avg_reduction': 8.0},
+                'variable_shortening': {'effectiveness': 0.6, 'applications': 0, 'avg_reduction': 20.0},
+                'lambda_optimization': {'effectiveness': 0.5, 'applications': 0, 'avg_reduction': 12.0},
+            },
+            'javascript': {
+                'comment_removal': {'effectiveness': 0.8, 'applications': 0, 'avg_reduction': 12.0},
+                'boolean_simplification': {'effectiveness': 0.9, 'applications': 0, 'avg_reduction': 6.0},
+                'whitespace_reduction': {'effectiveness': 0.85, 'applications': 0, 'avg_reduction': 8.0},
+                'arrow_function_conversion': {'effectiveness': 0.75, 'applications': 0, 'avg_reduction': 15.0},
+            },
+            'bash': {
+                'comment_removal': {'effectiveness': 0.75, 'applications': 0, 'avg_reduction': 10.0},
+                'whitespace_reduction': {'effectiveness': 0.8, 'applications': 0, 'avg_reduction': 5.0},
+            }
+        }
+    
+    def _save_patterns(self):
+        """Save pattern effectiveness data to storage"""
+        os.makedirs(os.path.dirname(self.storage_path), exist_ok=True)
+        try:
+            with open(self.storage_path, 'w') as f:
+                json.dump(self.patterns, f, indent=2)
+        except IOError as e:
+            print(f"Warning: Could not save patterns: {e}", file=sys.stderr)
+    
+    def get_pattern_priority(self, language: str) -> List[Tuple[str, float]]:
+        """Get optimizations ranked by effectiveness for given language"""
+        if language not in self.patterns:
+            return []
+        
+        patterns = self.patterns[language]
+        # Sort by effectiveness score (higher is better)
+        return sorted(
+            [(name, data['effectiveness']) for name, data in patterns.items()],
+            key=lambda x: x[1],
+            reverse=True
+        )
+    
+    def record_optimization(self, language: str, pattern_name: str, reduction: float):
+        """Record the result of applying an optimization pattern"""
+        if language not in self.patterns:
+            self.patterns[language] = {}
+        
+        if pattern_name not in self.patterns[language]:
+            self.patterns[language][pattern_name] = {
+                'effectiveness': 0.5,
+                'applications': 0,
+                'avg_reduction': 0.0
+            }
+        
+        pattern = self.patterns[language][pattern_name]
+        
+        # Update running average
+        total_reduction = pattern['avg_reduction'] * pattern['applications']
+        pattern['applications'] += 1
+        pattern['avg_reduction'] = (total_reduction + reduction) / pattern['applications']
+        
+        # Update effectiveness score (weighted average with decay)
+        # Higher reduction = higher effectiveness
+        new_effectiveness = min(1.0, reduction / 30.0)  # Scale: 30% reduction = 1.0 effectiveness
+        pattern['effectiveness'] = (
+            pattern['effectiveness'] * 0.9 + new_effectiveness * 0.1
+        )
+        
+        self.session_stats[pattern_name]['applications'] += 1
+        self.session_stats[pattern_name]['total_reduction'] += reduction
+    
+    def get_ai_suggestions(self, language: str, code: str) -> List[str]:
+        """Get AI-powered suggestions based on learned patterns"""
+        suggestions = []
+        
+        # Get top patterns for this language
+        top_patterns = self.get_pattern_priority(language)[:3]
+        
+        for pattern_name, effectiveness in top_patterns:
+            if pattern_name == 'variable_shortening' and len(code) > 100:
+                suggestions.append(
+                    f"✨ Variable shortening highly effective (score: {effectiveness:.2f}) - "
+                    f"Consider using single-letter names for frequently used variables"
+                )
+            elif pattern_name == 'lambda_optimization':
+                if 'lambda' in code:
+                    suggestions.append(
+                        f"✨ Lambda expressions detected - Consider inline optimization (score: {effectiveness:.2f})"
+                    )
+            elif pattern_name == 'arrow_function_conversion':
+                if 'function' in code and language == 'javascript':
+                    suggestions.append(
+                        f"✨ Convert functions to arrow syntax for shorter code (score: {effectiveness:.2f})"
+                    )
+        
+        # Code-specific insights
+        if language == 'python':
+            if 'for ' in code and ' in range(' in code:
+                suggestions.append("💡 Consider list comprehensions to reduce loop overhead")
+            if 'if ' in code and 'else:' in code:
+                suggestions.append("💡 Ternary operators (x if c else y) can be shorter")
+        
+        return suggestions
+    
+    def get_session_summary(self) -> Dict:
+        """Get summary of optimizations applied in current session"""
+        return {
+            'patterns_used': len(self.session_stats),
+            'total_applications': sum(s['applications'] for s in self.session_stats.values()),
+            'total_reduction': sum(s['total_reduction'] for s in self.session_stats.values()),
+            'top_patterns': sorted(
+                [(name, stats) for name, stats in self.session_stats.items()],
+                key=lambda x: x[1]['total_reduction'],
+                reverse=True
+            )[:5]
+        }
+    
+    def save_session(self):
+        """Save learned patterns to persistent storage"""
+        self._save_patterns()
+
+
+class CodeGolfOptimizer:
+    """Main optimizer class for multiple languages with AI-powered learning"""
+    
+    def __init__(self, enable_learning: bool = True):
         self.optimizations = {
             'python': self._optimize_python,
             'javascript': self._optimize_javascript,
@@ -40,9 +195,10 @@ class CodeGolfOptimizer:
             'bash': self._optimize_bash,
             'sh': self._optimize_bash,
         }
+        self.learning_engine = PatternLearningEngine() if enable_learning else None
     
-    def optimize(self, code: str, language: str = 'python') -> OptimizationResult:
-        """Optimize code for the specified language"""
+    def optimize(self, code: str, language: str = 'python', learn: bool = True) -> OptimizationResult:
+        """Optimize code for the specified language with AI-powered suggestions"""
         language = language.lower()
         
         if language not in self.optimizations:
@@ -54,6 +210,27 @@ class CodeGolfOptimizer:
         
         reduction = ((original_chars - optimized_chars) / original_chars * 100) if original_chars > 0 else 0
         
+        # Record patterns for learning
+        pattern_scores = {}
+        if self.learning_engine and learn:
+            for optimization in applied:
+                # Extract pattern name from optimization description
+                pattern_name = self._extract_pattern_name(optimization)
+                if pattern_name:
+                    # Calculate individual pattern contribution (approximate)
+                    pattern_reduction = reduction / len(applied) if applied else 0
+                    self.learning_engine.record_optimization(language, pattern_name, pattern_reduction)
+                    
+                    # Get pattern effectiveness score
+                    patterns = self.learning_engine.patterns.get(language, {})
+                    if pattern_name in patterns:
+                        pattern_scores[pattern_name] = patterns[pattern_name]['effectiveness']
+        
+        # Get AI suggestions
+        ai_suggestions = []
+        if self.learning_engine:
+            ai_suggestions = self.learning_engine.get_ai_suggestions(language, code)
+        
         return OptimizationResult(
             original_code=code,
             optimized_code=optimized_code,
@@ -61,8 +238,41 @@ class CodeGolfOptimizer:
             optimized_chars=optimized_chars,
             reduction_percentage=round(reduction, 2),
             optimizations_applied=applied,
-            language=language
+            language=language,
+            pattern_scores=pattern_scores,
+            ai_suggestions=ai_suggestions
         )
+    
+    def _extract_pattern_name(self, optimization_text: str) -> Optional[str]:
+        """Extract pattern name from optimization description"""
+        patterns_map = {
+            'comment': 'comment_removal',
+            'docstring': 'docstring_removal',
+            'spaces': 'whitespace_reduction',
+            'blank': 'blank_line_removal',
+            'True/False': 'boolean_simplification',
+            'true/false': 'boolean_simplification',
+            'variable': 'variable_shortening',
+            'lambda': 'lambda_optimization',
+            'arrow': 'arrow_function_conversion',
+        }
+        
+        text_lower = optimization_text.lower()
+        for keyword, pattern_name in patterns_map.items():
+            if keyword in text_lower:
+                return pattern_name
+        return None
+    
+    def get_learning_stats(self) -> Dict:
+        """Get statistics about learned optimization patterns"""
+        if not self.learning_engine:
+            return {}
+        return self.learning_engine.get_session_summary()
+    
+    def save_learning(self):
+        """Persist learned patterns to storage"""
+        if self.learning_engine:
+            self.learning_engine.save_session()
     
     def _optimize_python(self, code: str) -> Tuple[str, List[str]]:
         """Optimize Python code for minimal character count"""
@@ -223,15 +433,15 @@ class CodeGolfOptimizer:
         return optimized, applied
 
 
-def format_output(result: OptimizationResult, format_type: str = 'text') -> str:
-    """Format optimization results"""
+def format_output(result: OptimizationResult, format_type: str = 'text', show_ai: bool = True) -> str:
+    """Format optimization results with AI insights"""
     if format_type == 'json':
         return json.dumps(result.to_dict(), indent=2)
     
-    # Text format
+    # Text format with AI enhancements
     lines = [
         "=" * 70,
-        "CODE GOLF OPTIMIZATION RESULTS",
+        "🤖 AI CODE GOLF OPTIMIZATION RESULTS",
         "=" * 70,
         f"Language: {result.language.upper()}",
         f"Original: {result.original_chars} characters",
@@ -246,6 +456,25 @@ def format_output(result: OptimizationResult, format_type: str = 'text') -> str:
     
     if not result.optimizations_applied:
         lines.append("  (No optimizations applied)")
+    
+    # Show pattern effectiveness scores
+    if show_ai and result.pattern_scores:
+        lines.extend([
+            "",
+            "📊 Pattern Effectiveness Scores:",
+        ])
+        for pattern, score in sorted(result.pattern_scores.items(), key=lambda x: x[1], reverse=True):
+            bar = "█" * int(score * 20) + "░" * (20 - int(score * 20))
+            lines.append(f"  {pattern:25s} {bar} {score:.2f}")
+    
+    # Show AI suggestions
+    if show_ai and result.ai_suggestions:
+        lines.extend([
+            "",
+            "💡 AI-Powered Suggestions:",
+        ])
+        for suggestion in result.ai_suggestions:
+            lines.append(f"  {suggestion}")
     
     lines.extend([
         "",
@@ -265,23 +494,26 @@ def format_output(result: OptimizationResult, format_type: str = 'text') -> str:
 
 
 def main():
-    """Main CLI entry point"""
+    """Main CLI entry point with AI enhancements"""
     parser = argparse.ArgumentParser(
-        description='AI Code Golf Optimizer - Minimize code while preserving functionality',
+        description='🤖 AI Code Golf Optimizer - Minimize code with machine learning',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Optimize Python code from file
+  # Optimize Python code with AI suggestions
   %(prog)s -f script.py -l python
   
   # Optimize JavaScript code from stdin
   echo "function test() { return true; }" | %(prog)s -l javascript
   
-  # Output as JSON
+  # Output as JSON with AI data
   %(prog)s -f script.py -l python --format json
   
-  # Optimize bash script
-  %(prog)s -f deploy.sh -l bash
+  # Disable AI learning (faster, no persistence)
+  %(prog)s -f script.py --no-ai
+  
+  # Show learning statistics
+  %(prog)s -f script.py --stats
         """
     )
     
@@ -292,6 +524,12 @@ Examples:
     parser.add_argument('--format', choices=['text', 'json'], default='text',
                         help='Output format (default: text)')
     parser.add_argument('-o', '--output', help='Output file (default: stdout)')
+    parser.add_argument('--no-ai', action='store_true',
+                        help='Disable AI learning and suggestions')
+    parser.add_argument('--stats', action='store_true',
+                        help='Show learning statistics after optimization')
+    parser.add_argument('--no-save', action='store_true',
+                        help='Do not save learned patterns (temporary session)')
     
     args = parser.parse_args()
     
@@ -312,8 +550,8 @@ Examples:
         print("Error: No code provided", file=sys.stderr)
         sys.exit(1)
     
-    # Optimize code
-    optimizer = CodeGolfOptimizer()
+    # Optimize code with AI
+    optimizer = CodeGolfOptimizer(enable_learning=not args.no_ai)
     try:
         result = optimizer.optimize(code, args.language)
     except ValueError as e:
@@ -321,7 +559,7 @@ Examples:
         sys.exit(1)
     
     # Format and output results
-    output = format_output(result, args.format)
+    output = format_output(result, args.format, show_ai=not args.no_ai)
     
     if args.output:
         with open(args.output, 'w') as f:
@@ -329,6 +567,28 @@ Examples:
         print(f"Results written to {args.output}")
     else:
         print(output)
+    
+    # Show learning statistics if requested
+    if args.stats and not args.no_ai:
+        stats = optimizer.get_learning_stats()
+        print("\n" + "=" * 70)
+        print("📊 LEARNING STATISTICS")
+        print("=" * 70)
+        print(f"Patterns used in session: {stats.get('patterns_used', 0)}")
+        print(f"Total applications: {stats.get('total_applications', 0)}")
+        print(f"Total reduction achieved: {stats.get('total_reduction', 0):.2f}%")
+        
+        if stats.get('top_patterns'):
+            print("\nTop performing patterns:")
+            for name, pattern_stats in stats['top_patterns']:
+                print(f"  • {name}: {pattern_stats['applications']} uses, "
+                      f"{pattern_stats['total_reduction']:.2f}% total reduction")
+    
+    # Save learning data
+    if not args.no_ai and not args.no_save:
+        optimizer.save_learning()
+        if not args.output and args.format == 'text':
+            print("\n💾 Learning data saved for future optimizations")
 
 
 if __name__ == '__main__':
