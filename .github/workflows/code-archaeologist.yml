@@ -98,14 +98,21 @@ jobs:
             # Push branch
             git push origin "$BRANCH_NAME"
             
-            # Create PR
+            # Create PR (with fallback if labels don't exist)
             PR_DATE=$(date +%Y-%m-%d)
             gh pr create \
               --title "🏛️ Update archaeology database - ${PR_DATE}" \
               --body "## Archaeology Database Update"$'\n\n'"This PR updates the code archaeology database with active learning patterns."$'\n\n'"### Changes"$'\n'"- Updated archaeology analysis data"$'\n'"- Patterns learned: ${{ steps.stats.outputs.patterns_learned }}"$'\n'"- Recommendations: ${{ steps.stats.outputs.recommendations }}"$'\n\n'"---"$'\n'"*🤖 Automated archaeology workflow*" \
               --label "code-quality,automated,copilot" \
               --base main \
-              --head "$BRANCH_NAME"
+              --head "$BRANCH_NAME" || {
+                echo "⚠️ PR creation with labels failed, retrying without labels..."
+                gh pr create \
+                  --title "🏛️ Update archaeology database - ${PR_DATE}" \
+                  --body "## Archaeology Database Update"$'\n\n'"This PR updates the code archaeology database. (Labels could not be applied)" \
+                  --base main \
+                  --head "$BRANCH_NAME"
+              }
             
             echo "✅ PR created for archaeology data update"
           fi
