@@ -86,6 +86,34 @@ const DEFAULT_AGENT_LOCATIONS = {
 function initMap() {
     const mapDiv = document.getElementById('map');
     
+    // Check if Leaflet is loaded
+    if (typeof L === 'undefined') {
+        console.error('Leaflet library failed to load');
+        mapDiv.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #1a1a2e; border-radius: 12px; padding: 2rem;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🗺️</div>
+                <h2 style="color: #0891b2; margin-bottom: 1rem;">Map Unavailable</h2>
+                <p style="color: #9ca3af; text-align: center; max-width: 400px; margin-bottom: 1rem;">
+                    The map library failed to load. This may be due to ad blockers or network restrictions.
+                </p>
+                <p style="color: #9ca3af; text-align: center; max-width: 400px; margin-bottom: 1rem;">
+                    The world state is still being loaded and displayed in the sidebar. 
+                    You can view agent locations and metrics there.
+                </p>
+                <button onclick="location.reload()" style="background: #0891b2; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: 1rem; margin-top: 1rem;">
+                    🔄 Try Reloading
+                </button>
+            </div>
+        `;
+        // Still load data for sidebar
+        loadWorldData().then(success => {
+            if (success) {
+                updateSidebar();
+            }
+        });
+        return;
+    }
+    
     // Create Leaflet map
     map = L.map('map', {
         center: [20, 0],
@@ -131,15 +159,57 @@ function initMap() {
 // Load world data
 async function loadWorldData() {
     try {
+        // Show loading state
+        const refreshBtn = document.getElementById('refresh-btn');
+        const lastUpdateEl = document.getElementById('last-update');
+        if (refreshBtn) refreshBtn.textContent = '⏳ Loading...';
+        
         const stateResponse = await fetch('./world/world_state.json');
+        if (!stateResponse.ok) {
+            throw new Error(`Failed to load world state: ${stateResponse.status}`);
+        }
         worldState = await stateResponse.json();
         
         const knowledgeResponse = await fetch('./world/knowledge.json');
+        if (!knowledgeResponse.ok) {
+            throw new Error(`Failed to load knowledge: ${knowledgeResponse.status}`);
+        }
         knowledge = await knowledgeResponse.json();
         
+        // Update last refresh time
+        if (lastUpdateEl) {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString();
+            lastUpdateEl.textContent = `Last updated: ${timeStr}`;
+            lastUpdateEl.style.color = '#10b981';
+        }
+        
+        // Update world state time if available
+        if (worldState && worldState.time) {
+            const stateTime = new Date(worldState.time);
+            if (lastUpdateEl) {
+                lastUpdateEl.textContent = `Data from: ${stateTime.toLocaleString()}`;
+            }
+        }
+        
+        if (refreshBtn) refreshBtn.textContent = '🔄 Refresh Data';
         return true;
     } catch (error) {
         console.error('Error loading world data:', error);
+        
+        // Show error state
+        const refreshBtn = document.getElementById('refresh-btn');
+        const lastUpdateEl = document.getElementById('last-update');
+        if (refreshBtn) {
+            refreshBtn.textContent = '⚠️ Failed to Load';
+            setTimeout(() => {
+                refreshBtn.textContent = '🔄 Refresh Data';
+            }, 3000);
+        }
+        if (lastUpdateEl) {
+            lastUpdateEl.textContent = `Error: ${error.message}`;
+            lastUpdateEl.style.color = '#ef4444';
+        }
         return false;
     }
 }
@@ -147,7 +217,7 @@ async function loadWorldData() {
 // Get agent location (from world state or defaults)
 function getAgentLocation(agentLabel) {
     // PRIORITY 1: Check if agent has location in world state (source of truth)
-    if (worldState && worldState.regions) {
+    if (worldState && worldState.agents && worldState.regions) {
         const agent = worldState.agents.find(a => a.label === agentLabel);
         if (agent && agent.location_region_id) {
             const region = worldState.regions.find(r => r.id === agent.location_region_id);
@@ -155,7 +225,8 @@ function getAgentLocation(agentLabel) {
                 return {
                     lat: region.lat,
                     lng: region.lng,
-                    city: region.label
+                    city: region.label,
+                    region_id: region.id
                 };
             }
         }
@@ -228,12 +299,22 @@ function createAgentIcon(agent) {
     });
 }
 
+// Layer groups for different visualizations
+let pathLayers = null;
+let regionLayers = null;
+
 // Render all agents on map
 function renderAgents() {
     if (!worldState || !worldState.agents || !map) return;
     
     // Clear existing markers
     agentMarkers.clearLayers();
+    
+    // Clear and recreate path layers
+    if (pathLayers) {
+        map.removeLayer(pathLayers);
+    }
+    pathLayers = L.layerGroup().addTo(map);
     
     // Get all agent definitions
     const allAgentKeys = Object.keys(DEFAULT_AGENT_LOCATIONS);
@@ -247,6 +328,11 @@ function renderAgents() {
         const icon = createAgentIcon(agent);
         
         const marker = L.marker([location.lat, location.lng], { icon });
+        
+        // Draw agent path if exists
+        if (agent.path && agent.path.length > 0) {
+            drawAgentPath(agent, location);
+        }
         
         // Create popup content
         const score = agent.metrics?.overall_score || 0;
@@ -303,6 +389,130 @@ function renderAgents() {
             
             marker.bindPopup(popupContent);
             agentMarkers.addLayer(marker);
+        }
+    });
+    
+    // Render region markers
+    renderRegions();
+}
+
+// Draw agent movement path on map
+function drawAgentPath(agent, currentLocation) {
+    if (!agent.path || agent.path.length === 0 || !worldState.regions) return;
+    
+    const pathCoordinates = [[currentLocation.lat, currentLocation.lng]];
+    
+    // Get coordinates for each region in the path
+    agent.path.forEach(regionId => {
+        const region = worldState.regions.find(r => r.id === regionId);
+        if (region) {
+            pathCoordinates.push([region.lat, region.lng]);
+        }
+    });
+    
+    // Draw path with color based on agent score
+    const score = agent.metrics?.overall_score || 0;
+    let pathColor = '#6b7280';
+    if (score >= 0.85) pathColor = '#10b981';
+    else if (score >= 0.5) pathColor = '#0891b2';
+    else if (score >= 0.3) pathColor = '#f59e0b';
+    else pathColor = '#ef4444';
+    
+    const polyline = L.polyline(pathCoordinates, {
+        color: pathColor,
+        weight: 2,
+        opacity: 0.6,
+        dashArray: '5, 10',
+        lineJoin: 'round'
+    });
+    
+    polyline.bindPopup(`
+        <div style="min-width: 150px;">
+            <h4 style="margin: 0 0 8px 0; color: ${pathColor};">${agent.label} Journey</h4>
+            <p style="margin: 4px 0; font-size: 12px;">📍 Current: ${currentLocation.city}</p>
+            <p style="margin: 4px 0; font-size: 12px;">🗺️ Remaining stops: ${agent.path.length}</p>
+        </div>
+    `);
+    
+    pathLayers.addLayer(polyline);
+    
+    // Add small markers for waypoints
+    agent.path.forEach((regionId, index) => {
+        const region = worldState.regions.find(r => r.id === regionId);
+        if (region) {
+            const waypointMarker = L.circleMarker([region.lat, region.lng], {
+                radius: 4,
+                color: pathColor,
+                fillColor: pathColor,
+                fillOpacity: 0.5,
+                weight: 1
+            });
+            
+            waypointMarker.bindPopup(`
+                <div style="min-width: 120px;">
+                    <p style="margin: 0; font-size: 12px;"><strong>Stop ${index + 1}:</strong> ${region.label}</p>
+                </div>
+            `);
+            
+            pathLayers.addLayer(waypointMarker);
+        }
+    });
+}
+
+// Render regions with idea counts
+function renderRegions() {
+    if (!worldState || !worldState.regions) return;
+    
+    // Clear and recreate region layers
+    if (regionLayers) {
+        map.removeLayer(regionLayers);
+    }
+    regionLayers = L.layerGroup().addTo(map);
+    
+    worldState.regions.forEach(region => {
+        const ideaCount = region.idea_count || 0;
+        
+        // Skip regions with no ideas
+        if (ideaCount === 0) return;
+        
+        // Size circle based on idea count
+        const radius = Math.max(5000, Math.min(50000, ideaCount * 5000));
+        
+        // Create circle for region
+        const circle = L.circle([region.lat, region.lng], {
+            radius: radius,
+            color: '#0891b2',
+            fillColor: '#0891b2',
+            fillOpacity: 0.15,
+            weight: 1,
+            opacity: 0.4
+        });
+        
+        // Get agents in this region
+        const agentsHere = worldState.agents.filter(a => a.location_region_id === region.id);
+        
+        circle.bindPopup(`
+            <div style="min-width: 200px;">
+                <h3 style="margin: 0 0 8px 0; color: #0891b2;">${region.label}</h3>
+                <p style="margin: 4px 0; font-size: 13px;"><strong>💡 Ideas:</strong> ${ideaCount}</p>
+                <p style="margin: 4px 0; font-size: 13px;"><strong>🤖 Agents here:</strong> ${agentsHere.length}</p>
+                ${agentsHere.length > 0 ? `<p style="margin: 4px 0; font-size: 12px;">${agentsHere.map(a => a.label).join(', ')}</p>` : ''}
+                ${region.is_home_base ? '<p style="margin: 4px 0; font-size: 12px; color: #f59e0b;"><strong>🏠 Home Base</strong></p>' : ''}
+            </div>
+        `);
+        
+        regionLayers.addLayer(circle);
+        
+        // Add label for significant regions
+        if (ideaCount > 5 || region.is_home_base) {
+            const label = L.marker([region.lat, region.lng], {
+                icon: L.divIcon({
+                    html: `<div style="background: rgba(8, 145, 178, 0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap;">${region.label}</div>`,
+                    className: 'region-label',
+                    iconSize: null
+                })
+            });
+            regionLayers.addLayer(label);
         }
     });
 }
