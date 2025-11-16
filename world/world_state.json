@@ -1,5 +1,5 @@
 {
-  "time": "2025-11-16T16:29:11Z",
+  "time": "2025-11-16T17:21:40Z",
   "tick": 42,
   "agents": [
     {
@@ -7,11 +7,9 @@
       "label": "🧹 Robert Martin",
       "specialization": "organize-guru",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "US:San Francisco"
-      ],
-      "current_idea_id": "idea:19",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -31,11 +29,9 @@
       "label": "🧪 Tesla",
       "specialization": "assert-specialist",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "US:San Francisco"
-      ],
-      "current_idea_id": "idea:24",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -55,12 +51,9 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "US:San Francisco",
-        "US:Redmond"
-      ],
-      "current_idea_id": "idea:17",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -80,12 +73,9 @@
       "label": "🎯 Liskov",
       "specialization": "investigate-champion",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "US:San Francisco",
-        "US:Austin"
-      ],
-      "current_idea_id": "idea:21",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -105,12 +95,9 @@
       "label": "🔒 Moxie Marlinspike",
       "specialization": "secure-ninja",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "TW:Hsinchu",
-        "KR:Seoul"
-      ],
-      "current_idea_id": "idea:2",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -130,12 +117,9 @@
       "label": "🔨 Linus Torvalds",
       "specialization": "construct-specialist",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "CN:Hangzhou",
-        "CN:Shenzhen"
-      ],
-      "current_idea_id": "idea:3",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -155,11 +139,9 @@
       "label": "🎯 Ada",
       "specialization": "investigate-champion",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "US:San Francisco"
-      ],
-      "current_idea_id": "idea:24",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -179,12 +161,9 @@
       "label": "⚙️ Einstein",
       "specialization": "engineer-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "US:San Francisco",
-        "US:Redmond"
-      ],
-      "current_idea_id": "idea:1",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -204,12 +183,9 @@
       "label": "📖 Ada",
       "specialization": "support-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "TW:Hsinchu",
-        "KR:Seoul"
-      ],
-      "current_idea_id": "idea:2",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -229,11 +205,9 @@
       "label": "🌟 Steam Machine Specialist",
       "specialization": "steam-machine",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "US:San Francisco"
-      ],
-      "current_idea_id": "idea:20",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -253,11 +227,9 @@
       "label": "🗂️ Martin Fowler",
       "specialization": "restructure-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "US:San Francisco"
-      ],
-      "current_idea_id": "idea:23",
+      "status": "idle",
+      "path": [],
+      "current_idea_id": null,
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
