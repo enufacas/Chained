@@ -149,44 +149,50 @@ jobs:
               print(f"📚 Loaded {len(learnings)} recent learnings")
               print()
               
-              # Match agents to learnings
-              assignments = []
+              # Use the new diverse assignment method
+              print("🎯 Assigning learnings to agents with diversity constraints...")
+              print()
               
-              for agent in target_agents[:max_assignments]:
-                  agent_id = agent.get('id')
-                  agent_name = agent.get('name', agent_id)
-                  
-                  print(f"🔍 Matching {agent_name}...")
-                  
-                  # Get agent specialization from config
-                  agent_spec = matcher.agents.get(agent_id, {})
-                  
-                  if not agent_spec:
-                      print(f"   ⚠️  No specialization found for {agent_id}, skipping")
-                      continue
-                  
-                  # Find best matching learnings
-                  matches = matcher.match_agent_to_learnings(agent_id, learnings, top_k=3)
-                  
-                  if matches:
-                      best_match = matches[0]
-                      learning, score, categories = best_match
+              # Get list of agent IDs from target_agents
+              agent_ids = [agent.get('id') for agent in target_agents]
+              agent_names_map = {agent.get('id'): agent.get('name', agent.get('id')) for agent in target_agents}
+              
+              # Use the improved diverse assignment algorithm
+              # This ensures different agents get assigned, not all to one agent
+              assignments = matcher.assign_learnings_to_agents_diverse(
+                  learnings=learnings,
+                  agent_names=agent_ids,
+                  max_assignments=max_assignments,
+                  min_score=0.1,  # Lower threshold to be more liberal
+                  diversity_weight=0.7  # Strong diversity preference
+              )
+              
+              print(f"✅ Created {len(assignments)} diverse assignments")
+              
+              # Print summary of assignments
+              if assignments:
+                  print()
+                  print("📊 Assignment Summary:")
+                  agent_counts = {}
+                  for assignment in assignments:
+                      agent_id = assignment['agent_id']
+                      agent_name = agent_names_map.get(agent_id, agent_id)
+                      learning_title = assignment['learning'].get('title', 'Untitled')[:50]
+                      score = assignment['score']
+                      categories = ', '.join(assignment['categories'][:2])
+                      rank = assignment.get('assignment_rank', '?')
                       
-                      print(f"   ✅ Best match: {learning.get('title', 'Untitled')[:60]}...")
-                      print(f"      Score: {score:.3f}, Categories: {', '.join(categories)}")
+                      agent_counts[agent_id] = agent_counts.get(agent_id, 0) + 1
                       
-                      assignments.append({
-                          'agent_id': agent_id,
-                          'agent_name': agent_name,
-                          'learning': learning,
-                          'score': score,
-                          'categories': categories
-                      })
-                  else:
-                      print(f"   ⚠️  No suitable matches found")
+                      print(f"   📌 @{agent_id} (#{rank}) - {learning_title}...")
+                      print(f"      Score: {score:.3f}, Categories: {categories}")
+                  
+                  print()
+                  print("📈 Agent Distribution:")
+                  for agent_id, count in sorted(agent_counts.items(), key=lambda x: x[1], reverse=True):
+                      print(f"   • @{agent_id}: {count} assignment(s)")
               
               print()
-              print(f"✅ Created {len(assignments)} assignments")
               
               # Save assignments to file for next step
               output_file = '/tmp/agent_assignments.json'
