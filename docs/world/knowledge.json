@@ -219,7 +219,9 @@
       "source": "learning_analysis",
       "mention_count": 38,
       "category": "DevOps",
-      "created_at": "2025-11-16T20:16:28Z"
+      "created_at": "2025-11-16T20:06:54Z",
+      "mission_created": true,
+      "mission_created_at": "2025-11-16T20:21:18.618937+00:00"
     },
     {
       "id": "idea:27",
@@ -269,7 +271,9 @@
       "source": "learning_analysis",
       "mention_count": 104,
       "category": "AI/ML",
-      "created_at": "2025-11-16T20:16:28Z"
+      "created_at": "2025-11-16T20:06:54Z",
+      "mission_created": true,
+      "mission_created_at": "2025-11-16T20:21:18.618985+00:00"
     },
     {
       "id": "idea:28",
@@ -312,7 +316,9 @@
       "source": "learning_analysis",
       "mention_count": 38,
       "category": "AI/ML",
-      "created_at": "2025-11-16T20:16:28Z"
+      "created_at": "2025-11-16T20:06:54Z",
+      "mission_created": true,
+      "mission_created_at": "2025-11-16T20:21:18.619024+00:00"
     },
     {
       "id": "idea:29",
@@ -342,7 +348,9 @@
       "source": "learning_analysis",
       "mention_count": 18,
       "category": "AI/ML",
-      "created_at": "2025-11-16T20:16:28Z"
+      "created_at": "2025-11-16T20:06:54Z",
+      "mission_created": true,
+      "mission_created_at": "2025-11-16T20:21:18.619065+00:00"
     },
     {
       "id": "idea:30",
@@ -372,7 +380,9 @@
       "source": "learning_analysis",
       "mention_count": 16,
       "category": "Web",
-      "created_at": "2025-11-16T20:16:28Z"
+      "created_at": "2025-11-16T20:06:54Z",
+      "mission_created": true,
+      "mission_created_at": "2025-11-16T20:21:18.619108+00:00"
     },
     {
       "id": "idea:31",
@@ -877,7 +887,170 @@
       "source": "learning_analysis",
       "mention_count": 13,
       "category": "Integration",
-      "created_at": "2025-11-16T20:16:28Z"
+      "created_at": "2025-11-16T20:06:54Z"
+    },
+    {
+      "id": "idea:26",
+      "title": "Integration: Gpt-Cloud Innovation",
+      "summary": "Exploring gpt-cloud trends with 39 mentions. AI + Infrastructure: Integrate AI capabilities with cloud infrastructure Also: Combining Gpt and Cloud for better solutions",
+      "patterns": [
+        "integration",
+        "gpt-cloud",
+        "cloud",
+        "gpt"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 39,
+      "category": "Integration",
+      "created_at": "2025-11-16T20:20:54Z"
+    },
+    {
+      "id": "idea:27",
+      "title": "Integration: Security-Gpt Innovation",
+      "summary": "Exploring security-gpt trends with 42 mentions. Security + AI: Apply AI/ML to enhance security systems Also: Combining Security and Gpt for better solutions",
+      "patterns": [
+        "security",
+        "integration",
+        "security-gpt",
+        "gpt"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 42,
+      "category": "Integration",
+      "created_at": "2025-11-16T20:20:54Z"
+    },
+    {
+      "id": "idea:28",
+      "title": "Integration: Javascript-Ai-Agents Innovation",
+      "summary": "Exploring javascript-ai-agents trends with 11 mentions. Web + AI: Build AI-powered web applications Also: Combining Javascript and Ai-Agents for better solutions",
+      "patterns": [
+        "agents",
+        "javascript",
+        "ai",
+        "integration",
+        "javascript-ai-agents"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 11,
+      "category": "Integration",
+      "created_at": "2025-11-16T20:20:54Z"
+    },
+    {
+      "id": "idea:29",
+      "title": "Integration: Claude-Cloud-Infrastructure Innovation",
+      "summary": "Exploring claude-cloud-infrastructure trends with 14 mentions. AI + Infrastructure: Integrate AI capabilities with cloud infrastructure Also: Combining Claude and Cloud-Infrastructure for better solutions",
+      "patterns": [
+        "cloud",
+        "integration",
+        "infrastructure",
+        "claude-cloud-infrastructure",
+        "claude"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 14,
+      "category": "Integration",
+      "created_at": "2025-11-16T20:54:55Z"
+    },
+    {
+      "id": "idea:30",
+      "title": "Integration: Security-Ai-Agents Innovation",
+      "summary": "Exploring security-ai-agents trends with 27 mentions. Security + AI: Apply AI/ML to enhance security systems Also: Combining Security and Ai-Agents for better solutions",
+      "patterns": [
+        "integration",
+        "ai",
+        "security",
+        "agents",
+        "security-ai-agents"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 27,
+      "category": "Integration",
+      "created_at": "2025-11-16T20:54:55Z"
     }
   ]
 }
