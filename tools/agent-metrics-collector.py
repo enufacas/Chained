@@ -685,6 +685,11 @@ class MetricsCollector:
             )
             activity.issues_created = len(assigned_issues)
             
+            # SHORT-CIRCUIT OPTIMIZATION: If agent has no assigned issues, skip expensive PR/review lookups
+            if len(assigned_issues) == 0:
+                print(f"⚡ Short-circuit: {agent_id} has no assigned issues, skipping PR/review lookups", file=sys.stderr)
+                return activity  # Return early with all zeros
+            
             # Count resolved issues (closed ones)
             resolved_issues = [issue for issue in assigned_issues if issue.get('state') == 'closed']
             activity.issues_resolved = len(resolved_issues)
@@ -834,23 +839,34 @@ class MetricsCollector:
             activity.prs_merged = len(prs_merged)
             print(f"  ✅ {len(prs_merged)} PRs were merged", file=sys.stderr)
             
-            # Search for reviews given by agent
-            reviews = self._get_reviews_by_agent(agent_id, since_days)
-            activity.reviews_given = len(reviews)
+            # SHORT-CIRCUIT OPTIMIZATION: Only look for reviews if agent has PR activity
+            # Reviews are expensive to fetch since we have to check multiple PRs
+            if activity.prs_created > 0 or activity.issues_resolved > 5:
+                # Search for reviews given by agent
+                reviews = self._get_reviews_by_agent(agent_id, since_days)
+                activity.reviews_given = len(reviews)
+            else:
+                print(f"⚡ Short-circuit: Skipping review lookup (no significant PR activity)", file=sys.stderr)
+                activity.reviews_given = 0
             
             # Get comments made by agent on assigned issues
+            # SHORT-CIRCUIT: Only fetch if we have assigned issues
             comments_count = 0
-            for issue in assigned_issues:
-                issue_number = issue.get('number')
-                try:
-                    comments = self.github.get(f'/repos/{self.repo}/issues/{issue_number}/comments')
-                    self._api_call_count += 1
-                    if comments:
-                        agent_user = self._get_agent_github_user(agent_id)
-                        agent_comments = [c for c in comments if c.get('user', {}).get('login') == agent_user]
-                        comments_count += len(agent_comments)
-                except Exception:
-                    pass
+            if len(assigned_issues) > 0:
+                for issue in assigned_issues:
+                    issue_number = issue.get('number')
+                    try:
+                        comments = self.github.get(f'/repos/{self.repo}/issues/{issue_number}/comments')
+                        self._api_call_count += 1
+                        if comments:
+                            agent_user = self._get_agent_github_user(agent_id)
+                            agent_comments = [c for c in comments if c.get('user', {}).get('login') == agent_user]
+                            comments_count += len(agent_comments)
+                    except Exception:
+                        pass
+            else:
+                print(f"⚡ Short-circuit: Skipping comment lookup (no assigned issues)", file=sys.stderr)
+            
             activity.comments_made = comments_count
             
             # Log activity summary
@@ -1358,15 +1374,22 @@ class MetricsCollector:
                 print("❌ Registry manager not available", file=sys.stderr)
                 return results
             
-            print(f"📊 Evaluating {len(active_agents)} active agents...", file=sys.stderr)
+            total_agents = len(active_agents)
+            print(f"📊 Evaluating {total_agents} active agents...", file=sys.stderr)
             
             # OPTIMIZATION: Batch fetch all issues once, then distribute to agents
             print(f"🚀 Starting batch optimization...", file=sys.stderr)
             batch_cache = self._batch_fetch_all_agent_issues(since_days)
             print(f"✅ Batch fetch complete. Starting agent evaluation...", file=sys.stderr)
             
-            for agent in active_agents:
+            for idx, agent in enumerate(active_agents, 1):
                 agent_id = agent['id']
+                agent_name = agent.get('name', agent_id)
+                
+                print(f"\n{'='*70}", file=sys.stderr)
+                print(f"📊 Evaluating agent {idx}/{total_agents}: {agent_name}", file=sys.stderr)
+                print(f"{'='*70}", file=sys.stderr)
+                
                 try:
                     # Use batch cache to avoid redundant API calls
                     metrics = self.collect_metrics(
@@ -1377,7 +1400,7 @@ class MetricsCollector:
                     )
                     results[agent_id] = metrics
                     
-                    print(f"✅ Collected metrics for {agent_id}: score={metrics.scores.overall:.2%}", file=sys.stderr)
+                    print(f"✅ [{idx}/{total_agents}] Collected metrics for {agent_name}: score={metrics.scores.overall:.2%}", file=sys.stderr)
                 
                 except Exception as e:
                     print(f"❌ Error evaluating {agent_id}: {e}", file=sys.stderr)
