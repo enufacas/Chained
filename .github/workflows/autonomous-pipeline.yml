@@ -881,6 +881,8 @@ jobs:
           python3 << 'EOF'
           import json
           import os
+          import subprocess
+          import hashlib
           from datetime import datetime, timezone
           
           print("🎯 Creating agent missions...")
@@ -896,7 +898,7 @@ jobs:
           agents = world_state.get('agents', [])
           ideas = knowledge.get('ideas', [])
           
-          # Find recent learning-based ideas
+          # Find recent learning-based ideas that haven't been assigned yet
           recent_ideas = [idea for idea in ideas if idea.get('source') == 'learning_analysis'][:5]
           
           print(f"Processing {len(recent_ideas)} recent ideas")
@@ -907,46 +909,133 @@ jobs:
                   f.write(f"mission_count=0\n")
               exit(0)
           
+          # Load previous missions to avoid duplicates
+          previous_mission_hashes = set()
+          try:
+              if os.path.exists('.github/agent-system/missions_history.json'):
+                  with open('.github/agent-system/missions_history.json', 'r') as f:
+                      history = json.load(f)
+                      previous_mission_hashes = set(history.get('mission_hashes', []))
+                      print(f"Loaded {len(previous_mission_hashes)} previous mission hashes")
+          except Exception as e:
+              print(f"Note: Could not load mission history: {e}")
+          
           missions = []
+          used_agents = set()  # Track agents used in this run for variety
+          
           for idea in recent_ideas:
               idea_id = idea.get('id', 'unknown')
+              idea_title = idea.get('title', 'Unknown')
               idea_patterns = idea.get('patterns', [])
               idea_regions = idea.get('inspiration_regions', [])
+              idea_summary = idea.get('summary', '')[:200]
               
-              # Score agents
-              agent_scores = []
-              for agent in agents:
-                  score = 0.5  # Base score
-                  agent_scores.append({
-                      'agent_id': agent.get('id'),
-                      'agent_name': agent.get('label', 'Unknown'),
-                      'specialization': agent.get('specialization', ''),
-                      'score': score
-                  })
+              # Create a hash of the idea to detect duplicates
+              mission_content = f"{idea_id}:{idea_title}:{':'.join(sorted(idea_patterns))}"
+              mission_hash = hashlib.md5(mission_content.encode()).hexdigest()
               
-              # Sort agents by score and select the best one
-              agent_scores.sort(key=lambda x: x['score'], reverse=True)
-              best_agent = agent_scores[0] if agent_scores else {
-                  'agent_id': 'unknown',
-                  'agent_name': 'Unknown',
-                  'specialization': '',
-                  'score': 0.0
-              }
+              # Skip if we've already created a mission for this idea
+              if mission_hash in previous_mission_hashes:
+                  print(f"  ⏭️  Skipping duplicate mission for '{idea_title}' (hash: {mission_hash[:8]})")
+                  continue
+              
+              # Use the existing match-issue-to-agent.py tool for intelligent matching
+              # Combine title, summary, and patterns into a description for matching
+              match_text = f"{idea_title}. {idea_summary}. Patterns: {', '.join(idea_patterns)}"
+              
+              try:
+                  # Call match-issue-to-agent.py to get the best agent
+                  result = subprocess.run(
+                      ['python3', 'tools/match-issue-to-agent.py', match_text],
+                      capture_output=True,
+                      text=True,
+                      check=True
+                  )
+                  match_data = json.loads(result.stdout)
+                  matched_specialization = match_data.get('agent')
+                  match_score = match_data.get('score', 0)
+                  match_confidence = match_data.get('confidence', 'unknown')
+                  
+                  # If this agent was already used, try to get a different one
+                  if matched_specialization in used_agents:
+                      print(f"  ℹ️  @{matched_specialization} already used, looking for alternatives...")
+                      all_scores = match_data.get('all_scores', {})
+                      
+                      # Find best unused agent
+                      unused_agents = [(spec, score) for spec, score in all_scores.items() 
+                                      if spec not in used_agents and score > 0]
+                      
+                      if unused_agents:
+                          unused_agents.sort(key=lambda x: x[1], reverse=True)
+                          matched_specialization = unused_agents[0][0]
+                          match_score = unused_agents[0][1]
+                          print(f"  ↪️  Using alternative: @{matched_specialization} (score: {match_score})")
+                  
+                  # Find the agent details from world state
+                  agent_details = None
+                  for agent in agents:
+                      if agent.get('specialization') == matched_specialization:
+                          agent_details = agent
+                          break
+                  
+                  if not agent_details:
+                      print(f"  ⚠️  Matched agent @{matched_specialization} not found in world state, skipping")
+                      continue
+                  
+                  best_agent = {
+                      'agent_id': agent_details.get('id'),
+                      'agent_name': agent_details.get('label', 'Unknown'),
+                      'specialization': matched_specialization,
+                      'score': match_score
+                  }
+                  
+                  # Track this agent as used
+                  used_agents.add(matched_specialization)
+                  
+                  print(f"  ✅ Matched '{idea_title}' to @{matched_specialization} (score: {match_score}, confidence: {match_confidence})")
+                  
+              except subprocess.CalledProcessError as e:
+                  print(f"  ⚠️  Error matching agent for '{idea_title}': {e.stderr}")
+                  continue
+              except json.JSONDecodeError as e:
+                  print(f"  ⚠️  Error parsing match result for '{idea_title}': {e}")
+                  continue
+              except Exception as e:
+                  print(f"  ⚠️  Unexpected error for '{idea_title}': {e}")
+                  continue
               
               missions.append({
                   'idea_id': idea_id,
-                  'idea_title': idea.get('title', 'Unknown'),
-                  'idea_summary': idea.get('summary', '')[:200],
+                  'idea_title': idea_title,
+                  'idea_summary': idea_summary,
                   'patterns': idea_patterns,
                   'agent': best_agent,  # Single agent, not list
-                  'regions': [r.get('region_id', 'unknown') for r in idea_regions]
+                  'regions': [r.get('region_id', 'unknown') for r in idea_regions],
+                  'mission_hash': mission_hash
               })
           
           # Save missions
           with open('missions_data.json', 'w') as f:
               json.dump(missions, f, indent=2)
           
-          print(f"✅ Created {len(missions)} missions")
+          # Update mission history to prevent duplicates in future runs
+          try:
+              os.makedirs('.github/agent-system', exist_ok=True)
+              new_hashes = [m['mission_hash'] for m in missions]
+              all_hashes = list(previous_mission_hashes) + new_hashes
+              # Keep only the last 100 mission hashes to prevent unbounded growth
+              all_hashes = all_hashes[-100:]
+              
+              with open('.github/agent-system/missions_history.json', 'w') as f:
+                  json.dump({
+                      'last_updated': datetime.now(timezone.utc).isoformat(),
+                      'mission_hashes': all_hashes
+                  }, f, indent=2)
+              print(f"📝 Updated mission history with {len(new_hashes)} new hashes")
+          except Exception as e:
+              print(f"⚠️  Could not update mission history: {e}")
+          
+          print(f"✅ Created {len(missions)} new missions (skipped duplicates)")
           
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f"mission_count={len(missions)}\n")
@@ -1002,7 +1091,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add world/
+          git add world/ .github/agent-system/missions_history.json
           
           if git diff --staged --quiet; then
             echo "No changes"
