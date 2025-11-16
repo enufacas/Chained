@@ -166,7 +166,7 @@
       "id": "idea:4"
     },
     {
-      "id": "idea:15",
+      "id": "idea:26",
       "title": "DevOps: Cloud Innovation",
       "summary": "Exploring cloud trends with 38 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs Also: We cut our Mongo DB costs by 90% by moving to Hetzner",
       "patterns": [
@@ -219,15 +219,15 @@
       "source": "learning_analysis",
       "mention_count": 38,
       "category": "DevOps",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:16",
+      "id": "idea:27",
       "title": "AI/ML: Ai Innovation",
       "summary": "Exploring ai trends with 104 mentions. sansan0/TrendRadar - 🎯 告别信息过载，AI 助你看懂新闻资讯热点，简单的舆情监控分析 - 多平台热点聚合+基于 MCP 的AI分析工具。监控35个平台（抖音、知乎、B站、华尔街见 Also: yeongpin/cursor-free-vip - [Support 0.49.x]（Reset Cursor AI MachineID & Bypass H",
       "patterns": [
-        "ai/ml",
-        "ai"
+        "ai",
+        "ai/ml"
       ],
       "companies": [
         {
@@ -269,15 +269,15 @@
       "source": "learning_analysis",
       "mention_count": 104,
       "category": "AI/ML",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:17",
+      "id": "idea:28",
       "title": "AI/ML: Agents Innovation",
       "summary": "Exploring agents trends with 38 mentions. GibsonAI/Memori - Open-Source Memory Engine for LLMs, AI Agents & Multi-Agent Systems Also: google/adk-go - An open-source, code-first Go toolkit for building, evaluating, ",
       "patterns": [
-        "agents",
-        "ai/ml"
+        "ai/ml",
+        "agents"
       ],
       "companies": [
         {
@@ -312,10 +312,10 @@
       "source": "learning_analysis",
       "mention_count": 38,
       "category": "AI/ML",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:18",
+      "id": "idea:29",
       "title": "AI/ML: Claude Innovation",
       "summary": "Exploring claude trends with 18 mentions. davila7/claude-code-templates - CLI tool for configuring and monitoring Claude Code Also: GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻",
       "patterns": [
@@ -342,15 +342,15 @@
       "source": "learning_analysis",
       "mention_count": 18,
       "category": "AI/ML",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:19",
+      "id": "idea:30",
       "title": "Web: Api Innovation",
       "summary": "Exploring api trends with 16 mentions. requestly/requestly - Free and open-source API Client & Interceptor. Also: Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependen",
       "patterns": [
-        "web",
-        "api"
+        "api",
+        "web"
       ],
       "companies": [
         {
@@ -372,15 +372,15 @@
       "source": "learning_analysis",
       "mention_count": 16,
       "category": "Web",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:20",
+      "id": "idea:31",
       "title": "Languages: Go Innovation",
       "summary": "Exploring go trends with 22 mentions. Zed is our office Also: Reverse Engineering Yaesu FT-70D Firmware Encryption",
       "patterns": [
-        "languages",
-        "go"
+        "go",
+        "languages"
       ],
       "companies": [
         {
@@ -402,10 +402,10 @@
       "source": "learning_analysis",
       "mention_count": 22,
       "category": "Languages",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:21",
+      "id": "idea:32",
       "title": "Security: Security Innovation",
       "summary": "Exploring security trends with 44 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs Also: Android developer verification: Early access starts",
       "patterns": [
@@ -444,10 +444,10 @@
       "source": "learning_analysis",
       "mention_count": 44,
       "category": "Security",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:22",
+      "id": "idea:33",
       "title": "DevOps: Aws Innovation",
       "summary": "Exploring aws trends with 23 mentions. We cut our Mongo DB costs by 90% by moving to Hetzner Also: AWS DynamoDB Outage ☁️, Grafana Mimir 🆕, AI Platform At Pinterest 🧷",
       "patterns": [
@@ -474,15 +474,15 @@
       "source": "learning_analysis",
       "mention_count": 23,
       "category": "DevOps",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:23",
+      "id": "idea:34",
       "title": "AI/ML: Gpt Innovation",
       "summary": "Exploring gpt trends with 41 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Grok Code Remote 👨‍💻 , GPT-5.1 on OpenRouter 🤖, Moonshot AI AMA 💬",
       "patterns": [
-        "gpt",
-        "ai/ml"
+        "ai/ml",
+        "gpt"
       ],
       "companies": [
         {
@@ -504,10 +504,10 @@
       "source": "learning_analysis",
       "mention_count": 41,
       "category": "AI/ML",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:24",
+      "id": "idea:35",
       "title": "Languages: Javascript Innovation",
       "summary": "Exploring javascript trends with 13 mentions. Android 16 QPR1 is being pushed to the Android Open Source Project Also: Yt-dlp: External JavaScript runtime now required for full YouTube support",
       "patterns": [
@@ -534,15 +534,15 @@
       "source": "learning_analysis",
       "mention_count": 13,
       "category": "Languages",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:25",
+      "id": "idea:36",
       "title": "Google Innovation: Cutting-Edge Developments",
       "summary": "Exploring google trends with 27 mentions. google/adk-go - An open-source, code-first Go toolkit for building, evaluating, and deploying sophis Also: Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻",
       "patterns": [
-        "company_innovation",
-        "google"
+        "google",
+        "company_innovation"
       ],
       "companies": [
         {
@@ -564,15 +564,15 @@
       "source": "learning_analysis",
       "mention_count": 27,
       "category": "Company Innovation",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:26",
+      "id": "idea:37",
       "title": "Apple Innovation: Cutting-Edge Developments",
       "summary": "Exploring apple trends with 18 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: Apple Gemini deal terms 💰, Amazon layoff turmoil 💼, compiler targets 👨‍💻",
       "patterns": [
-        "company_innovation",
-        "apple"
+        "apple",
+        "company_innovation"
       ],
       "companies": [
         {
@@ -594,10 +594,10 @@
       "source": "learning_analysis",
       "mention_count": 18,
       "category": "Company Innovation",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:27",
+      "id": "idea:38",
       "title": "Nvidia Innovation: Cutting-Edge Developments",
       "summary": "Exploring nvidia trends with 15 mentions. Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻 Also: SoftBank sells its entire stake in Nvidia",
       "patterns": [
@@ -624,15 +624,15 @@
       "source": "learning_analysis",
       "mention_count": 15,
       "category": "Company Innovation",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:28",
+      "id": "idea:39",
       "title": "Openai Innovation: Cutting-Edge Developments",
       "summary": "Exploring openai trends with 31 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Sam on OpenAI finances 💰, GPT-5.1 🤖, Anthropic $350B valuation 📈",
       "patterns": [
-        "company_innovation",
-        "openai"
+        "openai",
+        "company_innovation"
       ],
       "companies": [
         {
@@ -654,15 +654,15 @@
       "source": "learning_analysis",
       "mention_count": 31,
       "category": "Company Innovation",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:29",
+      "id": "idea:40",
       "title": "Anthropic Innovation: Cutting-Edge Developments",
       "summary": "Exploring anthropic trends with 24 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Sam on OpenAI finances 💰, GPT-5.1 🤖, Anthropic $350B valuation 📈",
       "patterns": [
-        "anthropic",
-        "company_innovation"
+        "company_innovation",
+        "anthropic"
       ],
       "companies": [
         {
@@ -684,17 +684,17 @@
       "source": "learning_analysis",
       "mention_count": 24,
       "category": "Company Innovation",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:30",
+      "id": "idea:41",
       "title": "Emerging Theme: Ai Agents",
       "summary": "Exploring ai-agents trends with 10 mentions. Explore Ai Agents innovations",
       "patterns": [
-        "emerging_theme",
-        "agents",
         "ai",
-        "ai-agents"
+        "ai-agents",
+        "agents",
+        "emerging_theme"
       ],
       "companies": [
         {
@@ -716,17 +716,17 @@
       "source": "learning_analysis",
       "mention_count": 10,
       "category": "Emerging Theme",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:31",
+      "id": "idea:42",
       "title": "Emerging Theme: Go Specialist",
       "summary": "Exploring go-specialist trends with 10 mentions. Explore Go Specialist innovations",
       "patterns": [
-        "specialist",
-        "emerging_theme",
         "go",
-        "go-specialist"
+        "go-specialist",
+        "specialist",
+        "emerging_theme"
       ],
       "companies": [
         {
@@ -748,17 +748,17 @@
       "source": "learning_analysis",
       "mention_count": 10,
       "category": "Emerging Theme",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:32",
+      "id": "idea:43",
       "title": "Emerging Theme: Cloud Infrastructure",
       "summary": "Exploring cloud-infrastructure trends with 10 mentions. Explore Cloud Infrastructure innovations",
       "patterns": [
-        "emerging_theme",
         "infrastructure",
+        "cloud-infrastructure",
         "cloud",
-        "cloud-infrastructure"
+        "emerging_theme"
       ],
       "companies": [
         {
@@ -780,18 +780,19 @@
       "source": "learning_analysis",
       "mention_count": 10,
       "category": "Emerging Theme",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:33",
-      "title": "Integration: Gpt-Cloud-Infrastructure Innovation",
-      "summary": "Exploring gpt-cloud-infrastructure trends with 25 mentions. AI + Infrastructure: Integrate AI capabilities with cloud infrastructure Also: Combining Gpt and Cloud-Infrastructure for better solutions",
+      "id": "idea:44",
+      "title": "Integration: Ai-Agents-Cloud-Infrastructure Innovation",
+      "summary": "Exploring ai-agents-cloud-infrastructure trends with 10 mentions. AI + Infrastructure: Integrate AI capabilities with cloud infrastructure Also: Combining Ai-Agents and Cloud-Infrastructure for better solutions",
       "patterns": [
         "infrastructure",
+        "agents",
         "cloud",
-        "integration",
-        "gpt",
-        "gpt-cloud-infrastructure"
+        "ai",
+        "ai-agents-cloud-infrastructure",
+        "integration"
       ],
       "companies": [
         {
@@ -811,17 +812,17 @@
         }
       ],
       "source": "learning_analysis",
-      "mention_count": 25,
+      "mention_count": 10,
       "category": "Integration",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:34",
+      "id": "idea:45",
       "title": "Integration: Security-Ai Innovation",
       "summary": "Exploring security-ai trends with 74 mentions. Security + AI: Apply AI/ML to enhance security systems Also: Combining Security and Ai for better solutions",
       "patterns": [
-        "integration",
         "ai",
+        "integration",
         "security",
         "security-ai"
       ],
@@ -845,17 +846,17 @@
       "source": "learning_analysis",
       "mention_count": 74,
       "category": "Integration",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     },
     {
-      "id": "idea:35",
-      "title": "Integration: Api-Claude Innovation",
-      "summary": "Exploring api-claude trends with 17 mentions. Web + AI: Build AI-powered web applications Also: Combining Api and Claude for better solutions",
+      "id": "idea:46",
+      "title": "Integration: Api-Gpt Innovation",
+      "summary": "Exploring api-gpt trends with 28 mentions. Web + AI: Build AI-powered web applications Also: Combining Api and Gpt for better solutions",
       "patterns": [
-        "api-claude",
         "api",
-        "integration",
-        "claude"
+        "api-gpt",
+        "gpt",
+        "integration"
       ],
       "companies": [
         {
@@ -875,9 +876,9 @@
         }
       ],
       "source": "learning_analysis",
-      "mention_count": 17,
+      "mention_count": 28,
       "category": "Integration",
-      "created_at": "2025-11-16T19:10:08Z"
+      "created_at": "2025-11-16T19:13:33Z"
     }
   ]
 }
