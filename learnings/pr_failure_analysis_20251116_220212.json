@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-11-16T22:02:12.959110+00:00",
+  "total_failures": 27,
+  "patterns": [
+    {
+      "pattern_type": "review_rejection",
+      "occurrences": 27,
+      "affected_agents": [],
+      "common_issues": [],
+      "suggested_improvements": [],
+      "confidence_score": 1.0
+    }
+  ],
+  "failure_type_distribution": {
+    "review_rejection": 27
+  }
+}
