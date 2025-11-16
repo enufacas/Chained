@@ -1,0 +1,15 @@
+{
+  "deployments": {
+    "aws": "aws-chained-agent-v1.0.0",
+    "gcp": "gcp-chained-agent-v1.0.0"
+  },
+  "config": {
+    "app_name": "chained-agent",
+    "version": "v1.0.0",
+    "environment": "production",
+    "providers": [
+      "aws",
+      "gcp"
+    ]
+  }
+}
