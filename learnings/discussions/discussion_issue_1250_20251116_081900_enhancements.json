@@ -1,0 +1,39 @@
+{
+  "proactive_suggestions": [
+    "\u26a1 Consider documenting performance metrics and benchmarks",
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:organize-guru -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has..."
+  ],
+  "knowledge_connections": {
+    "insight_1250_552b656e5155": [
+      {
+        "target_id": "insight_1250_d36bfe90787e",
+        "similarity": 0.4
+      }
+    ],
+    "insight_1250_a847ee4a0753": [
+      {
+        "target_id": "insight_1250_97f6d021f9d0",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1250_d36bfe90787e": [
+      {
+        "target_id": "insight_1250_552b656e5155",
+        "similarity": 0.4
+      }
+    ],
+    "insight_1250_97f6d021f9d0": [
+      {
+        "target_id": "insight_1250_a847ee4a0753",
+        "similarity": 1.0
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 15,
+    "total_connections": 4,
+    "new_insights_added": 18
+  },
+  "timestamp": "2025-11-16T08:19:00.595201+00:00"
+}
