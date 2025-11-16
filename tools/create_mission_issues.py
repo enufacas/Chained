@@ -101,19 +101,20 @@ def main():
     
     print(f"\n📝 Creating issues for {len(missions)} missions\n")
     
+    created_issues = []  # Track created issues for assignment
+    
     for i, mission in enumerate(missions, 1):
         idea_title = mission.get('idea_title', 'Unknown Mission')
         idea_summary = mission.get('idea_summary', '')
         patterns = mission.get('patterns', [])
-        agents = mission.get('agents', [])
+        agent = mission.get('agent', {})  # Single agent, not list
         regions = mission.get('regions', [])
         idea_id = mission.get('idea_id', 'unknown')
         
-        # Build issue body
-        agent_list = '\n'.join([
-            f"- **{a.get('agent_name', 'Unknown')}** (@{a.get('specialization', 'unknown')}) - Score: {a.get('score', 0.0):.2f}"
-            for a in agents
-        ])
+        # Build agent info (single agent)
+        agent_name = agent.get('agent_name', 'Unknown')
+        agent_specialization = agent.get('specialization', 'unknown')
+        agent_score = agent.get('score', 0.0)
         
         location_list = ', '.join(regions) if regions else 'No specific location'
         pattern_list = ', '.join(patterns) if patterns else 'General'
@@ -135,11 +136,11 @@ def main():
 
 {pattern_list}
 
-### 👥 Assigned Agents (Max 10)
+### 🤖 Assigned Agent
 
-{agent_list}
+**{agent_name}** (@{agent_specialization}) - Match Score: {agent_score:.2f}
 
-**Note:** Only the top 10 most relevant agents were selected based on:
+This mission was matched to **@{agent_specialization}** based on:
 - Location relevance (30%)
 - Role/skill match (40%)  
 - Performance history (30%)
@@ -153,14 +154,14 @@ def main():
 
 ### 🔄 Next Steps
 
-1. Agents investigate the mission locations
-2. Gather insights and create artifacts
-3. Report findings back to world model
-4. Update agent metrics based on contributions
+1. **@{agent_specialization}** investigates the mission locations
+2. Gathers insights and creates artifacts
+3. Reports findings back to world model
+4. Agent metrics are updated based on contributions
 
 ---
 
-*This mission was automatically created by the Agent Missions workflow based on recent learning analysis.*
+*This mission was automatically created by the Agent Missions workflow and assigned to **@{agent_specialization}** based on intelligent matching.*
 """
         
         # Create labels list
@@ -191,14 +192,31 @@ def main():
                 text=True,
                 check=True
             )
+            issue_url = result.stdout.strip()
+            # Extract issue number from URL (format: https://github.com/owner/repo/issues/123)
+            issue_number = issue_url.split('/')[-1] if issue_url else None
+            
             print(f"  ✅ Created: {title}")
-            print(f"     Issue URL: {result.stdout.strip()}")
+            print(f"     Issue URL: {issue_url}")
+            
+            # Track created issue with agent specialization for assignment
+            created_issues.append({
+                'issue_number': issue_number,
+                'agent_specialization': agent_specialization,
+                'title': title
+            })
         except subprocess.CalledProcessError as e:
             print(f"  ⚠️  Failed to create issue: {e.stderr}")
         except Exception as e:
             print(f"  ⚠️  Error: {e}")
     
     print(f"\n✅ All mission issues created")
+    
+    # Save created issues info for assignment step
+    with open('created_missions.json', 'w') as f:
+        json.dump(created_issues, f, indent=2)
+    
+    print(f"📝 Saved {len(created_issues)} issue numbers for assignment")
     return 0
 
 
