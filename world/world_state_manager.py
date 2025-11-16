@@ -192,6 +192,149 @@ def clear_agent_mission(state: Dict[str, Any], agent_id: str) -> bool:
     return True
 
 
+def add_agent_path_entry(
+    state: Dict[str, Any],
+    agent_id: str,
+    region_id: str,
+    purpose: Optional[str] = None
+) -> bool:
+    """
+    Add a path entry for an agent's journey to a region.
+    
+    Args:
+        state: World state dict
+        agent_id: Agent ID or specialization
+        region_id: Destination region ID
+        purpose: Optional description of why agent is traveling
+    
+    Returns:
+        True if path was added, False if not found
+    """
+    agent = get_agent_by_id(state, agent_id)
+    
+    if not agent:
+        for a in state.get('agents', []):
+            if a.get('specialization') == agent_id:
+                agent = a
+                break
+    
+    if not agent:
+        return False
+    
+    # Initialize path if needed
+    if 'path' not in agent:
+        agent['path'] = []
+    
+    # Add new path entry
+    current_tick = state.get('tick', 0)
+    path_entry = {
+        'region_id': region_id,
+        'arrival_tick': current_tick + 3,  # Takes 3 ticks to travel
+        'purpose': purpose or 'exploring'
+    }
+    
+    agent['path'].append(path_entry)
+    agent['status'] = 'traveling'
+    
+    return True
+
+
+def record_agent_arrival(
+    state: Dict[str, Any],
+    agent_id: str,
+    region_id: str
+) -> bool:
+    """
+    Record an agent's arrival at a destination region.
+    Updates location and moves current path to history.
+    
+    Args:
+        state: World state dict
+        agent_id: Agent ID or specialization
+        region_id: Region where agent arrived
+    
+    Returns:
+        True if recorded, False if not found
+    """
+    agent = get_agent_by_id(state, agent_id)
+    
+    if not agent:
+        for a in state.get('agents', []):
+            if a.get('specialization') == agent_id:
+                agent = a
+                break
+    
+    if not agent:
+        return False
+    
+    current_tick = state.get('tick', 0)
+    
+    # Initialize path_history if needed
+    if 'path_history' not in agent:
+        agent['path_history'] = []
+    
+    # Record previous location in history
+    if agent.get('location_region_id'):
+        history_entry = {
+            'region_id': agent['location_region_id'],
+            'arrival_tick': agent.get('arrival_tick', current_tick - 1),
+            'departure_tick': current_tick,
+            'discoveries': [],
+            'collaborations': []
+        }
+        agent['path_history'].append(history_entry)
+        
+        # Keep only last 10 history entries
+        if len(agent['path_history']) > 10:
+            agent['path_history'] = agent['path_history'][-10:]
+    
+    # Update location
+    agent['location_region_id'] = region_id
+    agent['arrival_tick'] = current_tick
+    agent['status'] = 'exploring'
+    
+    # Remove completed path entry
+    if agent.get('path'):
+        agent['path'] = [p for p in agent['path'] if p['region_id'] != region_id]
+    
+    return True
+
+
+def add_agent_discovery(
+    state: Dict[str, Any],
+    agent_id: str,
+    discovery: str
+) -> bool:
+    """
+    Add a discovery to the agent's current location history.
+    
+    Args:
+        state: World state dict
+        agent_id: Agent ID or specialization
+        discovery: Description of what was discovered
+    
+    Returns:
+        True if added, False if not found
+    """
+    agent = get_agent_by_id(state, agent_id)
+    
+    if not agent:
+        for a in state.get('agents', []):
+            if a.get('specialization') == agent_id:
+                agent = a
+                break
+    
+    if not agent:
+        return False
+    
+    # Add to current session discoveries (will be moved to history on departure)
+    if 'current_discoveries' not in agent:
+        agent['current_discoveries'] = []
+    
+    agent['current_discoveries'].append(discovery)
+    return True
+
+
 if __name__ == '__main__':
     # Test the module
     state = load_world_state()

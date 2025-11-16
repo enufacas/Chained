@@ -601,7 +601,7 @@ function drawAgentPath(agent, currentLocation) {
     }
 }
 
-// Render regions with idea counts
+// Render regions with idea counts and enhanced metadata
 function renderRegions() {
     if (!worldState || !worldState.regions) return;
     
@@ -613,43 +613,129 @@ function renderRegions() {
     
     worldState.regions.forEach(region => {
         const ideaCount = region.idea_count || 0;
+        const agentsHere = worldState.agents.filter(a => a.location_region_id === region.id);
+        const agentCount = agentsHere.length;
         
-        // Skip regions with no ideas
-        if (ideaCount === 0) return;
+        // Determine region color based on type
+        let circleColor = '#0891b2'; // default cyan
+        let regionIcon = '📍';
         
-        // Size circle based on idea count
-        const radius = Math.max(5000, Math.min(50000, ideaCount * 5000));
+        if (region.is_home_base) {
+            circleColor = '#f59e0b'; // amber for home base
+            regionIcon = '🏠';
+        } else if (region.region_type === 'innovation_hub') {
+            circleColor = '#10b981'; // green for innovation hubs
+            regionIcon = '🚀';
+        } else if (region.region_type === 'tech_hub') {
+            circleColor = '#0891b2'; // cyan for tech hubs
+            regionIcon = '💻';
+        } else if (region.region_type === 'financial_hub') {
+            circleColor = '#8b5cf6'; // purple for financial
+            regionIcon = '💰';
+        } else if (region.region_type === 'manufacturing_hub' || region.region_type === 'hardware_hub') {
+            circleColor = '#f59e0b'; // amber for manufacturing
+            regionIcon = '⚙️';
+        } else if (region.region_type === 'startup_hub') {
+            circleColor = '#ec4899'; // pink for startups
+            regionIcon = '🌟';
+        }
         
-        // Create circle for region
+        // Calculate activity level (ideas + agents)
+        const activityScore = ideaCount + (agentCount * 2);
+        
+        // Skip empty regions unless they're home base
+        if (activityScore === 0 && !region.is_home_base) return;
+        
+        // Size circle based on activity
+        const baseRadius = 8000;
+        const radius = Math.max(baseRadius, Math.min(100000, activityScore * 5000));
+        
+        // Create circle for region with enhanced styling
         const circle = L.circle([region.lat, region.lng], {
             radius: radius,
-            color: '#0891b2',
-            fillColor: '#0891b2',
-            fillOpacity: 0.15,
-            weight: 1,
-            opacity: 0.4
+            color: circleColor,
+            fillColor: circleColor,
+            fillOpacity: Math.min(0.3, 0.1 + (activityScore * 0.02)),
+            weight: 2,
+            opacity: 0.6
         });
         
-        // Get agents in this region
-        const agentsHere = worldState.agents.filter(a => a.location_region_id === region.id);
+        // Build rich popup with metadata
+        let popupContent = `
+            <div style="min-width: 220px;">
+                <h3 style="margin: 0 0 8px 0; color: ${circleColor}; border-bottom: 2px solid ${circleColor}; padding-bottom: 4px;">
+                    ${regionIcon} ${region.label}
+                </h3>
+        `;
         
-        circle.bindPopup(`
-            <div style="min-width: 200px;">
-                <h3 style="margin: 0 0 8px 0; color: #0891b2;">${region.label}</h3>
-                <p style="margin: 4px 0; font-size: 13px;"><strong>💡 Ideas:</strong> ${ideaCount}</p>
-                <p style="margin: 4px 0; font-size: 13px;"><strong>🤖 Agents here:</strong> ${agentsHere.length}</p>
-                ${agentsHere.length > 0 ? `<p style="margin: 4px 0; font-size: 12px;">${agentsHere.map(a => a.label).join(', ')}</p>` : ''}
-                ${region.is_home_base ? '<p style="margin: 4px 0; font-size: 12px; color: #f59e0b;"><strong>🏠 Home Base</strong></p>' : ''}
-            </div>
-        `);
+        // Add region type and timezone if available
+        if (region.region_type) {
+            const typeLabel = region.region_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            popupContent += `<p style="margin: 4px 0; font-size: 12px; color: #9ca3af;"><strong>Type:</strong> ${typeLabel}</p>`;
+        }
         
+        if (region.timezone) {
+            popupContent += `<p style="margin: 4px 0; font-size: 12px; color: #9ca3af;"><strong>🕐 Timezone:</strong> ${region.timezone}</p>`;
+        }
+        
+        // Add activity metrics
+        popupContent += `<div style="margin: 8px 0; padding: 8px; background: rgba(0,0,0,0.1); border-radius: 4px;">`;
+        popupContent += `<p style="margin: 4px 0; font-size: 13px;"><strong>💡 Ideas:</strong> ${ideaCount}</p>`;
+        popupContent += `<p style="margin: 4px 0; font-size: 13px;"><strong>🤖 Agents:</strong> ${agentCount}`;
+        
+        if (region.agent_capacity) {
+            const capacityPct = (agentCount / region.agent_capacity * 100).toFixed(0);
+            popupContent += ` / ${region.agent_capacity} <span style="color: ${capacityPct > 80 ? '#ef4444' : '#10b981'}">(${capacityPct}%)</span>`;
+        }
+        popupContent += `</p>`;
+        
+        // Add tech ecosystem info if available
+        if (region.tech_ecosystem) {
+            const eco = region.tech_ecosystem;
+            if (eco.specializations && eco.specializations.length > 0) {
+                const specs = eco.specializations.slice(0, 3).map(s => s.replace(/_/g, ' ')).join(', ');
+                popupContent += `<p style="margin: 4px 0; font-size: 12px; color: #9ca3af;"><strong>🎯 Focus:</strong> ${specs}</p>`;
+            }
+        }
+        popupContent += `</div>`;
+        
+        // Add agents list if any
+        if (agentsHere.length > 0) {
+            popupContent += `<div style="margin-top: 8px;">`;
+            popupContent += `<p style="margin: 4px 0; font-size: 11px; font-weight: bold; color: #9ca3af;">Active Agents:</p>`;
+            agentsHere.slice(0, 5).forEach(agent => {
+                const score = agent.metrics?.overall_score || 0;
+                const scoreColor = score >= 0.85 ? '#10b981' : score >= 0.5 ? '#0891b2' : '#f59e0b';
+                popupContent += `<p style="margin: 2px 0; font-size: 11px;">• ${agent.label} <span style="color: ${scoreColor}">(${(score * 100).toFixed(0)}%)</span></p>`;
+            });
+            if (agentsHere.length > 5) {
+                popupContent += `<p style="margin: 2px 0; font-size: 11px; color: #9ca3af; font-style: italic;">... and ${agentsHere.length - 5} more</p>`;
+            }
+            popupContent += `</div>`;
+        }
+        
+        // Add cost multiplier if available
+        if (region.cost_multiplier && region.cost_multiplier !== 1.0) {
+            popupContent += `<p style="margin: 6px 0 0 0; font-size: 11px; color: ${region.cost_multiplier > 1.5 ? '#ef4444' : '#9ca3af'};">
+                💵 Cost: ${region.cost_multiplier}x
+            </p>`;
+        }
+        
+        // Add home base indicator
+        if (region.is_home_base) {
+            popupContent += `<p style="margin: 8px 0 0 0; font-size: 12px; color: ${circleColor}; font-weight: bold;">🏠 Agent Home Base</p>`;
+        }
+        
+        popupContent += `</div>`;
+        
+        circle.bindPopup(popupContent);
         regionLayers.addLayer(circle);
         
-        // Add label for significant regions
-        if (ideaCount > 5 || region.is_home_base) {
+        // Add label for significant regions or home base
+        if (activityScore > 5 || region.is_home_base) {
             const label = L.marker([region.lat, region.lng], {
                 icon: L.divIcon({
-                    html: `<div style="background: rgba(8, 145, 178, 0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap;">${region.label}</div>`,
+                    html: `<div style="background: ${circleColor}; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${regionIcon} ${region.label}</div>`,
                     className: 'region-label',
                     iconSize: null
                 })
