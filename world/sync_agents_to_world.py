@@ -2,6 +2,7 @@
 """
 Sync Agents to World State
 Synchronizes all agents from the registry into the world model with Charlotte, NC as home base.
+Uses RegistryManager to read from distributed agent files.
 """
 
 import json
@@ -12,8 +13,11 @@ from typing import Dict, List, Any
 
 # Path constants
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-REGISTRY_PATH = os.path.join(SCRIPT_DIR, '..', '.github', 'agent-system', 'registry.json')
 WORLD_STATE_PATH = os.path.join(SCRIPT_DIR, 'world_state.json')
+
+# Add tools directory to path for RegistryManager
+TOOLS_DIR = os.path.join(SCRIPT_DIR, '..', 'tools')
+sys.path.insert(0, TOOLS_DIR)
 
 # Charlotte, NC coordinates - Home base for all agents
 CHARLOTTE_NC = {
@@ -116,11 +120,21 @@ def sync_agents_to_world() -> Dict[str, Any]:
     print("🌍 Syncing Agents to World State")
     print("=" * 70)
     
-    # Load registry
-    print(f"\n📖 Loading agent registry from: {REGISTRY_PATH}")
-    registry = load_json_file(REGISTRY_PATH)
-    registry_agents = registry.get('agents', [])
-    print(f"   Found {len(registry_agents)} agents in registry")
+    # Import RegistryManager
+    from registry_manager import RegistryManager
+    
+    # Load registry using RegistryManager (reads from distributed agent files)
+    print(f"\n📖 Loading agents from distributed registry...")
+    registry_manager = RegistryManager()
+    
+    # Get all agents (active + hall of fame)
+    registry_agents = registry_manager.list_agents()
+    hall_of_fame = registry_manager.get_hall_of_fame()
+    all_agents = registry_agents + hall_of_fame
+    
+    print(f"   Found {len(registry_agents)} active agents")
+    print(f"   Found {len(hall_of_fame)} Hall of Fame agents")
+    print(f"   Total: {len(all_agents)} agents to sync")
     
     # Load world state
     print(f"\n🌍 Loading world state from: {WORLD_STATE_PATH}")
@@ -133,12 +147,14 @@ def sync_agents_to_world() -> Dict[str, Any]:
     ensure_charlotte_region_exists(world_state)
     
     # Convert all registry agents to world agents
-    print(f"\n🤖 Converting {len(registry_agents)} agents to world format...")
+    print(f"\n🤖 Converting {len(all_agents)} agents to world format...")
     world_agents = []
-    for reg_agent in registry_agents:
+    for reg_agent in all_agents:
         world_agent = create_world_agent_from_registry(reg_agent)
         world_agents.append(world_agent)
-        print(f"   ✓ {world_agent['label']} ({world_agent['specialization']}) - Score: {world_agent['metrics']['overall_score']:.2f}")
+        agent_status = reg_agent.get('status', 'unknown')
+        status_emoji = '🏆' if agent_status == 'hall_of_fame' else '🤖'
+        print(f"   {status_emoji} {world_agent['label']} ({world_agent['specialization']}) - Score: {world_agent['metrics']['overall_score']:.2f}")
     
     # Update world state
     world_state['agents'] = world_agents
@@ -149,12 +165,16 @@ def sync_agents_to_world() -> Dict[str, Any]:
     world_state['metrics']['total_agent_count'] = len(world_agents)
     
     # Add scoring thresholds to metrics
-    config = registry.get('config', {})
-    world_state['metrics']['elimination_threshold'] = config.get('elimination_threshold', 0.3)
-    world_state['metrics']['promotion_threshold'] = config.get('promotion_threshold', 0.85)
+    config = registry_manager.get_config()
+    if isinstance(config, dict):
+        world_state['metrics']['elimination_threshold'] = config.get('elimination_threshold', 0.3)
+        world_state['metrics']['promotion_threshold'] = config.get('promotion_threshold', 0.85)
+    else:
+        # Config is a RegistryConfig object
+        world_state['metrics']['elimination_threshold'] = config.elimination_threshold
+        world_state['metrics']['promotion_threshold'] = config.promotion_threshold
     
     # Add Hall of Fame info
-    hall_of_fame = registry.get('hall_of_fame', [])
     world_state['metrics']['hall_of_fame_count'] = len(hall_of_fame)
     
     # Save updated world state
