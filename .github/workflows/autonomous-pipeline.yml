@@ -875,6 +875,11 @@ jobs:
         run: |
           pip install requests PyYAML
 
+      - name: Sync mission flags with history
+        run: |
+          echo "🔄 Synchronizing mission_created flags with missions_history.json"
+          python3 tools/sync_mission_flags.py
+
       - name: Create missions
         id: create
         run: |

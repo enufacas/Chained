@@ -86,6 +86,11 @@ jobs:
           print(f"\n✅ All required labels are ready")
           EOF
       
+      - name: Sync mission flags with history
+        run: |
+          echo "🔄 Synchronizing mission_created flags with missions_history.json"
+          python3 tools/sync_mission_flags.py
+      
       - name: Analyze world state and select agents
         id: select_agents
         run: |
