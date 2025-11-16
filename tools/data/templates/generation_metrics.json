@@ -1,14 +1,12 @@
 {
-  "total_generations": 6,
+  "total_generations": 1,
   "avg_generation_time_ms": 0.0,
   "template_usage": {
-    "217b24b9da985b4d": 1,
-    "29ae0045b6ecb6ad": 2,
-    "4021221a65807ccb": 3
+    "217b24b9da985b4d": 1
   },
   "extraction_stats": {
-    "last_extraction": "2025-11-16T03:27:56.069402+00:00",
-    "extraction_time_seconds": 0.009537,
+    "last_extraction": "2025-11-16T03:28:03.577902+00:00",
+    "extraction_time_seconds": 0.010766,
     "templates_extracted": 62,
     "files_scanned": 20
   }
