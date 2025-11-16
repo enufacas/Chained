@@ -109,30 +109,23 @@ async function buildGraphData() {
     let nodeId = 0;
     
     try {
-        // Try to fetch learning files
+        // Try to fetch learning files from last 7 days
         const learningFiles = [];
         const today = new Date();
-        const dateStr = today.toISOString().split('T')[0].replace(/-/g, '');
         
-        // Add file patterns for today and yesterday
-        ['082735', '083000', '202403', '202500'].forEach(time => {
-            learningFiles.push(`tldr_${dateStr}_${time}.json`);
-        });
-        
-        ['070959', '071000', '131719', '131800', '190715', '191000'].forEach(time => {
-            learningFiles.push(`hn_${dateStr}_${time}.json`);
-        });
-        
-        const yesterday = new Date(today);
-        yesterday.setDate(today.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().split('T')[0].replace(/-/g, '');
-        
-        ['082000', '083000', '202000', '202500'].forEach(time => {
-            learningFiles.push(`tldr_${yesterdayStr}_${time}.json`);
-        });
-        ['070000', '071000', '130000', '131000', '190000', '191000'].forEach(time => {
-            learningFiles.push(`hn_${yesterdayStr}_${time}.json`);
-        });
+        // Scan last 7 days for learning files
+        for (let daysAgo = 0; daysAgo < 7; daysAgo++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - daysAgo);
+            const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
+            
+            // Try various time patterns that might exist
+            ['070000', '071000', '082000', '083000', '130000', '131000', '132000',
+             '185000', '186000', '190000', '191000', '202000', '202500'].forEach(time => {
+                learningFiles.push(`hn_${dateStr}_${time}.json`);
+                learningFiles.push(`tldr_${dateStr}_${time}.json`);
+            });
+        }
         
         let lastUpdate = null;
         
@@ -148,29 +141,30 @@ async function buildGraphData() {
                 
                 // Process learnings
                 for (const learning of data.learnings || []) {
-                    const title = learning.title;
+                    const title = learning.title || learning.description || 'Untitled';
                     const titleLower = title.toLowerCase();
                     
                     // Only include AI-related stories
-                    if (!titleLower.match(/\b(ai|ml|llm|gpt|neural|machine learning|copilot|model|training|chatbot|nlp|deep learning|transformer)\b/)) {
+                    if (!titleLower.match(/\b(ai|ml|llm|gpt|neural|machine learning|copilot|model|training|chatbot|nlp|deep learning|transformer|agent|openai|anthropic|claude)\b/)) {
                         continue;
                     }
                     
                     const category = categorizeStory(title);
                     const terms = extractKeyTerms(title);
-                    const score = learning.score || 100;
+                    // Use popularity-based scoring if no score field exists
+                    const score = learning.score || learning.points || 100;
                     
                     // Create node for the story
                     const storyNode = {
                         id: nodeId++,
                         label: title.substring(0, 30) + (title.length > 30 ? '...' : ''),
                         fullTitle: title,
-                        url: learning.url,
+                        url: learning.url || learning.link || '#',
                         score: score,
                         category: category,
                         type: 'story',
                         terms: terms,
-                        source: data.source
+                        source: learning.source || data.source || 'Unknown'
                     };
                     
                     nodes.push(storyNode);
