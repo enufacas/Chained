@@ -161,31 +161,7 @@ jobs:
           # Create PR (with fallback if labels don't exist)
           gh pr create \
             --title "🎹 AI Workflow Orchestrator Recommendations" \
-            --body "**@coordinate-wizard** has generated intelligent workflow scheduling recommendations.
-
-## 📊 Analysis Results
-
-This PR contains recommendations from the AI-powered workflow orchestrator.
-
-### What's Included
-- JSON export of all workflow predictions
-- Confidence scores for each recommendation
-- Expected durations and success rates
-- Resource impact classifications
-
-### How to Use
-1. Review the recommendations in \`workflow_recommendations.json\`
-2. Apply high-confidence recommendations (>70%) to your workflows
-3. Monitor the results and provide feedback
-
-### Next Steps
-- Collect real execution data to improve predictions
-- Integrate with existing workflow orchestrator
-- Monitor prediction accuracy
-
----
-
-*Orchestrated by **@coordinate-wizard*** 🎹" \
+            --body "**@coordinate-wizard** has generated intelligent workflow scheduling recommendations."$'\n\n'"## 📊 Analysis Results"$'\n\n'"This PR contains recommendations from the AI-powered workflow orchestrator."$'\n\n'"### What's Included"$'\n'"- JSON export of all workflow predictions"$'\n'"- Confidence scores for each recommendation"$'\n'"- Expected durations and success rates"$'\n'"- Resource impact classifications"$'\n\n'"### How to Use"$'\n'"1. Review the recommendations in \`workflow_recommendations.json\`"$'\n'"2. Apply high-confidence recommendations (>70%) to your workflows"$'\n'"3. Monitor the results and provide feedback"$'\n\n'"### Next Steps"$'\n'"- Collect real execution data to improve predictions"$'\n'"- Integrate with existing workflow orchestrator"$'\n'"- Monitor prediction accuracy"$'\n\n'"---"$'\n\n'"*Orchestrated by **@coordinate-wizard*** 🎹" \
             --label "automated,workflow-optimization" \
             --base main \
             --head "$BRANCH_NAME" || {
@@ -202,11 +178,6 @@ This PR contains recommendations from the AI-powered workflow orchestrator.
       - name: Add comment to issue (if triggered from issue)
         if: github.event_name == 'workflow_dispatch' && github.event.issue
         run: |
-          gh issue comment ${{ github.event.issue.number }} --body "🎼 **@coordinate-wizard** has completed the AI workflow orchestrator demo.
-
-✅ Mode: ${{ github.event.inputs.mode }}
-📊 Check the workflow run for detailed results: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-The AI orchestrator is learning from workflow patterns to optimize execution times!"
+          gh issue comment ${{ github.event.issue.number }} --body "🎼 **@coordinate-wizard** has completed the AI workflow orchestrator demo."$'\n\n'"✅ Mode: ${{ github.event.inputs.mode }}"$'\n'"📊 Check the workflow run for detailed results: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"$'\n\n'"The AI orchestrator is learning from workflow patterns to optimize execution times!"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -157,8 +157,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add learnings/pr_*.json
-          git add .github/agent-system/metrics/
+          # Add learning data files (use || true to avoid failures if no files match)
+          git add learnings/pr_*.json 2>/dev/null || true
+          git add .github/agent-system/metrics/ 2>/dev/null || true
           
           if git diff --staged --quiet; then
             echo "No changes to commit"
