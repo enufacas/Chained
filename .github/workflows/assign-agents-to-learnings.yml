@@ -117,9 +117,10 @@ jobs:
               
               print()
               
-              # Load recent learnings
+              # Load recent learnings with randomization for variety
               from pathlib import Path
               import glob
+              import random
               
               learnings = []
               learnings_dir = Path('learnings')
@@ -130,15 +131,37 @@ jobs:
                   if not learning_files:
                       print("⚠️  No JSON learning files found in learnings/ directory")
                   
-                  for learning_file in sorted(learning_files, reverse=True)[:20]:
+                  # Sort by modification time (newest first) but add some randomness
+                  learning_files_with_time = [(f, f.stat().st_mtime) for f in learning_files]
+                  learning_files_with_time.sort(key=lambda x: x[1], reverse=True)
+                  
+                  # Take top 30 recent files (increased from 20 for more variety)
+                  recent_files = [f for f, _ in learning_files_with_time[:30]]
+                  
+                  # Shuffle the recent files to add randomness
+                  # This ensures we don't always process the same files in the same order
+                  random.shuffle(recent_files)
+                  
+                  # Process files
+                  for learning_file in recent_files[:20]:  # Still limit to 20 for performance
                       try:
                           with open(learning_file) as f:
                               data = json.load(f)
                               # Handle different learning file formats
                               if isinstance(data, list):
-                                  learnings.extend(data[:5])  # Take first 5 from each file
+                                  # Instead of always taking first 5, randomly sample
+                                  sample_size = min(5, len(data))
+                                  if len(data) > sample_size:
+                                      learnings.extend(random.sample(data, sample_size))
+                                  else:
+                                      learnings.extend(data)
                               elif isinstance(data, dict) and 'items' in data:
-                                  learnings.extend(data['items'][:5])
+                                  items = data['items']
+                                  sample_size = min(5, len(items))
+                                  if len(items) > sample_size:
+                                      learnings.extend(random.sample(items, sample_size))
+                                  else:
+                                      learnings.extend(items)
                               elif isinstance(data, dict):
                                   learnings.append(data)
                       except Exception as e:
@@ -146,47 +169,57 @@ jobs:
               else:
                   print("⚠️  Learnings directory does not exist, skipping learning files")
               
-              print(f"📚 Loaded {len(learnings)} recent learnings")
+              # Shuffle the final learning list for maximum randomness
+              # This ensures variety across different workflow runs
+              random.shuffle(learnings)
+              
+              print(f"📚 Loaded {len(learnings)} learnings (with randomization)")
               print()
               
-              # Match agents to learnings
-              assignments = []
+              # Use the new diverse assignment method
+              print("🎯 Assigning learnings to agents with diversity constraints...")
+              print()
               
-              for agent in target_agents[:max_assignments]:
-                  agent_id = agent.get('id')
-                  agent_name = agent.get('name', agent_id)
-                  
-                  print(f"🔍 Matching {agent_name}...")
-                  
-                  # Get agent specialization from config
-                  agent_spec = matcher.agents.get(agent_id, {})
-                  
-                  if not agent_spec:
-                      print(f"   ⚠️  No specialization found for {agent_id}, skipping")
-                      continue
-                  
-                  # Find best matching learnings
-                  matches = matcher.match_agent_to_learnings(agent_id, learnings, top_k=3)
-                  
-                  if matches:
-                      best_match = matches[0]
-                      learning, score, categories = best_match
+              # Get list of agent IDs from target_agents
+              agent_ids = [agent.get('id') for agent in target_agents]
+              agent_names_map = {agent.get('id'): agent.get('name', agent.get('id')) for agent in target_agents}
+              
+              # Use the improved diverse assignment algorithm
+              # This ensures different agents get assigned, not all to one agent
+              assignments = matcher.assign_learnings_to_agents_diverse(
+                  learnings=learnings,
+                  agent_names=agent_ids,
+                  max_assignments=max_assignments,
+                  min_score=0.1,  # Lower threshold to be more liberal
+                  diversity_weight=0.7  # Strong diversity preference
+              )
+              
+              print(f"✅ Created {len(assignments)} diverse assignments")
+              
+              # Print summary of assignments
+              if assignments:
+                  print()
+                  print("📊 Assignment Summary:")
+                  agent_counts = {}
+                  for assignment in assignments:
+                      agent_id = assignment['agent_id']
+                      agent_name = agent_names_map.get(agent_id, agent_id)
+                      learning_title = assignment['learning'].get('title', 'Untitled')[:50]
+                      score = assignment['score']
+                      categories = ', '.join(assignment['categories'][:2])
+                      rank = assignment.get('assignment_rank', '?')
                       
-                      print(f"   ✅ Best match: {learning.get('title', 'Untitled')[:60]}...")
-                      print(f"      Score: {score:.3f}, Categories: {', '.join(categories)}")
+                      agent_counts[agent_id] = agent_counts.get(agent_id, 0) + 1
                       
-                      assignments.append({
-                          'agent_id': agent_id,
-                          'agent_name': agent_name,
-                          'learning': learning,
-                          'score': score,
-                          'categories': categories
-                      })
-                  else:
-                      print(f"   ⚠️  No suitable matches found")
+                      print(f"   📌 @{agent_id} (#{rank}) - {learning_title}...")
+                      print(f"      Score: {score:.3f}, Categories: {categories}")
+                  
+                  print()
+                  print("📈 Agent Distribution:")
+                  for agent_id, count in sorted(agent_counts.items(), key=lambda x: x[1], reverse=True):
+                      print(f"   • @{agent_id}: {count} assignment(s)")
               
               print()
-              print(f"✅ Created {len(assignments)} assignments")
               
               # Save assignments to file for next step
               output_file = '/tmp/agent_assignments.json'

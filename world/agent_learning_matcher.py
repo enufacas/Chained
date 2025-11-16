@@ -187,7 +187,10 @@ class AgentLearningMatcher:
         
         # 5. Source preference
         source = learning.get('source', '').lower()
-        source_key = 'hn' if 'hacker' in source else source.split()[0].lower()
+        if source:
+            source_key = 'hn' if 'hacker' in source else (source.split()[0].lower() if source.split() else 'other')
+        else:
+            source_key = 'other'
         source_multiplier = self.weights['source_preference'].get(
             source_key, 
             1.0
@@ -423,6 +426,110 @@ class AgentLearningMatcher:
                 })
         
         return dict(distribution)
+    
+    def assign_learnings_to_agents_diverse(
+        self,
+        learnings: List[Dict],
+        agent_names: Optional[List[str]] = None,
+        max_assignments: int = 5,
+        min_score: Optional[float] = None,
+        diversity_weight: float = 0.5
+    ) -> List[Dict]:
+        """
+        Assign learnings to agents with diversity constraints.
+        
+        This method ensures that:
+        1. Each learning is assigned to at most one agent
+        2. Agents are distributed evenly across assignments
+        3. The best matches are still prioritized
+        
+        Args:
+            learnings: List of learning dictionaries
+            agent_names: List of agent names to consider (None = all agents)
+            max_assignments: Maximum number of assignments to create
+            min_score: Minimum match score (None = use config threshold)
+            diversity_weight: Weight for diversity penalty (0-1, higher = more diverse)
+            
+        Returns:
+            List of assignment dictionaries with keys:
+                - agent_id: agent name
+                - learning: learning dict with relevance_score
+                - score: match score
+                - categories: matched categories
+        """
+        if min_score is None:
+            min_score = self.thresholds['minimum_score']
+        
+        if agent_names is None:
+            agent_names = list(self.agents.keys())
+        
+        # Track which agents have been assigned
+        agent_assignment_count = defaultdict(int)
+        
+        # Track which learnings have been assigned
+        assigned_learning_ids = set()
+        
+        assignments = []
+        
+        # For each learning, find best available agent
+        for learning in learnings:
+            if len(assignments) >= max_assignments:
+                break
+            
+            # Skip if already assigned
+            learning_id = id(learning)  # Use object id as unique identifier
+            if learning_id in assigned_learning_ids:
+                continue
+            
+            # Get all potential agent matches
+            agent_scores = self.match_learning_to_agents(
+                learning,
+                agent_names=agent_names,
+                max_results=len(agent_names),
+                min_score=min_score
+            )
+            
+            if not agent_scores:
+                continue
+            
+            # Apply diversity penalty based on how many times agent has been assigned
+            adjusted_scores = []
+            for agent_name, base_score in agent_scores:
+                # Penalty increases with each assignment to this agent
+                penalty = agent_assignment_count[agent_name] * diversity_weight
+                adjusted_score = base_score * (1.0 - min(penalty, 0.9))  # Cap penalty at 90%
+                adjusted_scores.append((agent_name, adjusted_score, base_score))
+            
+            # Sort by adjusted score
+            adjusted_scores.sort(key=lambda x: x[1], reverse=True)
+            
+            # Take the best agent (after diversity adjustment)
+            best_agent, adjusted_score, original_score = adjusted_scores[0]
+            
+            # Get categorization for the learning
+            categories = self._categorize_learning(learning)
+            category_names = [cat for cat, _ in categories[:3]]
+            
+            # Create assignment
+            learning_with_score = learning.copy()
+            learning_with_score['relevance_score'] = original_score
+            learning_with_score['matched_categories'] = category_names
+            
+            assignments.append({
+                'agent_id': best_agent,
+                'agent_name': self.agents[best_agent].get('focus_areas', [best_agent])[0],
+                'learning': learning_with_score,
+                'score': original_score,
+                'categories': category_names,
+                'adjusted_score': adjusted_score,
+                'assignment_rank': agent_assignment_count[best_agent] + 1
+            })
+            
+            # Update tracking
+            agent_assignment_count[best_agent] += 1
+            assigned_learning_ids.add(learning_id)
+        
+        return assignments
 
 
 # Convenience functions
