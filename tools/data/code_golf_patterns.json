@@ -38,24 +38,29 @@
   },
   "javascript": {
     "comment_removal": {
-      "effectiveness": 0.8,
-      "applications": 0,
-      "avg_reduction": 12.0
+      "effectiveness": 0.7523399558498897,
+      "applications": 1,
+      "avg_reduction": 9.701986754966887
     },
     "boolean_simplification": {
-      "effectiveness": 0.9,
-      "applications": 0,
-      "avg_reduction": 6.0
+      "effectiveness": 0.8423399558498896,
+      "applications": 1,
+      "avg_reduction": 9.701986754966887
     },
     "whitespace_reduction": {
-      "effectiveness": 0.85,
-      "applications": 0,
-      "avg_reduction": 8.0
+      "effectiveness": 0.7973399558498896,
+      "applications": 1,
+      "avg_reduction": 9.701986754966887
     },
     "arrow_function_conversion": {
-      "effectiveness": 0.75,
-      "applications": 0,
-      "avg_reduction": 15.0
+      "effectiveness": 0.7073399558498896,
+      "applications": 1,
+      "avg_reduction": 9.701986754966887
+    },
+    "blank_line_removal": {
+      "effectiveness": 0.48233995584988965,
+      "applications": 1,
+      "avg_reduction": 9.701986754966887
     }
   },
   "bash": {
