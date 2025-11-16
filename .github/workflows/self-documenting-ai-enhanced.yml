@@ -235,7 +235,6 @@ jobs:
                 --base main \
                 --head "$BRANCH_NAME"
             }
-            --head "$BRANCH_NAME"
           
           echo "✅ Created PR for enhanced learnings"
       

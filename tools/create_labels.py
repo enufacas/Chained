@@ -21,6 +21,7 @@ SYSTEM_LABELS: List[Tuple[str, str, str]] = [
     ("learning-source-tldr", "10B981", "From TLDR Tech newsletter"),
     ("learning-source-hn", "F59E0B", "From Hacker News"),
     ("learning-source-trending", "8B5CF6", "From GitHub Trending"),
+    ("self-documenting-ai", "059669", "Self-documenting AI system"),
     
     # Agent system labels
     ("agent-system", "1D76DB", "Agent system related"),

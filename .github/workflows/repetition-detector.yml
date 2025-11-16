@@ -87,6 +87,7 @@ jobs:
 
       - name: Run Uniqueness Scorer
         id: score
+        continue-on-error: true
         run: |
           threshold="${{ inputs.threshold }}"
           if [ -z "${threshold}" ]; then
@@ -95,20 +96,29 @@ jobs:
           
           echo "Calculating uniqueness scores (threshold: ${threshold})..."
           
+          # Run scorer and capture exit code
           python3 tools/uniqueness-scorer.py \
             -d . \
             --threshold ${threshold} \
             --days 90 \
             -o analysis/uniqueness-scores.json
           
-          # Check if agents are below threshold
-          if [ $? -ne 0 ]; then
+          EXIT_CODE=$?
+          
+          # Exit code 1 means agents are below threshold (expected behavior)
+          # This is informational, not a failure
+          if [ $EXIT_CODE -ne 0 ]; then
             echo "below_threshold=true" >> $GITHUB_OUTPUT
+            echo "⚠️  Some agents are below uniqueness threshold (this is informational)"
           else
             echo "below_threshold=false" >> $GITHUB_OUTPUT
+            echo "✅ All agents meet uniqueness threshold"
           fi
           
           echo "threshold=${threshold}" >> $GITHUB_OUTPUT
+          
+          # Always succeed - the exit code is informational only
+          exit 0
 
       - name: Generate Diversity Suggestions
         id: suggest
