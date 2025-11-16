@@ -2,11 +2,15 @@
 """
 Sync Learnings to World Ideas
 Converts learning analysis into geographic ideas for the world model.
+
+**@align-wizard** Enhancement: Preserves existing ideas and mission state
+to prevent duplicate missions and ensure continuous learning progress.
 """
 
 import json
 import os
 import sys
+import hashlib
 from datetime import datetime, timezone
 from typing import Dict, List, Any
 from pathlib import Path
@@ -264,9 +268,35 @@ def update_world_state_regions(world_state: Dict[str, Any], ideas: List[Dict[str
     world_state['regions'] = regions
 
 
+def generate_idea_content_hash(idea: Dict[str, Any]) -> str:
+    """
+    Generate a content hash for an idea based on its core attributes.
+    
+    This hash is used to detect when ideas are truly the same, even if
+    they're regenerated from new learning analysis runs.
+    
+    Args:
+        idea: Idea dict
+        
+    Returns:
+        MD5 hash of idea content
+    """
+    # Use title and patterns to identify unique ideas
+    # (Don't use mention_count or other volatile fields)
+    title = idea.get('title', '')
+    patterns = sorted(idea.get('patterns', []))
+    category = idea.get('category', '')
+    
+    content = f"{title}:{category}:{':'.join(patterns)}"
+    return hashlib.md5(content.encode()).hexdigest()
+
+
 def sync_learnings_to_ideas(max_ideas: int = 10, enable_deep_discovery: bool = True) -> Dict[str, Any]:
     """
     Main sync function: Load latest analysis, create ideas, update world.
+    
+    **@align-wizard** Enhancement: Preserves existing ideas and their mission state.
+    Only adds truly new ideas based on content hash deduplication.
     
     Args:
         max_ideas: Maximum number of ideas to create from top technologies
@@ -276,7 +306,7 @@ def sync_learnings_to_ideas(max_ideas: int = 10, enable_deep_discovery: bool = T
         Summary of sync operation
     """
     print("=" * 70)
-    print("💡 Syncing Learning Analysis to World Ideas")
+    print("💡 Syncing Learning Analysis to World Ideas (@align-wizard)")
     print("=" * 70)
     
     # Load latest analysis
@@ -335,15 +365,52 @@ def sync_learnings_to_ideas(max_ideas: int = 10, enable_deep_discovery: bool = T
     existing_ideas = knowledge.get('ideas', [])
     print(f"   Current ideas: {len(existing_ideas)}")
     
+    # **@align-wizard** Enhancement: Build hash map of existing learning ideas
+    # This preserves mission state and prevents duplicate idea creation
+    existing_learning_ideas = [idea for idea in existing_ideas if idea.get('source') == 'learning_analysis']
+    existing_content_hashes = {}
+    
+    for idea in existing_learning_ideas:
+        content_hash = generate_idea_content_hash(idea)
+        existing_content_hashes[content_hash] = idea
+    
+    print(f"   Existing learning ideas: {len(existing_learning_ideas)}")
+    print(f"   Content hashes: {len(existing_content_hashes)}")
+    
     # Create new ideas from technologies
-    print(f"\n💡 Creating ideas from technologies...")
+    print(f"\n💡 Processing technologies for ideas...")
     new_ideas = []
+    updated_ideas = []
+    skipped_duplicates = 0
     idea_id_base = len(existing_ideas) + 1
     
     for i, tech in enumerate(top_technologies):
-        idea = create_idea_from_technology(tech, idea_id_base + i)
-        new_ideas.append(idea)
-        print(f"   ✓ {idea['title']} (mentions: {tech.get('mention_count', 0)})")
+        # Create candidate idea
+        candidate_idea = create_idea_from_technology(tech, idea_id_base + len(new_ideas))
+        candidate_hash = generate_idea_content_hash(candidate_idea)
+        
+        # Check if this idea already exists
+        if candidate_hash in existing_content_hashes:
+            # Idea exists - preserve it with its mission state
+            existing_idea = existing_content_hashes[candidate_hash]
+            
+            # Update mention count if it changed significantly
+            old_mentions = existing_idea.get('mention_count', 0)
+            new_mentions = tech.get('mention_count', 0)
+            
+            if abs(new_mentions - old_mentions) > 5:
+                existing_idea['mention_count'] = new_mentions
+                existing_idea['updated_at'] = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+                updated_ideas.append(existing_idea)
+                print(f"   ↻ Updated: {existing_idea['title'][:50]} (mentions: {old_mentions} → {new_mentions})")
+            else:
+                print(f"   ✓ Kept: {existing_idea['title'][:50]} (unchanged)")
+            
+            skipped_duplicates += 1
+        else:
+            # Truly new idea
+            new_ideas.append(candidate_idea)
+            print(f"   + New: {candidate_idea['title']} (mentions: {tech.get('mention_count', 0)})")
     
     # **@construct-specialist** Enhancement: Add combination ideas for synergy
     if enable_deep_discovery and len(top_technologies) >= 2:
@@ -351,16 +418,29 @@ def sync_learnings_to_ideas(max_ideas: int = 10, enable_deep_discovery: bool = T
         combination_ideas = create_combination_ideas(top_technologies, max_combinations=3)
         
         for combo_idea in combination_ideas:
-            idea = create_idea_from_technology(combo_idea, idea_id_base + len(new_ideas), is_deep_discovery=True)
-            new_ideas.append(idea)
-            print(f"   ✓ {idea['title']} (integration opportunity)")
+            candidate_idea = create_idea_from_technology(combo_idea, idea_id_base + len(new_ideas), is_deep_discovery=True)
+            candidate_hash = generate_idea_content_hash(candidate_idea)
+            
+            if candidate_hash not in existing_content_hashes:
+                new_ideas.append(candidate_idea)
+                print(f"   + New integration: {candidate_idea['title']}")
+            else:
+                skipped_duplicates += 1
+                print(f"   ✓ Kept: {existing_content_hashes[candidate_hash]['title'][:50]} (combination exists)")
         
-        print(f"   Created {len(combination_ideas)} combination ideas")
+        print(f"   Created {len([i for i in new_ideas if i.get('is_combination')])} new combination ideas")
     
-    # Add new ideas to knowledge (replace old learning-based ideas)
-    # Keep only non-learning ideas
+    # **@align-wizard** Enhancement: Merge ideas intelligently
+    # Keep non-learning ideas + existing learning ideas + new learning ideas
     other_ideas = [idea for idea in existing_ideas if idea.get('source') != 'learning_analysis']
-    all_ideas = other_ideas + new_ideas
+    all_ideas = other_ideas + list(existing_content_hashes.values()) + new_ideas
+    
+    print(f"\n📊 Sync Summary:")
+    print(f"   Existing learning ideas preserved: {len(existing_content_hashes)}")
+    print(f"   New ideas added: {len(new_ideas)}")
+    print(f"   Ideas updated: {len(updated_ideas)}")
+    print(f"   Duplicates skipped: {skipped_duplicates}")
+    
     knowledge['ideas'] = all_ideas
     
     # Save knowledge base
