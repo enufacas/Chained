@@ -1,0 +1,16 @@
+{
+  "engineer-master": {
+    "total_failures": 10,
+    "failure_types": {
+      "review_rejection": 10
+    },
+    "improvements": []
+  },
+  "unknown": {
+    "total_failures": 23,
+    "failure_types": {
+      "review_rejection": 23
+    },
+    "improvements": []
+  }
+}
