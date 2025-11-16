@@ -86,6 +86,11 @@ jobs:
           print(f"\n✅ All required labels are ready")
           EOF
       
+      - name: Sync mission flags with history
+        run: |
+          echo "🔄 Synchronizing mission_created flags with missions_history.json"
+          python3 tools/sync_mission_flags.py
+      
       - name: Analyze world state and select agents
         id: select_agents
         run: |
@@ -93,6 +98,7 @@ jobs:
           import json
           import os
           import sys
+          import hashlib
           from datetime import datetime, timezone
           from pathlib import Path
           
@@ -117,6 +123,18 @@ jobs:
           with open('world/knowledge.json', 'r') as f:
               knowledge = json.load(f)
           
+          # Load mission history for hash-based deduplication
+          previous_mission_hashes = set()
+          try:
+              with open('.github/agent-system/missions_history.json', 'r') as f:
+                  history = json.load(f)
+                  previous_mission_hashes = set(history.get('mission_hashes', []))
+                  print(f"✅ Loaded {len(previous_mission_hashes)} previous mission hashes")
+          except FileNotFoundError:
+              print("⚠️  missions_history.json not found, will create new file")
+          except Exception as e:
+              print(f"⚠️  Error loading missions_history.json: {e}")
+          
           print("🌍 Analyzing World State")
           print(f"  Total agents: {len(world_state.get('agents', []))}")
           print(f"  Total ideas: {len(knowledge.get('ideas', []))}")
@@ -127,11 +145,30 @@ jobs:
           regions = world_state.get('regions', [])
           
           # Filter ideas: from learning_analysis AND not already having a mission
-          recent_ideas = [
-              idea for idea in ideas 
-              if idea.get('source') == 'learning_analysis' 
-              and not idea.get('mission_created', False)
-          ]
+          # Check BOTH mission_created flag AND hash to ensure consistency
+          recent_ideas = []
+          for idea in ideas:
+              if idea.get('source') != 'learning_analysis':
+                  continue
+              
+              # Generate hash using SAME method as autonomous-pipeline.yml
+              idea_id = idea.get('id', 'unknown')
+              idea_title = idea.get('title', 'Unknown')
+              idea_patterns = idea.get('patterns', [])
+              mission_content = f"{idea_id}:{idea_title}:{':'.join(sorted(idea_patterns))}"
+              mission_hash = hashlib.md5(mission_content.encode()).hexdigest()
+              
+              # Skip if EITHER flag is set OR hash exists
+              if idea.get('mission_created', False):
+                  print(f"  ⏭️  Skipping '{idea_title[:40]}...' (mission_created flag)")
+                  continue
+              
+              if mission_hash in previous_mission_hashes:
+                  print(f"  ⏭️  Skipping '{idea_title[:40]}...' (hash in history: {mission_hash[:8]})")
+                  continue
+              
+              recent_ideas.append(idea)
+          
           print(f"\n📊 Ideas without missions: {len(recent_ideas)}")
           
           if not recent_ideas:
@@ -181,11 +218,19 @@ jobs:
                   if idea and agent:
                       print(f"   ✅ {idea['title']} → @{agent_id} (score: {assignment['score']:.2f}, rank: {assignment['assignment_rank']})")
                       
+                      # Generate mission hash using SAME method as autonomous-pipeline.yml
+                      idea_id = idea['id']
+                      idea_title = idea['title']
+                      idea_patterns = idea.get('patterns', [])
+                      mission_content = f"{idea_id}:{idea_title}:{':'.join(sorted(idea_patterns))}"
+                      mission_hash = hashlib.md5(mission_content.encode()).hexdigest()
+                      
                       missions.append({
                           'idea_id': idea['id'],
                           'idea_title': idea['title'],
                           'idea_summary': idea.get('summary', '')[:200],
                           'patterns': idea.get('patterns', []),
+                          'mission_hash': mission_hash,
                           'agent': {
                               'agent_id': agent.get('id'),
                               'agent_name': agent.get('label', 'Unknown'),
@@ -239,11 +284,16 @@ jobs:
                       best_agent = agent_scores[0]
                       print(f"   Selected: {best_agent['agent_name']} (@{best_agent['specialization']}) - score: {best_agent['score']:.2f}")
                       
+                      # Generate mission hash using SAME method as autonomous-pipeline.yml
+                      mission_content = f"{idea_id}:{idea_title}:{':'.join(sorted(idea_patterns))}"
+                      mission_hash = hashlib.md5(mission_content.encode()).hexdigest()
+                      
                       missions.append({
                           'idea_id': idea_id,
                           'idea_title': idea_title,
                           'idea_summary': idea.get('summary', '')[:200],
                           'patterns': idea_patterns,
+                          'mission_hash': mission_hash,
                           'agent': best_agent,
                           'regions': [r.get('region_id') for r in idea_regions]
                       })
@@ -256,7 +306,7 @@ jobs:
           
           print(f"\n✅ Created {len(missions)} missions")
           
-          # Mark ideas as having missions created
+          # Mark ideas as having missions created AND update missions_history.json
           for mission in missions:
               idea_id = mission['idea_id']
               for idea in ideas:
@@ -270,6 +320,24 @@ jobs:
               json.dump(knowledge, f, indent=2)
           
           print(f"✅ Marked {len(missions)} ideas as having missions")
+          
+          # Update missions_history.json with new hashes
+          new_hashes = [m['mission_hash'] for m in missions]
+          all_hashes = list(previous_mission_hashes) + new_hashes
+          
+          # Keep only the last 100 hashes to prevent unbounded growth
+          if len(all_hashes) > 100:
+              all_hashes = all_hashes[-100:]
+          
+          missions_history = {
+              'last_updated': datetime.now(timezone.utc).isoformat(),
+              'mission_hashes': all_hashes
+          }
+          
+          with open('.github/agent-system/missions_history.json', 'w') as f:
+              json.dump(missions_history, f, indent=2)
+          
+          print(f"✅ Updated missions_history.json with {len(new_hashes)} new hashes (total: {len(all_hashes)})")
           
           # Output for GitHub Actions
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
@@ -390,7 +458,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add world/
+          git add world/ .github/agent-system/missions_history.json
           
           if git diff --staged --quiet; then
             echo "No changes to commit"
@@ -418,13 +486,15 @@ jobs:
             - Used AgentLearningMatcher with diversity constraints (diversity_weight=0.7)
             - Assigned 1 unique agent per mission with penalty for repeat assignments
             - Marked ideas as 'mission_created' to prevent reprocessing
+            - Updated missions_history.json with mission hashes for deduplication
             - Moved agents to mission locations
             - Updated world tick and agent status
             
-            Key Improvements (fixes from PR #1245):
+            Key Improvements:
             - Now uses world/agent_learning_matcher.py for intelligent matching
             - Diversity penalty prevents same agent from monopolizing missions
             - Ideas are marked as processed to prevent duplicate missions
+            - Mission hashes tracked in missions_history.json for cross-workflow consistency
             - Supports full agent roster, not limited pattern matching
             
             ---
