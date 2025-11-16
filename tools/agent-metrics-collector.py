@@ -99,6 +99,7 @@ except ImportError:
 
 # Constants
 METRICS_DIR = Path(".github/agent-system/metrics")
+REGISTRY_FILE = Path(".github/agent-system/registry.json")
 DEFAULT_LOOKBACK_DAYS = 7
 
 
@@ -689,17 +690,18 @@ class MetricsCollector:
             activity.issues_resolved = len(resolved_issues)
             
             # Find PRs that close issues assigned to this agent
-            # Optimization: Use multiple methods with smart fallbacks
+            # OPTIMIZED: Smarter fallback strategy to minimize expensive timeline API calls
             prs_for_agent = []
             pr_numbers_from_issues = set()
+            issues_needing_search = []  # Defer expensive operations
             
+            # Phase 1: Quick body scan for PR references (fastest, no extra API calls)
             for issue in assigned_issues:
                 issue_number = issue.get('number')
-                
-                # Method 1: Check if issue body contains PR links (fastest)
-                # Many times PRs are mentioned directly in issue updates
                 body = issue.get('body', '')
                 pr_refs = re.findall(r'#(\d+)', body)
+                found_pr_for_issue = False
+                
                 for pr_ref in pr_refs:
                     pr_number = int(pr_ref)
                     if pr_number != issue_number and pr_number not in pr_numbers_from_issues:
@@ -709,74 +711,98 @@ class MetricsCollector:
                             if pr_data.get('pull_request'):
                                 prs_for_agent.append(pr_data)
                                 pr_numbers_from_issues.add(pr_number)
+                                found_pr_for_issue = True
                                 print(f"  ✅ Found PR #{pr_number} via issue body reference", file=sys.stderr)
                 
-                # Method 2: Use timeline API only if we haven't found PRs yet
-                # This is the expensive call - minimize its use
-                if len(prs_for_agent) == 0:
-                    try:
-                        # Check cache first
-                        if issue_number in self._timeline_cache:
-                            timeline = self._timeline_cache[issue_number]
-                        else:
-                            # Only fetch timeline if we haven't cached it yet
-                            timeline = self.github.get(
-                                f'/repos/{self.repo}/issues/{issue_number}/timeline',
-                                headers={'Accept': 'application/vnd.github.mockingbird-preview+json'}
-                            )
-                            self._api_call_count += 1
-                            if timeline:
-                                self._timeline_cache[issue_number] = timeline
-                        
-                        if timeline:
-                            for event in timeline:
-                                if event.get('event') == 'cross-referenced':
-                                    source = event.get('source', {})
-                                    if source.get('type') == 'issue' and source.get('issue', {}).get('pull_request'):
-                                        pr_data = source.get('issue')
-                                        pr_number = pr_data.get('number')
-                                        if pr_number and pr_number not in pr_numbers_from_issues:
-                                            # Check cache for full PR details
-                                            if pr_number in self._pr_cache:
-                                                full_pr = self._pr_cache[pr_number]
-                                            else:
-                                                try:
-                                                    full_pr = self.github.get(f'/repos/{self.repo}/pulls/{pr_number}')
-                                                    self._api_call_count += 1
-                                                    if full_pr:
-                                                        self._pr_cache[pr_number] = full_pr
-                                                except Exception as e:
-                                                    full_pr = pr_data  # Fallback to partial data
-                                            
-                                            if full_pr:
-                                                prs_for_agent.append(full_pr)
-                                                pr_numbers_from_issues.add(pr_number)
-                                                merge_status = "merged" if full_pr.get('merged_at') else "open/closed"
-                                                print(f"  ✅ Found PR #{pr_number} ({merge_status}) via timeline for issue #{issue_number}", file=sys.stderr)
-                    except Exception as e:
-                        print(f"⚠️  Warning: Timeline API failed for issue {issue_number}: {e}", file=sys.stderr)
+                # Track issues that need more expensive searches
+                if not found_pr_for_issue:
+                    issues_needing_search.append(issue)
+            
+            # Phase 2: Batch PR search (if needed, more efficient than timeline)
+            if issues_needing_search and len(issues_needing_search) <= 10:
+                try:
+                    # Build search query for multiple issues at once
+                    issue_numbers_query = ' OR '.join([f'#{issue.get("number")}' for issue in issues_needing_search])
+                    
+                    search_results = self._search_issues(
+                        agent_id,
+                        'is:pr',
+                        f'({issue_numbers_query})'
+                    )
+                    self._api_call_count += 1
+                    
+                    for pr in search_results:
+                        pr_number = pr.get('number')
+                        if pr_number and pr_number not in pr_numbers_from_issues:
+                            # Cache this PR
+                            if pr_number not in self._pr_cache:
+                                self._pr_cache[pr_number] = pr
+                            prs_for_agent.append(pr)
+                            pr_numbers_from_issues.add(pr_number)
+                            print(f"  ✅ Found PR #{pr_number} via batch search", file=sys.stderr)
+                    
+                    # Update list - remove issues we found PRs for
+                    found_issue_numbers = set()
+                    for pr in search_results:
+                        pr_body = pr.get('body', '').lower()
+                        for issue in issues_needing_search:
+                            if f'#{issue.get("number")}' in pr_body:
+                                found_issue_numbers.add(issue.get('number'))
+                    
+                    issues_needing_search = [
+                        issue for issue in issues_needing_search 
+                        if issue.get('number') not in found_issue_numbers
+                    ]
                 
-                # Method 3: Search for PRs that mention this issue (fallback)
-                # Only use if timeline didn't work
-                if len(prs_for_agent) == 0:
-                    try:
-                        search_results = self._search_issues(
-                            agent_id,
-                            'is:pr',
-                            f'in:body #{issue_number}'
+                except Exception as e:
+                    print(f"⚠️  Warning: Batch PR search failed: {e}", file=sys.stderr)
+            
+            # Phase 3: Timeline API for remaining closed issues (most expensive, minimal use)
+            # Only use for closed issues that likely have PRs, limit to 3 calls
+            closed_issues = [issue for issue in issues_needing_search if issue.get('state') == 'closed']
+            for issue in closed_issues[:3]:  # Strict limit on timeline calls
+                issue_number = issue.get('number')
+                try:
+                    # Check cache first
+                    if issue_number in self._timeline_cache:
+                        timeline = self._timeline_cache[issue_number]
+                    else:
+                        # Only fetch timeline if we haven't cached it yet
+                        timeline = self.github.get(
+                            f'/repos/{self.repo}/issues/{issue_number}/timeline',
+                            headers={'Accept': 'application/vnd.github.mockingbird-preview+json'}
                         )
                         self._api_call_count += 1
-                        
-                        for pr in search_results:
-                            pr_number = pr.get('number')
-                            if pr_number and pr_number not in pr_numbers_from_issues:
-                                pr_body = pr.get('body', '').lower()
-                                if f'#{issue_number}' in pr_body or f'closes #{issue_number}' in pr_body or f'fixes #{issue_number}' in pr_body:
-                                    prs_for_agent.append(pr)
-                                    pr_numbers_from_issues.add(pr_number)
-                                    print(f"  ✅ Found PR #{pr_number} via search for issue #{issue_number}", file=sys.stderr)
-                    except Exception as e:
-                        print(f"⚠️  Warning: Search API failed for issue {issue_number}: {e}", file=sys.stderr)
+                        if timeline:
+                            self._timeline_cache[issue_number] = timeline
+                    
+                    if timeline:
+                        for event in timeline:
+                            if event.get('event') == 'cross-referenced':
+                                source = event.get('source', {})
+                                if source.get('type') == 'issue' and source.get('issue', {}).get('pull_request'):
+                                    pr_data = source.get('issue')
+                                    pr_number = pr_data.get('number')
+                                    if pr_number and pr_number not in pr_numbers_from_issues:
+                                        # Check cache for full PR details
+                                        if pr_number in self._pr_cache:
+                                            full_pr = self._pr_cache[pr_number]
+                                        else:
+                                            try:
+                                                full_pr = self.github.get(f'/repos/{self.repo}/pulls/{pr_number}')
+                                                self._api_call_count += 1
+                                                if full_pr:
+                                                    self._pr_cache[pr_number] = full_pr
+                                            except Exception as e:
+                                                full_pr = pr_data  # Fallback to partial data
+                                        
+                                        if full_pr:
+                                            prs_for_agent.append(full_pr)
+                                            pr_numbers_from_issues.add(pr_number)
+                                            merge_status = "merged" if full_pr.get('merged_at') else "open/closed"
+                                            print(f"  ✅ Found PR #{pr_number} ({merge_status}) via timeline for issue #{issue_number}", file=sys.stderr)
+                except Exception as e:
+                    print(f"⚠️  Warning: Timeline API failed for issue {issue_number}: {e}", file=sys.stderr)
             
             # Method 4: Git-based fallback when GitHub API is unavailable
             if len(prs_for_agent) == 0 and len(assigned_issues) > 0:
