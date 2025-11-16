@@ -924,16 +924,21 @@ jobs:
                       'score': score
                   })
               
-              # Top 10 agents
+              # Sort agents by score and select the best one
               agent_scores.sort(key=lambda x: x['score'], reverse=True)
-              top_agents = agent_scores[:10]
+              best_agent = agent_scores[0] if agent_scores else {
+                  'agent_id': 'unknown',
+                  'agent_name': 'Unknown',
+                  'specialization': '',
+                  'score': 0.0
+              }
               
               missions.append({
                   'idea_id': idea_id,
                   'idea_title': idea.get('title', 'Unknown'),
                   'idea_summary': idea.get('summary', '')[:200],
                   'patterns': idea_patterns,
-                  'agents': top_agents,
+                  'agent': best_agent,  # Single agent, not list
                   'regions': [r.get('region_id', 'unknown') for r in idea_regions]
               })
           
