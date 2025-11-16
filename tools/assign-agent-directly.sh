@@ -86,9 +86,8 @@ echo "🏷️  Adding agent label: $agent_label"
 gh label create "$agent_label" --repo "$GITHUB_REPOSITORY" --description "Custom agent: $matched_agent" --color "0E8A16" 2>/dev/null || true
 gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --add-label "$agent_label" 2>/dev/null || echo "⚠️  Could not add agent label"
 
-# Add copilot-assigned label to claim the issue
-echo "🏷️  Adding copilot-assigned label"
-gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --add-label "copilot-assigned" 2>/dev/null || echo "⚠️  Could not add copilot-assigned label"
+# NOTE: copilot-assigned label will be added AFTER successful GraphQL assignment
+# This prevents marking issues as assigned when the assignment actually failed
 
 # Add agent directive to issue body
 echo "📝 Adding agent directive with @mention to issue body..."
@@ -214,7 +213,11 @@ mutation_result=$(gh api graphql -f query='
   }' -f issueId="$issue_node_id" -f actorId="$target_actor_id" 2>&1)
 
 if echo "$mutation_result" | jq -e '.data.replaceActorsForAssignable.assignable' > /dev/null 2>&1; then
-  echo "✅ Successfully assigned issue #$issue_number"
+  echo "✅ Successfully assigned issue #$issue_number via GraphQL"
+  
+  # NOW add copilot-assigned label since assignment succeeded
+  echo "🏷️  Adding copilot-assigned label (assignment successful)"
+  gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --add-label "copilot-assigned" 2>/dev/null || echo "⚠️  Could not add copilot-assigned label"
   
   # Build success message based on assignment method
   if [ "$agent_human_name" != "null" ] && [ -n "$agent_human_name" ]; then
@@ -303,7 +306,8 @@ This workflow is using the default \`GITHUB_TOKEN\` which cannot assign Copilot 
 3. Re-run this workflow
 
 **For now:**
-- This mission has been labeled \`copilot-assigned\` for tracking
+- The \`copilot-assigned\` label was NOT added (assignment failed)
+- The \`agent:$matched_agent\` label was added for tracking
 - You can manually assign Copilot from the GitHub UI
 - The scheduled copilot-graphql-assign workflow will attempt assignment again
 
