@@ -1,5 +1,5 @@
 {
-  "time": "2025-11-16T18:40:03Z",
+  "time": "2025-11-16T19:13:33Z",
   "tick": 43,
   "agents": [
     {
@@ -1757,7 +1757,7 @@
       "label": "San Francisco",
       "lat": 37.7749,
       "lng": -122.4194,
-      "idea_count": 11,
+      "idea_count": 22,
       "timezone": "America/Los_Angeles",
       "utc_offset": -8,
       "region_type": "innovation_hub",
@@ -2021,7 +2021,7 @@
     }
   ],
   "metrics": {
-    "total_ideas": 14,
+    "total_ideas": 25,
     "total_regions": 10,
     "ticks_completed": 43,
     "active_agents": 48,
