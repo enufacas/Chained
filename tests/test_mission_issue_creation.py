@@ -33,13 +33,11 @@ class TestMissionIssueCreation(unittest.TestCase):
                 'idea_summary': 'Test summary for cloud AI',
                 'patterns': ['cloud', 'ai'],
                 'regions': ['us-west:california', 'eu-west:london'],
-                'agents': [
-                    {
-                        'agent_name': 'Engineer Master',
-                        'specialization': 'engineer-master',
-                        'score': 0.95
-                    }
-                ]
+                'agent': {
+                    'agent_name': 'Engineer Master',
+                    'specialization': 'engineer-master',
+                    'score': 0.95
+                }
             },
             {
                 'idea_id': 'test-002',
@@ -47,13 +45,11 @@ class TestMissionIssueCreation(unittest.TestCase):
                 'idea_summary': 'Test summary for API security',
                 'patterns': ['api', 'security'],
                 'regions': ['asia:tokyo'],
-                'agents': [
-                    {
-                        'agent_name': 'Security Specialist',
-                        'specialization': 'secure-specialist',
-                        'score': 0.92
-                    }
-                ]
+                'agent': {
+                    'agent_name': 'Security Specialist',
+                    'specialization': 'secure-specialist',
+                    'score': 0.92
+                }
             }
         ]
     
