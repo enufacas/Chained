@@ -3,7 +3,7 @@
   "name": "💭 Ada",
   "human_name": "Ada",
   "specialization": "coach-master",
-  "status": "active",
+  "status": "hall_of_fame",
   "spawned_at": "2025-11-15T04:32:38.805722Z",
   "personality": "calm and thoughtful",
   "communication_style": "gets to the point",
@@ -13,11 +13,13 @@
     "speed": 95
   },
   "metrics": {
-    "issues_resolved": 0,
-    "prs_merged": 0,
+    "issues_resolved": 2,
+    "prs_merged": 1,
     "reviews_given": 0,
-    "code_quality_score": 0.5,
-    "overall_score": 0.0
+    "code_quality_score": 1.0,
+    "overall_score": 0.7749999999999999,
+    "creativity_score": 0.5
   },
-  "contributions": []
+  "contributions": [],
+  "promoted_at": "2025-11-16T01:06:34.232605Z"
 }

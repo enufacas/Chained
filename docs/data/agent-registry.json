@@ -6,7 +6,7 @@
       "name": "\ud83e\uddf9 Robert Martin",
       "human_name": "Robert Martin",
       "specialization": "organize-guru",
-      "status": "active",
+      "status": "hall_of_fame",
       "spawned_at": "2025-11-12T01:26:19.844461Z",
       "personality": "clean and disciplined, with creative flair",
       "communication_style": "follows SOLID principles",
@@ -17,13 +17,14 @@
       },
       "metrics": {
         "issues_resolved": 1,
-        "prs_merged": 0,
+        "prs_merged": 2,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.42974999999999997,
-        "creativity_score": 0.5316666666666666
+        "code_quality_score": 1.0,
+        "overall_score": 0.764025,
+        "creativity_score": 0.42683333333333334
       },
-      "contributions": []
+      "contributions": [],
+      "promoted_at": "2025-11-16T00:46:27.073505Z"
     },
     {
       "id": "agent-1762918927",
@@ -44,8 +45,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.42974999999999997,
-        "creativity_score": 0.5316666666666666
+        "overall_score": 0.4124642857142857,
+        "creativity_score": 0.4164285714285715
       },
       "contributions": []
     },
@@ -54,7 +55,7 @@
       "name": "\ud83d\udcad Turing",
       "human_name": "Turing",
       "specialization": "coach-master",
-      "status": "active",
+      "status": "hall_of_fame",
       "spawned_at": "2025-11-12T06:23:40.505907Z",
       "personality": "methodical and precise",
       "communication_style": "explains things with analogies",
@@ -65,20 +66,21 @@
       },
       "metrics": {
         "issues_resolved": 2,
-        "prs_merged": 0,
+        "prs_merged": 1,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.42974999999999997,
-        "creativity_score": 0.5316666666666666
+        "code_quality_score": 1.0,
+        "overall_score": 0.764025,
+        "creativity_score": 0.42683333333333334
       },
-      "contributions": []
+      "contributions": [],
+      "promoted_at": "2025-11-16T00:48:35.530497Z"
     },
     {
       "id": "agent-1762960673",
       "name": "\ud83c\udfaf Liskov",
       "human_name": "Liskov",
       "specialization": "investigate-champion",
-      "status": "active",
+      "status": "hall_of_fame",
       "spawned_at": "2025-11-12T15:17:53.772435Z",
       "personality": "analytical and logical",
       "communication_style": "adds humor to discussions",
@@ -89,44 +91,21 @@
       },
       "metrics": {
         "issues_resolved": 2,
-        "prs_merged": 0,
+        "prs_merged": 1,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.42974999999999997,
-        "creativity_score": 0.5316666666666666
+        "code_quality_score": 1.0,
+        "overall_score": 0.764025,
+        "creativity_score": 0.42683333333333334
       },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763079117",
-      "name": "\ud83d\udd12 Moxie Marlinspike",
-      "human_name": "Moxie Marlinspike",
-      "specialization": "secure-ninja",
-      "status": "active",
-      "spawned_at": "2025-11-14T00:11:57.453779Z",
-      "personality": "privacy-focused and bold, with extra enthusiasm",
-      "communication_style": "protects user rights",
-      "traits": {
-        "creativity": 71,
-        "caution": 61,
-        "speed": 84
-      },
-      "metrics": {
-        "issues_resolved": 1,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.42974999999999997,
-        "creativity_score": 0.5316666666666666
-      },
-      "contributions": []
+      "contributions": [],
+      "promoted_at": "2025-11-16T00:49:40.407307Z"
     },
     {
       "id": "agent-1763082710",
       "name": "\ud83d\udd28 Linus Torvalds",
       "human_name": "Linus Torvalds",
       "specialization": "construct-specialist",
-      "status": "active",
+      "status": "hall_of_fame",
       "spawned_at": "2025-11-14T01:11:50.171182Z",
       "personality": "direct and practical, but more direct",
       "communication_style": "focuses on what works",
@@ -137,20 +116,21 @@
       },
       "metrics": {
         "issues_resolved": 1,
-        "prs_merged": 0,
+        "prs_merged": 1,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.42974999999999997,
-        "creativity_score": 0.5316666666666666
+        "code_quality_score": 1.0,
+        "overall_score": 0.7624642857142857,
+        "creativity_score": 0.4164285714285715
       },
-      "contributions": []
+      "contributions": [],
+      "promoted_at": "2025-11-16T15:58:43.372679Z"
     },
     {
       "id": "agent-1763086649",
       "name": "\ud83c\udfaf Ada",
       "human_name": "Ada",
       "specialization": "investigate-champion",
-      "status": "active",
+      "status": "hall_of_fame",
       "spawned_at": "2025-11-14T02:17:29.209138Z",
       "personality": "meticulous and careful",
       "communication_style": "adds encouraging emojis",
@@ -161,13 +141,14 @@
       },
       "metrics": {
         "issues_resolved": 2,
-        "prs_merged": 0,
+        "prs_merged": 1,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.42974999999999997,
-        "creativity_score": 0.5316666666666666
+        "code_quality_score": 1.0,
+        "overall_score": 0.77325,
+        "creativity_score": 0.48833333333333334
       },
-      "contributions": []
+      "contributions": [],
+      "promoted_at": "2025-11-16T00:52:47.560504Z"
     },
     {
       "id": "agent-1763101431",
@@ -185,11 +166,11 @@
       },
       "metrics": {
         "issues_resolved": 1,
-        "prs_merged": 0,
+        "prs_merged": 1,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.42974999999999997,
-        "creativity_score": 0.5316666666666666
+        "code_quality_score": 0.6,
+        "overall_score": 0.5424642857142857,
+        "creativity_score": 0.4164285714285715
       },
       "contributions": []
     },
@@ -198,7 +179,7 @@
       "name": "\ud83c\udfb9 Quincy Jones",
       "human_name": "Quincy Jones",
       "specialization": "coordinate-wizard",
-      "status": "active",
+      "status": "hall_of_fame",
       "spawned_at": "2025-11-14T09:17:15.529140Z",
       "personality": "versatile and integrative, with a philosophical bent",
       "communication_style": "orchestrates diverse talents",
@@ -209,13 +190,14 @@
       },
       "metrics": {
         "issues_resolved": 1,
-        "prs_merged": 0,
+        "prs_merged": 1,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.42974999999999997,
-        "creativity_score": 0.5316666666666666
+        "code_quality_score": 1.0,
+        "overall_score": 0.77325,
+        "creativity_score": 0.48833333333333334
       },
-      "contributions": []
+      "contributions": [],
+      "promoted_at": "2025-11-16T00:54:50.000899Z"
     },
     {
       "id": "agent-1763169004",
@@ -232,11 +214,12 @@
         "speed": 52
       },
       "metrics": {
-        "issues_resolved": 0,
+        "issues_resolved": 1,
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.42274999999999996,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -262,7 +245,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -285,7 +269,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -311,7 +296,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -334,7 +320,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -357,7 +344,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -380,7 +368,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -403,7 +392,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -426,7 +416,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -449,7 +440,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -472,7 +464,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -495,7 +488,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -504,7 +498,7 @@
       "name": "\ud83d\udcad Ada",
       "human_name": "Ada",
       "specialization": "coach-master",
-      "status": "active",
+      "status": "hall_of_fame",
       "spawned_at": "2025-11-15T04:32:38.805722Z",
       "personality": "calm and thoughtful",
       "communication_style": "gets to the point",
@@ -514,13 +508,15 @@
         "speed": 95
       },
       "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
+        "issues_resolved": 2,
+        "prs_merged": 1,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 1.0,
+        "overall_score": 0.7749999999999999,
+        "creativity_score": 0.5
       },
-      "contributions": []
+      "contributions": [],
+      "promoted_at": "2025-11-16T01:06:34.232605Z"
     },
     {
       "id": "agent-17631811707",
@@ -541,7 +537,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -564,7 +561,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -583,11 +581,12 @@
         "speed": 90
       },
       "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
+        "issues_resolved": 1,
+        "prs_merged": 1,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 0.6,
+        "overall_score": 0.55275,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -610,7 +609,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -629,11 +629,12 @@
         "speed": 96
       },
       "metrics": {
-        "issues_resolved": 0,
+        "issues_resolved": 1,
         "prs_merged": 0,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 0.0,
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -642,7 +643,7 @@
       "name": "\ud83c\udfb9 Einstein",
       "human_name": "Einstein",
       "specialization": "coordinate-wizard",
-      "status": "active",
+      "status": "hall_of_fame",
       "spawned_at": "2025-11-15T04:33:22.590993Z",
       "personality": "bold and innovative",
       "communication_style": "gets to the point",
@@ -652,13 +653,15 @@
         "speed": 74
       },
       "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
+        "issues_resolved": 1,
+        "prs_merged": 2,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 1.0,
+        "overall_score": 0.7727499999999999,
+        "creativity_score": 0.48500000000000004
       },
-      "contributions": []
+      "contributions": [],
+      "promoted_at": "2025-11-16T16:14:17.558760Z"
     },
     {
       "id": "agent-176318121213",
@@ -675,11 +678,12 @@
         "speed": 83
       },
       "metrics": {
-        "issues_resolved": 0,
+        "issues_resolved": 1,
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.42274999999999996,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -702,7 +706,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -744,11 +749,12 @@
         "speed": 60
       },
       "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
+        "issues_resolved": 1,
+        "prs_merged": 1,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 0.6,
+        "overall_score": 0.55275,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -771,7 +777,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -794,7 +801,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -817,7 +825,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -863,7 +872,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -886,7 +896,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -909,7 +920,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -918,7 +930,7 @@
       "name": "\ud83e\uddf9 Tesla",
       "human_name": "Tesla",
       "specialization": "organize-guru",
-      "status": "active",
+      "status": "hall_of_fame",
       "spawned_at": "2025-11-15T04:34:43.313852Z",
       "personality": "calm and thoughtful",
       "communication_style": "adds encouraging emojis",
@@ -928,20 +940,22 @@
         "speed": 58
       },
       "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
+        "issues_resolved": 1,
+        "prs_merged": 4,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 0.96,
+        "overall_score": 0.72075,
+        "creativity_score": 0.48500000000000004
       },
-      "contributions": []
+      "contributions": [],
+      "promoted_at": "2025-11-16T16:22:18.365748Z"
     },
     {
       "id": "agent-176318128825",
       "name": "\ud83d\udcad Darwin",
       "human_name": "Darwin",
       "specialization": "coach-master",
-      "status": "active",
+      "status": "hall_of_fame",
       "spawned_at": "2025-11-15T04:34:49.093981Z",
       "personality": "methodical and precise",
       "communication_style": "gets to the point",
@@ -951,20 +965,22 @@
         "speed": 78
       },
       "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
+        "issues_resolved": 2,
+        "prs_merged": 11,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 1.0,
+        "overall_score": 0.7560833333333333,
+        "creativity_score": 0.48500000000000004
       },
-      "contributions": []
+      "contributions": [],
+      "promoted_at": "2025-11-16T16:23:10.068485Z"
     },
     {
       "id": "agent-1763183746720248781-3-39930",
       "name": "\ud83d\udea8 Ada",
       "human_name": "Ada",
       "specialization": "secure-specialist",
-      "status": "active",
+      "status": "hall_of_fame",
       "spawned_at": "2025-11-15T05:15:46.921585Z",
       "personality": "bold and innovative",
       "communication_style": "explains with analogies",
@@ -974,13 +990,15 @@
         "speed": 56
       },
       "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
+        "issues_resolved": 1,
+        "prs_merged": 1,
         "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "code_quality_score": 1.0,
+        "overall_score": 0.7727499999999999,
+        "creativity_score": 0.48500000000000004
       },
-      "contributions": []
+      "contributions": [],
+      "promoted_at": "2025-11-16T16:23:58.943763Z"
     },
     {
       "id": "agent-1763183748073840492-2-43936",
@@ -1001,7 +1019,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -1024,7 +1043,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -1047,7 +1067,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -1070,7 +1091,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -1093,7 +1115,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.48500000000000004
       },
       "contributions": []
     },
@@ -1116,7 +1139,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.44166666666666665
       },
       "contributions": []
     },
@@ -1139,7 +1163,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5
       },
       "contributions": []
     },
@@ -1162,7 +1187,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5
       },
       "contributions": []
     },
@@ -1185,12 +1211,487 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763256520",
+      "name": "\u2601\ufe0f Cloud Architect Specialist",
+      "human_name": "Cloud",
+      "specialization": "cloud-architect",
+      "status": "active",
+      "spawned_at": "2025-11-16T01:28:40.619782Z",
+      "spawn_method": "learning-based",
+      "inspiration_topic": "cloud",
+      "topic_score": 84.0,
+      "personality": "visionary and creative",
+      "communication_style": "encouraging and supportive",
+      "traits": {
+        "creativity": 75,
+        "caution": 60,
+        "speed": 70
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.4,
+        "creativity_score": 0.5
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763258200757894834-1-54160",
+      "name": "\ud83d\udd0c Vint Cerf",
+      "human_name": "Vint Cerf",
+      "specialization": "connector-ninja",
+      "status": "active",
+      "spawned_at": "2025-11-16T01:56:40.939993Z",
+      "personality": "protocol-minded and inclusive, with a twist of humor",
+      "communication_style": "ensures interoperability",
+      "traits": {
+        "creativity": 55,
+        "caution": 36,
+        "speed": 85
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.4,
+        "creativity_score": 0.5
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763258203737029106-2-29948",
+      "name": "\u2714\ufe0f Liskov",
+      "human_name": "Liskov",
+      "specialization": "validator-pro",
+      "status": "active",
+      "spawned_at": "2025-11-16T01:56:44.005020Z",
+      "personality": "bold and innovative",
+      "communication_style": "uses technical jargon",
+      "traits": {
+        "creativity": 81,
+        "caution": 88,
+        "speed": 61
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.4,
+        "creativity_score": 0.5
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763258205657852196-3-16512",
+      "name": "\ud83d\udd04 Liskov",
+      "human_name": "Liskov",
+      "specialization": "bridge-master",
+      "status": "active",
+      "spawned_at": "2025-11-16T01:56:45.929573Z",
+      "personality": "calm and thoughtful",
+      "communication_style": "adds encouraging emojis",
+      "traits": {
+        "creativity": 68,
+        "caution": 50,
+        "speed": 73
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.4,
+        "creativity_score": 0.5
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763264778257825109-79144",
+      "name": "\ud83d\udea8 Feynman",
+      "human_name": "Feynman",
+      "specialization": "secure-specialist",
+      "status": "active",
+      "spawned_at": "2025-11-16T03:46:18.521776Z",
+      "personality": "meticulous and careful",
+      "communication_style": "explains things with analogies",
+      "traits": {
+        "creativity": 54,
+        "caution": 64,
+        "speed": 63
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.4,
+        "creativity_score": 0.5
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763264865",
+      "name": "\ud83c\udfaf Steam Machine Specialist",
+      "human_name": "Steam",
+      "specialization": "steam-machine",
+      "status": "active",
+      "spawned_at": "2025-11-16T03:47:45.308170Z",
+      "spawn_method": "learning-based",
+      "inspiration_topic": "Steam Machine",
+      "topic_score": 252.7,
+      "personality": "meticulous and precise",
+      "communication_style": "philosophical and deep",
+      "traits": {
+        "creativity": 75,
+        "caution": 60,
+        "speed": 70
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.4,
+        "creativity_score": 0.5
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763265019150673861-2-53350",
+      "name": "\ud83e\uddf9 Michael Feathers",
+      "human_name": "Michael Feathers",
+      "specialization": "cleaner-master",
+      "status": "active",
+      "spawned_at": "2025-11-16T03:50:19.328142Z",
+      "personality": "legacy-code warrior, with a practical focus",
+      "communication_style": "safely improves old code",
+      "traits": {
+        "creativity": 50,
+        "caution": 37,
+        "speed": 56
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.4,
+        "creativity_score": 0.5
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763265023760455549-1-14083",
+      "name": "\ud83d\udcc8 Curie",
+      "human_name": "Curie",
+      "specialization": "accelerate-master",
+      "status": "active",
+      "spawned_at": "2025-11-16T03:50:24.034019Z",
+      "personality": "calm and thoughtful",
+      "communication_style": "explains with analogies",
+      "traits": {
+        "creativity": 90,
+        "caution": 83,
+        "speed": 80
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.4,
+        "creativity_score": 0.5
       },
       "contributions": []
     }
   ],
-  "hall_of_fame": [],
+  "hall_of_fame": [
+    {
+      "id": "agent-1762910779",
+      "name": "\ud83e\uddf9 Robert Martin",
+      "human_name": "Robert Martin",
+      "specialization": "organize-guru",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-12T01:26:19.844461Z",
+      "personality": "clean and disciplined, with creative flair",
+      "communication_style": "follows SOLID principles",
+      "traits": {
+        "creativity": 72,
+        "caution": 42,
+        "speed": 77
+      },
+      "metrics": {
+        "issues_resolved": 1,
+        "prs_merged": 2,
+        "reviews_given": 0,
+        "code_quality_score": 1.0,
+        "overall_score": 0.764025,
+        "creativity_score": 0.42683333333333334
+      },
+      "contributions": [],
+      "promoted_at": "2025-11-16T00:46:27.073505Z"
+    },
+    {
+      "id": "agent-1762928620",
+      "name": "\ud83d\udcad Turing",
+      "human_name": "Turing",
+      "specialization": "coach-master",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-12T06:23:40.505907Z",
+      "personality": "methodical and precise",
+      "communication_style": "explains things with analogies",
+      "traits": {
+        "creativity": 66,
+        "caution": 81,
+        "speed": 78
+      },
+      "metrics": {
+        "issues_resolved": 2,
+        "prs_merged": 1,
+        "reviews_given": 0,
+        "code_quality_score": 1.0,
+        "overall_score": 0.764025,
+        "creativity_score": 0.42683333333333334
+      },
+      "contributions": [],
+      "promoted_at": "2025-11-16T00:48:35.530497Z"
+    },
+    {
+      "id": "agent-1762960673",
+      "name": "\ud83c\udfaf Liskov",
+      "human_name": "Liskov",
+      "specialization": "investigate-champion",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-12T15:17:53.772435Z",
+      "personality": "analytical and logical",
+      "communication_style": "adds humor to discussions",
+      "traits": {
+        "creativity": 78,
+        "caution": 75,
+        "speed": 95
+      },
+      "metrics": {
+        "issues_resolved": 2,
+        "prs_merged": 1,
+        "reviews_given": 0,
+        "code_quality_score": 1.0,
+        "overall_score": 0.764025,
+        "creativity_score": 0.42683333333333334
+      },
+      "contributions": [],
+      "promoted_at": "2025-11-16T00:49:40.407307Z"
+    },
+    {
+      "id": "agent-1763086649",
+      "name": "\ud83c\udfaf Ada",
+      "human_name": "Ada",
+      "specialization": "investigate-champion",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-14T02:17:29.209138Z",
+      "personality": "meticulous and careful",
+      "communication_style": "adds encouraging emojis",
+      "traits": {
+        "creativity": 67,
+        "caution": 89,
+        "speed": 58
+      },
+      "metrics": {
+        "issues_resolved": 2,
+        "prs_merged": 1,
+        "reviews_given": 0,
+        "code_quality_score": 1.0,
+        "overall_score": 0.77325,
+        "creativity_score": 0.48833333333333334
+      },
+      "contributions": [],
+      "promoted_at": "2025-11-16T00:52:47.560504Z"
+    },
+    {
+      "id": "agent-1763111835",
+      "name": "\ud83c\udfb9 Quincy Jones",
+      "human_name": "Quincy Jones",
+      "specialization": "coordinate-wizard",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-14T09:17:15.529140Z",
+      "personality": "versatile and integrative, with a philosophical bent",
+      "communication_style": "orchestrates diverse talents",
+      "traits": {
+        "creativity": 62,
+        "caution": 30,
+        "speed": 53
+      },
+      "metrics": {
+        "issues_resolved": 1,
+        "prs_merged": 1,
+        "reviews_given": 0,
+        "code_quality_score": 1.0,
+        "overall_score": 0.77325,
+        "creativity_score": 0.48833333333333334
+      },
+      "contributions": [],
+      "promoted_at": "2025-11-16T00:54:50.000899Z"
+    },
+    {
+      "id": "agent-17631811586",
+      "name": "\ud83d\udcad Ada",
+      "human_name": "Ada",
+      "specialization": "coach-master",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-15T04:32:38.805722Z",
+      "personality": "calm and thoughtful",
+      "communication_style": "gets to the point",
+      "traits": {
+        "creativity": 81,
+        "caution": 30,
+        "speed": 95
+      },
+      "metrics": {
+        "issues_resolved": 2,
+        "prs_merged": 1,
+        "reviews_given": 0,
+        "code_quality_score": 1.0,
+        "overall_score": 0.7749999999999999,
+        "creativity_score": 0.5
+      },
+      "contributions": [],
+      "promoted_at": "2025-11-16T01:06:34.232605Z"
+    },
+    {
+      "id": "agent-1763082710",
+      "name": "\ud83d\udd28 Linus Torvalds",
+      "human_name": "Linus Torvalds",
+      "specialization": "construct-specialist",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-14T01:11:50.171182Z",
+      "personality": "direct and practical, but more direct",
+      "communication_style": "focuses on what works",
+      "traits": {
+        "creativity": 80,
+        "caution": 91,
+        "speed": 69
+      },
+      "metrics": {
+        "issues_resolved": 1,
+        "prs_merged": 1,
+        "reviews_given": 0,
+        "code_quality_score": 1.0,
+        "overall_score": 0.7624642857142857,
+        "creativity_score": 0.4164285714285715
+      },
+      "contributions": [],
+      "promoted_at": "2025-11-16T15:58:43.372679Z"
+    },
+    {
+      "id": "agent-176318120211",
+      "name": "\ud83c\udfb9 Einstein",
+      "human_name": "Einstein",
+      "specialization": "coordinate-wizard",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-15T04:33:22.590993Z",
+      "personality": "bold and innovative",
+      "communication_style": "gets to the point",
+      "traits": {
+        "creativity": 58,
+        "caution": 71,
+        "speed": 74
+      },
+      "metrics": {
+        "issues_resolved": 1,
+        "prs_merged": 2,
+        "reviews_given": 0,
+        "code_quality_score": 1.0,
+        "overall_score": 0.7727499999999999,
+        "creativity_score": 0.48500000000000004
+      },
+      "contributions": [],
+      "promoted_at": "2025-11-16T16:14:17.558760Z"
+    },
+    {
+      "id": "agent-176318128324",
+      "name": "\ud83e\uddf9 Tesla",
+      "human_name": "Tesla",
+      "specialization": "organize-guru",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-15T04:34:43.313852Z",
+      "personality": "calm and thoughtful",
+      "communication_style": "adds encouraging emojis",
+      "traits": {
+        "creativity": 91,
+        "caution": 81,
+        "speed": 58
+      },
+      "metrics": {
+        "issues_resolved": 1,
+        "prs_merged": 4,
+        "reviews_given": 0,
+        "code_quality_score": 0.96,
+        "overall_score": 0.72075,
+        "creativity_score": 0.48500000000000004
+      },
+      "contributions": [],
+      "promoted_at": "2025-11-16T16:22:18.365748Z"
+    },
+    {
+      "id": "agent-176318128825",
+      "name": "\ud83d\udcad Darwin",
+      "human_name": "Darwin",
+      "specialization": "coach-master",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-15T04:34:49.093981Z",
+      "personality": "methodical and precise",
+      "communication_style": "gets to the point",
+      "traits": {
+        "creativity": 72,
+        "caution": 74,
+        "speed": 78
+      },
+      "metrics": {
+        "issues_resolved": 2,
+        "prs_merged": 11,
+        "reviews_given": 0,
+        "code_quality_score": 1.0,
+        "overall_score": 0.7560833333333333,
+        "creativity_score": 0.48500000000000004
+      },
+      "contributions": [],
+      "promoted_at": "2025-11-16T16:23:10.068485Z"
+    },
+    {
+      "id": "agent-1763183746720248781-3-39930",
+      "name": "\ud83d\udea8 Ada",
+      "human_name": "Ada",
+      "specialization": "secure-specialist",
+      "status": "hall_of_fame",
+      "spawned_at": "2025-11-15T05:15:46.921585Z",
+      "personality": "bold and innovative",
+      "communication_style": "explains with analogies",
+      "traits": {
+        "creativity": 95,
+        "caution": 40,
+        "speed": 56
+      },
+      "metrics": {
+        "issues_resolved": 1,
+        "prs_merged": 1,
+        "reviews_given": 0,
+        "code_quality_score": 1.0,
+        "overall_score": 0.7727499999999999,
+        "creativity_score": 0.48500000000000004
+      },
+      "contributions": [],
+      "promoted_at": "2025-11-16T16:23:58.943763Z"
+    }
+  ],
   "config": {
     "spawn_interval_hours": 3,
     "max_active_agents": 50,
@@ -1213,7 +1714,7 @@
     "new_agent_minimum_score": 0.4
   },
   "last_spawn": "2025-11-15T03:57:36.949624+00:00",
-  "last_evaluation": "2025-11-15T00:59:06.530290Z",
-  "system_lead": null,
+  "last_evaluation": "2025-11-16T16:28:57.360034Z",
+  "system_lead": "agent-17631811586",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
