@@ -204,7 +204,7 @@ jobs:
           }
           
           os.makedirs('learnings', exist_ok=True)
-          filename = f"learnings/tldr_{datetime.now().strftime('%Y%m%d')}.json"
+          filename = f"learnings/tldr_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
           with open(filename, 'w') as f:
               json.dump(data, f, indent=2)
           
@@ -289,7 +289,7 @@ jobs:
           }
           
           os.makedirs('learnings', exist_ok=True)
-          filename = f"learnings/hn_{datetime.now().strftime('%Y%m%d')}.json"
+          filename = f"learnings/hn_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
           with open(filename, 'w') as f:
               json.dump(data, f, indent=2)
           
@@ -364,7 +364,7 @@ jobs:
           }
           
           os.makedirs('learnings', exist_ok=True)
-          filename = f"learnings/github_trending_{datetime.now().strftime('%Y%m%d')}.json"
+          filename = f"learnings/github_trending_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
           with open(filename, 'w') as f:
               json.dump(data, f, indent=2)
           

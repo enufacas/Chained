@@ -131,8 +131,82 @@ jobs:
                   if not learning_files:
                       print("⚠️  No JSON learning files found in learnings/ directory")
                   
-                  # Sort by modification time (newest first) but add some randomness
-                  learning_files_with_time = [(f, f.stat().st_mtime) for f in learning_files]
+                  # DEDUPLICATION: Group files by source and date to avoid duplicates
+                  from collections import defaultdict
+                  
+                  def extract_source_date(filename):
+                      """Extract source and date from filename to group duplicates."""
+                      name = filename.stem  # Remove .json extension
+                      parts = name.split('_')
+                      if len(parts) >= 2:
+                          source = parts[0]  # e.g., 'tldr', 'hn', 'github'
+                          date = parts[1][:8]  # First 8 chars = YYYYMMDD
+                          return (source, date)
+                      return (name, None)
+                  
+                  def get_file_learning_count(filepath):
+                      """Get count of learnings in a file."""
+                      try:
+                          with open(filepath) as f:
+                              data = json.load(f)
+                              # Handle different formats
+                              if isinstance(data, dict):
+                                  # Check for explicit count field
+                                  if 'count' in data:
+                                      return data['count']
+                                  # Check for learnings array
+                                  if 'learnings' in data:
+                                      return len(data['learnings'])
+                                  # Check for stories array (HackerNews)
+                                  if 'stories' in data:
+                                      return len(data['stories'])
+                                  # Check for repositories array (GitHub Trending)
+                                  if 'repositories' in data:
+                                      return len(data['repositories'])
+                              elif isinstance(data, list):
+                                  return len(data)
+                      except Exception:
+                          pass
+                      return 0
+                  
+                  # Group files by source+date to identify duplicates
+                  file_groups = defaultdict(list)
+                  for f in learning_files:
+                      source, date = extract_source_date(f)
+                      if date:
+                          file_groups[(source, date)].append(f)
+                  
+                  # Select BEST file per source+date combination
+                  # Prioritize: 1) Most content, 2) Newest timestamp
+                  deduplicated_files = []
+                  duplicate_count = 0
+                  for (source, date), files in file_groups.items():
+                      if len(files) > 1:
+                          duplicate_count += len(files) - 1
+                          print(f"   🔍 Found {len(files)} files for {source}_{date}, selecting best one")
+                      
+                      # Score each file: content count (primary) + mtime (secondary)
+                      scored_files = []
+                      for f in files:
+                          content_count = get_file_learning_count(f)
+                          mtime = f.stat().st_mtime
+                          # Score: prioritize content (x1000) over recency
+                          score = (content_count * 1000) + mtime
+                          scored_files.append((score, content_count, mtime, f))
+                      
+                      # Select file with highest score (most content, then newest)
+                      best_file = max(scored_files, key=lambda x: x[0])[3]
+                      deduplicated_files.append(best_file)
+                      
+                      if len(files) > 1:
+                          best_count = max(scored_files, key=lambda x: x[0])[1]
+                          print(f"      → Selected {best_file.name} ({best_count} items)")
+                  
+                  if duplicate_count > 0:
+                      print(f"   ✅ Deduplicated {duplicate_count} duplicate files")
+                  
+                  # Sort by modification time (newest first)
+                  learning_files_with_time = [(f, f.stat().st_mtime) for f in deduplicated_files]
                   learning_files_with_time.sort(key=lambda x: x[1], reverse=True)
                   
                   # Take top 30 recent files (increased from 20 for more variety)

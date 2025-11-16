@@ -1,9 +1,12 @@
 name: "Learning: TLDR Tech"
 
-# NOTE: This workflow is now part of the autonomous-pipeline.yml
-# It can still be triggered manually for testing or standalone use
+# NOTE: This workflow is now DEPRECATED and integrated into autonomous-pipeline.yml
+# It is kept for manual testing only and will not run on schedule
+# To avoid duplicate learning files, use autonomous-pipeline.yml instead
 on:
   workflow_dispatch:
+    # Manual trigger only - use for testing or one-off learning collection
+    # For production, use autonomous-pipeline.yml which runs on schedule
 
 permissions:
   contents: write
