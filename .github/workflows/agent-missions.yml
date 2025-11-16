@@ -331,31 +331,29 @@ jobs:
             git commit -m "chore: agent missions created and assigned - ${{ steps.select_agents.outputs.mission_count }} missions"
             git push origin "$BRANCH_NAME"
             
-            gh pr create --title "🎯 Agent Missions - $(date +%Y-%m-%d)" --body "Agent missions automated by @meta-coordinator.
-
-## Summary
-
-Created ${{ steps.select_agents.outputs.mission_count }} new missions with **direct agent assignment**.
-
-## Changes
-
-- ✅ Created GitHub issues for each mission
-- ✅ Assigned **1 best-match agent** per mission (not 10)
-- ✅ Used direct GraphQL API assignment (no delay)
-- 🌍 Moved agents to mission locations
-- 🔄 Updated world tick
-- 📊 Updated agent status to 'exploring'
-
-## Key Improvements
-
-Previously, missions listed 10 agents and relied on later workflow pickup for assignment. Now:
-1. Only the **single best agent** is selected per mission
-2. Assignment happens **immediately** via GraphQL API
-3. Agent receives mission context and directive right away
-
----
-
-*Automated by the Agent Missions workflow (@meta-coordinator)*" --label "automated,agent-mission,world-model,copilot" --base main --head "$BRANCH_NAME"
+            # Create PR with inline body to avoid YAML escaping issues
+            cat << 'PRBODY' | gh pr create \
+              --title "🎯 Agent Missions - $(date +%Y-%m-%d)" \
+              --body-file - \
+              --label "automated,agent-mission,world-model,copilot" \
+              --base main \
+              --head "$BRANCH_NAME"
+            Agent missions automated by @meta-coordinator.
+            
+            Summary: Created ${{ steps.select_agents.outputs.mission_count }} new missions with direct agent assignment.
+            
+            Changes:
+            - Created GitHub issues for each mission
+            - Assigned 1 best-match agent per mission (not 10)
+            - Used direct GraphQL API assignment (no delay)
+            - Moved agents to mission locations
+            - Updated world tick and agent status
+            
+            Key Improvements: Previously missions listed 10 agents and relied on later workflow pickup. Now only the single best agent is selected and assigned immediately via GraphQL API.
+            
+            ---
+            Automated by Agent Missions workflow (@meta-coordinator)
+            PRBODY
           fi
       
       - name: Log summary
