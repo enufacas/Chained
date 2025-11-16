@@ -1,0 +1,27 @@
+{
+  "proactive_suggestions": [
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83c\udfaf Define clear acceptance criteria and test cases",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:infrastructure-specialist -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> Th..."
+  ],
+  "knowledge_connections": {
+    "insight_1102_c81df4f34b6c": [
+      {
+        "target_id": "insight_1102_d195d127397a",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1102_d195d127397a": [
+      {
+        "target_id": "insight_1102_c81df4f34b6c",
+        "similarity": 1.0
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 16,
+    "total_connections": 4,
+    "new_insights_added": 20
+  },
+  "timestamp": "2025-11-16T00:16:25.904354+00:00"
+}
