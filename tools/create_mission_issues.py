@@ -33,12 +33,16 @@ def calculate_ecosystem_relevance(patterns, summary):
     high_relevance_patterns = {
         'agents': 3,
         'autonomous': 3,
+        'ai': 3,  # AI is core to autonomous system built by AI
+        'ai_ml': 3,  # AI/ML topics are highly relevant
+        'ml': 3,  # Machine learning topics are highly relevant
+        'llm': 3,  # Large language models are core to the system
+        'code_generation': 3,
         'ci_automation': 2,
         'devops': 2,
         'github': 2,
         'workflow': 2,
         'testing': 2,
-        'code_generation': 3,
         'self_healing': 2,
         'evaluation': 2,
         'performance': 2,
@@ -47,9 +51,6 @@ def calculate_ecosystem_relevance(patterns, summary):
     
     # Medium relevance patterns
     medium_relevance_patterns = {
-        'ai': 1,
-        'ai_ml': 1,
-        'ml': 1,
         'api': 1,
         'web': 1,
         'cloud': 1,
@@ -71,6 +72,13 @@ def calculate_ecosystem_relevance(patterns, summary):
     ecosystem_keywords = {
         'agent': ('Agent System', 1),
         'autonomous': ('Autonomous Pipeline', 1),
+        'artificial intelligence': ('AI System', 2),
+        'machine learning': ('AI System', 2),
+        'llm': ('AI System', 2),
+        'language model': ('AI System', 2),
+        'ai': ('AI System', 1),
+        'copilot': ('AI System', 2),
+        'code generation': ('AI System', 2),
         'workflow': ('Autonomous Pipeline', 1),
         'ci/cd': ('Autonomous Pipeline', 1),
         'github actions': ('Autonomous Pipeline', 1),

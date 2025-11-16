@@ -27,9 +27,9 @@ def calculate_ecosystem_relevance(patterns, summary):
 
 **Scoring Logic:**
 - Base score: 3 (all missions)
-- High relevance patterns (+2-3 points): `agents`, `ci_automation`, `devops`, `github`, `workflow`, `self_healing`, `autonomous`
-- Medium relevance patterns (+1 point): `cloud`, `security`, `api`, `ai`, `ml`
-- Summary keywords (+1-2 points): `agent`, `autonomous`, `workflow`, `ci/cd`, `world model`, etc.
+- High relevance patterns (+2-3 points): `ai`, `ai_ml`, `ml`, `llm`, `agents`, `ci_automation`, `devops`, `github`, `workflow`, `self_healing`, `autonomous`, `code_generation`
+- Medium relevance patterns (+1 point): `cloud`, `security`, `api`, `data`, `analytics`
+- Summary keywords (+1-2 points): `ai`, `artificial intelligence`, `machine learning`, `llm`, `agent`, `autonomous`, `workflow`, `ci/cd`, `world model`, etc.
 - Maximum: 10 points
 
 **Relevance Levels:**
@@ -84,6 +84,8 @@ def calculate_ecosystem_relevance(patterns, summary):
 | Test Case | Patterns | Score | Level | Expected |
 |-----------|----------|-------|-------|----------|
 | High: CI + Agents | `ci_automation`, `agents`, `devops` | 10/10 | 🔴 High | ✅ Correct |
+| High: AI + ML | `ai`, `ml` | 10/10 | 🔴 High | ✅ Correct |
+| High: LLM | `llm` | 8/10 | 🔴 High | ✅ Correct |
 | Medium: Cloud Security | `cloud`, `security`, `api` | 6/10 | 🟡 Medium | ✅ Correct |
 | Low: Mobile UI | `mobile`, `ui` | 3/10 | 🟢 Low | ✅ Correct |
 | High: GitHub Actions | `github`, `workflow`, `testing` | 10/10 | 🔴 High | ✅ Correct |

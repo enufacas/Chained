@@ -13,8 +13,8 @@ This document describes the implementation of **Option 3: Context-Aware Enhanced
 **New Function:** `calculate_ecosystem_relevance(patterns, summary)`
 
 This function scores missions from 1-10 based on:
-- **High relevance patterns** (7-10): CI/CD, agents, autonomous systems, GitHub workflows
-- **Medium relevance patterns** (4-6): Cloud, security, APIs, ML/AI
+- **High relevance patterns** (7-10): AI/ML, agents, autonomous systems, CI/CD, LLMs, code generation, GitHub workflows
+- **Medium relevance patterns** (4-6): Cloud, security, APIs, data analytics
 - **Low relevance patterns** (1-3): General tech trends
 
 **Scoring Logic:**
@@ -173,15 +173,16 @@ User chose this option because:
 ### Patterns That Increase Score
 
 **High Impact (+2-3 points):**
-- `agents`, `autonomous`, `code_generation` (+3)
-- `ci_automation`, `devops`, `github`, `workflow`, `testing`, `self_healing` (+2)
+- `agents`, `autonomous`, `ai`, `ai_ml`, `ml`, `llm`, `code_generation` (+3)
+- `ci_automation`, `devops`, `github`, `workflow`, `testing`, `self_healing`, `performance`, `monitoring` (+2)
 
 **Medium Impact (+1 point):**
-- `ai`, `ai_ml`, `ml`, `api`, `cloud`, `security`, `data`
+- `api`, `cloud`, `security`, `data`, `analytics`
 
 ### Summary Keywords That Increase Score
 
-- `agent`, `autonomous`, `workflow`, `ci/cd`, `github actions` (+1)
+- `artificial intelligence`, `machine learning`, `llm`, `language model`, `copilot`, `code generation` (+2)
+- `agent`, `autonomous`, `workflow`, `ci/cd`, `github actions`, `ai` (+1)
 - `world model` (+2)
 - `testing`, `learning`, `documentation`, `geographic` (+1)
 
@@ -192,12 +193,17 @@ User chose this option because:
    - Keywords: "autonomous", "ci", "agent"
    - **Score: 10/10** (High)
 
-2. **"Cloud security incident at Checkout.com"**
+2. **"Anthropic releases Claude 3 with advanced reasoning capabilities"**
+   - Patterns: `ai`, `llm`, `ml`
+   - Keywords: "AI", "language model"
+   - **Score: 10/10** (High)
+
+3. **"Cloud security incident at Checkout.com"**
    - Patterns: `cloud`, `security`, `api`
    - Keywords: none
    - **Score: 6/10** (Medium)
 
-3. **"New mobile UI framework for React"**
+4. **"New mobile UI framework for React"**
    - Patterns: `mobile`, `web`, `ui`
    - Keywords: none
    - **Score: 4/10** (Low-Medium)
