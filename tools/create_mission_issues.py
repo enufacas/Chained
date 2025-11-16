@@ -113,8 +113,14 @@ def main():
         
         # Build agent info (single agent)
         agent_name = agent.get('agent_name', 'Unknown')
-        agent_specialization = agent.get('specialization', 'unknown')
+        agent_specialization = agent.get('specialization', '')
         agent_score = agent.get('score', 0.0)
+        
+        # Validate agent specialization - NEVER use 'unknown'
+        if not agent_specialization or agent_specialization == 'unknown':
+            print(f"  ⚠️  Warning: Mission '{idea_title}' has invalid agent specialization: '{agent_specialization}'")
+            print(f"  ⚠️  Skipping mission creation - agent validation failed")
+            continue  # Skip this mission
         
         location_list = ', '.join(regions) if regions else 'No specific location'
         pattern_list = ', '.join(patterns) if patterns else 'General'
