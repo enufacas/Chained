@@ -8,6 +8,9 @@ on:
   # Run when PRs are closed (both merged and unmerged)
   pull_request:
     types: [closed]
+    # Note: No 'paths' filters - we want to learn from ALL PR closures.
+    # The tools/pr-failure-learner.py script is a dependency, not a trigger condition.
+    # We need to run on every PR close to collect failure data across all changes.
   
   # Manual trigger for testing
   workflow_dispatch:
