@@ -7,7 +7,13 @@
 let map = null;
 let worldState = null;
 let knowledge = null;
+let issuesData = null; // Store issues data for linking
+let pullsData = null; // Store PRs data for linking
 let agentMarkers = null;
+let pathLayerGroup = null; // Layer group for agent paths
+let regionsLayerGroup = null; // Layer group for regions
+let learningsLayerGroup = null; // Layer group for learnings/work
+let layerControl = null; // Leaflet layer control
 let agentLocations = {}; // Map agent names to locations
 let allMarkers = []; // Store all marker references for filtering
 let searchQuery = ''; // Current search query
@@ -161,7 +167,32 @@ function initMap() {
         zoomToBoundsOnClick: true
     });
     
+    // Initialize layer groups for different features (@support-master enhancement)
+    pathLayerGroup = L.layerGroup();
+    regionsLayerGroup = L.layerGroup();
+    learningsLayerGroup = L.layerGroup();
+    
+    // Add base layers (always visible)
     map.addLayer(agentMarkers);
+    
+    // Add overlay layers (toggleable)
+    const overlays = {
+        "🤖 Agents": agentMarkers,
+        "🗺️ Agent Paths": pathLayerGroup,
+        "📍 Regions": regionsLayerGroup,
+        "💡 Learnings & Work": learningsLayerGroup
+    };
+    
+    // Add layer control to map
+    layerControl = L.control.layers(null, overlays, {
+        collapsed: false,
+        position: 'topright'
+    }).addTo(map);
+    
+    // Add overlay layers to map by default
+    pathLayerGroup.addTo(map);
+    regionsLayerGroup.addTo(map);
+    learningsLayerGroup.addTo(map);
     
     return true;
 }
@@ -185,6 +216,26 @@ async function loadWorldData() {
             throw new Error(`Failed to load knowledge: ${knowledgeResponse.status}`);
         }
         knowledge = await knowledgeResponse.json();
+        
+        // Load issues data for PR/issue links (@support-master enhancement)
+        try {
+            const issuesResponse = await fetch('./data/issues.json');
+            if (issuesResponse.ok) {
+                issuesData = await issuesResponse.json();
+            }
+        } catch (e) {
+            console.warn('Issues data not available:', e);
+        }
+        
+        // Load PRs data for PR links (@support-master enhancement)
+        try {
+            const pullsResponse = await fetch('./data/pulls.json');
+            if (pullsResponse.ok) {
+                pullsData = await pullsResponse.json();
+            }
+        } catch (e) {
+            console.warn('PRs data not available:', e);
+        }
         
         // Update last refresh time
         if (lastUpdateEl) {
@@ -372,6 +423,78 @@ function findAgentKey(label) {
     return null;
 }
 
+// Get issues for an agent (@support-master enhancement)
+function getAgentIssues(agentLabel, agentSpecialization) {
+    if (!issuesData) return [];
+    
+    // Find issues assigned to this agent or with matching agent label
+    const agentIssues = issuesData.filter(issue => {
+        // Check if issue mentions the agent in body or title
+        const bodyMentions = issue.body && (
+            issue.body.includes(`@${agentSpecialization}`) ||
+            issue.body.includes(agentLabel)
+        );
+        
+        // Check if issue has agent label
+        const hasAgentLabel = issue.labels && issue.labels.some(label => 
+            label.name === `agent:${agentSpecialization}`
+        );
+        
+        return bodyMentions || hasAgentLabel;
+    });
+    
+    // Return most recent 5 issues
+    return agentIssues
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 5);
+}
+
+// Get PRs for an agent (@support-master enhancement)
+function getAgentPRs(agentLabel, agentSpecialization) {
+    if (!pullsData) return [];
+    
+    // Find PRs that mention the agent or have agent label
+    const agentPRs = pullsData.filter(pr => {
+        const bodyMentions = pr.body && (
+            pr.body.includes(`@${agentSpecialization}`) ||
+            pr.body.includes(agentLabel)
+        );
+        
+        const hasAgentLabel = pr.labels && pr.labels.some(label => 
+            label.name === `agent:${agentSpecialization}`
+        );
+        
+        return bodyMentions || hasAgentLabel;
+    });
+    
+    // Return most recent 5 PRs
+    return agentPRs
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 5);
+}
+
+// Get learning/work info for an idea (@support-master enhancement)
+function getLearningInfo(ideaId) {
+    if (!knowledge || !knowledge.ideas) return null;
+    
+    const idea = knowledge.ideas.find(i => i.id === ideaId);
+    if (!idea) return null;
+    
+    // Find related issue for this idea
+    let relatedIssue = null;
+    if (issuesData) {
+        relatedIssue = issuesData.find(issue => 
+            issue.body && issue.body.includes(ideaId)
+        );
+    }
+    
+    return {
+        idea: idea,
+        issue: relatedIssue,
+        sourceUrl: idea.source_url || null
+    };
+}
+
 // Create custom agent marker icon
 function createAgentIcon(agent) {
     const score = agent.metrics?.overall_score || 0;
@@ -389,10 +512,6 @@ function createAgentIcon(agent) {
         popupAnchor: [0, -12]
     });
 }
-
-// Layer groups for different visualizations
-let pathLayers = null;
-let regionLayers = null;
 
 // Filter and search functions
 function applyFilters() {
@@ -437,14 +556,11 @@ function shouldShowAgent(agent, isActive) {
 function renderAgents() {
     if (!worldState || !worldState.agents || !map) return;
     
-    // Clear existing markers
+    // Clear existing markers and layers (@support-master layer management)
     agentMarkers.clearLayers();
-    
-    // Clear and recreate path layers
-    if (pathLayers) {
-        map.removeLayer(pathLayers);
-    }
-    pathLayers = L.layerGroup().addTo(map);
+    pathLayerGroup.clearLayers();
+    regionsLayerGroup.clearLayers();
+    learningsLayerGroup.clearLayers();
     
     // Get all agent definitions
     const allAgentKeys = Object.keys(DEFAULT_AGENT_LOCATIONS);
@@ -471,21 +587,82 @@ function renderAgents() {
             drawAgentPath(agent, location);
         }
         
-        // Create popup content
+        // Create popup content with enhanced PR/issue links (@support-master)
         const score = agent.metrics?.overall_score || 0;
         const specialization = agent.specialization || 'general';
         const idea = agent.current_idea_id ? getIdeaById(agent.current_idea_id) : null;
         
+        // Get recent issues and PRs for this agent
+        const recentIssues = getAgentIssues(agent.label, specialization);
+        const recentPRs = getAgentPRs(agent.label, specialization);
+        
+        // Build issues section
+        let issuesHtml = '';
+        if (recentIssues && recentIssues.length > 0) {
+            issuesHtml = '<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">' +
+                '<p style="margin: 4px 0; font-size: 12px; font-weight: bold; color: #6b7280;">📋 Recent Issues:</p>';
+            recentIssues.slice(0, 3).forEach(issue => {
+                const issueUrl = issue.html_url || `https://github.com/enufacas/Chained/issues/${issue.number}`;
+                issuesHtml += `<p style="margin: 2px 0; font-size: 11px;">
+                    <a href="${issueUrl}" target="_blank" style="color: #0891b2; text-decoration: none;">
+                        #${issue.number} - ${issue.title.substring(0, 30)}${issue.title.length > 30 ? '...' : ''}
+                    </a>
+                </p>`;
+            });
+            issuesHtml += '</div>';
+        }
+        
+        // Build PRs section
+        let prsHtml = '';
+        if (recentPRs && recentPRs.length > 0) {
+            prsHtml = '<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">' +
+                '<p style="margin: 4px 0; font-size: 12px; font-weight: bold; color: #6b7280;">🔀 Recent PRs:</p>';
+            recentPRs.slice(0, 3).forEach(pr => {
+                const prUrl = pr.html_url || `https://github.com/enufacas/Chained/pull/${pr.number}`;
+                const statusIcon = pr.state === 'merged' ? '✅' : pr.state === 'closed' ? '❌' : '🔄';
+                prsHtml += `<p style="margin: 2px 0; font-size: 11px;">
+                    <a href="${prUrl}" target="_blank" style="color: #0891b2; text-decoration: none;">
+                        ${statusIcon} #${pr.number} - ${pr.title.substring(0, 30)}${pr.title.length > 30 ? '...' : ''}
+                    </a>
+                </p>`;
+            });
+            prsHtml += '</div>';
+        }
+        
+        // Build learning/work info
+        let learningHtml = '';
+        if (idea) {
+            const learningInfo = getLearningInfo(agent.current_idea_id);
+            learningHtml = `<p style="margin: 4px 0; font-size: 13px;"><strong>💡 Current Work:</strong> ${idea.title}</p>`;
+            if (learningInfo && learningInfo.sourceUrl) {
+                learningHtml += `<p style="margin: 2px 0; font-size: 11px;">
+                    <a href="${learningInfo.sourceUrl}" target="_blank" style="color: #10b981; text-decoration: none;">
+                        🔗 View Learning Source
+                    </a>
+                </p>`;
+            }
+            if (learningInfo && learningInfo.issue) {
+                const issueUrl = learningInfo.issue.html_url || `https://github.com/enufacas/Chained/issues/${learningInfo.issue.number}`;
+                learningHtml += `<p style="margin: 2px 0; font-size: 11px;">
+                    <a href="${issueUrl}" target="_blank" style="color: #10b981; text-decoration: none;">
+                        📋 Related Issue #${learningInfo.issue.number}
+                    </a>
+                </p>`;
+            }
+        }
+        
         const popupContent = `
-            <div style="min-width: 200px;">
+            <div style="min-width: 250px; max-width: 350px;">
                 <h3 style="margin: 0 0 8px 0; color: #0891b2; font-size: 16px;">🤖 ${agent.label}</h3>
                 <p style="margin: 4px 0; font-size: 13px;"><strong>🏷️ Specialization:</strong> ${specialization}</p>
                 <p style="margin: 4px 0; font-size: 13px;"><strong>📍 Location:</strong> ${location.city}</p>
                 <p style="margin: 4px 0; font-size: 13px;"><strong>📊 Status:</strong> ${agent.status}</p>
                 <p style="margin: 4px 0; font-size: 13px;"><strong>⭐ Score:</strong> ${(score * 100).toFixed(0)}%</p>
                 <p style="margin: 4px 0; font-size: 13px;"><strong>📈 Metrics:</strong> ${agent.metrics?.issues_resolved || 0} issues | ${agent.metrics?.prs_merged || 0} PRs</p>
-                ${idea ? `<p style="margin: 4px 0; font-size: 13px;"><strong>💡 Current Idea:</strong> ${idea.title}</p>` : ''}
+                ${learningHtml}
                 ${agent.path && agent.path.length > 0 ? `<p style="margin: 4px 0; font-size: 13px;"><strong>🗺️ Journey:</strong> ${agent.path.length} stops remaining</p>` : ''}
+                ${issuesHtml}
+                ${prsHtml}
             </div>
         `;
         
@@ -603,7 +780,7 @@ function drawAgentPath(agent, currentLocation) {
         </div>
     `);
     
-    pathLayers.addLayer(polyline);
+    pathLayerGroup.addLayer(polyline);
     
     // Add numbered waypoint markers with better styling
     agent.path.forEach((regionId, index) => {
@@ -652,7 +829,7 @@ function drawAgentPath(agent, currentLocation) {
                 </div>
             `);
             
-            pathLayers.addLayer(waypointMarker);
+            pathLayerGroup.addLayer(waypointMarker);
         }
     });
     
@@ -678,7 +855,7 @@ function drawAgentPath(agent, currentLocation) {
             </div>
         `);
         
-        pathLayers.addLayer(destinationMarker);
+        pathLayerGroup.addLayer(destinationMarker);
     }
 }
 
@@ -686,11 +863,8 @@ function drawAgentPath(agent, currentLocation) {
 function renderRegions() {
     if (!worldState || !worldState.regions) return;
     
-    // Clear and recreate region layers
-    if (regionLayers) {
-        map.removeLayer(regionLayers);
-    }
-    regionLayers = L.layerGroup().addTo(map);
+    // Clear region layer (managed by layer control now)
+    regionsLayerGroup.clearLayers();
     
     worldState.regions.forEach(region => {
         const ideaCount = region.idea_count || 0;
@@ -810,7 +984,7 @@ function renderRegions() {
         popupContent += `</div>`;
         
         circle.bindPopup(popupContent);
-        regionLayers.addLayer(circle);
+        regionsLayerGroup.addLayer(circle);
         
         // Add label for significant regions or home base
         if (activityScore > 5 || region.is_home_base) {
@@ -821,8 +995,84 @@ function renderRegions() {
                     iconSize: null
                 })
             });
-            regionLayers.addLayer(label);
+            regionsLayerGroup.addLayer(label);
         }
+    });
+    
+    // Render learnings layer (@support-master enhancement)
+    renderLearnings();
+}
+
+// Render learnings and work accomplished on the map (@support-master)
+function renderLearnings() {
+    if (!knowledge || !knowledge.ideas) return;
+    
+    learningsLayerGroup.clearLayers();
+    
+    // Get all ideas with location data
+    knowledge.ideas.forEach(idea => {
+        if (!idea.inspiration_regions || idea.inspiration_regions.length === 0) return;
+        
+        // Use the primary inspiration region (highest weight)
+        const primaryRegion = idea.inspiration_regions.reduce((max, r) => 
+            r.weight > max.weight ? r : max
+        );
+        
+        // Get learning info with PR/issue links
+        const learningInfo = getLearningInfo(idea.id);
+        
+        // Create learning marker
+        const learningIcon = L.divIcon({
+            html: '<div style="background-color: #10b981; border: 2px solid white; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">💡</div>',
+            className: 'learning-marker-icon',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8],
+            popupAnchor: [0, -8]
+        });
+        
+        const marker = L.marker([primaryRegion.lat, primaryRegion.lng], { icon: learningIcon });
+        
+        // Build popup with links
+        let popupContent = `
+            <div style="min-width: 220px; max-width: 300px;">
+                <h4 style="margin: 0 0 8px 0; color: #10b981; font-size: 14px;">💡 ${idea.title}</h4>
+                <p style="margin: 4px 0; font-size: 12px; color: #6b7280;">${idea.summary ? idea.summary.substring(0, 150) : 'No summary available'}${idea.summary && idea.summary.length > 150 ? '...' : ''}</p>
+        `;
+        
+        // Add patterns/topics if available
+        if (idea.patterns && idea.patterns.length > 0) {
+            popupContent += `<p style="margin: 6px 0; font-size: 11px;"><strong>🏷️ Topics:</strong> ${idea.patterns.slice(0, 3).join(', ')}</p>`;
+        }
+        
+        // Add source link if available
+        if (learningInfo && learningInfo.sourceUrl) {
+            popupContent += `<p style="margin: 6px 0;">
+                <a href="${learningInfo.sourceUrl}" target="_blank" style="color: #10b981; text-decoration: none; font-size: 12px;">
+                    🔗 View Original Source
+                </a>
+            </p>`;
+        }
+        
+        // Add related issue link if available
+        if (learningInfo && learningInfo.issue) {
+            const issueUrl = learningInfo.issue.html_url || `https://github.com/enufacas/Chained/issues/${learningInfo.issue.number}`;
+            popupContent += `<p style="margin: 6px 0;">
+                <a href="${issueUrl}" target="_blank" style="color: #0891b2; text-decoration: none; font-size: 12px;">
+                    📋 Issue #${learningInfo.issue.number}
+                </a>
+            </p>`;
+        }
+        
+        // Add companies involved if available
+        if (idea.companies && idea.companies.length > 0) {
+            const companyNames = idea.companies.map(c => c.name).slice(0, 3).join(', ');
+            popupContent += `<p style="margin: 6px 0; font-size: 11px; color: #9ca3af;"><strong>🏢 Companies:</strong> ${companyNames}</p>`;
+        }
+        
+        popupContent += `</div>`;
+        
+        marker.bindPopup(popupContent);
+        learningsLayerGroup.addLayer(marker);
     });
 }
 
