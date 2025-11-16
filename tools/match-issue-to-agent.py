@@ -694,8 +694,22 @@ def match_issue_to_agent(title, body=""):
     
     # Find the best match
     if not scores or max(scores.values()) == 0:
-        # No clear match, default to create-guru for general issues
-        default_agent = 'create-guru'
+        # No clear match - use fallback strategy with variety
+        # Instead of always using create-guru, rotate through capable general agents
+        fallback_agents = [
+            'create-guru',        # Infrastructure & feature creation
+            'investigate-champion',  # General investigation
+            'meta-coordinator',   # Multi-task coordination
+            'engineer-master',    # Systematic engineering
+            'organize-guru',      # General organization
+        ]
+        # Filter to available agents
+        available_fallback = [a for a in fallback_agents if a in available_agents]
+        if not available_fallback:
+            available_fallback = list(available_agents)[:5]  # Use first 5 as fallback
+        
+        # Randomly select from fallback options for variety
+        default_agent = random.choice(available_fallback)
         human_name = get_human_name_for_specialization(default_agent)
         agent_info = get_agent_info(default_agent)
         return {
@@ -705,15 +719,25 @@ def match_issue_to_agent(title, body=""):
             'confidence': 'low',
             'emoji': agent_info['emoji'] if agent_info else '',
             'description': agent_info['description'] if agent_info else '',
-            'reason': 'No specific keywords matched, using default agent'
+            'reason': f'No specific keywords matched, selected @{default_agent} from general agents pool'
         }
     
     # Find all agents with the maximum score (to handle ties)
     max_score = max(scores.values())
-    top_agents = [agent for agent, score in scores.items() if score == max_score]
     
-    # If there are multiple agents with the same score, randomly select one
-    # This adds variety to agent selection
+    # Be more liberal - consider agents within 80% of the max score as viable
+    # This increases variety by not always picking the absolute highest scorer
+    liberal_threshold = max_score * 0.8
+    top_agents = [agent for agent, score in scores.items() if score >= liberal_threshold]
+    
+    # If too many agents match, narrow it down to top 5 to maintain quality
+    if len(top_agents) > 5:
+        # Sort by score and take top 5
+        sorted_agents = sorted(top_agents, key=lambda a: scores[a], reverse=True)
+        top_agents = sorted_agents[:5]
+    
+    # Randomly select from the top agents to promote variety
+    # This prevents always selecting the same agent for similar issues
     best_agent = random.choice(top_agents)
     best_score = scores[best_agent]
     
