@@ -10,6 +10,100 @@ import sys
 from datetime import datetime, timezone
 
 
+def calculate_ecosystem_relevance(patterns, summary):
+    """
+    Calculate ecosystem relevance score (1-10) based on patterns and summary.
+    
+    Scores missions based on how relevant they are to Chained's core ecosystem:
+    - High (7-10): Directly applicable to core systems
+    - Medium (4-6): Potentially applicable with some adaptation
+    - Low (1-3): Primarily external learning
+    
+    Args:
+        patterns: List of technology patterns
+        summary: Mission summary text
+    
+    Returns:
+        tuple: (score, relevance_level, applicable_components)
+    """
+    score = 3  # Base score for all learning missions
+    applicable_components = []
+    
+    # Core ecosystem patterns (high relevance)
+    high_relevance_patterns = {
+        'agents': 3,
+        'autonomous': 3,
+        'ci_automation': 2,
+        'devops': 2,
+        'github': 2,
+        'workflow': 2,
+        'testing': 2,
+        'code_generation': 3,
+        'self_healing': 2,
+        'evaluation': 2,
+        'performance': 2,
+        'monitoring': 2,
+    }
+    
+    # Medium relevance patterns
+    medium_relevance_patterns = {
+        'ai': 1,
+        'ai_ml': 1,
+        'ml': 1,
+        'api': 1,
+        'web': 1,
+        'cloud': 1,
+        'security': 1,
+        'data': 1,
+        'analytics': 1,
+    }
+    
+    # Calculate score based on patterns
+    for pattern in patterns:
+        pattern_lower = pattern.lower()
+        if pattern_lower in high_relevance_patterns:
+            score += high_relevance_patterns[pattern_lower]
+        elif pattern_lower in medium_relevance_patterns:
+            score += medium_relevance_patterns[pattern_lower]
+    
+    # Check summary for ecosystem keywords
+    summary_lower = summary.lower()
+    ecosystem_keywords = {
+        'agent': ('Agent System', 1),
+        'autonomous': ('Autonomous Pipeline', 1),
+        'workflow': ('Autonomous Pipeline', 1),
+        'ci/cd': ('Autonomous Pipeline', 1),
+        'github actions': ('Autonomous Pipeline', 1),
+        'testing': ('Autonomous Pipeline', 1),
+        'world model': ('World Model', 2),
+        'geographic': ('World Model', 1),
+        'learning': ('Learning System', 1),
+        'documentation': ('Documentation', 1),
+    }
+    
+    for keyword, (component, points) in ecosystem_keywords.items():
+        if keyword in summary_lower:
+            score += points
+            if component not in applicable_components:
+                applicable_components.append(component)
+    
+    # Cap score at 10
+    score = min(score, 10)
+    
+    # Determine relevance level
+    if score >= 7:
+        relevance_level = 'High'
+        relevance_emoji = '🔴'
+    elif score >= 4:
+        relevance_level = 'Medium'
+        relevance_emoji = '🟡'
+    else:
+        relevance_level = 'Low'
+        relevance_emoji = '🟢'
+    
+    return score, f"{relevance_emoji} {relevance_level}", applicable_components
+
+
 def ensure_label_exists(label_name, color='0E8A16', description=''):
     """
     Ensure a GitHub label exists in the repository.
@@ -125,14 +219,153 @@ def main():
         location_list = ', '.join(regions) if regions else 'No specific location'
         pattern_list = ', '.join(patterns) if patterns else 'General'
         
-        issue_body = f"""## 🎯 Agent Mission: {idea_title}
+        # Calculate ecosystem relevance
+        relevance_score, relevance_level, applicable_components = calculate_ecosystem_relevance(patterns, idea_summary)
+        
+        # Determine mission type and focus based on relevance
+        if relevance_score >= 7:
+            mission_type = '⚙️ Ecosystem Enhancement'
+            mission_focus = 'high relevance to core capabilities'
+        elif relevance_score >= 4:
+            mission_type = '🧠 Learning Mission'
+            mission_focus = 'medium relevance with potential applications'
+        else:
+            mission_type = '🧠 Learning Mission'
+            mission_focus = 'external learning and exploration'
+        
+        # Build ecosystem connection section
+        if relevance_score >= 4:
+            components_text = ', '.join(applicable_components) if applicable_components else 'To be determined'
+            ecosystem_section = f"""
+### 🔗 Ecosystem Connection ({relevance_level}: {relevance_score}/10)
+
+This mission has {mission_focus}:
+
+**Potentially applicable to:**
+- {components_text if applicable_components else 'Evaluate during research'}
+
+**Integration priority:** {'High - Consider implementation' if relevance_score >= 7 else 'Medium - Monitor for insights'}
+
+{f'**Recommended approach:** If you identify strong ecosystem applications (7+/10), document specific integration proposals for potential follow-up work.' if relevance_score < 7 else '**Focus:** This mission has high relevance to Chained. Research thoroughly and propose concrete integration approaches.'}
+"""
+        else:
+            ecosystem_section = f"""
+### 🔗 Ecosystem Connection ({relevance_level}: {relevance_score}/10)
+
+This mission is primarily for external learning and trend awareness.
+
+**Focus:** Understand tech trends and document insights for future reference. If you discover unexpected applications to Chained's core capabilities, note them in your findings.
+"""
+        
+        # Build deliverables based on relevance
+        if relevance_score >= 7:
+            deliverables_section = f"""### 📊 Expected Outputs
+
+**Learning Deliverables (Required):**
+- [ ] **Research Report** (2-3 pages)
+  - Summary of key findings related to {', '.join(patterns)}
+  - Best practices and lessons learned (3-5 points)
+  - Industry trends and patterns
+  
+- [ ] **Ecosystem Integration Proposal** (Required for high relevance)
+  - Specific changes to Chained's components
+  - Expected improvements and benefits
+  - Implementation complexity estimate (low/medium/high)
+  - Risk assessment and mitigation strategies
+
+**Additional Deliverables:**
+- [ ] Code examples or proof-of-concept (if applicable)
+- [ ] World model updates with geographic/tech data
+- [ ] Integration design document or architecture proposal"""
+        elif relevance_score >= 4:
+            deliverables_section = f"""### 📊 Expected Outputs
+
+**Learning Deliverables (Required):**
+- [ ] **Research Report** (1-2 pages)
+  - Summary of findings related to {', '.join(patterns)}
+  - Key takeaways (3-5 bullet points)
+  
+- [ ] **Ecosystem Applicability Assessment**
+  - Rate relevance to Chained: __ / 10
+  - Specific components that could benefit
+  - Integration complexity estimate (low/medium/high)
+
+**Ecosystem Integration (If relevance ≥ 7):**
+- [ ] Integration proposal document
+  - Specific changes to Chained's workflows/systems
+  - Expected benefits and improvements
+  - Implementation effort estimate
+
+**Additional:**
+- [ ] Code examples or tools (if applicable)
+- [ ] World model updates"""
+        else:
+            deliverables_section = f"""### 📊 Expected Outputs
+
+**Learning Deliverables (Required):**
+- [ ] **Research Report** (1-2 pages)
+  - Summary of findings related to {', '.join(patterns)}
+  - Key insights (3-5 points)
+  - Industry trends observed
+  
+- [ ] **Brief Ecosystem Assessment**
+  - Any unexpected applications to Chained (if found)
+  - Relevance rating: __ / 10
+
+**Additional:**
+- [ ] Documentation updates
+- [ ] World model updates with findings"""
+        
+        # Build next steps based on relevance
+        if relevance_score >= 7:
+            next_steps = f"""### 🔄 Next Steps
+
+1. **@{agent_specialization}** researches {', '.join(patterns)} thoroughly
+2. Analyzes applicability to Chained's core systems
+3. **Develops integration proposal** with specific recommendations
+4. Documents implementation approach and complexity
+5. Creates artifacts (code samples, design docs, etc.)
+6. Submits comprehensive findings with clear action items
+
+**Success Criteria:**
+- [ ] Clear understanding of technology/patterns
+- [ ] Detailed integration proposal for Chained
+- [ ] Implementation roadmap with effort estimates
+- [ ] Risk assessment completed"""
+        elif relevance_score >= 4:
+            next_steps = f"""### 🔄 Next Steps
+
+1. **@{agent_specialization}** researches {', '.join(patterns)}
+2. Documents findings and key insights
+3. **Evaluates ecosystem relevance** (critical step!)
+4. If high relevance (≥7): Proposes specific integration approach
+5. Updates world model with learnings
+6. Agent metrics updated based on contributions
+
+**Success Criteria:**
+- [ ] Research report completed
+- [ ] Ecosystem relevance honestly evaluated
+- [ ] If relevant: Integration ideas proposed"""
+        else:
+            next_steps = f"""### 🔄 Next Steps
+
+1. **@{agent_specialization}** investigates {', '.join(patterns)}
+2. Gathers insights and documents findings
+3. Notes any unexpected applications (if discovered)
+4. Updates world model with learnings
+5. Agent metrics updated based on contributions"""
+        
+        issue_body = f"""## {mission_type}: {idea_title}
 
 **Mission ID:** {idea_id}
+**Type:** {mission_type}
+**Ecosystem Relevance:** {relevance_level} ({relevance_score}/10)
 **Created:** {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}
 
 ### 📋 Mission Summary
 
 {idea_summary}
+{ecosystem_section}
 
 ### 🌍 Mission Locations
 
@@ -151,23 +384,13 @@ This mission was matched to **@{agent_specialization}** based on:
 - Role/skill match (40%)  
 - Performance history (30%)
 
-### 📊 Expected Outputs
+{deliverables_section}
 
-- [ ] Documentation related to {', '.join(patterns)}
-- [ ] Code examples or tools
-- [ ] World model updates
-- [ ] Learning artifacts
-
-### 🔄 Next Steps
-
-1. **@{agent_specialization}** investigates the mission locations
-2. Gathers insights and creates artifacts
-3. Reports findings back to world model
-4. Agent metrics are updated based on contributions
+{next_steps}
 
 ---
 
-*This mission was automatically created by the Agent Missions workflow and assigned to **@{agent_specialization}** based on intelligent matching.*
+*This mission was automatically created by the Agent Missions workflow. Ecosystem relevance: **{relevance_level} ({relevance_score}/10)** - {'Focus on integration opportunities' if relevance_score >= 7 else 'Focus on learning and evaluation' if relevance_score >= 4 else 'Focus on external learning'}.*
 """
         
         # Create labels list
