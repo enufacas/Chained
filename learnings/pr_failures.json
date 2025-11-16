@@ -1,5 +1,691 @@
 {
-  "failures": [],
-  "last_updated": "2025-11-14T20:46:32.353704+00:00",
-  "total_count": 0
+  "failures": [
+    {
+      "pr_number": 1288,
+      "title": "[WIP] Create neural network for code style transfer",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:46:12Z",
+      "closed_at": "2025-11-16T10:26:56Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1298,
+      "title": "[WIP] Create AI Friend Chat feature",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T09:20:45Z",
+      "closed_at": "2025-11-16T10:26:37Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1316,
+      "title": "[WIP] Explore Claude trends and configurations",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T10:00:46Z",
+      "closed_at": "2025-11-16T10:26:22Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1289,
+      "title": "[WIP] Investigate repeated agent assignment in workflow",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:49:15Z",
+      "closed_at": "2025-11-16T09:41:13Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1297,
+      "title": "[WIP] Fix workflow health alert issues",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T09:20:33Z",
+      "closed_at": "2025-11-16T09:34:36Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1283,
+      "title": "[WIP] Explore cloud trends for DevOps mission",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:44:51Z",
+      "closed_at": "2025-11-16T08:46:10Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1284,
+      "title": "[WIP] Explore AI trends for innovation",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:45:01Z",
+      "closed_at": "2025-11-16T08:46:04Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1285,
+      "title": "[WIP] Explore agents trends in AI and ML",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:45:10Z",
+      "closed_at": "2025-11-16T08:45:59Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1287,
+      "title": "[WIP] Explore API trends for innovation insights",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:45:30Z",
+      "closed_at": "2025-11-16T08:45:48Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1286,
+      "title": "[WIP] Explore Claude trends in AI/ML innovation",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:45:20Z",
+      "closed_at": "2025-11-16T08:45:52Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1272,
+      "title": "[WIP] Explore API trends and innovations",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:21:57Z",
+      "closed_at": "2025-11-16T08:23:33Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1268,
+      "title": "[WIP] Explore cloud innovation trends and security implications",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:21:19Z",
+      "closed_at": "2025-11-16T08:23:23Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1271,
+      "title": "[WIP] Explore Claude trends with new insights",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:21:41Z",
+      "closed_at": "2025-11-16T08:23:01Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1270,
+      "title": "[WIP] Explore AI/ML agents innovation trends",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:21:33Z",
+      "closed_at": "2025-11-16T08:23:11Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1269,
+      "title": "[WIP] Explore AI trends and innovations",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:21:26Z",
+      "closed_at": "2025-11-16T08:23:17Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1259,
+      "title": "[WIP] Explore API trends and innovations",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:17:21Z",
+      "closed_at": "2025-11-16T08:19:42Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1258,
+      "title": "[WIP] Explore Claude trends with monitoring tool",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:17:12Z",
+      "closed_at": "2025-11-16T08:19:37Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1257,
+      "title": "[WIP] Explore agents innovations in AI and ML",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:17:00Z",
+      "closed_at": "2025-11-16T08:19:30Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1256,
+      "title": "[WIP] Explore AI trends and innovation insights",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:16:51Z",
+      "closed_at": "2025-11-16T08:19:25Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1255,
+      "title": "[WIP] Explore cloud trends and security responses",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T08:16:40Z",
+      "closed_at": "2025-11-16T08:19:20Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1240,
+      "title": "[WIP] Explore cloud trends and security donations",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T07:46:36Z",
+      "closed_at": "2025-11-16T08:00:11Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1241,
+      "title": "[WIP] Explore AI trends for innovation analysis",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T07:46:47Z",
+      "closed_at": "2025-11-16T07:59:37Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1242,
+      "title": "[WIP] Explore trends in AI/ML agents",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T07:46:56Z",
+      "closed_at": "2025-11-16T07:58:59Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1243,
+      "title": "[WIP] Explore Claude trends with tool integration",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T07:47:06Z",
+      "closed_at": "2025-11-16T07:58:20Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1244,
+      "title": "[WIP] Explore API trends and investigate innovation opportunities",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T07:47:17Z",
+      "closed_at": "2025-11-16T07:57:45Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1228,
+      "title": "[WIP] Update strategy for managing API limits and data freshness",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T07:01:06Z",
+      "closed_at": "2025-11-16T07:24:11Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1212,
+      "title": "docs: Verify and document completion of AI innovation mission (idea:16) by @investigate-champion",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T06:16:56Z",
+      "closed_at": "2025-11-16T06:31:44Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1211,
+      "title": "[WIP] Explore cloud trends and security implications",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T06:16:48Z",
+      "closed_at": "2025-11-16T06:30:12Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1215,
+      "title": "[WIP] Explore API trends for web innovation",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T06:17:22Z",
+      "closed_at": "2025-11-16T06:26:23Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1218,
+      "title": "[WIP] Fix agent assignment issue in missions",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T06:22:11Z",
+      "closed_at": "2025-11-16T06:25:31Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1214,
+      "title": "[WIP] Explore Claude trends with CLI configuration tool",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T06:17:12Z",
+      "closed_at": "2025-11-16T06:24:17Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1078,
+      "title": "\ud83e\udde0 Learning Pipeline - 2025-11-15",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-15T20:51:12Z",
+      "closed_at": "2025-11-16T05:20:18Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "pipeline",
+        "auto-merge"
+      ]
+    }
+  ],
+  "last_updated": "2025-11-16T10:32:51.897234+00:00",
+  "total_count": 32
 }
