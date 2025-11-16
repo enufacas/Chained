@@ -1,66 +1,21 @@
 {
   "metadata": {
-    "generated_at": "2025-11-14T04:08:53.715616+00:00",
+    "generated_at": "2025-11-16T18:35:53.282448+00:00",
     "repository": ".",
     "analysis_period_days": 30,
-    "since_date": "2025-10-15T04:08:53.682427+00:00"
+    "since_date": "2025-10-17T18:35:53.277169+00:00"
   },
   "summary": {
     "total_agents": 2,
-    "total_contributions": 4,
+    "total_contributions": 2,
     "agents": [
       "copilot-swe-agent",
-      "github-actions"
+      "copilot"
     ]
   },
-  "commit_message_patterns": {
-    "copilot-swe-agent": {
-      "total_commits": 3,
-      "unique_templates": 3,
-      "most_common_count": 1,
-      "repetition_rate": 0.3333333333333333,
-      "emoji_usage": {}
-    }
-  },
-  "code_similarity": {
-    "copilot-swe-agent": {
-      "total_structures": 2,
-      "unique_structures": 2,
-      "duplicate_structures": 0,
-      "similarity_rate": 0.0,
-      "duplicates": []
-    }
-  },
-  "file_sequence_patterns": {
-    "copilot-swe-agent": {
-      "total_commits": 2,
-      "unique_sequences": 2,
-      "most_common_count": 1,
-      "repetition_rate": 0.5,
-      "top_sequences": [
-        {
-          "pattern": ".github/workflows/repetition-detector.yml|analysis/diversity-trends.json|analysis/repetition-history/2025-11-14-04-00-27.json|analysis/repetition-history/2025-11-14-04-00-36.json|analysis/repetition-history/latest.json|docs/diversity-dashboard.md|latest.json|tools/diversity-dashboard.py|tools/trend-analyzer.py",
-          "count": 1
-        },
-        {
-          "pattern": "analysis/diversity-suggestions.md|analysis/repetition-report.json|analysis/uniqueness-scores.json",
-          "count": 1
-        }
-      ]
-    }
-  },
-  "solution_approaches": {
-    "copilot-swe-agent": {
-      "total_contributions": 3,
-      "unique_approaches": 4,
-      "approaches": [
-        "yaml_configuration",
-        "feature_addition",
-        "markdown_documentation",
-        "python_development"
-      ],
-      "diversity_score": 133.33333333333331
-    }
-  },
+  "commit_message_patterns": {},
+  "code_similarity": {},
+  "file_sequence_patterns": {},
+  "solution_approaches": {},
   "repetition_flags": []
 }
