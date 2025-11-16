@@ -22,11 +22,28 @@ fi
 issue_number=$1
 matched_agent=$2
 
+# Validate agent name is not empty or 'unknown'
+if [ -z "$matched_agent" ] || [ "$matched_agent" = "unknown" ]; then
+  echo "❌ Error: Invalid agent name: '$matched_agent'"
+  echo "Agent name must not be empty or 'unknown'"
+  exit 1
+fi
+
+# Validate agent file exists
+agent_file=".github/agents/${matched_agent}.md"
+if [ ! -f "$agent_file" ]; then
+  echo "❌ Error: Agent file not found: $agent_file"
+  echo "Available agents:"
+  ls -1 .github/agents/*.md | xargs -n1 basename | sed 's/.md$//' | sed 's/^/  - /'
+  exit 1
+fi
+
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🤖 Direct Agent Assignment"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Issue: #$issue_number"
 echo "Agent: $matched_agent"
+echo "Agent file: $agent_file ✓"
 echo ""
 
 # Get agent info using get-agent-info.py since we already know the agent

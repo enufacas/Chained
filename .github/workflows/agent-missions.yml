@@ -188,7 +188,30 @@ jobs:
               
               # Sort by score and take only THE TOP 1 AGENT
               agent_scores.sort(key=lambda x: x['score'], reverse=True)
-              best_agent = agent_scores[0] if agent_scores else None
+              
+              # Find first agent with valid specialization
+              best_agent = None
+              for agent in agent_scores:
+                  specialization = agent.get('specialization', '')
+                  # Validate agent has a non-empty specialization
+                  if specialization and specialization != 'unknown':
+                      best_agent = agent
+                      break
+              
+              # If no valid agent found, use first available as fallback
+              if not best_agent and agent_scores:
+                  print(f"   ⚠️  Warning: No agents with valid specialization, using fallback")
+                  # Use investigate-champion as safe default if available
+                  fallback = next((a for a in agents if a.get('specialization') == 'investigate-champion'), None)
+                  if fallback:
+                      best_agent = {
+                          'agent_id': fallback.get('id'),
+                          'agent_name': fallback.get('label', 'Unknown'),
+                          'specialization': 'investigate-champion',
+                          'score': 0.0,
+                          'location': fallback.get('location_region_id', '')
+                      }
+                      print(f"   Using fallback agent: investigate-champion")
               
               if best_agent:
                   print(f"   Selected BEST agent: {best_agent['agent_name']} ({best_agent['specialization']}) - score: {best_agent['score']:.2f}")
