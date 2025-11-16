@@ -75,7 +75,7 @@ jobs:
             
             ---
             *This PR was automatically created by the Daily AI Goal Generator workflow.*" \
-              --label "documentation,automated" \
+              --label "documentation,automated,copilot" \
               --base main \
               --head "${INIT_BRANCH}" || true
             

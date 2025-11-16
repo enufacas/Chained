@@ -185,7 +185,7 @@ jobs:
             gh pr create \
               --title "🚀 Initialize learnings directory - ${PR_DATE}" \
               --body "## System Kickoff - Learnings Initialization"$'\n\n'"This PR initializes the learnings directory for the autonomous system."$'\n\n'"### Changes"$'\n'"- Created learnings directory structure"$'\n'"- Added README with usage instructions"$'\n\n'"---"$'\n'"*🤖 Automated system kickoff workflow*" \
-              --label "automated,system" \
+              --label "automated,system,copilot" \
               --base main \
               --head "$BRANCH_NAME" || echo "PR creation failed or already exists"
             

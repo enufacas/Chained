@@ -151,14 +151,22 @@ The agent needs to be registered and active in the system before work can begin.
   issue_body=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json body --jq '.body // ""')
   
   # Use intelligent matching to determine best agent
-  agent_match=$(python3 tools/match-issue-to-agent.py "$issue_title" "$issue_body" 2>/dev/null || echo '{"agent":"feature-architect","score":0,"confidence":"low"}')
+  agent_match=$(python3 tools/match-issue-to-agent.py "$issue_title" "$issue_body" 2>/dev/null || echo '{"agent":"create-guru","score":0,"confidence":"low"}')
   matched_agent=$(echo "$agent_match" | jq -r '.agent')
   agent_score=$(echo "$agent_match" | jq -r '.score')
   agent_confidence=$(echo "$agent_match" | jq -r '.confidence')
   agent_emoji=$(echo "$agent_match" | jq -r '.emoji')
   agent_description=$(echo "$agent_match" | jq -r '.description')
+  agent_human_name=$(echo "$agent_match" | jq -r '.human_name // "null"')
   
-  echo "✅ Matched to agent: $agent_emoji $matched_agent"
+  # Build display name - show human name if available
+  if [ "$agent_human_name" != "null" ] && [ -n "$agent_human_name" ]; then
+    agent_display_name="$agent_emoji $agent_human_name (@$matched_agent)"
+  else
+    agent_display_name="$agent_emoji $matched_agent"
+  fi
+  
+  echo "✅ Matched to agent: $agent_display_name"
   echo "   Score: $agent_score | Confidence: $agent_confidence"
   echo "   Description: $agent_description"
   
@@ -183,12 +191,19 @@ The agent needs to be registered and active in the system before work can begin.
   
   # Check if agent directive already exists in the issue body
   if ! echo "$issue_body_original" | grep -q "<!-- COPILOT_AGENT:"; then
+    # Build human name display for directive
+    if [ "$agent_human_name" != "null" ] && [ -n "$agent_human_name" ]; then
+      agent_name_display="**$agent_emoji $agent_human_name** (@$matched_agent)"
+    else
+      agent_name_display="**$agent_emoji $matched_agent**"
+    fi
+    
     # Prepend agent directive to issue body with @agent-name mention
     agent_directive="<!-- COPILOT_AGENT:$matched_agent -->
 
 > **🤖 Agent Assignment**
 > 
-> This issue has been assigned to GitHub Copilot with the **$agent_emoji $matched_agent** custom agent profile.
+> This issue has been assigned to GitHub Copilot with the $agent_name_display custom agent profile.
 > 
 > **@$matched_agent** - Please use the specialized approach and tools defined in [\`.github/agents/${matched_agent}.md\`](https://github.com/$GITHUB_REPOSITORY/blob/main/.github/agents/${matched_agent}.md).
 > 
@@ -335,13 +350,20 @@ Could not find GitHub Copilot in the list of available assignees for this reposi
     success_count=$((success_count + 1))
     
     # Build success message based on assignment method
+    # Build human-friendly agent name display
+    if [ "$agent_human_name" != "null" ] && [ -n "$agent_human_name" ]; then
+      agent_name_full="$agent_emoji **$agent_human_name** (@$matched_agent)"
+    else
+      agent_name_full="$agent_emoji **@$matched_agent**"
+    fi
+    
     if [ "$assignment_method" = "direct-custom-agent" ]; then
       assignment_details="
 ## 🎯 Direct Custom Agent Assignment
 
 **SUCCESS!** This issue was assigned directly to the custom agent actor:
 
-- **Custom Agent**: $agent_emoji **@$matched_agent**
+- **Custom Agent**: $agent_name_full
 - **Actor ID**: \`$target_actor_id\`
 - **Agent Path**: [\`.github/agents/${matched_agent}.md\`](https://github.com/$GITHUB_REPOSITORY/blob/main/.github/agents/${matched_agent}.md)
 - **Assignment Method**: Direct API assignment to custom agent actor
@@ -353,9 +375,9 @@ The custom agent has its own actor ID in the GitHub API, allowing direct assignm
         assignment_details="
 ## 🧠 Intelligent Agent Matching
 
-This issue has been analyzed and matched to the **$agent_emoji @$matched_agent** specialization:
+This issue has been analyzed and matched to the $agent_name_full specialization:
 
-- **Agent**: @$matched_agent
+- **Agent**: $agent_name_full
 - **Match Confidence**: $agent_confidence
 - **Match Score**: $agent_score
 - **Description**: $agent_description
@@ -374,20 +396,27 @@ The implementation should align with the [$matched_agent agent definition](https
       fi
       
       # Add success comment with agent matching info
+      # Use human-friendly name in what happens next section
+      if [ "$agent_human_name" != "null" ] && [ -n "$agent_human_name" ]; then
+        agent_mention="**$agent_human_name** (@$matched_agent)"
+      else
+        agent_mention="**@$matched_agent**"
+      fi
+      
       gh issue comment "$issue_number" --repo "$GITHUB_REPOSITORY" --body "🤖 **Copilot Assigned Successfully**
 
 GitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.
 $assignment_details
 
 **What happens next:**
-1. ✅ **@$matched_agent** will analyze the issue requirements using the $matched_agent specialization
-2. 💻 **@$matched_agent** will create a branch and implement the solution following the $matched_agent approach
-3. 📝 **@$matched_agent** will open a PR with the implementation
+1. ✅ $agent_mention will analyze the issue requirements using the $matched_agent specialization
+2. 💻 $agent_mention will create a branch and implement the solution following the $matched_agent approach
+3. 📝 $agent_mention will open a PR with the implementation
 4. 🔍 Auto-review workflow will validate and merge
 5. ✅ Issue will be automatically closed when complete
 
 **Estimated time:** Copilot typically starts work within a few minutes
-**Assigned agent:** @$matched_agent ($matched_agent specialization)
+**Assigned agent:** $agent_mention ($matched_agent specialization)
 **Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
 
 ---
