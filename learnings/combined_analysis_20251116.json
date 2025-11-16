@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-11-16T03:15:59.214342+00:00",
+  "timestamp": "2025-11-16T04:50:06.761602+00:00",
   "total_learnings": 746,
   "sources": {
     "tldr": 20,
@@ -1841,161 +1841,161 @@
       "source": "hackernews",
       "title": "AirPods libreated from Apple's ecosystem",
       "url": "https://github.com/kavishdevar/librepods",
-      "score": 238,
-      "comments": 40,
-      "collected_at": "2025-11-16T03:15:39.342062+00:00"
+      "score": 358,
+      "comments": 63,
+      "collected_at": "2025-11-16T04:49:43.537044+00:00"
     },
     {
       "source": "hackernews",
       "title": "IDEmacs: A Visual Studio Code clone for Emacs",
       "url": "https://codeberg.org/IDEmacs/IDEmacs",
-      "score": 70,
-      "comments": 6,
-      "collected_at": "2025-11-16T03:15:39.453896+00:00"
+      "score": 122,
+      "comments": 15,
+      "collected_at": "2025-11-16T04:49:43.668810+00:00"
     },
     {
       "source": "hackernews",
       "title": "Our investigation into the suspicious pressure on Archive.today",
       "url": "https://adguard-dns.io/en/blog/archive-today-adguard-dns-block-demand.html",
-      "score": 1349,
-      "comments": 366,
-      "collected_at": "2025-11-16T03:15:39.571298+00:00"
+      "score": 1408,
+      "comments": 369,
+      "collected_at": "2025-11-16T04:49:43.785387+00:00"
     },
     {
       "source": "hackernews",
       "title": "libwifi: an 802.11 frame parsing and generation library written in C",
       "url": "https://libwifi.so/",
-      "score": 63,
+      "score": 74,
       "comments": 5,
-      "collected_at": "2025-11-16T03:15:39.685013+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "When did people favor composition over inheritance?",
-      "url": "https://www.sicpers.info/2025/11/when-did-people-favor-composition-over-inheritance/",
-      "score": 92,
-      "comments": 50,
-      "collected_at": "2025-11-16T03:15:39.800212+00:00"
+      "collected_at": "2025-11-16T04:49:43.898911+00:00"
     },
     {
       "source": "hackernews",
       "title": "Blocking LLM crawlers without JavaScript",
       "url": "https://www.owl.is/blogg/blocking-crawlers-without-javascript/",
-      "score": 27,
-      "comments": 14,
-      "collected_at": "2025-11-16T03:15:39.921207+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "The inconceivable types of Rust: How to make self-borrows safe (2024)",
-      "url": "https://blog.polybdenum.com/2024/06/07/the-inconceivable-types-of-rust-how-to-make-self-borrows-safe.html",
-      "score": 25,
-      "comments": 0,
-      "collected_at": "2025-11-16T03:15:40.034686+00:00"
+      "score": 76,
+      "comments": 32,
+      "collected_at": "2025-11-16T04:49:44.016483+00:00"
     },
     {
       "source": "hackernews",
       "title": "Things that aren't doing the thing",
       "url": "https://strangestloop.io/essays/things-that-arent-doing-the-thing",
-      "score": 138,
+      "score": 166,
+      "comments": 82,
+      "collected_at": "2025-11-16T04:49:44.135020+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "When did people favor composition over inheritance?",
+      "url": "https://www.sicpers.info/2025/11/when-did-people-favor-composition-over-inheritance/",
+      "score": 110,
       "comments": 72,
-      "collected_at": "2025-11-16T03:15:40.149035+00:00"
+      "collected_at": "2025-11-16T04:49:44.252164+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "The inconceivable types of Rust: How to make self-borrows safe (2024)",
+      "url": "https://blog.polybdenum.com/2024/06/07/the-inconceivable-types-of-rust-how-to-make-self-borrows-safe.html",
+      "score": 33,
+      "comments": 3,
+      "collected_at": "2025-11-16T04:49:44.378725+00:00"
     },
     {
       "source": "hackernews",
       "title": "When UPS charged me a $684 tariff on $355 of vintage computer parts",
       "url": "http://oldvcr.blogspot.com/2025/11/when-ups-charged-me-684-tariff-on-355.html",
-      "score": 102,
-      "comments": 72,
-      "collected_at": "2025-11-16T03:15:40.264669+00:00"
+      "score": 140,
+      "comments": 108,
+      "collected_at": "2025-11-16T04:49:44.498711+00:00"
     },
     {
       "source": "hackernews",
       "title": "AsciiMath",
       "url": "https://asciimath.org/",
-      "score": 54,
-      "comments": 11,
-      "collected_at": "2025-11-16T03:15:40.378256+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Transgenerational Epigenetic Inheritance: the story of learned avoidance",
-      "url": "https://elifesciences.org/articles/109427",
-      "score": 121,
-      "comments": 72,
-      "collected_at": "2025-11-16T03:15:40.491792+00:00"
+      "score": 62,
+      "comments": 13,
+      "collected_at": "2025-11-16T04:49:44.610128+00:00"
     },
     {
       "source": "hackernews",
       "title": "Boa: A standard-conforming embeddable JavaScript engine written in Rust",
       "url": "https://github.com/boa-dev/boa",
-      "score": 176,
-      "comments": 55,
-      "collected_at": "2025-11-16T03:15:40.617504+00:00"
+      "score": 185,
+      "comments": 59,
+      "collected_at": "2025-11-16T04:49:44.719205+00:00"
     },
     {
       "source": "hackernews",
-      "title": "Show HN: Unflip \u2013 a puzzle game about XOR patterns of squares",
-      "url": "https://unflipgame.com/",
-      "score": 87,
-      "comments": 18,
-      "collected_at": "2025-11-16T03:15:40.733662+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "EyesOff: How I built a screen contact detection model",
-      "url": "https://ym2132.github.io/building_EyesOff_part2_model_training",
-      "score": 11,
-      "comments": 1,
-      "collected_at": "2025-11-16T03:15:40.846681+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Archimedes \u2013 A Python toolkit for hardware engineering",
-      "url": "https://pinetreelabs.github.io/archimedes/blog/2025/introduction.html",
-      "score": 56,
-      "comments": 9,
-      "collected_at": "2025-11-16T03:15:40.969149+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Linux on the Fujitsu Lifebook U729",
-      "url": "https://borretti.me/article/linux-on-the-fujitsu-lifebook-u729",
-      "score": 171,
-      "comments": 124,
-      "collected_at": "2025-11-16T03:15:41.090391+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "I made a better DOM morphing algorithm",
-      "url": "https://joel.drapper.me/p/morphlex/",
-      "score": 69,
-      "comments": 35,
-      "collected_at": "2025-11-16T03:15:41.206214+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "JVM exceptions are weird: a decompiler perspective",
-      "url": "https://purplesyringa.moe/blog/jvm-exceptions-are-weird-a-decompiler-perspective/",
-      "score": 60,
-      "comments": 3,
-      "collected_at": "2025-11-16T03:15:41.324031+00:00"
+      "title": "Transgenerational Epigenetic Inheritance: the story of learned avoidance",
+      "url": "https://elifesciences.org/articles/109427",
+      "score": 128,
+      "comments": 77,
+      "collected_at": "2025-11-16T04:49:44.834030+00:00"
     },
     {
       "source": "hackernews",
       "title": "Computing Across America (1983-1985)",
       "url": "https://microship.com/winnebiko/",
-      "score": 4,
-      "comments": 0,
-      "collected_at": "2025-11-16T03:15:41.440621+00:00"
+      "score": 11,
+      "comments": 1,
+      "collected_at": "2025-11-16T04:49:44.950261+00:00"
     },
     {
       "source": "hackernews",
-      "title": "Report: Tim Cook could step down as Apple CEO 'as soon as next year'",
-      "url": "https://9to5mac.com/2025/11/14/tim-cook-step-down-as-apple-ceo-as-soon-as-next-year-report/",
-      "score": 83,
-      "comments": 158,
-      "collected_at": "2025-11-16T03:15:41.555403+00:00"
+      "title": "Show HN: Unflip \u2013 a puzzle game about XOR patterns of squares",
+      "url": "https://unflipgame.com/",
+      "score": 98,
+      "comments": 26,
+      "collected_at": "2025-11-16T04:49:45.065586+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Archimedes \u2013 A Python toolkit for hardware engineering",
+      "url": "https://pinetreelabs.github.io/archimedes/blog/2025/introduction.html",
+      "score": 61,
+      "comments": 10,
+      "collected_at": "2025-11-16T04:49:45.191774+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Linux on the Fujitsu Lifebook U729",
+      "url": "https://borretti.me/article/linux-on-the-fujitsu-lifebook-u729",
+      "score": 174,
+      "comments": 125,
+      "collected_at": "2025-11-16T04:49:45.304502+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Why export templates would be useful in C++ (2010)",
+      "url": "http://warp.povusers.org/programming/export_templates.html",
+      "score": 4,
+      "comments": 0,
+      "collected_at": "2025-11-16T04:49:45.421831+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "JVM exceptions are weird: a decompiler perspective",
+      "url": "https://purplesyringa.moe/blog/jvm-exceptions-are-weird-a-decompiler-perspective/",
+      "score": 64,
+      "comments": 3,
+      "collected_at": "2025-11-16T04:49:45.535300+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "I made a better DOM morphing algorithm",
+      "url": "https://joel.drapper.me/p/morphlex/",
+      "score": 72,
+      "comments": 35,
+      "collected_at": "2025-11-16T04:49:45.650394+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "EyesOff: How I built a screen contact detection model",
+      "url": "https://ym2132.github.io/building_EyesOff_part2_model_training",
+      "score": 13,
+      "comments": 1,
+      "collected_at": "2025-11-16T04:49:45.767779+00:00"
     },
     {
       "title": "Operating Margins",
@@ -4511,140 +4511,140 @@
       "title": "Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-14",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514701+00:00"
+      "collected_at": "2025-11-16T04:49:42.118645+00:00"
     },
     {
       "source": "tldr",
       "title": "GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-13",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514719+00:00"
+      "collected_at": "2025-11-16T04:49:42.118665+00:00"
     },
     {
       "source": "tldr",
       "title": "SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-12",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514725+00:00"
+      "collected_at": "2025-11-16T04:49:42.118671+00:00"
     },
     {
       "source": "tldr",
       "title": "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-11",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514729+00:00"
+      "collected_at": "2025-11-16T04:49:42.118675+00:00"
     },
     {
       "source": "tldr",
       "title": "Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc",
       "url": "https://tldr.tech/tech/2025-11-10",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514734+00:00"
+      "collected_at": "2025-11-16T04:49:42.118679+00:00"
     },
     {
       "source": "tldr",
       "title": "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-07",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514738+00:00"
+      "collected_at": "2025-11-16T04:49:42.118684+00:00"
     },
     {
       "source": "tldr",
       "title": "Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-06",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514742+00:00"
+      "collected_at": "2025-11-16T04:49:42.118687+00:00"
     },
     {
       "source": "tldr",
       "title": "Low cost MacBook \ud83d\udcbb, Google AI data centers \ud83d\udef0\ufe0f, inside xAI \ud83e\udd16",
       "url": "https://tldr.tech/tech/2025-11-05",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514745+00:00"
+      "collected_at": "2025-11-16T04:49:42.118691+00:00"
     },
     {
       "source": "tldr",
       "title": "OpenAI AWS $38B deal \ud83d\udcb0, Facebook Dating \u2764\ufe0f, htmx 4 \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-04",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514749+00:00"
+      "collected_at": "2025-11-16T04:49:42.118695+00:00"
     },
     {
       "source": "tldr",
       "title": "Gemini Siri \ud83d\udcf1, SpaceX datacenters \ud83d\udef0\ufe0f, GitHub immutable releases \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-11-03",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514753+00:00"
+      "collected_at": "2025-11-16T04:49:42.118699+00:00"
     },
     {
       "source": "tldr",
       "title": "Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c",
       "url": "https://tldr.tech/ai/2025-11-14",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514757+00:00"
+      "collected_at": "2025-11-16T04:49:42.118702+00:00"
     },
     {
       "source": "tldr",
       "title": "MSFT OpenAI docs leak \ud83d\udcc4, GPT-5.1 \ud83e\udd16, Anthropic\u2019s $50B Bet \ud83d\udcb0",
       "url": "https://tldr.tech/ai/2025-11-13",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514760+00:00"
+      "collected_at": "2025-11-16T04:49:42.118706+00:00"
     },
     {
       "source": "tldr",
       "title": "ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
       "url": "https://tldr.tech/ai/2025-11-12",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514764+00:00"
+      "collected_at": "2025-11-16T04:49:42.118710+00:00"
     },
     {
       "source": "tldr",
       "title": "Grok Code Remote \ud83d\udc68\u200d\ud83d\udcbb , GPT-5.1 on OpenRouter \ud83e\udd16, Moonshot AI AMA \ud83d\udcac",
       "url": "https://tldr.tech/ai/2025-11-11",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514768+00:00"
+      "collected_at": "2025-11-16T04:49:42.118714+00:00"
     },
     {
       "source": "tldr",
       "title": "Nano Banana 2 leaks \ud83c\udf4c, GPT-5-Codex-Mini \ud83d\udc68\u200d\ud83d\udcbb, nested learning \ud83e\udde0",
       "url": "https://tldr.tech/ai/2025-11-10",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514771+00:00"
+      "collected_at": "2025-11-16T04:49:42.118718+00:00"
     },
     {
       "source": "tldr",
       "title": "Sam on OpenAI finances \ud83d\udcb0, GPT-5.1 \ud83e\udd16, Anthropic $350B valuation \ud83d\udcc8",
       "url": "https://tldr.tech/ai/2025-11-07",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514775+00:00"
+      "collected_at": "2025-11-16T04:49:42.118721+00:00"
     },
     {
       "source": "tldr",
       "title": "Gemini 3 this month \u2728, OpenAI CFO comments \ud83d\udcb0, Snapchat + Perplexity \ud83e\udd1d",
       "url": "https://tldr.tech/ai/2025-11-06",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514779+00:00"
+      "collected_at": "2025-11-16T04:49:42.118725+00:00"
     },
     {
       "source": "tldr",
       "title": "Anthropic $70B projection \ud83d\udcb0, Nano Banana 2 \ud83c\udf4c, beyond standard LLMs \ud83e\udde0",
       "url": "https://tldr.tech/ai/2025-11-05",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514782+00:00"
+      "collected_at": "2025-11-16T04:49:42.118729+00:00"
     },
     {
       "source": "tldr",
       "title": "Anthropic\u2019s AGI timeline \u23f3, AWS + OpenAI \ud83e\udd1d, Qwen3-Max-Thinking \ud83e\udd16",
       "url": "https://tldr.tech/ai/2025-11-04",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514786+00:00"
+      "collected_at": "2025-11-16T04:49:42.118732+00:00"
     },
     {
       "source": "tldr",
       "title": "Anthropic $300B rumor \ud83d\udcb0, Siri\u2019s private Gemini model \ud83d\udcf1, Ilya\u2019s deposition \ud83e\uddd1\u200d\u2696\ufe0f",
       "url": "https://tldr.tech/ai/2025-11-03",
       "summary": "",
-      "collected_at": "2025-11-16T03:15:40.514790+00:00"
+      "collected_at": "2025-11-16T04:49:42.118736+00:00"
     },
     {
       "title": "Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
@@ -6226,8 +6226,8 @@
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 8214,
-      "forks_text": "8,214",
+      "forks": 8248,
+      "forks_text": "8,248",
       "stars_period": "1,230 stars today",
       "stars_period_count": 1230
     },
@@ -6268,8 +6268,8 @@
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 2534,
-      "forks_text": "2,534",
+      "forks": 2536,
+      "forks_text": "2,536",
       "stars_period": "73 stars today",
       "stars_period_count": 73
     },
@@ -6310,8 +6310,8 @@
       "language": "JavaScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 2108,
-      "forks_text": "2,108",
+      "forks": 2109,
+      "forks_text": "2,109",
       "stars_period": "15 stars today",
       "stars_period_count": 15
     },
@@ -6324,8 +6324,8 @@
       "language": "JavaScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 982,
-      "forks_text": "982",
+      "forks": 981,
+      "forks_text": "981",
       "stars_period": "35 stars today",
       "stars_period_count": 35
     },
@@ -6352,8 +6352,8 @@
       "language": "JavaScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 7053,
-      "forks_text": "7,053",
+      "forks": 7054,
+      "forks_text": "7,054",
       "stars_period": "81 stars today",
       "stars_period_count": 81
     },
@@ -6408,8 +6408,8 @@
       "language": "Go",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 14632,
-      "forks_text": "14,632",
+      "forks": 14633,
+      "forks_text": "14,633",
       "stars_period": "26 stars today",
       "stars_period_count": 26
     },
@@ -6520,8 +6520,8 @@
       "language": "TypeScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 4394,
-      "forks_text": "4,394",
+      "forks": 4395,
+      "forks_text": "4,395",
       "stars_period": "227 stars today",
       "stars_period_count": 227
     },
