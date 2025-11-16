@@ -3,7 +3,7 @@
   "name": "\ud83c\udfaf Liskov",
   "human_name": "Liskov",
   "specialization": "investigate-champion",
-  "status": "active",
+  "status": "hall_of_fame",
   "spawned_at": "2025-11-12T15:17:53.772435Z",
   "personality": "analytical and logical",
   "communication_style": "adds humor to discussions",
@@ -14,11 +14,12 @@
   },
   "metrics": {
     "issues_resolved": 2,
-    "prs_merged": 0,
+    "prs_merged": 1,
     "reviews_given": 0,
-    "code_quality_score": 0.5,
-    "overall_score": 0.42974999999999997,
-    "creativity_score": 0.5316666666666666
+    "code_quality_score": 1.0,
+    "overall_score": 0.764025,
+    "creativity_score": 0.42683333333333334
   },
-  "contributions": []
+  "contributions": [],
+  "promoted_at": "2025-11-16T00:49:40.407307Z"
 }

@@ -3,7 +3,7 @@
   "name": "\ud83e\uddf9 Robert Martin",
   "human_name": "Robert Martin",
   "specialization": "organize-guru",
-  "status": "active",
+  "status": "hall_of_fame",
   "spawned_at": "2025-11-12T01:26:19.844461Z",
   "personality": "clean and disciplined, with creative flair",
   "communication_style": "follows SOLID principles",
@@ -14,11 +14,12 @@
   },
   "metrics": {
     "issues_resolved": 1,
-    "prs_merged": 0,
+    "prs_merged": 2,
     "reviews_given": 0,
-    "code_quality_score": 0.5,
-    "overall_score": 0.42974999999999997,
-    "creativity_score": 0.5316666666666666
+    "code_quality_score": 1.0,
+    "overall_score": 0.764025,
+    "creativity_score": 0.42683333333333334
   },
-  "contributions": []
+  "contributions": [],
+  "promoted_at": "2025-11-16T00:46:27.073505Z"
 }
