@@ -1,17 +1,18 @@
 {
-  "time": "2025-11-16T08:43:55.542269+00:00",
-  "tick": 38,
+  "time": "2025-11-16T09:43:29Z",
+  "tick": 39,
   "agents": [
     {
       "id": "agent-1762910779",
-      "label": "\ud83e\uddf9 Robert Martin",
+      "label": "🧹 Robert Martin",
       "specialization": "organize-guru",
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco"
+        "US:San Francisco",
+        "GB:London"
       ],
-      "current_idea_id": "idea:20",
+      "current_idea_id": "idea:16",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -28,15 +29,15 @@
     },
     {
       "id": "agent-1762918927",
-      "label": "\ud83e\uddea Tesla",
+      "label": "🧪 Tesla",
       "specialization": "assert-specialist",
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "CN:Hangzhou",
-        "CN:Shenzhen"
+        "US:San Francisco",
+        "US:Redmond"
       ],
-      "current_idea_id": "idea:3",
+      "current_idea_id": "idea:17",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -53,15 +54,15 @@
     },
     {
       "id": "agent-1762928620",
-      "label": "\ud83d\udcad Turing",
+      "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "SE:Stockholm",
-        "GB:London"
+        "CN:Hangzhou",
+        "CN:Shenzhen"
       ],
-      "current_idea_id": "idea:4",
+      "current_idea_id": "idea:3",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -78,7 +79,7 @@
     },
     {
       "id": "agent-1762960673",
-      "label": "\ud83c\udfaf Liskov",
+      "label": "🎯 Liskov",
       "specialization": "investigate-champion",
       "location_region_id": "US:Charlotte",
       "status": "exploring",
@@ -102,8 +103,106 @@
     },
     {
       "id": "agent-1763079117",
-      "label": "\ud83d\udd12 Moxie Marlinspike",
+      "label": "🔒 Moxie Marlinspike",
       "specialization": "secure-ninja",
+      "location_region_id": "US:Charlotte",
+      "status": "exploring",
+      "path": [
+        "US:San Francisco",
+        "US:Austin"
+      ],
+      "current_idea_id": "idea:21",
+      "home_base": "US:Charlotte",
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "traits": {
+        "creativity": 71,
+        "caution": 61,
+        "speed": 84
+      }
+    },
+    {
+      "id": "agent-1763082710",
+      "label": "🔨 Linus Torvalds",
+      "specialization": "construct-specialist",
+      "location_region_id": "US:Charlotte",
+      "status": "exploring",
+      "path": [
+        "US:San Francisco"
+      ],
+      "current_idea_id": "idea:22",
+      "home_base": "US:Charlotte",
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "traits": {
+        "creativity": 80,
+        "caution": 91,
+        "speed": 69
+      }
+    },
+    {
+      "id": "agent-1763086649",
+      "label": "🎯 Ada",
+      "specialization": "investigate-champion",
+      "location_region_id": "US:Charlotte",
+      "status": "exploring",
+      "path": [
+        "US:San Francisco"
+      ],
+      "current_idea_id": "idea:18",
+      "home_base": "US:Charlotte",
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "traits": {
+        "creativity": 67,
+        "caution": 89,
+        "speed": 58
+      }
+    },
+    {
+      "id": "agent-1763087215",
+      "label": "⚙️ Einstein",
+      "specialization": "engineer-master",
+      "location_region_id": "US:Charlotte",
+      "status": "exploring",
+      "path": [
+        "US:San Francisco",
+        "GB:London"
+      ],
+      "current_idea_id": "idea:16",
+      "home_base": "US:Charlotte",
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "traits": {
+        "creativity": 91,
+        "caution": 79,
+        "speed": 81
+      }
+    },
+    {
+      "id": "agent-1763091768",
+      "label": "📖 Ada",
+      "specialization": "support-master",
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
@@ -121,104 +220,6 @@
         "overall_score": 0.0
       },
       "traits": {
-        "creativity": 71,
-        "caution": 61,
-        "speed": 84
-      }
-    },
-    {
-      "id": "agent-1763082710",
-      "label": "\ud83d\udd28 Linus Torvalds",
-      "specialization": "construct-specialist",
-      "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "US:San Francisco",
-        "US:Redmond"
-      ],
-      "current_idea_id": "idea:17",
-      "home_base": "US:Charlotte",
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "traits": {
-        "creativity": 80,
-        "caution": 91,
-        "speed": 69
-      }
-    },
-    {
-      "id": "agent-1763086649",
-      "label": "\ud83c\udfaf Ada",
-      "specialization": "investigate-champion",
-      "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "US:San Francisco"
-      ],
-      "current_idea_id": "idea:19",
-      "home_base": "US:Charlotte",
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "traits": {
-        "creativity": 67,
-        "caution": 89,
-        "speed": 58
-      }
-    },
-    {
-      "id": "agent-1763087215",
-      "label": "\u2699\ufe0f Einstein",
-      "specialization": "engineer-master",
-      "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "US:San Francisco"
-      ],
-      "current_idea_id": "idea:22",
-      "home_base": "US:Charlotte",
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "traits": {
-        "creativity": 91,
-        "caution": 79,
-        "speed": 81
-      }
-    },
-    {
-      "id": "agent-1763091768",
-      "label": "\ud83d\udcd6 Ada",
-      "specialization": "support-master",
-      "location_region_id": "US:Charlotte",
-      "status": "exploring",
-      "path": [
-        "TW:Hsinchu",
-        "KR:Seoul"
-      ],
-      "current_idea_id": "idea:2",
-      "home_base": "US:Charlotte",
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "traits": {
         "creativity": 77,
         "caution": 84,
         "speed": 83
@@ -226,7 +227,7 @@
     },
     {
       "id": "agent-1763091865",
-      "label": "\ud83c\udf1f Steam Machine Specialist",
+      "label": "🌟 Steam Machine Specialist",
       "specialization": "steam-machine",
       "location_region_id": "US:Charlotte",
       "status": "exploring",
@@ -234,7 +235,7 @@
         "US:San Francisco",
         "US:Redmond"
       ],
-      "current_idea_id": "idea:17",
+      "current_idea_id": "idea:1",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -251,15 +252,15 @@
     },
     {
       "id": "agent-1763097820",
-      "label": "\ud83d\uddc2\ufe0f Martin Fowler",
+      "label": "🗂️ Martin Fowler",
       "specialization": "restructure-master",
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "CN:Hangzhou",
-        "CN:Shenzhen"
+        "TW:Hsinchu",
+        "KR:Seoul"
       ],
-      "current_idea_id": "idea:3",
+      "current_idea_id": "idea:2",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -374,7 +375,7 @@
   "metrics": {
     "total_ideas": 14,
     "total_regions": 10,
-    "ticks_completed": 37,
+    "ticks_completed": 39,
     "active_agents": 11,
     "total_agent_count": 11,
     "elimination_threshold": 0.3,
