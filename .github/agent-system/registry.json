@@ -256,6 +256,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1763273977",
+      "name": "\u2601\ufe0f Guido van Rossum",
+      "human_name": "Guido van Rossum",
+      "specialization": "cloud-architect",
+      "status": "active",
+      "spawned_at": "2025-11-16T06:19:50.670351+00:00",
+      "personality": "visionary and creative, with encouraging and supportive style",
+      "communication_style": "evidence-based and data-driven",
+      "traits": {
+        "creativity": 85,
+        "caution": 65,
+        "speed": 75
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],
