@@ -20,6 +20,18 @@ from typing import Dict, List, Any, Optional, Set, Tuple
 from hashlib import md5
 
 
+# System actors to exclude from diversity analysis
+# These are automation bots that perform repetitive tasks by design
+EXCLUDED_ACTORS = [
+    'github-actions',
+    'github-actions[bot]',
+    'dependabot',
+    'dependabot[bot]',
+    'renovate',
+    'renovate[bot]',
+]
+
+
 class ASTHasher(ast.NodeVisitor):
     """Generates structural hash of AST nodes for similarity comparison"""
     
@@ -111,6 +123,10 @@ class RepetitionDetector:
             
             if not agent_id:
                 continue  # Skip human contributors
+            
+            # Skip system automation bots - they're not AI agents requiring diversity analysis
+            if agent_id in EXCLUDED_ACTORS:
+                continue
             
             # Get files changed in this commit
             files_output = self._run_git_command([

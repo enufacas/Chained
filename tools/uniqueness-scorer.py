@@ -19,6 +19,18 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional, Set, Tuple
 
 
+# System actors to exclude from diversity analysis
+# These are automation bots that perform repetitive tasks by design
+EXCLUDED_ACTORS = [
+    'github-actions',
+    'github-actions[bot]',
+    'dependabot',
+    'dependabot[bot]',
+    'renovate',
+    'renovate[bot]',
+]
+
+
 class UniquenessScorer:
     """Scores uniqueness of AI agent contributions"""
     
@@ -266,11 +278,20 @@ class UniquenessScorer:
         }
     
     def score_all_agents(self, threshold: float = 30.0) -> Dict[str, Any]:
-        """Score all agents and flag those below threshold"""
+        """Score all agents and flag those below threshold
+        
+        Filters out system automation bots that are not AI agents.
+        """
         scores = {}
         flagged = []
+        excluded_count = 0
         
         for agent_id in self.agent_contributions.keys():
+            # Skip system automation bots - they're not AI agents requiring diversity coaching
+            if agent_id in EXCLUDED_ACTORS:
+                excluded_count += 1
+                continue
+                
             score_data = self.calculate_overall_score(agent_id)
             scores[agent_id] = score_data
             
@@ -286,7 +307,8 @@ class UniquenessScorer:
                 'generated_at': datetime.now(timezone.utc).isoformat(),
                 'repository': str(self.repo_dir),
                 'threshold': threshold,
-                'total_agents_analyzed': len(scores)
+                'total_agents_analyzed': len(scores),
+                'excluded_system_bots': excluded_count
             },
             'scores': scores,
             'flagged_agents': flagged,
