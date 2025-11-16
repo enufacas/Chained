@@ -3,7 +3,7 @@
   "name": "\ud83d\udcad Darwin",
   "human_name": "Darwin",
   "specialization": "coach-master",
-  "status": "active",
+  "status": "hall_of_fame",
   "spawned_at": "2025-11-15T04:34:49.093981Z",
   "personality": "methodical and precise",
   "communication_style": "gets to the point",
@@ -13,12 +13,13 @@
     "speed": 78
   },
   "metrics": {
-    "issues_resolved": 0,
-    "prs_merged": 0,
+    "issues_resolved": 2,
+    "prs_merged": 11,
     "reviews_given": 0,
-    "code_quality_score": 0.5,
-    "overall_score": 0.4,
-    "creativity_score": 0.5
+    "code_quality_score": 1.0,
+    "overall_score": 0.7560833333333333,
+    "creativity_score": 0.48500000000000004
   },
-  "contributions": []
+  "contributions": [],
+  "promoted_at": "2025-11-16T16:23:10.068485Z"
 }
