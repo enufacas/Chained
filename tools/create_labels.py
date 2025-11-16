@@ -41,7 +41,15 @@ SYSTEM_LABELS: List[Tuple[str, str, str]] = [
     ("testing", "FEF2C0", "Testing related"),
     ("ci-cd", "1F2937", "CI/CD workflows"),
     ("github-pages", "FB923C", "GitHub Pages site"),
+    ("pages-health", "FB923C", "GitHub Pages health checks"),
     ("github-actions", "2088FF", "GitHub Actions workflows"),
+    
+    # Code quality and development labels
+    ("code-quality", "D93F0B", "Code quality improvements"),
+    ("bug", "D73A4A", "Bug or error fix"),
+    ("security", "B60205", "Security related"),
+    ("performance", "10B981", "Performance improvements"),
+    ("workflow-optimization", "0E8A16", "Workflow optimization"),
     
     # Backlog and planning labels
     ("future-expansion", "FBCA04", "Backlog for future work"),

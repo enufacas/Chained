@@ -12,6 +12,11 @@ on:
       - '.github/copilot-instructions.md'
       - 'learnings/**'
       - 'analysis/**'
+    # Note: We intentionally do NOT use 'paths' filters here because
+    # this workflow needs to run on ALL PRs to label them correctly.
+    # Path filters would limit when this runs, breaking the labeling system.
+    # The tools/pr-content-analyzer.py script is a dependency, but changes
+    # to it don't require re-running this on old PRs - only new PRs need labels.
   
   workflow_dispatch:
     inputs:

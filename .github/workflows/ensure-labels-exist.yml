@@ -1,0 +1,123 @@
+name: "Maintenance: Ensure Repository Labels Exist"
+
+# Created by @troubleshoot-expert to prevent label-related workflow failures
+# This workflow ensures all required labels exist in the repository
+
+on:
+  schedule:
+    # Run weekly on Monday at 00:00 UTC to keep labels in sync
+    - cron: '0 0 * * 1'
+  
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Force update existing labels'
+        required: false
+        default: 'true'
+        type: boolean
+  
+  # Run when the label creator tool or this workflow changes
+  push:
+    branches:
+      - main
+    paths:
+      - 'tools/create_labels.py'
+      - '.github/workflows/ensure-labels-exist.yml'
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  ensure-labels:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Create/update system labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🏷️ Creating/updating repository labels..."
+          echo "=========================================="
+          
+          # Run the label creator with all standard labels
+          python3 tools/create_labels.py --all
+          
+          if [ $? -eq 0 ]; then
+            echo ""
+            echo "✅ Label creation completed successfully"
+          else
+            echo ""
+            echo "⚠️ Some labels may have failed to create (see output above)"
+            echo "This is usually not critical if most labels were created"
+          fi
+      
+      - name: Verify critical labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo ""
+          echo "🔍 Verifying critical labels for pr-content-analyzer..."
+          echo "=========================================="
+          
+          # List of critical labels used by pr-content-analyzer
+          CRITICAL_LABELS=(
+            "code-quality"
+            "testing"
+            "documentation"
+            "agent-system"
+            "workflow-optimization"
+            "learning"
+            "security"
+            "performance"
+            "bug"
+            "enhancement"
+            "pages-health"
+          )
+          
+          MISSING_LABELS=()
+          
+          for label in "${CRITICAL_LABELS[@]}"; do
+            if gh label list | grep -q "^${label}"; then
+              echo "✅ ${label}"
+            else
+              echo "❌ ${label} - MISSING"
+              MISSING_LABELS+=("$label")
+            fi
+          done
+          
+          echo ""
+          if [ ${#MISSING_LABELS[@]} -eq 0 ]; then
+            echo "✅ All critical labels exist"
+          else
+            echo "⚠️ ${#MISSING_LABELS[@]} critical labels are missing:"
+            printf '  - %s\n' "${MISSING_LABELS[@]}"
+            echo ""
+            echo "These labels are needed for pr-auto-labeler to work correctly."
+            echo "They should have been created by the create_labels.py script."
+            echo "If this persists, check the script output above for errors."
+          fi
+      
+      - name: Generate workflow summary
+        if: always()
+        run: |
+          echo "## 🏷️ Label Maintenance" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Purpose" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This workflow ensures all required repository labels exist." >> $GITHUB_STEP_SUMMARY
+          echo "It prevents failures in workflows like pr-auto-labeler that depend on labels." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Created by **@troubleshoot-expert** - Proactive issue prevention*" >> $GITHUB_STEP_SUMMARY

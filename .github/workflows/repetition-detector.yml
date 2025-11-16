@@ -3,6 +3,10 @@ name: "AI Pattern: Repetition Detector"
 on:
   pull_request:
     types: [opened, synchronize]
+    # Note: No 'paths' filters - we want to analyze ALL PRs for repetition patterns.
+    # The tools used (diversity-dashboard.py, repetition-detector.py, etc.) are
+    # dependencies, not trigger conditions. We need to run on every PR to detect
+    # repetitive patterns across all code changes.
   schedule:
     # Run every 6 hours
     - cron: '0 */6 * * *'
