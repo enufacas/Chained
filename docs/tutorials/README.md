@@ -2,17 +2,51 @@
 
 Welcome to the Chained tutorials! These comprehensive, step-by-step guides will help you understand, set up, and master the autonomous AI ecosystem.
 
+## 🎯 NEW! Interactive Tutorial 🌟
+
+**[Interactive Tutorial: Welcome to Chained](../interactive-tutorial.html)** ⭐ **START HERE!**  
+**Time**: 15-20 minutes | **Level**: Beginner | **Format**: Interactive HTML
+
+The best way to learn Chained! An engaging, hands-on tutorial with:
+- ✨ Progressive learning stages with visual feedback
+- 🎮 Interactive elements and exercises
+- 📊 Progress tracking and completion badges
+- 🚀 Direct links to all key resources
+- 🌌 Fun, engaging personality (Neil deGrasse Tyson vibes!)
+
+**Perfect for**: Anyone new to Chained who wants an engaging introduction before diving into documentation.
+
+---
+
 ## 🎯 Tutorial Path
 
 New to Chained? Follow this learning path:
 
-1. **[Understanding the Autonomous Workflow](./understanding-autonomous-workflow.md)** ⭐ START HERE
+0. **[Interactive Tutorial](../interactive-tutorial.html)** ⭐ **START HERE - NEW!**
+1. **[Understanding the Autonomous Workflow](./understanding-autonomous-workflow.md)**
 2. **[Setting Up Your First Instance](./setting-up-your-first-instance.md)**
 3. **[Monitoring and Debugging](./monitoring-and-debugging.md)**
 4. **[Mastering the Repository Time-Travel Debugger](./mastering-time-travel-debugger.md)** 🆕
 5. **[Creating Your First Custom Agent](./creating-custom-agent.md)**
 
 ## 📖 Available Tutorials
+
+### 🌟 NEW! Interactive Experience
+
+#### [Interactive Tutorial: Welcome to Chained](../interactive-tutorial.html)
+**Time**: 15-20 minutes | **Level**: Beginner | **Format**: Interactive HTML
+
+The most engaging way to learn Chained! Features:
+- Step-by-step guided tour of the ecosystem
+- Interactive elements and hands-on exercises
+- Progress tracking with visual feedback
+- Fun personality with pop culture references
+- Direct exploration of live dashboards
+- Completion badges and achievements
+
+**Perfect for**: Complete beginners who want an entertaining, hands-on introduction to Chained.
+
+---
 
 ### For Beginners
 
@@ -121,10 +155,12 @@ Build specialized AI agents:
 ### By Time Available
 
 **5 minutes**
+- Try the [Interactive Tutorial](../interactive-tutorial.html) (first 2 steps)
 - Skim [Understanding the Autonomous Workflow](./understanding-autonomous-workflow.md) (read "Big Picture" and "Complete Cycle" sections)
 - Check [GLOSSARY.md](../GLOSSARY.md) for terminology
 
 **15-20 minutes**
+- Complete the [Interactive Tutorial](../interactive-tutorial.html) ⭐ **Recommended!**
 - Complete [Creating Your First Custom Agent](./creating-custom-agent.md)
 - Complete [Mastering the Repository Time-Travel Debugger](./mastering-time-travel-debugger.md) 🆕
 - Review [QUICK_REFERENCE.md](../QUICK_REFERENCE.md) for commands
@@ -140,8 +176,11 @@ Build specialized AI agents:
 
 ### By Goal
 
+**I'm completely new to Chained**
+→ Start with the [Interactive Tutorial](../interactive-tutorial.html) ⭐
+
 **I want to understand how Chained works**
-→ Start with [Understanding the Autonomous Workflow](./understanding-autonomous-workflow.md)
+→ After the interactive tutorial, read [Understanding the Autonomous Workflow](./understanding-autonomous-workflow.md)
 
 **I want to set up my own instance**
 → Follow [Setting Up Your First Instance](./setting-up-your-first-instance.md)
