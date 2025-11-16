@@ -74,13 +74,81 @@ def get_latest_analysis_file() -> str:
     return str(analysis_files[0])
 
 
-def create_idea_from_technology(tech: Dict[str, Any], idea_id_base: int) -> Dict[str, Any]:
+def create_combination_ideas(technologies: List[Dict[str, Any]], max_combinations: int = 3) -> List[Dict[str, Any]]:
+    """
+    **@construct-specialist** Enhancement: Create combination/integration ideas.
+    
+    These ideas explore synergies between different technologies.
+    
+    Args:
+        technologies: List of technology trends
+        max_combinations: Maximum number of combination ideas to create
+        
+    Returns:
+        List of combination idea dicts
+    """
+    import random
+    
+    combination_ideas = []
+    
+    # Define interesting combination patterns
+    ai_keywords = {'ai', 'ml', 'agents', 'llm', 'claude', 'gpt'}
+    infra_keywords = {'cloud', 'devops', 'kubernetes', 'docker', 'infrastructure'}
+    security_keywords = {'security', 'authentication', 'encryption', 'vulnerability'}
+    web_keywords = {'web', 'api', 'frontend', 'backend', 'javascript'}
+    
+    # Find technologies in different categories
+    ai_techs = [t for t in technologies if any(kw in t.get('keywords', []) for kw in ai_keywords)]
+    infra_techs = [t for t in technologies if any(kw in t.get('keywords', []) for kw in infra_keywords)]
+    security_techs = [t for t in technologies if any(kw in t.get('keywords', []) for kw in security_keywords)]
+    web_techs = [t for t in technologies if any(kw in t.get('keywords', []) for kw in web_keywords)]
+    
+    # Create interesting combinations
+    combinations = [
+        ('AI + Infrastructure', ai_techs, infra_techs, 'Integrate AI capabilities with cloud infrastructure'),
+        ('Security + AI', security_techs, ai_techs, 'Apply AI/ML to enhance security systems'),
+        ('Web + AI', web_techs, ai_techs, 'Build AI-powered web applications'),
+        ('Cloud + Security', infra_techs, security_techs, 'Secure cloud infrastructure and deployments'),
+    ]
+    
+    for combo_title, list1, list2, combo_desc in combinations:
+        if len(combination_ideas) >= max_combinations:
+            break
+            
+        if list1 and list2:
+            # Pick one from each list
+            tech1 = random.choice(list1) if list1 else None
+            tech2 = random.choice(list2) if list2 else None
+            
+            if tech1 and tech2:
+                name1 = tech1.get('name', 'unknown').title()
+                name2 = tech2.get('name', 'unknown').title()
+                
+                combination_ideas.append({
+                    'name': f"{name1}-{name2}".lower(),
+                    'category': 'Integration',
+                    'mention_count': (tech1.get('mention_count', 0) + tech2.get('mention_count', 0)) // 2,
+                    'score': 80.0,  # Good score for combinations
+                    'sample_titles': [
+                        f"{combo_title}: {combo_desc}",
+                        f"Combining {name1} and {name2} for better solutions"
+                    ],
+                    'keywords': tech1.get('keywords', []) + tech2.get('keywords', []),
+                    'is_combination': True,
+                    'combined_from': [tech1.get('name'), tech2.get('name')]
+                })
+    
+    return combination_ideas
+
+
+def create_idea_from_technology(tech: Dict[str, Any], idea_id_base: int, is_deep_discovery: bool = False) -> Dict[str, Any]:
     """
     Create a world idea from a technology trend.
     
     Args:
         tech: Technology dict from analysis
         idea_id_base: Base number for idea ID
+        is_deep_discovery: Whether this is from deep discovery mode (affects title format)
         
     Returns:
         Idea dict for knowledge base
@@ -89,6 +157,11 @@ def create_idea_from_technology(tech: Dict[str, Any], idea_id_base: int) -> Dict
     category = tech.get('category', 'General')
     mention_count = tech.get('mention_count', 0)
     sample_titles = tech.get('sample_titles', [])
+    keywords = tech.get('keywords', [tech_name])
+    
+    # **@construct-specialist** Enhancement: Better pattern extraction
+    # Extract more patterns from keywords and category
+    patterns = list(set([tech_name] + keywords + [category.lower().replace(' ', '_')]))
     
     # Get companies associated with this tech
     companies = TECH_COMPANY_MAP.get(tech_name, [
@@ -115,17 +188,34 @@ def create_idea_from_technology(tech: Dict[str, Any], idea_id_base: int) -> Dict
             'weight': round(weight, 2)
         })
     
-    # Create idea
+    # **@construct-specialist** Enhancement: More descriptive summaries with context
+    summary_base = f"Exploring {tech_name} trends with {mention_count} mentions"
+    if sample_titles:
+        # Use first title for context
+        summary_base += f". {sample_titles[0][:100]}"
+        if len(sample_titles) > 1:
+            summary_base += f" Also: {sample_titles[1][:80]}"
+    else:
+        summary_base += ". Hot topic in tech."
+    
+    # Create idea with enhanced title based on category
+    if category == 'Company Innovation':
+        title = f"{tech_name.title()} Innovation: Cutting-Edge Developments"
+    elif category == 'Emerging Theme':
+        title = f"Emerging Theme: {tech_name.replace('-', ' ').title()}"
+    else:
+        title = f"{category}: {tech_name.title()} Innovation"
+    
     idea = {
         'id': f"idea:{idea_id_base}",
-        'title': f"{category}: {tech_name.title()} Innovation",
-        'summary': f"Exploring {tech_name} trends with {mention_count} mentions. " + 
-                   (sample_titles[0][:80] + '...' if sample_titles else 'Hot topic in tech.'),
-        'patterns': [tech_name, category.lower()],
+        'title': title,
+        'summary': summary_base,
+        'patterns': patterns,
         'companies': companies,
         'inspiration_regions': inspiration_regions,
         'source': 'learning_analysis',
         'mention_count': mention_count,
+        'category': category,
         'created_at': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     }
     
@@ -174,12 +264,13 @@ def update_world_state_regions(world_state: Dict[str, Any], ideas: List[Dict[str
     world_state['regions'] = regions
 
 
-def sync_learnings_to_ideas(max_ideas: int = 10) -> Dict[str, Any]:
+def sync_learnings_to_ideas(max_ideas: int = 10, enable_deep_discovery: bool = True) -> Dict[str, Any]:
     """
     Main sync function: Load latest analysis, create ideas, update world.
     
     Args:
         max_ideas: Maximum number of ideas to create from top technologies
+        enable_deep_discovery: Enable deeper topic exploration for more mission diversity
         
     Returns:
         Summary of sync operation
@@ -198,6 +289,46 @@ def sync_learnings_to_ideas(max_ideas: int = 10) -> Dict[str, Any]:
     top_technologies = analysis.get('top_technologies', [])[:max_ideas]
     print(f"   Found {len(top_technologies)} top technologies")
     
+    # **@construct-specialist** Enhancement: Deep Discovery Mode
+    if enable_deep_discovery:
+        print(f"\n🔍 Deep Discovery Mode: Exploring additional topics...")
+        
+        # Also extract from companies, hot_themes, and create combination ideas
+        top_companies = analysis.get('top_companies', [])[:5]
+        hot_themes = analysis.get('hot_themes', [])
+        
+        print(f"   Companies: {len(top_companies)}")
+        print(f"   Hot themes: {len(hot_themes)}")
+        
+        # Add companies as technology opportunities
+        for company in top_companies:
+            # Convert company to tech opportunity format
+            tech_opportunity = {
+                'name': company.get('name', 'unknown').lower(),
+                'category': 'Company Innovation',
+                'mention_count': company.get('mention_count', 0),
+                'score': company.get('score', 0),
+                'sample_titles': company.get('sample_titles', [])[:2],
+                'keywords': company.get('keywords', [])
+            }
+            top_technologies.append(tech_opportunity)
+        
+        # Add hot themes as exploration areas
+        for theme in hot_themes:
+            # Create a theme-based technology entry
+            theme_parts = theme.split('-')
+            theme_tech = {
+                'name': theme,
+                'category': 'Emerging Theme',
+                'mention_count': 10,  # Default for themes
+                'score': 75.0,  # Good score for hot themes
+                'sample_titles': [f"Explore {theme.replace('-', ' ').title()} innovations"],
+                'keywords': theme_parts
+            }
+            top_technologies.append(theme_tech)
+        
+        print(f"   ✓ Expanded from {len(analysis.get('top_technologies', [])[:max_ideas])} to {len(top_technologies)} opportunities")
+    
     # Load knowledge base
     print(f"\n📚 Loading knowledge base...")
     knowledge = load_json_file(KNOWLEDGE_PATH)
@@ -213,6 +344,18 @@ def sync_learnings_to_ideas(max_ideas: int = 10) -> Dict[str, Any]:
         idea = create_idea_from_technology(tech, idea_id_base + i)
         new_ideas.append(idea)
         print(f"   ✓ {idea['title']} (mentions: {tech.get('mention_count', 0)})")
+    
+    # **@construct-specialist** Enhancement: Add combination ideas for synergy
+    if enable_deep_discovery and len(top_technologies) >= 2:
+        print(f"\n🔗 Creating combination/integration ideas...")
+        combination_ideas = create_combination_ideas(top_technologies, max_combinations=3)
+        
+        for combo_idea in combination_ideas:
+            idea = create_idea_from_technology(combo_idea, idea_id_base + len(new_ideas), is_deep_discovery=True)
+            new_ideas.append(idea)
+            print(f"   ✓ {idea['title']} (integration opportunity)")
+        
+        print(f"   Created {len(combination_ideas)} combination ideas")
     
     # Add new ideas to knowledge (replace old learning-based ideas)
     # Keep only non-learning ideas
@@ -261,7 +404,9 @@ def sync_learnings_to_ideas(max_ideas: int = 10) -> Dict[str, Any]:
 def main():
     """Main entry point."""
     try:
-        summary = sync_learnings_to_ideas(max_ideas=10)
+        # **@construct-specialist** Enhancement: Enable deep discovery by default
+        # This creates more diverse missions from learning topics
+        summary = sync_learnings_to_ideas(max_ideas=10, enable_deep_discovery=True)
         return 0
     except Exception as e:
         print(f"\n❌ Error during sync: {e}")
