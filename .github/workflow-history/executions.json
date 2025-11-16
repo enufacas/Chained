@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-11-16T04:47:26.485590+00:00",
+  "last_updated": "2025-11-16T18:31:38.167047+00:00",
   "executions": [
     {
       "workflow_name": "workflow-13",
@@ -10400,6 +10400,2606 @@
       },
       "day_of_week": 4,
       "hour_of_day": 4
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-10-28T18:05:07.666466+00:00",
+      "duration_seconds": 394.4945139776619,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 20.47111131156217,
+        "memory_mb": 895.0200619213496,
+        "api_calls": 42
+      },
+      "day_of_week": 1,
+      "hour_of_day": 18
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-11-04T12:43:22.895801+00:00",
+      "duration_seconds": 295.8249713684921,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 18.092527710674933,
+        "memory_mb": 277.9726855279655,
+        "api_calls": 19
+      },
+      "day_of_week": 1,
+      "hour_of_day": 12
+    },
+    {
+      "workflow_name": "workflow-14",
+      "start_time": "2025-11-06T05:12:59.816260+00:00",
+      "duration_seconds": 30,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 78.6758956307282,
+        "memory_mb": 750.1073659748009,
+        "api_calls": 23
+      },
+      "day_of_week": 3,
+      "hour_of_day": 5
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-11-06T19:05:26.743209+00:00",
+      "duration_seconds": 253.5634641680573,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 42.50154748950641,
+        "memory_mb": 234.11064465661028,
+        "api_calls": 35
+      },
+      "day_of_week": 3,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-10-18T12:40:27.915030+00:00",
+      "duration_seconds": 315.7670318348381,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 71.30417806554186,
+        "memory_mb": 340.11566834402026,
+        "api_calls": 33
+      },
+      "day_of_week": 5,
+      "hour_of_day": 12
+    },
+    {
+      "workflow_name": "workflow-14",
+      "start_time": "2025-11-13T23:15:11.558108+00:00",
+      "duration_seconds": 69.94837051371957,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 46.369381550625704,
+        "memory_mb": 938.3667079527919,
+        "api_calls": 36
+      },
+      "day_of_week": 3,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-11-14T23:59:39.489164+00:00",
+      "duration_seconds": 215.90678432760538,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 89.8093986708171,
+        "memory_mb": 541.4965978254996,
+        "api_calls": 30
+      },
+      "day_of_week": 4,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-14",
+      "start_time": "2025-10-20T01:13:07.942440+00:00",
+      "duration_seconds": 190.73202512060934,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 36.9242916891626,
+        "memory_mb": 688.7576624111888,
+        "api_calls": 19
+      },
+      "day_of_week": 0,
+      "hour_of_day": 1
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-11-11T11:33:02.237026+00:00",
+      "duration_seconds": 165.53204203152052,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 51.80252204857729,
+        "memory_mb": 931.2389268461583,
+        "api_calls": 20
+      },
+      "day_of_week": 1,
+      "hour_of_day": 11
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-11-08T15:07:49.575662+00:00",
+      "duration_seconds": 214.81710203114773,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 82.51064724729856,
+        "memory_mb": 825.0370927785738,
+        "api_calls": 34
+      },
+      "day_of_week": 5,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-11-07T19:51:53.507415+00:00",
+      "duration_seconds": 209.30558541102653,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 60.2653607598681,
+        "memory_mb": 546.3472910232449,
+        "api_calls": 20
+      },
+      "day_of_week": 4,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-10",
+      "start_time": "2025-10-21T02:25:35.203383+00:00",
+      "duration_seconds": 470.7844139582411,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 45.820235339705356,
+        "memory_mb": 504.4707716286658,
+        "api_calls": 29
+      },
+      "day_of_week": 1,
+      "hour_of_day": 2
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-10-19T21:25:08.126861+00:00",
+      "duration_seconds": 110.4700157877274,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 42.24338308392657,
+        "memory_mb": 372.74843013879075,
+        "api_calls": 42
+      },
+      "day_of_week": 6,
+      "hour_of_day": 21
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-11-08T11:52:26.655811+00:00",
+      "duration_seconds": 95.3675339084412,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 74.00822559696135,
+        "memory_mb": 340.54847461523894,
+        "api_calls": 7
+      },
+      "day_of_week": 5,
+      "hour_of_day": 11
+    },
+    {
+      "workflow_name": "workflow-13",
+      "start_time": "2025-10-20T04:44:04.987685+00:00",
+      "duration_seconds": 387.4975992854121,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 29.321669583190513,
+        "memory_mb": 696.0750448711069,
+        "api_calls": 39
+      },
+      "day_of_week": 0,
+      "hour_of_day": 4
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-11-08T13:09:55.091275+00:00",
+      "duration_seconds": 214.766686876709,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 74.21267369667076,
+        "memory_mb": 644.8790756042582,
+        "api_calls": 26
+      },
+      "day_of_week": 5,
+      "hour_of_day": 13
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-11-11T00:01:33.779280+00:00",
+      "duration_seconds": 368.81835845053394,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 41.612332265539,
+        "memory_mb": 779.5154782816805,
+        "api_calls": 11
+      },
+      "day_of_week": 1,
+      "hour_of_day": 0
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-11-05T18:12:47.570397+00:00",
+      "duration_seconds": 101.30650214279237,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 12.376207799162922,
+        "memory_mb": 859.476557359408,
+        "api_calls": 6
+      },
+      "day_of_week": 2,
+      "hour_of_day": 18
+    },
+    {
+      "workflow_name": "workflow-1",
+      "start_time": "2025-11-10T03:04:47.069299+00:00",
+      "duration_seconds": 468.3926698807758,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 29.46329222587722,
+        "memory_mb": 200.82475179218716,
+        "api_calls": 10
+      },
+      "day_of_week": 0,
+      "hour_of_day": 3
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-11-10T15:28:39.540139+00:00",
+      "duration_seconds": 345.3089057695671,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 78.12777690030697,
+        "memory_mb": 930.1879441123452,
+        "api_calls": 46
+      },
+      "day_of_week": 0,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-10-26T15:42:11.510405+00:00",
+      "duration_seconds": 231.53260428554955,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 33.59612012494759,
+        "memory_mb": 230.46261548613472,
+        "api_calls": 41
+      },
+      "day_of_week": 6,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-11-05T15:37:18.064394+00:00",
+      "duration_seconds": 258.5375447569367,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 24.98021258046773,
+        "memory_mb": 821.5319421433483,
+        "api_calls": 38
+      },
+      "day_of_week": 2,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-11-16T12:45:21.707580+00:00",
+      "duration_seconds": 496.37356246684834,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 75.1638316337993,
+        "memory_mb": 795.1406004697204,
+        "api_calls": 10
+      },
+      "day_of_week": 6,
+      "hour_of_day": 12
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-10-18T14:57:52.126591+00:00",
+      "duration_seconds": 384.46398433292256,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 36.435811852611096,
+        "memory_mb": 131.5214830059543,
+        "api_calls": 43
+      },
+      "day_of_week": 5,
+      "hour_of_day": 14
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-11-11T23:03:38.589906+00:00",
+      "duration_seconds": 259.94153971724074,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 20.44019432232078,
+        "memory_mb": 282.4486324077311,
+        "api_calls": 33
+      },
+      "day_of_week": 1,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-10-24T17:26:34.135866+00:00",
+      "duration_seconds": 286.8075910338369,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 72.18715551280611,
+        "memory_mb": 534.38851082806,
+        "api_calls": 43
+      },
+      "day_of_week": 4,
+      "hour_of_day": 17
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-10-26T12:44:03.321595+00:00",
+      "duration_seconds": 325.67443681565965,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 47.86112417267259,
+        "memory_mb": 681.0572945340864,
+        "api_calls": 30
+      },
+      "day_of_week": 6,
+      "hour_of_day": 12
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-10-21T11:37:15.363628+00:00",
+      "duration_seconds": 84.5940435126048,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 16.253951540669647,
+        "memory_mb": 743.0452868158707,
+        "api_calls": 48
+      },
+      "day_of_week": 1,
+      "hour_of_day": 11
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-11-10T03:49:07.055829+00:00",
+      "duration_seconds": 30,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 84.50815287352808,
+        "memory_mb": 813.4767130933762,
+        "api_calls": 11
+      },
+      "day_of_week": 0,
+      "hour_of_day": 3
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-10-31T14:02:49.613311+00:00",
+      "duration_seconds": 138.27591718897827,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 68.71931570201775,
+        "memory_mb": 132.09870852593076,
+        "api_calls": 40
+      },
+      "day_of_week": 4,
+      "hour_of_day": 14
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-10-23T19:25:16.830418+00:00",
+      "duration_seconds": 267.5301022347936,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 52.56085873633869,
+        "memory_mb": 216.20938211873988,
+        "api_calls": 46
+      },
+      "day_of_week": 3,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-10-22T19:54:12.025071+00:00",
+      "duration_seconds": 184.07871270771068,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 75.63765475971435,
+        "memory_mb": 914.7879449771118,
+        "api_calls": 19
+      },
+      "day_of_week": 2,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-11-02T19:58:16.702738+00:00",
+      "duration_seconds": 401.7020436836693,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 30.51261105555236,
+        "memory_mb": 870.8427709881238,
+        "api_calls": 6
+      },
+      "day_of_week": 6,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-10-18T02:41:56.982821+00:00",
+      "duration_seconds": 238.86375659393158,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 29.22670899187681,
+        "memory_mb": 764.5493673080641,
+        "api_calls": 44
+      },
+      "day_of_week": 5,
+      "hour_of_day": 2
+    },
+    {
+      "workflow_name": "workflow-13",
+      "start_time": "2025-11-08T15:19:10.706323+00:00",
+      "duration_seconds": 486.3339535851217,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 81.1368301877239,
+        "memory_mb": 519.4268289398108,
+        "api_calls": 7
+      },
+      "day_of_week": 5,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-11-15T05:05:56.210439+00:00",
+      "duration_seconds": 447.78439926831754,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 22.703884414656272,
+        "memory_mb": 145.5192688351294,
+        "api_calls": 37
+      },
+      "day_of_week": 5,
+      "hour_of_day": 5
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-10-23T03:03:27.116793+00:00",
+      "duration_seconds": 500.8660290394367,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 15.27071825488008,
+        "memory_mb": 876.5387879393443,
+        "api_calls": 20
+      },
+      "day_of_week": 3,
+      "hour_of_day": 3
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-10-22T01:10:46.935638+00:00",
+      "duration_seconds": 117.72917123528471,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 16.405935540838588,
+        "memory_mb": 468.2045358233227,
+        "api_calls": 23
+      },
+      "day_of_week": 2,
+      "hour_of_day": 1
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-10-28T21:28:48.597280+00:00",
+      "duration_seconds": 269.18117221596754,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 80.77045478675564,
+        "memory_mb": 536.897741583184,
+        "api_calls": 14
+      },
+      "day_of_week": 1,
+      "hour_of_day": 21
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-10-31T08:52:44.863279+00:00",
+      "duration_seconds": 342.2777039629764,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 36.033123673974686,
+        "memory_mb": 890.0896810161549,
+        "api_calls": 34
+      },
+      "day_of_week": 4,
+      "hour_of_day": 8
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-11-06T12:41:59.215069+00:00",
+      "duration_seconds": 252.41636751852252,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 37.998801470423096,
+        "memory_mb": 299.4778579409998,
+        "api_calls": 10
+      },
+      "day_of_week": 3,
+      "hour_of_day": 12
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-10-24T06:35:48.410356+00:00",
+      "duration_seconds": 344.97346960270016,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 30.28418005937357,
+        "memory_mb": 411.5723489930229,
+        "api_calls": 30
+      },
+      "day_of_week": 4,
+      "hour_of_day": 6
+    },
+    {
+      "workflow_name": "workflow-1",
+      "start_time": "2025-10-18T20:31:14.638413+00:00",
+      "duration_seconds": 527.0037805063802,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 21.214509535285284,
+        "memory_mb": 156.4888223230597,
+        "api_calls": 6
+      },
+      "day_of_week": 5,
+      "hour_of_day": 20
+    },
+    {
+      "workflow_name": "workflow-1",
+      "start_time": "2025-11-04T00:21:55.042232+00:00",
+      "duration_seconds": 587.164164592664,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 38.67989119445081,
+        "memory_mb": 564.3751064242915,
+        "api_calls": 34
+      },
+      "day_of_week": 1,
+      "hour_of_day": 0
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-11-02T00:20:25.597224+00:00",
+      "duration_seconds": 414.1331372612721,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 79.44702611524033,
+        "memory_mb": 924.0057539573239,
+        "api_calls": 16
+      },
+      "day_of_week": 6,
+      "hour_of_day": 0
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-11-12T11:51:58.539365+00:00",
+      "duration_seconds": 352.69094570588294,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 21.06555469763127,
+        "memory_mb": 676.2682708079707,
+        "api_calls": 19
+      },
+      "day_of_week": 2,
+      "hour_of_day": 11
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-11-05T23:31:50.316903+00:00",
+      "duration_seconds": 440.20090324365555,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 69.07031608204008,
+        "memory_mb": 129.3011057238329,
+        "api_calls": 42
+      },
+      "day_of_week": 2,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-11-12T09:56:09.942523+00:00",
+      "duration_seconds": 355.6288515693133,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 78.65357437905381,
+        "memory_mb": 266.5774269085397,
+        "api_calls": 10
+      },
+      "day_of_week": 2,
+      "hour_of_day": 9
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-10-30T12:20:33.523681+00:00",
+      "duration_seconds": 424.20060603062706,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 11.57188413265935,
+        "memory_mb": 855.25230649409,
+        "api_calls": 30
+      },
+      "day_of_week": 3,
+      "hour_of_day": 12
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-11-06T10:23:05.737415+00:00",
+      "duration_seconds": 229.52917403817878,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 70.00083769172733,
+        "memory_mb": 100.07532733002787,
+        "api_calls": 45
+      },
+      "day_of_week": 3,
+      "hour_of_day": 10
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-11-07T19:27:56.858450+00:00",
+      "duration_seconds": 51.184839802106424,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 22.24992780905513,
+        "memory_mb": 627.33711245946,
+        "api_calls": 21
+      },
+      "day_of_week": 4,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-11-08T13:24:25.662144+00:00",
+      "duration_seconds": 30,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 12.725096554802136,
+        "memory_mb": 896.7884484782371,
+        "api_calls": 31
+      },
+      "day_of_week": 5,
+      "hour_of_day": 13
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-11-13T04:30:27.433347+00:00",
+      "duration_seconds": 201.29393275635655,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 80.58517134887565,
+        "memory_mb": 183.18578327386066,
+        "api_calls": 32
+      },
+      "day_of_week": 3,
+      "hour_of_day": 4
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-11-11T17:43:49.579818+00:00",
+      "duration_seconds": 308.587979776922,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 23.571653773625407,
+        "memory_mb": 902.6712484533102,
+        "api_calls": 33
+      },
+      "day_of_week": 1,
+      "hour_of_day": 17
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-10-18T00:48:48.620302+00:00",
+      "duration_seconds": 393.09917074400977,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 30.169712906063737,
+        "memory_mb": 964.1951050075752,
+        "api_calls": 39
+      },
+      "day_of_week": 5,
+      "hour_of_day": 0
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-11-16T11:51:07.775411+00:00",
+      "duration_seconds": 358.2041270685057,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 73.7887445166281,
+        "memory_mb": 699.2112179578988,
+        "api_calls": 26
+      },
+      "day_of_week": 6,
+      "hour_of_day": 11
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-10-26T08:18:14.330388+00:00",
+      "duration_seconds": 30,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 10.58473989872069,
+        "memory_mb": 937.229333095188,
+        "api_calls": 25
+      },
+      "day_of_week": 6,
+      "hour_of_day": 8
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-11-07T23:09:32.100553+00:00",
+      "duration_seconds": 265.57588659731607,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 79.74355371032902,
+        "memory_mb": 913.198711125805,
+        "api_calls": 39
+      },
+      "day_of_week": 4,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-11-02T22:39:31.708331+00:00",
+      "duration_seconds": 318.5990915647236,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 35.31916429069439,
+        "memory_mb": 326.4494835825709,
+        "api_calls": 11
+      },
+      "day_of_week": 6,
+      "hour_of_day": 22
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-11-10T23:54:35.413880+00:00",
+      "duration_seconds": 420.7355588480601,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 30.091671282354355,
+        "memory_mb": 385.82989077899,
+        "api_calls": 34
+      },
+      "day_of_week": 0,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-10-17T19:11:01.967726+00:00",
+      "duration_seconds": 134.2986057478508,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 85.3552222707939,
+        "memory_mb": 689.2368812095463,
+        "api_calls": 45
+      },
+      "day_of_week": 4,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-10-28T07:21:06.401896+00:00",
+      "duration_seconds": 310.0305753970028,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 69.15495095986614,
+        "memory_mb": 634.5358068794408,
+        "api_calls": 46
+      },
+      "day_of_week": 1,
+      "hour_of_day": 7
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-10-19T17:51:44.227365+00:00",
+      "duration_seconds": 431.42654145511847,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 81.58718698324627,
+        "memory_mb": 724.1678348360732,
+        "api_calls": 34
+      },
+      "day_of_week": 6,
+      "hour_of_day": 17
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-10-23T18:56:18.365204+00:00",
+      "duration_seconds": 414.9792655798197,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 44.72014860907145,
+        "memory_mb": 381.20663779295245,
+        "api_calls": 22
+      },
+      "day_of_week": 3,
+      "hour_of_day": 18
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-11-11T06:13:18.587223+00:00",
+      "duration_seconds": 396.88611583540927,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 48.606845147363245,
+        "memory_mb": 740.3418873060813,
+        "api_calls": 6
+      },
+      "day_of_week": 1,
+      "hour_of_day": 6
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-11-10T02:27:42.729297+00:00",
+      "duration_seconds": 238.06799580037188,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 68.22618467445638,
+        "memory_mb": 969.3138040183885,
+        "api_calls": 25
+      },
+      "day_of_week": 0,
+      "hour_of_day": 2
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-10-18T05:49:35.866880+00:00",
+      "duration_seconds": 306.22256587362216,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 24.34948201492621,
+        "memory_mb": 212.62134192619015,
+        "api_calls": 33
+      },
+      "day_of_week": 5,
+      "hour_of_day": 5
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-10-31T23:22:49.292519+00:00",
+      "duration_seconds": 319.2304423937681,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 43.0886202060858,
+        "memory_mb": 294.4194458078913,
+        "api_calls": 33
+      },
+      "day_of_week": 4,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-14",
+      "start_time": "2025-10-26T09:20:08.311419+00:00",
+      "duration_seconds": 46.90504937282076,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 47.55018411651062,
+        "memory_mb": 105.46574891653961,
+        "api_calls": 6
+      },
+      "day_of_week": 6,
+      "hour_of_day": 9
+    },
+    {
+      "workflow_name": "workflow-14",
+      "start_time": "2025-10-31T13:06:08.647353+00:00",
+      "duration_seconds": 96.23008469348927,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 42.1196970531037,
+        "memory_mb": 556.4962665754517,
+        "api_calls": 11
+      },
+      "day_of_week": 4,
+      "hour_of_day": 13
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-11-10T15:34:36.465209+00:00",
+      "duration_seconds": 386.2712440266115,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 89.78069261987605,
+        "memory_mb": 152.88278724098512,
+        "api_calls": 14
+      },
+      "day_of_week": 0,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-11-03T19:49:28.981697+00:00",
+      "duration_seconds": 264.8706788881789,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 19.957726646589407,
+        "memory_mb": 244.1999468400644,
+        "api_calls": 8
+      },
+      "day_of_week": 0,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-13",
+      "start_time": "2025-10-24T20:47:30.052845+00:00",
+      "duration_seconds": 335.5576187703013,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 39.585616579379995,
+        "memory_mb": 143.13931223102966,
+        "api_calls": 10
+      },
+      "day_of_week": 4,
+      "hour_of_day": 20
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-11-12T16:08:05.137088+00:00",
+      "duration_seconds": 228.1992061419307,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 61.2796071302212,
+        "memory_mb": 356.3089197633259,
+        "api_calls": 41
+      },
+      "day_of_week": 2,
+      "hour_of_day": 16
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-11-12T11:25:07.428483+00:00",
+      "duration_seconds": 30,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 52.590042554838305,
+        "memory_mb": 506.0559576362316,
+        "api_calls": 29
+      },
+      "day_of_week": 2,
+      "hour_of_day": 11
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-11-15T05:51:10.104414+00:00",
+      "duration_seconds": 441.8581577495225,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 26.0434755550226,
+        "memory_mb": 869.7615984699738,
+        "api_calls": 17
+      },
+      "day_of_week": 5,
+      "hour_of_day": 5
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-11-13T16:02:45.087482+00:00",
+      "duration_seconds": 365.9957910074072,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 30.94953039219171,
+        "memory_mb": 105.05121067880681,
+        "api_calls": 5
+      },
+      "day_of_week": 3,
+      "hour_of_day": 16
+    },
+    {
+      "workflow_name": "workflow-13",
+      "start_time": "2025-10-18T10:40:15.006043+00:00",
+      "duration_seconds": 359.08423787451613,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 22.724655834832692,
+        "memory_mb": 156.77713129945766,
+        "api_calls": 35
+      },
+      "day_of_week": 5,
+      "hour_of_day": 10
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-11-09T08:49:38.417367+00:00",
+      "duration_seconds": 444.8771662734532,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 87.45117966559815,
+        "memory_mb": 955.7139934290726,
+        "api_calls": 25
+      },
+      "day_of_week": 6,
+      "hour_of_day": 8
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-10-29T00:56:39.783287+00:00",
+      "duration_seconds": 158.60440260958345,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 33.08744686798867,
+        "memory_mb": 824.5034092976805,
+        "api_calls": 12
+      },
+      "day_of_week": 2,
+      "hour_of_day": 0
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-11-06T11:24:24.267854+00:00",
+      "duration_seconds": 30,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 75.59828155312415,
+        "memory_mb": 920.283774232373,
+        "api_calls": 32
+      },
+      "day_of_week": 3,
+      "hour_of_day": 11
+    },
+    {
+      "workflow_name": "workflow-13",
+      "start_time": "2025-10-25T06:52:15.493013+00:00",
+      "duration_seconds": 370.9294955829504,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 58.231429421106704,
+        "memory_mb": 168.77731206928087,
+        "api_calls": 40
+      },
+      "day_of_week": 5,
+      "hour_of_day": 6
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-11-11T04:33:38.284846+00:00",
+      "duration_seconds": 420.25723539105013,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 35.70700926284914,
+        "memory_mb": 846.6984854255041,
+        "api_calls": 21
+      },
+      "day_of_week": 1,
+      "hour_of_day": 4
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-10-18T23:37:26.148477+00:00",
+      "duration_seconds": 322.4474006463654,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 74.01112109810606,
+        "memory_mb": 127.7690387917175,
+        "api_calls": 18
+      },
+      "day_of_week": 5,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-10",
+      "start_time": "2025-11-12T15:13:48.788290+00:00",
+      "duration_seconds": 591.2403898977946,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 33.832179450827205,
+        "memory_mb": 173.009836890865,
+        "api_calls": 34
+      },
+      "day_of_week": 2,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-14",
+      "start_time": "2025-10-21T19:24:26.660464+00:00",
+      "duration_seconds": 206.84560729328405,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 85.99443005409192,
+        "memory_mb": 565.7062278137436,
+        "api_calls": 19
+      },
+      "day_of_week": 1,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-10-31T09:06:08.805297+00:00",
+      "duration_seconds": 268.56500332549825,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 25.615242586874682,
+        "memory_mb": 213.99845732627568,
+        "api_calls": 36
+      },
+      "day_of_week": 4,
+      "hour_of_day": 9
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-11-12T03:43:18.272077+00:00",
+      "duration_seconds": 273.65488657344315,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 12.26668510431879,
+        "memory_mb": 156.85172126523167,
+        "api_calls": 12
+      },
+      "day_of_week": 2,
+      "hour_of_day": 3
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-10-31T22:44:30.006533+00:00",
+      "duration_seconds": 276.8850184570872,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 17.306610854703386,
+        "memory_mb": 250.37170969966053,
+        "api_calls": 37
+      },
+      "day_of_week": 4,
+      "hour_of_day": 22
+    },
+    {
+      "workflow_name": "workflow-14",
+      "start_time": "2025-11-16T08:50:15.646938+00:00",
+      "duration_seconds": 132.5609323988143,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 59.12530228608005,
+        "memory_mb": 980.1751241411121,
+        "api_calls": 11
+      },
+      "day_of_week": 6,
+      "hour_of_day": 8
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-11-05T01:43:07.016298+00:00",
+      "duration_seconds": 389.2187181313691,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 14.357923933255021,
+        "memory_mb": 291.9639200723248,
+        "api_calls": 25
+      },
+      "day_of_week": 2,
+      "hour_of_day": 1
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-11-13T15:29:02.137028+00:00",
+      "duration_seconds": 255.2175485876229,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 18.769581966550604,
+        "memory_mb": 153.36341070621862,
+        "api_calls": 27
+      },
+      "day_of_week": 3,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-11-07T09:04:07.129256+00:00",
+      "duration_seconds": 168.02958192522576,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 49.8029900292582,
+        "memory_mb": 631.4417878559653,
+        "api_calls": 47
+      },
+      "day_of_week": 4,
+      "hour_of_day": 9
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-10-18T16:19:56.967519+00:00",
+      "duration_seconds": 486.1820260821888,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 38.34514602200251,
+        "memory_mb": 466.6352486654619,
+        "api_calls": 35
+      },
+      "day_of_week": 5,
+      "hour_of_day": 16
+    },
+    {
+      "workflow_name": "workflow-1",
+      "start_time": "2025-11-07T08:05:54.413744+00:00",
+      "duration_seconds": 446.49520876892495,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 62.904058742745946,
+        "memory_mb": 423.71759209690316,
+        "api_calls": 34
+      },
+      "day_of_week": 4,
+      "hour_of_day": 8
+    },
+    {
+      "workflow_name": "workflow-13",
+      "start_time": "2025-10-23T13:57:06.561139+00:00",
+      "duration_seconds": 356.32405863711455,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 84.87501903049362,
+        "memory_mb": 347.1949179053833,
+        "api_calls": 49
+      },
+      "day_of_week": 3,
+      "hour_of_day": 13
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-10-24T03:27:14.559436+00:00",
+      "duration_seconds": 163.6978127671223,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 51.685961079761285,
+        "memory_mb": 915.8877505830989,
+        "api_calls": 48
+      },
+      "day_of_week": 4,
+      "hour_of_day": 3
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-11-06T07:27:29.334489+00:00",
+      "duration_seconds": 367.4307877568909,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 73.41200077177064,
+        "memory_mb": 873.6188844767164,
+        "api_calls": 35
+      },
+      "day_of_week": 3,
+      "hour_of_day": 7
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-11-02T08:07:03.599470+00:00",
+      "duration_seconds": 352.4589663345866,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 70.9285105876081,
+        "memory_mb": 240.24580920895346,
+        "api_calls": 16
+      },
+      "day_of_week": 6,
+      "hour_of_day": 8
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-10-21T20:33:56.316043+00:00",
+      "duration_seconds": 309.6145796287963,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 24.51889897028589,
+        "memory_mb": 188.64641339698966,
+        "api_calls": 10
+      },
+      "day_of_week": 1,
+      "hour_of_day": 20
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-10-21T15:58:01.854688+00:00",
+      "duration_seconds": 221.38562234014609,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 43.977083963903034,
+        "memory_mb": 659.3367699424134,
+        "api_calls": 33
+      },
+      "day_of_week": 1,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-10-24T07:21:38.822782+00:00",
+      "duration_seconds": 260.32397003075755,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 72.57828924382986,
+        "memory_mb": 704.5504088996107,
+        "api_calls": 33
+      },
+      "day_of_week": 4,
+      "hour_of_day": 7
+    },
+    {
+      "workflow_name": "workflow-1",
+      "start_time": "2025-10-28T05:35:38.355325+00:00",
+      "duration_seconds": 484.85456189501997,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 52.01372758483386,
+        "memory_mb": 713.129386280184,
+        "api_calls": 17
+      },
+      "day_of_week": 1,
+      "hour_of_day": 5
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-11-14T22:13:25.393148+00:00",
+      "duration_seconds": 210.76914953806974,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 48.82068592463832,
+        "memory_mb": 817.8623239162412,
+        "api_calls": 49
+      },
+      "day_of_week": 4,
+      "hour_of_day": 22
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-10-28T00:18:21.858723+00:00",
+      "duration_seconds": 192.90291197930682,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 78.18489102812907,
+        "memory_mb": 422.63346619531217,
+        "api_calls": 6
+      },
+      "day_of_week": 1,
+      "hour_of_day": 0
+    },
+    {
+      "workflow_name": "workflow-10",
+      "start_time": "2025-11-13T08:01:27.320089+00:00",
+      "duration_seconds": 566.2990275461906,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 33.245518275474204,
+        "memory_mb": 441.5025034440464,
+        "api_calls": 42
+      },
+      "day_of_week": 3,
+      "hour_of_day": 8
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-11-10T00:05:53.029505+00:00",
+      "duration_seconds": 297.1872951548404,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 46.88389488312754,
+        "memory_mb": 177.73249067685498,
+        "api_calls": 12
+      },
+      "day_of_week": 0,
+      "hour_of_day": 0
+    },
+    {
+      "workflow_name": "workflow-1",
+      "start_time": "2025-10-29T01:04:44.886390+00:00",
+      "duration_seconds": 497.28771882789016,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 57.897529765625066,
+        "memory_mb": 183.37458167283773,
+        "api_calls": 36
+      },
+      "day_of_week": 2,
+      "hour_of_day": 1
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-10-23T04:09:32.126511+00:00",
+      "duration_seconds": 375.71768613847945,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 22.8628265281342,
+        "memory_mb": 488.21500559978324,
+        "api_calls": 37
+      },
+      "day_of_week": 3,
+      "hour_of_day": 4
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-10-29T21:34:52.653810+00:00",
+      "duration_seconds": 225.12346180986978,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 62.98845000802353,
+        "memory_mb": 141.94347219169154,
+        "api_calls": 19
+      },
+      "day_of_week": 2,
+      "hour_of_day": 21
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-10-27T08:51:01.179151+00:00",
+      "duration_seconds": 294.2991927683934,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 37.91141982362979,
+        "memory_mb": 794.1546599515597,
+        "api_calls": 41
+      },
+      "day_of_week": 0,
+      "hour_of_day": 8
+    },
+    {
+      "workflow_name": "workflow-10",
+      "start_time": "2025-11-10T20:15:43.554862+00:00",
+      "duration_seconds": 506.5763352559406,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 51.77291585421641,
+        "memory_mb": 112.23256143834931,
+        "api_calls": 10
+      },
+      "day_of_week": 0,
+      "hour_of_day": 20
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-11-14T19:24:41.180293+00:00",
+      "duration_seconds": 283.4594534721951,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 48.36894085631249,
+        "memory_mb": 325.254906751015,
+        "api_calls": 33
+      },
+      "day_of_week": 4,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-13",
+      "start_time": "2025-11-14T16:46:01.455428+00:00",
+      "duration_seconds": 443.4730810906597,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 33.11074483989369,
+        "memory_mb": 234.3121700773434,
+        "api_calls": 47
+      },
+      "day_of_week": 4,
+      "hour_of_day": 16
+    },
+    {
+      "workflow_name": "workflow-1",
+      "start_time": "2025-10-21T17:18:50.036778+00:00",
+      "duration_seconds": 364.00135377414404,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 18.663400168580615,
+        "memory_mb": 971.8802574672146,
+        "api_calls": 40
+      },
+      "day_of_week": 1,
+      "hour_of_day": 17
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-11-16T02:17:33.670295+00:00",
+      "duration_seconds": 384.06611473390325,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 40.88662331493954,
+        "memory_mb": 688.3970943073432,
+        "api_calls": 8
+      },
+      "day_of_week": 6,
+      "hour_of_day": 2
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-10-23T10:34:10.641378+00:00",
+      "duration_seconds": 283.84892936035635,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 54.21679610828661,
+        "memory_mb": 346.38090673940934,
+        "api_calls": 48
+      },
+      "day_of_week": 3,
+      "hour_of_day": 10
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-10-29T17:50:30.877667+00:00",
+      "duration_seconds": 448.43437989374235,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 55.89693649724849,
+        "memory_mb": 960.0825303709846,
+        "api_calls": 27
+      },
+      "day_of_week": 2,
+      "hour_of_day": 17
+    },
+    {
+      "workflow_name": "workflow-14",
+      "start_time": "2025-11-15T03:55:13.481314+00:00",
+      "duration_seconds": 76.89148702562566,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 33.009546010642,
+        "memory_mb": 199.38829313144856,
+        "api_calls": 40
+      },
+      "day_of_week": 5,
+      "hour_of_day": 3
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-11-16T07:46:13.277763+00:00",
+      "duration_seconds": 269.1430981007586,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 16.37948357951423,
+        "memory_mb": 580.9104782993328,
+        "api_calls": 32
+      },
+      "day_of_week": 6,
+      "hour_of_day": 7
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-11-12T06:06:59.119672+00:00",
+      "duration_seconds": 98.42383271225697,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 25.082877240202173,
+        "memory_mb": 364.2454407189863,
+        "api_calls": 5
+      },
+      "day_of_week": 2,
+      "hour_of_day": 6
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-11-16T03:57:26.326738+00:00",
+      "duration_seconds": 293.0227958973177,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 17.57984906726793,
+        "memory_mb": 373.6741208801697,
+        "api_calls": 38
+      },
+      "day_of_week": 6,
+      "hour_of_day": 3
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-11-07T06:10:19.601709+00:00",
+      "duration_seconds": 139.66011512262457,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 12.72314968058124,
+        "memory_mb": 297.46618003091356,
+        "api_calls": 15
+      },
+      "day_of_week": 4,
+      "hour_of_day": 6
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-11-07T08:29:51.659725+00:00",
+      "duration_seconds": 365.31790456419276,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 54.900610078372395,
+        "memory_mb": 728.2867895422164,
+        "api_calls": 39
+      },
+      "day_of_week": 4,
+      "hour_of_day": 8
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-10-31T23:50:57.369976+00:00",
+      "duration_seconds": 451.4078548835539,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 49.035946972102394,
+        "memory_mb": 497.7611231748827,
+        "api_calls": 10
+      },
+      "day_of_week": 4,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-11-01T15:10:54.842047+00:00",
+      "duration_seconds": 442.90258793776843,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 74.72110971336987,
+        "memory_mb": 787.0749081505654,
+        "api_calls": 42
+      },
+      "day_of_week": 5,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-10-26T01:44:43.222361+00:00",
+      "duration_seconds": 232.68309699222397,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 66.93062569002116,
+        "memory_mb": 514.1934814114254,
+        "api_calls": 18
+      },
+      "day_of_week": 6,
+      "hour_of_day": 1
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-11-08T13:36:53.538378+00:00",
+      "duration_seconds": 416.2377882832946,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 74.04853090290945,
+        "memory_mb": 501.79718177342374,
+        "api_calls": 39
+      },
+      "day_of_week": 5,
+      "hour_of_day": 13
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-10-28T10:02:23.371007+00:00",
+      "duration_seconds": 322.3599546008079,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 40.3039523777599,
+        "memory_mb": 973.6995455588216,
+        "api_calls": 42
+      },
+      "day_of_week": 1,
+      "hour_of_day": 10
+    },
+    {
+      "workflow_name": "workflow-10",
+      "start_time": "2025-10-29T10:23:35.165481+00:00",
+      "duration_seconds": 485.5911130250895,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 53.85814569310412,
+        "memory_mb": 960.5123244934651,
+        "api_calls": 24
+      },
+      "day_of_week": 2,
+      "hour_of_day": 10
+    },
+    {
+      "workflow_name": "workflow-1",
+      "start_time": "2025-10-28T21:06:32.570616+00:00",
+      "duration_seconds": 408.5122165225923,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 33.961436114748025,
+        "memory_mb": 282.412368691188,
+        "api_calls": 27
+      },
+      "day_of_week": 1,
+      "hour_of_day": 21
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-11-07T17:28:55.390094+00:00",
+      "duration_seconds": 151.77457878536114,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 50.606083278025025,
+        "memory_mb": 117.18098670326043,
+        "api_calls": 26
+      },
+      "day_of_week": 4,
+      "hour_of_day": 17
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-10-24T13:10:06.264350+00:00",
+      "duration_seconds": 418.3812108454782,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 58.45120522345808,
+        "memory_mb": 355.0049650291631,
+        "api_calls": 19
+      },
+      "day_of_week": 4,
+      "hour_of_day": 13
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-10-27T19:59:56.655648+00:00",
+      "duration_seconds": 339.13405439297713,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 75.35126944077261,
+        "memory_mb": 473.34520193493466,
+        "api_calls": 20
+      },
+      "day_of_week": 0,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-11-08T18:35:35.042880+00:00",
+      "duration_seconds": 452.711910014705,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 85.47880679742498,
+        "memory_mb": 547.8155592218776,
+        "api_calls": 25
+      },
+      "day_of_week": 5,
+      "hour_of_day": 18
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-11-14T02:57:40.317083+00:00",
+      "duration_seconds": 357.273871706325,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 67.42689094489195,
+        "memory_mb": 718.9697949174379,
+        "api_calls": 45
+      },
+      "day_of_week": 4,
+      "hour_of_day": 2
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-10-30T23:31:20.293616+00:00",
+      "duration_seconds": 307.05425688765393,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 40.840456956700095,
+        "memory_mb": 223.77259136528974,
+        "api_calls": 47
+      },
+      "day_of_week": 3,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-10",
+      "start_time": "2025-11-13T17:47:32.890484+00:00",
+      "duration_seconds": 563.0344900656057,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 28.90976774444928,
+        "memory_mb": 991.3646447098579,
+        "api_calls": 10
+      },
+      "day_of_week": 3,
+      "hour_of_day": 17
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-11-16T03:51:16.099303+00:00",
+      "duration_seconds": 409.75208794238324,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 24.019069588423292,
+        "memory_mb": 864.2879453863038,
+        "api_calls": 44
+      },
+      "day_of_week": 6,
+      "hour_of_day": 3
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-10-31T22:47:30.112205+00:00",
+      "duration_seconds": 502.484724480616,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 40.79951938104814,
+        "memory_mb": 600.4999209973769,
+        "api_calls": 44
+      },
+      "day_of_week": 4,
+      "hour_of_day": 22
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-11-06T16:05:23.043774+00:00",
+      "duration_seconds": 350.9080058247349,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 28.243128177449364,
+        "memory_mb": 649.1037650790546,
+        "api_calls": 42
+      },
+      "day_of_week": 3,
+      "hour_of_day": 16
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-11-12T10:50:20.779157+00:00",
+      "duration_seconds": 183.0743073716617,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 37.959611410862166,
+        "memory_mb": 280.90193534654736,
+        "api_calls": 45
+      },
+      "day_of_week": 2,
+      "hour_of_day": 10
+    },
+    {
+      "workflow_name": "workflow-14",
+      "start_time": "2025-10-29T11:26:50.675555+00:00",
+      "duration_seconds": 104.50059461895637,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 35.56640564870247,
+        "memory_mb": 219.39856744318308,
+        "api_calls": 16
+      },
+      "day_of_week": 2,
+      "hour_of_day": 11
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-10-31T01:44:48.866656+00:00",
+      "duration_seconds": 119.46007429098873,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 84.01488332605308,
+        "memory_mb": 353.29510701671734,
+        "api_calls": 39
+      },
+      "day_of_week": 4,
+      "hour_of_day": 1
+    },
+    {
+      "workflow_name": "workflow-10",
+      "start_time": "2025-11-13T00:18:39.239786+00:00",
+      "duration_seconds": 630.2999828161893,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 72.94604165515038,
+        "memory_mb": 114.95757860845391,
+        "api_calls": 19
+      },
+      "day_of_week": 3,
+      "hour_of_day": 0
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-10-31T18:23:41.342627+00:00",
+      "duration_seconds": 380.6524680806238,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 68.40682758358132,
+        "memory_mb": 522.7946674208101,
+        "api_calls": 7
+      },
+      "day_of_week": 4,
+      "hour_of_day": 18
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-11-01T02:47:23.854079+00:00",
+      "duration_seconds": 372.03467068160904,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 51.2302101105637,
+        "memory_mb": 895.1724103701529,
+        "api_calls": 18
+      },
+      "day_of_week": 5,
+      "hour_of_day": 2
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-10-21T05:45:41.099046+00:00",
+      "duration_seconds": 266.4805625326974,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 40.040719397571145,
+        "memory_mb": 820.5214238219692,
+        "api_calls": 35
+      },
+      "day_of_week": 1,
+      "hour_of_day": 5
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-10-28T03:06:55.358109+00:00",
+      "duration_seconds": 286.46713941886594,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 42.519701720105054,
+        "memory_mb": 286.0880270533372,
+        "api_calls": 39
+      },
+      "day_of_week": 1,
+      "hour_of_day": 3
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-10-25T18:29:13.705172+00:00",
+      "duration_seconds": 227.53853046717404,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 64.70039097065832,
+        "memory_mb": 284.2759122351283,
+        "api_calls": 21
+      },
+      "day_of_week": 5,
+      "hour_of_day": 18
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-10-20T23:55:58.424463+00:00",
+      "duration_seconds": 41.020257633488725,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 17.85150013837403,
+        "memory_mb": 825.7846759744243,
+        "api_calls": 46
+      },
+      "day_of_week": 0,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-11-10T19:07:22.885534+00:00",
+      "duration_seconds": 379.1886565735546,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 67.27109061963203,
+        "memory_mb": 457.6074748246244,
+        "api_calls": 8
+      },
+      "day_of_week": 0,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-10-28T04:26:58.862556+00:00",
+      "duration_seconds": 344.3398178928351,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 72.2983324906122,
+        "memory_mb": 930.8947811780428,
+        "api_calls": 32
+      },
+      "day_of_week": 1,
+      "hour_of_day": 4
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-10-19T13:20:31.741927+00:00",
+      "duration_seconds": 294.1059722982843,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 81.93690197749315,
+        "memory_mb": 896.0525570812209,
+        "api_calls": 46
+      },
+      "day_of_week": 6,
+      "hour_of_day": 13
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-11-10T15:27:59.700240+00:00",
+      "duration_seconds": 342.38857449129137,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 29.393128026661266,
+        "memory_mb": 537.3341225630086,
+        "api_calls": 16
+      },
+      "day_of_week": 0,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-10-20T10:54:22.651129+00:00",
+      "duration_seconds": 369.33832240806555,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 15.753785266654194,
+        "memory_mb": 667.0650747254948,
+        "api_calls": 21
+      },
+      "day_of_week": 0,
+      "hour_of_day": 10
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-11-04T21:03:52.207506+00:00",
+      "duration_seconds": 350.3182994400944,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 44.98116122788949,
+        "memory_mb": 492.1228726555114,
+        "api_calls": 34
+      },
+      "day_of_week": 1,
+      "hour_of_day": 21
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-11-05T07:10:33.918450+00:00",
+      "duration_seconds": 249.6359347395624,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 19.918787659560564,
+        "memory_mb": 423.8834926969165,
+        "api_calls": 44
+      },
+      "day_of_week": 2,
+      "hour_of_day": 7
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-11-12T01:29:35.782085+00:00",
+      "duration_seconds": 352.8348069014109,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 43.49354247369653,
+        "memory_mb": 231.51656810384316,
+        "api_calls": 21
+      },
+      "day_of_week": 2,
+      "hour_of_day": 1
+    },
+    {
+      "workflow_name": "workflow-1",
+      "start_time": "2025-10-28T19:21:42.816174+00:00",
+      "duration_seconds": 464.95914438039637,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 79.49402592637182,
+        "memory_mb": 952.4503255711936,
+        "api_calls": 19
+      },
+      "day_of_week": 1,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-11-16T01:37:27.755637+00:00",
+      "duration_seconds": 388.92117514530236,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 59.472626089984495,
+        "memory_mb": 596.0222333564209,
+        "api_calls": 29
+      },
+      "day_of_week": 6,
+      "hour_of_day": 1
+    },
+    {
+      "workflow_name": "workflow-13",
+      "start_time": "2025-10-25T21:22:11.228177+00:00",
+      "duration_seconds": 402.5210531537721,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 13.5263813870122,
+        "memory_mb": 663.1889505280043,
+        "api_calls": 42
+      },
+      "day_of_week": 5,
+      "hour_of_day": 21
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-10-25T13:22:55.069685+00:00",
+      "duration_seconds": 249.38979730132246,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 71.27275767558741,
+        "memory_mb": 775.7883788435162,
+        "api_calls": 21
+      },
+      "day_of_week": 5,
+      "hour_of_day": 13
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-11-04T23:02:08.717919+00:00",
+      "duration_seconds": 584.4226304349754,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 11.883278482946702,
+        "memory_mb": 382.5791793866979,
+        "api_calls": 7
+      },
+      "day_of_week": 1,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-11-15T03:45:01.355115+00:00",
+      "duration_seconds": 253.4714438259904,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 85.66111780558514,
+        "memory_mb": 283.8301122930179,
+        "api_calls": 5
+      },
+      "day_of_week": 5,
+      "hour_of_day": 3
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-10-19T01:59:53.296583+00:00",
+      "duration_seconds": 165.7351258219526,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 65.13540108143602,
+        "memory_mb": 200.50622364290854,
+        "api_calls": 37
+      },
+      "day_of_week": 6,
+      "hour_of_day": 1
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-11-12T08:29:07.659597+00:00",
+      "duration_seconds": 314.96852106154313,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 27.19325304591355,
+        "memory_mb": 832.821039567658,
+        "api_calls": 26
+      },
+      "day_of_week": 2,
+      "hour_of_day": 8
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-11-09T12:39:56.634729+00:00",
+      "duration_seconds": 134.77527531462724,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 41.440886768820526,
+        "memory_mb": 471.91367015144715,
+        "api_calls": 11
+      },
+      "day_of_week": 6,
+      "hour_of_day": 12
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-10-28T16:07:51.341028+00:00",
+      "duration_seconds": 381.10844281005336,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 44.81589436822961,
+        "memory_mb": 165.1186127418481,
+        "api_calls": 11
+      },
+      "day_of_week": 1,
+      "hour_of_day": 16
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-10-21T00:30:12.647481+00:00",
+      "duration_seconds": 137.99821025065785,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 62.85087173864409,
+        "memory_mb": 563.6916127042921,
+        "api_calls": 24
+      },
+      "day_of_week": 1,
+      "hour_of_day": 0
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-11-12T04:16:55.640637+00:00",
+      "duration_seconds": 30,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 39.33358344903511,
+        "memory_mb": 330.0983261974641,
+        "api_calls": 7
+      },
+      "day_of_week": 2,
+      "hour_of_day": 4
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-10-31T21:08:27.455784+00:00",
+      "duration_seconds": 303.4883447207029,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 62.70034402710575,
+        "memory_mb": 159.51980432008816,
+        "api_calls": 19
+      },
+      "day_of_week": 4,
+      "hour_of_day": 21
+    },
+    {
+      "workflow_name": "workflow-10",
+      "start_time": "2025-11-15T09:04:12.486453+00:00",
+      "duration_seconds": 544.4487850908466,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 72.90087970736336,
+        "memory_mb": 257.99299989551207,
+        "api_calls": 17
+      },
+      "day_of_week": 5,
+      "hour_of_day": 9
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-10-24T06:56:52.369752+00:00",
+      "duration_seconds": 79.12553072260752,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 60.73159983049873,
+        "memory_mb": 149.26688973960609,
+        "api_calls": 40
+      },
+      "day_of_week": 4,
+      "hour_of_day": 6
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-10-21T04:28:41.306913+00:00",
+      "duration_seconds": 30,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 70.40325463877718,
+        "memory_mb": 346.1825353291688,
+        "api_calls": 9
+      },
+      "day_of_week": 1,
+      "hour_of_day": 4
+    },
+    {
+      "workflow_name": "workflow-6",
+      "start_time": "2025-11-01T11:03:35.034186+00:00",
+      "duration_seconds": 357.1416434573458,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 78.23287625407586,
+        "memory_mb": 418.2490231363468,
+        "api_calls": 22
+      },
+      "day_of_week": 5,
+      "hour_of_day": 11
+    },
+    {
+      "workflow_name": "workflow-13",
+      "start_time": "2025-10-25T23:56:39.989716+00:00",
+      "duration_seconds": 417.2584668012178,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 26.965715698763013,
+        "memory_mb": 575.5874545655495,
+        "api_calls": 15
+      },
+      "day_of_week": 5,
+      "hour_of_day": 23
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-11-03T09:59:48.705867+00:00",
+      "duration_seconds": 492.3776402795836,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 24.364589705789363,
+        "memory_mb": 699.1609339676853,
+        "api_calls": 19
+      },
+      "day_of_week": 0,
+      "hour_of_day": 9
+    },
+    {
+      "workflow_name": "workflow-13",
+      "start_time": "2025-10-22T15:52:38.864482+00:00",
+      "duration_seconds": 539.1373832585293,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 60.44994878916854,
+        "memory_mb": 484.2484790014795,
+        "api_calls": 17
+      },
+      "day_of_week": 2,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-11-16T06:04:01.568069+00:00",
+      "duration_seconds": 252.58859966625957,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 47.26287714051548,
+        "memory_mb": 319.3155811382825,
+        "api_calls": 33
+      },
+      "day_of_week": 6,
+      "hour_of_day": 6
+    },
+    {
+      "workflow_name": "workflow-2",
+      "start_time": "2025-10-20T15:26:39.763757+00:00",
+      "duration_seconds": 230.28505103815795,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 69.39932896830481,
+        "memory_mb": 508.38582188895265,
+        "api_calls": 33
+      },
+      "day_of_week": 0,
+      "hour_of_day": 15
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-11-06T17:26:36.403123+00:00",
+      "duration_seconds": 227.50975157679702,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 39.9644938511793,
+        "memory_mb": 252.31120696760428,
+        "api_calls": 29
+      },
+      "day_of_week": 3,
+      "hour_of_day": 17
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-10-22T22:57:31.790024+00:00",
+      "duration_seconds": 265.09785438609305,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 88.88090104697037,
+        "memory_mb": 903.7557620697784,
+        "api_calls": 10
+      },
+      "day_of_week": 2,
+      "hour_of_day": 22
+    },
+    {
+      "workflow_name": "workflow-9",
+      "start_time": "2025-11-01T20:15:19.241229+00:00",
+      "duration_seconds": 340.31461911554277,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 73.54132954450857,
+        "memory_mb": 655.2323095432153,
+        "api_calls": 5
+      },
+      "day_of_week": 5,
+      "hour_of_day": 20
+    },
+    {
+      "workflow_name": "workflow-7",
+      "start_time": "2025-11-11T07:42:25.009944+00:00",
+      "duration_seconds": 30,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 34.23034244373891,
+        "memory_mb": 528.27762796825,
+        "api_calls": 24
+      },
+      "day_of_week": 1,
+      "hour_of_day": 7
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-11-12T10:35:10.240537+00:00",
+      "duration_seconds": 313.5705408048448,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 54.40262597840595,
+        "memory_mb": 890.0690347467432,
+        "api_calls": 45
+      },
+      "day_of_week": 2,
+      "hour_of_day": 10
+    },
+    {
+      "workflow_name": "workflow-5",
+      "start_time": "2025-10-27T14:21:08.052233+00:00",
+      "duration_seconds": 368.7589415237046,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 22.195668219047135,
+        "memory_mb": 934.0827083615076,
+        "api_calls": 30
+      },
+      "day_of_week": 0,
+      "hour_of_day": 14
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-11-11T11:20:53.264640+00:00",
+      "duration_seconds": 311.7128800512325,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 67.41351069445423,
+        "memory_mb": 656.7708717629005,
+        "api_calls": 29
+      },
+      "day_of_week": 1,
+      "hour_of_day": 11
+    },
+    {
+      "workflow_name": "workflow-8",
+      "start_time": "2025-11-04T04:36:56.005777+00:00",
+      "duration_seconds": 331.9967474908487,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 36.43219796279327,
+        "memory_mb": 251.61251843016424,
+        "api_calls": 47
+      },
+      "day_of_week": 1,
+      "hour_of_day": 4
+    },
+    {
+      "workflow_name": "workflow-0",
+      "start_time": "2025-11-16T18:06:48.211613+00:00",
+      "duration_seconds": 217.9810992614009,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 26.089414593235727,
+        "memory_mb": 768.47204997253,
+        "api_calls": 24
+      },
+      "day_of_week": 6,
+      "hour_of_day": 18
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-10-18T13:39:38.684475+00:00",
+      "duration_seconds": 355.97668679918513,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 72.72024275121137,
+        "memory_mb": 639.528496735986,
+        "api_calls": 8
+      },
+      "day_of_week": 5,
+      "hour_of_day": 13
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-11-01T05:11:21.338913+00:00",
+      "duration_seconds": 373.5161370746458,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 81.93719239507728,
+        "memory_mb": 233.2574583004015,
+        "api_calls": 24
+      },
+      "day_of_week": 5,
+      "hour_of_day": 5
+    },
+    {
+      "workflow_name": "workflow-1",
+      "start_time": "2025-10-24T19:04:01.567317+00:00",
+      "duration_seconds": 494.0158781768334,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 50.55879637689907,
+        "memory_mb": 772.0775341928745,
+        "api_calls": 31
+      },
+      "day_of_week": 4,
+      "hour_of_day": 19
+    },
+    {
+      "workflow_name": "workflow-12",
+      "start_time": "2025-10-30T04:46:36.111194+00:00",
+      "duration_seconds": 317.477075190416,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 31.158715558360104,
+        "memory_mb": 865.6165872103674,
+        "api_calls": 17
+      },
+      "day_of_week": 3,
+      "hour_of_day": 4
+    },
+    {
+      "workflow_name": "workflow-3",
+      "start_time": "2025-11-15T05:30:38.476023+00:00",
+      "duration_seconds": 318.50482206709967,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 50.296860111247724,
+        "memory_mb": 868.5820496723012,
+        "api_calls": 40
+      },
+      "day_of_week": 5,
+      "hour_of_day": 5
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-11-14T10:19:39.057614+00:00",
+      "duration_seconds": 186.03955755672231,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 26.845500558575583,
+        "memory_mb": 164.25837081876728,
+        "api_calls": 13
+      },
+      "day_of_week": 4,
+      "hour_of_day": 10
+    },
+    {
+      "workflow_name": "workflow-4",
+      "start_time": "2025-11-02T04:54:19.500229+00:00",
+      "duration_seconds": 264.5419715576846,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 29.254966531531448,
+        "memory_mb": 690.4211192282517,
+        "api_calls": 22
+      },
+      "day_of_week": 6,
+      "hour_of_day": 4
+    },
+    {
+      "workflow_name": "workflow-1",
+      "start_time": "2025-11-11T01:33:34.062856+00:00",
+      "duration_seconds": 474.9323715225439,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 61.84067170642888,
+        "memory_mb": 745.8924048705741,
+        "api_calls": 46
+      },
+      "day_of_week": 1,
+      "hour_of_day": 1
+    },
+    {
+      "workflow_name": "workflow-11",
+      "start_time": "2025-11-09T03:58:24.933328+00:00",
+      "duration_seconds": 392.9323150082541,
+      "success": false,
+      "resource_usage": {
+        "cpu_percent": 78.94739991211247,
+        "memory_mb": 404.76019439288945,
+        "api_calls": 37
+      },
+      "day_of_week": 6,
+      "hour_of_day": 3
+    },
+    {
+      "workflow_name": "workflow-14",
+      "start_time": "2025-11-06T12:21:40.716186+00:00",
+      "duration_seconds": 30,
+      "success": true,
+      "resource_usage": {
+        "cpu_percent": 88.20752651194015,
+        "memory_mb": 618.6429463773679,
+        "api_calls": 5
+      },
+      "day_of_week": 3,
+      "hour_of_day": 12
     }
   ]
 }
