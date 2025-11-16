@@ -1,0 +1,247 @@
+{
+  "insights": {
+    "insight_1227_c6c340110e4b": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:engineer-master -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\u2699\ufe0f Einstein** (@engineer-master) custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:00:17Z"
+    },
+    "insight_1227_e57a0f484a40": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "process",
+      "content": "> \n> **@engineer-master** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-16T07:00:17Z"
+    },
+    "insight_1227_98d9ecdcc3da": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/engineer-master",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:00:17Z"
+    },
+    "insight_1227_4a30e591b200": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "agent_behavior",
+      "content": "---\n\nWe continue to struggle getting stats on agents due to api limits and ultimately these pages https://enufacas",
+      "confidence": 0.7,
+      "tags": [
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:00:17Z"
+    },
+    "insight_1227_6b09815c19bc": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "process",
+      "content": "What other strategy might we use to store agent success",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:00:17Z"
+    },
+    "insight_1227_b2f06c4e54b5": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "agent_behavior",
+      "content": "It's needs to be resistant to multiple agents running at the same time and avoid trying to update the same file",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:00:17Z"
+    },
+    "insight_1227_b26d1048eca4": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the \u2699\ufe0f **Einstein** (@engineer-master) specialization:\n\n- **Agent**: \u2699\ufe0f **Einstein** (@engineer-master)\n- **Match Confidence**: medium\n- **Match Score**: 4\n- **Description**: Specialized agent for engineering APIs",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_453d1c22f277": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "process",
+      "content": "Inspired by 'Margaret Hamilton' - rigorous and innovative, with systematic approach",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_27ad668162eb": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_860daf0ce60c": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/engineer-master",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_c74205e7b2ac": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@engineer-master** by name in all conversations related to this issue",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_8a4d9b86307d": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@engineer-master** - Please use the **engineer-master** custom agent profile from `",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_7d4b0dd0c8a3": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_b82e9d3ef28f": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [engineer-master agent definition](https://github",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_ff7bb838707c": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **Einstein** (@engineer-master) will analyze the issue requirements using the engineer-master specialization\n2",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_5fa770c9ef97": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **Einstein** (@engineer-master) will create a branch and implement the solution following the engineer-master approach\n3",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_ebedbbd7757d": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **Einstein** (@engineer-master) will open a PR with the implementation\n4",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_81b9a9419cb1": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-16T07:01:06Z"
+    },
+    "insight_1227_46525a5145f9": {
+      "issue_number": 1227,
+      "issue_title": "Api limits",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** **Einstein** (@engineer-master) (engineer-master specialization)\n**Assigned at:** 2025-11-16 07:01:05 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T07:01:06Z"
+    }
+  },
+  "connections": [
+    {
+      "source_insight_id": "insight_1227_860daf0ce60c",
+      "target_insight_id": "insight_1227_98d9ecdcc3da",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-16T07:24:45.892371+00:00"
+    },
+    {
+      "source_insight_id": "insight_1227_860daf0ce60c",
+      "target_insight_id": "insight_1227_98d9ecdcc3da",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-16T07:24:45.892491+00:00"
+    },
+    {
+      "source_insight_id": "insight_1227_860daf0ce60c",
+      "target_insight_id": "insight_1227_98d9ecdcc3da",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-16T07:24:45.892976+00:00"
+    },
+    {
+      "source_insight_id": "insight_1227_860daf0ce60c",
+      "target_insight_id": "insight_1227_98d9ecdcc3da",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-16T07:24:45.893438+00:00"
+    }
+  ],
+  "metadata": {
+    "created": "2025-11-16T07:24:45.890291+00:00",
+    "last_updated": "2025-11-16T07:24:45.894769+00:00",
+    "total_insights": 19,
+    "total_connections": 4
+  }
+}

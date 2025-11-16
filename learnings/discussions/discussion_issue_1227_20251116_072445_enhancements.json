@@ -1,0 +1,26 @@
+{
+  "proactive_suggestions": [
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:engineer-master -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue h..."
+  ],
+  "knowledge_connections": {
+    "insight_1227_98d9ecdcc3da": [
+      {
+        "target_id": "insight_1227_860daf0ce60c",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1227_860daf0ce60c": [
+      {
+        "target_id": "insight_1227_98d9ecdcc3da",
+        "similarity": 1.0
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 19,
+    "total_connections": 4,
+    "new_insights_added": 23
+  },
+  "timestamp": "2025-11-16T07:24:45.901470+00:00"
+}
