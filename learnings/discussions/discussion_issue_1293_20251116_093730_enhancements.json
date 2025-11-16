@@ -1,0 +1,27 @@
+{
+  "proactive_suggestions": [
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83c\udfaf Define clear acceptance criteria and test cases",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This iss..."
+  ],
+  "knowledge_connections": {
+    "insight_1293_14487791d907": [
+      {
+        "target_id": "insight_1293_5dbb74768c27",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1293_5dbb74768c27": [
+      {
+        "target_id": "insight_1293_14487791d907",
+        "similarity": 1.0
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 30,
+    "total_connections": 4,
+    "new_insights_added": 34
+  },
+  "timestamp": "2025-11-16T09:37:30.911249+00:00"
+}

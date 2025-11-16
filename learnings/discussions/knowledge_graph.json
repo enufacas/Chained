@@ -1,0 +1,381 @@
+{
+  "insights": {
+    "insight_1293_763d32090ef9": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_4246a9095d70": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "> \n> **@troubleshoot-expert** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_14487791d907": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_de95c3c8ebee": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "---\n\n## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_1e41f2663a0d": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "**Detection Time:** 2025-11-16 09:13:28 UTC\n  \n  ### Health Summary\n  - **Total Workflow Runs:** 100 (last 100 sampled)\n  - **Completed Runs:** 33 (success + failure)\n  - **Failed Runs:** 11\n  - **Failure Rate:** 33",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_ee3520ecf3ce": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "3% (of completed runs)\n  \n  ### Failed Workflows Breakdown\n  - **",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_1d232d4e7084": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "github/workflows/ai-workflow-orchestrator-demo",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_a8470fbf2e8d": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Workflow Triggering (HTTP 403)\n  **Symptom:** Workflows fail when trying to trigger other workflows\n  **Solution:** Remove `gh workflow run` commands; rely on scheduled triggers instead\n  \n  #### 2",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_a24a3204e867": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Missing Secrets\n  **Symptom:** Workflows requiring COPILOT_PAT fail or skip steps\n  **Solution:** Configure required secrets in repository settings\n  \n  #### 3",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_dbc3cdef9f21": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "External Dependencies\n  **Symptom:** Workflows calling external APIs fail intermittently\n  **Solution:** Add retry logic and graceful error handling\n  \n  #### 4",
+      "confidence": 0.7,
+      "tags": [
+        "api",
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_64dc1307276a": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Configuration Issues\n  **Symptom:** Workflows fail due to missing files or permissions\n  **Solution:** Verify workflow configurations and file dependencies\n  \n  ### Recommended Actions\n  1",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_7498b17f8f3b": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Review the failed workflows breakdown above\n  2",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_1c682aba181f": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Focus on workflows with multiple failures first\n  4",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_d3e15fdca86c": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "decision",
+      "content": "Close this issue once all problems are resolved and failure rate drops below 20%",
+      "confidence": 0.6,
+      "tags": [
+        "ai"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_f6ab1041bddb": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "---\n  *This issue was automatically created by the System Monitor workflow",
+      "confidence": 0.6,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-16T09:13:29Z"
+    },
+    "insight_1293_011d88eabf73": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the \ud83d\udd27 **@troubleshoot-expert** specialization:\n\n- **Agent**: \ud83d\udd27 **@troubleshoot-expert**\n- **Match Confidence**: high\n- **Match Score**: 11\n- **Description**: Specialized agent for troubleshooting GitHub Actions and workflows",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "workflow",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_c8ab87ac5d19": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "technical",
+      "content": "Inspired by 'Grace Hopper' - practical and debugging-focused, with systematic problem-solving",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_f1d2ef685a69": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "technical",
+      "content": "Focuses on CI/CD issues, workflow failures, and GitHub Actions debugging",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_96fe6f563741": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "agent_behavior",
+      "content": "This is a protected agent that cannot be deleted or voted off",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_3c7f4ecea06a": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_5dbb74768c27": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_f895707d5475": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@troubleshoot-expert** by name in all conversations related to this issue",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_9d53244dd238": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@troubleshoot-expert** - Please use the **troubleshoot-expert** custom agent profile from `",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_e54bc1357e47": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_10b3e6b302f3": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [troubleshoot-expert agent definition](https://github",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_1b56fedd0b60": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **@troubleshoot-expert** will analyze the issue requirements using the troubleshoot-expert specialization\n2",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_b14572ff95e1": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@troubleshoot-expert** will create a branch and implement the solution following the troubleshoot-expert approach\n3",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_ac71470a4efd": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@troubleshoot-expert** will open a PR with the implementation\n4",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_39394403b3d3": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-16T09:20:33Z"
+    },
+    "insight_1293_bf6169f2b3eb": {
+      "issue_number": 1293,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-16",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** **@troubleshoot-expert** (troubleshoot-expert specialization)\n**Assigned at:** 2025-11-16 09:20:32 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-16T09:20:33Z"
+    }
+  },
+  "connections": [
+    {
+      "source_insight_id": "insight_1293_5dbb74768c27",
+      "target_insight_id": "insight_1293_14487791d907",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-16T09:37:30.893018+00:00"
+    },
+    {
+      "source_insight_id": "insight_1293_5dbb74768c27",
+      "target_insight_id": "insight_1293_14487791d907",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-16T09:37:30.893235+00:00"
+    },
+    {
+      "source_insight_id": "insight_1293_5dbb74768c27",
+      "target_insight_id": "insight_1293_14487791d907",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-16T09:37:30.894113+00:00"
+    },
+    {
+      "source_insight_id": "insight_1293_5dbb74768c27",
+      "target_insight_id": "insight_1293_14487791d907",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-16T09:37:30.894939+00:00"
+    }
+  ],
+  "metadata": {
+    "created": "2025-11-16T09:37:30.888697+00:00",
+    "last_updated": "2025-11-16T09:37:30.897106+00:00",
+    "total_insights": 30,
+    "total_connections": 4
+  }
+}
