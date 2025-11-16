@@ -14,8 +14,6 @@ on:
         description: 'Minimum issues per cluster'
         required: false
         default: '2'
-  issues:
-    types: [opened, labeled, closed]
 
 permissions:
   contents: write
@@ -171,33 +169,6 @@ jobs:
             --head "${BRANCH_NAME}"
           
           echo "✅ PR created successfully"
-      
-      - name: Comment on triggering issue
-        if: github.event_name == 'issues' && steps.check_changes.outputs.changes == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Get clustering results for this issue
-          ISSUE_NUMBER=${{ github.event.issue.number }}
-          
-          # Try to predict cluster for this issue
-          python3 tools/issue_clustering_system.py predict \
-            --input /tmp/issues.json \
-            --title "${{ github.event.issue.title }}" \
-            --body "${{ github.event.issue.body }}" \
-            > /tmp/prediction.txt || echo "Prediction not available" > /tmp/prediction.txt
-          
-          # Post comment
-          gh issue comment ${ISSUE_NUMBER} --body "## 🧠 Issue Clustering Analysis
-
-          **@engineer-master** has analyzed this issue using the clustering system.
-
-          $(cat /tmp/prediction.txt)
-
-          This issue has been included in the latest clustering analysis. A PR with updated clustering results will be created shortly.
-
-          ---
-          *Automated by Issue Clustering System - @engineer-master*"
       
       - name: Upload artifacts
         if: always()
