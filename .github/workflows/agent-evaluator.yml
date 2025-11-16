@@ -486,6 +486,12 @@ jobs:
           
           title = f"🏛️ Agent Evaluation Report - {datetime.utcnow().strftime('%Y-%m-%d')}"
           
+          # Get data using proper RegistryManager methods
+          active_agents = registry.list_agents(status='active')
+          hall_of_fame = registry.get_hall_of_fame()
+          metadata = registry.get_metadata()
+          system_lead_id = metadata.get('system_lead')
+          
           body = f"""## 📊 Daily Agent Evaluation Report
 
           **Date**: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
@@ -495,17 +501,17 @@ jobs:
           - 🏆 **Promoted**: {len(results.get('promoted', []))} agents
           - ❌ **Eliminated**: {len(results.get('eliminated', []))} agents
           - ✅ **Maintained**: {len(results.get('maintained', []))} agents
-          - 📊 **Total Active**: {len([a for a in registry['agents'] if a['status'] == 'active'])} agents
+          - 📊 **Total Active**: {len(active_agents)} agents
 
           ### Hall of Fame
 
           """
           
-          if registry.get('hall_of_fame'):
-              body += f"{len(registry['hall_of_fame'])} agents have earned their place:\n\n"
-              for hof_agent in sorted(registry['hall_of_fame'], key=lambda a: a['metrics']['overall_score'], reverse=True):
+          if hall_of_fame:
+              body += f"{len(hall_of_fame)} agents have earned their place:\n\n"
+              for hof_agent in sorted(hall_of_fame, key=lambda a: a['metrics']['overall_score'], reverse=True):
                   score = hof_agent['metrics']['overall_score']
-                  is_lead = hof_agent['id'] == registry.get('system_lead')
+                  is_lead = hof_agent['id'] == system_lead_id
                   crown = "👑 " if is_lead else ""
                   body += f"- {crown}**{hof_agent['name']}** - {score:.2%}\n"
           else:
@@ -513,8 +519,8 @@ jobs:
           
           body += "\n### System Lead\n\n"
           
-          if registry.get('system_lead'):
-              lead = next((a for a in registry['hall_of_fame'] if a['id'] == registry['system_lead']), None)
+          if system_lead_id:
+              lead = next((a for a in hall_of_fame if a['id'] == system_lead_id), None)
               if lead:
                   body += f"👑 **{lead['name']}** is currently governing the agent ecosystem.\n"
           else:
