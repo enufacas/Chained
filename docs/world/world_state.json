@@ -1,6 +1,6 @@
 {
-  "time": "2025-11-16T03:16:43Z",
-  "tick": 23,
+  "time": "2025-11-16T04:50:56Z",
+  "tick": 25,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -10,9 +10,9 @@
       "status": "exploring",
       "path": [
         "US:San Francisco",
-        "US:Austin"
+        "GB:London"
       ],
-      "current_idea_id": "idea:21",
+      "current_idea_id": "idea:16",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -34,10 +34,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "CN:Hangzhou",
-        "CN:Shenzhen"
+        "SE:Stockholm",
+        "GB:London"
       ],
-      "current_idea_id": "idea:3",
+      "current_idea_id": "idea:4",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -59,10 +59,9 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco",
-        "GB:London"
+        "US:San Francisco"
       ],
-      "current_idea_id": "idea:16",
+      "current_idea_id": "idea:20",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -84,9 +83,11 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
+        "US:Seattle",
+        "US:Redmond",
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:19",
+      "current_idea_id": "idea:15",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -109,9 +110,9 @@
       "status": "exploring",
       "path": [
         "US:San Francisco",
-        "US:Austin"
+        "GB:London"
       ],
-      "current_idea_id": "idea:21",
+      "current_idea_id": "idea:16",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -133,10 +134,9 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco",
-        "GB:London"
+        "US:San Francisco"
       ],
-      "current_idea_id": "idea:16",
+      "current_idea_id": "idea:24",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -158,9 +158,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco"
+        "US:San Francisco",
+        "GB:London"
       ],
-      "current_idea_id": "idea:20",
+      "current_idea_id": "idea:16",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -184,7 +185,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:20",
+      "current_idea_id": "idea:24",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -206,9 +207,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco"
+        "US:San Francisco",
+        "US:Redmond"
       ],
-      "current_idea_id": "idea:22",
+      "current_idea_id": "idea:1",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -230,10 +232,9 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "SE:Stockholm",
-        "GB:London"
+        "US:San Francisco"
       ],
-      "current_idea_id": "idea:4",
+      "current_idea_id": "idea:19",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -255,9 +256,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco"
+        "TW:Hsinchu",
+        "KR:Seoul"
       ],
-      "current_idea_id": "idea:22",
+      "current_idea_id": "idea:2",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -372,7 +374,7 @@
   "metrics": {
     "total_ideas": 14,
     "total_regions": 10,
-    "ticks_completed": 23,
+    "ticks_completed": 25,
     "active_agents": 11,
     "total_agent_count": 11,
     "elimination_threshold": 0.3,
