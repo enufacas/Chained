@@ -1,196 +1,154 @@
 #!/usr/bin/env python3
 """
-Test script to validate the improved mission matching logic
+Test script to validate agent assignment diversity with penalty system.
+Simulates the autonomous-pipeline mission matching logic.
 """
 
 import json
-import random
-import hashlib
-from datetime import datetime, timezone
+import subprocess
+import sys
 
-# Simulate loading world state and knowledge
-def load_test_data():
-    agents = [
-        {'id': 'agent-1', 'label': '🧹 Robert Martin', 'specialization': 'organize-guru', 'metrics': {'overall_score': 0.43}},
-        {'id': 'agent-2', 'label': '🧪 Tesla', 'specialization': 'assert-specialist', 'metrics': {'overall_score': 0.43}},
-        {'id': 'agent-3', 'label': '💭 Turing', 'specialization': 'coach-master', 'metrics': {'overall_score': 0.43}},
-        {'id': 'agent-4', 'label': '🔒 Schneier', 'specialization': 'secure-specialist', 'metrics': {'overall_score': 0.45}},
-        {'id': 'agent-5', 'label': '☁️ Cloud Expert', 'specialization': 'cloud-architect', 'metrics': {'overall_score': 0.48}},
-    ]
-    
-    ideas = [
-        {
-            'id': 'idea:1',
-            'title': 'Cloud Security Best Practices',
-            'summary': 'Exploring cloud security with 25 mentions...',
-            'patterns': ['cloud', 'security', 'devops'],
-            'source': 'learning_analysis',
-            'inspiration_regions': [{'region_id': 'US:Seattle'}]
-        },
-        {
-            'id': 'idea:2', 
-            'title': 'Testing Frameworks Comparison',
-            'summary': 'Comparing modern testing frameworks...',
-            'patterns': ['testing', 'coverage', 'api'],
-            'source': 'learning_analysis',
-            'inspiration_regions': [{'region_id': 'US:San Francisco'}]
-        },
-        {
-            'id': 'idea:3',
-            'title': 'Code Review Best Practices',
-            'summary': 'Best practices for effective code reviews...',
-            'patterns': ['review', 'refactor', 'clean'],
-            'source': 'learning_analysis',
-            'inspiration_regions': [{'region_id': 'GB:London'}]
-        },
-        {
-            'id': 'idea:4',
-            'title': 'Performance Optimization Techniques',
-            'summary': 'Advanced performance optimization strategies...',
-            'patterns': ['performance', 'optimize'],
-            'source': 'learning_analysis',
-            'inspiration_regions': [{'region_id': 'US:New York'}]
-        },
-        {
-            'id': 'idea:5',
-            'title': 'Kubernetes Best Practices',
-            'summary': 'Cloud-native deployment with Kubernetes...',
-            'patterns': ['cloud', 'kubernetes', 'devops'],
-            'source': 'learning_analysis',
-            'inspiration_regions': [{'region_id': 'US:Seattle'}]
-        }
-    ]
-    
-    return agents, ideas
+# Mock world state with agents
+mock_agents = [
+    {"id": "cloud-architect", "label": "Cloud Expert", "specialization": "cloud-architect"},
+    {"id": "assert-specialist", "label": "Tesla", "specialization": "assert-specialist"},
+    {"id": "organize-guru", "label": "Robert Martin", "specialization": "organize-guru"},
+    {"id": "coach-master", "label": "Turing", "specialization": "coach-master"},
+    {"id": "secure-specialist", "label": "Schneier", "specialization": "secure-specialist"},
+]
 
-# Pattern to specialization mapping
-PATTERN_TO_SPECIALIZATIONS = {
-    'performance': ['accelerate-master', 'accelerate-specialist'],
-    'optimize': ['accelerate-master', 'accelerate-specialist'],
-    'test': ['assert-specialist', 'assert-whiz'],
-    'testing': ['assert-specialist', 'assert-whiz'],
-    'coverage': ['assert-specialist', 'assert-whiz'],
-    'ci': ['align-wizard', 'coordinate-wizard'],
-    'cd': ['align-wizard', 'coordinate-wizard'],
-    'pipeline': ['align-wizard', 'coordinate-wizard'],
-    'workflow': ['align-wizard', 'coordinate-wizard'],
-    'api': ['bridge-master', 'engineer-master', 'engineer-wizard'],
-    'integration': ['bridge-master', 'connector-ninja'],
-    'documentation': ['clarify-champion', 'communicator-maestro', 'document-ninja'],
-    'tutorial': ['clarify-champion', 'communicator-maestro'],
-    'cloud': ['cloud-architect'],
-    'aws': ['cloud-architect'],
-    'azure': ['cloud-architect'],
-    'gcp': ['cloud-architect'],
-    'devops': ['cloud-architect', 'align-wizard'],
-    'kubernetes': ['cloud-architect'],
-    'docker': ['cloud-architect'],
-    'review': ['coach-master', 'coach-wizard', 'guide-wizard'],
-    'refactor': ['organize-guru', 'organize-specialist', 'restructure-master'],
-    'clean': ['cleaner-master', 'organize-guru', 'simplify-pro'],
-    'security': ['secure-specialist', 'secure-ninja', 'secure-pro', 'monitor-champion'],
-    'infrastructure': ['create-guru', 'infrastructure-specialist', 'construct-specialist'],
-    'build': ['create-champion', 'create-guru', 'construct-specialist'],
-}
+# Mock ideas with different patterns
+mock_ideas = [
+    {
+        "id": "idea1",
+        "title": "Cloud Security Best Practices",
+        "summary": "Best practices for securing cloud infrastructure",
+        "patterns": ["cloud", "security", "devops"]
+    },
+    {
+        "id": "idea2",
+        "title": "Testing Frameworks Comparison",
+        "summary": "Comparison of different testing frameworks",
+        "patterns": ["testing", "coverage", "api"]
+    },
+    {
+        "id": "idea3",
+        "title": "Code Review Best Practices",
+        "summary": "Best practices for conducting code reviews",
+        "patterns": ["review", "refactor", "clean"]
+    },
+    {
+        "id": "idea4",
+        "title": "Performance Optimization Techniques",
+        "summary": "Techniques for optimizing application performance",
+        "patterns": ["performance", "optimize"]
+    },
+    {
+        "id": "idea5",
+        "title": "Kubernetes Best Practices",
+        "summary": "Best practices for Kubernetes deployment",
+        "patterns": ["cloud", "kubernetes", "devops"]
+    },
+]
 
-def test_mission_matching():
-    print("🧪 Testing Mission Matching Logic\n")
-    print("=" * 60)
+print("🧪 Testing Mission Matching with Diversity Penalty System")
+print("=" * 60)
+print()
+
+# Track agent assignment counts (diversity penalty system)
+agent_assignment_count = {}
+diversity_weight = 0.7  # Same as agent_learning_matcher.py
+
+missions = []
+
+for idea in mock_ideas:
+    idea_title = idea['title']
+    idea_patterns = idea['patterns']
     
-    agents, ideas = load_test_data()
+    match_text = f"{idea_title}. Patterns: {', '.join(idea_patterns)}"
     
-    missions = []
-    used_agents = set()
-    
-    for idea in ideas[:5]:
-        idea_id = idea['id']
-        idea_title = idea['title']
-        idea_patterns = idea['patterns']
+    try:
+        result = subprocess.run(
+            ['python3', 'tools/match-issue-to-agent.py', match_text],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        match_data = json.loads(result.stdout)
+        all_scores = match_data.get('all_scores', {})
         
-        print(f"\n📋 Idea: {idea_title}")
-        print(f"   Patterns: {', '.join(idea_patterns)}")
+        # Apply diversity penalty (like autonomous-pipeline.yml now does)
+        adjusted_scores = []
+        for agent_spec, base_score in all_scores.items():
+            assignment_count = agent_assignment_count.get(agent_spec, 0)
+            penalty = assignment_count * diversity_weight
+            adjusted_score = base_score * (1.0 - min(penalty, 0.9))
+            adjusted_scores.append((agent_spec, adjusted_score, base_score))
         
-        # Score agents
-        agent_scores = []
-        for agent in agents:
-            specialization = agent['specialization']
+        adjusted_scores.sort(key=lambda x: x[1], reverse=True)
+        
+        if adjusted_scores:
+            matched_specialization = adjusted_scores[0][0]
+            adjusted_score = adjusted_scores[0][1]
+            base_score = adjusted_scores[0][2]
             
-            score = 0.3  # Base score
+            agent_details = None
+            for agent in mock_agents:
+                if agent.get('specialization') == matched_specialization:
+                    agent_details = agent
+                    break
             
-            # Match patterns
-            matches = []
-            for pattern in idea_patterns:
-                pattern_lower = pattern.lower()
-                if pattern_lower in PATTERN_TO_SPECIALIZATIONS:
-                    matching_specs = PATTERN_TO_SPECIALIZATIONS[pattern_lower]
-                    if specialization in matching_specs:
-                        score += 0.4
-                        matches.append(f"{pattern}→{specialization}")
-                elif pattern_lower in specialization:
-                    score += 0.2
-                    matches.append(f"{pattern}~{specialization}")
+            if not agent_details:
+                agent_details = {"id": matched_specialization, "label": matched_specialization, "specialization": matched_specialization}
             
-            # Randomness
-            random_bonus = random.uniform(-0.1, 0.1)
-            score += random_bonus
+            print(f"📋 {idea_title}")
+            print(f"   Patterns: {', '.join(idea_patterns)}")
             
-            # Variety penalty
-            if specialization in used_agents:
-                score -= 0.3
+            # Show top 3 with penalty info
+            print(f"\n   Top Candidates:")
+            for i, (agent_spec, adj_score, orig_score) in enumerate(adjusted_scores[:3], 1):
+                count = agent_assignment_count.get(agent_spec, 0)
+                penalty_pct = min(count * diversity_weight * 100, 90)
+                penalty_info = f" (penalty: -{penalty_pct:.0f}%)" if count > 0 else ""
+                print(f"   {i}. @{agent_spec:25s} Base:{orig_score:.3f} → Adjusted:{adj_score:.3f}{penalty_info}")
             
-            # Performance bonus
-            overall_score = agent['metrics']['overall_score']
-            score += overall_score * 0.1
+            rank = agent_assignment_count.get(matched_specialization, 0) + 1
+            rank_marker = f" (#{rank} assignment)" if rank > 1 else ""
+            print(f"\n   ✅ Selected: @{matched_specialization}{rank_marker}\n")
             
-            agent_scores.append({
-                'agent_name': agent['label'],
-                'specialization': specialization,
-                'score': score,
-                'matches': matches
+            agent_assignment_count[matched_specialization] = agent_assignment_count.get(matched_specialization, 0) + 1
+            
+            missions.append({
+                'idea': idea_title,
+                'agent': matched_specialization,
+                'base_score': base_score,
+                'adjusted_score': adjusted_score,
+                'assignment_rank': rank
             })
-        
-        # Sort and select best
-        agent_scores.sort(key=lambda x: x['score'], reverse=True)
-        
-        print("\n   Agent Scores:")
-        for i, agent in enumerate(agent_scores[:3], 1):
-            used_marker = " [USED]" if agent['specialization'] in used_agents else ""
-            matches_str = ", ".join(agent['matches']) if agent['matches'] else "no direct match"
-            print(f"   {i}. {agent['agent_name']:20} (@{agent['specialization']:20}) "
-                  f"Score: {agent['score']:.3f}{used_marker}")
-            if agent['matches']:
-                print(f"      Matches: {matches_str}")
-        
-        best_agent = agent_scores[0]
-        used_agents.add(best_agent['specialization'])
-        
-        print(f"\n   ✅ Selected: {best_agent['agent_name']} (@{best_agent['specialization']})")
-        
-        missions.append({
-            'idea': idea_title,
-            'agent': best_agent['specialization']
-        })
     
-    print("\n" + "=" * 60)
-    print("\n📊 Mission Summary:\n")
-    
-    for mission in missions:
-        print(f"   • {mission['idea'][:40]:40} → @{mission['agent']}")
-    
-    # Check for variety
-    unique_agents = len(set(m['agent'] for m in missions))
-    print(f"\n   Unique agents used: {unique_agents}/{len(missions)} missions")
-    
-    if unique_agents == 1:
-        print("   ❌ FAIL: All missions assigned to the same agent!")
-        return False
-    elif unique_agents >= len(missions) * 0.6:
-        print("   ✅ PASS: Good agent variety!")
-        return True
-    else:
-        print("   ⚠️  WARN: Some agent variety, but could be better")
-        return True
+    except Exception as e:
+        print(f"⚠️  Error: {e}")
 
-if __name__ == '__main__':
-    success = test_mission_matching()
-    exit(0 if success else 1)
+print("=" * 60)
+print("\n📊 Mission Summary:\n")
+
+for mission in missions:
+    rank_marker = f" (#{mission['assignment_rank']})" if mission['assignment_rank'] > 1 else ""
+    print(f"   • {mission['idea']:45s} → @{mission['agent']}{rank_marker}")
+
+print()
+unique_agents = len(set(m['agent'] for m in missions))
+total_missions = len(missions)
+diversity_pct = (unique_agents / total_missions * 100) if total_missions > 0 else 0
+
+print(f"   Diversity: {unique_agents}/{total_missions} unique agents ({diversity_pct:.0f}%)")
+
+if diversity_pct >= 80:
+    print(f"   ✅ PASS: Excellent diversity (≥80%)!")
+    sys.exit(0)
+elif diversity_pct >= 60:
+    print(f"   ✅ PASS: Good diversity (≥60%)!")
+    sys.exit(0)
+else:
+    print(f"   ❌ FAIL: Low diversity (<60%)")
+    sys.exit(1)

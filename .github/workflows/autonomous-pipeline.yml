@@ -921,7 +921,8 @@ jobs:
               print(f"Note: Could not load mission history: {e}")
           
           missions = []
-          used_agents = set()  # Track agents used in this run for variety
+          agent_assignment_count = {}  # Track how many times each agent has been assigned
+          diversity_weight = 0.7  # Strong diversity preference (same as agent_learning_matcher.py)
           
           for idea in recent_ideas:
               idea_id = idea.get('id', 'unknown')
@@ -955,32 +956,57 @@ jobs:
                   matched_specialization = match_data.get('agent')
                   match_score = match_data.get('score', 0)
                   match_confidence = match_data.get('confidence', 'unknown')
+                  all_scores = match_data.get('all_scores', {})
                   
-                  # If this agent was already used, try to get a different one
-                  if matched_specialization in used_agents:
-                      print(f"  ℹ️  @{matched_specialization} already used, looking for alternatives...")
-                      all_scores = match_data.get('all_scores', {})
-                      
-                      # Find best unused agent
-                      unused_agents = [(spec, score) for spec, score in all_scores.items() 
-                                      if spec not in used_agents and score > 0]
-                      
-                      if unused_agents:
-                          unused_agents.sort(key=lambda x: x[1], reverse=True)
-                          matched_specialization = unused_agents[0][0]
-                          match_score = unused_agents[0][1]
-                          print(f"  ↪️  Using alternative: @{matched_specialization} (score: {match_score})")
+                  # Apply diversity penalty (like agent_learning_matcher.py)
+                  # This prevents one agent from monopolizing all missions
+                  adjusted_scores = []
+                  for agent_spec, base_score in all_scores.items():
+                      # Penalty increases with each assignment (0%, 70%, 90%)
+                      assignment_count = agent_assignment_count.get(agent_spec, 0)
+                      penalty = assignment_count * diversity_weight
+                      adjusted_score = base_score * (1.0 - min(penalty, 0.9))  # Cap at 90%
+                      adjusted_scores.append((agent_spec, adjusted_score, base_score))
                   
-                  # Find the agent details from world state
+                  # Sort by adjusted score to find best agent after diversity penalty
+                  adjusted_scores.sort(key=lambda x: x[1], reverse=True)
+                  
+                  if adjusted_scores:
+                      matched_specialization = adjusted_scores[0][0]
+                      adjusted_score = adjusted_scores[0][1]
+                      match_score = adjusted_scores[0][2]  # Original score for logging
+                      
+                      print(f"  ✅ Matched '{idea_title}' to @{matched_specialization} (score: {match_score}, adjusted: {adjusted_score:.3f}, confidence: {match_confidence})")
+                      
+                      # Show if diversity penalty was applied
+                      if agent_assignment_count.get(matched_specialization, 0) > 0:
+                          rank = agent_assignment_count[matched_specialization] + 1
+                          print(f"     ℹ️  Assignment #{rank} for @{matched_specialization} (diversity penalty applied)")
+                  else:
+                      print(f"  ⚠️  No valid agents found for '{idea_title}'")
+                      continue
+                  
+                  # Find the agent details from world state or create from specialization
                   agent_details = None
                   for agent in agents:
                       if agent.get('specialization') == matched_specialization:
                           agent_details = agent
                           break
                   
+                  # If not in world_state.json, check if agent file exists
                   if not agent_details:
-                      print(f"  ⚠️  Matched agent @{matched_specialization} not found in world state, skipping")
-                      continue
+                      agent_file = f'.github/agents/{matched_specialization}.md'
+                      if os.path.exists(agent_file):
+                          # Agent file exists, use specialization as fallback
+                          agent_details = {
+                              'id': matched_specialization,
+                              'label': matched_specialization.replace('-', ' ').title(),
+                              'specialization': matched_specialization
+                          }
+                          print(f"  ℹ️  Using agent file for @{matched_specialization} (not in world_state.json)")
+                      else:
+                          print(f"  ⚠️  Matched agent @{matched_specialization} not found in world state or agent files, skipping")
+                          continue
                   
                   best_agent = {
                       'agent_id': agent_details.get('id'),
@@ -989,10 +1015,8 @@ jobs:
                       'score': match_score
                   }
                   
-                  # Track this agent as used
-                  used_agents.add(matched_specialization)
-                  
-                  print(f"  ✅ Matched '{idea_title}' to @{matched_specialization} (score: {match_score}, confidence: {match_confidence})")
+                  # Update assignment count for diversity penalty tracking
+                  agent_assignment_count[matched_specialization] = agent_assignment_count.get(matched_specialization, 0) + 1
                   
               except subprocess.CalledProcessError as e:
                   print(f"  ⚠️  Error matching agent for '{idea_title}': {e.stderr}")
@@ -1034,6 +1058,30 @@ jobs:
               print(f"📝 Updated mission history with {len(new_hashes)} new hashes")
           except Exception as e:
               print(f"⚠️  Could not update mission history: {e}")
+          
+          # Print agent distribution summary
+          if missions:
+              print()
+              print("📊 Agent Distribution Summary:")
+              agent_counts = {}
+              for mission in missions:
+                  agent_spec = mission['agent']['specialization']
+                  agent_counts[agent_spec] = agent_counts.get(agent_spec, 0) + 1
+              
+              for agent_spec, count in sorted(agent_counts.items(), key=lambda x: x[1], reverse=True):
+                  print(f"   • @{agent_spec}: {count} assignment(s)")
+              
+              unique_agents = len(agent_counts)
+              total_missions = len(missions)
+              diversity_pct = (unique_agents / total_missions * 100) if total_missions > 0 else 0
+              print(f"\n   Diversity: {unique_agents}/{total_missions} unique agents ({diversity_pct:.0f}%)")
+              
+              if diversity_pct >= 80:
+                  print(f"   ✅ Excellent diversity!")
+              elif diversity_pct >= 60:
+                  print(f"   ✓ Good diversity")
+              else:
+                  print(f"   ⚠️  Low diversity (consider lowering min_score threshold)")
           
           print(f"✅ Created {len(missions)} new missions (skipped duplicates)")
           
