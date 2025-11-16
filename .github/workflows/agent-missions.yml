@@ -92,8 +92,22 @@ jobs:
           python3 << 'EOF'
           import json
           import os
+          import sys
           from datetime import datetime, timezone
-          from collections import defaultdict
+          from pathlib import Path
+          
+          # Add world directory to Python path to import agent_learning_matcher
+          sys.path.insert(0, str(Path(__file__).parent / 'world'))
+          sys.path.insert(0, '/home/runner/work/Chained/Chained/world')
+          
+          try:
+              from agent_learning_matcher import AgentLearningMatcher
+              use_matcher = True
+              print("✅ Using AgentLearningMatcher for intelligent agent selection")
+          except ImportError as e:
+              print(f"⚠️  Could not import AgentLearningMatcher: {e}")
+              print("⚠️  Falling back to simple scoring")
+              use_matcher = False
           
           # Load world state
           with open('world/world_state.json', 'r') as f:
@@ -112,126 +126,150 @@ jobs:
           ideas = knowledge.get('ideas', [])
           regions = world_state.get('regions', [])
           
-          # Find recently created ideas (from learning analysis)
-          recent_ideas = [idea for idea in ideas if idea.get('source') == 'learning_analysis']
-          print(f"\n📊 Recent ideas from learning: {len(recent_ideas)}")
+          # Filter ideas: from learning_analysis AND not already having a mission
+          recent_ideas = [
+              idea for idea in ideas 
+              if idea.get('source') == 'learning_analysis' 
+              and not idea.get('mission_created', False)
+          ]
+          print(f"\n📊 Ideas without missions: {len(recent_ideas)}")
           
           if not recent_ideas:
-              print("No recent ideas to create missions for")
+              print("No new ideas to create missions for")
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                   f.write(f"has_missions=false\n")
               sys.exit(0)
           
-          # For each recent idea, select top 10 relevant agents
           missions = []
           
-          for idea in recent_ideas[:5]:  # Process top 5 ideas
-              idea_id = idea.get('id', 'unknown')
-              idea_title = idea.get('title', 'Unknown')
-              idea_patterns = idea.get('patterns', [])
-              idea_regions = idea.get('inspiration_regions', [])
+          if use_matcher:
+              # Use the sophisticated AgentLearningMatcher with diversity constraints
+              matcher = AgentLearningMatcher()
               
-              print(f"\n🎯 Processing idea: {idea_title}")
-              print(f"   Patterns: {', '.join(idea_patterns)}")
-              
-              # Score agents for this idea
-              agent_scores = []
-              
-              for agent in agents:
-                  score = 0.0
-                  agent_id = agent.get('id')
-                  specialization = agent.get('specialization', '')
-                  agent_location = agent.get('location_region_id', '')
-                  metrics = agent.get('metrics', {})
-                  
-                  # Location relevance (30%)
-                  for region in idea_regions:
-                      if agent_location == region.get('region_id'):
-                          score += 0.3 * region.get('weight', 0.5)
-                  
-                  # Role/skill relevance (40%)
-                  # Map patterns to agent specializations
-                  # NOTE: Only list agents that actually exist in the registry/world_state
-                  pattern_matches = {
-                      'ai': ['investigate-champion', 'engineer-master'],
-                      'ai/ml': ['investigate-champion', 'engineer-master'],
-                      'claude': ['investigate-champion', 'engineer-master'],
-                      'agents': ['investigate-champion', 'engineer-master'],
-                      'gpt': ['investigate-champion', 'engineer-master'],
-                      'cloud': ['investigate-champion', 'engineer-master', 'construct-specialist'],
-                      'aws': ['investigate-champion', 'engineer-master', 'construct-specialist'],
-                      'devops': ['investigate-champion', 'engineer-master', 'construct-specialist'],
-                      'security': ['secure-ninja', 'investigate-champion'],
-                      'testing': ['assert-specialist', 'investigate-champion'],
-                      'api': ['engineer-master', 'investigate-champion', 'construct-specialist'],
-                      'web': ['engineer-master', 'investigate-champion', 'construct-specialist'],
-                      'go': ['engineer-master', 'investigate-champion'],
-                      'javascript': ['engineer-master', 'investigate-champion'],
-                      'languages': ['engineer-master', 'investigate-champion'],
-                  }
-                  
-                  for pattern in idea_patterns:
-                      if specialization in pattern_matches.get(pattern, []):
-                          score += 0.4
-                  
-                  # Performance score (30%)
-                  overall_score = metrics.get('overall_score', 0.0)
-                  score += 0.3 * overall_score
-                  
-                  agent_scores.append({
-                      'agent_id': agent_id,
-                      'agent_name': agent.get('label', 'Unknown'),
-                      'specialization': specialization,
-                      'score': score,
-                      'location': agent_location
+              # Convert ideas to learning format for matcher
+              learnings_for_matching = []
+              for idea in recent_ideas[:10]:  # Process up to 10 ideas
+                  learnings_for_matching.append({
+                      'id': idea.get('id'),
+                      'title': idea.get('title', 'Unknown'),
+                      'description': idea.get('summary', ''),
+                      'content': idea.get('description', ''),
+                      'patterns': idea.get('patterns', []),
+                      'source': 'learning_analysis'
                   })
               
-              # Sort by score and take only THE TOP 1 AGENT
-              agent_scores.sort(key=lambda x: x['score'], reverse=True)
+              # Get diverse agent assignments (max 5)
+              assignments = matcher.assign_learnings_to_agents_diverse(
+                  learnings_for_matching,
+                  agent_names=None,  # Use all agents
+                  max_assignments=5,
+                  min_score=0.1,  # Lower threshold for more flexibility
+                  diversity_weight=0.7  # High diversity weight
+              )
               
-              # Find first agent with valid specialization
-              best_agent = None
-              for agent in agent_scores:
-                  specialization = agent.get('specialization', '')
-                  # Validate agent has a non-empty specialization
-                  if specialization and specialization != 'unknown':
-                      best_agent = agent
-                      break
+              print(f"\n🎯 Matcher assigned {len(assignments)} missions with diversity")
               
-              # If no valid agent found, use first available as fallback
-              if not best_agent and agent_scores:
-                  print(f"   ⚠️  Warning: No agents with valid specialization, using fallback")
-                  # Use investigate-champion as safe default if available
-                  fallback = next((a for a in agents if a.get('specialization') == 'investigate-champion'), None)
-                  if fallback:
-                      best_agent = {
-                          'agent_id': fallback.get('id'),
-                          'agent_name': fallback.get('label', 'Unknown'),
-                          'specialization': 'investigate-champion',
-                          'score': 0.0,
-                          'location': fallback.get('location_region_id', '')
-                      }
-                      print(f"   Using fallback agent: investigate-champion")
-              
-              if best_agent:
-                  print(f"   Selected BEST agent: {best_agent['agent_name']} ({best_agent['specialization']}) - score: {best_agent['score']:.2f}")
+              # Convert assignments to missions format
+              for assignment in assignments:
+                  agent_id = assignment['agent_id']
+                  learning = assignment['learning']
                   
-                  missions.append({
-                      'idea_id': idea_id,
-                      'idea_title': idea_title,
-                      'idea_summary': idea.get('summary', '')[:200],
-                      'patterns': idea_patterns,
-                      'agent': best_agent,  # Single agent, not list
-                      'regions': [r.get('region_id') for r in idea_regions]
-                  })
-              else:
-                  print(f"   ⚠️  No agents available for this mission")
+                  # Find the full idea and agent data
+                  idea = next((i for i in recent_ideas if i.get('id') == learning['id']), None)
+                  agent = next((a for a in agents if a.get('specialization') == agent_id), None)
+                  
+                  if idea and agent:
+                      print(f"   ✅ {idea['title']} → @{agent_id} (score: {assignment['score']:.2f}, rank: {assignment['assignment_rank']})")
+                      
+                      missions.append({
+                          'idea_id': idea['id'],
+                          'idea_title': idea['title'],
+                          'idea_summary': idea.get('summary', '')[:200],
+                          'patterns': idea.get('patterns', []),
+                          'agent': {
+                              'agent_id': agent.get('id'),
+                              'agent_name': agent.get('label', 'Unknown'),
+                              'specialization': agent_id,
+                              'score': assignment['score'],
+                              'location': agent.get('location_region_id', '')
+                          },
+                          'regions': [r.get('region_id') for r in idea.get('inspiration_regions', [])]
+                      })
+          
+          else:
+              # Fallback: Simple diverse selection (if matcher not available)
+              print("\n⚠️  Using fallback diverse selection")
+              from collections import defaultdict
+              agent_assignment_count = defaultdict(int)
+              
+              for idea in recent_ideas[:5]:
+                  idea_id = idea.get('id', 'unknown')
+                  idea_title = idea.get('title', 'Unknown')
+                  idea_patterns = idea.get('patterns', [])
+                  idea_regions = idea.get('inspiration_regions', [])
+                  
+                  print(f"\n🎯 Processing idea: {idea_title}")
+                  
+                  # Score all agents
+                  agent_scores = []
+                  for agent in agents:
+                      specialization = agent.get('specialization', '')
+                      if not specialization or specialization == 'unknown':
+                          continue
+                      
+                      # Simple base score (all agents start equal)
+                      base_score = 0.5
+                      
+                      # Apply diversity penalty
+                      diversity_penalty = agent_assignment_count[specialization] * 0.7
+                      adjusted_score = base_score * (1.0 - min(diversity_penalty, 0.9))
+                      
+                      agent_scores.append({
+                          'agent_id': agent.get('id'),
+                          'agent_name': agent.get('label', 'Unknown'),
+                          'specialization': specialization,
+                          'score': adjusted_score,
+                          'location': agent.get('location_region_id', '')
+                      })
+                  
+                  # Sort by adjusted score
+                  agent_scores.sort(key=lambda x: x['score'], reverse=True)
+                  
+                  if agent_scores:
+                      best_agent = agent_scores[0]
+                      print(f"   Selected: {best_agent['agent_name']} (@{best_agent['specialization']}) - score: {best_agent['score']:.2f}")
+                      
+                      missions.append({
+                          'idea_id': idea_id,
+                          'idea_title': idea_title,
+                          'idea_summary': idea.get('summary', '')[:200],
+                          'patterns': idea_patterns,
+                          'agent': best_agent,
+                          'regions': [r.get('region_id') for r in idea_regions]
+                      })
+                      
+                      agent_assignment_count[best_agent['specialization']] += 1
           
           # Save missions data
           with open('missions_data.json', 'w') as f:
               json.dump(missions, f, indent=2)
           
           print(f"\n✅ Created {len(missions)} missions")
+          
+          # Mark ideas as having missions created
+          for mission in missions:
+              idea_id = mission['idea_id']
+              for idea in ideas:
+                  if idea.get('id') == idea_id:
+                      idea['mission_created'] = True
+                      idea['mission_created_at'] = datetime.now(timezone.utc).isoformat()
+                      break
+          
+          # Save updated knowledge
+          with open('world/knowledge.json', 'w') as f:
+              json.dump(knowledge, f, indent=2)
+          
+          print(f"✅ Marked {len(missions)} ideas as having missions")
           
           # Output for GitHub Actions
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
@@ -373,16 +411,21 @@ jobs:
               --head "$BRANCH_NAME"
             Agent missions automated by @meta-coordinator.
             
-            Summary: Created ${{ steps.select_agents.outputs.mission_count }} new missions with direct agent assignment.
+            Summary: Created ${{ steps.select_agents.outputs.mission_count }} new missions with diverse agent assignment.
             
             Changes:
             - Created GitHub issues for each mission
-            - Assigned 1 best-match agent per mission (not 10)
-            - Used direct GraphQL API assignment (no delay)
+            - Used AgentLearningMatcher with diversity constraints (diversity_weight=0.7)
+            - Assigned 1 unique agent per mission with penalty for repeat assignments
+            - Marked ideas as 'mission_created' to prevent reprocessing
             - Moved agents to mission locations
             - Updated world tick and agent status
             
-            Key Improvements: Previously missions listed 10 agents and relied on later workflow pickup. Now only the single best agent is selected and assigned immediately via GraphQL API.
+            Key Improvements (fixes from PR #1245):
+            - Now uses world/agent_learning_matcher.py for intelligent matching
+            - Diversity penalty prevents same agent from monopolizing missions
+            - Ideas are marked as processed to prevent duplicate missions
+            - Supports full agent roster, not limited pattern matching
             
             ---
             Automated by Agent Missions workflow (@meta-coordinator)
