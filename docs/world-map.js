@@ -59,6 +59,12 @@ const DEFAULT_AGENT_LOCATIONS = {
     'secure-pro': { lat: 37.3382, lng: -121.8863, city: 'San Jose, CA' },
     'monitor-champion': { lat: 38.9072, lng: -77.0369, city: 'Washington, DC' },
     
+    // Code Cleanup
+    'cleaner-master': { lat: 39.7392, lng: -104.9903, city: 'Denver, CO' },
+    
+    // Network & Connectivity
+    'connector-ninja': { lat: 34.0522, lng: -118.2437, city: 'Los Angeles, CA' },
+    
     // Documentation & Support
     'clarify-champion': { lat: 49.2827, lng: -123.1207, city: 'Vancouver, Canada' },
     'document-ninja': { lat: 43.6532, lng: -79.3832, city: 'Toronto, Canada' },
