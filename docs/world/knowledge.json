@@ -219,7 +219,7 @@
       "source": "learning_analysis",
       "mention_count": 38,
       "category": "DevOps",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:27",
@@ -269,7 +269,7 @@
       "source": "learning_analysis",
       "mention_count": 104,
       "category": "AI/ML",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:28",
@@ -312,7 +312,7 @@
       "source": "learning_analysis",
       "mention_count": 38,
       "category": "AI/ML",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:29",
@@ -342,7 +342,7 @@
       "source": "learning_analysis",
       "mention_count": 18,
       "category": "AI/ML",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:30",
@@ -372,7 +372,7 @@
       "source": "learning_analysis",
       "mention_count": 16,
       "category": "Web",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:31",
@@ -402,7 +402,7 @@
       "source": "learning_analysis",
       "mention_count": 22,
       "category": "Languages",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:32",
@@ -444,7 +444,7 @@
       "source": "learning_analysis",
       "mention_count": 44,
       "category": "Security",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:33",
@@ -474,15 +474,15 @@
       "source": "learning_analysis",
       "mention_count": 23,
       "category": "DevOps",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:34",
       "title": "AI/ML: Gpt Innovation",
       "summary": "Exploring gpt trends with 41 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Grok Code Remote 👨‍💻 , GPT-5.1 on OpenRouter 🤖, Moonshot AI AMA 💬",
       "patterns": [
-        "gpt",
-        "ai/ml"
+        "ai/ml",
+        "gpt"
       ],
       "companies": [
         {
@@ -504,7 +504,7 @@
       "source": "learning_analysis",
       "mention_count": 41,
       "category": "AI/ML",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:35",
@@ -534,7 +534,7 @@
       "source": "learning_analysis",
       "mention_count": 13,
       "category": "Languages",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:36",
@@ -564,7 +564,7 @@
       "source": "learning_analysis",
       "mention_count": 27,
       "category": "Company Innovation",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:37",
@@ -594,7 +594,7 @@
       "source": "learning_analysis",
       "mention_count": 18,
       "category": "Company Innovation",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:38",
@@ -624,7 +624,7 @@
       "source": "learning_analysis",
       "mention_count": 15,
       "category": "Company Innovation",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:39",
@@ -654,7 +654,7 @@
       "source": "learning_analysis",
       "mention_count": 31,
       "category": "Company Innovation",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:40",
@@ -684,17 +684,17 @@
       "source": "learning_analysis",
       "mention_count": 24,
       "category": "Company Innovation",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:41",
       "title": "Emerging Theme: Ai Agents",
       "summary": "Exploring ai-agents trends with 10 mentions. Explore Ai Agents innovations",
       "patterns": [
-        "agents",
-        "ai-agents",
         "emerging_theme",
-        "ai"
+        "ai-agents",
+        "ai",
+        "agents"
       ],
       "companies": [
         {
@@ -716,17 +716,17 @@
       "source": "learning_analysis",
       "mention_count": 10,
       "category": "Emerging Theme",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:42",
       "title": "Emerging Theme: Go Specialist",
       "summary": "Exploring go-specialist trends with 10 mentions. Explore Go Specialist innovations",
       "patterns": [
-        "go",
+        "emerging_theme",
         "specialist",
-        "go-specialist",
-        "emerging_theme"
+        "go",
+        "go-specialist"
       ],
       "companies": [
         {
@@ -748,17 +748,17 @@
       "source": "learning_analysis",
       "mention_count": 10,
       "category": "Emerging Theme",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:43",
       "title": "Emerging Theme: Cloud Infrastructure",
       "summary": "Exploring cloud-infrastructure trends with 10 mentions. Explore Cloud Infrastructure innovations",
       "patterns": [
-        "cloud",
-        "infrastructure",
         "emerging_theme",
-        "cloud-infrastructure"
+        "cloud-infrastructure",
+        "cloud",
+        "infrastructure"
       ],
       "companies": [
         {
@@ -780,17 +780,18 @@
       "source": "learning_analysis",
       "mention_count": 10,
       "category": "Emerging Theme",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:44",
-      "title": "Integration: Claude-Cloud Innovation",
-      "summary": "Exploring claude-cloud trends with 28 mentions. AI + Infrastructure: Integrate AI capabilities with cloud infrastructure Also: Combining Claude and Cloud for better solutions",
+      "title": "Integration: Claude-Cloud-Infrastructure Innovation",
+      "summary": "Exploring claude-cloud-infrastructure trends with 14 mentions. AI + Infrastructure: Integrate AI capabilities with cloud infrastructure Also: Combining Claude and Cloud-Infrastructure for better solutions",
       "patterns": [
-        "claude",
         "integration",
         "cloud",
-        "claude-cloud"
+        "claude",
+        "infrastructure",
+        "claude-cloud-infrastructure"
       ],
       "companies": [
         {
@@ -810,19 +811,19 @@
         }
       ],
       "source": "learning_analysis",
-      "mention_count": 28,
+      "mention_count": 14,
       "category": "Integration",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:45",
-      "title": "Integration: Security-Ai Innovation",
-      "summary": "Exploring security-ai trends with 74 mentions. Security + AI: Apply AI/ML to enhance security systems Also: Combining Security and Ai for better solutions",
+      "title": "Integration: Security-Claude Innovation",
+      "summary": "Exploring security-claude trends with 31 mentions. Security + AI: Apply AI/ML to enhance security systems Also: Combining Security and Claude for better solutions",
       "patterns": [
-        "security-ai",
+        "security",
         "integration",
-        "ai",
-        "security"
+        "security-claude",
+        "claude"
       ],
       "companies": [
         {
@@ -842,9 +843,9 @@
         }
       ],
       "source": "learning_analysis",
-      "mention_count": 74,
+      "mention_count": 31,
       "category": "Integration",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     },
     {
       "id": "idea:46",
@@ -852,8 +853,8 @@
       "summary": "Exploring javascript-agents trends with 25 mentions. Web + AI: Build AI-powered web applications Also: Combining Javascript and Agents for better solutions",
       "patterns": [
         "javascript",
-        "integration",
         "javascript-agents",
+        "integration",
         "agents"
       ],
       "companies": [
@@ -876,7 +877,7 @@
       "source": "learning_analysis",
       "mention_count": 25,
       "category": "Integration",
-      "created_at": "2025-11-16T19:33:08Z"
+      "created_at": "2025-11-16T20:06:54Z"
     }
   ]
 }
