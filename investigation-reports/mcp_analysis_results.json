@@ -1,0 +1,414 @@
+{
+  "pipeline_info": {
+    "tools": [
+      {
+        "name": "sentiment_analyzer",
+        "description": "Analyzes sentiment: positive, negative, or neutral",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "content_item": {
+              "type": "ContentItem"
+            },
+            "parameters": {
+              "type": "object"
+            }
+          }
+        },
+        "output_schema": {
+          "type": "object",
+          "properties": {
+            "analysis_type": {
+              "type": "string"
+            },
+            "result": {
+              "type": "any"
+            },
+            "confidence": {
+              "type": "number"
+            },
+            "timestamp": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "trend_analyzer",
+        "description": "Identifies trending topics and temporal patterns",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "content_item": {
+              "type": "ContentItem"
+            },
+            "parameters": {
+              "type": "object"
+            }
+          }
+        },
+        "output_schema": {
+          "type": "object",
+          "properties": {
+            "analysis_type": {
+              "type": "string"
+            },
+            "result": {
+              "type": "any"
+            },
+            "confidence": {
+              "type": "number"
+            },
+            "timestamp": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "similarity_analyzer",
+        "description": "Finds similar content based on text similarity",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "content_item": {
+              "type": "ContentItem"
+            },
+            "parameters": {
+              "type": "object"
+            }
+          }
+        },
+        "output_schema": {
+          "type": "object",
+          "properties": {
+            "analysis_type": {
+              "type": "string"
+            },
+            "result": {
+              "type": "any"
+            },
+            "confidence": {
+              "type": "number"
+            },
+            "timestamp": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "sources": [
+      {
+        "name": "GitHub Trending",
+        "category": "Development"
+      },
+      {
+        "name": "Hacker News",
+        "category": "Technology"
+      },
+      {
+        "name": "TLDR Newsletter",
+        "category": "News"
+      }
+    ]
+  },
+  "results_history": [
+    {
+      "content": {
+        "title": "TrendRadar: AI-powered news analysis tool gains traction",
+        "content": "A new tool for monitoring 35 platforms with AI analysis capabilities",
+        "source": "GitHub Trending",
+        "url": "https://github.com/sansan0/TrendRadar",
+        "timestamp": "2025-11-16T03:29:44.314397",
+        "metadata": {
+          "language": "Python",
+          "stars": 2023
+        }
+      },
+      "results": {
+        "sentiment_analyzer": {
+          "analysis_type": "sentiment",
+          "result": {
+            "sentiment": "neutral",
+            "positive_score": 0,
+            "negative_score": 0
+          },
+          "confidence": 0.5,
+          "timestamp": "2025-11-16T03:29:44.314468",
+          "metadata": {
+            "method": "keyword_matching"
+          }
+        },
+        "trend_analyzer": {
+          "analysis_type": "trend",
+          "result": {
+            "trending_topics": [
+              {
+                "topic": "trendradar:",
+                "count": 1
+              },
+              {
+                "topic": "ai-powered",
+                "count": 1
+              },
+              {
+                "topic": "analysis",
+                "count": 1
+              },
+              {
+                "topic": "traction",
+                "count": 1
+              },
+              {
+                "topic": "monitoring",
+                "count": 1
+              }
+            ],
+            "content_topics": [
+              "trendradar:",
+              "ai-powered",
+              "analysis",
+              "traction",
+              "monitoring"
+            ]
+          },
+          "confidence": 0.7,
+          "timestamp": "2025-11-16T03:29:44.314502",
+          "metadata": {
+            "total_topics": 5
+          }
+        },
+        "similarity_analyzer": {
+          "analysis_type": "similarity",
+          "result": {
+            "similar_items": [],
+            "total_compared": 0
+          },
+          "confidence": 0.6,
+          "timestamp": "2025-11-16T03:29:44.314529",
+          "metadata": {
+            "method": "jaccard",
+            "threshold": 0.3
+          }
+        }
+      },
+      "timestamp": "2025-11-16T03:29:44.314559"
+    },
+    {
+      "content": {
+        "title": "GPT-5.1 released with improved conversational abilities",
+        "content": "OpenAI announces major update to ChatGPT with better understanding",
+        "source": "Hacker News",
+        "url": "https://news.ycombinator.com/item?id=123456",
+        "timestamp": "2025-11-16T03:29:44.314405",
+        "metadata": {
+          "points": 245,
+          "comments": 89
+        }
+      },
+      "results": {
+        "sentiment_analyzer": {
+          "analysis_type": "sentiment",
+          "result": {
+            "sentiment": "neutral",
+            "positive_score": 0,
+            "negative_score": 0
+          },
+          "confidence": 0.5,
+          "timestamp": "2025-11-16T03:29:44.314604",
+          "metadata": {
+            "method": "keyword_matching"
+          }
+        },
+        "trend_analyzer": {
+          "analysis_type": "trend",
+          "result": {
+            "trending_topics": [
+              {
+                "topic": "trendradar:",
+                "count": 1
+              },
+              {
+                "topic": "ai-powered",
+                "count": 1
+              },
+              {
+                "topic": "analysis",
+                "count": 1
+              },
+              {
+                "topic": "traction",
+                "count": 1
+              },
+              {
+                "topic": "monitoring",
+                "count": 1
+              },
+              {
+                "topic": "gpt-5.1",
+                "count": 1
+              },
+              {
+                "topic": "released",
+                "count": 1
+              },
+              {
+                "topic": "improved",
+                "count": 1
+              },
+              {
+                "topic": "conversational",
+                "count": 1
+              },
+              {
+                "topic": "abilities",
+                "count": 1
+              }
+            ],
+            "content_topics": [
+              "gpt-5.1",
+              "released",
+              "improved",
+              "conversational",
+              "abilities"
+            ]
+          },
+          "confidence": 0.7,
+          "timestamp": "2025-11-16T03:29:44.314634",
+          "metadata": {
+            "total_topics": 10
+          }
+        },
+        "similarity_analyzer": {
+          "analysis_type": "similarity",
+          "result": {
+            "similar_items": [],
+            "total_compared": 1
+          },
+          "confidence": 0.6,
+          "timestamp": "2025-11-16T03:29:44.314662",
+          "metadata": {
+            "method": "jaccard",
+            "threshold": 0.3
+          }
+        }
+      },
+      "timestamp": "2025-11-16T03:29:44.314693"
+    },
+    {
+      "content": {
+        "title": "AI agents becoming mainstream in software development",
+        "content": "Multiple companies adopt AI agent frameworks for automation",
+        "source": "TLDR Newsletter",
+        "url": "https://tldr.tech/article",
+        "timestamp": "2025-11-16T03:29:44.314407",
+        "metadata": {
+          "category": "AI/ML"
+        }
+      },
+      "results": {
+        "sentiment_analyzer": {
+          "analysis_type": "sentiment",
+          "result": {
+            "sentiment": "neutral",
+            "positive_score": 0,
+            "negative_score": 0
+          },
+          "confidence": 0.5,
+          "timestamp": "2025-11-16T03:29:44.314735",
+          "metadata": {
+            "method": "keyword_matching"
+          }
+        },
+        "trend_analyzer": {
+          "analysis_type": "trend",
+          "result": {
+            "trending_topics": [
+              {
+                "topic": "trendradar:",
+                "count": 1
+              },
+              {
+                "topic": "ai-powered",
+                "count": 1
+              },
+              {
+                "topic": "analysis",
+                "count": 1
+              },
+              {
+                "topic": "traction",
+                "count": 1
+              },
+              {
+                "topic": "monitoring",
+                "count": 1
+              },
+              {
+                "topic": "gpt-5.1",
+                "count": 1
+              },
+              {
+                "topic": "released",
+                "count": 1
+              },
+              {
+                "topic": "improved",
+                "count": 1
+              },
+              {
+                "topic": "conversational",
+                "count": 1
+              },
+              {
+                "topic": "abilities",
+                "count": 1
+              }
+            ],
+            "content_topics": [
+              "agents",
+              "becoming",
+              "mainstream",
+              "software",
+              "development"
+            ]
+          },
+          "confidence": 0.7,
+          "timestamp": "2025-11-16T03:29:44.314769",
+          "metadata": {
+            "total_topics": 15
+          }
+        },
+        "similarity_analyzer": {
+          "analysis_type": "similarity",
+          "result": {
+            "similar_items": [],
+            "total_compared": 2
+          },
+          "confidence": 0.6,
+          "timestamp": "2025-11-16T03:29:44.314798",
+          "metadata": {
+            "method": "jaccard",
+            "threshold": 0.3
+          }
+        }
+      },
+      "timestamp": "2025-11-16T03:29:44.314826"
+    }
+  ],
+  "insights": {
+    "total_analyzed": 3,
+    "sentiment_distribution": {
+      "positive": 0,
+      "negative": 0,
+      "neutral": 3
+    },
+    "tools_used": [
+      "sentiment_analyzer",
+      "trend_analyzer",
+      "similarity_analyzer"
+    ],
+    "sources_monitored": 3
+  }
+}
