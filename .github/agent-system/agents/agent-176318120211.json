@@ -3,7 +3,7 @@
   "name": "\ud83c\udfb9 Einstein",
   "human_name": "Einstein",
   "specialization": "coordinate-wizard",
-  "status": "active",
+  "status": "hall_of_fame",
   "spawned_at": "2025-11-15T04:33:22.590993Z",
   "personality": "bold and innovative",
   "communication_style": "gets to the point",
@@ -13,12 +13,13 @@
     "speed": 74
   },
   "metrics": {
-    "issues_resolved": 0,
-    "prs_merged": 0,
+    "issues_resolved": 1,
+    "prs_merged": 2,
     "reviews_given": 0,
-    "code_quality_score": 0.5,
-    "overall_score": 0.4,
-    "creativity_score": 0.5
+    "code_quality_score": 1.0,
+    "overall_score": 0.7727499999999999,
+    "creativity_score": 0.48500000000000004
   },
-  "contributions": []
+  "contributions": [],
+  "promoted_at": "2025-11-16T16:14:17.558760Z"
 }

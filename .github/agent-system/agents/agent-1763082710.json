@@ -3,7 +3,7 @@
   "name": "\ud83d\udd28 Linus Torvalds",
   "human_name": "Linus Torvalds",
   "specialization": "construct-specialist",
-  "status": "active",
+  "status": "hall_of_fame",
   "spawned_at": "2025-11-14T01:11:50.171182Z",
   "personality": "direct and practical, but more direct",
   "communication_style": "focuses on what works",
@@ -14,11 +14,12 @@
   },
   "metrics": {
     "issues_resolved": 1,
-    "prs_merged": 0,
+    "prs_merged": 1,
     "reviews_given": 0,
-    "code_quality_score": 0.5,
-    "overall_score": 0.42324999999999996,
-    "creativity_score": 0.48833333333333334
+    "code_quality_score": 1.0,
+    "overall_score": 0.7624642857142857,
+    "creativity_score": 0.4164285714285715
   },
-  "contributions": []
+  "contributions": [],
+  "promoted_at": "2025-11-16T15:58:43.372679Z"
 }

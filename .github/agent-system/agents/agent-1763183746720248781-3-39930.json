@@ -3,7 +3,7 @@
   "name": "\ud83d\udea8 Ada",
   "human_name": "Ada",
   "specialization": "secure-specialist",
-  "status": "active",
+  "status": "hall_of_fame",
   "spawned_at": "2025-11-15T05:15:46.921585Z",
   "personality": "bold and innovative",
   "communication_style": "explains with analogies",
@@ -13,12 +13,13 @@
     "speed": 56
   },
   "metrics": {
-    "issues_resolved": 0,
-    "prs_merged": 0,
+    "issues_resolved": 1,
+    "prs_merged": 1,
     "reviews_given": 0,
-    "code_quality_score": 0.5,
-    "overall_score": 0.4,
-    "creativity_score": 0.5
+    "code_quality_score": 1.0,
+    "overall_score": 0.7727499999999999,
+    "creativity_score": 0.48500000000000004
   },
-  "contributions": []
+  "contributions": [],
+  "promoted_at": "2025-11-16T16:23:58.943763Z"
 }

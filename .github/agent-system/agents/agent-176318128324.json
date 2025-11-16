@@ -3,7 +3,7 @@
   "name": "\ud83e\uddf9 Tesla",
   "human_name": "Tesla",
   "specialization": "organize-guru",
-  "status": "active",
+  "status": "hall_of_fame",
   "spawned_at": "2025-11-15T04:34:43.313852Z",
   "personality": "calm and thoughtful",
   "communication_style": "adds encouraging emojis",
@@ -13,12 +13,13 @@
     "speed": 58
   },
   "metrics": {
-    "issues_resolved": 0,
-    "prs_merged": 0,
+    "issues_resolved": 1,
+    "prs_merged": 4,
     "reviews_given": 0,
-    "code_quality_score": 0.5,
-    "overall_score": 0.4,
-    "creativity_score": 0.5
+    "code_quality_score": 0.96,
+    "overall_score": 0.72075,
+    "creativity_score": 0.48500000000000004
   },
-  "contributions": []
+  "contributions": [],
+  "promoted_at": "2025-11-16T16:22:18.365748Z"
 }
