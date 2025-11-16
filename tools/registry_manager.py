@@ -143,17 +143,47 @@ class RegistryManager:
         }
     
     @contextmanager
-    def _lock_file(self, filepath: Path):
-        """Context manager for file locking"""
+    def _lock_file(self, filepath: Path, max_retries: int = 10, base_delay: float = 0.1):
+        """
+        Context manager for file locking with retry and exponential backoff.
+        
+        Args:
+            filepath: Path to the file being locked
+            max_retries: Maximum number of lock acquisition attempts
+            base_delay: Initial delay between retries (doubles each time)
+        
+        Yields:
+            None when lock is acquired
+            
+        Raises:
+            IOError: If lock cannot be acquired after max_retries
+        """
         lock_file = filepath.parent / f".{filepath.name}.lock"
         lock_file.touch(exist_ok=True)
         
-        with open(lock_file, 'w') as f:
-            fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        retry_delay = base_delay
+        last_error = None
+        
+        for attempt in range(max_retries):
             try:
-                yield
-            finally:
-                fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                with open(lock_file, 'w') as f:
+                    # Try non-blocking lock first
+                    fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    try:
+                        yield
+                    finally:
+                        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                return  # Success, exit function
+            except IOError as e:
+                last_error = e
+                if attempt < max_retries - 1:
+                    # Exponential backoff
+                    import time
+                    time.sleep(retry_delay)
+                    retry_delay = min(retry_delay * 2, 5.0)  # Cap at 5 seconds
+        
+        # If we get here, all retries failed
+        raise IOError(f"Failed to acquire lock for {filepath} after {max_retries} attempts: {last_error}")
     
     def get_agent(self, agent_id: str) -> Optional[Dict[str, Any]]:
         """

@@ -183,11 +183,24 @@ class MetricsCollector:
         self.repo = repo or os.environ.get('GITHUB_REPOSITORY', 'enufacas/Chained')
         self.cache_size = cache_size
         
-        # Initialize caches for batch evaluation optimization
+        # Initialize persistent cache for cross-run optimization (@engineer-master)
+        try:
+            from metrics_cache import MetricsCache
+            self._persistent_cache = MetricsCache(default_ttl_hours=6)  # 6-hour cache
+            self._persistent_cache_available = True
+            print("✅ Persistent metrics cache enabled", file=sys.stderr)
+        except ImportError:
+            self._persistent_cache = None
+            self._persistent_cache_available = False
+            print("⚠️  Warning: Persistent cache not available, using in-memory only", file=sys.stderr)
+        
+        # Initialize in-memory caches for batch evaluation optimization
         self._issue_cache: Dict[int, Dict] = {}  # issue_number -> issue_details
         self._pr_cache: Dict[int, Dict] = {}  # pr_number -> pr_details
         self._timeline_cache: Dict[int, List] = {}  # issue_number -> timeline events
         self._api_call_count = 0  # Track API calls for monitoring
+        self._cache_hits = 0  # Track cache effectiveness
+        self._cache_misses = 0
         
         # Check GitHub API connectivity
         self._check_github_api_access()
@@ -328,6 +341,8 @@ class MetricsCollector:
         This is a critical optimization that reduces O(n*m) API calls to O(m) calls,
         where n = number of agents and m = number of issues.
         
+        Enhanced with persistent caching to reduce API calls across workflow runs (@engineer-master).
+        
         Args:
             since_days: Look back period
             
@@ -351,21 +366,37 @@ class MetricsCollector:
             
             print(f"📋 Found {len(all_issues)} total agent-work issues", file=sys.stderr)
             
-            # Fetch full details for each issue (batched)
+            # Fetch full details for each issue (with persistent caching)
             for issue in all_issues:
                 issue_number = issue.get('number')
                 if not issue_number:
                     continue
                 
-                # Check cache first
-                if issue_number in self._issue_cache:
+                issue_details = None
+                
+                # Try persistent cache first
+                if self._persistent_cache_available:
+                    cache_key = f"issue_{issue_number}"
+                    issue_details = self._persistent_cache.get('issues', cache_key)
+                    if issue_details:
+                        self._cache_hits += 1
+                
+                # Check in-memory cache if not in persistent cache
+                if not issue_details and issue_number in self._issue_cache:
                     issue_details = self._issue_cache[issue_number]
-                else:
-                    # Fetch if not cached
+                    self._cache_hits += 1
+                
+                # Fetch from API if not cached
+                if not issue_details:
+                    self._cache_misses += 1
                     issue_details = self.github.get(f'/repos/{self.repo}/issues/{issue_number}')
                     self._api_call_count += 1
+                    
                     if issue_details:
+                        # Store in both caches
                         self._issue_cache[issue_number] = issue_details
+                        if self._persistent_cache_available:
+                            self._persistent_cache.set('issues', cache_key, issue_details, ttl_hours=6)
                 
                 if not issue_details:
                     continue
@@ -398,7 +429,12 @@ class MetricsCollector:
                         print(f"⚠️  Warning: Could not map issue {issue_number}: {e}", file=sys.stderr)
             
             print(f"✅ Distributed issues to {len(agent_issues_map)} agents", file=sys.stderr)
-            print(f"📊 API calls so far: {self._api_call_count}", file=sys.stderr)
+            print(f"📊 API calls: {self._api_call_count} | Cache hits: {self._cache_hits} | Cache misses: {self._cache_misses}", file=sys.stderr)
+            
+            # Calculate cache hit rate
+            if self._cache_hits + self._cache_misses > 0:
+                hit_rate = (self._cache_hits / (self._cache_hits + self._cache_misses)) * 100
+                print(f"📈 Cache hit rate: {hit_rate:.1f}%", file=sys.stderr)
             
         except Exception as e:
             print(f"⚠️  Warning: Batch fetch failed: {e}", file=sys.stderr)
@@ -696,11 +732,21 @@ class MetricsCollector:
                 # This is the expensive call - minimize its use
                 if len(prs_for_agent) == 0:
                     try:
-                        # Check cache first
+                        # Check cache first (in-memory then persistent)
+                        timeline = None
                         if issue_number in self._timeline_cache:
                             timeline = self._timeline_cache[issue_number]
-                        else:
+                            self._cache_hits += 1
+                        elif self._persistent_cache_available:
+                            cache_key = f"timeline_{issue_number}"
+                            timeline = self._persistent_cache.get('timelines', cache_key)
+                            if timeline:
+                                self._timeline_cache[issue_number] = timeline
+                                self._cache_hits += 1
+                        
+                        if not timeline:
                             # Only fetch timeline if we haven't cached it yet
+                            self._cache_misses += 1
                             timeline = self.github.get(
                                 f'/repos/{self.repo}/issues/{issue_number}/timeline',
                                 headers={'Accept': 'application/vnd.github.mockingbird-preview+json'}
@@ -708,6 +754,8 @@ class MetricsCollector:
                             self._api_call_count += 1
                             if timeline:
                                 self._timeline_cache[issue_number] = timeline
+                                if self._persistent_cache_available:
+                                    self._persistent_cache.set('timelines', cache_key, timeline, ttl_hours=6)
                         
                         if timeline:
                             for event in timeline:
@@ -717,15 +765,27 @@ class MetricsCollector:
                                         pr_data = source.get('issue')
                                         pr_number = pr_data.get('number')
                                         if pr_number and pr_number not in pr_numbers_from_issues:
-                                            # Check cache for full PR details
+                                            # Check cache for full PR details (in-memory then persistent)
+                                            full_pr = None
                                             if pr_number in self._pr_cache:
                                                 full_pr = self._pr_cache[pr_number]
-                                            else:
+                                                self._cache_hits += 1
+                                            elif self._persistent_cache_available:
+                                                cache_key = f"pr_{pr_number}"
+                                                full_pr = self._persistent_cache.get('prs', cache_key)
+                                                if full_pr:
+                                                    self._pr_cache[pr_number] = full_pr
+                                                    self._cache_hits += 1
+                                            
+                                            if not full_pr:
                                                 try:
+                                                    self._cache_misses += 1
                                                     full_pr = self.github.get(f'/repos/{self.repo}/pulls/{pr_number}')
                                                     self._api_call_count += 1
                                                     if full_pr:
                                                         self._pr_cache[pr_number] = full_pr
+                                                        if self._persistent_cache_available:
+                                                            self._persistent_cache.set('prs', cache_key, full_pr, ttl_hours=6)
                                                 except Exception as e:
                                                     full_pr = pr_data  # Fallback to partial data
                                             
