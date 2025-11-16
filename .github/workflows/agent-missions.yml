@@ -176,22 +176,23 @@ jobs:
                       'location': agent_location
                   })
               
-              # Sort by score and take top 10
+              # Sort by score and take only THE TOP 1 AGENT
               agent_scores.sort(key=lambda x: x['score'], reverse=True)
-              top_agents = agent_scores[:10]  # ENFORCE 10-AGENT LIMIT
+              best_agent = agent_scores[0] if agent_scores else None
               
-              print(f"   Selected {len(top_agents)} agents (max 10):")
-              for i, agent in enumerate(top_agents[:3], 1):
-                  print(f"     {i}. {agent['agent_name']} ({agent['specialization']}) - score: {agent['score']:.2f}")
-              
-              missions.append({
-                  'idea_id': idea_id,
-                  'idea_title': idea_title,
-                  'idea_summary': idea.get('summary', '')[:200],
-                  'patterns': idea_patterns,
-                  'agents': top_agents,
-                  'regions': [r.get('region_id') for r in idea_regions]
-              })
+              if best_agent:
+                  print(f"   Selected BEST agent: {best_agent['agent_name']} ({best_agent['specialization']}) - score: {best_agent['score']:.2f}")
+                  
+                  missions.append({
+                      'idea_id': idea_id,
+                      'idea_title': idea_title,
+                      'idea_summary': idea.get('summary', '')[:200],
+                      'patterns': idea_patterns,
+                      'agent': best_agent,  # Single agent, not list
+                      'regions': [r.get('region_id') for r in idea_regions]
+                  })
+              else:
+                  print(f"   ⚠️  No agents available for this mission")
           
           # Save missions data
           with open('missions_data.json', 'w') as f:
@@ -233,7 +234,9 @@ jobs:
               
               target_region = mission_regions[0]  # Primary region
               
-              for agent_data in mission.get('agents', []):
+              # Move only the single assigned agent
+              agent_data = mission.get('agent')
+              if agent_data:
                   agent_id = agent_data['agent_id']
                   if agent_id in agent_dict:
                       agent = agent_dict[agent_id]
@@ -272,6 +275,42 @@ jobs:
           chmod +x tools/create_mission_issues.py
           python3 tools/create_mission_issues.py
       
+      - name: Assign agents to mission issues
+        if: steps.select_agents.outputs.has_missions == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+        run: |
+          chmod +x tools/assign-agent-directly.sh
+          
+          # Check if created_missions.json exists
+          if [ ! -f created_missions.json ]; then
+            echo "⚠️  No created_missions.json found, skipping assignment"
+            exit 0
+          fi
+          
+          # Read created issues and assign agents
+          echo "🎯 Assigning agents to created mission issues"
+          
+          # Use jq to parse the JSON and iterate
+          jq -r '.[] | "\(.issue_number) \(.agent_specialization)"' created_missions.json | while read -r issue_number agent_specialization; do
+            if [ -n "$issue_number" ] && [ -n "$agent_specialization" ]; then
+              echo ""
+              echo "═══════════════════════════════════════════"
+              echo "Assigning #$issue_number to @$agent_specialization"
+              echo "═══════════════════════════════════════════"
+              
+              ./tools/assign-agent-directly.sh "$issue_number" "$agent_specialization" || {
+                echo "⚠️  Assignment failed for issue #$issue_number, continuing..."
+              }
+            fi
+          done
+          
+          echo ""
+          echo "✅ Agent assignment process complete"
+      
       - name: Commit world state changes
         if: steps.select_agents.outputs.has_missions == 'true'
         env:
@@ -289,10 +328,34 @@ jobs:
             BRANCH_NAME="agent-missions/${TIMESTAMP}-${{ github.run_id }}"
             
             git checkout -b "$BRANCH_NAME"
-            git commit -m "chore: agent missions created - ${{ steps.select_agents.outputs.mission_count }} missions"
+            git commit -m "chore: agent missions created and assigned - ${{ steps.select_agents.outputs.mission_count }} missions"
             git push origin "$BRANCH_NAME"
             
-            gh pr create --title "🎯 Agent Missions - $(date +%Y-%m-%d)" --body "Agent missions automated by @meta-coordinator. Created ${{ steps.select_agents.outputs.mission_count }} new missions, moved agents to mission locations, updated world tick, and created GitHub issues for each mission." --label "automated,agent-mission,world-model,copilot" --base main --head "$BRANCH_NAME"
+            gh pr create --title "🎯 Agent Missions - $(date +%Y-%m-%d)" --body "Agent missions automated by @meta-coordinator.
+
+## Summary
+
+Created ${{ steps.select_agents.outputs.mission_count }} new missions with **direct agent assignment**.
+
+## Changes
+
+- ✅ Created GitHub issues for each mission
+- ✅ Assigned **1 best-match agent** per mission (not 10)
+- ✅ Used direct GraphQL API assignment (no delay)
+- 🌍 Moved agents to mission locations
+- 🔄 Updated world tick
+- 📊 Updated agent status to 'exploring'
+
+## Key Improvements
+
+Previously, missions listed 10 agents and relied on later workflow pickup for assignment. Now:
+1. Only the **single best agent** is selected per mission
+2. Assignment happens **immediately** via GraphQL API
+3. Agent receives mission context and directive right away
+
+---
+
+*Automated by the Agent Missions workflow (@meta-coordinator)*" --label "automated,agent-mission,world-model,copilot" --base main --head "$BRANCH_NAME"
           fi
       
       - name: Log summary
