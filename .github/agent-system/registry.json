@@ -256,6 +256,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-unknown",
+      "name": "\ud83c\udfa8 Leonardo da Vinci",
+      "human_name": "Leonardo da Vinci",
+      "specialization": "unknown",
+      "status": "active",
+      "spawned_at": "2025-11-16T06:21:05Z",
+      "personality": "curious and versatile, with a renaissance approach",
+      "communication_style": "exploratory, adaptable, and insightful",
+      "traits": {
+        "creativity": 95,
+        "caution": 50,
+        "speed": 70
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.5
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],

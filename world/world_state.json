@@ -271,6 +271,21 @@
         "caution": 82,
         "speed": 82
       }
+    },
+    {
+      "id": "agent-unknown",
+      "specialization": "unknown",
+      "label": "\ud83c\udfa8 Leonardo da Vinci",
+      "location_region_id": "US:San Francisco",
+      "status": "idle",
+      "path": [],
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.5
+      }
     }
   ],
   "regions": [
