@@ -120,7 +120,7 @@
         "content": "A new tool for monitoring 35 platforms with AI analysis capabilities",
         "source": "GitHub Trending",
         "url": "https://github.com/sansan0/TrendRadar",
-        "timestamp": "2025-11-16T02:18:22.687344",
+        "timestamp": "2025-11-16T04:59:18.758185",
         "metadata": {
           "language": "Python",
           "stars": 2023
@@ -135,7 +135,7 @@
             "negative_score": 0
           },
           "confidence": 0.5,
-          "timestamp": "2025-11-16T02:18:22.687363",
+          "timestamp": "2025-11-16T04:59:18.758204",
           "metadata": {
             "method": "keyword_matching"
           }
@@ -174,7 +174,7 @@
             ]
           },
           "confidence": 0.7,
-          "timestamp": "2025-11-16T02:18:22.687380",
+          "timestamp": "2025-11-16T04:59:18.758224",
           "metadata": {
             "total_topics": 5
           }
@@ -186,14 +186,14 @@
             "total_compared": 0
           },
           "confidence": 0.6,
-          "timestamp": "2025-11-16T02:18:22.687391",
+          "timestamp": "2025-11-16T04:59:18.758233",
           "metadata": {
             "method": "jaccard",
             "threshold": 0.3
           }
         }
       },
-      "timestamp": "2025-11-16T02:18:22.687405"
+      "timestamp": "2025-11-16T04:59:18.758246"
     },
     {
       "content": {
@@ -201,7 +201,7 @@
         "content": "OpenAI announces major update to ChatGPT with better understanding",
         "source": "Hacker News",
         "url": "https://news.ycombinator.com/item?id=123456",
-        "timestamp": "2025-11-16T02:18:22.687348",
+        "timestamp": "2025-11-16T04:59:18.758189",
         "metadata": {
           "points": 245,
           "comments": 89
@@ -216,7 +216,7 @@
             "negative_score": 0
           },
           "confidence": 0.5,
-          "timestamp": "2025-11-16T02:18:22.687419",
+          "timestamp": "2025-11-16T04:59:18.758259",
           "metadata": {
             "method": "keyword_matching"
           }
@@ -275,7 +275,7 @@
             ]
           },
           "confidence": 0.7,
-          "timestamp": "2025-11-16T02:18:22.687429",
+          "timestamp": "2025-11-16T04:59:18.758271",
           "metadata": {
             "total_topics": 10
           }
@@ -287,14 +287,14 @@
             "total_compared": 1
           },
           "confidence": 0.6,
-          "timestamp": "2025-11-16T02:18:22.687440",
+          "timestamp": "2025-11-16T04:59:18.758281",
           "metadata": {
             "method": "jaccard",
             "threshold": 0.3
           }
         }
       },
-      "timestamp": "2025-11-16T02:18:22.687450"
+      "timestamp": "2025-11-16T04:59:18.758291"
     },
     {
       "content": {
@@ -302,7 +302,7 @@
         "content": "Multiple companies adopt AI agent frameworks for automation",
         "source": "TLDR Newsletter",
         "url": "https://tldr.tech/article",
-        "timestamp": "2025-11-16T02:18:22.687349",
+        "timestamp": "2025-11-16T04:59:18.758190",
         "metadata": {
           "category": "AI/ML"
         }
@@ -316,7 +316,7 @@
             "negative_score": 0
           },
           "confidence": 0.5,
-          "timestamp": "2025-11-16T02:18:22.687461",
+          "timestamp": "2025-11-16T04:59:18.758319",
           "metadata": {
             "method": "keyword_matching"
           }
@@ -375,7 +375,7 @@
             ]
           },
           "confidence": 0.7,
-          "timestamp": "2025-11-16T02:18:22.687473",
+          "timestamp": "2025-11-16T04:59:18.758333",
           "metadata": {
             "total_topics": 15
           }
@@ -387,14 +387,14 @@
             "total_compared": 2
           },
           "confidence": 0.6,
-          "timestamp": "2025-11-16T02:18:22.687484",
+          "timestamp": "2025-11-16T04:59:18.758345",
           "metadata": {
             "method": "jaccard",
             "threshold": 0.3
           }
         }
       },
-      "timestamp": "2025-11-16T02:18:22.687493"
+      "timestamp": "2025-11-16T04:59:18.758354"
     }
   ],
   "insights": {
