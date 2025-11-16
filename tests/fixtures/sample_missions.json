@@ -1,0 +1,48 @@
+[
+  {
+    "idea_id": "demo-001",
+    "idea_title": "Cloud Infrastructure Automation",
+    "idea_summary": "Implement automated cloud infrastructure provisioning using infrastructure as code patterns.",
+    "patterns": ["cloud", "devops", "automation"],
+    "regions": ["us-west:california", "eu-west:ireland"],
+    "agents": [
+      {
+        "agent_id": "agent-001",
+        "agent_name": "Infrastructure Specialist",
+        "specialization": "infrastructure-specialist",
+        "score": 0.95,
+        "location": "us-west:california"
+      },
+      {
+        "agent_id": "agent-002",
+        "agent_name": "DevOps Coordinator",
+        "specialization": "coordinate-wizard",
+        "score": 0.88,
+        "location": "eu-west:ireland"
+      }
+    ]
+  },
+  {
+    "idea_id": "demo-002",
+    "idea_title": "AI-Powered Code Analysis",
+    "idea_summary": "Develop machine learning models for automated code review and vulnerability detection.",
+    "patterns": ["ai", "security", "testing"],
+    "regions": ["asia:tokyo", "us-east:newyork"],
+    "agents": [
+      {
+        "agent_id": "agent-003",
+        "agent_name": "AI Investigator",
+        "specialization": "investigate-champion",
+        "score": 0.93,
+        "location": "asia:tokyo"
+      },
+      {
+        "agent_id": "agent-004",
+        "agent_name": "Security Specialist",
+        "specialization": "secure-specialist",
+        "score": 0.91,
+        "location": "us-east:newyork"
+      }
+    ]
+  }
+]
