@@ -1,0 +1,78 @@
+{
+  "python": {
+    "comment_removal": {
+      "effectiveness": 0.7361257413997628,
+      "applications": 2,
+      "avg_reduction": 13.914590747330962
+    },
+    "docstring_removal": {
+      "effectiveness": 0.85,
+      "applications": 0,
+      "avg_reduction": 25.0
+    },
+    "whitespace_reduction": {
+      "effectiveness": 0.8171257413997628,
+      "applications": 2,
+      "avg_reduction": 13.914590747330962
+    },
+    "blank_line_removal": {
+      "effectiveness": 0.6956257413997629,
+      "applications": 2,
+      "avg_reduction": 13.914590747330962
+    },
+    "boolean_simplification": {
+      "effectiveness": 0.6551257413997629,
+      "applications": 2,
+      "avg_reduction": 13.914590747330962
+    },
+    "variable_shortening": {
+      "effectiveness": 0.5741257413997627,
+      "applications": 2,
+      "avg_reduction": 13.914590747330962
+    },
+    "lambda_optimization": {
+      "effectiveness": 0.5,
+      "applications": 0,
+      "avg_reduction": 12.0
+    }
+  },
+  "javascript": {
+    "comment_removal": {
+      "effectiveness": 0.7523399558498897,
+      "applications": 1,
+      "avg_reduction": 9.701986754966887
+    },
+    "boolean_simplification": {
+      "effectiveness": 0.8423399558498896,
+      "applications": 1,
+      "avg_reduction": 9.701986754966887
+    },
+    "whitespace_reduction": {
+      "effectiveness": 0.7973399558498896,
+      "applications": 1,
+      "avg_reduction": 9.701986754966887
+    },
+    "arrow_function_conversion": {
+      "effectiveness": 0.7073399558498896,
+      "applications": 1,
+      "avg_reduction": 9.701986754966887
+    },
+    "blank_line_removal": {
+      "effectiveness": 0.48233995584988965,
+      "applications": 1,
+      "avg_reduction": 9.701986754966887
+    }
+  },
+  "bash": {
+    "comment_removal": {
+      "effectiveness": 0.75,
+      "applications": 0,
+      "avg_reduction": 10.0
+    },
+    "whitespace_reduction": {
+      "effectiveness": 0.8,
+      "applications": 0,
+      "avg_reduction": 5.0
+    }
+  }
+}
