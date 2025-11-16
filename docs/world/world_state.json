@@ -1,6 +1,6 @@
 {
-  "time": "2025-11-16T09:59:14Z",
-  "tick": 41,
+  "time": "2025-11-16T16:29:11Z",
+  "tick": 42,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -33,10 +33,9 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco",
-        "GB:London"
+        "US:San Francisco"
       ],
-      "current_idea_id": "idea:16",
+      "current_idea_id": "idea:24",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -56,12 +55,12 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "working",
+      "status": "exploring",
       "path": [
         "US:San Francisco",
-        "GB:London"
+        "US:Redmond"
       ],
-      "current_idea_id": "idea:16",
+      "current_idea_id": "idea:17",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -74,12 +73,6 @@
         "creativity": 66,
         "caution": 81,
         "speed": 78
-      },
-      "current_mission": {
-        "mission_id": "idea:16",
-        "title": "AI/ML: Ai Innovation",
-        "issue_number": null,
-        "assigned_at": "2025-11-16T09:59:14Z"
       }
     },
     {
@@ -87,12 +80,12 @@
       "label": "🎯 Liskov",
       "specialization": "investigate-champion",
       "location_region_id": "US:Charlotte",
-      "status": "working",
+      "status": "exploring",
       "path": [
         "US:San Francisco",
         "US:Austin"
       ],
-      "current_idea_id": "idea:18",
+      "current_idea_id": "idea:21",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -105,12 +98,6 @@
         "creativity": 78,
         "caution": 75,
         "speed": 95
-      },
-      "current_mission": {
-        "mission_id": "idea:18",
-        "title": "AI/ML: Claude Innovation",
-        "issue_number": null,
-        "assigned_at": "2025-11-16T09:59:14Z"
       }
     },
     {
@@ -120,10 +107,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "SE:Stockholm",
-        "GB:London"
+        "TW:Hsinchu",
+        "KR:Seoul"
       ],
-      "current_idea_id": "idea:4",
+      "current_idea_id": "idea:2",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -145,9 +132,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco"
+        "CN:Hangzhou",
+        "CN:Shenzhen"
       ],
-      "current_idea_id": "idea:19",
+      "current_idea_id": "idea:3",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -169,10 +157,9 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco",
-        "US:Redmond"
+        "US:San Francisco"
       ],
-      "current_idea_id": "idea:1",
+      "current_idea_id": "idea:24",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -194,10 +181,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "CN:Hangzhou",
-        "CN:Shenzhen"
+        "US:San Francisco",
+        "US:Redmond"
       ],
-      "current_idea_id": "idea:3",
+      "current_idea_id": "idea:1",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -246,7 +233,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:19",
+      "current_idea_id": "idea:20",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -268,10 +255,9 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco",
-        "US:Austin"
+        "US:San Francisco"
       ],
-      "current_idea_id": "idea:21",
+      "current_idea_id": "idea:23",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -386,7 +372,7 @@
   "metrics": {
     "total_ideas": 14,
     "total_regions": 10,
-    "ticks_completed": 40,
+    "ticks_completed": 42,
     "active_agents": 11,
     "total_agent_count": 11,
     "elimination_threshold": 0.3,
