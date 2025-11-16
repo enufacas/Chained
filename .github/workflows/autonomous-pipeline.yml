@@ -21,6 +21,11 @@ on:
         required: false
         type: boolean
         default: false
+      skip_assignment:
+        description: 'Skip agent assignment stage'
+        required: false
+        type: boolean
+        default: false
       include_self_reinforcement:
         description: 'Include self-reinforcement stage'
         required: false
@@ -1127,6 +1132,127 @@ jobs:
           exit 1
 
   # ============================================================================
+  # STAGE 4.75: ASSIGN AGENTS TO MISSIONS
+  # ============================================================================
+  
+  assign-agents-to-missions:
+    name: "Stage 4.75: Assign Agents to Missions"
+    runs-on: ubuntu-latest
+    needs: [agent-missions, merge-mission-pr]
+    if: always() && !cancelled() && needs.agent-missions.outputs.mission_count > 0 && inputs.skip_assignment != true
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests
+      
+      - name: Assign agents to mission issues
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+        run: |
+          chmod +x tools/assign-agent-directly.sh
+          
+          echo "🎯 Stage 4.75: Assigning agents to mission issues"
+          echo "=================================================="
+          echo ""
+          
+          # Check if created_missions.json exists
+          if [ ! -f created_missions.json ]; then
+            echo "⚠️  No created_missions.json found"
+            echo "This means either:"
+            echo "  1. No missions were created in Stage 4"
+            echo "  2. The create_mission_issues.py script didn't run"
+            echo ""
+            echo "ℹ️  Checking for mission issues to assign..."
+            
+            # Try to find recent mission issues without assignment
+            RECENT_MISSION_ISSUES=$(gh issue list \
+              --repo "$GITHUB_REPOSITORY" \
+              --label "agent-mission" \
+              --state open \
+              --limit 20 \
+              --json number,createdAt,labels \
+              --jq '[.[] | select(.labels | map(.name) | contains(["agent-mission"]) and (contains(["copilot-assigned"]) | not))] | .[].number')
+            
+            if [ -z "$RECENT_MISSION_ISSUES" ]; then
+              echo "ℹ️  No unassigned mission issues found, skipping assignment"
+              exit 0
+            fi
+            
+            echo "Found unassigned mission issues: $RECENT_MISSION_ISSUES"
+            echo "⚠️  Cannot determine agent specialization without created_missions.json"
+            echo "These issues will be picked up by the scheduled copilot-graphql-assign workflow"
+            exit 0
+          fi
+          
+          # Read created issues and assign agents
+          echo "📋 Reading mission assignments from created_missions.json"
+          
+          # Count missions
+          MISSION_COUNT=$(jq '. | length' created_missions.json)
+          echo "Found $MISSION_COUNT missions to assign"
+          echo ""
+          
+          # Track assignment results
+          SUCCESS_COUNT=0
+          FAILED_COUNT=0
+          
+          # Use jq to parse the JSON and iterate
+          jq -r '.[] | "\(.issue_number) \(.agent_specialization)"' created_missions.json | while read -r issue_number agent_specialization; do
+            if [ -n "$issue_number" ] && [ -n "$agent_specialization" ]; then
+              echo ""
+              echo "═══════════════════════════════════════════"
+              echo "🎯 Assigning #$issue_number to @$agent_specialization"
+              echo "═══════════════════════════════════════════"
+              
+              if ./tools/assign-agent-directly.sh "$issue_number" "$agent_specialization"; then
+                echo "✅ Successfully assigned #$issue_number to @$agent_specialization"
+                SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+              else
+                echo "❌ Failed to assign #$issue_number to @$agent_specialization"
+                FAILED_COUNT=$((FAILED_COUNT + 1))
+                # Continue with other assignments even if one fails
+              fi
+            fi
+          done
+          
+          echo ""
+          echo "=================================================="
+          echo "📊 Assignment Summary"
+          echo "=================================================="
+          echo "Total missions: $MISSION_COUNT"
+          echo "Successfully assigned: $SUCCESS_COUNT"
+          echo "Failed: $FAILED_COUNT"
+          echo ""
+          
+          if [ $FAILED_COUNT -gt 0 ]; then
+            echo "⚠️  Some assignments failed. Common causes:"
+            echo "  1. Missing COPILOT_PAT secret (default GITHUB_TOKEN can't assign Copilot)"
+            echo "  2. Copilot not enabled for this repository"
+            echo "  3. Network or API issues"
+            echo ""
+            echo "ℹ️  Failed assignments will be retried by:"
+            echo "  - Scheduled copilot-graphql-assign workflow (runs every 15 minutes)"
+            echo "  - Manual workflow dispatch"
+            echo ""
+          fi
+          
+          echo "✅ Stage 4.75 complete - Agent assignment process finished"
+
+  # ============================================================================
   # STAGE 5: SELF-REINFORCEMENT (Optional)
   # ============================================================================
   
@@ -1164,7 +1290,7 @@ jobs:
   pipeline-summary:
     name: "Pipeline Summary"
     runs-on: ubuntu-latest
-    needs: [combine-learnings, merge-learning-pr, world-update, merge-world-pr, agent-missions, merge-mission-pr]
+    needs: [combine-learnings, merge-learning-pr, world-update, merge-world-pr, agent-missions, merge-mission-pr, assign-agents-to-missions]
     if: always() && !cancelled()
     
     steps:
@@ -1188,6 +1314,9 @@ jobs:
           echo "Stage 4: Agent Missions"
           echo "  Missions: ${{ needs.agent-missions.outputs.mission_count || 'N/A' }}"
           echo "  Status: ${{ needs.agent-missions.result }}"
+          echo ""
+          echo "Stage 4.75: Assign Agents to Missions"
+          echo "  Status: ${{ needs.assign-agents-to-missions.result }}"
           echo ""
           echo "Pipeline Run: ${{ github.run_id }}"
           echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
