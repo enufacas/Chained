@@ -151,22 +151,23 @@ jobs:
                   
                   # Role/skill relevance (40%)
                   # Map patterns to agent specializations
+                  # NOTE: Only list agents that actually exist in the registry/world_state
                   pattern_matches = {
                       'ai': ['investigate-champion', 'engineer-master', 'create-guru'],
                       'ai/ml': ['investigate-champion', 'engineer-master', 'create-guru'],
                       'claude': ['investigate-champion', 'engineer-master', 'create-guru'],
                       'agents': ['investigate-champion', 'engineer-master', 'create-guru'],
                       'gpt': ['investigate-champion', 'engineer-master', 'create-guru'],
-                      'cloud': ['infrastructure-specialist', 'engineer-master'],
-                      'aws': ['infrastructure-specialist', 'engineer-master', 'cloud-architect'],
-                      'devops': ['coordinate-wizard', 'align-wizard', 'infrastructure-specialist'],
-                      'security': ['secure-specialist', 'secure-ninja', 'monitor-champion'],
-                      'testing': ['assert-specialist', 'validator-pro'],
-                      'api': ['engineer-master', 'engineer-wizard', 'integrate-specialist'],
-                      'web': ['engineer-master', 'engineer-wizard', 'create-guru'],
-                      'go': ['engineer-master', 'create-guru'],
-                      'javascript': ['engineer-master', 'create-guru'],
-                      'languages': ['engineer-master', 'create-guru'],
+                      'cloud': ['investigate-champion', 'engineer-master', 'construct-specialist'],
+                      'aws': ['investigate-champion', 'engineer-master', 'construct-specialist'],
+                      'devops': ['investigate-champion', 'engineer-master', 'construct-specialist'],
+                      'security': ['secure-ninja', 'investigate-champion'],
+                      'testing': ['assert-specialist', 'investigate-champion'],
+                      'api': ['engineer-master', 'investigate-champion', 'construct-specialist'],
+                      'web': ['engineer-master', 'investigate-champion', 'construct-specialist'],
+                      'go': ['engineer-master', 'investigate-champion'],
+                      'javascript': ['engineer-master', 'investigate-champion'],
+                      'languages': ['engineer-master', 'investigate-champion'],
                   }
                   
                   for pattern in idea_patterns:
