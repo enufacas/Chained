@@ -153,11 +153,11 @@ jobs:
                   # Map patterns to agent specializations
                   # NOTE: Only list agents that actually exist in the registry/world_state
                   pattern_matches = {
-                      'ai': ['investigate-champion', 'engineer-master', 'create-guru'],
-                      'ai/ml': ['investigate-champion', 'engineer-master', 'create-guru'],
-                      'claude': ['investigate-champion', 'engineer-master', 'create-guru'],
-                      'agents': ['investigate-champion', 'engineer-master', 'create-guru'],
-                      'gpt': ['investigate-champion', 'engineer-master', 'create-guru'],
+                      'ai': ['investigate-champion', 'engineer-master'],
+                      'ai/ml': ['investigate-champion', 'engineer-master'],
+                      'claude': ['investigate-champion', 'engineer-master'],
+                      'agents': ['investigate-champion', 'engineer-master'],
+                      'gpt': ['investigate-champion', 'engineer-master'],
                       'cloud': ['investigate-champion', 'engineer-master', 'construct-specialist'],
                       'aws': ['investigate-champion', 'engineer-master', 'construct-specialist'],
                       'devops': ['investigate-champion', 'engineer-master', 'construct-specialist'],
