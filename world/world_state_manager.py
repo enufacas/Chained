@@ -112,6 +112,86 @@ def get_all_agents(state: Dict[str, Any]) -> List[Dict[str, Any]]:
     return state.get('agents', [])
 
 
+def update_agent_mission(
+    state: Dict[str, Any],
+    agent_id: str,
+    mission_id: str,
+    mission_title: str,
+    issue_number: Optional[int] = None
+) -> bool:
+    """
+    Update an agent's current mission assignment.
+    
+    Args:
+        state: World state dict
+        agent_id: Agent ID (e.g., 'agent-123' or specialization like 'cloud-architect')
+        mission_id: Mission/idea ID
+        mission_title: Human-readable mission title
+        issue_number: Optional GitHub issue number
+    
+    Returns:
+        True if agent was updated, False if not found
+    """
+    # Try to find agent by ID first
+    agent = get_agent_by_id(state, agent_id)
+    
+    # If not found by ID, try by specialization
+    if not agent:
+        for a in state.get('agents', []):
+            if a.get('specialization') == agent_id:
+                agent = a
+                break
+    
+    if not agent:
+        return False
+    
+    # Update agent's mission information
+    agent['current_idea_id'] = mission_id
+    agent['status'] = 'working'  # Changed from 'exploring' to 'working'
+    
+    # Add mission metadata if not present
+    if 'current_mission' not in agent:
+        agent['current_mission'] = {}
+    
+    agent['current_mission'] = {
+        'mission_id': mission_id,
+        'title': mission_title,
+        'issue_number': issue_number,
+        'assigned_at': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    }
+    
+    return True
+
+
+def clear_agent_mission(state: Dict[str, Any], agent_id: str) -> bool:
+    """
+    Clear an agent's current mission when completed or abandoned.
+    
+    Args:
+        state: World state dict
+        agent_id: Agent ID or specialization
+    
+    Returns:
+        True if agent was updated, False if not found
+    """
+    agent = get_agent_by_id(state, agent_id)
+    
+    if not agent:
+        for a in state.get('agents', []):
+            if a.get('specialization') == agent_id:
+                agent = a
+                break
+    
+    if not agent:
+        return False
+    
+    agent['status'] = 'exploring'
+    if 'current_mission' in agent:
+        del agent['current_mission']
+    
+    return True
+
+
 if __name__ == '__main__':
     # Test the module
     state = load_world_state()

@@ -881,6 +881,8 @@ jobs:
           python3 << 'EOF'
           import json
           import os
+          import subprocess
+          import hashlib
           from datetime import datetime, timezone
           
           print("🎯 Creating agent missions...")
@@ -896,7 +898,7 @@ jobs:
           agents = world_state.get('agents', [])
           ideas = knowledge.get('ideas', [])
           
-          # Find recent learning-based ideas
+          # Find recent learning-based ideas that haven't been assigned yet
           recent_ideas = [idea for idea in ideas if idea.get('source') == 'learning_analysis'][:5]
           
           print(f"Processing {len(recent_ideas)} recent ideas")
@@ -907,46 +909,181 @@ jobs:
                   f.write(f"mission_count=0\n")
               exit(0)
           
+          # Load previous missions to avoid duplicates
+          previous_mission_hashes = set()
+          try:
+              if os.path.exists('.github/agent-system/missions_history.json'):
+                  with open('.github/agent-system/missions_history.json', 'r') as f:
+                      history = json.load(f)
+                      previous_mission_hashes = set(history.get('mission_hashes', []))
+                      print(f"Loaded {len(previous_mission_hashes)} previous mission hashes")
+          except Exception as e:
+              print(f"Note: Could not load mission history: {e}")
+          
           missions = []
+          agent_assignment_count = {}  # Track how many times each agent has been assigned
+          diversity_weight = 0.7  # Strong diversity preference (same as agent_learning_matcher.py)
+          
           for idea in recent_ideas:
               idea_id = idea.get('id', 'unknown')
+              idea_title = idea.get('title', 'Unknown')
               idea_patterns = idea.get('patterns', [])
               idea_regions = idea.get('inspiration_regions', [])
+              idea_summary = idea.get('summary', '')[:200]
               
-              # Score agents
-              agent_scores = []
-              for agent in agents:
-                  score = 0.5  # Base score
-                  agent_scores.append({
-                      'agent_id': agent.get('id'),
-                      'agent_name': agent.get('label', 'Unknown'),
-                      'specialization': agent.get('specialization', ''),
-                      'score': score
-                  })
+              # Create a hash of the idea to detect duplicates
+              mission_content = f"{idea_id}:{idea_title}:{':'.join(sorted(idea_patterns))}"
+              mission_hash = hashlib.md5(mission_content.encode()).hexdigest()
               
-              # Sort agents by score and select the best one
-              agent_scores.sort(key=lambda x: x['score'], reverse=True)
-              best_agent = agent_scores[0] if agent_scores else {
-                  'agent_id': 'unknown',
-                  'agent_name': 'Unknown',
-                  'specialization': '',
-                  'score': 0.0
-              }
+              # Skip if we've already created a mission for this idea
+              if mission_hash in previous_mission_hashes:
+                  print(f"  ⏭️  Skipping duplicate mission for '{idea_title}' (hash: {mission_hash[:8]})")
+                  continue
+              
+              # Use the existing match-issue-to-agent.py tool for intelligent matching
+              # Combine title, summary, and patterns into a description for matching
+              match_text = f"{idea_title}. {idea_summary}. Patterns: {', '.join(idea_patterns)}"
+              
+              try:
+                  # Call match-issue-to-agent.py to get the best agent
+                  result = subprocess.run(
+                      ['python3', 'tools/match-issue-to-agent.py', match_text],
+                      capture_output=True,
+                      text=True,
+                      check=True
+                  )
+                  match_data = json.loads(result.stdout)
+                  matched_specialization = match_data.get('agent')
+                  match_score = match_data.get('score', 0)
+                  match_confidence = match_data.get('confidence', 'unknown')
+                  all_scores = match_data.get('all_scores', {})
+                  
+                  # Apply diversity penalty (like agent_learning_matcher.py)
+                  # This prevents one agent from monopolizing all missions
+                  adjusted_scores = []
+                  for agent_spec, base_score in all_scores.items():
+                      # Penalty increases with each assignment (0%, 70%, 90%)
+                      assignment_count = agent_assignment_count.get(agent_spec, 0)
+                      penalty = assignment_count * diversity_weight
+                      adjusted_score = base_score * (1.0 - min(penalty, 0.9))  # Cap at 90%
+                      adjusted_scores.append((agent_spec, adjusted_score, base_score))
+                  
+                  # Sort by adjusted score to find best agent after diversity penalty
+                  adjusted_scores.sort(key=lambda x: x[1], reverse=True)
+                  
+                  if adjusted_scores:
+                      matched_specialization = adjusted_scores[0][0]
+                      adjusted_score = adjusted_scores[0][1]
+                      match_score = adjusted_scores[0][2]  # Original score for logging
+                      
+                      print(f"  ✅ Matched '{idea_title}' to @{matched_specialization} (score: {match_score}, adjusted: {adjusted_score:.3f}, confidence: {match_confidence})")
+                      
+                      # Show if diversity penalty was applied
+                      if agent_assignment_count.get(matched_specialization, 0) > 0:
+                          rank = agent_assignment_count[matched_specialization] + 1
+                          print(f"     ℹ️  Assignment #{rank} for @{matched_specialization} (diversity penalty applied)")
+                  else:
+                      print(f"  ⚠️  No valid agents found for '{idea_title}'")
+                      continue
+                  
+                  # Find the agent details from world state or create from specialization
+                  agent_details = None
+                  for agent in agents:
+                      if agent.get('specialization') == matched_specialization:
+                          agent_details = agent
+                          break
+                  
+                  # If not in world_state.json, check if agent file exists
+                  if not agent_details:
+                      agent_file = f'.github/agents/{matched_specialization}.md'
+                      if os.path.exists(agent_file):
+                          # Agent file exists, use specialization as fallback
+                          agent_details = {
+                              'id': matched_specialization,
+                              'label': matched_specialization.replace('-', ' ').title(),
+                              'specialization': matched_specialization
+                          }
+                          print(f"  ℹ️  Using agent file for @{matched_specialization} (not in world_state.json)")
+                      else:
+                          print(f"  ⚠️  Matched agent @{matched_specialization} not found in world state or agent files, skipping")
+                          continue
+                  
+                  best_agent = {
+                      'agent_id': agent_details.get('id'),
+                      'agent_name': agent_details.get('label', 'Unknown'),
+                      'specialization': matched_specialization,
+                      'score': match_score
+                  }
+                  
+                  # Update assignment count for diversity penalty tracking
+                  agent_assignment_count[matched_specialization] = agent_assignment_count.get(matched_specialization, 0) + 1
+                  
+              except subprocess.CalledProcessError as e:
+                  print(f"  ⚠️  Error matching agent for '{idea_title}': {e.stderr}")
+                  continue
+              except json.JSONDecodeError as e:
+                  print(f"  ⚠️  Error parsing match result for '{idea_title}': {e}")
+                  continue
+              except Exception as e:
+                  print(f"  ⚠️  Unexpected error for '{idea_title}': {e}")
+                  continue
               
               missions.append({
                   'idea_id': idea_id,
-                  'idea_title': idea.get('title', 'Unknown'),
-                  'idea_summary': idea.get('summary', '')[:200],
+                  'idea_title': idea_title,
+                  'idea_summary': idea_summary,
                   'patterns': idea_patterns,
                   'agent': best_agent,  # Single agent, not list
-                  'regions': [r.get('region_id', 'unknown') for r in idea_regions]
+                  'regions': [r.get('region_id', 'unknown') for r in idea_regions],
+                  'mission_hash': mission_hash
               })
           
           # Save missions
           with open('missions_data.json', 'w') as f:
               json.dump(missions, f, indent=2)
           
-          print(f"✅ Created {len(missions)} missions")
+          # Update mission history to prevent duplicates in future runs
+          try:
+              os.makedirs('.github/agent-system', exist_ok=True)
+              new_hashes = [m['mission_hash'] for m in missions]
+              all_hashes = list(previous_mission_hashes) + new_hashes
+              # Keep only the last 100 mission hashes to prevent unbounded growth
+              all_hashes = all_hashes[-100:]
+              
+              with open('.github/agent-system/missions_history.json', 'w') as f:
+                  json.dump({
+                      'last_updated': datetime.now(timezone.utc).isoformat(),
+                      'mission_hashes': all_hashes
+                  }, f, indent=2)
+              print(f"📝 Updated mission history with {len(new_hashes)} new hashes")
+          except Exception as e:
+              print(f"⚠️  Could not update mission history: {e}")
+          
+          # Print agent distribution summary
+          if missions:
+              print()
+              print("📊 Agent Distribution Summary:")
+              agent_counts = {}
+              for mission in missions:
+                  agent_spec = mission['agent']['specialization']
+                  agent_counts[agent_spec] = agent_counts.get(agent_spec, 0) + 1
+              
+              for agent_spec, count in sorted(agent_counts.items(), key=lambda x: x[1], reverse=True):
+                  print(f"   • @{agent_spec}: {count} assignment(s)")
+              
+              unique_agents = len(agent_counts)
+              total_missions = len(missions)
+              diversity_pct = (unique_agents / total_missions * 100) if total_missions > 0 else 0
+              print(f"\n   Diversity: {unique_agents}/{total_missions} unique agents ({diversity_pct:.0f}%)")
+              
+              if diversity_pct >= 80:
+                  print(f"   ✅ Excellent diversity!")
+              elif diversity_pct >= 60:
+                  print(f"   ✓ Good diversity")
+              else:
+                  print(f"   ⚠️  Low diversity (consider lowering min_score threshold)")
+          
+          print(f"✅ Created {len(missions)} new missions (skipped duplicates)")
           
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f"mission_count={len(missions)}\n")
@@ -973,24 +1110,89 @@ jobs:
           path: created_missions.json
           retention-days: 1
 
-      - name: Update world state
+      - name: Update world state with agent missions
         if: steps.create.outputs.mission_count > 0
         run: |
           python3 << 'EOF'
           import json
+          import sys
+          import os
           from datetime import datetime, timezone
+          sys.path.insert(0, 'world')
+          from world_state_manager import load_world_state, save_world_state, update_agent_mission
+          
+          # Load missions data
+          try:
+              with open('missions_data.json', 'r') as f:
+                  missions = json.load(f)
+          except FileNotFoundError:
+              print("⚠️  No missions_data.json found")
+              missions = []
+          
+          # Load created issues mapping (if available)
+          issue_mapping = {}
+          if os.path.exists('created_missions.json'):
+              try:
+                  with open('created_missions.json', 'r') as f:
+                      created_missions = json.load(f)
+                      for cm in created_missions:
+                          mission_id = cm.get('mission_id')
+                          issue_number = cm.get('issue_number')
+                          if mission_id and issue_number:
+                              issue_mapping[mission_id] = issue_number
+              except:
+                  pass
+          
+          # Load and update world state
+          world_state = load_world_state()
+          
+          # Update each agent with their mission
+          updated_count = 0
+          for mission in missions:
+              agent = mission.get('agent', {})
+              agent_spec = agent.get('specialization')
+              agent_id = agent.get('agent_id')
+              
+              if not agent_spec:
+                  continue
+              
+              mission_id = mission.get('idea_id', mission.get('mission_hash', 'unknown'))
+              mission_title = mission.get('idea_title', 'Untitled Mission')
+              issue_number = issue_mapping.get(mission_id)
+              
+              # Try to update agent (by ID first, then by specialization)
+              success = update_agent_mission(
+                  world_state,
+                  agent_id or agent_spec,
+                  mission_id,
+                  mission_title,
+                  issue_number
+              )
+              
+              if success:
+                  updated_count += 1
+                  issue_info = f" (Issue #{issue_number})" if issue_number else ""
+                  print(f"✅ Updated @{agent_spec}: {mission_title}{issue_info}")
+              else:
+                  print(f"ℹ️  Agent @{agent_spec} not found in world_state (using fallback)")
           
           # Increment world tick
-          with open('world/world_state.json', 'r') as f:
-              world_state = json.load(f)
-          
           world_state['tick'] = world_state.get('tick', 0) + 1
           world_state['time'] = datetime.now(timezone.utc).isoformat()
           
-          with open('world/world_state.json', 'w') as f:
-              json.dump(world_state, f, indent=2)
+          # Update metrics
+          if 'metrics' not in world_state:
+              world_state['metrics'] = {}
+          world_state['metrics']['active_missions'] = len(missions)
           
-          print(f"✅ World tick: {world_state['tick']}")
+          # Save updated world state
+          save_world_state(world_state)
+          
+          print()
+          print(f"✅ World state updated:")
+          print(f"   Tick: {world_state['tick']}")
+          print(f"   Agents updated: {updated_count}/{len(missions)}")
+          print(f"   Active missions: {len(missions)}")
           EOF
 
       - name: Create PR with mission updates
@@ -1002,7 +1204,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add world/
+          git add world/ .github/agent-system/missions_history.json
           
           if git diff --staged --quiet; then
             echo "No changes"
@@ -1272,6 +1474,167 @@ jobs:
           echo "✅ Stage 4.75 complete - Agent assignment process finished"
 
   # ============================================================================
+  # STAGE 4.9: SYNC WORLD STATE TO DOCS
+  # ============================================================================
+  
+  sync-world-to-docs:
+    name: "Stage 4.9: Sync World State to Docs"
+    runs-on: ubuntu-latest
+    needs: [merge-mission-pr]
+    if: always() && !cancelled() && needs.agent-missions.outputs.mission_count > 0
+    outputs:
+      pr_number: ${{ steps.sync_pr.outputs.pr_number }}
+      pr_created: ${{ steps.sync_pr.outputs.pr_created }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main  # Pull latest with merged mission updates
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Sync world state to docs
+        id: sync
+        run: |
+          echo "🌍 Syncing world state to docs for GitHub Pages..."
+          echo ""
+          
+          # Create docs/world directory if it doesn't exist
+          mkdir -p docs/world
+          
+          # Copy world state to docs
+          cp world/world_state.json docs/world/ 2>&1 || echo "⚠️ world_state.json not found"
+          cp world/knowledge.json docs/world/ 2>&1 || echo "⚠️ knowledge.json not found"
+          
+          # Check what changed
+          git add docs/world/
+          
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No changes to sync"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            
+            # Show what changed
+            echo "✅ Changes detected:"
+            git diff --staged --stat
+            
+            # Extract tick
+            WORLD_TICK=$(python3 -c "import json; print(json.load(open('world/world_state.json'))['tick'])" 2>/dev/null || echo "unknown")
+            echo ""
+            echo "World tick: ${WORLD_TICK}"
+            echo "world_tick=${WORLD_TICK}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create PR with docs sync
+        id: sync_pr
+        if: steps.sync.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="sync-world-docs/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git commit -m "📚 Sync World State to Docs - Pipeline"
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR
+          PR_URL=$(gh pr create \
+            --title "📚 Sync World State to Docs - $(date +%Y-%m-%d)" \
+            --body "## 📚 World State Documentation Sync
+          
+          **World Tick:** ${{ steps.sync.outputs.world_tick }}
+          **Pipeline Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          Updates:
+          - ✅ Agent mission assignments synced to docs
+          - ✅ World state published to GitHub Pages
+          - ✅ Agent status updated (working/exploring)
+          
+          This ensures the GitHub Pages site reflects the latest agent missions and world state.
+          
+          **Note:** This PR will be auto-merged to complete the documentation sync.
+          " \
+            --label "automated,documentation,world-model,auto-merge,copilot" \
+            --base main \
+            --head "$BRANCH_NAME")
+          
+          # Extract PR number
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "pr_created=true" >> $GITHUB_OUTPUT
+
+  # ============================================================================
+  # STAGE 4.95: MERGE DOCS SYNC PR
+  # ============================================================================
+  
+  merge-docs-sync-pr:
+    name: "Stage 4.95: Merge Docs Sync PR"
+    runs-on: ubuntu-latest
+    needs: sync-world-to-docs
+    if: always() && !cancelled() && needs.sync-world-to-docs.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger Auto Review and Merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.sync-world-to-docs.outputs.pr_number }}"
+          echo "🔄 Triggering Auto Review & Merge for docs sync PR #$PR_NUMBER..."
+          
+          gh workflow run auto-review-merge.yml \
+            --repo ${{ github.repository }} \
+            -f pr_number="$PR_NUMBER"
+          
+          echo "✅ Auto-review workflow triggered for PR #$PR_NUMBER"
+
+      - name: Wait for PR to be merged
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.sync-world-to-docs.outputs.pr_number }}"
+          echo "⏳ Waiting for PR #$PR_NUMBER to be merged..."
+          
+          sleep 8
+          
+          MAX_WAIT=120  # 2 minutes for docs sync
+          ELAPSED=8
+          WAIT_INTERVAL=3
+          
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            PR_DATA=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state,mergedAt)
+            MERGED_AT=$(echo "$PR_DATA" | jq -r '.mergedAt')
+            
+            if [ "$MERGED_AT" != "null" ] && [ "$MERGED_AT" != "" ]; then
+              echo "✅ Docs sync PR #$PR_NUMBER merged successfully!"
+              echo "🎉 World state now published to GitHub Pages"
+              exit 0
+            fi
+            
+            sleep $WAIT_INTERVAL
+            ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+            
+            if [ $WAIT_INTERVAL -lt 15 ]; then
+              WAIT_INTERVAL=$((WAIT_INTERVAL * 2))
+            fi
+          done
+          
+          echo "⚠️  PR #$PR_NUMBER not merged within ${MAX_WAIT}s (continuing anyway)"
+          exit 0  # Don't fail pipeline
+
+  # ============================================================================
   # STAGE 5: SELF-REINFORCEMENT (Optional)
   # ============================================================================
   
@@ -1309,7 +1672,7 @@ jobs:
   pipeline-summary:
     name: "Pipeline Summary"
     runs-on: ubuntu-latest
-    needs: [combine-learnings, merge-learning-pr, world-update, merge-world-pr, agent-missions, merge-mission-pr, assign-agents-to-missions]
+    needs: [combine-learnings, merge-learning-pr, world-update, merge-world-pr, agent-missions, merge-mission-pr, assign-agents-to-missions, sync-world-to-docs, merge-docs-sync-pr]
     if: always() && !cancelled()
     
     steps:
