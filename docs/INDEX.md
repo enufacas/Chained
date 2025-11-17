@@ -13,7 +13,8 @@ New to Chained? Start here:
 5. **[GLOSSARY.md](./GLOSSARY.md)** - ⭐ Terminology and definitions
 6. **[LABELS.md](../LABELS.md)** - ⭐ **NEW!** Complete label reference guide
 7. **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - ⭐ Quick problem solving guide
-8. **[COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md](./COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md)** - ⭐ **NEW!** Complete diagnostic manual (@clarify-champion)
+8. **[TROUBLESHOOTING_QUICK_REFERENCE.md](./TROUBLESHOOTING_QUICK_REFERENCE.md)** - ⭐ **NEW!** Quick reference card (@clarify-champion)
+9. **[COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md](./COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md)** - ⭐ **NEW!** Complete diagnostic manual (@clarify-champion)
 
 ## 🤖 Agent System
 
@@ -145,6 +146,8 @@ Practical examples and data:
 
 - **[examples/cli-agent-task-examples.md](./examples/cli-agent-task-examples.md)** - CLI usage examples
 - **[data/](./data/)** - JSON data files for GitHub Pages
+- **[diagrams/](./diagrams/)** - System architecture and flow diagrams
+  - **[troubleshooting-flow.md](./diagrams/troubleshooting-flow.md)** - ⭐ **NEW!** Visual troubleshooting guide (@clarify-champion)
 
 ## 🌐 GitHub Pages
 
