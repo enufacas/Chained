@@ -2,8 +2,8 @@ name: "AgentOps Dashboard Data Sync"
 
 on:
   schedule:
-    # Run every 30 minutes to keep dashboard data fresh
-    - cron: '*/30 * * * *'
+    # Run every 2 hours to keep dashboard data fresh
+    - cron: '0 */2 * * *'
   workflow_dispatch:
     inputs:
       fetch_limit:
