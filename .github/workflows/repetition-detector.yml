@@ -234,9 +234,26 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           total_flags="${{ steps.stats.outputs.total_flags }}"
+          flagged_count="${{ steps.stats.outputs.flagged_count }}"
           
-          # Only create issue if flags are significant (more than 2)
-          if [ "${total_flags}" -gt 2 ]; then
+          # Only create issue if:
+          # 1. There are actual agents flagged (not just repetition patterns)
+          # 2. More than 2 flags OR more than 1 agent flagged below threshold
+          # This prevents false positives from system bot data
+          if [ "${flagged_count}" -gt 0 ] && ([ "${total_flags}" -gt 2 ] || [ "${flagged_count}" -gt 1 ]); then
+            # Extract flagged agent details for better reporting
+            flagged_agents=$(python3 -c "
+import json
+with open('analysis/uniqueness-scores.json') as f:
+    data = json.load(f)
+    flagged = data.get('flagged_agents', [])
+    if flagged:
+        for agent in flagged:
+            print(f\"- **{agent['agent_id']}**: Score {agent['score']} - {agent['reason']}\")
+    else:
+        print('- None (all agents above threshold)')
+" 2>/dev/null || echo "- Error extracting agent details")
+            
             cat > /tmp/issue_body.md << 'ISSUE_EOF'
           ## AI Agent Repetition Detected
           
@@ -247,6 +264,9 @@ jobs:
           - **Agents Flagged:** FLAGGED_COUNT_PLACEHOLDER
           - **Average Uniqueness Score:** AVG_SCORE_PLACEHOLDER
           - **Analysis Period:** Last DAYS_PLACEHOLDER days
+          
+          ### Flagged Agents:
+          FLAGGED_AGENTS_LIST
           
           ### Impact:
           Repetitive patterns may indicate:
@@ -275,6 +295,11 @@ jobs:
             sed -i "s/FLAGGED_COUNT_PLACEHOLDER/${{ steps.stats.outputs.flagged_count }}/g" /tmp/issue_body.md
             sed -i "s/AVG_SCORE_PLACEHOLDER/${{ steps.stats.outputs.avg_score }}/g" /tmp/issue_body.md
             sed -i "s/DAYS_PLACEHOLDER/${{ steps.detect.outputs.days }}/g" /tmp/issue_body.md
+            
+            # Insert flagged agents list (properly escaped for sed)
+            echo "${flagged_agents}" > /tmp/flagged_agents.txt
+            sed -i "/FLAGGED_AGENTS_LIST/r /tmp/flagged_agents.txt" /tmp/issue_body.md
+            sed -i "/FLAGGED_AGENTS_LIST/d" /tmp/issue_body.md
             
             gh issue create \
               --title "⚠️ AI Agent Repetition Alert: ${total_flags} patterns detected" \
