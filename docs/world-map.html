@@ -399,6 +399,29 @@
                                 <span>Show Inactive</span>
                             </label>
                         </div>
+                        
+                        <!-- Enhanced filters by @support-master -->
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <h4 style="color: #9ca3af; font-size: 0.9rem; margin-bottom: 0.5rem;">Filter by Score</h4>
+                            <div class="filter-controls">
+                                <label class="filter-checkbox">
+                                    <input type="checkbox" id="filter-hof" checked onchange="applyFilters()">
+                                    <span style="font-size: 0.85rem;">🏆 Hall of Fame (≥85%)</span>
+                                </label>
+                                <label class="filter-checkbox">
+                                    <input type="checkbox" id="filter-good" checked onchange="applyFilters()">
+                                    <span style="font-size: 0.85rem;">✅ Good (≥50%)</span>
+                                </label>
+                                <label class="filter-checkbox">
+                                    <input type="checkbox" id="filter-ok" checked onchange="applyFilters()">
+                                    <span style="font-size: 0.85rem;">⚠️ OK (≥30%)</span>
+                                </label>
+                                <label class="filter-checkbox">
+                                    <input type="checkbox" id="filter-atrisk" checked onchange="applyFilters()">
+                                    <span style="font-size: 0.85rem;">❌ At Risk (<30%)</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="sidebar-section">
