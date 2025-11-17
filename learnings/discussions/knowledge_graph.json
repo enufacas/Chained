@@ -1,0 +1,246 @@
+{
+  "insights": {
+    "insight_1471_a9407c9f39f2": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:support-master -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udcd6 Ada** (@support-master) custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:46:02Z"
+    },
+    "insight_1471_e2a721abb0f6": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "process",
+      "content": "> \n> **@support-master** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-17T01:46:02Z"
+    },
+    "insight_1471_f1e92ec6bf79": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/support-master",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:46:02Z"
+    },
+    "insight_1471_2793d062c6c3": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "process",
+      "content": "md\n\nI would also like you to review the last 25 issues I enufacas the owner of the repository have created and help brainstorm on what further changes need to be made to the copilot-instructions markdown",
+      "confidence": 0.7,
+      "tags": [
+        "ai"
+      ],
+      "timestamp": "2025-11-17T01:46:02Z"
+    },
+    "insight_1471_2460f9f1f878": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "technical",
+      "content": "Make sure we show deference to the most recent updated architecture concepts including the autonomous learning pipeline",
+      "confidence": 0.7,
+      "tags": [
+        "learning"
+      ],
+      "timestamp": "2025-11-17T01:46:02Z"
+    },
+    "insight_1471_b79a5240d615": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "agent_behavior",
+      "content": "Perhaps we should consider a rule that demands we keep a certain sets of doc sources of truth up to date and read them and update them as part of each agents lifecycle",
+      "confidence": 0.7,
+      "tags": [
+        "agent",
+        "ai"
+      ],
+      "timestamp": "2025-11-17T01:46:02Z"
+    },
+    "insight_1471_c66ee633810a": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the \ud83d\udcd6 **Ada** (@support-master) specialization:\n\n- **Agent**: \ud83d\udcd6 **Ada** (@support-master)\n- **Match Confidence**: high\n- **Match Score**: 9\n- **Description**: Specialized agent for supporting skill building",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_328e5b013434": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "technical",
+      "content": "Focuses on code reviews, best practices, and knowledge sharing",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_bdb8ace47df1": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_ebd1d5f5773b": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/support-master",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_4a4a25969e28": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@support-master** by name in all conversations related to this issue",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_be6389020b05": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@support-master** - Please use the **support-master** custom agent profile from `",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_4d3d1a5ac0da": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_1da71d7014a5": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [support-master agent definition](https://github",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_741b0fe2c65e": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **Ada** (@support-master) will analyze the issue requirements using the support-master specialization\n2",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_79a856566dc5": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **Ada** (@support-master) will create a branch and implement the solution following the support-master approach\n3",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_0e96774fe2c9": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **Ada** (@support-master) will open a PR with the implementation\n4",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_d8e4e469b0a4": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-17T01:46:23Z"
+    },
+    "insight_1471_25eb247cc410": {
+      "issue_number": 1471,
+      "issue_title": "Update copilot-instructions ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** **Ada** (@support-master) (support-master specialization)\n**Assigned at:** 2025-11-17 01:46:23 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:46:23Z"
+    }
+  },
+  "connections": [
+    {
+      "source_insight_id": "insight_1471_ebd1d5f5773b",
+      "target_insight_id": "insight_1471_f1e92ec6bf79",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T02:02:01.104899+00:00"
+    },
+    {
+      "source_insight_id": "insight_1471_ebd1d5f5773b",
+      "target_insight_id": "insight_1471_f1e92ec6bf79",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T02:02:01.105026+00:00"
+    },
+    {
+      "source_insight_id": "insight_1471_ebd1d5f5773b",
+      "target_insight_id": "insight_1471_f1e92ec6bf79",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T02:02:01.105511+00:00"
+    },
+    {
+      "source_insight_id": "insight_1471_ebd1d5f5773b",
+      "target_insight_id": "insight_1471_f1e92ec6bf79",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T02:02:01.106008+00:00"
+    }
+  ],
+  "metadata": {
+    "created": "2025-11-17T02:02:01.102760+00:00",
+    "last_updated": "2025-11-17T02:02:01.107395+00:00",
+    "total_insights": 19,
+    "total_connections": 4
+  }
+}
