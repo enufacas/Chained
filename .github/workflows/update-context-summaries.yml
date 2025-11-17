@@ -1,0 +1,50 @@
+name: Update Context Summaries
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+  push:
+    paths:
+      - 'learnings/discussions/*.json'
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-context:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Generate summaries
+        run: python3 tools/generate-context-summaries.py --update-all
+      
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add .
+          git diff --staged --quiet && exit 0
+          
+          BRANCH="context-update/$(date +%Y%m%d-%H%M%S)-${{ github.run_id }}"
+          git checkout -b "$BRANCH"
+          git commit -m "chore: Update context summaries"
+          git push origin "$BRANCH"
+          
+          gh pr create --title "chore: Update context summaries" \
+            --body "Auto-updated by @investigate-champion" \
+            --label "automated,documentation" \
+            --base main --head "$BRANCH"
