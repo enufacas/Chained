@@ -167,7 +167,7 @@ jobs:
           # Push branch
           git push origin "$BRANCH_NAME"
           
-          # Create PR
+          # Create PR (with fallback if labels don't exist)
           gh pr create \
             --title "Update issue history: Issue #$ISSUE_NUM (@engineer-master)" \
             --body "**@engineer-master** has updated the semantic similarity engine history.
@@ -186,4 +186,26 @@ jobs:
           *Automated by semantic similarity engine collection workflow*" \
             --label "automated,documentation" \
             --base main \
-            --head "$BRANCH_NAME"
+            --head "$BRANCH_NAME" || {
+              echo "⚠️ PR creation with labels failed, retrying without labels..."
+              gh pr create \
+                --title "Update issue history: Issue #$ISSUE_NUM (@engineer-master)" \
+                --body "**@engineer-master** has updated the semantic similarity engine history.
+          
+          ## 📚 Issue Added
+          
+          - **Issue**: #$ISSUE_NUM
+          - **Title**: ${{ steps.extract.outputs.title }}
+          - **Agent**: ${{ steps.extract.outputs.agent }}
+          - **Solution**: ${{ steps.extract.outputs.solution }}
+          
+          This issue has been added to the semantic similarity engine history for future reference and matching.
+          
+          ---
+          
+          *Automated by semantic similarity engine collection workflow (labels unavailable)*" \
+                --base main \
+                --head "$BRANCH_NAME"
+            }
+          
+          echo "✅ PR created for issue history update"
