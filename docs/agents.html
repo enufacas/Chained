@@ -501,6 +501,83 @@
                 </div>
             </section>
 
+            <!-- Agent Statistics Table Section -->
+            <section>
+                <h2>📊 Agent Statistics Table</h2>
+                <p style="color: var(--text-muted); text-align: center; margin-bottom: 1rem;">
+                    Comprehensive statistics for all agents with filtering and sorting capabilities
+                </p>
+                
+                <!-- Search and Filter Controls -->
+                <div class="stats-controls" style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <input type="text" id="searchInput" placeholder="🔍 Search by name..." 
+                           style="flex: 1; min-width: 200px; padding: 10px; border-radius: 8px; border: 1px solid rgba(6, 182, 212, 0.3); background: var(--card-bg); color: var(--text-color);">
+                    
+                    <select id="statusFilter" style="padding: 10px; border-radius: 8px; border: 1px solid rgba(6, 182, 212, 0.3); background: var(--card-bg); color: var(--text-color);">
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="hall_of_fame">Hall of Fame</option>
+                        <option value="eliminated">Eliminated</option>
+                    </select>
+                    
+                    <select id="specializationFilter" style="padding: 10px; border-radius: 8px; border: 1px solid rgba(6, 182, 212, 0.3); background: var(--card-bg); color: var(--text-color);">
+                        <option value="all">All Specializations</option>
+                    </select>
+                    
+                    <button id="resetFilters" style="padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(6, 182, 212, 0.5); background: rgba(6, 182, 212, 0.2); color: var(--primary-color); cursor: pointer; font-weight: 600;">
+                        Reset Filters
+                    </button>
+                </div>
+                
+                <!-- Statistics Table -->
+                <div style="overflow-x: auto; background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                    <table id="agentStatsTable" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: rgba(6, 182, 212, 0.1); border-bottom: 2px solid rgba(6, 182, 212, 0.3);">
+                                <th class="sortable" data-column="name" style="padding: 15px; text-align: left; cursor: pointer; user-select: none; color: var(--primary-color); font-weight: 600;">
+                                    Name <span class="sort-indicator">↕️</span>
+                                </th>
+                                <th class="sortable" data-column="specialization" style="padding: 15px; text-align: left; cursor: pointer; user-select: none; color: var(--primary-color); font-weight: 600;">
+                                    Specialization <span class="sort-indicator">↕️</span>
+                                </th>
+                                <th class="sortable" data-column="spawned_at" style="padding: 15px; text-align: left; cursor: pointer; user-select: none; color: var(--primary-color); font-weight: 600;">
+                                    Spawn Date <span class="sort-indicator">↕️</span>
+                                </th>
+                                <th class="sortable" data-column="prs_merged" style="padding: 15px; text-align: center; cursor: pointer; user-select: none; color: var(--primary-color); font-weight: 600;">
+                                    PRs <span class="sort-indicator">↕️</span>
+                                </th>
+                                <th class="sortable" data-column="issues_resolved" style="padding: 15px; text-align: center; cursor: pointer; user-select: none; color: var(--primary-color); font-weight: 600;">
+                                    Issues <span class="sort-indicator">↕️</span>
+                                </th>
+                                <th class="sortable" data-column="reviews_given" style="padding: 15px; text-align: center; cursor: pointer; user-select: none; color: var(--primary-color); font-weight: 600;">
+                                    Reviews <span class="sort-indicator">↕️</span>
+                                </th>
+                                <th class="sortable" data-column="overall_score" style="padding: 15px; text-align: center; cursor: pointer; user-select: none; color: var(--primary-color); font-weight: 600;">
+                                    Overall Score <span class="sort-indicator">↕️</span>
+                                </th>
+                                <th class="sortable" data-column="code_quality_score" style="padding: 15px; text-align: center; cursor: pointer; user-select: none; color: var(--primary-color); font-weight: 600;">
+                                    Quality <span class="sort-indicator">↕️</span>
+                                </th>
+                                <th class="sortable" data-column="status" style="padding: 15px; text-align: center; cursor: pointer; user-select: none; color: var(--primary-color); font-weight: 600;">
+                                    Status <span class="sort-indicator">↕️</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="agentStatsBody">
+                            <tr>
+                                <td colspan="9" style="padding: 40px; text-align: center; color: var(--text-muted);">
+                                    Loading agent statistics...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 15px; padding: 10px; text-align: center; color: var(--text-muted); font-size: 14px;">
+                    <span id="tableStats">Showing 0 agents</span>
+                </div>
+            </section>
+
             <section>
                 <h2>🏆 Hall of Fame</h2>
                 <p style="color: var(--text-muted); text-align: center; margin-bottom: 1rem;">
@@ -539,6 +616,23 @@
     </main>
 
     <script>
+        // Global variables for table management
+        let allAgentsData = [];
+        let currentSort = { column: 'spawned_at', direction: 'desc' };
+        
+        // Debounce function for performance optimization (@accelerate-master approach)
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
         async function loadAgentData() {
             try {
                 const response = await fetch('data/agent-registry.json');
@@ -547,11 +641,19 @@
                 }
                 const registry = await response.json();
                 
+                // Combine all agents for the table
+                allAgentsData = [...registry.agents];
+                if (registry.hall_of_fame) {
+                    allAgentsData.push(...registry.hall_of_fame);
+                }
+                
                 displayStats(registry);
                 displaySystemLead(registry);
                 displayHallOfFame(registry);
                 displayActiveAgents(registry);
                 displayEliminatedAgents(registry);
+                populateAgentStatsTable(allAgentsData);
+                setupTableControls();
             } catch (error) {
                 console.log('Agent registry not yet available:', error);
                 showPlaceholder();
@@ -793,6 +895,244 @@
                     </p>
                 </div>
             `;
+        }
+        
+        // Agent Stats Table Functions (@accelerate-master implementation)
+        function populateAgentStatsTable(agents) {
+            if (!agents || agents.length === 0) {
+                document.getElementById('agentStatsBody').innerHTML = `
+                    <tr>
+                        <td colspan="9" style="padding: 40px; text-align: center; color: var(--text-muted);">
+                            No agent data available
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('tableStats').textContent = 'Showing 0 agents';
+                return;
+            }
+            
+            // Get unique specializations for filter dropdown
+            const specializations = [...new Set(agents.map(a => a.specialization))].sort();
+            const specSelect = document.getElementById('specializationFilter');
+            specSelect.innerHTML = '<option value="all">All Specializations</option>';
+            specializations.forEach(spec => {
+                const option = document.createElement('option');
+                option.value = spec;
+                option.textContent = formatSpecialization(spec);
+                specSelect.appendChild(option);
+            });
+            
+            // Sort and render
+            renderAgentStatsTable(agents);
+        }
+        
+        function renderAgentStatsTable(agents) {
+            const tbody = document.getElementById('agentStatsBody');
+            
+            if (agents.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="padding: 40px; text-align: center; color: var(--text-muted);">
+                            No agents match the current filters
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('tableStats').textContent = 'Showing 0 agents';
+                return;
+            }
+            
+            // Sort agents
+            const sortedAgents = sortAgents([...agents], currentSort.column, currentSort.direction);
+            
+            // Generate table rows
+            const rows = sortedAgents.map(agent => {
+                const statusBadge = getStatusBadge(agent.status);
+                const spawnDate = new Date(agent.spawned_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                const overallScore = ((agent.metrics.overall_score || 0) * 100).toFixed(1);
+                const qualityScore = ((agent.metrics.code_quality_score || 0) * 100).toFixed(0);
+                
+                return `
+                    <tr style="border-bottom: 1px solid rgba(6, 182, 212, 0.1); transition: background 0.2s;" 
+                        onmouseover="this.style.background='rgba(6, 182, 212, 0.05)'" 
+                        onmouseout="this.style.background='transparent'">
+                        <td style="padding: 12px; color: var(--text-color); font-weight: 500;">
+                            ${agent.name || agent.human_name}
+                        </td>
+                        <td style="padding: 12px; color: var(--text-muted); font-size: 14px;">
+                            ${formatSpecialization(agent.specialization)}
+                        </td>
+                        <td style="padding: 12px; color: var(--text-muted); font-size: 14px;">
+                            ${spawnDate}
+                        </td>
+                        <td style="padding: 12px; text-align: center; color: var(--text-color); font-weight: 600;">
+                            ${agent.metrics.prs_merged || 0}
+                        </td>
+                        <td style="padding: 12px; text-align: center; color: var(--text-color); font-weight: 600;">
+                            ${agent.metrics.issues_resolved || 0}
+                        </td>
+                        <td style="padding: 12px; text-align: center; color: var(--text-color); font-weight: 600;">
+                            ${agent.metrics.reviews_given || 0}
+                        </td>
+                        <td style="padding: 12px; text-align: center;">
+                            <span style="color: ${getScoreColor(agent.metrics.overall_score)}; font-weight: 700; font-size: 15px;">
+                                ${overallScore}%
+                            </span>
+                        </td>
+                        <td style="padding: 12px; text-align: center;">
+                            <span style="color: ${getScoreColor(agent.metrics.code_quality_score)}; font-weight: 600;">
+                                ${qualityScore}%
+                            </span>
+                        </td>
+                        <td style="padding: 12px; text-align: center;">
+                            ${statusBadge}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = rows;
+            
+            // Update stats counter
+            const total = allAgentsData.length;
+            const showing = agents.length;
+            document.getElementById('tableStats').textContent = 
+                showing === total ? `Showing all ${total} agents` : `Showing ${showing} of ${total} agents`;
+        }
+        
+        function sortAgents(agents, column, direction) {
+            return agents.sort((a, b) => {
+                let aVal, bVal;
+                
+                switch (column) {
+                    case 'name':
+                        aVal = (a.name || a.human_name || '').toLowerCase();
+                        bVal = (b.name || b.human_name || '').toLowerCase();
+                        break;
+                    case 'specialization':
+                        aVal = a.specialization.toLowerCase();
+                        bVal = b.specialization.toLowerCase();
+                        break;
+                    case 'spawned_at':
+                        aVal = new Date(a.spawned_at).getTime();
+                        bVal = new Date(b.spawned_at).getTime();
+                        break;
+                    case 'prs_merged':
+                        aVal = a.metrics.prs_merged || 0;
+                        bVal = b.metrics.prs_merged || 0;
+                        break;
+                    case 'issues_resolved':
+                        aVal = a.metrics.issues_resolved || 0;
+                        bVal = b.metrics.issues_resolved || 0;
+                        break;
+                    case 'reviews_given':
+                        aVal = a.metrics.reviews_given || 0;
+                        bVal = b.metrics.reviews_given || 0;
+                        break;
+                    case 'overall_score':
+                        aVal = a.metrics.overall_score || 0;
+                        bVal = b.metrics.overall_score || 0;
+                        break;
+                    case 'code_quality_score':
+                        aVal = a.metrics.code_quality_score || 0;
+                        bVal = b.metrics.code_quality_score || 0;
+                        break;
+                    case 'status':
+                        const statusOrder = { 'hall_of_fame': 3, 'active': 2, 'eliminated': 1 };
+                        aVal = statusOrder[a.status] || 0;
+                        bVal = statusOrder[b.status] || 0;
+                        break;
+                    default:
+                        return 0;
+                }
+                
+                if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+        
+        function filterAgents() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const specFilter = document.getElementById('specializationFilter').value;
+            
+            const filtered = allAgentsData.filter(agent => {
+                const nameMatch = !searchTerm || 
+                    (agent.name || agent.human_name || '').toLowerCase().includes(searchTerm) ||
+                    agent.specialization.toLowerCase().includes(searchTerm);
+                    
+                const statusMatch = statusFilter === 'all' || agent.status === statusFilter;
+                const specMatch = specFilter === 'all' || agent.specialization === specFilter;
+                
+                return nameMatch && statusMatch && specMatch;
+            });
+            
+            renderAgentStatsTable(filtered);
+        }
+        
+        function setupTableControls() {
+            // Debounced search (@accelerate-master optimization)
+            const debouncedFilter = debounce(filterAgents, 300);
+            document.getElementById('searchInput').addEventListener('input', debouncedFilter);
+            
+            // Filter dropdowns
+            document.getElementById('statusFilter').addEventListener('change', filterAgents);
+            document.getElementById('specializationFilter').addEventListener('change', filterAgents);
+            
+            // Reset button
+            document.getElementById('resetFilters').addEventListener('click', () => {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('statusFilter').value = 'all';
+                document.getElementById('specializationFilter').value = 'all';
+                filterAgents();
+            });
+            
+            // Sortable column headers
+            document.querySelectorAll('.sortable').forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = header.dataset.column;
+                    
+                    // Toggle direction if same column, else default to desc
+                    if (currentSort.column === column) {
+                        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSort.column = column;
+                        currentSort.direction = 'desc';
+                    }
+                    
+                    // Update sort indicators
+                    document.querySelectorAll('.sort-indicator').forEach(ind => {
+                        ind.textContent = '↕️';
+                    });
+                    
+                    const indicator = header.querySelector('.sort-indicator');
+                    indicator.textContent = currentSort.direction === 'asc' ? '↑' : '↓';
+                    
+                    filterAgents();
+                });
+            });
+        }
+        
+        function getStatusBadge(status) {
+            const badges = {
+                'active': '<span style="display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981;">Active</span>',
+                'hall_of_fame': '<span style="display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid #ffd700;">Hall of Fame</span>',
+                'eliminated': '<span style="display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444;">Eliminated</span>'
+            };
+            return badges[status] || badges['active'];
+        }
+        
+        function getScoreColor(score) {
+            if (!score) return 'var(--text-muted)';
+            if (score >= 0.85) return '#ffd700'; // Gold for Hall of Fame
+            if (score >= 0.70) return '#10b981'; // Green for good
+            if (score >= 0.50) return '#06b6d4'; // Cyan for average
+            if (score >= 0.30) return '#f59e0b'; // Orange for low
+            return '#ef4444'; // Red for very low
         }
 
         // Load data on page load
