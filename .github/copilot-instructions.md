@@ -283,6 +283,12 @@ When making changes, consider how they align with these principles of autonomous
 - [FAQ](../FAQ.md) - Frequently asked questions
 - [Documentation Index](../docs/INDEX.md) - All documentation organized
 
+### Autonomous System Architecture
+- [Autonomous System Architecture](../AUTONOMOUS_SYSTEM_ARCHITECTURE.md) - Complete system blueprint
+- [Autonomous Loop Implementation](../AUTONOMOUS_LOOP_IMPLEMENTATION.md) - Closed-loop design
+- [Autonomous Pipeline](../docs/AUTONOMOUS_SYSTEM.md) - Pipeline architecture details
+- [Data Storage & Lifecycle](../docs/DATA_STORAGE_LIFECYCLE.md) - **Data architecture reference** - How data flows through the system, storage locations, lifecycle policies, and consumption paths
+
 ### Path-Specific Instructions
 - [Branch Protection Rules](./instructions/branch-protection.instructions.md) - PR-based workflow requirements
 - [Agent Issue Updates](./instructions/agent-issue-updates.instructions.md) - Communication requirements
@@ -292,4 +298,140 @@ When making changes, consider how they align with these principles of autonomous
 
 ---
 
+## 📖 Documentation Lifecycle & Maintenance
+
+### Critical Documentation Sources of Truth
+
+The following documents serve as **authoritative sources of truth** for their respective domains. **@support-master** and all agents MUST keep these documents up-to-date as part of their work lifecycle:
+
+#### 1. Data Architecture
+**Document**: `docs/DATA_STORAGE_LIFECYCLE.md`
+- **Scope**: All data storage locations, production workflows, consumption paths, retention policies
+- **Update Triggers**: 
+  - Adding new storage locations (directories, files)
+  - Creating new data production workflows
+  - Modifying data formats or schemas
+  - Changing consumption patterns
+  - Adding new data consumers
+- **Owner**: @investigate-champion (primary), @support-master (documentation)
+- **Update Frequency**: Within 24 hours of architectural changes
+
+#### 2. Autonomous System Architecture
+**Document**: `AUTONOMOUS_SYSTEM_ARCHITECTURE.md`
+- **Scope**: Complete system blueprint, component interactions, constraints, orchestration
+- **Update Triggers**:
+  - Changes to autonomous loop stages
+  - New workflow integrations
+  - Modified agent assignment logic
+  - World model updates
+  - Self-reinforcement changes
+- **Owner**: @create-guru (primary), all agents (contributions)
+- **Update Frequency**: Within 48 hours of system changes
+
+#### 3. Workflow Documentation
+**Document**: `docs/WORKFLOWS.md`
+- **Scope**: All GitHub Actions workflows, triggers, dependencies, data flows
+- **Update Triggers**:
+  - New workflow creation
+  - Workflow trigger changes
+  - Modified workflow dependencies
+  - Data input/output changes
+- **Owner**: @troubleshoot-expert (primary), @align-wizard (workflow coordination)
+- **Update Frequency**: Immediately when workflows are added/modified
+
+#### 4. Agent System Documentation
+**Documents**: `AGENT_QUICKSTART.md`, `.github/agents/README.md`
+- **Scope**: Agent capabilities, specializations, assignment rules, performance tracking
+- **Update Triggers**:
+  - New agent types created
+  - Agent specialization changes
+  - Performance metric updates
+  - Assignment algorithm changes
+- **Owner**: @coach-master (primary), all agents (self-documentation)
+- **Update Frequency**: Within 24 hours of agent system changes
+
+### Agent Documentation Responsibilities
+
+Every agent, including **@support-master**, MUST:
+
+1. **Read Before Working**: Consult relevant documentation sources of truth before starting any task
+2. **Document Changes**: Update documentation immediately after making architectural changes
+3. **Validate Accuracy**: Verify documentation matches actual implementation
+4. **Link Related Docs**: Cross-reference related documentation sections
+5. **Report Gaps**: Create issues for missing or outdated documentation
+
+### Documentation Update Process
+
+When making changes that affect sources of truth:
+
+```markdown
+1. Make code/system changes
+2. Update relevant documentation source(s) of truth
+3. Add "Updated [DOCUMENT_NAME]" to PR description
+4. Reference specific sections updated
+5. Ensure documentation reflects new reality
+6. Update last_updated date in document
+```
+
+### Example Documentation Update in PR
+
+```markdown
+## Changes Made
+- Added new learning source for Stack Overflow trends
+- Created `learn-from-stackoverflow.yml` workflow
+- Added `/learnings/stackoverflow_*.json` storage
+
+## Documentation Updates
+✅ Updated `docs/DATA_STORAGE_LIFECYCLE.md`:
+  - Section 1.1: Added `/learnings/` StackOverflow format
+  - Section 2.1: Added StackOverflow Learning Workflow
+  - Section 3.1.1: Added to Agent Decision Making sources
+  - Updated last_updated date to 2025-11-17
+```
+
+### Validation Rules
+
+**@support-master** and all agents must validate:
+- ✅ All new storage locations documented in DATA_STORAGE_LIFECYCLE.md
+- ✅ All new workflows documented with data flows
+- ✅ All architectural changes reflected in AUTONOMOUS_SYSTEM_ARCHITECTURE.md
+- ✅ All agent specialization changes updated in agent documentation
+- ✅ Cross-references between documents are accurate
+- ✅ Examples and diagrams reflect current implementation
+
+### Autonomous Learning Integration
+
+The autonomous learning pipeline creates a continuous feedback loop:
+
+```
+Learn → Analyze → Generate Ideas → Create Missions → Agents Work → 
+Self-Document → Feed Back to Learning
+```
+
+**Every agent** participates in this loop by:
+- **Learning from external sources**: TLDR, Hacker News, GitHub Trending
+- **Learning from self**: Analyzing completed work, PR discussions, issue resolutions
+- **Documenting insights**: Creating learnings that feed back into the system
+- **Maintaining knowledge**: Keeping documentation sources accurate and current
+
+### Documentation Anti-Patterns to Avoid
+
+❌ **DON'T**:
+- Make architectural changes without updating docs
+- Create new storage locations without documenting them
+- Add workflows without documenting data flows
+- Leave documentation outdated for more than 48 hours
+- Assume someone else will update the docs
+
+✅ **DO**:
+- Update docs as part of the same PR as code changes
+- Reference documentation in commit messages
+- Validate documentation accuracy before completing tasks
+- Cross-link related documentation sections
+- Keep documentation synchronized with reality
+
+---
+
 **Remember**: Custom agents are your first choice for specialized work. They are domain experts designed to deliver high-quality solutions in their areas of expertise. Use them liberally and trust their specialized capabilities.
+
+**Documentation is Living**: The autonomous system evolves continuously. Documentation must evolve with it. **@support-master** champions this principle.
