@@ -1,16 +1,2419 @@
 {
   "version": "1.0",
-  "last_updated": "2025-11-14T04:06:59.345305+00:00",
+  "last_updated": "2025-11-17T09:23:55.702732+00:00",
   "patterns": {
-    "success": [],
-    "failure": [],
+    "success": [
+      {
+        "pattern_type": "success",
+        "commit_hash": "31c34df",
+        "timestamp": "2025-11-17T09:20:44+00:00",
+        "subject": "feat: autonomous refactoring agent that learns code style preferences (@restructure-master) (#1569)",
+        "files_changed": 5,
+        "file_types": [
+          ".md",
+          ".py"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": true,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": true,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "b73ff93",
+        "timestamp": "2025-11-17T09:20:32+00:00",
+        "subject": "\ud83e\udd16 AI Friend Daily Conversation - 2025-11-17 (#1570)",
+        "files_changed": 2,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "4f6d235",
+        "timestamp": "2025-11-17T09:20:23+00:00",
+        "subject": "\ud83d\udcca Update timeline data - 2025-11-17 09:19:00 UTC (#1573)",
+        "files_changed": 5,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "2a21301",
+        "timestamp": "2025-11-17T08:50:43+00:00",
+        "subject": "Complete Apple Innovation investigation with multi-model AI strategy insights (@develop-specialist) (#1562)",
+        "files_changed": 3,
+        "file_types": [
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "1eea0e4",
+        "timestamp": "2025-11-17T08:50:30+00:00",
+        "subject": "Research Report: Nvidia Innovation Landscape Analysis (idea:38) by @coach-master (#1563)",
+        "files_changed": 3,
+        "file_types": [
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "c229628",
+        "timestamp": "2025-11-17T08:50:16+00:00",
+        "subject": "Complete OpenAI innovation research mission (idea:39) by @investigate-champion (#1564)",
+        "files_changed": 3,
+        "file_types": [
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "ad06952",
+        "timestamp": "2025-11-17T08:50:01+00:00",
+        "subject": "Research: Anthropic innovation landscape (idea:40) (@pioneer-pro) (#1565)",
+        "files_changed": 2,
+        "file_types": [
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "dc982d9",
+        "timestamp": "2025-11-17T08:49:49+00:00",
+        "subject": "Investigation and validation of GitHub Actions recommendations by @investigate-champion (#1567)",
+        "files_changed": 5,
+        "file_types": [
+          ".yml",
+          ".md",
+          ".txt"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "2bfb3da",
+        "timestamp": "2025-11-17T08:26:04+00:00",
+        "subject": "\ud83d\udcda Sync World State to Docs - Pipeline (#1561)",
+        "files_changed": 2,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "59fb3e1",
+        "timestamp": "2025-11-17T08:25:16+00:00",
+        "subject": "\ud83c\udfaf Agent Missions - Pipeline (#1560)",
+        "files_changed": 3,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "e74ca83",
+        "timestamp": "2025-11-17T08:24:17+00:00",
+        "subject": "\ud83c\udf0d World Model Update - Pipeline (#1554)",
+        "files_changed": 4,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "8eba26c",
+        "timestamp": "2025-11-17T08:23:49+00:00",
+        "subject": "chore: new chained tv episode (#1551)",
+        "files_changed": 3,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": true,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "d00e9f2",
+        "timestamp": "2025-11-17T08:23:39+00:00",
+        "subject": "\ud83d\udd04 AgentOps data sync - 2025-11-17 08:16 (#1552)",
+        "files_changed": 1,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "bb6fc98",
+        "timestamp": "2025-11-17T08:23:22+00:00",
+        "subject": "\ud83e\udde0 Learning Pipeline - 2025-11-17 (#1553)",
+        "files_changed": 1,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "b716918",
+        "timestamp": "2025-11-17T07:49:18+00:00",
+        "subject": "Fix AgentOps dashboard: add chart axis labels and pagination (@investigate-champion) (#1548)",
+        "files_changed": 2,
+        "file_types": [
+          ".yml",
+          ".html"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "5eb2c09",
+        "timestamp": "2025-11-17T07:16:28+00:00",
+        "subject": "docs: Add comprehensive troubleshooting guide suite (@clarify-champion) (#1540)",
+        "files_changed": 6,
+        "file_types": [
+          ".md",
+          ".sh"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": true,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "9bb168a",
+        "timestamp": "2025-11-17T07:16:13+00:00",
+        "subject": "Move Trends & Analytics section to top of AgentOps dashboard (#1546)",
+        "files_changed": 1,
+        "file_types": [
+          ".html"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "604363b",
+        "timestamp": "2025-11-17T06:51:30+00:00",
+        "subject": "\ud83d\udcca Goal progress update: \ud83d\udfe2 Strong Progress (#1542)",
+        "files_changed": 1,
+        "file_types": [
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "151fd9f",
+        "timestamp": "2025-11-17T06:48:01+00:00",
+        "subject": "Merge pull request #1538 from enufacas/timeline/update-20251117-062941",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "bd82ff3",
+        "timestamp": "2025-11-17T06:46:20+00:00",
+        "subject": "Merge pull request #1544 from enufacas/self-documenting-ai/20251117-064505-19420862160",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "e82aa97",
+        "timestamp": "2025-11-17T06:44:45+00:00",
+        "subject": "Merge pull request #1537 from enufacas/copilot/update-workflow-run-frequency",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "54a3945",
+        "timestamp": "2025-11-17T06:38:05+00:00",
+        "subject": "Merge pull request #1518 from enufacas/self-documenting-ai/20251117-054850-19419776837",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "4719195",
+        "timestamp": "2025-11-17T06:33:50+00:00",
+        "subject": "Update documentation to reflect 2-hour schedule (@align-wizard)",
+        "files_changed": 1,
+        "file_types": [
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "b2b25ce",
+        "timestamp": "2025-11-17T06:29:53+00:00",
+        "subject": "Update AgentOps workflow to run every 2 hours (@align-wizard)",
+        "files_changed": 1,
+        "file_types": [
+          ".yml"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "a330c07",
+        "timestamp": "2025-11-17T06:29:41+00:00",
+        "subject": "\ud83d\udcca Update timeline data - 2025-11-17 06:29:41 UTC",
+        "files_changed": 5,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "6157759",
+        "timestamp": "2025-11-17T06:29:31+00:00",
+        "subject": "Merge remote-tracking branch 'origin/main' into self-documenting-ai/20251117-054850-19419776837",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "a7b09da",
+        "timestamp": "2025-11-17T06:25:34+00:00",
+        "subject": "feat: enhanced learning from issue #1521 (@engineer-master) (#1523)",
+        "files_changed": 4,
+        "file_types": [
+          ".json",
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "3f1c820",
+        "timestamp": "2025-11-17T06:25:25+00:00",
+        "subject": "chore: new chained tv episode (#1527)",
+        "files_changed": 3,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": true,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "a015138",
+        "timestamp": "2025-11-17T06:25:22+00:00",
+        "subject": "Initial plan",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "27197a7",
+        "timestamp": "2025-11-17T06:25:08+00:00",
+        "subject": "\ud83c\udfaf Set AI Goal of the Day: Documentation - 2025-11-17 (#1529)",
+        "files_changed": 1,
+        "file_types": [
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "959f67f",
+        "timestamp": "2025-11-17T06:24:58+00:00",
+        "subject": "\ud83d\udcca Update timeline data - 2025-11-17 06:22:46 UTC (#1535)",
+        "files_changed": 5,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "579dc7e",
+        "timestamp": "2025-11-17T06:22:33+00:00",
+        "subject": "Merge pull request #1524 from enufacas/agentops-sync/20251117-055814-19419920574",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "c3fb230",
+        "timestamp": "2025-11-17T06:22:27+00:00",
+        "subject": "Merge remote-tracking branch 'origin/main' into self-documenting-ai/20251117-054850-19419776837",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "11e2f30",
+        "timestamp": "2025-11-17T06:16:26+00:00",
+        "subject": "Merge pull request #1526 from enufacas/copilot/improve-agent-ops-hero-cards",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "791f19a",
+        "timestamp": "2025-11-17T06:11:31+00:00",
+        "subject": "Complete AgentOps dashboard improvements (@investigate-champion)",
+        "files_changed": 1,
+        "file_types": [
+          ".html"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "0da8bfc",
+        "timestamp": "2025-11-17T06:03:49+00:00",
+        "subject": "Initial plan",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "763727a",
+        "timestamp": "2025-11-17T05:57:42+00:00",
+        "subject": "Merge pull request #1522 from enufacas/copilot/fix-workflow-failure-again",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "017a1bb",
+        "timestamp": "2025-11-17T05:55:20+00:00",
+        "subject": "Add comprehensive workflow fix summary (@troubleshoot-expert)",
+        "files_changed": 1,
+        "file_types": [
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "d1f386e",
+        "timestamp": "2025-11-17T05:51:20+00:00",
+        "subject": "Initial plan",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "8552ffd",
+        "timestamp": "2025-11-17T05:49:05+00:00",
+        "subject": "Merge pull request #1515 from enufacas/copilot/add-link-menu-support",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "4158d7d",
+        "timestamp": "2025-11-17T05:48:30+00:00",
+        "subject": "Merge pull request #1512 from enufacas/copilot/add-commit-to-main",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "6e48ecd",
+        "timestamp": "2025-11-17T05:46:11+00:00",
+        "subject": "Add AgentOps card to Explore Chained section (@meta-coordinator)",
+        "files_changed": 1,
+        "file_types": [
+          ".html"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "3f44c79",
+        "timestamp": "2025-11-17T05:42:19+00:00",
+        "subject": "feat: enhanced learning from issue #1509 (@engineer-master) (#1513)",
+        "files_changed": 4,
+        "file_types": [
+          ".json",
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "3e76ba8",
+        "timestamp": "2025-11-17T05:41:22+00:00",
+        "subject": "Initial plan",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "4d87bb2",
+        "timestamp": "2025-11-17T05:40:11+00:00",
+        "subject": "Merge pull request #1510 from enufacas/copilot/fix-workflow-failure",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "fdbee60",
+        "timestamp": "2025-11-17T05:40:05+00:00",
+        "subject": "Initial plan",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "5aebf22",
+        "timestamp": "2025-11-17T05:24:17+00:00",
+        "subject": "Fix AgentOps workflow: handle float string in FETCH_LIMIT conversion (@coordinate-wizard)",
+        "files_changed": 1,
+        "file_types": [
+          ".yml"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "167c5ef",
+        "timestamp": "2025-11-17T05:21:13+00:00",
+        "subject": "Initial plan",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "059bbe4",
+        "timestamp": "2025-11-17T05:16:38+00:00",
+        "subject": "Implement genetic algorithm-based agent evolution system (@accelerate-specialist) (#1506)",
+        "files_changed": 7,
+        "file_types": [
+          ".yml",
+          ".md",
+          ".py",
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": false,
+          "has_tests": true,
+          "large_change": true,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "0f9e1ac",
+        "timestamp": "2025-11-17T05:16:24+00:00",
+        "subject": "feat: implement AgentOps observability dashboard (@create-champion) (#1508)",
+        "files_changed": 6,
+        "file_types": [
+          ".yml",
+          ".md",
+          ".html",
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": true,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "a66490d",
+        "timestamp": "2025-11-17T04:58:28+00:00",
+        "subject": "Merge pull request #1505 from enufacas/copilot/merge-commit-201c2090",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "36f0773",
+        "timestamp": "2025-11-17T04:24:45+00:00",
+        "subject": "docs: Update agent listings to include all 47 agents",
+        "files_changed": 2,
+        "file_types": [
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "97cc7ba",
+        "timestamp": "2025-11-17T04:45:00+00:00",
+        "subject": "Initial plan",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "f804498",
+        "timestamp": "2025-11-17T04:22:44+00:00",
+        "subject": "Context-aware agent instructions from knowledge graph learnings (#1497)",
+        "files_changed": 18,
+        "file_types": [
+          ".yml",
+          ".md",
+          ".py",
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": true,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "558bd44",
+        "timestamp": "2025-11-17T04:22:33+00:00",
+        "subject": "\ud83d\udcca Goal progress update: \ud83d\udfe2 Strong Progress (#1500)",
+        "files_changed": 1,
+        "file_types": [
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "84b15d7",
+        "timestamp": "2025-11-17T04:22:21+00:00",
+        "subject": "Fix workflow failures from missing labels with retry fallback pattern (#1501)",
+        "files_changed": 3,
+        "file_types": [
+          ".yml",
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "b278d5d",
+        "timestamp": "2025-11-17T04:22:10+00:00",
+        "subject": "chore: new chained tv episode (#1502)",
+        "files_changed": 3,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": true,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "e50df76",
+        "timestamp": "2025-11-17T03:47:06+00:00",
+        "subject": "Accelerate unsupervised pattern learning by 39% via AST caching and single-pass analysis (@accelerate-specialist) (#1494)",
+        "files_changed": 8,
+        "file_types": [
+          ".md",
+          ".py",
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": true,
+          "large_change": true,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "7448dd4",
+        "timestamp": "2025-11-17T03:46:56+00:00",
+        "subject": "chore: new chained tv episode (#1495)",
+        "files_changed": 3,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": true,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "b151a0f",
+        "timestamp": "2025-11-17T03:46:33+00:00",
+        "subject": "\ud83d\udcca Update timeline data - 2025-11-17 03:45:43 UTC (#1499)",
+        "files_changed": 5,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "1409c84",
+        "timestamp": "2025-11-17T03:26:27+00:00",
+        "subject": "Merge pull request #1493 from enufacas/copilot/update-stats-on-lifecycle-page",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "8f67ebb",
+        "timestamp": "2025-11-17T03:24:46+00:00",
+        "subject": "Merge pull request #1488 from enufacas/self-documenting-ai/20251117-024102-19416678353",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "91b08a0",
+        "timestamp": "2025-11-17T03:21:03+00:00",
+        "subject": "Merge pull request #1491 from enufacas/copilot/sub-pr-1488",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "4c42490",
+        "timestamp": "2025-11-17T03:04:42+00:00",
+        "subject": "Update lifecycle stats to use real-time data from stats.json (@integrate-specialist)",
+        "files_changed": 3,
+        "file_types": [
+          ".yml",
+          ".json",
+          ".html"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "e89ab20",
+        "timestamp": "2025-11-17T02:58:47+00:00",
+        "subject": "Initial plan",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "2b95e4c",
+        "timestamp": "2025-11-17T02:58:39+00:00",
+        "subject": "fix: add copilot label to enhanced learning PRs for auto-merge",
+        "files_changed": 1,
+        "file_types": [
+          ".yml"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "24ca777",
+        "timestamp": "2025-11-17T02:55:54+00:00",
+        "subject": "Initial plan",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "8f94664",
+        "timestamp": "2025-11-17T02:41:10+00:00",
+        "subject": "Merge pull request #1484 from enufacas/copilot/add-copilot-instructions-rule",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "ed573e3",
+        "timestamp": "2025-11-17T02:40:40+00:00",
+        "subject": "Merge pull request #1487 from enufacas/copilot/update-readme-architecture",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "407eadc",
+        "timestamp": "2025-11-17T02:26:47+00:00",
+        "subject": "Update README and GitHub Pages home with autonomous learning pipeline emphasis - @support-master",
+        "files_changed": 2,
+        "file_types": [
+          ".md",
+          ".html"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "380ca7e",
+        "timestamp": "2025-11-17T02:21:22+00:00",
+        "subject": "Initial plan",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "020f61e",
+        "timestamp": "2025-11-17T02:19:55+00:00",
+        "subject": "Merge pull request #1474 from enufacas/copilot/redesign-home-page-layout",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "5fe374b",
+        "timestamp": "2025-11-17T02:16:30+00:00",
+        "subject": "Add workflow-reference instruction file for issue/PR attribution",
+        "files_changed": 2,
+        "file_types": [
+          ".md"
+        ],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "2b2bf8b",
+        "timestamp": "2025-11-17T02:12:13+00:00",
+        "subject": "Merge pull request #1482 from enufacas/self-documenting-ai/20251117-020957-19416173654",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "6e3c47e",
+        "timestamp": "2025-11-17T02:12:00+00:00",
+        "subject": "Merge pull request #1462 from enufacas/automated-clustering/20251117-011411-19415297281",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "f2e104c",
+        "timestamp": "2025-11-17T02:11:47+00:00",
+        "subject": "Merge pull request #1467 from enufacas/timeline/update-20251117-012544",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "478dc21",
+        "timestamp": "2025-11-17T02:11:40+00:00",
+        "subject": "Initial plan",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "b778d0e",
+        "timestamp": "2025-11-17T02:09:34+00:00",
+        "subject": "Merge pull request #1470 from enufacas/copilot/update-agent-evaluation-report-again",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "fa41b2b",
+        "timestamp": "2025-11-17T02:08:26+00:00",
+        "subject": "Merge pull request #1481 from enufacas/self-documenting-ai/20251117-020802-19416144105",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "success",
+        "commit_hash": "c5f94d5",
+        "timestamp": "2025-11-17T02:08:02+00:00",
+        "subject": "Merge pull request #1476 from enufacas/architecture-evolution/20251117-020205-19416047205",
+        "files_changed": 0,
+        "file_types": [],
+        "outcome": {
+          "success": true,
+          "fixes_needed": [],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      }
+    ],
+    "failure": [
+      {
+        "pattern_type": "failure",
+        "commit_hash": "b5fa80b",
+        "timestamp": "2025-11-17T08:24:01+00:00",
+        "subject": "AgentOps: Add branch visibility and analyze data extraction costs (#1550)",
+        "files_changed": 4,
+        "file_types": [
+          ".md",
+          ".html"
+        ],
+        "outcome": {
+          "success": false,
+          "fixes_needed": [
+            {
+              "commit": "b716918",
+              "subject": "Fix AgentOps dashboard: add chart axis labels and pagination (@investigate-champion) (#1548)",
+              "files": [
+                "docs/agentops.html"
+              ]
+            }
+          ],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "failure",
+        "commit_hash": "94bcae4",
+        "timestamp": "2025-11-17T06:45:05+00:00",
+        "subject": "feat: enhanced learning from issue #1536 (@engineer-master)",
+        "files_changed": 4,
+        "file_types": [
+          ".json",
+          ".md"
+        ],
+        "outcome": {
+          "success": false,
+          "fixes_needed": [
+            {
+              "commit": "a7b09da",
+              "subject": "feat: enhanced learning from issue #1521 (@engineer-master) (#1523)",
+              "files": [
+                "learnings/discussions/knowledge_graph.json"
+              ]
+            }
+          ],
+          "improvements_made": [
+            {
+              "commit": "a7b09da",
+              "subject": "feat: enhanced learning from issue #1521 (@engineer-master) (#1523)"
+            }
+          ],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "failure",
+        "commit_hash": "19bdb16",
+        "timestamp": "2025-11-17T05:58:14+00:00",
+        "subject": "\ud83d\udd04 AgentOps data sync - 2025-11-17 05:58",
+        "files_changed": 1,
+        "file_types": [
+          ".json"
+        ],
+        "outcome": {
+          "success": false,
+          "fixes_needed": [
+            {
+              "commit": "dce47da",
+              "subject": "feat: add Issue and PR tracking to AgentOps dashboard (@create-champion)",
+              "files": [
+                "docs/data/agentops-runs.json"
+              ]
+            }
+          ],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "failure",
+        "commit_hash": "1ef69ed",
+        "timestamp": "2025-11-17T05:53:49+00:00",
+        "subject": "Fix AgentOps workflow: add pull-requests write permission and fix date command (@troubleshoot-expert)",
+        "files_changed": 1,
+        "file_types": [
+          ".yml"
+        ],
+        "outcome": {
+          "success": false,
+          "fixes_needed": [
+            {
+              "commit": "dce47da",
+              "subject": "feat: add Issue and PR tracking to AgentOps dashboard (@create-champion)",
+              "files": [
+                ".github/workflows/agentops-data-sync.yml"
+              ]
+            }
+          ],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "failure",
+        "commit_hash": "65c6d2d",
+        "timestamp": "2025-11-17T05:51:13+00:00",
+        "subject": "feat: enhanced learning from issue #1516 (@engineer-master) (#1520)",
+        "files_changed": 4,
+        "file_types": [
+          ".json",
+          ".md"
+        ],
+        "outcome": {
+          "success": false,
+          "fixes_needed": [
+            {
+              "commit": "b5cd2df",
+              "subject": "feat: enhanced learning from issue #1511 (@engineer-master)",
+              "files": [
+                "learnings/discussions/knowledge_graph.json"
+              ]
+            },
+            {
+              "commit": "3f44c79",
+              "subject": "feat: enhanced learning from issue #1509 (@engineer-master) (#1513)",
+              "files": [
+                "learnings/discussions/knowledge_graph.json"
+              ]
+            }
+          ],
+          "improvements_made": [
+            {
+              "commit": "b5cd2df",
+              "subject": "feat: enhanced learning from issue #1511 (@engineer-master)"
+            },
+            {
+              "commit": "3f44c79",
+              "subject": "feat: enhanced learning from issue #1509 (@engineer-master) (#1513)"
+            }
+          ],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "failure",
+        "commit_hash": "b5cd2df",
+        "timestamp": "2025-11-17T05:48:50+00:00",
+        "subject": "feat: enhanced learning from issue #1511 (@engineer-master)",
+        "files_changed": 4,
+        "file_types": [
+          ".json",
+          ".md"
+        ],
+        "outcome": {
+          "success": false,
+          "fixes_needed": [
+            {
+              "commit": "3f44c79",
+              "subject": "feat: enhanced learning from issue #1509 (@engineer-master) (#1513)",
+              "files": [
+                "learnings/discussions/knowledge_graph.json"
+              ]
+            }
+          ],
+          "improvements_made": [
+            {
+              "commit": "3f44c79",
+              "subject": "feat: enhanced learning from issue #1509 (@engineer-master) (#1513)"
+            }
+          ],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "failure",
+        "commit_hash": "dce47da",
+        "timestamp": "2025-11-17T05:20:03+00:00",
+        "subject": "feat: add Issue and PR tracking to AgentOps dashboard (@create-champion)",
+        "files_changed": 4,
+        "file_types": [
+          ".yml",
+          ".md",
+          ".html",
+          ".json"
+        ],
+        "outcome": {
+          "success": false,
+          "fixes_needed": [
+            {
+              "commit": "5aebf22",
+              "subject": "Fix AgentOps workflow: handle float string in FETCH_LIMIT conversion (@coordinate-wizard)",
+              "files": [
+                ".github/workflows/agentops-data-sync.yml"
+              ]
+            }
+          ],
+          "improvements_made": [],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "failure",
+        "commit_hash": "7024dfb",
+        "timestamp": "2025-11-17T03:46:44+00:00",
+        "subject": "feat: enhanced learning from issue #1492 (@engineer-master) (#1496)",
+        "files_changed": 4,
+        "file_types": [
+          ".json",
+          ".md"
+        ],
+        "outcome": {
+          "success": false,
+          "fixes_needed": [
+            {
+              "commit": "8024525",
+              "subject": "feat: enhanced learning from issue #1486 (@engineer-master)",
+              "files": [
+                "learnings/discussions/knowledge_graph.json"
+              ]
+            }
+          ],
+          "improvements_made": [
+            {
+              "commit": "8024525",
+              "subject": "feat: enhanced learning from issue #1486 (@engineer-master)"
+            }
+          ],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "failure",
+        "commit_hash": "8024525",
+        "timestamp": "2025-11-17T02:41:02+00:00",
+        "subject": "feat: enhanced learning from issue #1486 (@engineer-master)",
+        "files_changed": 4,
+        "file_types": [
+          ".json",
+          ".md"
+        ],
+        "outcome": {
+          "success": false,
+          "fixes_needed": [
+            {
+              "commit": "2293d9a",
+              "subject": "feat: enhanced learning from issue #1458 (@engineer-master)",
+              "files": [
+                "learnings/discussions/knowledge_graph.json"
+              ]
+            }
+          ],
+          "improvements_made": [
+            {
+              "commit": "2293d9a",
+              "subject": "feat: enhanced learning from issue #1458 (@engineer-master)"
+            }
+          ],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      },
+      {
+        "pattern_type": "failure",
+        "commit_hash": "2293d9a",
+        "timestamp": "2025-11-17T02:09:57+00:00",
+        "subject": "feat: enhanced learning from issue #1458 (@engineer-master)",
+        "files_changed": 4,
+        "file_types": [
+          ".json",
+          ".md"
+        ],
+        "outcome": {
+          "success": false,
+          "fixes_needed": [
+            {
+              "commit": "4b1128c",
+              "subject": "feat: enhanced learning from issue #1461 (@engineer-master)",
+              "files": [
+                "learnings/discussions/knowledge_graph.json"
+              ]
+            },
+            {
+              "commit": "d3c76d8",
+              "subject": "feat: enhanced learning from issue #1460 (@engineer-master)",
+              "files": [
+                "learnings/discussions/knowledge_graph.json"
+              ]
+            }
+          ],
+          "improvements_made": [
+            {
+              "commit": "4b1128c",
+              "subject": "feat: enhanced learning from issue #1461 (@engineer-master)"
+            },
+            {
+              "commit": "d3c76d8",
+              "subject": "feat: enhanced learning from issue #1460 (@engineer-master)"
+            }
+          ],
+          "issues_introduced": []
+        },
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        }
+      }
+    ],
     "evolution": [
       {
         "pattern_type": "file_evolution",
-        "file": "analysis/archaeology-patterns.json",
+        "file": "docs/data/automation-log.json",
         "changes_count": 4,
-        "first_seen": "2025-11-14T03:54:44+00:00",
-        "last_seen": "2025-11-14T04:06:36+00:00",
+        "first_seen": "2025-11-17T03:46:33+00:00",
+        "last_seen": "2025-11-17T09:20:23+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "docs/data/issues.json",
+        "changes_count": 4,
+        "first_seen": "2025-11-17T03:46:33+00:00",
+        "last_seen": "2025-11-17T09:20:23+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "docs/data/pulls.json",
+        "changes_count": 4,
+        "first_seen": "2025-11-17T03:46:33+00:00",
+        "last_seen": "2025-11-17T09:20:23+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "docs/data/stats.json",
+        "changes_count": 5,
+        "first_seen": "2025-11-17T03:04:42+00:00",
+        "last_seen": "2025-11-17T09:20:23+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "docs/data/workflows.json",
+        "changes_count": 4,
+        "first_seen": "2025-11-17T03:46:33+00:00",
+        "last_seen": "2025-11-17T09:20:23+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "docs/AGENTOPS_DASHBOARD.md",
+        "changes_count": 4,
+        "first_seen": "2025-11-17T05:16:24+00:00",
+        "last_seen": "2025-11-17T08:24:01+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "feature",
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "docs/agentops.html",
+        "changes_count": 6,
+        "first_seen": "2025-11-17T05:16:24+00:00",
+        "last_seen": "2025-11-17T08:24:01+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "feature",
+          "bug_fix",
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "docs/episodes/index.json",
+        "changes_count": 4,
+        "first_seen": "2025-11-17T03:46:56+00:00",
+        "last_seen": "2025-11-17T08:23:49+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "docs/episodes/latest.json",
+        "changes_count": 4,
+        "first_seen": "2025-11-17T03:46:56+00:00",
+        "last_seen": "2025-11-17T08:23:49+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "docs/data/agentops-runs.json",
+        "changes_count": 4,
+        "first_seen": "2025-11-17T05:16:24+00:00",
+        "last_seen": "2025-11-17T08:23:39+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "maintenance",
+          "feature"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": ".github/workflows/agentops-data-sync.yml",
+        "changes_count": 6,
+        "first_seen": "2025-11-17T05:16:24+00:00",
+        "last_seen": "2025-11-17T07:49:18+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "bug_fix",
+          "feature",
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "docs/AI_GOALS.md",
+        "changes_count": 3,
+        "first_seen": "2025-11-17T04:22:33+00:00",
+        "last_seen": "2025-11-17T06:51:30+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "learnings/discussions/knowledge_graph.json",
+        "changes_count": 10,
+        "first_seen": "2025-11-17T02:04:33+00:00",
+        "last_seen": "2025-11-17T06:45:05+00:00",
+        "change_frequency": "very_frequent",
+        "common_change_types": [
+          "maintenance"
+        ]
+      },
+      {
+        "pattern_type": "file_evolution",
+        "file": "docs/index.html",
+        "changes_count": 4,
+        "first_seen": "2025-11-17T02:04:14+00:00",
+        "last_seen": "2025-11-17T05:46:11+00:00",
         "change_frequency": "very_frequent",
         "common_change_types": [
           "feature",
@@ -21,11 +2424,29 @@
   },
   "insights": [
     {
+      "type": "success_rate",
+      "title": "Refactorings have high success rate",
+      "description": "Found 1 successful refactorings",
+      "confidence": "medium",
+      "actionable": true
+    },
+    {
+      "type": "testing_importance",
+      "title": "Tests correlate with success",
+      "description": "Commits with tests: 7 successes. Without tests: 10 failures",
+      "confidence": "high",
+      "actionable": true
+    },
+    {
       "type": "high_churn",
       "title": "High churn files need attention",
-      "description": "Found 1 files with frequent changes",
+      "description": "Found 14 files with frequent changes",
       "files": [
-        "analysis/archaeology-patterns.json"
+        "docs/data/automation-log.json",
+        "docs/data/issues.json",
+        "docs/data/pulls.json",
+        "docs/data/stats.json",
+        "docs/data/workflows.json"
       ],
       "confidence": "high",
       "actionable": true
@@ -33,29 +2454,250 @@
   ],
   "recommendations": [
     {
+      "priority": "medium",
+      "title": "Continue with incremental refactoring",
+      "description": "Historical data shows refactorings succeed frequently",
+      "action": "Schedule regular refactoring sessions",
+      "based_on": "Refactorings have high success rate"
+    },
+    {
+      "priority": "high",
+      "title": "Require tests for all changes",
+      "description": "Commits with tests have significantly higher success rates",
+      "action": "Add test coverage checks to CI/CD",
+      "based_on": "Tests correlate with success"
+    },
+    {
       "priority": "high",
       "title": "Review high-churn files",
-      "description": "Files that change frequently may need refactoring: analysis/archaeology-patterns.json",
+      "description": "Files that change frequently may need refactoring: docs/data/automation-log.json, docs/data/issues.json, docs/data/pulls.json",
       "action": "Create issues for stabilizing high-churn files",
       "based_on": "High churn files need attention"
     }
   ],
   "statistics": {
-    "total_patterns": 1,
+    "total_patterns": 104,
     "prediction_accuracy": 0.0,
-    "recommendations_generated": 1,
+    "recommendations_generated": 3,
     "predictions_made": 0,
     "predictions_validated": 0
   },
   "timeline_data": {
-    "feature_completion_times": [],
-    "refactor_completion_times": [],
-    "bugfix_completion_times": []
+    "feature_completion_times": [
+      3.0,
+      5.0,
+      2.5,
+      2.0,
+      2.0,
+      2.5,
+      5.5,
+      5.0,
+      2.5,
+      2.0,
+      3.0,
+      4.0,
+      2.5,
+      4.0
+    ],
+    "refactor_completion_times": [
+      3.0
+    ],
+    "bugfix_completion_times": [
+      1.3,
+      0.5,
+      1.3,
+      0.5,
+      0.7,
+      1.1,
+      1.3,
+      1.3,
+      1.3,
+      1.3,
+      1.3,
+      1.3
+    ]
   },
   "knowledge_base": {
-    "best_practices": [],
-    "common_pitfalls": [],
-    "success_examples": [],
-    "failure_examples": []
+    "best_practices": [
+      {
+        "practice": "Always test refactorings to prevent regressions",
+        "evidence_count": 80
+      },
+      {
+        "practice": "Include comprehensive test coverage",
+        "evidence_count": 80
+      },
+      {
+        "practice": "Keep changes small and incremental",
+        "evidence_count": 80
+      }
+    ],
+    "common_pitfalls": [
+      {
+        "pitfall": "Skipping tests leads to bugs and rework",
+        "occurrences": 10
+      },
+      {
+        "pitfall": "Multiple follow-up fixes indicate insufficient initial testing",
+        "occurrences": 10
+      }
+    ],
+    "success_examples": [
+      {
+        "commit": "31c34df",
+        "subject": "feat: autonomous refactoring agent that learns code style preferences (@restructure-master) (#1569)",
+        "characteristics": {
+          "is_refactor": true,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": true,
+          "large_change": false,
+          "has_documentation": false
+        },
+        "key_factors": [
+          "Comprehensive testing",
+          "Focused scope",
+          "Systematic refactoring"
+        ]
+      },
+      {
+        "commit": "b73ff93",
+        "subject": "\ud83e\udd16 AI Friend Daily Conversation - 2025-11-17 (#1570)",
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        },
+        "key_factors": [
+          "Focused scope"
+        ]
+      },
+      {
+        "commit": "4f6d235",
+        "subject": "\ud83d\udcca Update timeline data - 2025-11-17 09:19:00 UTC (#1573)",
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        },
+        "key_factors": [
+          "Focused scope"
+        ]
+      },
+      {
+        "commit": "2a21301",
+        "subject": "Complete Apple Innovation investigation with multi-model AI strategy insights (@develop-specialist) (#1562)",
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        },
+        "key_factors": [
+          "Focused scope"
+        ]
+      },
+      {
+        "commit": "1eea0e4",
+        "subject": "Research Report: Nvidia Innovation Landscape Analysis (idea:38) by @coach-master (#1563)",
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        },
+        "key_factors": [
+          "Focused scope"
+        ]
+      }
+    ],
+    "failure_examples": [
+      {
+        "commit": "b5fa80b",
+        "subject": "AgentOps: Add branch visibility and analyze data extraction costs (#1550)",
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        },
+        "issues": [
+          "Fix AgentOps dashboard: add chart axis labels and pagination (@investigate-champion) (#1548)"
+        ]
+      },
+      {
+        "commit": "94bcae4",
+        "subject": "feat: enhanced learning from issue #1536 (@engineer-master)",
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        },
+        "issues": [
+          "feat: enhanced learning from issue #1521 (@engineer-master) (#1523)"
+        ]
+      },
+      {
+        "commit": "19bdb16",
+        "subject": "\ud83d\udd04 AgentOps data sync - 2025-11-17 05:58",
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": false,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        },
+        "issues": [
+          "feat: add Issue and PR tracking to AgentOps dashboard (@create-champion)"
+        ]
+      },
+      {
+        "commit": "1ef69ed",
+        "subject": "Fix AgentOps workflow: add pull-requests write permission and fix date command (@troubleshoot-expert)",
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": true,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        },
+        "issues": [
+          "feat: add Issue and PR tracking to AgentOps dashboard (@create-champion)"
+        ]
+      },
+      {
+        "commit": "65c6d2d",
+        "subject": "feat: enhanced learning from issue #1516 (@engineer-master) (#1520)",
+        "characteristics": {
+          "is_refactor": false,
+          "is_feature": false,
+          "is_bug_fix": true,
+          "has_tests": false,
+          "large_change": false,
+          "has_documentation": false
+        },
+        "issues": [
+          "feat: enhanced learning from issue #1511 (@engineer-master)",
+          "feat: enhanced learning from issue #1509 (@engineer-master) (#1513)"
+        ]
+      }
+    ]
   }
 }

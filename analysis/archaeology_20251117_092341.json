@@ -1,8 +1,6 @@
 {
-  "version": "1.0.0",
-  "last_updated": "2025-11-17T09:23:41.184017+00:00",
-  "repository": "tmp_hj4w711",
-  "total_commits_analyzed": 100,
+  "timestamp": "2025-11-17T09:23:40.454765+00:00",
+  "commits_analyzed": 100,
   "architectural_decisions": [
     {
       "type": "explicit_decision",
@@ -504,7 +502,6 @@
     }
   ],
   "technical_debt": [],
-  "legacy_patterns": [],
   "code_evolution": {
     "major_refactors": [
       {
@@ -1315,504 +1312,158 @@
       }
     ]
   },
-  "decision_timeline": [
-    {
-      "timestamp": "2025-11-17T02:01:59+00:00",
-      "type": "decision",
-      "content": "first-class learning source (@coordinate-wizard)",
-      "commit": "f795e1d"
-    },
-    {
-      "timestamp": "2025-11-17T02:04:14+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "6e18fdf"
-    },
-    {
-      "timestamp": "2025-11-17T02:04:33+00:00",
-      "type": "decision",
-      "content": "analyzed issue #1460 using the enhanced self-documenting AI system",
-      "commit": "d3c76d8"
-    },
-    {
-      "timestamp": "2025-11-17T02:08:02+00:00",
-      "type": "decision",
-      "content": "analyzed issue #1461 using the enhanced self-documenting AI system",
-      "commit": "4b1128c"
-    },
-    {
-      "timestamp": "2025-11-17T02:09:57+00:00",
-      "type": "decision",
-      "content": "analyzed issue #1458 using the enhanced self-documenting AI system",
-      "commit": "2293d9a"
-    },
-    {
-      "timestamp": "2025-11-17T02:16:30+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "5fe374b"
-    },
-    {
-      "timestamp": "2025-11-17T02:26:47+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "407eadc"
-    },
-    {
-      "timestamp": "2025-11-17T02:41:02+00:00",
-      "type": "decision",
-      "content": "analyzed issue #1486 using the enhanced self-documenting AI system",
-      "commit": "8024525"
-    },
-    {
-      "timestamp": "2025-11-17T02:58:39+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "2b95e4c"
-    },
-    {
-      "timestamp": "2025-11-17T03:04:42+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "4c42490"
-    },
-    {
-      "timestamp": "2025-11-17T03:46:44+00:00",
-      "type": "decision",
-      "content": "analyzed issue #1492 using the enhanced self-documenting AI system",
-      "commit": "7024dfb"
-    },
-    {
-      "timestamp": "2025-11-17T03:47:06+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "e50df76"
-    },
-    {
-      "timestamp": "2025-11-17T03:47:06+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "e50df76"
-    },
-    {
-      "timestamp": "2025-11-17T03:47:06+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "e50df76"
-    },
-    {
-      "timestamp": "2025-11-17T04:22:21+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "84b15d7"
-    },
-    {
-      "timestamp": "2025-11-17T04:22:21+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "84b15d7"
-    },
-    {
-      "timestamp": "2025-11-17T04:22:21+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "84b15d7"
-    },
-    {
-      "timestamp": "2025-11-17T04:22:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "f804498"
-    },
-    {
-      "timestamp": "2025-11-17T04:22:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "f804498"
-    },
-    {
-      "timestamp": "2025-11-17T04:22:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "f804498"
-    },
-    {
-      "timestamp": "2025-11-17T04:22:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "f804498"
-    },
-    {
-      "timestamp": "2025-11-17T04:22:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "f804498"
-    },
-    {
-      "timestamp": "2025-11-17T04:22:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "f804498"
-    },
-    {
-      "timestamp": "2025-11-17T04:22:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "f804498"
-    },
-    {
-      "timestamp": "2025-11-17T04:22:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "f804498"
-    },
-    {
-      "timestamp": "2025-11-17T04:24:45+00:00",
-      "type": "decision",
-      "content": "feedback to verify all available agents are documented",
-      "commit": "36f0773"
-    },
-    {
-      "timestamp": "2025-11-17T04:24:45+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "36f0773"
-    },
-    {
-      "timestamp": "2025-11-17T05:16:24+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "0f9e1ac"
-    },
-    {
-      "timestamp": "2025-11-17T05:16:24+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "0f9e1ac"
-    },
-    {
-      "timestamp": "2025-11-17T05:16:24+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "0f9e1ac"
-    },
-    {
-      "timestamp": "2025-11-17T05:16:38+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "059bbe4"
-    },
-    {
-      "timestamp": "2025-11-17T05:16:38+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "059bbe4"
-    },
-    {
-      "timestamp": "2025-11-17T05:16:38+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "059bbe4"
-    },
-    {
-      "timestamp": "2025-11-17T05:16:38+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "059bbe4"
-    },
-    {
-      "timestamp": "2025-11-17T05:20:03+00:00",
-      "type": "decision",
-      "content": "comma-separated)",
-      "commit": "dce47da"
-    },
-    {
-      "timestamp": "2025-11-17T05:20:03+00:00",
-      "type": "decision",
-      "content": "in PR comment #3540015552",
-      "commit": "dce47da"
-    },
-    {
-      "timestamp": "2025-11-17T05:20:03+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "dce47da"
-    },
-    {
-      "timestamp": "2025-11-17T05:24:17+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "5aebf22"
-    },
-    {
-      "timestamp": "2025-11-17T05:42:19+00:00",
-      "type": "decision",
-      "content": "analyzed issue #1509 using the enhanced self-documenting AI system",
-      "commit": "3f44c79"
-    },
-    {
-      "timestamp": "2025-11-17T05:46:11+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "6e48ecd"
-    },
-    {
-      "timestamp": "2025-11-17T05:48:50+00:00",
-      "type": "decision",
-      "content": "analyzed issue #1511 using the enhanced self-documenting AI system",
-      "commit": "b5cd2df"
-    },
-    {
-      "timestamp": "2025-11-17T05:51:13+00:00",
-      "type": "decision",
-      "content": "analyzed issue #1516 using the enhanced self-documenting AI system",
-      "commit": "65c6d2d"
-    },
-    {
-      "timestamp": "2025-11-17T05:53:49+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "1ef69ed"
-    },
-    {
-      "timestamp": "2025-11-17T05:55:20+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "017a1bb"
-    },
-    {
-      "timestamp": "2025-11-17T06:11:31+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "791f19a"
-    },
-    {
-      "timestamp": "2025-11-17T06:25:34+00:00",
-      "type": "decision",
-      "content": "analyzed issue #1521 using the enhanced self-documenting AI system",
-      "commit": "a7b09da"
-    },
-    {
-      "timestamp": "2025-11-17T06:29:53+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "b2b25ce"
-    },
-    {
-      "timestamp": "2025-11-17T06:33:50+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "4719195"
-    },
-    {
-      "timestamp": "2025-11-17T06:45:05+00:00",
-      "type": "decision",
-      "content": "analyzed issue #1536 using the enhanced self-documenting AI system",
-      "commit": "94bcae4"
-    },
-    {
-      "timestamp": "2025-11-17T07:16:13+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "9bb168a"
-    },
-    {
-      "timestamp": "2025-11-17T07:16:13+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "9bb168a"
-    },
-    {
-      "timestamp": "2025-11-17T07:16:28+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "5eb2c09"
-    },
-    {
-      "timestamp": "2025-11-17T07:16:28+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "5eb2c09"
-    },
-    {
-      "timestamp": "2025-11-17T07:16:28+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "5eb2c09"
-    },
-    {
-      "timestamp": "2025-11-17T07:16:28+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "5eb2c09"
-    },
-    {
-      "timestamp": "2025-11-17T07:49:18+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "b716918"
-    },
-    {
-      "timestamp": "2025-11-17T07:49:18+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "b716918"
-    },
-    {
-      "timestamp": "2025-11-17T08:24:01+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "b5fa80b"
-    },
-    {
-      "timestamp": "2025-11-17T08:24:01+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "b5fa80b"
-    },
-    {
-      "timestamp": "2025-11-17T08:24:01+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "b5fa80b"
-    },
-    {
-      "timestamp": "2025-11-17T08:24:01+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "b5fa80b"
-    },
-    {
-      "timestamp": "2025-11-17T08:49:49+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "dc982d9"
-    },
-    {
-      "timestamp": "2025-11-17T08:49:49+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "dc982d9"
-    },
-    {
-      "timestamp": "2025-11-17T08:49:49+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "dc982d9"
-    },
-    {
-      "timestamp": "2025-11-17T08:50:01+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "ad06952"
-    },
-    {
-      "timestamp": "2025-11-17T08:50:01+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "ad06952"
-    },
-    {
-      "timestamp": "2025-11-17T08:50:16+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "c229628"
-    },
-    {
-      "timestamp": "2025-11-17T08:50:16+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "c229628"
-    },
-    {
-      "timestamp": "2025-11-17T08:50:30+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "1eea0e4"
-    },
-    {
-      "timestamp": "2025-11-17T08:50:30+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "1eea0e4"
-    },
-    {
-      "timestamp": "2025-11-17T08:50:30+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "1eea0e4"
-    },
-    {
-      "timestamp": "2025-11-17T08:50:30+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "1eea0e4"
-    },
-    {
-      "timestamp": "2025-11-17T08:50:43+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "2a21301"
-    },
-    {
-      "timestamp": "2025-11-17T08:50:43+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "2a21301"
-    },
-    {
-      "timestamp": "2025-11-17T08:50:43+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "2a21301"
-    },
-    {
-      "timestamp": "2025-11-17T09:20:44+00:00",
-      "type": "decision",
-      "content": "implemented a complete autonomous refactoring agent that learns code style preferences and applies them intelligently",
-      "commit": "31c34df"
-    },
-    {
-      "timestamp": "2025-11-17T09:20:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "31c34df"
-    },
-    {
-      "timestamp": "2025-11-17T09:20:44+00:00",
-      "type": "decision",
-      "content": "added a complete demonstration script showing all agent capabilities:",
-      "commit": "31c34df"
-    },
-    {
-      "timestamp": "2025-11-17T09:20:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "31c34df"
-    },
-    {
-      "timestamp": "2025-11-17T09:20:44+00:00",
-      "type": "decision",
-      "content": "created a complete implementation summary documenting:",
-      "commit": "31c34df"
-    },
-    {
-      "timestamp": "2025-11-17T09:20:44+00:00",
-      "type": "decision",
-      "content": "a complete reference for the autonomous refactoring agent implementation",
-      "commit": "31c34df"
-    },
-    {
-      "timestamp": "2025-11-17T09:20:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "31c34df"
-    },
-    {
-      "timestamp": "2025-11-17T09:20:44+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "31c34df"
+  "statistics": {
+    "total_commits": 100,
+    "by_category": {
+      "architectural": 21,
+      "maintenance": 42,
+      "bug_fix": 23,
+      "feature": 14
+    },
+    "by_author": {
+      "Copilot": 15,
+      "github-actions[bot]": 31,
+      "Eric Smith": 28,
+      "copilot-swe-agent[bot]": 26
+    },
+    "files_most_changed": {
+      "AUTONOMOUS_REFACTORING_AGENT_SUMMARY.md": 1,
+      "examples/autonomous_refactoring_agent_demo.py": 1,
+      "tools/AUTONOMOUS_REFACTORING_AGENT_README.md": 1,
+      "tools/autonomous-refactoring-agent.py": 1,
+      "tools/test_autonomous_refactoring_agent.py": 1,
+      "docs/ai-conversations/conversation_20251117_091815.json": 1,
+      "docs/ai-conversations/index.json": 1,
+      "docs/data/automation-log.json": 4,
+      "docs/data/issues.json": 4,
+      "docs/data/pulls.json": 4,
+      "docs/data/stats.json": 5,
+      "docs/data/workflows.json": 4,
+      "investigation-reports/apple-innovation-mission-idea37.md": 1,
+      "investigation-reports/issue-comment-idea37-completion.md": 1,
+      "investigation-reports/mission-idea37-completion.md": 1,
+      "investigation-reports/issue-comment-idea38-completion.md": 1,
+      "investigation-reports/nvidia-innovation-mission-idea38.md": 1,
+      "learnings/world_model_update_nvidia_innovation_20251117.md": 1,
+      "learnings/mission_completion_idea39_openai_innovation.md": 1,
+      "learnings/openai_innovation_research_report_idea39.md": 1,
+      "learnings/world_model_update_openai_innovation_idea39.md": 1,
+      "learnings/anthropic_innovation_research_idea40.md": 1,
+      "learnings/mission_complete_idea40_anthropic_innovation.md": 1,
+      ".github/workflows/actions-generator-agent-DEMO.yml": 1,
+      "ACTIONS_INVESTIGATION_REPORT.md": 1,
+      "ACTIONS_MIGRATION_EXAMPLE.md": 1,
+      "ACTIONS_RECOMMENDATIONS_SUMMARY.md": 1,
+      "tools/requirements-generator.txt": 1,
+      "docs/world/knowledge.json": 2,
+      "docs/world/world_state.json": 2,
+      ".github/agent-system/missions_history.json": 1,
+      "world/knowledge.json": 2,
+      "world/world_state.json": 2,
+      "docs/AGENTOPS_DASHBOARD.md": 4,
+      "docs/AGENTOPS_DATA_EXTRACTION_SUMMARY.md": 1,
+      "docs/AGENTOPS_ENHANCEMENT_ANALYSIS.md": 1,
+      "docs/agentops.html": 6,
+      "docs/episodes/episode-20251117-0814.json": 1,
+      "docs/episodes/index.json": 4,
+      "docs/episodes/latest.json": 4,
+      "docs/data/agentops-runs.json": 4,
+      "learnings/combined_analysis_20251117.json": 1,
+      ".github/workflows/agentops-data-sync.yml": 6,
+      "docs/COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md": 1,
+      "docs/INDEX.md": 2,
+      "docs/TROUBLESHOOTING_QUICK_REFERENCE.md": 1,
+      "docs/diagrams/README.md": 1,
+      "docs/diagrams/troubleshooting-flow.md": 1,
+      "scripts/quick-health-check.sh": 1,
+      "docs/AI_GOALS.md": 3,
+      "learnings/discussions/discussion_issue_1536_20251117_064505.json": 1,
+      "learnings/discussions/discussion_issue_1536_20251117_064505.md": 1,
+      "learnings/discussions/discussion_issue_1536_20251117_064505_enhancements.json": 1,
+      "learnings/discussions/knowledge_graph.json": 10,
+      "learnings/discussions/discussion_issue_1521_20251117_055802.json": 1,
+      "learnings/discussions/discussion_issue_1521_20251117_055802.md": 1,
+      "learnings/discussions/discussion_issue_1521_20251117_055802_enhancements.json": 1,
+      "docs/episodes/episode-20251117-0615.json": 1,
+      "WORKFLOW_FIX_AGENTOPS_SUMMARY.md": 1,
+      "learnings/discussions/discussion_issue_1516_20251117_055032.json": 1,
+      "learnings/discussions/discussion_issue_1516_20251117_055032.md": 1,
+      "learnings/discussions/discussion_issue_1516_20251117_055032_enhancements.json": 1,
+      "learnings/discussions/discussion_issue_1511_20251117_054850.json": 1,
+      "learnings/discussions/discussion_issue_1511_20251117_054850.md": 1,
+      "learnings/discussions/discussion_issue_1511_20251117_054850_enhancements.json": 1,
+      "docs/index.html": 4,
+      "learnings/discussions/discussion_issue_1509_20251117_054036.json": 1,
+      "learnings/discussions/discussion_issue_1509_20251117_054036.md": 1,
+      "learnings/discussions/discussion_issue_1509_20251117_054036_enhancements.json": 1,
+      ".github/workflows/agent-evolution.yml": 1,
+      "AGENT_EVOLUTION_SUMMARY.md": 1,
+      "learnings/agent_evolution_system_implementation.json": 1,
+      "tests/test_agent_evolution_system.py": 1,
+      "tools/AGENT_EVOLUTION_SYSTEM_README.md": 1,
+      "tools/agent-evolution-system.py": 1,
+      "tools/demo-agent-evolution.py": 1,
+      ".github/copilot-instructions.md": 2,
+      ".github/instructions/agent-mentions.instructions.md": 1,
+      ".github/agents/.context.md": 1,
+      ".github/context-index.json": 1,
+      ".github/instructions/.context.md": 1,
+      ".github/workflows/.context.md": 1,
+      ".github/workflows/update-context-summaries.yml": 1,
+      "AGENT_WORKFLOW_SCENARIO.md": 1,
+      "CONTEXT_AWARE_AGENTS_DESIGN.md": 1,
+      "CONTEXT_OPTIONS_ANALYSIS.md": 1,
+      "CONTEXT_SYSTEM_COMPLETE.md": 1,
+      "CONTEXT_SYSTEM_README.md": 1,
+      "IMPLEMENTATION_SUMMARY.md": 1,
+      "OFFICIAL_DOCS_VERIFICATION.md": 1,
+      "PATH_SPECIFIC_CONTEXT_DETAILS.md": 1,
+      "VERIFICATION_CHECKLIST.md": 1,
+      "docs/DATA_STORAGE_LIFECYCLE.md": 1,
+      "tools/.context.md": 1,
+      "tools/generate-context-summaries.py": 1,
+      ".github/workflows/WORKFLOW_LABEL_FIXES.md": 1,
+      ".github/workflows/collect-resolved-issues.yml": 1,
+      ".github/workflows/repetition-detector.yml": 1,
+      "docs/episodes/episode-20251117-0415.json": 1,
+      "ACCELERATION_COMPLETE.md": 1,
+      "USAGE_GUIDE.md": 1,
+      "analysis/benchmark_results.json": 1,
+      "tools/accelerated_pattern_learner.py": 1,
+      "tools/benchmark_unsupervised_learner.py": 1,
+      "tools/optimized_learner.py": 1,
+      "tools/profile_learner.py": 1,
+      "tools/test_unsupervised_pattern_learner.py": 1,
+      "docs/episodes/episode-20251117-0308.json": 1,
+      "learnings/discussions/discussion_issue_1492_20251117_032648.json": 1,
+      "learnings/discussions/discussion_issue_1492_20251117_032648.md": 1,
+      "learnings/discussions/discussion_issue_1492_20251117_032648_enhancements.json": 1,
+      ".github/workflows/system-monitor.yml": 1,
+      "docs/lifecycle.html": 1,
+      ".github/workflows/self-documenting-ai-enhanced.yml": 1,
+      "learnings/discussions/discussion_issue_1486_20251117_024102.json": 1,
+      "learnings/discussions/discussion_issue_1486_20251117_024102.md": 1,
+      "learnings/discussions/discussion_issue_1486_20251117_024102_enhancements.json": 1,
+      "README.md": 1,
+      ".github/instructions/README.md": 1,
+      ".github/instructions/workflow-reference.instructions.md": 1,
+      "learnings/discussions/discussion_issue_1458_20251117_020957.json": 1,
+      "learnings/discussions/discussion_issue_1458_20251117_020957.md": 1,
+      "learnings/discussions/discussion_issue_1458_20251117_020957_enhancements.json": 1,
+      "learnings/discussions/discussion_issue_1461_20251117_020802.json": 1,
+      "learnings/discussions/discussion_issue_1461_20251117_020802.md": 1,
+      "learnings/discussions/discussion_issue_1461_20251117_020802_enhancements.json": 1,
+      "learnings/discussions/discussion_issue_1460_20251117_020433.json": 1,
+      "learnings/discussions/discussion_issue_1460_20251117_020433.md": 1,
+      "learnings/discussions/discussion_issue_1460_20251117_020433_enhancements.json": 1,
+      "analysis/architecture/architecture.mmd": 1,
+      "analysis/architecture/evolution.json": 1,
+      "analysis/architecture/latest.json": 1,
+      "analysis/architecture/snapshot_2025-11-17T02-02-04.json": 1,
+      "docs/data/architecture/architecture.mmd": 1,
+      "docs/data/architecture/evolution.json": 1,
+      "docs/data/architecture/latest.json": 1,
+      "docs/data/architecture/snapshot_2025-11-17T02-02-04.json": 1
     }
-  ]
+  }
 }
