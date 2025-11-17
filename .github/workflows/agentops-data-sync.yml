@@ -15,7 +15,7 @@ on:
 permissions:
   contents: write
   actions: read
-  pull-requests: read
+  pull-requests: write
   issues: read
 
 jobs:
@@ -280,7 +280,7 @@ jobs:
             BRANCH_NAME="agentops-sync/${TIMESTAMP}-${{ github.run_id }}"
             
             git checkout -b "$BRANCH_NAME"
-            git commit -m "🔄 AgentOps data sync - $(date +%Y-%m-%d %H:%M)"
+            git commit -m "🔄 AgentOps data sync - $(date '+%Y-%m-%d %H:%M')"
             git push origin "$BRANCH_NAME"
             
             gh pr create \
