@@ -221,7 +221,7 @@ jobs:
           *Following the @engineer-master systematic approach: rigorous analysis, defensive programming, and comprehensive validation.*
           
           Closes #${ISSUE_NUMBER}" \
-            --label "automated,self-documenting-ai,learning" \
+            --label "automated,self-documenting-ai,learning,copilot" \
             --base main \
             --head "$BRANCH_NAME" || {
               echo "⚠️ PR creation with labels failed, retrying without labels..."

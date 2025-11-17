@@ -1,0 +1,235 @@
+{
+  "proactive_suggestions": [
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83c\udfaf Define clear acceptance criteria and test cases",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:coach-master -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has ..."
+  ],
+  "knowledge_connections": {
+    "insight_1486_4c3a896a7122": [
+      {
+        "target_id": "insight_1460_15a9419e3baf",
+        "similarity": 0.8
+      },
+      {
+        "target_id": "insight_1458_3efdfdffaed2",
+        "similarity": 0.8
+      },
+      {
+        "target_id": "insight_1461_df7e683aa403",
+        "similarity": 0.75
+      }
+    ],
+    "insight_1486_ed408a6e6f65": [
+      {
+        "target_id": "insight_1460_d821e026c58a",
+        "similarity": 0.8333333333333334
+      },
+      {
+        "target_id": "insight_1458_c0ed8184fe83",
+        "similarity": 0.8333333333333334
+      },
+      {
+        "target_id": "insight_1461_46b28a924e49",
+        "similarity": 0.6923076923076923
+      }
+    ],
+    "insight_1486_d54bfe79f0f6": [
+      {
+        "target_id": "insight_1486_386145f25198",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1460_7b1df7ec4d69",
+        "similarity": 0.6
+      },
+      {
+        "target_id": "insight_1460_06df4429ed94",
+        "similarity": 0.6
+      }
+    ],
+    "insight_1486_a253d7d43990": [
+      {
+        "target_id": "insight_1458_266f71fc6247",
+        "similarity": 0.6875
+      },
+      {
+        "target_id": "insight_1460_901d1319e47b",
+        "similarity": 0.6363636363636364
+      },
+      {
+        "target_id": "insight_1461_8ac9e17af718",
+        "similarity": 0.5428571428571428
+      }
+    ],
+    "insight_1486_d5fbcbb1d0aa": [
+      {
+        "target_id": "insight_1460_0ea408b3d662",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1458_b58ba8e4f4f4",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1486_ff36f800939c": [
+      {
+        "target_id": "insight_1460_68aae128b455",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1461_468c5bac0631",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1458_c06c89414128",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1486_386145f25198": [
+      {
+        "target_id": "insight_1486_d54bfe79f0f6",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1460_7b1df7ec4d69",
+        "similarity": 0.6
+      },
+      {
+        "target_id": "insight_1460_06df4429ed94",
+        "similarity": 0.6
+      }
+    ],
+    "insight_1486_758606b553f9": [
+      {
+        "target_id": "insight_1460_b8b5519c2025",
+        "similarity": 0.9130434782608695
+      },
+      {
+        "target_id": "insight_1458_63aee4158532",
+        "similarity": 0.9130434782608695
+      },
+      {
+        "target_id": "insight_1461_adf13f5f0e40",
+        "similarity": 0.8333333333333334
+      }
+    ],
+    "insight_1486_2a61f71fb0fe": [
+      {
+        "target_id": "insight_1460_7d780ede38e3",
+        "similarity": 0.8333333333333334
+      },
+      {
+        "target_id": "insight_1458_9abc622d3d41",
+        "similarity": 0.8333333333333334
+      },
+      {
+        "target_id": "insight_1461_33952c0cdd1c",
+        "similarity": 0.6923076923076923
+      }
+    ],
+    "insight_1486_01c93ef9c5ae": [
+      {
+        "target_id": "insight_1460_734f5639eeb1",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1461_b02d3182b0fa",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1458_a11d8a8639cb",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1486_e4de3a29586d": [
+      {
+        "target_id": "insight_1460_81a0d37f9f19",
+        "similarity": 0.8333333333333334
+      },
+      {
+        "target_id": "insight_1458_dd8c4dc740f7",
+        "similarity": 0.8333333333333334
+      },
+      {
+        "target_id": "insight_1461_6781caf7af44",
+        "similarity": 0.6923076923076923
+      }
+    ],
+    "insight_1486_cc81db8368de": [
+      {
+        "target_id": "insight_1460_78f82bd6f5a0",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1458_33edf712f063",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1461_dc1e63490ce7",
+        "similarity": 0.6153846153846154
+      }
+    ],
+    "insight_1486_9da4cc3f4463": [
+      {
+        "target_id": "insight_1460_d27411a12afb",
+        "similarity": 0.85
+      },
+      {
+        "target_id": "insight_1458_a2e2d8e4c6be",
+        "similarity": 0.85
+      },
+      {
+        "target_id": "insight_1461_c3540ad118f8",
+        "similarity": 0.7875
+      }
+    ],
+    "insight_1486_593b0380d00d": [
+      {
+        "target_id": "insight_1460_6b8b9bb0ddc6",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1458_46084786e7f1",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1461_4c6aa98df983",
+        "similarity": 0.6153846153846154
+      }
+    ],
+    "insight_1486_676116f426a0": [
+      {
+        "target_id": "insight_1460_c75ae1e65917",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1461_0515074995f0",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1458_d545b9f13794",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1486_c8630fc4c052": [
+      {
+        "target_id": "insight_1460_98499e7d3f9d",
+        "similarity": 0.8222222222222222
+      },
+      {
+        "target_id": "insight_1458_cdd9be320b7e",
+        "similarity": 0.8222222222222222
+      },
+      {
+        "target_id": "insight_1461_39e9530f47ff",
+        "similarity": 0.8
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 75,
+    "total_connections": 133,
+    "new_insights_added": 22
+  },
+  "timestamp": "2025-11-17T02:41:02.251069+00:00"
+}
