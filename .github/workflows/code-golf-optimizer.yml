@@ -42,6 +42,25 @@ jobs:
         run: |
           cd tools
           
+          # Check if examples directory exists and has files
+          if [ ! -d "examples" ] || [ -z "$(ls -A examples 2>/dev/null)" ]; then
+            echo "⚠️ No examples directory or no example files found"
+            echo "Creating a basic report..."
+            
+            mkdir -p optimizations
+            echo "## Code Golf Optimization Report" > optimizations/report.md
+            echo "" >> optimizations/report.md
+            echo "Generated on: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> optimizations/report.md
+            echo "" >> optimizations/report.md
+            echo "⚠️ **No example files found to optimize**" >> optimizations/report.md
+            echo "" >> optimizations/report.md
+            echo "To run optimization, add example files to \`tools/examples/\`" >> optimizations/report.md
+            
+            echo "report_created=true" >> $GITHUB_OUTPUT
+            echo "total_saved=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
           # Create output directory
           mkdir -p optimizations
           
@@ -52,6 +71,7 @@ jobs:
           
           total_original=0
           total_optimized=0
+          files_processed=0
           
           # Optimize Python examples
           echo "### Python Examples" >> optimizations/report.md
@@ -62,68 +82,92 @@ jobs:
               echo "Optimizing: $file"
               filename=$(basename "$file")
               
-              # Run optimizer and capture output
-              python3 code-golf-optimizer.py -f "$file" -l python > "optimizations/${filename}.txt"
-              
-              # Extract metrics
-              original=$(grep "Original:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
-              optimized=$(grep "Optimized:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
-              reduction=$(grep "Reduction:" "optimizations/${filename}.txt" | grep -oP '\d+\.\d+' | head -1)
-              
-              total_original=$((total_original + original))
-              total_optimized=$((total_optimized + optimized))
-              
-              echo "- **$filename**: $original → $optimized chars (${reduction}% reduction)" >> optimizations/report.md
+              # Run optimizer and capture output (with error handling)
+              if python3 code-golf-optimizer.py -f "$file" -l python > "optimizations/${filename}.txt" 2>&1; then
+                # Extract metrics (with defaults if not found)
+                original=$(grep "Original:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1 || echo "0")
+                optimized=$(grep "Optimized:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1 || echo "0")
+                reduction=$(grep "Reduction:" "optimizations/${filename}.txt" | grep -oP '\d+\.\d+' | head -1 || echo "0.0")
+                
+                total_original=$((total_original + original))
+                total_optimized=$((total_optimized + optimized))
+                files_processed=$((files_processed + 1))
+                
+                echo "- **$filename**: $original → $optimized chars (${reduction}% reduction)" >> optimizations/report.md
+              else
+                echo "- **$filename**: ⚠️ Optimization failed" >> optimizations/report.md
+              fi
             fi
           done
+          
+          # Check if any Python files were processed
+          if [ $files_processed -eq 0 ]; then
+            echo "*No Python files found*" >> optimizations/report.md
+          fi
           
           echo "" >> optimizations/report.md
           
           # Optimize JavaScript examples
           echo "### JavaScript Examples" >> optimizations/report.md
           echo "" >> optimizations/report.md
+          js_files=0
           
           for file in examples/*.js; do
             if [ -f "$file" ]; then
               echo "Optimizing: $file"
               filename=$(basename "$file")
               
-              python3 code-golf-optimizer.py -f "$file" -l javascript > "optimizations/${filename}.txt"
-              
-              original=$(grep "Original:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
-              optimized=$(grep "Optimized:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
-              reduction=$(grep "Reduction:" "optimizations/${filename}.txt" | grep -oP '\d+\.\d+' | head -1)
-              
-              total_original=$((total_original + original))
-              total_optimized=$((total_optimized + optimized))
-              
-              echo "- **$filename**: $original → $optimized chars (${reduction}% reduction)" >> optimizations/report.md
+              if python3 code-golf-optimizer.py -f "$file" -l javascript > "optimizations/${filename}.txt" 2>&1; then
+                original=$(grep "Original:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1 || echo "0")
+                optimized=$(grep "Optimized:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1 || echo "0")
+                reduction=$(grep "Reduction:" "optimizations/${filename}.txt" | grep -oP '\d+\.\d+' | head -1 || echo "0.0")
+                
+                total_original=$((total_original + original))
+                total_optimized=$((total_optimized + optimized))
+                js_files=$((js_files + 1))
+                
+                echo "- **$filename**: $original → $optimized chars (${reduction}% reduction)" >> optimizations/report.md
+              else
+                echo "- **$filename**: ⚠️ Optimization failed" >> optimizations/report.md
+              fi
             fi
           done
+          
+          if [ $js_files -eq 0 ]; then
+            echo "*No JavaScript files found*" >> optimizations/report.md
+          fi
           
           echo "" >> optimizations/report.md
           
           # Optimize Bash examples
           echo "### Bash Examples" >> optimizations/report.md
           echo "" >> optimizations/report.md
+          bash_files=0
           
           for file in examples/*.sh; do
             if [ -f "$file" ]; then
               echo "Optimizing: $file"
               filename=$(basename "$file")
               
-              python3 code-golf-optimizer.py -f "$file" -l bash > "optimizations/${filename}.txt"
-              
-              original=$(grep "Original:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
-              optimized=$(grep "Optimized:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1)
-              reduction=$(grep "Reduction:" "optimizations/${filename}.txt" | grep -oP '\d+\.\d+' | head -1)
-              
-              total_original=$((total_original + original))
-              total_optimized=$((total_optimized + optimized))
-              
-              echo "- **$filename**: $original → $optimized chars (${reduction}% reduction)" >> optimizations/report.md
+              if python3 code-golf-optimizer.py -f "$file" -l bash > "optimizations/${filename}.txt" 2>&1; then
+                original=$(grep "Original:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1 || echo "0")
+                optimized=$(grep "Optimized:" "optimizations/${filename}.txt" | grep -oP '\d+' | head -1 || echo "0")
+                reduction=$(grep "Reduction:" "optimizations/${filename}.txt" | grep -oP '\d+\.\d+' | head -1 || echo "0.0")
+                
+                total_original=$((total_original + original))
+                total_optimized=$((total_optimized + optimized))
+                bash_files=$((bash_files + 1))
+                
+                echo "- **$filename**: $original → $optimized chars (${reduction}% reduction)" >> optimizations/report.md
+              else
+                echo "- **$filename**: ⚠️ Optimization failed" >> optimizations/report.md
+              fi
             fi
           done
+          
+          if [ $bash_files -eq 0 ]; then
+            echo "*No Bash files found*" >> optimizations/report.md
+          fi
           
           echo "" >> optimizations/report.md
           echo "### Summary" >> optimizations/report.md
@@ -133,8 +177,11 @@ jobs:
           
           saved=$((total_original - total_optimized))
           if [ $total_original -gt 0 ]; then
-            overall_reduction=$(echo "scale=2; ($saved * 100) / $total_original" | bc)
+            # Use awk instead of bc for better portability
+            overall_reduction=$(awk "BEGIN {printf \"%.2f\", ($saved * 100) / $total_original}")
             echo "- **Total Saved**: $saved characters (${overall_reduction}% reduction)" >> optimizations/report.md
+          else
+            echo "- **Total Saved**: 0 characters (no files optimized)" >> optimizations/report.md
           fi
           
           echo "" >> optimizations/report.md
@@ -159,13 +206,18 @@ jobs:
           # Read the report
           report_body=$(cat optimizations/report.md)
           
-          # Create an issue with the report
-          issue_url=$(gh issue create \
+          # Create an issue with the report (with fallback for labels)
+          gh issue create \
             --title "📊 Code Golf Optimization Report - $(date +%Y-%m-%d)" \
             --body "$report_body" \
-            --label "code-golf,ai-generated,report")
+            --label "code-golf,ai-generated,report" || {
+              echo "⚠️ Issue creation with labels failed, retrying without labels..."
+              gh issue create \
+                --title "📊 Code Golf Optimization Report - $(date +%Y-%m-%d)" \
+                --body "$report_body"
+            }
           
-          echo "Created optimization report issue: ${issue_url}"
+          echo "✅ Created optimization report issue"
 
       - name: Log activity
         run: |

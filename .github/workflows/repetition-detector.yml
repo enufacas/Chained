@@ -62,21 +62,26 @@ jobs:
           TIMESTAMP=$(date -u +%Y-%m-%d-%H-%M-%S)
           
           # Run detector and save to both current and historical locations
+          # Capture exit code immediately
           python3 tools/repetition-detector.py \
             -d . \
             --since-days ${days} \
             -o analysis/repetition-report.json
           
+          DETECTOR_EXIT_CODE=$?
+          
           # Save timestamped snapshot for trend analysis
-          cp analysis/repetition-report.json "analysis/repetition-history/${TIMESTAMP}.json"
+          if [ -f analysis/repetition-report.json ]; then
+            cp analysis/repetition-report.json "analysis/repetition-history/${TIMESTAMP}.json"
+            
+            # Update latest symlink
+            cd analysis/repetition-history
+            ln -sf "${TIMESTAMP}.json" latest.json
+            cd ../..
+          fi
           
-          # Update latest symlink
-          cd analysis/repetition-history
-          ln -sf "${TIMESTAMP}.json" latest.json
-          cd ../..
-          
-          # Check if repetition was detected
-          if [ $? -ne 0 ]; then
+          # Check if repetition was detected based on the detector exit code
+          if [ $DETECTOR_EXIT_CODE -ne 0 ]; then
             echo "repetition_detected=true" >> $GITHUB_OUTPUT
           else
             echo "repetition_detected=false" >> $GITHUB_OUTPUT
