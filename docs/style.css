@@ -2002,3 +2002,317 @@ footer p {
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== Workflow Runs Section Styles ===== */
+.workflow-runs-section {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: 15px;
+    margin: 2rem auto;
+    max-width: 1400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.workflow-controls {
+    display: flex;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+    padding: 1.5rem;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 10px;
+    align-items: end;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 150px;
+}
+
+.control-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.control-group input,
+.control-group select {
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: rgba(30, 41, 59, 0.8);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.control-group input:focus,
+.control-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
+}
+
+.btn-secondary {
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    border: 1px solid var(--primary-color);
+    background: rgba(8, 145, 178, 0.1);
+    color: var(--primary-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Workflow Summary Cards */
+.workflow-summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.summary-card {
+    background: rgba(8, 145, 178, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid rgba(8, 145, 178, 0.2);
+}
+
+.summary-icon {
+    font-size: 2.5rem;
+}
+
+.summary-content h4 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.summary-content p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* Table Container and Table */
+.table-container {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.workflow-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(30, 41, 59, 0.5);
+}
+
+.workflow-table thead {
+    background: rgba(8, 145, 178, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.workflow-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--primary-color);
+    white-space: nowrap;
+}
+
+.workflow-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease;
+}
+
+.workflow-table th.sortable:hover {
+    background: rgba(8, 145, 178, 0.3);
+}
+
+.workflow-table th.sorted {
+    background: rgba(8, 145, 178, 0.4);
+}
+
+.sort-indicator {
+    display: inline-block;
+    margin-left: 0.5rem;
+    opacity: 0.5;
+    font-size: 0.8rem;
+}
+
+.workflow-table tbody tr {
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    transition: background 0.2s ease;
+}
+
+.workflow-table tbody tr:hover {
+    background: rgba(8, 145, 178, 0.1);
+}
+
+.workflow-table td {
+    padding: 0.9rem 1rem;
+    color: var(--text-color);
+}
+
+.workflow-name {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.workflow-title {
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.workflow-date {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.workflow-id {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Status and Conclusion Badges */
+.badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-completed {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-in-progress {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badge-queued {
+    background: rgba(148, 163, 184, 0.2);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.badge-success {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-failure {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-action {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-skipped {
+    background: rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.badge-none,
+.badge-unknown {
+    background: rgba(71, 85, 105, 0.2);
+    color: #94a3b8;
+    border: 1px solid rgba(71, 85, 105, 0.3);
+}
+
+/* Loading, Error, and No Data states */
+.loading-cell,
+.error-cell,
+.no-data-cell {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.error-cell {
+    color: #f87171;
+}
+
+/* Pagination Controls */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
+}
+
+#page-info {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* Responsive Design for Workflow Section */
+@media (max-width: 768px) {
+    .workflow-controls {
+        flex-direction: column;
+    }
+    
+    .control-group {
+        width: 100%;
+    }
+    
+    .workflow-summary-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .workflow-table {
+        font-size: 0.85rem;
+    }
+    
+    .workflow-table th,
+    .workflow-table td {
+        padding: 0.6rem 0.5rem;
+    }
+    
+    .workflow-title {
+        max-width: 200px;
+    }
+}
