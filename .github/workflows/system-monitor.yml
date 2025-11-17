@@ -212,7 +212,7 @@ jobs:
             git commit -m "📊 Update timeline data - $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
             git push origin "${branch_name}"
             
-            # Create PR with timeline-update label for tracking
+            # Create PR with timeline-update label for tracking (with fallback if labels don't exist)
             gh pr create \
               --title "📊 Timeline Update - $(date -u +'%Y-%m-%d %H:%M:%S UTC')" \
               --body "## Automated Timeline Data Update
@@ -239,7 +239,35 @@ jobs:
             *This PR was automatically created by the System Monitor workflow and will be auto-merged.*" \
               --label "automated,copilot" \
               --base main \
-              --head "${branch_name}"
+              --head "${branch_name}" || {
+                echo "⚠️ PR creation with labels failed, retrying without labels..."
+                gh pr create \
+                  --title "📊 Timeline Update - $(date -u +'%Y-%m-%d %H:%M:%S UTC')" \
+                  --body "## Automated Timeline Data Update
+            
+            **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+            
+            ### Summary
+            This PR updates the timeline data with the latest repository activity metrics. (Labels could not be applied)
+            
+            ### Changes
+            - Updated issues and pull request data
+            - Refreshed workflow run statistics
+            - Updated automation metrics and completion rates
+            - Regenerated activity summary
+            
+            ### Data Updated
+            - \`docs/data/issues.json\` - Recent issues
+            - \`docs/data/pulls.json\` - Recent pull requests
+            - \`docs/data/workflows.json\` - Workflow runs
+            - \`docs/data/stats.json\` - Repository statistics
+            - \`docs/data/automation-log.json\` - Automation activity
+            
+            ---
+            *This PR was automatically created by the System Monitor workflow and will be auto-merged.*" \
+                  --base main \
+                  --head "${branch_name}"
+              }
             
             echo "✅ PR created successfully for timeline update"
           fi

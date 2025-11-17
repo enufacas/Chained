@@ -450,12 +450,20 @@ jobs:
           ---
           *🤖 Automated agent evaluation system - Survival of the fittest in action!*"
           
+          # Create PR (with fallback if labels don't exist)
           PR_URL=$(gh pr create \
             --title "🏛️ Daily Agent Evaluation - $(date +%Y-%m-%d)" \
             --body "$PR_BODY" \
             --label "agent-system,evaluation,automated,copilot,auto-merge" \
             --base main \
-            --head "$BRANCH_NAME")
+            --head "$BRANCH_NAME") || {
+              echo "⚠️ PR creation with labels failed, retrying without labels..."
+              PR_URL=$(gh pr create \
+                --title "🏛️ Daily Agent Evaluation - $(date +%Y-%m-%d)" \
+                --body "$PR_BODY" \
+                --base main \
+                --head "$BRANCH_NAME")
+            }
           
           # Extract PR number
           PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
@@ -751,7 +759,7 @@ jobs:
           git commit -m "🌍 World Model: Agent Evaluation Sync"
           git push origin "$BRANCH_NAME"
           
-          # Create PR
+          # Create PR (with fallback if labels don't exist)
           PR_URL=$(gh pr create \
             --title "🌍 World Model: Agent Evaluation Sync - $(date +%Y-%m-%d)" \
             --body "## 🌍 World Model Sync: Agent Evaluation
@@ -769,7 +777,26 @@ jobs:
           " \
             --label "automated,world-model,agent-system,auto-merge,copilot" \
             --base main \
-            --head "$BRANCH_NAME")
+            --head "$BRANCH_NAME") || {
+              echo "⚠️ PR creation with labels failed, retrying without labels..."
+              PR_URL=$(gh pr create \
+                --title "🌍 World Model: Agent Evaluation Sync - $(date +%Y-%m-%d)" \
+                --body "## 🌍 World Model Sync: Agent Evaluation
+          
+          **Pipeline Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          Updates:
+          - ✅ Agent positions synchronized from evaluation
+          - ✅ Agent registry data reflected in world state
+          - ✅ World model updated for agent environment
+          
+          **Note:** This PR will be auto-merged by the next pipeline stage. (Labels could not be applied)
+          
+          This sync ensures agents have access to updated evaluation data in their world model environment.
+          " \
+                --base main \
+                --head "$BRANCH_NAME")
+            }
           
           # Extract PR number
           PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
