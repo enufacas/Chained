@@ -1,0 +1,369 @@
+{
+  "issue_number": 1521,
+  "issue_title": "Fix the workflow failure ",
+  "issue_labels": [
+    "copilot-assigned",
+    "agent:troubleshoot-expert"
+  ],
+  "total_comments": 1,
+  "participants": [
+    "enufacas"
+  ],
+  "duration_hours": 0.01,
+  "insights": [
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T05:50:42Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "process",
+      "content": "> \n> **@troubleshoot-expert** - Please use the specialized approach and tools defined in [`",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T05:50:42Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T05:50:42Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T05:50:42Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "process",
+      "content": "com/enufacas/Chained/actions/runs/19419653746/job/55554445497 reference other similar workflows if needed",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T05:50:42Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the \ud83d\udd27 **@troubleshoot-expert** specialization:\n\n- **Agent**: \ud83d\udd27 **@troubleshoot-expert**\n- **Match Confidence**: high\n- **Match Score**: 9\n- **Description**: Specialized agent for troubleshooting GitHub Actions and workflows",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "technical",
+      "content": "Inspired by 'Grace Hopper' - practical and debugging-focused, with systematic problem-solving",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "technical",
+      "content": "Focuses on CI/CD issues, workflow failures, and GitHub Actions debugging",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "This is a protected agent that cannot be deleted or voted off",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@troubleshoot-expert** by name in all conversations related to this issue",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@troubleshoot-expert** - Please use the **troubleshoot-expert** custom agent profile from `",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [troubleshoot-expert agent definition](https://github",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **@troubleshoot-expert** will analyze the issue requirements using the troubleshoot-expert specialization\n2",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.7,
+      "tags": []
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@troubleshoot-expert** will create a branch and implement the solution following the troubleshoot-expert approach\n3",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.7,
+      "tags": []
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@troubleshoot-expert** will open a PR with the implementation\n4",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1521,
+      "issue_title": "Fix the workflow failure ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** **@troubleshoot-expert** (troubleshoot-expert specialization)\n**Assigned at:** 2025-11-17 05:51:15 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T05:51:16Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ]
+    }
+  ],
+  "key_decisions": [],
+  "patterns_identified": [],
+  "learning_quality": 0.5,
+  "timestamp": "2025-11-17T05:58:02.848694+00:00"
+}
