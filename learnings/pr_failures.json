@@ -1,5 +1,593 @@
 {
-  "failures": [],
-  "last_updated": "2025-11-14T20:46:32.353704+00:00",
-  "total_count": 0
+  "failures": [
+    {
+      "pr_number": 1479,
+      "title": "\ud83d\udcca Goal progress update - 2025-11-17",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T02:04:54Z",
+      "closed_at": "2025-11-17T02:06:40Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1448,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1442 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T00:10:47Z",
+      "closed_at": "2025-11-17T01:25:36Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1412,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1400 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:43:19Z",
+      "closed_at": "2025-11-17T01:25:25Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1449,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1444 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T00:11:40Z",
+      "closed_at": "2025-11-17T01:25:19Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1450,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1446 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T00:12:30Z",
+      "closed_at": "2025-11-17T01:25:15Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1437,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1433 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T21:42:17Z",
+      "closed_at": "2025-11-16T22:02:05Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1438,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1409 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T21:43:11Z",
+      "closed_at": "2025-11-16T22:02:00Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1436,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T21:42:13Z",
+      "closed_at": "2025-11-16T22:01:54Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1435,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T21:42:11Z",
+      "closed_at": "2025-11-16T22:01:48Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1431,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1413 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T21:20:19Z",
+      "closed_at": "2025-11-16T21:57:35Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1414,
+      "title": "Reduce autonomous pipeline frequency from 2x to 1x daily",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:48:48Z",
+      "closed_at": "2025-11-16T21:10:38Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1415,
+      "title": "[WIP] Fix AI agent repetition alert with detected patterns",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:52:04Z",
+      "closed_at": "2025-11-16T20:52:30Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1411,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:43:19Z",
+      "closed_at": "2025-11-16T20:49:23Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1410,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:43:16Z",
+      "closed_at": "2025-11-16T20:49:16Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1408,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1407 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:33:52Z",
+      "closed_at": "2025-11-16T20:49:07Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1405,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1398 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:23:55Z",
+      "closed_at": "2025-11-16T20:49:02Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1395,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1390 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:03:08Z",
+      "closed_at": "2025-11-16T20:48:56Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1406,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:23:55Z",
+      "closed_at": "2025-11-16T20:37:10Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1394,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:02:58Z",
+      "closed_at": "2025-11-16T20:37:03Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1393,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:02:58Z",
+      "closed_at": "2025-11-16T20:36:57Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1404,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T20:23:53Z",
+      "closed_at": "2025-11-16T20:36:51Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1350,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T16:47:40Z",
+      "closed_at": "2025-11-16T16:52:50Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1351,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T16:47:44Z",
+      "closed_at": "2025-11-16T16:52:45Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1347,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T16:43:08Z",
+      "closed_at": "2025-11-16T16:52:36Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1348,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T16:43:10Z",
+      "closed_at": "2025-11-16T16:52:31Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1345,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T16:41:12Z",
+      "closed_at": "2025-11-16T16:52:26Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1346,
+      "title": "\ud83e\udd16 Update code analysis data - 2025-11-16",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T16:41:12Z",
+      "closed_at": "2025-11-16T16:52:21Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1349,
+      "title": "[WIP] Add multi-agent debate system for different approaches",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T16:44:22Z",
+      "closed_at": "2025-11-16T16:51:53Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1313,
+      "title": "[WIP] Explore cloud innovation trends and findings",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-16T10:00:22Z",
+      "closed_at": "2025-11-16T16:51:35Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    }
+  ],
+  "last_updated": "2025-11-17T02:07:09.107940+00:00",
+  "total_count": 29
 }
