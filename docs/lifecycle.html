@@ -243,6 +243,110 @@
             </div>
         </section>
 
+        <section class="workflow-runs-section">
+            <h2>🔄 Workflow Runs & Statistics</h2>
+            <p class="section-description">
+                Detailed view of all autonomous workflow executions with filtering, sorting, and comprehensive metrics.
+            </p>
+
+            <!-- Filters and Controls -->
+            <div class="workflow-controls">
+                <div class="control-group">
+                    <label for="search-workflow">🔍 Search:</label>
+                    <input type="text" id="search-workflow" placeholder="Search by workflow name or title...">
+                </div>
+                <div class="control-group">
+                    <label for="filter-status">Status:</label>
+                    <select id="filter-status">
+                        <option value="">All</option>
+                        <option value="completed">Completed</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="queued">Queued</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="filter-conclusion">Conclusion:</label>
+                    <select id="filter-conclusion">
+                        <option value="">All</option>
+                        <option value="success">Success</option>
+                        <option value="failure">Failure</option>
+                        <option value="action_required">Action Required</option>
+                        <option value="skipped">Skipped</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="items-per-page">Show:</label>
+                    <select id="items-per-page">
+                        <option value="25">25</option>
+                        <option value="50" selected>50</option>
+                        <option value="100">100</option>
+                        <option value="all">All</option>
+                    </select>
+                </div>
+                <button id="reset-filters" class="btn-secondary">Reset Filters</button>
+            </div>
+
+            <!-- Workflow Statistics Summary -->
+            <div class="workflow-summary-cards">
+                <div class="summary-card">
+                    <div class="summary-icon">📊</div>
+                    <div class="summary-content">
+                        <h4 id="total-runs">0</h4>
+                        <p>Total Runs</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">✅</div>
+                    <div class="summary-content">
+                        <h4 id="success-runs">0</h4>
+                        <p>Successful</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">❌</div>
+                    <div class="summary-content">
+                        <h4 id="failed-runs">0</h4>
+                        <p>Failed</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">🔄</div>
+                    <div class="summary-content">
+                        <h4 id="success-rate">0%</h4>
+                        <p>Success Rate</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow Runs Table -->
+            <div class="table-container">
+                <table id="workflow-runs-table" class="workflow-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="name" class="sortable">Workflow Name <span class="sort-indicator">⬍</span></th>
+                            <th data-sort="displayTitle" class="sortable">Display Title <span class="sort-indicator">⬍</span></th>
+                            <th data-sort="status" class="sortable">Status <span class="sort-indicator">⬍</span></th>
+                            <th data-sort="conclusion" class="sortable">Conclusion <span class="sort-indicator">⬍</span></th>
+                            <th data-sort="createdAt" class="sortable">Created At <span class="sort-indicator">⬍</span></th>
+                            <th>Run ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="workflow-runs-body">
+                        <tr>
+                            <td colspan="6" class="loading-cell">Loading workflow data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-controls">
+                <button id="prev-page" class="btn-secondary" disabled>← Previous</button>
+                <span id="page-info">Page 1 of 1</span>
+                <button id="next-page" class="btn-secondary" disabled>Next →</button>
+            </div>
+        </section>
+
         <section class="lifecycle-features">
             <h2>✨ Key Features of the Autonomous Cycle</h2>
             <div class="features-grid">
@@ -575,6 +679,231 @@
 
         // Load statistics on page load
         loadStatistics();
+
+        // ===== Workflow Runs Table Functionality =====
+        let workflowData = [];
+        let filteredData = [];
+        let currentPage = 1;
+        let itemsPerPage = 50;
+        let sortColumn = 'createdAt';
+        let sortDirection = 'desc';
+
+        // Load workflow data
+        async function loadWorkflowData() {
+            try {
+                const response = await fetch('data/workflows.json');
+                if (response.ok) {
+                    workflowData = await response.json();
+                    filteredData = [...workflowData];
+                    updateWorkflowSummary();
+                    applyFiltersAndSort();
+                } else {
+                    showError('Unable to load workflow data');
+                }
+            } catch (error) {
+                console.error('Error loading workflow data:', error);
+                showError('Error loading workflow data');
+            }
+        }
+
+        // Update summary statistics
+        function updateWorkflowSummary() {
+            const total = workflowData.length;
+            const successful = workflowData.filter(w => w.conclusion === 'success').length;
+            const failed = workflowData.filter(w => w.conclusion === 'failure').length;
+            const successRate = total > 0 ? ((successful / total) * 100).toFixed(1) : 0;
+
+            document.getElementById('total-runs').textContent = total;
+            document.getElementById('success-runs').textContent = successful;
+            document.getElementById('failed-runs').textContent = failed;
+            document.getElementById('success-rate').textContent = successRate + '%';
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-workflow').value.toLowerCase();
+            const statusFilter = document.getElementById('filter-status').value;
+            const conclusionFilter = document.getElementById('filter-conclusion').value;
+
+            filteredData = workflowData.filter(run => {
+                const matchesSearch = !searchTerm || 
+                    run.name.toLowerCase().includes(searchTerm) ||
+                    run.displayTitle.toLowerCase().includes(searchTerm);
+                const matchesStatus = !statusFilter || run.status === statusFilter;
+                const matchesConclusion = !conclusionFilter || run.conclusion === conclusionFilter;
+                
+                return matchesSearch && matchesStatus && matchesConclusion;
+            });
+
+            currentPage = 1;
+        }
+
+        // Sort data
+        function sortData() {
+            filteredData.sort((a, b) => {
+                let aVal = a[sortColumn] || '';
+                let bVal = b[sortColumn] || '';
+
+                // Handle date sorting
+                if (sortColumn === 'createdAt') {
+                    aVal = new Date(aVal);
+                    bVal = new Date(bVal);
+                }
+
+                if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        // Apply filters and sorting
+        function applyFiltersAndSort() {
+            applyFilters();
+            sortData();
+            renderTable();
+        }
+
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('workflow-runs-body');
+            const itemsPerPageSelect = document.getElementById('items-per-page');
+            itemsPerPage = itemsPerPageSelect.value === 'all' ? filteredData.length : parseInt(itemsPerPageSelect.value);
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="no-data-cell">No workflow runs found</td></tr>';
+                updatePagination();
+                return;
+            }
+
+            tbody.innerHTML = pageData.map(run => {
+                const statusBadge = getStatusBadge(run.status);
+                const conclusionBadge = getConclusionBadge(run.conclusion);
+                const createdDate = new Date(run.createdAt).toLocaleString();
+                
+                return `
+                    <tr>
+                        <td class="workflow-name">${escapeHtml(run.name)}</td>
+                        <td class="workflow-title">${escapeHtml(run.displayTitle)}</td>
+                        <td>${statusBadge}</td>
+                        <td>${conclusionBadge}</td>
+                        <td class="workflow-date">${createdDate}</td>
+                        <td class="workflow-id">${run.databaseId}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            updatePagination();
+        }
+
+        // Get status badge HTML
+        function getStatusBadge(status) {
+            const badges = {
+                'completed': '<span class="badge badge-completed">✓ Completed</span>',
+                'in_progress': '<span class="badge badge-in-progress">⟳ In Progress</span>',
+                'queued': '<span class="badge badge-queued">⋯ Queued</span>',
+                '': '<span class="badge badge-unknown">? Unknown</span>'
+            };
+            return badges[status] || badges[''];
+        }
+
+        // Get conclusion badge HTML
+        function getConclusionBadge(conclusion) {
+            const badges = {
+                'success': '<span class="badge badge-success">✓ Success</span>',
+                'failure': '<span class="badge badge-failure">✗ Failure</span>',
+                'action_required': '<span class="badge badge-action">⚠ Action Required</span>',
+                'skipped': '<span class="badge badge-skipped">⊘ Skipped</span>',
+                '': '<span class="badge badge-none">─ None</span>'
+            };
+            return badges[conclusion] || badges[''];
+        }
+
+        // Update pagination controls
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages} (${filteredData.length} runs)`;
+            document.getElementById('prev-page').disabled = currentPage === 1;
+            document.getElementById('next-page').disabled = currentPage >= totalPages;
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Show error message
+        function showError(message) {
+            const tbody = document.getElementById('workflow-runs-body');
+            tbody.innerHTML = `<tr><td colspan="6" class="error-cell">⚠️ ${message}</td></tr>`;
+        }
+
+        // Event Listeners
+        document.getElementById('search-workflow').addEventListener('input', applyFiltersAndSort);
+        document.getElementById('filter-status').addEventListener('change', applyFiltersAndSort);
+        document.getElementById('filter-conclusion').addEventListener('change', applyFiltersAndSort);
+        document.getElementById('items-per-page').addEventListener('change', () => {
+            currentPage = 1;
+            renderTable();
+        });
+
+        document.getElementById('reset-filters').addEventListener('click', () => {
+            document.getElementById('search-workflow').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-conclusion').value = '';
+            document.getElementById('items-per-page').value = '50';
+            applyFiltersAndSort();
+        });
+
+        document.getElementById('prev-page').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+
+        document.getElementById('next-page').addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        });
+
+        // Add sorting to table headers
+        document.querySelectorAll('.sortable').forEach(header => {
+            header.addEventListener('click', () => {
+                const column = header.dataset.sort;
+                if (sortColumn === column) {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortColumn = column;
+                    sortDirection = 'asc';
+                }
+
+                // Update sort indicators
+                document.querySelectorAll('.sortable').forEach(h => {
+                    const indicator = h.querySelector('.sort-indicator');
+                    if (h.dataset.sort === column) {
+                        indicator.textContent = sortDirection === 'asc' ? '▲' : '▼';
+                        h.classList.add('sorted');
+                    } else {
+                        indicator.textContent = '⬍';
+                        h.classList.remove('sorted');
+                    }
+                });
+
+                applyFiltersAndSort();
+            });
+        });
+
+        // Load workflow data on page load
+        loadWorkflowData();
     </script>
     <script src="navigation.js"></script>
 </body>
