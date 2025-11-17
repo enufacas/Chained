@@ -2,9 +2,9 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 57
+**Total Insights:** 262
 
-**Last Updated:** 2025-11-15
+**Last Updated:** 2025-11-17
 
 ---
 
@@ -571,5 +571,211 @@ gives growing teams these enterprise foundations without slowing development:- M
 
 
 ### Apple Gemini deal terms 💰, Amazon layoff turmoil 💼, compiler targets 👨‍💻
+
+---
+
+
+## 📰 From Unknown
+
+
+### We cut our Mongo DB costs by 90% by moving to Hetzner
+
+**Community Score:** 136 upvotes
+
+**Link:** https://prosopo.io/blog/we-cut-our-mongodb-costs-by-90-percent/
+
+
+**Content Summary:**
+
+Nov 12, 2025 ⋅ 3 min read We cut our Mongo DB costs by 90% by moving to Hetzner Chris Taylor Table of Contents Starting with MongoDB Atlas for *Free* but Scaling Costs Added Up Why We Chose Hetzner Migration Things You'll Need To Do Yourself Conclusion Running databases in the cloud can be convenient, but it can also get expensive fast. For the Prosopo team, MongoDB Atlas was initially a fast, reliable way to run a cloud database, but as our data grew, so did the bills. Over the last year, we re...
+
+---
+
+
+### Things I don't like in configuration languages
+
+**Community Score:** 32 upvotes
+
+**Link:** https://medv.io/blog/things-i-dont-like-in-configuration-languages
+
+---
+
+
+### Show HN: Continuous Claude – run Claude Code in a loop
+
+**Community Score:** 11 upvotes
+
+**Link:** https://github.com/AnandChowdhary/continuous-claude
+
+---
+
+
+### Show HN: PrinceJS – 19,200 req/s Bun framework in 2.8 kB (built by a 13yo)
+
+**Community Score:** 3 upvotes
+
+**Link:** https://princejs.vercel.app
+
+---
+
+
+### Boa: A standard-conforming embeddable JavaScript engine written in Rust
+
+**Link:** https://github.com/boa-dev/boa
+
+---
+
+
+### Designing a Language (2017)
+
+**Link:** https://cs.lmu.edu/~ray/notes/languagedesignnotes/
+
+---
+
+
+### Go's Sweet 16
+
+**Link:** https://go.dev/blog/16years
+
+---
+
+
+### Designing a Language (2017
+
+**Community Score:** 145 upvotes
+
+**Link:** https://cs.lmu.edu/~ray/notes/languagedesignnotes/
+
+
+**Content Summary:**
+
+Language Design So, you want to design your own language? Of course you do. Or perhaps you are taking a class and are being forced to create a programming language under penalty of a bad grade. What kinds of things do you need to know? Designing a Language Of course you want to design (and implement!) your own programming language! It’s fun. It’s creative. It’s empowering. How do we do it? In a nutshell, the process is iterative, cycling between four phases: Doing the phases over and over is imp...
+
+---
+
+
+### Go's Sweet 16
+
+**Community Score:** 232 upvotes
+
+**Link:** https://go.dev/blog/16years
+
+
+**Content Summary:**
+
+The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 This past Monday, November 10th, we celebrated the 16th anniversary of Go’s open source release ! We released Go 1.24 in February and Go 1.25 in August , following our now well-established and dependable release cadence. Continuing our mission to build the most productive language platform for building production systems, these releases included new APIs for building robust and reliable software, significant advances in ...
+
+---
+
+
+### Think in math, write in code (2019)
+
+**Link:** https://www.jmeiners.com/think-in-math/
+
+---
+
+
+### Google will allow users to sideload Android apps without verification
+
+**Community Score:** 653 upvotes
+
+**Link:** https://android-developers.googleblog.com/2025/11/android-developer-verification-early.html
+
+
+**Content Summary:**
+
+☰ Android Developers Blog The latest Android and Google Play news for app and game developers. 🔍 Android Developers → Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News Platform Android Studio Google Play Jetpack Kotlin Docs News More | 12 November 2025 Android developer verification: Early access starts now as we continue to build with your feedback Share this post LinkedIn Twitter Facebook Email Copy link Link copied to clipboard Posted by Matthew Forsythe Di...
+
+---
+
+
+### Yt-dlp: External JavaScript runtime now required for full YouTube support
+
+**Community Score:** 939 upvotes
+
+**Link:** https://github.com/yt-dlp/yt-dlp/issues/15012
+
+
+**Content Summary:**
+
+yt-dlp / yt-dlp Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 10.8k Star 135k [Announcement] External JavaScript runtime now required for full YouTube support #15012 New issue Copy link New issue Copy link Open Open [Announcement] External JavaScript runtime now required for full YouTube support #15012 Copy link Labels discussion/announcement Description bashonly opened on Nov 12, 2025 Issue body...
+
+---
+
+
+### Itiner-e: the Google Maps of Roman Roads
+
+**Community Score:** 128 upvotes
+
+**Link:** https://itiner-e.org/
+
+---
+
+
+### JVM exceptions are weird: a decompiler perspective
+
+**Community Score:** 136 upvotes
+
+**Link:** https://purplesyringa.moe/blog/jvm-exceptions-are-weird-a-decompiler-perspective/
+
+---
+
+
+### Omnilingual ASR: Advancing automatic speech recognition for 1600 languages
+
+**Community Score:** 110 upvotes
+
+**Link:** https://ai.meta.com/blog/omnilingual-asr-advancing-automatic-speech-recognition/?_fb_noscript=1
+
+---
+
+
+### Vibe Code Warning – A personal casestudy
+
+**Community Score:** 279 upvotes
+
+**Link:** https://github.com/jackdoe/pico2-swd-riscv
+
+---
+
+
+### Go's Sweet 16
+
+**Community Score:** 142 upvotes
+
+**Link:** https://go.dev/blog/16years
+
+
+**Content Summary:**
+
+The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 This past Monday, November 10th, we celebrated the 16th anniversary of Go’s open source release ! We released Go 1.24 in February and Go 1.25 in August , following our now well-established and dependable release cadence. Continuing our mission to build the most productive language platform for building production systems, these releases included new APIs for building robust and reliable software, significant advances in ...
+
+---
+
+
+### Think in math, write in code (2019
+
+**Community Score:** 178 upvotes
+
+**Link:** https://www.jmeiners.com/think-in-math/
+
+
+**Content Summary:**
+
+Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss programming languages. We not only debate their technical merits and aesthetic qualities, but they become integrated into our personal identities, along with the values and traits that we associate with them. Some even defend a form of Linguistic Determinism that thinking is confined to what the language makes typable. Since we spend so much time writing code, a keen interest in language design is justified. However...
+
+---
+
+
+### So, you want to design your own language? (2017)
+
+**Link:** https://cs.lmu.edu/~ray/notes/languagedesignnotes/
+
+---
+
+
+### AMD GPUs Go Brrr
+
+**Link:** https://hazyresearch.stanford.edu/blog/2025-11-09-amd-brr
 
 ---

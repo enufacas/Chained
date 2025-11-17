@@ -1,0 +1,468 @@
+{
+  "timestamp": "2025-11-17T21:19:26.135018",
+  "analysis_period_days": 7,
+  "total_learnings_analyzed": 2944,
+  "top_technologies": [
+    {
+      "name": "go",
+      "category": "Languages",
+      "mention_count": 108,
+      "sources": [
+        "",
+        "Hacker News",
+        "GitHub Community Discussions",
+        "GitHub Trending"
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "Zed is our office",
+        "Reverse Engineering Yaesu FT-70D Firmware Encryption",
+        "Go's Sweet 16"
+      ],
+      "keywords": [
+        "go"
+      ]
+    },
+    {
+      "name": "cloud",
+      "category": "DevOps",
+      "mention_count": 179,
+      "sources": [
+        "",
+        "GitHub Copilot Docs",
+        "TLDR",
+        "GitHub Trending",
+        "Hacker News"
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "Checkout.com hacked, refuses ransom payment, donates to security labs",
+        "We cut our Mongo DB costs by 90% by moving to Hetzner",
+        "GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "cloud"
+      ]
+    },
+    {
+      "name": "security",
+      "category": "Security",
+      "mention_count": 189,
+      "sources": [
+        "TLDR",
+        "Hacker News",
+        "GitHub Copilot Docs",
+        ""
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "Checkout.com hacked, refuses ransom payment, donates to security labs",
+        "Android developer verification: Early access starts",
+        "Homebrew no longer allows bypassing Gatekeeper for unsigned/unnotarized software"
+      ],
+      "keywords": [
+        "security"
+      ]
+    },
+    {
+      "name": "aws",
+      "category": "DevOps",
+      "mention_count": 107,
+      "sources": [
+        "TLDR",
+        "Hacker News",
+        "hackernews",
+        "tldr"
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "We cut our Mongo DB costs by 90% by moving to Hetzner",
+        "Messing with scraper bots",
+        "SSL Configuration Generator"
+      ],
+      "keywords": [
+        "aws"
+      ]
+    },
+    {
+      "name": "gpt",
+      "category": "AI/ML",
+      "mention_count": 206,
+      "sources": [
+        "GitHub Copilot Docs",
+        "TLDR",
+        "tldr",
+        "Hacker News",
+        "GitHub Community Discussions"
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "GPT-5.1: A smarter, more conversational ChatGPT",
+        "Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+        "GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "gpt"
+      ]
+    },
+    {
+      "name": "claude",
+      "category": "AI/ML",
+      "mention_count": 90,
+      "sources": [
+        "",
+        "GitHub Copilot Docs",
+        "TLDR",
+        "GitHub Trending",
+        "Hacker News",
+        "hackernews"
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb",
+        "Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+        "davila7/claude-code-templates - CLI tool for configuring and monitoring Claude Code"
+      ],
+      "keywords": [
+        "claude"
+      ]
+    },
+    {
+      "name": "ai",
+      "category": "AI/ML",
+      "mention_count": 510,
+      "sources": [
+        "",
+        "GitHub Copilot Docs",
+        "TLDR",
+        "GitHub Trending",
+        "tldr",
+        "Hacker News"
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
+        "Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+        "Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c"
+      ],
+      "keywords": [
+        "ai"
+      ]
+    },
+    {
+      "name": "agents",
+      "category": "AI/ML",
+      "mention_count": 192,
+      "sources": [
+        "",
+        "TLDR",
+        "GitHub Trending",
+        "tldr",
+        "Hacker News"
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+        "ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+        "Grok Code Remote \ud83d\udc68\u200d\ud83d\udcbb , GPT-5.1 on OpenRouter \ud83e\udd16, Moonshot AI AMA \ud83d\udcac"
+      ],
+      "keywords": [
+        "agents"
+      ]
+    },
+    {
+      "name": "api",
+      "category": "Web",
+      "mention_count": 81,
+      "sources": [
+        "",
+        "TLDR",
+        "GitHub Trending",
+        "Hacker News",
+        "hackernews"
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "MSFT OpenAI docs leak \ud83d\udcc4, GPT-5.1 \ud83e\udd16, Anthropic\u2019s $50B Bet \ud83d\udcb0",
+        "Go's Sweet 16",
+        "requestly/requestly - Free and open-source API Client & Interceptor."
+      ],
+      "keywords": [
+        "api"
+      ]
+    },
+    {
+      "name": "python",
+      "category": "Languages",
+      "mention_count": 27,
+      "sources": [
+        "TLDR",
+        "Hacker News",
+        "hackernews",
+        ""
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "Show HN: Tiny Diffusion \u2013 A character-level text diffusion model from scratch",
+        "Awk Technical Notes (2023",
+        "Show HN: Chirp \u2013 Local Windows dictation with ParakeetV3 no executable required"
+      ],
+      "keywords": [
+        "python"
+      ]
+    }
+  ],
+  "top_companies": [
+    {
+      "name": "Github",
+      "category": "Company",
+      "mention_count": 56,
+      "sources": [
+        "GitHub Copilot Docs",
+        "TLDR",
+        "tldr",
+        "Hacker News",
+        "GitHub Community Discussions"
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "GitHub Partial Outage",
+        "GitHub\u2019s Agent HQ \ud83c\udfe2, OpenAI\u2019s Security Researcher \ud83e\udd77, AWS To Bare Metal \ud83d\udcbe",
+        "Show HN: Pegma, the free and open-source version of the classic Peg solitaire"
+      ],
+      "keywords": [
+        "github"
+      ]
+    },
+    {
+      "name": "Google",
+      "category": "Company",
+      "mention_count": 133,
+      "sources": [
+        "TLDR",
+        "Hacker News",
+        "GitHub Trending",
+        "tldr"
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c",
+        "A new Google model is nearly perfect on automated handwriting recognition",
+        "A new Google model is nearly perfect on automated handwriting recognition"
+      ],
+      "keywords": [
+        "google"
+      ]
+    },
+    {
+      "name": "Cloudflare",
+      "category": "Company",
+      "mention_count": 48,
+      "sources": [
+        "",
+        "TLDR",
+        "GitHub Trending",
+        "Hacker News",
+        "hackernews"
+      ],
+      "momentum": 0.0,
+      "score": 85.0,
+      "sample_titles": [
+        "serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly, and Fly.io",
+        "Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependencies \ud83e\udd80",
+        "Cloudflare scrubs Aisuru botnet from top domains list"
+      ],
+      "keywords": [
+        "cloudflare"
+      ]
+    },
+    {
+      "name": "Apple",
+      "category": "Company",
+      "mention_count": 89,
+      "sources": [
+        "TLDR",
+        "Hacker News",
+        "tldr"
+      ],
+      "momentum": 0.0,
+      "score": 84.0,
+      "sample_titles": [
+        "Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+        "Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+        "Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0"
+      ],
+      "keywords": [
+        "apple"
+      ]
+    },
+    {
+      "name": "Nvidia",
+      "category": "Company",
+      "mention_count": 70,
+      "sources": [
+        "TLDR",
+        "Hacker News",
+        "tldr"
+      ],
+      "momentum": 0.0,
+      "score": 84.0,
+      "sample_titles": [
+        "SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb",
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+        "SoftBank sells its entire stake in Nvidia"
+      ],
+      "keywords": [
+        "nvidia"
+      ]
+    },
+    {
+      "name": "Anthropic",
+      "category": "Company",
+      "mention_count": 122,
+      "sources": [
+        "TLDR",
+        "hackernews",
+        "tldr"
+      ],
+      "momentum": 0.0,
+      "score": 84.0,
+      "sample_titles": [
+        "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
+        "MSFT OpenAI docs leak \ud83d\udcc4, GPT-5.1 \ud83e\udd16, Anthropic\u2019s $50B Bet \ud83d\udcb0",
+        "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "anthropic"
+      ]
+    },
+    {
+      "name": "Aws",
+      "category": "Company",
+      "mention_count": 59,
+      "sources": [
+        "TLDR",
+        "hackernews",
+        "tldr"
+      ],
+      "momentum": 0.0,
+      "score": 84.0,
+      "sample_titles": [
+        "AWS DynamoDB Outage \u2601\ufe0f, Grafana Mimir \ud83c\udd95, AI Platform At Pinterest \ud83e\uddf7",
+        "GitHub\u2019s Agent HQ \ud83c\udfe2, OpenAI\u2019s Security Researcher \ud83e\udd77, AWS To Bare Metal \ud83d\udcbe",
+        "How when AWS was down, we were not"
+      ],
+      "keywords": [
+        "aws"
+      ]
+    },
+    {
+      "name": "Spacex",
+      "category": "Company",
+      "mention_count": 25,
+      "sources": [
+        "TLDR",
+        "tldr"
+      ],
+      "momentum": 0.0,
+      "score": 81.0,
+      "sample_titles": [
+        "SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb",
+        "SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb",
+        "SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "spacex"
+      ]
+    },
+    {
+      "name": "Openai",
+      "category": "Company",
+      "mention_count": 150,
+      "sources": [
+        "TLDR",
+        "tldr"
+      ],
+      "momentum": 0.0,
+      "score": 81.0,
+      "sample_titles": [
+        "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
+        "MSFT OpenAI docs leak \ud83d\udcc4, GPT-5.1 \ud83e\udd16, Anthropic\u2019s $50B Bet \ud83d\udcb0",
+        "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb"
+      ],
+      "keywords": [
+        "openai"
+      ]
+    },
+    {
+      "name": "Amd",
+      "category": "Company",
+      "mention_count": 25,
+      "sources": [
+        "Hacker News",
+        "hackernews"
+      ],
+      "momentum": 0.0,
+      "score": 81.0,
+      "sample_titles": [
+        "HipKittens: Fast and furious AMD kernels",
+        "HipKittens: Fast and furious AMD kernels",
+        "HipKittens: Fast and furious AMD kernels"
+      ],
+      "keywords": [
+        "amd"
+      ]
+    }
+  ],
+  "top_frameworks": [],
+  "notable_personalities": [
+    {
+      "name": "Elon Musk",
+      "mention_count": 32,
+      "context": [
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+        "Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+        "Tim Cook plans exit \ud83d\udc4b, Elon's interview \ud83d\udcdd, building a UI framework \ud83e\uddd1\u200d\ud83d\udcbb"
+      ],
+      "relevance_score": 100
+    },
+    {
+      "name": "Mark Zuckerberg",
+      "mention_count": 8,
+      "context": [
+        "I Am Mark Zuckerberg",
+        "I Am Mark Zuckerberg",
+        "I Am Mark Zuckerberg"
+      ],
+      "relevance_score": 80
+    },
+    {
+      "name": "Yann Lecun",
+      "mention_count": 8,
+      "context": [
+        "Yann LeCun to depart Meta and launch AI startup focused on 'world models'",
+        "Yann LeCun to depart Meta and launch AI startup focused on 'world models'",
+        "Yann LeCun to depart Meta and launch AI startup focused on 'world models'"
+      ],
+      "relevance_score": 80
+    }
+  ],
+  "emerging_topics": [],
+  "hot_themes": [
+    "ai-agents",
+    "go-specialist",
+    "cloud-infrastructure"
+  ]
+}

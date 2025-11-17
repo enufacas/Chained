@@ -1,0 +1,165 @@
+{
+  "timestamp": "2025-11-17T21:19:22.286013+00:00",
+  "source": "GitHub Copilot (Combined)",
+  "learnings": [
+    {
+      "title": "GitHub Copilot Docs: About billing for GitHub Copilot in organizations and enterprises",
+      "description": "About billing for GitHub Copilot in organizations and enterprises\nLearn about pricing and billing cycles for Copilot.\nWho can use this feature?\nOrganizations on a GitHub Free or GitHub Team plan, or organizations and enterprises on GitHub Enterprise Cloud\nIn this article\nAvailable plans\nGitHub offers the following plans for organization accounts:\nCopilot Business\nat $19 USD per user per month (Purchase additional premium requests at $0.04 USD per request)\nCopilot Enterprise\nat $39 USD per user p",
+      "content": "About billing for GitHub Copilot in organizations and enterprises\nLearn about pricing and billing cycles for Copilot.\nWho can use this feature?\nOrganizations on a GitHub Free or GitHub Team plan, or organizations and enterprises on GitHub Enterprise Cloud\nIn this article\nAvailable plans\nGitHub offers the following plans for organization accounts:\nCopilot Business\nat $19 USD per user per month (Purchase additional premium requests at $0.04 USD per request)\nCopilot Enterprise\nat $39 USD per user per month (GitHub Enterprise Cloud only, purchase additional premium requests at $0.04 USD per request)\nWith GitHub Enterprise Cloud, an enterprise owner chooses the plan for each organization in the enterprise. For guidance on choosing a plan, see\nChoosing your enterprise's plan for GitHub Copilot\n.\nPremium requests\nPaid Copilot plans include premium requests. Premium requests use advanced models and features and are subject to monthly allowances or potential overage costs. See\nRequests in GitHub Copilot\n.\nSeat assignment\nA Copilot seat is a license to use GitHub Copilot for a user. Each month, your organization or enterprise is billed for the number of assigned seats.\nSeat assignment is managed by organization owners. With GitHub Enterprise Cloud, an enterprise owner must have enabled GitHub Copilot for the organization before an organization owner can assign seats. See\nGranting access to GitHub Copilot for members of your organization\n.\nIf a user receives a seat from multiple organizations in the same enterprise, the enterprise will be billed only once, and one organization is selected and billed for the seat. To determine which organization is billed for a given user, request a detailed usage report and refer to the\norganization\ncolumn for the user's Copilot license. See\nBilling reports reference\n.\nBilling cycles\nBilled users are calculated at the end of each billing cycle, based on the number of GitHub Copilot seats that are assigned. Although you can add or remove seats \n\n[Content truncated...]",
+      "url": "https://docs.github.com/en/copilot/concepts/billing/organizations-and-enterprises",
+      "source": "GitHub Copilot Docs",
+      "timestamp": "2025-11-17T21:19:19.293246+00:00",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "GitHub Copilot Docs: About billing for individual GitHub Copilot plans",
+      "description": "About billing for individual GitHub Copilot plans\nLearn how billing works for Copilot Pro and Copilot Pro+.\nIn this article\nPricing for Copilot Pro and Copilot Pro+\nGitHub offers two paid plans for individuals: Copilot Pro and Copilot Pro+. Both plans are available on a monthly or yearly billing cycle.\nCopilot Pro\nIf you choose a monthly billing cycle\n, you will be billed $10 USD per calendar month.\nIf you choose a yearly billing cycle\n, you will be billed $100 USD per year.\nCopilot Pro+\nIf you ",
+      "content": "About billing for individual GitHub Copilot plans\nLearn how billing works for Copilot Pro and Copilot Pro+.\nIn this article\nPricing for Copilot Pro and Copilot Pro+\nGitHub offers two paid plans for individuals: Copilot Pro and Copilot Pro+. Both plans are available on a monthly or yearly billing cycle.\nCopilot Pro\nIf you choose a monthly billing cycle\n, you will be billed $10 USD per calendar month.\nIf you choose a yearly billing cycle\n, you will be billed $100 USD per year.\nCopilot Pro+\nIf you choose a monthly billing cycle\n, you will be billed $39 USD per calendar month.\nIf you choose a yearly billing cycle\n, you will be billed $390 USD per year.\nYou can change to a monthly or yearly billing cycle at any time. The change will take effect from the start of your next billing cycle.\nNote that GitHub may apply a temporary authorization hold for the value of the usage-based costs in advance, which will appear as a pending charge in your account's payment method.\nAbout the 30-day trial for Copilot Pro\nNote\nCopilot Pro+ does not include a trial. You will be billed immediately upon subscribing.\nBefore starting a paid plan for a personal account, you can set up a one-time 30-day trial to evaluate Copilot. To begin a trial, you will need to choose a monthly or yearly billing cycle, and provide a payment method. If you do not cancel the trial before the end of the 30 days, the trial will automatically convert to a paid plan.\nYou can cancel your Copilot trial at any time during the 30 days and you won't be charged. If you cancel before the end of the trial, you will continue to have access to Copilot until the 30-day trial period ends. See\nViewing and changing your GitHub Copilot plan\n.\nNote\nIf you were part of the free GitHub Copilot technical preview that was run between July 2021 and June 2022, you are not eligible for a 30-day trial.\nAbout premium requests\nYour Copilot plan includes premium requests. Premium requests use more advanced models or features and count against \n\n[Content truncated...]",
+      "url": "https://docs.github.com/en/copilot/concepts/billing/billing-for-individuals",
+      "source": "GitHub Copilot Docs",
+      "timestamp": "2025-11-17T21:19:19.877031+00:00",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "GitHub Copilot Docs: About Copilot auto model selection",
+      "description": "About Copilot auto model selection\nOptimize Copilot Chat in VS Code without needing to select a model\nWho can use this feature?\nAuto model selection is in  public preview in VS Code and in Visual Studio with all GitHub Copilot plans.\nIn this article\nOverview\nExperience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model selection automatically choose the best available model.\nIn VS Code and Visual Studio, Copilot auto model selection chooses from GPT-4",
+      "content": "About Copilot auto model selection\nOptimize Copilot Chat in VS Code without needing to select a model\nWho can use this feature?\nAuto model selection is in  public preview in VS Code and in Visual Studio with all GitHub Copilot plans.\nIn this article\nOverview\nExperience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model selection automatically choose the best available model.\nIn VS Code and Visual Studio, Copilot auto model selection chooses from GPT-4.1, GPT-5 mini, GPT-5, Claude Haiku 4.5, and Claude Sonnet 4.5, based on availability and to help reduce rate limiting. Included models may change over time.\nAutomatically selected models\nwon't\ninclude these models:\nModels with premium request multipliers greater than one. See\nSupported AI models in GitHub Copilot\n.\nModels excluded by individual or administrator policies. See\nConfiguring access to AI models in GitHub Copilot\n.\nModels not available in your plan. See\nSupported AI models in GitHub Copilot\n.\nTo see which model was used for each response, hover over the response in Copilot Chat.\nAI models for Copilot Chat\nWhile auto model selection is an option for Copilot Chat, you can manually choose a different model to override this selection. You can change the model Copilot uses to generate responses to chat prompts. You may find that different models perform better, or provide more useful responses, depending on the type of questions you ask. Options include premium models with advanced capabilities.  See\nChanging the AI model for GitHub Copilot Chat\n.\nMultiplier discounts\nIf you are on a paid Copilot plan and use auto model selection, models qualify for a 10% multiplier discount. See\nRequests in GitHub Copilot\n.\nEnabling access during public preview\nDuring the public preview, if you're using a Copilot Business or Copilot Enterprise plan, the organization or enterprise that provides your plan must have the\nEditor preview features\npolicy enabled. See\nManaging policies and fe\n\n[Content truncated...]",
+      "url": "https://docs.github.com/en/copilot/concepts/auto-model-selection",
+      "source": "GitHub Copilot Docs",
+      "timestamp": "2025-11-17T21:19:20.449675+00:00",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "GitHub Copilot Docs: About customizing GitHub Copilot responses",
+      "description": "About customizing GitHub Copilot responses\nLearn about customizing the behavior of GitHub Copilot to fit with your preferences and requirements.\nTool navigation\nIn this article\nNote\nThis version of this article is about custom instructions on the GitHub website. Click the tabs above for other environments.\nAbout customizing Copilot responses\nGitHub Copilot can provide responses that are tailored to your personal preferences, the way your team works, the tools you use, or the specifics of your pr",
+      "content": "About customizing GitHub Copilot responses\nLearn about customizing the behavior of GitHub Copilot to fit with your preferences and requirements.\nTool navigation\nIn this article\nNote\nThis version of this article is about custom instructions on the GitHub website. Click the tabs above for other environments.\nAbout customizing Copilot responses\nGitHub Copilot can provide responses that are tailored to your personal preferences, the way your team works, the tools you use, or the specifics of your project, if you provide it with enough context to do so. Instead of repeatedly adding this contextual detail to your prompts, you can create custom instructions that automatically add this information for you. The additional information is not displayed, but is available to Copilot to allow it to generate higher quality responses.\nNote\nDue to the non-deterministic nature of AI, Copilot may not always follow your custom instructions in exactly the same way every time they are used.\nTypes of custom instructions\nThere are three main types of custom instructions that you can use to customize Copilot responses on the GitHub website:\nPersonal instructions\napply to all conversations you have with Copilot Chat across the GitHub website. They allow you to specify your individual preferences, such as preferred language or response style, ensuring that the responses are tailored to your personal needs.\nRepository custom instructions\napply to conversations within the context of a specific repository. They are useful for defining project-specific coding standards, frameworks, or tools. For example, you can specify that a repository uses TypeScript and a particular library, ensuring consistent responses for all contributors.\nOrganization custom instructions\n(public preview) apply to conversations within the context of an organization on the GitHub website. They are ideal for enforcing organization-wide preferences, such as a common language or security guidelines. Organization custom instruc\n\n[Content truncated...]",
+      "url": "https://docs.github.com/en/copilot/concepts/prompting/response-customization",
+      "source": "GitHub Copilot Docs",
+      "timestamp": "2025-11-17T21:19:21.069562+00:00",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "GitHub Copilot Docs: About GitHub Copilot Chat",
+      "description": "About GitHub Copilot Chat\nLearn how you can use GitHub Copilot Chat to enhance your coding experience.\nIn this article\nOverview\nGitHub Copilot Chat is the AI-powered chat interface for GitHub Copilot. It allows you to interact with AI models to get coding assistance, explanations, and suggestions in a conversational format.\nCopilot Chat can help you with a variety of coding-related tasks, like offering you code suggestions, providing natural language descriptions of a piece of code's functionali",
+      "content": "About GitHub Copilot Chat\nLearn how you can use GitHub Copilot Chat to enhance your coding experience.\nIn this article\nOverview\nGitHub Copilot Chat is the AI-powered chat interface for GitHub Copilot. It allows you to interact with AI models to get coding assistance, explanations, and suggestions in a conversational format.\nCopilot Chat can help you with a variety of coding-related tasks, like offering you code suggestions, providing natural language descriptions of a piece of code's functionality and purpose, generating unit tests for your code, and proposing fixes for bugs in your code.\nGitHub Copilot Chat is available in various environments:\nGitHub (the website)\nA range of IDEs such as Visual Studio Code, Xcode, and JetBrains IDEs\nGitHub Mobile\nGitHub Copilot CLI\nDifferent environments may have different features and capabilities, but the core functionality remains consistent across platforms. To explore the functionality available in each environment, see the\nGitHub Copilot Chat\nhow-to guides and the\nTutorials for GitHub Copilot\n.\nLimitations\nCopilot Chat is designed to assist with coding tasks, but you remain responsible for reviewing and validating the code it generates. It may not always produce correct or optimal solutions, and it can sometimes generate code that contains security vulnerabilities or other issues. Always test and review the code before using it in production.\nCustomizing Copilot Chat responses\nGitHub Copilot in GitHub, Visual Studio Code, and Visual Studio can provide chat responses that are tailored to the way your team works, the tools you use, the specifics of your project, or your personal preferences, if you provide it with enough context to do so. Instead of repeating instructions in each prompt, you can create and save instructions for Copilot Chat to customize what responses you receive.\nThere are various ways you can create custom instructions for Copilot Chat. These fall into three main categories:\nPersonal instructions\n: You can a\n\n[Content truncated...]",
+      "url": "https://docs.github.com/en/copilot/concepts/chat",
+      "source": "GitHub Copilot Docs",
+      "timestamp": "2025-11-17T21:19:21.643646+00:00",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "GitHub Discussion: Copilot L1 Test generation",
+      "description": "No description",
+      "content": "",
+      "url": "https://github.com/rdkcentral/entservices-softwareupdate/pull/164",
+      "source": "GitHub Community Discussions",
+      "metadata": {
+        "comments": 2
+      },
+      "timestamp": "2025-11-17T21:19:22.284791+00:00",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "GitHub Discussion: Feature: Add GitHub Copilot as model provider",
+      "description": "### Issue\n\nHello!\r\n\r\nPlease add GitHub Copilot as model provider.\r\n\r\nShould be possible like this: https://github.com/olimorris/codecompanion.nvim/blob/5c5a5c759b8c925e81f8584a0279eefc8a6c6643/lua/codecompanion/adapters/copilot.lua\r\n\r\nIdea taken from: https://github.com/cline/cline/discussions/660\r\n\r\nThank you!\n\n### Version and model info\n\n_No response_",
+      "content": "### Issue\n\nHello!\r\n\r\nPlease add GitHub Copilot as model provider.\r\n\r\nShould be possible like this: https://github.com/olimorris/codecompanion.nvim/blob/5c5a5c759b8c925e81f8584a0279eefc8a6c6643/lua/codecompanion/adapters/copilot.lua\r\n\r\nIdea taken from: https://github.com/cline/cline/discussions/660\r\n\r\nThank you!\n\n### Version and model info\n\n_No response_",
+      "url": "https://github.com/Aider-AI/aider/issues/2227",
+      "source": "GitHub Community Discussions",
+      "metadata": {
+        "comments": 211
+      },
+      "timestamp": "2025-11-17T21:19:22.284828+00:00",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "GitHub Discussion: Ability to import docker-compose defintion and convert them as Copilot app and services",
+      "description": "Docker compose is commonly used for local development and testing. We need an ability for Copilot to import Docker Compose files and convert them as Copilot native app and svc objects, in a guide way. This will be a big boost for developers.",
+      "content": "Docker compose is commonly used for local development and testing. We need an ability for Copilot to import Docker Compose files and convert them as Copilot native app and svc objects, in a guide way. This will be a big boost for developers.",
+      "url": "https://github.com/aws/copilot-cli/issues/1612",
+      "source": "GitHub Community Discussions",
+      "metadata": {
+        "comments": 18
+      },
+      "timestamp": "2025-11-17T21:19:22.284836+00:00",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "GitHub Discussion: Ability to use Free Models (0x credits) in Copilot CLI",
+      "description": "### Describe the feature or problem you'd like to solve\n\nThe Copilot CLI uses Sonnet 4 by default which incurs 1x cost / message.\n\n### Proposed solution\n\nIn the Copilot CLI, I wish we could select from a list of free models provided by GitHub Copilot eg. GPT-4.1, GPT-4o, GPT-5 mini, Grok Code Fast 1 etc. This would let us optimize our monthly quota. Thank you for considering. \n\n<img width=\"353\" height=\"576\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/3f25c7a5-6e48-49b4-b67f-b309f",
+      "content": "### Describe the feature or problem you'd like to solve\n\nThe Copilot CLI uses Sonnet 4 by default which incurs 1x cost / message.\n\n### Proposed solution\n\nIn the Copilot CLI, I wish we could select from a list of free models provided by GitHub Copilot eg. GPT-4.1, GPT-4o, GPT-5 mini, Grok Code Fast 1 etc. This would let us optimize our monthly quota. Thank you for considering. \n\n<img width=\"353\" height=\"576\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/3f25c7a5-6e48-49b4-b67f-b309f0543cdc\" />\n\n### Example prompts or workflows\n\n_No response_\n\n### Additional context\n\n_No response_",
+      "url": "https://github.com/github/copilot-cli/issues/32",
+      "source": "GitHub Community Discussions",
+      "metadata": {
+        "comments": 41
+      },
+      "timestamp": "2025-11-17T21:19:22.284842+00:00",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    },
+    {
+      "title": "GitHub Discussion: sync github copilot chat history across devices",
+      "description": "I really wish it were possible to sync copilot chat histories across devices, ex: I use a laptop on the go and a desktop at home. I usually keep both devices lock-step via GitHub but it sucks that the chat history is different on both devices. I can usually enter in the same prompt to get a similar answer but it just seems counter intuitive that the chats do not sync by default, or there is not at least an option to sync the chats. Thanks",
+      "content": "I really wish it were possible to sync copilot chat histories across devices, ex: I use a laptop on the go and a desktop at home. I usually keep both devices lock-step via GitHub but it sucks that the chat history is different on both devices. I can usually enter in the same prompt to get a similar answer but it just seems counter intuitive that the chats do not sync by default, or there is not at least an option to sync the chats. Thanks",
+      "url": "https://github.com/microsoft/vscode-copilot-release/issues/991",
+      "source": "GitHub Community Discussions",
+      "metadata": {
+        "comments": 59
+      },
+      "timestamp": "2025-11-17T21:19:22.284848+00:00",
+      "quality_score": 1.0,
+      "quality_issues": [
+        "High quality content"
+      ],
+      "parsed": true
+    }
+  ],
+  "source_counts": {
+    "GitHub Copilot Docs": 5,
+    "Reddit r/GithubCopilot": 0,
+    "GitHub Community Discussions": 5
+  },
+  "total_learnings": 10,
+  "parsing_stats": {
+    "total_input": 10,
+    "accepted": 10,
+    "rejected": 0,
+    "acceptance_rate": 1.0,
+    "rejected_titles": []
+  },
+  "parsed_version": "1.0"
+}
