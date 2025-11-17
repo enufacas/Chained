@@ -20,6 +20,11 @@ on:
         required: false
         type: boolean
         default: true
+      include_github_copilot:
+        description: 'Include GitHub Copilot sources'
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -311,6 +316,84 @@ jobs:
           
           PYTHON_SCRIPT
 
+      - name: Fetch GitHub Copilot sources
+        id: copilot
+        if: github.event.inputs.include_github_copilot != 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          from datetime import datetime, timezone
+          import subprocess
+          import sys
+          
+          print("🤖 Fetching GitHub Copilot learning content...")
+          
+          # Run the GitHub Copilot fetcher
+          try:
+              # Set environment for token
+              env = os.environ.copy()
+              
+              result = subprocess.run(
+                  ['python3', 'tools/fetch-github-copilot.py', '--docs', '5', '--reddit', '3', '--discussions', '3'],
+                  capture_output=True,
+                  text=True,
+                  env=env,
+                  timeout=60
+              )
+              
+              # Print stderr for debugging
+              if result.stderr:
+                  print(result.stderr, file=sys.stderr)
+              
+              # Check for success
+              if result.returncode == 0:
+                  # Parse output for JSON data
+                  output = result.stdout
+                  try:
+                      data = json.loads(output)
+                      learnings = data.get('learnings', [])
+                      
+                      # Save to learnings directory
+                      os.makedirs('learnings', exist_ok=True)
+                      timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+                      filename = f'learnings/copilot_{timestamp}.json'
+                      
+                      with open(filename, 'w') as f:
+                          json.dump(data, f, indent=2)
+                      
+                      print(f"✓ Saved {len(learnings)} GitHub Copilot learnings to {filename}")
+                      
+                      # Output for GitHub Actions
+                      with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                          f.write(f"has_copilot=true\n")
+                          f.write(f"copilot_count={len(learnings)}\n")
+                          f.write(f"learning_file={filename}\n")
+                          if learnings:
+                              sample = learnings[0].get('title', 'No title')
+                              f.write(f"sample_copilot={sample}\n")
+                  except json.JSONDecodeError:
+                      print("Warning: Could not parse fetcher output as JSON")
+                      with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                          f.write(f"has_copilot=false\n")
+              else:
+                  print(f"Warning: Fetcher returned error code {result.returncode}")
+                  with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                      f.write(f"has_copilot=false\n")
+          
+          except subprocess.TimeoutExpired:
+              print("Warning: Fetcher timed out")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"has_copilot=false\n")
+          except Exception as e:
+              print(f"Warning: Error running fetcher: {e}")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"has_copilot=false\n")
+          
+          PYTHON_SCRIPT
+
       - name: Analyze combined learnings
         id: analyze
         run: |
@@ -328,7 +411,7 @@ jobs:
           sources = []
           
           # Get files created in the last few minutes
-          for pattern in ['learnings/github_trending_*.json', 'learnings/tldr_*.json', 'learnings/hn_*.json']:
+          for pattern in ['learnings/github_trending_*.json', 'learnings/tldr_*.json', 'learnings/hn_*.json', 'learnings/copilot_*.json']:
               files = glob.glob(pattern)
               # Sort by modification time and get the most recent
               if files:
@@ -349,7 +432,8 @@ jobs:
           
           # Analyze topics
           tech_keywords = {
-              'AI/ML': ['ai', 'ml', 'llm', 'gpt', 'machine learning', 'neural', 'copilot'],
+              'AI/ML': ['ai', 'ml', 'llm', 'gpt', 'machine learning', 'neural'],
+              'GitHub Copilot': ['copilot', 'code generation', 'ai assistant', 'code completion'],
               'Web Dev': ['javascript', 'typescript', 'react', 'vue', 'web', 'frontend'],
               'Backend': ['api', 'backend', 'server', 'database', 'postgres', 'redis'],
               'DevOps': ['docker', 'kubernetes', 'ci/cd', 'github actions', 'deployment'],
@@ -422,6 +506,7 @@ jobs:
           - 🔥 **GitHub Trending:** ${{ steps.github_trending.outputs.repo_count || 0 }} repositories
           - 📰 **TLDR Tech:** ${{ steps.tldr.outputs.learning_count || 0 }} articles
           - 🗞️ **Hacker News:** ${{ steps.hackernews.outputs.story_count || 0 }} stories
+          - 🤖 **GitHub Copilot:** ${{ steps.copilot.outputs.copilot_count || 0 }} learnings
 
           ### 🎯 Top Topic
 
@@ -434,6 +519,12 @@ jobs:
 
           **TLDR Tech:**
           ${{ steps.tldr.outputs.sample_learning || 'N/A' }}
+
+          **Hacker News:**
+          ${{ steps.hackernews.outputs.sample_story || 'N/A' }}
+          
+          **GitHub Copilot:**
+          ${{ steps.copilot.outputs.sample_copilot || 'N/A' }}
 
           **Hacker News:**
           ${{ steps.hackernews.outputs.sample_story || 'N/A' }}
