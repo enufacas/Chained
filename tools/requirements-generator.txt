@@ -1,0 +1,4 @@
+# Requirements for Actions Generator Tools
+# Used by actions-generator-agent.yml workflow
+
+pyyaml>=6.0
