@@ -1,6 +1,6 @@
 {
-  "time": "2025-11-17T08:23:45Z",
-  "tick": 52,
+  "time": "2025-11-17T08:24:47Z",
+  "tick": 53,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -57,7 +57,7 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
@@ -74,6 +74,12 @@
         "creativity": 66,
         "caution": 81,
         "speed": 78
+      },
+      "current_mission": {
+        "mission_id": "idea:38",
+        "title": "Nvidia Innovation: Cutting-Edge Developments",
+        "issue_number": null,
+        "assigned_at": "2025-11-17T08:24:47Z"
       }
     },
     {
@@ -81,11 +87,11 @@
       "label": "🎯 Liskov",
       "specialization": "investigate-champion",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:32",
+      "current_idea_id": "idea:39",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -98,6 +104,12 @@
         "creativity": 78,
         "caution": 75,
         "speed": 95
+      },
+      "current_mission": {
+        "mission_id": "idea:39",
+        "title": "Openai Innovation: Cutting-Edge Developments",
+        "issue_number": null,
+        "assigned_at": "2025-11-17T08:24:47Z"
       }
     },
     {
@@ -541,11 +553,11 @@
       "label": "🧪 Ivan Sutherland",
       "specialization": "pioneer-pro",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:31",
+      "current_idea_id": "idea:40",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -558,6 +570,12 @@
         "creativity": 57,
         "caution": 36,
         "speed": 97
+      },
+      "current_mission": {
+        "mission_id": "idea:40",
+        "title": "Anthropic Innovation: Cutting-Edge Developments",
+        "issue_number": null,
+        "assigned_at": "2025-11-17T08:24:47Z"
       }
     },
     {
@@ -589,12 +607,12 @@
       "label": "🔨 Linus Torvalds",
       "specialization": "create-champion",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco",
         "US:Austin"
       ],
-      "current_idea_id": "idea:32",
+      "current_idea_id": "idea:36",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -607,6 +625,12 @@
         "creativity": 84,
         "caution": 68,
         "speed": 58
+      },
+      "current_mission": {
+        "mission_id": "idea:36",
+        "title": "Google Innovation: Cutting-Edge Developments",
+        "issue_number": null,
+        "assigned_at": "2025-11-17T08:24:47Z"
       }
     },
     {
