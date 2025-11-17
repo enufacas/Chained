@@ -445,6 +445,8 @@
                                 <th>Workflow</th>
                                 <th>Status</th>
                                 <th>Agent</th>
+                                <th>Issue</th>
+                                <th>PR</th>
                                 <th>Duration</th>
                                 <th>Started</th>
                                 <th>Actions</th>
@@ -632,7 +634,7 @@
             tbody.innerHTML = '';
             
             if (filteredRuns.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No runs match the current filters</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">No runs match the current filters</td></tr>';
                 return;
             }
             
@@ -650,6 +652,37 @@
                     statusText = 'in progress';
                 }
                 
+                // Format issue number
+                let issueHtml = '-';
+                if (run.issue_number) {
+                    issueHtml = `<a href="https://github.com/${getRepoPath()}/issues/${run.issue_number}" 
+                                   target="_blank" 
+                                   style="color: var(--primary-color); text-decoration: none;">
+                                   #${run.issue_number}
+                                </a>`;
+                }
+                
+                // Format PR numbers
+                let prHtml = '-';
+                if (run.pr_numbers && run.pr_numbers.length > 0) {
+                    prHtml = run.pr_numbers.map(prNum => 
+                        `<a href="https://github.com/${getRepoPath()}/pull/${prNum}" 
+                            target="_blank" 
+                            style="color: var(--success-color); text-decoration: none;">
+                            #${prNum}
+                         </a>`
+                    ).join(', ');
+                } else if (run.pull_requests && run.pull_requests.length > 0) {
+                    // Fallback to pull_requests array if pr_numbers not available
+                    prHtml = run.pull_requests.map(pr => 
+                        `<a href="https://github.com/${getRepoPath()}/pull/${pr.number}" 
+                            target="_blank" 
+                            style="color: var(--success-color); text-decoration: none;">
+                            #${pr.number}
+                         </a>`
+                    ).join(', ');
+                }
+                
                 row.innerHTML = `
                     <td>#${run.run_number}</td>
                     <td>
@@ -661,6 +694,12 @@
                     </td>
                     <td>
                         ${run.agent_name ? `<span class="agent-badge">@${run.agent_name}</span>` : '-'}
+                    </td>
+                    <td>
+                        ${issueHtml}
+                    </td>
+                    <td>
+                        ${prHtml}
                     </td>
                     <td>
                         <span class="duration">${formatDuration(run.duration_seconds)}</span>
@@ -677,6 +716,18 @@
                 `;
                 tbody.appendChild(row);
             });
+        }
+        
+        function getRepoPath() {
+            // Extract repo path from URL or default to enufacas/Chained
+            const pathMatch = window.location.hostname.match(/github\.io/);
+            if (pathMatch) {
+                const pathParts = window.location.pathname.split('/').filter(p => p);
+                if (pathParts.length > 0) {
+                    return `enufacas/${pathParts[0]}`;
+                }
+            }
+            return 'enufacas/Chained';
         }
         
         function populateFilters(runs) {

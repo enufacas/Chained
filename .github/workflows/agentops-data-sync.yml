@@ -101,6 +101,16 @@ jobs:
                               if len(parts) > 1:
                                   agent_name = parts[1].split()[0].strip(')')
                           
+                          # Extract issue number from run name (e.g., "Fix #123" or "Issue #456")
+                          issue_number = None
+                          import re
+                          issue_match = re.search(r'#(\d+)', run_name)
+                          if issue_match:
+                              issue_number = int(issue_match.group(1))
+                          
+                          # Get PR numbers from pull_requests array
+                          pr_numbers = [pr['number'] for pr in run.get('pull_requests', [])]
+                          
                           run_data = {
                               'id': run['id'],
                               'run_number': run['run_number'],
@@ -119,6 +129,8 @@ jobs:
                               'head_branch': run.get('head_branch'),
                               'head_sha': run['head_sha'][:8] if run.get('head_sha') else None,
                               'agent_name': agent_name,
+                              'issue_number': issue_number,
+                              'pr_numbers': pr_numbers,
                               'pull_requests': [
                                   {
                                       'number': pr['number'],
