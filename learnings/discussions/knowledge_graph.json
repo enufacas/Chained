@@ -1149,6 +1149,181 @@
         "agent"
       ],
       "timestamp": "2025-11-17T05:21:05Z"
+    },
+    "insight_1516_e693d942bc9e": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:coordinate-wizard -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfb9 coordinate-wizard** custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T05:43:36Z"
+    },
+    "insight_1516_4652f98ca4bf": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "process",
+      "content": "> \n> **@coordinate-wizard** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-17T05:43:36Z"
+    },
+    "insight_1516_da3f9d11b5e7": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/coordinate-wizard",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T05:43:36Z"
+    },
+    "insight_1516_7bcd596d53af": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the \ud83c\udfb9 **@coordinate-wizard** specialization:\n\n- **Agent**: \ud83c\udfb9 **@coordinate-wizard**\n- **Match Confidence**: medium\n- **Match Score**: 3\n- **Description**: Specialized agent for coordinateing team coordination",
+      "confidence": 0.9,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_e95ebe7fe8de": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "process",
+      "content": "Focuses on workflows, CI/CD, and automation",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "automation"
+      ],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_9cd9d18ee5ba": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_030c089d6345": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/coordinate-wizard",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_f3648d2dea63": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@coordinate-wizard** by name in all conversations related to this issue",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_84439b309875": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@coordinate-wizard** - Please use the **coordinate-wizard** custom agent profile from `",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_ad28d65acd9a": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_4b601ea303d5": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [coordinate-wizard agent definition](https://github",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_a51bac41f35b": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **@coordinate-wizard** will analyze the issue requirements using the coordinate-wizard specialization\n2",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_f194a9dc9903": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@coordinate-wizard** will create a branch and implement the solution following the coordinate-wizard approach\n3",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_6f808ef7cc3b": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@coordinate-wizard** will open a PR with the implementation\n4",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_87ec60cdf7eb": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-17T05:44:00Z"
+    },
+    "insight_1516_de5b0a032ce7": {
+      "issue_number": 1516,
+      "issue_title": "Workflow failed ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** **@coordinate-wizard** (coordinate-wizard specialization)\n**Assigned at:** 2025-11-17 05:44:00 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T05:44:00Z"
     }
   },
   "connections": [
@@ -2957,12 +3132,586 @@
       "connection_type": "similar",
       "similarity_score": 0.7659574468085106,
       "timestamp": "2025-11-17T05:40:36.374913+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_e693d942bc9e",
+      "target_insight_id": "insight_1509_e7d0d2647da3",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.368938+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_e693d942bc9e",
+      "target_insight_id": "insight_1461_df7e683aa403",
+      "connection_type": "similar",
+      "similarity_score": 0.7894736842105263,
+      "timestamp": "2025-11-17T05:50:32.368959+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_e693d942bc9e",
+      "target_insight_id": "insight_1492_61b96b2f93c9",
+      "connection_type": "similar",
+      "similarity_score": 0.7894736842105263,
+      "timestamp": "2025-11-17T05:50:32.368970+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_e693d942bc9e",
+      "target_insight_id": "insight_1460_15a9419e3baf",
+      "connection_type": "similar",
+      "similarity_score": 0.75,
+      "timestamp": "2025-11-17T05:50:32.368977+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_e693d942bc9e",
+      "target_insight_id": "insight_1458_3efdfdffaed2",
+      "connection_type": "similar",
+      "similarity_score": 0.75,
+      "timestamp": "2025-11-17T05:50:32.368982+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_4652f98ca4bf",
+      "target_insight_id": "insight_1509_e82dd7e8632e",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.370446+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_4652f98ca4bf",
+      "target_insight_id": "insight_1460_d821e026c58a",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.370457+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_4652f98ca4bf",
+      "target_insight_id": "insight_1461_46b28a924e49",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.370464+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_4652f98ca4bf",
+      "target_insight_id": "insight_1458_c0ed8184fe83",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.370476+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_4652f98ca4bf",
+      "target_insight_id": "insight_1486_ed408a6e6f65",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.370481+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_da3f9d11b5e7",
+      "target_insight_id": "insight_1509_4ec6c2bf68bc",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.371685+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_da3f9d11b5e7",
+      "target_insight_id": "insight_1509_3ce138ed8d7b",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.371696+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_da3f9d11b5e7",
+      "target_insight_id": "insight_1509_4ec6c2bf68bc",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.372866+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_da3f9d11b5e7",
+      "target_insight_id": "insight_1509_3ce138ed8d7b",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.372879+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_7bcd596d53af",
+      "target_insight_id": "insight_1509_01f087fd6568",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.375389+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_7bcd596d53af",
+      "target_insight_id": "insight_1461_8ac9e17af718",
+      "connection_type": "similar",
+      "similarity_score": 0.65625,
+      "timestamp": "2025-11-17T05:50:32.375400+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_7bcd596d53af",
+      "target_insight_id": "insight_1460_901d1319e47b",
+      "connection_type": "similar",
+      "similarity_score": 0.6060606060606061,
+      "timestamp": "2025-11-17T05:50:32.375406+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_7bcd596d53af",
+      "target_insight_id": "insight_1458_266f71fc6247",
+      "connection_type": "similar",
+      "similarity_score": 0.6060606060606061,
+      "timestamp": "2025-11-17T05:50:32.375410+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_7bcd596d53af",
+      "target_insight_id": "insight_1492_2680d3259ba9",
+      "connection_type": "similar",
+      "similarity_score": 0.5757575757575758,
+      "timestamp": "2025-11-17T05:50:32.375415+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_e95ebe7fe8de",
+      "target_insight_id": "insight_1509_7bff2abe5183",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.376720+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_9cd9d18ee5ba",
+      "target_insight_id": "insight_1460_68aae128b455",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.377896+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_9cd9d18ee5ba",
+      "target_insight_id": "insight_1461_468c5bac0631",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.377906+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_9cd9d18ee5ba",
+      "target_insight_id": "insight_1458_c06c89414128",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.377921+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_9cd9d18ee5ba",
+      "target_insight_id": "insight_1486_ff36f800939c",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.377927+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_9cd9d18ee5ba",
+      "target_insight_id": "insight_1492_d9ca4fa7150b",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.377932+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1509_4ec6c2bf68bc",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.379127+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1509_3ce138ed8d7b",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.379136+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1516_da3f9d11b5e7",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.379141+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1509_4ec6c2bf68bc",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.380313+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1509_3ce138ed8d7b",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.380322+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1516_da3f9d11b5e7",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.380327+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_f3648d2dea63",
+      "target_insight_id": "insight_1509_66509dc51ec1",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.382135+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_f3648d2dea63",
+      "target_insight_id": "insight_1460_b8b5519c2025",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-17T05:50:32.382145+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_f3648d2dea63",
+      "target_insight_id": "insight_1461_adf13f5f0e40",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-17T05:50:32.382150+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_f3648d2dea63",
+      "target_insight_id": "insight_1458_63aee4158532",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-17T05:50:32.382155+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_f3648d2dea63",
+      "target_insight_id": "insight_1486_758606b553f9",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-17T05:50:32.382160+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_84439b309875",
+      "target_insight_id": "insight_1509_1f082f7be5b9",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.383952+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_84439b309875",
+      "target_insight_id": "insight_1460_7d780ede38e3",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.383962+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_84439b309875",
+      "target_insight_id": "insight_1461_33952c0cdd1c",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.383967+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_84439b309875",
+      "target_insight_id": "insight_1458_9abc622d3d41",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.383973+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_84439b309875",
+      "target_insight_id": "insight_1486_2a61f71fb0fe",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.383977+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1509_4ec6c2bf68bc",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.385237+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1509_3ce138ed8d7b",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.385250+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1516_da3f9d11b5e7",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.385256+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_ad28d65acd9a",
+      "target_insight_id": "insight_1460_734f5639eeb1",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.386785+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_ad28d65acd9a",
+      "target_insight_id": "insight_1461_b02d3182b0fa",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.386795+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_ad28d65acd9a",
+      "target_insight_id": "insight_1458_a11d8a8639cb",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.386800+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_ad28d65acd9a",
+      "target_insight_id": "insight_1486_01c93ef9c5ae",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.386805+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_ad28d65acd9a",
+      "target_insight_id": "insight_1492_1851bd63d4f6",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.386817+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_4b601ea303d5",
+      "target_insight_id": "insight_1509_2609ebaa49c0",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.388336+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_4b601ea303d5",
+      "target_insight_id": "insight_1460_81a0d37f9f19",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.388346+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_4b601ea303d5",
+      "target_insight_id": "insight_1461_6781caf7af44",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.388351+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_4b601ea303d5",
+      "target_insight_id": "insight_1458_dd8c4dc740f7",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.388356+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_4b601ea303d5",
+      "target_insight_id": "insight_1486_e4de3a29586d",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T05:50:32.388360+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1509_4ec6c2bf68bc",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.389589+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1509_3ce138ed8d7b",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.389599+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_030c089d6345",
+      "target_insight_id": "insight_1516_da3f9d11b5e7",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.389604+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_a51bac41f35b",
+      "target_insight_id": "insight_1509_a6a02b45872b",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.391285+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_a51bac41f35b",
+      "target_insight_id": "insight_1461_dc1e63490ce7",
+      "connection_type": "similar",
+      "similarity_score": 0.6666666666666666,
+      "timestamp": "2025-11-17T05:50:32.391295+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_a51bac41f35b",
+      "target_insight_id": "insight_1492_2b3d95533e12",
+      "connection_type": "similar",
+      "similarity_score": 0.6666666666666666,
+      "timestamp": "2025-11-17T05:50:32.391300+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_a51bac41f35b",
+      "target_insight_id": "insight_1460_78f82bd6f5a0",
+      "connection_type": "similar",
+      "similarity_score": 0.6153846153846154,
+      "timestamp": "2025-11-17T05:50:32.391304+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_a51bac41f35b",
+      "target_insight_id": "insight_1458_33edf712f063",
+      "connection_type": "similar",
+      "similarity_score": 0.6153846153846154,
+      "timestamp": "2025-11-17T05:50:32.391309+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_f194a9dc9903",
+      "target_insight_id": "insight_1509_38da08533181",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.393168+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_f194a9dc9903",
+      "target_insight_id": "insight_1461_c3540ad118f8",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333333,
+      "timestamp": "2025-11-17T05:50:32.393178+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_f194a9dc9903",
+      "target_insight_id": "insight_1492_c0476b2481c4",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333333,
+      "timestamp": "2025-11-17T05:50:32.393183+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_f194a9dc9903",
+      "target_insight_id": "insight_1460_d27411a12afb",
+      "connection_type": "similar",
+      "similarity_score": 0.7875,
+      "timestamp": "2025-11-17T05:50:32.393188+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_f194a9dc9903",
+      "target_insight_id": "insight_1458_a2e2d8e4c6be",
+      "connection_type": "similar",
+      "similarity_score": 0.7875,
+      "timestamp": "2025-11-17T05:50:32.393193+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_6f808ef7cc3b",
+      "target_insight_id": "insight_1509_b5057ad25e74",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.394772+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_6f808ef7cc3b",
+      "target_insight_id": "insight_1461_4c6aa98df983",
+      "connection_type": "similar",
+      "similarity_score": 0.6666666666666666,
+      "timestamp": "2025-11-17T05:50:32.394781+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_6f808ef7cc3b",
+      "target_insight_id": "insight_1492_a5b3a8f1c5f6",
+      "connection_type": "similar",
+      "similarity_score": 0.6666666666666666,
+      "timestamp": "2025-11-17T05:50:32.394786+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_6f808ef7cc3b",
+      "target_insight_id": "insight_1460_6b8b9bb0ddc6",
+      "connection_type": "similar",
+      "similarity_score": 0.6153846153846154,
+      "timestamp": "2025-11-17T05:50:32.394791+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_6f808ef7cc3b",
+      "target_insight_id": "insight_1458_46084786e7f1",
+      "connection_type": "similar",
+      "similarity_score": 0.6153846153846154,
+      "timestamp": "2025-11-17T05:50:32.394795+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_87ec60cdf7eb",
+      "target_insight_id": "insight_1460_c75ae1e65917",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.396300+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_87ec60cdf7eb",
+      "target_insight_id": "insight_1461_0515074995f0",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.396309+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_87ec60cdf7eb",
+      "target_insight_id": "insight_1458_d545b9f13794",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.396314+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_87ec60cdf7eb",
+      "target_insight_id": "insight_1486_676116f426a0",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.396319+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_87ec60cdf7eb",
+      "target_insight_id": "insight_1492_8250e22d8daf",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T05:50:32.396324+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_de5b0a032ce7",
+      "target_insight_id": "insight_1509_26fdb4736a5f",
+      "connection_type": "similar",
+      "similarity_score": 0.9069767441860465,
+      "timestamp": "2025-11-17T05:50:32.399573+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_de5b0a032ce7",
+      "target_insight_id": "insight_1486_c8630fc4c052",
+      "connection_type": "similar",
+      "similarity_score": 0.8,
+      "timestamp": "2025-11-17T05:50:32.399583+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_de5b0a032ce7",
+      "target_insight_id": "insight_1461_39e9530f47ff",
+      "connection_type": "similar",
+      "similarity_score": 0.782608695652174,
+      "timestamp": "2025-11-17T05:50:32.399588+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_de5b0a032ce7",
+      "target_insight_id": "insight_1492_c2a547daa51b",
+      "connection_type": "similar",
+      "similarity_score": 0.782608695652174,
+      "timestamp": "2025-11-17T05:50:32.399593+00:00"
+    },
+    {
+      "source_insight_id": "insight_1516_de5b0a032ce7",
+      "target_insight_id": "insight_1460_98499e7d3f9d",
+      "connection_type": "similar",
+      "similarity_score": 0.7659574468085106,
+      "timestamp": "2025-11-17T05:50:32.399598+00:00"
     }
   ],
   "metadata": {
     "created": "2025-11-17T02:04:33.396572+00:00",
-    "last_updated": "2025-11-17T05:40:36.374921+00:00",
-    "total_insights": 106,
-    "total_connections": 258
+    "last_updated": "2025-11-17T05:50:32.399607+00:00",
+    "total_insights": 122,
+    "total_connections": 340
   }
 }
