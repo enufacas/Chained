@@ -1,0 +1,26 @@
+{
+  "proactive_suggestions": [
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:construct-specialist -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This is..."
+  ],
+  "knowledge_connections": {
+    "insight_1446_0df3d592673c": [
+      {
+        "target_id": "insight_1446_dab814958753",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1446_dab814958753": [
+      {
+        "target_id": "insight_1446_0df3d592673c",
+        "similarity": 1.0
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 16,
+    "total_connections": 4,
+    "new_insights_added": 20
+  },
+  "timestamp": "2025-11-17T00:12:27.262764+00:00"
+}
