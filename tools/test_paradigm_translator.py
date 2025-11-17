@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """
 Tests for the Code Paradigm Translator
+
+Enhanced by @accelerate-specialist with performance feature tests
 """
 
 import sys
 import os
+import time
 import importlib.util
 
 # Load the translator module
@@ -18,6 +21,7 @@ spec.loader.exec_module(paradigm_translator)
 ParadigmTranslator = paradigm_translator.ParadigmTranslator
 Paradigm = paradigm_translator.Paradigm
 TranslationResult = paradigm_translator.TranslationResult
+PerformanceMetrics = paradigm_translator.PerformanceMetrics
 
 
 def test_imperative_to_declarative():
@@ -321,9 +325,184 @@ for n in numbers:
     print("✓ Multiple transformations test passed")
 
 
+def test_performance_metrics():
+    """Test that performance metrics are tracked (@accelerate-specialist)"""
+    translator = ParadigmTranslator()
+    
+    code = """
+doubled = []
+for n in numbers:
+    doubled.append(n * 2)
+"""
+    
+    result = translator.translate(code, Paradigm.IMPERATIVE, Paradigm.DECLARATIVE)
+    
+    assert result.performance_metrics is not None
+    assert result.performance_metrics.translation_time_ms >= 0
+    assert result.performance_metrics.code_size_before > 0
+    assert result.performance_metrics.code_size_after > 0
+    assert result.performance_metrics.lines_before > 0
+    assert result.performance_metrics.lines_after > 0
+    print("✓ Performance metrics test passed")
+
+
+def test_cache_functionality():
+    """Test that caching works correctly (@accelerate-specialist)"""
+    translator = ParadigmTranslator(enable_cache=True)
+    
+    code = "x = [i for i in range(10)]"
+    
+    # First translation (cache miss)
+    result1 = translator.translate(code, Paradigm.DECLARATIVE, Paradigm.IMPERATIVE)
+    assert result1.performance_metrics.cache_hit is False
+    
+    # Second translation (cache hit)
+    result2 = translator.translate(code, Paradigm.DECLARATIVE, Paradigm.IMPERATIVE)
+    assert result2.performance_metrics.cache_hit is True
+    
+    # Verify same translated code
+    assert result1.translated_code == result2.translated_code
+    print("✓ Cache functionality test passed")
+
+
+def test_cache_disabled():
+    """Test translator with caching disabled (@accelerate-specialist)"""
+    translator = ParadigmTranslator(enable_cache=False)
+    
+    code = "x = [i for i in range(10)]"
+    
+    result1 = translator.translate(code, Paradigm.DECLARATIVE, Paradigm.IMPERATIVE)
+    result2 = translator.translate(code, Paradigm.DECLARATIVE, Paradigm.IMPERATIVE)
+    
+    # Both should be cache misses
+    assert result1.performance_metrics.cache_hit is False
+    assert result2.performance_metrics.cache_hit is False
+    print("✓ Cache disabled test passed")
+
+
+def test_clear_cache():
+    """Test cache clearing functionality (@accelerate-specialist)"""
+    translator = ParadigmTranslator(enable_cache=True)
+    
+    code = "x = [i for i in range(10)]"
+    
+    # First translation
+    result1 = translator.translate(code, Paradigm.DECLARATIVE, Paradigm.IMPERATIVE)
+    assert result1.performance_metrics.cache_hit is False
+    
+    # Clear cache
+    translator.clear_cache()
+    
+    # Should be cache miss again
+    result2 = translator.translate(code, Paradigm.DECLARATIVE, Paradigm.IMPERATIVE)
+    assert result2.performance_metrics.cache_hit is False
+    print("✓ Clear cache test passed")
+
+
+def test_batch_translation():
+    """Test batch translation functionality (@accelerate-specialist)"""
+    translator = ParadigmTranslator()
+    
+    translations = [
+        ("x = [i for i in range(10)]", Paradigm.DECLARATIVE, Paradigm.IMPERATIVE),
+        ("y = [i * 2 for i in range(5)]", Paradigm.DECLARATIVE, Paradigm.IMPERATIVE),
+    ]
+    
+    results = translator.translate_batch(translations)
+    
+    assert len(results) == 2
+    assert all(isinstance(r, TranslationResult) for r in results)
+    assert all(r.success for r in results)
+    print("✓ Batch translation test passed")
+
+
+def test_performance_summary():
+    """Test performance summary generation (@accelerate-specialist)"""
+    translator = ParadigmTranslator()
+    
+    # Perform several translations
+    code1 = "x = [i for i in range(10)]"
+    code2 = "y = [i * 2 for i in range(5)]"
+    
+    translator.translate(code1, Paradigm.DECLARATIVE, Paradigm.IMPERATIVE)
+    translator.translate(code2, Paradigm.DECLARATIVE, Paradigm.IMPERATIVE)
+    translator.translate(code1, Paradigm.DECLARATIVE, Paradigm.IMPERATIVE)  # Cache hit
+    
+    summary = translator.get_performance_summary()
+    
+    assert summary['total_translations'] == 3
+    assert summary['cache_hits'] >= 1
+    assert summary['cache_hit_rate'] > 0
+    assert summary['total_time_ms'] >= 0
+    assert summary['average_time_ms'] >= 0
+    print("✓ Performance summary test passed")
+
+
+def test_benchmark_paradigm_performance():
+    """Test paradigm benchmarking (@accelerate-specialist)"""
+    translator = ParadigmTranslator()
+    
+    code = """
+class Calculator:
+    def add(self, a, b):
+        return a + b
+"""
+    
+    paradigms = [Paradigm.FUNCTIONAL, Paradigm.PROCEDURAL]
+    benchmark = translator.benchmark_paradigm_performance(code, paradigms)
+    
+    assert 'source_paradigm' in benchmark
+    assert 'benchmarks' in benchmark
+    assert benchmark['source_paradigm'] == 'object_oriented'
+    print("✓ Benchmark paradigm performance test passed")
+
+
+def test_size_reduction_calculation():
+    """Test size reduction percentage calculation (@accelerate-specialist)"""
+    metrics = PerformanceMetrics(
+        translation_time_ms=1.0,
+        code_size_before=100,
+        code_size_after=80,
+        lines_before=10,
+        lines_after=8
+    )
+    
+    assert metrics.size_reduction_percent == 20.0
+    assert metrics.line_reduction_percent == 20.0
+    print("✓ Size reduction calculation test passed")
+
+
+def test_performance_metrics_in_str():
+    """Test performance metrics display in result string (@accelerate-specialist)"""
+    result = TranslationResult(
+        source_paradigm=Paradigm.IMPERATIVE,
+        target_paradigm=Paradigm.DECLARATIVE,
+        original_code="x = 5",
+        translated_code="x = 5",
+        transformations_applied=["test"],
+        success=True,
+        warnings=[],
+        performance_metrics=PerformanceMetrics(
+            translation_time_ms=1.5,
+            code_size_before=10,
+            code_size_after=10,
+            lines_before=1,
+            lines_after=1,
+            cache_hit=True
+        )
+    )
+    
+    result_str = str(result)
+    assert "1.5" in result_str or "1.50" in result_str
+    assert "cached" in result_str.lower()
+    print("✓ Performance metrics in string test passed")
+
+
+
 def run_all_tests():
     """Run all tests"""
     print("\nRunning Paradigm Translator Tests...")
+    print("Enhanced by @accelerate-specialist with performance tests")
     print("=" * 60)
     
     test_functions = [
@@ -344,6 +523,16 @@ def run_all_tests():
         test_translation_result_str,
         test_error_handling,
         test_multiple_transformations,
+        # New performance tests by @accelerate-specialist
+        test_performance_metrics,
+        test_cache_functionality,
+        test_cache_disabled,
+        test_clear_cache,
+        test_batch_translation,
+        test_performance_summary,
+        test_benchmark_paradigm_performance,
+        test_size_reduction_calculation,
+        test_performance_metrics_in_str,
     ]
     
     passed = 0
