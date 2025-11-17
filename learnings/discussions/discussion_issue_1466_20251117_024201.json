@@ -1,0 +1,638 @@
+{
+  "issue_number": 1466,
+  "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+  "issue_labels": [
+    "bug",
+    "copilot-assigned",
+    "automated",
+    "workflow-monitor",
+    "agent:troubleshoot-expert"
+  ],
+  "total_comments": 1,
+  "participants": [
+    "enufacas",
+    "github-actions[bot]"
+  ],
+  "duration_hours": 0.33,
+  "insights": [
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "> \n> **@troubleshoot-expert** - Please use the specialized approach and tools defined in [`",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "---\n\n## Workflow Health Monitoring Alert\n  \n  The workflow monitor has detected issues that require attention",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "**Detection Time:** 2025-11-17 01:25:28 UTC\n  \n  ### Health Summary\n  - **Total Workflow Runs:** 100 (last 100 sampled)\n  - **Completed Runs:** 36 (success + failure)\n  - **Failed Runs:** 10\n  - **Failure Rate:** 27",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "technical",
+      "content": "8% (of completed runs)\n  \n  ### Failed Workflows Breakdown\n  - **AI Pattern**:  Repetition Detector:1 failure(s)\n- **Agent Investment**:  Update from PR Merges:3 failure(s)\n- **Agent System**:  Evaluator:1 failure(s)\n- **Orchestrator**:  Dynamic Scheduling:1 failure(s)\n- **System**:  Monitor:1 failure(s)\n- **System**:  PR Failure Learning:3 failure(s)\n  \n  ### \ud83d\udd27 Quick Fix: Missing Labels (Most Common Issue)\n  \n  **If you see label-related errors**, run this quick fix:\n  \n  ```bash\n  # Option 1: Run locally\n  bash scripts/fix-workflow-labels",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "agent",
+        "ai",
+        "learning"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "sh\n  \n  # Option 2: Trigger workflow manually\n  # Go to Actions \u2192 \"Maintenance: Ensure Repository Labels Exist\" \u2192 Run workflow\n  ```\n  \n  **@troubleshoot-expert** has added fallback logic to all workflows, so they'll create PRs without labels if needed",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "technical",
+      "content": "Missing Repository Labels \u2b50 MOST COMMON\n  **Symptom:** Workflows fail with `could not add label: 'code-quality' not found`\n  **Solution:** \n  - Run `bash scripts/fix-workflow-labels",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "sh` to create labels\n  - Or trigger the \"Ensure Repository Labels Exist\" workflow manually\n  - Workflows now have fallback logic and won't fail completely\n  \n  #### 2",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "Workflow Triggering (HTTP 403)\n  **Symptom:** Workflows fail when trying to trigger other workflows\n  **Solution:** Remove `gh workflow run` commands; rely on scheduled triggers instead\n  \n  #### 3",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "Missing Secrets\n  **Symptom:** Workflows requiring COPILOT_PAT fail or skip steps\n  **Solution:** Configure required secrets in repository settings\n  \n  #### 4",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "External Dependencies\n  **Symptom:** Workflows calling external APIs fail intermittently\n  **Solution:** Add retry logic and graceful error handling\n  \n  #### 5",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7,
+      "tags": [
+        "api",
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "Configuration Issues\n  **Symptom:** Workflows fail due to missing files or permissions\n  **Solution:** Verify workflow configurations and file dependencies\n  \n  ### Recommended Actions\n  1",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "technical",
+      "content": "**First:** Check if label-related (see Quick Fix above)\n  2",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "Review the failed workflows breakdown above\n  3",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "Focus on workflows with multiple failures first\n  5",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.6,
+      "tags": [
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "github/workflows/TROUBLESHOOTING",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "technical",
+      "content": "md`\n  - \ud83d\udd27 **Quick Fix Script:** `scripts/fix-workflow-labels",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.6,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "decision",
+      "content": "Close this issue once all problems are resolved and failure rate drops below 20%",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.6,
+      "tags": [
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "---\n  *This issue was automatically created by the System Monitor workflow",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.6,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "technical",
+      "content": "*\n  *Fixes by **@troubleshoot-expert*** \ud83d\udd27",
+      "context": "<!-- COPILOT_AGENT:troubleshoot-expert -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 troubleshoot-expert** custom agent profile.\n> \n> **@troubleshoot-e",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-17T01:25:29Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the \ud83d\udd27 **@troubleshoot-expert** specialization:\n\n- **Agent**: \ud83d\udd27 **@troubleshoot-expert**\n- **Match Confidence**: high\n- **Match Score**: 17\n- **Description**: Specialized agent for troubleshooting GitHub Actions and workflows",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "technical",
+      "content": "Inspired by 'Grace Hopper' - practical and debugging-focused, with systematic problem-solving",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "technical",
+      "content": "Focuses on CI/CD issues, workflow failures, and GitHub Actions debugging",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "ai"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "This is a protected agent that cannot be deleted or voted off",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@troubleshoot-expert** by name in all conversations related to this issue",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@troubleshoot-expert** - Please use the **troubleshoot-expert** custom agent profile from `",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [troubleshoot-expert agent definition](https://github",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/troubleshoot-expert",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **@troubleshoot-expert** will analyze the issue requirements using the troubleshoot-expert specialization\n2",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.7,
+      "tags": []
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@troubleshoot-expert** will create a branch and implement the solution following the troubleshoot-expert approach\n3",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.7,
+      "tags": []
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@troubleshoot-expert** will open a PR with the implementation\n4",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.6,
+      "tags": []
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1466,
+      "issue_title": "\u26a0\ufe0f Workflow Health Alert - 2025-11-17",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** **@troubleshoot-expert** (troubleshoot-expert specialization)\n**Assigned at:** 2025-11-17 01:45:22 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-17T01:45:23Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ]
+    }
+  ],
+  "key_decisions": [],
+  "patterns_identified": [],
+  "learning_quality": 0.5,
+  "timestamp": "2025-11-17T02:42:01.613788+00:00"
+}
