@@ -1,0 +1,210 @@
+{
+  "proactive_suggestions": [
+    "\u26a1 Consider documenting performance metrics and benchmarks",
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83d\udd28 Document the current state and desired improvements",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:coach-master -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has ..."
+  ],
+  "knowledge_connections": {
+    "insight_1604_1adf16f67a71": [
+      {
+        "target_id": "insight_1461_df7e683aa403",
+        "similarity": 0.7894736842105263
+      },
+      {
+        "target_id": "insight_1492_61b96b2f93c9",
+        "similarity": 0.7894736842105263
+      },
+      {
+        "target_id": "insight_1509_e7d0d2647da3",
+        "similarity": 0.7894736842105263
+      }
+    ],
+    "insight_1604_86f745bf2659": [
+      {
+        "target_id": "insight_1460_d821e026c58a",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1461_46b28a924e49",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1458_c0ed8184fe83",
+        "similarity": 0.6923076923076923
+      }
+    ],
+    "insight_1604_36581f01c15f": [
+      {
+        "target_id": "insight_1604_27e2758c5e98",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1604_7411de27771f": [
+      {
+        "target_id": "insight_1460_901d1319e47b",
+        "similarity": 0.6363636363636364
+      },
+      {
+        "target_id": "insight_1458_266f71fc6247",
+        "similarity": 0.5882352941176471
+      },
+      {
+        "target_id": "insight_1486_a253d7d43990",
+        "similarity": 0.5882352941176471
+      }
+    ],
+    "insight_1604_73d0f3704421": [
+      {
+        "target_id": "insight_1460_68aae128b455",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1461_468c5bac0631",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1458_c06c89414128",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1604_27e2758c5e98": [
+      {
+        "target_id": "insight_1604_36581f01c15f",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1604_88d9c5aa22e7": [
+      {
+        "target_id": "insight_1460_b8b5519c2025",
+        "similarity": 0.8333333333333334
+      },
+      {
+        "target_id": "insight_1461_adf13f5f0e40",
+        "similarity": 0.8333333333333334
+      },
+      {
+        "target_id": "insight_1458_63aee4158532",
+        "similarity": 0.8333333333333334
+      }
+    ],
+    "insight_1604_4d41df58069f": [
+      {
+        "target_id": "insight_1460_7d780ede38e3",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1461_33952c0cdd1c",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1458_9abc622d3d41",
+        "similarity": 0.6923076923076923
+      }
+    ],
+    "insight_1604_0f5493c2232f": [
+      {
+        "target_id": "insight_1460_734f5639eeb1",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1461_b02d3182b0fa",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1458_a11d8a8639cb",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1604_3dfe18399707": [
+      {
+        "target_id": "insight_1536_887024f667e4",
+        "similarity": 0.75
+      },
+      {
+        "target_id": "insight_1460_81a0d37f9f19",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1461_6781caf7af44",
+        "similarity": 0.6923076923076923
+      }
+    ],
+    "insight_1604_cbc410178dd4": [
+      {
+        "target_id": "insight_1461_dc1e63490ce7",
+        "similarity": 0.6666666666666666
+      },
+      {
+        "target_id": "insight_1492_2b3d95533e12",
+        "similarity": 0.6666666666666666
+      },
+      {
+        "target_id": "insight_1509_a6a02b45872b",
+        "similarity": 0.6666666666666666
+      }
+    ],
+    "insight_1604_9b2623fa60d3": [
+      {
+        "target_id": "insight_1461_c3540ad118f8",
+        "similarity": 0.8333333333333333
+      },
+      {
+        "target_id": "insight_1492_c0476b2481c4",
+        "similarity": 0.8333333333333333
+      },
+      {
+        "target_id": "insight_1509_38da08533181",
+        "similarity": 0.8333333333333333
+      }
+    ],
+    "insight_1604_45aa84afa9c5": [
+      {
+        "target_id": "insight_1461_4c6aa98df983",
+        "similarity": 0.6666666666666666
+      },
+      {
+        "target_id": "insight_1492_a5b3a8f1c5f6",
+        "similarity": 0.6666666666666666
+      },
+      {
+        "target_id": "insight_1509_b5057ad25e74",
+        "similarity": 0.6666666666666666
+      }
+    ],
+    "insight_1604_2448dd1672b6": [
+      {
+        "target_id": "insight_1460_c75ae1e65917",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1461_0515074995f0",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1458_d545b9f13794",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1604_bdc9719cf8ea": [
+      {
+        "target_id": "insight_1460_98499e7d3f9d",
+        "similarity": 0.8222222222222222
+      },
+      {
+        "target_id": "insight_1486_c8630fc4c052",
+        "similarity": 0.8181818181818182
+      },
+      {
+        "target_id": "insight_1461_39e9530f47ff",
+        "similarity": 0.8
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 156,
+    "total_connections": 490,
+    "new_insights_added": 23
+  },
+  "timestamp": "2025-11-17T17:48:17.443370+00:00"
+}
