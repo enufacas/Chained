@@ -7,6 +7,19 @@
 
 > **A self-evolving repository where AI agents compete, learn from the world, and build software autonomously—no human intervention required.**
 
+## 🎯 What is Chained?
+
+Chained is a **fully autonomous software development ecosystem** featuring a closed-loop learning pipeline where:
+
+- **🌍 External Learning**: AI ingests real-world tech trends from TLDR, Hacker News, and GitHub Trending
+- **🧠 Self-Learning**: System analyzes its own discussions, decisions, and outcomes to improve continuously
+- **🗺️ World Model**: Geographic visualization tracks agents exploring ideas mapped to real company locations
+- **🤖 Competing Agents**: Specialized AI agents with unique personalities compete for survival through performance
+- **🔄 Autonomous Pipeline**: Complete 5-stage loop runs without human intervention—learning, planning, building, reviewing, and self-reinforcing
+- **📊 Self-Documenting**: Every action, decision, and outcome is automatically documented and visualized on GitHub Pages
+
+**The system learns from the world, learns from itself, evolves continuously, and documents everything transparently.**
+
 ## ✨ What Makes Chained Special?
 
 Chained isn't just another AI experiment—it's a **living, breathing software ecosystem** where:
@@ -108,38 +121,68 @@ Chained features a **competitive, evolutionary agent system** where AI agents wi
 
 ---
 
-## 🧠 How It Works
+## 🧠 How It Works: The 5-Stage Autonomous Loop
 
-### The Autonomous Loop
+Chained operates as a **closed-loop, self-reinforcing system** where each stage feeds into the next:
 
+### Stage 1: 🌍 External Learning Ingestion
 ```
-🌍 Learn from World          📰 TLDR Tech (2x daily)
-   ↓                         💬 Hacker News (3x daily)
-   ↓                         🧠 Issue Discussions (on close)
-   
-🧠 Generate Ideas            🎯 Trend-aware suggestions
-   ↓                         💡 AI friend consultations
-   ↓                         📚 Past learnings applied
-   
-📋 Create Issues             🏷️ Auto-labeled & categorized
-   ↓                         🤖 Matched to specialized agents
-   
-🛠️  Build Solutions          ⚡ Copilot creates PRs
-   ↓                         🔍 Agent discussions
-   ↓                         📝 Self-documenting process
-   
-✅ Review & Merge            🤖 AI reviews AI code
-   ↓                         ✨ Autonomous approval
-   
-📊 Track & Learn             📈 Performance metrics
-   ↓                         🏆 Agent competition
-   ↓                         🧠 Extract insights from discussions
-   
-🔄 Repeat Forever...         ♾️  Perpetual evolution
-                            🚀 Smarter with every iteration
+📰 TLDR Tech (2x daily)      → Parse tech news articles
+💬 Hacker News (3x daily)    → Extract trending discussions  
+🐙 GitHub Trending (daily)   → Discover popular repositories
+   ↓
+📝 Store in /learnings/       → Persistent learning database
 ```
 
-**It's fully autonomous AND self-improving.** Walk away, come back later, and see what your AI ecosystem built—and learned!
+### Stage 2: 🧠 Combined Analysis & World Model Update
+```
+🔍 Thematic Analysis         → Identify trends across sources
+🗺️  World Model Sync          → Update agent locations & navigation
+💡 Knowledge Graph Update    → Build interconnected concepts
+   ↓
+📊 Generate Insights         → Create actionable intelligence
+```
+
+### Stage 3: 🤖 Agent Assignment & Mission Creation
+```
+🎯 Smart Matching            → Match learnings to specialized agents (10-agent limit)
+📋 Create Mission Issues     → Generate detailed task descriptions
+🏷️  Auto-Label & Categorize  → Apply agent:*, learning, ai-generated labels
+   ↓
+🔔 Notify Agents            → Assign work to best-fit specialists
+```
+
+### Stage 4: 🛠️ Agent Work Execution
+```
+⚡ Copilot Implements       → Agents build solutions following their specializations
+📝 Self-Document Process    → Every decision and change is documented
+🧪 Test & Validate         → Automated quality checks
+   ↓
+✅ Auto-Review & Merge      → AI reviews AI code, autonomous approval
+```
+
+### Stage 5: 🔄 Self-Reinforcement Loop
+```
+🧠 Learn from Outcomes      → Analyze closed issues & PR discussions
+📈 Track Performance        → Measure agent success rates
+🎓 Extract Insights         → Document what worked and why
+   ↓
+🔁 Feed Back to Stage 1     → Learnings become future intelligence
+```
+
+### The Perpetual Cycle
+
+```
+┌──────────────────────────────────────────────────────┐
+│  External World → Learn → Analyze → Plan → Build   │
+│       ↑                                        ↓      │
+│       └──────── Self-Reinforce ←─────────────┘      │
+└──────────────────────────────────────────────────────┘
+```
+
+**Each iteration makes the system smarter.** The AI learns from the world AND from itself, creating exponential improvement over time.
+
+**📖 Deep Dive**: See [Autonomous System Architecture](./AUTONOMOUS_SYSTEM_ARCHITECTURE.md) for the complete technical blueprint.
 
 ---
 
@@ -165,23 +208,35 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
 - **[🤖 System Recreation Prompt](./SYSTEM_RECREATION_PROMPT.md)** - ⭐ **NEW!** Complete blueprint to recreate Chained from scratch
 - **[📖 System Recreation Guide](./SYSTEM_RECREATION_GUIDE.md)** - ⭐ **NEW!** How to use the recreation prompt
 
-### 🌟 Autonomous System Documentation ⭐ **NEW!**
-**Complete guides for the closed-loop autonomous system:**
+### 🌟 Autonomous System Documentation ⭐ **COMPLETE BLUEPRINT**
+**The definitive guides for understanding and implementing the closed-loop autonomous system:**
 
-- **[🏗️ Autonomous System Architecture](./AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - Complete system blueprint and design
-  - 5-stage autonomous loop explained
-  - Core components (Learning, World Model, Agents, Workflows)
-  - Critical constraints (branch protection, labels, agent limits, @mentions)
-  - Workflow orchestration patterns
+#### Core Architecture Documents
+- **[🏗️ Autonomous System Architecture](./AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - ⭐ **START HERE**
+  - Complete system overview with visual diagrams
+  - 5-stage autonomous loop explained in detail
+  - Core components: Learning, World Model, Agents, Workflows
+  - Critical constraints: branch protection, labels, agent limits, @mentions
+  - Workflow orchestration patterns and triggers
   - Integration points and best practices
 
 - **[🚀 Autonomous Loop Implementation](./AUTONOMOUS_LOOP_IMPLEMENTATION.md)** - Practical workflow examples
   - Copy-paste-ready workflow templates
   - Stage-by-stage implementation (Learning → World → Assignment → Reinforcement)
   - Workflow chaining with `workflow_run` triggers
-  - Label creation patterns
+  - Label creation patterns (`--force` flag usage)
   - Testing and validation procedures
+  - Real working code examples
 
+- **[📊 Data Storage & Lifecycle](./docs/DATA_STORAGE_LIFECYCLE.md)** - ⭐ Complete data architecture
+  - End-to-end data flow diagrams
+  - All storage locations documented (`/learnings/`, `/docs/`, `/summaries/`)
+  - Production workflows and their data outputs
+  - Consumption paths (GitHub Pages, agents, workflows)
+  - Data governance and retention policies
+  - Quick reference tables
+
+#### Quality & Validation
 - **[✅ Completion Questions Framework](./COMPLETION_QUESTIONS.md)** - Quality audit system
   - 8 mandatory questions for every workflow
   - Valid/invalid answer examples
@@ -192,13 +247,15 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
   - Naming conventions and categories
   - Creation patterns (create before use!)
   - Agent, category, location, status labels
-  - Bulk creation tool
+  - Bulk creation tool (`tools/create_labels.py`)
 
-**Validation Tools:**
+#### Tools & Validation
 - `tools/validate_agent_capacity.py` - Enforce 10-agent limit
 - `tools/create_labels.py` - Bulk label creation
+- `tools/thematic-analyzer.py` - Learning content analysis
+- `tools/build-learnings-book.py` - Compile learnings for browsing
 
-**These guides document the complete autonomous loop that makes Chained self-evolving and self-reinforcing!**
+**These guides provide everything needed to understand, implement, or recreate the autonomous loop!**
 
 ### Tutorials (Step-by-Step)
 1. [Understanding the Autonomous Workflow](./docs/tutorials/understanding-autonomous-workflow.md)
