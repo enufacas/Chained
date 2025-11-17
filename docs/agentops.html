@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentOps Dashboard - Chained</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .agentops-hero {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(168, 85, 247, 0.1) 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .agentops-hero h1 {
+            color: #a855f7;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .agentops-hero p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .metric-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .metric-card .metric-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-card .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0.5rem 0;
+        }
+        
+        .metric-card .metric-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .metric-card .metric-change {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        
+        .metric-change.positive {
+            color: var(--success-color);
+        }
+        
+        .metric-change.negative {
+            color: var(--error-color);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-controls select,
+        .filter-controls input {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        
+        .runs-table {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+        
+        .runs-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .runs-table th {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .runs-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+        }
+        
+        .runs-table tr:hover {
+            background: rgba(139, 92, 246, 0.05);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+        
+        .status-badge.failure {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+        
+        .status-badge.in-progress {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid #fbbf24;
+        }
+        
+        .status-badge.queued {
+            background: rgba(6, 182, 212, 0.2);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .duration {
+            font-family: 'Courier New', monospace;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .agent-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #a855f7;
+            font-weight: 500;
+        }
+        
+        .workflow-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .workflow-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+        
+        .workflow-card h3 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .workflow-stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 6px;
+        }
+        
+        .workflow-stat span:first-child {
+            color: var(--text-muted);
+        }
+        
+        .workflow-stat span:last-child {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .loading-spinner {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+        
+        .loading-spinner::after {
+            content: "⏳";
+            font-size: 3rem;
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid var(--error-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            color: var(--error-color);
+        }
+        
+        .last-updated {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(6, 182, 212, 0.2);
+        }
+        
+        .agent-workload-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .agent-workload-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid #a855f7;
+        }
+        
+        .agent-workload-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .agent-workload-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .agent-workload-stats div {
+            text-align: center;
+            padding: 0.5rem;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 4px;
+        }
+        
+        .agent-workload-stats .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+        
+        .agent-workload-stats .value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .agent-workload-stats .value.success {
+            color: var(--success-color);
+        }
+        
+        .agent-workload-stats .value.failure {
+            color: var(--error-color);
+        }
+        
+        .agent-workload-stats .value.in-progress {
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <button class="hamburger" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1>🤖 Chained</h1>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            <a href="world-map.html" class="nav-link">🌍 World Map</a>
+            <a href="agents.html" class="nav-link">🤖 Agents</a>
+            <a href="lifecycle.html" class="nav-link">🔄 Lifecycle</a>
+            <a href="agentops.html" class="nav-link highlight-agentops" style="font-weight: 600;">📊 AgentOps</a>
+            <a href="tv.html" class="nav-link">📺 Chained TV</a>
+            <a href="ai-friends.html" class="nav-link">💬 AI Friends</a>
+            <a href="https://github.com/enufacas/Chained" target="_blank" class="nav-link">📂 GitHub</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <div class="agentops-hero">
+            <h1>📊 AgentOps Dashboard</h1>
+            <p>
+                Real-time monitoring and observability for the autonomous agent system. 
+                Track workflow executions, agent performance, system health, and operational metrics.
+            </p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading-spinner"></div>
+
+        <!-- Error State -->
+        <div id="error" class="error-message" style="display: none;">
+            <h3>⚠️ Error Loading AgentOps Data</h3>
+            <p id="error-message"></p>
+        </div>
+
+        <!-- Main Content (Hidden until loaded) -->
+        <div id="content" style="display: none;">
+            <!-- Summary Metrics -->
+            <section id="summary-metrics">
+                <div class="section-header">
+                    <h2>📈 System Overview</h2>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">🚀</div>
+                        <div class="metric-value" id="total-runs">-</div>
+                        <div class="metric-label">Total Runs</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">✅</div>
+                        <div class="metric-value" id="success-rate">-</div>
+                        <div class="metric-label">Success Rate</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">⏱️</div>
+                        <div class="metric-value" id="avg-duration">-</div>
+                        <div class="metric-label">Avg Duration</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">🔄</div>
+                        <div class="metric-value" id="in-progress">-</div>
+                        <div class="metric-label">In Progress</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">❌</div>
+                        <div class="metric-value" id="recent-failures">-</div>
+                        <div class="metric-label">Recent Failures (24h)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">🤖</div>
+                        <div class="metric-value" id="active-agents">-</div>
+                        <div class="metric-label">Active Agents</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agent Workload -->
+            <section id="agent-workload">
+                <div class="section-header">
+                    <h2>🤖 Agent Workload Distribution</h2>
+                </div>
+                <div class="agent-workload-grid" id="agent-workload-grid">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Workflow Statistics -->
+            <section id="workflow-stats">
+                <div class="section-header">
+                    <h2>⚙️ Workflow Performance</h2>
+                </div>
+                <div class="workflow-stats-grid" id="workflow-stats-grid">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Recent Runs -->
+            <section id="recent-runs">
+                <div class="section-header">
+                    <h2>📋 Recent Workflow Runs</h2>
+                    <div class="filter-controls">
+                        <select id="status-filter">
+                            <option value="all">All Statuses</option>
+                            <option value="success">Success</option>
+                            <option value="failure">Failure</option>
+                            <option value="in_progress">In Progress</option>
+                        </select>
+                        <select id="workflow-filter">
+                            <option value="all">All Workflows</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="runs-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Run #</th>
+                                <th>Workflow</th>
+                                <th>Status</th>
+                                <th>Agent</th>
+                                <th>Duration</th>
+                                <th>Started</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="runs-tbody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Last Updated -->
+            <div class="last-updated">
+                Last updated: <span id="last-updated">-</span>
+                <br>
+                <small>Dashboard refreshes every 30 minutes via automated sync workflow</small>
+            </div>
+        </div>
+    </main>
+
+    <script src="navigation.js"></script>
+    <script>
+        // Load and display AgentOps data
+        async function loadAgentOpsData() {
+            try {
+                const response = await fetch('data/agentops-runs.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Hide loading, show content
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+                
+                // Populate summary metrics
+                populateSummaryMetrics(data.summary, data.agent_workload);
+                
+                // Populate agent workload
+                populateAgentWorkload(data.agent_workload);
+                
+                // Populate workflow stats
+                populateWorkflowStats(data.workflow_stats);
+                
+                // Populate runs table
+                populateRunsTable(data.runs);
+                
+                // Populate filters
+                populateFilters(data.runs);
+                
+                // Update last updated time
+                document.getElementById('last-updated').textContent = formatDateTime(data.last_updated);
+                
+            } catch (error) {
+                console.error('Error loading AgentOps data:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error-message').textContent = error.message;
+            }
+        }
+        
+        function populateSummaryMetrics(summary, agentWorkload) {
+            document.getElementById('total-runs').textContent = summary.total_runs || 0;
+            document.getElementById('success-rate').textContent = `${summary.success_rate || 0}%`;
+            document.getElementById('avg-duration').textContent = formatDuration(summary.avg_duration_seconds || 0);
+            document.getElementById('in-progress').textContent = summary.in_progress || 0;
+            document.getElementById('recent-failures').textContent = summary.recent_failures_24h || 0;
+            document.getElementById('active-agents').textContent = Object.keys(agentWorkload || {}).length;
+        }
+        
+        function populateAgentWorkload(agentWorkload) {
+            const grid = document.getElementById('agent-workload-grid');
+            grid.innerHTML = '';
+            
+            if (!agentWorkload || Object.keys(agentWorkload).length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; width: 100%;">No agent workload data available</p>';
+                return;
+            }
+            
+            // Sort by total runs descending
+            const sortedAgents = Object.entries(agentWorkload)
+                .sort((a, b) => b[1].total - a[1].total);
+            
+            sortedAgents.forEach(([agentName, stats]) => {
+                const card = document.createElement('div');
+                card.className = 'agent-workload-card';
+                card.innerHTML = `
+                    <h4>@${agentName}</h4>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                        Total: ${stats.total} runs
+                    </div>
+                    <div class="agent-workload-stats">
+                        <div>
+                            <div class="label">Success</div>
+                            <div class="value success">${stats.success}</div>
+                        </div>
+                        <div>
+                            <div class="label">Failure</div>
+                            <div class="value failure">${stats.failure}</div>
+                        </div>
+                        <div>
+                            <div class="label">In Progress</div>
+                            <div class="value in-progress">${stats.in_progress}</div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        function populateWorkflowStats(workflowStats) {
+            const grid = document.getElementById('workflow-stats-grid');
+            grid.innerHTML = '';
+            
+            if (!workflowStats || Object.keys(workflowStats).length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; width: 100%;">No workflow statistics available</p>';
+                return;
+            }
+            
+            Object.entries(workflowStats).forEach(([workflow, stats]) => {
+                const card = document.createElement('div');
+                card.className = 'workflow-card';
+                
+                const successRate = stats.total > 0 
+                    ? ((stats.success / stats.total) * 100).toFixed(1) 
+                    : 0;
+                
+                card.innerHTML = `
+                    <h3>${workflow.replace('.yml', '')}</h3>
+                    <div class="workflow-stat">
+                        <span>Total Runs</span>
+                        <span>${stats.total}</span>
+                    </div>
+                    <div class="workflow-stat">
+                        <span>Success</span>
+                        <span style="color: var(--success-color);">${stats.success}</span>
+                    </div>
+                    <div class="workflow-stat">
+                        <span>Failure</span>
+                        <span style="color: var(--error-color);">${stats.failure}</span>
+                    </div>
+                    <div class="workflow-stat">
+                        <span>Success Rate</span>
+                        <span>${successRate}%</span>
+                    </div>
+                    <div class="workflow-stat">
+                        <span>Avg Duration</span>
+                        <span>${formatDuration(stats.avg_duration)}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        let allRuns = [];
+        
+        function populateRunsTable(runs) {
+            allRuns = runs || [];
+            filterAndDisplayRuns();
+        }
+        
+        function filterAndDisplayRuns() {
+            const statusFilter = document.getElementById('status-filter').value;
+            const workflowFilter = document.getElementById('workflow-filter').value;
+            
+            let filteredRuns = allRuns;
+            
+            if (statusFilter !== 'all') {
+                filteredRuns = filteredRuns.filter(run => {
+                    if (statusFilter === 'success' || statusFilter === 'failure') {
+                        return run.conclusion === statusFilter;
+                    }
+                    return run.status === statusFilter;
+                });
+            }
+            
+            if (workflowFilter !== 'all') {
+                filteredRuns = filteredRuns.filter(run => run.workflow_file === workflowFilter);
+            }
+            
+            const tbody = document.getElementById('runs-tbody');
+            tbody.innerHTML = '';
+            
+            if (filteredRuns.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No runs match the current filters</td></tr>';
+                return;
+            }
+            
+            filteredRuns.forEach(run => {
+                const row = document.createElement('tr');
+                
+                // Determine status badge
+                let statusClass = 'queued';
+                let statusText = run.status;
+                if (run.status === 'completed') {
+                    statusClass = run.conclusion === 'success' ? 'success' : 'failure';
+                    statusText = run.conclusion || 'completed';
+                } else if (run.status === 'in_progress') {
+                    statusClass = 'in-progress';
+                    statusText = 'in progress';
+                }
+                
+                row.innerHTML = `
+                    <td>#${run.run_number}</td>
+                    <td>
+                        <div style="font-weight: 500;">${run.workflow_name}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">${run.workflow_file}</div>
+                    </td>
+                    <td>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </td>
+                    <td>
+                        ${run.agent_name ? `<span class="agent-badge">@${run.agent_name}</span>` : '-'}
+                    </td>
+                    <td>
+                        <span class="duration">${formatDuration(run.duration_seconds)}</span>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.9rem;">${formatDateTime(run.created_at)}</div>
+                    </td>
+                    <td>
+                        <a href="${run.html_url}" target="_blank" 
+                           style="color: var(--primary-color); text-decoration: none; font-size: 0.9rem;">
+                            View Run →
+                        </a>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function populateFilters(runs) {
+            // Populate workflow filter
+            const workflowFilter = document.getElementById('workflow-filter');
+            const workflows = [...new Set(runs.map(r => r.workflow_file))].sort();
+            
+            workflows.forEach(workflow => {
+                const option = document.createElement('option');
+                option.value = workflow;
+                option.textContent = workflow.replace('.yml', '');
+                workflowFilter.appendChild(option);
+            });
+            
+            // Add event listeners
+            document.getElementById('status-filter').addEventListener('change', filterAndDisplayRuns);
+            document.getElementById('workflow-filter').addEventListener('change', filterAndDisplayRuns);
+        }
+        
+        function formatDuration(seconds) {
+            if (!seconds || seconds < 0) return '-';
+            
+            if (seconds < 60) {
+                return `${seconds.toFixed(0)}s`;
+            } else if (seconds < 3600) {
+                const minutes = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${minutes}m ${secs}s`;
+            } else {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                return `${hours}h ${minutes}m`;
+            }
+        }
+        
+        function formatDateTime(isoString) {
+            if (!isoString) return '-';
+            
+            const date = new Date(isoString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 1) return 'just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
+            if (diffMins < 10080) return `${Math.floor(diffMins / 1440)}d ago`;
+            
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+        
+        // Load data on page load
+        loadAgentOpsData();
+        
+        // Refresh every 5 minutes
+        setInterval(loadAgentOpsData, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
