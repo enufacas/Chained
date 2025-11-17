@@ -1,0 +1,27 @@
+{
+  "proactive_suggestions": [
+    "\u26a1 Consider documenting performance metrics and benchmarks",
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:accelerate-master -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue..."
+  ],
+  "knowledge_connections": {
+    "insight_1444_a00625b0d546": [
+      {
+        "target_id": "insight_1444_0d61a46f7b1b",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1444_0d61a46f7b1b": [
+      {
+        "target_id": "insight_1444_a00625b0d546",
+        "similarity": 1.0
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 18,
+    "total_connections": 4,
+    "new_insights_added": 22
+  },
+  "timestamp": "2025-11-17T00:11:37.609728+00:00"
+}
