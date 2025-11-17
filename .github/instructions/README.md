@@ -127,6 +127,21 @@ applyTo:
   - ".github/workflows/*docs*.yml"
 ```
 
+### 7. `workflow-reference.instructions.md` 🆕
+**Applies to:** All workflow files
+- **CRITICAL**: Requires workflow name reference in all created issues and PRs
+- Mandates footer attribution with workflow name and run link
+- Provides multiple format options for workflow references
+- Ensures traceability and audit trail for automated content
+- Supports debugging and transparency in the autonomous system
+
+**Scope:**
+```yaml
+applyTo:
+  - ".github/workflows/**/*.yml"
+  - ".github/workflows/*.yml"
+```
+
 ## File Format
 
 Each instruction file follows this structure:
