@@ -1,9 +1,9 @@
 {
   "python": {
     "comment_removal": {
-      "effectiveness": 0.7361257413997628,
-      "applications": 2,
-      "avg_reduction": 13.914590747330962
+      "effectiveness": 0.7204096726361306,
+      "applications": 3,
+      "avg_reduction": 15.066044369188383
     },
     "docstring_removal": {
       "effectiveness": 0.85,
@@ -11,14 +11,14 @@
       "avg_reduction": 25.0
     },
     "whitespace_reduction": {
-      "effectiveness": 0.8171257413997628,
-      "applications": 2,
-      "avg_reduction": 13.914590747330962
+      "effectiveness": 0.7933096726361306,
+      "applications": 3,
+      "avg_reduction": 15.066044369188383
     },
     "blank_line_removal": {
-      "effectiveness": 0.6956257413997629,
-      "applications": 2,
-      "avg_reduction": 13.914590747330962
+      "effectiveness": 0.6839596726361307,
+      "applications": 3,
+      "avg_reduction": 15.066044369188383
     },
     "boolean_simplification": {
       "effectiveness": 0.6551257413997629,
@@ -26,9 +26,9 @@
       "avg_reduction": 13.914590747330962
     },
     "variable_shortening": {
-      "effectiveness": 0.5741257413997627,
-      "applications": 2,
-      "avg_reduction": 13.914590747330962
+      "effectiveness": 0.5746096726361305,
+      "applications": 3,
+      "avg_reduction": 15.066044369188383
     },
     "lambda_optimization": {
       "effectiveness": 0.5,
