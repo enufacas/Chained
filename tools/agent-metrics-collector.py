@@ -336,7 +336,7 @@ class MetricsCollector:
         Returns:
             Dictionary mapping agent_id to list of assigned issues
         """
-        print(f"🔄 Batch fetching all agent-work issues (last {since_days} days)...", file=sys.stderr)
+        print(f"🔄 Batch fetching all agent-work issues (last {since_days} days)...")
         
         agent_issues_map = {}
         since_date = (datetime.now(timezone.utc) - timedelta(days=since_days)).isoformat()
@@ -368,7 +368,7 @@ class MetricsCollector:
             )
             self._api_call_count += 1
             
-            print(f"📋 Found {len(all_issues)} total agent-work issues", file=sys.stderr)
+            print(f"📋 Found {len(all_issues)} total agent-work issues")
             
             # OPTIMIZATION: Search results already include body, use it directly
             # Only fetch full details if body is missing
@@ -417,8 +417,8 @@ class MetricsCollector:
                         agent_issues_map[agent_id].append(issue)
                         print(f"  ✅ Issue #{issue_number} → {agent_info['name']}", file=sys.stderr)
             
-            print(f"✅ Distributed issues to {len(agent_issues_map)} agents", file=sys.stderr)
-            print(f"📊 API calls so far: {self._api_call_count}", file=sys.stderr)
+            print(f"✅ Distributed issues to {len(agent_issues_map)} agents")
+            print(f"📊 API calls so far: {self._api_call_count}")
             
         except Exception as e:
             print(f"⚠️  Warning: Batch fetch failed: {e}", file=sys.stderr)
@@ -687,7 +687,7 @@ class MetricsCollector:
             
             # SHORT-CIRCUIT OPTIMIZATION: If agent has no assigned issues, skip expensive PR/review lookups
             if len(assigned_issues) == 0:
-                print(f"⚡ Short-circuit: {agent_id} has no assigned issues, skipping PR/review lookups", file=sys.stderr)
+                print(f"⚡ Short-circuit: {agent_id} has no assigned issues, skipping PR/review lookups")
                 return activity  # Return early with all zeros
             
             # Count resolved issues (closed ones)
@@ -846,7 +846,7 @@ class MetricsCollector:
                 reviews = self._get_reviews_by_agent(agent_id, since_days)
                 activity.reviews_given = len(reviews)
             else:
-                print(f"⚡ Short-circuit: Skipping review lookup (no significant PR activity)", file=sys.stderr)
+                print(f"⚡ Short-circuit: Skipping review lookup (no significant PR activity)")
                 activity.reviews_given = 0
             
             # Get comments made by agent on assigned issues
@@ -865,19 +865,19 @@ class MetricsCollector:
                     except Exception:
                         pass
             else:
-                print(f"⚡ Short-circuit: Skipping comment lookup (no assigned issues)", file=sys.stderr)
+                print(f"⚡ Short-circuit: Skipping comment lookup (no assigned issues)")
             
             activity.comments_made = comments_count
             
             # Log activity summary
-            print(f"📊 Activity summary for {agent_id}:", file=sys.stderr)
-            print(f"  - Issues assigned: {activity.issues_created}", file=sys.stderr)
-            print(f"  - Issues resolved: {activity.issues_resolved}", file=sys.stderr)
-            print(f"  - PRs created: {activity.prs_created}", file=sys.stderr)
-            print(f"  - PRs merged: {activity.prs_merged}", file=sys.stderr)
-            print(f"  - Reviews given: {activity.reviews_given}", file=sys.stderr)
-            print(f"  - Comments made: {activity.comments_made}", file=sys.stderr)
-            print(f"  - API calls used: {self._api_call_count}", file=sys.stderr)
+            print(f"📊 Activity summary for {agent_id}:")
+            print(f"  - Issues assigned: {activity.issues_created}")
+            print(f"  - Issues resolved: {activity.issues_resolved}")
+            print(f"  - PRs created: {activity.prs_created}")
+            print(f"  - PRs merged: {activity.prs_merged}")
+            print(f"  - Reviews given: {activity.reviews_given}")
+            print(f"  - Comments made: {activity.comments_made}")
+            print(f"  - API calls used: {self._api_call_count}")
             
         except Exception as e:
             print(f"⚠️  Warning: Error collecting activity for {agent_id}: {e}", file=sys.stderr)
@@ -1265,7 +1265,7 @@ class MetricsCollector:
         Returns:
             Complete AgentMetrics object
         """
-        print(f"📊 Collecting metrics for {agent_id}...", file=sys.stderr)
+        print(f"📊 Collecting metrics for {agent_id}...")
         
         # Collect activity (with batch cache if available)
         activity = self.collect_agent_activity(
@@ -1378,9 +1378,9 @@ class MetricsCollector:
             print(f"📊 Evaluating {total_agents} active agents...", file=sys.stderr)
             
             # OPTIMIZATION: Batch fetch all issues once, then distribute to agents
-            print(f"🚀 Starting batch optimization...", file=sys.stderr)
+            print(f"🚀 Starting batch optimization...")
             batch_cache = self._batch_fetch_all_agent_issues(since_days)
-            print(f"✅ Batch fetch complete. Starting agent evaluation...", file=sys.stderr)
+            print(f"✅ Batch fetch complete. Starting agent evaluation...")
             
             for idx, agent in enumerate(active_agents, 1):
                 agent_id = agent['id']
@@ -1405,8 +1405,8 @@ class MetricsCollector:
                 except Exception as e:
                     print(f"❌ Error evaluating {agent_id}: {e}", file=sys.stderr)
             
-            print(f"✅ Evaluation complete! Collected metrics for {len(results)} agents.", file=sys.stderr)
-            print(f"📊 Total API calls used: {self._api_call_count}", file=sys.stderr)
+            print(f"✅ Evaluation complete! Collected metrics for {len(results)} agents.")
+            print(f"📊 Total API calls used: {self._api_call_count}")
             print(f"ℹ️  Note: Registry updates are handled by the evaluator workflow", file=sys.stderr)
         
         except Exception as e:
