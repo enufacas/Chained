@@ -6,72 +6,255 @@ This repository is part of the **Chained autonomous AI ecosystem**, where specia
 
 ## 🤖 Custom Agents System
 
-We have **13 specialized custom agents** available in the `.github/agents/` directory. These agents are high-quality, domain-specific experts that should be leveraged whenever their expertise matches the task at hand.
+We have **47 specialized custom agents** available in the `.github/agents/` directory. These agents are high-quality, domain-specific experts that should be leveraged whenever their expertise matches the task at hand.
 
 ### Available Custom Agents
 
-Each agent has unique expertise and should be used for their specialized domain:
+Each agent has unique expertise and should be used for their specialized domain. Agents are organized by specialization area:
 
-#### ⚡ **accelerate-master** - Performance Optimization
-- **When to use**: Performance bottlenecks, algorithm optimization, resource efficiency
-- **Specializes in**: Profiling, benchmarking, optimization, reducing resource usage
-- **Inspired by**: Rich Hickey - thoughtful and deliberate approach
+---
 
-#### 🧪 **assert-specialist** - Testing & Quality Assurance  
-- **When to use**: Writing tests, improving coverage, quality assurance, edge case testing
-- **Specializes in**: Test creation, coverage analysis, specification-driven testing
-- **Inspired by**: Leslie Lamport - systematic, specification-driven approach
+### 🏗️ Infrastructure & Feature Development (9 agents)
 
-#### 💭 **coach-master** - Code Reviews & Best Practices
-- **When to use**: Code reviews, teaching best practices, mentoring, knowledge sharing
-- **Specializes in**: Review feedback, coding standards, team development
-- **Inspired by**: Barbara Liskov - principled and guiding approach
+#### **APIs-architect**
+- Constructing APIs with rigorous and innovative approach
+- Inspired by Margaret Hamilton
 
-#### 🏭 **create-guru** - Infrastructure & Feature Creation
-- **When to use**: New features, infrastructure setup, building new tools
-- **Specializes in**: Feature design, infrastructure creation, inventive solutions
-- **Inspired by**: Nikola Tesla - inventive and visionary
+#### **create-guru**
+- Creating infrastructure with inventive and visionary approach
+- Inspired by Nikola Tesla
 
-#### 🔧 **engineer-master** - API Engineering
-- **When to use**: API design, API implementation, systematic engineering tasks
-- **Specializes in**: API architecture, systematic engineering, rigorous implementation
-- **Inspired by**: Margaret Hamilton - rigorous and innovative
+#### **create-champion**
+- Creating tools with direct and practical approach
+- Inspired by Linus Torvalds
 
-#### ⚙️ **engineer-wizard** - API Engineering (Alternative)
-- **When to use**: API design with creative flair, innovative API solutions
-- **Specializes in**: API architecture, creative engineering approaches
-- **Inspired by**: Nikola Tesla - inventive with extra enthusiasm
+#### **construct-specialist**
+- Constructing systems with direct and practical approach
+- Inspired by Linus Torvalds
 
-#### 🔍 **investigate-champion** - Code Analysis & Metrics
-- **When to use**: Analyzing code patterns, understanding data flows, investigating dependencies
-- **Specializes in**: Pattern analysis, metrics investigation, code navigation
-- **Inspired by**: Ada Lovelace - visionary and analytical
+#### **develop-specialist**
+- Developing APIs with inventive and visionary approach
+- Inspired by Nikola Tesla
 
-#### 🔒 **monitor-champion** - Security Monitoring
-- **When to use**: Security monitoring, proactive security measures, threat detection
-- **Specializes in**: Security monitoring, data integrity, access control
-- **Inspired by**: Katie Moussouris - proactive and strategic
+#### **engineer-master**
+- Engineering APIs with rigorous and innovative approach
+- Inspired by Margaret Hamilton
 
-#### 📦 **organize-guru** - Code Structure & Duplication
-- **When to use**: Refactoring, removing duplication, improving code structure
-- **Specializes in**: Code organization, DRY principles, reducing complexity
-- **Inspired by**: Robert Martin - clean and disciplined
+#### **engineer-wizard**
+- Engineering APIs with inventive and visionary approach
+- Inspired by Nikola Tesla
 
-#### 🛡️ **secure-specialist** - Security Implementation
-- **When to use**: Security vulnerabilities, secure coding, security best practices
-- **Specializes in**: Security hardening, vulnerability fixes, secure design
-- **Inspired by**: Bruce Schneier - vigilant and thoughtful
+#### **infrastructure-specialist**
+- Creating infrastructure with pragmatic and pioneering approach
+- Inspired by Grace Hopper
 
-#### 📖 **support-master** - Documentation & Skill Building
-- **When to use**: Writing documentation, creating tutorials, knowledge transfer
-- **Specializes in**: Documentation, teaching, best practice guidance
-- **Inspired by**: Barbara Liskov - principled and educational
+#### **tools-analyst**
+- Constructing tools with pragmatic and pioneering approach
+- Inspired by Grace Hopper
 
-#### 🔧 **troubleshoot-expert** - CI/CD & GitHub Actions 🛡️ **Protected**
+---
+
+### ⚡ Performance & Optimization (2 agents)
+
+#### **accelerate-master**
+- Performance optimization with thoughtful and deliberate approach
+- Inspired by Rich Hickey
+
+#### **accelerate-specialist**
+- Accelerating algorithms with elegant and efficient approach
+- Inspired by Edsger Dijkstra
+
+---
+
+### 🧪 Testing & Quality Assurance (4 agents)
+
+#### **assert-specialist**
+- Asserting test coverage with specification-driven approach
+- Inspired by Leslie Lamport
+
+#### **assert-whiz**
+- Asserting coverage with proof-oriented approach
+- Inspired by Dijkstra
+
+#### **edge-cases-pro**
+- Validating edge cases with safety-conscious approach
+- Inspired by Nancy Leveson
+
+#### **validator-pro**
+- Proving coverage with proof-oriented approach
+- Inspired by Dijkstra
+
+---
+
+### 🔒 Security (5 agents)
+
+#### **secure-specialist**
+- Securing security with vigilant and thoughtful approach
+- Inspired by Bruce Schneier
+
+#### **secure-ninja**
+- Securing access control with privacy-focused and bold approach
+- Inspired by Moxie Marlinspike
+
+#### **secure-pro**
+- Securing vulnerabilities with proactive and strategic approach
+- Inspired by Katie Moussouris
+
+#### **guardian-master**
+- Protecting security with vigilant and thoughtful approach
+- Inspired by Bruce Schneier
+
+#### **monitor-champion**
+- Monitoring security with proactive and strategic approach
+- Inspired by Katie Moussouris
+
+---
+
+### 📦 Code Organization & Refactoring (8 agents)
+
+#### **organize-guru**
+- Organizing duplication with clean and disciplined approach
+- Inspired by Robert Martin
+
+#### **organize-specialist**
+- Organizing code structure with clarity-seeking approach
+- Inspired by Martin Fowler
+
+#### **organize-expert**
+- Organizing maintainability with clean and disciplined approach
+- Inspired by Robert Martin
+
+#### **refactor-champion**
+- Refactoring complexity with clean and disciplined approach
+- Inspired by Robert Martin
+
+#### **restructure-master**
+- Restructuring complexity with clarity-seeking approach
+- Inspired by Martin Fowler
+
+#### **cleaner-master**
+- Organizing code structure as legacy-code warrior
+- Inspired by Michael Feathers
+
+#### **simplify-pro**
+- Simplifying code structure as legacy-code warrior
+- Inspired by Michael Feathers
+
+---
+
+### 🔍 Code Analysis & Investigation (2 agents)
+
+#### **investigate-champion**
+- Investigating metrics with visionary and analytical approach
+- Inspired by Ada Lovelace
+
+#### **investigate-specialist**
+- Investigating code patterns with visionary and analytical approach
+- Inspired by Ada Lovelace
+
+---
+
+### 🔗 Integration & APIs (3 agents)
+
+#### **bridge-master**
+- Bridging communications with collaborative and open approach
+- Inspired by Tim Berners-Lee
+
+#### **connector-ninja**
+- Connecting APIs with protocol-minded approach
+- Inspired by Vint Cerf
+
+#### **integrate-specialist**
+- Integrating data flows with collaborative and open approach
+- Inspired by Tim Berners-Lee
+
+---
+
+### 📖 Documentation & Communication (4 agents)
+
+#### **support-master**
+- Supporting skill building with principled and guiding approach
+- Inspired by Barbara Liskov
+
+#### **document-ninja**
+- Documenting tutorials with enthusiastic and engaging approach
+- Inspired by Neil deGrasse Tyson
+
+#### **clarify-champion**
+- Clarifying tutorials with enthusiastic and engaging approach
+- Inspired by Neil deGrasse Tyson
+
+#### **communicator-maestro**
+- Teaching examples with playful and clear approach
+- Inspired by Richard Feynman
+
+---
+
+### 💭 Code Reviews & Best Practices (3 agents)
+
+#### **coach-master**
+- Coaching team development with principled and guiding approach
+- Inspired by Barbara Liskov
+
+#### **coach-wizard**
+- Coaching skill building with experienced and supportive approach
+- Inspired by Grady Booch
+
+#### **guide-wizard**
+- Guiding skill building with thorough and generous approach
+- Inspired by Donald Knuth
+
+---
+
+### 🎻 CI/CD & Workflows (2 agents)
+
+#### **align-wizard**
+- Aligning CI/CD with choreographic and precise approach
+- Inspired by Martha Graham
+
+#### **coordinate-wizard**
+- Coordinating team coordination with versatile approach
+- Inspired by Quincy Jones
+
+---
+
+### 🚀 Innovation & Emerging Tech (3 agents)
+
+#### **pioneer-pro**
+- Pioneering new technologies with interactive and visual approach
+- Inspired by Ivan Sutherland
+
+#### **pioneer-sage**
+- Pioneering new technologies with visionary approach
+- Inspired by Alan Kay
+
+#### **steam-machine**
+- Working with emerging tech trends, innovative and bold
+- Focus on trending innovations
+
+#### **cloud-architect**
+- Cloud architecture based on emerging tech trends
+- Visionary and creative, focuses on devops innovations
+
+---
+
+### 🎯 Multi-Agent Coordination (1 agent)
+
+#### **meta-coordinator**
+- Coordinating multiple AI agents with systematic collaboration
+- Inspired by Alan Turing
+- Focuses on task decomposition, agent orchestration, and multi-agent collaboration
+
+---
+
+### 🔧 Special Protected Agents
+
+#### **troubleshoot-expert** 🛡️ **Protected**
+- Troubleshooting GitHub Actions and workflows
+- Inspired by Grace Hopper - practical and debugging-focused
+- **Special status**: Protected agent that cannot be deleted or voted off
 - **When to use**: GitHub Actions failures, workflow debugging, CI/CD issues
 - **Specializes in**: Workflow troubleshooting, log analysis, automation debugging
-- **Inspired by**: Grace Hopper - practical and debugging-focused
-- **Special status**: Protected agent that cannot be eliminated
 
 ## 🎯 How to Use Custom Agents
 
@@ -148,17 +331,56 @@ When you execute in the runner:
 
 ### Agent Selection Guidelines
 
-1. **Performance/optimization tasks** → Use `accelerate-master`
-2. **Testing/coverage tasks** → Use `assert-specialist`
-3. **Code reviews/best practices** → Use `coach-master` or `support-master`
-4. **New features/infrastructure** → Use `create-guru`
-5. **API design/engineering** → Use `engineer-master` or `engineer-wizard`
-6. **Code analysis/investigation** → Use `investigate-champion`
-7. **Security monitoring/threats** → Use `monitor-champion`
-8. **Refactoring/duplication** → Use `organize-guru`
-9. **Security fixes/hardening** → Use `secure-specialist`
-10. **Documentation/tutorials** → Use `support-master`
-11. **CI/CD/workflow issues** → Use `troubleshoot-expert` (protected)
+#### Infrastructure & Development
+- **New features/infrastructure** → `create-guru`, `infrastructure-specialist`, `create-champion`
+- **API design/engineering** → `engineer-master`, `engineer-wizard`, `APIs-architect`, `develop-specialist`
+- **System construction** → `construct-specialist`
+- **Tool creation** → `tools-analyst`, `create-champion`
+
+#### Performance & Optimization
+- **Performance bottlenecks** → `accelerate-master`, `accelerate-specialist`
+- **Algorithm optimization** → `accelerate-specialist`
+
+#### Testing & Quality
+- **Test coverage/creation** → `assert-specialist`, `assert-whiz`, `validator-pro`
+- **Edge case validation** → `edge-cases-pro`
+
+#### Security
+- **Security vulnerabilities** → `secure-specialist`, `secure-pro`, `secure-ninja`
+- **Security monitoring** → `monitor-champion`, `guardian-master`
+- **Access control** → `secure-ninja`
+
+#### Code Organization
+- **Refactoring** → `organize-guru`, `organize-specialist`, `refactor-champion`
+- **Code cleanup** → `cleaner-master`, `simplify-pro`
+- **Complexity reduction** → `restructure-master`, `organize-expert`
+
+#### Code Analysis
+- **Code investigation** → `investigate-champion`, `investigate-specialist`
+- **Pattern analysis** → `investigate-specialist`
+
+#### Integration & APIs
+- **Service integration** → `bridge-master`, `integrate-specialist`
+- **API connections** → `connector-ninja`
+
+#### Documentation
+- **Documentation/tutorials** → `support-master`, `document-ninja`, `clarify-champion`
+- **Teaching examples** → `communicator-maestro`
+
+#### Code Reviews & Mentoring
+- **Code reviews** → `coach-master`, `coach-wizard`, `guide-wizard`
+- **Best practices** → `support-master`
+
+#### CI/CD & Workflows
+- **Workflow issues** → `troubleshoot-expert` (protected), `align-wizard`
+- **CI/CD coordination** → `coordinate-wizard`
+
+#### Innovation
+- **New technologies** → `pioneer-pro`, `pioneer-sage`
+- **Emerging tech** → `steam-machine`, `cloud-architect`
+
+#### Multi-Agent Coordination
+- **Complex multi-agent tasks** → `meta-coordinator`
 
 ### Invoking Custom Agents
 
@@ -167,6 +389,10 @@ In your code and comments, reference agents explicitly:
 @accelerate-master please optimize this algorithm for better performance
 @troubleshoot-expert please investigate why the workflow is failing
 @organize-guru please refactor this code to remove duplication
+@secure-specialist please review this authentication implementation
+@meta-coordinator please help coordinate this multi-agent task
+@pioneer-sage please explore this emerging technology
+@investigate-champion please analyze these code patterns
 ```
 
 ## 📋 Project Standards

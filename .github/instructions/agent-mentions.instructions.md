@@ -63,19 +63,76 @@ Update workflow to notify @create-guru about new infrastructure needs
 ### 5. Available Custom Agents
 When mentioning agents, use these exact names with @ prefix:
 
-- @accelerate-master - Performance optimization
-- @assert-specialist - Testing & quality assurance
-- @coach-master - Code reviews & best practices
-- @create-guru - Infrastructure & feature creation
+**Infrastructure & Development:**
+- @APIs-architect - API construction
+- @create-guru - Infrastructure creation
+- @create-champion - Tool creation
+- @construct-specialist - System construction
+- @develop-specialist - API development
 - @engineer-master - API engineering (systematic)
 - @engineer-wizard - API engineering (creative)
-- @investigate-champion - Code analysis & metrics
-- @meta-coordinator - Multi-agent coordination
-- @monitor-champion - Security monitoring
-- @organize-guru - Code structure & duplication
+- @infrastructure-specialist - Infrastructure creation
+- @tools-analyst - Tool construction
+
+**Performance:**
+- @accelerate-master - Performance optimization
+- @accelerate-specialist - Algorithm acceleration
+
+**Testing & Quality:**
+- @assert-specialist - Test coverage
+- @assert-whiz - Test coverage
+- @edge-cases-pro - Edge case validation
+- @validator-pro - Coverage validation
+
+**Security:**
 - @secure-specialist - Security implementation
-- @support-master - Documentation & skill building
-- @troubleshoot-expert - CI/CD & GitHub Actions (protected)
+- @secure-ninja - Access control
+- @secure-pro - Vulnerability fixes
+- @guardian-master - Security protection
+- @monitor-champion - Security monitoring
+
+**Code Organization:**
+- @organize-guru - Duplication removal
+- @organize-specialist - Code structure
+- @organize-expert - Maintainability
+- @refactor-champion - Complexity refactoring
+- @restructure-master - Complexity restructuring
+- @cleaner-master - Code cleanup
+- @simplify-pro - Code simplification
+
+**Code Analysis:**
+- @investigate-champion - Metrics investigation
+- @investigate-specialist - Pattern investigation
+
+**Integration:**
+- @bridge-master - Communications bridging
+- @connector-ninja - API connections
+- @integrate-specialist - Data flow integration
+
+**Documentation:**
+- @support-master - Skill building
+- @document-ninja - Tutorial documentation
+- @clarify-champion - Tutorial clarification
+- @communicator-maestro - Teaching examples
+
+**Code Reviews:**
+- @coach-master - Team development
+- @coach-wizard - Skill building coaching
+- @guide-wizard - Skill building guidance
+
+**CI/CD:**
+- @align-wizard - CI/CD alignment
+- @coordinate-wizard - Team coordination
+- @troubleshoot-expert - GitHub Actions (protected)
+
+**Innovation:**
+- @pioneer-pro - New technologies
+- @pioneer-sage - New technologies
+- @steam-machine - Emerging tech
+- @cloud-architect - Cloud architecture
+
+**Coordination:**
+- @meta-coordinator - Multi-agent coordination
 
 ### 6. Enforcement in Code
 When writing scripts or workflows that handle agent assignment:
