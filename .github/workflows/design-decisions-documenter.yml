@@ -1,0 +1,211 @@
+name: "Code Quality: Design Decisions Documenter"
+
+on:
+  schedule:
+    # Run weekly on Wednesdays at 10 AM UTC
+    - cron: '0 10 * * 3'
+  workflow_dispatch:
+    inputs:
+      max_commits:
+        description: 'Maximum number of commits to analyze'
+        required: false
+        default: '500'
+      since:
+        description: 'Only analyze commits since date (e.g., "1 month ago")'
+        required: false
+      export_markdown:
+        description: 'Export decisions to markdown files'
+        required: false
+        default: 'true'
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  document-decisions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for analysis
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Run Design Decision Documenter
+        id: documenter
+        run: |
+          max_commits="${{ github.event.inputs.max_commits }}"
+          max_commits="${max_commits:-500}"
+          
+          since_arg=""
+          if [ -n "${{ github.event.inputs.since }}" ]; then
+            since_arg="--since '${{ github.event.inputs.since }}'"
+          fi
+          
+          echo "🏗️ Running Design Decision Documenter..."
+          echo "Max commits: $max_commits $since_arg"
+          
+          # Make tool executable
+          chmod +x tools/design-decision-documenter.py
+          
+          # Run the documenter
+          python3 tools/design-decision-documenter.py \
+            -n "$max_commits" \
+            $since_arg \
+            -o analysis/design-decisions-report.md
+          
+          # Export to markdown if requested
+          if [ "${{ github.event.inputs.export_markdown }}" = "true" ]; then
+            python3 tools/design-decision-documenter.py \
+              -n "$max_commits" \
+              $since_arg \
+              --export \
+              --export-dir docs/decisions
+          fi
+          
+          # Extract statistics
+          if [ -f analysis/design-decisions.json ]; then
+            total_decisions=$(jq '.total_decisions // 0' analysis/design-decisions.json)
+            accepted=$(jq '.statistics.accepted // 0' analysis/design-decisions.json)
+            rejected=$(jq '.statistics.rejected // 0' analysis/design-decisions.json)
+            deprecated=$(jq '.statistics.deprecated // 0' analysis/design-decisions.json)
+            
+            echo "total_decisions=$total_decisions" >> $GITHUB_OUTPUT
+            echo "accepted=$accepted" >> $GITHUB_OUTPUT
+            echo "rejected=$rejected" >> $GITHUB_OUTPUT
+            echo "deprecated=$deprecated" >> $GITHUB_OUTPUT
+          else
+            echo "total_decisions=0" >> $GITHUB_OUTPUT
+            echo "accepted=0" >> $GITHUB_OUTPUT
+            echo "rejected=0" >> $GITHUB_OUTPUT
+            echo "deprecated=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit design decision data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add generated files
+          git add analysis/design-decisions.json || true
+          git add analysis/design-decisions-report.md || true
+          git add docs/decisions/ || true
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            # Create unique branch name
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="design-decisions/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            # Commit changes
+            git commit -m "🏗️ Update design decisions documentation - $(date -u +"%Y-%m-%d")"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "🏗️ Update design decisions documentation - ${PR_DATE}" \
+              --body "## Design Decisions Update"$'\n\n'"**@accelerate-specialist** has updated the design decisions documentation with optimal performance."$'\n\n'"### Changes"$'\n'"- Analyzed ${{ steps.documenter.outputs.total_decisions }} design decisions"$'\n'"- Accepted: ${{ steps.documenter.outputs.accepted }}"$'\n'"- Rejected: ${{ steps.documenter.outputs.rejected }}"$'\n'"- Deprecated: ${{ steps.documenter.outputs.deprecated }}"$'\n\n'"### Performance"$'\n'"- O(1) lookup time for decision retrieval"$'\n'"- Indexed database for fast queries"$'\n'"- Lazy loading with caching"$'\n\n'"---"$'\n'"*🤖 Created by workflow: [Design Decisions Documenter](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+              --label "documentation,automated,copilot" \
+              --base main \
+              --head "$BRANCH_NAME" || {
+                echo "⚠️ PR creation failed, creating without labels..."
+                gh pr create \
+                  --title "🏗️ Update design decisions documentation - ${PR_DATE}" \
+                  --body "## Design Decisions Update"$'\n\n'"Documentation updated." \
+                  --base main \
+                  --head "$BRANCH_NAME"
+              }
+            
+            echo "✅ PR created for design decisions update"
+          fi
+
+      - name: Create design decisions issue
+        if: steps.documenter.outputs.total_decisions > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat > issue_body.md << 'EOF'
+          ## 🏗️ Design Decisions Documentation Update
+          
+          **Analysis Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          ### Summary
+          - 📋 Total decisions documented: ${{ steps.documenter.outputs.total_decisions }}
+          - ✅ Accepted: ${{ steps.documenter.outputs.accepted }}
+          - ❌ Rejected: ${{ steps.documenter.outputs.rejected }}
+          - 🔄 Deprecated: ${{ steps.documenter.outputs.deprecated }}
+          
+          ### What are Design Decisions?
+          
+          Design decisions document the important architectural and technical choices made during development. This includes:
+          
+          - **Context**: Why the decision was needed
+          - **Decision**: What was chosen
+          - **Consequences**: Impact of the decision
+          - **Alternatives**: Other options considered
+          
+          ### Performance Features
+          
+          **@accelerate-specialist** implemented this system with optimal efficiency:
+          - **O(1) lookup**: Instant retrieval by decision ID
+          - **Indexed search**: Fast queries by status, category, or date
+          - **Lazy loading**: Memory-efficient with caching
+          - **Batch processing**: Efficient analysis of large histories
+          
+          ### Access the Documentation
+          
+          📁 **Database:** `analysis/design-decisions.json`
+          📊 **Report:** `analysis/design-decisions-report.md`
+          📚 **Individual decisions:** `docs/decisions/` (if exported)
+          
+          ### Quick Queries
+          
+          ```bash
+          # Search for decisions
+          python3 tools/design-decision-documenter.py --search "database"
+          
+          # Find related decisions
+          python3 tools/design-decision-documenter.py --related DD-abc123
+          
+          # Export to markdown
+          python3 tools/design-decision-documenter.py --export
+          ```
+          
+          ---
+          
+          *Generated by Design Decision Documenter - Performance-optimized by **@accelerate-specialist***
+          EOF
+          
+          gh issue create \
+            --title "🏗️ Design Decisions Documentation - $(date -u +"%Y-%m-%d")" \
+            --body-file issue_body.md \
+            --label "documentation,automated,design-decisions"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-decisions
+          path: |
+            analysis/design-decisions.json
+            analysis/design-decisions-report.md
+            docs/decisions/
+
+      - name: Log completion
+        run: |
+          echo "✅ Design decisions documentation completed"
+          echo "Total decisions: ${{ steps.documenter.outputs.total_decisions }}"
+          echo "Accepted: ${{ steps.documenter.outputs.accepted }}"
+          echo "Rejected: ${{ steps.documenter.outputs.rejected }}"
+          echo "Deprecated: ${{ steps.documenter.outputs.deprecated }}"

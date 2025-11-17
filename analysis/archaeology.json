@@ -1,87 +1,46 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-14T04:06:59.230999+00:00",
+  "last_updated": "2025-11-17T17:09:36.240623+00:00",
   "repository": "tmp_hj4w711",
-  "total_commits_analyzed": 6,
+  "total_commits_analyzed": 3,
   "architectural_decisions": [
     {
       "type": "explicit_decision",
       "content": "<1485431+enufacas@users",
-      "commit": "a854e33",
-      "timestamp": "2025-11-14T04:06:36+00:00"
-    },
-    {
-      "type": "explicit_decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "f4cac56",
-      "timestamp": "2025-11-14T04:03:14+00:00"
-    },
-    {
-      "type": "explicit_decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "081aca1",
-      "timestamp": "2025-11-14T04:00:21+00:00"
-    },
-    {
-      "type": "explicit_decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "efcbe7c",
-      "timestamp": "2025-11-14T03:54:44+00:00"
+      "commit": "ab2e4f2",
+      "timestamp": "2025-11-17T17:08:51+00:00"
     }
   ],
   "technical_debt": [],
   "legacy_patterns": [],
   "code_evolution": {
-    "major_refactors": [],
+    "major_refactors": [
+      {
+        "hash": "ab2e4f2",
+        "subject": "Add autonomous design decision documentation system (@accelerate-specialist)",
+        "author": "copilot-swe-agent[bot]",
+        "timestamp": "2025-11-17T17:08:51+00:00",
+        "files_changed": 6,
+        "stats": "6 files changed, 2191 insertions(+)"
+      }
+    ],
     "feature_additions": [
       {
-        "hash": "a854e33",
-        "subject": "Complete enhanced archaeology implementation with summary (@investigate-champion)",
-        "author": "copilot-swe-agent[bot]",
-        "timestamp": "2025-11-14T04:06:36+00:00",
-        "files_changed": 2,
-        "stats": "2 files changed, 364 insertions(+), 8 deletions(-)"
-      },
-      {
-        "hash": "f4cac56",
-        "subject": "Add archaeology integration helpers and documentation (@investigate-champion)",
-        "author": "copilot-swe-agent[bot]",
-        "timestamp": "2025-11-14T04:03:14+00:00",
-        "files_changed": 3,
-        "stats": "3 files changed, 808 insertions(+), 3 deletions(-)"
-      },
-      {
-        "hash": "e46087a",
-        "subject": "chore: new chained tv episode (#717)",
+        "hash": "d449be4",
+        "subject": "chore: new chained tv episode (#1600)",
         "author": "github-actions[bot]",
-        "timestamp": "2025-11-14T03:47:28+00:00",
+        "timestamp": "2025-11-17T16:21:27+00:00",
         "files_changed": 0,
-        "stats": "711 files changed, 194080 insertions(+)"
+        "stats": "2134 files changed, 570013 insertions(+)"
       }
     ],
     "bug_fixes": [],
     "maintenance": [
       {
-        "hash": "081aca1",
-        "subject": "Enhance archaeology learner with predictive insights and knowledge base (@investigate-champion)",
-        "author": "copilot-swe-agent[bot]",
-        "timestamp": "2025-11-14T04:00:21+00:00",
-        "files_changed": 3,
-        "stats": "3 files changed, 1036 insertions(+), 102 deletions(-)"
-      },
-      {
-        "hash": "efcbe7c",
-        "subject": "Initial plan for enhanced code archaeology with active learning",
-        "author": "copilot-swe-agent[bot]",
-        "timestamp": "2025-11-14T03:54:44+00:00",
-        "files_changed": 1,
-        "stats": "1 file changed, 104 insertions(+), 10 deletions(-)"
-      },
-      {
-        "hash": "81765a7",
+        "hash": "5b22ff5",
         "subject": "Initial plan",
         "author": "copilot-swe-agent[bot]",
-        "timestamp": "2025-11-14T03:52:39+00:00",
+        "timestamp": "2025-11-17T16:58:10+00:00",
         "files_changed": 0,
         "stats": ""
       }
@@ -89,28 +48,10 @@
   },
   "decision_timeline": [
     {
-      "timestamp": "2025-11-14T03:54:44+00:00",
+      "timestamp": "2025-11-17T17:08:51+00:00",
       "type": "decision",
       "content": "<1485431+enufacas@users",
-      "commit": "efcbe7c"
-    },
-    {
-      "timestamp": "2025-11-14T04:00:21+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "081aca1"
-    },
-    {
-      "timestamp": "2025-11-14T04:03:14+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "f4cac56"
-    },
-    {
-      "timestamp": "2025-11-14T04:06:36+00:00",
-      "type": "decision",
-      "content": "<1485431+enufacas@users",
-      "commit": "a854e33"
+      "commit": "ab2e4f2"
     }
   ]
 }
