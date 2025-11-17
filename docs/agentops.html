@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgentOps Dashboard - Chained</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" integrity="sha512-SIMGYRUjwY8+gKg7nn9EItdD8LCADSDfJNutF9TPrvEo86sQmFMh6oo7h4MEEJ7lp0r6d+uH6nz+TN/iSCOW+OQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         .agentops-hero {
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(168, 85, 247, 0.1) 100%);
@@ -408,25 +409,25 @@
                     <div class="chart-container">
                         <h3>Success Rate Trend</h3>
                         <div class="chart-wrapper">
-                            <div id="success-rate-chart"></div>
+                            <canvas id="success-rate-chart"></canvas>
                         </div>
                     </div>
                     <div class="chart-container">
                         <h3>Agent Performance Overview</h3>
                         <div class="chart-wrapper">
-                            <div id="agent-performance-chart"></div>
+                            <canvas id="agent-performance-chart"></canvas>
                         </div>
                     </div>
                     <div class="chart-container">
                         <h3>Workflow Execution Trend</h3>
                         <div class="chart-wrapper">
-                            <div id="workflow-trend-chart"></div>
+                            <canvas id="workflow-trend-chart"></canvas>
                         </div>
                     </div>
                     <div class="chart-container">
                         <h3>Average Duration by Workflow</h3>
                         <div class="chart-wrapper">
-                            <div id="duration-chart"></div>
+                            <canvas id="duration-chart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -918,6 +919,14 @@
         }
         
         // Chart rendering functions (CSS-based)
+        // Store chart instances to allow for updating
+        let charts = {
+            successRate: null,
+            agentPerformance: null,
+            workflowTrend: null,
+            duration: null
+        };
+
         function renderCharts(runs, agentWorkload, workflowStats) {
             renderSuccessRateTrendChart(runs);
             renderAgentPerformanceChart(agentWorkload);
@@ -926,18 +935,25 @@
         }
         
         function renderSuccessRateTrendChart(runs) {
-            const container = document.getElementById('success-rate-chart');
-            if (!container) return;
+            const canvas = document.getElementById('success-rate-chart');
+            if (!canvas) return;
+            
+            // Destroy existing chart if it exists
+            if (charts.successRate) {
+                charts.successRate.destroy();
+            }
             
             // Group runs by hour (last 24 hours)
             const now = new Date();
             const hoursAgo = 24;
             const hourlyData = {};
+            const labels = [];
             
             for (let i = hoursAgo - 1; i >= 0; i--) {
                 const hour = new Date(now - i * 3600000);
                 const hourKey = hour.toISOString().slice(0, 13);
                 hourlyData[hourKey] = { total: 0, success: 0 };
+                labels.push(hour.getHours() + ':00');
             }
             
             runs.forEach(run => {
@@ -955,82 +971,204 @@
                 return data.total > 0 ? (data.success / data.total * 100) : 0;
             });
             
-            // Create bar chart HTML with axis labels
-            let html = '<div style="display: flex; gap: 8px;">';
-            // Y-axis labels
-            html += '<div style="display: flex; flex-direction: column; justify-content: space-between; height: 200px; min-width: 40px; text-align: right; font-size: 0.75rem; color: #94a3b8;">';
-            html += '<div>100%</div>';
-            html += '<div>75%</div>';
-            html += '<div>50%</div>';
-            html += '<div>25%</div>';
-            html += '<div>0%</div>';
-            html += '</div>';
-            // Chart bars
-            html += '<div style="flex: 1; display: flex; align-items: flex-end; height: 200px; gap: 2px; border-left: 1px solid rgba(148, 163, 184, 0.3); border-bottom: 1px solid rgba(148, 163, 184, 0.3); padding-left: 8px; padding-bottom: 0;">';
-            successRates.forEach((rate, i) => {
-                const height = rate;
-                const color = rate > 80 ? '#10b981' : rate > 50 ? '#fbbf24' : '#ef4444';
-                html += `<div style="flex: 1; background: ${color}; height: ${height}%; border-radius: 2px 2px 0 0; opacity: 0.8; min-width: 3px;" title="${rate.toFixed(1)}%"></div>`;
+            const ctx = canvas.getContext('2d');
+            charts.successRate = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Success Rate (%)',
+                        data: successRates,
+                        backgroundColor: successRates.map(rate => {
+                            if (rate > 80) return 'rgba(16, 185, 129, 0.8)';
+                            if (rate > 50) return 'rgba(251, 191, 36, 0.8)';
+                            return 'rgba(239, 68, 68, 0.8)';
+                        }),
+                        borderColor: successRates.map(rate => {
+                            if (rate > 80) return 'rgb(16, 185, 129)';
+                            if (rate > 50) return 'rgb(251, 191, 36)';
+                            return 'rgb(239, 68, 68)';
+                        }),
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                            titleColor: '#f1f5f9',
+                            bodyColor: '#cbd5e1',
+                            borderColor: 'rgba(139, 92, 246, 0.5)',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Success Rate: ${context.parsed.y.toFixed(1)}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#94a3b8',
+                                maxRotation: 45,
+                                minRotation: 0
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
             });
-            html += '</div>';
-            html += '</div>';
-            // X-axis label
-            html += '<div style="margin-top: 8px; text-align: center; color: #94a3b8; font-size: 0.85rem; font-weight: 500;">Time (Last 24 hours)</div>';
-            // Y-axis label
-            html += '<div style="position: absolute; left: 0; top: 50%; transform: translateY(-50%) rotate(-90deg); transform-origin: center; color: #94a3b8; font-size: 0.85rem; font-weight: 500; white-space: nowrap;">Success Rate (%)</div>';
-            
-            container.innerHTML = html;
-            container.style.position = 'relative';
-            container.style.paddingLeft = '20px';
         }
         
         function renderAgentPerformanceChart(agentWorkload) {
-            const container = document.getElementById('agent-performance-chart');
-            if (!container) return;
+            const canvas = document.getElementById('agent-performance-chart');
+            if (!canvas) return;
+            
+            // Destroy existing chart if it exists
+            if (charts.agentPerformance) {
+                charts.agentPerformance.destroy();
+            }
             
             const agents = Object.keys(agentWorkload).slice(0, 8);
+            const successData = [];
+            const failureData = [];
+            const inProgressData = [];
             
-            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
             agents.forEach(agent => {
                 const stats = agentWorkload[agent];
-                const total = stats.total;
-                const successPct = (stats.success / total * 100).toFixed(1);
-                const failurePct = (stats.failure / total * 100).toFixed(1);
-                
-                html += `
-                    <div>
-                        <div style="font-size: 0.9rem; color: var(--text-color); margin-bottom: 4px;">
-                            @${agent} (${total} runs)
-                        </div>
-                        <div style="display: flex; height: 24px; border-radius: 4px; overflow: hidden;">
-                            <div style="flex: ${stats.success}; background: #10b981;" title="Success: ${stats.success}"></div>
-                            <div style="flex: ${stats.failure}; background: #ef4444;" title="Failure: ${stats.failure}"></div>
-                            <div style="flex: ${stats.in_progress}; background: #fbbf24;" title="In Progress: ${stats.in_progress}"></div>
-                        </div>
-                        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">
-                            ${successPct}% success, ${failurePct}% failure
-                        </div>
-                    </div>
-                `;
+                successData.push(stats.success);
+                failureData.push(stats.failure);
+                inProgressData.push(stats.in_progress);
             });
-            html += '</div>';
             
-            container.innerHTML = html;
+            const ctx = canvas.getContext('2d');
+            charts.agentPerformance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: agents.map(a => '@' + a),
+                    datasets: [
+                        {
+                            label: 'Success',
+                            data: successData,
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                            borderColor: 'rgb(16, 185, 129)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Failure',
+                            data: failureData,
+                            backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                            borderColor: 'rgb(239, 68, 68)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'In Progress',
+                            data: inProgressData,
+                            backgroundColor: 'rgba(251, 191, 36, 0.8)',
+                            borderColor: 'rgb(251, 191, 36)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                color: '#cbd5e1',
+                                padding: 15,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                            titleColor: '#f1f5f9',
+                            bodyColor: '#cbd5e1',
+                            borderColor: 'rgba(139, 92, 246, 0.5)',
+                            borderWidth: 1,
+                            padding: 12
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            stacked: true,
+                            ticks: {
+                                color: '#94a3b8',
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            }
+                        },
+                        x: {
+                            stacked: true,
+                            ticks: {
+                                color: '#94a3b8',
+                                maxRotation: 45,
+                                minRotation: 0,
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
         }
         
         function renderWorkflowTrendChart(runs) {
-            const container = document.getElementById('workflow-trend-chart');
-            if (!container) return;
+            const canvas = document.getElementById('workflow-trend-chart');
+            if (!canvas) return;
+            
+            // Destroy existing chart if it exists
+            if (charts.workflowTrend) {
+                charts.workflowTrend.destroy();
+            }
             
             // Group by last 12 hours
             const now = new Date();
             const hoursAgo = 12;
             const hourlyData = {};
+            const labels = [];
             
             for (let i = hoursAgo - 1; i >= 0; i--) {
                 const hour = new Date(now - i * 3600000);
                 const hourKey = hour.toISOString().slice(0, 13);
                 hourlyData[hourKey] = 0;
+                labels.push(hour.getHours() + ':00');
             }
             
             runs.forEach(run => {
@@ -1041,68 +1179,144 @@
                 }
             });
             
-            const maxCount = Math.max(...Object.values(hourlyData), 1);
-            
-            // Create bar chart HTML with axis labels
-            let html = '<div style="display: flex; gap: 8px;">';
-            // Y-axis labels
-            html += '<div style="display: flex; flex-direction: column; justify-content: space-between; height: 200px; min-width: 30px; text-align: right; font-size: 0.75rem; color: #94a3b8;">';
-            html += `<div>${maxCount}</div>`;
-            html += `<div>${Math.floor(maxCount * 0.75)}</div>`;
-            html += `<div>${Math.floor(maxCount * 0.5)}</div>`;
-            html += `<div>${Math.floor(maxCount * 0.25)}</div>`;
-            html += '<div>0</div>';
-            html += '</div>';
-            // Chart bars
-            html += '<div style="flex: 1; display: flex; align-items: flex-end; height: 200px; gap: 4px; border-left: 1px solid rgba(148, 163, 184, 0.3); border-bottom: 1px solid rgba(148, 163, 184, 0.3); padding-left: 8px;">';
-            Object.values(hourlyData).forEach((count, i) => {
-                const height = (count / maxCount * 100);
-                html += `<div style="flex: 1; background: #8b5cf6; height: ${height}%; border-radius: 2px 2px 0 0; opacity: 0.8; min-width: 5px;" title="${count} runs"></div>`;
+            const ctx = canvas.getContext('2d');
+            charts.workflowTrend = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Runs',
+                        data: Object.values(hourlyData),
+                        backgroundColor: 'rgba(139, 92, 246, 0.8)',
+                        borderColor: 'rgb(139, 92, 246)',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                            titleColor: '#f1f5f9',
+                            bodyColor: '#cbd5e1',
+                            borderColor: 'rgba(139, 92, 246, 0.5)',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Runs: ${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#94a3b8',
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#94a3b8',
+                                maxRotation: 45,
+                                minRotation: 0
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
             });
-            html += '</div>';
-            html += '</div>';
-            // X-axis label
-            html += '<div style="margin-top: 8px; text-align: center; color: #94a3b8; font-size: 0.85rem; font-weight: 500;">Time (Last 12 hours)</div>';
-            // Y-axis label
-            html += '<div style="position: absolute; left: 0; top: 50%; transform: translateY(-50%) rotate(-90deg); transform-origin: center; color: #94a3b8; font-size: 0.85rem; font-weight: 500; white-space: nowrap;">Number of Runs</div>';
-            
-            container.innerHTML = html;
-            container.style.position = 'relative';
-            container.style.paddingLeft = '20px';
         }
         
         function renderDurationChart(workflowStats) {
-            const container = document.getElementById('duration-chart');
-            if (!container) return;
+            const canvas = document.getElementById('duration-chart');
+            if (!canvas) return;
+            
+            // Destroy existing chart if it exists
+            if (charts.duration) {
+                charts.duration.destroy();
+            }
             
             const workflows = Object.keys(workflowStats).slice(0, 6);
-            const maxDuration = Math.max(...workflows.map(wf => workflowStats[wf].avg_duration));
+            const durations = workflows.map(wf => (workflowStats[wf].avg_duration / 60).toFixed(1));
             
-            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
-            workflows.forEach(wf => {
-                const stats = workflowStats[wf];
-                const durationMin = (stats.avg_duration / 60).toFixed(1);
-                const widthPct = (stats.avg_duration / maxDuration * 100);
-                
-                html += `
-                    <div>
-                        <div style="font-size: 0.85rem; color: var(--text-color); margin-bottom: 4px;">
-                            ${wf.replace('.yml', '')}
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="flex: 1; background: rgba(6, 182, 212, 0.2); height: 24px; border-radius: 4px; overflow: hidden;">
-                                <div style="width: ${widthPct}%; height: 100%; background: #06b6d4;"></div>
-                            </div>
-                            <div style="min-width: 60px; text-align: right; font-size: 0.85rem; color: var(--primary-color);">
-                                ${durationMin} min
-                            </div>
-                        </div>
-                    </div>
-                `;
+            const ctx = canvas.getContext('2d');
+            charts.duration = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: workflows.map(wf => wf.replace('.yml', '')),
+                    datasets: [{
+                        label: 'Avg Duration (min)',
+                        data: durations,
+                        backgroundColor: 'rgba(6, 182, 212, 0.8)',
+                        borderColor: 'rgb(6, 182, 212)',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                            titleColor: '#f1f5f9',
+                            bodyColor: '#cbd5e1',
+                            borderColor: 'rgba(139, 92, 246, 0.5)',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Duration: ${context.parsed.x} min`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: function(value) {
+                                    return value + ' min';
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#94a3b8',
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
             });
-            html += '</div>';
-            
-            container.innerHTML = html;
         }
         
         // Load data on page load
