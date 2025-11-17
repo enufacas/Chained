@@ -201,12 +201,13 @@ class ABTestingEngine:
                 return exp
         return None
     
-    def analyze_experiment(self, experiment_id: str) -> Dict[str, Any]:
+    def analyze_experiment(self, experiment_id: str, use_advanced: bool = True) -> Dict[str, Any]:
         """
         Analyze an experiment and determine if there's a clear winner.
         
         Args:
             experiment_id: Unique experiment identifier
+            use_advanced: Use advanced statistical methods (Bayesian, sequential testing)
         
         Returns:
             Analysis results including statistical significance and recommendations
@@ -246,12 +247,24 @@ class ABTestingEngine:
         # Determine winner (simple comparison for now, can be enhanced with proper statistical tests)
         winner = self._determine_winner(variant_stats, config["min_improvement_threshold"])
         
-        return {
+        result = {
             "status": "analyzed",
             "variant_statistics": variant_stats,
             "winner": winner,
             "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         }
+        
+        # Add advanced analysis if requested
+        if use_advanced:
+            try:
+                from ab_testing_advanced import integrate_advanced_analysis
+                advanced_results = integrate_advanced_analysis(experiment)
+                result["advanced_analysis"] = advanced_results
+            except ImportError:
+                # Advanced analysis module not available
+                result["advanced_analysis"] = {"error": "Advanced analysis module not available"}
+        
+        return result
     
     def _calculate_variant_statistics(
         self,
