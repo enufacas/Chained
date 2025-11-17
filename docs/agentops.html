@@ -482,6 +482,9 @@
                         <select id="workflow-filter">
                             <option value="all">All Workflows</option>
                         </select>
+                        <select id="branch-filter">
+                            <option value="all">All Branches</option>
+                        </select>
                     </div>
                 </div>
                 <div class="runs-table">
@@ -492,6 +495,7 @@
                                 <th>Workflow</th>
                                 <th>Status</th>
                                 <th>Agent</th>
+                                <th>Branch</th>
                                 <th>Issue</th>
                                 <th>PR</th>
                                 <th>Duration</th>
@@ -700,6 +704,7 @@
         function filterAndDisplayRuns() {
             const statusFilter = document.getElementById('status-filter').value;
             const workflowFilter = document.getElementById('workflow-filter').value;
+            const branchFilter = document.getElementById('branch-filter').value;
             
             let filteredRuns = allRuns;
             
@@ -714,6 +719,10 @@
             
             if (workflowFilter !== 'all') {
                 filteredRuns = filteredRuns.filter(run => run.workflow_file === workflowFilter);
+            }
+            
+            if (branchFilter !== 'all') {
+                filteredRuns = filteredRuns.filter(run => run.head_branch === branchFilter);
             }
             
             // Calculate pagination
@@ -750,7 +759,7 @@
             tbody.innerHTML = '';
             
             if (filteredRuns.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem;">No runs match the current filters</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 2rem;">No runs match the current filters</td></tr>';
                 document.getElementById('pagination-controls').style.display = 'none';
                 return;
             }
@@ -802,6 +811,18 @@
                     ).join(', ');
                 }
                 
+                // Format branch name
+                let branchHtml = '-';
+                if (run.head_branch) {
+                    const branchName = run.head_branch;
+                    // Make branch name clickable to tree view
+                    branchHtml = `<a href="https://github.com/${getRepoPath()}/tree/${branchName}" 
+                                    target="_blank" 
+                                    style="color: var(--primary-color); text-decoration: none; font-family: monospace; font-size: 0.85rem;">
+                                    <code style="background: rgba(139, 92, 246, 0.1); padding: 2px 6px; border-radius: 3px;">${branchName}</code>
+                                 </a>`;
+                }
+                
                 row.innerHTML = `
                     <td>#${run.run_number}</td>
                     <td>
@@ -813,6 +834,9 @@
                     </td>
                     <td>
                         ${run.agent_name ? `<span class="agent-badge">@${run.agent_name}</span>` : '-'}
+                    </td>
+                    <td>
+                        ${branchHtml}
                     </td>
                     <td>
                         ${issueHtml}
@@ -861,12 +885,27 @@
                 workflowFilter.appendChild(option);
             });
             
+            // Populate branch filter
+            const branchFilter = document.getElementById('branch-filter');
+            const branches = [...new Set(runs.map(r => r.head_branch).filter(b => b))].sort();
+            
+            branches.forEach(branch => {
+                const option = document.createElement('option');
+                option.value = branch;
+                option.textContent = branch;
+                branchFilter.appendChild(option);
+            });
+            
             // Add event listeners for filters (reset to page 1)
             document.getElementById('status-filter').addEventListener('change', () => {
                 currentPage = 1;
                 filterAndDisplayRuns();
             });
             document.getElementById('workflow-filter').addEventListener('change', () => {
+                currentPage = 1;
+                filterAndDisplayRuns();
+            });
+            document.getElementById('branch-filter').addEventListener('change', () => {
                 currentPage = 1;
                 filterAndDisplayRuns();
             });
