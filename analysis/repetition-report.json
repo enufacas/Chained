@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "generated_at": "2025-11-16T18:37:31.501515+00:00",
+    "generated_at": "2025-11-17T18:38:02.901684+00:00",
     "repository": ".",
-    "analysis_period_days": 30,
-    "since_date": "2025-10-17T18:37:31.479999+00:00"
+    "analysis_period_days": 7,
+    "since_date": "2025-11-10T18:38:02.892936+00:00"
   },
   "summary": {
     "total_agents": 2,
@@ -22,23 +22,23 @@
       "emoji_usage": {}
     }
   },
-  "code_similarity": {
-    "copilot-swe-agent": {
-      "total_structures": 2,
-      "unique_structures": 2,
-      "duplicate_structures": 0,
-      "similarity_rate": 0.0,
-      "duplicates": []
-    }
-  },
+  "code_similarity": {},
   "file_sequence_patterns": {},
   "solution_approaches": {
     "copilot-swe-agent": {
       "total_contributions": 2,
       "unique_approaches": 2,
       "approaches": [
-        "python_development",
-        "markdown_documentation"
+        "workflow_automation",
+        "bug_fixing"
+      ],
+      "diversity_score": 100.0
+    },
+    "copilot": {
+      "total_contributions": 1,
+      "unique_approaches": 1,
+      "approaches": [
+        "feature_addition"
       ],
       "diversity_score": 100.0
     }
