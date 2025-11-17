@@ -1,5 +1,357 @@
 {
-  "failures": [],
-  "last_updated": "2025-11-14T20:46:32.353704+00:00",
-  "total_count": 0
+  "failures": [
+    {
+      "pr_number": 1543,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1531 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T06:44:37Z",
+      "closed_at": "2025-11-17T06:47:03Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "copilot",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1541,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1533 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T06:38:11Z",
+      "closed_at": "2025-11-17T06:43:36Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "copilot",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1519,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1514 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T05:49:27Z",
+      "closed_at": "2025-11-17T06:42:59Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "copilot",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1528,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1525 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T06:16:44Z",
+      "closed_at": "2025-11-17T06:42:51Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "copilot",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1539,
+      "title": "[WIP] Fix workflow health alert issues detected on 2025-11-17",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T06:34:05Z",
+      "closed_at": "2025-11-17T06:37:08Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1532,
+      "title": "[WIP] Fix frequency of merge commits",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T06:22:10Z",
+      "closed_at": "2025-11-17T06:32:53Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1534,
+      "title": "\ud83d\udd04 AgentOps Dashboard Data Sync - 2025-11-17",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T06:22:43Z",
+      "closed_at": "2025-11-17T06:23:12Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "documentation",
+        "automated",
+        "copilot",
+        "auto-merge"
+      ]
+    },
+    {
+      "pr_number": 1517,
+      "title": "[WIP] Fix workflow failure in GitHub Actions",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T05:44:07Z",
+      "closed_at": "2025-11-17T05:49:36Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1504,
+      "title": "[WIP] Check if specific commit is in main branch",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T04:34:41Z",
+      "closed_at": "2025-11-17T04:43:50Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1489,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1483 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T02:41:34Z",
+      "closed_at": "2025-11-17T03:34:25Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1490,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1466 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T02:42:04Z",
+      "closed_at": "2025-11-17T03:34:20Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1485,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1473 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T02:20:17Z",
+      "closed_at": "2025-11-17T03:34:14Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1468,
+      "title": "Fix workflow PR creation fallback logic to handle missing labels (@troubleshoot-expert)",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T01:45:23Z",
+      "closed_at": "2025-11-17T02:12:53Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1475,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1471 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T02:02:05Z",
+      "closed_at": "2025-11-17T02:11:36Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1477,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1464 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T02:02:24Z",
+      "closed_at": "2025-11-17T02:07:08Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "self-documenting-ai"
+      ]
+    }
+  ],
+  "last_updated": "2025-11-17T17:48:18.934649+00:00",
+  "total_count": 15
 }
