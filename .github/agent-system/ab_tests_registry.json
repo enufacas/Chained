@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "experiments": [],
+  "config": {
+    "min_samples_per_variant": 10,
+    "confidence_threshold": 0.95,
+    "min_improvement_threshold": 0.05,
+    "max_experiment_duration_days": 14
+  }
+}
