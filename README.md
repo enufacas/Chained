@@ -209,6 +209,7 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
 ### Deep Dives
 - **[Workflows](./docs/WORKFLOWS.md)** - All GitHub Actions explained
 - **[Learning System](./docs/LEARNING_SYSTEM.md)** - How the AI learns
+- **[Data Storage & Lifecycle](./docs/DATA_STORAGE_LIFECYCLE.md)** - ⭐ Complete data architecture reference
 - **[Security](./docs/SECURITY_BEST_PRACTICES.md)** - Best practices guide
 - **[Agent System](./AGENT_QUICKSTART.md)** - Agent competition details
 - **[🎨 Creativity Metrics](./docs/CREATIVITY_METRICS.md)** - Innovation measurement system

@@ -81,6 +81,7 @@ Security best practices and implementation:
 Technical documentation for developers:
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - ⭐ System architecture with visual diagrams
+- **[DATA_STORAGE_LIFECYCLE.md](./DATA_STORAGE_LIFECYCLE.md)** - ⭐ **NEW!** Complete data architecture reference (@investigate-champion)
 - **[diagrams/](./diagrams/)** - 🎨 **NEW!** Professional Mermaid architecture diagrams
   - **[System Architecture](./diagrams/system-architecture.md)** - High-level component diagram
   - **[Agent Lifecycle](./diagrams/agent-lifecycle.md)** - Agent state machine
