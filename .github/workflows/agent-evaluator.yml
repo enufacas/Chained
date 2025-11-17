@@ -121,6 +121,16 @@ jobs:
           grace_period_hours = config.get('new_agent_grace_period_hours', 48)
           minimum_score = config.get('new_agent_minimum_score', 0.40)
           
+          # OPTIMIZATION: Batch fetch all issues once before evaluating agents
+          batch_cache = None
+          if use_real_metrics:
+              try:
+                  print("🚀 Starting batch optimization...")
+                  batch_cache = collector._batch_fetch_all_agent_issues(since_days=7)
+                  print("✅ Batch fetch complete. Starting agent evaluation...")
+              except Exception as e:
+                  print(f"⚠️  Batch fetch failed, proceeding without cache: {e}")
+          
           for idx, agent in enumerate(active_agents, 1):
               # Progress logging
               print(f"\n{'='*60}")
@@ -152,7 +162,13 @@ jobs:
               if use_real_metrics:
                   # Use real GitHub activity metrics
                   try:
-                      metrics = collector.collect_metrics(agent_id, since_days=7)
+                      # Use batch cache to avoid redundant API calls
+                      metrics = collector.collect_metrics(
+                          agent_id, 
+                          since_days=7,
+                          use_batch_cache=True if batch_cache else False,
+                          batch_cache=batch_cache
+                      )
                       overall_score = metrics.scores.overall
                       
                       # Update all metrics from real data
