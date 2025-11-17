@@ -2,6 +2,25 @@
 
 Created by **@troubleshoot-expert** to help resolve common workflow issues.
 
+## Recent Fixes (2025-11-17)
+
+**@troubleshoot-expert** has implemented several fixes to improve workflow reliability:
+
+### Fixed Issues
+1. **Missing evolution_data.json** - Created initial evolution data structure
+2. **Exit code capture in repetition-detector.yml** - Fixed incorrect exit code checking
+3. **Code-golf-optimizer.yml improvements:**
+   - Added missing file/directory checks
+   - Replaced `bc` with `awk` for better portability
+   - Added error handling for individual file failures
+   - Added label fallback for issue creation
+4. **Pattern-matcher.yml** - Added label fallback for issue creation
+
+### Expected Impact
+These fixes should reduce workflow failure rate from ~25% to under 10%.
+
+---
+
 ## Common Issues
 
 ### 1. Label-Related Failures
@@ -141,6 +160,56 @@ gh issue create --title "Title" --body "Body" --label "label1,label2" || {
 ```
 
 This ensures workflows complete successfully even if labels haven't been created yet.
+
+### Testing Workflows Locally
+
+Before committing workflow changes, test the logic locally:
+
+```bash
+# Test Python tools
+cd tools
+python3 repetition-detector.py -d . --since-days 30 -o /tmp/test.json
+python3 code-golf-optimizer.py -f examples/fibonacci.py -l python
+python3 pattern-matcher.py -d . --format json -o /tmp/pattern.json
+
+# Test shell script logic
+cd .github/workflows
+# Extract and test shell commands from workflow YAML
+# Verify exit codes, file existence checks, fallback logic
+
+# Common checks:
+# - Does it handle missing files gracefully?
+# - Are exit codes captured immediately after commands?
+# - Does bc/other tools exist (prefer awk)?
+# - Are labels optional with fallback?
+```
+
+### Exit Code Best Practices
+
+**❌ Wrong:** Checking exit code after multiple commands
+```bash
+python3 script.py -o output.json
+cp output.json backup.json
+cd /tmp
+if [ $? -ne 0 ]; then  # This checks 'cd', not python!
+  echo "Script failed"
+fi
+```
+
+**✅ Correct:** Capture exit code immediately
+```bash
+python3 script.py -o output.json
+SCRIPT_EXIT=$?
+
+# Continue with other commands
+cp output.json backup.json
+cd /tmp
+
+# Check the correct exit code
+if [ $SCRIPT_EXIT -ne 0 ]; then
+  echo "Script failed"
+fi
+```
 
 ---
 
