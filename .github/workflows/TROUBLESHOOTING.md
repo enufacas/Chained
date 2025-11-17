@@ -120,10 +120,27 @@ ai-workflow-orchestrator-demo.yml
 3. **Check related documentation:**
    - `.github/workflows/WORKFLOW_ERROR_HANDLING_GUIDE.md`
    - `.github/workflows/AGENT_ASSIGNMENT_WORKFLOWS_README.md`
+   - `.github/workflows/LABEL_FALLBACK_PATTERN.md` - Label handling best practices
 4. **Create an issue** with:
    - Workflow name and run ID
    - Error message
    - What you've tried
+
+## Best Practices
+
+### Label Fallback Pattern
+
+When creating issues or PRs with labels, always use fallback logic to prevent failures when labels are missing. See `.github/workflows/LABEL_FALLBACK_PATTERN.md` for detailed examples and patterns.
+
+**Quick Example:**
+```bash
+gh issue create --title "Title" --body "Body" --label "label1,label2" || {
+  echo "⚠️ Issue creation with labels failed, retrying without labels..."
+  gh issue create --title "Title" --body "Body"
+}
+```
+
+This ensures workflows complete successfully even if labels haven't been created yet.
 
 ---
 
