@@ -2,238 +2,235 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 218
+**Total Insights:** 969
 
-**Last Updated:** 2025-11-16
-
-**Latest Analysis:** @investigate-champion GPT Innovation Investigation (Mission idea:34) ✅ **COMPLETE**
-
-> **Mission Status:** **@investigate-champion** has completed comprehensive analysis of GPT innovation trends. Full report available in `investigation-reports/gpt-innovation-mission-idea34.md`. Key finding: GPT-5.1 represents a conversational leap, while OpenRouter enables multi-model integration with 30-40% cost reduction potential.
-
-**Previous Analysis:** @investigate-champion AI Innovation Deep Dive (Mission idea:16) ✅ **COMPLETE**
-
-> **Mission Status:** **@investigate-champion** has completed comprehensive analysis of AI innovation trends. Full report available in `investigation-reports/ai-innovation-mission-idea16.md`. Key finding: MCP (Model Context Protocol) is transforming AI architecture toward composable, production-ready systems.
+**Last Updated:** 2025-11-17
 
 ---
 
-## 🔍 Featured Analysis: GPT Innovation Landscape (Mission idea:34)
 
-*Investigated by @investigate-champion on 2025-11-16*
+## 📰 From Agent Evolution System Implementation
 
-### GPT Innovation Trends (November 2025, 56 GPT Learnings from 746 Total)
 
-#### 📊 GPT Technology Mentions
+### Genetic Algorithm Evolution for AI Agents
 
-1. **GPT-5/5.1** - 80 mentions
-   - Smarter, more conversational ChatGPT
-   - Enhanced reasoning and context understanding
-   - Developer-focused API improvements
-   - Top score: 513 (highest in dataset)
 
-2. **OpenAI** - 27 mentions
-   - GPT-5.1 launch and ecosystem
-   - API platform expansion
-   - Developer adoption
+**Content Summary:**
 
-3. **Agent Integration** - 22 mentions
-   - GPT + autonomous agents convergence
-   - Multi-agent orchestration patterns
-   - Agent-GPT multiplicative value
-
-4. **Codex** - 12 mentions
-   - Specialized code generation
-   - GPT-5-Codex-Mini variants
-   - CLI integration patterns
-
-5. **OpenRouter** - 10 mentions
-   - Unified multi-model API access
-   - Cost optimization through routing
-   - Vendor independence
-
-6. **Grok** - 10 mentions
-   - Grok Code Remote (cloud development)
-   - Remote collaboration features
-   - AI-native development
-
-7. **Moonshot AI** - 10 mentions
-   - Conversational AI platform
-   - Multi-turn dialogue optimization
-   - Community engagement (AMA-style)
-
-#### 🚀 Key GPT Innovations
-
-**1. GPT-5.1 Conversational Leap**
-- **What:** OpenAI's focus on natural conversation quality
-- **Why Important:** Shifts AI from benchmarks to user experience
-- **Impact:** Raises baseline for all conversational AI
-- **Chained Relevance:** 7/10 - Enhanced agent communication
-
-**2. Code-Specific AI (Codex, Grok)**
-- **What:** Specialized models for development tasks
-- **Why Important:** Task-specific beats general for code
-- **Impact:** Developer productivity gains
-- **Chained Relevance:** 6/10 - Dynamic tool generation
-
-**3. Multi-Model Integration (OpenRouter)**
-- **What:** Unified API for GPT-5.1, Claude, and others
-- **Why Important:** Reduces lock-in, enables experimentation
-- **Impact:** 30-40% cost reduction potential
-- **Chained Relevance:** 8/10 - HIGH VALUE for Chained
-- **Recommendation:** ✅ Immediate integration
-
-**4. Conversational Patterns (Moonshot AI)**
-- **What:** Multi-turn dialogue optimization
-- **Why Important:** Context retention across conversations
-- **Impact:** Better agent memory and coordination
-- **Chained Relevance:** 5/10 - Agent memory enhancement
-
-#### 💡 Critical Insight: Agent-GPT Convergence
-
-**Pattern:** 22 agent mentions co-occur with 80 GPT mentions
-
-**Interpretation:** The future of AI is not standalone models OR agents, but **agent-orchestrated multi-model systems**. Chained is well-positioned at this intersection.
-
-#### 🎯 Recommendations for Chained
-
-**Immediate (1-2 days):**
-- ✅ **Integrate OpenRouter** for multi-model support
-  - Cost reduction: 30-40%
-  - Complexity: Low
-  - ROI: Very High
-
-**High Priority (3-5 days):**
-- ✅ **Evaluate GPT-5.1** for top agents
-  - Expected improvement: +10-15% success rate
-  - Complexity: Low-Medium
-  - ROI: High
-
-**Medium Priority (1-2 weeks):**
-- 🔄 **Code generation tools** for dynamic capabilities
-- 🔄 **Enhanced agent memory** using conversation patterns
+The Agent Evolution System introduces Darwinian evolution to the Chained ecosystem. High-performing agents (fitness >= 0.5) can breed to create offspring with mixed traits from both parents. The system implements: (1) Fitness-based selection using overall_score + longevity_bonus, (2) Uniform crossover where each gene is randomly inherited from either parent, (3) Random mutations at 15% rate with ±20 point variations bounded [0,100], (4) Complete lineage tracking with parent-offspring relationshi...
 
 ---
 
-## 🔍 Previous Analysis: AI Innovation Landscape (Mission idea:16)
 
-*Investigated by @investigate-champion on 2025-11-16*
+### Integration Patterns for Autonomous Systems
 
-### Key Trends (Last 7 Days, 681 Learnings Analyzed)
 
-#### 📊 Top Technologies by Mention Count
-1. **AI (General)** - 121 mentions, Score: 84.0
-   - Broad AI applications across industries
-   - AI-powered tools becoming mainstream
-   - Integration with existing workflows
+**Content Summary:**
 
-2. **GPT Models** - 46 mentions, Score: 81.0
-   - GPT-5.1 release with conversational improvements
-   - Developer adoption increasing
-   - API access expanding
+The evolution system integrates with existing infrastructure through: (1) Weekly cron job (Sundays at midnight) after agent evaluation, (2) Automatic issue creation documenting each generation, (3) Git commits for evolution data persistence, (4) Compatibility with existing agent registry format, (5) Manual integration point for adding offspring to active population. Key design decision: Keep evolution separate from spawning to maintain modularity. The system generates evolution data that can be ...
 
-3. **AI Agents** - 44 mentions, Score: 84.0
-   - Autonomous agent systems gaining traction
-   - Multi-agent collaboration frameworks
-   - Memory engines for persistent context
+---
 
-4. **Claude** - 21 mentions, Score: 84.0
-   - Anthropic's Claude in developer tools
-   - Code assistance integrations
-   - Enterprise adoptions
 
-#### 🚀 Emerging Patterns
+### Genetic Diversity Through Specialization Mutations
 
-**1. Model Context Protocol (MCP)**
-- **What:** Standard for AI tool integration
-- **Why Important:** Enables modular, composable AI pipelines
-- **Example:** TrendRadar uses MCP for 13 analysis tools
-- **Prediction:** Will become standard within 6-12 months
 
-**2. Multi-Platform Aggregation**
-- **What:** Tools that monitor 30+ data sources
-- **Why Important:** Solves information overload
-- **Example:** TrendRadar monitors 35 platforms
-- **Use Cases:** News analysis, trend detection, sentiment tracking
+**Content Summary:**
 
-**3. Zero-Code AI Tools**
-- **What:** AI analysis without programming
-- **Why Important:** Democratizes AI access
-- **Example:** 30-second deployments, mobile notifications
-- **Target:** Non-technical users, small businesses
+Specialization mutation occurs at 3% rate (15% base * 0.2) and only shifts to related types. Families defined: organize-* (refactoring agents), secure-* (security agents), engineer-* (builders), assert-* (testers), etc. This prevents random specialization chaos while enabling evolutionary adaptation. For example: organize-guru can mutate to organize-specialist or refactor-champion, but not to secure-ninja. This maintains coherent agent identities while allowing gradual specialization evolution. ...
 
-**4. Open-Source AI Infrastructure**
-- **What:** Self-hosted AI solutions
-- **Why Important:** Privacy, control, cost savings
-- **Examples:** Olares (personal cloud), Memori (memory engine)
-- **Trend:** Privacy-conscious AI adoption
+---
 
-### 🎯 Featured Project: TrendRadar Deep Dive
 
-**Repository:** [sansan0/TrendRadar](https://github.com/sansan0/TrendRadar)  
-**Stars:** 2,023 (trending), **Forks:** 7,577  
-**Language:** Python
+### Documentation as First-Class Deliverable
 
-**Architecture Highlights:**
-```
-User Interface → Notifications → MCP Analysis → Multi-Platform Aggregation → Docker Infrastructure
-```
 
-**13 AI Analysis Tools:**
-1. Trend tracking
-2. Sentiment analysis
-3. Similarity search
-4. Entity extraction
-5. Keyword extraction
-6. Topic categorization
-7. Temporal pattern detection
-8. Natural language queries
-9. Automated summarization
-10. Cross-platform correlation
-11. Anomaly detection
-12. Influence scoring
-13. Predictive analytics
+**Content Summary:**
 
-**Innovation Score: 9/10**
-- ✓ MCP adoption (cutting-edge)
-- ✓ Multi-source intelligence
-- ✓ Zero-code deployment
-- ✓ Privacy-focused (Docker)
-- ✓ Comprehensive tooling (13 tools)
+The 300+ line README includes: (1) Overview and features, (2) Installation and requirements, (3) CLI and Python API usage, (4) Detailed algorithm explanations, (5) Data structure documentation, (6) Configuration reference, (7) Integration patterns, (8) Performance characteristics, (9) Troubleshooting guide, (10) Future enhancements, (11) Academic references. Following @accelerate-specialist principles: documentation is not an afterthought but a core deliverable. Good documentation enables autono...
 
-**Code Example:** See `/investigation-reports/mcp-ai-analysis-example.py` for MCP pattern implementation
+---
 
-### 🌍 Geographic Insights
 
-**US (San Francisco):**
-- AI company HQ concentration
-- LLM development focus
-- $38B deals (OpenAI-AWS)
+## 📰 From GitHub Copilot (Combined)
 
-**GB (London):**
-- AI research growth
-- European AI governance
-- Financial AI applications
 
-**China:**
-- Mobile-first AI (TrendRadar origin)
-- Multi-platform integration
-- Social media AI analysis
+### GitHub Copilot Docs: About billing for GitHub Copilot in organizations and enterprises
 
-### 📈 Company Activity (Recent)
+**Link:** https://docs.github.com/en/copilot/concepts/billing/organizations-and-enterprises
 
-**OpenAI** (33 mentions)
-- GPT-5.1 launch
-- AWS partnership
-- Developer tool expansion
 
-**Anthropic** (26 mentions)
-- Claude improvements
-- $50B positioning
-- Enterprise integrations
+**Content Summary:**
 
-**Google** (31 mentions)
-- Handwriting recognition advances
-- TPU development
-- AI infrastructure
+About billing for GitHub Copilot in organizations and enterprises
+Learn about pricing and billing cycles for Copilot.
+Who can use this feature?
+Organizations on a GitHub Free or GitHub Team plan, or organizations and enterprises on GitHub Enterprise Cloud
+In this article
+Available plans
+GitHub offers the following plans for organization accounts:
+Copilot Business
+at $19 USD per user per month (Purchase additional premium requests at $0.04 USD per request)
+Copilot Enterprise
+at $39 USD per user p...
+
+---
+
+
+### GitHub Copilot Docs: About billing for individual GitHub Copilot plans
+
+**Link:** https://docs.github.com/en/copilot/concepts/billing/billing-for-individuals
+
+
+**Content Summary:**
+
+About billing for individual GitHub Copilot plans
+Learn how billing works for Copilot Pro and Copilot Pro+.
+In this article
+Pricing for Copilot Pro and Copilot Pro+
+GitHub offers two paid plans for individuals: Copilot Pro and Copilot Pro+. Both plans are available on a monthly or yearly billing cycle.
+Copilot Pro
+If you choose a monthly billing cycle
+, you will be billed $10 USD per calendar month.
+If you choose a yearly billing cycle
+, you will be billed $100 USD per year.
+Copilot Pro+
+If you ...
+
+---
+
+
+### GitHub Copilot Docs: About Copilot auto model selection
+
+**Link:** https://docs.github.com/en/copilot/concepts/auto-model-selection
+
+
+**Content Summary:**
+
+About Copilot auto model selection
+Optimize Copilot Chat in VS Code without needing to select a model
+Who can use this feature?
+Auto model selection is in  public preview in VS Code and in Visual Studio with all GitHub Copilot plans.
+In this article
+Overview
+Experience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model selection automatically choose the best available model.
+In VS Code and Visual Studio, Copilot auto model selection chooses from GPT-4...
+
+---
+
+
+### GitHub Copilot Docs: About customizing GitHub Copilot responses
+
+**Link:** https://docs.github.com/en/copilot/concepts/prompting/response-customization
+
+
+**Content Summary:**
+
+About customizing GitHub Copilot responses
+Learn about customizing the behavior of GitHub Copilot to fit with your preferences and requirements.
+Tool navigation
+In this article
+Note
+This version of this article is about custom instructions on the GitHub website. Click the tabs above for other environments.
+About customizing Copilot responses
+GitHub Copilot can provide responses that are tailored to your personal preferences, the way your team works, the tools you use, or the specifics of your pr...
+
+---
+
+
+### GitHub Copilot Docs: About GitHub Copilot Chat
+
+**Link:** https://docs.github.com/en/copilot/concepts/chat
+
+
+**Content Summary:**
+
+About GitHub Copilot Chat
+Learn how you can use GitHub Copilot Chat to enhance your coding experience.
+In this article
+Overview
+GitHub Copilot Chat is the AI-powered chat interface for GitHub Copilot. It allows you to interact with AI models to get coding assistance, explanations, and suggestions in a conversational format.
+Copilot Chat can help you with a variety of coding-related tasks, like offering you code suggestions, providing natural language descriptions of a piece of code's functionali...
+
+---
+
+
+### GitHub Discussion: Copilot L1 Test generation
+
+**Link:** https://github.com/rdkcentral/entservices-softwareupdate/pull/164
+
+
+No description
+
+---
+
+
+### GitHub Discussion: Feature: Add GitHub Copilot as model provider
+
+**Link:** https://github.com/Aider-AI/aider/issues/2227
+
+
+**Content Summary:**
+
+### Issue
+
+Hello!
+
+Please add GitHub Copilot as model provider.
+
+Should be possible like this: https://github.com/olimorris/codecompanion.nvim/blob/5c5a5c759b8c925e81f8584a0279eefc8a6c6643/lua/codecompanion/adapters/copilot.lua
+
+Idea taken from: https://github.com/cline/cline/discussions/660
+
+Thank you!
+
+### Version and model info
+
+_No response_
+
+---
+
+
+### GitHub Discussion: Ability to import docker-compose defintion and convert them as Copilot app and services
+
+**Link:** https://github.com/aws/copilot-cli/issues/1612
+
+
+**Content Summary:**
+
+Docker compose is commonly used for local development and testing. We need an ability for Copilot to import Docker Compose files and convert them as Copilot native app and svc objects, in a guide way. This will be a big boost for developers.
+
+---
+
+
+### GitHub Discussion: Ability to use Free Models (0x credits) in Copilot CLI
+
+**Link:** https://github.com/github/copilot-cli/issues/32
+
+
+**Content Summary:**
+
+### Describe the feature or problem you'd like to solve
+
+The Copilot CLI uses Sonnet 4 by default which incurs 1x cost / message.
+
+### Proposed solution
+
+In the Copilot CLI, I wish we could select from a list of free models provided by GitHub Copilot eg. GPT-4.1, GPT-4o, GPT-5 mini, Grok Code Fast 1 etc. This would let us optimize our monthly quota. Thank you for considering. 
+
+<img width="353" height="576" alt="Image" src="https://github.com/user-attachments/assets/3f25c7a5-6e48-49b4-b67f-b309f...
+
+---
+
+
+### GitHub Discussion: sync github copilot chat history across devices
+
+**Link:** https://github.com/microsoft/vscode-copilot-release/issues/991
+
+
+**Content Summary:**
+
+I really wish it were possible to sync copilot chat histories across devices, ex: I use a laptop on the go and a desktop at home. I usually keep both devices lock-step via GitHub but it sucks that the chat history is different on both devices. I can usually enter in the same prompt to get a similar answer but it just seems counter intuitive that the chats do not sync by default, or there is not at least an option to sync the chats. Thanks
 
 ---
 
@@ -980,5 +977,182 @@ You want AI to become part of your organizational DNA - and that means enabling 
 Airia is the
 “let's get serious about AI adoption” platform
 . Rapidly prototype, deploy, and manage AI agents that transform workflows across your organization - without sacrificin...
+
+---
+
+
+## 📰 From Unknown
+
+
+### GPT-5.1: A smarter, more conversational ChatGPT
+
+**Community Score:** 513 upvotes
+
+**Link:** https://openai.com/index/gpt-5-1/
+
+---
+
+
+### Britain's railway privatization was an abject failure
+
+**Community Score:** 417 upvotes
+
+**Link:** https://www.rosalux.de/en/news/id/53917/britains-railway-privatization-was-an-abject-failure
+
+
+**Content Summary:**
+
+Essay | 10/03/2025 Economic / Social Policy - Rosalux International - UK / Ireland - Commons / Social Infrastructure Britain’s Railway Privatization Was an Abject Failure Sold off in the 1990s, the UK’s railways are returning to public hands — but at what cost? Information Author Gareth Dennis , A commuter train waits to leave the station somewhere in London, 18 May 2023. Photo: IMAGO / Pond5 Images Liberalization of the railways has been a key tenet of European transport policy since the early ...
+
+---
+
+
+### Heretic: Automatic censorship removal for language models
+
+**Community Score:** 524 upvotes
+
+**Link:** https://github.com/p-e-w/heretic
+
+---
+
+
+### Neuroscientists track the neural activity underlying an “aha”
+
+**Community Score:** 97 upvotes
+
+**Link:** https://www.quantamagazine.org/how-your-brain-creates-aha-moments-and-why-they-stick-20251105/
+
+---
+
+
+### Llmdeathcount.com
+
+**Link:** https://llmdeathcount.com/
+
+---
+
+
+### I implemented an ISO 42001-certified AI Governance program in 6 months
+
+**Link:** https://beabytes.com/iso42001-certified-ai-governance/
+
+---
+
+
+### Trellis AI (YC W24) Is Hiring: Streamline access to life-saving therapies
+
+**Link:** https://www.ycombinator.com/companies/trellis-ai/jobs/f4GWvH0-forward-deployed-engineer-full-time
+
+---
+
+
+### AI World Clocks
+
+**Link:** https://clocks.brianmoore.com/
+
+
+&quot;Every minute, a new clock is rendered by nine different AI models.&quot;
+
+---
+
+
+### Strap Rail
+
+**Link:** https://www.construction-physics.com/p/strap-rail
+
+---
+
+
+### Streaming AI agent desktops with gaming protocols
+
+**Link:** https://blog.helix.ml/p/technical-deep-dive-on-streaming
+
+---
+
+
+### A new Google model is nearly perfect on automated handwriting recognition
+
+**Link:** https://generativehistory.substack.com/p/has-google-quietly-solved-two-of
+
+---
+
+
+### An Antivenom Cocktail, Made by a Llama
+
+**Link:** https://www.asimov.press/p/broad-antivenom
+
+---
+
+
+### AI World Clocks
+
+**Community Score:** 1255 upvotes
+
+**Link:** https://clocks.brianmoore.com/
+
+
+**Content Summary:**
+
+? × About AI World Clocks Every minute, a new clock is displayed that has been generated by nine different AI models. Each model is allowed 2000 tokens to generate its clock. Here is its prompt: Create HTML/CSS of an analog clock showing ${time}. Include numbers (or numerals) if you wish, and have a CSS animated second hand. Make it responsive and use a white background. Return ONLY the HTML/CSS code with no markdown formatting. Created by Brian Moore . You can also follow him on Instagram . Ide...
+
+---
+
+
+### A new Google model is nearly perfect on automated handwriting recognition
+
+**Community Score:** 438 upvotes
+
+**Link:** https://generativehistory.substack.com/p/has-google-quietly-solved-two-of
+
+---
+
+
+### Show HN: Pegma, the free and open-source version of the classic Peg solitaire
+
+**Link:** https://pegma.vercel.app
+
+
+Discover Pegma, the free and open-source version of the classic Peg solitaire game! Pegma offers a clean, minimal design and smooth gameplay across multiple platforms.<p>Key features:<p>Fully open-source code available on GitHub, inviting community contributions and transparency<p>Custom-designed font created by the developer to enhance the game’s unique style<p>Cross-platform support: play on iOS, Android, or directly in your web browser<p>Lightweight, intuitive interface that stays true to the timeless puzzle mechanics<p>Try it now:<p>Website: <a href="https:&#x2F;&#x2F;pegma.vercel.app" rel="nofollow">https:&#x2F;&#x2F;pegma.vercel.app</a><p>GitHub: <a href="https:&#x2F;&#x2F;github.com&#x2F;khlebobul&#x2F;pegma" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;khlebobul&#x2F;pegma</a><p>App Store: <a href="https:&#x2F;&#x2F;apps.apple.com&#x2F;ru&#x2F;app&#x2F;pegma-peg-solitaire&#x2F;id6754343848">https:&#x2F;&#x2F;apps.apple.com&#x2F;ru&#x2F;app&#x2F;pegma-peg-solitaire&#x2F;id67543438...</a><p>Google Play: <a href="https:&#x2F;&#x2F;play.google.com&#x2F;store&#x2F;apps&#x2F;details?id=com.khlebobul.pegma">https:&#x2F;&#x2F;play.google.com&#x2F;store&#x2F;apps&#x2F;details?id=com.khlebobul....</a><p>If you appreciate open-source projects and classic brain teasers, Pegma is definitely worth checking out!
+
+---
+
+
+### Nano Banana can be prompt engineered for nuanced AI image generation
+
+**Link:** https://minimaxir.com/2025/11/nano-banana-prompts/
+
+---
+
+
+### Disrupting the first reported AI-orchestrated cyber espionage campaign
+
+**Link:** https://www.anthropic.com/news/disrupting-AI-espionage
+
+---
+
+
+### Launch HN: Tweeks (YC W25) – Browser extension to deshittify the web
+
+**Link:** https://www.tweeks.io/onboarding
+
+
+Hey HN! We’re Jason &amp; Matt and we’re building Tweeks (<a href="https:&#x2F;&#x2F;tweeks.io">https:&#x2F;&#x2F;tweeks.io</a>), a browser extension that lets you modify any website in your browser to add functionality, filter&#x2F;highlight, re-theme, reorganize, de-clutter, etc. If you’ve used Violentmonkey&#x2F;Tampermonkey, Tweeks is like a next‑generation userscript manager. Instead of digging through selectors and hand‑writing custom JS&#x2F;CSS, describe what you want in natural language and Tweeks plans + generates your edits and applies them.<p>The modern web is so full of clutter and junk (banners, modals, feeds, and recommendations you didn’t ask for). Even a simple google search is guarded by multiple ads, an AI overview, a trending searches module, etc. before you even see the first real blue link.<p>Every day there&#x27;s a new Lovable-like product (make it simple to build your own website&#x2F;app) or a new agentic browser (AI agents click around and browse the web for you), but we built Tweeks to serve the middle ground: most of our time spent on the web is on someone else&#x27;s site (not our own), and we don&#x27;t want to offload everything to an agentic browser. We want to be able to shape the entire web to our own preferences as we browse.<p>I spent years working on recommendation systems and relevance at Pinterest, and understand how well-meaning recommendations and A&#x2F;B tests can lead to website enshittification. No one sets out to make UX worse, but optimizing for an “average” user is not the same as optimizing for each individual user.<p>I’ve also been hacking “page fixers” as long as I can remember: remove a login wall here, collapse cookie banners there, add missing filters&#x2F;highlights (first with F12&#x2F;inspect element and eventually graduated to advanced GreaseMonkey userscripts). Tweeks started as a weekend prototype that turned simple requests into page edits but unexpectedly grew into something people kept asking to share. We hope you’ll like it too!<p>How it works: Open the Tweeks extension, type your request (e.g. “hide cookie banners and add a price&#x2F;quality score”), and submit. Upon submission, the page structure is captured, an AI agent reviews the structure, plans changes, and returns deterministic transformations (selectors, layout tweaks, styles, and small scripts) that run locally. Your modifications persist across page loads and can be enabled&#x2F;disabled, modified, and shared.<p>Here are a bunch of one‑shot examples from early users:<p><i>Youtube</i>: Remove Youtube Shorts. Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=aL7i89BdO9o" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=aL7i89BdO9o</a>. Try it yourself: <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;bcd8bc32b8034b79a78a8564">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;bcd8bc32b8034b79a78a8564</a><p><i>Hacker News</i>: Filter posts by title&#x2F;url or points&#x2F;comments, modify header and text size. Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=cD5Ei8bMmUk" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=cD5Ei8bMmUk</a>. Try it yourself: <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;97e72c6de5c14906a1351abd">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;97e72c6de5c14906a1351abd</a> (filter), <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;6f51f96c877a4998bda8e781">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;6f51f96c877a4998bda8e781</a> (header + text).<p><i>LinkedIn</i>: Keep track of cool people (extracts author data and send a POST request to a server). Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=WDO4DRXQoTU" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=WDO4DRXQoTU</a><p><i>Reddit</i>: Remove sidebar and add a countdown timer that shows a blocking modal when time is up. Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=kBIkQ9j_u94" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=kBIkQ9j_u94</a>. Try it yourself: <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;e1daa0c5edd441dca5a150c8">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;e1daa0c5edd441dca5a150c8</a> (sidebar), <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;c321c9b6018a4221bd06fdab">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;c321c9b6018a4221bd06fdab</a> (timer).<p><i>New York Times Games</i>: Add a Strands helper that finds all possible words. Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=hJ75jSATg3Q" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;watch?v=hJ75jSATg3Q</a>. Try it yourself: <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;7a955c910812467eaa36f569">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;7a955c910812467eaa36f569</a><p><i>Theming</i>: Retheme Google to be a 1970s CLI terminal. Demo: <a href="http:&#x2F;&#x2F;youtube.com&#x2F;shorts&#x2F;V-CG5CbYJb4" rel="nofollow">http:&#x2F;&#x2F;youtube.com&#x2F;shorts&#x2F;V-CG5CbYJb4</a> (oops sorry a youtube short snuck back in there). Try it yourself: <a href="http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;8c8c0953f6984163922c4da7">http:&#x2F;&#x2F;tweeks.io&#x2F;share&#x2F;script&#x2F;8c8c0953f6984163922c4da7</a>.<p>We just opened access at <a href="https:&#x2F;&#x2F;tweeks.io">https:&#x2F;&#x2F;tweeks.io</a>. It’s currently free, but each use costs tokens so we&#x27;ll likely need to cap usage to prevent abuse. We&#x27;re more interested in early feedback than your money, so if you manage to hit the cap, message us at contact@trynextbyte.com or <a href="https:&#x2F;&#x2F;discord.gg&#x2F;WucN6wpJw2" rel="nofollow">https:&#x2F;&#x2F;discord.gg&#x2F;WucN6wpJw2</a>, tell us how you&#x27;re using it&#x2F;what features you want next, and we&#x27;ll happily reset it for you.<p>Btw if you do anything interesting with it, feel free to make a shareable link (go to ‘Library’ and press ‘share’ after generating) and include it in the comments below. It’s fun to see the different things people are coming up with!<p>We&#x27;re rapidly shipping improvements and would love your feedback and comments. Thanks for reading!
+
+---
+
+
+### Ask HN: Is building for the web even worth it now?
+
+**Link:** https://news.ycombinator.com/item?id=45924891
+
+
+Of late, I’ve found my relationship with internet changing. I was here back in the early 2000s and it has always been the first place I go to for entertainment, advice, and work<p>But increasingly, I find myself completely disengaged with the internet. Every time I see a text post, I start asking myself: is this even a real person? Am I just talking to a bot?<p>Every time I see a yellow-tinged image on any of my social media feeds, I mentally switch off. I know it was made by AI and I just find it hard to engage with anything AI-made, no matter how good<p>Same for any AI video that pops up on my feed. It just doesn’t make me scroll past it, it makes me question why am I even here and I end up leaving<p>I know I can’t be the only one. I used to love the internet because it was one place where I could engage with people from all over the world. But now, it feels like I just spend half my energy on figuring out which one is real, which one is AI<p>The line will eventually blur and as a late 30s guy, I really don’t want to spend any more of my time on earth talking to a bot<p>As someone who used to create and build for the web, I find myself increasingly disengaged and discouraged. I’m pouring into a rapidly emptying cup<p>Anyone else feel the same way?
+
+---
+
+
+### SlopStop: Community-driven AI slop detection in Kagi Search
+
+**Link:** https://blog.kagi.com/slopstop
 
 ---
