@@ -92,7 +92,7 @@
       "run_number": 156,
       "workflow_name": "Copilot Agent Assignment",
       "workflow_file": "copilot-graphql-assign.yml",
-      "display_title": "Fix authentication bug (@troubleshoot-expert)",
+      "display_title": "Fix authentication bug #1234 (@troubleshoot-expert)",
       "status": "completed",
       "conclusion": "success",
       "created_at": "2025-11-17T04:45:00Z",
@@ -105,7 +105,14 @@
       "head_branch": "main",
       "head_sha": "a1b2c3d4",
       "agent_name": "troubleshoot-expert",
-      "pull_requests": []
+      "issue_number": 1234,
+      "pr_numbers": [542],
+      "pull_requests": [
+        {
+          "number": 542,
+          "url": "https://api.github.com/repos/enufacas/Chained/pulls/542"
+        }
+      ]
     },
     {
       "id": 1763499999,
@@ -125,6 +132,8 @@
       "head_branch": "main",
       "head_sha": "a1b2c3d3",
       "agent_name": null,
+      "issue_number": null,
+      "pr_numbers": [],
       "pull_requests": []
     },
     {
@@ -132,7 +141,7 @@
       "run_number": 154,
       "workflow_name": "Copilot Agent Assignment",
       "workflow_file": "copilot-graphql-assign.yml",
-      "display_title": "Create API endpoint (@engineer-master)",
+      "display_title": "Create API endpoint #890 (@engineer-master)",
       "status": "in_progress",
       "conclusion": null,
       "created_at": "2025-11-17T03:30:00Z",
@@ -145,6 +154,8 @@
       "head_branch": "main",
       "head_sha": "a1b2c3d2",
       "agent_name": "engineer-master",
+      "issue_number": 890,
+      "pr_numbers": [],
       "pull_requests": []
     },
     {
@@ -165,14 +176,21 @@
       "head_branch": "main",
       "head_sha": "a1b2c3d1",
       "agent_name": null,
-      "pull_requests": []
+      "issue_number": null,
+      "pr_numbers": [542],
+      "pull_requests": [
+        {
+          "number": 542,
+          "url": "https://api.github.com/repos/enufacas/Chained/pulls/542"
+        }
+      ]
     },
     {
       "id": 1763499996,
       "run_number": 152,
       "workflow_name": "Copilot Agent Assignment",
       "workflow_file": "copilot-graphql-assign.yml",
-      "display_title": "Refactor code structure (@organize-guru)",
+      "display_title": "Refactor code structure #765 (@organize-guru)",
       "status": "completed",
       "conclusion": "success",
       "created_at": "2025-11-17T02:45:00Z",
@@ -185,7 +203,13 @@
       "head_branch": "main",
       "head_sha": "a1b2c3d0",
       "agent_name": "organize-guru",
+      "issue_number": 765,
+      "pr_numbers": [541, 542],
       "pull_requests": [
+        {
+          "number": 541,
+          "url": "https://api.github.com/repos/enufacas/Chained/pulls/541"
+        },
         {
           "number": 542,
           "url": "https://api.github.com/repos/enufacas/Chained/pulls/542"
@@ -197,7 +221,7 @@
       "run_number": 151,
       "workflow_name": "Copilot Agent Assignment",
       "workflow_file": "copilot-graphql-assign.yml",
-      "display_title": "Security audit (@secure-specialist)",
+      "display_title": "Security audit #999 (@secure-specialist)",
       "status": "in_progress",
       "conclusion": null,
       "created_at": "2025-11-17T02:15:00Z",
@@ -210,6 +234,8 @@
       "head_branch": "main",
       "head_sha": "a1b2c3cf",
       "agent_name": "secure-specialist",
+      "issue_number": 999,
+      "pr_numbers": [],
       "pull_requests": []
     },
     {
@@ -230,6 +256,8 @@
       "head_branch": "main",
       "head_sha": "a1b2c3ce",
       "agent_name": null,
+      "issue_number": null,
+      "pr_numbers": [],
       "pull_requests": []
     },
     {
@@ -237,7 +265,7 @@
       "run_number": 149,
       "workflow_name": "Copilot Agent Assignment",
       "workflow_file": "copilot-graphql-assign.yml",
-      "display_title": "Create AgentOps dashboard (@create-champion)",
+      "display_title": "Create AgentOps dashboard #1507 (@create-champion)",
       "status": "completed",
       "conclusion": "success",
       "created_at": "2025-11-16T22:30:00Z",
@@ -250,7 +278,14 @@
       "head_branch": "main",
       "head_sha": "a1b2c3cd",
       "agent_name": "create-champion",
-      "pull_requests": []
+      "issue_number": 1507,
+      "pr_numbers": [540],
+      "pull_requests": [
+        {
+          "number": 540,
+          "url": "https://api.github.com/repos/enufacas/Chained/pulls/540"
+        }
+      ]
     }
   ],
   "recent_failures": [
@@ -266,7 +301,9 @@
       "updated_at": "2025-11-17T03:17:45Z",
       "duration_seconds": 165,
       "html_url": "https://github.com/enufacas/Chained/actions/runs/1763499997",
-      "agent_name": null
+      "agent_name": null,
+      "issue_number": null,
+      "pr_numbers": [542]
     }
   ]
 }

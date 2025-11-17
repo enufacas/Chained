@@ -32,6 +32,8 @@ Detailed table of recent executions with:
 - Run number and workflow name
 - Status badges (success/failure/in-progress)
 - Agent attribution (@agent-name)
+- **Issue number** - Associated GitHub issue (clickable link)
+- **PR number(s)** - Associated pull request(s) (clickable links)
 - Duration and start time
 - Direct links to GitHub Actions logs
 
@@ -194,12 +196,21 @@ The dashboard implements several protections:
       "run_number": 42,
       "workflow_name": "Copilot Agent Assignment",
       "workflow_file": "copilot-graphql-assign.yml",
+      "display_title": "Fix bug #1234 (@create-champion)",
       "status": "completed",
       "conclusion": "success",
       "created_at": "2025-11-17T03:30:00Z",
       "duration_seconds": 234.5,
       "html_url": "https://github.com/.../runs/123456789",
-      "agent_name": "create-champion"
+      "agent_name": "create-champion",
+      "issue_number": 1234,
+      "pr_numbers": [542],
+      "pull_requests": [
+        {
+          "number": 542,
+          "url": "https://api.github.com/repos/enufacas/Chained/pulls/542"
+        }
+      ]
     }
   ]
 }
@@ -213,9 +224,10 @@ The dashboard implements several protections:
 - Tracks agent-specific success rates
 
 ### Issue/PR Tracking
-- Links workflow runs to associated issues
-- Shows PR numbers in run details
-- Enables full traceability
+- **Automatic extraction** - Issue numbers extracted from workflow run names (e.g., "Fix #1234")
+- **PR association** - Pull requests linked to workflow runs displayed
+- **Clickable links** - Direct navigation to issues and PRs
+- **Full traceability** - Complete audit trail from run to issue to PR
 
 ### Learning System Integration
 - Provides operational data for learning
