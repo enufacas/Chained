@@ -236,6 +236,181 @@
         "agent"
       ],
       "timestamp": "2025-11-17T01:45:38Z"
+    },
+    "insight_1461_df7e683aa403": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:meta-coordinator -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf meta-coordinator** custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:14:12Z"
+    },
+    "insight_1461_46b28a924e49": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "process",
+      "content": "> \n> **@meta-coordinator** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-17T01:14:12Z"
+    },
+    "insight_1461_5b85d5ca0f99": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/meta-coordinator",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:14:12Z"
+    },
+    "insight_1461_8ac9e17af718": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the \ud83c\udfaf **@meta-coordinator** specialization:\n\n- **Agent**: \ud83c\udfaf **@meta-coordinator**\n- **Match Confidence**: medium\n- **Match Score**: 3\n- **Description**: Specialized agent for coordinating multiple AI agents",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent",
+        "ai"
+      ],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_fd31c5420040": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "agent_behavior",
+      "content": "Focuses on task decomposition, agent orchestration, and multi-agent collaboration",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_468c5bac0631": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_6478261a617d": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/meta-coordinator",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_adf13f5f0e40": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@meta-coordinator** by name in all conversations related to this issue",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_33952c0cdd1c": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@meta-coordinator** - Please use the **meta-coordinator** custom agent profile from `",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_b02d3182b0fa": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_6781caf7af44": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [meta-coordinator agent definition](https://github",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_dc1e63490ce7": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **@meta-coordinator** will analyze the issue requirements using the meta-coordinator specialization\n2",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_c3540ad118f8": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@meta-coordinator** will create a branch and implement the solution following the meta-coordinator approach\n3",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_4c6aa98df983": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@meta-coordinator** will open a PR with the implementation\n4",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_0515074995f0": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-17T01:14:40Z"
+    },
+    "insight_1461_39e9530f47ff": {
+      "issue_number": 1461,
+      "issue_title": "Agent evaluator improvements ",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** **@meta-coordinator** (meta-coordinator specialization)\n**Assigned at:** 2025-11-17 01:14:39 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-17T01:14:40Z"
     }
   },
   "connections": [
@@ -266,12 +441,131 @@
       "connection_type": "similar",
       "similarity_score": 1.0,
       "timestamp": "2025-11-17T02:04:33.400373+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_df7e683aa403",
+      "target_insight_id": "insight_1460_15a9419e3baf",
+      "connection_type": "similar",
+      "similarity_score": 0.75,
+      "timestamp": "2025-11-17T02:08:02.047445+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_46b28a924e49",
+      "target_insight_id": "insight_1460_d821e026c58a",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T02:08:02.047788+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_8ac9e17af718",
+      "target_insight_id": "insight_1460_901d1319e47b",
+      "connection_type": "similar",
+      "similarity_score": 0.5428571428571428,
+      "timestamp": "2025-11-17T02:08:02.048888+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_468c5bac0631",
+      "target_insight_id": "insight_1460_68aae128b455",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T02:08:02.049503+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_6478261a617d",
+      "target_insight_id": "insight_1461_5b85d5ca0f99",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T02:08:02.049794+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_6478261a617d",
+      "target_insight_id": "insight_1461_5b85d5ca0f99",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T02:08:02.050128+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_adf13f5f0e40",
+      "target_insight_id": "insight_1460_b8b5519c2025",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-17T02:08:02.050586+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_33952c0cdd1c",
+      "target_insight_id": "insight_1460_7d780ede38e3",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T02:08:02.051071+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_6478261a617d",
+      "target_insight_id": "insight_1461_5b85d5ca0f99",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T02:08:02.051383+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_b02d3182b0fa",
+      "target_insight_id": "insight_1460_734f5639eeb1",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T02:08:02.051780+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_6781caf7af44",
+      "target_insight_id": "insight_1460_81a0d37f9f19",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-17T02:08:02.052189+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_6478261a617d",
+      "target_insight_id": "insight_1461_5b85d5ca0f99",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T02:08:02.052515+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_dc1e63490ce7",
+      "target_insight_id": "insight_1460_78f82bd6f5a0",
+      "connection_type": "similar",
+      "similarity_score": 0.6153846153846154,
+      "timestamp": "2025-11-17T02:08:02.052993+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_c3540ad118f8",
+      "target_insight_id": "insight_1460_d27411a12afb",
+      "connection_type": "similar",
+      "similarity_score": 0.7875,
+      "timestamp": "2025-11-17T02:08:02.053505+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_4c6aa98df983",
+      "target_insight_id": "insight_1460_6b8b9bb0ddc6",
+      "connection_type": "similar",
+      "similarity_score": 0.6153846153846154,
+      "timestamp": "2025-11-17T02:08:02.053989+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_0515074995f0",
+      "target_insight_id": "insight_1460_c75ae1e65917",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-17T02:08:02.054428+00:00"
+    },
+    {
+      "source_insight_id": "insight_1461_39e9530f47ff",
+      "target_insight_id": "insight_1460_98499e7d3f9d",
+      "connection_type": "similar",
+      "similarity_score": 0.8043478260869565,
+      "timestamp": "2025-11-17T02:08:02.055373+00:00"
     }
   ],
   "metadata": {
     "created": "2025-11-17T02:04:33.396572+00:00",
-    "last_updated": "2025-11-17T02:04:33.401946+00:00",
-    "total_insights": 22,
-    "total_connections": 4
+    "last_updated": "2025-11-17T02:08:02.055388+00:00",
+    "total_insights": 38,
+    "total_connections": 21
   }
 }
