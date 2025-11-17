@@ -95,21 +95,58 @@ jobs:
                           # Extract agent from run name or path if available
                           run_name = run.get('display_title', run.get('name', ''))
                           agent_name = None
-                          if '@' in run_name:
-                              # Try to extract agent name
-                              parts = run_name.split('@')
-                              if len(parts) > 1:
-                                  agent_name = parts[1].split()[0].strip(')')
-                          
-                          # Extract issue number from run name (e.g., "Fix #123" or "Issue #456")
-                          issue_number = None
                           import re
+                          
+                          # Try multiple patterns for agent extraction
+                          if '@' in run_name:
+                              # Pattern 1: "@agent-name" in display title
+                              agent_match = re.search(r'@([a-z-]+(?:-[a-z]+)*)', run_name, re.IGNORECASE)
+                              if agent_match:
+                                  agent_name = agent_match.group(1)
+                          
+                          # Try to get more metadata from workflow run jobs/artifacts
+                          # Check head commit message for agent references
+                          head_commit = run.get('head_commit', {})
+                          commit_message = head_commit.get('message', '') if head_commit else ''
+                          if not agent_name and '@' in commit_message:
+                              agent_match = re.search(r'@([a-z-]+(?:-[a-z]+)*)', commit_message, re.IGNORECASE)
+                              if agent_match:
+                                  agent_name = agent_match.group(1)
+                          
+                          # Extract issue number from multiple sources
+                          issue_number = None
+                          
+                          # Pattern 1: From display title (e.g., "Fix #123" or "Issue #456")
                           issue_match = re.search(r'#(\d+)', run_name)
                           if issue_match:
                               issue_number = int(issue_match.group(1))
                           
-                          # Get PR numbers from pull_requests array
+                          # Pattern 2: From commit message
+                          if not issue_number and commit_message:
+                              issue_match = re.search(r'#(\d+)', commit_message)
+                              if issue_match:
+                                  issue_number = int(issue_match.group(1))
+                          
+                          # Pattern 3: If event is 'issues', try to get from repository_dispatch
+                          if not issue_number and run['event'] == 'issues':
+                              # The issue number might be in the workflow path
+                              # This is a best-effort extraction
+                              pass
+                          
+                          # Get PR numbers from pull_requests array (GitHub provides this)
                           pr_numbers = [pr['number'] for pr in run.get('pull_requests', [])]
+                          
+                          # Try to fetch associated PRs from head_sha if we have it
+                          if not pr_numbers and run.get('head_sha'):
+                              try:
+                                  # Search for PRs with this commit
+                                  pr_search_url = f'https://api.github.com/repos/{REPO}/commits/{run["head_sha"]}/pulls'
+                                  pr_response = requests.get(pr_search_url, headers=headers, timeout=5)
+                                  if pr_response.status_code == 200:
+                                      prs = pr_response.json()
+                                      pr_numbers = [pr['number'] for pr in prs]
+                              except Exception as e:
+                                  pass  # Silently fail for PR lookups
                           
                           run_data = {
                               'id': run['id'],

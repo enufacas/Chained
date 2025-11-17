@@ -504,6 +504,19 @@
                         </tbody>
                     </table>
                 </div>
+                <!-- Pagination Controls -->
+                <div id="pagination-controls" style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 1.5rem; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid rgba(6, 182, 212, 0.2);">
+                    <button id="prev-page" style="padding: 0.5rem 1rem; background: rgba(139, 92, 246, 0.1); border: 1px solid var(--primary-color); border-radius: 6px; color: var(--primary-color); cursor: pointer; font-weight: 500;">
+                        ← Previous
+                    </button>
+                    <div style="color: var(--text-muted); font-size: 0.9rem;">
+                        Page <span id="current-page">1</span> of <span id="total-pages">1</span>
+                        <span style="margin-left: 1rem;">(<span id="showing-count">0</span> of <span id="total-count">0</span> runs)</span>
+                    </div>
+                    <button id="next-page" style="padding: 0.5rem 1rem; background: rgba(139, 92, 246, 0.1); border: 1px solid var(--primary-color); border-radius: 6px; color: var(--primary-color); cursor: pointer; font-weight: 500;">
+                        Next →
+                    </button>
+                </div>
             </section>
 
             <!-- Agent Workload -->
@@ -675,9 +688,12 @@
         }
         
         let allRuns = [];
+        let currentPage = 1;
+        const runsPerPage = 20;
         
         function populateRunsTable(runs) {
             allRuns = runs || [];
+            currentPage = 1;
             filterAndDisplayRuns();
         }
         
@@ -700,15 +716,48 @@
                 filteredRuns = filteredRuns.filter(run => run.workflow_file === workflowFilter);
             }
             
+            // Calculate pagination
+            const totalRuns = filteredRuns.length;
+            const totalPages = Math.ceil(totalRuns / runsPerPage);
+            
+            // Make sure currentPage is within bounds
+            if (currentPage > totalPages) {
+                currentPage = totalPages || 1;
+            }
+            
+            const startIndex = (currentPage - 1) * runsPerPage;
+            const endIndex = Math.min(startIndex + runsPerPage, totalRuns);
+            const pageRuns = filteredRuns.slice(startIndex, endIndex);
+            
+            // Update pagination controls
+            document.getElementById('current-page').textContent = currentPage;
+            document.getElementById('total-pages').textContent = totalPages || 1;
+            document.getElementById('showing-count').textContent = pageRuns.length;
+            document.getElementById('total-count').textContent = totalRuns;
+            
+            document.getElementById('prev-page').disabled = currentPage === 1;
+            document.getElementById('next-page').disabled = currentPage === totalPages || totalPages === 0;
+            
+            // Update button styles
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+            prevBtn.style.opacity = currentPage === 1 ? '0.5' : '1';
+            prevBtn.style.cursor = currentPage === 1 ? 'not-allowed' : 'pointer';
+            nextBtn.style.opacity = currentPage === totalPages || totalPages === 0 ? '0.5' : '1';
+            nextBtn.style.cursor = currentPage === totalPages || totalPages === 0 ? 'not-allowed' : 'pointer';
+            
             const tbody = document.getElementById('runs-tbody');
             tbody.innerHTML = '';
             
             if (filteredRuns.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">No runs match the current filters</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem;">No runs match the current filters</td></tr>';
+                document.getElementById('pagination-controls').style.display = 'none';
                 return;
             }
             
-            filteredRuns.forEach(run => {
+            document.getElementById('pagination-controls').style.display = 'flex';
+            
+            pageRuns.forEach(run => {
                 const row = document.createElement('tr');
                 
                 // Determine status badge
@@ -812,9 +861,37 @@
                 workflowFilter.appendChild(option);
             });
             
-            // Add event listeners
-            document.getElementById('status-filter').addEventListener('change', filterAndDisplayRuns);
-            document.getElementById('workflow-filter').addEventListener('change', filterAndDisplayRuns);
+            // Add event listeners for filters (reset to page 1)
+            document.getElementById('status-filter').addEventListener('change', () => {
+                currentPage = 1;
+                filterAndDisplayRuns();
+            });
+            document.getElementById('workflow-filter').addEventListener('change', () => {
+                currentPage = 1;
+                filterAndDisplayRuns();
+            });
+            
+            // Add event listeners for pagination
+            document.getElementById('prev-page').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    filterAndDisplayRuns();
+                    // Scroll to top of table
+                    document.getElementById('recent-runs').scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+            
+            document.getElementById('next-page').addEventListener('click', () => {
+                const totalPages = Math.ceil(
+                    document.getElementById('total-count').textContent / runsPerPage
+                );
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    filterAndDisplayRuns();
+                    // Scroll to top of table
+                    document.getElementById('recent-runs').scrollIntoView({ behavior: 'smooth' });
+                }
+            });
         }
         
         function formatDuration(seconds) {
@@ -887,17 +964,33 @@
                 return data.total > 0 ? (data.success / data.total * 100) : 0;
             });
             
-            // Create bar chart HTML
-            let html = '<div style="display: flex; align-items: flex-end; height: 200px; gap: 2px; justify-content: space-between;">';
+            // Create bar chart HTML with axis labels
+            let html = '<div style="display: flex; gap: 8px;">';
+            // Y-axis labels
+            html += '<div style="display: flex; flex-direction: column; justify-content: space-between; height: 200px; min-width: 40px; text-align: right; font-size: 0.75rem; color: #94a3b8;">';
+            html += '<div>100%</div>';
+            html += '<div>75%</div>';
+            html += '<div>50%</div>';
+            html += '<div>25%</div>';
+            html += '<div>0%</div>';
+            html += '</div>';
+            // Chart bars
+            html += '<div style="flex: 1; display: flex; align-items: flex-end; height: 200px; gap: 2px; border-left: 1px solid rgba(148, 163, 184, 0.3); border-bottom: 1px solid rgba(148, 163, 184, 0.3); padding-left: 8px; padding-bottom: 0;">';
             successRates.forEach((rate, i) => {
                 const height = rate;
                 const color = rate > 80 ? '#10b981' : rate > 50 ? '#fbbf24' : '#ef4444';
                 html += `<div style="flex: 1; background: ${color}; height: ${height}%; border-radius: 2px 2px 0 0; opacity: 0.8; min-width: 3px;" title="${rate.toFixed(1)}%"></div>`;
             });
             html += '</div>';
-            html += '<div style="margin-top: 8px; text-align: center; color: #94a3b8; font-size: 0.85rem;">Last 24 hours</div>';
+            html += '</div>';
+            // X-axis label
+            html += '<div style="margin-top: 8px; text-align: center; color: #94a3b8; font-size: 0.85rem; font-weight: 500;">Time (Last 24 hours)</div>';
+            // Y-axis label
+            html += '<div style="position: absolute; left: 0; top: 50%; transform: translateY(-50%) rotate(-90deg); transform-origin: center; color: #94a3b8; font-size: 0.85rem; font-weight: 500; white-space: nowrap;">Success Rate (%)</div>';
             
             container.innerHTML = html;
+            container.style.position = 'relative';
+            container.style.paddingLeft = '20px';
         }
         
         function renderAgentPerformanceChart(agentWorkload) {
@@ -959,15 +1052,32 @@
             
             const maxCount = Math.max(...Object.values(hourlyData), 1);
             
-            let html = '<div style="display: flex; align-items: flex-end; height: 200px; gap: 4px; justify-content: space-between;">';
+            // Create bar chart HTML with axis labels
+            let html = '<div style="display: flex; gap: 8px;">';
+            // Y-axis labels
+            html += '<div style="display: flex; flex-direction: column; justify-content: space-between; height: 200px; min-width: 30px; text-align: right; font-size: 0.75rem; color: #94a3b8;">';
+            html += `<div>${maxCount}</div>`;
+            html += `<div>${Math.floor(maxCount * 0.75)}</div>`;
+            html += `<div>${Math.floor(maxCount * 0.5)}</div>`;
+            html += `<div>${Math.floor(maxCount * 0.25)}</div>`;
+            html += '<div>0</div>';
+            html += '</div>';
+            // Chart bars
+            html += '<div style="flex: 1; display: flex; align-items: flex-end; height: 200px; gap: 4px; border-left: 1px solid rgba(148, 163, 184, 0.3); border-bottom: 1px solid rgba(148, 163, 184, 0.3); padding-left: 8px;">';
             Object.values(hourlyData).forEach((count, i) => {
                 const height = (count / maxCount * 100);
                 html += `<div style="flex: 1; background: #8b5cf6; height: ${height}%; border-radius: 2px 2px 0 0; opacity: 0.8; min-width: 5px;" title="${count} runs"></div>`;
             });
             html += '</div>';
-            html += '<div style="margin-top: 8px; text-align: center; color: #94a3b8; font-size: 0.85rem;">Last 12 hours</div>';
+            html += '</div>';
+            // X-axis label
+            html += '<div style="margin-top: 8px; text-align: center; color: #94a3b8; font-size: 0.85rem; font-weight: 500;">Time (Last 12 hours)</div>';
+            // Y-axis label
+            html += '<div style="position: absolute; left: 0; top: 50%; transform: translateY(-50%) rotate(-90deg); transform-origin: center; color: #94a3b8; font-size: 0.85rem; font-weight: 500; white-space: nowrap;">Number of Runs</div>';
             
             container.innerHTML = html;
+            container.style.position = 'relative';
+            container.style.paddingLeft = '20px';
         }
         
         function renderDurationChart(workflowStats) {
