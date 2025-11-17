@@ -1,0 +1,52 @@
+{
+  "version": "1.0",
+  "last_updated": "2025-11-17T03:48:57.414642",
+  "generated_by": "@investigate-champion",
+  "contexts": {
+    "workflows": {
+      "path": ".github/workflows/.context.md",
+      "summary": "Workflow development patterns, branch protection, and agent attribution",
+      "key_insights": 4,
+      "applies_to": [
+        ".github/workflows/**/*.yml"
+      ]
+    },
+    "agents": {
+      "path": ".github/agents/.context.md",
+      "summary": "Agent system behavior, coordination patterns, and performance insights",
+      "key_insights": 66,
+      "applies_to": [
+        ".github/agents/**",
+        ".github/agent-system/**"
+      ]
+    },
+    "tools": {
+      "path": "tools/.context.md",
+      "summary": "Tool development best practices and common patterns",
+      "key_insights": 0,
+      "applies_to": [
+        "tools/**/*.py"
+      ]
+    },
+    "instructions": {
+      "path": ".github/instructions/.context.md",
+      "summary": "Guidance for creating effective path-specific instructions",
+      "key_insights": 0,
+      "applies_to": [
+        ".github/instructions/**/*.instructions.md"
+      ]
+    }
+  },
+  "quick_reference": {
+    "agent_mentions": "Always use @agent-name syntax for agent references",
+    "branch_protection": "Never push directly to main, always create PR",
+    "workflow_references": "Include workflow name and run ID in created issues/PRs",
+    "issue_updates": "Comment on issues when work completes with @agent attribution",
+    "context_awareness": "Check for .context.md files before starting work"
+  },
+  "data_sources": {
+    "knowledge_graph": "learnings/discussions/knowledge_graph.json",
+    "discussions": "learnings/discussions/*.json",
+    "analysis": "analysis/*.json"
+  }
+}

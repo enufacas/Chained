@@ -96,6 +96,9 @@ This section enumerates all storage locations in the Chained repository and exte
   - `build-learnings-book.py` - Compiles learnings into browsable format
   - `validate_agent_capacity.py` - Enforces agent limits
   - `create_labels.py` - Bulk label creation
+  - `generate-context-summaries.py` - Generates context files from learnings data
+- **Context Files:**
+  - `.context.md` - Tool development best practices and common patterns
 - **Typical Size:** 5-30 KB per Python file
 - **Retention:** Persistent (source code)
 
@@ -112,6 +115,9 @@ This section enumerates all storage locations in the Chained repository and exte
   - World: `world-update.yml`
   - Pages: `github-pages-review.yml`
   - System: `system-kickoff.yml`, `system-monitor.yml`
+  - Context: `update-context-summaries.yml` (refreshes context files weekly)
+- **Context Files:**
+  - `.context.md` - Historical workflow development patterns and learned best practices
 - **Typical Size:** 10-50 KB per YAML file
 - **Retention:** Persistent (workflow definitions)
 
@@ -132,6 +138,8 @@ This section enumerates all storage locations in the Chained repository and exte
   - `mentorship_registry.json` - Agent mentorship relationships
   - `memory/` - Agent-specific memory files
   - `metadata/` - Agent-specific metadata files
+- **Context Files:**
+  - `../agents/.context.md` - Historical agent behavior patterns and coordination insights
 - **Typical Size:** 1-10 KB per JSON file
 - **Retention:** Persistent (agent system state)
 
@@ -173,8 +181,25 @@ This section enumerates all storage locations in the Chained repository and exte
   - `AGENT_QUICKSTART.md` - Agent system guide
   - `AUTONOMOUS_SYSTEM_ARCHITECTURE.md` - Architecture documentation
   - `LABELS.md` - Complete label reference
+  - `CONTEXT_AWARE_AGENTS_DESIGN.md` - Context awareness system design
   - Various task completion and implementation summaries
 - **Retention:** Persistent (documentation)
+
+#### Context Awareness System
+- **Path:** `.github/context-index.json` and `.context.md` files in multiple directories
+- **Format:** JSON (index), Markdown (context files)
+- **Persistence:** Persistent (committed to git)
+- **Purpose:** Provide agents with historical context and learned patterns
+- **Key Files:**
+  - `.github/context-index.json` - Index of all context resources and quick reference
+  - `.github/workflows/.context.md` - Workflow development patterns (auto-generated)
+  - `.github/agents/.context.md` - Agent behavior and coordination insights (auto-generated)
+  - `.github/instructions/.context.md` - Instruction file creation guidance
+  - `tools/.context.md` - Tool development best practices
+- **Generation:** Auto-generated from `learnings/discussions/knowledge_graph.json` and discussion files
+- **Update Frequency:** Weekly via `update-context-summaries.yml` workflow
+- **Typical Size:** 2-5 KB per context file
+- **Retention:** Persistent (regenerated to stay current)
 
 ### 1.2 Ephemeral Storage Locations
 
