@@ -235,6 +235,57 @@ In your code and comments, reference agents explicitly:
 - Add emojis sparingly for visual organization
 - Include links to related documentation
 
+## 🗺️ Context Awareness System
+
+**@investigate-champion** has implemented a context awareness system to help agents access relevant historical insights when working on tasks.
+
+### Available Context Files
+
+When starting work, agents should check for `.context.md` files in the directory they're working in:
+
+- **`.github/workflows/.context.md`** - Workflow development patterns, branch protection rules, agent attribution
+- **`.github/agents/.context.md`** - Agent system behavior, coordination patterns, performance insights
+- **`tools/.context.md`** - Tool development best practices and common patterns
+- **`.github/instructions/.context.md`** - Guidance for creating effective path-specific instructions
+
+### Context Index
+
+The **`.github/context-index.json`** file provides a quick reference to all available context:
+- Summaries of each context area
+- Quick reference for common rules
+- Links to data sources (knowledge graph, discussions, analysis)
+
+### How to Use Context
+
+1. **Before starting work:** Check if a `.context.md` file exists in your working directory
+2. **Review key insights:** Understand patterns and decisions from similar past work
+3. **Avoid known pitfalls:** Learn from common mistakes documented in context
+4. **Reference discussions:** Link to specific issues when relevant context applies
+5. **Apply learned patterns:** Use successful approaches from historical work
+
+### Context Generation
+
+Context files are auto-generated from:
+- `learnings/discussions/knowledge_graph.json` - 75+ insights with 133 connections
+- `learnings/discussions/*.json` - Detailed issue discussions and decisions
+- `analysis/*.json` - Code archaeology and pattern analysis
+
+**Regeneration:** Run `python tools/generate-context-summaries.py --update-all` to refresh context files
+
+### Benefits of Context Awareness
+
+- **Avoid repetition:** Don't reinvent solutions to problems already solved
+- **Learn from mistakes:** Understand what didn't work in the past
+- **Apply patterns:** Use successful approaches from similar tasks
+- **Maintain consistency:** Follow established conventions and decisions
+- **Better decisions:** Informed by historical context and experience
+
+### Context vs. Context Window
+
+**Important:** Context files are curated summaries (< 500 words each) designed to provide useful information without overwhelming the LLM context window. They're not comprehensive histories but targeted insights for better decision-making.
+
+For deep dives, consult the full data sources in `learnings/` and `analysis/` directories.
+
 ## 🏗️ Repository Structure
 
 This is an autonomous AI ecosystem project with the following key areas:
@@ -295,6 +346,13 @@ When making changes, consider how they align with these principles of autonomous
 - [Agent Mentions](./instructions/agent-mentions.instructions.md) - Agent attribution format
 - [Workflow Agent Assignment](./instructions/workflow-agent-assignment.instructions.md) - Workflow-specific rules
 - [Issue/PR Agent Mentions](./instructions/issue-pr-agent-mentions.instructions.md) - Template requirements
+
+### Context Awareness System
+- [Context Index](./context-index.json) - Quick reference to all available context
+- [Context-Aware Agents Design](../CONTEXT_AWARE_AGENTS_DESIGN.md) - System design and architecture
+- [Workflow Context](.github/workflows/.context.md) - Historical workflow patterns
+- [Agent Context](.github/agents/.context.md) - Agent behavior insights
+- [Tools Context](../tools/.context.md) - Tool development guidance
 
 ---
 
