@@ -52,7 +52,7 @@ jobs:
           
           GITHUB_TOKEN = os.environ['GH_TOKEN']
           REPO = os.environ['GITHUB_REPOSITORY']
-          FETCH_LIMIT = int(os.environ.get('FETCH_LIMIT', '50'))
+          FETCH_LIMIT = int(float(os.environ.get('FETCH_LIMIT', '50')))
           
           headers = {
               'Authorization': f'token {GITHUB_TOKEN}',
