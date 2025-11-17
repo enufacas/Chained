@@ -1,0 +1,210 @@
+name: Agent Evolution - Genetic Algorithm
+
+on:
+  schedule:
+    # Run weekly on Sundays at midnight UTC (after evaluation)
+    - cron: '5 0 * * 0'
+  
+  workflow_dispatch:
+    inputs:
+      max_offspring:
+        description: 'Maximum number of offspring to create'
+        required: false
+        default: '2'
+      force_evolution:
+        description: 'Force evolution even if no eligible candidates'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  evolve-agents:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Check current evolution status
+        id: check_status
+        run: |
+          echo "📊 Current Evolution Status"
+          python tools/agent-evolution-system.py --stats
+          
+          # Check if evolution data exists
+          if [ -f .github/agent-system/evolution_data.json ]; then
+            echo "evolution_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "evolution_exists=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Analyze breeding eligibility
+        id: analyze
+        run: |
+          echo "🔍 Analyzing agent population for breeding eligibility"
+          
+          # Count high-performing agents
+          HIGH_PERFORMERS=$(cat .github/agent-system/registry.json | \
+            jq '[.agents[] | select(.metrics.overall_score >= 0.5)] | length')
+          
+          echo "high_performers=$HIGH_PERFORMERS" >> $GITHUB_OUTPUT
+          echo "Found $HIGH_PERFORMERS agents with score >= 0.5"
+          
+          if [ "$HIGH_PERFORMERS" -ge 2 ]; then
+            echo "eligible_for_breeding=true" >> $GITHUB_OUTPUT
+            echo "✅ Population eligible for breeding"
+          else
+            echo "eligible_for_breeding=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Not enough high performers for breeding (need 2+)"
+          fi
+      
+      - name: Evolve agent population
+        id: evolve
+        if: steps.analyze.outputs.eligible_for_breeding == 'true' || github.event.inputs.force_evolution == 'true'
+        run: |
+          echo "🧬 Evolving agent population..."
+          
+          MAX_OFFSPRING="${{ github.event.inputs.max_offspring || '2' }}"
+          
+          # Run evolution
+          OUTPUT=$(python tools/agent-evolution-system.py --evolve --offspring $MAX_OFFSPRING 2>&1)
+          echo "$OUTPUT"
+          
+          # Check if offspring were created
+          OFFSPRING_COUNT=$(echo "$OUTPUT" | grep -oP 'Created \K[0-9]+' || echo "0")
+          echo "offspring_count=$OFFSPRING_COUNT" >> $GITHUB_OUTPUT
+          
+          if [ "$OFFSPRING_COUNT" -gt 0 ]; then
+            echo "success=true" >> $GITHUB_OUTPUT
+            echo "✅ Successfully created $OFFSPRING_COUNT offspring"
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+            echo "⚠️ No offspring created"
+          fi
+      
+      - name: Get evolution statistics
+        id: stats
+        if: steps.evolve.outputs.success == 'true'
+        run: |
+          echo "📊 Evolution Statistics"
+          STATS=$(python tools/agent-evolution-system.py --stats)
+          echo "$STATS"
+          
+          # Extract key metrics
+          GENERATION=$(echo "$STATS" | grep "Current Generation:" | grep -oP '\d+')
+          TOTAL_EVOLVED=$(echo "$STATS" | grep "Total Evolved Agents:" | grep -oP '\d+')
+          BREEDING_EVENTS=$(echo "$STATS" | grep "Total Breeding Events:" | grep -oP '\d+')
+          
+          echo "generation=$GENERATION" >> $GITHUB_OUTPUT
+          echo "total_evolved=$TOTAL_EVOLVED" >> $GITHUB_OUTPUT
+          echo "breeding_events=$BREEDING_EVENTS" >> $GITHUB_OUTPUT
+      
+      - name: Create issue for evolved agents
+        if: steps.evolve.outputs.success == 'true' && steps.evolve.outputs.offspring_count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OFFSPRING_COUNT="${{ steps.evolve.outputs.offspring_count }}"
+          GENERATION="${{ steps.stats.outputs.generation }}"
+          
+          # Read evolution data to get offspring details
+          OFFSPRING_DATA=$(cat .github/agent-system/evolution_data.json | \
+            jq -r '.breeding_pairs[-'$OFFSPRING_COUNT':] | .[] | 
+            "- Offspring: \(.offspring_id)\n  Parents: \(.parent1_id) × \(.parent2_id)\n  Generation: \(.generation)"')
+          
+          ISSUE_BODY="## 🧬 Agent Evolution - Generation $GENERATION
+
+**Evolutionary breeding has produced new agents through genetic algorithms!**
+
+### 📊 Evolution Summary
+
+- **Generation**: $GENERATION
+- **New offspring created**: $OFFSPRING_COUNT
+- **Total agents evolved**: ${{ steps.stats.outputs.total_evolved }}
+- **Total breeding events**: ${{ steps.stats.outputs.breeding_events }}
+
+### 🧬 New Offspring
+
+$OFFSPRING_DATA
+
+### 🔬 Evolution Process
+
+These agents were created through:
+1. **Fitness-based selection**: Top 25% of performers selected as breeding candidates
+2. **Genetic crossover**: Mixed traits from both parents
+3. **Random mutations**: 15% mutation rate for genetic diversity
+4. **Generation advancement**: Complete lineage tracked
+
+### 📈 Next Steps
+
+The evolved agents are ready to be integrated into the active agent population:
+- Review their genetic traits
+- Add to agent registry (manual integration required)
+- Monitor their performance
+- Track generational improvements
+
+### 🧪 Genetic Algorithm Details
+
+- **Fitness function**: \`overall_score + longevity_bonus\`
+- **Selection method**: Elite-based (top 25%)
+- **Crossover type**: Uniform crossover
+- **Mutation rate**: 15% per gene
+- **Trait bounds**: [0, 100]
+
+---
+
+*🧬 Generated by Agent Evolution System (@accelerate-specialist)*
+*Workflow: \`agent-evolution.yml\` | Run: ${{ github.run_id }}*"
+
+          gh issue create \
+            --title "🧬 Agent Evolution: Generation $GENERATION - $OFFSPRING_COUNT New Offspring" \
+            --body "$ISSUE_BODY" \
+            --label "agent-system,evolution,automated"
+          
+          echo "✅ Created issue for evolved agents"
+      
+      - name: Commit evolution data
+        if: steps.evolve.outputs.success == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if there are changes
+          if git diff --quiet .github/agent-system/evolution_data.json; then
+            echo "No changes to evolution data"
+          else
+            git add .github/agent-system/evolution_data.json
+            git commit -m "🧬 Evolution: Generation ${{ steps.stats.outputs.generation }} - ${{ steps.evolve.outputs.offspring_count }} offspring (@accelerate-specialist)
+
+Co-authored-by: accelerate-specialist <accelerate-specialist@chained-agents>"
+            
+            git push
+            echo "✅ Committed evolution data"
+          fi
+      
+      - name: Report results
+        if: always()
+        run: |
+          echo "🧬 Agent Evolution Workflow Summary"
+          echo "=================================="
+          echo "High performers: ${{ steps.analyze.outputs.high_performers }}"
+          echo "Eligible for breeding: ${{ steps.analyze.outputs.eligible_for_breeding }}"
+          echo "Evolution attempted: ${{ steps.evolve.outputs.success || 'false' }}"
+          echo "Offspring created: ${{ steps.evolve.outputs.offspring_count || '0' }}"
+          
+          if [ "${{ steps.evolve.outputs.success }}" = "true" ]; then
+            echo "Generation: ${{ steps.stats.outputs.generation }}"
+            echo "Total evolved: ${{ steps.stats.outputs.total_evolved }}"
+            echo "✅ Evolution cycle complete"
+          else
+            echo "⚠️ Evolution cycle skipped or failed"
+          fi
