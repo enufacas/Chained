@@ -1,0 +1,31 @@
+[
+  {
+    "label": "baseline",
+    "directory": "tools",
+    "n_clusters": 10,
+    "total_time": 3.585267262000002,
+    "phases": [
+      {
+        "phase": "feature_extraction",
+        "label": "baseline",
+        "features": 2651,
+        "time_seconds": 2.7854413830000055,
+        "features_per_second": 951.7342623612462
+      },
+      {
+        "phase": "pattern_discovery",
+        "label": "baseline",
+        "patterns": 11,
+        "clusters": 10,
+        "time_seconds": 0.7997329849999915,
+        "patterns_per_second": 13.75459085259578
+      },
+      {
+        "phase": "report_generation",
+        "label": "baseline",
+        "report_size": 5926,
+        "time_seconds": 9.289400000511705e-05
+      }
+    ]
+  }
+]
