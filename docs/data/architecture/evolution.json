@@ -271,6 +271,22 @@
       },
       "component_count": 6,
       "file_count": 718
+    },
+    {
+      "timestamp": "2025-11-17T02:02:04.802560",
+      "commit": "b98a0249e4844add436bd11a76df1de6afdda304",
+      "commit_message": "Merge pull request #1472 from enufacas/copilot/update-copilot-instructions\n\nAdd documentation lifecycle governance and DATA_STORAGE_LIFECYCLE reference to copilot-instructions",
+      "metrics": {
+        "total_components": 7,
+        "total_files": 778,
+        "total_lines": 352085,
+        "total_dependencies": 0,
+        "external_libraries": 58,
+        "coupling_score": 0.0,
+        "complexity_score": 1.0
+      },
+      "component_count": 6,
+      "file_count": 778
     }
   ]
 }
