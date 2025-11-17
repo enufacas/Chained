@@ -679,83 +679,61 @@ jobs:
             # Fetch latest base branch
             git fetch origin "${base_branch}"
             
-            # Attempt to merge base into head with strategy
-            # Try ours strategy first (prefer PR changes for automated PRs)
-            if git merge "origin/${base_branch}" -X ours --no-edit; then
-              echo "✅ Merged ${base_branch} into ${head_branch} using 'ours' strategy"
+            # Use rebase instead of merge to maintain linear history without merge commits
+            # This prevents the merge commits that clutter PR history
+            # Attempt to rebase PR branch onto latest base
+            if git rebase "origin/${base_branch}"; then
+              echo "✅ Rebased ${head_branch} onto ${base_branch} successfully"
               
-              # Push the resolved conflicts
-              if git push origin "${head_branch}"; then
-                echo "✅ Pushed conflict resolution for PR #${pr_num}"
+              # Push the rebased branch (force with lease for safety)
+              if git push --force-with-lease origin "${head_branch}"; then
+                echo "✅ Pushed rebased branch for PR #${pr_num}"
                 
-                gh pr comment ${pr_num} --body "✅ **Merge Conflicts Resolved**
+                gh pr comment ${pr_num} --body "✅ **Branch Updated with Rebase**
                 
-                The merge conflicts in this PR have been automatically resolved.
+                This PR branch has been automatically rebased onto the latest \`${base_branch}\`.
                 
-                **Resolution strategy:** Used 'ours' strategy (preferred PR changes)
+                **Strategy:** Rebase (maintains linear history without merge commits)
                 **Base branch:** \`${base_branch}\`
                 **Updated branch:** \`${head_branch}\`
                 
-                The PR should now be ready for review and merge.
+                The PR now has a clean, linear history and should be ready for review and merge.
                 
                 **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
                 
                 ---
-                *Automatically resolved by System Monitor - Merge Conflict Resolution*" || true
+                *Automatically rebased by System Monitor (@engineer-master)*" || true
               else
-                echo "❌ Failed to push conflict resolution"
+                echo "❌ Failed to push rebased branch"
               fi
             else
-              # Merge failed, abort and try alternative strategy
-              git merge --abort
+              # Rebase failed, likely due to conflicts
+              git rebase --abort
               
-              echo "⚠️ 'ours' strategy failed, trying 'theirs' strategy"
+              echo "⚠️ Automatic rebase failed due to conflicts"
               
-              if git merge "origin/${base_branch}" -X theirs --no-edit; then
-                echo "✅ Merged ${base_branch} into ${head_branch} using 'theirs' strategy"
-                
-                if git push origin "${head_branch}"; then
-                  echo "✅ Pushed conflict resolution for PR #${pr_num}"
-                  
-                  gh pr comment ${pr_num} --body "✅ **Merge Conflicts Resolved**
-                  
-                  The merge conflicts in this PR have been automatically resolved.
-                  
-                  **Resolution strategy:** Used 'theirs' strategy (preferred base branch changes)
-                  **Base branch:** \`${base_branch}\`
-                  **Updated branch:** \`${head_branch}\`
-                  
-                  ⚠️ Note: This strategy preferred changes from the base branch. Please verify the changes.
-                  
-                  **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
-                  
-                  ---
-                  *Automatically resolved by System Monitor - Merge Conflict Resolution*" || true
-                else
-                  echo "❌ Failed to push conflict resolution"
-                fi
-              else
-                # Both strategies failed
-                git merge --abort
-                
-                echo "❌ Automatic resolution failed for PR #${pr_num}"
-                
-                gh pr comment ${pr_num} --body "⚠️ **Automatic Conflict Resolution Failed**
-                
-                This PR has complex merge conflicts that could not be automatically resolved.
-                
-                **Action required:** Manual resolution is needed.
-                
-                Please:
-                1. Pull the latest changes from \`${base_branch}\`
-                2. Resolve conflicts manually
-                3. Push the updated branch
-                
-                **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
-                
-                ---
-                *Attempted by System Monitor - Merge Conflict Resolution*" || true
-              fi
+              # Don't attempt alternative strategies - complex conflicts need manual resolution
+              echo "❌ Automatic resolution failed for PR #${pr_num}"
+              
+              gh pr comment ${pr_num} --body "⚠️ **Automatic Rebase Failed**
+              
+              This PR has conflicts that could not be automatically resolved via rebase.
+              
+              **Action required:** Manual conflict resolution is needed.
+              
+              **To resolve conflicts:**
+              1. Checkout the branch: \`git checkout ${head_branch}\`
+              2. Rebase onto base branch: \`git rebase origin/${base_branch}\`
+              3. Resolve conflicts in the affected files
+              4. Continue rebase: \`git rebase --continue\`
+              5. Force push (with lease for safety): \`git push --force-with-lease origin ${head_branch}\`
+              
+              **Why rebase?** Maintains a clean, linear commit history without merge commits.
+              
+              **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+              
+              ---
+              *Attempted by System Monitor (@engineer-master)*" || true
             fi
             
             # Return to main branch
