@@ -163,10 +163,11 @@ jobs:
                   # Use real GitHub activity metrics
                   try:
                       # Use batch cache to avoid redundant API calls
+                      # Note: Check 'is not None' because empty dict {} is still a valid cache
                       metrics = collector.collect_metrics(
                           agent_id, 
                           since_days=7,
-                          use_batch_cache=True if batch_cache else False,
+                          use_batch_cache=(batch_cache is not None),
                           batch_cache=batch_cache
                       )
                       overall_score = metrics.scores.overall
