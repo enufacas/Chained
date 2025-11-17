@@ -1,8 +1,9 @@
 {
   "current_generation": 0,
-  "total_evolved_agents": 0,
+  "agent_lineages": {},
+  "generation_history": [],
   "breeding_pairs": [],
-  "configuration": {
+  "config": {
     "mutation_rate": 0.15,
     "crossover_rate": 0.7,
     "elite_threshold": 0.75,
@@ -10,7 +11,13 @@
   },
   "metadata": {
     "created_at": "2025-11-17T15:30:00Z",
+    "updated_at": "2025-11-17T18:32:00Z",
     "version": "1.0",
-    "description": "Agent evolution tracking system - initialized by @troubleshoot-expert"
+    "description": "Agent evolution tracking system - initialized by @troubleshoot-expert",
+    "fixes": [
+      "Added missing agent_lineages field",
+      "Added missing generation_history field",
+      "Renamed configuration to config for consistency"
+    ]
   }
 }
