@@ -12,7 +12,8 @@ New to Chained? Start here:
 4. **[FAQ.md](../FAQ.md)** - Frequently asked questions
 5. **[GLOSSARY.md](./GLOSSARY.md)** - ⭐ Terminology and definitions
 6. **[LABELS.md](../LABELS.md)** - ⭐ **NEW!** Complete label reference guide
-7. **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - ⭐ Problem solving guide
+7. **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - ⭐ Quick problem solving guide
+8. **[COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md](./COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md)** - ⭐ **NEW!** Complete diagnostic manual (@clarify-champion)
 
 ## 🤖 Agent System
 
