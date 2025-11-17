@@ -8,37 +8,37 @@
     <style>
         .agentops-hero {
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(168, 85, 247, 0.1) 100%);
-            padding: 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
             text-align: center;
             border: 2px solid rgba(139, 92, 246, 0.3);
         }
         
         .agentops-hero h1 {
             color: #a855f7;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
         }
         
         .agentops-hero p {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             color: var(--text-muted);
-            max-width: 800px;
+            max-width: 700px;
             margin: 0 auto;
         }
         
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
         
         .metric-card {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
+            border-radius: 8px;
+            padding: 1rem;
             border: 1px solid rgba(139, 92, 246, 0.2);
             transition: all 0.3s;
         }
@@ -50,22 +50,22 @@
         }
         
         .metric-card .metric-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+            margin-bottom: 0.25rem;
         }
         
         .metric-card .metric-value {
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: var(--primary-color);
-            margin: 0.5rem 0;
+            margin: 0.25rem 0;
         }
         
         .metric-card .metric-label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         
         .metric-card .metric-change {
@@ -317,6 +317,38 @@
         .agent-workload-stats .value.in-progress {
             color: #fbbf24;
         }
+        
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-container h3 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 250px;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -401,27 +433,7 @@
                 </div>
             </section>
 
-            <!-- Agent Workload -->
-            <section id="agent-workload">
-                <div class="section-header">
-                    <h2>🤖 Agent Workload Distribution</h2>
-                </div>
-                <div class="agent-workload-grid" id="agent-workload-grid">
-                    <!-- Populated by JavaScript -->
-                </div>
-            </section>
-
-            <!-- Workflow Statistics -->
-            <section id="workflow-stats">
-                <div class="section-header">
-                    <h2>⚙️ Workflow Performance</h2>
-                </div>
-                <div class="workflow-stats-grid" id="workflow-stats-grid">
-                    <!-- Populated by JavaScript -->
-                </div>
-            </section>
-
-            <!-- Recent Runs -->
+            <!-- Recent Runs - MOVED UP -->
             <section id="recent-runs">
                 <div class="section-header">
                     <h2>📋 Recent Workflow Runs</h2>
@@ -456,6 +468,61 @@
                             <!-- Populated by JavaScript -->
                         </tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- Charts Section - NEW -->
+            <section id="charts-section">
+                <div class="section-header">
+                    <h2>📊 Trends & Analytics</h2>
+                </div>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>Success Rate Trend</h3>
+                        <div class="chart-wrapper">
+                            <div id="success-rate-chart"></div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Agent Performance Overview</h3>
+                        <div class="chart-wrapper">
+                            <div id="agent-performance-chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>Workflow Execution Trend</h3>
+                        <div class="chart-wrapper">
+                            <div id="workflow-trend-chart"></div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Average Duration by Workflow</h3>
+                        <div class="chart-wrapper">
+                            <div id="duration-chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agent Workload -->
+            <section id="agent-workload">
+                <div class="section-header">
+                    <h2>🤖 Agent Workload Distribution</h2>
+                </div>
+                <div class="agent-workload-grid" id="agent-workload-grid">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Workflow Statistics -->
+            <section id="workflow-stats">
+                <div class="section-header">
+                    <h2>⚙️ Workflow Performance</h2>
+                </div>
+                <div class="workflow-stats-grid" id="workflow-stats-grid">
+                    <!-- Populated by JavaScript -->
                 </div>
             </section>
 
@@ -499,6 +566,9 @@
                 
                 // Populate filters
                 populateFilters(data.runs);
+                
+                // Render charts
+                renderCharts(data.runs, data.agent_workload, data.workflow_stats);
                 
                 // Update last updated time
                 document.getElementById('last-updated').textContent = formatDateTime(data.last_updated);
@@ -777,6 +847,161 @@
             if (diffMins < 10080) return `${Math.floor(diffMins / 1440)}d ago`;
             
             return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+        
+        // Chart rendering functions (CSS-based)
+        function renderCharts(runs, agentWorkload, workflowStats) {
+            renderSuccessRateTrendChart(runs);
+            renderAgentPerformanceChart(agentWorkload);
+            renderWorkflowTrendChart(runs);
+            renderDurationChart(workflowStats);
+        }
+        
+        function renderSuccessRateTrendChart(runs) {
+            const container = document.getElementById('success-rate-chart');
+            if (!container) return;
+            
+            // Group runs by hour (last 24 hours)
+            const now = new Date();
+            const hoursAgo = 24;
+            const hourlyData = {};
+            
+            for (let i = hoursAgo - 1; i >= 0; i--) {
+                const hour = new Date(now - i * 3600000);
+                const hourKey = hour.toISOString().slice(0, 13);
+                hourlyData[hourKey] = { total: 0, success: 0 };
+            }
+            
+            runs.forEach(run => {
+                const runDate = new Date(run.created_at);
+                const hourKey = runDate.toISOString().slice(0, 13);
+                if (hourlyData[hourKey]) {
+                    hourlyData[hourKey].total++;
+                    if (run.conclusion === 'success') {
+                        hourlyData[hourKey].success++;
+                    }
+                }
+            });
+            
+            const successRates = Object.values(hourlyData).map(data => {
+                return data.total > 0 ? (data.success / data.total * 100) : 0;
+            });
+            
+            // Create bar chart HTML
+            let html = '<div style="display: flex; align-items: flex-end; height: 200px; gap: 2px; justify-content: space-between;">';
+            successRates.forEach((rate, i) => {
+                const height = rate;
+                const color = rate > 80 ? '#10b981' : rate > 50 ? '#fbbf24' : '#ef4444';
+                html += `<div style="flex: 1; background: ${color}; height: ${height}%; border-radius: 2px 2px 0 0; opacity: 0.8; min-width: 3px;" title="${rate.toFixed(1)}%"></div>`;
+            });
+            html += '</div>';
+            html += '<div style="margin-top: 8px; text-align: center; color: #94a3b8; font-size: 0.85rem;">Last 24 hours</div>';
+            
+            container.innerHTML = html;
+        }
+        
+        function renderAgentPerformanceChart(agentWorkload) {
+            const container = document.getElementById('agent-performance-chart');
+            if (!container) return;
+            
+            const agents = Object.keys(agentWorkload).slice(0, 8);
+            
+            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            agents.forEach(agent => {
+                const stats = agentWorkload[agent];
+                const total = stats.total;
+                const successPct = (stats.success / total * 100).toFixed(1);
+                const failurePct = (stats.failure / total * 100).toFixed(1);
+                
+                html += `
+                    <div>
+                        <div style="font-size: 0.9rem; color: var(--text-color); margin-bottom: 4px;">
+                            @${agent} (${total} runs)
+                        </div>
+                        <div style="display: flex; height: 24px; border-radius: 4px; overflow: hidden;">
+                            <div style="flex: ${stats.success}; background: #10b981;" title="Success: ${stats.success}"></div>
+                            <div style="flex: ${stats.failure}; background: #ef4444;" title="Failure: ${stats.failure}"></div>
+                            <div style="flex: ${stats.in_progress}; background: #fbbf24;" title="In Progress: ${stats.in_progress}"></div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">
+                            ${successPct}% success, ${failurePct}% failure
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+        
+        function renderWorkflowTrendChart(runs) {
+            const container = document.getElementById('workflow-trend-chart');
+            if (!container) return;
+            
+            // Group by last 12 hours
+            const now = new Date();
+            const hoursAgo = 12;
+            const hourlyData = {};
+            
+            for (let i = hoursAgo - 1; i >= 0; i--) {
+                const hour = new Date(now - i * 3600000);
+                const hourKey = hour.toISOString().slice(0, 13);
+                hourlyData[hourKey] = 0;
+            }
+            
+            runs.forEach(run => {
+                const runDate = new Date(run.created_at);
+                const hourKey = runDate.toISOString().slice(0, 13);
+                if (hourlyData[hourKey] !== undefined) {
+                    hourlyData[hourKey]++;
+                }
+            });
+            
+            const maxCount = Math.max(...Object.values(hourlyData), 1);
+            
+            let html = '<div style="display: flex; align-items: flex-end; height: 200px; gap: 4px; justify-content: space-between;">';
+            Object.values(hourlyData).forEach((count, i) => {
+                const height = (count / maxCount * 100);
+                html += `<div style="flex: 1; background: #8b5cf6; height: ${height}%; border-radius: 2px 2px 0 0; opacity: 0.8; min-width: 5px;" title="${count} runs"></div>`;
+            });
+            html += '</div>';
+            html += '<div style="margin-top: 8px; text-align: center; color: #94a3b8; font-size: 0.85rem;">Last 12 hours</div>';
+            
+            container.innerHTML = html;
+        }
+        
+        function renderDurationChart(workflowStats) {
+            const container = document.getElementById('duration-chart');
+            if (!container) return;
+            
+            const workflows = Object.keys(workflowStats).slice(0, 6);
+            const maxDuration = Math.max(...workflows.map(wf => workflowStats[wf].avg_duration));
+            
+            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            workflows.forEach(wf => {
+                const stats = workflowStats[wf];
+                const durationMin = (stats.avg_duration / 60).toFixed(1);
+                const widthPct = (stats.avg_duration / maxDuration * 100);
+                
+                html += `
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--text-color); margin-bottom: 4px;">
+                            ${wf.replace('.yml', '')}
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="flex: 1; background: rgba(6, 182, 212, 0.2); height: 24px; border-radius: 4px; overflow: hidden;">
+                                <div style="width: ${widthPct}%; height: 100%; background: #06b6d4;"></div>
+                            </div>
+                            <div style="min-width: 60px; text-align: right; font-size: 0.85rem; color: var(--primary-color);">
+                                ${durationMin} min
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            container.innerHTML = html;
         }
         
         // Load data on page load
