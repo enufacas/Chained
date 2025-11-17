@@ -27,6 +27,7 @@ SYSTEM_LABELS: List[Tuple[str, str, str]] = [
     ("agent-system", "1D76DB", "Agent system related"),
     ("agent-mission", "1D76DB", "Agent mission/task"),
     ("agent-spawner", "2563EB", "Agent creation/spawning"),
+    ("evolution", "9333EA", "Agent evolution/genetic algorithm"),
     ("performance-metrics", "6366F1", "Agent performance tracking"),
     ("investment-tracker", "8B5CF6", "Agent investment/expertise tracking"),
     ("collaboration", "EC4899", "Multi-agent collaboration"),

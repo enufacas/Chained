@@ -301,10 +301,16 @@ with open('analysis/uniqueness-scores.json') as f:
             sed -i "/FLAGGED_AGENTS_LIST/r /tmp/flagged_agents.txt" /tmp/issue_body.md
             sed -i "/FLAGGED_AGENTS_LIST/d" /tmp/issue_body.md
             
+            # Create issue with fallback if labels don't exist
             gh issue create \
               --title "⚠️ AI Agent Repetition Alert: ${total_flags} patterns detected" \
               --body-file /tmp/issue_body.md \
-              --label "automated" || true
+              --label "automated" || {
+                echo "⚠️ Issue creation with labels failed, retrying without labels..."
+                gh issue create \
+                  --title "⚠️ AI Agent Repetition Alert: ${total_flags} patterns detected" \
+                  --body-file /tmp/issue_body.md
+              }
           fi
 
       - name: Commit Analysis Results
