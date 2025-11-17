@@ -180,6 +180,8 @@ The evolved agents are ready to be integrated into the active agent population:
       
       - name: Commit evolution data
         if: steps.evolve.outputs.success == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -188,13 +190,39 @@ The evolved agents are ready to be integrated into the active agent population:
           if git diff --quiet .github/agent-system/evolution_data.json; then
             echo "No changes to evolution data"
           else
+            # Create unique branch name
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="agent-evolution/${TIMESTAMP}-${{ github.run_id }}"
+            
+            # Checkout new branch
+            git checkout -b "$BRANCH_NAME"
+            
+            # Commit changes
             git add .github/agent-system/evolution_data.json
             git commit -m "🧬 Evolution: Generation ${{ steps.stats.outputs.generation }} - ${{ steps.evolve.outputs.offspring_count }} offspring (@accelerate-specialist)
 
 Co-authored-by: accelerate-specialist <accelerate-specialist@chained-agents>"
             
-            git push
-            echo "✅ Committed evolution data"
+            # Push to new branch (NOT main)
+            git push origin "$BRANCH_NAME"
+            
+            # Create pull request with fallback
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "🧬 Agent Evolution: Generation ${{ steps.stats.outputs.generation }} - ${PR_DATE}" \
+              --body "## Agent Evolution Data Update"$'\n\n'"**@accelerate-specialist** has evolved the agent population through genetic algorithms."$'\n\n'"### Evolution Summary"$'\n'"- **Generation**: ${{ steps.stats.outputs.generation }}"$'\n'"- **Offspring created**: ${{ steps.evolve.outputs.offspring_count }}"$'\n'"- **Total evolved agents**: ${{ steps.stats.outputs.total_evolved }}"$'\n'"- **Total breeding events**: ${{ steps.stats.outputs.breeding_events }}"$'\n\n'"### Changes"$'\n'"- Updated evolution_data.json with new generation data"$'\n'"- Added ${{ steps.evolve.outputs.offspring_count }} new offspring records"$'\n\n'"---"$'\n'"*🧬 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+              --label "agent-system,evolution,automated" \
+              --base main \
+              --head "$BRANCH_NAME" || {
+                echo "⚠️ PR creation with labels failed, retrying without labels..."
+                gh pr create \
+                  --title "🧬 Agent Evolution: Generation ${{ steps.stats.outputs.generation }} - ${PR_DATE}" \
+                  --body "## Agent Evolution Data Update"$'\n\n'"**@accelerate-specialist** has evolved the agent population through genetic algorithms."$'\n\n'"### Evolution Summary"$'\n'"- **Generation**: ${{ steps.stats.outputs.generation }}"$'\n'"- **Offspring created**: ${{ steps.evolve.outputs.offspring_count }}"$'\n'"- **Total evolved agents**: ${{ steps.stats.outputs.total_evolved }}"$'\n'"- **Total breeding events**: ${{ steps.stats.outputs.breeding_events }}"$'\n\n'"### Changes"$'\n'"- Updated evolution_data.json with new generation data"$'\n'"- Added ${{ steps.evolve.outputs.offspring_count }} new offspring records"$'\n\n'"---"$'\n'"*🧬 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+                  --base main \
+                  --head "$BRANCH_NAME"
+              }
+            
+            echo "✅ PR created for evolution data update"
           fi
       
       - name: Report results
