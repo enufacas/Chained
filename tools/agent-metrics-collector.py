@@ -467,7 +467,9 @@ class MetricsCollector:
         """
         # Use batch cache if available (optimization for evaluate_all_agents)
         if use_batch_cache and batch_cache is not None:
-            return batch_cache.get(agent_id, [])
+            cached_issues = batch_cache.get(agent_id, [])
+            print(f"✅ Using batch cache for {agent_id}: {len(cached_issues)} issues (0 API calls)", file=sys.stderr)
+            return cached_issues
         
         # Fallback to individual agent search (for single-agent metrics)
         assigned_issues = []
@@ -477,7 +479,7 @@ class MetricsCollector:
             print(f"⚠️  Warning: No specialization found for {agent_id}", file=sys.stderr)
             return assigned_issues
         
-        print(f"🔍 Looking for issues assigned to agent {agent_id} (specialization: {specialization})", file=sys.stderr)
+        print(f"🔍 [FALLBACK] Looking for issues assigned to agent {agent_id} (specialization: {specialization})", file=sys.stderr)
         
         try:
             since_date = (datetime.now(timezone.utc) - timedelta(days=since_days)).isoformat()
