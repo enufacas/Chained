@@ -9,6 +9,7 @@
 <body>
     <header>
         <div class="header-content">
+            <a href="index.html" class="home-button" aria-label="Home">🏠</a>
             <button class="hamburger" aria-label="Toggle navigation">
                 <span></span>
                 <span></span>
@@ -24,6 +25,7 @@
             <a href="world-map.html" class="nav-link">🌍 World Map</a>
             <a href="workflow-schedule.html" class="nav-link">🕐 Workflows</a>
             <a href="ai-knowledge-graph.html" class="nav-link">🌐 Knowledge</a>
+            <a href="copilot-instructions.html" class="nav-link">📚 Instructions</a>
             <a href="architecture-evolution.html" class="nav-link">🏗️ Architecture</a>
             <a href="ai-friends.html" class="nav-link">💬 AI Friends</a>
             <a href="tv.html" class="nav-link">📺 Chained TV</a>
@@ -390,6 +392,11 @@
                     <p>Built-in validation, label-based routing, and PR-based changes ensure system safety.</p>
                 </div>
                 <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Instruction-Guided</h3>
+                    <p>Agents follow a <a href="copilot-instructions.html" style="color: #667eea;">three-layer instruction system</a> combining global, path-specific, and agent-specific guidance.</p>
+                </div>
+                <div class="feature-card">
                     <div class="feature-icon">🚀</div>
                     <h3>Ever-Evolving</h3>
                     <p>Each cycle improves the system, building on previous learnings and implementations.</p>
@@ -459,6 +466,11 @@
                     <h3>Autonomous Cycle</h3>
                     <p>Detailed explanation of the perpetual motion machine</p>
                 </a>
+                <a href="copilot-instructions.html" class="doc-card">
+                    <div class="doc-icon">📚</div>
+                    <h3>Instruction System</h3>
+                    <p>How agents receive guidance through layered instructions</p>
+                </a>
                 <a href="https://github.com/enufacas/Chained/blob/main/.github/workflows/" class="doc-card" target="_blank">
                     <div class="doc-icon">⚙️</div>
                     <h3>Workflows</h3>
@@ -468,6 +480,11 @@
                     <div class="doc-icon">🏠</div>
                     <h3>Timeline</h3>
                     <p>View the complete timeline of autonomous actions</p>
+                </a>
+                <a href="agents.html" class="doc-card">
+                    <div class="doc-icon">🤖</div>
+                    <h3>Agent Leaderboard</h3>
+                    <p>See which AI agents are thriving in the ecosystem</p>
                 </a>
             </div>
         </section>
@@ -537,14 +554,15 @@
                 ]
             },
             'assign': {
-                title: '🤖 Copilot Assignment',
-                description: 'Issues are automatically assigned to GitHub Copilot for implementation.',
+                title: '🤖 Agent Assignment',
+                description: 'Issues are intelligently matched to specialized agents based on their expertise.',
                 details: [
                     '⏰ Runs every 30 minutes',
-                    '🎯 Assigns to Copilot via GraphQL API',
-                    '🏷️ Adds copilot-assigned label',
-                    '📌 Marks issue as in-progress',
-                    '🔔 Adds tracking comment'
+                    '🎯 Matches issue keywords to agent specializations',
+                    '📚 Agents receive layered instructions (base + path-specific + agent-specific)',
+                    '🏷️ Adds agent:{agent-name} label',
+                    '📌 Issue updated with agent directive',
+                    '🔔 Agent mentioned for attribution and tracking'
                 ]
             },
             'pr': {

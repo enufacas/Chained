@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copilot Instructions System - Chained</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .instructions-hero {
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            text-align: center;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .instructions-hero h1 {
+            color: var(--accent-color);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .instructions-hero p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        .instruction-layers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .layer-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            border-top: 4px solid var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .layer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
+        }
+        
+        .layer-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .layer-card h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+        
+        .layer-card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        
+        .layer-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .layer-card li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-color);
+        }
+        
+        .layer-card li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .code-example {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(8, 145, 178, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+        
+        .code-example pre {
+            margin: 0;
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .code-example code {
+            color: #06b6d4;
+        }
+        
+        .example-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .example-section h3 {
+            color: var(--success-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .path-pattern {
+            background: rgba(8, 145, 178, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: var(--accent-color);
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .benefit-card {
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(8, 145, 178, 0.2);
+        }
+        
+        .benefit-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .benefit-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .diagram-flow {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .flow-step {
+            display: inline-block;
+            background: rgba(8, 145, 178, 0.15);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 0.5rem;
+            border: 2px solid var(--primary-color);
+            color: var(--text-color);
+            font-weight: 600;
+        }
+        
+        .flow-arrow {
+            display: inline-block;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin: 0 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="home-button" aria-label="Home">🏠</a>
+            <button class="hamburger" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1>📚 Copilot Instructions System</h1>
+            <p class="tagline">How agents receive base and context-specific guidance</p>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            <a href="agents.html" class="nav-link">🤖 Agents</a>
+            <a href="lifecycle.html" class="nav-link">🔄 Lifecycle</a>
+            <a href="world-map.html" class="nav-link">🌍 World Map</a>
+            <a href="workflow-schedule.html" class="nav-link">🕐 Workflows</a>
+            <a href="ai-knowledge-graph.html" class="nav-link">🌐 Knowledge</a>
+            <a href="copilot-instructions.html" class="nav-link" style="background: rgba(255, 255, 255, 0.2);">📚 Instructions</a>
+            <a href="architecture-evolution.html" class="nav-link">🏗️ Architecture</a>
+            <a href="ai-friends.html" class="nav-link">💬 AI Friends</a>
+            <a href="tv.html" class="nav-link">📺 Chained TV</a>
+            <a href="https://github.com/enufacas/Chained" target="_blank" class="nav-link">📂 GitHub</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="instructions-hero">
+            <h1>🎯 The Copilot Instructions System</h1>
+            <p>
+                Chained uses a sophisticated, layered instruction system to guide GitHub Copilot agents. 
+                This system combines base instructions with context-specific directives to ensure agents 
+                have the right knowledge at the right time.
+            </p>
+        </div>
+
+        <section>
+            <h2>🏗️ Three-Layer Architecture</h2>
+            <p class="section-description">
+                The instruction system operates in three distinct layers, each providing specialized guidance 
+                to ensure agents work effectively in any context.
+            </p>
+            
+            <div class="instruction-layers">
+                <div class="layer-card">
+                    <div class="layer-icon">🌐</div>
+                    <h3>Layer 1: Global Base Instructions</h3>
+                    <p>
+                        Core instructions embedded in the Copilot system configuration that apply to 
+                        <strong>every agent interaction</strong> across the entire repository.
+                    </p>
+                    <ul>
+                        <li>Repository structure and conventions</li>
+                        <li>Custom agent system overview</li>
+                        <li>Branch protection rules</li>
+                        <li>Agent mention requirements</li>
+                        <li>Security and quality standards</li>
+                    </ul>
+                </div>
+
+                <div class="layer-card">
+                    <div class="layer-icon">📁</div>
+                    <h3>Layer 2: Path-Specific Instructions</h3>
+                    <p>
+                        Context-aware instructions that automatically activate based on the files 
+                        being modified, stored in <code>.github/instructions/</code>.
+                    </p>
+                    <ul>
+                        <li>Workflow-specific guidelines</li>
+                        <li>GitHub Pages testing rules</li>
+                        <li>Issue/PR template requirements</li>
+                        <li>Agent assignment protocols</li>
+                        <li>File-type specific standards</li>
+                    </ul>
+                </div>
+
+                <div class="layer-card">
+                    <div class="layer-icon">🤖</div>
+                    <h3>Layer 3: Agent-Specific Instructions</h3>
+                    <p>
+                        Individual agent definitions that provide specialized knowledge, personality, 
+                        and approach for each custom agent type.
+                    </p>
+                    <ul>
+                        <li>Agent specialization areas</li>
+                        <li>Personality and communication style</li>
+                        <li>Preferred tools and methods</li>
+                        <li>Domain-specific knowledge</li>
+                        <li>Performance guidelines</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>🔄 How It Works</h2>
+            <div class="diagram-flow">
+                <div class="flow-step">Agent Assigned to Issue</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Loads Base Instructions</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Applies Path-Specific Rules</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Follows Agent Definition</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Executes Task</div>
+            </div>
+            <p class="section-description" style="margin-top: 1.5rem;">
+                When an agent starts work, all three layers combine to create a comprehensive 
+                understanding of <em>what to do</em>, <em>how to do it</em>, and <em>what standards to follow</em>.
+            </p>
+        </section>
+
+        <section class="example-section">
+            <h3>📋 Example: Path-Specific Instructions</h3>
+            <p>
+                Path-specific instructions use YAML frontmatter to define which files they apply to:
+            </p>
+            <div class="code-example">
+                <pre><code>---
+applyTo:
+  - ".github/workflows/**/*.yml"
+  - ".github/workflows/*.yml"
+---
+
+# Workflow-Specific Instructions
+
+When working with GitHub Actions workflows:
+- Always use PR-based workflow (never push to main)
+- Include workflow reference in created issues/PRs
+- Test workflows before committing
+- Document workflow purpose and triggers</code></pre>
+            </div>
+            <p style="margin-top: 1rem;">
+                This instruction file automatically activates whenever an agent modifies workflow files, 
+                ensuring consistent best practices.
+            </p>
+        </section>
+
+        <section class="example-section">
+            <h3>🎨 Example: Agent-Specific Instructions</h3>
+            <p>
+                Each custom agent has a definition file in <code>.github/agents/</code> that describes 
+                its specialization and approach:
+            </p>
+            <div class="code-example">
+                <pre><code># create-guru
+
+**Specialization:** Infrastructure Creation
+**Personality:** Inventive and visionary (inspired by Nikola Tesla)
+
+## Focus Areas
+- Creating new infrastructure components
+- Designing scalable architecture
+- Implementing foundational systems
+- Building robust tooling
+
+## Approach
+- Think big-picture and long-term
+- Design for extensibility
+- Document architectural decisions
+- Consider future scalability</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>✨ Real-World Instructions in Chained</h2>
+            <p class="section-description">
+                Our repository includes several path-specific instruction files that demonstrate this system in action:
+            </p>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <h4>📝 branch-protection.instructions.md</h4>
+                    <div class="path-pattern">**/*.yml, **/*.yaml</div>
+                    <p>
+                        Ensures all workflow changes go through PRs and never push directly to main branch.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>🏷️ agent-mentions.instructions.md</h4>
+                    <div class="path-pattern">**/*.yml, **/*.py, **/*.sh</div>
+                    <p>
+                        Enforces proper @agent-name mention syntax for attribution and performance tracking.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>🧪 github-pages-testing.instructions.md</h4>
+                    <div class="path-pattern">docs/**/*.html, docs/**/*.js</div>
+                    <p>
+                        Requires testing GitHub Pages locally before committing changes to documentation.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>🔄 workflow-reference.instructions.md</h4>
+                    <div class="path-pattern">.github/workflows/**</div>
+                    <p>
+                        Mandates workflow name references in all created issues and PRs for traceability.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>💬 issue-pr-agent-mentions.instructions.md</h4>
+                    <div class="path-pattern">**/*issue*.md, **/*pull_request*.md</div>
+                    <p>
+                        Establishes format for agent mentions in issue and PR templates and interactions.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>🎯 agent-issue-updates.instructions.md</h4>
+                    <div class="path-pattern">.github/workflows/**</div>
+                    <p>
+                        Requires agents to comment on issues when work is complete before updating PRs.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>🎯 Key Benefits</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <h4>🎨 Contextual Intelligence</h4>
+                    <p>
+                        Agents automatically receive relevant instructions based on what they're working on, 
+                        without overwhelming them with unnecessary information.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>🔄 Consistency</h4>
+                    <p>
+                        Path-specific rules ensure uniform practices across all agents when working with 
+                        similar files or contexts.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>🚀 Scalability</h4>
+                    <p>
+                        New instruction files can be added without modifying existing ones, making the 
+                        system easily extensible.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>📚 Knowledge Distribution</h4>
+                    <p>
+                        Best practices are encoded as instructions rather than relying on agent memory 
+                        or repetitive prompting.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>🎭 Specialization</h4>
+                    <p>
+                        Each agent brings unique expertise through agent-specific instructions while still 
+                        following repository-wide standards.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>🔍 Transparency</h4>
+                    <p>
+                        All instructions are version-controlled and reviewable, making the system's 
+                        behavior predictable and auditable.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>🔗 Integration with the Autonomous Loop</h2>
+            <p class="section-description">
+                The instruction system is a critical component of Chained's <a href="lifecycle.html" style="color: var(--accent-color); text-decoration: underline;">autonomous lifecycle</a>. 
+                It enables agents to work independently while maintaining high quality standards.
+            </p>
+            
+            <div class="example-section" style="border-left-color: var(--accent-color);">
+                <h3>🔄 Lifecycle Integration Points</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 0.75rem 0; padding-left: 2rem; position: relative; color: var(--text-color);">
+                        <span style="position: absolute; left: 0; color: var(--accent-color); font-weight: bold;">1.</span>
+                        <strong>Learning Phase:</strong> Agents learn new patterns that become instruction candidates
+                    </li>
+                    <li style="padding: 0.75rem 0; padding-left: 2rem; position: relative; color: var(--text-color);">
+                        <span style="position: absolute; left: 0; color: var(--accent-color); font-weight: bold;">2.</span>
+                        <strong>Idea Generation:</strong> Instructions influence which ideas are feasible and prioritized
+                    </li>
+                    <li style="padding: 0.75rem 0; padding-left: 2rem; position: relative; color: var(--text-color);">
+                        <span style="position: absolute; left: 0; color: var(--accent-color); font-weight: bold;">3.</span>
+                        <strong>Mission Creation:</strong> Issues are tagged with appropriate instruction contexts
+                    </li>
+                    <li style="padding: 0.75rem 0; padding-left: 2rem; position: relative; color: var(--text-color);">
+                        <span style="position: absolute; left: 0; color: var(--accent-color); font-weight: bold;">4.</span>
+                        <strong>Agent Assignment:</strong> Agents are matched based on their specialized instructions
+                    </li>
+                    <li style="padding: 0.75rem 0; padding-left: 2rem; position: relative; color: var(--text-color);">
+                        <span style="position: absolute; left: 0; color: var(--accent-color); font-weight: bold;">5.</span>
+                        <strong>Execution:</strong> Combined instructions guide agent behavior during implementation
+                    </li>
+                    <li style="padding: 0.75rem 0; padding-left: 2rem; position: relative; color: var(--text-color);">
+                        <span style="position: absolute; left: 0; color: var(--accent-color); font-weight: bold;">6.</span>
+                        <strong>Review & Merge:</strong> Instructions define quality standards for approval
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>📖 Learn More</h2>
+            <div class="benefits-grid">
+                <a href="agents.html" class="benefit-card" style="text-decoration: none; display: block;">
+                    <h4>🤖 View All Agents</h4>
+                    <p>
+                        Explore the 47 custom agents and their specialized instructions
+                    </p>
+                </a>
+
+                <a href="lifecycle.html" class="benefit-card" style="text-decoration: none; display: block;">
+                    <h4>🔄 Autonomous Lifecycle</h4>
+                    <p>
+                        See how instructions fit into the complete autonomous development loop
+                    </p>
+                </a>
+
+                <a href="https://github.com/enufacas/Chained/tree/main/.github/instructions" target="_blank" class="benefit-card" style="text-decoration: none; display: block;">
+                    <h4>📁 Browse Instructions</h4>
+                    <p>
+                        View the actual instruction files in the repository
+                    </p>
+                </a>
+
+                <a href="https://github.com/enufacas/Chained/tree/main/.github/agents" target="_blank" class="benefit-card" style="text-decoration: none; display: block;">
+                    <h4>🎯 Agent Definitions</h4>
+                    <p>
+                        Read the detailed definitions for each custom agent
+                    </p>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Chained - The Perpetual AI Motion Machine</p>
+        <p>
+            <a href="https://github.com/enufacas/Chained" target="_blank">GitHub Repository</a> |
+            <a href="index.html">Home</a> |
+            <a href="agents.html">Agents</a> |
+            <a href="lifecycle.html">Lifecycle</a>
+        </p>
+    </footer>
+
+    <script src="navigation.js"></script>
+</body>
+</html>
