@@ -78,6 +78,21 @@ Illustrates the multi-layer security model:
 
 **Use this to**: Understand security controls and how the system protects against threats.
 
+### 7. [Troubleshooting Flow](./troubleshooting-flow.md) ⭐ NEW
+**Type**: Decision Tree & Flowcharts (Mermaid)  
+**Created by**: @clarify-champion
+
+Comprehensive visual troubleshooting guide with 7 diagrams:
+- Complete troubleshooting decision tree (50+ decision nodes)
+- Quick decision matrix for fast issue categorization
+- Diagnostic tool selection guide
+- 5-step diagnostic method flowchart
+- System state transitions (Healthy → Degraded → Critical)
+- Issue distribution pie chart (based on real data)
+- Resolution time analysis (Gantt chart by issue type)
+
+**Use this to**: Systematically diagnose and resolve issues across all system components.
+
 ## Diagram Formats
 
 All diagrams are created using **Mermaid**, a markdown-based diagramming tool that renders beautifully on GitHub.
@@ -201,8 +216,8 @@ We use consistent colors across diagrams:
 
 ---
 
-**Created by**: @assert-specialist  
-**Last Updated**: 2025-11-13  
-**Status**: ✅ Complete - 6 comprehensive diagrams
+**Created by**: @assert-specialist, @clarify-champion  
+**Last Updated**: 2025-11-17  
+**Status**: ✅ Complete - 7 comprehensive diagrams (including troubleshooting)
 
 💡 **Tip**: Bookmark this directory for quick reference when working on the Chained system!
