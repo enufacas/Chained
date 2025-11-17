@@ -1,0 +1,297 @@
+name: "AgentOps Dashboard Data Sync"
+
+on:
+  schedule:
+    # Run every 30 minutes to keep dashboard data fresh
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+    inputs:
+      fetch_limit:
+        description: 'Number of recent runs to fetch per workflow'
+        required: false
+        type: number
+        default: 50
+
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  sync-agentops-data:
+    name: "Sync AgentOps Dashboard Data"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests PyYAML
+      
+      - name: Fetch AgentOps data
+        id: fetch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FETCH_LIMIT: ${{ inputs.fetch_limit || 50 }}
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          import requests
+          from datetime import datetime, timezone, timedelta
+          
+          print("🔄 Fetching AgentOps dashboard data...")
+          
+          GITHUB_TOKEN = os.environ['GH_TOKEN']
+          REPO = os.environ['GITHUB_REPOSITORY']
+          FETCH_LIMIT = int(os.environ.get('FETCH_LIMIT', '50'))
+          
+          headers = {
+              'Authorization': f'token {GITHUB_TOKEN}',
+              'Accept': 'application/vnd.github.v3+json'
+          }
+          
+          # Key workflows to monitor for AgentOps
+          workflows_to_monitor = [
+              'copilot-graphql-assign.yml',
+              'autonomous-pipeline.yml',
+              'learn-from-copilot.yml',
+              'agent-missions.yml',
+              'agent-evaluator.yml',
+              'self-reinforcement.yml'
+          ]
+          
+          all_runs = []
+          
+          for workflow_file in workflows_to_monitor:
+              print(f"\n📊 Fetching runs for {workflow_file}...")
+              
+              url = f'https://api.github.com/repos/{REPO}/actions/workflows/{workflow_file}/runs'
+              params = {'per_page': min(FETCH_LIMIT, 100)}
+              
+              try:
+                  response = requests.get(url, headers=headers, params=params, timeout=10)
+                  
+                  if response.status_code == 200:
+                      data = response.json()
+                      runs = data.get('workflow_runs', [])
+                      
+                      print(f"   Found {len(runs)} runs")
+                      
+                      for run in runs:
+                          # Calculate duration
+                          created_at = datetime.fromisoformat(run['created_at'].replace('Z', '+00:00'))
+                          updated_at = datetime.fromisoformat(run['updated_at'].replace('Z', '+00:00'))
+                          duration_seconds = (updated_at - created_at).total_seconds()
+                          
+                          # Extract agent from run name or path if available
+                          run_name = run.get('display_title', run.get('name', ''))
+                          agent_name = None
+                          if '@' in run_name:
+                              # Try to extract agent name
+                              parts = run_name.split('@')
+                              if len(parts) > 1:
+                                  agent_name = parts[1].split()[0].strip(')')
+                          
+                          run_data = {
+                              'id': run['id'],
+                              'run_number': run['run_number'],
+                              'workflow_name': run['name'],
+                              'workflow_file': workflow_file,
+                              'display_title': run.get('display_title', run['name']),
+                              'status': run['status'],
+                              'conclusion': run.get('conclusion'),
+                              'created_at': run['created_at'],
+                              'updated_at': run['updated_at'],
+                              'duration_seconds': round(duration_seconds, 2),
+                              'html_url': run['html_url'],
+                              'run_started_at': run.get('run_started_at'),
+                              'triggering_actor': run.get('triggering_actor', {}).get('login'),
+                              'event': run['event'],
+                              'head_branch': run.get('head_branch'),
+                              'head_sha': run['head_sha'][:8] if run.get('head_sha') else None,
+                              'agent_name': agent_name,
+                              'pull_requests': [
+                                  {
+                                      'number': pr['number'],
+                                      'url': pr['url']
+                                  }
+                                  for pr in run.get('pull_requests', [])
+                              ]
+                          }
+                          
+                          all_runs.append(run_data)
+                  
+                  elif response.status_code == 404:
+                      print(f"   ⚠️  Workflow not found: {workflow_file}")
+                  else:
+                      print(f"   ⚠️  Error {response.status_code}: {response.text[:100]}")
+              
+              except Exception as e:
+                  print(f"   ⚠️  Error fetching {workflow_file}: {e}")
+          
+          # Sort by created_at descending
+          all_runs.sort(key=lambda x: x['created_at'], reverse=True)
+          
+          # Calculate summary statistics
+          total_runs = len(all_runs)
+          completed_runs = [r for r in all_runs if r['status'] == 'completed']
+          success_runs = [r for r in completed_runs if r['conclusion'] == 'success']
+          failure_runs = [r for r in completed_runs if r['conclusion'] == 'failure']
+          in_progress_runs = [r for r in all_runs if r['status'] == 'in_progress']
+          
+          success_rate = (len(success_runs) / len(completed_runs) * 100) if completed_runs else 0
+          avg_duration = sum(r['duration_seconds'] for r in completed_runs) / len(completed_runs) if completed_runs else 0
+          
+          # Agent workload analysis
+          agent_workload = {}
+          for run in all_runs:
+              if run['agent_name']:
+                  if run['agent_name'] not in agent_workload:
+                      agent_workload[run['agent_name']] = {
+                          'total': 0,
+                          'success': 0,
+                          'failure': 0,
+                          'in_progress': 0
+                      }
+                  
+                  agent_workload[run['agent_name']]['total'] += 1
+                  if run['status'] == 'completed':
+                      if run['conclusion'] == 'success':
+                          agent_workload[run['agent_name']]['success'] += 1
+                      elif run['conclusion'] == 'failure':
+                          agent_workload[run['agent_name']]['failure'] += 1
+                  elif run['status'] == 'in_progress':
+                      agent_workload[run['agent_name']]['in_progress'] += 1
+          
+          # Workflow distribution
+          workflow_stats = {}
+          for run in all_runs:
+              wf = run['workflow_file']
+              if wf not in workflow_stats:
+                  workflow_stats[wf] = {
+                      'total': 0,
+                      'success': 0,
+                      'failure': 0,
+                      'in_progress': 0,
+                      'avg_duration': 0
+                  }
+              
+              workflow_stats[wf]['total'] += 1
+              if run['status'] == 'completed':
+                  if run['conclusion'] == 'success':
+                      workflow_stats[wf]['success'] += 1
+                  elif run['conclusion'] == 'failure':
+                      workflow_stats[wf]['failure'] += 1
+              elif run['status'] == 'in_progress':
+                  workflow_stats[wf]['in_progress'] += 1
+          
+          # Calculate average durations per workflow
+          for wf in workflow_stats:
+              wf_runs = [r for r in completed_runs if r['workflow_file'] == wf]
+              if wf_runs:
+                  workflow_stats[wf]['avg_duration'] = round(
+                      sum(r['duration_seconds'] for r in wf_runs) / len(wf_runs), 2
+                  )
+          
+          # Recent failures (last 24 hours)
+          now = datetime.now(timezone.utc)
+          recent_failures = [
+              r for r in failure_runs
+              if (now - datetime.fromisoformat(r['created_at'].replace('Z', '+00:00'))).total_seconds() < 86400
+          ]
+          
+          # Build final data structure
+          agentops_data = {
+              'last_updated': datetime.now(timezone.utc).isoformat(),
+              'summary': {
+                  'total_runs': total_runs,
+                  'completed': len(completed_runs),
+                  'in_progress': len(in_progress_runs),
+                  'success': len(success_runs),
+                  'failure': len(failure_runs),
+                  'success_rate': round(success_rate, 2),
+                  'avg_duration_seconds': round(avg_duration, 2),
+                  'recent_failures_24h': len(recent_failures)
+              },
+              'agent_workload': agent_workload,
+              'workflow_stats': workflow_stats,
+              'runs': all_runs[:100],  # Keep last 100 runs for dashboard
+              'recent_failures': recent_failures[:20]  # Last 20 failures for quick debugging
+          }
+          
+          # Save to docs/data
+          os.makedirs('docs/data', exist_ok=True)
+          output_file = 'docs/data/agentops-runs.json'
+          
+          with open(output_file, 'w') as f:
+              json.dump(agentops_data, f, indent=2)
+          
+          print(f"\n✅ AgentOps data synced to {output_file}")
+          print(f"\n📊 Summary:")
+          print(f"   Total runs: {total_runs}")
+          print(f"   Success rate: {success_rate:.1f}%")
+          print(f"   Avg duration: {avg_duration:.1f}s")
+          print(f"   In progress: {len(in_progress_runs)}")
+          print(f"   Recent failures (24h): {len(recent_failures)}")
+          print(f"   Agents tracked: {len(agent_workload)}")
+          
+          # Set outputs
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"total_runs={total_runs}\n")
+              f.write(f"success_rate={success_rate:.1f}\n")
+              f.write(f"has_changes=true\n")
+          EOF
+      
+      - name: Create PR with AgentOps data
+        if: steps.fetch.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add docs/data/agentops-runs.json
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="agentops-sync/${TIMESTAMP}-${{ github.run_id }}"
+            
+            git checkout -b "$BRANCH_NAME"
+            git commit -m "🔄 AgentOps data sync - $(date +%Y-%m-%d %H:%M)"
+            git push origin "$BRANCH_NAME"
+            
+            gh pr create \
+              --title "🔄 AgentOps Dashboard Data Sync - $(date +%Y-%m-%d)" \
+              --body "## 🔄 AgentOps Dashboard Data Sync
+          
+          **Total Runs:** ${{ steps.fetch.outputs.total_runs }}
+          **Success Rate:** ${{ steps.fetch.outputs.success_rate }}%
+          **Sync Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          This PR updates the AgentOps dashboard data with the latest workflow run information.
+          
+          Updated data includes:
+          - ✅ Recent workflow runs (all monitored workflows)
+          - ✅ Success/failure metrics
+          - ✅ Agent workload distribution  
+          - ✅ Performance statistics
+          - ✅ Recent failures for debugging
+          
+          ---
+          
+          *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+              --label "automated,documentation,auto-merge,copilot" \
+              --base main \
+              --head "$BRANCH_NAME"
+          fi

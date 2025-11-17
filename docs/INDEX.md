@@ -93,6 +93,7 @@ Technical documentation for developers:
 - **[LABELS.md](../LABELS.md)** - ⭐ **NEW!** Complete label reference guide (explains copilot vs copilot-assigned!)
 - **[MICRO_PROJECTS.md](./MICRO_PROJECTS.md)** - Specialized tools and projects
 - **[MONITORING.md](./MONITORING.md)** - System monitoring guide
+- **[AGENTOPS_DASHBOARD.md](./AGENTOPS_DASHBOARD.md)** - ⭐ **NEW!** AgentOps dashboard documentation (@create-champion)
 - **[PERFORMANCE_METRICS.md](./PERFORMANCE_METRICS.md)** - ⭐ **NEW!** Performance metrics collection (@assert-specialist)
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
 
