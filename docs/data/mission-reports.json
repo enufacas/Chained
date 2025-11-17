@@ -1,0 +1,527 @@
+{
+  "generated_by": "@guide-wizard",
+  "generated_at": "2025-11-17",
+  "total_missions": 45,
+  "categories": {
+    "ai_innovation": {
+      "name": "\ud83e\udd16 AI Innovation",
+      "keywords": [
+        "ai-innovation",
+        "ai/ml",
+        "gpt",
+        "claude",
+        "llm",
+        "model"
+      ],
+      "missions": [
+        {
+          "filename": "ai-innovation-mission-idea-16.md",
+          "title": "\ud83c\udfaf AI/ML Innovation Investigation Report",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "unknown",
+          "date": "2025-11-16",
+          "excerpt": "---",
+          "size": 10386
+        },
+        {
+          "filename": "ai-innovation-mission-idea16.md",
+          "title": "\ud83c\udfaf AI Innovation Investigation Report",
+          "mission_id": "idea:16",
+          "status": "in-progress",
+          "agent": "unknown",
+          "date": null,
+          "excerpt": "---",
+          "size": 24910
+        },
+        {
+          "filename": "claude-innovation-mission-idea18.md",
+          "title": "\ud83c\udfaf Claude AI/ML Innovation Investigation Report",
+          "mission_id": "idea:18",
+          "status": "complete",
+          "agent": "@investigate-champion",
+          "date": null,
+          "excerpt": "---",
+          "size": 21613
+        },
+        {
+          "filename": "coach-master-review-idea16.md",
+          "title": "\ud83d\udcad Coach-Master Review: AI/ML Innovation Mission (idea:16)",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "unknown",
+          "date": null,
+          "excerpt": "---",
+          "size": 35133
+        },
+        {
+          "filename": "gpt-innovation-mission-idea34.md",
+          "title": "\ud83c\udfaf GPT Innovation Investigation Report",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@investigate-champion",
+          "date": null,
+          "excerpt": "---",
+          "size": 22032
+        },
+        {
+          "filename": "mission-idea-16-summary.md",
+          "title": "\ud83c\udfaf Mission Completion Summary: AI/ML Innovation (idea:16)",
+          "mission_id": null,
+          "status": "complete",
+          "agent": "unknown",
+          "date": "2025-11-16",
+          "excerpt": "---",
+          "size": 9451
+        },
+        {
+          "filename": "mission-idea16-coach-review-summary.md",
+          "title": "Mission Completion Summary: AI/ML Innovation Investigation (idea:16)",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@coach-master",
+          "date": "2025-11-16",
+          "excerpt": "---",
+          "size": 8754
+        },
+        {
+          "filename": "mission-idea34-completion.md",
+          "title": "\ud83c\udfaf Mission Complete: GPT Innovation Investigation",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@investigate-champion",
+          "date": null,
+          "excerpt": "---",
+          "size": 12063
+        },
+        {
+          "filename": "mission-idea34-issue-comment.md",
+          "title": "\ud83c\udfaf GPT Innovation Investigation Complete",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@investigate-champion",
+          "date": null,
+          "excerpt": "---",
+          "size": 9095
+        }
+      ]
+    },
+    "cloud_infrastructure": {
+      "name": "\u2601\ufe0f Cloud Infrastructure",
+      "keywords": [
+        "cloud",
+        "aws",
+        "kubernetes",
+        "infrastructure",
+        "devops"
+      ],
+      "missions": [
+        {
+          "filename": "MISSION_COMPLETE_idea43.md",
+          "title": "Mission Completion Summary: Cloud Infrastructure Investigation",
+          "mission_id": "idea:43",
+          "status": "complete",
+          "agent": "@cloud-architect",
+          "date": "2025-11-17",
+          "excerpt": "---",
+          "size": 12801
+        },
+        {
+          "filename": "README-idea26.md",
+          "title": "Mission idea:26 - Cloud DevOps Innovation",
+          "mission_id": null,
+          "status": "complete",
+          "agent": "@cloud-architect",
+          "date": "2025-11-16",
+          "excerpt": "---",
+          "size": 6042
+        },
+        {
+          "filename": "agents-cloud-integration-proposal-idea44.md",
+          "title": "\ud83c\udfaf Ecosystem Integration Proposal: Cloud-Native Agent Architecture",
+          "mission_id": "idea:44",
+          "status": "complete",
+          "agent": "unknown",
+          "date": "2025-11-17",
+          "excerpt": "---",
+          "size": 31859
+        },
+        {
+          "filename": "agents-cloud-integration-research-idea44.md",
+          "title": "\ud83c\udfaf Agents-Cloud Integration Research Report",
+          "mission_id": "idea:44",
+          "status": "complete",
+          "agent": "unknown",
+          "date": "2025-11-17",
+          "excerpt": "",
+          "size": 20623
+        },
+        {
+          "filename": "aws-innovation-idea33.md",
+          "title": "\ud83c\udfaf AWS Innovation Investigation Report",
+          "mission_id": "idea:33",
+          "status": "complete",
+          "agent": "@cloud-architect",
+          "date": null,
+          "excerpt": "",
+          "size": 32075
+        },
+        {
+          "filename": "cloud-devops-innovation-idea-15.md",
+          "title": "\ud83c\udfaf Cloud DevOps Innovation Investigation - Mission idea:15",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@investigate-champion",
+          "date": null,
+          "excerpt": "---",
+          "size": 14032
+        },
+        {
+          "filename": "cloud-devops-innovation-idea26.md",
+          "title": "\ud83c\udfaf Cloud & DevOps Innovation Investigation Report",
+          "mission_id": "idea:26",
+          "status": "complete",
+          "agent": "@cloud-architect",
+          "date": null,
+          "excerpt": "---",
+          "size": 28580
+        },
+        {
+          "filename": "cloud-infrastructure-emerging-theme-idea43.md",
+          "title": "\ud83c\udfaf Cloud Infrastructure Innovation Investigation Report",
+          "mission_id": "idea:43",
+          "status": "complete",
+          "agent": "unknown",
+          "date": null,
+          "excerpt": "---",
+          "size": 45136
+        },
+        {
+          "filename": "mission-idea26-completion-summary.md",
+          "title": "\ud83c\udfaf Mission Completion Summary: idea:26 - Cloud DevOps Innovation",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@cloud-architect",
+          "date": null,
+          "excerpt": "---",
+          "size": 14355
+        }
+      ]
+    },
+    "security": {
+      "name": "\ud83d\udd12 Security Innovation",
+      "keywords": [
+        "security",
+        "vulnerability",
+        "authentication",
+        "encryption"
+      ],
+      "missions": [
+        {
+          "filename": "mission-idea32-README.md",
+          "title": "Security Innovation Mission - Quick Reference",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@monitor-champion",
+          "date": "2025-11-16",
+          "excerpt": "1. **Investigation Report** (25KB)",
+          "size": 1720
+        },
+        {
+          "filename": "mission-idea32-completion-summary.md",
+          "title": "\ud83c\udfaf Mission Completion Summary: Security Innovation (idea:32)",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@monitor-champion",
+          "date": null,
+          "excerpt": "---",
+          "size": 12705
+        },
+        {
+          "filename": "security-innovation-mission-idea32.md",
+          "title": "\ud83d\udd10 Security Innovation Investigation Report",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@monitor-champion",
+          "date": null,
+          "excerpt": "",
+          "size": 25745
+        }
+      ]
+    },
+    "web_api": {
+      "name": "\ufffd\ufffd Web & API",
+      "keywords": [
+        "web",
+        "api",
+        "rest",
+        "graphql",
+        "http"
+      ],
+      "missions": [
+        {
+          "filename": "mission_idea19_completion_note.md",
+          "title": "\ud83c\udfaf Mission Completion Note: Web API Innovation (idea:19)",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@investigate-champion",
+          "date": "2025-11-16",
+          "excerpt": "",
+          "size": 2369
+        },
+        {
+          "filename": "mission_idea30_completion_summary.md",
+          "title": "Mission Completion Summary: Web API Innovation (idea:30)",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@bridge-master",
+          "date": null,
+          "excerpt": "",
+          "size": 15871
+        },
+        {
+          "filename": "web_api_innovation_investigation_20251116.md",
+          "title": "\ud83c\udf10 Web API Innovation Investigation Report",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "unknown",
+          "date": "2025-11-16",
+          "excerpt": "---",
+          "size": 29944
+        },
+        {
+          "filename": "web_api_innovation_mission_idea30.md",
+          "title": "\ud83c\udf10 Web API Innovation Investigation Report",
+          "mission_id": "idea:30",
+          "status": "complete",
+          "agent": "unknown",
+          "date": null,
+          "excerpt": "",
+          "size": 39706
+        }
+      ]
+    },
+    "platform_specific": {
+      "name": "\ud83c\udfaf Platform Innovations",
+      "keywords": [
+        "apple",
+        "nvidia",
+        "google",
+        "microsoft"
+      ],
+      "missions": [
+        {
+          "filename": "apple-innovation-mission-idea37.md",
+          "title": "\ud83c\udf4e Apple Innovation Investigation - Mission ID: idea:37",
+          "mission_id": "idea:37",
+          "status": "complete",
+          "agent": "@develop-specialist",
+          "date": null,
+          "excerpt": "---",
+          "size": 36724
+        },
+        {
+          "filename": "issue-comment-idea38-completion.md",
+          "title": "Issue Completion Comment - Nvidia Innovation Mission (idea:38)",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "unknown",
+          "date": null,
+          "excerpt": "",
+          "size": 14109
+        },
+        {
+          "filename": "mission-idea37-completion.md",
+          "title": "Mission Completion Summary: Apple Innovation (idea:37)",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@develop-specialist",
+          "date": null,
+          "excerpt": "---",
+          "size": 8762
+        },
+        {
+          "filename": "nvidia-innovation-mission-idea38.md",
+          "title": "\ud83c\udfaf Nvidia Innovation Investigation Report",
+          "mission_id": "idea:38",
+          "status": "complete",
+          "agent": "unknown",
+          "date": null,
+          "excerpt": "---",
+          "size": 37160
+        }
+      ]
+    },
+    "investigations": {
+      "name": "\ud83d\udcca Investigations",
+      "keywords": [
+        "investigation",
+        "analysis",
+        "research",
+        "study"
+      ],
+      "missions": [
+        {
+          "filename": "README-idea15-completion.md",
+          "title": "Mission idea:15 Completion Documentation",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@investigate-champion",
+          "date": null,
+          "excerpt": "",
+          "size": 10294
+        },
+        {
+          "filename": "README-idea41-ai-agents.md",
+          "title": "\ud83d\udcda AI Agents Investigation - Quick Reference Guide",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@investigate-champion",
+          "date": "2025-11-17",
+          "excerpt": "---",
+          "size": 7516
+        },
+        {
+          "filename": "RESOLUTION-SUMMARY.md",
+          "title": "Workflow Health Issue Resolution Summary",
+          "mission_id": null,
+          "status": "complete",
+          "agent": "unknown",
+          "date": "2025-11-14",
+          "excerpt": "---",
+          "size": 5076
+        },
+        {
+          "filename": "ai-agents-emerging-theme-idea41.md",
+          "title": "\ud83c\udfaf AI Agents Emerging Theme Investigation Report",
+          "mission_id": "idea:41",
+          "status": "complete",
+          "agent": "Autonomous",
+          "date": null,
+          "excerpt": "",
+          "size": 61379
+        },
+        {
+          "filename": "hn_learning_investigation_20251115.md",
+          "title": "\ud83d\udd0d Hacker News Learning Investigation - November 15, 2025",
+          "mission_id": null,
+          "status": "complete",
+          "agent": "unknown",
+          "date": "2025-11-15",
+          "excerpt": "---",
+          "size": 14727
+        },
+        {
+          "filename": "issue-comment-idea-16.md",
+          "title": "issue-comment-idea-16.md",
+          "mission_id": null,
+          "status": "complete",
+          "agent": "unknown",
+          "date": null,
+          "excerpt": "--- - \u2705 **Documentation related to AI/ML** - Comprehensive investigation report created",
+          "size": 10718
+        },
+        {
+          "filename": "issue-comment-idea18-completion.md",
+          "title": "issue-comment-idea18-completion.md",
+          "mission_id": null,
+          "status": "complete",
+          "agent": "unknown",
+          "date": null,
+          "excerpt": "--- - Analyzed 18 Claude-related mentions across GitHub Trending, Hacker News, and TLDR",
+          "size": 5876
+        },
+        {
+          "filename": "issue-comment-idea26-completion.md",
+          "title": "issue-comment-idea26-completion.md",
+          "mission_id": null,
+          "status": "complete",
+          "agent": "@cloud-architect",
+          "date": "2025-11-16",
+          "excerpt": "--- Analyzed **38 cloud mentions** across TLDR Tech, Hacker News, and GitHub Trending, focusing on two transformative stories that exemplify current cloud infrastructure trends.",
+          "size": 8545
+        },
+        {
+          "filename": "issue-comment-idea37-completion.md",
+          "title": "issue-comment-idea37-completion.md",
+          "mission_id": "idea:37.",
+          "status": "complete",
+          "agent": "unknown",
+          "date": null,
+          "excerpt": "---",
+          "size": 8111
+        },
+        {
+          "filename": "mission-idea16-completion.md",
+          "title": "\ud83c\udfaf Mission Complete: AI Innovation Investigation",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "@investigate-champion",
+          "date": null,
+          "excerpt": "---",
+          "size": 8805
+        },
+        {
+          "filename": "mission-idea17-coordination-summary.md",
+          "title": "\ud83c\udfaf Mission idea:17 - Coordination Summary",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "unknown",
+          "date": "2025-11-16",
+          "excerpt": "",
+          "size": 15533
+        },
+        {
+          "filename": "mission-idea17-issue-comment.md",
+          "title": "\ud83c\udfaf Mission idea:17 Completion - Issue Comment",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "unknown",
+          "date": "2025-11-16",
+          "excerpt": "---",
+          "size": 5879
+        },
+        {
+          "filename": "mission-idea17-meta-coordinator-validation.md",
+          "title": "\ud83c\udfaf Mission idea:17 - Meta-Coordinator Validation & Completion Report",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "unknown",
+          "date": null,
+          "excerpt": "",
+          "size": 16775
+        },
+        {
+          "filename": "mission-idea17-validation-report.md",
+          "title": "\ud83c\udfaf Mission idea:17 Validation Report",
+          "mission_id": "**",
+          "status": "complete",
+          "agent": "unknown",
+          "date": "2025-11-16",
+          "excerpt": "---",
+          "size": 14750
+        },
+        {
+          "filename": "mission-idea33-completion-comment.md",
+          "title": "mission-idea33-completion-comment.md",
+          "mission_id": null,
+          "status": "complete",
+          "agent": "unknown",
+          "date": null,
+          "excerpt": "",
+          "size": 5879
+        },
+        {
+          "filename": "workflow-health-2025-11-14-investigate-champion.md",
+          "title": "Workflow Health Investigation Report",
+          "mission_id": null,
+          "status": "complete",
+          "agent": "@investigate-champion",
+          "date": "2025-11-14",
+          "excerpt": "---",
+          "size": 7181
+        }
+      ]
+    }
+  }
+}

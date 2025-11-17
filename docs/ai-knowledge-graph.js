@@ -1,4 +1,183 @@
 // AI Knowledge Graph Visualization using D3.js
+// Enhanced by @guide-wizard to include Mission Reports
+
+// ============================================================================
+// MISSION REPORTS FUNCTIONALITY - by @guide-wizard
+// ============================================================================
+
+/**
+ * Load and display mission reports from the investigation-reports directory
+ * Organized by category for easy navigation and discovery
+ */
+async function loadMissionReports() {
+    try {
+        console.log('Loading mission reports data...');
+        const response = await fetch('data/mission-reports.json');
+        
+        if (!response.ok) {
+            throw new Error(`Failed to load mission reports: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Mission reports loaded:', data);
+        
+        // Update statistics
+        document.getElementById('total-missions-count').textContent = data.total_missions;
+        
+        // Count completed missions
+        let completedCount = 0;
+        Object.values(data.categories).forEach(category => {
+            category.missions.forEach(mission => {
+                if (mission.status === 'complete') completedCount++;
+            });
+        });
+        document.getElementById('completed-missions-count').textContent = completedCount;
+        
+        // Count categories with missions
+        const categoriesWithMissions = Object.values(data.categories).filter(cat => cat.missions.length > 0).length;
+        document.getElementById('categories-count').textContent = categoriesWithMissions;
+        
+        // Render mission categories
+        renderMissionCategories(data.categories);
+        
+    } catch (error) {
+        console.error('Error loading mission reports:', error);
+        const container = document.getElementById('mission-categories-container');
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--text-muted, #666);">
+                <p style="font-size: 18px; margin-bottom: 10px;">⚠️ Unable to load mission reports</p>
+                <p style="font-size: 14px;">Error: ${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Render mission reports organized by category
+ * Each category displays its missions in a grid layout
+ */
+function renderMissionCategories(categories) {
+    const container = document.getElementById('mission-categories-container');
+    container.innerHTML = '';
+    
+    // Sort categories by number of missions (descending)
+    const sortedCategories = Object.entries(categories)
+        .filter(([_, cat]) => cat.missions.length > 0)
+        .sort((a, b) => b[1].missions.length - a[1].missions.length);
+    
+    sortedCategories.forEach(([categoryKey, category]) => {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'mission-category';
+        categoryDiv.id = `category-${categoryKey}`;
+        
+        // Category header
+        const header = document.createElement('h3');
+        header.innerHTML = `
+            ${category.name}
+            <span class="mission-count">${category.missions.length}</span>
+        `;
+        categoryDiv.appendChild(header);
+        
+        // Mission grid
+        const grid = document.createElement('div');
+        grid.className = 'mission-grid';
+        
+        // Sort missions by date (newest first) and status (complete first)
+        const sortedMissions = [...category.missions].sort((a, b) => {
+            // Completed missions first
+            if (a.status === 'complete' && b.status !== 'complete') return -1;
+            if (a.status !== 'complete' && b.status === 'complete') return 1;
+            
+            // Then by date
+            if (a.date && b.date) {
+                return b.date.localeCompare(a.date);
+            }
+            return 0;
+        });
+        
+        sortedMissions.forEach(mission => {
+            const card = createMissionCard(mission);
+            grid.appendChild(card);
+        });
+        
+        categoryDiv.appendChild(grid);
+        container.appendChild(categoryDiv);
+    });
+}
+
+/**
+ * Create a mission card element
+ * Displays mission title, status, agent, date, and excerpt with link to full report
+ */
+function createMissionCard(mission) {
+    const card = document.createElement('div');
+    card.className = 'mission-card';
+    
+    // Card header with title and status
+    const header = document.createElement('div');
+    header.className = 'mission-card-header';
+    
+    const title = document.createElement('h4');
+    title.className = 'mission-title';
+    title.textContent = mission.title.replace(/^#+\s*/, ''); // Remove leading # from title
+    
+    const status = document.createElement('span');
+    status.className = `mission-status ${mission.status}`;
+    status.textContent = mission.status === 'complete' ? '✅ Complete' : '🔄 In Progress';
+    
+    header.appendChild(title);
+    header.appendChild(status);
+    card.appendChild(header);
+    
+    // Mission metadata
+    const meta = document.createElement('div');
+    meta.className = 'mission-meta';
+    
+    if (mission.agent && mission.agent !== 'unknown') {
+        const agentSpan = document.createElement('span');
+        agentSpan.innerHTML = `🤖 <strong>${mission.agent}</strong>`;
+        meta.appendChild(agentSpan);
+    }
+    
+    if (mission.date) {
+        const dateSpan = document.createElement('span');
+        dateSpan.innerHTML = `📅 ${mission.date}`;
+        meta.appendChild(dateSpan);
+    }
+    
+    if (mission.mission_id) {
+        const idSpan = document.createElement('span');
+        idSpan.innerHTML = `🎯 ${mission.mission_id}`;
+        meta.appendChild(idSpan);
+    }
+    
+    if (meta.children.length > 0) {
+        card.appendChild(meta);
+    }
+    
+    // Excerpt
+    if (mission.excerpt) {
+        const excerpt = document.createElement('p');
+        excerpt.className = 'mission-excerpt';
+        excerpt.textContent = mission.excerpt;
+        card.appendChild(excerpt);
+    }
+    
+    // Link to full report
+    const link = document.createElement('a');
+    link.className = 'mission-link';
+    link.href = `https://github.com/enufacas/Chained/blob/main/investigation-reports/${mission.filename}`;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.innerHTML = '📄 View Full Report →';
+    card.appendChild(link);
+    
+    return card;
+}
+
+// ============================================================================
+// TAB SWITCHING
+// ============================================================================
 
 // Tab switching
 function switchTab(tabName) {
@@ -17,6 +196,12 @@ function switchTab(tabName) {
     
     // Activate button
     event.target.classList.add('active');
+    
+    // Load mission reports if switching to that tab
+    if (tabName === 'mission-reports' && !window.missionReportsLoaded) {
+        loadMissionReports();
+        window.missionReportsLoaded = true;
+    }
     
     // Load codebase graph if switching to that tab
     if (tabName === 'codebase' && !window.codebaseGraphLoaded) {
@@ -814,3 +999,19 @@ function toggleCodebasePhysics() {
     }
 }
 
+
+// ============================================================================
+// INITIALIZATION - by @guide-wizard
+// ============================================================================
+
+/**
+ * Initialize the page on load
+ * Mission Reports tab is active by default, so load it immediately
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('AI Knowledge Graph page initialized by @guide-wizard');
+    
+    // Load mission reports immediately since it's the active tab
+    loadMissionReports();
+    window.missionReportsLoaded = true;
+});

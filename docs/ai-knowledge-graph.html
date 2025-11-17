@@ -193,7 +193,126 @@
         .tab-content.active {
             display: block;
         }
+        
+        /* Mission Reports Styles - by @guide-wizard */
+        .mission-category {
+            margin-bottom: 30px;
+            background: var(--bg-secondary, #1a1a2e);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--primary, #00d4ff);
+        }
+        
+        .mission-category h3 {
+            color: var(--primary, #00d4ff);
+            margin: 0 0 15px 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .mission-count {
+            background: var(--primary, #00d4ff);
+            color: var(--bg-primary, #0f0f1e);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 15px;
+        }
+        
+        .mission-card {
+            background: var(--bg-primary, #0f0f1e);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .mission-card:hover {
+            border-color: var(--primary, #00d4ff);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+        }
+        
+        .mission-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .mission-title {
+            color: var(--text-primary, #e0e0e0);
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            flex: 1;
+        }
+        
+        .mission-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        
+        .mission-status.complete {
+            background: #4ecdc4;
+            color: #0f0f1e;
+        }
+        
+        .mission-status.in-progress {
+            background: #ffeaa7;
+            color: #0f0f1e;
+        }
+        
+        .mission-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: var(--text-muted, #666);
+        }
+        
+        .mission-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .mission-excerpt {
+            color: var(--text-secondary, #b0b0b0);
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+        
+        .mission-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary, #00d4ff);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        
+        .mission-link:hover {
+            text-decoration: underline;
+        }
     </style>
+
 </head>
 <body>
     <header>
@@ -225,7 +344,10 @@
     <main>
         <!-- Tab Navigation -->
         <div class="tabs" style="margin-bottom: 20px; border-bottom: 2px solid var(--primary, #00d4ff);">
-            <button class="tab-button active" onclick="switchTab('ai-learnings')">
+            <button class="tab-button active" onclick="switchTab('mission-reports')">
+                🎯 Mission Reports
+            </button>
+            <button class="tab-button" onclick="switchTab('ai-learnings')">
                 📚 AI Learnings
             </button>
             <button class="tab-button" onclick="switchTab('codebase')">
@@ -233,8 +355,42 @@
             </button>
         </div>
 
+        <!-- Mission Reports Tab -->
+        <div id="mission-reports" class="tab-content active">
+            <section class="mission-reports-section">
+                <h2>🎯 Mission Reports</h2>
+                <p class="section-description">
+                    Comprehensive investigation reports from specialized agents exploring AI innovation trends, 
+                    cloud infrastructure, security, and emerging technologies. Each mission delivers actionable 
+                    insights backed by thorough research and analysis.
+                </p>
+                
+                <div id="mission-stats" style="margin-bottom: 30px; display: flex; gap: 20px; flex-wrap: wrap;">
+                    <div style="background: var(--bg-secondary, #1a1a2e); padding: 15px; border-radius: 8px; border: 1px solid var(--primary, #00d4ff);">
+                        <h3 style="margin: 0 0 10px 0; color: var(--primary, #00d4ff);">📊 Total Missions</h3>
+                        <p style="font-size: 32px; margin: 0; font-weight: bold;" id="total-missions-count">0</p>
+                    </div>
+                    <div style="background: var(--bg-secondary, #1a1a2e); padding: 15px; border-radius: 8px; border: 1px solid #4ecdc4;">
+                        <h3 style="margin: 0 0 10px 0; color: #4ecdc4;">✅ Completed</h3>
+                        <p style="font-size: 32px; margin: 0; font-weight: bold;" id="completed-missions-count">0</p>
+                    </div>
+                    <div style="background: var(--bg-secondary, #1a1a2e); padding: 15px; border-radius: 8px; border: 1px solid #ffeaa7;">
+                        <h3 style="margin: 0 0 10px 0; color: #ffeaa7;">📁 Categories</h3>
+                        <p style="font-size: 32px; margin: 0; font-weight: bold;" id="categories-count">0</p>
+                    </div>
+                </div>
+                
+                <div id="mission-categories-container">
+                    <!-- Mission categories will be populated here by JavaScript -->
+                    <p style="text-align: center; color: var(--text-muted, #666); padding: 40px;">
+                        Loading mission reports...
+                    </p>
+                </div>
+            </section>
+        </div>
+
         <!-- AI Learnings Tab -->
-        <div id="ai-learnings" class="tab-content active">
+        <div id="ai-learnings" class="tab-content">
             <section class="knowledge-graph-section">
                 <h2>🌐 AI Learnings Network</h2>
                 <p class="section-description">
