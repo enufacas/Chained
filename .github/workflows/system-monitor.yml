@@ -112,6 +112,9 @@ jobs:
             merge_rate="0.0"
           fi
           
+          # Count learning files (JSON and MD files in learnings directory)
+          learning_count=$(find learnings/ -type f \( -name "*.json" -o -name "*.md" \) 2>/dev/null | wc -l || echo 0)
+          
           cat > docs/data/stats.json << EOF
           {
             "total_issues": ${total_issues},
@@ -125,6 +128,7 @@ jobs:
             "in_progress": ${in_progress},
             "completion_rate": ${completion_rate},
             "merge_rate": ${merge_rate},
+            "learning_sessions": ${learning_count},
             "last_updated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
           }
           EOF
