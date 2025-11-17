@@ -32,6 +32,7 @@ Detailed table of recent executions with:
 - Run number and workflow name
 - Status badges (success/failure/in-progress)
 - Agent attribution (@agent-name)
+- **Branch name** - Git branch for the workflow run (clickable link) ✨ NEW
 - **Issue number** - Associated GitHub issue (clickable link)
 - **PR number(s)** - Associated pull request(s) (clickable links)
 - Duration and start time
@@ -40,6 +41,7 @@ Detailed table of recent executions with:
 ### 🔍 Filtering & Search
 - Filter by status (All/Success/Failure/In Progress)
 - Filter by workflow type
+- **Filter by branch** - Filter runs by Git branch ✨ NEW
 - Real-time table updates
 
 ## Data Sources
