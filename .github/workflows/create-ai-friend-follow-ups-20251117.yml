@@ -1,0 +1,120 @@
+name: "AI Friend: Create Follow-up Issues - 2025-11-17"
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (do not create issues)'
+        required: false
+        default: 'false'
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  create-follow-up-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python for issue processing
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Process and create issues
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import re
+          import subprocess
+          import sys
+          
+          def process_issue_file(filepath, title, labels):
+              """Strip frontmatter and create issue from markdown file."""
+              with open(filepath, 'r') as f:
+                  content = f.read()
+              
+              # Remove frontmatter
+              body = re.sub(r'^---\n.*?\n---\n', '', content, flags=re.DOTALL).strip()
+              
+              # Create temp file for body
+              temp_file = '/tmp/issue_body.md'
+              with open(temp_file, 'w') as f:
+                  f.write(body)
+              
+              # Create issue using gh CLI
+              cmd = [
+                  'gh', 'issue', 'create',
+                  '--title', title,
+                  '--body-file', temp_file,
+                  '--label', labels,
+                  '--repo', 'enufacas/Chained'
+              ]
+              
+              try:
+                  result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+                  print(f"✅ Created: {title}")
+                  print(f"   URL: {result.stdout.strip()}")
+                  return True
+              except subprocess.CalledProcessError as e:
+                  print(f"❌ Failed to create: {title}")
+                  print(f"   Error: {e.stderr}")
+                  return False
+          
+          # Process all issues from 2025-11-17 AI Friend conversation
+          issues = [
+              ('docs/ai-suggestions/issue-10-curiosity-engine.md',
+               '🔍 Curiosity Engine - Identify and Explore Knowledge Gaps',
+               'enhancement,ai-suggested,copilot,learning,innovation'),
+              ('docs/ai-suggestions/issue-11-learning-priority-system.md',
+               '🎯 Learning Priority System - Smart Ranking for Knowledge Application',
+               'enhancement,ai-suggested,copilot,learning,optimization'),
+              ('docs/ai-suggestions/issue-12-ab-testing-framework.md',
+               '🧪 A/B Testing Framework for AI-Generated Features',
+               'enhancement,ai-suggested,copilot,testing,experimentation')
+          ]
+          
+          success_count = 0
+          for filepath, title, labels in issues:
+              if process_issue_file(filepath, title, labels):
+                  success_count += 1
+          
+          print(f"\n✅ Successfully created {success_count}/{len(issues)} issues")
+          
+          # Note about What-If Simulator
+          print("\n📝 Note: What-If Simulator (issue-8) already exists and was validated by this AI Friend conversation")
+          
+          sys.exit(0 if success_count > 0 else 1)
+          
+          PYTHON_SCRIPT
+
+      - name: Dry run summary
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: |
+          echo "🔍 DRY RUN MODE - No issues will be created"
+          echo ""
+          echo "The following issues would be created:"
+          echo "1. 🔍 Curiosity Engine - Identify and Explore Knowledge Gaps"
+          echo "2. 🎯 Learning Priority System - Smart Ranking for Knowledge Application"
+          echo "3. 🧪 A/B Testing Framework for AI-Generated Features"
+          echo ""
+          echo "Note: What-If Simulator (issue-8) already exists"
+
+      - name: Summary
+        run: |
+          echo "✅ AI Friend follow-up issues creation completed"
+          echo ""
+          echo "Issues created from AI Friend conversation (2025-11-17):"
+          echo "- 🔍 Curiosity Engine: Self-directed knowledge discovery"
+          echo "- 🎯 Learning Priority System: Intelligent learning prioritization"
+          echo "- 🧪 A/B Testing Framework: Scientific feature validation"
+          echo "- 🔮 What-If Simulator: Already exists (issue-8)"
+          echo ""
+          echo "Source conversation: docs/ai-conversations/conversation_20251117_091815.json"
+          echo ""
+          echo "Designed by: @create-guru with inventive, visionary infrastructure approach"
