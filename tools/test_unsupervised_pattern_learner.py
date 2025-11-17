@@ -523,6 +523,62 @@ def test_integration_with_real_code():
     return True
 
 
+def test_accelerated_learner():
+    """Test accelerated learner compatibility and performance"""
+    print("\nTesting accelerated learner...")
+    
+    try:
+        from accelerated_pattern_learner import AcceleratedPatternLearner
+        
+        # Test basic functionality
+        accelerated = AcceleratedPatternLearner()
+        
+        # Test on a small sample
+        test_code = '''
+def example_function(x, y):
+    """Example function"""
+    if x > y:
+        return x
+    return y
+
+class ExampleClass:
+    """Example class"""
+    def method(self):
+        pass
+'''
+        
+        # Create temp file
+        import tempfile
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+            f.write(test_code)
+            temp_file = f.name
+        
+        try:
+            features = accelerated.extract_features_from_file(temp_file)
+            assert len(features) > 0, "Should extract features"
+            
+            # Test caching
+            accelerated.extract_features_from_file(temp_file)  # Second call should hit cache
+            stats = accelerated.get_performance_stats()
+            
+            print(f"  Extracted {len(features)} features")
+            print(f"  Cache stats available: {bool(stats)}")
+            print("✅ Accelerated learner test passed")
+            
+            return True
+            
+        finally:
+            import os
+            os.unlink(temp_file)
+            
+    except ImportError:
+        print("⚠️  Accelerated learner not available, skipping test")
+        return True
+    except Exception as e:
+        print(f"❌ Accelerated learner test failed: {e}")
+        return False
+
+
 def run_all_tests():
     """Run all tests and report results"""
     tests = [
@@ -538,6 +594,7 @@ def run_all_tests():
         ("Pattern Naming", test_pattern_naming),
         ("Save and Load Patterns", test_save_and_load_patterns),
         ("Integration with Real Code", test_integration_with_real_code),
+        ("Accelerated Learner", test_accelerated_learner),
     ]
     
     print("=" * 80)
