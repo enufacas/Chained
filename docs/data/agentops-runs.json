@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-11-17T18:14:32.975646+00:00",
+  "last_updated": "2025-11-17T20:12:13.161907+00:00",
   "summary": {
     "total_runs": 98,
     "completed": 98,
@@ -7,10 +7,22 @@
     "success": 80,
     "failure": 13,
     "success_rate": 81.63,
-    "avg_duration_seconds": 213.03,
+    "avg_duration_seconds": 212.48,
     "recent_failures_24h": 2
   },
   "agent_workload": {
+    "users": {
+      "total": 22,
+      "success": 17,
+      "failure": 4,
+      "in_progress": 0
+    },
+    "create-guru": {
+      "total": 1,
+      "success": 1,
+      "failure": 0,
+      "in_progress": 0
+    },
     "engineer-master": {
       "total": 6,
       "success": 6,
@@ -18,8 +30,8 @@
       "in_progress": 0
     },
     "accelerate-specialist": {
-      "total": 7,
-      "success": 7,
+      "total": 6,
+      "success": 6,
       "failure": 0,
       "in_progress": 0
     },
@@ -35,12 +47,6 @@
       "failure": 1,
       "in_progress": 0
     },
-    "users": {
-      "total": 18,
-      "success": 13,
-      "failure": 4,
-      "in_progress": 0
-    },
     "support-master": {
       "total": 1,
       "success": 1,
@@ -48,14 +54,14 @@
       "in_progress": 0
     },
     "investigate-champion": {
-      "total": 13,
-      "success": 13,
+      "total": 12,
+      "success": 12,
       "failure": 0,
       "in_progress": 0
     },
     "restructure-master": {
-      "total": 3,
-      "success": 2,
+      "total": 2,
+      "success": 1,
       "failure": 1,
       "in_progress": 0
     },
@@ -108,7 +114,7 @@
       "success": 50,
       "failure": 0,
       "in_progress": 0,
-      "avg_duration": 23.94
+      "avg_duration": 22.86
     },
     "learn-from-copilot.yml": {
       "total": 1,
@@ -140,6 +146,126 @@
     }
   },
   "runs": [
+    {
+      "id": 19442586856,
+      "run_number": 478,
+      "workflow_name": "Automation: Copilot Assignment",
+      "workflow_file": "copilot-graphql-assign.yml",
+      "display_title": "Automation: Copilot Assignment",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2025-11-17T19:51:35Z",
+      "updated_at": "2025-11-17T19:51:50Z",
+      "duration_seconds": 15.0,
+      "html_url": "https://github.com/enufacas/Chained/actions/runs/19442586856",
+      "run_started_at": "2025-11-17T19:51:35Z",
+      "triggering_actor": "enufacas",
+      "event": "schedule",
+      "head_branch": "main",
+      "head_sha": "7c5f8abd",
+      "agent_name": "users",
+      "issue_number": 1613,
+      "pr_numbers": [
+        1613
+      ],
+      "pull_requests": []
+    },
+    {
+      "id": 19442217081,
+      "run_number": 477,
+      "workflow_name": "Automation: Copilot Assignment",
+      "workflow_file": "copilot-graphql-assign.yml",
+      "display_title": "Automation: Copilot Assignment",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2025-11-17T19:37:58Z",
+      "updated_at": "2025-11-17T19:38:12Z",
+      "duration_seconds": 14.0,
+      "html_url": "https://github.com/enufacas/Chained/actions/runs/19442217081",
+      "run_started_at": "2025-11-17T19:37:58Z",
+      "triggering_actor": "enufacas",
+      "event": "schedule",
+      "head_branch": "main",
+      "head_sha": "7c5f8abd",
+      "agent_name": "users",
+      "issue_number": 1613,
+      "pr_numbers": [
+        1613
+      ],
+      "pull_requests": []
+    },
+    {
+      "id": 19441645624,
+      "run_number": 476,
+      "workflow_name": "Automation: Copilot Assignment",
+      "workflow_file": "copilot-graphql-assign.yml",
+      "display_title": "Automation: Copilot Assignment",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2025-11-17T19:16:52Z",
+      "updated_at": "2025-11-17T19:17:08Z",
+      "duration_seconds": 16.0,
+      "html_url": "https://github.com/enufacas/Chained/actions/runs/19441645624",
+      "run_started_at": "2025-11-17T19:16:52Z",
+      "triggering_actor": "enufacas",
+      "event": "schedule",
+      "head_branch": "main",
+      "head_sha": "7c5f8abd",
+      "agent_name": "users",
+      "issue_number": 1613,
+      "pr_numbers": [
+        1613
+      ],
+      "pull_requests": []
+    },
+    {
+      "id": 19441016375,
+      "run_number": 475,
+      "workflow_name": "Automation: Copilot Assignment",
+      "workflow_file": "copilot-graphql-assign.yml",
+      "display_title": "Automation: Copilot Assignment",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2025-11-17T18:54:41Z",
+      "updated_at": "2025-11-17T18:54:53Z",
+      "duration_seconds": 12.0,
+      "html_url": "https://github.com/enufacas/Chained/actions/runs/19441016375",
+      "run_started_at": "2025-11-17T18:54:41Z",
+      "triggering_actor": "enufacas",
+      "event": "schedule",
+      "head_branch": "main",
+      "head_sha": "7c5f8abd",
+      "agent_name": "users",
+      "issue_number": 1613,
+      "pr_numbers": [
+        1613
+      ],
+      "pull_requests": []
+    },
+    {
+      "id": 19440328071,
+      "run_number": 474,
+      "workflow_name": "Automation: Copilot Assignment",
+      "workflow_file": "copilot-graphql-assign.yml",
+      "display_title": "Automation: Copilot Assignment",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2025-11-17T18:31:00Z",
+      "updated_at": "2025-11-17T18:31:24Z",
+      "duration_seconds": 24.0,
+      "html_url": "https://github.com/enufacas/Chained/actions/runs/19440328071",
+      "run_started_at": "2025-11-17T18:31:00Z",
+      "triggering_actor": "enufacas",
+      "event": "schedule",
+      "head_branch": "main",
+      "head_sha": "8136d5cc",
+      "agent_name": "create-guru",
+      "issue_number": 1608,
+      "pr_numbers": [
+        1608
+      ],
+      "pull_requests": []
+    },
     {
       "id": 19439331781,
       "run_number": 473,
@@ -1265,126 +1391,6 @@
       "issue_number": 1497,
       "pr_numbers": [
         1497
-      ],
-      "pull_requests": []
-    },
-    {
-      "id": 19418426571,
-      "run_number": 428,
-      "workflow_name": "Automation: Copilot Assignment",
-      "workflow_file": "copilot-graphql-assign.yml",
-      "display_title": "Automation: Copilot Assignment",
-      "status": "completed",
-      "conclusion": "success",
-      "created_at": "2025-11-17T04:29:31Z",
-      "updated_at": "2025-11-17T04:29:48Z",
-      "duration_seconds": 17.0,
-      "html_url": "https://github.com/enufacas/Chained/actions/runs/19418426571",
-      "run_started_at": "2025-11-17T04:29:31Z",
-      "triggering_actor": "enufacas",
-      "event": "schedule",
-      "head_branch": "main",
-      "head_sha": "f8044984",
-      "agent_name": "investigate-champion",
-      "issue_number": 1497,
-      "pr_numbers": [
-        1497
-      ],
-      "pull_requests": []
-    },
-    {
-      "id": 19417862160,
-      "run_number": 427,
-      "workflow_name": "Automation: Copilot Assignment",
-      "workflow_file": "copilot-graphql-assign.yml",
-      "display_title": "Automation: Copilot Assignment",
-      "status": "completed",
-      "conclusion": "success",
-      "created_at": "2025-11-17T03:55:40Z",
-      "updated_at": "2025-11-17T03:56:11Z",
-      "duration_seconds": 31.0,
-      "html_url": "https://github.com/enufacas/Chained/actions/runs/19417862160",
-      "run_started_at": "2025-11-17T03:55:40Z",
-      "triggering_actor": "enufacas",
-      "event": "schedule",
-      "head_branch": "main",
-      "head_sha": "e50df76a",
-      "agent_name": "accelerate-specialist",
-      "issue_number": 1494,
-      "pr_numbers": [
-        1494
-      ],
-      "pull_requests": []
-    },
-    {
-      "id": 19417085517,
-      "run_number": 426,
-      "workflow_name": "Automation: Copilot Assignment",
-      "workflow_file": "copilot-graphql-assign.yml",
-      "display_title": "Automation: Copilot Assignment",
-      "status": "completed",
-      "conclusion": "success",
-      "created_at": "2025-11-17T03:07:07Z",
-      "updated_at": "2025-11-17T03:07:37Z",
-      "duration_seconds": 30.0,
-      "html_url": "https://github.com/enufacas/Chained/actions/runs/19417085517",
-      "run_started_at": "2025-11-17T03:07:07Z",
-      "triggering_actor": "enufacas",
-      "event": "schedule",
-      "head_branch": "main",
-      "head_sha": "8f94664b",
-      "agent_name": null,
-      "issue_number": 1484,
-      "pr_numbers": [
-        1484
-      ],
-      "pull_requests": []
-    },
-    {
-      "id": 19416943715,
-      "run_number": 425,
-      "workflow_name": "Automation: Copilot Assignment",
-      "workflow_file": "copilot-graphql-assign.yml",
-      "display_title": "Update stats",
-      "status": "completed",
-      "conclusion": "success",
-      "created_at": "2025-11-17T02:58:22Z",
-      "updated_at": "2025-11-17T02:58:51Z",
-      "duration_seconds": 29.0,
-      "html_url": "https://github.com/enufacas/Chained/actions/runs/19416943715",
-      "run_started_at": "2025-11-17T02:58:22Z",
-      "triggering_actor": "enufacas",
-      "event": "issues",
-      "head_branch": "main",
-      "head_sha": "8f94664b",
-      "agent_name": null,
-      "issue_number": 1484,
-      "pr_numbers": [
-        1484
-      ],
-      "pull_requests": []
-    },
-    {
-      "id": 19416343666,
-      "run_number": 424,
-      "workflow_name": "Automation: Copilot Assignment",
-      "workflow_file": "copilot-graphql-assign.yml",
-      "display_title": "Readme",
-      "status": "completed",
-      "conclusion": "success",
-      "created_at": "2025-11-17T02:20:57Z",
-      "updated_at": "2025-11-17T02:21:25Z",
-      "duration_seconds": 28.0,
-      "html_url": "https://github.com/enufacas/Chained/actions/runs/19416343666",
-      "run_started_at": "2025-11-17T02:20:57Z",
-      "triggering_actor": "enufacas",
-      "event": "issues",
-      "head_branch": "main",
-      "head_sha": "020f61e6",
-      "agent_name": "restructure-master",
-      "issue_number": 1474,
-      "pr_numbers": [
-        1474
       ],
       "pull_requests": []
     },
