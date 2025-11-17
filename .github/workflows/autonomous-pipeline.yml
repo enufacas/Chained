@@ -382,6 +382,104 @@ jobs:
           path: learnings/github_trending_*.json
           retention-days: 7
 
+  learn-github-copilot:
+    name: "Stage 1d: Learn from GitHub Copilot"
+    runs-on: ubuntu-latest
+    needs: ensure-labels
+    if: inputs.skip_learning != true
+    outputs:
+      copilot_count: ${{ steps.fetch.outputs.copilot_count }}
+      learning_file: ${{ steps.fetch.outputs.learning_file }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install beautifulsoup4 requests lxml html5lib
+
+      - name: Fetch GitHub Copilot learnings
+        id: fetch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import subprocess
+          import sys
+          from datetime import datetime, timezone
+          
+          print("🤖 Fetching GitHub Copilot learning content...")
+          
+          # Run the GitHub Copilot fetcher
+          try:
+              env = os.environ.copy()
+              result = subprocess.run(
+                  ['python3', 'tools/fetch-github-copilot.py', '--docs', '5', '--reddit', '2', '--discussions', '3'],
+                  capture_output=True,
+                  text=True,
+                  env=env,
+                  timeout=60
+              )
+              
+              if result.stderr:
+                  print(result.stderr, file=sys.stderr)
+              
+              if result.returncode == 0:
+                  output = result.stdout
+                  try:
+                      data = json.loads(output)
+                      learnings = data.get('learnings', [])
+                      
+                      os.makedirs('learnings', exist_ok=True)
+                      timestamp = datetime.now(timezone.utc).strftime('%Y%m%d')
+                      filename = f'learnings/copilot_{timestamp}.json'
+                      
+                      with open(filename, 'w') as f:
+                          json.dump(data, f, indent=2)
+                      
+                      print(f"✅ Collected {len(learnings)} GitHub Copilot learnings → {filename}")
+                      
+                      with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                          f.write(f"copilot_count={len(learnings)}\n")
+                          f.write(f"learning_file={filename}\n")
+                  except json.JSONDecodeError as e:
+                      print(f"Warning: Could not parse fetcher output: {e}")
+                      with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                          f.write(f"copilot_count=0\n")
+                          f.write(f"learning_file=none\n")
+              else:
+                  print(f"Warning: Fetcher returned error code {result.returncode}")
+                  with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                      f.write(f"copilot_count=0\n")
+                      f.write(f"learning_file=none\n")
+          except subprocess.TimeoutExpired:
+              print("Warning: Fetcher timed out")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"copilot_count=0\n")
+                  f.write(f"learning_file=none\n")
+          except Exception as e:
+              print(f"Warning: Error running fetcher: {e}")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"copilot_count=0\n")
+                  f.write(f"learning_file=none\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Upload Copilot learnings
+        uses: actions/upload-artifact@v4
+        with:
+          name: copilot-learnings
+          path: learnings/copilot_*.json
+          retention-days: 7
+
   # ============================================================================
   # STAGE 2: COMBINE LEARNINGS
   # ============================================================================
@@ -389,7 +487,7 @@ jobs:
   combine-learnings:
     name: "Stage 2: Combine All Learnings"
     runs-on: ubuntu-latest
-    needs: [learn-tldr, learn-hackernews, learn-github-trending]
+    needs: [learn-tldr, learn-hackernews, learn-github-trending, learn-github-copilot]
     if: always() && !cancelled() && inputs.skip_learning != true
     outputs:
       total_learnings: ${{ steps.analyze.outputs.total_learnings }}
