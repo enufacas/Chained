@@ -75,7 +75,7 @@ class IntegratedArchaeologySystem:
         
         # Run archaeology analysis (broader context)
         print("\n🏛️ Phase 2: Running code archaeology...")
-        archaeology_report = self.archaeologist.analyze(max_commits=max_commits)
+        archaeology_report = self.archaeologist.analyze_repository(max_commits=max_commits)
         
         # Cross-reference decisions with archaeology data
         print("\n🔗 Phase 3: Cross-referencing data...")
