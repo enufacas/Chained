@@ -20,6 +20,12 @@ let searchQuery = ''; // Current search query
 let showActive = true; // Filter: show active agents
 let showInactive = true; // Filter: show inactive agents
 
+// Score-based filters (@support-master enhancement)
+let showHOF = true; // Show Hall of Fame agents (≥85%)
+let showGood = true; // Show good agents (≥50%)
+let showOK = true; // Show OK agents (≥30%)
+let showAtRisk = true; // Show at-risk agents (<30%)
+
 // Default locations for agents (diverse global distribution)
 const DEFAULT_AGENT_LOCATIONS = {
     // Performance & Optimization
@@ -517,6 +523,13 @@ function createAgentIcon(agent) {
 function applyFilters() {
     showActive = document.getElementById('filter-active').checked;
     showInactive = document.getElementById('filter-inactive').checked;
+    
+    // Score-based filters (@support-master enhancement)
+    showHOF = document.getElementById('filter-hof')?.checked ?? true;
+    showGood = document.getElementById('filter-good')?.checked ?? true;
+    showOK = document.getElementById('filter-ok')?.checked ?? true;
+    showAtRisk = document.getElementById('filter-atrisk')?.checked ?? true;
+    
     if (map) {
         renderAgents();
     }
@@ -541,6 +554,14 @@ function matchesSearch(agentLabel) {
     return agentLabel.toLowerCase().includes(searchQuery);
 }
 
+// Get agent score category (@support-master helper)
+function getAgentScoreCategory(score) {
+    if (score >= 0.85) return 'hof';
+    if (score >= 0.5) return 'good';
+    if (score >= 0.3) return 'ok';
+    return 'atrisk';
+}
+
 function shouldShowAgent(agent, isActive) {
     // Check search filter
     if (!matchesSearch(agent.label || agent)) return false;
@@ -548,6 +569,17 @@ function shouldShowAgent(agent, isActive) {
     // Check active/inactive filter
     if (isActive && !showActive) return false;
     if (!isActive && !showInactive) return false;
+    
+    // Check score-based filters for active agents (@support-master)
+    if (isActive && agent.metrics) {
+        const score = agent.metrics.overall_score || 0;
+        const category = getAgentScoreCategory(score);
+        
+        if (category === 'hof' && !showHOF) return false;
+        if (category === 'good' && !showGood) return false;
+        if (category === 'ok' && !showOK) return false;
+        if (category === 'atrisk' && !showAtRisk) return false;
+    }
     
     return true;
 }
