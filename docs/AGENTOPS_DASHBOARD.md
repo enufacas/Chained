@@ -63,7 +63,7 @@ The dashboard consumes data from:
 
 The dashboard data is updated via the `agentops-data-sync.yml` workflow:
 
-- **Schedule**: Runs every 30 minutes
+- **Schedule**: Runs every 2 hours
 - **Manual Trigger**: Can be triggered via workflow_dispatch
 - **Data File**: `docs/data/agentops-runs.json`
 - **Rate Limiting**: Protected by caching and conditional requests
@@ -73,7 +73,7 @@ The dashboard data is updated via the `agentops-data-sync.yml` workflow:
 ```yaml
 # Workflow runs on schedule and manual dispatch
 schedule:
-  - cron: '*/30 * * * *'  # Every 30 minutes
+  - cron: '0 */2 * * *'  # Every 2 hours
 
 # Fetches data from GitHub Actions API
 # Aggregates metrics and statistics
@@ -150,7 +150,7 @@ Or navigate from the main site:
 
 The dashboard implements several protections:
 
-- ✅ **Scheduled Sync** - Data fetched every 30 minutes, not on-demand
+- ✅ **Scheduled Sync** - Data fetched every 2 hours, not on-demand
 - ✅ **Cached Data** - Dashboard loads from static JSON file
 - ✅ **Batch Requests** - Sync workflow fetches multiple workflows in one run
 - ✅ **Conditional Requests** - Uses ETags when available
