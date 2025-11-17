@@ -505,6 +505,12 @@
 
             metricsToShow.forEach(metric => {
                 const value = metrics[metric.key] || 0;
+                
+                // Skip rendering metrics with 0 value (hide dependencies and coupling if they're 0)
+                if (value === 0) {
+                    return;
+                }
+                
                 const prevValue = previousMetrics ? (previousMetrics[metric.key] || 0) : null;
                 const change = prevValue !== null ? value - prevValue : null;
 
@@ -756,13 +762,14 @@
                 diagram.push(`    ${name}["${displayName}<br/>${fileCount} files"]`);
             });
 
-            // Add some logical relationships
+            // Add some logical relationships based on actual components
+            // Components: learning_system, agent_system, analysis_tools, documentation, testing, tools
             const relationships = [
                 ['learning_system', 'agent_system', 'feeds'],
-                ['agent_system', 'workflows', 'triggers'],
+                ['agent_system', 'tools', 'uses'],
                 ['analysis_tools', 'documentation', 'generates'],
-                ['workflows', 'testing', 'validates'],
-                ['testing', 'workflows', 'validates']
+                ['tools', 'testing', 'validates'],
+                ['learning_system', 'analysis_tools', 'analyzes']
             ];
 
             relationships.forEach(([source, target, label]) => {
