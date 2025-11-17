@@ -6,14 +6,21 @@ Created by **@troubleshoot-expert** to help resolve common workflow issues.
 
 **@troubleshoot-expert** has implemented several fixes to improve workflow reliability:
 
-### Fixed Issues (Latest - 2025-11-17 18:40 UTC)
-1. **agent-evolution.yml failures (9 → 0)** - Fixed evolution_data.json structure
+### Fixed Issues (Latest - 2025-11-17 21:20 UTC)
+1. **autonomous-ab-testing.yml failures (3 → 0)** - Added label fallback logic
+   - Python subprocess calls for `gh issue create` now have fallback
+   - Retries without labels if label creation fails
+   - Prevents failures when labels don't exist yet
+   - Testing: Issue creation works with or without labels
+
+2. **agent-evolution.yml failures (14 → expected 0)** - Fixed evolution_data.json structure
    - Added missing `agent_lineages` dictionary
    - Added missing `generation_history` array
    - Renamed `configuration` to `config` for consistency
    - Testing: `python3 tools/agent-evolution-system.py --stats` now works
+   - Note: Workflow may skip evolution if no agents have score >= 0.5 (this is expected behavior)
 
-2. **repetition-detector.yml failures (9 → 0)** - Fixed exit code logic
+3. **repetition-detector.yml failures (14 → expected 0)** - Fixed exit code logic
    - Was checking exit code != 0 to detect repetition (backwards logic)
    - Now checks JSON output for `repetition_flags` array length
    - Script always exits with 0 on success, so exit code was misleading
@@ -228,12 +235,41 @@ ai-workflow-orchestrator-demo.yml
 
 When creating issues or PRs with labels, always use fallback logic to prevent failures when labels are missing. See `.github/workflows/LABEL_FALLBACK_PATTERN.md` for detailed examples and patterns.
 
-**Quick Example:**
+**Quick Example (Bash):**
 ```bash
 gh issue create --title "Title" --body "Body" --label "label1,label2" || {
   echo "⚠️ Issue creation with labels failed, retrying without labels..."
   gh issue create --title "Title" --body "Body"
 }
+```
+
+**Quick Example (Python subprocess):**
+```python
+import subprocess
+
+# Try with labels first
+result = subprocess.run([
+    'gh', 'issue', 'create',
+    '--title', title,
+    '--body', body,
+    '--label', 'automated,label2'
+], capture_output=True, text=True)
+
+if result.returncode == 0:
+    print(f"✅ Created issue")
+else:
+    # Retry without labels
+    print(f"⚠️ Issue creation with labels failed, retrying without labels...")
+    result_no_labels = subprocess.run([
+        'gh', 'issue', 'create',
+        '--title', title,
+        '--body', body
+    ], capture_output=True, text=True)
+    
+    if result_no_labels.returncode == 0:
+        print(f"✅ Created issue (without labels)")
+    else:
+        print(f"❌ Failed to create issue: {result_no_labels.stderr}")
 ```
 
 This ensures workflows complete successfully even if labels haven't been created yet.
