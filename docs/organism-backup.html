@@ -680,22 +680,17 @@
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
         // Global state
         let scene, camera, renderer, controls;
-        let labelRenderer, labelScene;
         let lifecycleCore, agentSpheres = [];
-        let agentLabels = [];
-        let missionObjects = [];
         let particles, particleSystem;
         let connectionLines = [];
-        let worldStateData, agentRegistryData, statsData, missionData;
+        let worldStateData, agentRegistryData, statsData;
         let selectedAgent = null;
         let animationSpeed = 1.0;
         let showParticles = true;
         let showConnections = true;
-        let showLabels = true;
 
         // Colors for specializations
         const specializationColors = {
@@ -717,34 +712,11 @@
             'default': 0x00ffff      // Default Cyan
         };
 
-        // Shape types for different specializations
-        const specializationShapes = {
-            'organize': 'box',           // Organized cubes
-            'assert': 'octahedron',      // Testing - multi-faceted
-            'secure': 'cone',            // Security - pointed/vigilant
-            'accelerate': 'torus',       // Performance - continuous flow
-            'create': 'dodecahedron',    // Creation - complex/creative
-            'investigate': 'icosahedron',// Analysis - many perspectives
-            'bridge': 'cylinder',        // Integration - connecting
-            'document': 'plane',         // Documentation - flat/clear
-            'coach': 'tetrahedron',      // Coaching - foundation
-            'align': 'capsule',          // CI/CD - streamlined
-            'pioneer': 'star',           // Innovation - shining
-            'develop': 'sphere',         // Development - well-rounded
-            'engineer': 'box',           // Engineering - structured
-            'infrastructure': 'cylinder',// Infrastructure - support
-            'tools': 'torus',            // Tools - utility
-            'default': 'sphere'          // Default sphere
-        };
-
         // Initialize Three.js scene
         function initScene() {
             // Scene setup
             scene = new THREE.Scene();
             scene.fog = new THREE.FogExp2(0x0a0e1a, 0.015);
-
-            // Label scene for CSS3D labels
-            labelScene = new THREE.Scene();
 
             // Camera setup
             camera = new THREE.PerspectiveCamera(
@@ -765,14 +737,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
             document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-            // CSS3D Label Renderer
-            labelRenderer = new CSS3DRenderer();
-            labelRenderer.setSize(window.innerWidth, window.innerHeight);
-            labelRenderer.domElement.style.position = 'absolute';
-            labelRenderer.domElement.style.top = '0';
-            labelRenderer.domElement.style.pointerEvents = 'none';
-            document.getElementById('canvas-container').appendChild(labelRenderer.domElement);
 
             // Orbit controls
             controls = new OrbitControls(camera, renderer.domElement);
@@ -907,106 +871,11 @@
             return specializationColors.default;
         }
 
-        // Get shape type for specialization
-        function getSpecializationShape(specialization) {
-            for (const key in specializationShapes) {
-                if (specialization.includes(key)) {
-                    return specializationShapes[key];
-                }
-            }
-            return specializationShapes.default;
-        }
-
-        // Create geometry based on shape type
-        function createShapeGeometry(shapeType, size) {
-            switch(shapeType) {
-                case 'box':
-                    return new THREE.BoxGeometry(size * 1.5, size * 1.5, size * 1.5);
-                case 'cone':
-                    return new THREE.ConeGeometry(size, size * 2, 8);
-                case 'cylinder':
-                    return new THREE.CylinderGeometry(size * 0.7, size * 0.7, size * 2, 8);
-                case 'octahedron':
-                    return new THREE.OctahedronGeometry(size);
-                case 'dodecahedron':
-                    return new THREE.DodecahedronGeometry(size);
-                case 'icosahedron':
-                    return new THREE.IcosahedronGeometry(size);
-                case 'tetrahedron':
-                    return new THREE.TetrahedronGeometry(size);
-                case 'torus':
-                    return new THREE.TorusGeometry(size * 0.8, size * 0.3, 8, 12);
-                case 'plane':
-                    return new THREE.PlaneGeometry(size * 2, size * 2);
-                case 'capsule':
-                    return new THREE.CapsuleGeometry(size * 0.5, size * 1.5, 4, 8);
-                case 'star':
-                    // Create a star shape using extrusion
-                    const starShape = new THREE.Shape();
-                    const outerRadius = size;
-                    const innerRadius = size * 0.5;
-                    const points = 5;
-                    
-                    for (let i = 0; i < points * 2; i++) {
-                        const radius = i % 2 === 0 ? outerRadius : innerRadius;
-                        const angle = (i * Math.PI) / points;
-                        const x = Math.cos(angle) * radius;
-                        const y = Math.sin(angle) * radius;
-                        
-                        if (i === 0) starShape.moveTo(x, y);
-                        else starShape.lineTo(x, y);
-                    }
-                    starShape.closePath();
-                    
-                    const extrudeSettings = {
-                        depth: size * 0.5,
-                        bevelEnabled: true,
-                        bevelThickness: 0.1,
-                        bevelSize: 0.1,
-                        bevelSegments: 2
-                    };
-                    return new THREE.ExtrudeGeometry(starShape, extrudeSettings);
-                default:
-                    return new THREE.SphereGeometry(size, 16, 16);
-            }
-        }
-
-        // Create CSS3D label for agent
-        function createAgentLabel(agent, position) {
-            const labelDiv = document.createElement('div');
-            labelDiv.className = 'agent-label';
-            labelDiv.textContent = agent.label;
-            labelDiv.style.cssText = `
-                color: #00ffff;
-                font-size: 12px;
-                font-family: 'Segoe UI', sans-serif;
-                background: rgba(10, 14, 26, 0.8);
-                padding: 4px 8px;
-                border-radius: 4px;
-                border: 1px solid #00ffff;
-                white-space: nowrap;
-                pointer-events: none;
-                text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
-            `;
-
-            const label = new CSS3DObject(labelDiv);
-            label.position.copy(position);
-            label.position.y += 3; // Position above the agent
-            label.scale.set(0.05, 0.05, 0.05);
-            
-            labelScene.add(label);
-            return label;
-        }
-
         // Create agent spheres based on world state data
         function createAgentSpheres() {
             // Clear existing agent spheres
             agentSpheres.forEach(sphere => scene.remove(sphere));
             agentSpheres = [];
-
-            // Clear existing labels
-            agentLabels.forEach(label => labelScene.remove(label));
-            agentLabels = [];
 
             // Clear existing connection lines
             connectionLines.forEach(line => scene.remove(line));
@@ -1016,12 +885,11 @@
 
             worldStateData.agents.forEach((agent, index) => {
                 const color = getSpecializationColor(agent.specialization);
-                const shapeType = getSpecializationShape(agent.specialization);
                 
                 // Size based on performance score
                 const size = 0.5 + (agent.metrics.overall_score || 0.5) * 1.5;
                 
-                const geometry = createShapeGeometry(shapeType, size);
+                const geometry = new THREE.SphereGeometry(size, 16, 16);
                 const material = new THREE.MeshPhongMaterial({
                     color: color,
                     emissive: color,
@@ -1029,26 +897,24 @@
                     shininess: 100
                 });
 
-                const mesh = new THREE.Mesh(geometry, material);
+                const sphere = new THREE.Mesh(geometry, material);
                 
                 // Position based on status and index
                 const angle = (index / worldStateData.agents.length) * Math.PI * 2;
                 const distance = agent.status === 'working' ? 25 : 35;
                 
-                mesh.position.x = Math.cos(angle) * distance;
-                mesh.position.y = (Math.random() - 0.5) * 10;
-                mesh.position.z = Math.sin(angle) * distance;
+                sphere.position.x = Math.cos(angle) * distance;
+                sphere.position.y = (Math.random() - 0.5) * 10;
+                sphere.position.z = Math.sin(angle) * distance;
                 
-                mesh.userData = {
+                sphere.userData = {
                     agent: agent,
-                    originalY: mesh.position.y,
-                    floatOffset: Math.random() * Math.PI * 2,
-                    shapeType: shapeType
+                    originalY: sphere.position.y,
+                    floatOffset: Math.random() * Math.PI * 2
                 };
 
                 // Add glow
-                const glowSize = shapeType === 'sphere' ? size + 0.3 : size * 1.3;
-                const glowGeometry = new THREE.SphereGeometry(glowSize, 16, 16);
+                const glowGeometry = new THREE.SphereGeometry(size + 0.3, 16, 16);
                 const glowMaterial = new THREE.MeshBasicMaterial({
                     color: color,
                     transparent: true,
@@ -1056,22 +922,16 @@
                     side: THREE.BackSide
                 });
                 const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-                mesh.add(glow);
+                sphere.add(glow);
 
-                scene.add(mesh);
-                agentSpheres.push(mesh);
-
-                // Create label for agent
-                if (showLabels) {
-                    const label = createAgentLabel(agent, mesh.position);
-                    agentLabels.push(label);
-                }
+                scene.add(sphere);
+                agentSpheres.push(sphere);
 
                 // Create connection line to core for working agents
                 if (agent.status === 'working' && showConnections) {
                     const lineGeometry = new THREE.BufferGeometry().setFromPoints([
                         new THREE.Vector3(0, 0, 0),
-                        mesh.position
+                        sphere.position
                     ]);
                     const lineMaterial = new THREE.LineBasicMaterial({
                         color: color,
@@ -1083,60 +943,6 @@
                     connectionLines.push(line);
                 }
             });
-        }
-
-        // Create mission visualization objects
-        function createMissionObjects() {
-            // Clear existing mission objects
-            missionObjects.forEach(obj => scene.remove(obj));
-            missionObjects = [];
-
-            if (!missionData || !missionData.categories) return;
-
-            let missionCount = 0;
-            const maxMissions = 20; // Limit to avoid clutter
-
-            // Iterate through categories and missions
-            for (const categoryKey in missionData.categories) {
-                const category = missionData.categories[categoryKey];
-                
-                if (category.missions && Array.isArray(category.missions)) {
-                    category.missions.slice(0, 5).forEach((mission, idx) => {
-                        if (missionCount >= maxMissions) return;
-                        
-                        // Create a small cube/octahedron for missions
-                        const isComplete = mission.status === 'complete';
-                        const geometry = new THREE.OctahedronGeometry(0.3);
-                        const material = new THREE.MeshPhongMaterial({
-                            color: isComplete ? 0x00ff00 : 0xffaa00,
-                            emissive: isComplete ? 0x00ff00 : 0xffaa00,
-                            emissiveIntensity: 0.4,
-                            transparent: true,
-                            opacity: 0.7
-                        });
-
-                        const missionObj = new THREE.Mesh(geometry, material);
-                        
-                        // Position missions in an outer ring
-                        const angle = (missionCount / maxMissions) * Math.PI * 2;
-                        const distance = 45;
-                        
-                        missionObj.position.x = Math.cos(angle) * distance;
-                        missionObj.position.y = (Math.random() - 0.5) * 5;
-                        missionObj.position.z = Math.sin(angle) * distance;
-                        
-                        missionObj.userData = {
-                            mission: mission,
-                            category: categoryKey,
-                            rotationSpeed: 0.01 + Math.random() * 0.02
-                        };
-
-                        scene.add(missionObj);
-                        missionObjects.push(missionObj);
-                        missionCount++;
-                    });
-                }
-            }
         }
 
         // Load data from JSON files
@@ -1154,19 +960,9 @@
                 const statsRes = await fetch('data/stats.json');
                 statsData = await statsRes.json();
 
-                // Load mission reports
-                try {
-                    const missionRes = await fetch('data/mission-reports.json');
-                    missionData = await missionRes.json();
-                } catch (e) {
-                    console.warn('Mission data not available:', e);
-                    missionData = null;
-                }
-
                 // Update UI with data
                 updateUI();
                 createAgentSpheres();
-                createMissionObjects();
 
                 console.log('Data loaded successfully');
             } catch (error) {
@@ -1192,10 +988,9 @@
                 const agentList = document.getElementById('agent-list');
                 agentList.innerHTML = '';
                 
-                worldStateData.agents.forEach((agent, index) => {
+                worldStateData.agents.forEach(agent => {
                     const item = document.createElement('div');
                     item.className = `agent-item ${agent.status}`;
-                    item.dataset.agentId = agent.id;
                     item.innerHTML = `
                         <div class="agent-name">${agent.label}</div>
                         <div class="agent-spec">${agent.specialization}</div>
@@ -1205,13 +1000,7 @@
                             <span class="metric">Issues: ${agent.metrics.issues_resolved}</span>
                         </div>
                     `;
-                    
-                    // Add click handler for sidebar-3D synchronization
-                    item.addEventListener('click', () => {
-                        selectAgentInScene(agent);
-                        showAgentDetail(agent);
-                    });
-                    
+                    item.addEventListener('click', () => showAgentDetail(agent));
                     agentList.appendChild(item);
                 });
             }
@@ -1233,80 +1022,6 @@
                 document.getElementById('stat-merge-rate').textContent = mergeRate.toFixed(1) + '%';
                 document.getElementById('merge-rate-bar').style.width = mergeRate + '%';
             }
-        }
-
-        // Select agent in 3D scene and focus camera
-        function selectAgentInScene(agent) {
-            // Find the agent's mesh in the scene
-            const agentMesh = agentSpheres.find(mesh => 
-                mesh.userData.agent && mesh.userData.agent.id === agent.id
-            );
-
-            if (agentMesh) {
-                // Animate camera to focus on agent
-                const targetPosition = agentMesh.position.clone();
-                const offset = new THREE.Vector3(0, 5, 15);
-                const cameraTarget = targetPosition.clone().add(offset);
-
-                // Smooth camera transition
-                animateCameraTo(cameraTarget, targetPosition);
-
-                // Update sidebar selection
-                updateSidebarSelection(agent.id);
-                
-                // Highlight the agent temporarily
-                highlightAgent(agentMesh);
-            }
-        }
-
-        // Animate camera to position
-        function animateCameraTo(position, lookAt, duration = 1000) {
-            const startPos = camera.position.clone();
-            const startLookAt = controls.target.clone();
-            const startTime = Date.now();
-
-            function animate() {
-                const elapsed = Date.now() - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                // Easing function
-                const eased = progress < 0.5 
-                    ? 2 * progress * progress 
-                    : -1 + (4 - 2 * progress) * progress;
-
-                camera.position.lerpVectors(startPos, position, eased);
-                controls.target.lerpVectors(startLookAt, lookAt, eased);
-                controls.update();
-
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                }
-            }
-
-            animate();
-        }
-
-        // Highlight agent temporarily
-        function highlightAgent(mesh) {
-            const originalEmissive = mesh.material.emissiveIntensity;
-            mesh.material.emissiveIntensity = 0.8;
-            
-            setTimeout(() => {
-                mesh.material.emissiveIntensity = originalEmissive;
-            }, 1000);
-        }
-
-        // Update sidebar selection
-        function updateSidebarSelection(agentId) {
-            const agentItems = document.querySelectorAll('.agent-item');
-            agentItems.forEach(item => {
-                if (item.dataset.agentId === agentId) {
-                    item.classList.add('selected');
-                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                } else {
-                    item.classList.remove('selected');
-                }
-            });
         }
 
         // Show agent detail modal
@@ -1400,38 +1115,18 @@
                 lifecycleCore.rotation.y += 0.001 * animationSpeed;
             }
 
-            // Animate agent spheres (floating and rotation)
-            agentSpheres.forEach((mesh, index) => {
-                if (mesh.userData.originalY !== undefined) {
-                    mesh.userData.floatOffset += 0.02 * animationSpeed;
-                    mesh.position.y = mesh.userData.originalY + 
-                        Math.sin(mesh.userData.floatOffset) * 2;
-                }
-
-                // Rotate non-sphere shapes for visual interest
-                if (mesh.userData.shapeType !== 'sphere') {
-                    mesh.rotation.x += 0.005 * animationSpeed;
-                    mesh.rotation.y += 0.01 * animationSpeed;
-                }
-
-                // Update label position to follow agent
-                if (agentLabels[index]) {
-                    agentLabels[index].position.copy(mesh.position);
-                    agentLabels[index].position.y += 3;
+            // Animate agent spheres (floating)
+            agentSpheres.forEach(sphere => {
+                if (sphere.userData.originalY !== undefined) {
+                    sphere.userData.floatOffset += 0.02 * animationSpeed;
+                    sphere.position.y = sphere.userData.originalY + 
+                        Math.sin(sphere.userData.floatOffset) * 2;
                 }
 
                 // Pulse working agents
-                if (mesh.userData.agent && mesh.userData.agent.status === 'working') {
+                if (sphere.userData.agent && sphere.userData.agent.status === 'working') {
                     const pulse = (Math.sin(Date.now() * 0.003) + 1) / 2;
-                    mesh.material.emissiveIntensity = 0.3 + pulse * 0.3;
-                }
-            });
-
-            // Animate mission objects
-            missionObjects.forEach(obj => {
-                if (obj.userData.rotationSpeed) {
-                    obj.rotation.x += obj.userData.rotationSpeed * animationSpeed;
-                    obj.rotation.y += obj.userData.rotationSpeed * 0.5 * animationSpeed;
+                    sphere.material.emissiveIntensity = 0.3 + pulse * 0.3;
                 }
             });
 
@@ -1468,7 +1163,6 @@
 
             controls.update();
             renderer.render(scene, camera);
-            labelRenderer.render(labelScene, camera);
         }
 
         // Window resize handler
@@ -1476,41 +1170,10 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            labelRenderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        // Raycasting for clicking agents in 3D scene
-        function onCanvasClick(event) {
-            const rect = renderer.domElement.getBoundingClientRect();
-            const mouse = new THREE.Vector2();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(mouse, camera);
-
-            const intersects = raycaster.intersectObjects(agentSpheres, true);
-            
-            if (intersects.length > 0) {
-                // Find the top-level agent mesh
-                let agentMesh = intersects[0].object;
-                while (agentMesh.parent && !agentMesh.userData.agent) {
-                    agentMesh = agentMesh.parent;
-                }
-
-                if (agentMesh.userData.agent) {
-                    const agent = agentMesh.userData.agent;
-                    showAgentDetail(agent);
-                    updateSidebarSelection(agent.id);
-                }
-            }
         }
 
         // Setup event listeners
         function setupEventListeners() {
-            // Canvas click for selecting agents in 3D
-            renderer.domElement.addEventListener('click', onCanvasClick);
-
             // Control buttons
             document.getElementById('btn-reset-camera').addEventListener('click', () => {
                 camera.position.set(0, 25, 50);
