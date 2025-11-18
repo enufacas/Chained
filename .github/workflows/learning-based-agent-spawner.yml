@@ -370,7 +370,73 @@ jobs:
           *🧬 This is autonomous AI evolution in action! The system is learning and adapting based on real-world tech trends.*" \
             --label "agent-system,automated,copilot,learning-based" \
             --base main \
-            --head "$BRANCH_NAME")
+            --head "$BRANCH_NAME") || {
+            echo "⚠️ PR creation with labels failed, retrying without labels..."
+            PR_URL=$(gh pr create \
+              --title "$EMOJI Learning-Based Agent: $AGENT_NAME" \
+              --body "## 🧬 Learning-Inspired Agent Spawned!
+          
+          A new agent has been **dynamically generated** based on recent tech community learnings!
+          
+          ### 🎯 Agent Details
+          
+          **Name**: $EMOJI $AGENT_NAME  
+          **Agent ID**: $AGENT_ID  
+          **Specialization**: $SPECIALIZATION  
+          **Personality**: ${{ steps.generate.outputs.personality }}  
+          **Communication**: ${{ steps.generate.outputs.communication_style }}  
+          **Inspired by**: ${{ steps.generate.outputs.inspiration }}
+          
+          ### 🔥 Origin Story
+          
+          ${{ steps.analyze.outputs.insights }}
+          
+          This agent was created by analyzing **${{ steps.analyze.outputs.article_count }}** articles from TLDR, identifying trends in:
+          ${{ steps.analyze.outputs.top_keywords }}
+          
+          The system noticed a gap in our capabilities related to **${{ steps.analyze.outputs.trend }}**, so it autonomously spawned this agent with the right skills!
+          
+          ### 🧠 Learning Context
+          
+          Recent tech community discussions revealed:
+          - 📈 Trending topics: ${{ steps.analyze.outputs.trending_topics }}
+          - 🔧 Emerging tools: ${{ steps.analyze.outputs.emerging_tools }}
+          - 💡 Innovation areas: ${{ steps.analyze.outputs.innovation_areas }}
+          
+          ### 🎭 Personality Profile
+          
+          **Character**: ${{ steps.generate.outputs.personality }}  
+          **Communication Style**: ${{ steps.generate.outputs.communication_style }}
+          
+          The agent will bring its unique personality to all interactions!
+          
+          ### 📁 Changes
+          
+          - 🆕 Created agent definition: \`.github/agents/${SPECIALIZATION}.md\`
+          - 📝 Registered in system: \`.github/agent-system/registry.json\`
+          - 👤 Created profile: \`.github/agent-system/profiles/${AGENT_ID}.md\`
+          
+          ### ⚔️ Competition System
+          
+          This agent will:
+          - 🎯 Compete with other agents for survival
+          - 📊 Be evaluated on code quality, issue resolution, and PR success
+          - 🏆 Strive for Hall of Fame (score > 85%)
+          - ⚠️ Must maintain score > 30% to avoid elimination
+          
+          ### 🚀 What's Next
+          
+          Once this PR is merged, the agent will:
+          1. Become active in the agent system
+          2. Be eligible for issue assignments
+          3. Start contributing to the repository
+          4. Learn and adapt based on outcomes
+          
+          ---
+          *🧬 This is autonomous AI evolution in action! The system is learning and adapting based on real-world tech trends.*" \
+              --base main \
+              --head "$BRANCH_NAME")
+          }
           
           PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT

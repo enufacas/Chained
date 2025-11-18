@@ -622,7 +622,48 @@ jobs:
           *🤖 Automated agent spawning system - Evolving autonomous AI ecosystem*" \
             --label "agent-system,automated,copilot" \
             --base main \
-            --head "$BRANCH_NAME")
+            --head "$BRANCH_NAME") || {
+            echo "⚠️ PR creation with labels failed, retrying without labels..."
+            PR_URL=$(gh pr create \
+              --title "$EMOJI New Agent Spawned: $HUMAN_NAME" \
+              --body "## 🎉 Meet $HUMAN_NAME!
+          
+          A new agent has joined our autonomous AI ecosystem!
+          
+          **Agent ID**: $AGENT_ID  
+          **Name**: $AGENT_NAME  
+          **Goes By**: $HUMAN_NAME  
+          **Specialization**: $SPECIALIZATION  
+          **Agent Definition**: [.github/agents/${SPECIALIZATION}.md](.github/agents/${SPECIALIZATION}.md)  
+          **Spawned At**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          
+          ${NEW_AGENT_INFO}${MENTORSHIP_INFO}### Personality Profile
+          
+          **Character**: $PERSONALITY  
+          **Communication Style**: $COMMUNICATION_STYLE  
+          **Inspired By**: $INSPIRATION
+          
+          ### Goals and Mission
+          
+          This agent will:
+          - 🎯 Work on $FOCUS_AREA issues
+          - 📊 Build experience and reputation
+          - 🏆 Compete for a spot in the Hall of Fame
+          - ⚔️ Compete against other agents (score > 30% to survive)
+          
+          ### Changes
+          
+          - Added agent to registry
+          - Created agent profile${IS_NEW:+ (linked to new agent definition)}
+          - Updated metrics tracking
+          
+          This agent will be evaluated in 24 hours. Agents scoring below 30% face elimination, while top performers (85%+) enter the Hall of Fame!
+          
+          ---
+          *🤖 Automated agent spawning system - Evolving autonomous AI ecosystem*" \
+              --base main \
+              --head "$BRANCH_NAME")
+          }
           
           # Extract PR number from URL
           PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
