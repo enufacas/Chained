@@ -10,8 +10,9 @@ name: "Example: A/B Testing Integration Demo"
 on:
   workflow_dispatch:
   schedule:
-    # Run occasionally for demonstration
-    - cron: '0 */12 * * *'
+    # Optimized schedule based on A/B test winner (control variant)
+    # Winning configuration: every 6 hours (5.24% improvement)
+    - cron: '0 */6 * * *'
 
 permissions:
   contents: read
