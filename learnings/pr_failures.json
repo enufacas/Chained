@@ -1,5 +1,31 @@
 {
-  "failures": [],
-  "last_updated": "2025-11-14T20:46:32.353704+00:00",
-  "total_count": 0
+  "failures": [
+    {
+      "pr_number": 241,
+      "title": "\ud83d\udcdd New Agent Spawned: \ud83d\udcdd Gamma-1111",
+      "author": "github-actions[bot]",
+      "agent_id": "agent-system",
+      "agent_specialization": null,
+      "created_at": "2025-11-11T02:08:42Z",
+      "closed_at": "2025-11-11T17:10:54Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "completed",
+        "copilot",
+        "agent-system"
+      ]
+    }
+  ],
+  "last_updated": "2025-11-18T03:56:00.297320+00:00",
+  "total_count": 1
 }
