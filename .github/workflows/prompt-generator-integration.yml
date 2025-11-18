@@ -91,14 +91,17 @@ jobs:
           # Generate prompt using the self-improving prompt generator
           issue_body=$(cat /tmp/issue_body.txt)
           
+          # Redirect stderr to filter warnings
           prompt_output=$(python3 tools/prompt-generator.py generate \
             --issue-body "$issue_body" \
             --category "${{ steps.category.outputs.category }}" \
-            --agent "${{ inputs.agent }}")
+            --agent "${{ inputs.agent }}" 2>&1 | grep -v "^Warning:")
           
-          # Extract template ID and prompt
+          # Extract template ID
           template_id=$(echo "$prompt_output" | grep "Template ID:" | cut -d: -f2 | xargs)
-          prompt=$(echo "$prompt_output" | sed -n '/Generated Prompt:/,/^$/p' | tail -n +2)
+          
+          # Extract prompt more robustly - everything after "Generated Prompt:"
+          prompt=$(echo "$prompt_output" | sed -n '/Generated Prompt:/,$p' | tail -n +2)
           
           echo "template_id=$template_id" >> $GITHUB_OUTPUT
           
