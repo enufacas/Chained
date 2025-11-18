@@ -411,17 +411,21 @@ Follow best practices and the systematic approach defined in your agent profile.
         category: str = "feature"
     ) -> str:
         """Enhance prompt with recent learnings"""
-        # Use provided context or get from learning integrator
-        if learning_context:
-            learning_section = "\n\n**Recent Relevant Learnings:**\n"
-            for idx, learning in enumerate(learning_context[:3], 1):
-                learning_section += f"{idx}. {learning}\n"
-            
-            learning_section += "\nConsider these recent insights when approaching this task.\n"
-            
-            return prompt + learning_section
+        # If learning_context is explicitly provided (even if empty), use it and don't fall back to integrator
+        if learning_context is not None:
+            # Only add learning section if there are actual items
+            if len(learning_context) > 0:
+                learning_section = "\n\n**Recent Relevant Learnings:**\n"
+                for idx, learning in enumerate(learning_context[:3], 1):
+                    learning_section += f"{idx}. {learning}\n"
+                
+                learning_section += "\nConsider these recent insights when approaching this task.\n"
+                
+                return prompt + learning_section
+            # If empty list explicitly provided, don't add any learnings
+            return prompt
         
-        # Get learnings from integrator if available
+        # Get learnings from integrator if available (only when learning_context is None)
         if self.learning_integrator:
             try:
                 # Get relevant insights
