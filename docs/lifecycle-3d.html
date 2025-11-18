@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Lifecycle Visualization - Chained</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #canvas-container {
+            width: 100%;
+            height: calc(100vh - 180px);
+            min-height: 600px;
+            position: relative;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        
+        #threejs-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .controls-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(26, 26, 46, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            min-width: 250px;
+            z-index: 10;
+        }
+        
+        .controls-panel h3 {
+            color: #06b6d4;
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #06b6d4;
+            padding-bottom: 0.5rem;
+        }
+        
+        .control-item {
+            margin-bottom: 1rem;
+        }
+        
+        .control-item label {
+            display: block;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .control-item button {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .control-item button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
+        }
+        
+        .control-item input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #334155;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #06b6d4;
+            cursor: pointer;
+        }
+        
+        .control-item input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #06b6d4;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .control-value {
+            display: inline-block;
+            color: #06b6d4;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+        
+        .info-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(26, 26, 46, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            max-width: 400px;
+            z-index: 10;
+        }
+        
+        .info-panel h4 {
+            color: #06b6d4;
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+        
+        .info-panel p {
+            color: #94a3b8;
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 30, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(6, 182, 212, 0.2);
+            border-top-color: #06b6d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: #06b6d4;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: #06b6d4;
+            box-shadow: 0 8px 24px rgba(6, 182, 212, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            color: #06b6d4;
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .feature-card p {
+            color: #94a3b8;
+            margin: 0;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="home-button" aria-label="Home">🏠</a>
+            <button class="hamburger" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1>🌌 3D Lifecycle Visualization</h1>
+            <p class="tagline">Explore the Chained autonomous system in immersive 3D</p>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            <a href="agents.html" class="nav-link">🤖 Agents</a>
+            <a href="lifecycle.html" class="nav-link">🔄 Lifecycle</a>
+            <a href="lifecycle-3d.html" class="nav-link" style="background: rgba(255, 255, 255, 0.2);">🌌 3D View</a>
+            <a href="world-map.html" class="nav-link">🌍 World Map</a>
+            <a href="https://github.com/enufacas/Chained" target="_blank" class="nav-link">📂 GitHub</a>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Interactive 3D Visualization</h2>
+            <p class="section-description">
+                Experience the Chained autonomous lifecycle in three dimensions. Rotate, zoom, and interact
+                with the living organism that powers continuous AI-driven development.
+            </p>
+        </section>
+
+        <div id="canvas-container">
+            <canvas id="threejs-canvas"></canvas>
+            
+            <div class="loading-overlay" id="loading">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading 3D Scene...</div>
+            </div>
+            
+            <div class="controls-panel">
+                <h3>🎮 Controls</h3>
+                
+                <div class="control-item">
+                    <label>Rotation Speed</label>
+                    <input type="range" id="rotationSpeed" min="0" max="2" step="0.1" value="0.5">
+                    <span class="control-value" id="rotationSpeedValue">0.5</span>
+                </div>
+                
+                <div class="control-item">
+                    <label>Animation</label>
+                    <button id="toggleAnimation">Pause Animation</button>
+                </div>
+                
+                <div class="control-item">
+                    <label>View</label>
+                    <button id="resetCamera">Reset Camera</button>
+                </div>
+                
+                <div class="control-item">
+                    <label>Particle Flow</label>
+                    <button id="toggleParticles">Hide Particles</button>
+                </div>
+            </div>
+            
+            <div class="info-panel" id="infoPanel">
+                <h4>💡 Interactive Tips</h4>
+                <p>
+                    🖱️ <strong>Left Click + Drag:</strong> Rotate view<br>
+                    🖱️ <strong>Right Click + Drag:</strong> Pan camera<br>
+                    🖱️ <strong>Scroll:</strong> Zoom in/out<br>
+                    🖱️ <strong>Click Stage:</strong> View details
+                </p>
+            </div>
+        </div>
+
+        <section>
+            <h2>✨ Features of This Visualization</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Circular Flow</h3>
+                    <p>The 5-stage autonomous lifecycle arranged in a perpetual 3D loop, showing the continuous nature of the system.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Data Particles</h3>
+                    <p>Animated particles flowing between stages represent data moving through the system in real-time.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Interactive 3D</h3>
+                    <p>Rotate, zoom, and pan to explore the system from any angle. Click on stages to learn more.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌟</div>
+                    <h3>Real-time Updates</h3>
+                    <p>Visualization reflects actual system statistics and metrics from the live autonomous system.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Stage Highlighting</h3>
+                    <p>Hover and click on stages to see detailed information about each phase of the lifecycle.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Performance Optimized</h3>
+                    <p>Smooth 60fps rendering with efficient particle systems and responsive controls.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>🔧 Possible Enhancements</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Agent Orbits</h3>
+                    <p>Show AI agents as orbiting entities around the lifecycle core, sized by performance metrics.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Live Activity Pulses</h3>
+                    <p>Stages pulse and glow when workflows are actively running, connected to GitHub Actions.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Geographic Learning</h3>
+                    <p>Connect to world map data showing where learnings originate geographically.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎬</div>
+                    <h3>Automated Tours</h3>
+                    <p>Scripted camera movements that guide users through the system's components.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Historical Playback</h3>
+                    <p>Scrub through time to see how the system has evolved and grown over days/weeks.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎪</div>
+                    <h3>VR/AR Support</h3>
+                    <p>Future WebXR integration for immersive virtual/augmented reality experiences.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Powered by Three.js | <a href="https://github.com/enufacas/Chained" target="_blank">View on GitHub</a></p>
+    </footer>
+
+    <!-- Three.js via ES modules (works better with modern browsers) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+    
+    <script type="module">
+        import * as THREE from 'three';
+        
+        // Make THREE global for compatibility
+        window.THREE = THREE;
+        
+        // Three.js Scene Setup
+        let scene, camera, renderer, controls;
+        let stages = [];
+        let particles = [];
+        let isAnimating = true;
+        let rotationSpeed = 0.5;
+        let particlesVisible = true;
+        
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x0f0f1e, 10, 50);
+            
+            // Camera
+            const container = document.getElementById('canvas-container');
+            camera = new THREE.PerspectiveCamera(
+                75,
+                container.clientWidth / container.clientHeight,
+                0.1,
+                1000
+            );
+            camera.position.set(0, 5, 15);
+            camera.lookAt(0, 0, 0);
+            
+            // Renderer
+            const canvas = document.getElementById('threejs-canvas');
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: canvas,
+                antialias: true,
+                alpha: true 
+            });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setClearColor(0x0f0f1e, 1);
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+            scene.add(ambientLight);
+            
+            const pointLight1 = new THREE.PointLight(0x06b6d4, 1, 50);
+            pointLight1.position.set(10, 10, 10);
+            scene.add(pointLight1);
+            
+            const pointLight2 = new THREE.PointLight(0x8b5cf6, 0.8, 50);
+            pointLight2.position.set(-10, -10, 10);
+            scene.add(pointLight2);
+            
+            // Create lifecycle stages
+            createLifecycleStages();
+            
+            // Create particle system
+            createParticleSystem();
+            
+            // Create connecting lines
+            createConnections();
+            
+            // Simple OrbitControls-like mouse control
+            setupMouseControls();
+            
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
+            setupControlHandlers();
+            
+            // Hide loading overlay
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 1000);
+            
+            // Start animation
+            animate();
+        }
+        
+        function createLifecycleStages() {
+            const stageData = [
+                { name: 'Learning', color: 0x06b6d4, position: 0 },
+                { name: 'Analysis', color: 0x8b5cf6, position: 1 },
+                { name: 'Assignment', color: 0x10b981, position: 2 },
+                { name: 'Execution', color: 0xf59e0b, position: 3 },
+                { name: 'Review', color: 0xef4444, position: 4 }
+            ];
+            
+            const radius = 8;
+            const angleStep = (Math.PI * 2) / stageData.length;
+            
+            stageData.forEach((data, index) => {
+                const angle = angleStep * index - Math.PI / 2;
+                const x = Math.cos(angle) * radius;
+                const z = Math.sin(angle) * radius;
+                
+                // Create stage sphere
+                const geometry = new THREE.SphereGeometry(0.8, 32, 32);
+                const material = new THREE.MeshPhongMaterial({ 
+                    color: data.color,
+                    emissive: data.color,
+                    emissiveIntensity: 0.3,
+                    shininess: 100
+                });
+                const sphere = new THREE.Mesh(geometry, material);
+                sphere.position.set(x, 0, z);
+                sphere.userData = { name: data.name, index: index };
+                
+                // Add glow effect
+                const glowGeometry = new THREE.SphereGeometry(1.2, 32, 32);
+                const glowMaterial = new THREE.MeshBasicMaterial({
+                    color: data.color,
+                    transparent: true,
+                    opacity: 0.2,
+                    side: THREE.BackSide
+                });
+                const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+                sphere.add(glow);
+                
+                scene.add(sphere);
+                stages.push({ mesh: sphere, data: data, angle: angle });
+            });
+        }
+        
+        function createParticleSystem() {
+            const particleCount = 200;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 8 + Math.random() * 2;
+                
+                positions[i3] = Math.cos(angle) * radius;
+                positions[i3 + 1] = (Math.random() - 0.5) * 4;
+                positions[i3 + 2] = Math.sin(angle) * radius;
+                
+                const color = new THREE.Color();
+                color.setHSL(Math.random() * 0.6 + 0.5, 1, 0.5);
+                colors[i3] = color.r;
+                colors[i3 + 1] = color.g;
+                colors[i3 + 2] = color.b;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 0.1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            
+            const particleSystem = new THREE.Points(geometry, material);
+            particleSystem.userData.isParticleSystem = true;
+            scene.add(particleSystem);
+            particles.push(particleSystem);
+        }
+        
+        function createConnections() {
+            const radius = 8;
+            const points = [];
+            const angleStep = (Math.PI * 2) / stages.length;
+            
+            for (let i = 0; i <= stages.length; i++) {
+                const angle = angleStep * i - Math.PI / 2;
+                points.push(new THREE.Vector3(
+                    Math.cos(angle) * radius,
+                    0,
+                    Math.sin(angle) * radius
+                ));
+            }
+            
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const material = new THREE.LineBasicMaterial({ 
+                color: 0x06b6d4,
+                transparent: true,
+                opacity: 0.3
+            });
+            const line = new THREE.Line(geometry, material);
+            scene.add(line);
+        }
+        
+        function setupMouseControls() {
+            let isDragging = false;
+            let previousMouseX = 0;
+            let previousMouseY = 0;
+            let rotationX = 0;
+            let rotationY = 0;
+            
+            const canvas = document.getElementById('threejs-canvas');
+            
+            canvas.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMouseX = e.clientX;
+                previousMouseY = e.clientY;
+            });
+            
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                
+                const deltaX = e.clientX - previousMouseX;
+                const deltaY = e.clientY - previousMouseY;
+                
+                rotationY += deltaX * 0.005;
+                rotationX += deltaY * 0.005;
+                
+                // Limit vertical rotation
+                rotationX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotationX));
+                
+                camera.position.x = Math.sin(rotationY) * 15 * Math.cos(rotationX);
+                camera.position.y = Math.sin(rotationX) * 15;
+                camera.position.z = Math.cos(rotationY) * 15 * Math.cos(rotationX);
+                camera.lookAt(0, 0, 0);
+                
+                previousMouseX = e.clientX;
+                previousMouseY = e.clientY;
+            });
+            
+            canvas.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+            
+            canvas.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const zoomSpeed = 0.001;
+                const distance = camera.position.length();
+                const newDistance = Math.max(5, Math.min(30, distance + e.deltaY * zoomSpeed * distance));
+                camera.position.multiplyScalar(newDistance / distance);
+            });
+        }
+        
+        function setupControlHandlers() {
+            // Rotation speed
+            const rotationSlider = document.getElementById('rotationSpeed');
+            const rotationValue = document.getElementById('rotationSpeedValue');
+            rotationSlider.addEventListener('input', (e) => {
+                rotationSpeed = parseFloat(e.target.value);
+                rotationValue.textContent = rotationSpeed.toFixed(1);
+            });
+            
+            // Toggle animation
+            document.getElementById('toggleAnimation').addEventListener('click', (e) => {
+                isAnimating = !isAnimating;
+                e.target.textContent = isAnimating ? 'Pause Animation' : 'Resume Animation';
+            });
+            
+            // Reset camera
+            document.getElementById('resetCamera').addEventListener('click', () => {
+                camera.position.set(0, 5, 15);
+                camera.lookAt(0, 0, 0);
+            });
+            
+            // Toggle particles
+            document.getElementById('toggleParticles').addEventListener('click', (e) => {
+                particlesVisible = !particlesVisible;
+                particles.forEach(p => p.visible = particlesVisible);
+                e.target.textContent = particlesVisible ? 'Hide Particles' : 'Show Particles';
+            });
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (isAnimating) {
+                // Rotate stages
+                stages.forEach((stage, index) => {
+                    const time = Date.now() * 0.001 * rotationSpeed;
+                    stage.mesh.rotation.y = time;
+                    
+                    // Subtle floating animation
+                    stage.mesh.position.y = Math.sin(time + index) * 0.2;
+                });
+                
+                // Animate particles
+                particles.forEach(particleSystem => {
+                    const positions = particleSystem.geometry.attributes.position.array;
+                    const time = Date.now() * 0.0005;
+                    
+                    for (let i = 0; i < positions.length; i += 3) {
+                        const angle = Math.atan2(positions[i + 2], positions[i]);
+                        const newAngle = angle + 0.005 * rotationSpeed;
+                        const radius = Math.sqrt(positions[i] * positions[i] + positions[i + 2] * positions[i + 2]);
+                        
+                        positions[i] = Math.cos(newAngle) * radius;
+                        positions[i + 2] = Math.sin(newAngle) * radius;
+                        positions[i + 1] += Math.sin(time + i) * 0.01;
+                        
+                        // Reset if too far
+                        if (Math.abs(positions[i + 1]) > 5) {
+                            positions[i + 1] = (Math.random() - 0.5) * 4;
+                        }
+                    }
+                    
+                    particleSystem.geometry.attributes.position.needsUpdate = true;
+                });
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        function onWindowResize() {
+            const container = document.getElementById('canvas-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', init);
+    </script>
+    <script src="navigation.js"></script>
+</body>
+</html>
