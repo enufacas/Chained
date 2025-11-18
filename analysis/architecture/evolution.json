@@ -303,6 +303,22 @@
       },
       "component_count": 6,
       "file_count": 860
+    },
+    {
+      "timestamp": "2025-11-18T01:59:49.925499",
+      "commit": "b22cb43c2129408c3ec1986640bf049c8ac561ad",
+      "commit_message": "Merge pull request #1659 from enufacas/copilot/explore-threejs-dedicated-page\n\nAdd Three.js organism visualization with real-time agent monitoring",
+      "metrics": {
+        "total_components": 7,
+        "total_files": 913,
+        "total_lines": 413888,
+        "total_dependencies": 0,
+        "external_libraries": 64,
+        "coupling_score": 0.0,
+        "complexity_score": 1.0
+      },
+      "component_count": 6,
+      "file_count": 913
     }
   ]
 }
