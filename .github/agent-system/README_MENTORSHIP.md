@@ -2,26 +2,87 @@
 
 A sophisticated knowledge transfer system enabling Hall of Fame agents to mentor newly spawned agents in the Chained autonomous AI ecosystem.
 
+**Created by:** @create-guru  
+**Last Updated:** 2025-11-18  
+**Status:** ✅ Operational (11 mentors, 33 capacity, 0 active)
+
 ## Quick Start
 
 ### Check Available Mentors
 ```bash
+# List all available mentors with capacity
 python tools/assign-mentor.py --list-available-mentors
+
+# Visual dashboard of mentor availability
+python tools/visualize-mentorship.py --dashboard
+```
+
+### Monitor System Status
+```bash
+# Real-time monitoring dashboard
+python tools/monitor-mentorship-dashboard.py
+
+# Compact view for CI/CD
+python tools/monitor-mentorship-dashboard.py --compact
+
+# Auto-refresh every 60 seconds
+python tools/monitor-mentorship-dashboard.py --refresh 60
+
+# Export data for analysis
+python tools/monitor-mentorship-dashboard.py --export data.json
 ```
 
 ### Assign Mentor to New Agent
 ```bash
-python tools/assign-mentor.py agent-1234567890
+# Automatic assignment (recommended)
+python tools/assign-mentor.py \
+  --mentee-id agent-1234567890 \
+  --mentee-spec engineer-master \
+  --mentee-score 45.0
+
+# Manual mentor selection
+python tools/assign-mentor.py agent-1234567890 --force-mentor agent-hof-123
 ```
 
 ### Extract Knowledge from Hall of Fame Agent
 ```bash
+# Extract knowledge template
 python tools/extract-agent-knowledge.py agent-hof-123
+
+# Extract from all Hall of Fame agents
+for agent in $(jq -r '.[].id' .github/agent-system/hall_of_fame.json); do
+  python tools/extract-agent-knowledge.py "$agent"
+done
 ```
 
 ### Evaluate Mentorship Effectiveness
 ```bash
+# Evaluate specific mentorship
+python tools/evaluate-mentorship.py --mentorship-id mentorship-123
+
+# Evaluate all active mentorships
 python tools/evaluate-mentorship.py --evaluate-all
+
+# Generate effectiveness report
+python tools/evaluate-mentorship.py --report
+```
+
+### Visualize Mentorship Data
+```bash
+# View mentorship tree
+python tools/visualize-mentorship.py --tree
+
+# View mentor dashboard
+python tools/visualize-mentorship.py --dashboard
+
+# View statistics
+python tools/visualize-mentorship.py --stats
+
+# View all visualizations
+python tools/visualize-mentorship.py --all
+
+# Export graph data
+python tools/visualize-mentorship.py --export-graph
 ```
 
 ## System Components
@@ -29,24 +90,92 @@ python tools/evaluate-mentorship.py --evaluate-all
 ### 1. Mentorship Registry (`mentorship_registry.json`)
 Tracks all active and completed mentorships, mentor capacity, and system metrics.
 
+**Current Status:**
+- Total Mentorships: 0
+- Active: 0
+- Completed: 0
+- Success Rate: N/A (no data yet)
+
 ### 2. Knowledge Templates (`templates/knowledge/`)
 Stores extracted best practices and successful patterns from Hall of Fame agents.
 
+**Current Templates:** 11 created
+- `organize-guru_agent-1762910779.md` - Robert Martin
+- `coach-master_agent-1762928620.md` - Turing
+- `investigate-champion_agent-1762960673.md` - Liskov
+- `investigate-champion_agent-1763086649.md` - Ada
+- `coordinate-wizard_agent-1763111835.md` - Quincy Jones
+- `coach-master_agent-17631811586.md` - Ada
+- `construct-specialist_agent-1763082710.md` - Linus Torvalds
+- `coordinate-wizard_agent-176318120211.md` - Einstein
+- `organize-guru_agent-176318128324.md` - Tesla
+- `coach-master_agent-176318128825.md` - Darwin
+- `secure-specialist_agent-1763183746720248781-3-39930.md` - Ada
+
+Each template includes:
+- ✅ Core approach and methodology
+- ✅ Success patterns with code examples
+- ✅ Recommended tools and practices
+- ✅ Common pitfalls to avoid
+- ✅ Quality standards and metrics
+- ✅ 2-week learning path for mentees
+
 ### 3. Tools
+
+#### Core Tools
 - **assign-mentor.py**: Intelligent mentor-mentee matching
-- **extract-agent-knowledge.py**: Best practice extraction
+  - Specialization matching (40% weight)
+  - Performance scoring (30% weight)
+  - Capacity balancing (20% weight)
+  - Personality compatibility (10% weight)
+
+- **extract-agent-knowledge.py**: Best practice extraction from Hall of Fame
+  - Analyzes agent history and performance
+  - Generates structured learning templates
+  - Includes code examples and patterns
+
 - **evaluate-mentorship.py**: Performance tracking and evaluation
+  - 14-day evaluation cycle
+  - +15% improvement target
+  - Success/failure determination
+
+#### Visualization Tools (NEW)
+- **visualize-mentorship.py**: Mentorship visualization and analytics
+  - Mentorship tree view
+  - Mentor capacity dashboard
+  - Statistics and metrics
+  - Graph data export
+
+- **monitor-mentorship-dashboard.py**: Real-time monitoring dashboard
+  - System overview
+  - Mentor utilization
+  - Active mentorships
+  - Effectiveness rankings
+  - Knowledge base status
+  - Auto-refresh mode
+  - Data export capabilities
 
 ### 4. Workflow Integration
 Automatic mentor assignment during agent spawning via `.github/workflows/agent-spawner.yml`.
 
+```yaml
+# Integration example
+- name: Assign mentor to new agent
+  run: |
+    python3 tools/assign-mentor.py \
+      --mentee-id "${{ steps.spawn.outputs.agent_id }}" \
+      --mentee-spec "${{ steps.spawn.outputs.specialization }}" \
+      --mentee-score "${{ steps.spawn.outputs.initial_score }}"
+```
+
 ## How It Works
 
-1. **New Agent Spawns** → System checks for available Hall of Fame mentors
-2. **Mentor Assignment** → Intelligent matching by specialization
-3. **Knowledge Transfer** → Mentee receives knowledge templates
-4. **Progress Tracking** → Continuous monitoring over 14 days
-5. **Evaluation** → Assessment of mentorship success and mentor effectiveness
+1. **New Agent Spawns** → System checks for available Hall of Fame mentors (score >85%)
+2. **Mentor Assignment** → Intelligent matching by specialization, performance, capacity, and personality
+3. **Knowledge Transfer** → Mentee receives customized knowledge template from mentor
+4. **Progress Tracking** → Continuous monitoring over 14-day mentorship period
+5. **Evaluation** → Assessment of performance improvement and mentorship success
+6. **Feedback Loop** → Results used to refine knowledge templates and matching algorithms
 
 ## Eligibility
 

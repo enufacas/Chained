@@ -1,0 +1,291 @@
+name: Mentorship Monitoring Dashboard
+
+on:
+  schedule:
+    # Run daily at 00:00 UTC to monitor mentorship health
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      force_evaluation:
+        description: 'Force evaluation of all mentorships'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  monitor-mentorships:
+    name: Monitor Mentorship System
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Check mentorship system health
+        id: health_check
+        run: |
+          echo "🏥 Checking mentorship system health..."
+          
+          # Check for required files
+          REQUIRED_FILES=(
+            ".github/agent-system/mentorship_registry.json"
+            ".github/agent-system/hall_of_fame.json"
+            "tools/assign-mentor.py"
+            "tools/evaluate-mentorship.py"
+            "tools/visualize-mentorship.py"
+          )
+          
+          ALL_PRESENT=true
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "⚠️ Missing required file: $file"
+              ALL_PRESENT=false
+            fi
+          done
+          
+          if [ "$ALL_PRESENT" = true ]; then
+            echo "✅ All required files present"
+            echo "health_status=healthy" >> $GITHUB_OUTPUT
+          else
+            echo "❌ System health check failed"
+            echo "health_status=unhealthy" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Generate mentorship report
+        id: generate_report
+        run: |
+          echo "📊 Generating mentorship report..."
+          
+          # Generate comprehensive report
+          REPORT_FILE="mentorship_report_$(date +%Y%m%d).txt"
+          
+          {
+            echo "# Mentorship System Report"
+            echo "Generated: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+            echo ""
+            echo "## System Health"
+            python3 tools/evaluate-mentorship.py --report
+            echo ""
+            echo "## Capacity Dashboard"
+            python3 tools/visualize-mentorship.py --dashboard
+            echo ""
+            echo "## Active Mentorships"
+            python3 tools/visualize-mentorship.py --tree
+            echo ""
+            echo "## Statistics"
+            python3 tools/visualize-mentorship.py --stats
+          } > "$REPORT_FILE"
+          
+          echo "report_file=$REPORT_FILE" >> $GITHUB_OUTPUT
+          
+          # Extract key metrics
+          ACTIVE_COUNT=$(python3 -c "import json; data=json.load(open('.github/agent-system/mentorship_registry.json')); print(len(data.get('active_mentorships', [])))")
+          COMPLETED_COUNT=$(python3 -c "import json; data=json.load(open('.github/agent-system/mentorship_registry.json')); print(len(data.get('completed_mentorships', [])))")
+          
+          echo "active_count=$ACTIVE_COUNT" >> $GITHUB_OUTPUT
+          echo "completed_count=$COMPLETED_COUNT" >> $GITHUB_OUTPUT
+          
+          echo "✅ Report generated: $REPORT_FILE"
+          cat "$REPORT_FILE"
+      
+      - name: Evaluate active mentorships
+        id: evaluate
+        if: github.event.inputs.force_evaluation == 'true' || github.event_name == 'schedule'
+        run: |
+          echo "🔍 Evaluating active mentorships..."
+          
+          # Run evaluation
+          python3 tools/evaluate-mentorship.py --evaluate-all --verbose || {
+            echo "⚠️ Evaluation encountered issues"
+            echo "evaluation_status=warning" >> $GITHUB_OUTPUT
+            exit 0
+          }
+          
+          echo "✅ Evaluation completed successfully"
+          echo "evaluation_status=success" >> $GITHUB_OUTPUT
+      
+      - name: Check mentor capacity
+        id: capacity_check
+        run: |
+          echo "🔍 Checking mentor capacity..."
+          
+          # Get available mentor count
+          AVAILABLE_MENTORS=$(python3 tools/assign-mentor.py --list-available-mentors 2>&1 | grep -c "^  -" || echo "0")
+          
+          # Get Hall of Fame count
+          HOF_COUNT=$(python3 -c "import json; print(len(json.load(open('.github/agent-system/hall_of_fame.json'))))" || echo "0")
+          
+          # Calculate utilization
+          ACTIVE_COUNT=${{ steps.generate_report.outputs.active_count }}
+          TOTAL_CAPACITY=$((HOF_COUNT * 3))
+          
+          if [ "$TOTAL_CAPACITY" -gt 0 ]; then
+            UTILIZATION=$((ACTIVE_COUNT * 100 / TOTAL_CAPACITY))
+          else
+            UTILIZATION=0
+          fi
+          
+          echo "available_mentors=$AVAILABLE_MENTORS" >> $GITHUB_OUTPUT
+          echo "hof_count=$HOF_COUNT" >> $GITHUB_OUTPUT
+          echo "total_capacity=$TOTAL_CAPACITY" >> $GITHUB_OUTPUT
+          echo "utilization=$UTILIZATION" >> $GITHUB_OUTPUT
+          
+          echo "📊 Capacity Status:"
+          echo "   Hall of Fame Mentors: $HOF_COUNT"
+          echo "   Available Mentors: $AVAILABLE_MENTORS"
+          echo "   Total Capacity: $TOTAL_CAPACITY slots"
+          echo "   Active Mentorships: $ACTIVE_COUNT"
+          echo "   Utilization: $UTILIZATION%"
+          
+          # Set alert if capacity is low
+          if [ "$UTILIZATION" -gt 80 ]; then
+            echo "⚠️ High utilization - consider promoting more agents to Hall of Fame"
+            echo "capacity_alert=high" >> $GITHUB_OUTPUT
+          elif [ "$AVAILABLE_MENTORS" -lt 3 ]; then
+            echo "⚠️ Low mentor availability"
+            echo "capacity_alert=low" >> $GITHUB_OUTPUT
+          else
+            echo "✅ Capacity healthy"
+            echo "capacity_alert=none" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create monitoring issue if problems detected
+        if: |
+          steps.health_check.outputs.health_status == 'unhealthy' ||
+          steps.capacity_check.outputs.capacity_alert != 'none'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🚨 Creating monitoring alert issue..."
+          
+          HEALTH_STATUS="${{ steps.health_check.outputs.health_status }}"
+          CAPACITY_ALERT="${{ steps.capacity_check.outputs.capacity_alert }}"
+          ACTIVE_COUNT="${{ steps.generate_report.outputs.active_count }}"
+          UTILIZATION="${{ steps.capacity_check.outputs.utilization }}"
+          
+          # Build issue body
+          ISSUE_BODY="## 🚨 Mentorship System Alert
+          
+          **Date**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          **Triggered by**: Automated monitoring
+          
+          ### Issues Detected
+          "
+          
+          if [ "$HEALTH_STATUS" = "unhealthy" ]; then
+            ISSUE_BODY="${ISSUE_BODY}
+          - ⚠️ **System Health**: Unhealthy (missing required files)
+          "
+          fi
+          
+          if [ "$CAPACITY_ALERT" = "high" ]; then
+            ISSUE_BODY="${ISSUE_BODY}
+          - 🔴 **High Utilization**: ${UTILIZATION}% capacity used
+          - **Recommendation**: Promote more agents to Hall of Fame to expand mentor pool
+          "
+          elif [ "$CAPACITY_ALERT" = "low" ]; then
+            ISSUE_BODY="${ISSUE_BODY}
+          - 🟡 **Low Mentor Availability**: Only ${{ steps.capacity_check.outputs.available_mentors }} mentors available
+          - **Recommendation**: Monitor agent evaluations for promotion candidates
+          "
+          fi
+          
+          ISSUE_BODY="${ISSUE_BODY}
+          
+          ### Current Metrics
+          
+          - Active Mentorships: ${ACTIVE_COUNT}
+          - Hall of Fame Mentors: ${{ steps.capacity_check.outputs.hof_count }}
+          - Total Capacity: ${{ steps.capacity_check.outputs.total_capacity }} slots
+          - Utilization: ${UTILIZATION}%
+          
+          ### Actions Required
+          
+          1. Review system health and resolve any missing files
+          2. Consider promoting high-performing agents to Hall of Fame
+          3. Monitor mentor workload distribution
+          4. Ensure knowledge templates are up to date
+          
+          ### Automated Checks
+          
+          Run these commands to diagnose:
+          \`\`\`bash
+          python3 tools/visualize-mentorship.py --all
+          python3 tools/evaluate-mentorship.py --report
+          python3 tools/assign-mentor.py --list-available-mentors
+          \`\`\`
+          
+          ---
+          *🤖 Created by workflow: [Mentorship Monitoring Dashboard](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+          "
+          
+          # Check if similar issue already exists
+          EXISTING_ISSUE=$(gh issue list \
+            --label "mentorship-system,automated" \
+            --state open \
+            --search "Mentorship System Alert" \
+            --json number \
+            --jq '.[0].number' || echo "")
+          
+          if [ -z "$EXISTING_ISSUE" ]; then
+            # Create new issue
+            gh issue create \
+              --title "🚨 Mentorship System Alert - $(date +%Y-%m-%d)" \
+              --body "$ISSUE_BODY" \
+              --label "mentorship-system,automated,alert"
+            
+            echo "✅ Alert issue created"
+          else
+            # Update existing issue
+            gh issue comment "$EXISTING_ISSUE" --body "## 🔄 Updated Alert
+
+          $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+
+          $ISSUE_BODY"
+            
+            echo "✅ Updated existing alert issue #$EXISTING_ISSUE"
+          fi
+      
+      - name: Archive report
+        run: |
+          echo "📦 Archiving report..."
+          
+          REPORT_FILE="${{ steps.generate_report.outputs.report_file }}"
+          ARCHIVE_DIR=".github/agent-system/reports"
+          
+          mkdir -p "$ARCHIVE_DIR"
+          cp "$REPORT_FILE" "$ARCHIVE_DIR/"
+          
+          # Keep only last 30 reports
+          cd "$ARCHIVE_DIR"
+          ls -t mentorship_report_*.txt | tail -n +31 | xargs -r rm
+          
+          echo "✅ Report archived"
+      
+      - name: Summary
+        run: |
+          echo "## 📊 Mentorship Monitoring Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Metrics" >> $GITHUB_STEP_SUMMARY
+          echo "- **Active Mentorships**: ${{ steps.generate_report.outputs.active_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Completed**: ${{ steps.generate_report.outputs.completed_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Hall of Fame Mentors**: ${{ steps.capacity_check.outputs.hof_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total Capacity**: ${{ steps.capacity_check.outputs.total_capacity }} slots" >> $GITHUB_STEP_SUMMARY
+          echo "- **Utilization**: ${{ steps.capacity_check.outputs.utilization }}%" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Status" >> $GITHUB_STEP_SUMMARY
+          echo "- **System Health**: ${{ steps.health_check.outputs.health_status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Capacity Alert**: ${{ steps.capacity_check.outputs.capacity_alert }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Report: \`${{ steps.generate_report.outputs.report_file }}\`" >> $GITHUB_STEP_SUMMARY
