@@ -113,13 +113,17 @@ jobs:
             threshold="30"
           fi
           
-          echo "Calculating uniqueness scores (threshold: ${threshold})..."
+          # Minimum contributions required for meaningful diversity analysis
+          min_contributions="3"
+          
+          echo "Calculating uniqueness scores (threshold: ${threshold}, min contributions: ${min_contributions})..."
           
           # Run scorer and capture exit code
           python3 tools/uniqueness-scorer.py \
             -d . \
             --threshold ${threshold} \
             --days 90 \
+            --min-contributions ${min_contributions} \
             -o analysis/uniqueness-scores.json
           
           EXIT_CODE=$?
@@ -131,7 +135,7 @@ jobs:
             echo "⚠️  Some agents are below uniqueness threshold (this is informational)"
           else
             echo "below_threshold=false" >> $GITHUB_OUTPUT
-            echo "✅ All agents meet uniqueness threshold"
+            echo "✅ All agents meet uniqueness threshold or have insufficient data"
           fi
           
           echo "threshold=${threshold}" >> $GITHUB_OUTPUT
