@@ -1,0 +1,240 @@
+{
+  "generated_at": "2025-11-18T03:09:32.701070+00:00",
+  "repository": ".",
+  "metrics_analyzed": 406,
+  "hypotheses_generated": 8,
+  "hypotheses_validated": 4,
+  "validation_rate": 0.5,
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp_complexity_quality_1",
+      "description": "Functions with high cyclomatic_complexity tend to have lower test_coverage",
+      "hypothesis_type": "correlation",
+      "independent_var": "cyclomatic_complexity",
+      "dependent_var": "test_coverage",
+      "threshold": null,
+      "direction": "positive",
+      "tested": true,
+      "validated": false,
+      "confidence": 0.05,
+      "p_value": 0.8800347450224282,
+      "sample_size": 406,
+      "supporting_examples": [
+        {
+          "file": "tools/debug_custom_agent_actors.py",
+          "function": "main",
+          "independent": 19.0,
+          "dependent": 0.0
+        },
+        {
+          "file": "tools/pr-failure-learner.py",
+          "function": "_extract_common_issues",
+          "independent": 18.0,
+          "dependent": 0.0
+        },
+        {
+          "file": "tools/demo_autonomous_ab_testing.py",
+          "function": "demonstrate_full_analysis",
+          "independent": 18.0,
+          "dependent": 0.0
+        }
+      ],
+      "contradicting_examples": [],
+      "generated_at": "2025-11-18T03:09:32.696759+00:00",
+      "tested_at": "2025-11-18T03:09:32.696855+00:00"
+    },
+    {
+      "hypothesis_id": "hyp_complexity_quality_3",
+      "description": "Functions with high cognitive_complexity tend to have fewer docstrings",
+      "hypothesis_type": "correlation",
+      "independent_var": "cognitive_complexity",
+      "dependent_var": "docstrings",
+      "threshold": null,
+      "direction": "positive",
+      "tested": true,
+      "validated": false,
+      "confidence": 0.05,
+      "p_value": 1.0,
+      "sample_size": 406,
+      "supporting_examples": [
+        {
+          "file": "test_agent_attribution.py",
+          "function": "test_copilot_agent_comment_parsing",
+          "independent": 0.0,
+          "dependent": 1.0
+        },
+        {
+          "file": "test_agent_attribution.py",
+          "function": "test_agent_specialization_in_registry",
+          "independent": 0.0,
+          "dependent": 1.0
+        },
+        {
+          "file": "test_agent_attribution.py",
+          "function": "test_metrics_collector_import",
+          "independent": 0.0,
+          "dependent": 1.0
+        }
+      ],
+      "contradicting_examples": [],
+      "generated_at": "2025-11-18T03:09:32.696780+00:00",
+      "tested_at": "2025-11-18T03:09:32.697602+00:00"
+    },
+    {
+      "hypothesis_id": "hyp_complexity_quality_5",
+      "description": "Functions with many parameters tend to have higher error_rate",
+      "hypothesis_type": "correlation",
+      "independent_var": "parameters",
+      "dependent_var": "error_rate",
+      "threshold": null,
+      "direction": "negative",
+      "tested": true,
+      "validated": false,
+      "confidence": 0.05,
+      "p_value": null,
+      "sample_size": 406,
+      "supporting_examples": [],
+      "contradicting_examples": [],
+      "generated_at": "2025-11-18T03:09:32.696787+00:00",
+      "tested_at": "2025-11-18T03:09:32.698266+00:00"
+    },
+    {
+      "hypothesis_id": "hyp_naming_quality_7",
+      "description": "Functions with short naming have lower docstring_quality",
+      "hypothesis_type": "pattern",
+      "independent_var": "naming_pattern",
+      "dependent_var": "docstring_quality",
+      "threshold": null,
+      "direction": null,
+      "tested": true,
+      "validated": true,
+      "confidence": 0.95,
+      "p_value": 0.1571627260083449,
+      "sample_size": 406,
+      "supporting_examples": [],
+      "contradicting_examples": [],
+      "generated_at": "2025-11-18T03:09:32.696795+00:00",
+      "tested_at": "2025-11-18T03:09:32.698599+00:00"
+    },
+    {
+      "hypothesis_id": "hyp_naming_quality_9",
+      "description": "Functions with long naming have higher complexity",
+      "hypothesis_type": "pattern",
+      "independent_var": "naming_pattern",
+      "dependent_var": "complexity",
+      "threshold": null,
+      "direction": null,
+      "tested": true,
+      "validated": true,
+      "confidence": 0.95,
+      "p_value": 0.1571627260083449,
+      "sample_size": 406,
+      "supporting_examples": [],
+      "contradicting_examples": [],
+      "generated_at": "2025-11-18T03:09:32.696800+00:00",
+      "tested_at": "2025-11-18T03:09:32.699035+00:00"
+    },
+    {
+      "hypothesis_id": "hyp_naming_quality_11",
+      "description": "Functions with clear naming have better maintainability",
+      "hypothesis_type": "pattern",
+      "independent_var": "naming_pattern",
+      "dependent_var": "maintainability",
+      "threshold": null,
+      "direction": null,
+      "tested": true,
+      "validated": true,
+      "confidence": 0.95,
+      "p_value": 0.1571627260083449,
+      "sample_size": 406,
+      "supporting_examples": [],
+      "contradicting_examples": [],
+      "generated_at": "2025-11-18T03:09:32.696804+00:00",
+      "tested_at": "2025-11-18T03:09:32.699468+00:00"
+    },
+    {
+      "hypothesis_id": "hyp_size_threshold_13",
+      "description": "Functions exceeding 50 lines tend to have multiple responsibilities",
+      "hypothesis_type": "threshold",
+      "independent_var": "lines",
+      "dependent_var": "quality",
+      "threshold": 50.0,
+      "direction": null,
+      "tested": true,
+      "validated": true,
+      "confidence": 0.95,
+      "p_value": 0.14966299523261542,
+      "sample_size": 406,
+      "supporting_examples": [
+        {
+          "file": "test_agent_attribution.py",
+          "function": "test_copilot_agent_comment_parsing",
+          "value": 61
+        },
+        {
+          "file": "test_agent_attribution.py",
+          "function": "test_agent_mention_extraction",
+          "value": 88
+        },
+        {
+          "file": "test_agent_attribution.py",
+          "function": "test_strict_attribution_config",
+          "value": 51
+        }
+      ],
+      "contradicting_examples": [],
+      "generated_at": "2025-11-18T03:09:32.696811+00:00",
+      "tested_at": "2025-11-18T03:09:32.699882+00:00"
+    },
+    {
+      "hypothesis_id": "hyp_size_threshold_15",
+      "description": "Functions exceeding 5 parameters tend to have poor cohesion",
+      "hypothesis_type": "threshold",
+      "independent_var": "parameters",
+      "dependent_var": "quality",
+      "threshold": 5.0,
+      "direction": null,
+      "tested": true,
+      "validated": false,
+      "confidence": 0.05,
+      "p_value": 0.058219178082191715,
+      "sample_size": 406,
+      "supporting_examples": [],
+      "contradicting_examples": [],
+      "generated_at": "2025-11-18T03:09:32.696815+00:00",
+      "tested_at": "2025-11-18T03:09:32.700481+00:00"
+    }
+  ],
+  "summary": {
+    "top_validated_hypotheses": [
+      {
+        "description": "Functions with short naming have lower docstring_quality",
+        "confidence": 0.95,
+        "sample_size": 406
+      },
+      {
+        "description": "Functions with long naming have higher complexity",
+        "confidence": 0.95,
+        "sample_size": 406
+      },
+      {
+        "description": "Functions with clear naming have better maintainability",
+        "confidence": 0.95,
+        "sample_size": 406
+      },
+      {
+        "description": "Functions exceeding 50 lines tend to have multiple responsibilities",
+        "confidence": 0.95,
+        "sample_size": 406
+      }
+    ],
+    "hypothesis_types": {
+      "correlation": 3,
+      "threshold": 2,
+      "pattern": 3
+    },
+    "insights": [
+      "Consider refactoring functions with lines > 50.0"
+    ]
+  }
+}
