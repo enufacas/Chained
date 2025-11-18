@@ -160,6 +160,21 @@ def get_human_name_for_specialization(specialization):
 # All agents are inspired by legendary computer scientists and engineers
 # COMPREHENSIVE PATTERNS - Covers all 43+ agent specializations
 AGENT_PATTERNS = {
+    'APIs-architect': {
+        'keywords': [
+            'api', 'apis', 'endpoint', 'endpoints', 'rest', 'restful',
+            'graphql', 'http', 'https', 'service', 'microservice',
+            'architecture', 'design', 'interface', 'construct',
+            'backend', 'frontend', 'webhook', 'integration',
+            'swagger', 'openapi', 'json', 'xml', 'response'
+        ],
+        'patterns': [
+            r'\bapi\b', r'\bapis\b', r'\bendpoint', r'\brest\b',
+            r'\bgraphql\b', r'\bhttp', r'\bservice\b', r'\bmicroservice',
+            r'\barchitecture\b', r'\binterface\b', r'\bconstruct',
+            r'\bbackend\b', r'\bswagger\b', r'\bopenapi\b'
+        ]
+    },
     'accelerate-master': {
         'keywords': [
             'performance', 'slow', 'optimize', 'speed', 'latency',
@@ -222,6 +237,19 @@ AGENT_PATTERNS = {
             r'\bconnect', r'\binterface\b', r'\bcollab'
         ]
     },
+    'cleaner-master': {
+        'keywords': [
+            'clean', 'cleanup', 'organize', 'legacy', 'code structure',
+            'refactor', 'duplication', 'duplicate', 'simplify', 'complexity',
+            'maintainable', 'readable', 'technical debt', 'messy',
+            'improve structure', 'reorganize', 'tidy', 'clarify code'
+        ],
+        'patterns': [
+            r'\bclean', r'\blegacy\b', r'\bcode\s*structure\b',
+            r'\brefactor', r'\bduplicat', r'\bsimplif', r'\bcomplex',
+            r'\bmaintain', r'\btechnical\s*debt\b', r'\bmessy\b'
+        ]
+    },
     'clarify-champion': {
         'keywords': [
             'documentation', 'tutorial', 'clarify', 'explain', 'guide',
@@ -271,6 +299,19 @@ AGENT_PATTERNS = {
         'patterns': [
             r'\bdocument', r'\bexample', r'\bteach', r'\bexplain\b',
             r'\bcommunicat', r'\btutorial\b', r'\bguide\b'
+        ]
+    },
+    'connector-ninja': {
+        'keywords': [
+            'connect', 'connector', 'connection', 'api', 'integration',
+            'integrate', 'interface', 'bridge', 'link', 'interoperability',
+            'protocol', 'service', 'endpoint', 'webhook', 'sync',
+            'data flow', 'communication', 'middleware', 'adapter'
+        ],
+        'patterns': [
+            r'\bconnect', r'\bapi\b', r'\bintegrat', r'\binterface\b',
+            r'\bbridge\b', r'\blink\b', r'\bprotocol\b', r'\bservice\b',
+            r'\bendpoint', r'\bwebhook\b', r'\bsync\b', r'\bmiddleware\b'
         ]
     },
     'construct-specialist': {
@@ -374,6 +415,21 @@ AGENT_PATTERNS = {
         'patterns': [
             r'\bguide\b', r'\bmentor', r'\bskill\b', r'\bteach',
             r'\breview\b', r'\bbest practice', r'\bknowledge\b'
+        ]
+    },
+    'guardian-master': {
+        'keywords': [
+            'security', 'protect', 'protection', 'guardian', 'secure',
+            'vulnerability', 'threat', 'attack', 'defense', 'safety',
+            'access control', 'authentication', 'authorization', 'audit',
+            'data integrity', 'privacy', 'compliance', 'validation',
+            'sanitize', 'injection', 'xss', 'csrf', 'encryption'
+        ],
+        'patterns': [
+            r'\bsecur', r'\bprotect', r'\bguardian\b', r'\bvulner',
+            r'\bthreat\b', r'\battack\b', r'\bdefense\b', r'\bsafety\b',
+            r'\baccess\s*control\b', r'\bauth', r'\baudit\b',
+            r'\bintegrity\b', r'\bprivacy\b', r'\bvalidat', r'\bsanitiz'
         ]
     },
     'infrastructure-specialist': {
@@ -497,6 +553,25 @@ AGENT_PATTERNS = {
         'patterns': [
             r'\brefactor', r'\bcomplex', r'\bclean\b', r'\bsimplif',
             r'\bimprove\b', r'\brestructure\b', r'\bmaintain'
+        ]
+    },
+    'render-3d-master': {
+        'keywords': [
+            '3d', 'three.js', 'threejs', 'webgl', 'rendering', 'render',
+            'visualization', 'organism.html', 'lifecycle-3d', 'canvas',
+            'graphics', 'shader', 'mesh', 'geometry', 'material',
+            'camera', 'scene', 'fps', 'particle', 'animation',
+            'gpu', 'vertex', 'fragment', 'texture', 'lighting',
+            'bloom', 'post-processing', 'orbitcontrols', 'effect',
+            'instanced', 'draw call', 'webgl2', 'glsl'
+        ],
+        'patterns': [
+            r'\b3d\b', r'\bthree\.?js\b', r'\bwebgl\b', r'\brendering\b',
+            r'\brender', r'\bvisuali[sz]ation\b', r'\borganism\.html\b',
+            r'\bcanvas\b', r'\bgraphics\b', r'\bshader\b', r'\bmesh\b',
+            r'\bgeometry\b', r'\bcamera\b', r'\bscene\b', r'\bfps\b',
+            r'\bparticle', r'\banimation\b', r'\bgpu\b', r'\btexture\b',
+            r'\blighting\b', r'\bbloom\b', r'\bpost-process', r'\bglsl\b'
         ]
     },
     'restructure-master': {
