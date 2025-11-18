@@ -1,0 +1,212 @@
+name: "Tech Lead Review System (PoC)"
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, synchronize]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to analyze for Tech Lead review'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  analyze-pr-for-tech-lead:
+    runs-on: ubuntu-latest
+    # Skip draft PRs unless manually triggered
+    if: github.event.pull_request.draft == false || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Determine PR number
+        id: pr_number
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "pr_number=${{ inputs.pr_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Analyze PR for Tech Lead requirements
+        id: analyze
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          PR_NUM="${{ steps.pr_number.outputs.pr_number }}"
+          echo "Analyzing PR #${PR_NUM} for Tech Lead requirements..."
+          
+          # Run the matching script with complexity analysis
+          RESULT=$(python3 tools/match-pr-to-tech-lead.py "${PR_NUM}" --check-complexity)
+          echo "Analysis result:"
+          echo "${RESULT}" | jq .
+          
+          # Extract key information
+          TECH_LEADS=$(echo "${RESULT}" | jq -r '.tech_leads | length')
+          REQUIRES_REVIEW=$(echo "${RESULT}" | jq -r '.complexity.requires_review // false')
+          RECOMMENDATION=$(echo "${RESULT}" | jq -r '.complexity.recommendation // "optional"')
+          
+          echo "tech_leads_count=${TECH_LEADS}" >> $GITHUB_OUTPUT
+          echo "requires_review=${REQUIRES_REVIEW}" >> $GITHUB_OUTPUT
+          echo "recommendation=${RECOMMENDATION}" >> $GITHUB_OUTPUT
+          
+          # Save full result for later steps
+          echo "${RESULT}" > /tmp/tech_lead_analysis.json
+      
+      - name: Check current labels
+        id: check_labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUM="${{ steps.pr_number.outputs.pr_number }}"
+          
+          # Get current labels
+          LABELS=$(gh pr view "${PR_NUM}" --repo ${{ github.repository }} --json labels --jq '.labels[].name')
+          
+          # Check if already has tech-lead labels
+          HAS_TECH_LEAD_LABEL=false
+          if echo "${LABELS}" | grep -q "needs-tech-lead-review\|tech-lead-approved\|tech-lead-changes-requested"; then
+            HAS_TECH_LEAD_LABEL=true
+          fi
+          
+          echo "has_tech_lead_label=${HAS_TECH_LEAD_LABEL}" >> $GITHUB_OUTPUT
+          echo "Current labels: ${LABELS}"
+      
+      - name: Add Tech Lead review label if needed
+        if: steps.analyze.outputs.tech_leads_count > 0 && steps.analyze.outputs.requires_review == 'true' && steps.check_labels.outputs.has_tech_lead_label == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUM="${{ steps.pr_number.outputs.pr_number }}"
+          
+          echo "📋 PR requires Tech Lead review - adding label"
+          gh pr edit "${PR_NUM}" --repo ${{ github.repository }} --add-label "needs-tech-lead-review"
+          
+          # Add specific Tech Lead labels
+          RESULT=$(cat /tmp/tech_lead_analysis.json)
+          TECH_LEADS=$(echo "${RESULT}" | jq -r '.tech_leads[].name')
+          
+          for TECH_LEAD in ${TECH_LEADS}; do
+            echo "Adding label for Tech Lead: ${TECH_LEAD}"
+            gh pr edit "${PR_NUM}" --repo ${{ github.repository }} --add-label "tech-lead:${TECH_LEAD}" || true
+          done
+      
+      - name: Post Tech Lead analysis comment
+        if: steps.analyze.outputs.tech_leads_count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUM="${{ steps.pr_number.outputs.pr_number }}"
+          RESULT=$(cat /tmp/tech_lead_analysis.json)
+          
+          # Check if we already posted a comment (avoid duplicates)
+          EXISTING_COMMENT=$(gh pr view "${PR_NUM}" --repo ${{ github.repository }} --json comments --jq '.comments[] | select(.body | contains("🏗️ Tech Lead Review Analysis")) | .id' | head -1)
+          
+          if [ -n "${EXISTING_COMMENT}" ]; then
+            echo "Tech Lead analysis comment already exists (ID: ${EXISTING_COMMENT}), skipping duplicate"
+            exit 0
+          fi
+          
+          # Extract analysis data
+          TECH_LEADS=$(echo "${RESULT}" | jq -r '.tech_leads')
+          COMPLEXITY=$(echo "${RESULT}" | jq -r '.complexity // {}')
+          TOTAL_FILES=$(echo "${RESULT}" | jq -r '.total_files')
+          REQUIRES_REVIEW=$(echo "${COMPLEXITY}" | jq -r '.requires_review // false')
+          RECOMMENDATION=$(echo "${COMPLEXITY}" | jq -r '.recommendation // "optional"')
+          
+          # Build Tech Lead list
+          TECH_LEAD_LIST=""
+          echo "${TECH_LEADS}" | jq -c '.[]' | while read -r lead; do
+            NAME=$(echo "${lead}" | jq -r '.name')
+            SPEC=$(echo "${lead}" | jq -r '.specialization')
+            FILE_COUNT=$(echo "${lead}" | jq -r '.file_count')
+            TECH_LEAD_LIST="${TECH_LEAD_LIST}\n- **@${NAME}** (${SPEC}) - ${FILE_COUNT} file(s)"
+          done
+          
+          # Create comment body
+          COMMENT_BODY="## 🏗️ Tech Lead Review Analysis
+
+This PR has been analyzed for Tech Lead review requirements.
+
+### 📊 Analysis Summary
+- **Total Files Changed**: ${TOTAL_FILES}
+- **Tech Leads Identified**: $(echo "${TECH_LEADS}" | jq '. | length')
+- **Review Recommendation**: **${RECOMMENDATION}**
+- **Review Required**: $([ "${REQUIRES_REVIEW}" = "true" ] && echo "✅ Yes" || echo "ℹ️ Optional")
+
+### 👥 Relevant Tech Leads
+
+Based on the files changed, these Tech Lead agents are responsible for the affected areas:
+
+$(echo -e "${TECH_LEAD_LIST}")
+
+### 📋 Complexity Factors
+
+\`\`\`json
+$(echo "${COMPLEXITY}" | jq .)
+\`\`\`
+
+### 🔄 Next Steps
+
+"
+          
+          if [ "${REQUIRES_REVIEW}" = "true" ]; then
+            COMMENT_BODY="${COMMENT_BODY}
+This PR **requires Tech Lead review** before it can be merged. The \`needs-tech-lead-review\` label has been added to block auto-merge until review is complete.
+
+**Review Process:**
+1. ⏳ Tech Lead agent(s) will be assigned to review this PR
+2. 🔍 Tech Lead will analyze changes and provide feedback
+3. ✅ Upon approval, \`tech-lead-approved\` label will be added
+4. 🚀 PR can then proceed to auto-merge
+
+**If changes are requested:**
+- 📝 Tech Lead will provide detailed feedback
+- 🔧 Original agent or Tech Lead will make corrections
+- 🔄 Tech Lead will re-review after changes"
+          else
+            COMMENT_BODY="${COMMENT_BODY}
+This PR is **optional for Tech Lead review** based on complexity analysis. However, Tech Leads listed above are available to review if needed.
+
+**To request Tech Lead review:**
+- Add the \`needs-tech-lead-review\` label manually
+- Or mention the Tech Lead agent in a comment"
+          fi
+          
+          COMMENT_BODY="${COMMENT_BODY}
+
+---
+*🤖 Automated Tech Lead Review System - Proof of Concept*
+*Workflow: \`tech-lead-review-poc.yml\` - Run ID: ${{ github.run_id }}*"
+          
+          # Post the comment
+          gh pr comment "${PR_NUM}" --repo ${{ github.repository }} --body "${COMMENT_BODY}"
+          
+          echo "✅ Posted Tech Lead analysis comment to PR #${PR_NUM}"
+      
+      - name: Summary
+        run: |
+          PR_NUM="${{ steps.pr_number.outputs.pr_number }}"
+          TECH_LEADS="${{ steps.analyze.outputs.tech_leads_count }}"
+          REQUIRES="${{ steps.analyze.outputs.requires_review }}"
+          RECOMMENDATION="${{ steps.analyze.outputs.recommendation }}"
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Tech Lead Review Analysis Complete"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "PR Number: #${PR_NUM}"
+          echo "Tech Leads Identified: ${TECH_LEADS}"
+          echo "Review Required: ${REQUIRES}"
+          echo "Recommendation: ${RECOMMENDATION}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
