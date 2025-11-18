@@ -114,9 +114,16 @@ python3 tools/create_labels.py --all
 
 The following workflows have been updated with fallback logic:
 
+**By @troubleshoot-expert:**
 - ✅ `.github/workflows/agent-evolution.yml` - Issue creation (line 168)
 - ✅ `.github/workflows/repetition-detector.yml` - Issue creation (line 304)
 - ✅ `.github/workflows/repetition-detector.yml` - PR creation (line 352) - already had fallback
+
+**By @workflows-tech-lead (2025-11-18):**
+- ✅ `.github/workflows/creative-coding-challenge-generator.yml` - Issue creation
+- ✅ `.github/workflows/prompt-performance-tracker.yml` - PR creation
+- ✅ `.github/workflows/learning-based-agent-spawner.yml` - PR creation
+- ✅ `.github/workflows/agent-spawner.yml` - PR creation
 
 ## Workflows That May Need Updates
 
