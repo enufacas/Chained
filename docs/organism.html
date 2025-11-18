@@ -485,10 +485,47 @@
             z-index: 100;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
             max-width: 400px;
+            transition: all 0.3s ease;
         }
 
         #pipeline-filters.collapsed {
-            transform: translateY(150px);
+            transform: translateY(calc(100% + 70px));
+        }
+        
+        /* Mobile responsive styles for pipeline filters */
+        @media (max-width: 768px) {
+            #pipeline-filters {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                max-width: none;
+                width: auto;
+            }
+            
+            #pipeline-filters.collapsed {
+                transform: translateY(calc(100% - 40px));
+            }
+            
+            #pipeline-filters h3 {
+                cursor: pointer;
+                user-select: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            #pipeline-filters h3::after {
+                content: '▼';
+                transition: transform 0.3s ease;
+            }
+            
+            #pipeline-filters.collapsed h3::after {
+                transform: rotate(-180deg);
+            }
+            
+            #pipeline-filters.collapsed .filter-content {
+                display: none;
+            }
         }
 
         .close-btn:hover {
@@ -681,41 +718,43 @@
 
     <!-- Pipeline Filter Panel -->
     <div id="pipeline-filters" style="display: none;">
-        <h3 style="color: #00ffff; margin: 0 0 10px 0; font-size: 14px;">🔍 PIPELINE FILTERS</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div>
-                <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Agent:</label>
-                <select id="filter-agent" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
-                    <option value="">All Agents</option>
-                </select>
+        <h3 style="color: #00ffff; margin: 0 0 10px 0; font-size: 14px;" onclick="toggleFilterPanel()">🔍 PIPELINE FILTERS</h3>
+        <div class="filter-content">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Agent:</label>
+                    <select id="filter-agent" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
+                        <option value="">All Agents</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Status:</label>
+                    <select id="filter-status" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
+                        <option value="">All Status</option>
+                        <option value="success">Success</option>
+                        <option value="failure">Failure</option>
+                        <option value="in_progress">In Progress</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Workflow:</label>
+                    <select id="filter-workflow" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
+                        <option value="">All Workflows</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Type:</label>
+                    <select id="filter-type" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
+                        <option value="">All Types</option>
+                        <option value="runs">Workflow Runs</option>
+                        <option value="missions">Missions</option>
+                        <option value="prs">Pull Requests</option>
+                        <option value="issues">Issues</option>
+                    </select>
+                </div>
             </div>
-            <div>
-                <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Status:</label>
-                <select id="filter-status" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
-                    <option value="">All Status</option>
-                    <option value="success">Success</option>
-                    <option value="failure">Failure</option>
-                    <option value="in_progress">In Progress</option>
-                </select>
-            </div>
-            <div>
-                <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Workflow:</label>
-                <select id="filter-workflow" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
-                    <option value="">All Workflows</option>
-                </select>
-            </div>
-            <div>
-                <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Type:</label>
-                <select id="filter-type" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
-                    <option value="">All Types</option>
-                    <option value="runs">Workflow Runs</option>
-                    <option value="missions">Missions</option>
-                    <option value="prs">Pull Requests</option>
-                    <option value="issues">Issues</option>
-                </select>
-            </div>
+            <button id="btn-apply-filters" style="margin-top: 10px; width: 100%; padding: 8px; background: rgba(0, 255, 255, 0.2); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">APPLY FILTERS</button>
         </div>
-        <button id="btn-apply-filters" style="margin-top: 10px; width: 100%; padding: 8px; background: rgba(0, 255, 255, 0.2); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">APPLY FILTERS</button>
     </div>
 
     <!-- Agent Detail Modal -->
@@ -762,7 +801,7 @@
         let showHelpers = false;
         let enableBloom = true;
         let agentMissionAnimations = []; // Track active animations
-        let viewMode = 'agents'; // 'agents' or 'pipeline'
+        let viewMode = 'pipeline'; // 'agents' or 'pipeline' - DEFAULT TO PIPELINE
         let pipelineObjects = []; // Store pipeline visualization objects
         let pipelineFilters = {
             agent: '',
@@ -1477,12 +1516,12 @@
             // Limit to most recent runs for performance
             filteredRuns = filteredRuns.slice(0, 50);
 
-            // Create pipeline grid layout - runs flow from left to right in lanes
-            const laneWidth = 8;
-            const laneHeight = 5;
-            const runSpacing = 6;
+            // GRID LAYOUT - arrange pipelines in a grid instead of single row
+            const gridColumns = 5; // Number of pipelines per row
+            const gridSpacing = 15; // Space between grid cells
+            const pipeLength = 8; // Length of each pipe segment
 
-            // Group runs by workflow for lanes
+            // Group runs by workflow for organization
             const workflowLanes = {};
             filteredRuns.forEach(run => {
                 if (!workflowLanes[run.workflow_file]) {
@@ -1491,36 +1530,38 @@
                 workflowLanes[run.workflow_file].push(run);
             });
 
-            // Create visual objects for each run in its lane
+            // Create visual objects for each run in a grid layout
             const workflowNames = Object.keys(workflowLanes);
-            const totalLanes = workflowNames.length;
             
-            workflowNames.forEach((workflow, laneIndex) => {
+            let runIndex = 0;
+            workflowNames.forEach((workflow, workflowIdx) => {
                 const runs = workflowLanes[workflow];
-                const laneY = (laneIndex - totalLanes / 2) * laneHeight;
-
-                runs.forEach((run, runIndex) => {
-                    const runX = (runIndex - runs.length / 2) * runSpacing;
+                
+                runs.forEach((run, idx) => {
+                    // Calculate grid position
+                    const gridX = (runIndex % gridColumns) * gridSpacing - (gridColumns * gridSpacing) / 2;
+                    const gridY = Math.floor(runIndex / gridColumns) * -gridSpacing;
                     
-                    // Create run object - use cylinder as "pipe segment"
+                    // Create run object - pipe segment (VISIBLE BY DEFAULT)
                     const runObj = createRunObject(run);
-                    runObj.position.set(runX, laneY, 0);
+                    runObj.position.set(gridX, gridY, 0);
+                    runObj.visible = true; // MAKE VISIBLE BY DEFAULT
                     
                     runObj.userData = {
                         type: 'run',
                         run: run,
-                        lane: workflow,
-                        laneIndex: laneIndex,
+                        workflow: workflow,
                         pulseOffset: Math.random() * Math.PI * 2
                     };
 
                     scene.add(runObj);
                     pipelineObjects.push(runObj);
 
-                    // Create connecting agents (small spheres)
+                    // Create humanoid agent INSIDE the pipe
                     if (run.agent_name) {
                         const agentObj = createAgentMarker(run.agent_name);
-                        agentObj.position.set(runX, laneY + 2, 0);
+                        agentObj.position.set(gridX, gridY, 0); // Position inside pipe
+                        agentObj.scale.setScalar(1.2); // Scale up a bit for visibility
                         agentObj.userData = {
                             type: 'agent-marker',
                             agent: run.agent_name,
@@ -1528,23 +1569,30 @@
                         };
                         scene.add(agentObj);
                         pipelineObjects.push(agentObj);
-
-                        // Create connection line
-                        const lineGeom = new THREE.BufferGeometry().setFromPoints([
-                            new THREE.Vector3(runX, laneY + 1.5, 0),
-                            new THREE.Vector3(runX, laneY + 2, 0)
-                        ]);
-                        const lineMat = new THREE.LineBasicMaterial({ color: 0x00ffff, opacity: 0.5, transparent: true });
-                        const line = new THREE.Line(lineGeom, lineMat);
-                        scene.add(line);
-                        pipelineObjects.push(line);
+                        
+                        // Add agent name label
+                        const agentLabelDiv = document.createElement('div');
+                        agentLabelDiv.style.color = '#00ffff';
+                        agentLabelDiv.style.fontSize = '10px';
+                        agentLabelDiv.style.fontFamily = 'monospace';
+                        agentLabelDiv.style.background = 'rgba(0,0,0,0.8)';
+                        agentLabelDiv.style.padding = '2px 5px';
+                        agentLabelDiv.style.borderRadius = '3px';
+                        agentLabelDiv.style.border = '1px solid #00ffff';
+                        agentLabelDiv.textContent = run.agent_name;
+                        
+                        const agentLabel = new CSS3DObject(agentLabelDiv);
+                        agentLabel.position.set(gridX, gridY + 3, 0);
+                        agentLabel.scale.set(0.04, 0.04, 0.04);
+                        labelScene.add(agentLabel);
+                        pipelineObjects.push(agentLabel);
                     }
 
-                    // Add PR markers if present
+                    // Add PR markers with labels
                     if (run.pr_numbers && run.pr_numbers.length > 0) {
                         run.pr_numbers.slice(0, 3).forEach((prNum, prIdx) => {
                             const prObj = createPRMarker(prNum);
-                            prObj.position.set(runX + (prIdx - 1) * 1.5, laneY - 2, 0);
+                            prObj.position.set(gridX + (prIdx - 1) * 2, gridY - 4, 0);
                             prObj.userData = {
                                 type: 'pr',
                                 prNumber: prNum,
@@ -1552,13 +1600,30 @@
                             };
                             scene.add(prObj);
                             pipelineObjects.push(prObj);
+                            
+                            // Add PR label "PR ####"
+                            const prLabelDiv = document.createElement('div');
+                            prLabelDiv.style.color = '#ff00ff';
+                            prLabelDiv.style.fontSize = '10px';
+                            prLabelDiv.style.fontFamily = 'monospace';
+                            prLabelDiv.style.background = 'rgba(0,0,0,0.8)';
+                            prLabelDiv.style.padding = '2px 5px';
+                            prLabelDiv.style.borderRadius = '3px';
+                            prLabelDiv.style.border = '1px solid #ff00ff';
+                            prLabelDiv.textContent = `PR #${prNum}`;
+                            
+                            const prLabel = new CSS3DObject(prLabelDiv);
+                            prLabel.position.set(gridX + (prIdx - 1) * 2, gridY - 5.5, 0);
+                            prLabel.scale.set(0.03, 0.03, 0.03);
+                            labelScene.add(prLabel);
+                            pipelineObjects.push(prLabel);
                         });
                     }
 
-                    // Add issue marker if present
+                    // Add issue marker with label
                     if (run.issue_number) {
                         const issueObj = createIssueMarker(run.issue_number);
-                        issueObj.position.set(runX, laneY - 3, 0);
+                        issueObj.position.set(gridX - 4, gridY, 0);
                         issueObj.userData = {
                             type: 'issue',
                             issueNumber: run.issue_number,
@@ -1566,25 +1631,47 @@
                         };
                         scene.add(issueObj);
                         pipelineObjects.push(issueObj);
+                        
+                        // Add Issue label "Issue ###"
+                        const issueLabelDiv = document.createElement('div');
+                        issueLabelDiv.style.color = '#00ffff';
+                        issueLabelDiv.style.fontSize = '10px';
+                        issueLabelDiv.style.fontFamily = 'monospace';
+                        issueLabelDiv.style.background = 'rgba(0,0,0,0.8)';
+                        issueLabelDiv.style.padding = '2px 5px';
+                        issueLabelDiv.style.borderRadius = '3px';
+                        issueLabelDiv.style.border = '1px solid #00ffff';
+                        issueLabelDiv.textContent = `Issue #${run.issue_number}`;
+                        
+                        const issueLabel = new CSS3DObject(issueLabelDiv);
+                        issueLabel.position.set(gridX - 4, gridY + 1.5, 0);
+                        issueLabel.scale.set(0.03, 0.03, 0.03);
+                        labelScene.add(issueLabel);
+                        pipelineObjects.push(issueLabel);
                     }
+                    
+                    // Add workflow name label above each pipeline
+                    if (idx === 0) { // Only add workflow label once per workflow
+                        const workflowLabelDiv = document.createElement('div');
+                        workflowLabelDiv.style.color = '#ffaa00';
+                        workflowLabelDiv.style.fontSize = '11px';
+                        workflowLabelDiv.style.fontFamily = 'monospace';
+                        workflowLabelDiv.style.background = 'rgba(0,0,0,0.9)';
+                        workflowLabelDiv.style.padding = '3px 8px';
+                        workflowLabelDiv.style.borderRadius = '4px';
+                        workflowLabelDiv.style.border = '1px solid #ffaa00';
+                        workflowLabelDiv.style.fontWeight = 'bold';
+                        workflowLabelDiv.textContent = workflow.replace('.yml', '');
+                        
+                        const workflowLabel = new CSS3DObject(workflowLabelDiv);
+                        workflowLabel.position.set(gridX, gridY + 5, 0);
+                        workflowLabel.scale.set(0.05, 0.05, 0.05);
+                        labelScene.add(workflowLabel);
+                        pipelineObjects.push(workflowLabel);
+                    }
+                    
+                    runIndex++;
                 });
-
-                // Create lane label
-                const labelDiv = document.createElement('div');
-                labelDiv.style.color = '#00ffff';
-                labelDiv.style.fontSize = '12px';
-                labelDiv.style.fontFamily = 'monospace';
-                labelDiv.style.background = 'rgba(0,0,0,0.7)';
-                labelDiv.style.padding = '5px';
-                labelDiv.style.borderRadius = '4px';
-                labelDiv.style.border = '1px solid #00ffff';
-                labelDiv.textContent = workflow.replace('.yml', '');
-                
-                const label = new CSS3DObject(labelDiv);
-                label.position.set(-30, laneY, 0);
-                label.scale.set(0.05, 0.05, 0.05);
-                labelScene.add(label);
-                pipelineObjects.push(label);
             });
 
             // Add missions as floating objects
@@ -1592,12 +1679,13 @@
                 addMissionsToPipeline();
             }
 
-            console.log(`Created ${pipelineObjects.length} pipeline objects`);
+            console.log(`Created ${pipelineObjects.length} pipeline objects in grid layout`);
         }
 
-        // Create visual object for a workflow run (pipe segment)
+        // Create visual object for a workflow run (pipe segment) - LARGER FOR HUMANOIDS
         function createRunObject(run) {
-            const geometry = new THREE.CylinderGeometry(0.5, 0.5, 2, 8);
+            // Make pipe larger to fit humanoid agents (radius 2 instead of 0.5)
+            const geometry = new THREE.CylinderGeometry(2, 2, 5, 16);
             let color;
             
             if (run.conclusion === 'success') {
@@ -1610,11 +1698,14 @@
                 color = 0x888888; // Gray
             }
 
-            const material = new THREE.MeshPhongMaterial({ 
+            const material = new THREE.MeshStandardMaterial({ 
                 color: color,
                 emissive: color,
                 emissiveIntensity: 0.3,
-                shininess: 100
+                metalness: 0.7,
+                roughness: 0.3,
+                transparent: true,
+                opacity: 0.6 // Semi-transparent so we can see humanoid inside
             });
             
             const mesh = new THREE.Mesh(geometry, material);
@@ -1623,41 +1714,110 @@
             return mesh;
         }
 
-        // Create agent marker (small sphere)
+        // Create agent marker - USE HUMANOID INSTEAD OF SPHERE
         function createAgentMarker(agentName) {
-            const geometry = new THREE.SphereGeometry(0.4, 16, 16);
             const color = getAgentColor(agentName);
-            const material = new THREE.MeshPhongMaterial({
-                color: color,
-                emissive: color,
-                emissiveIntensity: 0.5,
-                shininess: 100
-            });
-            return new THREE.Mesh(geometry, material);
+            // Use the existing humanoid shape with smaller size for pipeline
+            const humanoid = createHumanoidShape(0.8, color);
+            return humanoid;
         }
 
-        // Create PR marker (octahedron)
+        // Create PR marker - CODE MERGE SYMBOL (Y-shape / fork merge)
         function createPRMarker(prNumber) {
-            const geometry = new THREE.OctahedronGeometry(0.3);
-            const material = new THREE.MeshPhongMaterial({
+            const group = new THREE.Group();
+            
+            // Create a Y-shape representing code merge
+            const material = new THREE.MeshStandardMaterial({
                 color: 0xff00ff,
                 emissive: 0xff00ff,
-                emissiveIntensity: 0.4,
-                shininess: 100
+                emissiveIntensity: 0.5,
+                metalness: 0.8,
+                roughness: 0.2
             });
-            return new THREE.Mesh(geometry, material);
+            
+            // Main vertical line (merged result)
+            const mainLine = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.1, 0.1, 1, 8),
+                material
+            );
+            mainLine.position.y = -0.5;
+            group.add(mainLine);
+            
+            // Left branch
+            const leftBranch = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.08, 0.08, 0.6, 8),
+                material
+            );
+            leftBranch.position.set(-0.3, 0.3, 0);
+            leftBranch.rotation.z = Math.PI / 4;
+            group.add(leftBranch);
+            
+            // Right branch
+            const rightBranch = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.08, 0.08, 0.6, 8),
+                material
+            );
+            rightBranch.position.set(0.3, 0.3, 0);
+            rightBranch.rotation.z = -Math.PI / 4;
+            group.add(rightBranch);
+            
+            // Add merge point sphere
+            const mergePoint = new THREE.Mesh(
+                new THREE.SphereGeometry(0.15, 16, 16),
+                material
+            );
+            group.add(mergePoint);
+            
+            return group;
         }
 
-        // Create issue marker (tetrahedron/flag)
+        // Create issue marker - PAPER/DOCUMENT SYMBOL
         function createIssueMarker(issueNumber) {
-            const geometry = new THREE.TetrahedronGeometry(0.4);
-            const material = new THREE.MeshPhongMaterial({
-                color: 0x00ffff,
+            const group = new THREE.Group();
+            
+            // Create a paper/document shape
+            const paperGeometry = new THREE.PlaneGeometry(0.8, 1.0);
+            const paperMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
                 emissive: 0x00ffff,
-                emissiveIntensity: 0.4,
-                shininess: 100
+                emissiveIntensity: 0.3,
+                metalness: 0.2,
+                roughness: 0.8,
+                side: THREE.DoubleSide
             });
-            return new THREE.Mesh(geometry, material);
+            const paper = new THREE.Mesh(paperGeometry, paperMaterial);
+            group.add(paper);
+            
+            // Add border lines to look like a document
+            const borderMaterial = new THREE.LineBasicMaterial({ 
+                color: 0x00ffff,
+                linewidth: 2
+            });
+            
+            // Create border
+            const borderPoints = [
+                new THREE.Vector3(-0.4, 0.5, 0.01),
+                new THREE.Vector3(0.4, 0.5, 0.01),
+                new THREE.Vector3(0.4, -0.5, 0.01),
+                new THREE.Vector3(-0.4, -0.5, 0.01),
+                new THREE.Vector3(-0.4, 0.5, 0.01)
+            ];
+            const borderGeometry = new THREE.BufferGeometry().setFromPoints(borderPoints);
+            const border = new THREE.Line(borderGeometry, borderMaterial);
+            group.add(border);
+            
+            // Add horizontal lines to simulate text
+            for (let i = 0; i < 3; i++) {
+                const linePoints = [
+                    new THREE.Vector3(-0.3, 0.3 - i * 0.25, 0.02),
+                    new THREE.Vector3(0.3, 0.3 - i * 0.25, 0.02)
+                ];
+                const lineGeometry = new THREE.BufferGeometry().setFromPoints(linePoints);
+                const line = new THREE.Line(lineGeometry, borderMaterial);
+                group.add(line);
+            }
+            
+            return group;
         }
 
         // Add missions to pipeline view
@@ -2514,6 +2674,14 @@
         }
 
         // Setup event listeners
+        // Toggle filter panel on mobile
+        function toggleFilterPanel() {
+            const filterPanel = document.getElementById('pipeline-filters');
+            if (filterPanel && window.innerWidth <= 768) {
+                filterPanel.classList.toggle('collapsed');
+            }
+        }
+
         function setupEventListeners() {
             // Canvas click for selecting agents in 3D
             renderer.domElement.addEventListener('click', onCanvasClick);
@@ -2606,6 +2774,34 @@
             initScene();
             await loadData();
             setupEventListeners();
+            
+            // START IN PIPELINE MODE BY DEFAULT
+            // Update button text to reflect we're in pipeline mode
+            const btn = document.getElementById('btn-view-mode');
+            if (btn) {
+                btn.textContent = 'Mode: Pipeline';
+            }
+            
+            // Show pipeline view immediately
+            if (viewMode === 'pipeline') {
+                // Hide agent view objects
+                agentSpheres.forEach(s => s.visible = false);
+                missionObjects.forEach(m => m.visible = false);
+                if (lifecycleCore) lifecycleCore.visible = false;
+                
+                // Show pipeline
+                createPipelineVisualization();
+                const filterPanel = document.getElementById('pipeline-filters');
+                if (filterPanel) {
+                    filterPanel.style.display = 'block';
+                }
+                
+                // Set camera for pipeline view
+                camera.position.set(0, 0, 60);
+                controls.target.set(0, 0, 0);
+                controls.update();
+            }
+            
             animate();
 
             // Hide loading screen
