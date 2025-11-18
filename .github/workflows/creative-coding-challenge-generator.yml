@@ -203,13 +203,11 @@ jobs:
             
             if ! git diff --staged --quiet; then
               git commit -m "Add generated challenge: ${{ steps.generate.outputs.title }}
-
-Generated challenge data for daily coding challenge.
-Challenge ID: ${{ steps.generate.outputs.challenge_id }}
-Category: ${{ steps.generate.outputs.category }}
-Difficulty: ${{ steps.generate.outputs.difficulty }}
-
-🤖 Automated commit by Creative Coding Challenge Generator (@create-guru)"
+              
+              Generated challenge data - ID: ${{ steps.generate.outputs.challenge_id }}
+              Category: ${{ steps.generate.outputs.category }} | Difficulty: ${{ steps.generate.outputs.difficulty }}
+              
+              Automated by Creative Coding Challenge Generator (@create-guru)"
               
               # Note: This would normally push, but we follow PR-based workflow
               echo "✓ Changes committed (would create PR in production)"
