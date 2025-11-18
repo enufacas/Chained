@@ -1,0 +1,228 @@
+name: "Creative Coding Challenge: Daily Generator"
+
+on:
+  schedule:
+    # Run daily at 2 PM UTC (after learnings are processed)
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+    inputs:
+      category:
+        description: 'Challenge category (optional)'
+        required: false
+        type: choice
+        options:
+          - 'random'
+          - 'algorithms'
+          - 'data_structures'
+          - 'api'
+          - 'ml'
+          - 'creative'
+          - 'system_design'
+        default: 'random'
+      difficulty:
+        description: 'Challenge difficulty (optional)'
+        required: false
+        type: choice
+        options:
+          - 'random'
+          - 'easy'
+          - 'medium'
+          - 'hard'
+          - 'expert'
+        default: 'random'
+
+permissions:
+  issues: write
+  contents: write
+
+jobs:
+  generate-challenge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Generate creative coding challenge
+        id: generate
+        run: |
+          # Determine category and difficulty
+          CATEGORY="${{ github.event.inputs.category }}"
+          DIFFICULTY="${{ github.event.inputs.difficulty }}"
+          
+          # Build command args
+          ARGS=""
+          if [ "$CATEGORY" != "random" ] && [ -n "$CATEGORY" ]; then
+            ARGS="$ARGS --category $CATEGORY"
+          fi
+          
+          if [ "$DIFFICULTY" != "random" ] && [ -n "$DIFFICULTY" ]; then
+            ARGS="$ARGS --difficulty $DIFFICULTY"
+          fi
+          
+          # Check for recent learnings to provide context
+          LEARNING_CONTEXT=""
+          if [ -d "learnings" ]; then
+            # Get topics from recent learning files
+            RECENT_TOPICS=$(find learnings -name "*.json" -type f -mtime -7 | \
+              xargs cat 2>/dev/null | \
+              jq -r '.topics | keys[]' 2>/dev/null | \
+              head -20 | tr '\n' ' ' || echo "")
+            
+            if [ -n "$RECENT_TOPICS" ]; then
+              LEARNING_CONTEXT="--learning-context \"$RECENT_TOPICS\""
+            fi
+          fi
+          
+          # Generate challenge and save to file
+          OUTPUT_FILE="tools/data/coding_challenges/latest_challenge.json"
+          mkdir -p "tools/data/coding_challenges"
+          
+          eval python3 tools/creative-coding-challenge-generator.py $ARGS $LEARNING_CONTEXT --output "$OUTPUT_FILE"
+          
+          # Extract challenge details
+          CHALLENGE_TITLE=$(jq -r '.title' "$OUTPUT_FILE")
+          CHALLENGE_ID=$(jq -r '.challenge_id' "$OUTPUT_FILE")
+          CHALLENGE_CATEGORY=$(jq -r '.category' "$OUTPUT_FILE")
+          CHALLENGE_DIFFICULTY=$(jq -r '.difficulty' "$OUTPUT_FILE")
+          CHALLENGE_TIME=$(jq -r '.estimated_time_minutes // 60' "$OUTPUT_FILE" 2>/dev/null || echo "60")
+          
+          # Format full description from JSON
+          FULL_DESC=$(jq -r '.full_description' "$OUTPUT_FILE")
+          
+          # Set outputs
+          {
+            echo "title=$CHALLENGE_TITLE"
+            echo "challenge_id=$CHALLENGE_ID"
+            echo "category=$CHALLENGE_CATEGORY"
+            echo "difficulty=$CHALLENGE_DIFFICULTY"
+            echo "estimated_time=$CHALLENGE_TIME"
+            echo "output_file=$OUTPUT_FILE"
+          } >> "$GITHUB_OUTPUT"
+          
+          # Save description to file for issue creation
+          echo "$FULL_DESC" > /tmp/challenge_description.md
+          
+          echo "✓ Generated challenge: $CHALLENGE_TITLE"
+          echo "✓ Category: $CHALLENGE_CATEGORY | Difficulty: $CHALLENGE_DIFFICULTY"
+          echo "✓ Estimated time: $CHALLENGE_TIME minutes"
+
+      - name: Create challenge issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Read the challenge description
+          DESCRIPTION=$(cat /tmp/challenge_description.md)
+          
+          # Create difficulty emoji
+          case "${{ steps.generate.outputs.difficulty }}" in
+            "easy")    DIFF_EMOJI="🟢" ;;
+            "medium")  DIFF_EMOJI="🟡" ;;
+            "hard")    DIFF_EMOJI="🟠" ;;
+            "expert")  DIFF_EMOJI="🔴" ;;
+            *)         DIFF_EMOJI="⚪" ;;
+          esac
+          
+          # Create category emoji
+          case "${{ steps.generate.outputs.category }}" in
+            "algorithms")      CAT_EMOJI="🧮" ;;
+            "data_structures") CAT_EMOJI="🗂️" ;;
+            "api")             CAT_EMOJI="🔌" ;;
+            "ml")              CAT_EMOJI="🤖" ;;
+            "creative")        CAT_EMOJI="🎨" ;;
+            "system_design")   CAT_EMOJI="🏗️" ;;
+            *)                 CAT_EMOJI="💡" ;;
+          esac
+          
+          # Create issue with challenge
+          issue_url=$(gh issue create \
+            --title "$CAT_EMOJI $DIFF_EMOJI Daily Coding Challenge: ${{ steps.generate.outputs.title }}" \
+            --body "# 🚀 Creative Coding Challenge
+          
+          $DESCRIPTION
+          
+          ---
+          
+          ## 📊 Challenge Metadata
+          
+          - **Challenge ID:** \`${{ steps.generate.outputs.challenge_id }}\`
+          - **Category:** ${{ steps.generate.outputs.category }}
+          - **Difficulty:** ${{ steps.generate.outputs.difficulty }}
+          - **Estimated Time:** ${{ steps.generate.outputs.estimated_time }} minutes
+          - **Generated:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          
+          ## 🎯 Participation Guidelines
+          
+          1. **Fork the repository** and create a new branch
+          2. **Implement your solution** following the requirements
+          3. **Add tests** to validate your implementation
+          4. **Create a PR** with your solution
+          5. **Tag it** with \`coding-challenge\` and \`${{ steps.generate.outputs.challenge_id }}\`
+          
+          ## 🏆 Evaluation Criteria
+          
+          Your solution will be evaluated on:
+          - ✅ **Correctness**: Passes all test cases
+          - 🎯 **Code Quality**: Clean, readable, well-documented
+          - ⚡ **Performance**: Efficient implementation
+          - 🎨 **Creativity**: Innovative approaches welcome!
+          
+          ## 💡 Resources
+          
+          - [Learnings Book](https://github.com/enufacas/Chained/tree/main/learnings/book) - Technical insights
+          - [Previous Challenges](https://github.com/enufacas/Chained/issues?q=label%3Acoding-challenge) - Past challenges
+          - [Documentation](https://github.com/enufacas/Chained/tree/main/docs) - Repository guides
+          
+          ---
+          
+          *🤖 Generated by Creative Coding Challenge Generator (@create-guru)*
+          *💡 Inspired by the Chained autonomous AI ecosystem*" \
+            --label "coding-challenge,${{ steps.generate.outputs.category }},${{ steps.generate.outputs.difficulty }}")
+          
+          echo "✓ Created challenge issue: ${issue_url}"
+          echo "challenge_url=${issue_url}" >> "$GITHUB_OUTPUT"
+
+      - name: Update statistics
+        run: |
+          # Generate and display statistics
+          echo "=== Challenge Generation Statistics ==="
+          python3 tools/creative-coding-challenge-generator.py --stats
+
+      - name: Commit challenge data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if [ -f "${{ steps.generate.outputs.output_file }}" ]; then
+            git add "${{ steps.generate.outputs.output_file }}" || true
+            git add tools/data/coding_challenges/*.json || true
+            
+            if ! git diff --staged --quiet; then
+              git commit -m "Add generated challenge: ${{ steps.generate.outputs.title }}
+              
+              Generated challenge data - ID: ${{ steps.generate.outputs.challenge_id }}
+              Category: ${{ steps.generate.outputs.category }} | Difficulty: ${{ steps.generate.outputs.difficulty }}
+              
+              Automated by Creative Coding Challenge Generator (@create-guru)"
+              
+              # Note: This would normally push, but we follow PR-based workflow
+              echo "✓ Changes committed (would create PR in production)"
+            else
+              echo "ℹ️ No changes to commit"
+            fi
+          fi
+
+      - name: Log activity
+        run: |
+          echo "=== Daily Challenge Generation Complete ==="
+          echo "Challenge: ${{ steps.generate.outputs.title }}"
+          echo "Category: ${{ steps.generate.outputs.category }}"
+          echo "Difficulty: ${{ steps.generate.outputs.difficulty }}"
+          echo "Issue URL: ${{ steps.generate.outputs.challenge_url }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo ""
+          echo "✨ Challenge ready for the community! ✨"

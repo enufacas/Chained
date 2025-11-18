@@ -1,0 +1,8 @@
+{
+  "spawn_threshold": 10.0,
+  "lead_time_hours": 24,
+  "confidence_threshold": 0.7,
+  "target_utilization": 0.75,
+  "learning_rate": 0.05,
+  "max_history": 2000
+}
