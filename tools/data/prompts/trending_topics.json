@@ -1,7 +1,7 @@
 {
-  "last_updated": "2025-11-14T17:02:48.651270+00:00",
+  "last_updated": "2025-11-18T13:36:51.776289+00:00",
   "analysis_period_days": 7,
-  "total_insights": 40,
+  "total_insights": 44,
   "top_keywords": [
     {
       "keyword": "openai",
@@ -28,6 +28,14 @@
       "count": 7
     },
     {
+      "keyword": "gpt-5",
+      "count": 6
+    },
+    {
+      "keyword": "nano",
+      "count": 6
+    },
+    {
       "keyword": "platform",
       "count": 6
     },
@@ -40,6 +48,10 @@
       "count": 5
     },
     {
+      "keyword": "when",
+      "count": 5
+    },
+    {
       "keyword": "gemini",
       "count": 5
     },
@@ -48,19 +60,19 @@
       "count": 5
     },
     {
-      "keyword": "gpt-5",
+      "keyword": "banana",
       "count": 4
     },
     {
-      "keyword": "nano",
+      "keyword": "valuation",
+      "count": 4
+    },
+    {
+      "keyword": "infrastructure",
       "count": 4
     },
     {
       "keyword": "they",
-      "count": 4
-    },
-    {
-      "keyword": "when",
       "count": 4
     },
     {
@@ -70,22 +82,10 @@
     {
       "keyword": "becoming",
       "count": 3
-    },
-    {
-      "keyword": "chatgpt",
-      "count": 3
-    },
-    {
-      "keyword": "analysis",
-      "count": 3
-    },
-    {
-      "keyword": "state",
-      "count": 3
     }
   ],
   "category_distribution": {
-    "ai_ml": 28,
+    "ai_ml": 32,
     "feature": 5,
     "bug_fix": 3,
     "refactor": 1,
