@@ -928,6 +928,17 @@
         };
 
         function renderCharts(runs, agentWorkload, workflowStats) {
+            // Check if Chart.js is available
+            if (typeof window.Chart === 'undefined') {
+                console.warn('Chart.js library is not available. Charts will not be rendered.');
+                // Hide chart section or show a message
+                const chartsSection = document.getElementById('charts-section');
+                if (chartsSection) {
+                    chartsSection.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">📊 Charts are currently unavailable. The dashboard data is still visible below.</div>';
+                }
+                return;
+            }
+            
             renderSuccessRateTrendChart(runs);
             renderAgentPerformanceChart(agentWorkload);
             renderWorkflowTrendChart(runs);
@@ -936,7 +947,7 @@
         
         function renderSuccessRateTrendChart(runs) {
             const canvas = document.getElementById('success-rate-chart');
-            if (!canvas) return;
+            if (!canvas || typeof window.Chart === 'undefined') return;
             
             // Destroy existing chart if it exists
             if (charts.successRate) {
@@ -972,7 +983,7 @@
             });
             
             const ctx = canvas.getContext('2d');
-            charts.successRate = new Chart(ctx, {
+            charts.successRate = new window.Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -1046,7 +1057,7 @@
         
         function renderAgentPerformanceChart(agentWorkload) {
             const canvas = document.getElementById('agent-performance-chart');
-            if (!canvas) return;
+            if (!canvas || typeof window.Chart === 'undefined') return;
             
             // Destroy existing chart if it exists
             if (charts.agentPerformance) {
@@ -1066,7 +1077,7 @@
             });
             
             const ctx = canvas.getContext('2d');
-            charts.agentPerformance = new Chart(ctx, {
+            charts.agentPerformance = new window.Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: agents.map(a => '@' + a),
@@ -1151,7 +1162,7 @@
         
         function renderWorkflowTrendChart(runs) {
             const canvas = document.getElementById('workflow-trend-chart');
-            if (!canvas) return;
+            if (!canvas || typeof window.Chart === 'undefined') return;
             
             // Destroy existing chart if it exists
             if (charts.workflowTrend) {
@@ -1180,7 +1191,7 @@
             });
             
             const ctx = canvas.getContext('2d');
-            charts.workflowTrend = new Chart(ctx, {
+            charts.workflowTrend = new window.Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -1243,7 +1254,7 @@
         
         function renderDurationChart(workflowStats) {
             const canvas = document.getElementById('duration-chart');
-            if (!canvas) return;
+            if (!canvas || typeof window.Chart === 'undefined') return;
             
             // Destroy existing chart if it exists
             if (charts.duration) {
@@ -1254,7 +1265,7 @@
             const durations = workflows.map(wf => (workflowStats[wf].avg_duration / 60).toFixed(1));
             
             const ctx = canvas.getContext('2d');
-            charts.duration = new Chart(ctx, {
+            charts.duration = new window.Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: workflows.map(wf => wf.replace('.yml', '')),
