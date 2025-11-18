@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organism Preview - Static</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0e27;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1f3a 0%, #0a0e27 100%);
+            border-bottom: 2px solid #00d9ff;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            color: #00d9ff;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .system-time {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .main-view {
+            flex: 1;
+            display: flex;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: rgba(26, 31, 58, 0.8);
+            border-right: 1px solid #00d9ff;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            color: #00d9ff;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid #00d9ff;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            color: #00d9ff;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+
+        .agent-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .agent-item {
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .agent-item.working {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .agent-item.exploring {
+            border-color: #f97316;
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .agent-name {
+            color: #00d9ff;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .agent-spec {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .agent-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .agent-status.working {
+            background: #22c55e;
+            color: #0a0e27;
+        }
+
+        .agent-status.exploring {
+            background: #f97316;
+            color: #0a0e27;
+        }
+
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            background: radial-gradient(circle at center, #1a1f3a 0%, #0a0e27 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .visualization-preview {
+            width: 600px;
+            height: 600px;
+            position: relative;
+        }
+
+        .core-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 3px solid #00d9ff;
+            box-shadow: 0 0 40px rgba(0, 217, 255, 0.5), inset 0 0 40px rgba(0, 217, 255, 0.2);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 40px rgba(0, 217, 255, 0.5), inset 0 0 40px rgba(0, 217, 255, 0.2); }
+            50% { box-shadow: 0 0 60px rgba(0, 217, 255, 0.8), inset 0 0 60px rgba(0, 217, 255, 0.4); }
+        }
+
+        .stage {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 20px;
+        }
+
+        .stage-1 { top: 20%; left: 50%; transform: translateX(-50%); background: #06b6d4; box-shadow: 0 0 20px #06b6d4; }
+        .stage-2 { top: 35%; right: 15%; background: #a855f7; box-shadow: 0 0 20px #a855f7; }
+        .stage-3 { bottom: 35%; right: 15%; background: #22c55e; box-shadow: 0 0 20px #22c55e; }
+        .stage-4 { bottom: 20%; left: 50%; transform: translateX(-50%); background: #f97316; box-shadow: 0 0 20px #f97316; }
+        .stage-5 { top: 35%; left: 15%; background: #ef4444; box-shadow: 0 0 20px #ef4444; }
+
+        .agent-orb {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: #00d9ff;
+            box-shadow: 0 0 5px #00d9ff;
+            animation: spiral 10s linear infinite;
+        }
+
+        @keyframes spiral {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg) translateX(0px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            to {
+                transform: translate(-50%, -50%) rotate(1080deg) translateX(300px) rotate(-1080deg);
+                opacity: 0;
+            }
+        }
+
+        .hud-panels {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 300px;
+        }
+
+        .hud-panel {
+            background: rgba(26, 31, 58, 0.9);
+            border: 1px solid #00d9ff;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        }
+
+        .hud-panel h3 {
+            color: #00d9ff;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .hud-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .hud-item:last-child {
+            border-bottom: none;
+        }
+
+        .hud-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .hud-value {
+            color: #00d9ff;
+            font-weight: bold;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(26, 31, 58, 0.9);
+            border: 1px solid #00d9ff;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .control-btn {
+            background: #00d9ff;
+            color: #0a0e27;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            background: #06b6d4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 217, 255, 0.4);
+        }
+
+        .loading-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00d9ff;
+            font-size: 1.5rem;
+            text-align: center;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Digital Organism Command Center</h1>
+            <div class="system-time">TICK: 156 | TIME: 12:34:56</div>
+        </div>
+
+        <div class="main-view">
+            <div class="sidebar">
+                <h2>Agent Roster</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">47</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">Working</div>
+                    </div>
+                </div>
+
+                <div class="agent-list">
+                    <div class="agent-item working">
+                        <div class="agent-name">@engineer-master</div>
+                        <div class="agent-spec">Infrastructure Development</div>
+                        <span class="agent-status working">WORKING</span>
+                    </div>
+                    <div class="agent-item exploring">
+                        <div class="agent-name">@bug-hunter</div>
+                        <div class="agent-spec">Quality Assurance</div>
+                        <span class="agent-status exploring">EXPLORING</span>
+                    </div>
+                    <div class="agent-item working">
+                        <div class="agent-name">@secure-specialist</div>
+                        <div class="agent-spec">Security</div>
+                        <span class="agent-status working">WORKING</span>
+                    </div>
+                    <div class="agent-item working">
+                        <div class="agent-name">@accelerate-master</div>
+                        <div class="agent-spec">Performance Optimization</div>
+                        <span class="agent-status working">WORKING</span>
+                    </div>
+                    <div class="agent-item exploring">
+                        <div class="agent-name">@pioneer-sage</div>
+                        <div class="agent-spec">Innovation</div>
+                        <span class="agent-status exploring">EXPLORING</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <div class="visualization-preview">
+                    <!-- Core lifecycle circle -->
+                    <div class="core-circle"></div>
+                    
+                    <!-- 5 Lifecycle stages -->
+                    <div class="stage stage-1">🔵</div>
+                    <div class="stage stage-2">🟣</div>
+                    <div class="stage stage-3">🟢</div>
+                    <div class="stage stage-4">🟠</div>
+                    <div class="stage stage-5">🔴</div>
+
+                    <!-- Agent orbs (sample positions) -->
+                    <div class="agent-orb" style="top: 15%; left: 60%; background: #00d9ff; box-shadow: 0 0 10px #00d9ff;"></div>
+                    <div class="agent-orb" style="top: 25%; left: 75%; background: #22c55e; box-shadow: 0 0 10px #22c55e; animation-delay: 0.5s;"></div>
+                    <div class="agent-orb" style="top: 45%; left: 85%; background: #a855f7; box-shadow: 0 0 10px #a855f7; animation-delay: 1s;"></div>
+                    <div class="agent-orb" style="bottom: 45%; left: 85%; background: #ef4444; box-shadow: 0 0 10px #ef4444; animation-delay: 1.5s;"></div>
+                    <div class="agent-orb" style="bottom: 25%; left: 75%; background: #f97316; box-shadow: 0 0 10px #f97316; animation-delay: 2s;"></div>
+                    <div class="agent-orb" style="bottom: 15%; left: 60%; background: #eab308; box-shadow: 0 0 10px #eab308; animation-delay: 2.5s;"></div>
+                    <div class="agent-orb" style="bottom: 15%; right: 60%; background: #06b6d4; box-shadow: 0 0 10px #06b6d4; animation-delay: 3s;"></div>
+                    <div class="agent-orb" style="top: 15%; right: 60%; background: #8b5cf6; box-shadow: 0 0 10px #8b5cf6; animation-delay: 3.5s;"></div>
+
+                    <!-- Particles -->
+                    <div class="particle" style="top: 50%; left: 50%; animation-delay: 0s;"></div>
+                    <div class="particle" style="top: 50%; left: 50%; animation-delay: 1s;"></div>
+                    <div class="particle" style="top: 50%; left: 50%; animation-delay: 2s;"></div>
+                    <div class="particle" style="top: 50%; left: 50%; animation-delay: 3s;"></div>
+                    <div class="particle" style="top: 50%; left: 50%; animation-delay: 4s;"></div>
+                </div>
+
+                <!-- HUD Panels -->
+                <div class="hud-panels">
+                    <div class="hud-panel">
+                        <h3>System Stats</h3>
+                        <div class="hud-item">
+                            <span class="hud-label">Total Issues</span>
+                            <span class="hud-value">342</span>
+                        </div>
+                        <div class="hud-item">
+                            <span class="hud-label">Closed Issues</span>
+                            <span class="hud-value">298</span>
+                        </div>
+                        <div class="hud-item">
+                            <span class="hud-label">Completion Rate</span>
+                            <span class="hud-value">87%</span>
+                        </div>
+                    </div>
+
+                    <div class="hud-panel">
+                        <h3>Activity</h3>
+                        <div class="hud-item">
+                            <span class="hud-label">Learning Sessions</span>
+                            <span class="hud-value">45</span>
+                        </div>
+                        <div class="hud-item">
+                            <span class="hud-label">In Progress</span>
+                            <span class="hud-value">12</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="controls">
+                    <button class="control-btn">Reset View</button>
+                    <button class="control-btn">Particles: ON</button>
+                    <button class="control-btn">Connections: ON</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
