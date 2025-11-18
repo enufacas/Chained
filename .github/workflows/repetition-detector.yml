@@ -178,7 +178,11 @@ jobs:
       - name: Extract Summary Statistics
         id: stats
         run: |
-          # Extract key metrics from reports
+          # Extract key metrics from both reports
+          # Note: total_flags = repetition patterns in commits/code structure
+          #       flagged_count = agents below uniqueness threshold (diversity scores)
+          # These are different metrics measuring different aspects
+          
           if [ -f analysis/repetition-report.json ]; then
             total_agents=$(python3 -c "import json; d=json.load(open('analysis/repetition-report.json')); print(d['summary']['total_agents'])" 2>/dev/null || echo "0")
             total_flags=$(python3 -c "import json; d=json.load(open('analysis/repetition-report.json')); print(len(d.get('repetition_flags', [])))" 2>/dev/null || echo "0")
@@ -248,69 +252,86 @@ jobs:
           gh pr comment ${pr_number} --body-file /tmp/pr_comment.md || true
 
       - name: Create Issue for Significant Repetition
-        if: steps.stats.outputs.total_flags != '0' && steps.stats.outputs.total_flags != ''
+        if: steps.stats.outputs.flagged_count != '0' && steps.stats.outputs.flagged_count != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           total_flags="${{ steps.stats.outputs.total_flags }}"
           flagged_count="${{ steps.stats.outputs.flagged_count }}"
           
-          # Only create issue if:
-          # 1. There are actual agents flagged (not just repetition patterns)
-          # 2. More than 2 flags OR more than 1 agent flagged below threshold
-          # This prevents false positives from system bot data
-          if [ "${flagged_count}" -gt 0 ] && ([ "${total_flags}" -gt 2 ] || [ "${flagged_count}" -gt 1 ]); then
+          # Only create issue if there are agents flagged below threshold
+          # flagged_count is from uniqueness scorer (agents needing diversity improvement)
+          if [ "${flagged_count}" -gt 0 ]; then
             # Extract flagged agent details for better reporting
-            flagged_agents=$(python3 -c '
+            # Validate file exists first to provide better error messages
+            if [ ! -f "analysis/uniqueness-scores.json" ]; then
+              flagged_agents="- Error: uniqueness-scores.json file not found"
+            else
+              flagged_agents=$(python3 -c '
           import json
-          with open("analysis/uniqueness-scores.json") as f:
-              data = json.load(f)
-              flagged = data.get("flagged_agents", [])
-              if flagged:
-                  for agent in flagged:
-                      print(f"- **{agent[\"agent_id\"]}**: Score {agent[\"score\"]} - {agent[\"reason\"]}")
-              else:
-                  print("- None (all agents above threshold)")
-          ' 2>/dev/null) || flagged_agents="- Error extracting agent details"
+          import sys
+          try:
+              with open("analysis/uniqueness-scores.json") as f:
+                  data = json.load(f)
+                  flagged = data.get("flagged_agents", [])
+                  if flagged:
+                      for agent in flagged:
+                          agent_id = agent.get("agent_id", "unknown")
+                          score = agent.get("score", 0)
+                          reason = agent.get("reason", "no reason")
+                          print(f"- **{agent_id}**: Score {score} - {reason}")
+                  else:
+                      print("- None (all agents above threshold)")
+          except Exception as e:
+              print(f"- Error: {type(e).__name__}: {str(e)}")
+              sys.exit(1)
+          ' 2>&1) || flagged_agents="- Error extracting agent details (check workflow logs)"
+            fi
             
             cat > /tmp/issue_body.md << 'ISSUE_EOF'
-          ## AI Agent Repetition Detected
+          ## AI Agent Diversity Alert
           
-          The pattern repetition detection system has identified concerning patterns in AI agent contributions.
+          The uniqueness scoring system has identified AI agents with diversity scores below the threshold.
           
           ### Summary:
-          - **Repetition Flags:** TOTAL_FLAGS_PLACEHOLDER
-          - **Agents Flagged:** FLAGGED_COUNT_PLACEHOLDER
+          - **Agents Below Threshold:** FLAGGED_COUNT_PLACEHOLDER
           - **Average Uniqueness Score:** AVG_SCORE_PLACEHOLDER
+          - **Threshold:** 30.0
           - **Analysis Period:** Last DAYS_PLACEHOLDER days
           
-          ### Flagged Agents:
+          ### Agents Needing Improvement:
           FLAGGED_AGENTS_LIST
           
-          ### Impact:
-          Repetitive patterns may indicate:
+          ### What This Means:
+          Low diversity scores may indicate:
           - Agents falling into habitual approaches
-          - Lack of diversity in problem-solving strategies
-          - Potential for missed innovative solutions
-          - Risk of creating technical debt
+          - Limited variety in problem-solving strategies
+          - Opportunities for broader skill application
+          - Potential for more innovative solutions
           
           ### Action Items:
-          1. Review `analysis/diversity-suggestions.md` for specific recommendations
-          2. Examine flagged agents' recent contributions
-          3. Consider updating agent prompts to encourage diversity
-          4. Share successful diverse patterns with the team
+          1. **Review Diversity Suggestions**: Check `analysis/diversity-suggestions.md` for specific recommendations
+          2. **Examine Recent Work**: Look at flagged agents' recent contributions to identify patterns
+          3. **Encourage Exploration**: Consider assigning diverse types of issues to these agents
+          4. **Learn from High Performers**: Share successful diverse patterns from agents above threshold
           
-          ### Reports:
-          - 📊 Repetition Report: `analysis/repetition-report.json`
-          - 🎯 Uniqueness Scores: `analysis/uniqueness-scores.json`
-          - 💡 Suggestions: `analysis/diversity-suggestions.md`
+          ### Analysis Reports:
+          - 📊 **Repetition Patterns**: `analysis/repetition-report.json` - Code structure and commit patterns
+          - 🎯 **Uniqueness Scores**: `analysis/uniqueness-scores.json` - Agent diversity metrics
+          - 💡 **Improvement Suggestions**: `analysis/diversity-suggestions.md` - Actionable recommendations
+          
+          ### Note:
+          This alert focuses on **AI agent diversity**, not code quality. All agents can improve by:
+          - Working on varied issue types
+          - Using different solution approaches
+          - Exploring diverse technologies and domains
           
           ---
           *Automatically generated by the AI Pattern Repetition Detector*
+          *Issue created by workflow: repetition-detector.yml*
           ISSUE_EOF
             
             # Replace placeholders
-            sed -i "s/TOTAL_FLAGS_PLACEHOLDER/${total_flags}/g" /tmp/issue_body.md
             sed -i "s/FLAGGED_COUNT_PLACEHOLDER/${{ steps.stats.outputs.flagged_count }}/g" /tmp/issue_body.md
             sed -i "s/AVG_SCORE_PLACEHOLDER/${{ steps.stats.outputs.avg_score }}/g" /tmp/issue_body.md
             sed -i "s/DAYS_PLACEHOLDER/${{ steps.detect.outputs.days }}/g" /tmp/issue_body.md
@@ -322,12 +343,12 @@ jobs:
             
             # Create issue with fallback if labels don't exist
             gh issue create \
-              --title "⚠️ AI Agent Repetition Alert: ${total_flags} patterns detected" \
+              --title "⚠️ AI Agent Diversity Alert: ${flagged_count} agents below threshold" \
               --body-file /tmp/issue_body.md \
               --label "automated" || {
                 echo "⚠️ Issue creation with labels failed, retrying without labels..."
                 gh issue create \
-                  --title "⚠️ AI Agent Repetition Alert: ${total_flags} patterns detected" \
+                  --title "⚠️ AI Agent Diversity Alert: ${flagged_count} agents below threshold" \
                   --body-file /tmp/issue_body.md
               }
           fi
