@@ -653,7 +653,6 @@
         <button class="control-btn" id="btn-reset-camera">Reset View</button>
         <button class="control-btn active" id="btn-toggle-bloom">Bloom: ON</button>
         <button class="control-btn" id="btn-toggle-helpers">Helpers: OFF</button>
-        <button class="control-btn" id="btn-toggle-particles">Particles: ON</button>
         <button class="control-btn" id="btn-toggle-connections">Connections: ON</button>
         <div class="control-slider">
             <label>Speed</label>
@@ -695,17 +694,16 @@
         let lifecycleCore, agentSpheres = [];
         let agentLabels = [];
         let missionObjects = [];
-        let particles, particleSystem;
         let connectionLines = [];
         let gridHelper, axesHelper;
         let worldStateData, agentRegistryData, statsData, missionData;
         let selectedAgent = null;
         let animationSpeed = 1.0;
-        let showParticles = true;
         let showConnections = true;
         let showLabels = true;
         let showHelpers = false;
         let enableBloom = true;
+        let agentMissionAnimations = []; // Track active animations
 
         // Colors for specializations
         const specializationColors = {
@@ -865,9 +863,6 @@
             // Create lifecycle core (center)
             createLifecycleCore();
 
-            // Create particle system
-            createParticleSystem();
-
             // Window resize handler
             window.addEventListener('resize', onWindowResize, false);
         }
@@ -940,72 +935,19 @@
             scene.add(lifecycleCore);
         }
 
-        // Create particle system for data flow
-        function createParticleSystem() {
-            const particleCount = 800;
-            const positions = new Float32Array(particleCount * 3);
-            const colors = new Float32Array(particleCount * 3);
-            const sizes = new Float32Array(particleCount);
-            const velocities = new Float32Array(particleCount * 3);
 
-            for (let i = 0; i < particleCount; i++) {
-                const i3 = i * 3;
-                
-                // Random position in sphere
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.acos(Math.random() * 2 - 1);
-                const r = 15 + Math.random() * 20;
-                
-                positions[i3] = r * Math.sin(phi) * Math.cos(theta);
-                positions[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-                positions[i3 + 2] = r * Math.cos(phi);
-
-                // Color gradients: cyan to magenta
-                const colorMix = Math.random();
-                colors[i3] = colorMix * 1.0;     // R
-                colors[i3 + 1] = 1.0 - colorMix * 0.5; // G
-                colors[i3 + 2] = 1.0;            // B
-
-                // Varying sizes
-                sizes[i] = 0.3 + Math.random() * 0.8;
-
-                // Random velocities
-                velocities[i3] = (Math.random() - 0.5) * 0.05;
-                velocities[i3 + 1] = (Math.random() - 0.5) * 0.05;
-                velocities[i3 + 2] = (Math.random() - 0.5) * 0.05;
-            }
-
-            const geometry = new THREE.BufferGeometry();
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-
-            const material = new THREE.PointsMaterial({
-                size: 1.0,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.9,
-                blending: THREE.AdditiveBlending,
-                sizeAttenuation: true,
-                depthWrite: false
-            });
-
-            particleSystem = new THREE.Points(geometry, material);
-            particleSystem.userData.velocities = velocities;
-            scene.add(particleSystem);
-        }
 
         // Create a simplified humanoid shape for agents
         function createHumanoidShape(size, color) {
             const humanoid = new THREE.Group();
             
-            // Material for the humanoid
+            // Material for the humanoid with enhanced cyberpunk look
             const material = new THREE.MeshStandardMaterial({
                 color: color,
                 emissive: color,
-                emissiveIntensity: 0.4,
-                metalness: 0.6,
-                roughness: 0.4
+                emissiveIntensity: 0.6,
+                metalness: 0.9,
+                roughness: 0.1
             });
             
             // Head
@@ -1016,6 +958,18 @@
             head.receiveShadow = true;
             humanoid.add(head);
             
+            // Add visor/eyes to head
+            const visorGeometry = new THREE.PlaneGeometry(size * 0.6, size * 0.15);
+            const visorMaterial = new THREE.MeshBasicMaterial({
+                color: 0x00ffff,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            const visor = new THREE.Mesh(visorGeometry, visorMaterial);
+            visor.position.set(0, size * 1.5, size * 0.4);
+            humanoid.add(visor);
+            
             // Torso (body)
             const torsoGeometry = new THREE.CapsuleGeometry(size * 0.35, size * 0.8, 8, 16);
             const torso = new THREE.Mesh(torsoGeometry, material);
@@ -1023,6 +977,18 @@
             torso.castShadow = true;
             torso.receiveShadow = true;
             humanoid.add(torso);
+            
+            // Add chest light
+            const chestLightGeometry = new THREE.CircleGeometry(size * 0.15, 8);
+            const chestLightMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.9,
+                blending: THREE.AdditiveBlending
+            });
+            const chestLight = new THREE.Mesh(chestLightGeometry, chestLightMaterial);
+            chestLight.position.set(0, size * 0.8, size * 0.35);
+            humanoid.add(chestLight);
             
             // Left Arm
             const armGeometry = new THREE.CapsuleGeometry(size * 0.15, size * 0.7, 4, 8);
@@ -1056,18 +1022,43 @@
             rightLeg.receiveShadow = true;
             humanoid.add(rightLeg);
             
-            // Add a subtle glow around the entire humanoid
-            const glowGeometry = new THREE.SphereGeometry(size * 1.2, 16, 16);
+            // Add enhanced glow with scanlines
+            const glowGeometry = new THREE.SphereGeometry(size * 1.3, 16, 16);
             const glowMaterial = new THREE.MeshBasicMaterial({
                 color: color,
                 transparent: true,
-                opacity: 0.2,
+                opacity: 0.3,
                 side: THREE.BackSide,
                 blending: THREE.AdditiveBlending
             });
             const glow = new THREE.Mesh(glowGeometry, glowMaterial);
             glow.position.y = size * 0.5;
             humanoid.add(glow);
+            
+            // Add wireframe overlay for cyberpunk effect
+            const wireframeGeometry = new THREE.SphereGeometry(size * 1.1, 8, 8);
+            const wireframeMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.2
+            });
+            const wireframe = new THREE.Mesh(wireframeGeometry, wireframeMaterial);
+            wireframe.position.y = size * 0.5;
+            humanoid.add(wireframe);
+            
+            // Add circular data ring around the agent
+            const dataRingGeometry = new THREE.TorusGeometry(size * 1.4, size * 0.03, 8, 32);
+            const dataRingMaterial = new THREE.MeshBasicMaterial({
+                color: 0x00ffff,
+                transparent: true,
+                opacity: 0.5,
+                blending: THREE.AdditiveBlending
+            });
+            const dataRing = new THREE.Mesh(dataRingGeometry, dataRingMaterial);
+            dataRing.rotation.x = Math.PI / 2;
+            dataRing.position.y = size * 0.5;
+            humanoid.add(dataRing);
             
             return humanoid;
         }
@@ -1252,6 +1243,103 @@
             });
         }
 
+        // Create cyberpunk-inspired mission portal/terminal
+        function createMissionPortal(mission, categoryKey) {
+            const group = new THREE.Group();
+            const isComplete = mission.status === 'complete';
+            const color = isComplete ? 0x00ff00 : 0xff00ff;
+            
+            // Main portal frame (hexagonal)
+            const frameShape = new THREE.Shape();
+            const radius = 1.5;
+            for (let i = 0; i < 6; i++) {
+                const angle = (i / 6) * Math.PI * 2;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                if (i === 0) frameShape.moveTo(x, y);
+                else frameShape.lineTo(x, y);
+            }
+            frameShape.closePath();
+            
+            const extrudeSettings = {
+                depth: 0.2,
+                bevelEnabled: true,
+                bevelThickness: 0.05,
+                bevelSize: 0.05,
+                bevelSegments: 2
+            };
+            
+            const frameGeometry = new THREE.ExtrudeGeometry(frameShape, extrudeSettings);
+            const frameMaterial = new THREE.MeshStandardMaterial({
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.5,
+                metalness: 0.8,
+                roughness: 0.2
+            });
+            const frame = new THREE.Mesh(frameGeometry, frameMaterial);
+            frame.rotation.y = Math.PI / 2;
+            group.add(frame);
+            
+            // Inner portal surface (holographic)
+            const innerGeometry = new THREE.CircleGeometry(radius * 0.8, 6);
+            const innerMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.DoubleSide,
+                blending: THREE.AdditiveBlending
+            });
+            const inner = new THREE.Mesh(innerGeometry, innerMaterial);
+            inner.rotation.y = Math.PI / 2;
+            group.add(inner);
+            
+            // Glowing core
+            const coreGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+            const coreMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            const core = new THREE.Mesh(coreGeometry, coreMaterial);
+            group.add(core);
+            
+            // Surrounding energy rings
+            for (let i = 0; i < 3; i++) {
+                const ringGeometry = new THREE.TorusGeometry(radius * (0.5 + i * 0.2), 0.02, 8, 32);
+                const ringMaterial = new THREE.MeshBasicMaterial({
+                    color: color,
+                    transparent: true,
+                    opacity: 0.4,
+                    blending: THREE.AdditiveBlending
+                });
+                const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+                ring.rotation.y = Math.PI / 2;
+                ring.userData.ringOffset = i * Math.PI * 0.66;
+                group.add(ring);
+            }
+            
+            // Scanline effect bars
+            for (let i = 0; i < 4; i++) {
+                const barGeometry = new THREE.BoxGeometry(0.05, radius * 1.5, 0.05);
+                const barMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x00ffff,
+                    transparent: true,
+                    opacity: 0.6,
+                    blending: THREE.AdditiveBlending
+                });
+                const bar = new THREE.Mesh(barGeometry, barMaterial);
+                bar.position.x = (Math.random() - 0.5) * radius;
+                bar.position.y = (Math.random() - 0.5) * radius;
+                bar.userData.scanSpeed = 0.02 + Math.random() * 0.03;
+                group.add(bar);
+            }
+            
+            group.userData.missionType = 'portal';
+            return group;
+        }
+
         // Create mission visualization objects
         function createMissionObjects() {
             // Clear existing mission objects
@@ -1261,7 +1349,7 @@
             if (!missionData || !missionData.categories) return;
 
             let missionCount = 0;
-            const maxMissions = 20; // Limit to avoid clutter
+            const maxMissions = 15; // Limit to avoid clutter
 
             // Iterate through categories and missions
             for (const categoryKey in missionData.categories) {
@@ -1271,31 +1359,26 @@
                     category.missions.slice(0, 5).forEach((mission, idx) => {
                         if (missionCount >= maxMissions) return;
                         
-                        // Create a small cube/octahedron for missions
-                        const isComplete = mission.status === 'complete';
-                        const geometry = new THREE.OctahedronGeometry(0.3);
-                        const material = new THREE.MeshPhongMaterial({
-                            color: isComplete ? 0x00ff00 : 0xffaa00,
-                            emissive: isComplete ? 0x00ff00 : 0xffaa00,
-                            emissiveIntensity: 0.4,
-                            transparent: true,
-                            opacity: 0.7
-                        });
-
-                        const missionObj = new THREE.Mesh(geometry, material);
+                        // Create cyberpunk mission portal
+                        const missionObj = createMissionPortal(mission, categoryKey);
                         
                         // Position missions in an outer ring
                         const angle = (missionCount / maxMissions) * Math.PI * 2;
-                        const distance = 45;
+                        const distance = 40;
                         
                         missionObj.position.x = Math.cos(angle) * distance;
-                        missionObj.position.y = (Math.random() - 0.5) * 5;
+                        missionObj.position.y = (Math.random() - 0.5) * 8;
                         missionObj.position.z = Math.sin(angle) * distance;
+                        
+                        // Make portal face the center
+                        missionObj.lookAt(0, missionObj.position.y, 0);
                         
                         missionObj.userData = {
                             mission: mission,
                             category: categoryKey,
-                            rotationSpeed: 0.01 + Math.random() * 0.02
+                            rotationSpeed: 0.005 + Math.random() * 0.01,
+                            pulseOffset: Math.random() * Math.PI * 2,
+                            originalY: missionObj.position.y
                         };
 
                         scene.add(missionObj);
@@ -1476,9 +1559,162 @@
             });
         }
 
+        // Animate agent moving to and accomplishing a mission
+        function animateAgentToMission(agentMesh, missionObj) {
+            if (!agentMesh || !missionObj) return;
+            
+            const animation = {
+                agent: agentMesh,
+                mission: missionObj,
+                startPos: agentMesh.position.clone(),
+                targetPos: missionObj.position.clone(),
+                startTime: Date.now(),
+                duration: 3000, // 3 seconds to reach mission
+                phase: 'approaching', // approaching -> entering -> completing -> returning
+                originalPos: agentMesh.position.clone()
+            };
+            
+            agentMissionAnimations.push(animation);
+        }
+
+        // Update agent-mission animations
+        function updateAgentMissionAnimations() {
+            agentMissionAnimations = agentMissionAnimations.filter(anim => {
+                const elapsed = Date.now() - anim.startTime;
+                const progress = Math.min(elapsed / anim.duration, 1);
+                
+                if (anim.phase === 'approaching') {
+                    // Move agent towards mission
+                    anim.agent.position.lerpVectors(anim.startPos, anim.targetPos, progress);
+                    
+                    // Make agent look at mission
+                    anim.agent.lookAt(anim.targetPos);
+                    
+                    if (progress >= 1) {
+                        anim.phase = 'entering';
+                        anim.startTime = Date.now();
+                        anim.duration = 1000; // 1 second entering phase
+                    }
+                } else if (anim.phase === 'entering') {
+                    // Scale down agent as it enters the portal
+                    const scale = 1 - progress * 0.5;
+                    anim.agent.scale.setScalar(scale);
+                    
+                    // Pulse the mission portal
+                    const pulse = Math.sin(progress * Math.PI * 4);
+                    anim.mission.children.forEach(child => {
+                        if (child.material && child.material.emissiveIntensity !== undefined) {
+                            child.material.emissiveIntensity = 0.5 + pulse * 0.3;
+                        }
+                    });
+                    
+                    if (progress >= 1) {
+                        anim.phase = 'completing';
+                        anim.startTime = Date.now();
+                        anim.duration = 2000; // 2 seconds completing
+                    }
+                } else if (anim.phase === 'completing') {
+                    // Agent is inside, portal shows work being done
+                    const pulse = Math.sin(progress * Math.PI * 6);
+                    
+                    // Change portal color to show progress
+                    anim.mission.children.forEach(child => {
+                        if (child.material) {
+                            if (child.material.emissive) {
+                                const greenMix = progress;
+                                child.material.emissive.setRGB(
+                                    (1 - greenMix) * 1.0,
+                                    greenMix * 1.0,
+                                    (1 - greenMix) * 1.0
+                                );
+                            }
+                            if (child.material.emissiveIntensity !== undefined) {
+                                child.material.emissiveIntensity = 0.6 + pulse * 0.4;
+                            }
+                        }
+                    });
+                    
+                    if (progress >= 1) {
+                        anim.phase = 'returning';
+                        anim.startTime = Date.now();
+                        anim.duration = 2000; // 2 seconds returning
+                    }
+                } else if (anim.phase === 'returning') {
+                    // Scale agent back up
+                    const scale = 0.5 + progress * 0.5;
+                    anim.agent.scale.setScalar(scale);
+                    
+                    // Move agent back to original position
+                    anim.agent.position.lerpVectors(anim.targetPos, anim.originalPos, progress);
+                    
+                    // Make agent face center as it returns
+                    anim.agent.lookAt(0, anim.agent.position.y, 0);
+                    
+                    if (progress >= 1) {
+                        // Animation complete, restore agent
+                        anim.agent.scale.setScalar(1);
+                        return false; // Remove from array
+                    }
+                }
+                
+                return true; // Keep in array
+            });
+        }
+
+        // Randomly trigger agent-mission interactions
+        function triggerRandomAgentMission() {
+            if (agentSpheres.length > 0 && missionObjects.length > 0 && agentMissionAnimations.length < 2) {
+                // Only allow 2 simultaneous animations
+                const randomAgent = agentSpheres[Math.floor(Math.random() * agentSpheres.length)];
+                const randomMission = missionObjects[Math.floor(Math.random() * missionObjects.length)];
+                
+                // Check if this agent is already animating
+                const isAnimating = agentMissionAnimations.some(anim => anim.agent === randomAgent);
+                
+                if (!isAnimating && randomAgent.userData.agent && randomAgent.userData.agent.status === 'working') {
+                    animateAgentToMission(randomAgent, randomMission);
+                }
+            }
+        }
+
+        // Get missions associated with an agent
+        function getAgentMissions(agentLabel) {
+            if (!missionData || !missionData.categories) return [];
+            
+            const missions = [];
+            for (const categoryKey in missionData.categories) {
+                const category = missionData.categories[categoryKey];
+                if (category.missions && Array.isArray(category.missions)) {
+                    category.missions.forEach(mission => {
+                        // Check if agent is mentioned in the mission
+                        if (mission.agent && mission.agent.toLowerCase().includes(agentLabel.toLowerCase())) {
+                            missions.push({
+                                ...mission,
+                                category: category.name,
+                                categoryKey: categoryKey
+                            });
+                        }
+                    });
+                }
+            }
+            
+            // Sort by date (most recent first) and status
+            missions.sort((a, b) => {
+                if (a.status === 'complete' && b.status !== 'complete') return -1;
+                if (a.status !== 'complete' && b.status === 'complete') return 1;
+                if (a.date && b.date) return new Date(b.date) - new Date(a.date);
+                return 0;
+            });
+            
+            return missions.slice(0, 5); // Return top 5
+        }
+
         // Show agent detail modal
         function showAgentDetail(agent) {
             selectedAgent = agent;
+            
+            // Get recent missions for this agent
+            const recentMissions = getAgentMissions(agent.label);
             
             const content = document.getElementById('detail-content');
             content.innerHTML = `
@@ -1524,6 +1760,24 @@
                     </div>
                 </div>
 
+                ${recentMissions.length > 0 ? `
+                <div class="detail-section">
+                    <h4>Recent Missions</h4>
+                    ${recentMissions.map(mission => `
+                        <div class="detail-row" style="display: block; margin-bottom: 10px; padding: 8px; background: rgba(0, 255, 255, 0.05); border-left: 2px solid ${mission.status === 'complete' ? '#00ff00' : '#ffaa00'}; border-radius: 4px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span class="detail-value" style="font-size: 11px;">${mission.title}</span>
+                                <span style="font-size: 10px; color: ${mission.status === 'complete' ? '#00ff00' : '#ffaa00'}; text-transform: uppercase;">${mission.status}</span>
+                            </div>
+                            <div style="font-size: 10px; color: #888;">
+                                <span>${mission.category}</span>
+                                ${mission.date ? ` • ${mission.date}` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+
                 <div class="detail-section">
                     <h4>Traits</h4>
                     <div class="detail-row">
@@ -1565,6 +1819,14 @@
             // Rotate lifecycle core
             if (lifecycleCore) {
                 lifecycleCore.rotation.y += 0.001 * animationSpeed;
+            }
+
+            // Update agent-mission animations
+            updateAgentMissionAnimations();
+            
+            // Randomly trigger new agent-mission interactions (every ~5 seconds)
+            if (Math.random() < 0.01 * animationSpeed) {
+                triggerRandomAgentMission();
             }
 
             // Animate agent spheres (floating and rotation)
@@ -1609,44 +1871,47 @@
                 }
             });
 
-            // Animate mission objects
+            // Animate mission objects (cyberpunk portals)
             missionObjects.forEach(obj => {
                 if (obj.userData.rotationSpeed) {
-                    obj.rotation.x += obj.userData.rotationSpeed * animationSpeed;
-                    obj.rotation.y += obj.userData.rotationSpeed * 0.5 * animationSpeed;
+                    // Slow rotation of entire portal
+                    obj.rotation.y += obj.userData.rotationSpeed * animationSpeed;
                 }
-            });
-
-            // Animate particles
-            if (particleSystem && showParticles) {
-                const positions = particleSystem.geometry.attributes.position.array;
-                const velocities = particleSystem.userData.velocities;
-
-                for (let i = 0; i < positions.length; i += 3) {
-                    positions[i] += velocities[i] * animationSpeed;
-                    positions[i + 1] += velocities[i + 1] * animationSpeed;
-                    positions[i + 2] += velocities[i + 2] * animationSpeed;
-
-                    // Reset particles that go too far
-                    const dist = Math.sqrt(
-                        positions[i] ** 2 + 
-                        positions[i + 1] ** 2 + 
-                        positions[i + 2] ** 2
-                    );
-                    
-                    if (dist > 50) {
-                        const theta = Math.random() * Math.PI * 2;
-                        const phi = Math.acos(Math.random() * 2 - 1);
-                        const r = 15;
-                        
-                        positions[i] = r * Math.sin(phi) * Math.cos(theta);
-                        positions[i + 1] = r * Math.sin(phi) * Math.sin(theta);
-                        positions[i + 2] = r * Math.cos(phi);
+                
+                // Floating motion
+                if (obj.userData.originalY !== undefined) {
+                    obj.userData.pulseOffset += 0.01 * animationSpeed;
+                    obj.position.y = obj.userData.originalY + Math.sin(obj.userData.pulseOffset) * 1;
+                }
+                
+                // Animate rings and inner portal
+                obj.children.forEach((child, index) => {
+                    if (child.geometry && child.geometry.type === 'TorusGeometry') {
+                        // Rotate energy rings
+                        child.rotation.y += (0.02 + index * 0.01) * animationSpeed;
                     }
-                }
-
-                particleSystem.geometry.attributes.position.needsUpdate = true;
-            }
+                    
+                    if (child.geometry && child.geometry.type === 'CircleGeometry') {
+                        // Pulse inner portal
+                        const pulse = (Math.sin(Date.now() * 0.002) + 1) / 2;
+                        child.material.opacity = 0.2 + pulse * 0.3;
+                    }
+                    
+                    if (child.geometry && child.geometry.type === 'SphereGeometry') {
+                        // Pulse core
+                        const pulse = (Math.sin(Date.now() * 0.003 + index) + 1) / 2;
+                        child.scale.setScalar(0.8 + pulse * 0.4);
+                    }
+                    
+                    if (child.geometry && child.geometry.type === 'BoxGeometry' && child.userData.scanSpeed) {
+                        // Animate scanline bars
+                        child.position.y += child.userData.scanSpeed * animationSpeed;
+                        if (Math.abs(child.position.y) > 2) {
+                            child.position.y = -2;
+                        }
+                    }
+                });
+            });
 
             controls.update();
             
@@ -1723,13 +1988,6 @@
                 if (gridHelper) gridHelper.visible = showHelpers;
                 if (axesHelper) axesHelper.visible = showHelpers;
                 e.target.textContent = `Helpers: ${showHelpers ? 'ON' : 'OFF'}`;
-                e.target.classList.toggle('active');
-            });
-
-            document.getElementById('btn-toggle-particles').addEventListener('click', (e) => {
-                showParticles = !showParticles;
-                particleSystem.visible = showParticles;
-                e.target.textContent = `Particles: ${showParticles ? 'ON' : 'OFF'}`;
                 e.target.classList.toggle('active');
             });
 
