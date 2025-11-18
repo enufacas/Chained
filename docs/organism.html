@@ -473,6 +473,24 @@
             padding: 5px 10px;
         }
 
+        /* Pipeline Filter Panel */
+        #pipeline-filters {
+            position: fixed;
+            bottom: 70px;
+            left: 320px;
+            background: rgba(10, 14, 26, 0.95);
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            padding: 15px;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            max-width: 400px;
+        }
+
+        #pipeline-filters.collapsed {
+            transform: translateY(150px);
+        }
+
         .close-btn:hover {
             color: #00ffff;
         }
@@ -650,6 +668,7 @@
 
     <!-- Control Panel -->
     <div id="control-panel">
+        <button class="control-btn active" id="btn-view-mode">Mode: Agents</button>
         <button class="control-btn" id="btn-reset-camera">Reset View</button>
         <button class="control-btn active" id="btn-toggle-bloom">Bloom: ON</button>
         <button class="control-btn" id="btn-toggle-helpers">Helpers: OFF</button>
@@ -658,6 +677,45 @@
             <label>Speed</label>
             <input type="range" id="speed-slider" min="0.1" max="3" step="0.1" value="1">
         </div>
+    </div>
+
+    <!-- Pipeline Filter Panel -->
+    <div id="pipeline-filters" style="display: none;">
+        <h3 style="color: #00ffff; margin: 0 0 10px 0; font-size: 14px;">🔍 PIPELINE FILTERS</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Agent:</label>
+                <select id="filter-agent" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
+                    <option value="">All Agents</option>
+                </select>
+            </div>
+            <div>
+                <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Status:</label>
+                <select id="filter-status" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
+                    <option value="">All Status</option>
+                    <option value="success">Success</option>
+                    <option value="failure">Failure</option>
+                    <option value="in_progress">In Progress</option>
+                </select>
+            </div>
+            <div>
+                <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Workflow:</label>
+                <select id="filter-workflow" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
+                    <option value="">All Workflows</option>
+                </select>
+            </div>
+            <div>
+                <label style="color: #00ffff; font-size: 11px; display: block; margin-bottom: 5px;">Type:</label>
+                <select id="filter-type" style="width: 100%; padding: 5px; background: rgba(0,0,0,0.7); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; font-size: 11px;">
+                    <option value="">All Types</option>
+                    <option value="runs">Workflow Runs</option>
+                    <option value="missions">Missions</option>
+                    <option value="prs">Pull Requests</option>
+                    <option value="issues">Issues</option>
+                </select>
+            </div>
+        </div>
+        <button id="btn-apply-filters" style="margin-top: 10px; width: 100%; padding: 8px; background: rgba(0, 255, 255, 0.2); border: 1px solid #00ffff; color: #00ffff; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">APPLY FILTERS</button>
     </div>
 
     <!-- Agent Detail Modal -->
@@ -696,7 +754,7 @@
         let missionObjects = [];
         let connectionLines = [];
         let gridHelper, axesHelper;
-        let worldStateData, agentRegistryData, statsData, missionData;
+        let worldStateData, agentRegistryData, statsData, missionData, agentOpsData, issuesData, prsData;
         let selectedAgent = null;
         let animationSpeed = 1.0;
         let showConnections = true;
@@ -704,6 +762,14 @@
         let showHelpers = false;
         let enableBloom = true;
         let agentMissionAnimations = []; // Track active animations
+        let viewMode = 'agents'; // 'agents' or 'pipeline'
+        let pipelineObjects = []; // Store pipeline visualization objects
+        let pipelineFilters = {
+            agent: '',
+            status: '',
+            workflow: '',
+            type: ''
+        };
 
         // Colors for specializations
         const specializationColors = {
@@ -1389,6 +1455,344 @@
             }
         }
 
+        // Create 3D Pipeline Grid Visualization
+        function createPipelineVisualization() {
+            // Clear existing pipeline objects
+            pipelineObjects.forEach(obj => scene.remove(obj));
+            pipelineObjects = [];
+
+            if (!agentOpsData || !agentOpsData.runs) {
+                console.warn('No agentops data available for pipeline view');
+                return;
+            }
+
+            // Filter runs based on current filters
+            let filteredRuns = agentOpsData.runs.filter(run => {
+                if (pipelineFilters.agent && run.agent_name !== pipelineFilters.agent) return false;
+                if (pipelineFilters.status && run.conclusion !== pipelineFilters.status && run.status !== pipelineFilters.status) return false;
+                if (pipelineFilters.workflow && run.workflow_file !== pipelineFilters.workflow) return false;
+                return true;
+            });
+
+            // Limit to most recent runs for performance
+            filteredRuns = filteredRuns.slice(0, 50);
+
+            // Create pipeline grid layout - runs flow from left to right in lanes
+            const laneWidth = 8;
+            const laneHeight = 5;
+            const runSpacing = 6;
+
+            // Group runs by workflow for lanes
+            const workflowLanes = {};
+            filteredRuns.forEach(run => {
+                if (!workflowLanes[run.workflow_file]) {
+                    workflowLanes[run.workflow_file] = [];
+                }
+                workflowLanes[run.workflow_file].push(run);
+            });
+
+            // Create visual objects for each run in its lane
+            const workflowNames = Object.keys(workflowLanes);
+            const totalLanes = workflowNames.length;
+            
+            workflowNames.forEach((workflow, laneIndex) => {
+                const runs = workflowLanes[workflow];
+                const laneY = (laneIndex - totalLanes / 2) * laneHeight;
+
+                runs.forEach((run, runIndex) => {
+                    const runX = (runIndex - runs.length / 2) * runSpacing;
+                    
+                    // Create run object - use cylinder as "pipe segment"
+                    const runObj = createRunObject(run);
+                    runObj.position.set(runX, laneY, 0);
+                    
+                    runObj.userData = {
+                        type: 'run',
+                        run: run,
+                        lane: workflow,
+                        laneIndex: laneIndex,
+                        pulseOffset: Math.random() * Math.PI * 2
+                    };
+
+                    scene.add(runObj);
+                    pipelineObjects.push(runObj);
+
+                    // Create connecting agents (small spheres)
+                    if (run.agent_name) {
+                        const agentObj = createAgentMarker(run.agent_name);
+                        agentObj.position.set(runX, laneY + 2, 0);
+                        agentObj.userData = {
+                            type: 'agent-marker',
+                            agent: run.agent_name,
+                            run: run
+                        };
+                        scene.add(agentObj);
+                        pipelineObjects.push(agentObj);
+
+                        // Create connection line
+                        const lineGeom = new THREE.BufferGeometry().setFromPoints([
+                            new THREE.Vector3(runX, laneY + 1.5, 0),
+                            new THREE.Vector3(runX, laneY + 2, 0)
+                        ]);
+                        const lineMat = new THREE.LineBasicMaterial({ color: 0x00ffff, opacity: 0.5, transparent: true });
+                        const line = new THREE.Line(lineGeom, lineMat);
+                        scene.add(line);
+                        pipelineObjects.push(line);
+                    }
+
+                    // Add PR markers if present
+                    if (run.pr_numbers && run.pr_numbers.length > 0) {
+                        run.pr_numbers.slice(0, 3).forEach((prNum, prIdx) => {
+                            const prObj = createPRMarker(prNum);
+                            prObj.position.set(runX + (prIdx - 1) * 1.5, laneY - 2, 0);
+                            prObj.userData = {
+                                type: 'pr',
+                                prNumber: prNum,
+                                run: run
+                            };
+                            scene.add(prObj);
+                            pipelineObjects.push(prObj);
+                        });
+                    }
+
+                    // Add issue marker if present
+                    if (run.issue_number) {
+                        const issueObj = createIssueMarker(run.issue_number);
+                        issueObj.position.set(runX, laneY - 3, 0);
+                        issueObj.userData = {
+                            type: 'issue',
+                            issueNumber: run.issue_number,
+                            run: run
+                        };
+                        scene.add(issueObj);
+                        pipelineObjects.push(issueObj);
+                    }
+                });
+
+                // Create lane label
+                const labelDiv = document.createElement('div');
+                labelDiv.style.color = '#00ffff';
+                labelDiv.style.fontSize = '12px';
+                labelDiv.style.fontFamily = 'monospace';
+                labelDiv.style.background = 'rgba(0,0,0,0.7)';
+                labelDiv.style.padding = '5px';
+                labelDiv.style.borderRadius = '4px';
+                labelDiv.style.border = '1px solid #00ffff';
+                labelDiv.textContent = workflow.replace('.yml', '');
+                
+                const label = new CSS3DObject(labelDiv);
+                label.position.set(-30, laneY, 0);
+                label.scale.set(0.05, 0.05, 0.05);
+                labelScene.add(label);
+                pipelineObjects.push(label);
+            });
+
+            // Add missions as floating objects
+            if (missionData && missionData.categories && (!pipelineFilters.type || pipelineFilters.type === 'missions')) {
+                addMissionsToPipeline();
+            }
+
+            console.log(`Created ${pipelineObjects.length} pipeline objects`);
+        }
+
+        // Create visual object for a workflow run (pipe segment)
+        function createRunObject(run) {
+            const geometry = new THREE.CylinderGeometry(0.5, 0.5, 2, 8);
+            let color;
+            
+            if (run.conclusion === 'success') {
+                color = 0x00ff00; // Green
+            } else if (run.conclusion === 'failure') {
+                color = 0xff0000; // Red
+            } else if (run.status === 'in_progress') {
+                color = 0xffff00; // Yellow
+            } else {
+                color = 0x888888; // Gray
+            }
+
+            const material = new THREE.MeshPhongMaterial({ 
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.3,
+                shininess: 100
+            });
+            
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.rotation.z = Math.PI / 2; // Rotate to horizontal
+            
+            return mesh;
+        }
+
+        // Create agent marker (small sphere)
+        function createAgentMarker(agentName) {
+            const geometry = new THREE.SphereGeometry(0.4, 16, 16);
+            const color = getAgentColor(agentName);
+            const material = new THREE.MeshPhongMaterial({
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.5,
+                shininess: 100
+            });
+            return new THREE.Mesh(geometry, material);
+        }
+
+        // Create PR marker (octahedron)
+        function createPRMarker(prNumber) {
+            const geometry = new THREE.OctahedronGeometry(0.3);
+            const material = new THREE.MeshPhongMaterial({
+                color: 0xff00ff,
+                emissive: 0xff00ff,
+                emissiveIntensity: 0.4,
+                shininess: 100
+            });
+            return new THREE.Mesh(geometry, material);
+        }
+
+        // Create issue marker (tetrahedron/flag)
+        function createIssueMarker(issueNumber) {
+            const geometry = new THREE.TetrahedronGeometry(0.4);
+            const material = new THREE.MeshPhongMaterial({
+                color: 0x00ffff,
+                emissive: 0x00ffff,
+                emissiveIntensity: 0.4,
+                shininess: 100
+            });
+            return new THREE.Mesh(geometry, material);
+        }
+
+        // Add missions to pipeline view
+        function addMissionsToPipeline() {
+            if (!missionData || !missionData.categories) return;
+
+            let missionCount = 0;
+            const maxMissions = 10;
+
+            for (const categoryKey in missionData.categories) {
+                const category = missionData.categories[categoryKey];
+                
+                if (category.missions && Array.isArray(category.missions)) {
+                    category.missions.slice(0, 3).forEach((mission, idx) => {
+                        if (missionCount >= maxMissions) return;
+                        
+                        // Create mission crystal/gem
+                        const geometry = new THREE.IcosahedronGeometry(1);
+                        const material = new THREE.MeshPhongMaterial({
+                            color: 0x9900ff,
+                            emissive: 0x9900ff,
+                            emissiveIntensity: 0.6,
+                            shininess: 100,
+                            transparent: true,
+                            opacity: 0.8
+                        });
+                        const missionObj = new THREE.Mesh(geometry, material);
+                        
+                        // Position missions in a floating layer above pipeline
+                        const angle = (missionCount / maxMissions) * Math.PI * 2;
+                        const distance = 25;
+                        missionObj.position.x = Math.cos(angle) * distance;
+                        missionObj.position.y = 15 + Math.sin(missionCount) * 3;
+                        missionObj.position.z = Math.sin(angle) * distance;
+                        
+                        missionObj.userData = {
+                            type: 'mission',
+                            mission: mission,
+                            category: categoryKey,
+                            rotationSpeed: 0.01,
+                            pulseOffset: Math.random() * Math.PI * 2
+                        };
+
+                        scene.add(missionObj);
+                        pipelineObjects.push(missionObj);
+                        missionCount++;
+                    });
+                }
+            }
+        }
+
+        // Get agent color based on name
+        function getAgentColor(agentName) {
+            if (!agentName) return 0x00ffff;
+            
+            for (const key in specializationColors) {
+                if (agentName.toLowerCase().includes(key)) {
+                    return specializationColors[key];
+                }
+            }
+            return specializationColors.default;
+        }
+
+        // Populate filter dropdown options
+        function populateFilterOptions() {
+            if (!agentOpsData || !agentOpsData.runs) return;
+
+            // Get unique agents
+            const agents = [...new Set(agentOpsData.runs.map(r => r.agent_name).filter(Boolean))];
+            const agentSelect = document.getElementById('filter-agent');
+            agents.forEach(agent => {
+                const option = document.createElement('option');
+                option.value = agent;
+                option.textContent = agent;
+                agentSelect.appendChild(option);
+            });
+
+            // Get unique workflows
+            const workflows = [...new Set(agentOpsData.runs.map(r => r.workflow_file).filter(Boolean))];
+            const workflowSelect = document.getElementById('filter-workflow');
+            workflows.forEach(workflow => {
+                const option = document.createElement('option');
+                option.value = workflow;
+                option.textContent = workflow.replace('.yml', '');
+                workflowSelect.appendChild(option);
+            });
+        }
+
+        // Toggle view mode between agents and pipeline
+        function toggleViewMode() {
+            viewMode = viewMode === 'agents' ? 'pipeline' : 'agents';
+            
+            const btn = document.getElementById('btn-view-mode');
+            btn.textContent = `Mode: ${viewMode === 'agents' ? 'Agents' : 'Pipeline'}`;
+            
+            const filterPanel = document.getElementById('pipeline-filters');
+            
+            if (viewMode === 'pipeline') {
+                // Hide agent view objects
+                agentSpheres.forEach(s => s.visible = false);
+                missionObjects.forEach(m => m.visible = false);
+                if (lifecycleCore) lifecycleCore.visible = false;
+                
+                // Show pipeline objects
+                createPipelineVisualization();
+                filterPanel.style.display = 'block';
+                
+                // Reset camera for pipeline view
+                camera.position.set(0, 0, 60);
+                controls.target.set(0, 0, 0);
+                controls.update();
+            } else {
+                // Show agent view objects
+                agentSpheres.forEach(s => s.visible = true);
+                missionObjects.forEach(m => m.visible = true);
+                if (lifecycleCore) lifecycleCore.visible = true;
+                
+                // Hide pipeline objects
+                pipelineObjects.forEach(obj => {
+                    if (obj.isLine || obj.isMesh) {
+                        scene.remove(obj);
+                    } else if (obj.isCSS3DObject) {
+                        labelScene.remove(obj);
+                    }
+                });
+                pipelineObjects = [];
+                filterPanel.style.display = 'none';
+                
+                // Reset camera for agent view
+                camera.position.set(0, 25, 50);
+                controls.target.set(0, 0, 0);
+                controls.update();
+            }
+        }
+
         // Load data from JSON files
         async function loadData() {
             try {
@@ -1413,10 +1817,38 @@
                     missionData = null;
                 }
 
+                // Load agentops runs (for pipeline view)
+                try {
+                    const agentOpsRes = await fetch('data/agentops-runs.json');
+                    agentOpsData = await agentOpsRes.json();
+                } catch (e) {
+                    console.warn('AgentOps data not available:', e);
+                    agentOpsData = null;
+                }
+
+                // Load issues data
+                try {
+                    const issuesRes = await fetch('data/issues.json');
+                    issuesData = await issuesRes.json();
+                } catch (e) {
+                    console.warn('Issues data not available:', e);
+                    issuesData = null;
+                }
+
+                // Load PRs data
+                try {
+                    const prsRes = await fetch('data/pulls.json');
+                    prsData = await prsRes.json();
+                } catch (e) {
+                    console.warn('PRs data not available:', e);
+                    prsData = null;
+                }
+
                 // Update UI with data
                 updateUI();
                 createAgentSpheres();
                 createMissionObjects();
+                populateFilterOptions();
 
                 console.log('Data loaded successfully');
             } catch (error) {
@@ -1913,6 +2345,58 @@
                 });
             });
 
+            // Animate pipeline objects
+            if (viewMode === 'pipeline') {
+                pipelineObjects.forEach(obj => {
+                    if (!obj.isMesh) return;
+                    
+                    const userData = obj.userData;
+                    
+                    // Pulse workflow runs based on status
+                    if (userData.type === 'run') {
+                        const pulse = (Math.sin(Date.now() * 0.003 + userData.pulseOffset) + 1) / 2;
+                        if (obj.material && obj.material.emissive) {
+                            obj.material.emissiveIntensity = 0.3 + pulse * 0.3;
+                        }
+                    }
+                    
+                    // Rotate agent markers
+                    if (userData.type === 'agent-marker') {
+                        obj.rotation.y += 0.02 * animationSpeed;
+                    }
+                    
+                    // Rotate PR markers
+                    if (userData.type === 'pr') {
+                        obj.rotation.x += 0.03 * animationSpeed;
+                        obj.rotation.y += 0.02 * animationSpeed;
+                    }
+                    
+                    // Rotate issue markers
+                    if (userData.type === 'issue') {
+                        obj.rotation.y += 0.025 * animationSpeed;
+                    }
+                    
+                    // Animate missions in pipeline view
+                    if (userData.type === 'mission' && userData.rotationSpeed) {
+                        obj.rotation.x += userData.rotationSpeed * animationSpeed;
+                        obj.rotation.y += userData.rotationSpeed * 0.7 * animationSpeed;
+                        
+                        // Floating motion
+                        if (userData.pulseOffset !== undefined) {
+                            userData.pulseOffset += 0.01 * animationSpeed;
+                            const originalY = obj.position.y;
+                            obj.position.y = originalY + Math.sin(userData.pulseOffset) * 0.5;
+                        }
+                        
+                        // Pulse glow
+                        const pulse = (Math.sin(Date.now() * 0.003 + userData.pulseOffset) + 1) / 2;
+                        if (obj.material && obj.material.emissive) {
+                            obj.material.emissiveIntensity = 0.6 + pulse * 0.4;
+                        }
+                    }
+                });
+            }
+
             controls.update();
             
             // Use composer for post-processing effects
@@ -1948,21 +2432,85 @@
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, camera);
 
-            const intersects = raycaster.intersectObjects(agentSpheres, true);
-            
-            if (intersects.length > 0) {
-                // Find the top-level agent mesh
-                let agentMesh = intersects[0].object;
-                while (agentMesh.parent && !agentMesh.userData.agent) {
-                    agentMesh = agentMesh.parent;
+            if (viewMode === 'pipeline') {
+                // Check pipeline objects
+                const intersects = raycaster.intersectObjects(pipelineObjects.filter(obj => obj.isMesh), true);
+                
+                if (intersects.length > 0) {
+                    const obj = intersects[0].object;
+                    const userData = obj.userData;
+                    
+                    if (userData.type === 'run' && userData.run) {
+                        // Open workflow run URL
+                        window.open(userData.run.html_url, '_blank');
+                    } else if (userData.type === 'pr' && userData.run) {
+                        // Open PR URL
+                        const prNum = userData.prNumber;
+                        window.open(`https://github.com/enufacas/Chained/pull/${prNum}`, '_blank');
+                    } else if (userData.type === 'issue' && userData.run) {
+                        // Open issue URL
+                        const issueNum = userData.issueNumber;
+                        window.open(`https://github.com/enufacas/Chained/issues/${issueNum}`, '_blank');
+                    } else if (userData.type === 'mission' && userData.mission) {
+                        // Show mission detail
+                        showMissionDetail(userData.mission, userData.category);
+                    }
                 }
+            } else {
+                // Check agent spheres
+                const intersects = raycaster.intersectObjects(agentSpheres, true);
+                
+                if (intersects.length > 0) {
+                    // Find the top-level agent mesh
+                    let agentMesh = intersects[0].object;
+                    while (agentMesh.parent && !agentMesh.userData.agent) {
+                        agentMesh = agentMesh.parent;
+                    }
 
-                if (agentMesh.userData.agent) {
-                    const agent = agentMesh.userData.agent;
-                    showAgentDetail(agent);
-                    updateSidebarSelection(agent.id);
+                    if (agentMesh.userData.agent) {
+                        const agent = agentMesh.userData.agent;
+                        showAgentDetail(agent);
+                        updateSidebarSelection(agent.id);
+                    }
                 }
             }
+        }
+
+        // Show mission detail
+        function showMissionDetail(mission, category) {
+            const detailModal = document.getElementById('agent-detail');
+            const detailContent = document.getElementById('detail-content');
+            
+            detailContent.innerHTML = `
+                <h2 style="color: #9900ff;">🎯 ${mission.title || 'Mission'}</h2>
+                <div class="detail-section">
+                    <h4>Mission Info</h4>
+                    <div class="detail-row">
+                        <span class="detail-label">Category</span>
+                        <span class="detail-value">${category || 'Unknown'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">${mission.status || 'Active'}</span>
+                    </div>
+                    ${mission.description ? `
+                    <div class="detail-row">
+                        <span class="detail-label">Description</span>
+                        <span class="detail-value" style="white-space: pre-wrap;">${mission.description.substring(0, 200)}...</span>
+                    </div>
+                    ` : ''}
+                </div>
+                ${mission.url ? `
+                <div class="detail-section">
+                    <button onclick="window.open('${mission.url}', '_blank')" 
+                            style="padding: 10px 20px; background: rgba(153, 0, 255, 0.3); border: 1px solid #9900ff; color: #9900ff; cursor: pointer; border-radius: 4px; width: 100%;">
+                        View Mission on GitHub
+                    </button>
+                </div>
+                ` : ''}
+            `;
+            
+            detailModal.classList.add('visible');
         }
 
         // Setup event listeners
@@ -1971,9 +2519,18 @@
             renderer.domElement.addEventListener('click', onCanvasClick);
 
             // Control buttons
+            document.getElementById('btn-view-mode').addEventListener('click', () => {
+                toggleViewMode();
+            });
+
             document.getElementById('btn-reset-camera').addEventListener('click', () => {
-                camera.position.set(0, 25, 50);
-                controls.target.set(0, 0, 0);
+                if (viewMode === 'pipeline') {
+                    camera.position.set(0, 0, 60);
+                    controls.target.set(0, 0, 0);
+                } else {
+                    camera.position.set(0, 25, 50);
+                    controls.target.set(0, 0, 0);
+                }
                 controls.update();
             });
 
@@ -2000,6 +2557,18 @@
 
             document.getElementById('speed-slider').addEventListener('input', (e) => {
                 animationSpeed = parseFloat(e.target.value);
+            });
+
+            // Pipeline filters
+            document.getElementById('btn-apply-filters').addEventListener('click', () => {
+                pipelineFilters.agent = document.getElementById('filter-agent').value;
+                pipelineFilters.status = document.getElementById('filter-status').value;
+                pipelineFilters.workflow = document.getElementById('filter-workflow').value;
+                pipelineFilters.type = document.getElementById('filter-type').value;
+                
+                if (viewMode === 'pipeline') {
+                    createPipelineVisualization();
+                }
             });
 
             // Sidebar toggles
