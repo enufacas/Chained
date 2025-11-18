@@ -1,0 +1,74 @@
+[
+  {
+    "challenge_id": "challenge-creative_code_poetry-1763462142-587474",
+    "template_id": "creative_code_poetry",
+    "title": "Functional Code Poetry Generator",
+    "category": "creative",
+    "difficulty": "medium",
+    "full_description": "# Functional Code Poetry Generator\n\n**Category:** Creative\n**Difficulty:** Medium\n**Estimated Time:** 120 minutes\n\n## Description\n\nCreate a system that generates executable code that is also aesthetically pleasing as poetry, inspired by the AI's creative capabilities.\n\n## Requirements\n\n1. Generate syntactically valid code in target language\n2. Code should read like poetry when formatted\n3. Maintain functional correctness\n4. Support multiple aesthetic styles\n\n## Test Cases\n\n### Test Case 1: Generates haiku-style code\n- **Input:** `haiku_style`\n- **Expected:** `valid_executable_haiku_code`\n\n### Test Case 2: Generates sonnet-style code\n- **Input:** `sonnet_style`\n- **Expected:** `valid_executable_sonnet_code`\n\n## Hints\n\n- Use template-based code generation with poetic constraints\n- Implement syllable counting for code tokens\n- Balance aesthetics with functionality\n\n## Inspiration\n\nThis challenge was inspired by concepts from the Chained autonomous AI ecosystem:\n- Creative Ai Concepts",
+    "requirements": [
+      "Generate syntactically valid code in target language",
+      "Code should read like poetry when formatted",
+      "Maintain functional correctness",
+      "Support multiple aesthetic styles"
+    ],
+    "test_cases": [
+      {
+        "input": "haiku_style",
+        "expected": "valid_executable_haiku_code",
+        "description": "Generates haiku-style code"
+      },
+      {
+        "input": "sonnet_style",
+        "expected": "valid_executable_sonnet_code",
+        "description": "Generates sonnet-style code"
+      }
+    ],
+    "hints": [
+      "Use template-based code generation with poetic constraints",
+      "Implement syllable counting for code tokens",
+      "Balance aesthetics with functionality"
+    ],
+    "timestamp": "2025-11-18T10:35:42.587493+00:00",
+    "learning_context": "",
+    "inspiration_sources": [
+      "creative_ai_concepts"
+    ]
+  },
+  {
+    "challenge_id": "challenge-api_self_documenting-1763462254-332335",
+    "template_id": "api_self_documenting",
+    "title": "Self-Documenting API Generator",
+    "category": "api",
+    "difficulty": "hard",
+    "full_description": "# Self-Documenting API Generator\n\n**Category:** Api\n**Difficulty:** Hard\n**Estimated Time:** 150 minutes\n\n## Description\n\nBuild an API that automatically generates comprehensive documentation from its usage patterns, inspired by the self-documenting AI.\n\n## Requirements\n\n1. Create a REST API with auto-documentation\n2. Track usage patterns and common workflows\n3. Generate examples from actual usage\n4. Provide interactive documentation\n\n## Test Cases\n\n### Test Case 1: Generates API documentation\n- **Input:** `api_endpoints`\n- **Expected:** `generated_docs`\n\n### Test Case 2: Creates usage examples\n- **Input:** `usage_patterns`\n- **Expected:** `usage_examples`\n\n## Hints\n\n- Implement middleware to capture API calls\n- Use OpenAPI/Swagger for documentation structure\n- Analyze request/response patterns for examples\n\n## Inspiration\n\nThis challenge was inspired by concepts from the Chained autonomous AI ecosystem:\n- Self Documenting Ai",
+    "requirements": [
+      "Create a REST API with auto-documentation",
+      "Track usage patterns and common workflows",
+      "Generate examples from actual usage",
+      "Provide interactive documentation"
+    ],
+    "test_cases": [
+      {
+        "input": "api_endpoints",
+        "expected": "generated_docs",
+        "description": "Generates API documentation"
+      },
+      {
+        "input": "usage_patterns",
+        "expected": "usage_examples",
+        "description": "Creates usage examples"
+      }
+    ],
+    "hints": [
+      "Implement middleware to capture API calls",
+      "Use OpenAPI/Swagger for documentation structure",
+      "Analyze request/response patterns for examples"
+    ],
+    "timestamp": "2025-11-18T10:37:34.332378+00:00",
+    "learning_context": "api rest graphql microservices",
+    "inspiration_sources": [
+      "self_documenting_ai"
+    ]
+  }
+]
