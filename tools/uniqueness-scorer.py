@@ -277,24 +277,42 @@ class UniquenessScorer:
             }
         }
     
-    def score_all_agents(self, threshold: float = 30.0) -> Dict[str, Any]:
+    def score_all_agents(self, threshold: float = 30.0, min_contributions: int = 3) -> Dict[str, Any]:
         """Score all agents and flag those below threshold
         
         Filters out system automation bots that are not AI agents.
+        Also filters out agents with insufficient contributions for meaningful diversity analysis.
+        
+        Args:
+            threshold: Minimum score required to avoid flagging
+            min_contributions: Minimum number of contributions required for diversity analysis (default: 3)
         """
         scores = {}
         flagged = []
         excluded_count = 0
+        insufficient_data_count = 0
         
         for agent_id in self.agent_contributions.keys():
             # Skip system automation bots - they're not AI agents requiring diversity coaching
             if agent_id in EXCLUDED_ACTORS:
                 excluded_count += 1
                 continue
-                
+            
+            # Calculate score for all agents (for reporting)
             score_data = self.calculate_overall_score(agent_id)
             scores[agent_id] = score_data
             
+            # Only flag agents with sufficient contributions
+            # Agents with < min_contributions don't have enough data for meaningful diversity analysis
+            contribution_count = score_data['details']['total_contributions']
+            
+            if contribution_count < min_contributions:
+                insufficient_data_count += 1
+                # Add note to score data
+                score_data['note'] = f'Insufficient data ({contribution_count} contributions, need {min_contributions}+)'
+                continue
+            
+            # Flag agents with sufficient data but low diversity
             if score_data['overall_score'] < threshold:
                 flagged.append({
                     'agent_id': agent_id,
@@ -307,8 +325,10 @@ class UniquenessScorer:
                 'generated_at': datetime.now(timezone.utc).isoformat(),
                 'repository': str(self.repo_dir),
                 'threshold': threshold,
+                'min_contributions': min_contributions,
                 'total_agents_analyzed': len(scores),
-                'excluded_system_bots': excluded_count
+                'excluded_system_bots': excluded_count,
+                'insufficient_data_agents': insufficient_data_count
             },
             'scores': scores,
             'flagged_agents': flagged,
@@ -317,7 +337,8 @@ class UniquenessScorer:
                     sum(s['overall_score'] for s in scores.values()) / len(scores), 2
                 ) if scores else 0,
                 'agents_below_threshold': len(flagged),
-                'agents_above_threshold': len(scores) - len(flagged)
+                'agents_above_threshold': len(scores) - len(flagged),
+                'total_agents': len(scores)
             }
         }
     
@@ -421,6 +442,12 @@ def main():
         help='Number of days to look back (default: 90)'
     )
     parser.add_argument(
+        '--min-contributions',
+        type=int,
+        default=3,
+        help='Minimum contributions required for diversity analysis (default: 3)'
+    )
+    parser.add_argument(
         '-o', '--output',
         help='Output file for JSON report (default: stdout)'
     )
@@ -440,7 +467,7 @@ def main():
     if args.agent_id:
         report = scorer.score_specific_agent(args.agent_id, args.threshold)
     else:
-        report = scorer.score_all_agents(args.threshold)
+        report = scorer.score_all_agents(args.threshold, args.min_contributions)
     
     # Output report
     if args.output:

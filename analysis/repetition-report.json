@@ -1,47 +1,20 @@
 {
   "metadata": {
-    "generated_at": "2025-11-17T18:38:02.901684+00:00",
+    "generated_at": "2025-11-18T18:37:48.866681+00:00",
     "repository": ".",
-    "analysis_period_days": 7,
-    "since_date": "2025-11-10T18:38:02.892936+00:00"
+    "analysis_period_days": 30,
+    "since_date": "2025-10-19T18:37:48.862048+00:00"
   },
   "summary": {
-    "total_agents": 2,
-    "total_contributions": 3,
+    "total_agents": 1,
+    "total_contributions": 1,
     "agents": [
-      "copilot-swe-agent",
-      "copilot"
+      "copilot-swe-agent"
     ]
   },
-  "commit_message_patterns": {
-    "copilot-swe-agent": {
-      "total_commits": 2,
-      "unique_templates": 2,
-      "most_common_count": 1,
-      "repetition_rate": 0.5,
-      "emoji_usage": {}
-    }
-  },
+  "commit_message_patterns": {},
   "code_similarity": {},
   "file_sequence_patterns": {},
-  "solution_approaches": {
-    "copilot-swe-agent": {
-      "total_contributions": 2,
-      "unique_approaches": 2,
-      "approaches": [
-        "workflow_automation",
-        "bug_fixing"
-      ],
-      "diversity_score": 100.0
-    },
-    "copilot": {
-      "total_contributions": 1,
-      "unique_approaches": 1,
-      "approaches": [
-        "feature_addition"
-      ],
-      "diversity_score": 100.0
-    }
-  },
+  "solution_approaches": {},
   "repetition_flags": []
 }
