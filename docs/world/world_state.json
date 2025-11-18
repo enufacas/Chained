@@ -1,6 +1,6 @@
 {
-  "time": "2025-11-18T20:19:55Z",
-  "tick": 59,
+  "time": "2025-11-18T20:21:14Z",
+  "tick": 60,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -396,7 +396,7 @@
       "label": "☁️ Cloud Architect Specialist",
       "specialization": "cloud-architect",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco",
         "US:Austin"
@@ -414,6 +414,12 @@
         "creativity": 75,
         "caution": 60,
         "speed": 70
+      },
+      "current_mission": {
+        "mission_id": "idea:32",
+        "title": "Integration: Ai-Agents-Cloud-Infrastructure Innovation",
+        "issue_number": null,
+        "assigned_at": "2025-11-18T20:21:14Z"
       }
     },
     {
@@ -421,11 +427,11 @@
       "label": "🔌 Vint Cerf",
       "specialization": "connector-ninja",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:46",
+      "current_idea_id": "idea:35",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -438,6 +444,12 @@
         "creativity": 55,
         "caution": 36,
         "speed": 85
+      },
+      "current_mission": {
+        "mission_id": "idea:35",
+        "title": "Integration: Gpt-Cloud-Infrastructure Innovation",
+        "issue_number": null,
+        "assigned_at": "2025-11-18T20:21:14Z"
       }
     },
     {
@@ -469,12 +481,12 @@
       "label": "🔄 Liskov",
       "specialization": "bridge-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "SE:Stockholm",
         "GB:London"
       ],
-      "current_idea_id": "idea:4",
+      "current_idea_id": "idea:34",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -487,6 +499,12 @@
         "creativity": 68,
         "caution": 50,
         "speed": 73
+      },
+      "current_mission": {
+        "mission_id": "idea:34",
+        "title": "Integration: Api-Claude Innovation",
+        "issue_number": null,
+        "assigned_at": "2025-11-18T20:21:14Z"
       }
     },
     {
