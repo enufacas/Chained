@@ -1,0 +1,359 @@
+[
+  {
+    "template_id": "algo_pattern_finder",
+    "title": "Pattern Recognition in Code",
+    "category": "algorithms",
+    "difficulty": "medium",
+    "description": "Build an algorithm that identifies repeating patterns in code repositories, inspired by the autonomous AI's pattern matching.",
+    "requirements": [
+      "Implement a pattern detection algorithm",
+      "Support multiple programming languages",
+      "Calculate pattern frequency and relevance",
+      "Provide pattern extraction and reporting"
+    ],
+    "test_cases": [
+      {
+        "input": "code_samples",
+        "expected": "pattern_list",
+        "description": "Detects common patterns"
+      },
+      {
+        "input": "edge_case_code",
+        "expected": "no_patterns",
+        "description": "Handles edge cases"
+      }
+    ],
+    "solution_hints": [
+      "Consider using abstract syntax trees (AST) for language-agnostic parsing",
+      "Implement sliding window algorithm for pattern detection",
+      "Use hashing for efficient pattern comparison"
+    ],
+    "keywords": [
+      "pattern",
+      "algorithm",
+      "detection",
+      "code analysis",
+      "ast"
+    ],
+    "learning_sources": [
+      "autonomous_ai_pattern_matching"
+    ],
+    "estimated_time_minutes": 90,
+    "created_at": "2025-11-18T10:35:42.586821+00:00",
+    "usage_count": 0,
+    "completion_rate": 0.0,
+    "avg_rating": 0.0
+  },
+  {
+    "template_id": "creative_code_poetry",
+    "title": "Functional Code Poetry Generator",
+    "category": "creative",
+    "difficulty": "medium",
+    "description": "Create a system that generates executable code that is also aesthetically pleasing as poetry, inspired by the AI's creative capabilities.",
+    "requirements": [
+      "Generate syntactically valid code in target language",
+      "Code should read like poetry when formatted",
+      "Maintain functional correctness",
+      "Support multiple aesthetic styles"
+    ],
+    "test_cases": [
+      {
+        "input": "haiku_style",
+        "expected": "valid_executable_haiku_code",
+        "description": "Generates haiku-style code"
+      },
+      {
+        "input": "sonnet_style",
+        "expected": "valid_executable_sonnet_code",
+        "description": "Generates sonnet-style code"
+      }
+    ],
+    "solution_hints": [
+      "Use template-based code generation with poetic constraints",
+      "Implement syllable counting for code tokens",
+      "Balance aesthetics with functionality"
+    ],
+    "keywords": [
+      "creative",
+      "poetry",
+      "code generation",
+      "aesthetics"
+    ],
+    "learning_sources": [
+      "creative_ai_concepts"
+    ],
+    "estimated_time_minutes": 120,
+    "created_at": "2025-11-18T10:35:42.586821+00:00",
+    "usage_count": 3,
+    "completion_rate": 0.0,
+    "avg_rating": 0.0
+  },
+  {
+    "template_id": "api_self_documenting",
+    "title": "Self-Documenting API Generator",
+    "category": "api",
+    "difficulty": "hard",
+    "description": "Build an API that automatically generates comprehensive documentation from its usage patterns, inspired by the self-documenting AI.",
+    "requirements": [
+      "Create a REST API with auto-documentation",
+      "Track usage patterns and common workflows",
+      "Generate examples from actual usage",
+      "Provide interactive documentation"
+    ],
+    "test_cases": [
+      {
+        "input": "api_endpoints",
+        "expected": "generated_docs",
+        "description": "Generates API documentation"
+      },
+      {
+        "input": "usage_patterns",
+        "expected": "usage_examples",
+        "description": "Creates usage examples"
+      }
+    ],
+    "solution_hints": [
+      "Implement middleware to capture API calls",
+      "Use OpenAPI/Swagger for documentation structure",
+      "Analyze request/response patterns for examples"
+    ],
+    "keywords": [
+      "api",
+      "documentation",
+      "self-learning",
+      "rest"
+    ],
+    "learning_sources": [
+      "self_documenting_ai"
+    ],
+    "estimated_time_minutes": 150,
+    "created_at": "2025-11-18T10:35:42.586821+00:00",
+    "usage_count": 1,
+    "completion_rate": 0.0,
+    "avg_rating": 0.0
+  },
+  {
+    "template_id": "ml_code_predictor",
+    "title": "Code Completion Predictor",
+    "category": "ml",
+    "difficulty": "expert",
+    "description": "Create a lightweight ML model that predicts the next line of code based on context, inspired by GitHub Copilot.",
+    "requirements": [
+      "Train a sequence prediction model",
+      "Support multiple programming languages",
+      "Provide confidence scores for predictions",
+      "Optimize for real-time inference"
+    ],
+    "test_cases": [
+      {
+        "input": "code_context",
+        "expected": "predicted_line",
+        "description": "Predicts next code line"
+      },
+      {
+        "input": "partial_function",
+        "expected": "completion",
+        "description": "Completes functions"
+      }
+    ],
+    "solution_hints": [
+      "Consider using LSTM or transformer-based architecture",
+      "Create a custom tokenizer for code",
+      "Train on public code repositories",
+      "Implement beam search for better predictions"
+    ],
+    "keywords": [
+      "ml",
+      "prediction",
+      "code completion",
+      "neural network"
+    ],
+    "learning_sources": [
+      "ai_ml_trends"
+    ],
+    "estimated_time_minutes": 240,
+    "created_at": "2025-11-18T10:35:42.586821+00:00",
+    "usage_count": 0,
+    "completion_rate": 0.0,
+    "avg_rating": 0.0
+  },
+  {
+    "template_id": "ds_knowledge_graph",
+    "title": "Dynamic Knowledge Graph Builder",
+    "category": "data_structures",
+    "difficulty": "hard",
+    "description": "Implement a dynamic knowledge graph that learns relationships between concepts from code and documentation.",
+    "requirements": [
+      "Design graph data structure for knowledge representation",
+      "Implement relationship extraction from text",
+      "Support graph queries and traversal",
+      "Provide visualization capabilities"
+    ],
+    "test_cases": [
+      {
+        "input": "code_and_docs",
+        "expected": "knowledge_graph",
+        "description": "Builds knowledge graph"
+      },
+      {
+        "input": "query",
+        "expected": "related_concepts",
+        "description": "Queries relationships"
+      }
+    ],
+    "solution_hints": [
+      "Use adjacency list or matrix for graph representation",
+      "Implement NLP for relationship extraction",
+      "Consider using graph databases like Neo4j",
+      "Add weighting for relationship strength"
+    ],
+    "keywords": [
+      "graph",
+      "knowledge",
+      "data structure",
+      "nlp"
+    ],
+    "learning_sources": [
+      "knowledge_graph_system"
+    ],
+    "estimated_time_minutes": 180,
+    "created_at": "2025-11-18T10:35:42.586821+00:00",
+    "usage_count": 0,
+    "completion_rate": 0.0,
+    "avg_rating": 0.0
+  },
+  {
+    "template_id": "sys_autonomous_workflow",
+    "title": "Autonomous Workflow Orchestrator",
+    "category": "system_design",
+    "difficulty": "expert",
+    "description": "Design a system that automatically orchestrates workflows based on dependencies and resource availability.",
+    "requirements": [
+      "Implement workflow dependency resolution",
+      "Support parallel and sequential execution",
+      "Handle resource constraints and conflicts",
+      "Provide monitoring and logging"
+    ],
+    "test_cases": [
+      {
+        "input": "workflow_definition",
+        "expected": "execution_plan",
+        "description": "Creates execution plan"
+      },
+      {
+        "input": "resource_limits",
+        "expected": "optimized_schedule",
+        "description": "Optimizes scheduling"
+      }
+    ],
+    "solution_hints": [
+      "Use directed acyclic graphs (DAG) for dependencies",
+      "Implement topological sorting for execution order",
+      "Consider priority queues for scheduling",
+      "Add circuit breakers for fault tolerance"
+    ],
+    "keywords": [
+      "workflow",
+      "orchestration",
+      "system design",
+      "dag"
+    ],
+    "learning_sources": [
+      "autonomous_pipeline"
+    ],
+    "estimated_time_minutes": 200,
+    "created_at": "2025-11-18T10:35:42.586821+00:00",
+    "usage_count": 0,
+    "completion_rate": 0.0,
+    "avg_rating": 0.0
+  },
+  {
+    "template_id": "algo_commit_analyzer",
+    "title": "Git Commit Message Analyzer",
+    "category": "algorithms",
+    "difficulty": "easy",
+    "description": "Build a tool that analyzes git commit messages to identify patterns and suggest improvements.",
+    "requirements": [
+      "Parse git commit messages",
+      "Identify common patterns and conventions",
+      "Suggest improvements for clarity",
+      "Generate statistics and insights"
+    ],
+    "test_cases": [
+      {
+        "input": "commit_messages",
+        "expected": "analysis_report",
+        "description": "Analyzes commits"
+      },
+      {
+        "input": "bad_message",
+        "expected": "suggestions",
+        "description": "Provides suggestions"
+      }
+    ],
+    "solution_hints": [
+      "Use regular expressions for pattern matching",
+      "Implement keyword extraction",
+      "Check against conventional commit standards"
+    ],
+    "keywords": [
+      "git",
+      "commit",
+      "analysis",
+      "patterns"
+    ],
+    "learning_sources": [
+      "code_analysis"
+    ],
+    "estimated_time_minutes": 60,
+    "created_at": "2025-11-18T10:35:42.586821+00:00",
+    "usage_count": 0,
+    "completion_rate": 0.0,
+    "avg_rating": 0.0
+  },
+  {
+    "template_id": "creative_code_visualizer",
+    "title": "Real-Time Code Execution Visualizer",
+    "category": "creative",
+    "difficulty": "medium",
+    "description": "Create an animated visualizer that shows code execution flow in real-time, making algorithms come alive.",
+    "requirements": [
+      "Parse and instrument code for tracking",
+      "Create visual representation of execution",
+      "Support step-through debugging",
+      "Animate data structure changes"
+    ],
+    "test_cases": [
+      {
+        "input": "sorting_algorithm",
+        "expected": "animated_visualization",
+        "description": "Visualizes sorting"
+      },
+      {
+        "input": "tree_traversal",
+        "expected": "tree_animation",
+        "description": "Animates tree operations"
+      }
+    ],
+    "solution_hints": [
+      "Use code instrumentation for execution tracking",
+      "Implement canvas or SVG for visualization",
+      "Add timeline controls for playback",
+      "Consider using D3.js for data visualization"
+    ],
+    "keywords": [
+      "visualization",
+      "animation",
+      "execution",
+      "debugging"
+    ],
+    "learning_sources": [
+      "visual_programming"
+    ],
+    "estimated_time_minutes": 120,
+    "created_at": "2025-11-18T10:35:42.586821+00:00",
+    "usage_count": 0,
+    "completion_rate": 0.0,
+    "avg_rating": 0.0
+  }
+]
