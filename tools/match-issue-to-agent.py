@@ -675,6 +675,37 @@ AGENT_PATTERNS = {
             r'\bvalidat', r'\bverif', r'\btest', r'\bcoverage\b',
             r'\bproof\b', r'\bquality\b', r'\bcheck\b', r'\bassert'
         ]
+    },
+    'workflows-tech-lead': {
+        'keywords': [
+            'workflow', 'workflows', 'github actions', 'actions', 'ci/cd',
+            'pipeline', 'automation', 'yaml', '.github/workflows',
+            'action', 'job', 'step', 'trigger', 'concurrency',
+            'workflow_dispatch', 'on:', 'runs-on', 'uses:', 'permissions',
+            'secrets', 'environment', 'matrix', 'strategy', 'needs'
+        ],
+        'patterns': [
+            r'\bworkflow', r'\bgithub\s*actions\b', r'\bactions?\b',
+            r'\bci/cd\b', r'\bpipeline\b', r'\bautomation\b', r'\byaml\b',
+            r'\.github/workflows', r'\bjobs?\b', r'\bsteps?\b',
+            r'\btrigger', r'\bconcurrency\b', r'\bworkflow_dispatch\b',
+            r'\bruns-on\b', r'\buses:\b', r'\bpermissions\b', r'\bsecrets\b'
+        ]
+    },
+    'agents-tech-lead': {
+        'keywords': [
+            'agent', 'agents', 'agent system', 'agent-system',
+            '.github/agents', 'agent definition', 'specialization',
+            'registry', 'agent registry', 'match-issue-to-agent',
+            'agent patterns', 'agent matching', 'frontmatter',
+            'agent metrics', 'agent performance', 'hall of fame'
+        ],
+        'patterns': [
+            r'\bagent', r'\bagent\s*system\b', r'\.github/agents',
+            r'\bspecialization\b', r'\bregistry\b', r'\bmatch-issue',
+            r'\bpatterns?\b', r'\bmatching\b', r'\bfrontmatter\b',
+            r'\bmetrics\b', r'\bhall\s*of\s*fame\b'
+        ]
     }
 }
 
