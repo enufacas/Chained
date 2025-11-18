@@ -1,0 +1,314 @@
+name: "Cleanup: Old Learning Files"
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC to clean up old learning files
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      days_old:
+        description: 'Delete files older than this many days'
+        required: false
+        default: '60'
+        type: string
+      dry_run:
+        description: 'Dry run mode (preview only, no deletions)'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  cleanup-old-learning-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Clean up old learning files
+        env:
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          DAYS_OLD: ${{ inputs.days_old || '60' }}
+        run: |
+          echo "🧹 Cleaning up old learning files..."
+          echo "Configuration:"
+          echo "  - Days threshold: ${DAYS_OLD}"
+          echo "  - Dry run mode: ${DRY_RUN}"
+
+          # Calculate cutoff timestamp (in seconds since epoch)
+          CUTOFF_TIMESTAMP=$(date -d "${DAYS_OLD} days ago" +%s)
+          CUTOFF_DATE=$(date -d "${DAYS_OLD} days ago" +'%Y-%m-%d %H:%M:%S')
+          echo "  - Cutoff date: ${CUTOFF_DATE}"
+          echo ""
+
+          # Protected files and directories (never delete)
+          PROTECTED_PATTERNS=(
+            "README.md"
+            "QUICKSTART.md"
+            "learnings/book/"
+            "learnings/agent_memory/"
+            "learnings/discussions/"
+          )
+
+          # Function to check if file is protected
+          is_protected() {
+            local file="$1"
+            for pattern in "${PROTECTED_PATTERNS[@]}"; do
+              if [[ "$file" == *"$pattern"* ]]; then
+                return 0
+              fi
+            done
+            return 1
+          }
+
+          # Counters
+          files_deleted=0
+          files_kept=0
+          total_size_deleted=0
+
+          # Process learning files in learnings/ directory
+          echo "📂 Scanning learnings/ directory..."
+          while IFS= read -r -d '' file; do
+            # Skip if protected
+            if is_protected "$file"; then
+              echo "🔒 Protected: $file"
+              ((files_kept++))
+              continue
+            fi
+
+            # Get file modification time
+            file_timestamp=$(stat -c %Y "$file" 2>/dev/null || echo "0")
+
+            # Check if file is older than cutoff
+            if [ "$file_timestamp" -lt "$CUTOFF_TIMESTAMP" ]; then
+              file_date=$(date -d "@$file_timestamp" +'%Y-%m-%d')
+              file_size=$(stat -c %s "$file" 2>/dev/null || echo "0")
+
+              if [ "$DRY_RUN" = "true" ]; then
+                echo "🔍 [DRY RUN] Would delete: $file (modified: $file_date, size: $file_size bytes)"
+              else
+                echo "🗑️  Deleting: $file (modified: $file_date, size: $file_size bytes)"
+                rm -f "$file"
+              fi
+
+              ((files_deleted++))
+              total_size_deleted=$((total_size_deleted + file_size))
+            else
+              ((files_kept++))
+            fi
+          done < <(find learnings/ -type f \( -name "*.json" -o -name "*.md" \) -print0)
+
+          echo ""
+          echo "📂 Scanning root directory for learning files..."
+          # Process learning files in root directory
+          ROOT_LEARNING_PATTERNS=(
+            "*LEARNING*.md"
+            "*learning*.md"
+            "*TLDR*.md"
+            "*COMBINED*.md"
+            "TASK_COMPLETION_*.md"
+            "COORDINATION_PLAN_*.md"
+          )
+
+          for pattern in "${ROOT_LEARNING_PATTERNS[@]}"; do
+            for file in $pattern 2>/dev/null; do
+              if [ -f "$file" ]; then
+                # Skip if protected
+                if is_protected "$file"; then
+                  echo "🔒 Protected: $file"
+                  ((files_kept++))
+                  continue
+                fi
+
+                # Get file modification time
+                file_timestamp=$(stat -c %Y "$file" 2>/dev/null || echo "0")
+
+                # Check if file is older than cutoff
+                if [ "$file_timestamp" -lt "$CUTOFF_TIMESTAMP" ]; then
+                  file_date=$(date -d "@$file_timestamp" +'%Y-%m-%d')
+                  file_size=$(stat -c %s "$file" 2>/dev/null || echo "0")
+
+                  if [ "$DRY_RUN" = "true" ]; then
+                    echo "🔍 [DRY RUN] Would delete: $file (modified: $file_date, size: $file_size bytes)"
+                  else
+                    echo "🗑️  Deleting: $file (modified: $file_date, size: $file_size bytes)"
+                    rm -f "$file"
+                  fi
+
+                  ((files_deleted++))
+                  total_size_deleted=$((total_size_deleted + file_size))
+                else
+                  ((files_kept++))
+                fi
+              fi
+            done
+          done
+
+          echo ""
+          echo "📂 Scanning summaries/ directory for old learning files..."
+          # Process learning summaries
+          while IFS= read -r -d '' file; do
+            # Skip if protected
+            if is_protected "$file"; then
+              echo "🔒 Protected: $file"
+              ((files_kept++))
+              continue
+            fi
+
+            # Get file modification time
+            file_timestamp=$(stat -c %Y "$file" 2>/dev/null || echo "0")
+
+            # Check if file is older than cutoff
+            if [ "$file_timestamp" -lt "$CUTOFF_TIMESTAMP" ]; then
+              file_date=$(date -d "@$file_timestamp" +'%Y-%m-%d')
+              file_size=$(stat -c %s "$file" 2>/dev/null || echo "0")
+
+              if [ "$DRY_RUN" = "true" ]; then
+                echo "🔍 [DRY RUN] Would delete: $file (modified: $file_date, size: $file_size bytes)"
+              else
+                echo "🗑️  Deleting: $file (modified: $file_date, size: $file_size bytes)"
+                rm -f "$file"
+              fi
+
+              ((files_deleted++))
+              total_size_deleted=$((total_size_deleted + file_size))
+            else
+              ((files_kept++))
+            fi
+          done < <(find summaries/ -type f \( -name "*LEARNING*.md" -o -name "*learning*.md" -o -name "HN_LEARNING*.md" \) -print0 2>/dev/null)
+
+          echo ""
+          echo "📂 Scanning investigation-reports/ directory for old learning files..."
+          # Process learning investigation reports
+          while IFS= read -r -d '' file; do
+            # Skip if protected
+            if is_protected "$file"; then
+              echo "🔒 Protected: $file"
+              ((files_kept++))
+              continue
+            fi
+
+            # Get file modification time
+            file_timestamp=$(stat -c %Y "$file" 2>/dev/null || echo "0")
+
+            # Check if file is older than cutoff
+            if [ "$file_timestamp" -lt "$CUTOFF_TIMESTAMP" ]; then
+              file_date=$(date -d "@$file_timestamp" +'%Y-%m-%d')
+              file_size=$(stat -c %s "$file" 2>/dev/null || echo "0")
+
+              if [ "$DRY_RUN" = "true" ]; then
+                echo "🔍 [DRY RUN] Would delete: $file (modified: $file_date, size: $file_size bytes)"
+              else
+                echo "🗑️  Deleting: $file (modified: $file_date, size: $file_size bytes)"
+                rm -f "$file"
+              fi
+
+              ((files_deleted++))
+              total_size_deleted=$((total_size_deleted + file_size))
+            else
+              ((files_kept++))
+            fi
+          done < <(find investigation-reports/ -type f \( -name "*learning*.md" -o -name "*LEARNING*.md" \) -print0 2>/dev/null)
+
+          # Calculate size in human-readable format
+          if [ "$total_size_deleted" -gt 1048576 ]; then
+            size_mb=$(echo "scale=2; $total_size_deleted / 1048576" | bc)
+            size_display="${size_mb} MB"
+          elif [ "$total_size_deleted" -gt 1024 ]; then
+            size_kb=$(echo "scale=2; $total_size_deleted / 1024" | bc)
+            size_display="${size_kb} KB"
+          else
+            size_display="${total_size_deleted} bytes"
+          fi
+
+          echo ""
+          echo "═══════════════════════════════════════════"
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "✅ Dry run complete (no files were deleted)"
+          else
+            echo "✅ Cleanup complete"
+          fi
+          echo "   Files that would be/were deleted: ${files_deleted}"
+          echo "   Files kept: ${files_kept}"
+          echo "   Space that would be/was freed: ${size_display}"
+          echo "═══════════════════════════════════════════"
+
+          # Save stats for PR
+          echo "files_deleted=${files_deleted}" >> $GITHUB_ENV
+          echo "files_kept=${files_kept}" >> $GITHUB_ENV
+          echo "size_display=${size_display}" >> $GITHUB_ENV
+
+      - name: Commit and push changes
+        if: ${{ inputs.dry_run != 'true' && env.files_deleted != '0' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if there are changes
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "📝 Committing cleanup changes..."
+
+            # Create unique branch name
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="automated-cleanup/${TIMESTAMP}-${{ github.run_id }}"
+
+            # Create branch and commit
+            git checkout -b "$BRANCH_NAME"
+            git add .
+            git commit -m "chore: cleanup old learning files (${files_deleted} files, ${size_display} freed)"
+            git push origin "$BRANCH_NAME"
+
+            # Create PR
+            gh pr create \
+              --title "🧹 Cleanup: Remove old learning files (${files_deleted} files)" \
+              --body "## Automated Learning Files Cleanup
+
+            **@edge-cases-pro** has automatically cleaned up old learning files to prevent repository bloat.
+
+            ### Cleanup Summary
+            - **Files deleted**: ${files_deleted}
+            - **Files kept**: ${files_kept}
+            - **Space freed**: ${size_display}
+            - **Retention policy**: Files older than ${{ inputs.days_old || '60' }} days
+
+            ### Protected Files
+            The following files/directories are never deleted:
+            - README.md files
+            - QUICKSTART.md files
+            - learnings/book/ (knowledge base)
+            - learnings/agent_memory/ (agent memories)
+            - learnings/discussions/ (discussion history)
+
+            ### Files Deleted
+            Old learning files from:
+            - learnings/ directory (JSON and markdown files)
+            - Root directory (learning session summaries)
+            - summaries/ directory (learning analysis summaries)
+            - investigation-reports/ directory (learning investigations)
+
+            ---
+
+            *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+              --label "automated,cleanup,edge-cases-pro" \
+              --base main \
+              --head "$BRANCH_NAME"
+
+            echo "✅ PR created successfully"
+          else
+            echo "ℹ️ No changes to commit"
+          fi
+
+      - name: Log cleanup activity
+        if: ${{ inputs.dry_run != 'true' }}
+        run: |
+          echo "Learning files cleanup completed"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "Files deleted: ${files_deleted}"
+          echo "Space freed: ${size_display}"
