@@ -789,10 +789,73 @@ To add new template categories or improve existing ones:
 4. Test relevance scoring
 5. Submit PR with examples
 
+## Workflow Integration
+
+**@workflows-tech-lead** has created comprehensive GitHub Actions workflows for automated prompt generation and performance tracking.
+
+### Available Workflows
+
+#### 1. Prompt Generator Integration (`prompt-generator-integration.yml`)
+
+**Purpose**: Generate optimized prompts for specific issues on-demand
+
+**Trigger**: Manual workflow dispatch
+
+**Usage**:
+```bash
+gh workflow run prompt-generator-integration.yml \
+  -f issue_number=123 \
+  -f agent=engineer-master \
+  -f enable_learning=true
+```
+
+**Features**:
+- Automatic category detection from labels and title
+- Generates optimized prompt using the best-performing template
+- Posts prompt as issue comment with performance stats
+- Shows template effectiveness metrics
+
+#### 2. Prompt Performance Tracker (`prompt-performance-tracker.yml`)
+
+**Purpose**: Track and analyze prompt effectiveness continuously
+
+**Trigger**: Daily at 2 AM UTC or manual dispatch
+
+**Features**:
+- Refreshes learning insights from TLDR data
+- Generates comprehensive performance reports
+- Identifies optimization opportunities
+- Commits performance history
+- Creates PRs with performance updates
+
+### Integration Documentation
+
+For complete integration guide, see:
+- **`tools/PROMPT_GENERATOR_WORKFLOW_INTEGRATION.md`** - Complete integration patterns
+- Includes outcome recording, category detection, and best practices
+- Full end-to-end examples for workflow integration
+
+### Testing
+
+Run the integration test suite:
+```bash
+./tools/test-prompt-generator-integration.sh
+```
+
+This validates:
+- CLI command functionality
+- JSON output formats
+- Category detection logic
+- Workflow YAML syntax
+- Learning refresh capability
+- Outcome recording
+
 ---
 
 **Created by @engineer-master** - Systematic engineering for continuous improvement
 
 **Enhanced in v2.0 by @engineer-master** - Learning integration, template evolution, and A/B testing
+
+**Workflow Integration by @workflows-tech-lead** - Autonomous workflow orchestration
 
 **Part of the Chained Autonomous AI Ecosystem** - Where AI evolves itself

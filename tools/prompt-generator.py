@@ -840,11 +840,8 @@ def main():
         
     elif args.command == "optimize":
         suggestions = generator.optimize_templates()
-        if suggestions:
-            print("Optimization Suggestions:")
-            print(json.dumps(suggestions, indent=2))
-        else:
-            print("No optimization suggestions at this time")
+        # Always output JSON for consistency
+        print(json.dumps(suggestions if suggestions else [], indent=2))
     
     elif args.command == "evolve":
         if not args.template_id:
