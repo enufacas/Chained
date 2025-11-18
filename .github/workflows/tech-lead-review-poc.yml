@@ -135,63 +135,67 @@ jobs:
           done
           
           # Create comment body
-          COMMENT_BODY="## 🏗️ Tech Lead Review Analysis
-
-This PR has been analyzed for Tech Lead review requirements.
-
-### 📊 Analysis Summary
-- **Total Files Changed**: ${TOTAL_FILES}
-- **Tech Leads Identified**: $(echo "${TECH_LEADS}" | jq '. | length')
-- **Review Recommendation**: **${RECOMMENDATION}**
-- **Review Required**: $([ "${REQUIRES_REVIEW}" = "true" ] && echo "✅ Yes" || echo "ℹ️ Optional")
-
-### 👥 Relevant Tech Leads
-
-Based on the files changed, these Tech Lead agents are responsible for the affected areas:
-
-$(echo -e "${TECH_LEAD_LIST}")
-
-### 📋 Complexity Factors
-
-\`\`\`json
-$(echo "${COMPLEXITY}" | jq .)
-\`\`\`
-
-### 🔄 Next Steps
-
-"
+          cat > /tmp/comment_body.md <<-COMMENT_EOF
+            ## 🏗️ Tech Lead Review Analysis
+            
+            This PR has been analyzed for Tech Lead review requirements.
+            
+            ## 📊 Analysis Summary
+            - Total Files Changed: ${TOTAL_FILES}
+            - Tech Leads Identified: $(echo "${TECH_LEADS}" | jq '. | length')
+            - Review Recommendation: ${RECOMMENDATION}
+            - Review Required: $([ "${REQUIRES_REVIEW}" = "true" ] && echo "✅ Yes" || echo "ℹ️ Optional")
+            
+            ## 👥 Relevant Tech Leads
+            
+            Based on the files changed, these Tech Lead agents are responsible for the affected areas:
+            
+            $(echo -e "${TECH_LEAD_LIST}")
+            
+            ## 📋 Complexity Factors
+            
+            \`\`\`json
+            $(echo "${COMPLEXITY}" | jq .)
+            \`\`\`
+            
+            ## 🔄 Next Steps
+            
+            COMMENT_EOF
           
           if [ "${REQUIRES_REVIEW}" = "true" ]; then
-            COMMENT_BODY="${COMMENT_BODY}
-This PR **requires Tech Lead review** before it can be merged. The \`needs-tech-lead-review\` label has been added to block auto-merge until review is complete.
-
-**Review Process:**
-1. ⏳ Tech Lead agent(s) will be assigned to review this PR
-2. 🔍 Tech Lead will analyze changes and provide feedback
-3. ✅ Upon approval, \`tech-lead-approved\` label will be added
-4. 🚀 PR can then proceed to auto-merge
-
-**If changes are requested:**
-- 📝 Tech Lead will provide detailed feedback
-- 🔧 Original agent or Tech Lead will make corrections
-- 🔄 Tech Lead will re-review after changes"
+            cat >> /tmp/comment_body.md <<-'REVIEW_REQUIRED_EOF'
+            This PR **requires Tech Lead review** before it can be merged. The `needs-tech-lead-review` label has been added to block auto-merge until review is complete.
+            
+            **Review Process:**
+            1. ⏳ Tech Lead agent(s) will be assigned to review this PR
+            2. 🔍 Tech Lead will analyze changes and provide feedback
+            3. ✅ Upon approval, `tech-lead-approved` label will be added
+            4. 🚀 PR can then proceed to auto-merge
+            
+            **If changes are requested:**
+            - 📝 Tech Lead will provide detailed feedback
+            - 🔧 Original agent or Tech Lead will make corrections
+            - 🔄 Tech Lead will re-review after changes
+            REVIEW_REQUIRED_EOF
           else
-            COMMENT_BODY="${COMMENT_BODY}
-This PR is **optional for Tech Lead review** based on complexity analysis. However, Tech Leads listed above are available to review if needed.
-
-**To request Tech Lead review:**
-- Add the \`needs-tech-lead-review\` label manually
-- Or mention the Tech Lead agent in a comment"
+            cat >> /tmp/comment_body.md <<-'REVIEW_OPTIONAL_EOF'
+            This PR is **optional for Tech Lead review** based on complexity analysis. However, Tech Leads listed above are available to review if needed.
+            
+            **To request Tech Lead review:**
+            - Add the `needs-tech-lead-review` label manually
+            - Or mention the Tech Lead agent in a comment
+            REVIEW_OPTIONAL_EOF
           fi
           
-          COMMENT_BODY="${COMMENT_BODY}
-
----
-*🤖 Automated Tech Lead Review System - Proof of Concept*
-*Workflow: \`tech-lead-review-poc.yml\` - Run ID: ${{ github.run_id }}*"
+          cat >> /tmp/comment_body.md <<-COMMENT_FOOTER_EOF
+            
+            ---
+            *🤖 Automated Tech Lead Review System - Proof of Concept*
+            *Workflow: \`tech-lead-review-poc.yml\` - Run ID: ${{ github.run_id }}*
+            COMMENT_FOOTER_EOF
           
           # Post the comment
-          gh pr comment "${PR_NUM}" --repo ${{ github.repository }} --body "${COMMENT_BODY}"
+          gh pr comment "${PR_NUM}" --repo ${{ github.repository }} --body-file /tmp/comment_body.md
           
           echo "✅ Posted Tech Lead analysis comment to PR #${PR_NUM}"
       
