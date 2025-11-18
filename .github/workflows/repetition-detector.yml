@@ -261,17 +261,17 @@ jobs:
           # This prevents false positives from system bot data
           if [ "${flagged_count}" -gt 0 ] && ([ "${total_flags}" -gt 2 ] || [ "${flagged_count}" -gt 1 ]); then
             # Extract flagged agent details for better reporting
-            flagged_agents=$(python3 -c "
-import json
-with open('analysis/uniqueness-scores.json') as f:
-    data = json.load(f)
-    flagged = data.get('flagged_agents', [])
-    if flagged:
-        for agent in flagged:
-            print(f\"- **{agent['agent_id']}**: Score {agent['score']} - {agent['reason']}\")
-    else:
-        print('- None (all agents above threshold)')
-" 2>/dev/null || echo "- Error extracting agent details")
+            flagged_agents=$(python3 -c '
+          import json
+          with open("analysis/uniqueness-scores.json") as f:
+              data = json.load(f)
+              flagged = data.get("flagged_agents", [])
+              if flagged:
+                  for agent in flagged:
+                      print(f"- **{agent[\"agent_id\"]}**: Score {agent[\"score\"]} - {agent[\"reason\"]}")
+              else:
+                  print("- None (all agents above threshold)")
+          ' 2>/dev/null) || flagged_agents="- Error extracting agent details"
             
             cat > /tmp/issue_body.md << 'ISSUE_EOF'
           ## AI Agent Repetition Detected
