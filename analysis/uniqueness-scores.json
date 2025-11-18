@@ -1,55 +1,19 @@
 {
-  "metadata": {
-    "generated_at": "2025-11-16T18:37:31.550240+00:00",
-    "repository": ".",
-    "threshold": 30.0,
-    "total_agents_analyzed": 2,
-    "excluded_system_bots": 0
-  },
-  "scores": {
-    "copilot-swe-agent": {
-      "agent_id": "copilot-swe-agent",
-      "overall_score": 34.5,
-      "metrics": {
-        "structural_uniqueness": 65.0,
-        "approach_diversity": 0.0,
-        "innovation_index": 50.0
-      },
-      "details": {
-        "total_contributions": 2,
-        "unique_approaches": 0,
-        "unique_file_types": 3,
-        "approaches_used": [],
-        "file_types_used": [
-          ".md",
-          ".json",
-          ".py"
-        ]
-      }
-    },
-    "copilot": {
-      "agent_id": "copilot",
-      "overall_score": 70.0,
-      "metrics": {
-        "structural_uniqueness": 50.0,
-        "approach_diversity": 100.0,
-        "innovation_index": 50.0
-      },
-      "details": {
-        "total_contributions": 1,
-        "unique_approaches": 1,
-        "unique_file_types": 0,
-        "approaches_used": [
-          "enhancement"
-        ],
-        "file_types_used": []
-      }
-    }
-  },
-  "flagged_agents": [],
   "summary": {
-    "average_score": 52.25,
-    "agents_below_threshold": 0,
-    "agents_above_threshold": 2
-  }
+    "average_score": 31.77,
+    "total_agents": 10,
+    "flagged_count": 2
+  },
+  "flagged_agents": [
+    {
+      "agent_id": "test-agent-1",
+      "score": 25.5,
+      "reason": "low approach diversity (10.0), limited innovation index (15.5)"
+    },
+    {
+      "agent_id": "test-agent-2", 
+      "score": 28.0,
+      "reason": "low technology diversity (12.0), limited solution variety (16.0)"
+    }
+  ]
 }

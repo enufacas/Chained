@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-18T01:59:49.925499",
-  "commit": "b22cb43c2129408c3ec1986640bf049c8ac561ad",
+  "timestamp": "2025-11-18T12:54:31.262995",
+  "commit": "4bd5b6bb1165da547fa10248d72b621d4553c14e",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 266,
-        "line_count": 109413,
+        "file_count": 284,
+        "line_count": 116906,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -39,6 +39,7 @@
           "HIERARCHICAL_AGENT_SYSTEM_QUICKSTART.md",
           "HIERARCHICAL_AGENT_SYSTEM_README.md",
           "HIERARCHICAL_AGENT_SYSTEM_SUMMARY.md",
+          "HYPOTHESIS_TESTING_ENGINE_README.md",
           "INTELLIGENT_LEARNING_QUICKREF.md",
           "INTELLIGENT_LEARNING_SYSTEM.md",
           "ISSUE_CLUSTERING_SYSTEM_README.md",
@@ -55,13 +56,12 @@
           "PR_FAILURE_INTELLIGENCE_README.md",
           "PR_FAILURE_LEARNING_README.md",
           "READABILITY_SCORER.md",
-          "README.md",
           "README.md"
         ]
       },
       "docs": {
-        "file_count": 364,
-        "line_count": 132336,
+        "file_count": 388,
+        "line_count": 141079,
         "files": [
           ".nojekyll",
           "ACTOR_ID_SYSTEM.md",
@@ -87,6 +87,7 @@
           "BATCH_OPTIMIZATION.md",
           "BEST_PRACTICES.md",
           "CHART_JS_IMPLEMENTATION.md",
+          "CLAUDE_INTEGRATION_GUIDE.md",
           "CLUSTERING_ARCHITECTURE.md",
           "CLUSTERING_IMPLEMENTATION_SUMMARY.md",
           "CODE_REVIEW_CHECKLIST.md",
@@ -111,8 +112,7 @@
           "GITHUB_INTEGRATION.md",
           "GITHUB_PAGES_HEALTH_CHECK.md",
           "GITHUB_PAGES_HEALTH_CHECK_RESOLUTION.md",
-          "GITHUB_PAGES_HEALTH_QUICK_GUIDE.md",
-          "GLOSSARY.md"
+          "GITHUB_PAGES_HEALTH_QUICK_GUIDE.md"
         ]
       },
       ".github/workflows": {
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 52,
-        "line_count": 74471,
+        "file_count": 54,
+        "line_count": 75299,
         "files": [
           "2025-11-14-04-00-27.json",
           "2025-11-14-04-00-36.json",
@@ -156,6 +156,7 @@
           "diversity-suggestions.md",
           "diversity-trends.json",
           "evolution.json",
+          "hypothesis_results.json",
           "integrated-archaeology-report.md",
           "latest.json",
           "latest.json",
@@ -177,13 +178,12 @@
           "snapshot_2025-11-15T12-47-40.json",
           "snapshot_2025-11-16T12-47-23.json",
           "snapshot_2025-11-17T02-02-04.json",
-          "snapshot_2025-11-17T12-54-10.json",
-          "uniqueness-scores.json"
+          "snapshot_2025-11-17T12-54-10.json"
         ]
       },
       "learnings": {
-        "file_count": 215,
-        "line_count": 94456,
+        "file_count": 229,
+        "line_count": 108005,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -191,6 +191,8 @@
           "Database.md",
           "DevOps.md",
           "ECOSYSTEM_ASSESSMENT.md",
+          "INTEGRATION_IMPLEMENTATION.md",
+          "MISSION_COMPLETE.md",
           "OpenSource.md",
           "Other.md",
           "Performance.md",
@@ -232,20 +234,22 @@
           "api_innovation_investigation_20251116.md",
           "bridge_patterns_api_integration_20251116.md",
           "claude_innovation_analysis_20251116.md",
-          "cloud_devops_innovation_investigation_20251116.md",
-          "coaching_review_20251113.md",
-          "coaching_session_summary_20251113.md"
+          "cloud_devops_innovation_investigation_20251116.md"
         ]
       },
       "root_tests": {
-        "file_count": 16,
-        "line_count": 3212,
+        "file_count": 21,
+        "line_count": 4908,
         "files": [
+          "test_ab_winner_selection.py",
           "test_agent_attribution.py",
           "test_pr_credit_fix.py",
           "test_agent_scoring_accuracy.py",
+          "test_predictive_spawning_engine.py",
           "test_agent_progression_improvements.py",
           "test_pr_attribution_debug.py",
+          "test_adaptive_workload_monitor.py",
+          "test_workload_spawner.py",
           "test_attribution_simulation.py",
           "test_scoring_system.py",
           "test_metrics_collection.py",
@@ -254,6 +258,7 @@
           "test_end_to_end_agent_system.py",
           "test_world_state_updates.py",
           "test_mission_matching.py",
+          "test_agent_coordinator.py",
           "test_dynamic_agent_handling.py",
           "test_evaluator_optimizations.py",
           "test_git_pr_fallback.py"
@@ -261,14 +266,15 @@
       }
     },
     "files_by_type": {},
-    "total_files": 913,
-    "total_lines": 413888
+    "total_files": 976,
+    "total_lines": 446197
   },
   "dependencies": {
     "internal_imports": {
       "code-analyzer.py": [],
       "ab_testing_advanced.py": [],
       "api_performance_monitor.py": [],
+      "autonomous_agent_system.py": [],
       "pr-failure-learner.py": [],
       "demo_autonomous_ab_testing.py": [],
       "prompt_learning_integration.py": [],
@@ -301,12 +307,15 @@
       "benchmark_code_analyzer.py": [],
       "demo_hn_code_generator.py": [],
       "actions-pattern-analyzer.py": [],
+      "creative-coding-challenge-generator.py": [],
       "profile_learner.py": [],
       "pr-failure-intelligence.py": [],
       "build-learnings-book.py": [],
       "fetch-web-content.py": [],
       "ab_testing_helper.py": [],
       "lazy_evaluation_system.py": [],
+      "predictive_spawning_engine.py": [],
+      "adaptive_workload_monitor.py": [],
       "lazy-workflow-evaluator.py": [],
       "benchmark_unsupervised_learner.py": [],
       "workflow-orchestrator.py": [],
@@ -338,6 +347,7 @@
       "workflow_dependency_graph.py": [],
       "multi_source_aggregator.py": [],
       "optimized_learner.py": [],
+      "hypothesis_testing_engine.py": [],
       "code-smell-fixer.py": [],
       "copilot-usage-tracker.py": [],
       "github_integration.py": [],
@@ -382,14 +392,18 @@
       "demo_code.py": [],
       "unsupervised_pattern_learner.py": [],
       "generate-learning-inspired-agent.py": [],
+      "workload_subagent_spawner.py": [],
       "agent_memory_system.py": [],
       "generate-new-agent.py": [],
       "performance_benchmark.py": [],
+      "match-pr-to-tech-lead.py": [],
       "integrated-archaeology.py": [],
       "validate-workflows.py": [],
       "cross-repo-pattern-matcher.py": [],
+      "agent_coordinator.py": [],
       "meta_agent_coordinator.py": [],
       "prompt-generator.py": [],
+      "workload_monitor.py": [],
       "universal_api_client.py": [],
       "code-archaeologist.py": [],
       "pattern-matcher.py": [],
@@ -399,26 +413,30 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 82,
-      "sys": 101,
-      "json": 116,
-      "re": 57,
-      "ast": 16,
-      "datetime": 83,
-      "pathlib": 106,
-      "typing": 96,
-      "collections": 48,
+      "os": 86,
+      "sys": 109,
+      "json": 125,
+      "re": 60,
+      "ast": 17,
+      "datetime": 91,
+      "pathlib": 115,
+      "typing": 105,
+      "collections": 53,
       "functools": 9,
-      "argparse": 88,
+      "argparse": 96,
       "math": 7,
-      "random": 16,
+      "random": 22,
       "time": 23,
-      "statistics": 6,
-      "dataclasses": 50,
+      "statistics": 9,
+      "dataclasses": 56,
+      "adaptive_workload_monitor": 2,
+      "agent_coordinator": 1,
+      "workload_subagent_spawner": 1,
+      "predictive_spawning_engine": 1,
       "github_integration": 4,
       "ab_testing_engine": 2,
       "ab_testing_advanced": 2,
-      "subprocess": 22,
+      "subprocess": 23,
       "hashlib": 15,
       "traceback": 11,
       "importlib": 20,
@@ -429,7 +447,7 @@
       "fcntl": 1,
       "contextlib": 1,
       "issue_clustering_system": 1,
-      "registry_manager": 6,
+      "registry_manager": 9,
       "hn_code_generator": 1,
       "unsupervised_pattern_learner": 5,
       "requests": 3,
@@ -440,8 +458,9 @@
       "validation_utils": 5,
       "workflow_dependency_graph": 1,
       "lazy_workflow_loader": 1,
+      "workload_monitor": 3,
       "pickle": 1,
-      "enum": 11,
+      "enum": 12,
       "threading": 3,
       "semantic_similarity_engine": 2,
       "copy": 1,
@@ -457,6 +476,8 @@
       "meta_agent_coordinator": 1,
       "zipfile": 1,
       "psutil": 1,
+      "generate_new_agent": 1,
+      "fnmatch": 1,
       "abc": 1,
       "prompt_learning_integration": 1,
       "logging": 1,
@@ -468,17 +489,17 @@
   },
   "metrics": {
     "total_components": 7,
-    "total_files": 913,
-    "total_lines": 413888,
+    "total_files": 976,
+    "total_lines": 446197,
     "total_dependencies": 0,
-    "external_libraries": 64,
+    "external_libraries": 71,
     "coupling_score": 0.0,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 94456,
+      "line_count": 108005,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -486,6 +507,8 @@
         "Database.md",
         "DevOps.md",
         "ECOSYSTEM_ASSESSMENT.md",
+        "INTEGRATION_IMPLEMENTATION.md",
+        "MISSION_COMPLETE.md",
         "OpenSource.md",
         "Other.md",
         "Performance.md",
@@ -497,14 +520,12 @@
         "Tools.md",
         "WORLD_MODEL_UPDATE.md",
         "Web.md",
-        "agent_evolution_system_implementation.json",
-        "agent_pattern_matching_fix.py",
-        "ai_agents_innovation_deep_dive_nov16_2025.md"
+        "agent_evolution_system_implementation.json"
       ]
     },
     "agent_system": {
       "file_count": 2,
-      "line_count": 2864,
+      "line_count": 2788,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json"
@@ -512,7 +533,7 @@
     },
     "analysis_tools": {
       "file_count": 48,
-      "line_count": 74471,
+      "line_count": 75299,
       "files": [
         "2025-11-14-04-00-27.json",
         "2025-11-14-04-00-36.json",
@@ -538,7 +559,7 @@
     },
     "documentation": {
       "file_count": 49,
-      "line_count": 132336,
+      "line_count": 141079,
       "files": [
         ".nojekyll",
         "ACTOR_ID_SYSTEM.md",
@@ -563,10 +584,13 @@
       ]
     },
     "testing": {
-      "file_count": 16,
-      "line_count": 3212,
+      "file_count": 21,
+      "line_count": 4908,
       "files": [
+        "test_ab_winner_selection.py",
+        "test_adaptive_workload_monitor.py",
         "test_agent_attribution.py",
+        "test_agent_coordinator.py",
         "test_agent_progression_improvements.py",
         "test_agent_scoring_accuracy.py",
         "test_attribution_simulation.py",
@@ -580,13 +604,14 @@
         "test_pr_attribution.py",
         "test_pr_attribution_debug.py",
         "test_pr_credit_fix.py",
+        "test_predictive_spawning_engine.py",
         "test_scoring_system.py",
-        "test_world_state_updates.py"
+        "test_workload_spawner.py"
       ]
     },
     "tools": {
-      "file_count": 49,
-      "line_count": 109413,
+      "file_count": 50,
+      "line_count": 116906,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",

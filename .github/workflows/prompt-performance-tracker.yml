@@ -1,0 +1,293 @@
+name: "AI: Prompt Performance Tracker"
+
+# This workflow tracks the performance of the self-improving prompt generator
+# by monitoring outcomes, analyzing patterns, and generating optimization reports.
+# It helps ensure the prompt generator continues to improve over time.
+
+on:
+  # Run daily to analyze recent outcomes
+  schedule:
+    - cron: '0 2 * * *'  # 2 AM UTC daily
+  
+  # Allow manual triggering for immediate analysis
+  workflow_dispatch:
+    inputs:
+      days_to_analyze:
+        description: 'Number of days to analyze'
+        required: false
+        default: '7'
+        type: string
+      refresh_learnings:
+        description: 'Refresh learning insights from TLDR'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  issues: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  track-performance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Refresh learning insights
+        if: ${{ inputs.refresh_learnings == 'true' || github.event_name == 'schedule' }}
+        run: |
+          echo "🔄 Refreshing learning insights from recent TLDR data..."
+          days="${{ inputs.days_to_analyze || '7' }}"
+          
+          python3 tools/prompt-generator.py refresh-learnings --days "$days"
+          
+          echo "✓ Learning insights refreshed"
+      
+      - name: Generate performance report
+        id: report
+        run: |
+          echo "📊 Generating prompt performance report..."
+          
+          report=$(python3 tools/prompt-generator.py report)
+          
+          # Extract key metrics
+          total_prompts=$(echo "$report" | jq -r '.insights.overall.total_prompts_used // 0')
+          success_rate=$(echo "$report" | jq -r '.insights.overall.success_rate // 0')
+          avg_resolution=$(echo "$report" | jq -r '.insights.overall.avg_resolution_time // 0')
+          
+          echo "total_prompts=$total_prompts" >> $GITHUB_OUTPUT
+          echo "success_rate=$success_rate" >> $GITHUB_OUTPUT
+          echo "avg_resolution=$avg_resolution" >> $GITHUB_OUTPUT
+          
+          # Save full report
+          echo "$report" > /tmp/performance_report.json
+          
+          echo ""
+          echo "Key Metrics:"
+          echo "  Total prompts: $total_prompts"
+          echo "  Success rate: $(echo "$success_rate * 100" | bc)%"
+          echo "  Avg resolution: $avg_resolution hours"
+      
+      - name: Identify optimization opportunities
+        id: optimize
+        run: |
+          echo "🔍 Identifying templates that need optimization..."
+          
+          suggestions=$(python3 tools/prompt-generator.py optimize)
+          
+          # Count suggestions
+          suggestion_count=$(echo "$suggestions" | jq '. | length')
+          
+          echo "suggestion_count=$suggestion_count" >> $GITHUB_OUTPUT
+          echo "Found $suggestion_count optimization opportunities"
+          
+          # Save suggestions
+          echo "$suggestions" > /tmp/optimization_suggestions.json
+          
+          if [ "$suggestion_count" -gt 0 ]; then
+            echo ""
+            echo "Templates needing attention:"
+            echo "$suggestions" | jq -r '.[] | "  - \(.template_id): \(.issue) (success rate: \(.success_rate * 100)%)"'
+          fi
+      
+      - name: Analyze learning integration effectiveness
+        run: |
+          echo "📚 Analyzing learning integration effectiveness..."
+          
+          report=$(cat /tmp/performance_report.json)
+          
+          # Check if learning integration stats are available
+          learning_insights=$(echo "$report" | jq -r '.insights.learning_integration.total_insights // 0')
+          
+          if [ "$learning_insights" -gt 0 ]; then
+            echo "  Total learning insights: $learning_insights"
+            
+            categories=$(echo "$report" | jq -r '.insights.learning_integration.categories | to_entries[] | "\(.key): \(.value)"')
+            echo "  Categories:"
+            echo "$categories" | while read line; do echo "    - $line"; done
+          else
+            echo "  No learning integration data available yet"
+          fi
+      
+      - name: Create performance summary
+        run: |
+          total_prompts="${{ steps.report.outputs.total_prompts }}"
+          success_rate="${{ steps.report.outputs.success_rate }}"
+          avg_resolution="${{ steps.report.outputs.avg_resolution }}"
+          suggestion_count="${{ steps.optimize.outputs.suggestion_count }}"
+          
+          # Calculate success rate as percentage
+          success_pct=$(echo "$success_rate * 100" | bc)
+          
+          # Create summary file
+          cat > /tmp/performance_summary.md <<EOF
+# 🤖 Prompt Generator Performance Report
+
+**Generated:** $(date -u +"%Y-%m-%d %H:%M UTC")
+
+## 📊 Overall Metrics
+
+- **Total Prompts Used:** $total_prompts
+- **Success Rate:** ${success_pct}%
+- **Average Resolution Time:** ${avg_resolution} hours
+- **Optimization Opportunities:** $suggestion_count templates
+
+## 🎯 Performance Analysis
+
+EOF
+          
+          if [ "$total_prompts" -eq 0 ]; then
+            cat >> /tmp/performance_summary.md <<EOF
+No prompt usage data available yet. The system will begin collecting performance metrics as issues are resolved.
+
+**Next Steps:**
+1. Generate prompts for new issues using the prompt generator
+2. Record outcomes after issues are resolved
+3. Run this workflow again to see performance trends
+EOF
+          else
+            # Add template performance details
+            cat >> /tmp/performance_summary.md <<EOF
+The prompt generator has processed $total_prompts issues with a ${success_pct}% success rate.
+
+### Template Performance
+
+EOF
+            
+            # Extract top performing templates
+            python3 -c "
+import json
+with open('/tmp/performance_report.json') as f:
+    report = json.load(f)
+    templates = report.get('templates', {})
+    
+    # Sort by effectiveness score
+    sorted_templates = sorted(
+        templates.items(),
+        key=lambda x: x[1].get('effectiveness_score', 0),
+        reverse=True
+    )
+    
+    if sorted_templates:
+        print('#### Top Performing Templates\n')
+        for template_id, stats in sorted_templates[:5]:
+            score = stats.get('effectiveness_score', 0)
+            uses = stats.get('total_uses', 0)
+            success = stats.get('success_rate', 0)
+            print(f'- **{template_id}**: {score:.2f} effectiveness ({success*100:.0f}% success, {uses} uses)')
+" >> /tmp/performance_summary.md
+            
+            # Add optimization opportunities if any
+            if [ "$suggestion_count" -gt 0 ]; then
+              cat >> /tmp/performance_summary.md <<EOF
+
+### 🔧 Optimization Opportunities
+
+The following templates need attention:
+
+EOF
+              python3 -c "
+import json
+with open('/tmp/optimization_suggestions.json') as f:
+    suggestions = json.load(f)
+    for s in suggestions:
+        print(f\"- **{s['template_id']}**: {s['issue']} - {s['recommendation']}\")
+" >> /tmp/performance_summary.md
+            fi
+          fi
+          
+          cat >> /tmp/performance_summary.md <<EOF
+
+## 📈 Continuous Improvement
+
+The prompt generator automatically:
+- Tracks success rates and resolution times for each template
+- Identifies underperforming templates
+- Evolves templates based on performance data
+- Integrates recent learnings from TLDR and Hacker News
+- Tests template variations using A/B testing
+
+**@workflows-tech-lead** - This autonomous system continuously optimizes prompts to improve Copilot's effectiveness.
+
+---
+
+*Generated by the self-improving prompt generator performance tracker*
+EOF
+          
+          echo "✓ Performance summary created"
+      
+      - name: Display summary
+        run: |
+          echo ""
+          cat /tmp/performance_summary.md
+      
+      - name: Save performance history
+        run: |
+          # Create history directory if it doesn't exist
+          mkdir -p tools/data/prompts/history
+          
+          # Save timestamped report
+          timestamp=$(date -u +"%Y%m%d_%H%M%S")
+          cp /tmp/performance_report.json "tools/data/prompts/history/report_${timestamp}.json"
+          cp /tmp/performance_summary.md "tools/data/prompts/history/summary_${timestamp}.md"
+          
+          echo "✓ Performance history saved"
+      
+      - name: Check if updates needed
+        id: check_updates
+        run: |
+          # Check if there are any changes to commit
+          if git diff --quiet tools/data/prompts/; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes to commit"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in prompt data"
+          fi
+      
+      - name: Commit performance data
+        if: steps.check_updates.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add tools/data/prompts/
+          git commit -m "chore: update prompt generator performance data
+
+- Total prompts: ${{ steps.report.outputs.total_prompts }}
+- Success rate: $(echo '${{ steps.report.outputs.success_rate }} * 100' | bc)%
+- Optimization opportunities: ${{ steps.optimize.outputs.suggestion_count }}
+
+Automated by @workflows-tech-lead"
+          
+          echo "✓ Changes committed"
+      
+      - name: Create PR with performance updates
+        if: steps.check_updates.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create a unique branch name
+          timestamp=$(date -u +"%Y%m%d-%H%M%S")
+          branch_name="prompt-performance/${timestamp}-${{ github.run_id }}"
+          
+          # Push to new branch
+          git checkout -b "$branch_name"
+          git push origin "$branch_name"
+          
+          # Create PR
+          gh pr create \
+            --title "📊 Prompt Generator Performance Update - $(date -u +%Y-%m-%d)" \
+            --body "$(cat /tmp/performance_summary.md)" \
+            --label "automated,prompt-generator,documentation" \
+            --base main \
+            --head "$branch_name"
+          
+          echo "✓ Created PR with performance updates"
