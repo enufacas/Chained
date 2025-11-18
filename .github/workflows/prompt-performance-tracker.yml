@@ -282,12 +282,19 @@ Automated by @workflows-tech-lead"
           git checkout -b "$branch_name"
           git push origin "$branch_name"
           
-          # Create PR
+          # Create PR with label fallback
           gh pr create \
             --title "📊 Prompt Generator Performance Update - $(date -u +%Y-%m-%d)" \
             --body "$(cat /tmp/performance_summary.md)" \
             --label "automated,prompt-generator,documentation" \
             --base main \
-            --head "$branch_name"
+            --head "$branch_name" || {
+            echo "⚠️ PR creation with labels failed, retrying without labels..."
+            gh pr create \
+              --title "📊 Prompt Generator Performance Update - $(date -u +%Y-%m-%d)" \
+              --body "$(cat /tmp/performance_summary.md)" \
+              --base main \
+              --head "$branch_name"
+          }
           
           echo "✓ Created PR with performance updates"
