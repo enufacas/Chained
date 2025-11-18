@@ -49,6 +49,9 @@ def test_insufficient_data_handling():
     
     engine = PredictiveSpawningEngine()
     
+    # Clear any existing history
+    engine.history = []
+    
     # Try to forecast with no data
     forecast = engine.forecast_workload('security', hours_ahead=6)
     

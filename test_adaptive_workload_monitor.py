@@ -43,6 +43,9 @@ def test_trend_calculation():
     
     monitor = AdaptiveWorkloadMonitor()
     
+    # Clear any existing history
+    monitor.history = []
+    
     # Create increasing trend data
     now = datetime.now()
     for i in range(10):

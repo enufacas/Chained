@@ -277,6 +277,9 @@ class AdaptiveWorkloadMonitor(WorkloadMonitor):
         if len(recent_entries) < 2:
             return 0.0  # Not enough data
         
+        # Sort by timestamp to ensure chronological order
+        recent_entries.sort(key=lambda e: datetime.fromisoformat(e.timestamp))
+        
         # Calculate simple linear trend
         workloads = [entry.workload_per_agent for entry in recent_entries]
         

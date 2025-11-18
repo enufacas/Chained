@@ -1,6 +1,6 @@
 {
-  "last_updated": "2025-11-18T09:04:19.321235",
-  "total_entries": 24,
+  "last_updated": "2025-11-18T09:13:45.592313",
+  "total_entries": 72,
   "entries": [
     {
       "timestamp": "2025-11-18T03:58:44.430179",
@@ -211,6 +211,438 @@
     },
     {
       "timestamp": "2025-11-18T09:04:19.321235",
+      "specialization": "infrastructure",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 1,
+      "workload_per_agent": 1.0,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T04:11:18.701242",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T05:11:18.701242",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T06:11:18.701242",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T07:11:18.701242",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T08:11:18.701242",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T09:11:18.703330",
+      "specialization": "security",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 6,
+      "workload_per_agent": 0.5,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:11:18.703330",
+      "specialization": "bug-fix",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 0,
+      "workload_per_agent": 3.0,
+      "bottleneck_severity": "low"
+    },
+    {
+      "timestamp": "2025-11-18T09:11:18.703330",
+      "specialization": "performance",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 1,
+      "workload_per_agent": 3.0,
+      "bottleneck_severity": "low"
+    },
+    {
+      "timestamp": "2025-11-18T09:11:18.703330",
+      "specialization": "feature",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 16,
+      "workload_per_agent": 0.1875,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:11:18.703330",
+      "specialization": "documentation",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 1,
+      "workload_per_agent": 1.0,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:11:18.703330",
+      "specialization": "testing",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 2,
+      "workload_per_agent": 0.5,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:11:18.703330",
+      "specialization": "infrastructure",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 1,
+      "workload_per_agent": 1.0,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T04:12:38.937507",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T05:12:38.937507",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T06:12:38.937507",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T07:12:38.937507",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T08:12:38.937507",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T09:12:38.939627",
+      "specialization": "security",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 6,
+      "workload_per_agent": 0.5,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:12:38.939627",
+      "specialization": "bug-fix",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 0,
+      "workload_per_agent": 3.0,
+      "bottleneck_severity": "low"
+    },
+    {
+      "timestamp": "2025-11-18T09:12:38.939627",
+      "specialization": "performance",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 1,
+      "workload_per_agent": 3.0,
+      "bottleneck_severity": "low"
+    },
+    {
+      "timestamp": "2025-11-18T09:12:38.939627",
+      "specialization": "feature",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 16,
+      "workload_per_agent": 0.1875,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:12:38.939627",
+      "specialization": "documentation",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 1,
+      "workload_per_agent": 1.0,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:12:38.939627",
+      "specialization": "testing",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 2,
+      "workload_per_agent": 0.5,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:12:38.939627",
+      "specialization": "infrastructure",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 1,
+      "workload_per_agent": 1.0,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T04:13:02.117628",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T05:13:02.117628",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T06:13:02.117628",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T07:13:02.117628",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T08:13:02.117628",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:02.119790",
+      "specialization": "bug-fix",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 0,
+      "workload_per_agent": 3.0,
+      "bottleneck_severity": "low"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:02.119790",
+      "specialization": "security",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 6,
+      "workload_per_agent": 0.5,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:02.119790",
+      "specialization": "performance",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 1,
+      "workload_per_agent": 3.0,
+      "bottleneck_severity": "low"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:02.119790",
+      "specialization": "feature",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 16,
+      "workload_per_agent": 0.1875,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:02.119790",
+      "specialization": "documentation",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 1,
+      "workload_per_agent": 1.0,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:02.119790",
+      "specialization": "testing",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 2,
+      "workload_per_agent": 0.5,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:02.119790",
+      "specialization": "infrastructure",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 1,
+      "workload_per_agent": 1.0,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T04:13:45.590168",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T05:13:45.590168",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T06:13:45.590168",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T07:13:45.590168",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T08:13:45.590168",
+      "specialization": "security",
+      "open_issues": 15,
+      "pending_prs": 5,
+      "active_agents": 4,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "medium"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:45.592313",
+      "specialization": "security",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 6,
+      "workload_per_agent": 0.5,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:45.592313",
+      "specialization": "bug-fix",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 0,
+      "workload_per_agent": 3.0,
+      "bottleneck_severity": "low"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:45.592313",
+      "specialization": "performance",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 1,
+      "workload_per_agent": 3.0,
+      "bottleneck_severity": "low"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:45.592313",
+      "specialization": "feature",
+      "open_issues": 2,
+      "pending_prs": 1,
+      "active_agents": 16,
+      "workload_per_agent": 0.1875,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:45.592313",
+      "specialization": "documentation",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 1,
+      "workload_per_agent": 1.0,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:45.592313",
+      "specialization": "testing",
+      "open_issues": 1,
+      "pending_prs": 0,
+      "active_agents": 2,
+      "workload_per_agent": 0.5,
+      "bottleneck_severity": "none"
+    },
+    {
+      "timestamp": "2025-11-18T09:13:45.592313",
       "specialization": "infrastructure",
       "open_issues": 1,
       "pending_prs": 0,
