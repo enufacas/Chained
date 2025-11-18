@@ -1,54 +1,54 @@
 {
-  "last_updated": "2025-11-18T08:58:44.432411",
+  "last_updated": "2025-11-18T09:04:19.321766",
   "thresholds": {
     "security": {
       "specialization": "security",
-      "workload_threshold": 4.95,
+      "workload_threshold": 4.9005,
       "capacity_threshold": 0.8,
       "spawn_confidence": 0.5,
-      "last_updated": "2025-11-18T08:58:44.432325"
+      "last_updated": "2025-11-18T09:04:19.321658"
     },
     "performance": {
       "specialization": "performance",
-      "workload_threshold": 5.5,
+      "workload_threshold": 6.655000000000001,
       "capacity_threshold": 0.8,
       "spawn_confidence": 0.5,
-      "last_updated": "2025-11-18T08:58:44.432350"
+      "last_updated": "2025-11-18T09:04:19.321684"
     },
     "bug-fix": {
       "specialization": "bug-fix",
-      "workload_threshold": 5.5,
+      "workload_threshold": 6.655000000000001,
       "capacity_threshold": 0.8,
       "spawn_confidence": 0.5,
-      "last_updated": "2025-11-18T08:58:44.432339"
+      "last_updated": "2025-11-18T09:04:19.321674"
     },
     "feature": {
       "specialization": "feature",
-      "workload_threshold": 5.5,
+      "workload_threshold": 6.655000000000001,
       "capacity_threshold": 0.8,
       "spawn_confidence": 0.5,
-      "last_updated": "2025-11-18T08:58:44.432360"
+      "last_updated": "2025-11-18T09:04:19.321694"
     },
     "documentation": {
       "specialization": "documentation",
-      "workload_threshold": 5.5,
+      "workload_threshold": 6.655000000000001,
       "capacity_threshold": 0.8,
       "spawn_confidence": 0.5,
-      "last_updated": "2025-11-18T08:58:44.432368"
+      "last_updated": "2025-11-18T09:04:19.321704"
     },
     "testing": {
       "specialization": "testing",
-      "workload_threshold": 5.5,
+      "workload_threshold": 6.655000000000001,
       "capacity_threshold": 0.8,
       "spawn_confidence": 0.5,
-      "last_updated": "2025-11-18T08:58:44.432376"
+      "last_updated": "2025-11-18T09:04:19.321713"
     },
     "infrastructure": {
       "specialization": "infrastructure",
-      "workload_threshold": 5.5,
+      "workload_threshold": 6.655000000000001,
       "capacity_threshold": 0.8,
       "spawn_confidence": 0.5,
-      "last_updated": "2025-11-18T08:58:44.432384"
+      "last_updated": "2025-11-18T09:04:19.321721"
     },
     "refactoring": {
       "specialization": "refactoring",

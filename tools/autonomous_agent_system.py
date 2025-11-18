@@ -27,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from adaptive_workload_monitor import AdaptiveWorkloadMonitor
 from agent_coordinator import AgentCoordinator
 from workload_subagent_spawner import SubAgentSpawner
+from predictive_spawning_engine import PredictiveSpawningEngine
 
 
 class AutonomousAgentSystem:
@@ -57,6 +58,7 @@ class AutonomousAgentSystem:
         self.monitor = AdaptiveWorkloadMonitor(repo_path, registry_path)
         self.coordinator = AgentCoordinator(registry_path)
         self.spawner = SubAgentSpawner(repo_path, registry_path)
+        self.predictor = PredictiveSpawningEngine(repo_path)
     
     def run_full_cycle(self, 
                       max_spawns: int = 5,
@@ -220,6 +222,56 @@ class AutonomousAgentSystem:
             'spawned': spawned_count
         }
         
+        # Phase 3.5: Predictive/Proactive Spawning
+        print("\n🔮 Phase 3.5: Predictive Spawning (Advanced)")
+        print("-" * 80)
+        
+        predictive_spawns = 0
+        predictive_recommendations = self.predictor.get_predictive_recommendations()
+        
+        if predictive_recommendations:
+            print(f"  🔮 {len(predictive_recommendations)} predictive recommendation(s)")
+            
+            # Record observations for learning
+            for spec, metric in metrics.items():
+                workload = metric.open_issues + metric.pending_prs
+                self.predictor.record_observation(spec, workload)
+            
+            # Execute top predictive spawns (limited to avoid over-spawning)
+            max_predictive = max(0, max_spawns - spawned_count)
+            for rec in predictive_recommendations[:max_predictive]:
+                if rec['confidence'] >= self.predictor.parameters['confidence_threshold']:
+                    print(f"  🔮 Predictive spawn: {rec['category']} ({rec['agents_needed']} agents)")
+                    print(f"     Confidence: {rec['confidence']:.0%}, Lead time: {rec['lead_time_hours']}h")
+                    print(f"     Reason: {rec['reason']}")
+                    
+                    # Execute predictive spawning
+                    result = self.spawner.spawn_agents(
+                        specialization=rec['category'],
+                        count=rec['agents_needed'],
+                        priority=rec['priority'],
+                        reason=f"[PREDICTIVE] {rec['reason']}"
+                    )
+                    
+                    if result.get('success'):
+                        predictive_spawns += result.get('spawned', 0)
+                        summary['actions_taken'].append({
+                            'type': 'predictive_spawn',
+                            'specialization': rec['category'],
+                            'count': result.get('spawned', 0),
+                            'confidence': rec['confidence'],
+                            'lead_time_hours': rec['lead_time_hours']
+                        })
+                        print(f"  ✅ Predictively spawned {result.get('spawned', 0)} agent(s)")
+        else:
+            print("  ✅ No predictive spawning needed - workload trends stable")
+        
+        summary['phases']['predictive_spawning'] = {
+            'recommendations': len(predictive_recommendations),
+            'spawned': predictive_spawns,
+            'history_size': len(self.predictor.history)
+        }
+        
         # Phase 4: System Health Check
         print("\n🏥 Phase 4: System Health Check")
         print("-" * 80)
@@ -258,7 +310,8 @@ class AutonomousAgentSystem:
         print("=" * 80)
         print(f"  • Analyzed: {len(metrics)} specializations")
         print(f"  • Coordinated: {len(coordination_actions)} actions")
-        print(f"  • Spawned: {spawned_count} new agents")
+        print(f"  • Reactive Spawns: {spawned_count} new agents")
+        print(f"  • Predictive Spawns: {predictive_spawns} new agents")
         print(f"  • Hibernated: {hibernation_count} idle agents")
         print(f"  • Total Actions: {len(summary['actions_taken'])}")
         
@@ -325,9 +378,20 @@ class AutonomousAgentSystem:
             phase = phases['spawning']
             
             lines.extend([
-                "### 🌱 Phase 3: Intelligent Spawning",
+                "### 🌱 Phase 3: Intelligent Spawning (Reactive)",
                 f"- Spawn Recommendations: {phase.get('recommendations', 0)}",
                 f"- Agents Spawned: {phase.get('spawned', 0)}",
+                ""
+            ])
+        
+        if 'predictive_spawning' in phases:
+            phase = phases['predictive_spawning']
+            
+            lines.extend([
+                "### 🔮 Phase 3.5: Predictive Spawning (Proactive)",
+                f"- Predictive Recommendations: {phase.get('recommendations', 0)}",
+                f"- Agents Pre-spawned: {phase.get('spawned', 0)}",
+                f"- Prediction History Size: {phase.get('history_size', 0)}",
                 ""
             ])
         
