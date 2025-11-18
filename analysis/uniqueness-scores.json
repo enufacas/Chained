@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "average_score": 31.77,
+    "total_agents": 10,
+    "flagged_count": 2
+  },
+  "flagged_agents": [
+    {
+      "agent_id": "test-agent-1",
+      "score": 25.5,
+      "reason": "low approach diversity (10.0), limited innovation index (15.5)"
+    },
+    {
+      "agent_id": "test-agent-2", 
+      "score": 28.0,
+      "reason": "low technology diversity (12.0), limited solution variety (16.0)"
+    }
+  ]
+}
