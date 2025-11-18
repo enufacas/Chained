@@ -1,0 +1,75 @@
+{
+  "last_updated": "2025-11-18T08:58:44.432411",
+  "thresholds": {
+    "security": {
+      "specialization": "security",
+      "workload_threshold": 4.95,
+      "capacity_threshold": 0.8,
+      "spawn_confidence": 0.5,
+      "last_updated": "2025-11-18T08:58:44.432325"
+    },
+    "performance": {
+      "specialization": "performance",
+      "workload_threshold": 5.5,
+      "capacity_threshold": 0.8,
+      "spawn_confidence": 0.5,
+      "last_updated": "2025-11-18T08:58:44.432350"
+    },
+    "bug-fix": {
+      "specialization": "bug-fix",
+      "workload_threshold": 5.5,
+      "capacity_threshold": 0.8,
+      "spawn_confidence": 0.5,
+      "last_updated": "2025-11-18T08:58:44.432339"
+    },
+    "feature": {
+      "specialization": "feature",
+      "workload_threshold": 5.5,
+      "capacity_threshold": 0.8,
+      "spawn_confidence": 0.5,
+      "last_updated": "2025-11-18T08:58:44.432360"
+    },
+    "documentation": {
+      "specialization": "documentation",
+      "workload_threshold": 5.5,
+      "capacity_threshold": 0.8,
+      "spawn_confidence": 0.5,
+      "last_updated": "2025-11-18T08:58:44.432368"
+    },
+    "testing": {
+      "specialization": "testing",
+      "workload_threshold": 5.5,
+      "capacity_threshold": 0.8,
+      "spawn_confidence": 0.5,
+      "last_updated": "2025-11-18T08:58:44.432376"
+    },
+    "infrastructure": {
+      "specialization": "infrastructure",
+      "workload_threshold": 5.5,
+      "capacity_threshold": 0.8,
+      "spawn_confidence": 0.5,
+      "last_updated": "2025-11-18T08:58:44.432384"
+    },
+    "refactoring": {
+      "specialization": "refactoring",
+      "workload_threshold": 5.0,
+      "capacity_threshold": 0.8,
+      "spawn_confidence": 0.5,
+      "last_updated": "2025-11-18T08:58:44.429269"
+    },
+    "ai-ml": {
+      "specialization": "ai-ml",
+      "workload_threshold": 5.0,
+      "capacity_threshold": 0.8,
+      "spawn_confidence": 0.5,
+      "last_updated": "2025-11-18T08:58:44.429271"
+    },
+    "api": {
+      "specialization": "api",
+      "workload_threshold": 5.0,
+      "capacity_threshold": 0.8,
+      "spawn_confidence": 0.5,
+      "last_updated": "2025-11-18T08:58:44.429272"
+    }
+  }
+}
