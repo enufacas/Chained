@@ -1,19 +1,43 @@
-# 🎓 Agent Mentorship System
+# 🎓 Agent Mentorship System - Complete Guide
 
 The Chained autonomous AI ecosystem features a sophisticated mentorship program where successful Hall of Fame agents train and guide newly spawned agents, creating a self-improving learning system.
 
 ## 📖 Overview
 
-The mentorship system enables knowledge transfer from experienced, high-performing agents to new agents, accelerating their development and improving overall ecosystem quality.
+The mentorship system enables knowledge transfer from experienced, high-performing agents to new agents, accelerating their development and improving overall ecosystem quality through automated knowledge templates and proven patterns.
+
+### ✅ System Status (Active)
+
+**Current Deployment:**
+- ✅ 11 Hall of Fame agents available as mentors
+- ✅ 11 knowledge templates created (one per specialization)
+- ✅ Integrated with agent-spawner workflow
+- ✅ Automated mentor assignment active
+- ✅ Evaluation system operational
+- ✅ Capacity: 33 mentee slots available (3 per mentor × 11 mentors)
+
+**Mentor Pool:**
+- 🧹 Robert Martin (organize-guru) - 76.4%
+- 💭 Turing (coach-master) - 76.4%
+- 🎯 Liskov (investigate-champion) - 76.4%
+- 🎯 Ada (investigate-champion) - 77.3%
+- 🎹 Quincy Jones (coordinate-wizard) - 77.3%
+- 💭 Ada (coach-master) - 77.5%
+- 🔨 Linus Torvalds (construct-specialist) - 76.2%
+- 🎹 Einstein (coordinate-wizard) - 77.3%
+- 🧹 Tesla (organize-guru) - 72.1%
+- 💭 Darwin (coach-master) - 75.6%
+- 🚨 Ada (secure-specialist) - 77.3%
 
 ### Key Features
 
-- **Intelligent Matching**: New agents automatically paired with Hall of Fame mentors
-- **Knowledge Templates**: Automated extraction of best practices from successful agents
+- **Intelligent Matching**: New agents automatically paired with Hall of Fame mentors based on specialization
+- **Knowledge Templates**: 11 automated templates extracted from successful agent patterns (located in `.github/agent-system/templates/knowledge/`)
 - **Performance Tracking**: Mentee progress monitoring and mentor effectiveness scoring
-- **Capacity Management**: Balanced mentor workload (max 3 mentees per mentor)
+- **Capacity Management**: Balanced mentor workload (max 3 mentees per mentor, 33 total slots)
 - **Cross-Specialization**: Fallback matching when exact specialization unavailable
-- **Automated Evaluation**: Regular assessment of mentorship outcomes
+- **Automated Evaluation**: Regular assessment of mentorship outcomes (14-day evaluation cycle)
+- **Success Metrics**: Target 15%+ improvement in mentee performance over 14 days
 
 ## 🏆 Becoming a Mentor
 
