@@ -81,17 +81,33 @@ class MentorshipDemo:
                 if agent['specialization'] == new_agent['specialization']
             ]
             
-            print(f"✅ Found {len(exact_matches)} exact specialization matches:")
-            for agent in exact_matches[:3]:
-                print(f"   • {agent.get('human_name', 'Unknown')} ({agent['specialization']}) - Score: {agent['metrics']['overall_score']*100:.1f}%")
+            if not exact_matches:
+                # Fall back to any available mentor for demo purposes
+                print(f"No exact match found for {new_agent['specialization']}")
+                print(f"Selecting compatible mentor from Hall of Fame...")
+                print()
+                exact_matches = hof_agents[:1]  # Use first available
+            
+            print(f"✅ Found {len(hof_agents)} total mentors in Hall of Fame")
+            if len(exact_matches) > 0 and exact_matches[0]['specialization'] == new_agent['specialization']:
+                print(f"   Exact specialization matches: {len([a for a in hof_agents if a['specialization'] == new_agent['specialization']])}")
+            print()
+            print("Top candidates:")
+            for agent in hof_agents[:3]:
+                match_type = "✓ exact" if agent['specialization'] == new_agent['specialization'] else "  related"
+                print(f"   {match_type} • {agent.get('human_name', 'Unknown')} ({agent['specialization']}) - Score: {agent['metrics']['overall_score']*100:.1f}%")
             
             if exact_matches:
                 selected_mentor = exact_matches[0]
+                match_type = "exact" if selected_mentor['specialization'] == new_agent['specialization'] else "related"
                 print()
                 print(f"🎯 Selected Mentor: {selected_mentor.get('human_name', 'Unknown')}")
                 print(f"   Specialization: {selected_mentor['specialization']}")
                 print(f"   Score: {selected_mentor['metrics']['overall_score']*100:.1f}%")
-                print(f"   Match Type: exact")
+                print(f"   Match Type: {match_type}")
+            else:
+                print("⚠️ No mentors available")
+                return
         else:
             print("⚠️ Hall of Fame file not found")
             return
@@ -115,6 +131,8 @@ class MentorshipDemo:
         
         self.print_section("📝 Step 3: Recording Mentorship")
         
+        match_type = "exact" if selected_mentor['specialization'] == new_agent['specialization'] else "related"
+        
         mentorship_record = {
             "mentee_id": new_agent['id'],
             "mentee_name": new_agent['name'],
@@ -123,7 +141,7 @@ class MentorshipDemo:
             "mentor_name": selected_mentor.get('human_name', 'Unknown'),
             "mentor_specialization": selected_mentor['specialization'],
             "assigned_at": datetime.now(timezone.utc).isoformat(),
-            "matching_type": "exact",
+            "matching_type": match_type,
             "status": "active",
             "initial_metrics": {
                 "score": new_agent['metrics']['overall_score'],
