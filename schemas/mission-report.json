@@ -1,0 +1,349 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/enufacas/Chained/schemas/mission-report.json",
+  "title": "Chained Mission Report",
+  "description": "Standardized format for agent mission reports. Created by @connector-ninja for structured agent communication.",
+  "type": "object",
+  "required": ["mission_id", "agent", "status", "deliverables", "timestamp"],
+  "properties": {
+    "mission_id": {
+      "type": "string",
+      "pattern": "^idea:\\d+$",
+      "description": "Mission identifier (e.g., 'idea:29')",
+      "examples": ["idea:29", "idea:42", "idea:100"]
+    },
+    "agent": {
+      "type": "string",
+      "pattern": "^@[a-z][a-z0-9-]*$",
+      "description": "Agent name with @ prefix (e.g., '@connector-ninja')",
+      "examples": ["@connector-ninja", "@investigate-champion", "@secure-specialist"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["in_progress", "complete", "blocked", "failed"],
+      "description": "Current mission status"
+    },
+    "completion_percentage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Percentage of mission completed"
+    },
+    "deliverables": {
+      "type": "object",
+      "required": ["research_report", "ecosystem_assessment"],
+      "properties": {
+        "research_report": {
+          "type": "object",
+          "required": ["completed", "word_count", "key_insights"],
+          "properties": {
+            "completed": {
+              "type": "boolean",
+              "description": "Whether research report is complete"
+            },
+            "word_count": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Total words in research report"
+            },
+            "key_insights": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 3,
+              "maxItems": 5,
+              "description": "3-5 key insights from research"
+            },
+            "document_path": {
+              "type": "string",
+              "description": "Path to research report document"
+            }
+          }
+        },
+        "ecosystem_assessment": {
+          "type": "object",
+          "required": ["completed", "relevance_rating"],
+          "properties": {
+            "completed": {
+              "type": "boolean",
+              "description": "Whether ecosystem assessment is complete"
+            },
+            "relevance_rating": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "description": "Relevance to Chained ecosystem (0-10)"
+            },
+            "initial_rating": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "description": "Initial relevance estimate"
+            },
+            "upgrade_justification": {
+              "type": "string",
+              "description": "Explanation if rating changed"
+            },
+            "document_path": {
+              "type": "string",
+              "description": "Path to assessment document"
+            }
+          }
+        },
+        "integration_proposal": {
+          "type": "object",
+          "properties": {
+            "completed": {
+              "type": "boolean"
+            },
+            "priority": {
+              "type": "string",
+              "enum": ["critical", "high", "medium", "low"],
+              "description": "Implementation priority"
+            },
+            "implementation_phases": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "duration", "tasks"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Phase name"
+                  },
+                  "duration": {
+                    "type": "string",
+                    "description": "Estimated duration (e.g., '1-2 weeks')"
+                  },
+                  "tasks": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Tasks in this phase"
+                  }
+                }
+              }
+            },
+            "document_path": {
+              "type": "string"
+            }
+          }
+        },
+        "world_model_updates": {
+          "type": "object",
+          "required": ["completed"],
+          "properties": {
+            "completed": {
+              "type": "boolean"
+            },
+            "patterns_identified": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Technology patterns identified"
+            },
+            "document_path": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "time_spent_hours": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Hours spent on mission"
+        },
+        "documents_created": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Number of documents created"
+        },
+        "total_characters": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total characters written"
+        },
+        "sources_analyzed": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Number of sources analyzed"
+        },
+        "code_examples": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Number of code examples created"
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "impact", "evidence"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Finding title"
+          },
+          "impact": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Impact level"
+          },
+          "evidence": {
+            "type": "string",
+            "description": "Evidence supporting finding"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source of information"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Recommended action"
+          }
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["description", "severity"],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Blocker description"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Blocker severity"
+          },
+          "resolution": {
+            "type": "string",
+            "description": "How blocker was/will be resolved"
+          }
+        }
+      }
+    },
+    "next_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Ordered list of next actions"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of report generation"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_specialization": {
+          "type": "string",
+          "description": "Agent's area of specialization"
+        },
+        "mission_type": {
+          "type": "string",
+          "description": "Type of mission (e.g., 'learning-integration')"
+        },
+        "ecosystem_relevance": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"],
+          "description": "Overall relevance to Chained"
+        },
+        "quality_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Self-assessed quality score"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "mission_id": "idea:29",
+      "agent": "@connector-ninja",
+      "status": "complete",
+      "completion_percentage": 100,
+      "deliverables": {
+        "research_report": {
+          "completed": true,
+          "word_count": 2800,
+          "key_insights": [
+            "MCP standardization enables tool interoperability",
+            "Structured outputs ensure production reliability",
+            "Integration patterns accelerate adoption"
+          ],
+          "document_path": "learnings/claude-innovation-idea29/RESEARCH_REPORT.md"
+        },
+        "ecosystem_assessment": {
+          "completed": true,
+          "relevance_rating": 7,
+          "initial_rating": 5,
+          "upgrade_justification": "Strong integration opportunities discovered",
+          "document_path": "learnings/claude-innovation-idea29/ECOSYSTEM_ASSESSMENT.md"
+        },
+        "integration_proposal": {
+          "completed": true,
+          "priority": "high",
+          "implementation_phases": [
+            {
+              "name": "MCP Server Implementation",
+              "duration": "1-2 weeks",
+              "tasks": [
+                "Build world-model MCP server",
+                "Create structured schemas",
+                "Deploy to production"
+              ]
+            }
+          ]
+        },
+        "world_model_updates": {
+          "completed": true,
+          "patterns_identified": ["mcp-protocol", "structured-outputs", "cloud-integration"]
+        }
+      },
+      "metrics": {
+        "time_spent_hours": 8,
+        "documents_created": 5,
+        "total_characters": 75000,
+        "sources_analyzed": 8,
+        "code_examples": 12
+      },
+      "findings": [
+        {
+          "title": "MCP Production Infrastructure",
+          "impact": "high",
+          "evidence": "Gram provides managed MCP hosting",
+          "source": "TLDR Tech Newsletter",
+          "recommendation": "Build Chained-specific MCP servers"
+        }
+      ],
+      "blockers": [],
+      "next_steps": [
+        "Deploy MCP server for testing",
+        "Create integration documentation",
+        "Build additional MCP servers"
+      ],
+      "timestamp": "2025-11-18T08:30:00Z",
+      "metadata": {
+        "agent_specialization": "API integration and protocol implementation",
+        "mission_type": "learning-integration",
+        "ecosystem_relevance": "high",
+        "quality_score": 85
+      }
+    }
+  ]
+}
