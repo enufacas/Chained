@@ -1,5 +1,173 @@
 {
-  "failures": [],
-  "last_updated": "2025-11-14T20:46:32.353704+00:00",
-  "total_count": 0
+  "failures": [
+    {
+      "pr_number": 241,
+      "title": "\ud83d\udcdd New Agent Spawned: \ud83d\udcdd Gamma-1111",
+      "author": "github-actions[bot]",
+      "agent_id": "agent-system",
+      "agent_specialization": null,
+      "created_at": "2025-11-11T02:08:42Z",
+      "closed_at": "2025-11-11T17:10:54Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "completed",
+        "copilot",
+        "agent-system"
+      ]
+    },
+    {
+      "pr_number": 1543,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1531 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T06:44:37Z",
+      "closed_at": "2025-11-17T06:47:03Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "copilot",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1541,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1533 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T06:38:11Z",
+      "closed_at": "2025-11-17T06:43:36Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "copilot",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1519,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1514 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T05:49:27Z",
+      "closed_at": "2025-11-17T06:42:59Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "copilot",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1528,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1525 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T06:16:44Z",
+      "closed_at": "2025-11-17T06:42:51Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "copilot",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1539,
+      "title": "[WIP] Fix workflow health alert issues detected on 2025-11-17",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T06:34:05Z",
+      "closed_at": "2025-11-17T06:37:08Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": []
+    },
+    {
+      "pr_number": 1532,
+      "title": "[WIP] Fix frequency of merge commits",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-17T06:22:10Z",
+      "closed_at": "2025-11-17T06:32:53Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    }
+  ],
+  "last_updated": "2025-11-18T02:19:46.567016+00:00",
+  "total_count": 7
 }
