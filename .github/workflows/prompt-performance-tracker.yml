@@ -46,7 +46,8 @@ jobs:
           echo "🔄 Refreshing learning insights from recent TLDR data..."
           days="${{ inputs.days_to_analyze || '7' }}"
           
-          python3 tools/prompt-generator.py refresh-learnings --days "$days"
+          # Redirect stderr warnings to avoid cluttering logs
+          python3 tools/prompt-generator.py refresh-learnings --days "$days" 2>&1 | grep -v "^Warning:" || true
           
           echo "✓ Learning insights refreshed"
       
@@ -55,7 +56,8 @@ jobs:
         run: |
           echo "📊 Generating prompt performance report..."
           
-          report=$(python3 tools/prompt-generator.py report)
+          # Filter warnings from output to get clean JSON
+          report=$(python3 tools/prompt-generator.py report 2>&1 | grep -v "^Warning:")
           
           # Extract key metrics
           total_prompts=$(echo "$report" | jq -r '.insights.overall.total_prompts_used // 0')
@@ -80,7 +82,8 @@ jobs:
         run: |
           echo "🔍 Identifying templates that need optimization..."
           
-          suggestions=$(python3 tools/prompt-generator.py optimize)
+          # Filter warnings from output to get clean JSON
+          suggestions=$(python3 tools/prompt-generator.py optimize 2>&1 | grep -v "^Warning:")
           
           # Count suggestions
           suggestion_count=$(echo "$suggestions" | jq '. | length')
