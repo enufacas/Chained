@@ -256,6 +256,29 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1763435100",
+      "name": "🎨 John Carmack",
+      "human_name": "John Carmack",
+      "specialization": "render-3d-master",
+      "status": "active",
+      "spawned_at": "2025-11-18T03:05:00.000000Z",
+      "personality": "technical excellence and performance-focused",
+      "communication_style": "direct and pragmatic about technical details",
+      "traits": {
+        "creativity": 85,
+        "caution": 70,
+        "speed": 90
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [],
@@ -279,7 +302,7 @@
     ],
     "strict_pr_attribution": true
   },
-  "last_spawn": "2025-11-14T05:23:40.396257Z",
+  "last_spawn": "2025-11-18T03:05:00.000000Z",
   "last_evaluation": "2025-11-13T22:47:41.700770Z",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
