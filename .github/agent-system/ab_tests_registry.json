@@ -7,7 +7,7 @@
       "description": "Demonstrating autonomous A/B testing with different workflow configurations",
       "workflow_name": "demo-workflow",
       "created_at": "2025-11-17T20:50:53.767946Z",
-      "status": "active",
+      "status": "completed",
       "variants": {
         "control": {
           "config": {
@@ -912,7 +912,161 @@
         "success_rate",
         "resource_usage"
       ],
-      "results": null
+      "results": {
+        "winner": "control",
+        "notes": "Auto-completed by autonomous A/B testing system. Winner showed 5.24% improvement. Rollout completed by @validator-pro.",
+        "final_analysis": {
+          "status": "analyzed",
+          "variant_statistics": {
+            "control": {
+              "execution_time": {
+                "mean": 96.25645657991491,
+                "min": 77.55906890079625,
+                "max": 122.98862389981232,
+                "count": 20
+              },
+              "success_rate": {
+                "mean": 0.8365718245346964,
+                "min": 0.7531333211051314,
+                "max": 0.9203468569599932,
+                "count": 20
+              },
+              "resource_usage": {
+                "mean": 48.943970986314966,
+                "min": 41.362123274848514,
+                "max": 58.824349077678505,
+                "count": 20
+              }
+            },
+            "optimized": {
+              "execution_time": {
+                "mean": 83.07310253654299,
+                "min": 62.28992291280207,
+                "max": 101.28598338790812,
+                "count": 20
+              },
+              "success_rate": {
+                "mean": 0.9276473329270392,
+                "min": 0.8835831901030778,
+                "max": 0.9769965241672027,
+                "count": 20
+              },
+              "resource_usage": {
+                "mean": 53.69250106069272,
+                "min": 41.8913324944952,
+                "max": 63.91827285082219,
+                "count": 20
+              }
+            },
+            "aggressive": {
+              "execution_time": {
+                "mean": 70.08809222077323,
+                "min": 52.05918213728545,
+                "max": 94.67403607399214,
+                "count": 20
+              },
+              "success_rate": {
+                "mean": 0.789294283732144,
+                "min": 0.6691680982921261,
+                "max": 0.9375166410872162,
+                "count": 20
+              },
+              "resource_usage": {
+                "mean": 68.95007549298765,
+                "min": 51.567833684925084,
+                "max": 86.62714913495158,
+                "count": 20
+              }
+            }
+          },
+          "winner": {
+            "variant": "control",
+            "score": 48.678999796921524,
+            "improvement": 0.052440359136967006,
+            "confidence": "medium"
+          },
+          "timestamp": "2025-11-18T19:00:48.374235Z",
+          "advanced_analysis": {
+            "bayesian_analysis": {
+              "optimized_vs_control": {
+                "probability_better": 0.5028,
+                "confidence": "low"
+              },
+              "aggressive_vs_control": {
+                "probability_better": 0.5019,
+                "confidence": "low"
+              }
+            },
+            "sequential_test": {
+              "should_stop": false,
+              "winner": null,
+              "recommendation": "Continue collecting data"
+            },
+            "confidence_intervals": {
+              "control": {
+                "execution_time": {
+                  "lower": 90.61856109463963,
+                  "upper": 101.89435206519019,
+                  "width": 11.27579097055056
+                },
+                "success_rate": {
+                  "lower": 0.8388698745050667,
+                  "upper": 1.0,
+                  "width": 0.16113012549493333
+                },
+                "resource_usage": {
+                  "lower": 46.75724375872468,
+                  "upper": 51.130698213905255,
+                  "width": 4.373454455180578
+                }
+              },
+              "optimized": {
+                "execution_time": {
+                  "lower": 78.88464802243814,
+                  "upper": 87.26155705064784,
+                  "width": 8.376909028209695
+                },
+                "success_rate": {
+                  "lower": 0.8388698745050667,
+                  "upper": 1.0,
+                  "width": 0.16113012549493333
+                },
+                "resource_usage": {
+                  "lower": 51.326999261625225,
+                  "upper": 56.058002859760215,
+                  "width": 4.73100359813499
+                }
+              },
+              "aggressive": {
+                "execution_time": {
+                  "lower": 64.9074398890074,
+                  "upper": 75.26874455253906,
+                  "width": 10.361304663531655
+                },
+                "success_rate": {
+                  "lower": 0.8388698745050667,
+                  "upper": 1.0,
+                  "width": 0.16113012549493333
+                },
+                "resource_usage": {
+                  "lower": 64.7287925748623,
+                  "upper": 73.171358411113,
+                  "width": 8.442565836250708
+                }
+              }
+            },
+            "thompson_sampling": {
+              "probabilities": {
+                "control": 0.9545454545454546,
+                "optimized": 0.9545454545454546,
+                "aggressive": 0.9545454545454546
+              },
+              "recommended_variant": "aggressive"
+            }
+          }
+        }
+      },
+      "completed_at": "2025-11-18T19:00:48.373898Z"
     }
   ],
   "config": {
