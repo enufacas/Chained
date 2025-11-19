@@ -10,6 +10,10 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: analysis-architecture-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   track-architecture:
     runs-on: ubuntu-latest
@@ -141,6 +145,15 @@ jobs:
             TIMESTAMP=$(date +%Y%m%d-%H%M%S)
             BRANCH_NAME="architecture-evolution/${TIMESTAMP}-${{ github.run_id }}"
             git checkout -b "$BRANCH_NAME"
+            
+            # Pull latest main to avoid conflicts
+            git fetch origin main
+            git merge origin/main --no-edit || {
+              # If merge conflicts, keep our changes
+              git checkout --ours analysis/
+              git add analysis/
+              git commit --no-edit
+            }
             
             # Commit changes
             git commit -m "🏗️ Update architecture evolution tracking" \

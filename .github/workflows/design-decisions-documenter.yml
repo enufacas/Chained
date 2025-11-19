@@ -22,6 +22,10 @@ permissions:
   contents: write
   issues: write
 
+concurrency:
+  group: analysis-design-decisions-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   document-decisions:
     runs-on: ubuntu-latest
@@ -105,6 +109,15 @@ jobs:
             TIMESTAMP=$(date +%Y%m%d-%H%M%S)
             BRANCH_NAME="design-decisions/${TIMESTAMP}-${{ github.run_id }}"
             git checkout -b "$BRANCH_NAME"
+            
+            # Pull latest main to avoid conflicts
+            git fetch origin main
+            git merge origin/main --no-edit || {
+              # If merge conflicts, keep our changes
+              git checkout --ours analysis/
+              git add analysis/
+              git commit --no-edit
+            }
             
             # Commit changes
             git commit -m "🏗️ Update design decisions documentation - $(date -u +"%Y-%m-%d")"
