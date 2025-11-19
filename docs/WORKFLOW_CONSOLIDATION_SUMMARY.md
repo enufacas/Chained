@@ -237,6 +237,7 @@ jobs:
 - ✅ Created 5 consolidated workflows
 - ✅ Tested consolidated workflow syntax
 - ✅ Removed all 16 original workflow files
+- ✅ Removed 1 duplicate workflow (create-ai-friend-follow-ups-20251117.yml)
 - ✅ Updated documentation
 
 **Original workflows removed**:
@@ -257,6 +258,9 @@ jobs:
 15. goal-progress-checker.yml
 16. idea-generator.yml
 
+**Duplicate workflows removed**:
+1. create-ai-friend-follow-ups-20251117.yml (old dated version)
+
 **Consolidation is now active**. The new workflows will begin running according to their schedules.
 
 ### Original Migration Plan (Archived)
@@ -276,6 +280,7 @@ jobs:
 **Workflow Count**: 71 total
 **Organizational Issues**:
 - 16 workflows identified for consolidation
+- 1 duplicate/outdated workflow
 - Difficult to find specific workflows
 - Duplicate functionality
 - Maintenance overhead
@@ -283,7 +288,7 @@ jobs:
 
 ### After Consolidation
 
-**Workflow Count**: 60 (after cleanup)
+**Workflow Count**: 59 (after consolidation and cleanup)
 **Organizational Benefits**:
 - 5 mega-workflows with clear purposes
 - 16 stages organized by function
@@ -295,7 +300,7 @@ jobs:
 
 | Metric | Before | After | Improvement |
 |--------|--------|-------|-------------|
-| Workflows to maintain | 71 | 55 | -23% (16 removed) |
+| Workflows to maintain | 71 | 59 | -16.9% (12 removed) |
 | Organizational groups | None | 5 | +5 |
 | Stage flexibility | None | 16 stages | +16 |
 | Documentation pages | 0 | 3 | +3 |
