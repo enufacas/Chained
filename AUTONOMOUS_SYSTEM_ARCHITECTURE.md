@@ -692,7 +692,7 @@ Every workflow, agent action, and system change MUST answer these 8 questions:
 - [Custom Agents Directory](./.github/agents/README.md)
 - [World Model Guide](./world/README.md)
 - [Workflow Validation Guide](./WORKFLOW_VALIDATION_GUIDE.md)
-- [Labels Reference](./LABELS.md)
+- [Labels Reference](./docs/guides/LABELS.md)
 - [FAQ](./FAQ.md)
 
 ---

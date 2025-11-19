@@ -271,7 +271,7 @@ Each section provides:
 ### Quick References
 
 - **[docs/QUICK_REFERENCE.md](./docs/QUICK_REFERENCE.md)** - Command cheat sheet
-- **[LABELS.md](./LABELS.md)** - Label reference
+- **[LABELS.md](./docs/guides/LABELS.md)** - Label reference
 - **[docs/INDEX.md](./docs/INDEX.md)** - All documentation
 
 ## Summary
