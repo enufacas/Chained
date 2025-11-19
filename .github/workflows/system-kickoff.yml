@@ -26,6 +26,7 @@ permissions:
   issues: write
   contents: write
   actions: write
+  pull-requests: write
 
 jobs:
   kickoff:
