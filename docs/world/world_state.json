@@ -1,6 +1,6 @@
 {
-  "time": "2025-11-19T08:21:47Z",
-  "tick": 61,
+  "time": "2025-11-19T08:23:14Z",
+  "tick": 62,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -31,11 +31,11 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:27",
+      "current_idea_id": "idea:40",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -48,6 +48,12 @@
         "creativity": 66,
         "caution": 81,
         "speed": 78
+      },
+      "current_mission": {
+        "mission_id": "idea:40",
+        "title": "Languages: Typescript Innovation",
+        "issue_number": null,
+        "assigned_at": "2025-11-19T08:23:14Z"
       }
     },
     {
@@ -469,12 +475,12 @@
       "label": "🔄 Liskov",
       "specialization": "bridge-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "SE:Stockholm",
         "GB:London"
       ],
-      "current_idea_id": "idea:4",
+      "current_idea_id": "idea:39",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -487,6 +493,12 @@
         "creativity": 68,
         "caution": 50,
         "speed": 73
+      },
+      "current_mission": {
+        "mission_id": "idea:39",
+        "title": "Integration: Javascript-Gpt Innovation",
+        "issue_number": null,
+        "assigned_at": "2025-11-19T08:23:14Z"
       }
     },
     {
