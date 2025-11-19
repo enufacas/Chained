@@ -27,13 +27,14 @@ on:
         type: string
 
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  contents: write  # Required: Create branches and push commits for PR creation
+  issues: write    # Required: Create learning documentation issues
+  pull-requests: write  # Required: Create PRs for learnings
 
 jobs:
   learn-from-copilot:
     runs-on: ubuntu-latest
+    timeout-minutes: 30  # Prevent infinite runs if external APIs hang
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -42,10 +43,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'  # Cache pip dependencies for faster runs
 
       - name: Install dependencies
         run: |
-          pip install beautifulsoup4 requests lxml html5lib
+          pip install -r requirements.txt
 
       - name: Fetch GitHub Copilot content
         id: fetch
@@ -55,6 +57,15 @@ jobs:
           REDDIT_COUNT: ${{ inputs.reddit_count || '5' }}
           DISCUSSIONS_COUNT: ${{ inputs.discussions_count || '5' }}
         run: |
+          # Validate inputs are numeric and within reasonable range
+          for var in DOCS_COUNT REDDIT_COUNT DISCUSSIONS_COUNT; do
+            val=$(eval echo \$$var)
+            if ! [[ "$val" =~ ^[0-9]+$ ]] || [ "$val" -lt 1 ] || [ "$val" -gt 50 ]; then
+              echo "Error: $var must be a number between 1 and 50, got: $val"
+              exit 1
+            fi
+          done
+          
           python3 tools/fetch-github-copilot.py \
             --docs ${DOCS_COUNT} \
             --reddit ${REDDIT_COUNT} \
