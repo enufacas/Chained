@@ -1,0 +1,746 @@
+name: Agent Spawning System
+
+# Consolidates multiple agent spawning workflows:
+# - agent-spawner.yml → Stage: standard-spawner
+# - learning-based-agent-spawner.yml → Stage: learning-based-spawner
+# - multi-agent-spawner.yml → Stage: multi-spawner
+# - workload-subagent-spawner.yml → Stage: workload-spawner
+
+on:
+  schedule:
+    # Standard spawner: every 3 hours
+    - cron: '0 */3 * * *'
+  
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: 'Which spawning stage to run'
+        required: true
+        type: choice
+        default: 'standard-spawner'
+        options:
+          - standard-spawner
+          - learning-based-spawner
+          - multi-spawner
+          - workload-spawner
+      
+      # Standard spawner options
+      mode:
+        description: '[Standard] Spawning mode'
+        required: false
+        type: choice
+        default: 'mixed'
+        options:
+          - mixed  # 50% existing, 50% new random agents
+          - existing  # Only use existing agent definitions
+          - new  # Always create new random agents
+      specialization:
+        description: '[Standard] Force specific specialization'
+        required: false
+        type: string
+      delete_mode:
+        description: '[Standard] Delete agents before spawning'
+        required: false
+        type: choice
+        default: 'none'
+        options:
+          - none
+          - all
+          - specific
+      delete_agent_ids:
+        description: '[Standard] Agent IDs to delete (comma-separated)'
+        required: false
+        type: string
+      respawn_count:
+        description: '[Standard] Number of agents to spawn after deletion'
+        required: false
+        type: number
+        default: 1
+      
+      # Learning-based spawner options
+      force_spawn:
+        description: '[Learning] Force spawn even if recent spawns exist'
+        required: false
+        type: boolean
+        default: false
+      
+      # Multi-spawner options
+      spawn_count:
+        description: '[Multi] Number of agents to spawn'
+        required: false
+        type: number
+        default: 3
+      batch_mode:
+        description: '[Multi] Batch spawning strategy'
+        required: false
+        type: choice
+        default: 'balanced'
+        options:
+          - balanced  # Mix of existing and new agents
+          - existing  # Only existing agent types
+          - new  # Only new random agents
+          - diverse  # Maximize specialization diversity
+      
+      # Workload spawner options
+      max_spawns:
+        description: '[Workload] Maximum agents to spawn'
+        required: false
+        default: '5'
+      dry_run:
+        description: '[Workload] Dry run (no actual spawning)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  # ===================================================================================
+  # STAGE 1: Standard Agent Spawner (from agent-spawner.yml)
+  # ===================================================================================
+  standard-spawner:
+    name: "Standard Agent Spawner"
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'schedule') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'standard-spawner')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Ensure agent system labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🏷️ Checking and creating agent system labels..."
+          
+          create_label_if_missing() {
+            local name="$1"
+            local color="$2"
+            local description="$3"
+            
+            if gh label list --repo ${{ github.repository }} | grep -q "^${name}[[:space:]]"; then
+              echo "✓ Label '$name' already exists, skipping creation"
+            else
+              if gh label create "$name" --color "$color" --description "$description" --repo ${{ github.repository }} 2>&1; then
+                echo "✅ Created label '$name'"
+              else
+                echo "✓ Label '$name' already exists (detected during creation attempt)"
+              fi
+            fi
+          }
+          
+          create_label_if_missing "agent-system" "7057ff" "Agent ecosystem activity"
+          create_label_if_missing "agent-work" "0e8a16" "Work assigned to agents"
+          create_label_if_missing "spawn-pending" "d4c5f9" "Waiting for agent spawn PR to merge"
+          create_label_if_missing "announcement" "0075ca" "Agent announcements"
+          create_label_if_missing "evaluation" "e4e669" "Agent evaluations"
+          create_label_if_missing "automated" "ededed" "Auto-generated content"
+          create_label_if_missing "copilot" "8b5cf6" "Copilot-related tasks"
+          
+          echo "✅ All agent system labels verified"
+
+      - name: Delete agents if requested
+        id: delete_agents
+        if: github.event.inputs.delete_mode != 'none' && github.event.inputs.delete_mode != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DELETE_MODE="${{ github.event.inputs.delete_mode }}"
+          DELETE_AGENT_IDS="${{ github.event.inputs.delete_agent_ids }}"
+          
+          echo "🗑️ Delete mode: $DELETE_MODE"
+          
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          import shutil
+          from datetime import datetime
+          from pathlib import Path
+          
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          
+          delete_mode = os.environ.get('DELETE_MODE', 'none')
+          delete_agent_ids_str = os.environ.get('DELETE_AGENT_IDS', '')
+          
+          registry = RegistryManager()
+          deleted_agents = []
+          
+          if delete_mode == 'all':
+              agents = registry.list_agents(status='active')
+              for agent in agents:
+                  agent_id = agent['id']
+                  
+                  profile_path = Path(f".github/agent-system/profiles/{agent_id}.md")
+                  archive_path = Path(f".github/agent-system/archive/{agent_id}.md")
+                  if profile_path.exists():
+                      archive_path.parent.mkdir(parents=True, exist_ok=True)
+                      shutil.move(str(profile_path), str(archive_path))
+                  
+                  registry.delete_agent(agent_id)
+                  deleted_agents.append(agent)
+                  print(f"🗑️ Deleted agent: {agent['name']} ({agent_id})")
+              
+          elif delete_mode == 'specific' and delete_agent_ids_str:
+              delete_ids = [id.strip() for id in delete_agent_ids_str.split(',') if id.strip()]
+              
+              for agent_id in delete_ids:
+                  agent = registry.get_agent(agent_id)
+                  if agent and agent.get('status') == 'active':
+                      profile_path = Path(f".github/agent-system/profiles/{agent_id}.md")
+                      archive_path = Path(f".github/agent-system/archive/{agent_id}.md")
+                      if profile_path.exists():
+                          archive_path.parent.mkdir(parents=True, exist_ok=True)
+                          shutil.move(str(profile_path), str(archive_path))
+                      
+                      registry.delete_agent(agent_id)
+                      deleted_agents.append(agent)
+                      print(f"🗑️ Deleted agent: {agent['name']} ({agent_id})")
+                  else:
+                      print(f"⚠️ Agent {agent_id} not found or not active")
+          
+          print(f"\n✅ Deleted {len(deleted_agents)} agent(s)")
+          
+          with open('/tmp/deleted_count.txt', 'w') as f:
+              f.write(str(len(deleted_agents)))
+          PYTHON_SCRIPT
+          
+          if [ -f "/tmp/deleted_count.txt" ]; then
+            DELETED_COUNT=$(cat /tmp/deleted_count.txt)
+            echo "deleted_count=$DELETED_COUNT" >> $GITHUB_OUTPUT
+            echo "✅ Deleted $DELETED_COUNT agent(s)"
+          else
+            echo "deleted_count=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check agent capacity
+        id: check_capacity
+        run: |
+          ACTIVE_COUNT=$(python3 tools/list_agents_from_registry.py --status active --format count)
+          
+          MAX_AGENTS=$(python3 -c "
+          import sys
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          registry = RegistryManager()
+          config = registry.get_config()
+          print(config['max_active_agents'])
+          ")
+          
+          echo "active_count=$ACTIVE_COUNT" >> $GITHUB_OUTPUT
+          echo "max_agents=$MAX_AGENTS" >> $GITHUB_OUTPUT
+          
+          if [ "$ACTIVE_COUNT" -ge "$MAX_AGENTS" ]; then
+            echo "can_spawn=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Maximum agent capacity reached ($ACTIVE_COUNT/$MAX_AGENTS)"
+          else
+            echo "can_spawn=true" >> $GITHUB_OUTPUT
+            echo "✅ Can spawn new agent ($ACTIVE_COUNT/$MAX_AGENTS)"
+          fi
+
+      - name: Generate agent DNA
+        id: generate_agent
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          TIMESTAMP=$(date +%s%N)
+          RANDOM_SUFFIX=$((RANDOM * RANDOM % 100000))
+          AGENT_ID="agent-${TIMESTAMP}-${RANDOM_SUFFIX}"
+          
+          MODE="${{ github.event.inputs.mode }}"
+          if [ -z "$MODE" ]; then
+            MODE="mixed"
+          fi
+          
+          if [ "$MODE" == "new" ]; then
+            CREATE_NEW="true"
+          elif [ "$MODE" == "existing" ]; then
+            CREATE_NEW="false"
+          else
+            if [ $((RANDOM % 2)) -eq 0 ]; then
+              CREATE_NEW="true"
+            else
+              CREATE_NEW="false"
+            fi
+          fi
+          
+          echo "is_new_agent=$CREATE_NEW" >> $GITHUB_OUTPUT
+          
+          if [ "$CREATE_NEW" == "true" ]; then
+            echo "🎲 Generating new random agent..."
+            NEW_AGENT_JSON=$(python3 tools/generate-new-agent.py)
+            
+            if [ $? -ne 0 ] || [ -z "$NEW_AGENT_JSON" ]; then
+              echo "❌ Failed to generate new agent"
+              exit 1
+            fi
+            
+            SPECIALIZATION=$(echo "$NEW_AGENT_JSON" | jq -r '.agent_name' 2>/dev/null || echo "")
+            EMOJI=$(echo "$NEW_AGENT_JSON" | jq -r '.emoji' 2>/dev/null || echo "🤖")
+            HUMAN_NAME=$(echo "$NEW_AGENT_JSON" | jq -r '.human_name' 2>/dev/null || echo "Agent")
+            PERSONALITY=$(echo "$NEW_AGENT_JSON" | jq -r '.personality' 2>/dev/null || echo "analytical")
+            COMM_STYLE=$(echo "$NEW_AGENT_JSON" | jq -r '.communication_style' 2>/dev/null || echo "direct")
+            
+            if [ -z "$SPECIALIZATION" ]; then
+              echo "❌ Failed to extract agent data from JSON"
+              exit 1
+            fi
+            
+            echo "✅ Created new agent type: $SPECIALIZATION"
+          else
+            echo "📚 Using existing agent definition..."
+            
+            if [ "${{ github.event.inputs.specialization }}" != "" ]; then
+              SPECIALIZATION="${{ github.event.inputs.specialization }}"
+            else
+              SPECS=($(python3 tools/get-agent-info.py list))
+              RANDOM_INDEX=$((RANDOM % ${#SPECS[@]}))
+              SPECIALIZATION="${SPECS[$RANDOM_INDEX]}"
+            fi
+            
+            EMOJI=$(python3 tools/get-agent-info.py emoji "$SPECIALIZATION")
+            HUMAN_NAME=$(python3 tools/get-available-human-names.py --format random --with-fallback)
+            
+            if [ -z "$HUMAN_NAME" ]; then
+              echo "❌ Failed to generate unique human name"
+              exit 1
+            fi
+            
+            PERSONALITIES=("methodical and precise" "enthusiastic and energetic" "calm and thoughtful" "bold and innovative" "meticulous and careful" "creative and artistic" "analytical and logical" "friendly and collaborative")
+            PERS_INDEX=$((RANDOM % ${#PERSONALITIES[@]}))
+            PERSONALITY="${PERSONALITIES[$PERS_INDEX]}"
+            
+            COMM_STYLES=("uses technical jargon with enthusiasm" "explains things with analogies" "gets straight to the point" "adds encouraging emojis" "likes to share facts" "uses clear structure" "adds humor to discussions")
+            COMM_INDEX=$((RANDOM % ${#COMM_STYLES[@]}))
+            COMM_STYLE="${COMM_STYLES[$COMM_INDEX]}"
+          fi
+          
+          AGENT_NAME="${EMOJI} ${HUMAN_NAME}"
+          CREATIVITY=$((50 + RANDOM % 50))
+          CAUTION=$((30 + RANDOM % 70))
+          SPEED=$((40 + RANDOM % 60))
+          
+          echo "agent_id=$AGENT_ID" >> $GITHUB_OUTPUT
+          echo "agent_name=$AGENT_NAME" >> $GITHUB_OUTPUT
+          echo "human_name=$HUMAN_NAME" >> $GITHUB_OUTPUT
+          echo "specialization=$SPECIALIZATION" >> $GITHUB_OUTPUT
+          echo "emoji=$EMOJI" >> $GITHUB_OUTPUT
+          echo "personality=$PERSONALITY" >> $GITHUB_OUTPUT
+          echo "communication_style=$COMM_STYLE" >> $GITHUB_OUTPUT
+          echo "creativity=$CREATIVITY" >> $GITHUB_OUTPUT
+          echo "caution=$CAUTION" >> $GITHUB_OUTPUT
+          echo "speed=$SPEED" >> $GITHUB_OUTPUT
+          
+          echo "🤖 Generated Agent:"
+          echo "  ID: $AGENT_ID"
+          echo "  Name: $AGENT_NAME"
+          echo "  Specialization: $SPECIALIZATION"
+          echo "  Is New Type: $CREATE_NEW"
+
+      - name: Verify agent ID uniqueness
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          
+          if python3 -c "
+          import sys
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          registry = RegistryManager()
+          agent = registry.get_agent('$AGENT_ID')
+          sys.exit(0 if agent is None else 1)
+          "; then
+            echo "✅ Agent ID is unique: $AGENT_ID"
+          else
+            echo "❌ ERROR: Agent ID already exists in registry: $AGENT_ID"
+            exit 1
+          fi
+
+      - name: Register agent
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          cat > /tmp/new_agent.json << EOF
+          {
+            "id": "${{ steps.generate_agent.outputs.agent_id }}",
+            "name": "${{ steps.generate_agent.outputs.agent_name }}",
+            "human_name": "${{ steps.generate_agent.outputs.human_name }}",
+            "specialization": "${{ steps.generate_agent.outputs.specialization }}",
+            "status": "active",
+            "spawned_at": "$(date -u +"%Y-%m-%dT%H:%M:%S.%6NZ")",
+            "personality": "${{ steps.generate_agent.outputs.personality }}",
+            "communication_style": "${{ steps.generate_agent.outputs.communication_style }}",
+            "traits": {
+              "creativity": ${{ steps.generate_agent.outputs.creativity }},
+              "caution": ${{ steps.generate_agent.outputs.caution }},
+              "speed": ${{ steps.generate_agent.outputs.speed }}
+            },
+            "metrics": {
+              "issues_resolved": 0,
+              "prs_merged": 0,
+              "reviews_given": 0,
+              "code_quality_score": 0.5,
+              "overall_score": 0.0
+            },
+            "contributions": []
+          }
+          EOF
+          
+          python3 tools/add_agent_to_registry.py /tmp/new_agent.json
+
+      - name: Assign mentor
+        id: assign_mentor
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          set +e
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
+          
+          echo "🎓 Checking for available mentors..."
+          
+          MENTOR_OUTPUT=$(python3 tools/assign-mentor.py "$AGENT_ID" --specialization "$SPECIALIZATION" --json 2>&1)
+          MENTOR_EXIT_CODE=$?
+          set -e
+          
+          if [ $MENTOR_EXIT_CODE -eq 0 ] && [ -n "$MENTOR_OUTPUT" ]; then
+            if echo "$MENTOR_OUTPUT" | jq empty 2>/dev/null; then
+              echo "has_mentor=true" >> $GITHUB_OUTPUT
+              
+              MENTOR_NAME=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_name' 2>/dev/null || echo "Unknown")
+              MENTOR_ID=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_id' 2>/dev/null || echo "")
+              MENTOR_SPEC=$(echo "$MENTOR_OUTPUT" | jq -r '.mentor_specialization' 2>/dev/null || echo "")
+              MATCH_TYPE=$(echo "$MENTOR_OUTPUT" | jq -r '.matching_type' 2>/dev/null || echo "unknown")
+              
+              echo "mentor_name=$MENTOR_NAME" >> $GITHUB_OUTPUT
+              echo "mentor_id=$MENTOR_ID" >> $GITHUB_OUTPUT
+              echo "mentor_specialization=$MENTOR_SPEC" >> $GITHUB_OUTPUT
+              echo "match_type=$MATCH_TYPE" >> $GITHUB_OUTPUT
+              
+              echo "✅ Mentor assigned: $MENTOR_NAME ($MATCH_TYPE match)"
+            else
+              echo "has_mentor=false" >> $GITHUB_OUTPUT
+              echo "⚠️  Mentor assignment returned invalid JSON"
+            fi
+          else
+            echo "has_mentor=false" >> $GITHUB_OUTPUT
+            echo "⚠️  No mentor available"
+          fi
+
+      - name: Create agent profile
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
+          
+          mkdir -p ".github/agent-system/profiles"
+          
+          AGENT_DESCRIPTION=$(python3 tools/get-agent-info.py description "$SPECIALIZATION")
+          
+          HAS_MENTOR="${{ steps.assign_mentor.outputs.has_mentor }}"
+          if [ "$HAS_MENTOR" == "true" ]; then
+            MENTOR_SECTION="
+          ## 🎓 Mentorship
+          
+          **Mentor**: ${{ steps.assign_mentor.outputs.mentor_name }}  
+          **Mentor ID**: ${{ steps.assign_mentor.outputs.mentor_id }}  
+          **Mentor Specialization**: ${{ steps.assign_mentor.outputs.mentor_specialization }}  
+          **Match Type**: ${{ steps.assign_mentor.outputs.match_type }}
+          "
+          else
+            MENTOR_SECTION="
+          ## 🎓 Mentorship
+          
+          **Status**: No mentor assigned
+          "
+          fi
+          
+          cat > ".github/agent-system/profiles/${AGENT_ID}.md" << EOF
+          # $AGENT_NAME
+          
+          **ID**: $AGENT_ID  
+          **Specialization**: $SPECIALIZATION  
+          **Status**: 🟢 Active  
+          **Spawned**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          $MENTOR_SECTION
+          
+          ## Personality
+          
+          **Character**: ${{ steps.generate_agent.outputs.personality }}  
+          **Communication Style**: ${{ steps.generate_agent.outputs.communication_style }}
+          
+          ## Performance Traits
+          
+          - **Creativity**: ${{ steps.generate_agent.outputs.creativity }}/100
+          - **Caution**: ${{ steps.generate_agent.outputs.caution }}/100
+          - **Speed**: ${{ steps.generate_agent.outputs.speed }}/100
+          
+          ## Mission
+          
+          $AGENT_DESCRIPTION
+          
+          ## Performance Metrics
+          
+          - Issues Resolved: 0
+          - PRs Merged: 0
+          - Overall Score: 0%
+          
+          ---
+          
+          *Standard Agent Spawner - @workflows-tech-lead*
+          EOF
+          
+          echo "✅ Agent profile created"
+
+      - name: Commit and create PR
+        id: create_spawn_pr
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          AGENT_ID="${{ steps.generate_agent.outputs.agent_id }}"
+          AGENT_NAME="${{ steps.generate_agent.outputs.agent_name }}"
+          SPECIALIZATION="${{ steps.generate_agent.outputs.specialization }}"
+          EMOJI="${{ steps.generate_agent.outputs.emoji }}"
+          IS_NEW="${{ steps.generate_agent.outputs.is_new_agent }}"
+          
+          BRANCH_NAME="agent-spawn/${AGENT_ID}"
+          git checkout -b "$BRANCH_NAME"
+          
+          git add .github/agent-system/
+          if [ "$IS_NEW" == "true" ]; then
+            git add .github/agents/
+            git commit -m "$EMOJI Spawn new agent: ${{ steps.generate_agent.outputs.human_name }} ($SPECIALIZATION) + definition"
+          else
+            git commit -m "$EMOJI Spawn new agent: ${{ steps.generate_agent.outputs.human_name }} ($SPECIALIZATION)"
+          fi
+          git push origin "$BRANCH_NAME"
+          
+          PR_URL=$(gh pr create \
+            --title "$EMOJI New Agent Spawned: ${{ steps.generate_agent.outputs.human_name }}" \
+            --body "## 🎉 New Agent Spawned
+          
+          **Agent ID**: $AGENT_ID  
+          **Name**: $AGENT_NAME  
+          **Specialization**: $SPECIALIZATION  
+          **Spawned**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          
+          ---
+          *🤖 Created by workflow: [agent-spawning.yml](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Standard Spawner (@workflows-tech-lead)*" \
+            --label "agent-system,automated,copilot" \
+            --base main \
+            --head "$BRANCH_NAME") || {
+            PR_URL=$(gh pr create \
+              --title "$EMOJI New Agent Spawned: ${{ steps.generate_agent.outputs.human_name }}" \
+              --body "## 🎉 New Agent Spawned
+          
+          **Agent ID**: $AGENT_ID  
+          **Name**: $AGENT_NAME  
+          **Specialization**: $SPECIALIZATION
+          
+          ---
+          *🤖 Created by workflow: [agent-spawning.yml](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) - @workflows-tech-lead*" \
+              --base main \
+              --head "$BRANCH_NAME")
+          }
+          
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "✅ PR #$PR_NUMBER created"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🤖 Standard Agent Spawner" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check_capacity.outputs.can_spawn }}" == "true" ]; then
+            echo "✅ Agent spawned successfully" >> $GITHUB_STEP_SUMMARY
+            echo "- **Agent**: ${{ steps.generate_agent.outputs.agent_name }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **PR**: #${{ steps.create_spawn_pr.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.check_capacity.outputs.can_spawn }}" == "false" ]; then
+            echo "⚠️ Capacity limit reached" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ===================================================================================
+  # STAGE 2: Learning-Based Agent Spawner (from learning-based-agent-spawner.yml)
+  # ===================================================================================
+  learning-based-spawner:
+    name: "Learning-Based Spawner"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'learning-based-spawner'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check for recent learnings
+        id: check_learnings
+        run: |
+          echo "🔍 Checking for recent learnings..."
+          
+          RECENT_ANALYSIS=$(find learnings -name "analysis_*.json" -mtime -1 2>/dev/null | wc -l)
+          RECENT_HN=$(find learnings -name "hn_*.json" -mtime -1 2>/dev/null | wc -l)
+          RECENT_TLDR=$(find learnings -name "tldr_*.json" -mtime -1 2>/dev/null | wc -l)
+          
+          TOTAL_RECENT=$((RECENT_ANALYSIS + RECENT_HN + RECENT_TLDR))
+          
+          if [ $TOTAL_RECENT -gt 0 ]; then
+            echo "has_learnings=true" >> $GITHUB_OUTPUT
+            echo "✅ Found $TOTAL_RECENT recent learning files"
+          else
+            echo "has_learnings=false" >> $GITHUB_OUTPUT
+            echo "⚠️ No recent learnings found"
+          fi
+
+      - name: Check agent capacity
+        id: check_capacity
+        if: steps.check_learnings.outputs.has_learnings == 'true'
+        run: |
+          ACTIVE_COUNT=$(python3 tools/list_agents_from_registry.py --status active --format count 2>/dev/null || echo "0")
+          MAX_AGENTS=$(python3 -c "
+          import sys
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          registry = RegistryManager()
+          config = registry.get_config()
+          print(config.get('max_active_agents', 50))
+          " 2>/dev/null || echo "50")
+          
+          echo "active_count=$ACTIVE_COUNT" >> $GITHUB_OUTPUT
+          echo "max_agents=$MAX_AGENTS" >> $GITHUB_OUTPUT
+          
+          if [ "$ACTIVE_COUNT" -ge "$MAX_AGENTS" ]; then
+            echo "can_spawn=false" >> $GITHUB_OUTPUT
+          else
+            echo "can_spawn=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate learning-inspired agent
+        id: generate
+        if: steps.check_capacity.outputs.can_spawn == 'true'
+        run: |
+          echo "🤖 Generating agent from recent learnings..."
+          
+          AGENT_JSON=$(python3 tools/generate-learning-inspired-agent.py)
+          
+          if [ $? -ne 0 ]; then
+            echo "❌ Agent generation failed"
+            exit 1
+          fi
+          
+          echo "$AGENT_JSON" | jq empty || exit 1
+          
+          AGENT_NAME=$(echo "$AGENT_JSON" | jq -r '.agent_name')
+          DISPLAY_NAME=$(echo "$AGENT_JSON" | jq -r '.display_name')
+          EMOJI=$(echo "$AGENT_JSON" | jq -r '.emoji')
+          TOPIC=$(echo "$AGENT_JSON" | jq -r '.topic')
+          
+          echo "agent_name=$AGENT_NAME" >> $GITHUB_OUTPUT
+          echo "display_name=$DISPLAY_NAME" >> $GITHUB_OUTPUT
+          echo "emoji=$EMOJI" >> $GITHUB_OUTPUT
+          echo "topic=$TOPIC" >> $GITHUB_OUTPUT
+          
+          echo "✅ Learning-based agent generated: $AGENT_NAME"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🧬 Learning-Based Spawner" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check_learnings.outputs.has_learnings }}" == "false" ]; then
+            echo "⚠️ No recent learnings found" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.check_capacity.outputs.can_spawn }}" == "false" ]; then
+            echo "⚠️ Capacity limit reached" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.generate.outputs.agent_name }}" != "" ]; then
+            echo "✅ Agent generated from learnings" >> $GITHUB_STEP_SUMMARY
+            echo "- **Agent**: ${{ steps.generate.outputs.display_name }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Topic**: ${{ steps.generate.outputs.topic }}" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ===================================================================================
+  # STAGE 3: Workload-Based Sub-Agent Spawner (from workload-subagent-spawner.yml)
+  # ===================================================================================
+  workload-spawner:
+    name: "Workload-Based Spawner"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'workload-spawner'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install PyYAML requests beautifulsoup4 lxml psutil
+      
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Fetch current workload
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue list --json number,title,labels,state --limit 100 > /tmp/issues.json
+          gh pr list --json number,title,labels,state --limit 100 > /tmp/prs.json
+      
+      - name: Analyze workload
+        id: analyze
+        run: |
+          echo "🔍 Analyzing system workload..."
+          
+          python3 tools/workload_monitor.py \
+            --output .github/agent-system/workload_analysis.json \
+            --report \
+            --max-spawns ${{ github.event.inputs.max_spawns || '5' }}
+          
+          NEEDS_SPAWN=$(jq -r '.summary.spawning_needed' .github/agent-system/workload_analysis.json)
+          RECOMMENDED=$(jq -r '.summary.recommended_spawns' .github/agent-system/workload_analysis.json)
+          
+          echo "needs_spawn=$NEEDS_SPAWN" >> $GITHUB_OUTPUT
+          echo "recommended_spawns=$RECOMMENDED" >> $GITHUB_OUTPUT
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 📊 Workload-Based Spawner" >> $GITHUB_STEP_SUMMARY
+          echo "**Spawning Needed:** ${{ steps.analyze.outputs.needs_spawn }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Recommended:** ${{ steps.analyze.outputs.recommended_spawns }}" >> $GITHUB_STEP_SUMMARY
