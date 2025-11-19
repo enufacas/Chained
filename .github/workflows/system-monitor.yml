@@ -7,10 +7,6 @@ on:
     - cron: '0 */6 * * *'
     # Run every 3 hours for merge conflict resolution, agent health, and pages health
     - cron: '0 */3 * * *'
-  issues:
-    types: [opened, closed, labeled]
-  pull_request:
-    types: [opened, closed, merged]
   workflow_dispatch:
     inputs:
       skip_timeline:
@@ -54,7 +50,6 @@ permissions:
 jobs:
   timeline-update:
     runs-on: ubuntu-latest
-    # Only run on schedule to prevent event cascade from PR triggers
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout repository
