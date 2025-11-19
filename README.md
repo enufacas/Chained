@@ -237,13 +237,13 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
   - Quick reference tables
 
 #### Quality & Validation
-- **[✅ Completion Questions Framework](./COMPLETION_QUESTIONS.md)** - Quality audit system
+- **[✅ Completion Questions Framework](./docs/guides/COMPLETION_QUESTIONS.md)** - Quality audit system
   - 8 mandatory questions for every workflow
   - Valid/invalid answer examples
   - PR and issue body templates
   - Automated validation scripts
 
-- **[🏷️ Label Management Guide](./LABELS.md)** - Complete label reference
+- **[🏷️ Label Management Guide](./docs/guides/LABELS.md)** - Complete label reference
   - Naming conventions and categories
   - Creation patterns (create before use!)
   - Agent, category, location, status labels

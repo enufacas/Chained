@@ -1061,8 +1061,8 @@ echo "🎉 All tests passed!"
 ## 📚 Related Documentation
 
 - [Autonomous System Architecture](./AUTONOMOUS_SYSTEM_ARCHITECTURE.md)
-- [Workflow Validation Guide](./WORKFLOW_VALIDATION_GUIDE.md)
-- [Label Management](./LABELS.md)
+- [Workflow Validation Guide](./docs/guides/WORKFLOW_VALIDATION_GUIDE.md)
+- [Label Management](./docs/guides/LABELS.md)
 - [Agent System Quick Start](./AGENT_QUICKSTART.md)
 
 ---
