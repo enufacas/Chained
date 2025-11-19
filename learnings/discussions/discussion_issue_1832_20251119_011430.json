@@ -1,0 +1,373 @@
+{
+  "issue_number": 1832,
+  "issue_title": "Organize and consolidate workflows",
+  "issue_labels": [
+    "copilot-assigned",
+    "agent:workflows-tech-lead"
+  ],
+  "total_comments": 1,
+  "participants": [
+    "enufacas"
+  ],
+  "duration_hours": 0.01,
+  "insights": [
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:workflows-tech-lead -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 workflows-tech-lead** custom agent profile",
+      "context": "<!-- COPILOT_AGENT:workflows-tech-lead -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 workflows-tech-lead** custom agent profile.\n> \n> **@workflows-tech",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-19T00:39:42Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "> \n> **@workflows-tech-lead** - Please use the specialized approach and tools defined in [`",
+      "context": "<!-- COPILOT_AGENT:workflows-tech-lead -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 workflows-tech-lead** custom agent profile.\n> \n> **@workflows-tech",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-19T00:39:42Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "github/agents/workflows-tech-lead",
+      "context": "<!-- COPILOT_AGENT:workflows-tech-lead -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 workflows-tech-lead** custom agent profile.\n> \n> **@workflows-tech",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-19T00:39:42Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "github/agents/workflows-tech-lead",
+      "context": "<!-- COPILOT_AGENT:workflows-tech-lead -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 workflows-tech-lead** custom agent profile.\n> \n> **@workflows-tech",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-19T00:39:42Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "> \n> **IMPORTANT**: Always mention **@workflows-tech-lead** by name in all conversations, comments, and PRs related to this issue",
+      "context": "<!-- COPILOT_AGENT:workflows-tech-lead -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 workflows-tech-lead** custom agent profile.\n> \n> **@workflows-tech",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-19T00:39:42Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "---\n\nThere are a large number of workflows that are experiments or one offs",
+      "context": "<!-- COPILOT_AGENT:workflows-tech-lead -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 workflows-tech-lead** custom agent profile.\n> \n> **@workflows-tech",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-19T00:39:42Z",
+      "confidence": 0.6,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "Perhaps we could have slightly bigger workflows with named stages and allow an individual stage to be triggered",
+      "context": "<!-- COPILOT_AGENT:workflows-tech-lead -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83d\udd27 workflows-tech-lead** custom agent profile.\n> \n> **@workflows-tech",
+      "participants": [
+        "issue_author"
+      ],
+      "timestamp": "2025-11-19T00:39:42Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the \ud83d\udd27 **@workflows-tech-lead** specialization:\n\n- **Agent**: \ud83d\udd27 **@workflows-tech-lead**\n- **Match Confidence**: high\n- **Match Score**: 7\n- **Description**: Tech Lead agent responsible for GitHub Actions workflows, ensuring reliability and best practices in CI/CD automation\n- **Agent Path**: [`",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "workflow",
+        "agent",
+        "automation"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "github/agents/workflows-tech-lead",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "github/agents/workflows-tech-lead",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@workflows-tech-lead** by name in all conversations related to this issue",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@workflows-tech-lead** - Please use the **workflows-tech-lead** custom agent profile from `",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "github/agents/workflows-tech-lead",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "**IMPORTANT**: Always mention **@workflows-tech-lead** by name in all your conversations, comments, and PRs related to this issue to ensure proper attribution and tracking",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [workflows-tech-lead agent definition](https://github",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "github/agents/workflows-tech-lead",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "workflow",
+        "agent"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "\u2705 **@workflows-tech-lead** will analyze the issue requirements using the workflows-tech-lead specialization\n2",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **@workflows-tech-lead** will create a branch and implement the solution following the workflows-tech-lead approach\n3",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **@workflows-tech-lead** will open a PR with the implementation\n4",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.6,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ]
+    },
+    {
+      "issue_number": 1832,
+      "issue_title": "Organize and consolidate workflows",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** **@workflows-tech-lead** (workflows-tech-lead specialization)\n**Assigned at:** 2025-11-19 00:40:07 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
+      "participants": [
+        "enufacas"
+      ],
+      "timestamp": "2025-11-19T00:40:07Z",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "workflow",
+        "agent"
+      ]
+    }
+  ],
+  "key_decisions": [],
+  "patterns_identified": [],
+  "learning_quality": 0.5,
+  "timestamp": "2025-11-19T01:14:30.404297+00:00"
+}
