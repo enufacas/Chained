@@ -635,8 +635,99 @@
         "copilot",
         "agent-system"
       ]
+    },
+    {
+      "pr_number": 1868,
+      "title": "[WIP] Fix workflow health monitoring issues",
+      "author": "Copilot",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-19T01:43:43Z",
+      "closed_at": "2025-11-19T02:20:05Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": true
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "copilot"
+      ]
+    },
+    {
+      "pr_number": 1894,
+      "title": "\ud83d\udcca Code Analysis Results",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-19T02:14:56Z",
+      "closed_at": "2025-11-19T02:19:48Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "code-quality"
+      ]
+    },
+    {
+      "pr_number": 1891,
+      "title": "\ud83d\udcca Code Analysis Results",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-19T02:14:00Z",
+      "closed_at": "2025-11-19T02:19:36Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "code-quality"
+      ]
+    },
+    {
+      "pr_number": 1889,
+      "title": "\ud83d\udcca Code Analysis Results",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-19T02:13:29Z",
+      "closed_at": "2025-11-19T02:19:29Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "code-quality"
+      ]
     }
   ],
-  "last_updated": "2025-11-19T02:13:58.007439+00:00",
-  "total_count": 27
+  "last_updated": "2025-11-19T02:21:23.398598+00:00",
+  "total_count": 31
 }
