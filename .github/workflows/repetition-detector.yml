@@ -273,27 +273,55 @@ jobs:
             # Extract flagged agent details for better reporting
             # Validate file exists first to provide better error messages
             if [ ! -f "analysis/uniqueness-scores.json" ]; then
-              flagged_agents="- Error: uniqueness-scores.json file not found"
-            else
-              flagged_agents=$(python3 -c '
+              echo "⚠️  uniqueness-scores.json not found, skipping issue creation"
+              exit 0
+            fi
+            
+            # Extract flagged agents and validate they have sufficient data for diversity analysis
+            # Agents with insufficient data (< 3 contributions) should NOT trigger diversity alerts
+            flagged_agents=$(python3 -c '
           import json
           import sys
           try:
               with open("analysis/uniqueness-scores.json") as f:
                   data = json.load(f)
                   flagged = data.get("flagged_agents", [])
-                  if flagged:
-                      for agent in flagged:
+                  scores = data.get("scores", {})
+                  
+                  # Validate that flagged agents actually have sufficient data
+                  # Filter out agents with "Insufficient data" notes
+                  real_flagged = []
+                  for agent in flagged:
+                      agent_id = agent.get("agent_id", "unknown")
+                      # Check if this agent has the "Insufficient data" note
+                      agent_score = scores.get(agent_id, {})
+                      if "note" in agent_score and "Insufficient data" in agent_score["note"]:
+                          # Skip agents with insufficient data - they should not trigger alerts
+                          continue
+                      real_flagged.append(agent)
+                  
+                  if real_flagged:
+                      for agent in real_flagged:
                           agent_id = agent.get("agent_id", "unknown")
                           score = agent.get("score", 0)
                           reason = agent.get("reason", "no reason")
-                          print(f"- **{agent_id}**: Score {score} - {reason}")
+                          print(f"- **{agent_id}**: Score {score:.2f} - {reason}")
+                      # Exit with 0 to indicate real flagged agents found
+                      sys.exit(0)
                   else:
-                      print("- None (all agents above threshold)")
+                      # No real flagged agents (all have insufficient data)
+                      # Exit with 1 to signal no issue should be created
+                      sys.exit(1)
           except Exception as e:
-              print(f"- Error: {type(e).__name__}: {str(e)}")
+              print(f"- Error: {type(e).__name__}: {str(e)}", file=sys.stderr)
               sys.exit(1)
-          ' 2>&1) || flagged_agents="- Error extracting agent details (check workflow logs)"
+          ' 2>&1)
+            
+            # Check if we got real flagged agents (exit code 0) or not (exit code 1)
+            if [ $? -ne 0 ]; then
+              echo "✅ No agents with sufficient data are flagged - skipping issue creation"
+              echo "   All flagged agents have insufficient contributions (< 3) for diversity analysis"
+              exit 0
             fi
             
             cat > /tmp/issue_body.md << 'ISSUE_EOF'
