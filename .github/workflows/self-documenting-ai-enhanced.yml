@@ -20,6 +20,11 @@ permissions:
   issues: read
   pull-requests: write
 
+# Prevent concurrent runs to avoid merge conflicts
+concurrency:
+  group: learning-discussions-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   enhanced-learning:
     runs-on: ubuntu-latest
@@ -149,6 +154,17 @@ jobs:
             echo "ℹ️ No new learnings to commit"
             exit 0
           fi
+          
+          # Pull latest changes from main to avoid conflicts
+          echo "🔄 Pulling latest changes from main..."
+          git fetch origin main
+          git merge origin/main --no-edit || {
+            echo "⚠️ Merge conflict detected, attempting to resolve..."
+            # Keep our changes for learnings directory
+            git checkout --ours learnings/
+            git add learnings/
+            git commit --no-edit
+          }
           
           # Create branch
           git checkout -b "$BRANCH_NAME"
