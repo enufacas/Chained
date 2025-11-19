@@ -1527,6 +1527,39 @@
       "mention_count": 61,
       "category": "Company Innovation",
       "created_at": "2025-11-19T08:21:47Z"
+    },
+    {
+      "id": "idea:43",
+      "title": "Integration: Ai-Agents-Cloud Innovation",
+      "summary": "Exploring ai-agents-cloud trends with 117 mentions. AI + Infrastructure: Integrate AI capabilities with cloud infrastructure Also: Combining Ai-Agents and Cloud for better solutions",
+      "patterns": [
+        "cloud",
+        "ai-agents-cloud",
+        "integration",
+        "agents",
+        "ai"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 117,
+      "category": "Integration",
+      "created_at": "2025-11-19T20:16:40Z"
     }
   ]
 }
