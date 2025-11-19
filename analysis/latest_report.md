@@ -1,6 +1,6 @@
 # Code Analysis Report
 
-**Generated:** 2025-11-19T01:46:32.830693+00:00
+**Generated:** 2025-11-19T01:49:34.425055+00:00
 
 **Directory:** .
 
@@ -20,17 +20,17 @@
 - bad:deep_nesting: 122
 
 ## Learning Insights
-Total merges analyzed: 2
+Total merges analyzed: 3
 
 ### Most Reliable Good Patterns
-- **descriptive_variable_names**: 100.00% success correlation (92536 occurrences)
-- **comprehensive_docstrings**: 100.00% success correlation (3590 occurrences)
-- **error_handling**: 100.00% success correlation (735 occurrences)
+- **descriptive_variable_names**: 100.00% success correlation (184337 occurrences)
+- **comprehensive_docstrings**: 100.00% success correlation (7155 occurrences)
+- **error_handling**: 100.00% success correlation (1467 occurrences)
 
 ### Most Problematic Bad Patterns
-- **long_functions**: 0.00% issue correlation (498 occurrences)
-- **deep_nesting**: 0.00% issue correlation (123 occurrences)
-- **magic_numbers**: 0.00% issue correlation (205148 occurrences)
+- **long_functions**: 0.00% issue correlation (990 occurrences)
+- **deep_nesting**: 0.00% issue correlation (245 occurrences)
+- **magic_numbers**: 0.00% issue correlation (410273 occurrences)
 
 ## Recommendations
 - ⚠️ Consider refactoring code with detected bad patterns
