@@ -1,23 +1,51 @@
-name: "Autonomous A/B Testing Orchestrator"
+name: "A/B Testing System"
 
-# This workflow autonomously creates, manages, and learns from A/B testing experiments
-# Author: @accelerate-specialist
+# Consolidated A/B testing workflow
+# Created by @workflows-tech-lead
+#
+# This workflow consolidates:
+# - ab-testing-demo.yml: Integration demo for A/B testing
+# - ab-testing-manager.yml: Experiment manager and analyzer
+# - autonomous-ab-testing.yml: Autonomous experiment orchestrator
+#
+# Each stage can be triggered independently via workflow_dispatch
 
 on:
   schedule:
-    # Run twice daily to manage experiments
+    # Run demo every 6 hours (optimized based on A/B test)
+    - cron: '0 */6 * * *'
+    # Run manager daily for analysis
+    - cron: '0 8 * * *'
+    # Run autonomous orchestrator twice daily
     - cron: '0 6,18 * * *'
+  
   workflow_dispatch:
     inputs:
-      action:
-        description: 'Action to perform'
+      stage:
+        description: 'Which A/B testing stage to run'
         required: true
         type: choice
+        default: 'demo'
         options:
+          - demo
+          - manager
+          - autonomous
+      action:
+        description: 'Action for manager/autonomous stages'
+        required: false
+        type: choice
+        options:
+          - analyze_all
+          - list_experiments
+          - create_example
           - auto_create_experiments
           - analyze_and_optimize
           - rollout_winners
-        default: 'analyze_and_optimize'
+        default: 'analyze_all'
+      experiment_id:
+        description: 'Experiment ID (for specific operations)'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -25,8 +53,382 @@ permissions:
   pull-requests: write
 
 jobs:
-  orchestrate-ab-testing:
+  # Stage 1: A/B Testing Integration Demo
+  ab-testing-demo:
+    name: "A/B Testing Demo"
     runs-on: ubuntu-latest
+    # Run on schedule at */6 hours, or manual trigger with 'demo' stage
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 */6 * * *') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'demo')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Check for Active Experiment
+        id: check_experiment
+        run: |
+          # Check if there's an active experiment for this workflow
+          result=$(python3 tools/ab_testing_helper.py get-variant "ab-testing-demo" || echo '{"has_experiment": false}')
+          
+          echo "Experiment check result:"
+          echo "$result" | jq '.'
+          
+          # Extract values for use in subsequent steps
+          has_experiment=$(echo "$result" | jq -r '.has_experiment')
+          experiment_id=$(echo "$result" | jq -r '.experiment_id // ""')
+          variant=$(echo "$result" | jq -r '.variant // "control"')
+          
+          echo "has_experiment=${has_experiment}" >> $GITHUB_OUTPUT
+          echo "experiment_id=${experiment_id}" >> $GITHUB_OUTPUT
+          echo "variant=${variant}" >> $GITHUB_OUTPUT
+          
+          # Get variant configuration
+          if [ "$has_experiment" == "true" ]; then
+            config=$(echo "$result" | jq -c '.variant_config')
+            echo "variant_config=${config}" >> $GITHUB_OUTPUT
+            echo "✅ Active experiment found, using variant: ${variant}"
+          else
+            echo "ℹ️ No active experiment, using default configuration"
+          fi
+
+      - name: Apply Variant Configuration
+        id: apply_config
+        env:
+          VARIANT: ${{ steps.check_experiment.outputs.variant }}
+          VARIANT_CONFIG: ${{ steps.check_experiment.outputs.variant_config }}
+        run: |
+          echo "🔧 Applying configuration for variant: ${VARIANT}"
+          
+          if [ -n "${VARIANT_CONFIG}" ]; then
+            echo "Configuration: ${VARIANT_CONFIG}"
+            
+            # Example: Extract configuration values
+            timeout=$(echo "${VARIANT_CONFIG}" | jq -r '.timeout // 300')
+            retries=$(echo "${VARIANT_CONFIG}" | jq -r '.max_retries // 3')
+            
+            echo "  Timeout: ${timeout}s"
+            echo "  Max Retries: ${retries}"
+            
+            # Export for use in job
+            echo "timeout=${timeout}" >> $GITHUB_OUTPUT
+            echo "retries=${retries}" >> $GITHUB_OUTPUT
+          else
+            # Default configuration
+            echo "  Using default configuration"
+            echo "timeout=300" >> $GITHUB_OUTPUT
+            echo "retries=3" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Execute Workflow Task (Demo)
+        id: task
+        env:
+          TIMEOUT: ${{ steps.apply_config.outputs.timeout }}
+          RETRIES: ${{ steps.apply_config.outputs.retries }}
+        run: |
+          echo "🚀 Executing task with configuration:"
+          echo "  Timeout: ${TIMEOUT}s"
+          echo "  Max Retries: ${RETRIES}"
+          
+          # Record start time
+          start_time=$(date +%s)
+          
+          # Simulate task execution
+          sleep 2
+          
+          # Calculate execution time
+          end_time=$(date +%s)
+          execution_time=$((end_time - start_time))
+          
+          # Simulate success rate (for demo, always 100%)
+          success_rate=1.0
+          
+          # Record metrics for use in next step
+          echo "execution_time=${execution_time}" >> $GITHUB_OUTPUT
+          echo "success_rate=${success_rate}" >> $GITHUB_OUTPUT
+          
+          echo "✅ Task completed in ${execution_time}s"
+
+      - name: Record A/B Test Sample
+        if: steps.check_experiment.outputs.has_experiment == 'true'
+        env:
+          EXPERIMENT_ID: ${{ steps.check_experiment.outputs.experiment_id }}
+          VARIANT: ${{ steps.check_experiment.outputs.variant }}
+          EXECUTION_TIME: ${{ steps.task.outputs.execution_time }}
+          SUCCESS_RATE: ${{ steps.task.outputs.success_rate }}
+        run: |
+          echo "📊 Recording A/B test sample"
+          echo "  Experiment: ${EXPERIMENT_ID}"
+          echo "  Variant: ${VARIANT}"
+          echo "  Execution Time: ${EXECUTION_TIME}s"
+          echo "  Success Rate: ${SUCCESS_RATE}"
+          
+          # Record the sample
+          python3 tools/ab_testing_helper.py record \
+            "${EXPERIMENT_ID}" \
+            "${VARIANT}" \
+            --metric execution_time="${EXECUTION_TIME}" \
+            --metric success_rate="${SUCCESS_RATE}" \
+            --metadata run_id="${{ github.run_id }}" \
+            --metadata workflow="${{ github.workflow }}" \
+            --metadata run_number="${{ github.run_number }}"
+          
+          echo "✅ Sample recorded successfully"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### 🔬 A/B Testing Demo Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check_experiment.outputs.has_experiment }}" == "true" ]; then
+            echo "**Status**: Active experiment detected" >> $GITHUB_STEP_SUMMARY
+            echo "**Experiment ID**: ${{ steps.check_experiment.outputs.experiment_id }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Variant Used**: ${{ steps.check_experiment.outputs.variant }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Performance Metrics**:" >> $GITHUB_STEP_SUMMARY
+            echo "- Execution Time: ${{ steps.task.outputs.execution_time }}s" >> $GITHUB_STEP_SUMMARY
+            echo "- Success Rate: ${{ steps.task.outputs.success_rate }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Status**: No active experiment" >> $GITHUB_STEP_SUMMARY
+            echo "Using default configuration" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "*Consolidated by @workflows-tech-lead - Stage: demo*" >> $GITHUB_STEP_SUMMARY
+
+  # Stage 2: A/B Testing Manager
+  experiment-manager:
+    name: "Experiment Manager"
+    runs-on: ubuntu-latest
+    # Run on schedule at 8am daily, or manual trigger with 'manager' stage
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 8 * * *') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'manager')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: List Active Experiments
+        id: list
+        run: |
+          python3 tools/ab_testing_engine.py list active > /tmp/active_experiments.json
+          echo "Active Experiments:"
+          cat /tmp/active_experiments.json
+          
+          # Count active experiments
+          count=$(python3 -c "import json; data = json.load(open('/tmp/active_experiments.json')); print(len(data))")
+          echo "experiment_count=${count}" >> $GITHUB_OUTPUT
+
+      - name: Analyze Experiments
+        if: github.event.inputs.action == 'analyze_all' || github.event.inputs.action == '' || github.event_name == 'schedule'
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import sys
+          
+          # Add tools to path
+          sys.path.insert(0, 'tools')
+          from ab_testing_engine import ABTestingEngine
+          
+          engine = ABTestingEngine()
+          
+          # Get all active experiments
+          active_experiments = engine.list_experiments(status="active")
+          
+          print(f"🔬 Analyzing {len(active_experiments)} active experiments...")
+          
+          results = []
+          for exp_summary in active_experiments:
+              exp_id = exp_summary["id"]
+              exp_name = exp_summary["name"]
+              
+              print(f"\n📊 Analyzing: {exp_name} ({exp_id})")
+              
+              try:
+                  analysis = engine.analyze_experiment(exp_id)
+                  
+                  if analysis["status"] == "insufficient_data":
+                      print(f"  ⏳ Status: Insufficient data")
+                      print(f"  📈 Samples: {analysis['current_samples']}")
+                  elif analysis["status"] == "analyzed":
+                      print(f"  ✅ Status: Analysis complete")
+                      
+                      if analysis["winner"]:
+                          winner_info = analysis["winner"]
+                          print(f"  🏆 Winner: {winner_info['variant']}")
+                          print(f"  📈 Improvement: {winner_info['improvement']:.2%}")
+                          print(f"  🎯 Confidence: {winner_info['confidence']}")
+                          
+                          results.append({
+                              "experiment_id": exp_id,
+                              "experiment_name": exp_name,
+                              "winner": winner_info["variant"],
+                              "improvement": winner_info["improvement"]
+                          })
+                      else:
+                          print(f"  ⚖️  No clear winner yet")
+              except Exception as e:
+                  print(f"  ❌ Error analyzing experiment: {e}")
+          
+          # Save results
+          if results:
+              with open('/tmp/winning_experiments.json', 'w') as f:
+                  json.dump(results, f, indent=2)
+              print(f"\n✅ Found {len(results)} experiments with clear winners")
+          else:
+              print(f"\n📊 No experiments have clear winners yet")
+          PYTHON_SCRIPT
+
+      - name: Create Example Experiment
+        if: github.event.inputs.action == 'create_example'
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import sys
+          sys.path.insert(0, 'tools')
+          from ab_testing_engine import ABTestingEngine
+          
+          engine = ABTestingEngine()
+          
+          # Create an example experiment
+          variants = {
+              "control": {
+                  "schedule": "*/15 * * * *",
+                  "description": "Current 15-minute schedule"
+              },
+              "variant_a": {
+                  "schedule": "*/10 * * * *",
+                  "description": "More frequent 10-minute schedule"
+              },
+              "variant_b": {
+                  "schedule": "*/20 * * * *",
+                  "description": "Less frequent 20-minute schedule"
+              }
+          }
+          
+          exp_id = engine.create_experiment(
+              name="Auto-Review Schedule Optimization",
+              description="Testing different schedule frequencies for auto-review-merge workflow to optimize for resource usage vs responsiveness",
+              variants=variants,
+              metrics=["execution_time", "success_rate", "resource_usage"],
+              workflow_name="auto-review-merge"
+          )
+          
+          print(f"✅ Created example experiment: {exp_id}")
+          print(f"📋 Experiment: Auto-Review Schedule Optimization")
+          print(f"🔬 Variants: {len(variants)}")
+          print(f"📊 Metrics: execution_time, success_rate, resource_usage")
+          PYTHON_SCRIPT
+
+      - name: Report Results
+        if: steps.list.outputs.experiment_count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if we have winning experiments
+          if [ -f /tmp/winning_experiments.json ]; then
+            winners=$(cat /tmp/winning_experiments.json)
+            winner_count=$(echo "$winners" | python3 -c "import json, sys; print(len(json.load(sys.stdin)))")
+            
+            if [ "$winner_count" -gt 0 ]; then
+              # Create issue to report winners
+              issue_body=$(cat << 'EOF'
+          ## 🏆 A/B Testing Results Available
+          
+          **@engineer-master** has completed analysis of active A/B testing experiments.
+          
+          ### Winning Experiments
+          
+          The following experiments have clear winners based on statistical analysis:
+          
+          EOF
+          )
+              
+              # Add winner details
+              echo "$winners" | python3 << 'PYTHON_SCRIPT' >> /tmp/issue_body.md
+          import json
+          import sys
+          
+          winners = json.load(sys.stdin)
+          
+          for result in winners:
+              exp_name = result["experiment_name"]
+              winner = result["winner"]
+              improvement = result["improvement"]
+              
+              print(f"#### {exp_name}")
+              print(f"- **Winner**: `{winner}`")
+              print(f"- **Improvement**: {improvement:.2%}")
+              print(f"- **Recommendation**: Consider rolling out the winning configuration")
+              print()
+          PYTHON_SCRIPT
+              
+              cat /tmp/issue_body.md >> /tmp/full_issue_body.md
+              echo "" >> /tmp/full_issue_body.md
+              echo "**IMPORTANT**: Always mention **@engineer-master** by name when discussing these results." >> /tmp/full_issue_body.md
+              echo "" >> /tmp/full_issue_body.md
+              echo "*Generated by @workflows-tech-lead consolidation (stage: manager)*" >> /tmp/full_issue_body.md
+              
+              # Create the issue
+              gh issue create \
+                --title "🏆 A/B Testing Winners Detected" \
+                --body-file /tmp/full_issue_body.md \
+                --label "automated,ab-testing,ai-generated" \
+                --repo ${{ github.repository }}
+              
+              echo "✅ Created issue with A/B testing results"
+            fi
+          fi
+
+      - name: Summary
+        run: |
+          echo "### 🔬 A/B Testing Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Active Experiments**: ${{ steps.list.outputs.experiment_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f /tmp/active_experiments.json ]; then
+            echo "#### Active Experiments" >> $GITHUB_STEP_SUMMARY
+            python3 << 'PYTHON_SCRIPT' >> $GITHUB_STEP_SUMMARY
+          import json
+          
+          with open('/tmp/active_experiments.json', 'r') as f:
+              experiments = json.load(f)
+          
+          if experiments:
+              print("| Experiment | Status | Variants | Total Samples |")
+              print("|------------|--------|----------|---------------|")
+              for exp in experiments:
+                  print(f"| {exp['name']} | {exp['status']} | {exp['variant_count']} | {exp['total_samples']} |")
+          else:
+              print("*No active experiments*")
+          PYTHON_SCRIPT
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "*Consolidated by @workflows-tech-lead - Stage: manager*" >> $GITHUB_STEP_SUMMARY
+
+  # Stage 3: Autonomous A/B Testing Orchestrator
+  autonomous-orchestrator:
+    name: "Autonomous Orchestrator"
+    runs-on: ubuntu-latest
+    # Run on schedule twice daily, or manual trigger with 'autonomous' stage
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 6,18 * * *') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'autonomous')
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -130,7 +532,10 @@ jobs:
           fi
 
       - name: Auto-Create Experiments
-        if: github.event.inputs.action == 'auto_create_experiments' || github.event_name == 'schedule'
+        if: |
+          github.event.inputs.action == 'auto_create_experiments' ||
+          github.event.inputs.action == '' ||
+          github.event_name == 'schedule'
         run: |
           python3 << 'PYTHON_SCRIPT'
           import json
@@ -385,7 +790,7 @@ jobs:
               # Create issue body
               issue_body = f"""## 🏆 A/B Test Winner Ready for Rollout
           
-           @accelerate-specialist has identified a winning configuration for automatic rollout.
+          **@accelerate-specialist** has identified a winning configuration for automatic rollout.
           
           ### Experiment Details
           
@@ -394,7 +799,7 @@ jobs:
           - **Winner**: `{winner}`
           - **Improvement**: {improvement:.2%}
           
-          ###Winning Configuration
+          ### Winning Configuration
           
           ```json
           {json.dumps(config, indent=2)}
@@ -413,7 +818,8 @@ jobs:
           
           ---
           
-          *Generated by @accelerate-specialist Autonomous A/B Testing System*
+          *Generated by @workflows-tech-lead consolidation (stage: autonomous)*
+          *Original system by @accelerate-specialist*
           """
               
               # Create the issue with label fallback
@@ -514,4 +920,4 @@ jobs:
           
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
-          echo "*Autonomous optimization by **@accelerate-specialist***" >> $GITHUB_STEP_SUMMARY
+          echo "*Consolidated by @workflows-tech-lead - Stage: autonomous*" >> $GITHUB_STEP_SUMMARY

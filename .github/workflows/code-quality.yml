@@ -1,0 +1,337 @@
+name: Code Quality System
+
+# Consolidates code quality workflows:
+# - code-analyzer.yml → Stage: analyzer
+# - code-archaeologist.yml → Stage: archaeologist
+# - code-golf-optimizer.yml → Stage: golf-optimizer
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'analysis/**'
+  
+  pull_request:
+    types: [closed]
+    paths-ignore:
+      - 'analysis/**'
+  
+  schedule:
+    # Archaeologist: Weekly on Mondays at 9 AM UTC
+    - cron: '0 9 * * 1'
+    # Golf Optimizer: Weekly on Mondays at 10 AM UTC
+    - cron: '0 10 * * 1'
+  
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: 'Which quality stage to run'
+        required: true
+        type: choice
+        default: 'analyzer'
+        options:
+          - analyzer
+          - archaeologist
+          - golf-optimizer
+      
+      # Analyzer options
+      directory:
+        description: '[Analyzer] Directory to analyze'
+        required: false
+        default: '.'
+      mark_as_failure:
+        description: '[Analyzer] Mark as failed merge (for learning)'
+        required: false
+        type: boolean
+        default: false
+      
+      # Archaeologist options
+      max_commits:
+        description: '[Archaeologist] Maximum commits to analyze'
+        required: false
+        default: '100'
+      since:
+        description: '[Archaeologist] Only analyze commits since (e.g., "1 month ago")'
+        required: false
+      
+      # Golf Optimizer options
+      file_path:
+        description: '[Golf] Path to file to optimize (optional)'
+        required: false
+        type: string
+      language:
+        description: '[Golf] Programming language'
+        required: false
+        default: 'python'
+        type: choice
+        options:
+          - python
+          - javascript
+          - bash
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  # ===================================================================================
+  # STAGE 1: Code Analyzer (from code-analyzer.yml)
+  # ===================================================================================
+  analyzer:
+    name: "Code Analyzer"
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'analyzer')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Run Code Analyzer
+        id: analyze
+        run: |
+          merge_success="true"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.mark_as_failure }}" = "true" ]; then
+            merge_success="false"
+          fi
+          
+          target_dir="${{ inputs.directory }}"
+          if [ -z "${target_dir}" ]; then
+            target_dir="."
+          fi
+          
+          echo "Analyzing directory: ${target_dir}"
+          echo "Merge successful: ${merge_success}"
+          
+          if [ "${merge_success}" = "true" ]; then
+            python3 tools/code-analyzer.py -d "${target_dir}" --learn --success -o analysis/latest_report.md
+          else
+            python3 tools/code-analyzer.py -d "${target_dir}" --learn --failure -o analysis/latest_report.md
+          fi
+          
+          echo "merge_success=${merge_success}" >> $GITHUB_OUTPUT
+          echo "target_dir=${target_dir}" >> $GITHUB_OUTPUT
+
+      - name: Commit analysis results
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add analysis/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="code-analysis/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            git commit -m "Code analysis results - ${{ steps.analyze.outputs.target_dir }}"
+            git push origin "$BRANCH_NAME"
+            
+            gh pr create \
+              --title "📊 Code Analysis Results" \
+              --body "## Code Analysis Results
+            
+            **Directory**: ${{ steps.analyze.outputs.target_dir }}  
+            **Merge Success**: ${{ steps.analyze.outputs.merge_success }}
+            
+            ---
+            *🤖 Created by workflow: [code-quality.yml](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Analyzer (@workflows-tech-lead)*" \
+              --label "automated,code-quality" \
+              --base main \
+              --head "$BRANCH_NAME" || true
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 📊 Code Analyzer" >> $GITHUB_STEP_SUMMARY
+          echo "- **Directory**: ${{ steps.analyze.outputs.target_dir }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ steps.analyze.outputs.merge_success }}" >> $GITHUB_STEP_SUMMARY
+
+  # ===================================================================================
+  # STAGE 2: Code Archaeologist (from code-archaeologist.yml)
+  # ===================================================================================
+  archaeologist:
+    name: "Code Archaeologist"
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 9 * * 1') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'archaeologist')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Run Code Archaeologist
+        id: archaeology
+        run: |
+          max_commits="${{ github.event.inputs.max_commits }}"
+          max_commits="${max_commits:-100}"
+          
+          since_arg=""
+          if [ -n "${{ github.event.inputs.since }}" ]; then
+            since_arg="--since '${{ github.event.inputs.since }}'"
+          fi
+          
+          echo "Running archaeology: max_commits=$max_commits $since_arg"
+          
+          python3 tools/code-archaeologist.py \
+            -n "$max_commits" \
+            $since_arg \
+            -o archaeology_report.md \
+            --learn
+          
+          commits_analyzed=$(grep "Total commits analyzed:" archaeology_report.md | grep -o '[0-9]*' || echo "0")
+          decisions_found=$(grep "Architectural decisions found:" archaeology_report.md | grep -o '[0-9]*' || echo "0")
+          debt_found=$(grep "Technical debt items found:" archaeology_report.md | grep -o '[0-9]*' || echo "0")
+          
+          echo "commits_analyzed=$commits_analyzed" >> $GITHUB_OUTPUT
+          echo "decisions_found=$decisions_found" >> $GITHUB_OUTPUT
+          echo "debt_found=$debt_found" >> $GITHUB_OUTPUT
+          
+          if [ -f analysis/archaeology-patterns.json ]; then
+            patterns_learned=$(jq '.statistics.total_patterns // 0' analysis/archaeology-patterns.json)
+            recommendations=$(jq '.statistics.recommendations_generated // 0' analysis/archaeology-patterns.json)
+            echo "patterns_learned=$patterns_learned" >> $GITHUB_OUTPUT
+            echo "recommendations=$recommendations" >> $GITHUB_OUTPUT
+          else
+            echo "patterns_learned=0" >> $GITHUB_OUTPUT
+            echo "recommendations=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit archaeology data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add analysis/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="archaeology/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            git commit -m "Code archaeology analysis - ${{ steps.archaeology.outputs.commits_analyzed }} commits"
+            git push origin "$BRANCH_NAME"
+            
+            gh pr create \
+              --title "🏛️ Code Archaeology Analysis" \
+              --body "## Code Archaeology Results
+            
+            **Commits Analyzed**: ${{ steps.archaeology.outputs.commits_analyzed }}  
+            **Decisions Found**: ${{ steps.archaeology.outputs.decisions_found }}  
+            **Technical Debt**: ${{ steps.archaeology.outputs.debt_found }}  
+            **Patterns Learned**: ${{ steps.archaeology.outputs.patterns_learned }}  
+            **Recommendations**: ${{ steps.archaeology.outputs.recommendations }}
+            
+            ---
+            *🤖 Created by workflow: [code-quality.yml](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Archaeologist (@workflows-tech-lead)*" \
+              --label "automated,code-quality" \
+              --base main \
+              --head "$BRANCH_NAME" || true
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🏛️ Code Archaeologist" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commits**: ${{ steps.archaeology.outputs.commits_analyzed }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Decisions**: ${{ steps.archaeology.outputs.decisions_found }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Patterns**: ${{ steps.archaeology.outputs.patterns_learned }}" >> $GITHUB_STEP_SUMMARY
+
+  # ===================================================================================
+  # STAGE 3: Code Golf Optimizer (from code-golf-optimizer.yml)
+  # ===================================================================================
+  golf-optimizer:
+    name: "Code Golf Optimizer"
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 10 * * 1') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'golf-optimizer')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run Code Golf Optimizer
+        id: optimize
+        run: |
+          cd tools
+          
+          if [ ! -d "examples" ] || [ -z "$(ls -A examples 2>/dev/null)" ]; then
+            echo "⚠️ No examples directory found"
+            mkdir -p optimizations
+            echo "## Code Golf Optimization Report" > optimizations/report.md
+            echo "" >> optimizations/report.md
+            echo "Generated on: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> optimizations/report.md
+            echo "" >> optimizations/report.md
+            echo "⚠️ **No example files found to optimize**" >> optimizations/report.md
+            
+            echo "report_created=true" >> $GITHUB_OUTPUT
+            echo "total_saved=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          mkdir -p optimizations
+          echo "## Code Golf Optimization Report" > optimizations/report.md
+          echo "" >> optimizations/report.md
+          echo "Generated on: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> optimizations/report.md
+          echo "" >> optimizations/report.md
+          
+          total_original=0
+          total_optimized=0
+          files_processed=0
+          
+          echo "### Python Examples" >> optimizations/report.md
+          echo "" >> optimizations/report.md
+          
+          for file in examples/*.py 2>/dev/null; do
+            if [ -f "$file" ]; then
+              original_size=$(wc -c < "$file")
+              total_original=$((total_original + original_size))
+              files_processed=$((files_processed + 1))
+              echo "- \`$(basename $file)\`: $original_size bytes" >> optimizations/report.md
+            fi
+          done
+          
+          echo "" >> optimizations/report.md
+          echo "**Total files processed**: $files_processed" >> optimizations/report.md
+          echo "**Total size**: $total_original bytes" >> optimizations/report.md
+          
+          echo "report_created=true" >> $GITHUB_OUTPUT
+          echo "total_saved=0" >> $GITHUB_OUTPUT
+          echo "files_processed=$files_processed" >> $GITHUB_OUTPUT
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## ⛳ Code Golf Optimizer" >> $GITHUB_STEP_SUMMARY
+          echo "- **Files**: ${{ steps.optimize.outputs.files_processed }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Saved**: ${{ steps.optimize.outputs.total_saved }} bytes" >> $GITHUB_STEP_SUMMARY
