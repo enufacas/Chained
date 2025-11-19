@@ -1,0 +1,96 @@
+name: Autonomous A/B Testing
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode (no actual changes)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      max_concurrent:
+        description: 'Maximum concurrent experiments'
+        required: false
+        default: '5'
+        type: number
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  ab_testing_cycle:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+      
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Run autonomous A/B testing cycle
+        id: ab_testing
+        run: |
+          MODE="live"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            MODE="dry-run"
+          fi
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+          
+          echo "Analyzing workflows..."
+          python3 tools/ab_testing_workflow_analyzer.py > analyzer_output.txt
+          cat analyzer_output.txt
+          
+          echo "Running autonomous experiment creator..."
+          if [ "$MODE" = "dry-run" ]; then
+            python3 tools/autonomous_experiment_creator.py --dry-run --max-concurrent ${{ github.event.inputs.max_concurrent || 5 }} --json > ab_testing_results.json
+          else
+            python3 tools/autonomous_experiment_creator.py --max-concurrent ${{ github.event.inputs.max_concurrent || 5 }} --json > ab_testing_results.json
+          fi
+          
+          EXPERIMENTS_CREATED=$(jq -r '.experiments_created | length' ab_testing_results.json)
+          WINNERS_DETECTED=$(jq -r '.winners_detected | length' ab_testing_results.json)
+          EXPERIMENTS_COMPLETED=$(jq -r '.experiments_completed | length' ab_testing_results.json)
+          
+          echo "experiments_created=$EXPERIMENTS_CREATED" >> $GITHUB_OUTPUT
+          echo "winners_detected=$WINNERS_DETECTED" >> $GITHUB_OUTPUT
+          echo "experiments_completed=$EXPERIMENTS_COMPLETED" >> $GITHUB_OUTPUT
+      
+      - name: Generate dashboard
+        if: steps.ab_testing.outputs.mode == 'live'
+        run: python3 tools/ab_testing_dashboard.py
+      
+      - name: Create PR with updates
+        if: steps.ab_testing.outputs.mode == 'live'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! git diff --quiet; then
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="ab-testing/update-${TIMESTAMP}-${{ github.run_id }}"
+            
+            git checkout -b "$BRANCH_NAME"
+            git add .github/agent-system/ab_tests_registry.json docs/ab-testing-dashboard.html
+            git commit -m "A/B testing update $(date +%Y-%m-%d)" -m "By workflows-tech-lead"
+            git push origin "$BRANCH_NAME"
+            
+            gh pr create --title "A/B Testing Update $(date +%Y-%m-%d)" --body "Autonomous A/B testing update by workflows-tech-lead" --label "automated,ab-testing" --base main --head "$BRANCH_NAME"
+          fi
