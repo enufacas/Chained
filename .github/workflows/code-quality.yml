@@ -154,7 +154,7 @@ jobs:
             git commit -m "Code analysis results - ${{ steps.analyze.outputs.target_dir }}"
             git push origin "$BRANCH_NAME"
             
-            gh pr create \
+            PR_URL=$(gh pr create \
               --title "📊 Code Analysis Results" \
               --body "## Code Analysis Results
             
@@ -162,10 +162,17 @@ jobs:
             **Merge Success**: ${{ steps.analyze.outputs.merge_success }}
             
             ---
-            *🤖 Created by workflow: [code-quality.yml](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Analyzer (@workflows-tech-lead)*" \
-              --label "automated,code-quality" \
+            
+            *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Analyzer (@workflows-tech-lead)*" \
+              --label "automated,code-quality,auto-merge" \
               --base main \
-              --head "$BRANCH_NAME" || true
+              --head "$BRANCH_NAME") || true
+            
+            if [ -n "$PR_URL" ]; then
+              PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+              gh workflow run auto-review-merge.yml --repo ${{ github.repository }} -f pr_number="$PR_NUMBER" || true
+              echo "✅ PR created and auto-merge triggered: #$PR_NUMBER"
+            fi
           fi
 
       - name: Summary
@@ -260,7 +267,7 @@ jobs:
             git commit -m "Code archaeology analysis - ${{ steps.archaeology.outputs.commits_analyzed }} commits"
             git push origin "$BRANCH_NAME"
             
-            gh pr create \
+            PR_URL=$(gh pr create \
               --title "🏛️ Code Archaeology Analysis" \
               --body "## Code Archaeology Results
             
@@ -271,10 +278,17 @@ jobs:
             **Recommendations**: ${{ steps.archaeology.outputs.recommendations }}
             
             ---
-            *🤖 Created by workflow: [code-quality.yml](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Archaeologist (@workflows-tech-lead)*" \
-              --label "automated,code-quality" \
+            
+            *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Archaeologist (@workflows-tech-lead)*" \
+              --label "automated,code-quality,auto-merge" \
               --base main \
-              --head "$BRANCH_NAME" || true
+              --head "$BRANCH_NAME") || true
+            
+            if [ -n "$PR_URL" ]; then
+              PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+              gh workflow run auto-review-merge.yml --repo ${{ github.repository }} -f pr_number="$PR_NUMBER" || true
+              echo "✅ PR created and auto-merge triggered: #$PR_NUMBER"
+            fi
           fi
 
       - name: Summary
