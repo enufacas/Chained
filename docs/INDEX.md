@@ -55,6 +55,7 @@ Learn about the autonomous agent ecosystem:
 Understand the autonomous workflows:
 
 - **[WORKFLOWS.md](./WORKFLOWS.md)** - Comprehensive workflow documentation
+- **[AB_TESTING_GUIDE.md](./AB_TESTING_GUIDE.md)** - 🔬 **NEW!** Autonomous A/B testing for workflow optimization (@workflows-tech-lead)
 - **[Workflow scripts](../.)** - Shell scripts for workflow management:
   - `validate-system.sh` - Validate system setup
   - `kickoff-system.sh` - Initialize the system
