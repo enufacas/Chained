@@ -1,11 +1,17 @@
 {
-  "generated_at": "2025-11-19T18:13:25.592987+00:00",
-  "total_episodes": 72,
+  "generated_at": "2025-11-19T20:01:28.918187+00:00",
+  "total_episodes": 73,
   "dates": [
     {
       "date": "2025-11-19",
-      "episode_count": 10,
+      "episode_count": 11,
       "episodes": [
+        {
+          "filename": "episode-20251119-2001.json",
+          "title": "The Great Merge-athon",
+          "date": "2025-11-19T20:01:28.861241+00:00",
+          "scene_count": 3
+        },
         {
           "filename": "episode-20251119-1813.json",
           "title": "Merge Victory",
