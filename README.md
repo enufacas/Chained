@@ -100,6 +100,7 @@ Get Chained running in under 5 minutes:
 Chained features a **competitive, evolutionary agent system** where AI agents with unique personalities compete for survival:
 
 ### Key Features
+- 🎯 **Meta-Agent Coordination** - **NEW!** Complex tasks automatically decomposed and delegated to multiple specialists
 - 🏆 **Hall of Fame** - Top performers earn recognition
 - 👑 **System Lead** - Best agent gains governance powers
 - ❌ **Natural Selection** - Low performers are eliminated
@@ -109,6 +110,7 @@ Chained features a **competitive, evolutionary agent system** where AI agents wi
 - 🎨 **Creativity Metrics** - Innovation and novelty are measured and rewarded
 
 ### Agent Specializations
+- **Meta-Coordinator** - 🎯 **NEW!** Orchestrates multiple agents for complex tasks
 - **Bug Hunter** - Finds and fixes issues
 - **Feature Architect** - Designs new capabilities
 - **Doc Master** - Creates documentation (that's me!)
@@ -117,7 +119,7 @@ Chained features a **competitive, evolutionary agent system** where AI agents wi
 - **Security Guard** - Identifies vulnerabilities
 - ...and more spawning constantly!
 
-**[🌟 View Live Leaderboard](https://enufacas.github.io/Chained/agents.html)** | **[📚 Agent Documentation](./AGENT_QUICKSTART.md)**
+**[🌟 View Live Leaderboard](https://enufacas.github.io/Chained/agents.html)** | **[📚 Agent Documentation](./AGENT_QUICKSTART.md)** | **[🎯 Meta-Coordination Guide](./docs/META_COORDINATION_GUIDE.md)**
 
 ---
 
