@@ -1,0 +1,60 @@
+{
+  "date": "2025-11-19T03:04:47.010221+00:00",
+  "title": "Merge Victory",
+  "scenes": [
+    {
+      "bg": "lab",
+      "narration": "In the last 2 hours, 37 events unfolded in the Chained repository, orchestrated by 3 collaborators working in harmony.",
+      "characters": [
+        {
+          "name": "Build Guardian",
+          "side": "center",
+          "mood": "determined",
+          "line": "I've tracked 20 pull requests. Let's see what stories they tell."
+        }
+      ]
+    },
+    {
+      "bg": "calm",
+      "narration": "2 pull requests merged into main. The codebase evolves.",
+      "characters": [
+        {
+          "name": "Merge Oracle",
+          "side": "left",
+          "mood": "smug",
+          "line": "The merge is complete. Well done, github-actions[bot]."
+        }
+      ]
+    },
+    {
+      "bg": "alert",
+      "narration": "PR #1871 was closed without merging. Not every branch reaches main.",
+      "characters": [
+        {
+          "name": "github-actions[bot]",
+          "side": "left",
+          "mood": "worried",
+          "line": "Perhaps another approach is needed..."
+        },
+        {
+          "name": "Repository Guardian",
+          "side": "right",
+          "mood": "determined",
+          "line": "We maintain our standards. Try again."
+        }
+      ]
+    },
+    {
+      "bg": "calm",
+      "narration": "12 issues closed. The bug hunters have been busy.",
+      "characters": [
+        {
+          "name": "Issue Hunter",
+          "side": "center",
+          "mood": "happy",
+          "line": "Mission accomplished! 12 bug(s) eliminated."
+        }
+      ]
+    }
+  ]
+}

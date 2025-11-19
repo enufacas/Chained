@@ -168,7 +168,7 @@ jobs:
           git push origin "$BRANCH_NAME"
           
           # Create PR (with fallback if labels don't exist)
-          gh pr create \
+          PR_URL=$(gh pr create \
             --title "Update issue history: Issue #$ISSUE_NUM (@engineer-master)" \
             --body "**@engineer-master** has updated the semantic similarity engine history.
           
@@ -183,12 +183,12 @@ jobs:
           
           ---
           
-          *Automated by semantic similarity engine collection workflow*" \
-            --label "automated,documentation" \
+          *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+            --label "automated,documentation,auto-merge" \
             --base main \
-            --head "$BRANCH_NAME" || {
+            --head "$BRANCH_NAME") || {
               echo "⚠️ PR creation with labels failed, retrying without labels..."
-              gh pr create \
+              PR_URL=$(gh pr create \
                 --title "Update issue history: Issue #$ISSUE_NUM (@engineer-master)" \
                 --body "**@engineer-master** has updated the semantic similarity engine history.
           
@@ -203,9 +203,13 @@ jobs:
           
           ---
           
-          *Automated by semantic similarity engine collection workflow (labels unavailable)*" \
+          *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
                 --base main \
-                --head "$BRANCH_NAME"
+                --head "$BRANCH_NAME")
             }
           
-          echo "✅ PR created for issue history update"
+          if [ -n "$PR_URL" ]; then
+            PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+            gh workflow run auto-review-merge.yml --repo ${{ github.repository }} -f pr_number="$PR_NUMBER" || true
+            echo "✅ PR created and auto-merge triggered: #$PR_NUMBER"
+          fi

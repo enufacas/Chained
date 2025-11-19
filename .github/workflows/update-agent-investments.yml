@@ -409,6 +409,14 @@ jobs:
               impact = data['impact']
               pr_number = data['pr_number']
               
+              # Get workflow info from environment
+              workflow_name = os.getenv('GITHUB_WORKFLOW', 'update-agent-investments')
+              server_url = os.getenv('GITHUB_SERVER_URL', 'https://github.com')
+              repository = os.getenv('GITHUB_REPOSITORY', '')
+              run_id = os.getenv('GITHUB_RUN_ID', '')
+              
+              workflow_link = f"{server_url}/{repository}/actions/runs/{run_id}"
+              
               pr_body = f"""## 📊 Agent Investment Update
 
           Updated investments for **@{agent_id}** based on merged PR #{pr_number}.
@@ -425,7 +433,7 @@ jobs:
 
           ---
 
-          *🤖 Automated workflow: update-agent-investments*
+          *🤖 Created by workflow: [{workflow_name}]({workflow_link})*
           """
               
               with open('/tmp/pr_body.txt', 'w') as f:
@@ -439,19 +447,23 @@ jobs:
             
             # Create PR (with fallback if labels don't exist)
             PR_DATE=$(date +%Y-%m-%d)
-            gh pr create \
+            PR_URL=$(gh pr create \
               --title "📊 Investment update: @${{ steps.analyze.outputs.agent_id }} - ${PR_DATE}" \
               --body-file /tmp/pr_body.txt \
-              --label "agent-system,automated,investment-tracker" \
+              --label "agent-system,automated,investment-tracker,auto-merge" \
               --base main \
-              --head "$BRANCH_NAME" || {
+              --head "$BRANCH_NAME") || {
                 echo "⚠️ PR creation with labels failed, retrying without labels..."
-                gh pr create \
+                PR_URL=$(gh pr create \
                   --title "📊 Investment update: @${{ steps.analyze.outputs.agent_id }} - ${PR_DATE}" \
                   --body-file /tmp/pr_body.txt \
                   --base main \
-                  --head "$BRANCH_NAME"
+                  --head "$BRANCH_NAME")
               }
             
-            echo "✅ PR created for investment updates"
+            if [ -n "$PR_URL" ]; then
+              PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+              gh workflow run auto-review-merge.yml --repo ${{ github.repository }} -f pr_number="$PR_NUMBER" || true
+              echo "✅ PR created and auto-merge triggered: #$PR_NUMBER"
+            fi
           fi

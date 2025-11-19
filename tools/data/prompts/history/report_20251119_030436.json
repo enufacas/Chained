@@ -1,0 +1,111 @@
+{
+  "generated_at": "2025-11-19T03:04:36.219526+00:00",
+  "templates": {
+    "refactor_systematic": {
+      "category": "refactor",
+      "success_rate": 0.0,
+      "effectiveness_score": 0.5,
+      "total_uses": 0,
+      "avg_resolution_time": 0.0
+    },
+    "documentation_precise": {
+      "category": "documentation",
+      "success_rate": 0.0,
+      "effectiveness_score": 0.5,
+      "total_uses": 0,
+      "avg_resolution_time": 0.0
+    },
+    "investigation_thorough": {
+      "category": "investigation",
+      "success_rate": 0.0,
+      "effectiveness_score": 0.5,
+      "total_uses": 0,
+      "avg_resolution_time": 0.0
+    },
+    "security_defensive": {
+      "category": "security",
+      "success_rate": 0.0,
+      "effectiveness_score": 0.5,
+      "total_uses": 0,
+      "avg_resolution_time": 0.0
+    },
+    "bug_fix_systematic": {
+      "category": "bug_fix",
+      "success_rate": 0.15384615384615385,
+      "effectiveness_score": 0.4076923076923077,
+      "total_uses": 13,
+      "avg_resolution_time": 3.375
+    },
+    "feature_rigorous": {
+      "category": "feature",
+      "success_rate": 0.0,
+      "effectiveness_score": 0.09,
+      "total_uses": 3,
+      "avg_resolution_time": 0.0
+    }
+  },
+  "insights": {
+    "overall": {
+      "total_prompts_used": 3,
+      "success_rate": 0.6666666666666666,
+      "avg_resolution_time": 3.0,
+      "last_updated": "2025-11-18T13:34:11.158211+00:00"
+    },
+    "by_category": {
+      "bug_fix": {
+        "best_template": "bug_fix_systematic",
+        "success_rate": 0.4,
+        "avg_time": 3.375,
+        "total_uses": 5
+      },
+      "feature": {
+        "best_template": "feature_rigorous",
+        "success_rate": 0.0,
+        "avg_time": 0.0,
+        "total_uses": 3
+      },
+      "refactor": {
+        "best_template": "refactor_systematic",
+        "success_rate": 0.0,
+        "avg_time": 0.0,
+        "total_uses": 0
+      },
+      "documentation": {
+        "best_template": "documentation_precise",
+        "success_rate": 0.0,
+        "avg_time": 0.0,
+        "total_uses": 0
+      },
+      "investigation": {
+        "best_template": "investigation_thorough",
+        "success_rate": 0.0,
+        "avg_time": 0.0,
+        "total_uses": 0
+      },
+      "security": {
+        "best_template": "security_defensive",
+        "success_rate": 0.0,
+        "avg_time": 0.0,
+        "total_uses": 0
+      }
+    },
+    "common_failures": {
+      "test_failures": 1
+    },
+    "ab_tests": [
+      {
+        "test_id": "ab_bug_fix_systematic_vs_feature_rigorous",
+        "template_a": "bug_fix_systematic",
+        "template_b": "feature_rigorous",
+        "start_date": "2025-11-14T16:57:29.239479+00:00",
+        "status": "active",
+        "results": {
+          "a_uses": 0,
+          "b_uses": 0,
+          "a_success": 0,
+          "b_success": 0
+        }
+      }
+    ]
+  }
+}
