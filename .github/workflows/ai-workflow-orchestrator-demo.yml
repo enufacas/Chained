@@ -13,6 +13,8 @@ on:
           - report
           - simulate
           - export
+          - accuracy
+          - track-demo
   schedule:
     # Run weekly on Monday at 9:00 AM UTC
     - cron: '0 9 * * 1'
@@ -68,6 +70,28 @@ jobs:
               echo "📊 Generating comprehensive orchestration report..."
               python3 tools/integrated_workflow_orchestrator.py --report
               ;;
+            "accuracy")
+              echo ""
+              echo "📈 Analyzing prediction accuracy..."
+              python3 tools/workflow_execution_tracker.py --simulate --report
+              python3 tools/workflow_execution_tracker.py --export accuracy_metrics.json
+              ;;
+            "track-demo")
+              echo ""
+              echo "🎯 Demonstrating execution time tracking..."
+              echo ""
+              echo "Step 1: Creating prediction data..."
+              python3 tools/ai_workflow_predictor.py --simulate
+              echo ""
+              echo "Step 2: Simulating tracked executions..."
+              python3 tools/workflow_execution_tracker.py --simulate
+              echo ""
+              echo "Step 3: Generating accuracy report..."
+              python3 tools/workflow_execution_tracker.py --report
+              echo ""
+              echo "Step 4: Showing integrated orchestrator with accuracy..."
+              python3 tools/integrated_workflow_orchestrator.py --report
+              ;;
             *)
               echo "Unknown mode: $MODE"
               exit 1
@@ -81,6 +105,12 @@ jobs:
             echo "has_recommendations=true" >> $GITHUB_OUTPUT
           else
             echo "has_recommendations=false" >> $GITHUB_OUTPUT
+          fi
+          
+          if [ -f "accuracy_metrics.json" ]; then
+            echo "has_accuracy=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_accuracy=false" >> $GITHUB_OUTPUT
           fi
       
       - name: Create summary
@@ -144,6 +174,87 @@ jobs:
           
           cat >> $GITHUB_STEP_SUMMARY
       
+      - name: Create accuracy summary
+        if: steps.check_file.outputs.has_accuracy == 'true'
+        run: |
+          echo "## 📈 Prediction Accuracy Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**@workflows-tech-lead** has analyzed prediction accuracy." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Parse accuracy JSON and create summary
+          python3 << 'EOF'
+          import json
+          import sys
+          
+          try:
+              with open('accuracy_metrics.json', 'r') as f:
+                  data = json.load(f)
+              
+              overall = data.get('overall_metrics', {})
+              total = overall.get('total_comparisons', 0)
+              mean_error = overall.get('mean_error_percent', 0)
+              accuracy = overall.get('overall_accuracy_score', 0)
+              
+              print(f"### 📊 Overall Accuracy")
+              print(f"")
+              print(f"- **Total Predictions Tracked**: {total}")
+              print(f"- **Mean Error**: {mean_error:.1f}%")
+              print(f"- **Overall Accuracy Score**: {accuracy:.1f}%")
+              print(f"")
+              
+              dist = overall.get('accuracy_distribution', {})
+              excellent = dist.get('excellent_10_percent', 0)
+              good = dist.get('good_25_percent', 0)
+              fair = dist.get('fair_50_percent', 0)
+              poor = dist.get('poor_over_50_percent', 0)
+              
+              print(f"### 🎯 Accuracy Distribution")
+              print(f"")
+              print(f"| Category | Count | Percentage |")
+              print(f"|----------|-------|------------|")
+              print(f"| Excellent (≤10%) | {excellent} | {excellent/total*100:.0f}% |")
+              print(f"| Good (10-25%) | {good} | {good/total*100:.0f}% |")
+              print(f"| Fair (25-50%) | {fair} | {fair/total*100:.0f}% |")
+              print(f"| Poor (>50%) | {poor} | {poor/total*100:.0f}% |")
+              print(f"")
+              
+              # Show per-workflow top performers
+              per_workflow = data.get('per_workflow_metrics', {})
+              if per_workflow:
+                  print(f"### 🏆 Top Performing Workflows")
+                  print(f"")
+                  
+                  # Sort by accuracy
+                  sorted_wf = sorted(per_workflow.items(), 
+                                   key=lambda x: x[1].get('overall_accuracy_score', 0), 
+                                   reverse=True)
+                  
+                  print(f"| Workflow | Comparisons | Mean Error | Accuracy |")
+                  print(f"|----------|-------------|------------|----------|")
+                  
+                  for wf_name, metrics in sorted_wf[:5]:
+                      comp = metrics.get('total_comparisons', 0)
+                      error = metrics.get('mean_error_percent', 0)
+                      acc = metrics.get('overall_accuracy_score', 0)
+                      wf_short = wf_name[:30] + '...' if len(wf_name) > 30 else wf_name
+                      print(f"| {wf_short} | {comp} | {error:.1f}% | {acc:.0f}% |")
+                  
+                  print(f"")
+              
+              print(f"### 🔄 Continuous Improvement")
+              print(f"")
+              print(f"The AI orchestrator learns from these comparisons to improve future predictions.")
+              print(f"As more workflows are tracked, accuracy will continue to increase.")
+              print(f"")
+              
+          except Exception as e:
+              print(f"Error parsing accuracy metrics: {e}", file=sys.stderr)
+              sys.exit(1)
+          EOF
+          
+          cat >> $GITHUB_STEP_SUMMARY
+      
       - name: Commit recommendations (if export mode)
         if: github.event.inputs.mode == 'export' && steps.check_file.outputs.has_recommendations == 'true'
         run: |
@@ -169,6 +280,37 @@ jobs:
               gh pr create \
                 --title "🎹 AI Workflow Orchestrator Recommendations" \
                 --body "**@coordinate-wizard** has generated intelligent workflow scheduling recommendations. (Labels could not be applied - they may need to be created)" \
+                --base main \
+                --head "$BRANCH_NAME"
+            }
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Commit accuracy metrics (if accuracy mode)
+        if: github.event.inputs.mode == 'accuracy' && steps.check_file.outputs.has_accuracy == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="ai-orchestrator-accuracy/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git add accuracy_metrics.json
+          git commit -m "chore: AI workflow prediction accuracy metrics by @workflows-tech-lead"
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR
+          gh pr create \
+            --title "📈 AI Workflow Prediction Accuracy Metrics" \
+            --body "**@workflows-tech-lead** has analyzed prediction accuracy."$'\n\n'"## 📊 Accuracy Analysis"$'\n\n'"This PR contains comprehensive accuracy metrics from the execution time tracker."$'\n\n'"### What's Included"$'\n'"- Overall prediction accuracy scores"$'\n'"- Per-workflow accuracy breakdown"$'\n'"- Error distribution analysis"$'\n'"- Recent prediction comparisons"$'\n\n'"### Key Metrics"$'\n'"- Mean error percentage"$'\n'"- Median error percentage"$'\n'"- Accuracy distribution (excellent/good/fair/poor)"$'\n'"- Per-workflow performance"$'\n\n'"### How to Use"$'\n'"1. Review \`accuracy_metrics.json\` for detailed analysis"$'\n'"2. Identify workflows with poor prediction accuracy"$'\n'"3. Collect more execution data for those workflows"$'\n'"4. Monitor accuracy improvements over time"$'\n\n'"---"$'\n\n'"*Tracked by **@workflows-tech-lead*** 🔧" \
+            --label "automated,workflow-optimization" \
+            --base main \
+            --head "$BRANCH_NAME" || {
+              echo "⚠️ PR creation with labels failed, retrying without labels..."
+              gh pr create \
+                --title "📈 AI Workflow Prediction Accuracy Metrics" \
+                --body "**@workflows-tech-lead** has analyzed prediction accuracy." \
                 --base main \
                 --head "$BRANCH_NAME"
             }
