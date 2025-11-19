@@ -121,20 +121,28 @@ jobs:
           grace_period_hours = config.get('new_agent_grace_period_hours', 48)
           minimum_score = config.get('new_agent_minimum_score', 0.40)
           
-          # OPTIMIZATION: Batch fetch all issues once before evaluating agents
-          batch_cache = None
+          # OPTIMIZATION: Use evaluate_all_agents() which prefers stored metrics
+          # This significantly reduces GitHub API calls by using stored data when fresh
+          metrics_results = {}
           if use_real_metrics:
               try:
-                  print("🚀 Starting batch optimization...")
-                  batch_cache = collector._batch_fetch_all_agent_issues(since_days=7)
-                  print("✅ Batch fetch complete. Starting agent evaluation...")
+                  print("🚀 Starting optimized evaluation (storage-first approach)...")
+                  print("   Checking stored metrics (freshness threshold: 12 hours)")
+                  # Use the new evaluate_all_agents() method that prefers stored metrics
+                  metrics_results = collector.evaluate_all_agents(
+                      since_days=7,
+                      max_age_hours=12.0,  # Use metrics stored within last 12 hours
+                      force_refresh=False  # Prefer stored data when available
+                  )
+                  print(f"✅ Evaluation complete! Collected/loaded metrics for {len(metrics_results)} agents")
               except Exception as e:
-                  print(f"⚠️  Batch fetch failed, proceeding without cache: {e}")
+                  print(f"⚠️  Batch evaluation failed: {e}")
+                  use_real_metrics = False
           
           for idx, agent in enumerate(active_agents, 1):
               # Progress logging
               print(f"\n{'='*60}")
-              print(f"📊 Evaluating agent {idx}/{total_agents}")
+              print(f"📊 Processing agent {idx}/{total_agents}")
               print(f"{'='*60}")
               agent_id = agent['id']
               agent_name = agent['name']
@@ -159,17 +167,10 @@ jobs:
               if in_grace_period:
                   print(f"\n{agent_name}: 🆕 IN GRACE PERIOD ({age_hours:.1f}h / {grace_period_hours}h)")
               
-              if use_real_metrics:
-                  # Use real GitHub activity metrics
+              if use_real_metrics and agent_id in metrics_results:
+                  # Use metrics from storage-first evaluation
                   try:
-                      # Use batch cache to avoid redundant API calls
-                      # Note: Check 'is not None' because empty dict {} is still a valid cache
-                      metrics = collector.collect_metrics(
-                          agent_id, 
-                          since_days=7,
-                          use_batch_cache=(batch_cache is not None),
-                          batch_cache=batch_cache
-                      )
+                      metrics = metrics_results[agent_id]
                       overall_score = metrics.scores.overall
                       
                       # Update all metrics from real data
@@ -180,11 +181,13 @@ jobs:
                       agent['metrics']['creativity_score'] = metrics.scores.creativity
                       agent['metrics']['overall_score'] = overall_score
                       
-                      print(f"\n{agent_name}: {overall_score:.2%} (real metrics)")
+                      # Show source of metrics
+                      source = "stored" if hasattr(metrics, '_from_storage') else "fresh"
+                      print(f"\n{agent_name}: {overall_score:.2%} ({source} metrics)")
                       print(f"  🎨 Creativity: {metrics.scores.creativity:.2%}")
                   except Exception as e:
-                      print(f"⚠️  Error collecting metrics for {agent_id}, using fallback: {e}")
-                      # Fallback to time-based scoring if metrics collection fails
+                      print(f"⚠️  Error processing metrics for {agent_id}, using fallback: {e}")
+                      # Fallback to time-based scoring if metrics processing fails
                       spawned = datetime.fromisoformat(agent['spawned_at'].replace('Z', '+00:00'))
                       age_hours = (datetime.utcnow().replace(tzinfo=spawned.tzinfo) - spawned).total_seconds() / 3600
                       overall_score = min(0.5, age_hours / 48.0)  # Conservative scoring for new agents
