@@ -1354,19 +1354,110 @@ class MetricsCollector:
             print(f"❌ Error loading metrics: {e}", file=sys.stderr)
             return None
     
-    def evaluate_all_agents(self, since_days: int = DEFAULT_LOOKBACK_DAYS) -> Dict[str, AgentMetrics]:
+    def is_metrics_fresh(
+        self, 
+        agent_id: str, 
+        max_age_hours: float = 12.0
+    ) -> bool:
+        """
+        Check if stored metrics for an agent are fresh enough to use.
+        
+        Args:
+            agent_id: Agent identifier
+            max_age_hours: Maximum age in hours for metrics to be considered fresh
+            
+        Returns:
+            True if metrics exist and are fresh, False otherwise
+        """
+        metrics = self.load_latest_metrics(agent_id)
+        if not metrics:
+            return False
+        
+        try:
+            # Parse timestamp
+            timestamp = datetime.fromisoformat(metrics.timestamp.replace('Z', '+00:00'))
+            age = datetime.now(timezone.utc) - timestamp
+            age_hours = age.total_seconds() / 3600
+            
+            is_fresh = age_hours <= max_age_hours
+            if is_fresh:
+                print(f"✅ Using stored metrics for {agent_id} (age: {age_hours:.1f}h)", file=sys.stderr)
+            else:
+                print(f"⏰ Stored metrics for {agent_id} are stale (age: {age_hours:.1f}h > {max_age_hours}h)", file=sys.stderr)
+            
+            return is_fresh
+        except Exception as e:
+            print(f"⚠️  Error checking metrics freshness for {agent_id}: {e}", file=sys.stderr)
+            return False
+    
+    def get_or_collect_metrics(
+        self,
+        agent_id: str,
+        since_days: int = DEFAULT_LOOKBACK_DAYS,
+        max_age_hours: float = 12.0,
+        force_refresh: bool = False,
+        use_batch_cache: bool = False,
+        batch_cache: Optional[Dict[str, List[Dict]]] = None
+    ) -> AgentMetrics:
+        """
+        Get metrics for an agent, preferring stored data over API collection.
+        
+        This method implements the optimization to use already-stored metrics
+        when they are fresh enough, avoiding unnecessary GitHub API calls.
+        
+        Args:
+            agent_id: Agent identifier
+            since_days: Look back period in days
+            max_age_hours: Maximum age in hours for stored metrics to be considered fresh
+            force_refresh: If True, always collect fresh metrics from API
+            use_batch_cache: If True, use pre-fetched batch cache
+            batch_cache: Pre-fetched issues map from batch operation
+            
+        Returns:
+            AgentMetrics object (from storage or freshly collected)
+        """
+        # If force refresh, skip stored metrics
+        if force_refresh:
+            print(f"🔄 Force refresh enabled for {agent_id}, collecting fresh metrics", file=sys.stderr)
+            return self.collect_metrics(agent_id, since_days, use_batch_cache, batch_cache)
+        
+        # Check if stored metrics are fresh enough
+        if self.is_metrics_fresh(agent_id, max_age_hours):
+            metrics = self.load_latest_metrics(agent_id)
+            if metrics:
+                print(f"📂 Using stored metrics for {agent_id} (saved {self._api_call_count} API calls)", file=sys.stderr)
+                return metrics
+        
+        # Fall back to collecting fresh metrics
+        print(f"🔄 Collecting fresh metrics for {agent_id}", file=sys.stderr)
+        return self.collect_metrics(agent_id, since_days, use_batch_cache, batch_cache)
+    
+    def evaluate_all_agents(
+        self,
+        since_days: int = DEFAULT_LOOKBACK_DAYS,
+        max_age_hours: float = 12.0,
+        force_refresh: bool = False
+    ) -> Dict[str, AgentMetrics]:
         """
         Evaluate all active agents in the registry.
         
-        This method uses batch optimization to minimize API calls:
-        - Fetches all agent-work issues once
-        - Distributes them to agents
-        - Uses caching for repeated data access
+        This method optimizes evaluation by:
+        1. Preferring stored metrics when fresh enough (within max_age_hours)
+        2. Batch fetching issues for agents that need fresh metrics
+        3. Using caching for repeated data access
+        
+        Args:
+            since_days: Look back period in days
+            max_age_hours: Maximum age in hours for stored metrics to be considered fresh
+            force_refresh: If True, always collect fresh metrics for all agents
         
         Returns:
             Dictionary mapping agent_id to AgentMetrics
         """
         results = {}
+        api_calls_saved = 0
+        agents_from_storage = 0
+        agents_from_api = 0
         
         try:
             if REGISTRY_MANAGER_AVAILABLE:
@@ -1379,36 +1470,64 @@ class MetricsCollector:
             total_agents = len(active_agents)
             print(f"📊 Evaluating {total_agents} active agents...", file=sys.stderr)
             
-            # OPTIMIZATION: Batch fetch all issues once, then distribute to agents
-            print(f"🚀 Starting batch optimization...")
-            batch_cache = self._batch_fetch_all_agent_issues(since_days)
-            print(f"✅ Batch fetch complete. Starting agent evaluation...")
+            # OPTIMIZATION: First, try to use stored metrics where possible
+            agents_needing_refresh = []
             
             for idx, agent in enumerate(active_agents, 1):
                 agent_id = agent['id']
                 agent_name = agent.get('name', agent_id)
                 
-                print(f"\n{'='*70}", file=sys.stderr)
-                print(f"📊 Evaluating agent {idx}/{total_agents}: {agent_name}", file=sys.stderr)
-                print(f"{'='*70}", file=sys.stderr)
+                # Check if we can use stored metrics
+                if not force_refresh and self.is_metrics_fresh(agent_id, max_age_hours):
+                    metrics = self.load_latest_metrics(agent_id)
+                    if metrics:
+                        results[agent_id] = metrics
+                        agents_from_storage += 1
+                        print(f"✅ [{idx}/{total_agents}] Using stored metrics for {agent_name}: score={metrics.scores.overall:.2%}", file=sys.stderr)
+                        continue
                 
-                try:
-                    # Use batch cache to avoid redundant API calls
-                    metrics = self.collect_metrics(
-                        agent_id, 
-                        since_days,
-                        use_batch_cache=True,
-                        batch_cache=batch_cache
-                    )
-                    results[agent_id] = metrics
-                    
-                    print(f"✅ [{idx}/{total_agents}] Collected metrics for {agent_name}: score={metrics.scores.overall:.2%}", file=sys.stderr)
-                
-                except Exception as e:
-                    print(f"❌ Error evaluating {agent_id}: {e}", file=sys.stderr)
+                # Mark for fresh collection
+                agents_needing_refresh.append(agent)
             
-            print(f"✅ Evaluation complete! Collected metrics for {len(results)} agents.")
-            print(f"📊 Total API calls used: {self._api_call_count}")
+            print(f"\n📂 Loaded {agents_from_storage} agents from storage", file=sys.stderr)
+            print(f"🔄 Need to refresh {len(agents_needing_refresh)} agents", file=sys.stderr)
+            
+            # OPTIMIZATION: Batch fetch for agents that need refresh
+            if agents_needing_refresh:
+                print(f"\n🚀 Starting batch optimization for {len(agents_needing_refresh)} agents...")
+                batch_cache = self._batch_fetch_all_agent_issues(since_days)
+                print(f"✅ Batch fetch complete. Starting agent evaluation...")
+                
+                for idx, agent in enumerate(agents_needing_refresh, 1):
+                    agent_id = agent['id']
+                    agent_name = agent.get('name', agent_id)
+                    
+                    print(f"\n{'='*70}", file=sys.stderr)
+                    print(f"📊 Evaluating agent {idx}/{len(agents_needing_refresh)}: {agent_name}", file=sys.stderr)
+                    print(f"{'='*70}", file=sys.stderr)
+                    
+                    try:
+                        # Use batch cache to avoid redundant API calls
+                        metrics = self.collect_metrics(
+                            agent_id, 
+                            since_days,
+                            use_batch_cache=True,
+                            batch_cache=batch_cache
+                        )
+                        results[agent_id] = metrics
+                        agents_from_api += 1
+                        
+                        print(f"✅ [{idx}/{len(agents_needing_refresh)}] Collected fresh metrics for {agent_name}: score={metrics.scores.overall:.2%}", file=sys.stderr)
+                    
+                    except Exception as e:
+                        print(f"❌ Error evaluating {agent_id}: {e}", file=sys.stderr)
+            
+            print(f"\n{'='*70}", file=sys.stderr)
+            print(f"✅ Evaluation complete! Metrics for {len(results)} agents:", file=sys.stderr)
+            print(f"   📂 From storage: {agents_from_storage} agents (0 API calls)", file=sys.stderr)
+            print(f"   🔄 Fresh collection: {agents_from_api} agents ({self._api_call_count} API calls)", file=sys.stderr)
+            print(f"   💰 Estimated API calls saved: ~{agents_from_storage * 50}", file=sys.stderr)
+            print(f"{'='*70}", file=sys.stderr)
             print(f"ℹ️  Note: Registry updates are handled by the evaluator workflow", file=sys.stderr)
         
         except Exception as e:
@@ -1452,6 +1571,17 @@ def main():
         action='store_true',
         help='Output results as JSON'
     )
+    parser.add_argument(
+        '--max-age-hours',
+        type=float,
+        default=12.0,
+        help='Maximum age in hours for stored metrics to be considered fresh (default: 12.0)'
+    )
+    parser.add_argument(
+        '--force-refresh',
+        action='store_true',
+        help='Force refresh all metrics from API, ignoring stored data'
+    )
     
     args = parser.parse_args()
     
@@ -1460,7 +1590,11 @@ def main():
     
     if args.evaluate_all:
         # Evaluate all agents
-        results = collector.evaluate_all_agents(args.since)
+        results = collector.evaluate_all_agents(
+            since_days=args.since,
+            max_age_hours=args.max_age_hours,
+            force_refresh=args.force_refresh
+        )
         
         if args.json:
             print(json.dumps({k: v.to_dict() for k, v in results.items()}, indent=2))
@@ -1475,8 +1609,13 @@ def main():
                 print(f"  Reviews Given: {metrics.activity.reviews_given}")
     
     elif args.agent_id:
-        # Evaluate single agent
-        metrics = collector.collect_metrics(args.agent_id, args.since)
+        # Evaluate single agent (prefer stored metrics)
+        metrics = collector.get_or_collect_metrics(
+            agent_id=args.agent_id,
+            since_days=args.since,
+            max_age_hours=args.max_age_hours,
+            force_refresh=args.force_refresh
+        )
         
         if args.json:
             print(json.dumps(metrics.to_dict(), indent=2))
