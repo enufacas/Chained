@@ -1,0 +1,57 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-19T10:29:02.313808+00:00",
+  "repository": "Chained",
+  "total_decisions": 1,
+  "decisions": [
+    {
+      "id": "DD-31c34df2",
+      "title": "feat: autonomous refactoring agent that learns code style preferences (@restructure-master) (#1569)",
+      "date": "2025-11-17T09:20:44+00:00",
+      "status": "accepted",
+      "category": "architecture",
+      "context": "feat: autonomous refactoring agent that learns code style preferences (@restructure-master) (#1569)\n* Initial plan",
+      "decision": "feat: autonomous refactoring agent that learns code style preferences (@restructure-master) (#1569)",
+      "consequences": "",
+      "alternatives": "",
+      "commit": "31c34df",
+      "author": "Copilot",
+      "metadata": {
+        "files_affected": [
+          "AUTONOMOUS_REFACTORING_AGENT_SUMMARY.md",
+          "examples/autonomous_refactoring_agent_demo.py",
+          "tools/AUTONOMOUS_REFACTORING_AGENT_README.md",
+          "tools/autonomous-refactoring-agent.py",
+          "tools/test_autonomous_refactoring_agent.py"
+        ],
+        "commit_timestamp": 1763371244
+      }
+    }
+  ],
+  "index": {
+    "by_status": {
+      "accepted": [
+        0
+      ]
+    },
+    "by_category": {
+      "architecture": [
+        0
+      ]
+    },
+    "by_date": {
+      "2025-11": [
+        0
+      ]
+    },
+    "by_hash": {
+      "DD-31c34df2": 0
+    }
+  },
+  "statistics": {
+    "accepted": 1,
+    "rejected": 0,
+    "deprecated": 0,
+    "proposed": 0
+  }
+}
