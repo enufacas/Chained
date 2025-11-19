@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 229
+**Total Insights:** 275
 
 **Last Updated:** 2025-11-19
 

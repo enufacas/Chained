@@ -2,7 +2,7 @@
 
 > Security vulnerabilities, encryption, authentication, and privacy
 
-**Total Insights:** 51
+**Total Insights:** 61
 
 **Last Updated:** 2025-11-19
 
