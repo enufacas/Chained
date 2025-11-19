@@ -277,11 +277,11 @@ Related post: <a href="https:&#x2F;&#x2F;hazyresearch.stanford.edu&#x2F;blog&#x2
 ---
 
 
-### Show HN: Browser-based interactive 3D Three-Body problem simulator
+### Static Web Hosting on the Intel N150: FreeBSD, SmartOS, NetBSD, OpenBSD and Linu
 
-**Community Score:** 101 upvotes
+**Community Score:** 40 upvotes
 
-**Link:** https://trisolarchaos.com/?pr=O_8(0.6)&n=3&s=5.0&so=0.00&im=rk4&dt=1.00e-4&rt=1.0e-6&at=1.0e-8&bs=0.15&sf=0&sv=0&cm=free&kt=1&st=1&tl=1500&cp=2.5208,1.5125,2.5208&ct=0.0000,0.0000,0.1670
+**Link:** https://it-notes.dragas.net/2025/11/19/static-web-hosting-intel-n150-freebsd-smartos-netbsd-openbsd-linux/
 
 ---
 

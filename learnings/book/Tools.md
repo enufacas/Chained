@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 275
+**Total Insights:** 276
 
 **Last Updated:** 2025-11-19
 
@@ -601,6 +601,15 @@ Arianity (profile) says: November 13, 2025 at 8:24 pm Maybe we’ll be able to p
 ---
 
 
+### The Future of Programming (2013) [video]
+
+**Community Score:** 126 upvotes
+
+**Link:** https://www.youtube.com/watch?v=8pTEmbeENF4
+
+---
+
+
 ### DNS Provider Quad9 Sees Piracy Blocking Orders as "Existential Threat"
 
 **Community Score:** 207 upvotes
@@ -765,15 +774,5 @@ inp...
 ### 'No One Lives Forever' turns 25 and you still can't buy it legitimately
 
 **Link:** https://www.techdirt.com/2025/11/13/no-one-lives-forever-turns-25-you-still-cant-buy-it-legitimately/
-
----
-
-
-### Show HN: Dumbass Business Ideas
-
-**Link:** https://dumbassideas.com
-
-
-Discover hilariously terrible business ideas that probably shouldn&#x27;t exist. Get inspired by the worst startup concepts, share them with friends, and submit your own dumbass ideas!
 
 ---
