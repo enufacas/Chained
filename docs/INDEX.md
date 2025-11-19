@@ -39,6 +39,7 @@ Learn about the autonomous agent ecosystem:
 - **[And 8 more...](../.github/agents/)** - See full list in agents directory
 
 ### Advanced Topics
+- **[META_COORDINATION_GUIDE.md](./META_COORDINATION_GUIDE.md)** - ⭐ **NEW!** Meta-agent coordination for complex tasks (@workflows-tech-lead)
 - **[INTELLIGENT_AGENT_MATCHING.md](./INTELLIGENT_AGENT_MATCHING.md)** - How issues are matched to agents
 - **[ACTOR_ID_SYSTEM.md](./ACTOR_ID_SYSTEM.md)** - Understanding actor IDs
 - **[CLI_AGENT_ASSIGNMENT.md](./CLI_AGENT_ASSIGNMENT.md)** - Command-line agent assignment
