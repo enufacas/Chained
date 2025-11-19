@@ -1,0 +1,157 @@
+{
+  "proactive_suggestions": [
+    "\u26a1 Consider documenting performance metrics and benchmarks",
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83c\udfaf Define clear acceptance criteria and test cases",
+    "\ud83d\udd28 Document the current state and desired improvements",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:coach-master -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has ..."
+  ],
+  "knowledge_connections": {
+    "insight_1812_ddc4f7ec963c": [
+      {
+        "target_id": "insight_1461_df7e683aa403",
+        "similarity": 0.7894736842105263
+      },
+      {
+        "target_id": "insight_1492_61b96b2f93c9",
+        "similarity": 0.7894736842105263
+      },
+      {
+        "target_id": "insight_1509_e7d0d2647da3",
+        "similarity": 0.7894736842105263
+      }
+    ],
+    "insight_1812_741b965aab47": [
+      {
+        "target_id": "insight_1460_d821e026c58a",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1461_46b28a924e49",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1458_c0ed8184fe83",
+        "similarity": 0.6923076923076923
+      }
+    ],
+    "insight_1812_22261147cb68": [
+      {
+        "target_id": "insight_1812_7903e8367abd",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1812_421749e38870": [
+      {
+        "target_id": "insight_1555_c18d200b6021",
+        "similarity": 0.46153846153846156
+      }
+    ],
+    "insight_1812_18a4a5b543ab": [
+      {
+        "target_id": "insight_1555_b5adf70e07e3",
+        "similarity": 0.57
+      }
+    ],
+    "insight_1812_268218ed74b1": [
+      {
+        "target_id": "insight_1555_98038dd6bd73",
+        "similarity": 0.5172413793103449
+      }
+    ],
+    "insight_1812_cc2cb8b80c35": [
+      {
+        "target_id": "insight_1555_0db9be47795e",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1812_0db9e7d9b3f1": [
+      {
+        "target_id": "insight_1555_628ea55a8db9",
+        "similarity": 0.75
+      }
+    ],
+    "insight_1812_7903e8367abd": [
+      {
+        "target_id": "insight_1812_22261147cb68",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1812_d174fee98d9c": [
+      {
+        "target_id": "insight_1555_ef849b9f7e04",
+        "similarity": 0.8333333333333334
+      },
+      {
+        "target_id": "insight_1460_b8b5519c2025",
+        "similarity": 0.76
+      },
+      {
+        "target_id": "insight_1461_adf13f5f0e40",
+        "similarity": 0.76
+      }
+    ],
+    "insight_1812_1802ffbaf5f1": [
+      {
+        "target_id": "insight_1460_7d780ede38e3",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1461_33952c0cdd1c",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1458_9abc622d3d41",
+        "similarity": 0.6923076923076923
+      }
+    ],
+    "insight_1812_dd9c8a81a930": [
+      {
+        "target_id": "insight_1460_734f5639eeb1",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1461_b02d3182b0fa",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1458_a11d8a8639cb",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1812_8bc98082066c": [
+      {
+        "target_id": "insight_1555_43d0175523d5",
+        "similarity": 0.6666666666666666
+      },
+      {
+        "target_id": "insight_1461_dc1e63490ce7",
+        "similarity": 0.5384615384615384
+      },
+      {
+        "target_id": "insight_1492_2b3d95533e12",
+        "similarity": 0.5384615384615384
+      }
+    ],
+    "insight_1812_10fd4e5613fd": [
+      {
+        "target_id": "insight_1555_8bd6247a8272",
+        "similarity": 0.7446808510638298
+      },
+      {
+        "target_id": "insight_1604_bdc9719cf8ea",
+        "similarity": 0.5
+      },
+      {
+        "target_id": "insight_1673_5a1ead88b5f3",
+        "similarity": 0.5
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 259,
+    "total_connections": 911,
+    "new_insights_added": 19
+  },
+  "timestamp": "2025-11-19T00:24:24.146506+00:00"
+}
