@@ -69,6 +69,7 @@ Understand the autonomous workflows:
 How Chained learns and evolves:
 
 - **[LEARNING_SYSTEM.md](./LEARNING_SYSTEM.md)** - Complete learning system documentation
+- **[commit-learning-system.md](./commit-learning-system.md)** - ⭐ **NEW!** Git commit strategy learning system (@workflows-tech-lead)
 - **[AI_GOALS.md](./AI_GOALS.md)** - Daily AI goals system
 - **[ai-conversations/](./ai-conversations/)** - AI friend conversations
 
