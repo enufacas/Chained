@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 399
+**Total Insights:** 398
 
 **Last Updated:** 2025-11-19
 
@@ -648,20 +648,11 @@ The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 Th
 ---
 
 
-### Google Antigravity
+### Reproducible C++ builds by logging Git hashes
 
-**Community Score:** 854 upvotes
+**Community Score:** 16 upvotes
 
-**Link:** https://antigravity.google/
-
----
-
-
-### The code and open-source tools I used to produce a science fiction anthology
-
-**Community Score:** 137 upvotes
-
-**Link:** https://compellingsciencefiction.com/posts/the-code-and-open-source-tools-i-used-to-produce-a-science-fiction-anthology.html
+**Link:** https://jgarby.uk/posts/git_repr/
 
 ---
 
@@ -777,5 +768,19 @@ Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss
 **Community Score:** 480 upvotes
 
 **Link:** https://github.com/Snapchat/Valdi
+
+---
+
+
+### Think in math, write in code (2019
+
+**Community Score:** 140 upvotes
+
+**Link:** https://www.jmeiners.com/think-in-math/
+
+
+**Content Summary:**
+
+Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss programming languages. We not only debate their technical merits and aesthetic qualities, but they become integrated into our personal identities, along with the values and traits that we associate with them. Some even defend a form of Linguistic Determinism that thinking is confined to what the language makes typable. Since we spend so much time writing code, a keen interest in language design is justified. However...
 
 ---

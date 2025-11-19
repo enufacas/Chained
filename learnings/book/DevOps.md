@@ -2,7 +2,7 @@
 
 > CI/CD, containers, orchestration, and infrastructure automation
 
-**Total Insights:** 131
+**Total Insights:** 129
 
 **Last Updated:** 2025-11-19
 
@@ -206,24 +206,6 @@ Ingress NGINX Retirement: What You Need to Know By Tabitha Sable (Kubernetes SRC
 ---
 
 
-### Cloudflare outage on November 18, 2025 post mortem
-
-**Community Score:** 888 upvotes
-
-**Link:** https://blog.cloudflare.com/18-november-2025-outage/
-
----
-
-
-### Cloudflare Global Network experiencing issues
-
-**Community Score:** 2359 upvotes
-
-**Link:** https://www.cloudflarestatus.com/incidents/8gmgl950y3h7
-
----
-
-
 ### Kubernetes Ingress Nginx is retiring
 
 **Community Score:** 107 upvotes
@@ -394,5 +376,25 @@ Milvus is a high-performance, cloud-native vector database built for scalable ve
 
 
 A Kubernetes web UI that is fully-featured, user-friendly and extensible
+
+---
+
+
+### Untitled
+
+**Link:** https://github.com/serverless-dns/serverless-dns
+
+
+The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly, and Fly.io
+
+---
+
+
+### Untitled
+
+**Link:** https://github.com/traefik/traefik
+
+
+The Cloud Native Application Proxy
 
 ---

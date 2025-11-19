@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 1489
+**Total Insights:** 1514
 
 **Last Updated:** 2025-11-19
 
@@ -1330,10 +1330,10 @@ Hi HN - I’m Peter, here with Harry (devhawk), and we’re building DBOS Java, 
 ---
 
 
-### Exploring the Limits of Large Language Models as Quant Traders
+### Building more with GPT-5.1-Codex-Max
 
-**Community Score:** 11 upvotes
+**Community Score:** 179 upvotes
 
-**Link:** https://nof1.ai/blog/TechPost1
+**Link:** https://openai.com/index/gpt-5-1-codex-max/
 
 ---
