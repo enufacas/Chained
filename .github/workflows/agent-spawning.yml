@@ -82,14 +82,11 @@ on:
           - diverse  # Maximize specialization diversity
       
       # Workload spawner options
-      max_spawns:
-        description: '[Workload] Maximum agents to spawn'
+      workload_options:
+        description: '[Workload] Options as "max_spawns:5,dry_run:false"'
         required: false
-        default: '5'
-      dry_run:
-        description: '[Workload] Dry run (no actual spawning)'
-        required: false
-        default: 'false'
+        type: string
+        default: 'max_spawns:5,dry_run:false'
 
 permissions:
   contents: write
@@ -715,6 +712,24 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
       
+      - name: Parse workload options
+        id: parse_options
+        run: |
+          # Parse workload_options input (format: "max_spawns:5,dry_run:false")
+          WORKLOAD_OPTIONS="${{ github.event.inputs.workload_options || 'max_spawns:5,dry_run:false' }}"
+          
+          # Extract max_spawns
+          MAX_SPAWNS=$(echo "$WORKLOAD_OPTIONS" | grep -oP 'max_spawns:\K[^,]+' || echo "5")
+          echo "max_spawns=$MAX_SPAWNS" >> $GITHUB_OUTPUT
+          
+          # Extract dry_run
+          DRY_RUN=$(echo "$WORKLOAD_OPTIONS" | grep -oP 'dry_run:\K[^,]+' || echo "false")
+          echo "dry_run=$DRY_RUN" >> $GITHUB_OUTPUT
+          
+          echo "📋 Workload options parsed:"
+          echo "  max_spawns: $MAX_SPAWNS"
+          echo "  dry_run: $DRY_RUN"
+      
       - name: Fetch current workload
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -730,7 +745,7 @@ jobs:
           python3 tools/workload_monitor.py \
             --output .github/agent-system/workload_analysis.json \
             --report \
-            --max-spawns ${{ github.event.inputs.max_spawns || '5' }}
+            --max-spawns ${{ steps.parse_options.outputs.max_spawns }}
           
           NEEDS_SPAWN=$(jq -r '.summary.spawning_needed' .github/agent-system/workload_analysis.json)
           RECOMMENDED=$(jq -r '.summary.recommended_spawns' .github/agent-system/workload_analysis.json)
