@@ -130,99 +130,111 @@ jobs:
           success_pct=$(echo "$success_rate * 100" | bc)
           
           # Create summary file
-          cat > /tmp/performance_summary.md <<EOF
-# 🤖 Prompt Generator Performance Report
-
-**Generated:** $(date -u +"%Y-%m-%d %H:%M UTC")
-
-## 📊 Overall Metrics
-
-- **Total Prompts Used:** $total_prompts
-- **Success Rate:** ${success_pct}%
-- **Average Resolution Time:** ${avg_resolution} hours
-- **Optimization Opportunities:** $suggestion_count templates
-
-## 🎯 Performance Analysis
-
-EOF
+          cat > /tmp/performance_summary.md <<'EOF'
+          # 🤖 Prompt Generator Performance Report
+          
+          **Generated:** $(date -u +"%Y-%m-%d %H:%M UTC")
+          
+          ## 📊 Overall Metrics
+          
+          - **Total Prompts Used:** $total_prompts
+          - **Success Rate:** ${success_pct}%
+          - **Average Resolution Time:** ${avg_resolution} hours
+          - **Optimization Opportunities:** $suggestion_count templates
+          
+          ## 🎯 Performance Analysis
+          
+          EOF
+          
+          # Remove leading spaces from the file
+          sed -i 's/^          //' /tmp/performance_summary.md
           
           if [ "$total_prompts" -eq 0 ]; then
-            cat >> /tmp/performance_summary.md <<EOF
-No prompt usage data available yet. The system will begin collecting performance metrics as issues are resolved.
-
-**Next Steps:**
-1. Generate prompts for new issues using the prompt generator
-2. Record outcomes after issues are resolved
-3. Run this workflow again to see performance trends
-EOF
+            cat >> /tmp/performance_summary.md <<'EOF'
+          No prompt usage data available yet. The system will begin collecting performance metrics as issues are resolved.
+          
+          **Next Steps:**
+          1. Generate prompts for new issues using the prompt generator
+          2. Record outcomes after issues are resolved
+          3. Run this workflow again to see performance trends
+          EOF
+            
+            # Remove leading spaces
+            sed -i 's/^          //' /tmp/performance_summary.md
           else
             # Add template performance details
-            cat >> /tmp/performance_summary.md <<EOF
-The prompt generator has processed $total_prompts issues with a ${success_pct}% success rate.
-
-### Template Performance
-
-EOF
+            cat >> /tmp/performance_summary.md <<'EOF'
+          The prompt generator has processed $total_prompts issues with a ${success_pct}% success rate.
+          
+          ### Template Performance
+          
+          EOF
+            
+            sed -i 's/^          //' /tmp/performance_summary.md
             
             # Extract top performing templates
             python3 -c "
-import json
-with open('/tmp/performance_report.json') as f:
-    report = json.load(f)
-    templates = report.get('templates', {})
-    
-    # Sort by effectiveness score
-    sorted_templates = sorted(
-        templates.items(),
-        key=lambda x: x[1].get('effectiveness_score', 0),
-        reverse=True
-    )
-    
-    if sorted_templates:
-        print('#### Top Performing Templates\n')
-        for template_id, stats in sorted_templates[:5]:
-            score = stats.get('effectiveness_score', 0)
-            uses = stats.get('total_uses', 0)
-            success = stats.get('success_rate', 0)
-            print(f'- **{template_id}**: {score:.2f} effectiveness ({success*100:.0f}% success, {uses} uses)')
-" >> /tmp/performance_summary.md
+          import json
+          with open('/tmp/performance_report.json') as f:
+              report = json.load(f)
+              templates = report.get('templates', {})
+              
+              # Sort by effectiveness score
+              sorted_templates = sorted(
+                  templates.items(),
+                  key=lambda x: x[1].get('effectiveness_score', 0),
+                  reverse=True
+              )
+              
+              if sorted_templates:
+                  print('#### Top Performing Templates\n')
+                  for template_id, stats in sorted_templates[:5]:
+                      score = stats.get('effectiveness_score', 0)
+                      uses = stats.get('total_uses', 0)
+                      success = stats.get('success_rate', 0)
+                      print(f'- **{template_id}**: {score:.2f} effectiveness ({success*100:.0f}% success, {uses} uses)')
+          " >> /tmp/performance_summary.md
             
             # Add optimization opportunities if any
             if [ "$suggestion_count" -gt 0 ]; then
-              cat >> /tmp/performance_summary.md <<EOF
-
-### 🔧 Optimization Opportunities
-
-The following templates need attention:
-
-EOF
+              cat >> /tmp/performance_summary.md <<'EOF'
+          
+          ### 🔧 Optimization Opportunities
+          
+          The following templates need attention:
+          
+          EOF
+              
+              sed -i 's/^          //' /tmp/performance_summary.md
               python3 -c "
-import json
-with open('/tmp/optimization_suggestions.json') as f:
-    suggestions = json.load(f)
-    for s in suggestions:
-        print(f\"- **{s['template_id']}**: {s['issue']} - {s['recommendation']}\")
-" >> /tmp/performance_summary.md
+          import json
+          with open('/tmp/optimization_suggestions.json') as f:
+              suggestions = json.load(f)
+              for s in suggestions:
+                  print(f\"- **{s['template_id']}**: {s['issue']} - {s['recommendation']}\")
+          " >> /tmp/performance_summary.md
             fi
           fi
           
-          cat >> /tmp/performance_summary.md <<EOF
-
-## 📈 Continuous Improvement
-
-The prompt generator automatically:
-- Tracks success rates and resolution times for each template
-- Identifies underperforming templates
-- Evolves templates based on performance data
-- Integrates recent learnings from TLDR and Hacker News
-- Tests template variations using A/B testing
-
-**@workflows-tech-lead** - This autonomous system continuously optimizes prompts to improve Copilot's effectiveness.
-
----
-
-*Generated by the self-improving prompt generator performance tracker*
-EOF
+          cat >> /tmp/performance_summary.md <<'EOF'
+          
+          ## 📈 Continuous Improvement
+          
+          The prompt generator automatically:
+          - Tracks success rates and resolution times for each template
+          - Identifies underperforming templates
+          - Evolves templates based on performance data
+          - Integrates recent learnings from TLDR and Hacker News
+          - Tests template variations using A/B testing
+          
+          **@workflows-tech-lead** - This autonomous system continuously optimizes prompts to improve Copilot's effectiveness.
+          
+          ---
+          
+          *Generated by the self-improving prompt generator performance tracker*
+          EOF
+          
+          sed -i 's/^          //' /tmp/performance_summary.md
           
           echo "✓ Performance summary created"
       
@@ -263,12 +275,12 @@ EOF
           
           git add tools/data/prompts/
           git commit -m "chore: update prompt generator performance data
-
-- Total prompts: ${{ steps.report.outputs.total_prompts }}
-- Success rate: $(echo '${{ steps.report.outputs.success_rate }} * 100' | bc)%
-- Optimization opportunities: ${{ steps.optimize.outputs.suggestion_count }}
-
-Automated by @workflows-tech-lead"
+          
+          - Total prompts: ${{ steps.report.outputs.total_prompts }}
+          - Success rate: $(echo '${{ steps.report.outputs.success_rate }} * 100' | bc)%
+          - Optimization opportunities: ${{ steps.optimize.outputs.suggestion_count }}
+          
+          Automated by @workflows-tech-lead"
           
           echo "✓ Changes committed"
       
