@@ -1,0 +1,98 @@
+test_detokenization (__main__.TestCodeTokenizer.test_detokenization)
+Test converting tokens back to code ... ok
+test_javascript_tokenization (__main__.TestCodeTokenizer.test_javascript_tokenization)
+Test JavaScript code tokenization ... ok
+test_preserves_newlines (__main__.TestCodeTokenizer.test_preserves_newlines)
+Test that newlines are preserved ... ok
+test_python_tokenization (__main__.TestCodeTokenizer.test_python_tokenization)
+Test Python code tokenization ... ok
+test_beam_search (__main__.TestSequencePredictor.test_beam_search)
+Test beam search completion ... ok
+test_confidence_scores (__main__.TestSequencePredictor.test_confidence_scores)
+Test that confidence scores are valid probabilities ... ok
+test_prediction_with_context (__main__.TestSequencePredictor.test_prediction_with_context)
+Test predictions with known context ... ok
+test_training (__main__.TestSequencePredictor.test_training)
+Test that model learns patterns ... ok
+test_cache_performance (__main__.TestCodeCompletionPredictor.test_cache_performance)
+Test that caching improves performance ... ok
+test_complete_function_requirement_2 (__main__.TestCodeCompletionPredictor.test_complete_function_requirement_2)
+Test Case 2: Completes functions ... ok
+test_confidence_scores_requirement_3 (__main__.TestCodeCompletionPredictor.test_confidence_scores_requirement_3)
+Test Requirement 3: Provide confidence scores for predictions ... ok
+test_model_save_and_load (__main__.TestCodeCompletionPredictor.test_model_save_and_load)
+Test saving and loading model ... ok
+test_model_training (__main__.TestCodeCompletionPredictor.test_model_training)
+Test that model trains successfully ... ok
+test_multiple_languages_support (__main__.TestCodeCompletionPredictor.test_multiple_languages_support)
+Test support for multiple programming languages ... ok
+test_predict_next_line_requirement_1 (__main__.TestCodeCompletionPredictor.test_predict_next_line_requirement_1)
+Test Case 1: Predicts next code line ... ok
+test_real_time_inference_requirement_4 (__main__.TestCodeCompletionPredictor.test_real_time_inference_requirement_4)
+Test Requirement 4: Optimize for real-time inference ... ok
+test_empty_context (__main__.TestEdgeCases.test_empty_context)
+Test prediction with empty context ... ok
+test_untrained_model (__main__.TestEdgeCases.test_untrained_model)
+Test using untrained model ... ok
+test_very_long_context (__main__.TestEdgeCases.test_very_long_context)
+Test with very long code context ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.018s
+
+OK
+
+======================================================================
+Code Completion Predictor - Test Suite
+======================================================================
+
+✓ Cache Performance:
+  First call: 0.04ms
+  Cached call: 0.00ms
+  Speedup: 10.5x
+
+✓ Test Case 2 - Function Completion:
+  Partial: 'f calculate_product(a, b):\n    result = '
+  Completion: '0 \n for i in range ( b ) : \n result = 0 \n for i in range ('
+  Confidence: 32.67%
+
+✓ Requirement 3 - Confidence Scores:
+  1. calculate_sum: 25.00%
+  2. calculate_average: 25.00%
+  3. add: 25.00%
+
+✓ Model Persistence:
+  Save/Load: ✓
+  Original prediction: 'a 0 total'
+  Loaded prediction: 'a 0 total'
+
+✓ Multi-language Support:
+  JavaScript model trained: ✓
+  Prediction: 'return console'
+
+✓ Test Case 1 - Next Line Prediction:
+  Context: 'def process_data(data):\n    total = 0\n    '
+  Predicted: 'for total'
+  Confidence: 84.44%
+
+✓ Requirement 4 - Real-time Inference:
+  Average time: 0.00ms
+  Min time: 0.00ms
+  Max time: 0.03ms
+  Target: < 100ms ✓
+
+======================================================================
+Test Summary
+======================================================================
+Tests run: 19
+Successes: 19
+Failures: 0
+Errors: 0
+
+✓ All tests passed!
+
+Requirements Validated:
+  1. ✓ Sequence prediction model
+  2. ✓ Multiple programming languages
+  3. ✓ Confidence scores
+  4. ✓ Real-time inference (< 100ms)
