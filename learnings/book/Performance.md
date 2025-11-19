@@ -2,7 +2,7 @@
 
 > Performance tuning, benchmarks, and optimization techniques
 
-**Total Insights:** 110
+**Total Insights:** 132
 
 **Last Updated:** 2025-11-19
 
@@ -389,15 +389,6 @@ Home About Steve Startup Books Slides/Videos Fund Raising Tools! Secret History 
 ---
 
 
-### Trying out Gemini 3 Pro with audio transcription and a new pelican benchmark
-
-**Community Score:** 28 upvotes
-
-**Link:** https://simonwillison.net/2025/Nov/18/gemini-3/
-
----
-
-
 ### High-performance 2D graphics rendering on the CPU using sparse strips [pdf]
 
 **Community Score:** 254 upvotes
@@ -544,7 +535,7 @@ A fast reverse proxy to help you expose a local server behind a NAT or firewall 
 ---
 
 
-### Untitled
+### HKUDS/LightRAG - [EMNLP2025] "LightRAG: Simple and Fast Retrieval-Augmented Generation"
 
 **Link:** https://github.com/HKUDS/LightRAG
 
@@ -554,7 +545,7 @@ A fast reverse proxy to help you expose a local server behind a NAT or firewall 
 ---
 
 
-### Untitled
+### fatedier/frp - A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.
 
 **Link:** https://github.com/fatedier/frp
 
@@ -590,5 +581,15 @@ A fast reverse proxy to help you expose a local server behind a NAT or firewall 
 
 
 [EMNLP2025] "LightRAG: Simple and Fast Retrieval-Augmented Generation"
+
+---
+
+
+### fatedier/frp - A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.
+
+**Link:** https://github.com/fatedier/frp
+
+
+A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.
 
 ---

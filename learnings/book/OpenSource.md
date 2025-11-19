@@ -2,7 +2,7 @@
 
 > Open source projects, community insights, and collaboration
 
-**Total Insights:** 26
+**Total Insights:** 31
 
 **Last Updated:** 2025-11-19
 
@@ -194,15 +194,6 @@ To use the Mastodon web application, please enable JavaScript. Alternatively, tr
 ---
 
 
-### The fate of "small" open source
-
-**Community Score:** 66 upvotes
-
-**Link:** https://nolanlawson.com/2025/11/16/the-fate-of-small-open-source/
-
----
-
-
 ### bobeff/open-source-games - A list of open source games.
 
 **Link:** https://github.com/bobeff/open-source-games
@@ -253,6 +244,15 @@ A list of open source games.
 **Content Summary:**
 
 To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
+
+---
+
+
+### The fate of "small" open source
+
+**Community Score:** 66 upvotes
+
+**Link:** https://nolanlawson.com/2025/11/16/the-fate-of-small-open-source/
 
 ---
 

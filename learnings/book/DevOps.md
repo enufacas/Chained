@@ -2,7 +2,7 @@
 
 > CI/CD, containers, orchestration, and infrastructure automation
 
-**Total Insights:** 107
+**Total Insights:** 131
 
 **Last Updated:** 2025-11-19
 
@@ -206,6 +206,24 @@ Ingress NGINX Retirement: What You Need to Know By Tabitha Sable (Kubernetes SRC
 ---
 
 
+### Cloudflare outage on November 18, 2025 post mortem
+
+**Community Score:** 888 upvotes
+
+**Link:** https://blog.cloudflare.com/18-november-2025-outage/
+
+---
+
+
+### Cloudflare Global Network experiencing issues
+
+**Community Score:** 2359 upvotes
+
+**Link:** https://www.cloudflarestatus.com/incidents/8gmgl950y3h7
+
+---
+
+
 ### Kubernetes Ingress Nginx is retiring
 
 **Community Score:** 107 upvotes
@@ -220,15 +238,6 @@ Ingress NGINX Retirement: What You Need to Know By Tabitha Sable (Kubernetes SRC
 ---
 
 
-### Cloudflare Global Network experiencing issues
-
-**Community Score:** 2172 upvotes
-
-**Link:** https://www.cloudflarestatus.com/incidents/8gmgl950y3h7
-
----
-
-
 ### serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly, and Fly.io
 
 **Link:** https://github.com/serverless-dns/serverless-dns
@@ -260,46 +269,6 @@ Milvus is a high-performance, cloud-native vector database built for scalable ve
 
 
 ### kubernetes-sigs/headlamp - A Kubernetes web UI that is fully-featured, user-friendly and extensible
-
-**Link:** https://github.com/kubernetes-sigs/headlamp
-
-
-A Kubernetes web UI that is fully-featured, user-friendly and extensible
-
----
-
-
-### Untitled
-
-**Link:** https://github.com/serverless-dns/serverless-dns
-
-
-The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly, and Fly.io
-
----
-
-
-### Untitled
-
-**Link:** https://github.com/traefik/traefik
-
-
-The Cloud Native Application Proxy
-
----
-
-
-### Untitled
-
-**Link:** https://github.com/milvus-io/milvus
-
-
-Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
-
----
-
-
-### Untitled
 
 **Link:** https://github.com/kubernetes-sigs/headlamp
 
@@ -395,5 +364,35 @@ A Kubernetes web UI that is fully-featured, user-friendly and extensible
 
 
 The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly, and Fly.io
+
+---
+
+
+### traefik/traefik - The Cloud Native Application Proxy
+
+**Link:** https://github.com/traefik/traefik
+
+
+The Cloud Native Application Proxy
+
+---
+
+
+### milvus-io/milvus - Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
+
+**Link:** https://github.com/milvus-io/milvus
+
+
+Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
+
+---
+
+
+### kubernetes-sigs/headlamp - A Kubernetes web UI that is fully-featured, user-friendly and extensible
+
+**Link:** https://github.com/kubernetes-sigs/headlamp
+
+
+A Kubernetes web UI that is fully-featured, user-friendly and extensible
 
 ---

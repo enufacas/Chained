@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 1219
+**Total Insights:** 1489
 
 **Last Updated:** 2025-11-19
 
@@ -53,6 +53,186 @@ The 300+ line README includes: (1) Overview and features, (2) Installation and r
 
 
 ## 📰 From GitHub Copilot (Combined)
+
+
+### GitHub Copilot Docs: About billing for GitHub Copilot in organizations and enterprises
+
+**Link:** https://docs.github.com/en/copilot/concepts/billing/organizations-and-enterprises
+
+
+**Content Summary:**
+
+About billing for GitHub Copilot in organizations and enterprises
+Learn about pricing and billing cycles for Copilot.
+Who can use this feature?
+Organizations on a GitHub Free or GitHub Team plan, or organizations and enterprises on GitHub Enterprise Cloud
+In this article
+Available plans
+GitHub offers the following plans for organization accounts:
+Copilot Business
+at $19 USD per user per month (Purchase additional premium requests at $0.04 USD per request)
+Copilot Enterprise
+at $39 USD per user p...
+
+---
+
+
+### GitHub Copilot Docs: About billing for individual GitHub Copilot plans
+
+**Link:** https://docs.github.com/en/copilot/concepts/billing/billing-for-individuals
+
+
+**Content Summary:**
+
+About billing for individual GitHub Copilot plans
+Learn how billing works for Copilot Pro and Copilot Pro+.
+In this article
+Pricing for Copilot Pro and Copilot Pro+
+GitHub offers two paid plans for individuals: Copilot Pro and Copilot Pro+. Both plans are available on a monthly or yearly billing cycle.
+Copilot Pro
+If you choose a monthly billing cycle
+, you will be billed $10 USD per calendar month.
+If you choose a yearly billing cycle
+, you will be billed $100 USD per year.
+Copilot Pro+
+If you ...
+
+---
+
+
+### GitHub Copilot Docs: About Copilot auto model selection
+
+**Link:** https://docs.github.com/en/copilot/concepts/auto-model-selection
+
+
+**Content Summary:**
+
+About Copilot auto model selection
+Automatically select models for Copilot Chat.
+Who can use this feature?
+Auto model selection is in  public preview for supported IDEs with all GitHub Copilot plans.
+In this article
+Overview
+Experience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model selection automatically choose the best available model.
+Copilot auto model selection chooses from GPT-4.1, GPT-5 mini, GPT-5, Claude Haiku 4.5, and Claude Sonnet 4.5, ...
+
+---
+
+
+### GitHub Copilot Docs: About customizing GitHub Copilot responses
+
+**Link:** https://docs.github.com/en/copilot/concepts/prompting/response-customization
+
+
+**Content Summary:**
+
+About customizing GitHub Copilot responses
+Learn about customizing the behavior of GitHub Copilot to fit with your preferences and requirements.
+Tool navigation
+In this article
+Note
+This version of this article is about custom instructions on the GitHub website. Click the tabs above for other environments.
+About customizing Copilot responses
+GitHub Copilot can provide responses that are tailored to your personal preferences, the way your team works, the tools you use, or the specifics of your pr...
+
+---
+
+
+### GitHub Copilot Docs: About GitHub Copilot Chat
+
+**Link:** https://docs.github.com/en/copilot/concepts/chat
+
+
+**Content Summary:**
+
+About GitHub Copilot Chat
+Learn how you can use GitHub Copilot Chat to enhance your coding experience.
+In this article
+Overview
+GitHub Copilot Chat is the AI-powered chat interface for GitHub Copilot. It allows you to interact with AI models to get coding assistance, explanations, and suggestions in a conversational format.
+Copilot Chat can help you with a variety of coding-related tasks, like offering you code suggestions, providing natural language descriptions of a piece of code's functionali...
+
+---
+
+
+### GitHub Discussion: Copilot L1 Test generation
+
+**Link:** https://github.com/rdkcentral/entservices-softwareupdate/pull/164
+
+
+No description
+
+---
+
+
+### GitHub Discussion: Feature: Add GitHub Copilot as model provider
+
+**Link:** https://github.com/Aider-AI/aider/issues/2227
+
+
+**Content Summary:**
+
+### Issue
+
+Hello!
+
+Please add GitHub Copilot as model provider.
+
+Should be possible like this: https://github.com/olimorris/codecompanion.nvim/blob/5c5a5c759b8c925e81f8584a0279eefc8a6c6643/lua/codecompanion/adapters/copilot.lua
+
+Idea taken from: https://github.com/cline/cline/discussions/660
+
+Thank you!
+
+### Version and model info
+
+_No response_
+
+---
+
+
+### GitHub Discussion: Ability to import docker-compose defintion and convert them as Copilot app and services
+
+**Link:** https://github.com/aws/copilot-cli/issues/1612
+
+
+**Content Summary:**
+
+Docker compose is commonly used for local development and testing. We need an ability for Copilot to import Docker Compose files and convert them as Copilot native app and svc objects, in a guide way. This will be a big boost for developers.
+
+---
+
+
+### GitHub Discussion: Ability to use Free Models (0x credits) in Copilot CLI
+
+**Link:** https://github.com/github/copilot-cli/issues/32
+
+
+**Content Summary:**
+
+### Describe the feature or problem you'd like to solve
+
+The Copilot CLI uses Sonnet 4 by default which incurs 1x cost / message.
+
+### Proposed solution
+
+In the Copilot CLI, I wish we could select from a list of free models provided by GitHub Copilot eg. GPT-4.1, GPT-4o, GPT-5 mini, Grok Code Fast 1 etc. This would let us optimize our monthly quota. Thank you for considering. 
+
+<img width="353" height="576" alt="Image" src="https://github.com/user-attachments/assets/3f25c7a5-6e48-49b4-b67f-b309f...
+
+---
+
+
+### GitHub Discussion: sync github copilot chat history across devices
+
+**Link:** https://github.com/microsoft/vscode-copilot-release/issues/991
+
+
+**Content Summary:**
+
+I really wish it were possible to sync copilot chat histories across devices, ex: I use a laptop on the go and a desktop at home. I usually keep both devices lock-step via GitHub but it sucks that the chat history is different on both devices. I can usually enter in the same prompt to get a similar answer but it just seems counter intuitive that the chats do not sync by default, or there is not at least an option to sync the chats. Thanks
+
+---
 
 
 ### GitHub Copilot Docs: About billing for GitHub Copilot in organizations and enterprises
@@ -1150,10 +1330,10 @@ Hi HN - I’m Peter, here with Harry (devhawk), and we’re building DBOS Java, 
 ---
 
 
-### LLMs are steroids for your Dunning-Kruger
+### Exploring the Limits of Large Language Models as Quant Traders
 
-**Community Score:** 128 upvotes
+**Community Score:** 11 upvotes
 
-**Link:** https://bytesauna.com/post/dunning-kruger
+**Link:** https://nof1.ai/blog/TechPost1
 
 ---

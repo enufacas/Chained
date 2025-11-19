@@ -2,7 +2,7 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 128
+**Total Insights:** 155
 
 **Last Updated:** 2025-11-19
 
@@ -277,6 +277,15 @@ Related post: <a href="https:&#x2F;&#x2F;hazyresearch.stanford.edu&#x2F;blog&#x2
 ---
 
 
+### Show HN: Browser-based interactive 3D Three-Body problem simulator
+
+**Community Score:** 101 upvotes
+
+**Link:** https://trisolarchaos.com/?pr=O_8(0.6)&n=3&s=5.0&so=0.00&im=rk4&dt=1.00e-4&rt=1.0e-6&at=1.0e-8&bs=0.15&sf=0&sv=0&cm=free&kt=1&st=1&tl=1500&cp=2.5208,1.5125,2.5208&ct=0.0000,0.0000,0.1670
+
+---
+
+
 ### Meta replaces WhatsApp for Windows with web wrapper that uses 1 GB RAM when idle
 
 **Community Score:** 103 upvotes
@@ -426,36 +435,6 @@ Deliver web apps with confidence 🚀
 ---
 
 
-### Untitled
-
-**Link:** https://github.com/playcanvas/engine
-
-
-Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
-
----
-
-
-### Untitled
-
-**Link:** https://github.com/requestly/requestly
-
-
-Free and open-source API Client & Interceptor.
-
----
-
-
-### Untitled
-
-**Link:** https://github.com/angular/angular
-
-
-Deliver web apps with confidence 🚀
-
----
-
-
 ### playcanvas/engine - Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
 
 **Link:** https://github.com/playcanvas/engine
@@ -482,5 +461,25 @@ Free and open-source API Client & Interceptor.
 
 
 Deliver web apps with confidence 🚀
+
+---
+
+
+### playcanvas/engine - Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+
+**Link:** https://github.com/playcanvas/engine
+
+
+Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+
+---
+
+
+### requestly/requestly - Free and open-source API Client & Interceptor.
+
+**Link:** https://github.com/requestly/requestly
+
+
+Free and open-source API Client & Interceptor.
 
 ---
