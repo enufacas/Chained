@@ -20,6 +20,10 @@ permissions:
   issues: read
   pull-requests: write
 
+concurrency:
+  group: analysis-clustering-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   cluster-issues:
     name: Cluster Repository Issues
@@ -112,6 +116,15 @@ jobs:
             echo "No changes to commit"
             exit 0
           fi
+          
+          # Pull latest main to avoid conflicts
+          git fetch origin main
+          git merge origin/main --no-edit || {
+            # If merge conflicts, keep our changes
+            git checkout --ours analysis/
+            git add analysis/
+            git commit --no-edit
+          }
           
           # Commit changes
           git commit -m "chore: update issue clustering analysis (@engineer-master)

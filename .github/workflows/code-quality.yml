@@ -75,6 +75,10 @@ permissions:
   pull-requests: write
   issues: write
 
+concurrency:
+  group: analysis-code-quality-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   # ===================================================================================
   # STAGE 1: Code Analyzer (from code-analyzer.yml)
@@ -137,6 +141,16 @@ jobs:
             TIMESTAMP=$(date +%Y%m%d-%H%M%S)
             BRANCH_NAME="code-analysis/${TIMESTAMP}-${{ github.run_id }}"
             git checkout -b "$BRANCH_NAME"
+            
+            # Pull latest main to avoid conflicts
+            git fetch origin main
+            git merge origin/main --no-edit || {
+              # If merge conflicts, keep our changes
+              git checkout --ours analysis/
+              git add analysis/
+              git commit --no-edit
+            }
+            
             git commit -m "Code analysis results - ${{ steps.analyze.outputs.target_dir }}"
             git push origin "$BRANCH_NAME"
             
@@ -233,6 +247,16 @@ jobs:
             TIMESTAMP=$(date +%Y%m%d-%H%M%S)
             BRANCH_NAME="archaeology/${TIMESTAMP}-${{ github.run_id }}"
             git checkout -b "$BRANCH_NAME"
+            
+            # Pull latest main to avoid conflicts
+            git fetch origin main
+            git merge origin/main --no-edit || {
+              # If merge conflicts, keep our changes
+              git checkout --ours analysis/
+              git add analysis/
+              git commit --no-edit
+            }
+            
             git commit -m "Code archaeology analysis - ${{ steps.archaeology.outputs.commits_analyzed }} commits"
             git push origin "$BRANCH_NAME"
             

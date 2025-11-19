@@ -26,6 +26,10 @@ permissions:
   issues: write
   pull-requests: write
 
+concurrency:
+  group: analysis-repetition-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   detect-repetition:
     runs-on: ubuntu-latest
@@ -386,6 +390,15 @@ jobs:
             TIMESTAMP=$(date +%Y%m%d-%H%M%S)
             BRANCH_NAME="repetition-analysis/${TIMESTAMP}-${{ github.run_id }}"
             git checkout -b "$BRANCH_NAME"
+            
+            # Pull latest main to avoid conflicts
+            git fetch origin main
+            git merge origin/main --no-edit || {
+              # If merge conflicts, keep our changes
+              git checkout --ours analysis/
+              git add analysis/
+              git commit --no-edit
+            }
             
             git commit -m "🤖 Update pattern repetition analysis" \
                        -m "Analyzed: ${{ steps.stats.outputs.total_agents }} agents" \

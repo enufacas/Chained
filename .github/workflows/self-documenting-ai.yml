@@ -15,6 +15,11 @@ permissions:
   issues: write
   pull-requests: write
 
+# Prevent concurrent runs to avoid merge conflicts
+concurrency:
+  group: learning-discussions-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   learn-from-discussion:
     runs-on: ubuntu-latest
@@ -296,6 +301,17 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new learnings to commit"
           else
+            # Pull latest changes from main to avoid conflicts
+            echo "🔄 Pulling latest changes from main..."
+            git fetch origin main
+            git merge origin/main --no-edit || {
+              echo "⚠️ Merge conflict detected, attempting to resolve..."
+              # Keep our changes for learnings directory
+              git checkout --ours learnings/
+              git add learnings/
+              git commit --no-edit
+            }
+            
             # Create branch
             TIMESTAMP=$(date +%Y%m%d-%H%M%S)
             BRANCH_NAME="learning/discussion-${TIMESTAMP}-${{ github.run_id }}"

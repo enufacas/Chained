@@ -31,6 +31,11 @@ permissions:
   issues: write
   pull-requests: write
 
+# Prevent concurrent runs to avoid merge conflicts in learnings directory
+concurrency:
+  group: learning-combined-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   combined-learning:
     runs-on: ubuntu-latest
@@ -567,6 +572,17 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new learnings to commit"
           else
+            # Pull latest changes from main to avoid conflicts
+            echo "🔄 Pulling latest changes from main..."
+            git fetch origin main
+            git merge origin/main --no-edit || {
+              echo "⚠️ Merge conflict detected, attempting to resolve..."
+              # Keep our changes for learnings directory
+              git checkout --ours learnings/
+              git add learnings/
+              git commit --no-edit
+            }
+            
             BRANCH_NAME="${{ steps.branch_info.outputs.branch_name }}"
             git checkout -b "${BRANCH_NAME}"
             
