@@ -800,12 +800,279 @@
         "stat-test-1-subtask-1": "agent-1762918927"
       },
       "status": "active"
+    },
+    {
+      "id": "coord-test-5-1763570590",
+      "task_id": "test-5",
+      "created_at": "2025-11-19T16:43:10.875335+00:00",
+      "plan": {
+        "task_id": "test-5",
+        "complexity": "complex",
+        "sub_tasks": [
+          {
+            "id": "test-5-subtask-1",
+            "description": "Infrastructure work: Implement infrastructure and tooling for: Build authentication API with security audit and comprehensive testing",
+            "required_specializations": [
+              "create-guru",
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [
+              "test-5-subtask-3"
+            ],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "Feature implemented and tested",
+              "Infrastructure is documented",
+              "Integration tests pass"
+            ]
+          },
+          {
+            "id": "test-5-subtask-2",
+            "description": "Api work: Design and implement API endpoints for: Build authentication API with security audit and comprehensive testing",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [
+              "test-5-subtask-1"
+            ],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          },
+          {
+            "id": "test-5-subtask-3",
+            "description": "Security work: Audit and fix security vulnerabilities for: Build authentication API with security audit and comprehensive testing",
+            "required_specializations": [
+              "secure-specialist",
+              "monitor-champion"
+            ],
+            "dependencies": [],
+            "priority": 10,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": null,
+            "completion_criteria": [
+              "Vulnerabilities fixed",
+              "Security tests pass",
+              "Security review completed"
+            ]
+          }
+        ],
+        "execution_order": [
+          "test-5-subtask-3",
+          "test-5-subtask-1",
+          "test-5-subtask-2"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "long (1-3 days)",
+        "required_agents": [
+          "engineer-wizard",
+          "create-guru",
+          "secure-specialist",
+          "engineer-master",
+          "monitor-champion"
+        ]
+      },
+      "assignments": {
+        "test-5-subtask-1": "agent-1763087215",
+        "test-5-subtask-2": "agent-1763087215"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-test-5-1763570629",
+      "task_id": "test-5",
+      "created_at": "2025-11-19T16:43:49.923133+00:00",
+      "plan": {
+        "task_id": "test-5",
+        "complexity": "complex",
+        "sub_tasks": [
+          {
+            "id": "test-5-subtask-1",
+            "description": "Infrastructure work: Implement infrastructure and tooling for: Build authentication API with security audit and comprehensive testing",
+            "required_specializations": [
+              "create-guru",
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [
+              "test-5-subtask-3"
+            ],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "Feature implemented and tested",
+              "Infrastructure is documented",
+              "Integration tests pass"
+            ]
+          },
+          {
+            "id": "test-5-subtask-2",
+            "description": "Api work: Design and implement API endpoints for: Build authentication API with security audit and comprehensive testing",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [
+              "test-5-subtask-1"
+            ],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          },
+          {
+            "id": "test-5-subtask-3",
+            "description": "Security work: Audit and fix security vulnerabilities for: Build authentication API with security audit and comprehensive testing",
+            "required_specializations": [
+              "secure-specialist",
+              "monitor-champion"
+            ],
+            "dependencies": [],
+            "priority": 10,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": null,
+            "completion_criteria": [
+              "Vulnerabilities fixed",
+              "Security tests pass",
+              "Security review completed"
+            ]
+          }
+        ],
+        "execution_order": [
+          "test-5-subtask-3",
+          "test-5-subtask-1",
+          "test-5-subtask-2"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "long (1-3 days)",
+        "required_agents": [
+          "monitor-champion",
+          "create-guru",
+          "engineer-master",
+          "secure-specialist",
+          "engineer-wizard"
+        ]
+      },
+      "assignments": {
+        "test-5-subtask-1": "agent-1763087215",
+        "test-5-subtask-2": "agent-1763087215"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-test-5-1763570651",
+      "task_id": "test-5",
+      "created_at": "2025-11-19T16:44:11.262071+00:00",
+      "plan": {
+        "task_id": "test-5",
+        "complexity": "complex",
+        "sub_tasks": [
+          {
+            "id": "test-5-subtask-1",
+            "description": "Infrastructure work: Implement infrastructure and tooling for: Build authentication API with security audit and comprehensive testing",
+            "required_specializations": [
+              "create-guru",
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [
+              "test-5-subtask-3"
+            ],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "Feature implemented and tested",
+              "Infrastructure is documented",
+              "Integration tests pass"
+            ]
+          },
+          {
+            "id": "test-5-subtask-2",
+            "description": "Api work: Design and implement API endpoints for: Build authentication API with security audit and comprehensive testing",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [
+              "test-5-subtask-1"
+            ],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          },
+          {
+            "id": "test-5-subtask-3",
+            "description": "Security work: Audit and fix security vulnerabilities for: Build authentication API with security audit and comprehensive testing",
+            "required_specializations": [
+              "secure-specialist",
+              "monitor-champion"
+            ],
+            "dependencies": [],
+            "priority": 10,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": null,
+            "completion_criteria": [
+              "Vulnerabilities fixed",
+              "Security tests pass",
+              "Security review completed"
+            ]
+          }
+        ],
+        "execution_order": [
+          "test-5-subtask-3",
+          "test-5-subtask-1",
+          "test-5-subtask-2"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "long (1-3 days)",
+        "required_agents": [
+          "engineer-wizard",
+          "secure-specialist",
+          "monitor-champion",
+          "engineer-master",
+          "create-guru"
+        ]
+      },
+      "assignments": {
+        "test-5-subtask-1": "agent-1763087215",
+        "test-5-subtask-2": "agent-1763087215"
+      },
+      "status": "active"
     }
   ],
   "statistics": {
-    "total_coordinations": 20,
+    "total_coordinations": 23,
     "successful_coordinations": 0,
     "failed_coordinations": 0,
-    "avg_agents_per_task": 0.75
+    "avg_agents_per_task": 0.9130434782608695
   }
 }
