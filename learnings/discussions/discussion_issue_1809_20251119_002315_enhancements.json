@@ -1,0 +1,151 @@
+{
+  "proactive_suggestions": [
+    "\u26a1 Consider documenting performance metrics and benchmarks",
+    "\ud83d\udc1b Document steps to reproduce and expected vs actual behavior",
+    "\ud83c\udfaf Define clear acceptance criteria and test cases",
+    "\ud83d\udd28 Document the current state and desired improvements",
+    "\ud83d\udca1 Related past insights: -- COPILOT_AGENT:coach-master -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has ..."
+  ],
+  "knowledge_connections": {
+    "insight_1809_647e149dd354": [
+      {
+        "target_id": "insight_1461_df7e683aa403",
+        "similarity": 0.7894736842105263
+      },
+      {
+        "target_id": "insight_1492_61b96b2f93c9",
+        "similarity": 0.7894736842105263
+      },
+      {
+        "target_id": "insight_1509_e7d0d2647da3",
+        "similarity": 0.7894736842105263
+      }
+    ],
+    "insight_1809_a9adc8cd9a2d": [
+      {
+        "target_id": "insight_1460_d821e026c58a",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1461_46b28a924e49",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1458_c0ed8184fe83",
+        "similarity": 0.6923076923076923
+      }
+    ],
+    "insight_1809_aff0111832df": [
+      {
+        "target_id": "insight_1809_1b5a15c5c46d",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1809_e8baa74e1b15": [
+      {
+        "target_id": "insight_1555_c18d200b6021",
+        "similarity": 0.48
+      }
+    ],
+    "insight_1809_89e453dc183c": [
+      {
+        "target_id": "insight_1555_b5adf70e07e3",
+        "similarity": 0.5615384615384615
+      }
+    ],
+    "insight_1809_d24c88843a5f": [
+      {
+        "target_id": "insight_1555_0db9be47795e",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1809_60d78eef36bf": [
+      {
+        "target_id": "insight_1555_628ea55a8db9",
+        "similarity": 0.75
+      }
+    ],
+    "insight_1809_1b5a15c5c46d": [
+      {
+        "target_id": "insight_1809_aff0111832df",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1809_fadab677387b": [
+      {
+        "target_id": "insight_1555_ef849b9f7e04",
+        "similarity": 0.8333333333333334
+      },
+      {
+        "target_id": "insight_1460_b8b5519c2025",
+        "similarity": 0.76
+      },
+      {
+        "target_id": "insight_1461_adf13f5f0e40",
+        "similarity": 0.76
+      }
+    ],
+    "insight_1809_3aa4663977c4": [
+      {
+        "target_id": "insight_1460_7d780ede38e3",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1461_33952c0cdd1c",
+        "similarity": 0.6923076923076923
+      },
+      {
+        "target_id": "insight_1458_9abc622d3d41",
+        "similarity": 0.6923076923076923
+      }
+    ],
+    "insight_1809_082820914cfc": [
+      {
+        "target_id": "insight_1460_734f5639eeb1",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1461_b02d3182b0fa",
+        "similarity": 1.0
+      },
+      {
+        "target_id": "insight_1458_a11d8a8639cb",
+        "similarity": 1.0
+      }
+    ],
+    "insight_1809_ad0c4969023f": [
+      {
+        "target_id": "insight_1555_43d0175523d5",
+        "similarity": 0.6666666666666666
+      },
+      {
+        "target_id": "insight_1461_dc1e63490ce7",
+        "similarity": 0.5384615384615384
+      },
+      {
+        "target_id": "insight_1492_2b3d95533e12",
+        "similarity": 0.5384615384615384
+      }
+    ],
+    "insight_1809_afc638686855": [
+      {
+        "target_id": "insight_1555_8bd6247a8272",
+        "similarity": 0.7446808510638298
+      },
+      {
+        "target_id": "insight_1673_5a1ead88b5f3",
+        "similarity": 0.5
+      },
+      {
+        "target_id": "insight_1638_acdfe6a64fd0",
+        "similarity": 0.4909090909090909
+      }
+    ]
+  },
+  "knowledge_graph_stats": {
+    "total_insights": 263,
+    "total_connections": 910,
+    "new_insights_added": 23
+  },
+  "timestamp": "2025-11-19T00:23:15.138427+00:00"
+}
