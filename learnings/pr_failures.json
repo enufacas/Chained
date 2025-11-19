@@ -212,8 +212,175 @@
       "labels": [
         "copilot"
       ]
+    },
+    {
+      "pr_number": 1873,
+      "title": "\ud83d\udcca Code Analysis Results",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-19T01:46:44Z",
+      "closed_at": "2025-11-19T01:48:16Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "code-quality"
+      ]
+    },
+    {
+      "pr_number": 1829,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1708 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-19T00:27:17Z",
+      "closed_at": "2025-11-19T01:44:59Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "copilot",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1828,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1810 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-19T00:27:07Z",
+      "closed_at": "2025-11-19T01:44:54Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "copilot",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1842,
+      "title": "\ud83d\udcda Enhanced Learning: Issue #1832 (@engineer-master)",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-19T01:14:33Z",
+      "closed_at": "2025-11-19T01:44:49Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "learning",
+        "copilot",
+        "self-documenting-ai"
+      ]
+    },
+    {
+      "pr_number": 1843,
+      "title": "\ud83d\udcca Code Analysis Results",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-19T01:14:37Z",
+      "closed_at": "2025-11-19T01:44:39Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "code-quality"
+      ]
+    },
+    {
+      "pr_number": 1859,
+      "title": "\ud83d\udcca Code Analysis Results",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-19T01:26:46Z",
+      "closed_at": "2025-11-19T01:44:33Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "code-quality"
+      ]
+    },
+    {
+      "pr_number": 1860,
+      "title": "\ud83d\udcca Code Analysis Results",
+      "author": "github-actions[bot]",
+      "agent_id": null,
+      "agent_specialization": null,
+      "created_at": "2025-11-19T01:26:47Z",
+      "closed_at": "2025-11-19T01:44:28Z",
+      "failure_type": "review_rejection",
+      "failure_details": {
+        "state_reason": null,
+        "draft": false
+      },
+      "check_runs": [],
+      "review_comments": [],
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "labels": [
+        "automated",
+        "code-quality"
+      ]
     }
   ],
-  "last_updated": "2025-11-19T01:41:12.675380+00:00",
-  "total_count": 9
+  "last_updated": "2025-11-19T01:53:38.775320+00:00",
+  "total_count": 16
 }
