@@ -86,7 +86,19 @@ Security best practices and implementation:
 
 Technical documentation for developers:
 
+- **[ARCHITECTURE_OVERVIEW.md](../ARCHITECTURE_OVERVIEW.md)** - ⭐ **NEW! START HERE FOR ARCHITECTURE**
+  - 10-minute guide to understand the system
+  - Perfect for newcomers and stakeholders
+  - Visual 5-layer architecture
+  - Daily cycle walk-through
+  - Navigation guide for all docs
+- **[ARCHITECTURE_QUICK_REFERENCE.md](./ARCHITECTURE_QUICK_REFERENCE.md)** - ⭐ **NEW! QUICK LOOKUP CARD**
+  - One-page printable reference
+  - Tables and quick facts
+  - Perfect for keeping handy
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - ⭐ System architecture with visual diagrams
+- **[AUTONOMOUS_SYSTEM_ARCHITECTURE.md](../AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - ⭐ Complete technical blueprint
+- **[PIPELINE_ARCHITECTURE.md](./PIPELINE_ARCHITECTURE.md)** - ⭐ Pipeline details
 - **[DATA_STORAGE_LIFECYCLE.md](./DATA_STORAGE_LIFECYCLE.md)** - ⭐ **NEW!** Complete data architecture reference (@investigate-champion)
 - **[diagrams/](./diagrams/)** - 🎨 **NEW!** Professional Mermaid architecture diagrams
   - **[System Architecture](./diagrams/system-architecture.md)** - High-level component diagram

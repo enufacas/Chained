@@ -6,6 +6,19 @@ A comprehensive visual guide to understanding the Chained autonomous AI ecosyste
 > 
 > This document now includes both ASCII art (for quick reference) and professional **[Mermaid diagrams](./diagrams/)** that render beautifully on GitHub. For the best visual experience, check out the **[diagrams directory](./diagrams/)**.
 
+## 📚 Architecture Documentation Suite
+
+**New to Chained?** Start with the [Architecture Overview](../ARCHITECTURE_OVERVIEW.md) - a 10-minute guided tour perfect for beginners.
+
+**Quick reference?** Check the [Architecture Quick Reference Card](./ARCHITECTURE_QUICK_REFERENCE.md) - one-page printable guide.
+
+**Deep technical dive?** Read the [Autonomous System Architecture](../AUTONOMOUS_SYSTEM_ARCHITECTURE.md) - complete 702-line blueprint.
+
+**Specialized topics:**
+- [Pipeline Architecture](./PIPELINE_ARCHITECTURE.md) - Detailed pipeline workflows
+- [Data Architecture](./DATA_STORAGE_LIFECYCLE.md) - Complete data lifecycle
+- [Mermaid Diagrams](./diagrams/) - Professional visual diagrams
+
 ## 📐 High-Level Architecture
 
 **🎨 [View Interactive Mermaid Diagram](./diagrams/system-architecture.md)** - Comprehensive system architecture with color-coded components

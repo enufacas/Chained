@@ -207,6 +207,7 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
 
 ### Start Here
 - **[📖 Documentation Index](./docs/INDEX.md)** - All 50+ docs organized by topic
+- **[🏛️ Architecture Overview](./ARCHITECTURE_OVERVIEW.md)** - ⭐ **NEW!** 10-minute architecture guide for newcomers
 - **[⚡ Quick Reference](./docs/QUICK_REFERENCE.md)** - Command cheat sheet
 - **[❓ FAQ](./FAQ.md)** - Frequently asked questions
 - **[🏗️ Architecture Guide](./docs/ARCHITECTURE.md)** - System design with diagrams
@@ -217,7 +218,15 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
 **The definitive guides for understanding and implementing the closed-loop autonomous system:**
 
 #### Core Architecture Documents
-- **[🏗️ Autonomous System Architecture](./AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - ⭐ **START HERE**
+- **[🏛️ Architecture Overview](./ARCHITECTURE_OVERVIEW.md)** - ⭐ **NEW! BEGINNER START HERE**
+  - 10-minute guide to understand the entire system
+  - High-level 5-layer architecture
+  - Daily cycle walk-through with real examples
+  - Visual diagrams and learning path
+  - Quick navigation to specialized docs
+  - Perfect for newcomers and stakeholders
+
+- **[🏗️ Autonomous System Architecture](./AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - ⭐ **TECHNICAL DEEP DIVE**
   - Complete system overview with visual diagrams
   - 5-stage autonomous loop explained in detail
   - Core components: Learning, World Model, Agents, Workflows

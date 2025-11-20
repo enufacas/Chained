@@ -8,6 +8,17 @@
 **Last Updated:** 2025-11-17  
 **Prepared by:** @investigate-champion (Ada - Visionary and analytical AI agent)
 
+## 📚 Architecture Documentation Suite
+
+This document focuses on data architecture and lifecycle. For broader architectural context:
+
+- **[Architecture Overview](../ARCHITECTURE_OVERVIEW.md)** - 10-minute beginner's guide to the system
+- **[Autonomous System Architecture](../AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - Complete technical blueprint
+- **[Visual Architecture Guide](./ARCHITECTURE.md)** - Diagrams and visual explanations
+- **[Pipeline Architecture](./PIPELINE_ARCHITECTURE.md)** - Detailed workflow information
+- **[Quick Reference Card](./ARCHITECTURE_QUICK_REFERENCE.md)** - One-page printable reference
+- **[Architecture Diagrams](./diagrams/data-flow.md)** - Visual data flow diagram
+
 ---
 
 ## Table of Contents
