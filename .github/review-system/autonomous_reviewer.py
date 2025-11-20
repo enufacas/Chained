@@ -429,6 +429,10 @@ class AutonomousReviewer:
         if len(recent_history) < 5:
             return  # Not enough data
         
+        # Calculate overall success metrics
+        successful_reviews = sum(1 for h in recent_history if h['outcome'].get('merged', False) and not h['outcome'].get('major_changes_required', False))
+        success_rate = successful_reviews / len(recent_history) if recent_history else 0.5
+        
         # For each criteria category, calculate effectiveness
         for category_name, category in self.criteria['criteria'].items():
             effectiveness_scores = []
@@ -440,8 +444,15 @@ class AutonomousReviewer:
                 if times_applied < 3:
                     continue
                 
-                # Calculate effectiveness: how often did this check correlate with good outcomes?
+                # Calculate effectiveness with confidence interval
+                # Higher times_applied = more confidence in the measurement
+                confidence = min(1.0, times_applied / 10.0)  # Full confidence at 10+ applications
                 current_eff = check.get('effectiveness', 0.5)
+                
+                # Smooth effectiveness with historical success rate
+                # Blend current effectiveness with overall success rate based on confidence
+                adjusted_eff = (current_eff * confidence) + (success_rate * (1 - confidence))
+                check['effectiveness'] = adjusted_eff
                 
                 # Update historical effectiveness
                 if 'historical_effectiveness' not in category:
@@ -450,29 +461,96 @@ class AutonomousReviewer:
                 category['historical_effectiveness'].append({
                     'timestamp': datetime.utcnow().isoformat() + 'Z',
                     'check_id': check_id,
-                    'effectiveness': current_eff
+                    'effectiveness': adjusted_eff,
+                    'confidence': confidence
                 })
                 
-                effectiveness_scores.append(current_eff)
+                effectiveness_scores.append(adjusted_eff)
             
             if effectiveness_scores:
                 avg_effectiveness = sum(effectiveness_scores) / len(effectiveness_scores)
                 
+                # Calculate variance for adaptive learning rate
+                variance = sum((e - avg_effectiveness) ** 2 for e in effectiveness_scores) / len(effectiveness_scores)
+                adaptive_learning_rate = category.get('learning_rate', 0.1) * (1.0 + variance)
+                
                 # Adjust category weight based on effectiveness
-                learning_rate = category.get('learning_rate', 0.1)
-                adjustment = (avg_effectiveness - 0.5) * config['weight_adjustment_rate']
+                adjustment = (avg_effectiveness - 0.5) * config['weight_adjustment_rate'] * adaptive_learning_rate
                 category['weight'] = max(0.1, min(2.0, category['weight'] + adjustment))
                 
-                # Adjust threshold
+                # Adjust threshold with adaptive logic
                 if avg_effectiveness > config['criteria_promotion_threshold']:
-                    # Very effective - can be stricter
-                    category['threshold'] = min(0.9, category['threshold'] + config['threshold_adjustment_rate'])
+                    # Very effective - can be stricter (but gradually)
+                    new_threshold = category['threshold'] + config['threshold_adjustment_rate'] * adaptive_learning_rate
+                    category['threshold'] = min(0.9, new_threshold)
                 elif avg_effectiveness < config['criteria_removal_threshold']:
                     # Not effective - be more lenient
-                    category['threshold'] = max(0.3, category['threshold'] - config['threshold_adjustment_rate'])
+                    new_threshold = category['threshold'] - config['threshold_adjustment_rate'] * adaptive_learning_rate
+                    category['threshold'] = max(0.3, new_threshold)
+                
+                # Store effectiveness stats
+                category['avg_effectiveness'] = avg_effectiveness
+                category['effectiveness_variance'] = variance
             
             # Increment times_evaluated
             category['times_evaluated'] = category.get('times_evaluated', 0) + 1
+    
+    def generate_metrics_report(self) -> str:
+        """Generate a detailed metrics report about the reviewer's performance."""
+        
+        total_reviews = self.criteria['metadata']['total_reviews']
+        success_rate = self.criteria['metadata']['success_rate']
+        
+        report = f"""# 📊 Autonomous Reviewer Performance Metrics
+
+## Overall Statistics
+
+- **Total Reviews Performed**: {total_reviews}
+- **Success Rate**: {success_rate:.1%}
+- **Criteria Version**: {self.criteria['version']}
+- **Last Updated**: {self.criteria['last_updated']}
+
+## Category Performance
+
+"""
+        
+        # Add category details
+        for category_name, category in self.criteria['criteria'].items():
+            avg_eff = category.get('avg_effectiveness', 0.5)
+            variance = category.get('effectiveness_variance', 0.0)
+            times_eval = category.get('times_evaluated', 0)
+            
+            report += f"### {category_name.replace('_', ' ').title()}\n\n"
+            report += f"- **Weight**: {category['weight']:.2f}\n"
+            report += f"- **Threshold**: {category['threshold']:.0%}\n"
+            report += f"- **Avg Effectiveness**: {avg_eff:.1%}\n"
+            report += f"- **Variance**: {variance:.3f}\n"
+            report += f"- **Times Evaluated**: {times_eval}\n"
+            
+            # Add check details
+            report += f"\n**Checks ({len(category.get('checks', []))}):**\n\n"
+            for check in category.get('checks', []):
+                check_eff = check.get('effectiveness', 0.5)
+                times_applied = check.get('times_applied', 0)
+                bar = '█' * int(check_eff * 10) + '░' * (10 - int(check_eff * 10))
+                report += f"- `{check['id']}`: {check_eff:.0%} `{bar}` (applied {times_applied}x)\n"
+            
+            report += "\n"
+        
+        # Add evolution trajectory
+        if len(self.criteria.get('history', [])) > 0:
+            report += "## Learning History\n\n"
+            report += f"Recent reviews: {len(self.criteria['history'])}\n\n"
+            
+            # Show last 5 outcomes
+            report += "### Last 5 Reviews\n\n"
+            for i, history_item in enumerate(self.criteria['history'][-5:], 1):
+                outcome = history_item['outcome']
+                merged = "✅ Merged" if outcome.get('merged') else "❌ Not Merged"
+                score = outcome.get('overall_score', 0)
+                report += f"{i}. {history_item['review_id']}: {merged} (score: {score:.0%})\n"
+        
+        return report
     
     def generate_review_comment(self, results: Dict) -> str:
         """Generate a formatted review comment from results."""
@@ -503,16 +581,20 @@ class AutonomousReviewer:
 
 """
         
-        # Add category scores
-        for category, score in results['category_scores'].items():
+        # Add category scores with weights
+        for category_name, score in results['category_scores'].items():
+            category = self.criteria['criteria'].get(category_name, {})
+            weight = category.get('weight', 1.0)
             bar = '█' * int(score * 10) + '░' * (10 - int(score * 10))
-            comment += f"- **{category.replace('_', ' ').title()}**: {score:.0%} `{bar}`\n"
+            comment += f"- **{category_name.replace('_', ' ').title()}**: {score:.0%} `{bar}` (weight: {weight:.1f})\n"
         
         # Add failed checks
         if results['failed_checks']:
             comment += "\n### ⚠️ Issues Found\n\n"
             for failure in results['failed_checks'][:10]:  # Limit to top 10
-                comment += f"- **{failure['check']}** ({failure['category']})\n"
+                severity = failure.get('severity', 'medium')
+                severity_emoji = {'high': '🔴', 'medium': '🟡', 'low': '🟢'}.get(severity, '⚪')
+                comment += f"- {severity_emoji} **{failure['check']}** ({failure['category']})\n"
                 if failure.get('details'):
                     comment += f"  - {failure['details']}\n"
         
@@ -521,20 +603,21 @@ class AutonomousReviewer:
             comment += "\n### ✅ Passed Checks\n\n"
             comment += f"This PR passed {len(results['passed_checks'])} quality checks.\n"
         
-        # Add learning note
+        # Add learning note with more context
         comment += f"""
 
 ---
 
 ### 📊 About This Review
 
-This autonomous review uses **self-improving criteria** based on {self.criteria['metadata']['total_reviews']} previous reviews.
+This autonomous review uses **self-improving criteria** based on {self.criteria['metadata']['total_reviews']} previous reviews with a {self.criteria['metadata']['success_rate']:.1%} success rate.
 
-- **Success Rate**: {self.criteria['metadata']['success_rate']:.1%}
-- **Criteria Version**: {self.criteria['version']}
-- **Last Updated**: {self.criteria['last_updated']}
+**Criteria Evolution:**
+- Version: {self.criteria['version']}
+- Last Updated: {self.criteria['last_updated']}
+- Learning Status: {'🧠 Actively Learning' if self.criteria['metadata']['total_reviews'] < 50 else '✅ Mature Criteria'}
 
-The review criteria evolve over time based on PR outcomes, becoming more accurate with each review.
+The review criteria evolve continuously based on PR outcomes, adjusting weights and thresholds to become more accurate with each review.
 
 **Reviewed by:** @workflows-tech-lead (Autonomous Reviewer)  
 **Timestamp:** {results['timestamp']}
@@ -549,22 +632,88 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description='Autonomous Code Reviewer')
+    parser.add_argument('command', choices=['review', 'learn', 'metrics', 'simulate'], 
+                       help='Command to execute')
     parser.add_argument('--pr-number', type=str, help='PR number to review')
-    parser.add_argument('--file-list', type=str, help='File with list of changed files')
-    parser.add_argument('--output', type=str, default='review_results.json', help='Output file')
+    parser.add_argument('--files', type=str, help='JSON array of changed files')
+    parser.add_argument('--repo', type=str, help='Repository name (owner/repo)')
+    parser.add_argument('--output', type=str, default='review_result.json', help='Output file')
     parser.add_argument('--comment', action='store_true', help='Generate review comment')
+    parser.add_argument('--review-id', type=str, help='Review ID for learning')
+    parser.add_argument('--outcome', type=str, help='JSON outcome data for learning')
     
     args = parser.parse_args()
     
     reviewer = AutonomousReviewer()
     
-    # For CLI testing, we'd read files from git diff
-    # In the workflow, we'll pass files differently
-    
-    print("Autonomous Code Reviewer initialized")
-    print(f"Total reviews performed: {reviewer.criteria['metadata']['total_reviews']}")
-    print(f"Success rate: {reviewer.criteria['metadata']['success_rate']:.1%}")
-    
+    if args.command == 'metrics':
+        # Generate and display metrics report
+        report = reviewer.generate_metrics_report()
+        print(report)
+        
+        # Save to file
+        output_file = args.output.replace('.json', '.md')
+        with open(output_file, 'w') as f:
+            f.write(report)
+        print(f"\nMetrics report saved to: {output_file}")
+        
+    elif args.command == 'learn':
+        # Learn from an outcome
+        if not args.review_id or not args.outcome:
+            print("Error: --review-id and --outcome required for learning")
+            return 1
+        
+        import json
+        outcome = json.loads(args.outcome)
+        reviewer.learn_from_outcome(args.review_id, outcome)
+        print(f"Learned from review: {args.review_id}")
+        print(f"Total reviews: {reviewer.criteria['metadata']['total_reviews']}")
+        print(f"Success rate: {reviewer.criteria['metadata']['success_rate']:.1%}")
+        
+    elif args.command == 'simulate':
+        # Simulate learning with test data
+        print("Simulating learning with test outcomes...")
+        
+        # Simulate 10 successful PRs
+        for i in range(10):
+            reviewer.learn_from_outcome(f'sim-success-{i}', {
+                'merged': True,
+                'major_changes_required': False,
+                'overall_score': 0.75 + (i * 0.02)
+            })
+        
+        # Simulate 3 failed PRs
+        for i in range(3):
+            reviewer.learn_from_outcome(f'sim-failed-{i}', {
+                'merged': False,
+                'rejected': True,
+                'major_changes_required': True,
+                'overall_score': 0.3 + (i * 0.05)
+            })
+        
+        print("\nSimulation complete!")
+        print(f"Total reviews: {reviewer.criteria['metadata']['total_reviews']}")
+        print(f"Success rate: {reviewer.criteria['metadata']['success_rate']:.1%}")
+        
+        # Generate metrics
+        report = reviewer.generate_metrics_report()
+        print("\n" + "="*60)
+        print(report)
+        
+    elif args.command == 'review':
+        # For CLI testing, we'd read files from git diff
+        # In the workflow, we'll pass files differently
+        
+        print("Autonomous Code Reviewer initialized")
+        print(f"Total reviews performed: {reviewer.criteria['metadata']['total_reviews']}")
+        print(f"Success rate: {reviewer.criteria['metadata']['success_rate']:.1%}")
+        
+        if args.files:
+            import json
+            file_list = json.loads(args.files)
+            print(f"\nFiles to review: {len(file_list)}")
+            # Would need actual file contents for full review
+        
     return 0
 
 

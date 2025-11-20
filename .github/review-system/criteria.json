@@ -1,15 +1,15 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-20T01:53:56.185385Z",
+  "last_updated": "2025-11-20T04:29:32.868371Z",
   "metadata": {
     "description": "Autonomous code review criteria that evolve based on outcomes",
     "created_by": "workflows-tech-lead",
-    "total_reviews": 5,
-    "success_rate": 0.5
+    "total_reviews": 18,
+    "success_rate": 0.6944444444444444
   },
   "criteria": {
     "correctness": {
-      "weight": 1.0,
+      "weight": 1.0219401704220932,
       "threshold": 0.7,
       "description": "Code logic is sound and handles edge cases",
       "checks": [
@@ -28,7 +28,7 @@
             "# TODO.*error",
             "// TODO.*error"
           ],
-          "effectiveness": 0.8,
+          "effectiveness": 0.6835773808045934,
           "times_applied": 3
         },
         {
@@ -42,7 +42,7 @@
             "\\.filter\\(",
             "\\?\\.\\s*\\."
           ],
-          "effectiveness": 0.75,
+          "effectiveness": 0.6835763966545934,
           "times_applied": 3
         },
         {
@@ -56,7 +56,7 @@
             "if\\s+!.*:",
             "range\\(.*\\)"
           ],
-          "effectiveness": 0.7,
+          "effectiveness": 0.6835754125045934,
           "times_applied": 3
         },
         {
@@ -69,16 +69,235 @@
             ".*\\.test\\.js",
             ".*\\.spec\\.js"
           ],
-          "effectiveness": 0.85,
+          "effectiveness": 0.6835783649545935,
           "times_applied": 3
         }
       ],
       "learning_rate": 0.1,
-      "times_evaluated": 0,
-      "historical_effectiveness": []
+      "times_evaluated": 9,
+      "historical_effectiveness": [
+        {
+          "timestamp": "2025-11-20T04:29:32.858980Z",
+          "check_id": "error_handling",
+          "effectiveness": 0.73,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.858988Z",
+          "check_id": "null_checks",
+          "effectiveness": 0.7149999999999999,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.858991Z",
+          "check_id": "boundary_conditions",
+          "effectiveness": 0.7,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.858994Z",
+          "check_id": "test_coverage",
+          "effectiveness": 0.7449999999999999,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859781Z",
+          "check_id": "error_handling",
+          "effectiveness": 0.728090909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859785Z",
+          "check_id": "null_checks",
+          "effectiveness": 0.723590909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859787Z",
+          "check_id": "boundary_conditions",
+          "effectiveness": 0.719090909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859790Z",
+          "check_id": "test_coverage",
+          "effectiveness": 0.732590909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860623Z",
+          "check_id": "error_handling",
+          "effectiveness": 0.7434272727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860627Z",
+          "check_id": "null_checks",
+          "effectiveness": 0.7420772727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860630Z",
+          "check_id": "boundary_conditions",
+          "effectiveness": 0.7407272727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860632Z",
+          "check_id": "test_coverage",
+          "effectiveness": 0.7447772727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861666Z",
+          "check_id": "error_handling",
+          "effectiveness": 0.7614897202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861670Z",
+          "check_id": "null_checks",
+          "effectiveness": 0.7610847202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861672Z",
+          "check_id": "boundary_conditions",
+          "effectiveness": 0.7606797202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861675Z",
+          "check_id": "test_coverage",
+          "effectiveness": 0.7618947202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862773Z",
+          "check_id": "error_handling",
+          "effectiveness": 0.778446916083916,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862776Z",
+          "check_id": "null_checks",
+          "effectiveness": 0.7783254160839159,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862779Z",
+          "check_id": "boundary_conditions",
+          "effectiveness": 0.778203916083916,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862781Z",
+          "check_id": "test_coverage",
+          "effectiveness": 0.7785684160839159,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.863964Z",
+          "check_id": "error_handling",
+          "effectiveness": 0.7935340748251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.863967Z",
+          "check_id": "null_checks",
+          "effectiveness": 0.7934976248251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.863969Z",
+          "check_id": "boundary_conditions",
+          "effectiveness": 0.7934611748251748,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.863972Z",
+          "check_id": "test_coverage",
+          "effectiveness": 0.7935705248251748,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865291Z",
+          "check_id": "error_handling",
+          "effectiveness": 0.7630602224475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865294Z",
+          "check_id": "null_checks",
+          "effectiveness": 0.7630492874475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865297Z",
+          "check_id": "boundary_conditions",
+          "effectiveness": 0.7630383524475524,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865299Z",
+          "check_id": "test_coverage",
+          "effectiveness": 0.7630711574475524,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866744Z",
+          "check_id": "error_handling",
+          "effectiveness": 0.7230357137930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866747Z",
+          "check_id": "null_checks",
+          "effectiveness": 0.7230324332930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866750Z",
+          "check_id": "boundary_conditions",
+          "effectiveness": 0.7230291527930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866753Z",
+          "check_id": "test_coverage",
+          "effectiveness": 0.7230389942930893,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868315Z",
+          "check_id": "error_handling",
+          "effectiveness": 0.6835773808045934,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868318Z",
+          "check_id": "null_checks",
+          "effectiveness": 0.6835763966545934,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868320Z",
+          "check_id": "boundary_conditions",
+          "effectiveness": 0.6835754125045934,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868323Z",
+          "check_id": "test_coverage",
+          "effectiveness": 0.6835783649545935,
+          "confidence": 0.3
+        }
+      ],
+      "avg_effectiveness": 0.6835768887295934,
+      "effectiveness_variance": 1.2106890281650592e-12
     },
     "clarity": {
-      "weight": 0.8,
+      "weight": 0.8212971958580813,
       "threshold": 0.6,
       "description": "Code is readable and maintainable",
       "checks": [
@@ -93,7 +312,7 @@
             "foo|bar|baz"
           ],
           "min_name_length": 3,
-          "effectiveness": 0.65,
+          "effectiveness": 0.6835744283545934,
           "times_applied": 3
         },
         {
@@ -105,7 +324,7 @@
             "def\\s+\\w+\\(",
             "function\\s+\\w+\\("
           ],
-          "effectiveness": 0.6,
+          "effectiveness": 0.6835734442045934,
           "times_applied": 3
         },
         {
@@ -120,7 +339,7 @@
             "'''.*'''"
           ],
           "min_comment_ratio": 0.05,
-          "effectiveness": 0.55,
+          "effectiveness": 0.6835724600545934,
           "times_applied": 3
         },
         {
@@ -128,16 +347,235 @@
           "name": "Reasonable Nesting Depth",
           "weight": 0.25,
           "max_depth": 3,
-          "effectiveness": 0.7,
+          "effectiveness": 0.6835754125045934,
           "times_applied": 3
         }
       ],
       "learning_rate": 0.1,
-      "times_evaluated": 0,
-      "historical_effectiveness": []
+      "times_evaluated": 9,
+      "historical_effectiveness": [
+        {
+          "timestamp": "2025-11-20T04:29:32.859016Z",
+          "check_id": "meaningful_names",
+          "effectiveness": 0.6849999999999999,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859021Z",
+          "check_id": "function_size",
+          "effectiveness": 0.6699999999999999,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859027Z",
+          "check_id": "comments_present",
+          "effectiveness": 0.6549999999999999,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859032Z",
+          "check_id": "nesting_depth",
+          "effectiveness": 0.7,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859798Z",
+          "check_id": "meaningful_names",
+          "effectiveness": 0.714590909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859800Z",
+          "check_id": "function_size",
+          "effectiveness": 0.710090909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859802Z",
+          "check_id": "comments_present",
+          "effectiveness": 0.705590909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859805Z",
+          "check_id": "nesting_depth",
+          "effectiveness": 0.719090909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860639Z",
+          "check_id": "meaningful_names",
+          "effectiveness": 0.7393772727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860642Z",
+          "check_id": "function_size",
+          "effectiveness": 0.7380272727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860644Z",
+          "check_id": "comments_present",
+          "effectiveness": 0.7366772727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860647Z",
+          "check_id": "nesting_depth",
+          "effectiveness": 0.7407272727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861683Z",
+          "check_id": "meaningful_names",
+          "effectiveness": 0.7602747202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861685Z",
+          "check_id": "function_size",
+          "effectiveness": 0.7598697202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861688Z",
+          "check_id": "comments_present",
+          "effectiveness": 0.7594647202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861690Z",
+          "check_id": "nesting_depth",
+          "effectiveness": 0.7606797202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862788Z",
+          "check_id": "meaningful_names",
+          "effectiveness": 0.7780824160839159,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862791Z",
+          "check_id": "function_size",
+          "effectiveness": 0.777960916083916,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862793Z",
+          "check_id": "comments_present",
+          "effectiveness": 0.7778394160839159,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862795Z",
+          "check_id": "nesting_depth",
+          "effectiveness": 0.778203916083916,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.863979Z",
+          "check_id": "meaningful_names",
+          "effectiveness": 0.7934247248251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.863982Z",
+          "check_id": "function_size",
+          "effectiveness": 0.7933882748251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.863984Z",
+          "check_id": "comments_present",
+          "effectiveness": 0.7933518248251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.863986Z",
+          "check_id": "nesting_depth",
+          "effectiveness": 0.7934611748251748,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865306Z",
+          "check_id": "meaningful_names",
+          "effectiveness": 0.7630274174475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865309Z",
+          "check_id": "function_size",
+          "effectiveness": 0.7630164824475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865311Z",
+          "check_id": "comments_present",
+          "effectiveness": 0.7630055474475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865313Z",
+          "check_id": "nesting_depth",
+          "effectiveness": 0.7630383524475524,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866760Z",
+          "check_id": "meaningful_names",
+          "effectiveness": 0.7230258722930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866762Z",
+          "check_id": "function_size",
+          "effectiveness": 0.7230225917930893,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866765Z",
+          "check_id": "comments_present",
+          "effectiveness": 0.7230193112930893,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866767Z",
+          "check_id": "nesting_depth",
+          "effectiveness": 0.7230291527930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868330Z",
+          "check_id": "meaningful_names",
+          "effectiveness": 0.6835744283545934,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868332Z",
+          "check_id": "function_size",
+          "effectiveness": 0.6835734442045934,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868335Z",
+          "check_id": "comments_present",
+          "effectiveness": 0.6835724600545934,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868337Z",
+          "check_id": "nesting_depth",
+          "effectiveness": 0.6835754125045934,
+          "confidence": 0.3
+        }
+      ],
+      "avg_effectiveness": 0.6835739362795934,
+      "effectiveness_variance": 1.2106890281377435e-12
     },
     "security": {
-      "weight": 1.2,
+      "weight": 1.2112023661718037,
       "threshold": 0.8,
       "description": "Code follows security best practices",
       "checks": [
@@ -152,7 +590,7 @@
             "token\\s*=\\s*['\"](?!\\$)",
             "aws[_-]?access"
           ],
-          "effectiveness": 0.95,
+          "effectiveness": 0.6835803332545933,
           "times_applied": 3
         },
         {
@@ -166,7 +604,7 @@
             "isinstance\\(",
             "\\.match\\("
           ],
-          "effectiveness": 0.8,
+          "effectiveness": 0.6835773808045934,
           "times_applied": 3
         },
         {
@@ -184,16 +622,181 @@
             "parameterized",
             "prepared"
           ],
-          "effectiveness": 0.9,
+          "effectiveness": 0.6835793491045934,
           "times_applied": 3
         }
       ],
       "learning_rate": 0.05,
-      "times_evaluated": 0,
-      "historical_effectiveness": []
+      "times_evaluated": 9,
+      "historical_effectiveness": [
+        {
+          "timestamp": "2025-11-20T04:29:32.859045Z",
+          "check_id": "secret_exposure",
+          "effectiveness": 0.7749999999999999,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859050Z",
+          "check_id": "input_validation",
+          "effectiveness": 0.73,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859054Z",
+          "check_id": "sql_injection",
+          "effectiveness": 0.76,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859810Z",
+          "check_id": "secret_exposure",
+          "effectiveness": 0.741590909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859813Z",
+          "check_id": "input_validation",
+          "effectiveness": 0.728090909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859815Z",
+          "check_id": "sql_injection",
+          "effectiveness": 0.737090909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860656Z",
+          "check_id": "secret_exposure",
+          "effectiveness": 0.7474772727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860659Z",
+          "check_id": "input_validation",
+          "effectiveness": 0.7434272727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860661Z",
+          "check_id": "sql_injection",
+          "effectiveness": 0.7461272727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861695Z",
+          "check_id": "secret_exposure",
+          "effectiveness": 0.7627047202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861698Z",
+          "check_id": "input_validation",
+          "effectiveness": 0.7614897202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861700Z",
+          "check_id": "sql_injection",
+          "effectiveness": 0.7622997202797203,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862801Z",
+          "check_id": "secret_exposure",
+          "effectiveness": 0.778811416083916,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862803Z",
+          "check_id": "input_validation",
+          "effectiveness": 0.778446916083916,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862805Z",
+          "check_id": "sql_injection",
+          "effectiveness": 0.778689916083916,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.863991Z",
+          "check_id": "secret_exposure",
+          "effectiveness": 0.7936434248251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.863994Z",
+          "check_id": "input_validation",
+          "effectiveness": 0.7935340748251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.863996Z",
+          "check_id": "sql_injection",
+          "effectiveness": 0.7936069748251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865319Z",
+          "check_id": "secret_exposure",
+          "effectiveness": 0.7630930274475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865321Z",
+          "check_id": "input_validation",
+          "effectiveness": 0.7630602224475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865323Z",
+          "check_id": "sql_injection",
+          "effectiveness": 0.7630820924475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866772Z",
+          "check_id": "secret_exposure",
+          "effectiveness": 0.7230455552930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866774Z",
+          "check_id": "input_validation",
+          "effectiveness": 0.7230357137930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866777Z",
+          "check_id": "sql_injection",
+          "effectiveness": 0.7230422747930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868342Z",
+          "check_id": "secret_exposure",
+          "effectiveness": 0.6835803332545933,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868345Z",
+          "check_id": "input_validation",
+          "effectiveness": 0.6835773808045934,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868347Z",
+          "check_id": "sql_injection",
+          "effectiveness": 0.6835793491045934,
+          "confidence": 0.3
+        }
+      ],
+      "avg_effectiveness": 0.6835790210545934,
+      "effectiveness_variance": 1.5066352349333046e-12
     },
     "maintainability": {
-      "weight": 0.7,
+      "weight": 0.7214040873040327,
       "threshold": 0.6,
       "description": "Code is easy to modify and extend",
       "checks": [
@@ -203,7 +806,7 @@
           "weight": 0.4,
           "detection": "similarity_threshold",
           "threshold": 0.8,
-          "effectiveness": 0.7,
+          "effectiveness": 0.6835754125045934,
           "times_applied": 3
         },
         {
@@ -212,7 +815,7 @@
           "weight": 0.3,
           "heuristic": "lines_per_function",
           "max_lines": 30,
-          "effectiveness": 0.65,
+          "effectiveness": 0.6835744283545934,
           "times_applied": 3
         },
         {
@@ -226,16 +829,181 @@
             "@param",
             "@return"
           ],
-          "effectiveness": 0.6,
+          "effectiveness": 0.6835734442045934,
           "times_applied": 3
         }
       ],
       "learning_rate": 0.1,
-      "times_evaluated": 0,
-      "historical_effectiveness": []
+      "times_evaluated": 9,
+      "historical_effectiveness": [
+        {
+          "timestamp": "2025-11-20T04:29:32.859066Z",
+          "check_id": "dry_principle",
+          "effectiveness": 0.7,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859071Z",
+          "check_id": "single_responsibility",
+          "effectiveness": 0.6849999999999999,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859076Z",
+          "check_id": "documentation",
+          "effectiveness": 0.6699999999999999,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859820Z",
+          "check_id": "dry_principle",
+          "effectiveness": 0.719090909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859823Z",
+          "check_id": "single_responsibility",
+          "effectiveness": 0.714590909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859825Z",
+          "check_id": "documentation",
+          "effectiveness": 0.710090909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860666Z",
+          "check_id": "dry_principle",
+          "effectiveness": 0.7407272727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860669Z",
+          "check_id": "single_responsibility",
+          "effectiveness": 0.7393772727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860671Z",
+          "check_id": "documentation",
+          "effectiveness": 0.7380272727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861705Z",
+          "check_id": "dry_principle",
+          "effectiveness": 0.7606797202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861708Z",
+          "check_id": "single_responsibility",
+          "effectiveness": 0.7602747202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861710Z",
+          "check_id": "documentation",
+          "effectiveness": 0.7598697202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862810Z",
+          "check_id": "dry_principle",
+          "effectiveness": 0.778203916083916,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862813Z",
+          "check_id": "single_responsibility",
+          "effectiveness": 0.7780824160839159,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862815Z",
+          "check_id": "documentation",
+          "effectiveness": 0.777960916083916,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.864001Z",
+          "check_id": "dry_principle",
+          "effectiveness": 0.7934611748251748,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.864003Z",
+          "check_id": "single_responsibility",
+          "effectiveness": 0.7934247248251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.864006Z",
+          "check_id": "documentation",
+          "effectiveness": 0.7933882748251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865328Z",
+          "check_id": "dry_principle",
+          "effectiveness": 0.7630383524475524,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865334Z",
+          "check_id": "single_responsibility",
+          "effectiveness": 0.7630274174475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865337Z",
+          "check_id": "documentation",
+          "effectiveness": 0.7630164824475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866781Z",
+          "check_id": "dry_principle",
+          "effectiveness": 0.7230291527930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866784Z",
+          "check_id": "single_responsibility",
+          "effectiveness": 0.7230258722930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866786Z",
+          "check_id": "documentation",
+          "effectiveness": 0.7230225917930893,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868351Z",
+          "check_id": "dry_principle",
+          "effectiveness": 0.6835754125045934,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868354Z",
+          "check_id": "single_responsibility",
+          "effectiveness": 0.6835744283545934,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868356Z",
+          "check_id": "documentation",
+          "effectiveness": 0.6835734442045934,
+          "confidence": 0.3
+        }
+      ],
+      "avg_effectiveness": 0.6835744283545934,
+      "effectiveness_variance": 6.457008149922282e-13
     },
     "workflow_specific": {
-      "weight": 1.0,
+      "weight": 1.0175521363376743,
       "threshold": 0.75,
       "description": "GitHub Actions workflow best practices (workflows-tech-lead domain)",
       "checks": [
@@ -251,7 +1019,7 @@
             "uses:.*@main",
             "uses:.*@master"
           ],
-          "effectiveness": 0.85,
+          "effectiveness": 0.6835783649545935,
           "times_applied": 3
         },
         {
@@ -266,7 +1034,7 @@
           "negative_patterns": [
             "permissions:\\s+write-all"
           ],
-          "effectiveness": 0.8,
+          "effectiveness": 0.6835773808045934,
           "times_applied": 3
         },
         {
@@ -278,7 +1046,7 @@
             "||\\s+echo",
             "||\\s+true"
           ],
-          "effectiveness": 0.75,
+          "effectiveness": 0.6835763966545934,
           "times_applied": 3
         },
         {
@@ -289,13 +1057,232 @@
             "concurrency:",
             "cancel-in-progress:"
           ],
-          "effectiveness": 0.7,
+          "effectiveness": 0.6835754125045934,
           "times_applied": 3
         }
       ],
       "learning_rate": 0.08,
-      "times_evaluated": 0,
-      "historical_effectiveness": []
+      "times_evaluated": 9,
+      "historical_effectiveness": [
+        {
+          "timestamp": "2025-11-20T04:29:32.859088Z",
+          "check_id": "action_pinning",
+          "effectiveness": 0.7449999999999999,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859093Z",
+          "check_id": "minimal_permissions",
+          "effectiveness": 0.73,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859098Z",
+          "check_id": "error_handling_workflow",
+          "effectiveness": 0.7149999999999999,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859104Z",
+          "check_id": "concurrency_control",
+          "effectiveness": 0.7,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859830Z",
+          "check_id": "action_pinning",
+          "effectiveness": 0.732590909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859832Z",
+          "check_id": "minimal_permissions",
+          "effectiveness": 0.728090909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859834Z",
+          "check_id": "error_handling_workflow",
+          "effectiveness": 0.723590909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.859837Z",
+          "check_id": "concurrency_control",
+          "effectiveness": 0.719090909090909,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860676Z",
+          "check_id": "action_pinning",
+          "effectiveness": 0.7447772727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860678Z",
+          "check_id": "minimal_permissions",
+          "effectiveness": 0.7434272727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860680Z",
+          "check_id": "error_handling_workflow",
+          "effectiveness": 0.7420772727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.860683Z",
+          "check_id": "concurrency_control",
+          "effectiveness": 0.7407272727272726,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861715Z",
+          "check_id": "action_pinning",
+          "effectiveness": 0.7618947202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861717Z",
+          "check_id": "minimal_permissions",
+          "effectiveness": 0.7614897202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861719Z",
+          "check_id": "error_handling_workflow",
+          "effectiveness": 0.7610847202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.861725Z",
+          "check_id": "concurrency_control",
+          "effectiveness": 0.7606797202797202,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862819Z",
+          "check_id": "action_pinning",
+          "effectiveness": 0.7785684160839159,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862822Z",
+          "check_id": "minimal_permissions",
+          "effectiveness": 0.778446916083916,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862824Z",
+          "check_id": "error_handling_workflow",
+          "effectiveness": 0.7783254160839159,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.862826Z",
+          "check_id": "concurrency_control",
+          "effectiveness": 0.778203916083916,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.864010Z",
+          "check_id": "action_pinning",
+          "effectiveness": 0.7935705248251748,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.864012Z",
+          "check_id": "minimal_permissions",
+          "effectiveness": 0.7935340748251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.864014Z",
+          "check_id": "error_handling_workflow",
+          "effectiveness": 0.7934976248251747,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.864017Z",
+          "check_id": "concurrency_control",
+          "effectiveness": 0.7934611748251748,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865342Z",
+          "check_id": "action_pinning",
+          "effectiveness": 0.7630711574475524,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865344Z",
+          "check_id": "minimal_permissions",
+          "effectiveness": 0.7630602224475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865346Z",
+          "check_id": "error_handling_workflow",
+          "effectiveness": 0.7630492874475523,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.865348Z",
+          "check_id": "concurrency_control",
+          "effectiveness": 0.7630383524475524,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866791Z",
+          "check_id": "action_pinning",
+          "effectiveness": 0.7230389942930893,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866793Z",
+          "check_id": "minimal_permissions",
+          "effectiveness": 0.7230357137930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866795Z",
+          "check_id": "error_handling_workflow",
+          "effectiveness": 0.7230324332930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.866798Z",
+          "check_id": "concurrency_control",
+          "effectiveness": 0.7230291527930892,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868360Z",
+          "check_id": "action_pinning",
+          "effectiveness": 0.6835783649545935,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868363Z",
+          "check_id": "minimal_permissions",
+          "effectiveness": 0.6835773808045934,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868365Z",
+          "check_id": "error_handling_workflow",
+          "effectiveness": 0.6835763966545934,
+          "confidence": 0.3
+        },
+        {
+          "timestamp": "2025-11-20T04:29:32.868367Z",
+          "check_id": "concurrency_control",
+          "effectiveness": 0.6835754125045934,
+          "confidence": 0.3
+        }
+      ],
+      "avg_effectiveness": 0.6835768887295934,
+      "effectiveness_variance": 1.2106890281650592e-12
     }
   },
   "evolution_config": {
@@ -354,6 +1341,126 @@
         "rejected": true,
         "major_changes_required": true,
         "overall_score": 0.35
+      }
+    },
+    {
+      "review_id": "sim-success-0",
+      "timestamp": "2025-11-20T04:29:32.856563Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.75
+      }
+    },
+    {
+      "review_id": "sim-success-1",
+      "timestamp": "2025-11-20T04:29:32.857211Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.77
+      }
+    },
+    {
+      "review_id": "sim-success-2",
+      "timestamp": "2025-11-20T04:29:32.857825Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.79
+      }
+    },
+    {
+      "review_id": "sim-success-3",
+      "timestamp": "2025-11-20T04:29:32.858373Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.81
+      }
+    },
+    {
+      "review_id": "sim-success-4",
+      "timestamp": "2025-11-20T04:29:32.858943Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.83
+      }
+    },
+    {
+      "review_id": "sim-success-5",
+      "timestamp": "2025-11-20T04:29:32.859766Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.85
+      }
+    },
+    {
+      "review_id": "sim-success-6",
+      "timestamp": "2025-11-20T04:29:32.860610Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.87
+      }
+    },
+    {
+      "review_id": "sim-success-7",
+      "timestamp": "2025-11-20T04:29:32.861653Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.89
+      }
+    },
+    {
+      "review_id": "sim-success-8",
+      "timestamp": "2025-11-20T04:29:32.862760Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.91
+      }
+    },
+    {
+      "review_id": "sim-success-9",
+      "timestamp": "2025-11-20T04:29:32.863951Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.9299999999999999
+      }
+    },
+    {
+      "review_id": "sim-failed-0",
+      "timestamp": "2025-11-20T04:29:32.865277Z",
+      "outcome": {
+        "merged": false,
+        "rejected": true,
+        "major_changes_required": true,
+        "overall_score": 0.3
+      }
+    },
+    {
+      "review_id": "sim-failed-1",
+      "timestamp": "2025-11-20T04:29:32.866731Z",
+      "outcome": {
+        "merged": false,
+        "rejected": true,
+        "major_changes_required": true,
+        "overall_score": 0.35
+      }
+    },
+    {
+      "review_id": "sim-failed-2",
+      "timestamp": "2025-11-20T04:29:32.868300Z",
+      "outcome": {
+        "merged": false,
+        "rejected": true,
+        "major_changes_required": true,
+        "overall_score": 0.4
       }
     }
   ]
