@@ -147,6 +147,14 @@ You could create labels like:
 
 Then request a feature to have the agent matcher consider these labels.
 
+**See the detailed enhancement proposal**: **[COMPLEXITY_BASED_ROUTING.md](./enhancements/COMPLEXITY_BASED_ROUTING.md)**
+
+This document includes:
+- Complete implementation guide
+- Code examples
+- Benefits and use cases
+- Testing checklist
+
 #### Option 3: Request an Enhancement
 
 Create an issue requesting complexity-aware routing:
