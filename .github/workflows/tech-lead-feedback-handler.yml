@@ -220,92 +220,92 @@ jobs:
           issue_title="[Tech Lead Feedback] Address review comments for PR #${pr_number}"
           
           # Create issue body
-          issue_body=$(cat <<EOF
-> **🤖 Agent Assignment**
-> 
-> This issue has been assigned to GitHub Copilot with the **${agent_emoji} @${matched_agent}** custom agent profile.
-> 
-> **@${matched_agent}** - Please use the specialized approach and tools defined in \`.github/agents/${matched_agent}.md\`.
-> 
-> **IMPORTANT**: Always mention **@${matched_agent}** by name in all conversations, comments, and PRs related to this issue.
+          issue_body=$(cat <<'          EOF'
+          **🤖 Agent Assignment**
 
----
+          This issue has been assigned to GitHub Copilot with the **${agent_emoji} @${matched_agent}** custom agent profile.
 
-## 📋 Tech Lead Feedback to Address
+          **@${matched_agent}** - Please use the specialized approach and tools defined in \`.github/agents/${matched_agent}.md\`.
 
-**Original PR:** ${pr_url}
-**PR Title:** ${pr_title}
-**Tech Lead:** @${tech_lead_name} (via @${reviewer})
-**Agent Assignment Confidence:** ${agent_confidence}
+          **IMPORTANT**: Always mention **@${matched_agent}** by name in all conversations, comments, and PRs related to this issue.
 
----
+          ---
 
-## 🔍 Review Feedback
+          ## 📋 Tech Lead Feedback to Address
 
-${review_body}
+          **Original PR:** ${pr_url}
+          **PR Title:** ${pr_title}
+          **Tech Lead:** @${tech_lead_name} (via @${reviewer})
+          **Agent Assignment Confidence:** ${agent_confidence}
 
----
+          ---
 
-## ✅ Instructions for @${matched_agent}
+          ## 🔍 Review Feedback
 
-1. **Review the feedback** above from **@${tech_lead_name}**
-2. **Checkout the PR branch** for PR #${pr_number}
-3. **Address each point** mentioned in the review
-4. **Commit your changes** with clear commit messages
-5. **Push to the same branch** to update PR #${pr_number}
-6. **Comment on this issue** when complete with a summary of changes made
-7. **Comment on the PR** to notify the tech lead that feedback has been addressed
+          ${review_body}
 
-### Expected Workflow
+          ---
 
-\`\`\`bash
-# 1. Checkout the PR branch
-gh pr checkout ${pr_number}
+          ## ✅ Instructions for @${matched_agent}
 
-# 2. Make your fixes according to tech lead feedback
+          1. **Review the feedback** above from **@${tech_lead_name}**
+          2. **Checkout the PR branch** for PR #${pr_number}
+          3. **Address each point** mentioned in the review
+          4. **Commit your changes** with clear commit messages
+          5. **Push to the same branch** to update PR #${pr_number}
+          6. **Comment on this issue** when complete with a summary of changes made
+          7. **Comment on the PR** to notify the tech lead that feedback has been addressed
 
-# 3. Commit changes
-git add .
-git commit -m "fix: address @${tech_lead_name} feedback - [specific change]"
+          ### Expected Workflow
 
-# 4. Push to update the PR
-git push
+          \`\`\`bash
+          # 1. Checkout the PR branch
+          gh pr checkout ${pr_number}
 
-# 5. Comment on PR
-gh pr comment ${pr_number} --body "@${tech_lead_name}, I've addressed your feedback. Please re-review when convenient."
+          # 2. Make your fixes according to tech lead feedback
 
-# 6. Update this issue
-gh issue comment [THIS_ISSUE_NUMBER] --body "✅ Completed fixes for PR #${pr_number}. See PR for details."
-\`\`\`
+          # 3. Commit changes
+          git add .
+          git commit -m "fix: address @${tech_lead_name} feedback - [specific change]"
 
----
+          # 4. Push to update the PR
+          git push
 
-## 🔄 Review Cycle
+          # 5. Comment on PR
+          gh pr comment ${pr_number} --body "@${tech_lead_name}, I've addressed your feedback. Please re-review when convenient."
 
-This issue is part of the **Tech Lead Review Cycle**:
+          # 6. Update this issue
+          gh issue comment [THIS_ISSUE_NUMBER] --body "✅ Completed fixes for PR #${pr_number}. See PR for details."
+          \`\`\`
 
-1. ✅ Tech Lead reviewed PR #${pr_number}
-2. ✅ Feedback extracted and analyzed
-3. ✅ **@${matched_agent}** assigned to make fixes (YOU ARE HERE)
-4. ⏳ Agent makes fixes and updates PR
-5. ⏳ Tech Lead re-reviews
-6. ⏳ Repeat until approved or PR merged
+          ---
 
----
+          ## 🔄 Review Cycle
 
-## 📎 Related Links
+          This issue is part of the **Tech Lead Review Cycle**:
 
-- **PR to Fix:** ${pr_url}
-- **Tech Lead Profile:** \`.github/agents/${tech_lead_name}.md\`
-- **Agent Profile:** \`.github/agents/${matched_agent}.md\`
-- **Review Cycle Docs:** \`docs/TECH_LEAD_REVIEW_CYCLE.md\`
+          1. ✅ Tech Lead reviewed PR #${pr_number}
+          2. ✅ Feedback extracted and analyzed
+          3. ✅ **@${matched_agent}** assigned to make fixes (YOU ARE HERE)
+          4. ⏳ Agent makes fixes and updates PR
+          5. ⏳ Tech Lead re-reviews
+          6. ⏳ Repeat until approved or PR merged
 
----
+          ---
 
-*🤖 Automated issue created by Tech Lead Feedback Handler*
-*Agent: @${matched_agent} | Tech Lead: @${tech_lead_name} | PR: #${pr_number}*
-EOF
-)
+          ## 📎 Related Links
+
+          - **PR to Fix:** ${pr_url}
+          - **Tech Lead Profile:** \`.github/agents/${tech_lead_name}.md\`
+          - **Agent Profile:** \`.github/agents/${matched_agent}.md\`
+          - **Review Cycle Docs:** \`docs/TECH_LEAD_REVIEW_CYCLE.md\`
+
+          ---
+
+                    *🤖 Automated issue created by Tech Lead Feedback Handler*
+          *Agent: @${matched_agent} | Tech Lead: @${tech_lead_name} | PR: #${pr_number}*
+          EOF
+          )
           
           # Create the issue
           echo "Creating follow-up issue for @${matched_agent}..."
@@ -337,20 +337,20 @@ EOF
           
           # Comment on PR to link the follow-up issue
           gh pr comment ${pr_number} --repo ${{ github.repository }} --body "## 🤖 Tech Lead Feedback Processing
-
-**@${tech_lead_name}** requested changes. A follow-up issue has been created for **@${matched_agent}** to address the feedback.
-
-**Follow-up Issue:** ${issue_url}
-
-**@${matched_agent}** will:
-1. Review the feedback
-2. Make necessary fixes
-3. Update this PR with changes
-4. Notify when ready for re-review
-
----
-
-*Automated by Tech Lead Feedback Handler*"
+          
+          **@${tech_lead_name}** requested changes. A follow-up issue has been created for **@${matched_agent}** to address the feedback.
+          
+          **Follow-up Issue:** ${issue_url}
+          
+          **@${matched_agent}** will:
+          1. Review the feedback
+          2. Make necessary fixes
+          3. Update this PR with changes
+          4. Notify when ready for re-review
+          
+          ---
+          
+          *Automated by Tech Lead Feedback Handler*"
           
           echo "✅ Linked issue #${issue_number} to PR #${pr_number}"
 
@@ -370,26 +370,26 @@ EOF
       - name: Post summary
         if: steps.get_info.outputs.has_wip == 'false' && steps.create_issue.outputs.issue_number != ''
         run: |
-          cat >> $GITHUB_STEP_SUMMARY <<EOF
-## 🤖 Tech Lead Feedback Processed
-
-**PR:** #${{ steps.get_info.outputs.pr_number }}
-**Tech Lead:** @${{ steps.check_tech_lead.outputs.tech_lead_name }}
-**Assigned Agent:** @${{ steps.match_agent.outputs.matched_agent }}
-
-**Created Follow-up Issue:** #${{ steps.create_issue.outputs.issue_number }}
-${{ steps.create_issue.outputs.issue_url }}
-
-### Next Steps
-
-1. **@${{ steps.match_agent.outputs.matched_agent }}** will address the feedback
-2. PR #${{ steps.get_info.outputs.pr_number }} will be updated with fixes
-3. **@${{ steps.check_tech_lead.outputs.tech_lead_name }}** will be notified for re-review
-
----
-
-*Tech Lead Review Cycle active - automated feedback loop in progress*
-EOF
+          cat >> $GITHUB_STEP_SUMMARY <<'          EOF'
+          ## 🤖 Tech Lead Feedback Processed
+          
+          **PR:** #${{ steps.get_info.outputs.pr_number }}
+          **Tech Lead:** @${{ steps.check_tech_lead.outputs.tech_lead_name }}
+          **Assigned Agent:** @${{ steps.match_agent.outputs.matched_agent }}
+          
+          **Created Follow-up Issue:** #${{ steps.create_issue.outputs.issue_number }}
+          ${{ steps.create_issue.outputs.issue_url }}
+          
+          ### Next Steps
+          
+          1. **@${{ steps.match_agent.outputs.matched_agent }}** will address the feedback
+          2. PR #${{ steps.get_info.outputs.pr_number }} will be updated with fixes
+          3. **@${{ steps.check_tech_lead.outputs.tech_lead_name }}** will be notified for re-review
+          
+          ---
+          
+          *Tech Lead Review Cycle active - automated feedback loop in progress*
+          EOF
           
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "✅ Tech Lead Feedback Handler completed successfully"
