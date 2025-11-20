@@ -177,18 +177,18 @@ jobs:
           if git diff --staged --quiet; then
             echo "ℹ️  No changes to commit"
           else
-            # Create commit message
-            commit_msg="chore: update learned scheduling strategies (@workflows-tech-lead)
-
-Meta-learning optimization run completed:
-- Adapted strategies based on recent feedback
-- Evolution: ${{ steps.evolve.outputs.evolved || 'false' }}
-- Best strategy: ${{ steps.report.outputs.best_strategy || 'N/A' }}
-- Accuracy: ${{ steps.report.outputs.accuracy_score || 'N/A' }}%
-
-🤖 Automated by @workflows-tech-lead meta-learning system"
-
-            git commit -m "$commit_msg"
+            # Create commit message in parts to avoid YAML issues
+            echo "chore: update learned scheduling strategies (@workflows-tech-lead)" > /tmp/commit_msg.txt
+            echo "" >> /tmp/commit_msg.txt
+            echo "Meta-learning optimization run completed:" >> /tmp/commit_msg.txt
+            echo "- Adapted strategies based on recent feedback" >> /tmp/commit_msg.txt
+            echo "- Evolution: ${{ steps.evolve.outputs.evolved || 'false' }}" >> /tmp/commit_msg.txt
+            echo "- Best strategy: ${{ steps.report.outputs.best_strategy || 'N/A' }}" >> /tmp/commit_msg.txt
+            echo "- Accuracy: ${{ steps.report.outputs.accuracy_score || 'N/A' }}%" >> /tmp/commit_msg.txt
+            echo "" >> /tmp/commit_msg.txt
+            echo "Automated by @workflows-tech-lead meta-learning system" >> /tmp/commit_msg.txt
+            
+            git commit -F /tmp/commit_msg.txt
             git push
             echo "✅ Learned strategies committed and pushed"
           fi
@@ -245,19 +245,22 @@ Meta-learning optimization run completed:
             --jq '.[].number')
           
           if [ -n "$issue_numbers" ]; then
+            # Create comment body in a file to avoid YAML escaping issues
+            echo "🎓 Meta-Learning Update (@workflows-tech-lead)" > /tmp/comment.md
+            echo "" >> /tmp/comment.md
+            echo "The meta-learning scheduler has completed an optimization cycle:" >> /tmp/comment.md
+            echo "" >> /tmp/comment.md
+            echo "- Best Strategy: ${{ steps.report.outputs.best_strategy }}" >> /tmp/comment.md
+            echo "- Accuracy: ${{ steps.report.outputs.accuracy_score }}%" >> /tmp/comment.md
+            echo "- Total Strategies: ${{ steps.report.outputs.total_strategies }}" >> /tmp/comment.md
+            echo "" >> /tmp/comment.md
+            echo "The system is continuously learning and improving workflow schedules based on execution patterns." >> /tmp/comment.md
+            echo "" >> /tmp/comment.md
+            echo "---" >> /tmp/comment.md
+            echo "*Automated by @workflows-tech-lead meta-learning system*" >> /tmp/comment.md
+            
             for issue_num in $issue_numbers; do
-              gh issue comment "$issue_num" --body "🎓 **Meta-Learning Update** (@workflows-tech-lead)
-
-The meta-learning scheduler has completed an optimization cycle:
-
-- **Best Strategy**: ${{ steps.report.outputs.best_strategy }}
-- **Accuracy**: ${{ steps.report.outputs.accuracy_score }}%
-- **Total Strategies**: ${{ steps.report.outputs.total_strategies }}
-
-The system is continuously learning and improving workflow schedules based on execution patterns.
-
----
-*Automated by @workflows-tech-lead meta-learning system*"
+              gh issue comment "$issue_num" --body-file /tmp/comment.md
             done
             
             echo "✅ Posted updates to related issues"
