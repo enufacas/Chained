@@ -707,27 +707,33 @@ AGENT_PATTERNS = {
             r'\bmetrics\b', r'\bhall\s*of\s*fame\b'
         ]
     },
-    'product-owner': {
+    'docs-tech-lead': {
         'keywords': [
-            'vague', 'unclear', 'general', 'improve', 'enhance', 'better',
-            'make it', 'user story', 'acceptance criteria', 'requirements',
-            'clarify', 'specification', 'what should', 'need to', 'want to',
-            'feature request', 'idea', 'suggestion', 'proposal', 'epic',
-            'requirements gathering', 'product', 'stakeholder', 'business value',
-            'context', 'background', 'why', 'rationale', 'purpose',
-            'ambiguous', 'not clear', 'missing details', 'more info needed'
+            'documentation', 'docs', 'readme', 'markdown', '.md',
+            'docs/', 'contributing', 'guide', 'tutorial', 'learnings',
+            'summaries', 'doc', 'document', 'writing', 'explanation',
+            'knowledge', 'readme.md', 'contributing.md'
         ],
         'patterns': [
-            r'\bvague\b', r'\bunclear\b', r'\bgeneral\b', r'\bimprove\b',
-            r'\benhance\b', r'\bbetter\b', r'\bmake\s+it\b', r'\buser\s+stor',
-            r'\bacceptance\s+criteria\b', r'\brequirements?\b', r'\bclarif',
-            r'\bspecification\b', r'\bfeature\s+request\b', r'\bidea\b',
-            r'\bsuggestion\b', r'\bproposal\b', r'\bepic\b', r'\bproduct\b',
-            r'\bstakeholder\b', r'\bbusiness\s+value\b', r'\bcontext\b',
-            r'\bbackground\b', r'\brationale\b', r'\bpurpose\b',
-            r'\bambiguous\b', r'\bnot\s+clear\b', r'\bmissing\s+details\b',
-            r'\bmore\s+info', r'\bwhat\s+should\b', r'\bneed\s+to\b',
-            r'\bwant\s+to\b'
+            r'\bdocumentation\b', r'\bdocs?\b', r'\breadme\b', r'\bmarkdown\b',
+            r'\.md\b', r'\bdocs/', r'\bcontributing\b', r'\bguide\b',
+            r'\btutorial', r'\blearnings', r'\bsummaries',
+            r'\bknowledge\b', r'\bexplanation\b', r'\bwriting\b'
+        ]
+    },
+    'github-pages-tech-lead': {
+        'keywords': [
+            'github pages', 'pages', 'website', 'site', 'html', 'css',
+            'javascript', 'web', 'rendering', 'docs/*.html', 'docs/*.css',
+            'docs/*.js', 'browser', 'visual', 'ui', 'frontend',
+            'responsive', 'accessibility', 'performance', 'page load'
+        ],
+        'patterns': [
+            r'\bgithub\s*pages\b', r'\bpages?\b', r'\bwebsite\b', r'\bsite\b',
+            r'\bhtml\b', r'\bcss\b', r'\bjavascript\b', r'\bweb\b',
+            r'\brendering\b', r'docs/.*\.html', r'docs/.*\.css', r'docs/.*\.js',
+            r'\bbrowser', r'\bvisual', r'\bfrontend', r'\bresponsive',
+            r'\baccessibility\b', r'\bperformance\b', r'\bpage\s*load\b'
         ]
     }
 }

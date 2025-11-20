@@ -13,7 +13,11 @@
   "spawn_mode": "mixed",
   "new_agent_probability": 0.5,
   "protected_specializations": [
-    "troubleshoot-expert"
+    "troubleshoot-expert",
+    "agents-tech-lead",
+    "workflows-tech-lead",
+    "docs-tech-lead",
+    "github-pages-tech-lead"
   ],
   "strict_pr_attribution": true,
   "new_agent_grace_period_hours": 48,
