@@ -1,0 +1,52 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-20T20:26:20Z",
+  "description": "Neural configuration for self-evolving workflow adaptation",
+  "global_learning_rate": 0.01,
+  "adaptation_threshold": 0.7,
+  "architectures": [
+    {
+      "workflow_name": "Performance Metrics Collection",
+      "weights": {
+        "timeout_minutes": {
+          "parameter_name": "timeout_minutes",
+          "current_value": 30.0,
+          "weight": 0.8,
+          "bias": 0.1,
+          "gradient": 0.0,
+          "momentum": 0.0,
+          "learning_history": []
+        },
+        "max_retries": {
+          "parameter_name": "max_retries",
+          "current_value": 3.0,
+          "weight": 0.8,
+          "bias": 0.1,
+          "gradient": 0.0,
+          "momentum": 0.0,
+          "learning_history": []
+        },
+        "concurrency_limit": {
+          "parameter_name": "concurrency_limit",
+          "current_value": 5.0,
+          "weight": 0.8,
+          "bias": 0.1,
+          "gradient": 0.0,
+          "momentum": 0.0,
+          "learning_history": []
+        }
+      },
+      "success_history": [],
+      "adaptation_count": 0,
+      "last_adapted": null,
+      "confidence": 0.5
+    }
+  ],
+  "notes": [
+    "This configuration is automatically managed by the neural workflow adapter",
+    "Neural weights are adjusted using gradient descent with momentum",
+    "Each workflow maintains its own neural architecture",
+    "Adaptation occurs when success rate falls below threshold (default 70%)",
+    "System targets 95% success rate for all workflows"
+  ]
+}
