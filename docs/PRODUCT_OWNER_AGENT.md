@@ -8,13 +8,35 @@ Inspired by Marty Cagan's product management principles, this agent deeply under
 
 ## How It Works
 
-The product owner agent is treated like any other specialized agent in the system:
+**⚠️ IMPORTANT: Two-Phase Process**
+
+The product owner operates in a two-phase workflow:
+
+### Phase 1: Product Owner Enhancement (Current Agent)
 
 1. **Issue Created** - User creates an issue with vague or general requirements
 2. **Agent Matching** - `match-issue-to-agent.py` analyzes the issue content
 3. **Pattern Detection** - If vague language is detected, @product-owner is selected
-4. **Enhancement** - Product owner transforms the issue into structured format
-5. **Follow-up** - Specialized agent can then work on the clarified requirements
+4. **Assignment** - Copilot assigned with @product-owner directive
+5. **Enhancement** - Product owner transforms the issue into structured format
+6. **Handoff Actions** - **CRITICAL**: PO must remove labels and unassign to trigger Phase 2
+
+### Phase 2: Specialist Implementation (Automatic)
+
+7. **Re-assignment Trigger** - Workflow detects issue without `copilot-assigned` label
+8. **Re-matching** - Agent matcher analyzes ENHANCED content (now much clearer)
+9. **Specialist Selection** - Appropriate specialist matched (e.g., @accelerate-master)
+10. **Implementation** - Specialist agent implements the actual solution
+
+### Critical Gap Warning
+
+**Without proper handoff, work stops at Phase 1.** The product owner agent MUST:
+- Remove `copilot-assigned` and `agent:product-owner` labels
+- Unassign Copilot from the issue
+- Add completion comment with specialist recommendation
+- Keep issue OPEN
+
+See [Workflow Analysis](PRODUCT_OWNER_WORKFLOW_ANALYSIS.md) for complete technical details and troubleshooting.
 
 ## When Product Owner is Selected
 
@@ -79,9 +101,11 @@ So that I can work efficiently without delays.
 - [ ] Load testing conducted
 - [ ] Metrics validated across different scenarios
 
-## 🤖 Recommended Agent
-@accelerate-master - Performance optimization specialist
+---
+*Enhanced by @product-owner - Ready for specialist assignment*
 ```
+
+**Note:** The product-owner does NOT recommend a specific agent. After enhancement, the `match-issue-to-agent.py` system automatically re-analyzes the structured content and selects the best specialist (e.g., @accelerate-master for performance).
 
 ## Agent Definition
 
@@ -90,7 +114,7 @@ The full agent definition is located at `.github/agents/product-owner.md` and in
 - **Personality**: Product-focused, user-centric, clarity-driven (inspired by Marty Cagan)
 - **Specialization**: Requirements clarification, story writing, acceptance criteria
 - **Deep Knowledge**: Chained system architecture, agent capabilities, autonomous workflows
-- **Approach**: Preserve original, add structure, recommend best agent for implementation
+- **Approach**: Preserve original, add structure, enable re-assignment for specialist matching
 
 ## Configuration
 
@@ -167,7 +191,13 @@ Selected: @product-owner
   ↓
 Enhancement: Transforms into structured requirement
   ↓
-Follow-up: Specialized agent works on clarified issue
+Re-assignment: Labels removed, issue ready for re-matching
+  ↓
+Agent Matching (2nd pass): Analyzes enhanced content
+  ↓
+Selected: Appropriate specialist (e.g., @APIs-architect)
+  ↓
+Implementation: Specialist works on clarified requirement
 ```
 
 ## Testing

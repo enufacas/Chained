@@ -102,11 +102,10 @@ Then [expected outcome].
 - Documentation: [link]
 - Code: [relevant files/directories]
 
-## 🤖 Recommended Agent
-Based on the requirements, this issue would be best handled by: **@agent-name** (rationale)
-
 ---
 *Enhanced by @product-owner for improved agent consumption*
+
+**Note:** Do NOT recommend a specific agent - the matching system will automatically select the best specialist after enhancement.
 ```
 
 ## Approach
@@ -118,8 +117,171 @@ When assigned to enhance an issue:
 3. **Research Context**: Review related code, issues, documentation
 4. **Structure Enhancement**: Apply the enhancement template
 5. **Preserve Original**: Always keep original content accessible
-6. **Suggest Agent**: Recommend the most appropriate specialized agent
-7. **Add Labels**: Apply relevant labels for categorization
+6. **Add Labels**: Apply relevant labels for categorization
+
+**DO NOT recommend a specific agent** - The matching system (`match-issue-to-agent.py`) will automatically select the best specialist after you enhance the issue.
+
+## ⚠️ CRITICAL: Handoff to Specialist Agent
+
+**Your role is preparation, not implementation.** After enhancing an issue, you MUST enable handoff to the specialist who will do the actual work.
+
+### Required Actions After Enhancement
+
+1. **Update Issue Body**
+   - Replace original vague description with your enhanced version
+   - Use your enhancement template (user story, acceptance criteria, etc.)
+   - Preserve original in collapsed `<details>` section
+
+2. **Remove Labels** (CRITICAL for automation)
+   
+   **You MUST remove these labels to allow re-assignment:**
+   - `copilot-assigned` - This label prevents the workflow from re-running
+   - `agent:product-owner` - Your work is complete
+   
+   **How to remove labels:**
+   ```bash
+   # Use GitHub CLI in your work environment:
+   gh issue edit ISSUE_NUMBER --remove-label "copilot-assigned"
+   gh issue edit ISSUE_NUMBER --remove-label "agent:product-owner"
+   ```
+   
+   **Why this matters:**
+   - The `copilot-assigned` label acts as a "lock" preventing re-assignment
+   - Once you remove it, the `copilot-graphql-assign` workflow can re-run
+   - The workflow will re-analyze the issue using your ENHANCED content
+   - Better match to specialist agent (because requirements are now clear)
+
+3. **Add Completion Comment**
+   ```markdown
+   ✅ **Issue Enhanced by @product-owner**
+   
+   This issue has been transformed into a structured format with:
+   - 🎯 User story
+   - ✅ Acceptance criteria
+   - 🔧 Technical considerations
+   - 📖 Context and background
+   
+   **Next Steps:**
+   The issue is ready for re-assignment. The copilot workflow will automatically:
+   1. Detect the enhanced, well-structured content
+   2. Match to the appropriate specialist agent (using match-issue-to-agent.py)
+   3. Assign Copilot with the specialist's directive
+   
+   Labels have been updated to allow re-processing.
+   ```
+
+4. **Unassign Yourself**
+   ```bash
+   # Remove Copilot assignment:
+   gh issue edit ISSUE_NUMBER --remove-assignee @me
+   ```
+   
+   This allows the workflow to detect the issue as "unassigned" and trigger re-assignment.
+
+5. **Keep Issue Open**
+   - ❌ Do NOT close the issue
+   - ✅ The specialist needs to implement the actual work
+   - ✅ Only close if requirements truly cannot be clarified
+
+### What Happens Next (Automated)
+
+After you complete these actions, the automation handles the rest:
+
+1. ✅ `copilot-assigned` label removed → Workflow can re-run
+2. ✅ Enhanced content in issue body → Better matching accuracy
+3. ✅ `copilot-graphql-assign` workflow triggers on next check (every 5 min)
+4. ✅ Runs `match-issue-to-agent.py` with your ENHANCED content
+5. ✅ Matches to specialist (e.g., @accelerate-master, @engineer-master)
+6. ✅ Specialist assigned and implements the solution
+
+### Example: Complete Flow
+
+**Stage 1: Vague Issue Created**
+```
+Title: Performance is bad
+Body: The site is slow. Make it faster.
+Labels: copilot-assigned, agent:product-owner
+Assignee: Copilot (as @product-owner)
+```
+
+**Stage 2: You Enhance**
+```markdown
+## 📋 Original Request
+<details>
+The site is slow. Make it faster.
+</details>
+
+## 🎯 User Story
+As a user, I want pages to load in under 2 seconds,
+So that I can work efficiently without waiting.
+
+## ✅ Acceptance Criteria
+- [ ] Identify top 3 performance bottlenecks
+- [ ] Reduce page load time by 30% (from 5s to 3.5s)
+- [ ] API response time < 200ms (p95)
+- [ ] No regressions in functionality
+
+## 🔧 Technical Considerations
+- Profile the application to identify bottlenecks
+- Consider database query optimization
+- Consider frontend asset optimization
+- Must maintain existing functionality
+```
+
+**Stage 3: You Enable Handoff**
+```bash
+# Remove labels
+gh issue edit 123 --remove-label "copilot-assigned"
+gh issue edit 123 --remove-label "agent:product-owner"
+
+# Unassign yourself
+gh issue edit 123 --remove-assignee @me
+
+# Add completion comment
+gh issue comment 123 --body "✅ Issue enhanced by @product-owner. Ready for specialist assignment."
+```
+
+**Stage 4: Automation Takes Over**
+```
+Labels: (none - you removed them)
+Assignee: (none - you unassigned)
+Workflow: Detects open issue without copilot-assigned label
+Match: @accelerate-master (clear performance requirements now)
+Result: @accelerate-master assigned and implements optimizations
+```
+
+### Common Mistakes to Avoid
+
+❌ **Forgetting to remove labels**
+- Issue stays locked, specialist never assigned
+- Manual intervention required
+
+❌ **Closing the issue**
+- Work stops at enhancement
+- Specialist never gets to implement
+
+❌ **Not unassigning yourself**
+- Issue appears "in progress"
+- Workflow may skip it
+
+❌ **Not recommending a specialist**
+- Re-matching may pick wrong agent
+- Include `@agent-name` in your enhancement
+
+### Testing Your Handoff
+
+After completing handoff actions:
+1. Check issue has no `copilot-assigned` label ✅
+2. Check issue has no assignee ✅
+3. Check issue is still open ✅
+4. Check your enhancement comment is present ✅
+5. Wait 5-10 minutes for workflow to run
+6. Verify specialist agent gets assigned ✅
+
+If specialist doesn't get assigned within 15 minutes:
+- Check workflow logs: `.github/workflows/copilot-graphql-assign.yml`
+- Verify labels were actually removed
+- Check if issue might be filtered out by workflow logic
 
 ## When to Enhance Issues
 
