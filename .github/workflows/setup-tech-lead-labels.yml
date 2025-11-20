@@ -92,6 +92,18 @@ jobs:
             "Assigned to agents-tech-lead for review" \
             "5319E7"
           
+          # Label 7: tech-lead:docs-tech-lead (identifier label - PURPLE)
+          create_label \
+            "tech-lead:docs-tech-lead" \
+            "Assigned to docs-tech-lead for review" \
+            "5319E7"
+          
+          # Label 8: tech-lead:github-pages-tech-lead (identifier label - PURPLE)
+          create_label \
+            "tech-lead:github-pages-tech-lead" \
+            "Assigned to github-pages-tech-lead for review" \
+            "5319E7"
+          
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "✅ Tech Lead Review System labels are ready!"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -103,6 +115,8 @@ jobs:
           echo "  🔵 tech-lead-review-cycle (tracking)"
           echo "  🟣 tech-lead:workflows-tech-lead (identifier)"
           echo "  🟣 tech-lead:agents-tech-lead (identifier)"
+          echo "  🟣 tech-lead:docs-tech-lead (identifier)"
+          echo "  🟣 tech-lead:github-pages-tech-lead (identifier)"
           echo ""
           echo "These labels are now active and will be used by:"
           echo "  • tech-lead-review.yml - For PR analysis and assignment"
@@ -134,6 +148,8 @@ jobs:
           echo "| \`tech-lead-review-cycle\` | 🔵 Blue | In review cycle | ℹ️ Info |" >> $GITHUB_STEP_SUMMARY
           echo "| \`tech-lead:workflows-tech-lead\` | 🟣 Purple | Workflows Tech Lead | ℹ️ Info |" >> $GITHUB_STEP_SUMMARY
           echo "| \`tech-lead:agents-tech-lead\` | 🟣 Purple | Agents Tech Lead | ℹ️ Info |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`tech-lead:docs-tech-lead\` | 🟣 Purple | Docs Tech Lead | ℹ️ Info |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`tech-lead:github-pages-tech-lead\` | 🟣 Purple | GitHub Pages Tech Lead | ℹ️ Info |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "✅ **System Status:** Tech Lead Review System labels are active and ready for use." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
