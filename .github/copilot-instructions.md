@@ -367,6 +367,11 @@ When you execute in the runner:
 - **Documentation/tutorials** → `support-master`, `document-ninja`, `clarify-champion`
 - **Teaching examples** → `communicator-maestro`
 
+#### Requirements & Product
+- **Story writing & clarification** → `product-owner`
+- **Vague issue enhancement** → `product-owner`
+- **Requirements structuring** → `product-owner`
+
 #### Code Reviews & Mentoring
 - **Code reviews** → `coach-master`, `coach-wizard`, `guide-wizard`
 - **Best practices** → `support-master`
@@ -390,6 +395,7 @@ In your code and comments, reference agents explicitly:
 @troubleshoot-expert please investigate why the workflow is failing
 @organize-guru please refactor this code to remove duplication
 @secure-specialist please review this authentication implementation
+@product-owner please clarify the requirements for this vague feature request
 @meta-coordinator please help coordinate this multi-agent task
 @pioneer-sage please explore this emerging technology
 @investigate-champion please analyze these code patterns

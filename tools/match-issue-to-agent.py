@@ -706,6 +706,29 @@ AGENT_PATTERNS = {
             r'\bpatterns?\b', r'\bmatching\b', r'\bfrontmatter\b',
             r'\bmetrics\b', r'\bhall\s*of\s*fame\b'
         ]
+    },
+    'product-owner': {
+        'keywords': [
+            'vague', 'unclear', 'general', 'improve', 'enhance', 'better',
+            'make it', 'user story', 'acceptance criteria', 'requirements',
+            'clarify', 'specification', 'what should', 'need to', 'want to',
+            'feature request', 'idea', 'suggestion', 'proposal', 'epic',
+            'requirements gathering', 'product', 'stakeholder', 'business value',
+            'context', 'background', 'why', 'rationale', 'purpose',
+            'ambiguous', 'not clear', 'missing details', 'more info needed'
+        ],
+        'patterns': [
+            r'\bvague\b', r'\bunclear\b', r'\bgeneral\b', r'\bimprove\b',
+            r'\benhance\b', r'\bbetter\b', r'\bmake\s+it\b', r'\buser\s+stor',
+            r'\bacceptance\s+criteria\b', r'\brequirements?\b', r'\bclarif',
+            r'\bspecification\b', r'\bfeature\s+request\b', r'\bidea\b',
+            r'\bsuggestion\b', r'\bproposal\b', r'\bepic\b', r'\bproduct\b',
+            r'\bstakeholder\b', r'\bbusiness\s+value\b', r'\bcontext\b',
+            r'\bbackground\b', r'\brationale\b', r'\bpurpose\b',
+            r'\bambiguous\b', r'\bnot\s+clear\b', r'\bmissing\s+details\b',
+            r'\bmore\s+info', r'\bwhat\s+should\b', r'\bneed\s+to\b',
+            r'\bwant\s+to\b'
+        ]
     }
 }
 
