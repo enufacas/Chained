@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 324
+**Total Insights:** 323
 
 **Last Updated:** 2025-11-20
 
@@ -674,20 +674,11 @@ Remember when you thought age verification laws couldn't get any worse ? Well, l
 ---
 
 
-### CLI tool to check the Git status of multiple projects
+### Free interactive tool that shows you how PCIe lanes work on motherboards
 
-**Community Score:** 22 upvotes
+**Community Score:** 71 upvotes
 
-**Link:** https://github.com/uralys/check-projects
-
----
-
-
-### How Slide Rules Work
-
-**Community Score:** 100 upvotes
-
-**Link:** https://amenzwa.github.io/stem/ComputingHistory/HowSlideRulesWork/
+**Link:** https://mobomaps.com
 
 ---
 
@@ -776,5 +767,12 @@ Date
 The
 date
 inp...
+
+---
+
+
+### 'No One Lives Forever' turns 25 and you still can't buy it legitimately
+
+**Link:** https://www.techdirt.com/2025/11/13/no-one-lives-forever-turns-25-you-still-cant-buy-it-legitimately/
 
 ---

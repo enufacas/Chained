@@ -2,7 +2,7 @@
 
 > General technology news and insights
 
-**Total Insights:** 2020
+**Total Insights:** 2026
 
 **Last Updated:** 2025-11-20
 
