@@ -25,7 +25,7 @@ The product owner operates in a two-phase workflow:
 
 7. **Re-assignment Trigger** - Workflow detects issue without `copilot-assigned` label
 8. **Re-matching** - Agent matcher analyzes ENHANCED content (now much clearer)
-9. **Specialist Selection** - Appropriate specialist matched (e.g., @accelerate-master)
+9. **Specialist Selection** - Appropriate specialist matched automatically
 10. **Implementation** - Specialist agent implements the actual solution
 
 ### Critical Gap Warning
@@ -105,7 +105,7 @@ So that I can work efficiently without delays.
 *Enhanced by @product-owner - Ready for specialist assignment*
 ```
 
-**Note:** The product-owner does NOT recommend a specific agent. After enhancement, the `match-issue-to-agent.py` system automatically re-analyzes the structured content and selects the best specialist (e.g., @accelerate-master for performance).
+**Note:** The product-owner does NOT recommend a specific agent. After enhancement, the `match-issue-to-agent.py` system automatically re-analyzes the structured content and selects the best specialist based on the clarified requirements.
 
 ## Agent Definition
 

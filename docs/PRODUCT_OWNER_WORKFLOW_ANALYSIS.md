@@ -31,7 +31,7 @@
    - Following template in `.github/agents/product-owner.md`
    - **Gap Identified**: PO agent needs to:
      - Update the issue body with enhanced content
-     - Recommend specialist agent (e.g., "@accelerate-master")
+     - Signal completion via comment
      - **CRITICAL**: Must trigger re-assignment somehow
 
 ## Identified Gap: Re-Assignment
@@ -39,7 +39,7 @@
 ### The Problem
 
 After @product-owner enhances the issue, there's **no automatic mechanism** to:
-1. Trigger re-assignment to the recommended specialist
+1. Trigger re-assignment to a specialist
 2. Update labels from `agent:product-owner` to `agent:specialist`
 3. Remove `copilot-assigned` label to allow re-processing
 
@@ -81,13 +81,11 @@ Once you've enhanced the issue, you MUST:
    - Remove: `copilot-assigned` (allows re-assignment)
    - Remove: `agent:product-owner` (you're done)
    - Keep: All other labels
-3. **Add comment** recommending specialist:
+3. **Add comment** to signal completion:
    ```
    ✅ Issue enhanced by @product-owner
    
-   Recommended specialist: @accelerate-master
-   
-   Issue is ready for re-assignment.
+   Issue is ready for re-assignment. The matching system will automatically select the appropriate specialist.
    ```
 4. **Unassign yourself** (Copilot) from the issue
 5. **Do NOT close the issue** - specialist needs to work on it
@@ -200,8 +198,6 @@ Your work as product owner is **preparation**, not implementation. After enhance
    - Technical considerations
    - Context and background
    
-   **Recommended Specialist:** @[specialist-name]
-   
    **Next Steps:**
    The issue is now ready for re-assignment. The copilot workflow will automatically:
    1. Detect the enhanced, well-structured content
@@ -228,7 +224,7 @@ After you complete these actions:
 2. ✅ Enhanced content in issue → Better matching accuracy
 3. ✅ `copilot-graphql-assign` workflow detects open issue without labels
 4. ✅ Runs `match-issue-to-agent.py` with ENHANCED content
-5. ✅ Matches to specialist (e.g., @accelerate-master, @engineer-master)
+5. ✅ Matches to appropriate specialist based on enhanced requirements
 6. ✅ Specialist gets assigned and implements solution
 
 ### Example Flow
@@ -250,10 +246,10 @@ As a user, I want pages to load under 2 seconds...
 - [ ] Identify bottlenecks
 - [ ] Reduce load time by 30%
 Labels: none (PO removed copilot-assigned)
-Match: accelerate-master (clear performance requirements)
+Match: Performance specialist (clear performance requirements)
 ```
 
-**Result:** @accelerate-master assigned, implements optimizations.
+**Result:** Performance specialist assigned, implements optimizations.
 ```
 
 ## Testing the Flow

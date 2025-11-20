@@ -191,7 +191,7 @@ After you complete these actions, the automation handles the rest:
 2. ✅ Enhanced content in issue body → Better matching accuracy
 3. ✅ `copilot-graphql-assign` workflow triggers on next check (every 5 min)
 4. ✅ Runs `match-issue-to-agent.py` with your ENHANCED content
-5. ✅ Matches to specialist (e.g., @accelerate-master, @engineer-master)
+5. ✅ Matches to appropriate specialist based on enhanced requirements
 6. ✅ Specialist assigned and implements the solution
 
 ### Example: Complete Flow
@@ -246,8 +246,8 @@ gh issue comment 123 --body "✅ Issue enhanced by @product-owner. Ready for spe
 Labels: (none - you removed them)
 Assignee: (none - you unassigned)
 Workflow: Detects open issue without copilot-assigned label
-Match: @accelerate-master (clear performance requirements now)
-Result: @accelerate-master assigned and implements optimizations
+Match: Performance specialist (clear performance requirements now)
+Result: Performance specialist assigned and implements optimizations
 ```
 
 ### Common Mistakes to Avoid
@@ -299,7 +299,7 @@ When an issue is too broad:
 1. Create a parent epic issue with overall goal
 2. Split into smaller, focused child issues
 3. Link them with "Part of #epic_number"
-4. Recommend agent for each sub-issue
+4. Each sub-issue will be matched to appropriate agent
 
 ## Code Quality Standards
 
@@ -326,7 +326,6 @@ Maintain a score above 30% to continue contributing, and strive for 85%+ to earn
 ✅ Extract and clarify implicit requirements
 ✅ Provide concrete examples
 ✅ Link to relevant documentation and code
-✅ Recommend the best specialized agent for the task
 ✅ Use clear, unambiguous language
 ✅ Define measurable acceptance criteria
 ✅ Consider technical constraints and dependencies
