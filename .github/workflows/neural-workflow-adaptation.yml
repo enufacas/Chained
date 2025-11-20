@@ -1,0 +1,296 @@
+name: 🧠 Neural Workflow Adaptation
+
+on:
+  # Trigger after performance metrics are collected
+  workflow_run:
+    workflows: ["📊 Performance Metrics Collection"]
+    types: [completed]
+  
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      force_adapt:
+        description: 'Force adaptation of all workflows'
+        required: false
+        type: boolean
+        default: false
+  
+  # Periodic adaptation cycle (every 6 hours)
+  schedule:
+    - cron: '0 */6 * * *'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  neural-adaptation:
+    name: Self-Evolving Neural Architecture
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: 📦 Install dependencies
+        run: |
+          pip install --upgrade pip
+          # No additional dependencies needed - uses standard library
+      
+      - name: 🔍 Collect workflow execution data
+        id: collect
+        run: |
+          echo "📊 Collecting workflow execution data..."
+          
+          # Get recent workflow runs from GitHub API
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/repos/${{ github.repository }}/actions/runs?per_page=100" \
+            > /tmp/workflow_runs.json || echo "Warning: Could not fetch workflow runs"
+          
+          # Count successful and failed runs per workflow
+          python3 << 'EOF'
+          import json
+          import sys
+          from pathlib import Path
+          from collections import defaultdict
+          
+          # Load workflow runs
+          try:
+              with open('/tmp/workflow_runs.json', 'r') as f:
+                  data = json.load(f)
+              
+              runs = data.get('workflow_runs', [])
+              print(f"✅ Loaded {len(runs)} workflow runs")
+              
+              # Aggregate by workflow
+              stats = defaultdict(lambda: {'success': 0, 'failure': 0, 'total': 0})
+              
+              for run in runs:
+                  workflow_name = run.get('name', 'Unknown')
+                  conclusion = run.get('conclusion', 'unknown')
+                  
+                  stats[workflow_name]['total'] += 1
+                  if conclusion == 'success':
+                      stats[workflow_name]['success'] += 1
+                  elif conclusion in ['failure', 'timed_out', 'cancelled']:
+                      stats[workflow_name]['failure'] += 1
+              
+              # Save aggregated stats
+              output = {
+                  'workflows': {},
+                  'total_runs': len(runs)
+              }
+              
+              for workflow_name, counts in stats.items():
+                  success_rate = counts['success'] / counts['total'] if counts['total'] > 0 else 0.5
+                  output['workflows'][workflow_name] = {
+                      'success': counts['success'],
+                      'failure': counts['failure'],
+                      'total': counts['total'],
+                      'success_rate': success_rate
+                  }
+              
+              Path('/tmp').mkdir(exist_ok=True)
+              with open('/tmp/workflow_stats.json', 'w') as f:
+                  json.dump(output, f, indent=2)
+              
+              print(f"✅ Processed {len(stats)} unique workflows")
+              
+          except Exception as e:
+              print(f"⚠️  Error processing workflow data: {e}", file=sys.stderr)
+              # Create empty stats file
+              with open('/tmp/workflow_stats.json', 'w') as f:
+                  json.dump({'workflows': {}, 'total_runs': 0}, f)
+          EOF
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 🧠 Initialize neural architectures
+        id: initialize
+        run: |
+          echo "🧠 Initializing neural architectures for workflows..."
+          
+          python3 << 'EOF'
+          import json
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'tools')
+          
+          from neural_workflow_adapter import NeuralWorkflowAdapter
+          
+          # Load workflow stats
+          with open('/tmp/workflow_stats.json', 'r') as f:
+              stats = json.load(f)
+          
+          adapter = NeuralWorkflowAdapter()
+          
+          # Register workflows that don't exist yet
+          for workflow_name, workflow_stats in stats['workflows'].items():
+              if workflow_name not in adapter.architectures:
+                  # Default parameters for workflow optimization
+                  parameters = {
+                      'timeout_minutes': 30.0,
+                      'max_retries': 3.0,
+                      'concurrency_limit': 5.0,
+                      'cache_enabled': 1.0
+                  }
+                  adapter.register_workflow(workflow_name, parameters)
+                  print(f"✅ Registered new workflow: {workflow_name}")
+          
+          # Record recent executions
+          for workflow_name, workflow_stats in stats['workflows'].items():
+              # Record successes
+              for _ in range(workflow_stats['success']):
+                  adapter.record_execution(workflow_name, success=True)
+              
+              # Record failures
+              for _ in range(workflow_stats['failure']):
+                  adapter.record_execution(workflow_name, success=False)
+          
+          adapter._save_config()
+          print(f"\n✅ Initialized {len(adapter.architectures)} neural architectures")
+          EOF
+      
+      - name: 🔄 Perform neural adaptation
+        id: adapt
+        run: |
+          echo "🔄 Performing neural adaptation cycle..."
+          
+          python3 tools/neural_workflow_adapter.py --adapt-all --json > /tmp/adaptation_results.json
+          
+          # Show results
+          cat /tmp/adaptation_results.json
+          
+          # Count adaptations
+          ADAPTED_COUNT=$(python3 -c "import json; data=json.load(open('/tmp/adaptation_results.json')); print(sum(1 for v in data.values() if v is not None))")
+          echo "adapted_count=${ADAPTED_COUNT}" >> $GITHUB_OUTPUT
+          echo "✅ Adapted ${ADAPTED_COUNT} workflows"
+      
+      - name: 📊 Generate adaptation report
+        run: |
+          echo "📊 Generating neural adaptation report..."
+          
+          python3 tools/neural_workflow_adapter.py --report > /tmp/neural_report.txt
+          
+          cat /tmp/neural_report.txt
+      
+      - name: 💾 Commit neural configuration updates
+        if: steps.adapt.outputs.adapted_count > 0
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if there are changes
+          git add .github/agent-system/neural_config.json
+          
+          if git diff --staged --quiet; then
+            echo "ℹ️  No configuration changes to commit"
+          else
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="neural-adaptation/${TIMESTAMP}-${{ github.run_id }}"
+            
+            git checkout -b "$BRANCH_NAME"
+            git commit -m "🧠 Neural workflow adaptation - ${{ steps.adapt.outputs.adapted_count }} workflows updated"
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            gh pr create \
+              --title "🧠 Neural Workflow Adaptation - $(date +%Y-%m-%d)" \
+              --body "## 🧠 Neural Workflow Adaptation
+            
+            **@workflows-tech-lead** has performed automatic neural adaptation of workflow configurations.
+            
+            ### 📊 Adaptation Results
+            
+            - **Workflows adapted**: ${{ steps.adapt.outputs.adapted_count }}
+            - **Timestamp**: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+            - **Triggered by**: ${{ github.event_name }}
+            
+            ### 🔄 How Neural Adaptation Works
+            
+            The neural workflow adapter uses a neural network-inspired architecture to:
+            
+            1. **Monitor** workflow success rates and performance metrics
+            2. **Learn** from execution history using gradient descent
+            3. **Adapt** parameters (timeouts, retries, concurrency) automatically
+            4. **Optimize** for 95% success rate target
+            
+            Each workflow has neural weights that are adjusted based on feedback, similar to backpropagation in neural networks.
+            
+            ### 📈 Configuration Updates
+            
+            This PR updates the neural configuration with optimized workflow parameters based on recent execution data.
+            
+            ---
+            
+            *🤖 Created by workflow: [neural-workflow-adaptation.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+            *Neural adaptation by **@workflows-tech-lead***" \
+              --label "automated,neural-adaptation,workflows" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ Created PR for neural configuration updates"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 📤 Upload adaptation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neural-adaptation-report-${{ github.run_id }}
+          path: |
+            /tmp/neural_report.txt
+            /tmp/adaptation_results.json
+            /tmp/workflow_stats.json
+          retention-days: 30
+      
+      - name: 💬 Comment on related issues
+        if: steps.adapt.outputs.adapted_count > 0
+        run: |
+          # Find any open issues related to workflow optimization
+          ISSUES=$(gh issue list --label "workflows,optimization" --state open --json number --jq '.[].number')
+          
+          if [ -n "$ISSUES" ]; then
+            for issue_num in $ISSUES; do
+              gh issue comment "$issue_num" --body "🧠 **Neural workflow adaptation completed**
+          
+          **@workflows-tech-lead** has adapted ${{ steps.adapt.outputs.adapted_count }} workflows based on recent success rates.
+          
+          The self-evolving neural architecture has optimized workflow parameters to improve reliability and performance.
+          
+          📊 [View adaptation report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            done
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: ✅ Summary
+        if: always()
+        run: |
+          echo "## 🧠 Neural Workflow Adaptation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Workflows analyzed**: $(python3 -c "import json; print(len(json.load(open('/tmp/workflow_stats.json'))['workflows']))" 2>/dev/null || echo "N/A")" >> $GITHUB_STEP_SUMMARY
+          echo "- **Workflows adapted**: ${{ steps.adapt.outputs.adapted_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎯 Neural Adaptation Approach" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The system uses neural network-inspired learning to optimize workflows:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Input Layer**: Execution data, success rates, performance metrics" >> $GITHUB_STEP_SUMMARY
+          echo "- **Hidden Layer**: Neural weights for each parameter (timeout, retries, etc.)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Output Layer**: Optimized configuration values" >> $GITHUB_STEP_SUMMARY
+          echo "- **Learning**: Gradient descent with momentum from success feedback" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*🤖 Autonomous neural adaptation by **@workflows-tech-lead***" >> $GITHUB_STEP_SUMMARY
