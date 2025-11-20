@@ -2,7 +2,7 @@
 
 > SQL, NoSQL, data storage, and data engineering
 
-**Total Insights:** 73
+**Total Insights:** 74
 
 **Last Updated:** 2025-11-20
 
@@ -164,6 +164,15 @@ Perkeep is under active development. If you're a programmer or fairly technical,
 ---
 
 
+### Data-at-Rest Encryption in DuckDB
+
+**Community Score:** 17 upvotes
+
+**Link:** https://duckdb.org/2025/11/19/encryption-in-duckdb
+
+---
+
+
 ### 650GB of Data (Delta Lake on S3). Polars vs. DuckDB vs. Daft vs. Spark
 
 **Community Score:** 208 upvotes
@@ -364,30 +373,5 @@ Perkeep is under active development. If you're a programmer or fairly technical,
 ### RegreSQL: Regression Testing for PostgreSQL Queries
 
 **Link:** https://boringsql.com/posts/regresql-testing-queries/
-
----
-
-
-### Perkeep – Personal storage system for life
-
-**Community Score:** 106 upvotes
-
-**Link:** https://perkeep.org/
-
-
-**Content Summary:**
-
-Home
-Download
-Docs
-Code
-Community
-Perkeep lets you
-permanently keep
-your stuff, for life.
-Perkeep (
-née Camlistore
-) is a set of open source formats, protocols, and software for modeling, storing, searching, sharing and synchronizing data in the post-PC era. Data may be files or objects, tweets or 5TB videos, and you can access it via a phone, browser or FUSE filesystem.
-Perkeep is under active development. If you're a programmer or fairly technical, you can probably get it up and running and ge...
 
 ---

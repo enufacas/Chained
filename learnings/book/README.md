@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-20 09:22 UTC
+**Generated:** 2025-11-20 21:19 UTC
 
-**Total Learning Sessions:** 95
+**Total Learning Sessions:** 97
 
-**Total Insights:** 5286
+**Total Insights:** 5306
 
 ---
 
@@ -18,14 +18,14 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 1808
+**Insights:** 1824
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 465
+**Insights:** 463
 
 
 ### [🚀 DevOps & Infrastructure](./DevOps.md)
@@ -39,7 +39,7 @@ CI/CD, containers, orchestration, and infrastructure automation
 
 SQL, NoSQL, data storage, and data engineering
 
-**Insights:** 73
+**Insights:** 74
 
 
 ### [🌐 Web Development](./Web.md)
@@ -67,7 +67,7 @@ Performance tuning, benchmarks, and optimization techniques
 
 IDEs, editors, debuggers, and productivity tools
 
-**Insights:** 324
+**Insights:** 323
 
 
 ### [🌟 Open Source & Community](./OpenSource.md)
@@ -81,7 +81,7 @@ Open source projects, community insights, and collaboration
 
 General technology news and insights
 
-**Insights:** 2020
+**Insights:** 2026
 
 
 ## 📊 Statistics
@@ -89,13 +89,13 @@ General technology news and insights
 
 ### By Source
 
-- **Unknown:** 40 learning sessions
+- **Unknown:** 41 learning sessions
 
 - **Hacker News:** 26 learning sessions
 
 - **TLDR Tech:** 20 learning sessions
 
-- **GitHub Copilot (Combined):** 4 learning sessions
+- **GitHub Copilot (Combined):** 5 learning sessions
 
 - **GitHub Trending:** 4 learning sessions
 
@@ -104,13 +104,13 @@ General technology news and insights
 
 ### By Topic
 
-- **📚 General Tech Insights:** 2020 insights
+- **📚 General Tech Insights:** 2026 insights
 
-- **🤖 AI & Machine Learning:** 1808 insights
+- **🤖 AI & Machine Learning:** 1824 insights
 
-- **💻 Programming Languages & Frameworks:** 465 insights
+- **💻 Programming Languages & Frameworks:** 463 insights
 
-- **🔧 Developer Tools:** 324 insights
+- **🔧 Developer Tools:** 323 insights
 
 - **🌐 Web Development:** 181 insights
 
@@ -118,7 +118,7 @@ General technology news and insights
 
 - **🚀 DevOps & Infrastructure:** 151 insights
 
-- **🗄️ Databases & Data Management:** 73 insights
+- **🗄️ Databases & Data Management:** 74 insights
 
 - **🔒 Security & Privacy:** 72 insights
 

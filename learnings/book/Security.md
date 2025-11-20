@@ -190,11 +190,11 @@ This article dives into my full methodology for reverse engineering the tool men
 ---
 
 
-### Researchers discover security vulnerability in WhatsApp
+### Okta's NextJS-0auth troubles
 
-**Community Score:** 215 upvotes
+**Community Score:** 128 upvotes
 
-**Link:** https://www.univie.ac.at/en/news/detail/forscherinnen-entdecken-grosse-sicherheitsluecke-in-whatsapp
+**Link:** https://joshua.hu/ai-slop-okta-nextjs-0auth-security-vulnerability
 
 ---
 
