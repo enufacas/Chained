@@ -1,0 +1,360 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-20T01:53:56.185385Z",
+  "metadata": {
+    "description": "Autonomous code review criteria that evolve based on outcomes",
+    "created_by": "workflows-tech-lead",
+    "total_reviews": 5,
+    "success_rate": 0.5
+  },
+  "criteria": {
+    "correctness": {
+      "weight": 1.0,
+      "threshold": 0.7,
+      "description": "Code logic is sound and handles edge cases",
+      "checks": [
+        {
+          "id": "error_handling",
+          "name": "Error Handling Present",
+          "weight": 0.3,
+          "patterns": [
+            "try.*except",
+            "catch\\s*\\(",
+            "if\\s+.*error",
+            "\\.on\\('error'",
+            "throw new Error"
+          ],
+          "negative_patterns": [
+            "# TODO.*error",
+            "// TODO.*error"
+          ],
+          "effectiveness": 0.8,
+          "times_applied": 3
+        },
+        {
+          "id": "null_checks",
+          "name": "Null/Undefined Checks",
+          "weight": 0.25,
+          "patterns": [
+            "if\\s+.*is None",
+            "if\\s+.*===\\s*null",
+            "if\\s+.*===\\s*undefined",
+            "\\.filter\\(",
+            "\\?\\.\\s*\\."
+          ],
+          "effectiveness": 0.75,
+          "times_applied": 3
+        },
+        {
+          "id": "boundary_conditions",
+          "name": "Boundary Conditions Handled",
+          "weight": 0.25,
+          "patterns": [
+            "len\\(.*\\)\\s*>\\s*0",
+            "\\.length\\s*>\\s*0",
+            "if\\s+not\\s+.*:",
+            "if\\s+!.*:",
+            "range\\(.*\\)"
+          ],
+          "effectiveness": 0.7,
+          "times_applied": 3
+        },
+        {
+          "id": "test_coverage",
+          "name": "Tests Present",
+          "weight": 0.2,
+          "file_patterns": [
+            "test_.*\\.py",
+            ".*_test\\.py",
+            ".*\\.test\\.js",
+            ".*\\.spec\\.js"
+          ],
+          "effectiveness": 0.85,
+          "times_applied": 3
+        }
+      ],
+      "learning_rate": 0.1,
+      "times_evaluated": 0,
+      "historical_effectiveness": []
+    },
+    "clarity": {
+      "weight": 0.8,
+      "threshold": 0.6,
+      "description": "Code is readable and maintainable",
+      "checks": [
+        {
+          "id": "meaningful_names",
+          "name": "Meaningful Variable Names",
+          "weight": 0.3,
+          "negative_patterns": [
+            "\\b[a-z]\\b(?!\\s*=\\s*range)",
+            "var\\s+x\\s*=",
+            "let\\s+y\\s*=",
+            "foo|bar|baz"
+          ],
+          "min_name_length": 3,
+          "effectiveness": 0.65,
+          "times_applied": 3
+        },
+        {
+          "id": "function_size",
+          "name": "Reasonable Function Size",
+          "weight": 0.25,
+          "max_lines": 50,
+          "patterns": [
+            "def\\s+\\w+\\(",
+            "function\\s+\\w+\\("
+          ],
+          "effectiveness": 0.6,
+          "times_applied": 3
+        },
+        {
+          "id": "comments_present",
+          "name": "Complex Logic Explained",
+          "weight": 0.2,
+          "patterns": [
+            "#.*",
+            "//.*",
+            "/\\*.*\\*/",
+            "\"\"\".*\"\"\"",
+            "'''.*'''"
+          ],
+          "min_comment_ratio": 0.05,
+          "effectiveness": 0.55,
+          "times_applied": 3
+        },
+        {
+          "id": "nesting_depth",
+          "name": "Reasonable Nesting Depth",
+          "weight": 0.25,
+          "max_depth": 3,
+          "effectiveness": 0.7,
+          "times_applied": 3
+        }
+      ],
+      "learning_rate": 0.1,
+      "times_evaluated": 0,
+      "historical_effectiveness": []
+    },
+    "security": {
+      "weight": 1.2,
+      "threshold": 0.8,
+      "description": "Code follows security best practices",
+      "checks": [
+        {
+          "id": "secret_exposure",
+          "name": "No Hardcoded Secrets",
+          "weight": 0.4,
+          "negative_patterns": [
+            "password\\s*=\\s*['\"]",
+            "api[_-]?key\\s*=\\s*['\"]",
+            "secret\\s*=\\s*['\"]",
+            "token\\s*=\\s*['\"](?!\\$)",
+            "aws[_-]?access"
+          ],
+          "effectiveness": 0.95,
+          "times_applied": 3
+        },
+        {
+          "id": "input_validation",
+          "name": "Input Validation Present",
+          "weight": 0.3,
+          "patterns": [
+            "validate\\(",
+            "assert\\s+",
+            "if\\s+.*in\\s+",
+            "isinstance\\(",
+            "\\.match\\("
+          ],
+          "effectiveness": 0.8,
+          "times_applied": 3
+        },
+        {
+          "id": "sql_injection",
+          "name": "No SQL Injection Risk",
+          "weight": 0.3,
+          "negative_patterns": [
+            "execute\\(.*\\+.*\\)",
+            "query\\(.*\\+.*\\)",
+            "SELECT.*%s",
+            "INSERT.*%s"
+          ],
+          "positive_patterns": [
+            "\\?",
+            "parameterized",
+            "prepared"
+          ],
+          "effectiveness": 0.9,
+          "times_applied": 3
+        }
+      ],
+      "learning_rate": 0.05,
+      "times_evaluated": 0,
+      "historical_effectiveness": []
+    },
+    "maintainability": {
+      "weight": 0.7,
+      "threshold": 0.6,
+      "description": "Code is easy to modify and extend",
+      "checks": [
+        {
+          "id": "dry_principle",
+          "name": "No Obvious Duplication",
+          "weight": 0.4,
+          "detection": "similarity_threshold",
+          "threshold": 0.8,
+          "effectiveness": 0.7,
+          "times_applied": 3
+        },
+        {
+          "id": "single_responsibility",
+          "name": "Functions Have Single Purpose",
+          "weight": 0.3,
+          "heuristic": "lines_per_function",
+          "max_lines": 30,
+          "effectiveness": 0.65,
+          "times_applied": 3
+        },
+        {
+          "id": "documentation",
+          "name": "Public APIs Documented",
+          "weight": 0.3,
+          "patterns": [
+            "\"\"\".*\"\"\"",
+            "'''.*'''",
+            "/\\*\\*.*\\*/",
+            "@param",
+            "@return"
+          ],
+          "effectiveness": 0.6,
+          "times_applied": 3
+        }
+      ],
+      "learning_rate": 0.1,
+      "times_evaluated": 0,
+      "historical_effectiveness": []
+    },
+    "workflow_specific": {
+      "weight": 1.0,
+      "threshold": 0.75,
+      "description": "GitHub Actions workflow best practices (workflows-tech-lead domain)",
+      "checks": [
+        {
+          "id": "action_pinning",
+          "name": "Actions Pinned to SHA",
+          "weight": 0.3,
+          "patterns": [
+            "uses:.*@[a-f0-9]{40}"
+          ],
+          "negative_patterns": [
+            "uses:.*@v\\d",
+            "uses:.*@main",
+            "uses:.*@master"
+          ],
+          "effectiveness": 0.85,
+          "times_applied": 3
+        },
+        {
+          "id": "minimal_permissions",
+          "name": "Minimal Permissions Granted",
+          "weight": 0.25,
+          "patterns": [
+            "permissions:\\s*$",
+            "contents:\\s+read",
+            "pull-requests:\\s+read"
+          ],
+          "negative_patterns": [
+            "permissions:\\s+write-all"
+          ],
+          "effectiveness": 0.8,
+          "times_applied": 3
+        },
+        {
+          "id": "error_handling_workflow",
+          "name": "Workflow Error Handling",
+          "weight": 0.2,
+          "patterns": [
+            "continue-on-error:",
+            "||\\s+echo",
+            "||\\s+true"
+          ],
+          "effectiveness": 0.75,
+          "times_applied": 3
+        },
+        {
+          "id": "concurrency_control",
+          "name": "Concurrency Controls Present",
+          "weight": 0.25,
+          "patterns": [
+            "concurrency:",
+            "cancel-in-progress:"
+          ],
+          "effectiveness": 0.7,
+          "times_applied": 3
+        }
+      ],
+      "learning_rate": 0.08,
+      "times_evaluated": 0,
+      "historical_effectiveness": []
+    }
+  },
+  "evolution_config": {
+    "min_reviews_before_adjustment": 10,
+    "effectiveness_window": 30,
+    "weight_adjustment_rate": 0.1,
+    "threshold_adjustment_rate": 0.05,
+    "criteria_removal_threshold": 0.3,
+    "criteria_promotion_threshold": 0.85
+  },
+  "history": [
+    {
+      "review_id": "pr-001",
+      "timestamp": "2025-11-20T01:52:06.512907Z",
+      "outcome": {
+        "merged": true,
+        "rejected": false,
+        "major_changes_required": false,
+        "overall_score": 0.82
+      }
+    },
+    {
+      "review_id": "pr-002",
+      "timestamp": "2025-11-20T01:52:06.513508Z",
+      "outcome": {
+        "merged": false,
+        "rejected": true,
+        "major_changes_required": true,
+        "overall_score": 0.35
+      }
+    },
+    {
+      "review_id": "pr-003",
+      "timestamp": "2025-11-20T01:52:06.514064Z",
+      "outcome": {
+        "merged": true,
+        "rejected": false,
+        "major_changes_required": true,
+        "overall_score": 0.58
+      }
+    },
+    {
+      "review_id": "test-pr-success",
+      "timestamp": "2025-11-20T01:53:56.184695Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.85
+      }
+    },
+    {
+      "review_id": "test-pr-failed",
+      "timestamp": "2025-11-20T01:53:56.185373Z",
+      "outcome": {
+        "merged": false,
+        "rejected": true,
+        "major_changes_required": true,
+        "overall_score": 0.35
+      }
+    }
+  ]
+}

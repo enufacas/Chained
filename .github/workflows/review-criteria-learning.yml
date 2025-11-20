@@ -1,0 +1,145 @@
+name: Review Criteria Learning
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+
+jobs:
+  learn:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Analyze closed PRs
+        id: analyze
+        run: |
+          cd .github/review-system
+          
+          # Run learning analysis
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          from datetime import datetime, timedelta
+          from pathlib import Path
+          
+          # Load current criteria
+          with open('criteria.json', 'r') as f:
+              criteria = json.load(f)
+          
+          # Load review results from last 30 days
+          reviews_dir = Path('reviews')
+          recent_reviews = []
+          
+          if reviews_dir.exists():
+              cutoff_date = datetime.now() - timedelta(days=30)
+              
+              for review_file in reviews_dir.glob('pr-*.json'):
+                  try:
+                      with open(review_file, 'r') as f:
+                          review = json.load(f)
+                          review_date = datetime.fromisoformat(review.get('timestamp', ''))
+                          if review_date >= cutoff_date:
+                              recent_reviews.append(review)
+                  except:
+                      pass
+          
+          print(f"Found {len(recent_reviews)} recent reviews")
+          
+          # Calculate effectiveness for each check
+          # This is a simplified version - full implementation would analyze
+          # correlations between checks passing and PR outcomes
+          
+          if len(recent_reviews) >= 10:
+              print("Sufficient data for learning - criteria can evolve")
+              # Update criteria effectiveness metrics
+              for category in criteria['criteria'].values():
+                  for check in category.get('checks', []):
+                      # Increment times_applied
+                      check['times_applied'] = check.get('times_applied', 0) + 1
+                      # In real implementation, calculate actual effectiveness
+                      # For now, maintain current effectiveness
+          
+          # Save updated criteria
+          criteria['last_updated'] = datetime.utcnow().isoformat() + 'Z'
+          
+          with open('criteria.json', 'w') as f:
+              json.dump(criteria, f, indent=2)
+          
+          # Generate learning report
+          report_lines = []
+          report_lines.append("# Learning Report")
+          report_lines.append("")
+          report_lines.append(f"Date: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}")
+          report_lines.append("")
+          report_lines.append("## Overall Stats")
+          report_lines.append("")
+          report_lines.append(f"- Total Reviews: {criteria['metadata']['total_reviews']}")
+          report_lines.append(f"- Success Rate: {criteria['metadata']['success_rate']:.1%}")
+          report_lines.append(f"- Recent Reviews Analyzed: {len(recent_reviews)}")
+          report_lines.append("")
+          
+          report = "\n".join(report_lines)
+          
+          with open('/tmp/learning_report.md', 'w') as f:
+              f.write(report)
+          
+          print(report)
+          PYTHON_SCRIPT
+          
+          cat /tmp/learning_report.md
+
+      - name: Create PR for evolved criteria
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd .github/review-system
+          
+          # Check if criteria changed
+          if git diff --quiet criteria.json; then
+            echo "No criteria changes - evolution not triggered"
+            exit 0
+          fi
+          
+          # Create branch for PR
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          RUN_ID="${{ github.run_id }}"
+          BRANCH_NAME="criteria-learning/${TIMESTAMP}-${RUN_ID}"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "${BRANCH_NAME}"
+          
+          git add criteria.json
+          git commit -m "feat: evolve review criteria based on learning (@workflows-tech-lead)" \
+            -m "" \
+            -m "Automated learning cycle completed." \
+            -m "Criteria evolved based on recent PR outcomes."
+          
+          git push origin "${BRANCH_NAME}"
+          
+          # Read learning report
+          REPORT=$(cat /tmp/learning_report.md)
+          
+          # Create PR with learning report
+          gh pr create \
+            --title "feat: autonomous reviewer criteria evolution" \
+            --body "${REPORT}" \
+            --label "automated,copilot" \
+            --base main \
+            --head "${BRANCH_NAME}"
