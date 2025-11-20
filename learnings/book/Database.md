@@ -2,9 +2,9 @@
 
 > SQL, NoSQL, data storage, and data engineering
 
-**Total Insights:** 63
+**Total Insights:** 73
 
-**Last Updated:** 2025-11-19
+**Last Updated:** 2025-11-20
 
 ---
 
@@ -322,15 +322,6 @@ Home Download Docs Code Community Perkeep lets you permanently keep your stuff, 
 ---
 
 
-### A day at Hetzner Online in the Falkenstein data center
-
-**Community Score:** 130 upvotes
-
-**Link:** https://www.igorslab.de/en/a-day-at-hetzner-online-in-the-falkenstein-data-center-insights-into-server-technology-cooling-production-rma-and-sustainability/
-
----
-
-
 ### RegreSQL: Regression Testing for PostgreSQL Queries
 
 **Community Score:** 132 upvotes
@@ -373,5 +364,30 @@ Perkeep is under active development. If you're a programmer or fairly technical,
 ### RegreSQL: Regression Testing for PostgreSQL Queries
 
 **Link:** https://boringsql.com/posts/regresql-testing-queries/
+
+---
+
+
+### Perkeep – Personal storage system for life
+
+**Community Score:** 106 upvotes
+
+**Link:** https://perkeep.org/
+
+
+**Content Summary:**
+
+Home
+Download
+Docs
+Code
+Community
+Perkeep lets you
+permanently keep
+your stuff, for life.
+Perkeep (
+née Camlistore
+) is a set of open source formats, protocols, and software for modeling, storing, searching, sharing and synchronizing data in the post-PC era. Data may be files or objects, tweets or 5TB videos, and you can access it via a phone, browser or FUSE filesystem.
+Perkeep is under active development. If you're a programmer or fairly technical, you can probably get it up and running and ge...
 
 ---
