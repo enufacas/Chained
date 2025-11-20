@@ -180,12 +180,68 @@ def match_file_to_tech_leads(filepath: str, tech_leads: List[Dict]) -> List[Dict
     
     for tech_lead in tech_leads:
         for pattern in tech_lead['paths']:
-            # Convert glob pattern to fnmatch
-            if fnmatch(filepath, pattern):
+            if matches_pattern(filepath, pattern):
                 matched.append(tech_lead)
                 break
     
     return matched
+
+
+def matches_pattern(filepath: str, pattern: str) -> bool:
+    """
+    Check if a filepath matches a glob pattern.
+    
+    Handles ** wildcards correctly:
+    - docs/**/*.html matches docs/index.html AND docs/sub/index.html
+    - .github/workflows/** matches any file under .github/workflows/
+    - **/*.py matches any .py file anywhere
+    """
+    from pathlib import PurePath
+    
+    # Normalize the pattern and filepath
+    pattern = pattern.replace('\\', '/')
+    filepath = filepath.replace('\\', '/')
+    
+    # Handle specific pattern types
+    if '**' not in pattern:
+        # Simple pattern without **, use fnmatch
+        return fnmatch(filepath, pattern)
+    
+    # Split pattern into parts
+    pattern_parts = pattern.split('/')
+    filepath_parts = filepath.split('/')
+    
+    # Try to match the pattern
+    return match_glob_parts(filepath_parts, pattern_parts)
+
+
+def match_glob_parts(filepath_parts: List[str], pattern_parts: List[str]) -> bool:
+    """
+    Match filepath parts against pattern parts, handling ** correctly.
+    
+    ** matches zero or more path components.
+    """
+    if not pattern_parts:
+        return not filepath_parts
+    
+    if not filepath_parts:
+        # Remaining pattern parts must all be ** or empty
+        return all(p == '**' for p in pattern_parts)
+    
+    pattern_head = pattern_parts[0]
+    
+    if pattern_head == '**':
+        # ** can match zero or more path components
+        # Try matching with ** consuming nothing
+        if match_glob_parts(filepath_parts, pattern_parts[1:]):
+            return True
+        # Try matching with ** consuming one component
+        return match_glob_parts(filepath_parts[1:], pattern_parts)
+    else:
+        # Regular pattern, must match current filepath component
+        if not fnmatch(filepath_parts[0], pattern_head):
+            return False
+        return match_glob_parts(filepath_parts[1:], pattern_parts[1:])
 
 
 def analyze_pr_complexity(pr_files: List[Dict], pr_metadata: Dict) -> Dict:
