@@ -1,0 +1,53 @@
+{
+  "summary": {
+    "spawning_needed": true,
+    "recommended_spawns": 2,
+    "total_recommendations": 2
+  },
+  "recommendations": [
+    {
+      "specialization": "security",
+      "category": "security",
+      "count": 1,
+      "priority": "high",
+      "reason": "High workload: 10 items with 2 agents (5.0/agent)",
+      "metrics": {
+        "open_issues": 8,
+        "pending_prs": 2,
+        "active_agents": 2,
+        "workload_per_agent": 5.0,
+        "bottleneck_severity": "high"
+      }
+    },
+    {
+      "specialization": "performance",
+      "category": "performance",
+      "count": 1,
+      "priority": "medium",
+      "reason": "Moderate workload: 8 items with 1 agent (8.0/agent)",
+      "metrics": {
+        "open_issues": 6,
+        "pending_prs": 2,
+        "active_agents": 1,
+        "workload_per_agent": 8.0,
+        "bottleneck_severity": "medium"
+      }
+    }
+  ],
+  "metrics": {
+    "security": {
+      "open_issues": 8,
+      "pending_prs": 2,
+      "active_agents": 2,
+      "workload_per_agent": 5.0,
+      "bottleneck_severity": "high"
+    },
+    "performance": {
+      "open_issues": 6,
+      "pending_prs": 2,
+      "active_agents": 1,
+      "workload_per_agent": 8.0,
+      "bottleneck_severity": "medium"
+    }
+  }
+}
