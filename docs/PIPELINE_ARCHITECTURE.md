@@ -1,5 +1,15 @@
 # Autonomous Pipeline Architecture
 
+## 📚 Architecture Documentation Suite
+
+This document provides detailed technical information about the pipeline workflows. For broader context:
+
+- **[Architecture Overview](../ARCHITECTURE_OVERVIEW.md)** - Start here if you're new
+- **[Autonomous System Architecture](../AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - Complete system blueprint
+- **[Visual Architecture Guide](./ARCHITECTURE.md)** - Diagrams and visual explanations
+- **[Data Architecture](./DATA_STORAGE_LIFECYCLE.md)** - Data flow and storage
+- **[Quick Reference Card](./ARCHITECTURE_QUICK_REFERENCE.md)** - One-page lookup
+
 ## Overview
 
 The `autonomous-pipeline.yml` workflow implements a multi-stage progressive pipeline that consolidates all autonomous learning and mission creation activities into a single coordinated execution.

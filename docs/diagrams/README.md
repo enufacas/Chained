@@ -2,6 +2,17 @@
 
 This directory contains comprehensive architecture diagrams for the Chained autonomous AI ecosystem.
 
+## 📚 Architecture Documentation Suite
+
+Looking for broader context? Check out:
+
+- **[Architecture Overview](../../ARCHITECTURE_OVERVIEW.md)** - 10-minute beginner's guide
+- **[Autonomous System Architecture](../../AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - Complete technical blueprint
+- **[Visual Architecture Guide](../ARCHITECTURE.md)** - Text-based diagrams with explanations
+- **[Pipeline Architecture](../PIPELINE_ARCHITECTURE.md)** - Detailed workflow pipeline
+- **[Data Architecture](../DATA_STORAGE_LIFECYCLE.md)** - Complete data flow
+- **[Quick Reference Card](../ARCHITECTURE_QUICK_REFERENCE.md)** - One-page lookup
+
 ## Available Diagrams
 
 ### 1. [System Architecture](./system-architecture.md)

@@ -4,6 +4,18 @@
 
 This document serves as the definitive architectural guide for the Chained autonomous AI system, detailing how all components work together to create a truly self-improving, closed-loop software development ecosystem.
 
+## 📚 Related Documentation
+
+**New to Chained?** Start with the [Architecture Overview](./ARCHITECTURE_OVERVIEW.md) for a 10-minute introduction.
+
+**Quick lookup?** See the [Architecture Quick Reference Card](./docs/ARCHITECTURE_QUICK_REFERENCE.md) for tables and facts.
+
+**Other architecture docs:**
+- [Visual Architecture Guide](./docs/ARCHITECTURE.md) - Diagrams and visual explanations
+- [Pipeline Architecture](./docs/PIPELINE_ARCHITECTURE.md) - Detailed pipeline information
+- [Data Architecture](./docs/DATA_STORAGE_LIFECYCLE.md) - Complete data flow documentation
+- [Architecture Diagrams](./docs/diagrams/) - Mermaid diagrams for all components
+
 ## 📋 Table of Contents
 
 1. [System Overview](#system-overview)
