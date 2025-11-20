@@ -83,6 +83,56 @@ See [COPILOT_INTEGRATION.md](./COPILOT_INTEGRATION.md) for complete setup instru
 
 **TL;DR**: Fully automated with PAT, falls back to manual assignment without it.
 
+### Can I just add a "complex" tag/label to an issue to try it?
+
+**Yes! But you don't need any special labels - just create an issue!**
+
+**Quick Answer:**
+- Just create a regular GitHub issue - the system will automatically analyze it and assign the best agent
+- You don't need to add any labels (the system adds them automatically)
+- The system uses intelligent content matching, not labels, to select agents
+
+**How to Try It:**
+
+1. **Simple method** - Just create an issue:
+   ```
+   Title: Add dark mode to documentation
+   Body: The docs would look better with a dark theme option
+   ```
+   → System automatically matches to the right agent (like @designer-engineer)
+
+2. **Guide agent selection** - Use keywords in your issue:
+   ```
+   Title: Refactor the agent matching code for better maintainability
+   Body: The code has duplication and complexity issues...
+   Keywords: refactor, cleanup, complexity, organize
+   ```
+   → Triggers agents like @cleaner-master or @refactor-champion
+
+3. **For complex tasks** - Just describe the complexity:
+   ```
+   Title: Build intelligent workflow orchestration system
+   Body: This is a complex task requiring multi-system coordination...
+   Keywords: complex, orchestration, coordination
+   ```
+   → Triggers specialized agents like @meta-coordinator
+
+**About Labels:**
+- The system adds labels automatically (like `copilot-assigned`, `agent:agent-name`)
+- You can add your own labels (like `complexity:high`) but they won't affect agent selection currently
+- Agent selection is based on **content analysis** (keywords in title/body), not labels
+
+**Want to Learn More?**
+See the complete guide: **[HOW_TO_TRIGGER_AGENTS.md](./docs/HOW_TO_TRIGGER_AGENTS.md)**
+
+This guide includes:
+- Detailed examples for different types of tasks
+- List of all 47+ available agents and their specializations
+- How the intelligent matching system works
+- Tips for getting the agent you want
+
+**TL;DR**: Just create an issue - no special labels needed! The system is smart enough to figure it out.
+
 ### How does Copilot assignment handle issues created by automated workflows?
 
 **The Challenge:** When workflows create issues using `GITHUB_TOKEN`, GitHub doesn't trigger the `issues: opened` event for other workflows (security feature to prevent infinite loops).

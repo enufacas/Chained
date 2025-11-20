@@ -9,12 +9,13 @@ New to Chained? Start here:
 1. **[README.md](../README.md)** - Project overview and quick introduction
 2. **[GETTING_STARTED.md](../GETTING_STARTED.md)** - Validation and launch guide
 3. **[QUICKSTART.md](../QUICKSTART.md)** - 5-minute setup guide
-4. **[FAQ.md](../FAQ.md)** - Frequently asked questions
-5. **[GLOSSARY.md](./GLOSSARY.md)** - ⭐ Terminology and definitions
-6. **[LABELS.md](../LABELS.md)** - ⭐ **NEW!** Complete label reference guide
-7. **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - ⭐ Quick problem solving guide
-8. **[TROUBLESHOOTING_QUICK_REFERENCE.md](./TROUBLESHOOTING_QUICK_REFERENCE.md)** - ⭐ **NEW!** Quick reference card (@clarify-champion)
-9. **[COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md](./COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md)** - ⭐ **NEW!** Complete diagnostic manual (@clarify-champion)
+4. **[HOW_TO_TRIGGER_AGENTS.md](./HOW_TO_TRIGGER_AGENTS.md)** - ⭐ **NEW!** Complete guide to triggering the autonomous system
+5. **[FAQ.md](../FAQ.md)** - Frequently asked questions
+6. **[GLOSSARY.md](./GLOSSARY.md)** - ⭐ Terminology and definitions
+7. **[LABELS.md](../LABELS.md)** - ⭐ **NEW!** Complete label reference guide
+8. **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - ⭐ Quick problem solving guide
+9. **[TROUBLESHOOTING_QUICK_REFERENCE.md](./TROUBLESHOOTING_QUICK_REFERENCE.md)** - ⭐ **NEW!** Quick reference card (@clarify-champion)
+10. **[COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md](./COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md)** - ⭐ **NEW!** Complete diagnostic manual (@clarify-champion)
 
 ## 🤖 Agent System
 
