@@ -93,7 +93,7 @@ Get Chained running in under 5 minutes:
 
 > **💡 Want to try it immediately?** Just [create an issue](../../issues/new) describing what you want! The system automatically analyzes your issue and assigns the best specialized agent. No special labels needed - it's that simple! **[Learn more →](./docs/HOW_TO_TRIGGER_AGENTS.md)**
 
-**Need more details?** See the [complete setup guide](./GETTING_STARTED.md) or [5-minute quickstart](./QUICKSTART.md).
+**Need more details?** See the [complete setup guide](./docs/GETTING_STARTED.md) or [5-minute quickstart](./docs/QUICKSTART.md).
 
 ---
 
@@ -187,7 +187,7 @@ Chained operates as a **closed-loop, self-reinforcing system** where each stage 
 
 **Each iteration makes the system smarter.** The AI learns from the world AND from itself, creating exponential improvement over time.
 
-**📖 Deep Dive**: See [Autonomous System Architecture](./AUTONOMOUS_SYSTEM_ARCHITECTURE.md) for the complete technical blueprint.
+**📖 Deep Dive**: See [Autonomous System Architecture](./docs/AUTONOMOUS_SYSTEM_ARCHITECTURE.md) for the complete technical blueprint.
 
 ---
 
@@ -207,18 +207,18 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
 
 ### Start Here
 - **[📖 Documentation Index](./docs/INDEX.md)** - All 50+ docs organized by topic
-- **[🏛️ Architecture Overview](./ARCHITECTURE_OVERVIEW.md)** - ⭐ **NEW!** 10-minute architecture guide for newcomers
+- **[🏛️ Architecture Overview](./docs/ARCHITECTURE_OVERVIEW.md)** - ⭐ **NEW!** 10-minute architecture guide for newcomers
 - **[⚡ Quick Reference](./docs/QUICK_REFERENCE.md)** - Command cheat sheet
-- **[❓ FAQ](./FAQ.md)** - Frequently asked questions
+- **[❓ FAQ](./docs/FAQ.md)** - Frequently asked questions
 - **[🏗️ Architecture Guide](./docs/ARCHITECTURE.md)** - System design with diagrams
-- **[🤖 System Recreation Prompt](./SYSTEM_RECREATION_PROMPT.md)** - ⭐ **NEW!** Complete blueprint to recreate Chained from scratch
-- **[📖 System Recreation Guide](./SYSTEM_RECREATION_GUIDE.md)** - ⭐ **NEW!** How to use the recreation prompt
+- **[🤖 System Recreation Prompt](./docs/SYSTEM_RECREATION_PROMPT.md)** - ⭐ **NEW!** Complete blueprint to recreate Chained from scratch
+- **[📖 System Recreation Guide](./docs/SYSTEM_RECREATION_GUIDE.md)** - ⭐ **NEW!** How to use the recreation prompt
 
 ### 🌟 Autonomous System Documentation ⭐ **COMPLETE BLUEPRINT**
 **The definitive guides for understanding and implementing the closed-loop autonomous system:**
 
 #### Core Architecture Documents
-- **[🏛️ Architecture Overview](./ARCHITECTURE_OVERVIEW.md)** - ⭐ **NEW! BEGINNER START HERE**
+- **[🏛️ Architecture Overview](./docs/ARCHITECTURE_OVERVIEW.md)** - ⭐ **NEW! BEGINNER START HERE**
   - 10-minute guide to understand the entire system
   - High-level 5-layer architecture
   - Daily cycle walk-through with real examples
@@ -226,7 +226,7 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
   - Quick navigation to specialized docs
   - Perfect for newcomers and stakeholders
 
-- **[🏗️ Autonomous System Architecture](./AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - ⭐ **TECHNICAL DEEP DIVE**
+- **[🏗️ Autonomous System Architecture](./docs/AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - ⭐ **TECHNICAL DEEP DIVE**
   - Complete system overview with visual diagrams
   - 5-stage autonomous loop explained in detail
   - Core components: Learning, World Model, Agents, Workflows
@@ -234,7 +234,7 @@ The system sets a **new goal every day** and checks progress every 3 hours. Goal
   - Workflow orchestration patterns and triggers
   - Integration points and best practices
 
-- **[🚀 Autonomous Loop Implementation](./AUTONOMOUS_LOOP_IMPLEMENTATION.md)** - Practical workflow examples
+- **[🚀 Autonomous Loop Implementation](./docs/AUTONOMOUS_LOOP_IMPLEMENTATION.md)** - Practical workflow examples
   - Copy-paste-ready workflow templates
   - Stage-by-stage implementation (Learning → World → Assignment → Reinforcement)
   - Workflow chaining with `workflow_run` triggers

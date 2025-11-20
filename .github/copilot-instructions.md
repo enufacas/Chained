@@ -560,15 +560,15 @@ When making changes, consider how they align with these principles of autonomous
 ## 📚 Related Documentation
 
 ### Core Documentation
-- [Agent System Quick Start](../AGENT_QUICKSTART.md) - Complete agent system guide
+- [Agent System Quick Start](../docs/AGENT_QUICKSTART.md) - Complete agent system guide
 - [Custom Agents Directory](./agents/README.md) - Detailed agent documentation
 - [Main README](../README.md) - Project overview and setup
-- [FAQ](../FAQ.md) - Frequently asked questions
+- [FAQ](../docs/FAQ.md) - Frequently asked questions
 - [Documentation Index](../docs/INDEX.md) - All documentation organized
 
 ### Autonomous System Architecture
-- [Autonomous System Architecture](../AUTONOMOUS_SYSTEM_ARCHITECTURE.md) - Complete system blueprint
-- [Autonomous Loop Implementation](../AUTONOMOUS_LOOP_IMPLEMENTATION.md) - Closed-loop design
+- [Autonomous System Architecture](../docs/AUTONOMOUS_SYSTEM_ARCHITECTURE.md) - Complete system blueprint
+- [Autonomous Loop Implementation](../docs/AUTONOMOUS_LOOP_IMPLEMENTATION.md) - Closed-loop design
 - [Autonomous Pipeline](../docs/AUTONOMOUS_SYSTEM.md) - Pipeline architecture details
 - [Data Storage & Lifecycle](../docs/DATA_STORAGE_LIFECYCLE.md) - **Data architecture reference** - How data flows through the system, storage locations, lifecycle policies, and consumption paths
 
@@ -607,7 +607,7 @@ The following documents serve as **authoritative sources of truth** for their re
 - **Update Frequency**: Within 24 hours of architectural changes
 
 #### 2. Autonomous System Architecture
-**Document**: `AUTONOMOUS_SYSTEM_ARCHITECTURE.md`
+**Document**: `docs/AUTONOMOUS_SYSTEM_ARCHITECTURE.md`
 - **Scope**: Complete system blueprint, component interactions, constraints, orchestration
 - **Update Triggers**:
   - Changes to autonomous loop stages
@@ -630,7 +630,7 @@ The following documents serve as **authoritative sources of truth** for their re
 - **Update Frequency**: Immediately when workflows are added/modified
 
 #### 4. Agent System Documentation
-**Documents**: `AGENT_QUICKSTART.md`, `.github/agents/README.md`
+**Documents**: `docs/AGENT_QUICKSTART.md`, `.github/agents/README.md`
 - **Scope**: Agent capabilities, specializations, assignment rules, performance tracking
 - **Update Triggers**:
   - New agent types created
@@ -684,7 +684,7 @@ When making changes that affect sources of truth:
 **@support-master** and all agents must validate:
 - ✅ All new storage locations documented in DATA_STORAGE_LIFECYCLE.md
 - ✅ All new workflows documented with data flows
-- ✅ All architectural changes reflected in AUTONOMOUS_SYSTEM_ARCHITECTURE.md
+- ✅ All architectural changes reflected in docs/AUTONOMOUS_SYSTEM_ARCHITECTURE.md
 - ✅ All agent specialization changes updated in agent documentation
 - ✅ Cross-references between documents are accurate
 - ✅ Examples and diagrams reflect current implementation
