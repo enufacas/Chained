@@ -2,9 +2,9 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 155
+**Total Insights:** 181
 
-**Last Updated:** 2025-11-19
+**Last Updated:** 2025-11-20
 
 ---
 
@@ -277,15 +277,6 @@ Related post: <a href="https:&#x2F;&#x2F;hazyresearch.stanford.edu&#x2F;blog&#x2
 ---
 
 
-### Static Web Hosting on the Intel N150: FreeBSD, SmartOS, NetBSD, OpenBSD and Linu
-
-**Community Score:** 40 upvotes
-
-**Link:** https://it-notes.dragas.net/2025/11/19/static-web-hosting-intel-n150-freebsd-smartos-netbsd-openbsd-linux/
-
----
-
-
 ### Meta replaces WhatsApp for Windows with web wrapper that uses 1 GB RAM when idle
 
 **Community Score:** 103 upvotes
@@ -435,6 +426,36 @@ Deliver web apps with confidence 🚀
 ---
 
 
+### Untitled
+
+**Link:** https://github.com/playcanvas/engine
+
+
+Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+
+---
+
+
+### Untitled
+
+**Link:** https://github.com/requestly/requestly
+
+
+Free and open-source API Client & Interceptor.
+
+---
+
+
+### Untitled
+
+**Link:** https://github.com/angular/angular
+
+
+Deliver web apps with confidence 🚀
+
+---
+
+
 ### playcanvas/engine - Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
 
 **Link:** https://github.com/playcanvas/engine
@@ -461,25 +482,5 @@ Free and open-source API Client & Interceptor.
 
 
 Deliver web apps with confidence 🚀
-
----
-
-
-### playcanvas/engine - Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
-
-**Link:** https://github.com/playcanvas/engine
-
-
-Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
-
----
-
-
-### requestly/requestly - Free and open-source API Client & Interceptor.
-
-**Link:** https://github.com/requestly/requestly
-
-
-Free and open-source API Client & Interceptor.
 
 ---

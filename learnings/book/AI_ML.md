@@ -2,9 +2,9 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 1514
+**Total Insights:** 1808
 
-**Last Updated:** 2025-11-19
+**Last Updated:** 2025-11-20
 
 ---
 
@@ -1330,10 +1330,10 @@ Hi HN - I’m Peter, here with Harry (devhawk), and we’re building DBOS Java, 
 ---
 
 
-### Building more with GPT-5.1-Codex-Max
+### LLMs are steroids for your Dunning-Kruger
 
-**Community Score:** 179 upvotes
+**Community Score:** 128 upvotes
 
-**Link:** https://openai.com/index/gpt-5-1-codex-max/
+**Link:** https://bytesauna.com/post/dunning-kruger
 
 ---

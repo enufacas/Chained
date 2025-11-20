@@ -2,9 +2,9 @@
 
 > Performance tuning, benchmarks, and optimization techniques
 
-**Total Insights:** 133
+**Total Insights:** 155
 
-**Last Updated:** 2025-11-19
+**Last Updated:** 2025-11-20
 
 ---
 
@@ -327,15 +327,6 @@ Nov 11, 2025 · 8 min read HipKittens: Fast and Furious AMD Kernels William Hu ,
 ---
 
 
-### Show HN: DNS Benchmark Tool – Compare and monitor resolvers
-
-**Community Score:** 25 upvotes
-
-**Link:** https://github.com/frankovo/dns-benchmark-tool
-
----
-
-
 ### High-performance 2D graphics rendering on the CPU using sparse strips [pdf]
 
 **Community Score:** 199 upvotes
@@ -544,7 +535,7 @@ A fast reverse proxy to help you expose a local server behind a NAT or firewall 
 ---
 
 
-### HKUDS/LightRAG - [EMNLP2025] "LightRAG: Simple and Fast Retrieval-Augmented Generation"
+### Untitled
 
 **Link:** https://github.com/HKUDS/LightRAG
 
@@ -554,7 +545,7 @@ A fast reverse proxy to help you expose a local server behind a NAT or firewall 
 ---
 
 
-### fatedier/frp - A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.
+### Untitled
 
 **Link:** https://github.com/fatedier/frp
 
@@ -590,5 +581,15 @@ A fast reverse proxy to help you expose a local server behind a NAT or firewall 
 
 
 [EMNLP2025] "LightRAG: Simple and Fast Retrieval-Augmented Generation"
+
+---
+
+
+### fatedier/frp - A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.
+
+**Link:** https://github.com/fatedier/frp
+
+
+A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.
 
 ---

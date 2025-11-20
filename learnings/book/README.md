@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-19 21:16 UTC
+**Generated:** 2025-11-20 09:22 UTC
 
-**Total Learning Sessions:** 92
+**Total Learning Sessions:** 95
 
-**Total Insights:** 4492
+**Total Insights:** 5286
 
 ---
 
@@ -18,70 +18,70 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 1514
+**Insights:** 1808
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 398
+**Insights:** 465
 
 
 ### [🚀 DevOps & Infrastructure](./DevOps.md)
 
 CI/CD, containers, orchestration, and infrastructure automation
 
-**Insights:** 129
+**Insights:** 151
 
 
 ### [🗄️ Databases & Data Management](./Database.md)
 
 SQL, NoSQL, data storage, and data engineering
 
-**Insights:** 63
+**Insights:** 73
 
 
 ### [🌐 Web Development](./Web.md)
 
 Web technologies, browsers, APIs, and frontend frameworks
 
-**Insights:** 155
+**Insights:** 181
 
 
 ### [🔒 Security & Privacy](./Security.md)
 
 Security vulnerabilities, encryption, authentication, and privacy
 
-**Insights:** 61
+**Insights:** 72
 
 
 ### [⚡ Performance & Optimization](./Performance.md)
 
 Performance tuning, benchmarks, and optimization techniques
 
-**Insights:** 133
+**Insights:** 155
 
 
 ### [🔧 Developer Tools](./Tools.md)
 
 IDEs, editors, debuggers, and productivity tools
 
-**Insights:** 276
+**Insights:** 324
 
 
 ### [🌟 Open Source & Community](./OpenSource.md)
 
 Open source projects, community insights, and collaboration
 
-**Insights:** 32
+**Insights:** 37
 
 
 ### [📚 General Tech Insights](./Other.md)
 
 General technology news and insights
 
-**Insights:** 1731
+**Insights:** 2020
 
 
 ## 📊 Statistics
@@ -89,40 +89,40 @@ General technology news and insights
 
 ### By Source
 
-- **Unknown:** 38 learning sessions
+- **Unknown:** 40 learning sessions
 
 - **Hacker News:** 26 learning sessions
 
 - **TLDR Tech:** 20 learning sessions
 
-- **GitHub Trending:** 4 learning sessions
+- **GitHub Copilot (Combined):** 4 learning sessions
 
-- **GitHub Copilot (Combined):** 3 learning sessions
+- **GitHub Trending:** 4 learning sessions
 
 - **Agent Evolution System Implementation:** 1 learning sessions
 
 
 ### By Topic
 
-- **📚 General Tech Insights:** 1731 insights
+- **📚 General Tech Insights:** 2020 insights
 
-- **🤖 AI & Machine Learning:** 1514 insights
+- **🤖 AI & Machine Learning:** 1808 insights
 
-- **💻 Programming Languages & Frameworks:** 398 insights
+- **💻 Programming Languages & Frameworks:** 465 insights
 
-- **🔧 Developer Tools:** 276 insights
+- **🔧 Developer Tools:** 324 insights
 
-- **🌐 Web Development:** 155 insights
+- **🌐 Web Development:** 181 insights
 
-- **⚡ Performance & Optimization:** 133 insights
+- **⚡ Performance & Optimization:** 155 insights
 
-- **🚀 DevOps & Infrastructure:** 129 insights
+- **🚀 DevOps & Infrastructure:** 151 insights
 
-- **🗄️ Databases & Data Management:** 63 insights
+- **🗄️ Databases & Data Management:** 73 insights
 
-- **🔒 Security & Privacy:** 61 insights
+- **🔒 Security & Privacy:** 72 insights
 
-- **🌟 Open Source & Community:** 32 insights
+- **🌟 Open Source & Community:** 37 insights
 
 
 ## 💡 How to Use This Book
