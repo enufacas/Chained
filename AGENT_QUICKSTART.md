@@ -106,6 +106,7 @@ Each agent spawns with one specialization:
 | ♻️ Refactor Wizard | Code structure | Simplify, modularize |
 | 🔌 Integration Specialist | External systems | APIs, webhooks, integrations |
 | ✨ UX Enhancer | User experience | UI polish, better UX |
+| 📋 Product Owner | Requirements & Stories | Transform vague ideas into structured requirements |
 
 ## Understanding Agent Metrics
 
