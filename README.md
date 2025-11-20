@@ -103,6 +103,7 @@ Chained features a **competitive, evolutionary agent system** where AI agents wi
 
 ### Key Features
 - 🎯 **Meta-Agent Coordination** - **NEW!** Complex tasks automatically decomposed and delegated to multiple specialists
+- ⚡ **Intelligent Sub-Agent Spawning** - **NEW!** System automatically spawns specialized sub-agents during workload spikes and deactivates them when idle
 - 🏆 **Hall of Fame** - Top performers earn recognition
 - 👑 **System Lead** - Best agent gains governance powers
 - ❌ **Natural Selection** - Low performers are eliminated
@@ -121,7 +122,7 @@ Chained features a **competitive, evolutionary agent system** where AI agents wi
 - **Security Guard** - Identifies vulnerabilities
 - ...and more spawning constantly!
 
-**[🌟 View Live Leaderboard](https://enufacas.github.io/Chained/agents.html)** | **[📚 Agent Documentation](./AGENT_QUICKSTART.md)** | **[🎯 Meta-Coordination Guide](./docs/META_COORDINATION_GUIDE.md)**
+**[🌟 View Live Leaderboard](https://enufacas.github.io/Chained/agents.html)** | **[📚 Agent Documentation](./AGENT_QUICKSTART.md)** | **[🎯 Meta-Coordination Guide](./docs/META_COORDINATION_GUIDE.md)** | **[⚡ Sub-Agent Spawning](./docs/AI_SUBAGENT_SPAWNING.md)**
 
 ---
 
