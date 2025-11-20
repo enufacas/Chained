@@ -16,12 +16,19 @@ The Tech Lead Review Cycle system ensures that critical code changes receive exp
    - Manages review state labels
    - Handles the review iteration cycle
 
-2. **Auto-Review-Merge Integration** (`.github/workflows/auto-review-merge.yml`)
+2. **Tech Lead Feedback Handler** (`.github/workflows/tech-lead-feedback-handler.yml`) **NEW!**
+   - Automatically converts tech lead review comments into agent work items
+   - Matches feedback to appropriate specialized agents
+   - Creates follow-up issues for agents to address feedback
+   - Links issues back to PRs for tracking
+   - Completes the automated review → fix → re-review cycle
+
+3. **Auto-Review-Merge Integration** (`.github/workflows/auto-review-merge.yml`)
    - Checks Tech Lead review status before merging
    - Blocks merge if review is pending or changes requested
    - Allows merge once Tech Lead approval is given
 
-3. **PR Matching Tool** (`tools/match-pr-to-tech-lead.py`)
+4. **PR Matching Tool** (`tools/match-pr-to-tech-lead.py`)
    - Analyzes PR file changes
    - Matches files to Tech Lead responsibilities
    - Evaluates complexity and sensitivity
@@ -62,13 +69,18 @@ The review cycle uses these labels to manage state:
    
 7a. Tech Lead approves              7b. Tech Lead requests changes
     ↓                                    ↓
-8a. Labels updated:                 8b. Labels updated:
-    - Remove: needs-tech-lead-review    - Add: tech-lead-changes-requested
-    - Add: tech-lead-approved           - Keep: needs-tech-lead-review
-    ↓                                    ↓
-9a. auto-review-merge proceeds      9b. Agent/Author makes changes
-    ↓                                    ↓
-10a. PR merged automatically        10b. PR updated with new commits
+8a. Labels updated:                 8b. tech-lead-feedback-handler.yml triggers **NEW!**
+    - Remove: needs-tech-lead-review    ↓
+    - Add: tech-lead-approved       8c. Feedback Handler:
+    ↓                                    - Extracts review comments
+9a. auto-review-merge proceeds          - Matches to appropriate agent
+    ↓                                    - Creates follow-up issue
+10a. PR merged automatically            - Links issue to PR
+                                         - Adds label: tech-lead-changes-requested
+                                         ↓
+                                    9b. Agent receives issue assignment
+                                         ↓
+                                    10b. Agent addresses feedback and updates PR
                                          ↓
                                     11b. tech-lead-review.yml re-triggers
                                          ↓
@@ -91,6 +103,26 @@ The review cycle uses these labels to manage state:
 6. PR merged automatically (if all other criteria met)
 ```
 
+### WIP (Work In Progress) Handling
+
+PRs marked as WIP are excluded from tech lead review until ready:
+
+**WIP Detection:**
+- Draft PRs (GitHub's draft status)
+- Title contains: `[WIP]`, `WIP:`, `WIP `, `[do not merge]`, `[dnm]`
+- Case-insensitive matching
+
+**Behavior:**
+- Tech lead review workflows skip WIP PRs
+- Existing tech lead labels are removed
+- Informative comment posted (on first WIP detection)
+- Review automatically triggers when WIP is removed
+
+**To Resume Review:**
+1. Remove WIP markers from title
+2. Convert from draft to ready (if draft)
+3. Push an update or manually trigger workflow
+
 ## Review Triggers
 
 A PR requires Tech Lead review if ANY of these conditions are met:
@@ -112,6 +144,11 @@ A PR requires Tech Lead review if ANY of these conditions are met:
 
 - `secret`, `password`, `token`
 - `auth`, `permission`, `security`
+
+### 4. Not WIP
+
+- PR is not in draft status
+- Title does not contain WIP markers
 
 ## Tech Lead Assignment
 
@@ -267,8 +304,41 @@ Potential improvements to consider:
 4. **Review quality metrics** to track Tech Lead effectiveness
 5. **Smart re-review triggers** based on change scope
 
+## Automated Feedback Loop
+
+**NEW:** The system now includes an automated feedback loop that converts tech lead review comments into agent work items.
+
+### How It Works
+
+1. **Tech lead requests changes** on a PR
+2. **Feedback handler automatically creates** a follow-up issue
+3. **Issue is assigned** to the most appropriate agent based on:
+   - PR content and files changed
+   - Review comments and requested changes
+   - Agent specializations and expertise
+4. **Agent addresses feedback** and updates the PR
+5. **Tech lead is notified** for re-review
+6. **Cycle repeats** until approved
+
+### Key Benefits
+
+- **Automated tracking**: No manual issue creation needed
+- **Smart assignment**: Right agent for the right fixes
+- **Clear accountability**: Follow-up issues document the cycle
+- **Seamless integration**: Works with existing workflows
+
+### See Complete Documentation
+
+For detailed information about the automated feedback loop:
+
+- **[Tech Lead Feedback Loop](./TECH_LEAD_FEEDBACK_LOOP.md)** - Complete workflow documentation
+- **[Tech Lead Feedback Handler](./.github/workflows/tech-lead-feedback-handler.yml)** - Workflow implementation
+
 ## Related Documentation
 
+- [Tech Lead Feedback Loop](./TECH_LEAD_FEEDBACK_LOOP.md) - **NEW: Automated review → fix → re-review cycle**
+- [Tech Lead Labels](./TECH_LEAD_LABELS.md) - Label reference guide
+- [Tech Lead Flow Diagrams](./TECH_LEAD_REVIEW_FLOW_DIAGRAMS.md) - Visual workflow diagrams
 - [Tech Lead Agents](./.github/agents/)
 - [PR Matching Tool](../tools/match-pr-to-tech-lead.py)
 - [Auto-Review-Merge Workflow](./.github/workflows/auto-review-merge.yml)

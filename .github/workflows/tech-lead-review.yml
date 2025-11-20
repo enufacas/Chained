@@ -41,7 +41,61 @@ jobs:
             echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           fi
 
+      - name: Check PR title for WIP markers
+        id: check_wip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          
+          # Get PR title
+          pr_title=$(gh pr view "${pr_num}" --json title --jq '.title' --repo ${{ github.repository }})
+          echo "PR title: ${pr_title}"
+          
+          # Check for WIP markers (case-insensitive)
+          if echo "${pr_title}" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'; then
+            echo "has_wip=true" >> $GITHUB_OUTPUT
+            echo "⚠️ PR has WIP marker in title - will skip tech lead review"
+          else
+            echo "has_wip=false" >> $GITHUB_OUTPUT
+            echo "✅ No WIP marker in title"
+          fi
+
+      - name: Handle WIP PR
+        if: steps.check_wip.outputs.has_wip == 'true' && github.event.action == 'opened'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          
+          echo "⚠️ PR has WIP marker - skipping tech lead review until WIP is removed"
+          
+          # Remove tech lead review labels if they exist (cleanup)
+          gh pr edit "${pr_num}" \
+            --remove-label "needs-tech-lead-review" \
+            --remove-label "tech-lead-review-cycle" \
+            --repo ${{ github.repository }} 2>/dev/null || true
+          
+          # Post informative comment (only on opened)
+          gh pr comment "${pr_num}" --body "## ⚠️ Work In Progress
+          
+          This PR has a WIP marker in the title and will not be reviewed by tech leads until the WIP is removed.
+          
+          **To trigger tech lead review:**
+          1. Remove WIP markers from the title (e.g., \`[WIP]\`, \`WIP:\`, \`[do not merge]\`)
+          2. Update the PR or convert from draft to ready
+          
+          **Current status:**
+          - 🔴 Tech lead review: **Paused**
+          - ⏸️ Auto-merge: **Blocked**
+          
+          ---
+          
+          *Note: Tech lead review will automatically trigger when WIP is removed and PR is updated.*
+          *Automated by @workflows-tech-lead*" --repo ${{ github.repository }} || true
+
       - name: Analyze PR for Tech Lead requirements
+        if: steps.check_wip.outputs.has_wip == 'false'
         id: analyze
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -71,7 +125,7 @@ jobs:
           echo "${result}" > /tmp/analysis_result.json
 
       - name: Manage Tech Lead labels
-        if: steps.analyze.outputs.tech_leads != ''
+        if: steps.check_wip.outputs.has_wip == 'false' && steps.analyze.outputs.tech_leads != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -123,7 +177,7 @@ jobs:
           echo "has_needs_review=${has_needs_review}" >> $GITHUB_OUTPUT
 
       - name: Post Tech Lead analysis comment
-        if: steps.analyze.outputs.tech_leads != '' && github.event.action != 'synchronize'
+        if: steps.check_wip.outputs.has_wip == 'false' && steps.analyze.outputs.tech_leads != '' && github.event.action != 'synchronize'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -198,7 +252,7 @@ jobs:
           *Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')*" --repo ${{ github.repository }} || true
 
       - name: Assign Tech Lead via GraphQL (if required)
-        if: steps.analyze.outputs.requires_review == 'true' && steps.check_review_state.outputs.has_approved == '0'
+        if: steps.check_wip.outputs.has_wip == 'false' && steps.analyze.outputs.requires_review == 'true' && steps.check_review_state.outputs.has_approved == '0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -231,7 +285,7 @@ jobs:
           fi
 
       - name: Handle review state changes
-        if: github.event_name == 'pull_request_review'
+        if: steps.check_wip.outputs.has_wip == 'false' && github.event_name == 'pull_request_review'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -309,7 +363,7 @@ jobs:
           fi
 
       - name: Detect re-review after changes
-        if: github.event.action == 'synchronize' && steps.check_review_state.outputs.has_changes_requested == '1'
+        if: steps.check_wip.outputs.has_wip == 'false' && github.event.action == 'synchronize' && steps.check_review_state.outputs.has_changes_requested == '1'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
