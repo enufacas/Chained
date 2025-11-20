@@ -71,6 +71,8 @@ How Chained learns and evolves:
 
 - **[LEARNING_SYSTEM.md](./LEARNING_SYSTEM.md)** - Complete learning system documentation
 - **[commit-learning-system.md](./commit-learning-system.md)** - ⭐ **NEW!** Git commit strategy learning system (@workflows-tech-lead)
+- **[copilot-learning-review-20251120.md](./copilot-learning-review-20251120.md)** - ⭐ **NEW!** GitHub Copilot learnings review (@docs-tech-lead)
+- **[workflow-review-learn-from-copilot.md](./workflow-review-learn-from-copilot.md)** - Learn from Copilot workflow technical review
 - **[AI_GOALS.md](./AI_GOALS.md)** - Daily AI goals system
 - **[ai-conversations/](./ai-conversations/)** - AI friend conversations
 
