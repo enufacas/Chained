@@ -153,6 +153,8 @@ jobs:
 
       - name: Commit updated criteria
         if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Check if criteria file changed
           if git diff --quiet .github/review-system/criteria.json; then
@@ -162,18 +164,49 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             
+            # Create unique branch name
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="review-criteria-update/${TIMESTAMP}-${{ github.run_id }}"
+            
+            git checkout -b "$BRANCH_NAME"
             git add .github/review-system/criteria.json
-            git commit -m "chore: update autonomous review criteria [skip ci]
+            
+            total_reviews=$(jq -r '.metadata.total_reviews' .github/review-system/criteria.json)
+            success_rate=$(jq -r '.metadata.success_rate' .github/review-system/criteria.json)
+            
+            git commit -m "chore: update autonomous review criteria (@workflows-tech-lead)
 
 Criteria evolved based on PR #${{ github.event.pull_request.number }} review.
 
-- Total reviews: $(jq -r '.metadata.total_reviews' .github/review-system/criteria.json)
-- Success rate: $(jq -r '.metadata.success_rate' .github/review-system/criteria.json)
+- Total reviews: ${total_reviews}
+- Success rate: ${success_rate}
 
-Reviewed by @workflows-tech-lead"
+Reviewed by @workflows-tech-lead
+
+---
+*🤖 Created by workflow: [autonomous-code-reviewer.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - @workflows-tech-lead*"
             
-            # Push to main (criteria updates go directly)
-            git push origin HEAD:main || echo "Could not push criteria updates"
+            # Push to new branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR for criteria update
+            gh pr create \
+              --title "🤖 Autonomous reviewer criteria update (@workflows-tech-lead)" \
+              --body "Criteria evolved based on PR #${{ github.event.pull_request.number }} review.
+
+## Stats
+
+- **Total reviews**: ${total_reviews}
+- **Success rate**: ${success_rate}
+
+The autonomous reviewer has adjusted its criteria based on observed outcomes.
+
+---
+*🤖 Created by workflow: [autonomous-code-reviewer.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - @workflows-tech-lead*" \
+              --label "automated" \
+              --label "agent-system" \
+              --base main \
+              --head "$BRANCH_NAME" || echo "Could not create criteria update PR"
           fi
 
       - name: Store review data

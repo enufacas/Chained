@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-20T01:43:00Z",
+  "last_updated": "2025-11-20T01:53:56.185385Z",
   "metadata": {
     "description": "Autonomous code review criteria that evolve based on outcomes",
     "created_by": "workflows-tech-lead",
-    "total_reviews": 0,
-    "success_rate": 0.0
+    "total_reviews": 5,
+    "success_rate": 0.5
   },
   "criteria": {
     "correctness": {
@@ -29,7 +29,7 @@
             "// TODO.*error"
           ],
           "effectiveness": 0.8,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "null_checks",
@@ -43,7 +43,7 @@
             "\\?\\.\\s*\\."
           ],
           "effectiveness": 0.75,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "boundary_conditions",
@@ -57,7 +57,7 @@
             "range\\(.*\\)"
           ],
           "effectiveness": 0.7,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "test_coverage",
@@ -70,7 +70,7 @@
             ".*\\.spec\\.js"
           ],
           "effectiveness": 0.85,
-          "times_applied": 0
+          "times_applied": 3
         }
       ],
       "learning_rate": 0.1,
@@ -94,7 +94,7 @@
           ],
           "min_name_length": 3,
           "effectiveness": 0.65,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "function_size",
@@ -106,7 +106,7 @@
             "function\\s+\\w+\\("
           ],
           "effectiveness": 0.6,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "comments_present",
@@ -121,7 +121,7 @@
           ],
           "min_comment_ratio": 0.05,
           "effectiveness": 0.55,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "nesting_depth",
@@ -129,7 +129,7 @@
           "weight": 0.25,
           "max_depth": 3,
           "effectiveness": 0.7,
-          "times_applied": 0
+          "times_applied": 3
         }
       ],
       "learning_rate": 0.1,
@@ -153,7 +153,7 @@
             "aws[_-]?access"
           ],
           "effectiveness": 0.95,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "input_validation",
@@ -167,7 +167,7 @@
             "\\.match\\("
           ],
           "effectiveness": 0.8,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "sql_injection",
@@ -185,7 +185,7 @@
             "prepared"
           ],
           "effectiveness": 0.9,
-          "times_applied": 0
+          "times_applied": 3
         }
       ],
       "learning_rate": 0.05,
@@ -204,7 +204,7 @@
           "detection": "similarity_threshold",
           "threshold": 0.8,
           "effectiveness": 0.7,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "single_responsibility",
@@ -213,7 +213,7 @@
           "heuristic": "lines_per_function",
           "max_lines": 30,
           "effectiveness": 0.65,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "documentation",
@@ -227,7 +227,7 @@
             "@return"
           ],
           "effectiveness": 0.6,
-          "times_applied": 0
+          "times_applied": 3
         }
       ],
       "learning_rate": 0.1,
@@ -252,7 +252,7 @@
             "uses:.*@master"
           ],
           "effectiveness": 0.85,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "minimal_permissions",
@@ -267,7 +267,7 @@
             "permissions:\\s+write-all"
           ],
           "effectiveness": 0.8,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "error_handling_workflow",
@@ -279,7 +279,7 @@
             "||\\s+true"
           ],
           "effectiveness": 0.75,
-          "times_applied": 0
+          "times_applied": 3
         },
         {
           "id": "concurrency_control",
@@ -290,7 +290,7 @@
             "cancel-in-progress:"
           ],
           "effectiveness": 0.7,
-          "times_applied": 0
+          "times_applied": 3
         }
       ],
       "learning_rate": 0.08,
@@ -306,5 +306,55 @@
     "criteria_removal_threshold": 0.3,
     "criteria_promotion_threshold": 0.85
   },
-  "history": []
+  "history": [
+    {
+      "review_id": "pr-001",
+      "timestamp": "2025-11-20T01:52:06.512907Z",
+      "outcome": {
+        "merged": true,
+        "rejected": false,
+        "major_changes_required": false,
+        "overall_score": 0.82
+      }
+    },
+    {
+      "review_id": "pr-002",
+      "timestamp": "2025-11-20T01:52:06.513508Z",
+      "outcome": {
+        "merged": false,
+        "rejected": true,
+        "major_changes_required": true,
+        "overall_score": 0.35
+      }
+    },
+    {
+      "review_id": "pr-003",
+      "timestamp": "2025-11-20T01:52:06.514064Z",
+      "outcome": {
+        "merged": true,
+        "rejected": false,
+        "major_changes_required": true,
+        "overall_score": 0.58
+      }
+    },
+    {
+      "review_id": "test-pr-success",
+      "timestamp": "2025-11-20T01:53:56.184695Z",
+      "outcome": {
+        "merged": true,
+        "major_changes_required": false,
+        "overall_score": 0.85
+      }
+    },
+    {
+      "review_id": "test-pr-failed",
+      "timestamp": "2025-11-20T01:53:56.185373Z",
+      "outcome": {
+        "merged": false,
+        "rejected": true,
+        "major_changes_required": true,
+        "overall_score": 0.35
+      }
+    }
+  ]
 }
