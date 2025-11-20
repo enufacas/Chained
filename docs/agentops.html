@@ -5,7 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgentOps Dashboard - Chained</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" integrity="sha512-SIMGYRUjwY8+gKg7nn9EItdD8LCADSDfJNutF9TPrvEo86sQmFMh6oo7h4MEEJ7lp0r6d+uH6nz+TN/iSCOW+OQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        // Load Chart.js with fallback mechanism to handle CDN blocks
+        (function() {
+            const cdnUrls = [
+                'https://unpkg.com/chart.js@4.4.0/dist/chart.umd.js',
+                'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js'
+            ];
+            
+            function loadChartJs(urls, index = 0) {
+                if (index >= urls.length) {
+                    console.error('Failed to load Chart.js from all CDN sources');
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = urls[index];
+                script.async = false;
+                
+                script.onload = function() {
+                    console.log('Chart.js loaded successfully from:', urls[index]);
+                };
+                
+                script.onerror = function() {
+                    console.warn('Failed to load Chart.js from:', urls[index]);
+                    loadChartJs(urls, index + 1);
+                };
+                
+                document.head.appendChild(script);
+            }
+            
+            loadChartJs(cdnUrls);
+        })();
+    </script>
     <style>
         .agentops-hero {
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(168, 85, 247, 0.1) 100%);
@@ -928,14 +961,10 @@
         };
 
         function renderCharts(runs, agentWorkload, workflowStats) {
-            // Check if Chart.js is available
+            // Check if Chart.js is available, otherwise use CSS-based fallback charts
             if (typeof window.Chart === 'undefined') {
-                console.warn('Chart.js library is not available. Charts will not be rendered.');
-                // Hide chart section or show a message
-                const chartsSection = document.getElementById('charts-section');
-                if (chartsSection) {
-                    chartsSection.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">📊 Charts are currently unavailable. The dashboard data is still visible below.</div>';
-                }
+                console.log('Chart.js library not available. Using CSS-based charts as fallback.');
+                renderCSSFallbackCharts(runs, agentWorkload, workflowStats);
                 return;
             }
             
@@ -943,6 +972,285 @@
             renderAgentPerformanceChart(agentWorkload);
             renderWorkflowTrendChart(runs);
             renderDurationChart(workflowStats);
+        }
+        
+        function renderCSSFallbackCharts(runs, agentWorkload, workflowStats) {
+            // Render simple CSS-based visualizations
+            renderCSSSuccessRateChart(runs);
+            renderCSSAgentPerformanceChart(agentWorkload);
+            renderCSSWorkflowTrendChart(runs);
+            renderCSSDurationChart(workflowStats);
+        }
+        
+        function renderCSSSuccessRateChart(runs) {
+            const container = document.getElementById('success-rate-chart');
+            if (!container) return;
+            
+            // Get parent container
+            const parent = container.parentElement;
+            parent.innerHTML = '';
+            
+            // Create chart header
+            const header = document.createElement('div');
+            header.style.cssText = 'margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(139, 92, 246, 0.2);';
+            header.innerHTML = '<h4 style="margin: 0; color: var(--primary-color); font-size: 1rem;">Success Rate Trend (Last 10 Runs)</h4>';
+            parent.appendChild(header);
+            
+            // Take last 10 runs and calculate success rate
+            const recentRuns = runs.slice(0, 10);
+            const successCount = recentRuns.filter(r => r.conclusion === 'success').length;
+            const failureCount = recentRuns.filter(r => r.conclusion === 'failure').length;
+            const inProgressCount = recentRuns.filter(r => r.status === 'in_progress' || r.status === 'queued').length;
+            const successRate = recentRuns.length > 0 ? (successCount / recentRuns.length * 100) : 0;
+            
+            // Create bar chart
+            const barsContainer = document.createElement('div');
+            barsContainer.style.cssText = 'display: flex; gap: 0.5rem; align-items: flex-end; height: 150px; margin-bottom: 1rem;';
+            
+            recentRuns.forEach((run, index) => {
+                const bar = document.createElement('div');
+                bar.style.cssText = `
+                    flex: 1;
+                    height: ${run.conclusion === 'success' ? '100%' : run.conclusion === 'failure' ? '50%' : '75%'};
+                    background: ${run.conclusion === 'success' ? 'rgba(16, 185, 129, 0.8)' : run.conclusion === 'failure' ? 'rgba(239, 68, 68, 0.8)' : 'rgba(251, 191, 36, 0.8)'};
+                    border-radius: 4px 4px 0 0;
+                    transition: all 0.3s;
+                    cursor: pointer;
+                    min-width: 20px;
+                `;
+                bar.title = `Run #${10 - index}: ${run.conclusion || run.status}`;
+                bar.onmouseenter = function() { this.style.opacity = '0.7'; };
+                bar.onmouseleave = function() { this.style.opacity = '1'; };
+                barsContainer.appendChild(bar);
+            });
+            
+            parent.appendChild(barsContainer);
+            
+            // Create legend
+            const legend = document.createElement('div');
+            legend.style.cssText = 'display: flex; gap: 1.5rem; font-size: 0.85rem; flex-wrap: wrap;';
+            legend.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div style="width: 16px; height: 16px; background: rgba(16, 185, 129, 0.8); border-radius: 4px;"></div>
+                    <span>Success: ${successCount} (${successRate.toFixed(1)}%)</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div style="width: 16px; height: 16px; background: rgba(239, 68, 68, 0.8); border-radius: 4px;"></div>
+                    <span>Failure: ${failureCount}</span>
+                </div>
+                ${inProgressCount > 0 ? `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div style="width: 16px; height: 16px; background: rgba(251, 191, 36, 0.8); border-radius: 4px;"></div>
+                    <span>In Progress: ${inProgressCount}</span>
+                </div>` : ''}
+            `;
+            parent.appendChild(legend);
+        }
+        
+        function renderCSSAgentPerformanceChart(agentWorkload) {
+            const container = document.getElementById('agent-performance-chart');
+            if (!container) return;
+            
+            const parent = container.parentElement;
+            parent.innerHTML = '';
+            
+            // Create chart header
+            const header = document.createElement('div');
+            header.style.cssText = 'margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(139, 92, 246, 0.2);';
+            header.innerHTML = '<h4 style="margin: 0; color: var(--primary-color); font-size: 1rem;">Top Agents by Workload</h4>';
+            parent.appendChild(header);
+            
+            // Sort agents by total runs and take top 8
+            const sortedAgents = Object.entries(agentWorkload)
+                .sort((a, b) => b[1].total - a[1].total)
+                .slice(0, 8);
+            
+            const maxRuns = sortedAgents[0] ? sortedAgents[0][1].total : 1;
+            
+            // Create horizontal bars
+            const barsContainer = document.createElement('div');
+            barsContainer.style.cssText = 'display: flex; flex-direction: column; gap: 0.75rem;';
+            
+            sortedAgents.forEach(([agent, data]) => {
+                const percentage = (data.total / maxRuns) * 100;
+                const successRate = data.total > 0 ? (data.success / data.total * 100) : 0;
+                
+                const row = document.createElement('div');
+                row.style.cssText = 'display: flex; flex-direction: column; gap: 0.25rem;';
+                
+                const label = document.createElement('div');
+                label.style.cssText = 'display: flex; justify-content: space-between; font-size: 0.85rem;';
+                label.innerHTML = `
+                    <span style="color: #a855f7; font-weight: 500;">${agent}</span>
+                    <span style="color: var(--text-muted);">${data.total} runs (${successRate.toFixed(0)}% success)</span>
+                `;
+                row.appendChild(label);
+                
+                const barBg = document.createElement('div');
+                barBg.style.cssText = 'width: 100%; height: 24px; background: rgba(139, 92, 246, 0.1); border-radius: 4px; overflow: hidden;';
+                
+                const bar = document.createElement('div');
+                bar.style.cssText = `
+                    width: ${percentage}%;
+                    height: 100%;
+                    background: linear-gradient(90deg, rgba(139, 92, 246, 0.8) 0%, rgba(168, 85, 247, 0.6) 100%);
+                    transition: width 0.5s ease;
+                    display: flex;
+                    align-items: center;
+                    padding-left: 0.5rem;
+                    font-size: 0.75rem;
+                    color: white;
+                    font-weight: 600;
+                `;
+                bar.textContent = successRate > 0 ? `${successRate.toFixed(0)}%` : '';
+                
+                barBg.appendChild(bar);
+                row.appendChild(barBg);
+                barsContainer.appendChild(row);
+            });
+            
+            parent.appendChild(barsContainer);
+        }
+        
+        function renderCSSWorkflowTrendChart(runs) {
+            const container = document.getElementById('workflow-trend-chart');
+            if (!container) return;
+            
+            const parent = container.parentElement;
+            parent.innerHTML = '';
+            
+            // Create chart header
+            const header = document.createElement('div');
+            header.style.cssText = 'margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(139, 92, 246, 0.2);';
+            header.innerHTML = '<h4 style="margin: 0; color: var(--primary-color); font-size: 1rem;">Workflow Activity (Last 20 Runs)</h4>';
+            parent.appendChild(header);
+            
+            // Group by workflow name
+            const workflowCounts = {};
+            runs.slice(0, 20).forEach(run => {
+                const workflow = run.name || 'Unknown';
+                if (!workflowCounts[workflow]) {
+                    workflowCounts[workflow] = { success: 0, failure: 0, inProgress: 0 };
+                }
+                if (run.conclusion === 'success') workflowCounts[workflow].success++;
+                else if (run.conclusion === 'failure') workflowCounts[workflow].failure++;
+                else workflowCounts[workflow].inProgress++;
+            });
+            
+            // Create stacked bars
+            const barsContainer = document.createElement('div');
+            barsContainer.style.cssText = 'display: flex; flex-direction: column; gap: 0.75rem;';
+            
+            Object.entries(workflowCounts).forEach(([workflow, counts]) => {
+                const total = counts.success + counts.failure + counts.inProgress;
+                const successPct = (counts.success / total) * 100;
+                const failurePct = (counts.failure / total) * 100;
+                const inProgressPct = (counts.inProgress / total) * 100;
+                
+                const row = document.createElement('div');
+                row.style.cssText = 'display: flex; flex-direction: column; gap: 0.25rem;';
+                
+                const label = document.createElement('div');
+                label.style.cssText = 'font-size: 0.85rem; color: var(--text-muted); font-weight: 500;';
+                label.textContent = workflow.length > 30 ? workflow.substring(0, 30) + '...' : workflow;
+                row.appendChild(label);
+                
+                const barBg = document.createElement('div');
+                barBg.style.cssText = 'display: flex; height: 20px; background: rgba(139, 92, 246, 0.1); border-radius: 4px; overflow: hidden;';
+                
+                if (successPct > 0) {
+                    const successBar = document.createElement('div');
+                    successBar.style.cssText = `width: ${successPct}%; background: rgba(16, 185, 129, 0.8); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: white; font-weight: 600;`;
+                    successBar.textContent = counts.success;
+                    successBar.title = `${counts.success} successful runs`;
+                    barBg.appendChild(successBar);
+                }
+                
+                if (failurePct > 0) {
+                    const failureBar = document.createElement('div');
+                    failureBar.style.cssText = `width: ${failurePct}%; background: rgba(239, 68, 68, 0.8); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: white; font-weight: 600;`;
+                    failureBar.textContent = counts.failure;
+                    failureBar.title = `${counts.failure} failed runs`;
+                    barBg.appendChild(failureBar);
+                }
+                
+                if (inProgressPct > 0) {
+                    const inProgressBar = document.createElement('div');
+                    inProgressBar.style.cssText = `width: ${inProgressPct}%; background: rgba(251, 191, 36, 0.8); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: white; font-weight: 600;`;
+                    inProgressBar.textContent = counts.inProgress;
+                    inProgressBar.title = `${counts.inProgress} in-progress runs`;
+                    barBg.appendChild(inProgressBar);
+                }
+                
+                row.appendChild(barBg);
+                barsContainer.appendChild(row);
+            });
+            
+            parent.appendChild(barsContainer);
+        }
+        
+        function renderCSSDurationChart(workflowStats) {
+            const container = document.getElementById('duration-chart');
+            if (!container) return;
+            
+            const parent = container.parentElement;
+            parent.innerHTML = '';
+            
+            // Create chart header
+            const header = document.createElement('div');
+            header.style.cssText = 'margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(139, 92, 246, 0.2);';
+            header.innerHTML = '<h4 style="margin: 0; color: var(--primary-color); font-size: 1rem;">Average Duration by Workflow</h4>';
+            parent.appendChild(header);
+            
+            // Sort by average duration
+            const sortedWorkflows = Object.entries(workflowStats)
+                .filter(([_, stats]) => stats.avgDuration > 0)
+                .sort((a, b) => b[1].avgDuration - a[1].avgDuration)
+                .slice(0, 6);
+            
+            if (sortedWorkflows.length === 0) {
+                parent.innerHTML += '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">No duration data available</div>';
+                return;
+            }
+            
+            const maxDuration = sortedWorkflows[0][1].avgDuration;
+            
+            // Create horizontal bars
+            const barsContainer = document.createElement('div');
+            barsContainer.style.cssText = 'display: flex; flex-direction: column; gap: 0.75rem;';
+            
+            sortedWorkflows.forEach(([workflow, stats]) => {
+                const percentage = (stats.avgDuration / maxDuration) * 100;
+                const durationStr = formatDuration(stats.avgDuration);
+                
+                const row = document.createElement('div');
+                row.style.cssText = 'display: flex; flex-direction: column; gap: 0.25rem;';
+                
+                const label = document.createElement('div');
+                label.style.cssText = 'display: flex; justify-content: space-between; font-size: 0.85rem;';
+                label.innerHTML = `
+                    <span style="color: var(--text-muted); font-weight: 500;">${workflow.length > 25 ? workflow.substring(0, 25) + '...' : workflow}</span>
+                    <span style="color: #a855f7; font-weight: 600;">${durationStr}</span>
+                `;
+                row.appendChild(label);
+                
+                const barBg = document.createElement('div');
+                barBg.style.cssText = 'width: 100%; height: 20px; background: rgba(139, 92, 246, 0.1); border-radius: 4px; overflow: hidden;';
+                
+                const bar = document.createElement('div');
+                bar.style.cssText = `
+                    width: ${percentage}%;
+                    height: 100%;
+                    background: linear-gradient(90deg, rgba(6, 182, 212, 0.8) 0%, rgba(139, 92, 246, 0.6) 100%);
+                    transition: width 0.5s ease;
+                `;
+                
+                barBg.appendChild(bar);
+                row.appendChild(barBg);
+                barsContainer.appendChild(row);
+            });
+            
+            parent.appendChild(barsContainer);
         }
         
         function renderSuccessRateTrendChart(runs) {
