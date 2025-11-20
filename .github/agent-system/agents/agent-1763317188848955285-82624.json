@@ -3,7 +3,7 @@
   "name": "\ud83d\udd28 Einstein",
   "human_name": "Einstein",
   "specialization": "construct-specialist",
-  "status": "active",
+  "status": "hall_of_fame",
   "spawned_at": "2025-11-16T18:19:49.111262Z",
   "personality": "friendly and collaborative",
   "communication_style": "gets straight to the point",
@@ -14,11 +14,12 @@
   },
   "metrics": {
     "issues_resolved": 1,
-    "prs_merged": 0,
+    "prs_merged": 1,
     "reviews_given": 0,
-    "code_quality_score": 0.5,
-    "overall_score": 0.425,
-    "creativity_score": 0.5
+    "code_quality_score": 1.0,
+    "overall_score": 0.7737499999999999,
+    "creativity_score": 0.49166666666666664
   },
-  "contributions": []
+  "contributions": [],
+  "promoted_at": "2025-11-20T01:00:27.190974Z"
 }
