@@ -45,7 +45,7 @@
 
         <section class="lifecycle-diagram-section">
             <div class="diagram-container">
-                <svg id="lifecycle-diagram" viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+                <svg id="lifecycle-diagram" viewBox="0 0 800 1550" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <!-- Gradient definitions -->
                         <linearGradient id="gradientBlue" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -81,12 +81,12 @@
                     </defs>
 
                     <!-- Center circle - perpetual motion symbol -->
-                    <circle cx="400" cy="600" r="280" fill="none" stroke="url(#gradientBlue)" stroke-width="2" stroke-dasharray="10,5" opacity="0.3">
+                    <circle cx="400" cy="750" r="350" fill="none" stroke="url(#gradientBlue)" stroke-width="2" stroke-dasharray="10,5" opacity="0.3">
                         <animateTransform
                             attributeName="transform"
                             type="rotate"
-                            from="0 400 600"
-                            to="360 400 600"
+                            from="0 400 750"
+                            to="360 400 750"
                             dur="60s"
                             repeatCount="indefinite"/>
                     </circle>
@@ -130,71 +130,101 @@
                     </g>
 
                     <!-- Arrow 4 -->
-                    <path d="M 400 540 L 400 580" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+                    <path d="M 400 540 L 400 575" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+                    <!-- Stage 4b: Mission Creation (NEW) -->
+                    <g id="stage-4b" class="stage-group" data-stage="missions">
+                        <rect x="250" y="585" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientPurple)" stroke-width="3"/>
+                        <text x="400" y="620" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🎯 Mission Creation</text>
+                        <text x="400" y="645" text-anchor="middle" fill="#94a3b8" font-size="13">Convert ideas → mission issues</text>
+                    </g>
+
+                    <!-- Arrow 4b -->
+                    <path d="M 400 665 L 400 700" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
 
                     <!-- Stage 5: Create Issue -->
                     <g id="stage-5" class="stage-group" data-stage="issue">
-                        <rect x="250" y="590" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientBlue)" stroke-width="3"/>
-                        <text x="400" y="625" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">📋 Create GitHub Issue</text>
-                        <text x="400" y="650" text-anchor="middle" fill="#94a3b8" font-size="13">Auto-labeled & assigned</text>
+                        <rect x="250" y="710" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientBlue)" stroke-width="3"/>
+                        <text x="400" y="745" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">📋 Create GitHub Issue</text>
+                        <text x="400" y="770" text-anchor="middle" fill="#94a3b8" font-size="13">Auto-labeled & assigned</text>
                     </g>
 
                     <!-- Arrow 5 -->
-                    <path d="M 400 670 L 400 710" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+                    <path d="M 400 790 L 400 825" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
 
-                    <!-- Stage 6: Copilot Assignment -->
-                    <g id="stage-6" class="stage-group" data-stage="assign">
-                        <rect x="250" y="720" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientPurple)" stroke-width="3"/>
-                        <text x="400" y="755" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🤖 Copilot Assignment</text>
-                        <text x="400" y="780" text-anchor="middle" fill="#94a3b8" font-size="13">AI takes ownership (Every 30min)</text>
+                    <!-- Stage 6: Agent Persona Selection (NEW) -->
+                    <g id="stage-6" class="stage-group" data-stage="agent-persona">
+                        <rect x="250" y="835" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientOrange)" stroke-width="3"/>
+                        <text x="400" y="870" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🎭 Agent Persona Selection</text>
+                        <text x="400" y="895" text-anchor="middle" fill="#94a3b8" font-size="13">47 specialized agents with unique traits</text>
                     </g>
 
                     <!-- Arrow 6 -->
-                    <path d="M 400 800 L 400 840" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+                    <path d="M 400 915 L 400 950" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
 
-                    <!-- Stage 7: Create PR -->
-                    <g id="stage-7" class="stage-group" data-stage="pr">
-                        <rect x="250" y="850" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientGreen)" stroke-width="3"/>
-                        <text x="400" y="885" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🔧 Create Pull Request</text>
-                        <text x="400" y="910" text-anchor="middle" fill="#94a3b8" font-size="13">AI implements the feature</text>
+                    <!-- Stage 7: Instruction Layer (NEW) -->
+                    <g id="stage-7" class="stage-group" data-stage="instructions">
+                        <rect x="250" y="960" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientGreen)" stroke-width="3"/>
+                        <text x="400" y="995" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">📚 Instruction Steering</text>
+                        <text x="400" y="1020" text-anchor="middle" fill="#94a3b8" font-size="13">Path-specific guidance + agent profile</text>
                     </g>
 
                     <!-- Arrow 7 -->
-                    <path d="M 400 930 L 400 970" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+                    <path d="M 400 1040 L 400 1075" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
 
-                    <!-- Stage 8: Auto Review -->
-                    <g id="stage-8" class="stage-group" data-stage="review">
-                        <rect x="250" y="980" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientOrange)" stroke-width="3"/>
-                        <text x="400" y="1015" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🔍 Auto Review</text>
-                        <text x="400" y="1040" text-anchor="middle" fill="#94a3b8" font-size="13">AI reviews AI code (Every 15min)</text>
+                    <!-- Stage 8: Copilot Assignment -->
+                    <g id="stage-8" class="stage-group" data-stage="assign">
+                        <rect x="250" y="1085" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientPurple)" stroke-width="3"/>
+                        <text x="400" y="1120" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🤖 Copilot Assignment</text>
+                        <text x="400" y="1145" text-anchor="middle" fill="#94a3b8" font-size="13">AI takes ownership (Every 30min)</text>
                     </g>
 
                     <!-- Arrow 8 -->
-                    <path d="M 550 1020 Q 650 1020 650 920 L 650 150 Q 650 50 550 50" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+                    <path d="M 400 1165 L 400 1200" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
 
-                    <!-- Stage 9: Auto Merge (on the side) -->
-                    <g id="stage-9" class="stage-group" data-stage="merge">
-                        <rect x="580" y="500" width="180" height="100" rx="15" fill="#1e293b" stroke="url(#gradientGreen)" stroke-width="3"/>
-                        <text x="670" y="535" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="bold">✅ Auto Merge</text>
-                        <text x="670" y="560" text-anchor="middle" fill="#94a3b8" font-size="11">No human</text>
-                        <text x="670" y="578" text-anchor="middle" fill="#94a3b8" font-size="11">approval</text>
-                        <text x="670" y="596" text-anchor="middle" fill="#94a3b8" font-size="11">needed!</text>
+                    <!-- Stage 9: Create PR -->
+                    <g id="stage-9" class="stage-group" data-stage="pr">
+                        <rect x="250" y="1210" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientGreen)" stroke-width="3"/>
+                        <text x="400" y="1245" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🔧 Create Pull Request</text>
+                        <text x="400" y="1270" text-anchor="middle" fill="#94a3b8" font-size="13">AI implements the feature</text>
                     </g>
 
-                    <!-- Stage 10: Progress Tracking (on the side) -->
-                    <g id="stage-10" class="stage-group" data-stage="progress">
-                        <rect x="40" y="500" width="180" height="100" rx="15" fill="#1e293b" stroke="url(#gradientPurple)" stroke-width="3"/>
-                        <text x="130" y="535" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="bold">📊 Progress</text>
-                        <text x="130" y="560" text-anchor="middle" fill="#94a3b8" font-size="11">Timeline</text>
-                        <text x="130" y="578" text-anchor="middle" fill="#94a3b8" font-size="11">updates</text>
-                        <text x="130" y="596" text-anchor="middle" fill="#94a3b8" font-size="11">(Every 6h)</text>
+                    <!-- Arrow 9 -->
+                    <path d="M 400 1290 L 400 1325" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+                    <!-- Stage 10: Auto Review -->
+                    <g id="stage-10" class="stage-group" data-stage="review">
+                        <rect x="250" y="1335" width="300" height="80" rx="15" fill="#1e293b" stroke="url(#gradientOrange)" stroke-width="3"/>
+                        <text x="400" y="1370" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="bold">🔍 Auto Review</text>
+                        <text x="400" y="1395" text-anchor="middle" fill="#94a3b8" font-size="13">AI reviews AI code (Every 15min)</text>
+                    </g>
+
+                    <!-- Arrow 10 -->
+                    <path d="M 550 1375 Q 650 1375 650 1275 L 650 150 Q 650 50 550 50" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+
+                    <!-- Stage 11: Auto Merge (on the side) -->
+                    <g id="stage-11" class="stage-group" data-stage="merge">
+                        <rect x="580" y="650" width="180" height="100" rx="15" fill="#1e293b" stroke="url(#gradientGreen)" stroke-width="3"/>
+                        <text x="670" y="685" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="bold">✅ Auto Merge</text>
+                        <text x="670" y="710" text-anchor="middle" fill="#94a3b8" font-size="11">No human</text>
+                        <text x="670" y="728" text-anchor="middle" fill="#94a3b8" font-size="11">approval</text>
+                        <text x="670" y="746" text-anchor="middle" fill="#94a3b8" font-size="11">needed!</text>
+                    </g>
+
+                    <!-- Stage 12: Progress Tracking (on the side) -->
+                    <g id="stage-12" class="stage-group" data-stage="progress">
+                        <rect x="40" y="650" width="180" height="100" rx="15" fill="#1e293b" stroke="url(#gradientPurple)" stroke-width="3"/>
+                        <text x="130" y="685" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="bold">📊 Progress</text>
+                        <text x="130" y="710" text-anchor="middle" fill="#94a3b8" font-size="11">Timeline</text>
+                        <text x="130" y="728" text-anchor="middle" fill="#94a3b8" font-size="11">updates</text>
+                        <text x="130" y="746" text-anchor="middle" fill="#94a3b8" font-size="11">(Every 6h)</text>
                     </g>
 
                     <!-- Perpetual Motion Text -->
-                    <text x="400" y="1150" text-anchor="middle" fill="#06b6d4" font-size="22" font-weight="bold">
+                    <text x="400" y="1480" text-anchor="middle" fill="#06b6d4" font-size="22" font-weight="bold">
                         ♾️ The cycle continues forever...
                     </text>
-                    <text x="400" y="1180" text-anchor="middle" fill="#10b981" font-size="16" font-style="italic">
+                    <text x="400" y="1510" text-anchor="middle" fill="#10b981" font-size="16" font-style="italic">
                         Getting smarter with each iteration!
                     </text>
                 </svg>
@@ -397,6 +427,16 @@
                     <p>Agents follow a <a href="copilot-instructions.html" style="color: #667eea;">three-layer instruction system</a> combining global, path-specific, and agent-specific guidance.</p>
                 </div>
                 <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Mission-Driven</h3>
+                    <p>High-value ideas become mission issues with clear objectives, deliverables, and progress tracking. Missions organize work into strategic initiatives.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎭</div>
+                    <h3>Diverse Agent Personas</h3>
+                    <p>47 specialized agents with unique personalities (rigorous, creative, systematic) inspired by tech legends ensure variety in problem-solving approaches.</p>
+                </div>
+                <div class="feature-card">
                     <div class="feature-icon">🚀</div>
                     <h3>Ever-Evolving</h3>
                     <p>Each cycle improves the system, building on previous learnings and implementations.</p>
@@ -542,6 +582,18 @@
                     '📋 Automatically creates GitHub issues'
                 ]
             },
+            'missions': {
+                title: '🎯 Mission Creation',
+                description: 'Converts ideas into actionable mission issues with clear objectives and deliverables.',
+                details: [
+                    '🎯 Creates mission issues from high-value ideas',
+                    '📝 Defines clear objectives and success criteria',
+                    '🏷️ Tags with mission category (ai-innovation, workflow, etc.)',
+                    '👥 Links to relevant agents and expertise',
+                    '📊 Tracks mission progress and completion',
+                    '💾 Stores mission reports in learnings/missions/'
+                ]
+            },
             'issue': {
                 title: '📋 Create GitHub Issue',
                 description: 'Automatically creates well-structured GitHub issues for each idea.',
@@ -551,6 +603,30 @@
                     '🎯 Clear acceptance criteria',
                     '🔗 Links to related learnings',
                     '🤖 Ready for AI assignment'
+                ]
+            },
+            'agent-persona': {
+                title: '🎭 Agent Persona Selection',
+                description: 'Matches issues to specialized agents with unique personalities and approaches.',
+                details: [
+                    '👥 47 specialized agents with distinct traits',
+                    '🎭 Personalities: rigorous, creative, systematic, playful',
+                    '🔍 Pattern matching on keywords and expertise',
+                    '🎯 Agent specializations: APIs, security, testing, docs, etc.',
+                    '💡 Inspired by tech legends (Grace Hopper, Ada Lovelace, etc.)',
+                    '🏆 Protected tech leads ensure system integrity'
+                ]
+            },
+            'instructions': {
+                title: '📚 Instruction Steering',
+                description: 'Three-layer instruction system guides agent behavior and decision-making.',
+                details: [
+                    '🌍 Layer 1: Global instructions (copilot-instructions.md)',
+                    '📂 Layer 2: Path-specific (.github/instructions/*.md)',
+                    '🎭 Layer 3: Agent-specific (.github/agents/{agent}.md)',
+                    '🎯 Ensures consistent quality and approach',
+                    '📋 Includes best practices, patterns, anti-patterns',
+                    '🔄 Guides workflow, security, testing, documentation'
                 ]
             },
             'assign': {
