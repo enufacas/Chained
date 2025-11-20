@@ -488,6 +488,27 @@
             transition: all 0.3s ease;
         }
 
+        #pipeline-filters h3 {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #pipeline-filters h3::after {
+            content: '▼';
+            transition: transform 0.3s ease;
+        }
+        
+        #pipeline-filters.collapsed h3::after {
+            transform: rotate(-180deg);
+        }
+        
+        #pipeline-filters.collapsed .filter-content {
+            display: none;
+        }
+
         #pipeline-filters.collapsed {
             transform: translateY(calc(100% + 70px));
         }
@@ -504,27 +525,6 @@
             
             #pipeline-filters.collapsed {
                 transform: translateY(calc(100% - 40px));
-            }
-            
-            #pipeline-filters h3 {
-                cursor: pointer;
-                user-select: none;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            
-            #pipeline-filters h3::after {
-                content: '▼';
-                transition: transform 0.3s ease;
-            }
-            
-            #pipeline-filters.collapsed h3::after {
-                transform: rotate(-180deg);
-            }
-            
-            #pipeline-filters.collapsed .filter-content {
-                display: none;
             }
         }
 
@@ -1445,11 +1445,9 @@
                 scene.add(humanoid);
                 agentSpheres.push(humanoid);
 
-                // Create label for agent
-                if (showLabels) {
-                    const label = createAgentLabel(agent, humanoid.position);
-                    agentLabels.push(label);
-                }
+                // Create label for agent (always create labels to ensure visibility)
+                const label = createAgentLabel(agent, humanoid.position);
+                agentLabels.push(label);
 
                 // Create enhanced connection line to core for working agents
                 if (agent.status === 'working' && showConnections) {
@@ -1544,7 +1542,7 @@
         }
 
         // Create particle trail effect
-        function createParticleTrail(color) {
+        function createParticleTrail(color, particleSize = 0.5) {
             const particleCount = 20;
             const geometry = new THREE.BufferGeometry();
             const positions = new Float32Array(particleCount * 3);
@@ -1565,7 +1563,7 @@
             geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
             
             const material = new THREE.PointsMaterial({
-                size: 0.5,
+                size: particleSize, // Dynamic size based on parameter
                 vertexColors: true,
                 transparent: true,
                 opacity: 0.6,
@@ -1582,8 +1580,8 @@
         function createPRMarker(prNumber, color = 0x00ff00) {
             const group = new THREE.Group();
             
-            // PR badge (octahedron)
-            const geometry = new THREE.OctahedronGeometry(0.8);
+            // PR badge (larger octahedron for better visibility)
+            const geometry = new THREE.OctahedronGeometry(1.2); // Increased from 0.8
             const material = new THREE.MeshStandardMaterial({
                 color: color,
                 emissive: color,
@@ -1594,8 +1592,8 @@
             const badge = new THREE.Mesh(geometry, material);
             group.add(badge);
             
-            // Glowing outline
-            const outlineGeometry = new THREE.OctahedronGeometry(1.0);
+            // Glowing outline (larger)
+            const outlineGeometry = new THREE.OctahedronGeometry(1.5); // Increased from 1.0
             const outlineMaterial = new THREE.MeshBasicMaterial({
                 color: color,
                 transparent: true,
@@ -1783,10 +1781,10 @@
                 agentGroups[agentName].push(run);
             });
 
-            // Limit agents shown (top active agents)
+            // Limit agents shown (increase to show more pipelines)
             const topAgents = Object.keys(agentGroups)
                 .sort((a, b) => agentGroups[b].length - agentGroups[a].length)
-                .slice(0, 12); // Show top 12 most active agents
+                .slice(0, 24); // Show top 24 most active agents (increased from 12)
 
             // 3D MATRIX LAYOUT - X, Y, Z grid formation
             const matrixSize = Math.ceil(Math.cbrt(topAgents.length)); // Cube root for 3D grid
@@ -1827,8 +1825,25 @@
                 scene.add(agentMarker);
                 pipelineObjects.push(agentMarker);
 
-                // Add particle trail for agent
-                const trail = createParticleTrail(agentColor);
+                // Add particle trail for agent - size based on work complexity
+                // Use PR count or title length as proxy for code size
+                let particleSize = 0.5;
+                if (runs[0] && runs[0].pr_numbers && runs[0].pr_numbers.length > 0) {
+                    const prCount = runs[0].pr_numbers.length;
+                    // Find PR title length if available
+                    let avgTitleLength = 20;
+                    if (prsData) {
+                        const prNumbers = runs[0].pr_numbers;
+                        const titles = prNumbers.map(num => {
+                            const pr = prsData.find(p => p.number === num);
+                            return pr ? pr.title.length : 20;
+                        });
+                        avgTitleLength = titles.reduce((a, b) => a + b, 0) / titles.length;
+                    }
+                    // Scale particle size: larger for bigger PRs (longer titles = more complex)
+                    particleSize = Math.min(0.5 + (avgTitleLength / 100), 1.5);
+                }
+                const trail = createParticleTrail(agentColor, particleSize);
                 trail.userData = { linkedAgent: agentMarker };
                 scene.add(trail);
                 pipelineObjects.push(trail);
@@ -1872,17 +1887,44 @@
                         scene.add(prObj);
                         pipelineObjects.push(prObj);
                         
-                        // Add PR label
+                        // Find PR title from prsData if available
+                        let prTitle = '';
+                        if (prsData && prsData.length > 0) {
+                            const prData = prsData.find(pr => pr.number === prNum);
+                            if (prData && prData.title) {
+                                // Truncate long titles
+                                prTitle = prData.title.length > 40 
+                                    ? prData.title.substring(0, 37) + '...'
+                                    : prData.title;
+                            }
+                        }
+                        
+                        // Add PR label with title
                         const prLabelDiv = document.createElement('div');
                         prLabelDiv.style.color = `#${agentColor.toString(16).padStart(6, '0')}`;
-                        prLabelDiv.style.fontSize = '10px';
+                        prLabelDiv.style.fontSize = '12px'; // Increased from 10px
                         prLabelDiv.style.fontFamily = 'monospace';
-                        prLabelDiv.style.background = 'rgba(0,0,0,0.9)';
-                        prLabelDiv.style.padding = '2px 6px';
-                        prLabelDiv.style.borderRadius = '3px';
-                        prLabelDiv.style.border = `1px solid #${agentColor.toString(16).padStart(6, '0')}`;
-                        prLabelDiv.textContent = `PR #${prNum}`;
+                        prLabelDiv.style.fontWeight = 'bold'; // Make it bold
+                        prLabelDiv.style.background = 'rgba(0,0,0,0.95)'; // More opaque
+                        prLabelDiv.style.padding = '4px 10px'; // More padding
+                        prLabelDiv.style.borderRadius = '4px';
+                        prLabelDiv.style.border = `2px solid #${agentColor.toString(16).padStart(6, '0')}`; // Thicker border
                         prLabelDiv.style.cursor = 'pointer';
+                        prLabelDiv.style.textShadow = `0 0 8px #${agentColor.toString(16).padStart(6, '0')}`; // Glow effect
+                        prLabelDiv.style.whiteSpace = 'nowrap';
+                        prLabelDiv.style.maxWidth = '300px';
+                        prLabelDiv.style.overflow = 'hidden';
+                        prLabelDiv.style.textOverflow = 'ellipsis';
+                        
+                        // Set content with PR number and title if available
+                        prLabelDiv.innerHTML = prTitle 
+                            ? `<strong>PR #${prNum}</strong><br/><small style="font-size: 10px; opacity: 0.9;">${prTitle}</small>`
+                            : `<strong>PR #${prNum}</strong>`;
+                        
+                        // Make it clickable to open PR
+                        prLabelDiv.addEventListener('click', () => {
+                            window.open(`https://github.com/enufacas/Chained/pull/${prNum}`, '_blank');
+                        });
                         
                         const prLabel = new CSS3DObject(prLabelDiv);
                         prLabel.position.set(
@@ -1890,8 +1932,13 @@
                             gridY + (prIdx - 0.5) * 3,
                             gridZ
                         );
-                        prLabel.scale.set(0.03, 0.03, 0.03);
-                        prLabel.userData = { clickable: true, prNumber: prNum, run: recentRun };
+                        prLabel.scale.set(0.04, 0.04, 0.04); // Increased from 0.03 for better readability
+                        prLabel.userData = { 
+                            clickable: true, 
+                            prNumber: prNum, 
+                            run: recentRun,
+                            type: 'pr-label'
+                        };
                         labelScene.add(prLabel);
                         pipelineObjects.push(prLabel);
                     });
@@ -1899,6 +1946,127 @@
             });
 
             console.log(`Created 3D matrix pipeline with ${topAgents.length} agents`);
+            
+            // Show agents not in active pipelines in separate groups
+            showInactiveAgents(topAgents);
+        }
+        
+        // Show agents not in active pipelines, organized into groups
+        function showInactiveAgents(activeAgents) {
+            if (!agentRegistryData || !agentRegistryData.agents) return;
+            
+            const techLeadSpecializations = ['troubleshoot-expert', 'agents-tech-lead', 'workflows-tech-lead'];
+            
+            // Categorize all agents
+            const hallOfFame = [];
+            const techLeads = [];
+            const regularAgents = [];
+            
+            agentRegistryData.agents.forEach(agent => {
+                const agentName = agent.human_name || agent.name;
+                // Skip if already shown in active pipelines
+                if (activeAgents.includes(agentName)) return;
+                
+                // Categorize
+                if (techLeadSpecializations.includes(agent.specialization)) {
+                    techLeads.push(agent);
+                } else if (agent.metrics && agent.metrics.overall_score >= 0.85) {
+                    hallOfFame.push(agent);
+                } else {
+                    regularAgents.push(agent);
+                }
+            });
+            
+            // Position groups in 3D space
+            const groupSpacing = 40;
+            
+            // Hall of Fame section - top right
+            if (hallOfFame.length > 0) {
+                createAgentGroup(hallOfFame, 60, 20, 0, '🏆 HALL OF FAME', 0xffd700);
+            }
+            
+            // Tech Leads section - top left
+            if (techLeads.length > 0) {
+                createAgentGroup(techLeads, -60, 20, 0, '👔 TECH LEADS', 0xff00ff);
+            }
+            
+            // Regular agents - bottom area
+            if (regularAgents.length > 0) {
+                createAgentGroup(regularAgents.slice(0, 20), 0, -30, 20, '👥 TEAM MEMBERS', 0x00ffff);
+            }
+        }
+        
+        // Create a group of agent humanoids with a label
+        function createAgentGroup(agents, baseX, baseY, baseZ, groupLabel, groupColor) {
+            // Create group label
+            const labelDiv = document.createElement('div');
+            labelDiv.style.color = `#${groupColor.toString(16).padStart(6, '0')}`;
+            labelDiv.style.fontSize = '16px';
+            labelDiv.style.fontFamily = 'monospace';
+            labelDiv.style.fontWeight = 'bold';
+            labelDiv.style.background = 'rgba(0,0,0,0.95)';
+            labelDiv.style.padding = '6px 12px';
+            labelDiv.style.borderRadius = '6px';
+            labelDiv.style.border = `3px solid #${groupColor.toString(16).padStart(6, '0')}`;
+            labelDiv.style.textShadow = `0 0 12px #${groupColor.toString(16).padStart(6, '0')}`;
+            labelDiv.textContent = groupLabel;
+            
+            const label = new CSS3DObject(labelDiv);
+            label.position.set(baseX, baseY + 8, baseZ);
+            label.scale.set(0.06, 0.06, 0.06);
+            labelScene.add(label);
+            pipelineObjects.push(label);
+            
+            // Arrange agents in a crowd formation
+            const crowdRadius = 8;
+            agents.forEach((agent, idx) => {
+                const angle = (idx / agents.length) * Math.PI * 2;
+                const distance = crowdRadius + Math.random() * 4;
+                
+                const agentColor = getSpecializationColor(agent.specialization);
+                const size = 0.8 + (agent.metrics?.overall_score || 0.5) * 0.8;
+                
+                // Create humanoid
+                const humanoid = createHumanoidShape(size, agentColor);
+                humanoid.position.set(
+                    baseX + Math.cos(angle) * distance,
+                    baseY + (Math.random() - 0.5) * 2,
+                    baseZ + Math.sin(angle) * distance
+                );
+                
+                // Face center of group
+                humanoid.lookAt(baseX, humanoid.position.y, baseZ);
+                
+                humanoid.userData = {
+                    agent: agent,
+                    shapeType: 'humanoid'
+                };
+                
+                scene.add(humanoid);
+                pipelineObjects.push(humanoid);
+                
+                // Create label for each agent
+                const agentName = agent.human_name || agent.name;
+                const agentLabelDiv = document.createElement('div');
+                agentLabelDiv.style.color = `#${agentColor.toString(16).padStart(6, '0')}`;
+                agentLabelDiv.style.fontSize = '9px';
+                agentLabelDiv.style.fontFamily = 'monospace';
+                agentLabelDiv.style.background = 'rgba(0,0,0,0.9)';
+                agentLabelDiv.style.padding = '2px 6px';
+                agentLabelDiv.style.borderRadius = '3px';
+                agentLabelDiv.style.border = `1px solid #${agentColor.toString(16).padStart(6, '0')}`;
+                agentLabelDiv.textContent = agentName;
+                
+                const agentLabel = new CSS3DObject(agentLabelDiv);
+                agentLabel.position.set(
+                    humanoid.position.x,
+                    humanoid.position.y + 2,
+                    humanoid.position.z
+                );
+                agentLabel.scale.set(0.03, 0.03, 0.03);
+                labelScene.add(agentLabel);
+                pipelineObjects.push(agentLabel);
+            });
         }
 
         // Create visual object for a workflow run (pipe segment) - LARGER FOR HUMANOIDS
@@ -2971,10 +3139,10 @@
         window.closeDetailPanel = closeDetailPanel;
 
         // Setup event listeners
-        // Toggle filter panel on mobile
+        // Toggle filter panel (works on all devices, not just mobile)
         function toggleFilterPanel() {
             const filterPanel = document.getElementById('pipeline-filters');
-            if (filterPanel && window.innerWidth <= 768) {
+            if (filterPanel) {
                 filterPanel.classList.toggle('collapsed');
             }
         }
@@ -3071,6 +3239,38 @@
             initScene();
             await loadData();
             setupEventListeners();
+            
+            // Detect mobile and collapse sidebars/filters on mobile
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                // Collapse left sidebar (agent roster)
+                const roster = document.getElementById('agent-roster');
+                if (roster) {
+                    roster.classList.add('collapsed');
+                    const toggleBtn = document.getElementById('toggle-roster');
+                    if (toggleBtn) {
+                        toggleBtn.textContent = '▶';
+                        toggleBtn.style.left = '20px';
+                    }
+                }
+                
+                // Collapse right sidebar (stats panel)
+                const stats = document.getElementById('stats-panel');
+                if (stats) {
+                    stats.classList.add('collapsed');
+                    const toggleBtn = document.getElementById('toggle-stats');
+                    if (toggleBtn) {
+                        toggleBtn.textContent = '◀';
+                        toggleBtn.style.right = '20px';
+                    }
+                }
+                
+                // Collapse pipeline filters
+                const filterPanel = document.getElementById('pipeline-filters');
+                if (filterPanel) {
+                    filterPanel.classList.add('collapsed');
+                }
+            }
             
             // START IN PIPELINE MODE BY DEFAULT
             // Update button text to reflect we're in pipeline mode
