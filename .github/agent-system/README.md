@@ -162,6 +162,7 @@ Some agents are designated as **protected** and have special status:
 
 **Currently Protected Agents:**
 - **🔧 Troubleshoot Expert**: Essential for maintaining GitHub Actions and workflow health
+- **📋 Product Owner**: Essential for transforming vague requirements into actionable specifications
 
 Protected agents are configured in `.github/agent-system/registry.json` under `config.protected_specializations`.
 
