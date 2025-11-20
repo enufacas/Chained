@@ -34,26 +34,35 @@ jobs:
 
       - name: Run autonomous review
         id: review
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd .github/review-system
-          
-          # Run the reviewer
-          python3 autonomous_reviewer.py review \
+          # Run the reviewer from repo root
+          python3 .github/review-system/autonomous_reviewer.py review \
             --files '${{ steps.changed-files.outputs.files }}' \
             --pr-number ${{ github.event.pull_request.number }} \
-            --repo ${{ github.repository }}
+            --output .github/review-system/review_result.json
           
-          # Store results
-          if [ -f review_result.json ]; then
-            SCORE=$(jq -r '.overall_score' review_result.json)
-            COMMENT=$(jq -r '.comment' review_result.json)
-            LABEL=$(jq -r '.suggested_label' review_result.json)
+          # Store results in outputs
+          if [ -f .github/review-system/review_result.json ]; then
+            SCORE=$(jq -r '.results.overall_score' .github/review-system/review_result.json)
+            COMMENT=$(jq -r '.comment' .github/review-system/review_result.json)
+            LABEL=$(jq -r '.suggested_label' .github/review-system/review_result.json)
             
             echo "score=${SCORE}" >> $GITHUB_OUTPUT
             echo "label=${LABEL}" >> $GITHUB_OUTPUT
-            echo "comment<<EOF" >> $GITHUB_OUTPUT
-            echo "${COMMENT}" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
+            
+            # Save comment to file to handle multiline properly
+            jq -r '.comment' .github/review-system/review_result.json > /tmp/review_comment.txt
+            
+            echo "comment<<COMMENT_EOF" >> $GITHUB_OUTPUT
+            cat /tmp/review_comment.txt >> $GITHUB_OUTPUT
+            echo "COMMENT_EOF" >> $GITHUB_OUTPUT
+            
+            echo "Review complete with score: ${SCORE}"
+          else
+            echo "Error: Review result file not found"
+            exit 1
           fi
 
       - name: Post review comment
