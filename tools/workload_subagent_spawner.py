@@ -18,6 +18,7 @@ Created by @accelerate-specialist - Efficient algorithms with Dijkstra's eleganc
 
 import json
 import sys
+import importlib.util
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -29,7 +30,20 @@ sys.path.insert(0, str(Path(__file__).parent))
 try:
     from workload_monitor import WorkloadMonitor, SpawningRecommendation
     from registry_manager import RegistryManager
-    from generate_new_agent import generate_agent_personality, SPECIALIZATION_TEMPLATES
+    
+    # Import dash-named module using importlib
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        'generate_new_agent',
+        Path(__file__).parent / 'generate-new-agent.py'
+    )
+    generate_new_agent = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(generate_new_agent)
+    
+    # Import specific functions from the module
+    generate_random_agent = generate_new_agent.generate_random_agent
+    create_agent_file = generate_new_agent.create_agent_file
+    AGENT_ARCHETYPES = generate_new_agent.AGENT_ARCHETYPES
 except ImportError as e:
     print(f"Error: Required modules not found: {e}")
     sys.exit(1)
@@ -393,15 +407,21 @@ class WorkloadSubAgentSpawner:
             return True  # Don't fail in dry run
         
         try:
+            # Find a parent agent of the same specialization
+            parent_agent_id = self._find_parent_agent(agent_spec.specialization)
+            
             agent_data = {
                 "id": agent_spec.agent_id,
                 "name": f"🤖 {agent_spec.human_name}",
                 "human_name": agent_spec.human_name,
                 "specialization": agent_spec.specialization,
                 "status": "active",
-                "spawned_at": datetime.now(datetime.timezone.utc).isoformat(),
+                "spawned_at": datetime.now().isoformat(),
                 "spawn_type": "workload_based",
                 "spawn_reason": agent_spec.justification,
+                "is_sub_agent": True,
+                "parent_agent_id": parent_agent_id,
+                "parent_specialization": agent_spec.specialization if parent_agent_id else None,
                 "personality": agent_spec.personality,
                 "communication_style": agent_spec.communication_style,
                 "traits": {
@@ -426,6 +446,39 @@ class WorkloadSubAgentSpawner:
         except Exception as e:
             print(f"Error registering agent: {e}")
             return False
+    
+    def _find_parent_agent(self, specialization: str) -> Optional[str]:
+        """
+        Find a parent agent of the given specialization.
+        
+        Args:
+            specialization: Specialization to match
+            
+        Returns:
+            Parent agent ID or None
+        """
+        if not self.registry:
+            return None
+        
+        try:
+            agents = self.registry.list_agents(status='active')
+            # Find agents with same specialization that are not sub-agents
+            candidates = [
+                agent for agent in agents
+                if agent.get('specialization') == specialization
+                and not agent.get('is_sub_agent', False)
+            ]
+            
+            if candidates:
+                # Return the agent with the highest score
+                candidates.sort(key=lambda a: a.get('metrics', {}).get('overall_score', 0), reverse=True)
+                return candidates[0].get('id')
+            
+            return None
+            
+        except Exception as e:
+            print(f"Warning: Could not find parent agent: {e}")
+            return None
     
     def _create_agent_profile(self, agent_spec: SubAgentSpec):
         """

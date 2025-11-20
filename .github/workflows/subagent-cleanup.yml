@@ -1,0 +1,271 @@
+name: Sub-Agent Cleanup
+
+on:
+  schedule:
+    # Run every 6 hours to check if sub-agents can be deactivated
+    - cron: '0 */6 * * *'
+  
+  workflow_dispatch:
+    inputs:
+      min_idle_hours:
+        description: 'Minimum idle hours before deactivation'
+        required: false
+        default: '12'
+      dry_run:
+        description: 'Dry run (no actual deactivation)'
+        required: false
+        default: 'false'
+
+jobs:
+  cleanup:
+    name: "Sub-Agent Lifecycle Management"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Parse inputs
+        id: parse
+        run: |
+          MIN_IDLE_HOURS="${{ github.event.inputs.min_idle_hours }}"
+          DRY_RUN="${{ github.event.inputs.dry_run }}"
+          
+          # Defaults for scheduled runs
+          if [ -z "$MIN_IDLE_HOURS" ]; then
+            MIN_IDLE_HOURS="12"
+          fi
+          if [ -z "$DRY_RUN" ]; then
+            DRY_RUN="false"
+          fi
+          
+          echo "min_idle_hours=$MIN_IDLE_HOURS" >> $GITHUB_OUTPUT
+          echo "dry_run=$DRY_RUN" >> $GITHUB_OUTPUT
+          
+          echo "📋 Cleanup options:"
+          echo "  min_idle_hours: $MIN_IDLE_HOURS"
+          echo "  dry_run: $DRY_RUN"
+      
+      - name: Fetch current workload
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📊 Fetching current workload..."
+          gh issue list --json number,title,labels,state --limit 100 > /tmp/issues.json
+          gh pr list --json number,title,labels,state --limit 100 > /tmp/prs.json
+          echo "✅ Workload data fetched"
+      
+      - name: Analyze workload
+        id: analyze
+        run: |
+          echo "🔍 Analyzing current workload..."
+          
+          python3 tools/workload_monitor.py \
+            --output .github/agent-system/current_workload.json \
+            --report
+          
+          echo "✅ Workload analysis complete"
+      
+      - name: Identify idle sub-agents
+        id: identify
+        run: |
+          echo "🔍 Identifying idle sub-agents..."
+          
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import sys
+          from pathlib import Path
+          from datetime import datetime, timedelta
+          
+          # Load registry
+          registry_file = Path('.github/agent-system/registry.json')
+          if not registry_file.exists():
+              print("⚠️  Registry not found")
+              sys.exit(0)
+          
+          with open(registry_file) as f:
+              registry = json.load(f)
+          
+          agents = registry.get('agents', [])
+          
+          # Filter sub-agents
+          sub_agents = [a for a in agents if a.get('is_sub_agent', False) and a.get('status') == 'active']
+          
+          if not sub_agents:
+              print("✅ No active sub-agents found")
+              with open('.github/agent-system/idle_subagents.json', 'w') as f:
+                  json.dump({'idle_agents': [], 'count': 0}, f, indent=2)
+              sys.exit(0)
+          
+          print(f"📋 Found {len(sub_agents)} active sub-agents")
+          
+          # Load workload data
+          workload_file = Path('.github/agent-system/current_workload.json')
+          workload_data = {}
+          if workload_file.exists():
+              with open(workload_file) as f:
+                  workload_data = json.load(f)
+          
+          # Determine which sub-agents can be deactivated
+          idle_agents = []
+          min_hours = int('${{ steps.parse.outputs.min_idle_hours }}')
+          now = datetime.utcnow()
+          
+          for agent in sub_agents:
+              spawned_at_str = agent.get('spawned_at', '')
+              if not spawned_at_str:
+                  continue
+              
+              try:
+                  spawned_at = datetime.fromisoformat(spawned_at_str.replace('Z', '+00:00'))
+              except:
+                  continue
+              
+              hours_active = (now - spawned_at).total_seconds() / 3600
+              
+              # Check if agent has been idle (no contributions in min_hours)
+              contributions = agent.get('contributions', [])
+              recent_activity = False
+              
+              if contributions:
+                  # Check last contribution time
+                  try:
+                      last_contrib = datetime.fromisoformat(contributions[-1].get('timestamp', '').replace('Z', '+00:00'))
+                      hours_since_contrib = (now - last_contrib).total_seconds() / 3600
+                      if hours_since_contrib < min_hours:
+                          recent_activity = True
+                  except:
+                      pass
+              
+              # Check workload for this specialization
+              specialization = agent.get('specialization', '')
+              workload_metrics = workload_data.get('metrics', {})
+              
+              # Find matching workload category
+              for category, metrics in workload_metrics.items():
+                  if metrics.get('specialization') == specialization:
+                      # If workload is still high, keep the sub-agent
+                      if metrics.get('bottleneck_severity') in ['high', 'critical']:
+                          recent_activity = True
+                      break
+              
+              if not recent_activity and hours_active >= min_hours:
+                  idle_agents.append({
+                      'id': agent['id'],
+                      'name': agent.get('human_name', agent.get('name', 'Unknown')),
+                      'specialization': specialization,
+                      'hours_active': round(hours_active, 1),
+                      'contributions_count': len(contributions),
+                      'reason': f'Idle for {round(hours_active, 1)} hours with {len(contributions)} contributions'
+                  })
+          
+          print(f"🔍 Identified {len(idle_agents)} idle sub-agents")
+          
+          # Save results
+          result = {
+              'idle_agents': idle_agents,
+              'count': len(idle_agents),
+              'analysis_time': now.isoformat()
+          }
+          
+          with open('.github/agent-system/idle_subagents.json', 'w') as f:
+              json.dump(result, f, indent=2)
+          
+          print(f"✅ Idle agents identified: {len(idle_agents)}")
+          PYTHON_SCRIPT
+      
+      - name: Deactivate idle sub-agents
+        if: steps.parse.outputs.dry_run != 'true'
+        run: |
+          echo "🧹 Deactivating idle sub-agents..."
+          
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          from pathlib import Path
+          from datetime import datetime
+          
+          # Load idle agents
+          idle_file = Path('.github/agent-system/idle_subagents.json')
+          if not idle_file.exists():
+              print("No idle agents file found")
+              exit(0)
+          
+          with open(idle_file) as f:
+              idle_data = json.load(f)
+          
+          idle_agents = idle_data.get('idle_agents', [])
+          
+          if not idle_agents:
+              print("✅ No idle sub-agents to deactivate")
+              exit(0)
+          
+          # Load registry
+          registry_file = Path('.github/agent-system/registry.json')
+          with open(registry_file) as f:
+              registry = json.load(f)
+          
+          agents = registry.get('agents', [])
+          deactivated = []
+          
+          for idle_agent in idle_agents:
+              agent_id = idle_agent['id']
+              
+              # Find and update agent
+              for agent in agents:
+                  if agent.get('id') == agent_id:
+                      agent['status'] = 'deactivated'
+                      agent['deactivated_at'] = datetime.utcnow().isoformat()
+                      agent['deactivation_reason'] = idle_agent['reason']
+                      deactivated.append(agent_id)
+                      print(f"  ✅ Deactivated: {idle_agent['name']} ({idle_agent['specialization']})")
+                      break
+          
+          # Save updated registry
+          registry['agents'] = agents
+          registry['last_updated'] = datetime.utcnow().isoformat()
+          
+          with open(registry_file, 'w') as f:
+              json.dump(registry, f, indent=2)
+          
+          print(f"✅ Deactivated {len(deactivated)} sub-agents")
+          PYTHON_SCRIPT
+      
+      - name: Report results
+        if: always()
+        run: |
+          echo "## 🧹 Sub-Agent Cleanup Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f .github/agent-system/idle_subagents.json ]; then
+            IDLE_COUNT=$(jq -r '.count' .github/agent-system/idle_subagents.json)
+            echo "**Idle sub-agents found:** $IDLE_COUNT" >> $GITHUB_STEP_SUMMARY
+            
+            if [ "$IDLE_COUNT" -gt 0 ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### Idle Sub-Agents" >> $GITHUB_STEP_SUMMARY
+              jq -r '.idle_agents[] | "- **\(.name)** (\(.specialization)): \(.reason)"' .github/agent-system/idle_subagents.json >> $GITHUB_STEP_SUMMARY
+              
+              if [ "${{ steps.parse.outputs.dry_run }}" == "true" ]; then
+                echo "" >> $GITHUB_STEP_SUMMARY
+                echo "🔍 **Dry run mode** - No agents were actually deactivated" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "" >> $GITHUB_STEP_SUMMARY
+                echo "✅ **Deactivated** $IDLE_COUNT idle sub-agents" >> $GITHUB_STEP_SUMMARY
+              fi
+            else
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "✅ All sub-agents are active and working" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "⚠️ No analysis results found" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*🤖 Created by workflow: subagent-cleanup.yml - @workflows-tech-lead*" >> $GITHUB_STEP_SUMMARY

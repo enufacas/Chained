@@ -10,6 +10,8 @@ on:
   schedule:
     # Standard spawner: every 3 hours
     - cron: '0 */3 * * *'
+    # Workload-based spawner: every 2 hours (intelligent sub-agent spawning)
+    - cron: '0 */2 * * *'
   
   workflow_dispatch:
     inputs:
@@ -692,7 +694,9 @@ jobs:
     name: "Workload-Based Spawner"
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'workload-spawner'
+    if: |
+      (github.event.inputs.stage == 'workload-spawner') ||
+      (github.event_name == 'schedule' && github.event.schedule == '0 */2 * * *')
     
     steps:
       - name: Checkout repository
@@ -752,6 +756,26 @@ jobs:
           
           echo "needs_spawn=$NEEDS_SPAWN" >> $GITHUB_OUTPUT
           echo "recommended_spawns=$RECOMMENDED" >> $GITHUB_OUTPUT
+
+      - name: Spawn sub-agents
+        if: steps.analyze.outputs.needs_spawn == 'true' && steps.parse_options.outputs.dry_run != 'true'
+        run: |
+          echo "🤖 Spawning specialized sub-agents based on workload..."
+          
+          python3 tools/workload_subagent_spawner.py \
+            --analysis .github/agent-system/workload_analysis.json \
+            --max-spawns ${{ steps.parse_options.outputs.max_spawns }} \
+            --report
+          
+          echo "✅ Sub-agents spawned successfully"
+      
+      - name: Report spawning results
+        if: steps.analyze.outputs.needs_spawn == 'true' && steps.parse_options.outputs.dry_run != 'true'
+        run: |
+          if [ -f .github/agent-system/spawned_agents.json ]; then
+            echo "📋 Spawned agents:"
+            cat .github/agent-system/spawned_agents.json | jq -r '.spawned_agents[] | "  - \(.agent_id): \(.specialization) (\(.justification))"'
+          fi
 
       - name: Summary
         if: always()
