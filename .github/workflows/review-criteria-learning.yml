@@ -1,0 +1,248 @@
+name: "Review Criteria Learning"
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      lookback_days:
+        description: 'Number of days to analyze'
+        required: false
+        default: '7'
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: read
+
+jobs:
+  learn-from-outcomes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Fetch recent PR outcomes
+        id: fetch_outcomes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          lookback_days="${{ github.event.inputs.lookback_days || '7' }}"
+          since_date=$(date -u -d "$lookback_days days ago" +%Y-%m-%dT%H:%M:%SZ)
+          
+          echo "Fetching PR outcomes since $since_date..."
+          
+          # Get closed PRs (merged and rejected)
+          gh pr list \
+            --state closed \
+            --limit 100 \
+            --json number,title,state,mergedAt,closedAt,labels \
+            --search "closed:>=$since_date" \
+            > /tmp/recent_prs.json
+          
+          pr_count=$(jq '. | length' /tmp/recent_prs.json)
+          echo "Found $pr_count closed PRs"
+          echo "pr_count=$pr_count" >> $GITHUB_OUTPUT
+
+      - name: Analyze outcomes and learn
+        if: steps.fetch_outcomes.outputs.pr_count > 0
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import sys
+          from pathlib import Path
+          from datetime import datetime
+          
+          sys.path.insert(0, '.github/review-system')
+          from autonomous_reviewer import AutonomousReviewer
+          
+          # Load recent PRs
+          with open('/tmp/recent_prs.json', 'r') as f:
+              recent_prs = json.load(f)
+          
+          # Initialize reviewer
+          reviewer = AutonomousReviewer()
+          
+          # Process each PR
+          learned_count = 0
+          
+          for pr in recent_prs:
+              pr_number = pr['number']
+              review_file = Path(f".github/review-system/reviews/pr-{pr_number}-*.json")
+              
+              # Check if we have a review for this PR
+              review_files = list(Path('.github/review-system/reviews').glob(f'pr-{pr_number}-*.json'))
+              
+              if not review_files:
+                  continue
+              
+              # Load review results
+              with open(review_files[0], 'r') as f:
+                  review_results = json.load(f)
+              
+              # Determine outcome
+              merged = pr.get('mergedAt') is not None
+              has_quality_issues = any(
+                  label['name'].startswith('quality: issues') or 
+                  label['name'].startswith('quality: needs-improvement')
+                  for label in pr.get('labels', [])
+              )
+              
+              outcome = {
+                  'merged': merged,
+                  'rejected': not merged and pr.get('closedAt') is not None,
+                  'major_changes_required': has_quality_issues,
+                  'overall_score': review_results.get('overall_score', 0.5)
+              }
+              
+              # Learn from this outcome
+              review_id = review_files[0].stem
+              reviewer.learn_from_outcome(review_id, outcome)
+              learned_count += 1
+              
+              print(f"Learned from PR #{pr_number}: {'merged' if merged else 'rejected'}")
+          
+          print(f"\n✅ Learned from {learned_count} PR outcomes")
+          print(f"Total reviews: {reviewer.criteria['metadata']['total_reviews']}")
+          print(f"Success rate: {reviewer.criteria['metadata']['success_rate']:.1%}")
+          
+          # Save updated criteria
+          reviewer._save_criteria()
+          
+          PYTHON_SCRIPT
+
+      - name: Generate learning report
+        if: steps.fetch_outcomes.outputs.pr_count > 0
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          from datetime import datetime
+          
+          # Load criteria
+          with open('.github/review-system/criteria.json', 'r') as f:
+              criteria = json.load(f)
+          
+          # Generate report
+          report = f"""# 📊 Autonomous Reviewer Learning Report
+          
+**Date:** {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}
+          
+## Overall Stats
+          
+- **Total Reviews:** {criteria['metadata']['total_reviews']}
+- **Success Rate:** {criteria['metadata']['success_rate']:.1%}
+- **Criteria Version:** {criteria['version']}
+- **Last Updated:** {criteria['last_updated']}
+          
+## Criteria Evolution
+          
+"""
+          
+          # Add category statistics
+          for category_name, category in criteria['criteria'].items():
+              report += f"### {category_name.replace('_', ' ').title()}\n\n"
+              report += f"- **Weight:** {category['weight']:.2f}\n"
+              report += f"- **Threshold:** {category['threshold']:.0%}\n"
+              report += f"- **Times Evaluated:** {category.get('times_evaluated', 0)}\n"
+              
+              # Check effectiveness
+              checks = category.get('checks', [])
+              if checks:
+                  avg_effectiveness = sum(c.get('effectiveness', 0.5) for c in checks) / len(checks)
+                  report += f"- **Average Check Effectiveness:** {avg_effectiveness:.0%}\n"
+              
+              report += "\n"
+          
+          report += """
+## Learning Configuration
+          
+"""
+          
+          config = criteria['evolution_config']
+          report += f"- **Min Reviews Before Adjustment:** {config['min_reviews_before_adjustment']}\n"
+          report += f"- **Effectiveness Window:** {config['effectiveness_window']}\n"
+          report += f"- **Weight Adjustment Rate:** {config['weight_adjustment_rate']}\n"
+          report += f"- **Threshold Adjustment Rate:** {config['threshold_adjustment_rate']}\n"
+          
+          report += """
+---
+          
+*🤖 Generated by @workflows-tech-lead autonomous learning system*
+"""
+          
+          with open('/tmp/learning_report.md', 'w') as f:
+              f.write(report)
+          
+          print(report)
+          
+          PYTHON_SCRIPT
+
+      - name: Commit criteria updates
+        if: steps.fetch_outcomes.outputs.pr_count > 0
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check for changes
+          if git diff --quiet .github/review-system/criteria.json; then
+            echo "No criteria updates needed"
+            exit 0
+          fi
+          
+          # Create branch for criteria update
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="autonomous-review-learning/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git add .github/review-system/criteria.json
+          
+          # Commit changes
+          total_reviews=$(jq -r '.metadata.total_reviews' .github/review-system/criteria.json)
+          success_rate=$(jq -r '.metadata.success_rate' .github/review-system/criteria.json)
+          
+          git commit -m "chore: autonomous reviewer learned from ${total_reviews} reviews (@workflows-tech-lead)
+
+Criteria evolved through autonomous learning:
+
+- Total reviews analyzed: ${total_reviews}
+- Current success rate: ${success_rate}
+- Adjusted weights and thresholds based on effectiveness
+
+The autonomous reviewer continues to improve its criteria based on PR outcomes.
+
+---
+*🤖 Created by workflow: [review-criteria-learning.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - @workflows-tech-lead*"
+          
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR with learning report
+          gh pr create \
+            --title "📊 Autonomous Reviewer Learning - $(date +%Y-%m-%d) (@workflows-tech-lead)" \
+            --body-file /tmp/learning_report.md \
+            --label "automated" \
+            --label "agent-system" \
+            --label "copilot" \
+            --base main \
+            --head "$BRANCH_NAME"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        if: always()
+        run: |
+          if [ -f /tmp/learning_report.md ]; then
+            cat /tmp/learning_report.md
+          else
+            echo "No learning occurred (no recent PR outcomes to analyze)"
+          fi
+
+---
+
+*🤖 Created by workflow: [review-criteria-learning.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - @workflows-tech-lead*
