@@ -91,6 +91,8 @@ Get Chained running in under 5 minutes:
    - First agent spawns within 3 hours
    - Check the Actions tab to watch workflows execute
 
+> **💡 Want to try it immediately?** Just [create an issue](../../issues/new) describing what you want! The system automatically analyzes your issue and assigns the best specialized agent. No special labels needed - it's that simple! **[Learn more →](./docs/HOW_TO_TRIGGER_AGENTS.md)**
+
 **Need more details?** See the [complete setup guide](./GETTING_STARTED.md) or [5-minute quickstart](./QUICKSTART.md).
 
 ---
