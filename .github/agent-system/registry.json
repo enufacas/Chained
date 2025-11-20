@@ -298,7 +298,8 @@
     "spawn_mode": "mixed",
     "new_agent_probability": 0.5,
     "protected_specializations": [
-      "troubleshoot-expert"
+      "troubleshoot-expert",
+      "product-owner"
     ],
     "strict_pr_attribution": true
   },

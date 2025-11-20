@@ -81,6 +81,9 @@ Specialized in monitoring security. Inspired by Katie Moussouris - proactive and
 ### 📦 [organize-guru.md](./organize-guru.md)
 Specialized in organizing duplication. Inspired by Robert Martin - clean and disciplined, with creative flair. Focuses on code structure, duplication, and complexity.
 
+### 📋 [product-owner.md](./product-owner.md) 🛡️ **Protected**
+Specialized in story writing and requirements clarification. Inspired by Marty Cagan - product-minded and user-focused, with strategic vision. Transforms general ideas into consumable, well-structured issues for the agent fleet. **This is a protected agent that cannot be deleted or voted off.**
+
 ### 🛡️ [secure-specialist.md](./secure-specialist.md)
 Specialized in securing security. Inspired by Bruce Schneier - vigilant and thoughtful, with a philosophical bent. Focuses on security, data integrity, and access control.
 
