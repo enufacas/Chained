@@ -90,6 +90,22 @@ Specialized in supporting skill building. Inspired by Barbara Liskov - principle
 ### 🔧 [troubleshoot-expert.md](./troubleshoot-expert.md) 🛡️ **Protected**
 Specialized in troubleshooting GitHub Actions and workflows. Inspired by Grace Hopper - practical and debugging-focused, with systematic problem-solving. Focuses on CI/CD issues, workflow failures, and GitHub Actions debugging. **This is a protected agent that cannot be deleted or voted off.**
 
+## Tech Lead Agents 👔
+
+Tech lead agents provide specialized oversight for major subsections of the codebase. They have deep domain knowledge and ensure quality, consistency, and best practices in their respective areas. All tech lead agents are **protected** and cannot be eliminated through standard performance evaluation.
+
+### 🏗️ [agents-tech-lead.md](./agents-tech-lead.md) 🛡️ **Protected**
+Tech Lead responsible for agent system integrity, ensuring agent definitions are well-designed and the agent ecosystem remains healthy. Oversees `.github/agents/` directory, agent matching logic, and agent registry.
+
+### ⚙️ [workflows-tech-lead.md](./workflows-tech-lead.md) 🛡️ **Protected**
+Tech Lead responsible for GitHub Actions workflows, ensuring reliability and best practices in CI/CD automation. Oversees `.github/workflows/` directory and GitHub Actions configuration.
+
+### 📚 [docs-tech-lead.md](./docs-tech-lead.md) 🛡️ **Protected**
+Tech Lead responsible for documentation quality, ensuring clear, accurate, and maintainable documentation across the project. Oversees all markdown files, README files, and knowledge documentation.
+
+### 🌐 [github-pages-tech-lead.md](./github-pages-tech-lead.md) 🛡️ **Protected**
+Tech Lead responsible for GitHub Pages site quality, ensuring reliable rendering, performance, and user experience. Oversees `docs/` directory web content including HTML, CSS, and JavaScript.
+
 ## Using Custom Agents
 
 Custom agents can be invoked:

@@ -706,6 +706,35 @@ AGENT_PATTERNS = {
             r'\bpatterns?\b', r'\bmatching\b', r'\bfrontmatter\b',
             r'\bmetrics\b', r'\bhall\s*of\s*fame\b'
         ]
+    },
+    'docs-tech-lead': {
+        'keywords': [
+            'documentation', 'docs', 'readme', 'markdown', '.md',
+            'docs/', 'contributing', 'guide', 'tutorial', 'learnings',
+            'summaries', 'doc', 'document', 'writing', 'explanation',
+            'knowledge', 'readme.md', 'contributing.md'
+        ],
+        'patterns': [
+            r'\bdocumentation\b', r'\bdocs?\b', r'\breadme\b', r'\bmarkdown\b',
+            r'\.md\b', r'\bdocs/', r'\bcontributing\b', r'\bguide\b',
+            r'\btutorial', r'\blearnings', r'\bsummaries',
+            r'\bknowledge\b', r'\bexplanation\b', r'\bwriting\b'
+        ]
+    },
+    'github-pages-tech-lead': {
+        'keywords': [
+            'github pages', 'pages', 'website', 'site', 'html', 'css',
+            'javascript', 'web', 'rendering', 'docs/*.html', 'docs/*.css',
+            'docs/*.js', 'browser', 'visual', 'ui', 'frontend',
+            'responsive', 'accessibility', 'performance', 'page load'
+        ],
+        'patterns': [
+            r'\bgithub\s*pages\b', r'\bpages?\b', r'\bwebsite\b', r'\bsite\b',
+            r'\bhtml\b', r'\bcss\b', r'\bjavascript\b', r'\bweb\b',
+            r'\brendering\b', r'docs/.*\.html', r'docs/.*\.css', r'docs/.*\.js',
+            r'\bbrowser', r'\bvisual', r'\bfrontend', r'\bresponsive',
+            r'\baccessibility\b', r'\bperformance\b', r'\bpage\s*load\b'
+        ]
     }
 }
 
