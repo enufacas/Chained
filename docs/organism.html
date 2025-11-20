@@ -488,6 +488,27 @@
             transition: all 0.3s ease;
         }
 
+        #pipeline-filters h3 {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #pipeline-filters h3::after {
+            content: '▼';
+            transition: transform 0.3s ease;
+        }
+        
+        #pipeline-filters.collapsed h3::after {
+            transform: rotate(-180deg);
+        }
+        
+        #pipeline-filters.collapsed .filter-content {
+            display: none;
+        }
+
         #pipeline-filters.collapsed {
             transform: translateY(calc(100% + 70px));
         }
@@ -504,27 +525,6 @@
             
             #pipeline-filters.collapsed {
                 transform: translateY(calc(100% - 40px));
-            }
-            
-            #pipeline-filters h3 {
-                cursor: pointer;
-                user-select: none;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            
-            #pipeline-filters h3::after {
-                content: '▼';
-                transition: transform 0.3s ease;
-            }
-            
-            #pipeline-filters.collapsed h3::after {
-                transform: rotate(-180deg);
-            }
-            
-            #pipeline-filters.collapsed .filter-content {
-                display: none;
             }
         }
 
@@ -1582,8 +1582,8 @@
         function createPRMarker(prNumber, color = 0x00ff00) {
             const group = new THREE.Group();
             
-            // PR badge (octahedron)
-            const geometry = new THREE.OctahedronGeometry(0.8);
+            // PR badge (larger octahedron for better visibility)
+            const geometry = new THREE.OctahedronGeometry(1.2); // Increased from 0.8
             const material = new THREE.MeshStandardMaterial({
                 color: color,
                 emissive: color,
@@ -1594,8 +1594,8 @@
             const badge = new THREE.Mesh(geometry, material);
             group.add(badge);
             
-            // Glowing outline
-            const outlineGeometry = new THREE.OctahedronGeometry(1.0);
+            // Glowing outline (larger)
+            const outlineGeometry = new THREE.OctahedronGeometry(1.5); // Increased from 1.0
             const outlineMaterial = new THREE.MeshBasicMaterial({
                 color: color,
                 transparent: true,
@@ -1783,10 +1783,10 @@
                 agentGroups[agentName].push(run);
             });
 
-            // Limit agents shown (top active agents)
+            // Limit agents shown (increase to show more pipelines)
             const topAgents = Object.keys(agentGroups)
                 .sort((a, b) => agentGroups[b].length - agentGroups[a].length)
-                .slice(0, 12); // Show top 12 most active agents
+                .slice(0, 24); // Show top 24 most active agents (increased from 12)
 
             // 3D MATRIX LAYOUT - X, Y, Z grid formation
             const matrixSize = Math.ceil(Math.cbrt(topAgents.length)); // Cube root for 3D grid
@@ -1872,17 +1872,44 @@
                         scene.add(prObj);
                         pipelineObjects.push(prObj);
                         
-                        // Add PR label
+                        // Find PR title from prsData if available
+                        let prTitle = '';
+                        if (prsData && prsData.length > 0) {
+                            const prData = prsData.find(pr => pr.number === prNum);
+                            if (prData && prData.title) {
+                                // Truncate long titles
+                                prTitle = prData.title.length > 40 
+                                    ? prData.title.substring(0, 37) + '...'
+                                    : prData.title;
+                            }
+                        }
+                        
+                        // Add PR label with title
                         const prLabelDiv = document.createElement('div');
                         prLabelDiv.style.color = `#${agentColor.toString(16).padStart(6, '0')}`;
-                        prLabelDiv.style.fontSize = '10px';
+                        prLabelDiv.style.fontSize = '12px'; // Increased from 10px
                         prLabelDiv.style.fontFamily = 'monospace';
-                        prLabelDiv.style.background = 'rgba(0,0,0,0.9)';
-                        prLabelDiv.style.padding = '2px 6px';
-                        prLabelDiv.style.borderRadius = '3px';
-                        prLabelDiv.style.border = `1px solid #${agentColor.toString(16).padStart(6, '0')}`;
-                        prLabelDiv.textContent = `PR #${prNum}`;
+                        prLabelDiv.style.fontWeight = 'bold'; // Make it bold
+                        prLabelDiv.style.background = 'rgba(0,0,0,0.95)'; // More opaque
+                        prLabelDiv.style.padding = '4px 10px'; // More padding
+                        prLabelDiv.style.borderRadius = '4px';
+                        prLabelDiv.style.border = `2px solid #${agentColor.toString(16).padStart(6, '0')}`; // Thicker border
                         prLabelDiv.style.cursor = 'pointer';
+                        prLabelDiv.style.textShadow = `0 0 8px #${agentColor.toString(16).padStart(6, '0')}`; // Glow effect
+                        prLabelDiv.style.whiteSpace = 'nowrap';
+                        prLabelDiv.style.maxWidth = '300px';
+                        prLabelDiv.style.overflow = 'hidden';
+                        prLabelDiv.style.textOverflow = 'ellipsis';
+                        
+                        // Set content with PR number and title if available
+                        prLabelDiv.innerHTML = prTitle 
+                            ? `<strong>PR #${prNum}</strong><br/><small style="font-size: 10px; opacity: 0.9;">${prTitle}</small>`
+                            : `<strong>PR #${prNum}</strong>`;
+                        
+                        // Make it clickable to open PR
+                        prLabelDiv.addEventListener('click', () => {
+                            window.open(`https://github.com/enufacas/Chained/pull/${prNum}`, '_blank');
+                        });
                         
                         const prLabel = new CSS3DObject(prLabelDiv);
                         prLabel.position.set(
@@ -1890,8 +1917,13 @@
                             gridY + (prIdx - 0.5) * 3,
                             gridZ
                         );
-                        prLabel.scale.set(0.03, 0.03, 0.03);
-                        prLabel.userData = { clickable: true, prNumber: prNum, run: recentRun };
+                        prLabel.scale.set(0.04, 0.04, 0.04); // Increased from 0.03 for better readability
+                        prLabel.userData = { 
+                            clickable: true, 
+                            prNumber: prNum, 
+                            run: recentRun,
+                            type: 'pr-label'
+                        };
                         labelScene.add(prLabel);
                         pipelineObjects.push(prLabel);
                     });
@@ -2971,10 +3003,10 @@
         window.closeDetailPanel = closeDetailPanel;
 
         // Setup event listeners
-        // Toggle filter panel on mobile
+        // Toggle filter panel (works on all devices, not just mobile)
         function toggleFilterPanel() {
             const filterPanel = document.getElementById('pipeline-filters');
-            if (filterPanel && window.innerWidth <= 768) {
+            if (filterPanel) {
                 filterPanel.classList.toggle('collapsed');
             }
         }
@@ -3071,6 +3103,38 @@
             initScene();
             await loadData();
             setupEventListeners();
+            
+            // Detect mobile and collapse sidebars/filters on mobile
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                // Collapse left sidebar (agent roster)
+                const roster = document.getElementById('agent-roster');
+                if (roster) {
+                    roster.classList.add('collapsed');
+                    const toggleBtn = document.getElementById('toggle-roster');
+                    if (toggleBtn) {
+                        toggleBtn.textContent = '▶';
+                        toggleBtn.style.left = '20px';
+                    }
+                }
+                
+                // Collapse right sidebar (stats panel)
+                const stats = document.getElementById('stats-panel');
+                if (stats) {
+                    stats.classList.add('collapsed');
+                    const toggleBtn = document.getElementById('toggle-stats');
+                    if (toggleBtn) {
+                        toggleBtn.textContent = '◀';
+                        toggleBtn.style.right = '20px';
+                    }
+                }
+                
+                // Collapse pipeline filters
+                const filterPanel = document.getElementById('pipeline-filters');
+                if (filterPanel) {
+                    filterPanel.classList.add('collapsed');
+                }
+            }
             
             // START IN PIPELINE MODE BY DEFAULT
             // Update button text to reflect we're in pipeline mode
