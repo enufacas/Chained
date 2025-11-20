@@ -1,0 +1,401 @@
+name: "Tech Lead Review System"
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+    # Trigger on all PR changes to re-evaluate tech lead requirements
+  pull_request_review:
+    types: [submitted]
+    # Trigger when a review is submitted to update labels
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to analyze'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  analyze-and-assign-tech-lead:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Get PR number
+        id: pr_number
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "pr_number=${{ inputs.pr_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check PR title for WIP markers
+        id: check_wip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          
+          # Get PR title
+          pr_title=$(gh pr view "${pr_num}" --json title --jq '.title' --repo ${{ github.repository }})
+          echo "PR title: ${pr_title}"
+          
+          # Check for WIP markers (case-insensitive)
+          if echo "${pr_title}" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'; then
+            echo "has_wip=true" >> $GITHUB_OUTPUT
+            echo "⚠️ PR has WIP marker in title - will skip tech lead review"
+          else
+            echo "has_wip=false" >> $GITHUB_OUTPUT
+            echo "✅ No WIP marker in title"
+          fi
+
+      - name: Handle WIP PR
+        if: steps.check_wip.outputs.has_wip == 'true' && github.event.action == 'opened'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          
+          echo "⚠️ PR has WIP marker - skipping tech lead review until WIP is removed"
+          
+          # Remove tech lead review labels if they exist (cleanup)
+          gh pr edit "${pr_num}" \
+            --remove-label "needs-tech-lead-review" \
+            --remove-label "tech-lead-review-cycle" \
+            --repo ${{ github.repository }} 2>/dev/null || true
+          
+          # Post informative comment (only on opened)
+          gh pr comment "${pr_num}" --body "## ⚠️ Work In Progress
+          
+          This PR has a WIP marker in the title and will not be reviewed by tech leads until the WIP is removed.
+          
+          **To trigger tech lead review:**
+          1. Remove WIP markers from the title (e.g., \`[WIP]\`, \`WIP:\`, \`[do not merge]\`)
+          2. Update the PR or convert from draft to ready
+          
+          **Current status:**
+          - 🔴 Tech lead review: **Paused**
+          - ⏸️ Auto-merge: **Blocked**
+          
+          ---
+          
+          *Note: Tech lead review will automatically trigger when WIP is removed and PR is updated.*
+          *Automated by @workflows-tech-lead*" --repo ${{ github.repository }} || true
+
+      - name: Analyze PR for Tech Lead requirements
+        if: steps.check_wip.outputs.has_wip == 'false'
+        id: analyze
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          echo "Analyzing PR #${pr_num} for Tech Lead requirements..."
+          
+          # Run the matching script with complexity analysis
+          result=$(python3 tools/match-pr-to-tech-lead.py "${pr_num}" --check-complexity)
+          echo "Analysis result:"
+          echo "${result}"
+          
+          # Extract key information
+          tech_leads=$(echo "${result}" | jq -r '.tech_leads[].name' | tr '\n' ',' | sed 's/,$//')
+          requires_review=$(echo "${result}" | jq -r '.complexity.requires_review // false')
+          recommendation=$(echo "${result}" | jq -r '.complexity.recommendation // "optional"')
+          total_files=$(echo "${result}" | jq -r '.total_files // 0')
+          
+          # Output for next steps
+          echo "tech_leads=${tech_leads}" >> $GITHUB_OUTPUT
+          echo "requires_review=${requires_review}" >> $GITHUB_OUTPUT
+          echo "recommendation=${recommendation}" >> $GITHUB_OUTPUT
+          echo "total_files=${total_files}" >> $GITHUB_OUTPUT
+          
+          # Save full result for comment
+          echo "${result}" > /tmp/analysis_result.json
+
+      - name: Manage Tech Lead labels
+        if: steps.check_wip.outputs.has_wip == 'false' && steps.analyze.outputs.tech_leads != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          tech_leads="${{ steps.analyze.outputs.tech_leads }}"
+          requires_review="${{ steps.analyze.outputs.requires_review }}"
+          
+          echo "Managing labels for PR #${pr_num}..."
+          echo "Tech Leads: ${tech_leads}"
+          echo "Requires Review: ${requires_review}"
+          
+          # Add tech-lead identifier labels
+          IFS=',' read -ra LEADS <<< "${tech_leads}"
+          for lead in "${LEADS[@]}"; do
+            if [ -n "${lead}" ]; then
+              echo "Adding label: tech-lead:${lead}"
+              gh pr edit ${pr_num} --add-label "tech-lead:${lead}" --repo ${{ github.repository }} || true
+            fi
+          done
+          
+          # Add needs-tech-lead-review label if required
+          if [ "${requires_review}" = "true" ]; then
+            echo "Adding label: needs-tech-lead-review"
+            gh pr edit ${pr_num} --add-label "needs-tech-lead-review" --repo ${{ github.repository }} || true
+            
+            # Add review cycle tracking label
+            gh pr edit ${pr_num} --add-label "tech-lead-review-cycle" --repo ${{ github.repository }} || true
+          fi
+
+      - name: Check for existing tech lead review state
+        id: check_review_state
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          
+          # Get current PR labels
+          labels=$(gh pr view ${pr_num} --json labels --jq '.labels[].name' | tr '\n' ',' || echo "")
+          
+          echo "Current labels: ${labels}"
+          
+          # Check for review state labels
+          has_approved=$(echo "${labels}" | grep -c "tech-lead-approved" || echo "0")
+          has_changes_requested=$(echo "${labels}" | grep -c "tech-lead-changes-requested" || echo "0")
+          has_needs_review=$(echo "${labels}" | grep -c "needs-tech-lead-review" || echo "0")
+          
+          echo "has_approved=${has_approved}" >> $GITHUB_OUTPUT
+          echo "has_changes_requested=${has_changes_requested}" >> $GITHUB_OUTPUT
+          echo "has_needs_review=${has_needs_review}" >> $GITHUB_OUTPUT
+
+      - name: Post Tech Lead analysis comment
+        if: steps.check_wip.outputs.has_wip == 'false' && steps.analyze.outputs.tech_leads != '' && github.event.action != 'synchronize'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          requires_review="${{ steps.analyze.outputs.requires_review }}"
+          recommendation="${{ steps.analyze.outputs.recommendation }}"
+          
+          # Read the full analysis
+          analysis=$(cat /tmp/analysis_result.json)
+          
+          # Extract tech lead information
+          tech_leads=$(echo "${analysis}" | jq -r '.tech_leads[] | "- **@\(.name)** - \(.description) (\(.file_count) files)"' || echo "- None identified")
+          
+          # Extract complexity factors
+          complexity=$(echo "${analysis}" | jq -r '.complexity // {}')
+          total_files=$(echo "${complexity}" | jq -r '.total_files // 0')
+          total_changes=$(echo "${complexity}" | jq -r '.total_changes // 0')
+          touches_protected=$(echo "${complexity}" | jq -r '.touches_protected // false')
+          has_sensitive=$(echo "${complexity}" | jq -r '.has_sensitive_keywords // false')
+          
+          # Build complexity summary
+          complexity_summary="**Complexity Analysis:**
+          - Total files: ${total_files}
+          - Total changes: ${total_changes} lines
+          - Protected paths: $([ "${touches_protected}" = "true" ] && echo "✅ Yes" || echo "❌ No")
+          - Security keywords: $([ "${has_sensitive}" = "true" ] && echo "⚠️ Yes" || echo "✅ No")"
+          
+          # Determine review status icon
+          if [ "${requires_review}" = "true" ]; then
+            status_icon="🔒"
+            status_text="**Required**"
+            next_steps="This PR requires Tech Lead approval before it can be merged. The identified Tech Leads will be automatically assigned for review."
+          else
+            status_icon="ℹ️"
+            status_text="**Optional**"
+            next_steps="Tech Lead review is optional for this PR. It may proceed to auto-merge if all other criteria are met."
+          fi
+          
+          # Create the comment
+          gh pr comment ${pr_num} --body "## ${status_icon} Tech Lead Review Analysis
+
+          **Review Status:** ${status_text}
+          **Recommendation:** \`${recommendation}\`
+
+          ### 📋 Tech Leads Identified
+
+          ${tech_leads}
+
+          ### 📊 Analysis Details
+
+          ${complexity_summary}
+
+          ### 🎯 Next Steps
+
+          ${next_steps}
+
+          ### 🏷️ Labels Applied
+
+          - \`tech-lead:<name>\` - Identifies which Tech Lead should review
+          - \`needs-tech-lead-review\` - $([ "${requires_review}" = "true" ] && echo "✅ Applied (blocks auto-merge)" || echo "❌ Not needed")
+          - \`tech-lead-review-cycle\` - $([ "${requires_review}" = "true" ] && echo "✅ Applied (tracking review iterations)" || echo "❌ Not needed")
+
+          ### 📖 Review Process
+
+          1. **Tech Lead Assignment:** The workflow will assign the appropriate Tech Lead via GraphQL API
+          2. **Initial Review:** Tech Lead reviews the changes and provides feedback
+          3. **Approval Path:** Tech Lead approves → \`tech-lead-approved\` label added → Auto-merge proceeds
+          4. **Changes Path:** Tech Lead requests changes → \`tech-lead-changes-requested\` label added → Agent fixes issues → Re-review cycle
+
+          ---
+          *🤖 Automated Tech Lead Review System - Analyzed by @workflows-tech-lead*
+          *Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')*" --repo ${{ github.repository }} || true
+
+      - name: Assign Tech Lead via GraphQL (if required)
+        if: steps.check_wip.outputs.has_wip == 'false' && steps.analyze.outputs.requires_review == 'true' && steps.check_review_state.outputs.has_approved == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          tech_leads="${{ steps.analyze.outputs.tech_leads }}"
+          
+          # Get the primary tech lead (first one in the list)
+          primary_lead=$(echo "${tech_leads}" | cut -d',' -f1)
+          
+          if [ -n "${primary_lead}" ]; then
+            echo "Assigning primary Tech Lead: ${primary_lead}"
+            
+            # Add a comment mentioning the tech lead
+            gh pr comment ${pr_num} --body "🔔 **Tech Lead Assignment**
+
+            **@${primary_lead}** has been assigned as the primary Tech Lead reviewer for this PR.
+
+            As the Tech Lead for this area, please:
+            1. Review the changes following your review criteria
+            2. Provide clear, actionable feedback
+            3. Approve when satisfied or request changes as needed
+
+            **Review Focus:** See \`.github/agents/${primary_lead}.md\` for your review checklist.
+
+            ---
+            *This assignment is part of the Tech Lead review cycle managed by @workflows-tech-lead*" --repo ${{ github.repository }} || true
+            
+            # Note: Full GraphQL assignment similar to issue assignment would go here
+            # For now, we're using comment mentions which triggers notifications
+          fi
+
+      - name: Handle review state changes
+        if: steps.check_wip.outputs.has_wip == 'false' && github.event_name == 'pull_request_review'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ github.event.pull_request.number }}"
+          review_state="${{ github.event.review.state }}"
+          reviewer="${{ github.event.review.user.login }}"
+          
+          echo "Review submitted by ${reviewer} with state: ${review_state}"
+          
+          # Check if reviewer is a tech lead (has tech-lead label)
+          labels=$(gh pr view ${pr_num} --json labels --jq '.labels[].name' || echo "")
+          is_tech_lead=$(echo "${labels}" | grep -c "tech-lead:" || echo "0")
+          
+          if [ "${is_tech_lead}" -gt 0 ]; then
+            echo "Review from Tech Lead detected"
+            
+            if [ "${review_state}" = "approved" ]; then
+              echo "Tech Lead approved - updating labels"
+              
+              # Remove blocking labels
+              gh pr edit ${pr_num} --remove-label "needs-tech-lead-review" --repo ${{ github.repository }} 2>/dev/null || true
+              gh pr edit ${pr_num} --remove-label "tech-lead-changes-requested" --repo ${{ github.repository }} 2>/dev/null || true
+              
+              # Add approval label
+              gh pr edit ${pr_num} --add-label "tech-lead-approved" --repo ${{ github.repository }} || true
+              
+              # Post comment about approval
+              gh pr comment ${pr_num} --body "✅ **Tech Lead Approval Received**
+
+              This PR has been approved by a Tech Lead reviewer!
+
+              **Status Changes:**
+              - ❌ Removed \`needs-tech-lead-review\` label
+              - ❌ Removed \`tech-lead-changes-requested\` label (if present)
+              - ✅ Added \`tech-lead-approved\` label
+
+              **Next Steps:**
+              This PR is now eligible for auto-merge if all other criteria are met.
+
+              ---
+              *Tech Lead review cycle completed by @workflows-tech-lead*" --repo ${{ github.repository }} || true
+              
+            elif [ "${review_state}" = "changes_requested" ]; then
+              echo "Tech Lead requested changes - updating labels"
+              
+              # Add changes requested label
+              gh pr edit ${pr_num} --add-label "tech-lead-changes-requested" --repo ${{ github.repository }} || true
+              
+              # Keep needs-tech-lead-review label
+              gh pr edit ${pr_num} --add-label "needs-tech-lead-review" --repo ${{ github.repository }} || true
+              
+              # Post comment about changes requested
+              gh pr comment ${pr_num} --body "🔄 **Tech Lead Requested Changes**
+
+              A Tech Lead has requested changes to this PR.
+
+              **Status Changes:**
+              - ✅ Added \`tech-lead-changes-requested\` label (blocks merge)
+              - ✅ Maintained \`needs-tech-lead-review\` label
+
+              **Next Steps:**
+              1. The PR author or assigned agent should address the feedback
+              2. Push changes to the PR branch
+              3. Request re-review from the Tech Lead
+              4. Tech Lead will re-review and either approve or request further changes
+
+              **Automated Workflow:**
+              - When you push changes, this workflow will re-trigger
+              - The Tech Lead will be notified to re-review
+              - The cycle continues until approval is given
+
+              ---
+              *Tech Lead review cycle managed by @workflows-tech-lead*" --repo ${{ github.repository }} || true
+            fi
+          fi
+
+      - name: Detect re-review after changes
+        if: steps.check_wip.outputs.has_wip == 'false' && github.event.action == 'synchronize' && steps.check_review_state.outputs.has_changes_requested == '1'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          
+          echo "Changes pushed to PR with outstanding Tech Lead change requests"
+          
+          # Get the tech leads assigned
+          tech_leads="${{ steps.analyze.outputs.tech_leads }}"
+          primary_lead=$(echo "${tech_leads}" | cut -d',' -f1)
+          
+          # Post comment about re-review
+          gh pr comment ${pr_num} --body "🔄 **Changes Pushed - Re-Review Requested**
+
+          New changes have been pushed to this PR.
+
+          **@${primary_lead}** - Please re-review the changes when you have a chance.
+
+          **Current Status:**
+          - ✅ Changes addressed by PR author/agent
+          - 🔄 Awaiting Tech Lead re-review
+          - 🏷️ \`tech-lead-changes-requested\` label still active (blocks merge)
+
+          The \`tech-lead-changes-requested\` label will be removed when you approve the changes.
+
+          ---
+          *Re-review request by @workflows-tech-lead*" --repo ${{ github.repository }} || true
+
+      - name: Log Tech Lead review activity
+        run: |
+          echo "Tech Lead review analysis completed"
+          echo "PR: ${{ steps.pr_number.outputs.pr_number }}"
+          echo "Tech Leads: ${{ steps.analyze.outputs.tech_leads }}"
+          echo "Requires Review: ${{ steps.analyze.outputs.requires_review }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

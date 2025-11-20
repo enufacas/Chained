@@ -194,6 +194,80 @@ jobs:
             
             if [ "${should_auto_merge}" -eq 1 ]; then
               
+              # Tech Lead Review System Integration
+              # Check for tech lead review labels before proceeding with auto-merge
+              has_needs_tech_lead_review=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "needs-tech-lead-review" || echo "0")
+              has_tech_lead_changes_requested=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "tech-lead-changes-requested" || echo "0")
+              has_tech_lead_approved=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "tech-lead-approved" || echo "0")
+              
+              # Block merge if tech lead review is needed but not approved
+              if [ "${has_needs_tech_lead_review}" -gt 0 ] && [ "${has_tech_lead_approved}" -eq 0 ]; then
+                echo "⏸️ PR #${pr_num} requires Tech Lead review before merge"
+                gh pr comment ${pr_num} --body "⏸️ **Auto-Merge Blocked: Tech Lead Review Required**
+                
+                This PR cannot be automatically merged because it requires Tech Lead review.
+                
+                **Current Status:**
+                - 🏷️ Has \`needs-tech-lead-review\` label
+                - ❌ Missing \`tech-lead-approved\` label
+                - $([ "${has_tech_lead_changes_requested}" -gt 0 ] && echo "⚠️ Has \\\`tech-lead-changes-requested\\\` label" || echo "⏳ Awaiting Tech Lead review")
+                
+                **Next Steps:**
+                1. Wait for Tech Lead to review the changes
+                2. Address any feedback if changes are requested
+                3. Once approved, the \`tech-lead-approved\` label will be added
+                4. Auto-merge will proceed automatically
+                
+                **Tech Lead Review System:**
+                This PR was flagged for Tech Lead review based on:
+                - Modified protected paths (.github/workflows/, .github/agents/, etc.)
+                - Large number of changes
+                - Security-related keywords detected
+                - Multiple subsystems affected
+                
+                ---
+                *🤖 Auto-merge blocked by Tech Lead Review System*
+                *Managed by @workflows-tech-lead*
+                *Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')*" --repo ${{ github.repository }} || true
+                
+                continue
+              fi
+              
+              # Block merge if tech lead requested changes
+              if [ "${has_tech_lead_changes_requested}" -gt 0 ]; then
+                echo "⏸️ PR #${pr_num} has outstanding Tech Lead change requests"
+                gh pr comment ${pr_num} --body "⏸️ **Auto-Merge Blocked: Changes Requested by Tech Lead**
+                
+                This PR cannot be automatically merged because a Tech Lead has requested changes.
+                
+                **Current Status:**
+                - ⚠️ Has \`tech-lead-changes-requested\` label
+                - 🔄 Awaiting changes from PR author/agent
+                
+                **Next Steps:**
+                1. Review the Tech Lead's feedback comments
+                2. Address all requested changes
+                3. Push updated code to the PR branch
+                4. Request re-review from the Tech Lead
+                5. Once approved, auto-merge will proceed
+                
+                **Review Cycle:**
+                The Tech Lead review system ensures code quality in critical areas. This iterative
+                process helps maintain high standards while preserving automation benefits.
+                
+                ---
+                *🤖 Auto-merge blocked by Tech Lead Review System*
+                *Managed by @workflows-tech-lead*
+                *Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')*" --repo ${{ github.repository }} || true
+                
+                continue
+              fi
+              
+              # If tech lead approved, log it and proceed
+              if [ "${has_tech_lead_approved}" -gt 0 ]; then
+                echo "✅ PR #${pr_num} has Tech Lead approval, proceeding with auto-merge"
+              fi
+              
               # For bot-created PRs, skip approval (can't approve own PR) and enable auto-merge
               # For owner PRs, add approval review first
               if [ "${is_trusted_bot}" -eq 1 ]; then
