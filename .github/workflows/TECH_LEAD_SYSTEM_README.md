@@ -427,7 +427,7 @@ Potential improvements:
 
 ## Related Documentation
 
-- [Agent System Quick Start](/AGENT_QUICKSTART.md)
+- [Agent System Quick Start](/docs/AGENT_QUICKSTART.md)
 - [Workflow Documentation](/docs/WORKFLOWS.md)
 - [Custom Agents Directory](/.github/agents/README.md)
 - [Auto-Review-Merge Workflow](/docs/AUTO_REVIEW_MERGE.md)

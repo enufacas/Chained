@@ -52,7 +52,7 @@ jobs:
           # Protected files and directories (never delete)
           PROTECTED_PATTERNS=(
             "README.md"
-            "QUICKSTART.md"
+            "docs/QUICKSTART.md"
             "learnings/book/"
             "learnings/agent_memory/"
             "learnings/discussions/"
@@ -281,7 +281,7 @@ jobs:
             ### Protected Files
             The following files/directories are never deleted:
             - README.md files
-            - QUICKSTART.md files
+            - docs/QUICKSTART.md files
             - learnings/book/ (knowledge base)
             - learnings/agent_memory/ (agent memories)
             - learnings/discussions/ (discussion history)
