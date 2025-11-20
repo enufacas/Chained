@@ -121,6 +121,22 @@ The autonomous reviewer evaluates PRs across multiple categories:
 3. **Effectiveness Calculation**: Each criterion's correlation with good outcomes is measured
 4. **Criteria Adjustment**: Weights and thresholds are adjusted based on effectiveness
 
+### Statistical Confidence
+
+The system uses **confidence intervals** to avoid premature conclusions:
+
+- **New checks** (few applications): Effectiveness blended with overall success rate
+- **Established checks** (10+ applications): Full confidence in measured effectiveness
+- **Adaptive learning rate**: Adjusts based on effectiveness variance
+
+**Example:**
+- Check applied 3 times, 100% effective: Confidence = 30%
+  - Adjusted effectiveness = (1.0 × 0.3) + (0.7 × 0.7) = 0.79
+- Check applied 15 times, 100% effective: Confidence = 100%
+  - Adjusted effectiveness = 1.0
+
+This prevents overfitting to small samples while still learning quickly.
+
 ### Evolution Parameters
 
 ```json
@@ -136,9 +152,30 @@ The autonomous reviewer evaluates PRs across multiple categories:
 
 ### Adaptation Strategy
 
-- **Effective criteria** (>85% correlation): Increase weight, stricter threshold
-- **Neutral criteria** (30-85% correlation): Maintain current settings
-- **Ineffective criteria** (<30% correlation): Decrease weight, lenient threshold
+- **Effective criteria** (>85% correlation): 
+  - ⬆️ Increase weight by (effectiveness - 0.5) × adjustment_rate
+  - ⬆️ Stricter threshold (up to 90%)
+  - 📈 Higher priority in reviews
+
+- **Neutral criteria** (30-85% correlation): 
+  - ➡️ Maintain current settings
+  - 📊 Continue monitoring
+
+- **Ineffective criteria** (<30% correlation): 
+  - ⬇️ Decrease weight
+  - ⬇️ More lenient threshold (down to 30%)
+  - ⚠️ Flagged for potential removal
+
+### Adaptive Learning Rate
+
+The learning rate adapts based on effectiveness variance:
+
+```python
+adaptive_rate = base_rate × (1.0 + variance)
+```
+
+- **Low variance**: Stable patterns → slower, incremental changes
+- **High variance**: Inconsistent results → faster adaptation to changing patterns
 
 ## 🚀 Usage
 
@@ -151,7 +188,51 @@ The system automatically reviews all PRs when:
 
 No configuration needed—it just works!
 
-### Manual Trigger
+### Manual Commands
+
+#### Generate Metrics Report
+
+View current performance metrics and effectiveness:
+
+```bash
+python3 .github/review-system/autonomous_reviewer.py metrics --output metrics.md
+```
+
+**Example Output:**
+```
+📊 Autonomous Reviewer Performance Metrics
+
+Total Reviews Performed: 18
+Success Rate: 69.4%
+Criteria Version: 1.0.0
+
+Category Performance:
+  Correctness: weight=1.02, effectiveness=68.4%
+  Security: weight=1.21, effectiveness=68.4% ⚡ High Priority
+  Clarity: weight=0.82, effectiveness=68.4%
+```
+
+#### Simulate Learning
+
+Test the learning mechanism with simulated outcomes:
+
+```bash
+python3 .github/review-system/autonomous_reviewer.py simulate
+```
+
+This generates 10 successful and 3 failed PR outcomes to demonstrate how criteria evolve.
+
+#### Learn from Specific Outcome
+
+Manually record a PR outcome for learning:
+
+```bash
+python3 .github/review-system/autonomous_reviewer.py learn \
+  --review-id "pr-123" \
+  --outcome '{"merged": true, "major_changes_required": false, "overall_score": 0.85}'
+```
+
+### Manual Trigger (Learning Workflow)
 
 To manually trigger learning from recent outcomes:
 
@@ -263,7 +344,57 @@ EOF
 
 ## 📊 Performance Dashboard
 
-View current performance:
+Generate comprehensive dashboard:
+
+```bash
+python3 .github/review-system/autonomous_reviewer.py metrics
+```
+
+### Example Dashboard Output
+
+After 18 reviews with 69.4% success rate:
+
+```markdown
+📊 Autonomous Reviewer Performance Metrics
+
+## Overall Statistics
+- Total Reviews Performed: 18
+- Success Rate: 69.4%
+- Criteria Version: 1.0.0
+- Last Updated: 2025-11-20T04:29:32Z
+
+## Category Performance
+
+### Security ⚡ (High Priority)
+- Weight: 1.21
+- Threshold: 80%
+- Avg Effectiveness: 68.4%
+- Times Evaluated: 9
+
+Checks:
+- secret_exposure:    68% ██████░░░░ (applied 3x)
+- input_validation:   68% ██████░░░░ (applied 3x)
+- sql_injection:      68% ██████░░░░ (applied 3x)
+
+### Correctness
+- Weight: 1.02
+- Threshold: 70%
+- Avg Effectiveness: 68.4%
+
+Checks:
+- error_handling:     68% ██████░░░░ (applied 3x)
+- null_checks:        68% ██████░░░░ (applied 3x)
+- test_coverage:      68% ██████░░░░ (applied 3x)
+
+## Learning History
+1. pr-123: ✅ Merged (score: 85%)
+2. pr-124: ✅ Merged (score: 82%)
+3. pr-125: ❌ Not Merged (score: 35%)
+4. pr-126: ✅ Merged (score: 78%)
+5. pr-127: ✅ Merged (score: 90%)
+```
+
+### Quick Stats View
 
 ```bash
 python3 << 'EOF'

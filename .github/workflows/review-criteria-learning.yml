@@ -30,6 +30,13 @@ jobs:
         run: |
           cd .github/review-system
           
+          # Generate comprehensive metrics report
+          python3 autonomous_reviewer.py metrics --output /tmp/metrics_report.md
+          
+          echo "## 📊 Current Metrics" > /tmp/learning_report.md
+          echo "" >> /tmp/learning_report.md
+          cat /tmp/metrics_report.md >> /tmp/learning_report.md
+          
           # Run learning analysis
           python3 << 'PYTHON_SCRIPT'
           import json
@@ -83,24 +90,45 @@ jobs:
           
           # Generate learning report
           report_lines = []
-          report_lines.append("# Learning Report")
+          report_lines.append("## 📊 Learning Analysis")
           report_lines.append("")
-          report_lines.append(f"Date: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}")
+          report_lines.append(f"**Date:** {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}")
           report_lines.append("")
-          report_lines.append("## Overall Stats")
+          report_lines.append("### Analysis Summary")
           report_lines.append("")
           report_lines.append(f"- Total Reviews: {criteria['metadata']['total_reviews']}")
           report_lines.append(f"- Success Rate: {criteria['metadata']['success_rate']:.1%}")
           report_lines.append(f"- Recent Reviews Analyzed: {len(recent_reviews)}")
           report_lines.append("")
           
+          if len(recent_reviews) >= 10:
+              report_lines.append("✅ **Sufficient data for learning** - Criteria evolved based on outcomes")
+              report_lines.append("")
+              
+              # Show category evolution
+              report_lines.append("### Category Weight Evolution")
+              report_lines.append("")
+              for name, cat in criteria['criteria'].items():
+                  weight = cat['weight']
+                  times_eval = cat.get('times_evaluated', 0)
+                  avg_eff = cat.get('avg_effectiveness', 0.5)
+                  report_lines.append(f"- **{name}**: weight={weight:.2f}, effectiveness={avg_eff:.1%}, evaluated={times_eval}x")
+          else:
+              report_lines.append(f"⏳ **Collecting data** - Need {10 - len(recent_reviews)} more reviews for evolution")
+          
           report = "\n".join(report_lines)
           
-          with open('/tmp/learning_report.md', 'w') as f:
+          with open('/tmp/learning_analysis.md', 'w') as f:
               f.write(report)
           
           print(report)
           PYTHON_SCRIPT
+          
+          # Combine reports
+          echo "" >> /tmp/learning_report.md
+          echo "---" >> /tmp/learning_report.md
+          echo "" >> /tmp/learning_report.md
+          cat /tmp/learning_analysis.md >> /tmp/learning_report.md
           
           cat /tmp/learning_report.md
 
