@@ -1,0 +1,141 @@
+name: "Setup Tech Lead Review Labels"
+
+# This workflow creates the required labels for the Tech Lead Review System
+# Run manually via workflow_dispatch or automatically on push to main
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/tech-lead-review.yml'
+      - '.github/workflows/setup-tech-lead-labels.yml'
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  create-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Tech Lead Review System labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🏷️  Creating Tech Lead Review System labels..."
+          echo "Repository: ${{ github.repository }}"
+          echo ""
+          
+          # Function to create or update a label
+          create_label() {
+            local name="$1"
+            local description="$2"
+            local color="$3"
+            
+            echo "Creating label: ${name}"
+            
+            # Try to create the label
+            if gh label create "${name}" \
+              --repo "${{ github.repository }}" \
+              --description "${description}" \
+              --color "${color}" 2>/dev/null; then
+              echo "✅ Created: ${name}"
+            else
+              # If creation fails, try to update it
+              if gh label edit "${name}" \
+                --repo "${{ github.repository }}" \
+                --description "${description}" \
+                --color "${color}" 2>/dev/null; then
+                echo "♻️  Updated: ${name}"
+              else
+                echo "ℹ️  Already exists: ${name}"
+              fi
+            fi
+            echo ""
+          }
+          
+          # Label 1: needs-tech-lead-review (blocking label - RED)
+          create_label \
+            "needs-tech-lead-review" \
+            "Tech Lead review is required before this PR can be merged" \
+            "D73A4A"
+          
+          # Label 2: tech-lead-approved (approval label - GREEN)
+          create_label \
+            "tech-lead-approved" \
+            "Tech Lead has approved this PR for merge" \
+            "0E8A16"
+          
+          # Label 3: tech-lead-changes-requested (blocking label - YELLOW/ORANGE)
+          create_label \
+            "tech-lead-changes-requested" \
+            "Tech Lead has requested changes to this PR" \
+            "FBCA04"
+          
+          # Label 4: tech-lead-review-cycle (info label - BLUE)
+          create_label \
+            "tech-lead-review-cycle" \
+            "This PR is in an active Tech Lead review iteration cycle" \
+            "1D76DB"
+          
+          # Label 5: tech-lead:workflows-tech-lead (identifier label - PURPLE)
+          create_label \
+            "tech-lead:workflows-tech-lead" \
+            "Assigned to workflows-tech-lead for review" \
+            "5319E7"
+          
+          # Label 6: tech-lead:agents-tech-lead (identifier label - PURPLE)
+          create_label \
+            "tech-lead:agents-tech-lead" \
+            "Assigned to agents-tech-lead for review" \
+            "5319E7"
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Tech Lead Review System labels are ready!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Created/Updated labels:"
+          echo "  🔴 needs-tech-lead-review (blocks merge)"
+          echo "  🟢 tech-lead-approved (enables merge)"
+          echo "  🟡 tech-lead-changes-requested (blocks merge)"
+          echo "  🔵 tech-lead-review-cycle (tracking)"
+          echo "  🟣 tech-lead:workflows-tech-lead (identifier)"
+          echo "  🟣 tech-lead:agents-tech-lead (identifier)"
+          echo ""
+          echo "These labels are now active and will be used by:"
+          echo "  • tech-lead-review.yml - For PR analysis and assignment"
+          echo "  • auto-review-merge.yml - For merge blocking/allowing"
+          echo ""
+          echo "🎯 System Status: READY"
+          echo ""
+
+      - name: List all tech-lead labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📋 Current Tech Lead labels in repository:"
+          echo ""
+          gh label list --repo "${{ github.repository }}" | grep -E "(tech-lead|Tech Lead)" || echo "No tech-lead labels found"
+          echo ""
+
+      - name: Post summary
+        run: |
+          echo "## 🏷️ Tech Lead Review Labels Setup" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The following labels have been created/updated for the Tech Lead Review System:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Label | Color | Purpose | Blocks Merge |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|---------|--------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| \`needs-tech-lead-review\` | 🔴 Red | Tech Lead review required | ✅ Yes |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`tech-lead-approved\` | 🟢 Green | Approved by Tech Lead | ❌ No |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`tech-lead-changes-requested\` | 🟡 Yellow | Changes requested | ✅ Yes |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`tech-lead-review-cycle\` | 🔵 Blue | In review cycle | ℹ️ Info |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`tech-lead:workflows-tech-lead\` | 🟣 Purple | Workflows Tech Lead | ℹ️ Info |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`tech-lead:agents-tech-lead\` | 🟣 Purple | Agents Tech Lead | ℹ️ Info |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **System Status:** Tech Lead Review System labels are active and ready for use." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*🤖 Automated by @workflows-tech-lead*" >> $GITHUB_STEP_SUMMARY
