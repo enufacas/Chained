@@ -12,7 +12,7 @@ import json
 import os
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Any, Tuple
 
@@ -35,7 +35,7 @@ class AutonomousReviewer:
     
     def _save_criteria(self):
         """Save updated criteria back to file."""
-        self.criteria['last_updated'] = datetime.utcnow().isoformat() + 'Z'
+        self.criteria['last_updated'] = datetime.now(timezone.utc).isoformat() + 'Z'
         with open(self.criteria_file, 'w') as f:
             json.dump(self.criteria, f, indent=2)
     
@@ -56,7 +56,7 @@ class AutonomousReviewer:
             'findings': [],
             'passed_checks': [],
             'failed_checks': [],
-            'timestamp': datetime.utcnow().isoformat() + 'Z'
+            'timestamp': datetime.now(timezone.utc).isoformat() + 'Z'
         }
         
         total_weight = 0.0
@@ -385,7 +385,7 @@ class AutonomousReviewer:
         # Record outcome in history
         outcome_record = {
             'review_id': review_id,
-            'timestamp': datetime.utcnow().isoformat() + 'Z',
+            'timestamp': datetime.now(timezone.utc).isoformat() + 'Z',
             'outcome': outcome
         }
         
@@ -448,7 +448,7 @@ class AutonomousReviewer:
                     category['historical_effectiveness'] = []
                 
                 category['historical_effectiveness'].append({
-                    'timestamp': datetime.utcnow().isoformat() + 'Z',
+                    'timestamp': datetime.now(timezone.utc).isoformat() + 'Z',
                     'check_id': check_id,
                     'effectiveness': current_eff
                 })
@@ -543,29 +543,265 @@ The review criteria evolve over time based on PR outcomes, becoming more accurat
         return comment
 
 
+def fetch_pr_files(pr_number: str, repo: str) -> Tuple[List[str], Dict[str, str]]:
+    """
+    Fetch changed files and their contents from a PR using GitHub CLI.
+    
+    Args:
+        pr_number: PR number
+        repo: Repository in format 'owner/repo'
+        
+    Returns:
+        Tuple of (file_paths, file_contents)
+    """
+    import subprocess
+    
+    # Get list of changed files
+    result = subprocess.run(
+        ['gh', 'pr', 'diff', pr_number, '--name-only', '--repo', repo],
+        capture_output=True,
+        text=True
+    )
+    
+    if result.returncode != 0:
+        print(f"Error fetching PR files: {result.stderr}", file=sys.stderr)
+        return [], {}
+    
+    file_paths = [f.strip() for f in result.stdout.strip().split('\n') if f.strip()]
+    
+    # Fetch content for each file
+    file_contents = {}
+    for file_path in file_paths:
+        # Try to read from current working directory (PR branch)
+        try:
+            full_path = Path(file_path)
+            if full_path.exists():
+                with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    file_contents[file_path] = f.read()
+        except Exception as e:
+            print(f"Warning: Could not read {file_path}: {e}", file=sys.stderr)
+            continue
+    
+    return file_paths, file_contents
+
+
+def command_review(args):
+    """Execute review command."""
+    reviewer = AutonomousReviewer(args.criteria)
+    
+    # Fetch PR files
+    if args.files:
+        # Files provided as JSON array
+        import json
+        file_paths = json.loads(args.files)
+        
+        # Read contents
+        file_contents = {}
+        for file_path in file_paths:
+            try:
+                full_path = Path(file_path)
+                if full_path.exists():
+                    with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
+                        file_contents[file_path] = f.read()
+            except Exception as e:
+                print(f"Warning: Could not read {file_path}: {e}", file=sys.stderr)
+    elif args.pr_number and args.repo:
+        # Fetch from GitHub
+        file_paths, file_contents = fetch_pr_files(args.pr_number, args.repo)
+    else:
+        print("Error: Must provide either --files or --pr-number with --repo", file=sys.stderr)
+        return 1
+    
+    if not file_paths:
+        print("No files to review", file=sys.stderr)
+        return 1
+    
+    print(f"Reviewing {len(file_paths)} files...")
+    
+    # Run evaluation
+    results = reviewer.evaluate_pr_files(file_paths, file_contents)
+    
+    # Generate comment
+    comment = reviewer.generate_review_comment(results)
+    
+    # Determine label based on score
+    score = results['overall_score']
+    if score >= 0.8:
+        label = 'quality:excellent'
+    elif score >= 0.6:
+        label = 'quality:good'
+    elif score >= 0.4:
+        label = 'quality:needs-work'
+    else:
+        label = 'quality:significant-issues'
+    
+    # Prepare output
+    output = {
+        'results': results,
+        'comment': comment,
+        'suggested_label': label,
+        'review_id': f"pr-{args.pr_number}" if args.pr_number else "review",
+        'timestamp': datetime.now(timezone.utc).isoformat() + 'Z'
+    }
+    
+    # Save to output file
+    output_file = Path(args.output)
+    with open(output_file, 'w') as f:
+        json.dump(output, f, indent=2)
+    
+    print(f"Review complete! Score: {score:.2%}")
+    print(f"Results saved to: {output_file}")
+    
+    # Store review in reviews directory
+    if args.pr_number:
+        reviews_dir = Path('.github/review-system/reviews')
+        reviews_dir.mkdir(parents=True, exist_ok=True)
+        timestamp = datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')
+        review_file = reviews_dir / f"pr-{args.pr_number}-{timestamp}.json"
+        with open(review_file, 'w') as f:
+            json.dump(output, f, indent=2)
+        print(f"Review stored: {review_file}")
+    
+    return 0
+
+
+def command_learn(args):
+    """Execute learning command."""
+    reviewer = AutonomousReviewer(args.criteria)
+    
+    # Parse outcome
+    outcome = {
+        'merged': args.merged,
+        'rejected': args.rejected,
+        'major_changes_required': args.major_changes
+    }
+    
+    if args.score:
+        outcome['overall_score'] = float(args.score)
+    
+    # Apply learning
+    reviewer.learn_from_outcome(args.review_id, outcome)
+    
+    print(f"Learning applied for review: {args.review_id}")
+    print(f"Total reviews: {reviewer.criteria['metadata']['total_reviews']}")
+    print(f"Success rate: {reviewer.criteria['metadata']['success_rate']:.1%}")
+    
+    return 0
+
+
+def command_status(args):
+    """Show current status of criteria."""
+    reviewer = AutonomousReviewer(args.criteria)
+    
+    criteria = reviewer.criteria
+    
+    print("=" * 60)
+    print("AUTONOMOUS CODE REVIEWER STATUS")
+    print("=" * 60)
+    print()
+    print(f"Version: {criteria['version']}")
+    print(f"Last Updated: {criteria['last_updated']}")
+    print()
+    print("Metadata:")
+    print(f"  Total Reviews: {criteria['metadata']['total_reviews']}")
+    print(f"  Success Rate: {criteria['metadata']['success_rate']:.1%}")
+    print()
+    print("Criteria Categories:")
+    print()
+    
+    for name, category in criteria['criteria'].items():
+        print(f"  {name.replace('_', ' ').title()}")
+        print(f"    Weight: {category['weight']:.2f}")
+        print(f"    Threshold: {category['threshold']:.0%}")
+        print(f"    Checks: {len(category.get('checks', []))}")
+        print(f"    Times Evaluated: {category.get('times_evaluated', 0)}")
+        print()
+    
+    print("Recent History:")
+    history = criteria.get('history', [])
+    for entry in history[-5:]:
+        print(f"  - {entry['review_id']}: ", end='')
+        outcome = entry['outcome']
+        if outcome.get('merged'):
+            print("✅ Merged", end='')
+        elif outcome.get('rejected'):
+            print("❌ Rejected", end='')
+        else:
+            print("🔄 Modified", end='')
+        if 'overall_score' in outcome:
+            print(f" (Score: {outcome['overall_score']:.0%})", end='')
+        print()
+    
+    return 0
+
+
 def main():
     """Main entry point for CLI usage."""
     
     import argparse
     
-    parser = argparse.ArgumentParser(description='Autonomous Code Reviewer')
-    parser.add_argument('--pr-number', type=str, help='PR number to review')
-    parser.add_argument('--file-list', type=str, help='File with list of changed files')
-    parser.add_argument('--output', type=str, default='review_results.json', help='Output file')
-    parser.add_argument('--comment', action='store_true', help='Generate review comment')
+    parser = argparse.ArgumentParser(
+        description='Autonomous Code Reviewer with Self-Improving Criteria',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Review a PR
+  %(prog)s review --pr-number 123 --repo owner/repo
+  
+  # Review files from JSON list
+  %(prog)s review --files '["file1.py", "file2.js"]'
+  
+  # Record learning from outcome
+  %(prog)s learn --review-id pr-123 --merged --score 0.85
+  
+  # Show current status
+  %(prog)s status
+        """
+    )
+    
+    parser.add_argument(
+        '--criteria',
+        type=str,
+        default='.github/review-system/criteria.json',
+        help='Path to criteria JSON file'
+    )
+    
+    subparsers = parser.add_subparsers(dest='command', help='Commands')
+    
+    # Review command
+    review_parser = subparsers.add_parser('review', help='Review PR files')
+    review_parser.add_argument('--pr-number', type=str, help='PR number to review')
+    review_parser.add_argument('--repo', type=str, help='Repository (owner/repo)')
+    review_parser.add_argument('--files', type=str, help='JSON array of file paths')
+    review_parser.add_argument('--output', type=str, default='review_result.json', help='Output file')
+    
+    # Learn command
+    learn_parser = subparsers.add_parser('learn', help='Learn from PR outcome')
+    learn_parser.add_argument('--review-id', type=str, required=True, help='Review ID')
+    learn_parser.add_argument('--merged', action='store_true', help='PR was merged')
+    learn_parser.add_argument('--rejected', action='store_true', help='PR was rejected')
+    learn_parser.add_argument('--major-changes', action='store_true', help='Required major changes')
+    learn_parser.add_argument('--score', type=str, help='Overall score (0.0-1.0)')
+    
+    # Status command
+    status_parser = subparsers.add_parser('status', help='Show current criteria status')
     
     args = parser.parse_args()
     
-    reviewer = AutonomousReviewer()
+    if not args.command:
+        parser.print_help()
+        return 1
     
-    # For CLI testing, we'd read files from git diff
-    # In the workflow, we'll pass files differently
-    
-    print("Autonomous Code Reviewer initialized")
-    print(f"Total reviews performed: {reviewer.criteria['metadata']['total_reviews']}")
-    print(f"Success rate: {reviewer.criteria['metadata']['success_rate']:.1%}")
-    
-    return 0
+    # Route to appropriate command
+    if args.command == 'review':
+        return command_review(args)
+    elif args.command == 'learn':
+        return command_learn(args)
+    elif args.command == 'status':
+        return command_status(args)
+    else:
+        parser.print_help()
+        return 1
 
 
 if __name__ == '__main__':
