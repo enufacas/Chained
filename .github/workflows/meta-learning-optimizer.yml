@@ -1,0 +1,271 @@
+name: Meta-Learning Workflow Optimizer
+# Created by @workflows-tech-lead
+#
+# This workflow implements a meta-learning system that continuously optimizes
+# workflow schedules by learning from historical execution patterns.
+#
+# Key Features:
+# - Learns from prediction accuracy to improve future schedules
+# - Adapts scheduling strategies based on performance feedback
+# - Discovers optimal parameter configurations automatically
+# - Implements reinforcement learning for schedule optimization
+
+on:
+  # Run every 6 hours to learn from recent workflow executions
+  schedule:
+    - cron: '0 */6 * * *'
+  
+  # Allow manual trigger for testing and immediate learning
+  workflow_dispatch:
+    inputs:
+      force_evolution:
+        description: 'Force strategy evolution'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      generate_report:
+        description: 'Generate detailed learning report'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+permissions:
+  contents: write  # For committing learned strategies
+  actions: read    # For reading workflow execution data
+
+jobs:
+  meta-learning-optimization:
+    name: Meta-Learning Schedule Optimization
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for learning
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          # No additional dependencies needed - uses stdlib only
+      
+      - name: Verify meta-learning scheduler
+        run: |
+          echo "🔍 Verifying meta-learning scheduler..."
+          if [ -f tools/meta_learning_scheduler.py ]; then
+            python3 tools/meta_learning_scheduler.py --help
+            echo "✅ Meta-learning scheduler is ready"
+          else
+            echo "❌ Meta-learning scheduler not found"
+            exit 1
+          fi
+      
+      - name: Run meta-learning tests
+        id: tests
+        run: |
+          echo "🧪 Running meta-learning scheduler tests..."
+          if python3 tools/test_meta_learning_scheduler.py; then
+            echo "✅ All tests passed"
+            echo "tests_passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️  Some tests failed, but continuing..."
+            echo "tests_passed=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Adapt all strategies
+        id: adapt
+        run: |
+          echo "🔄 Adapting scheduling strategies based on recent performance..."
+          
+          # Adapt each strategy based on feedback
+          for strategy in default; do
+            echo "Adapting strategy: $strategy"
+            python3 tools/meta_learning_scheduler.py --adapt "$strategy"
+          done
+          
+          echo "✅ Strategy adaptation complete"
+          echo "adapted=true" >> $GITHUB_OUTPUT
+      
+      - name: Evolve strategies
+        id: evolve
+        if: github.event.inputs.force_evolution == 'true' || github.event_name == 'schedule'
+        run: |
+          echo "🧬 Evolving strategies using genetic algorithm..."
+          python3 tools/meta_learning_scheduler.py --evolve
+          echo "✅ Strategy evolution complete"
+          echo "evolved=true" >> $GITHUB_OUTPUT
+      
+      - name: Generate meta-learning report
+        id: report
+        if: github.event.inputs.generate_report != 'false'
+        run: |
+          echo "📊 Generating meta-learning report..."
+          
+          # Generate comprehensive report
+          python3 tools/meta_learning_scheduler.py \
+            --report \
+            --export .github/workflow-history/meta-learning/report_latest.json
+          
+          echo "✅ Report generated"
+          
+          # Extract key metrics for summary
+          if [ -f .github/workflow-history/meta-learning/report_latest.json ]; then
+            best_strategy=$(jq -r '.best_strategy' .github/workflow-history/meta-learning/report_latest.json)
+            total_strategies=$(jq '.strategies | length' .github/workflow-history/meta-learning/report_latest.json)
+            accuracy=$(jq -r '.accuracy_metrics.accuracy_score' .github/workflow-history/meta-learning/report_latest.json)
+            
+            echo "best_strategy=$best_strategy" >> $GITHUB_OUTPUT
+            echo "total_strategies=$total_strategies" >> $GITHUB_OUTPUT
+            echo "accuracy_score=$accuracy" >> $GITHUB_OUTPUT
+            
+            echo "📈 Key Metrics:"
+            echo "  Best Strategy: $best_strategy"
+            echo "  Total Strategies: $total_strategies"
+            echo "  Accuracy Score: $accuracy%"
+          fi
+      
+      - name: Test optimized schedule generation
+        id: test_schedule
+        run: |
+          echo "🎯 Testing optimized schedule generation..."
+          
+          # Test generating an optimized schedule
+          python3 tools/meta_learning_scheduler.py \
+            --optimize "github-pages-review" \
+            --strategy "default" \
+            > /tmp/schedule_test.txt
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ Schedule generation successful"
+            cat /tmp/schedule_test.txt
+          else
+            echo "⚠️  Schedule generation had issues"
+          fi
+      
+      - name: Commit learned strategies
+        if: steps.adapt.outputs.adapted == 'true' || steps.evolve.outputs.evolved == 'true'
+        run: |
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add learned strategies if they exist
+          if [ -f .github/workflow-history/meta-learning/learned_strategies.json ]; then
+            git add .github/workflow-history/meta-learning/learned_strategies.json
+          fi
+          
+          if [ -f .github/workflow-history/meta-learning/learning_log.json ]; then
+            git add .github/workflow-history/meta-learning/learning_log.json
+          fi
+          
+          if [ -f .github/workflow-history/meta-learning/report_latest.json ]; then
+            git add .github/workflow-history/meta-learning/report_latest.json
+          fi
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "ℹ️  No changes to commit"
+          else
+            # Create commit message
+            commit_msg="chore: update learned scheduling strategies (@workflows-tech-lead)
+
+Meta-learning optimization run completed:
+- Adapted strategies based on recent feedback
+- Evolution: ${{ steps.evolve.outputs.evolved || 'false' }}
+- Best strategy: ${{ steps.report.outputs.best_strategy || 'N/A' }}
+- Accuracy: ${{ steps.report.outputs.accuracy_score || 'N/A' }}%
+
+🤖 Automated by @workflows-tech-lead meta-learning system"
+
+            git commit -m "$commit_msg"
+            git push
+            echo "✅ Learned strategies committed and pushed"
+          fi
+      
+      - name: Create summary
+        if: always()
+        run: |
+          echo "## 🎓 Meta-Learning Optimization Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**@workflows-tech-lead** has completed meta-learning optimization" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.tests.outputs.tests_passed }}" == "true" ]; then
+            echo "✅ All tests passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️  Some tests had issues" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ steps.adapt.outputs.adapted }}" == "true" ]; then
+            echo "✅ Strategies adapted based on feedback" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ steps.evolve.outputs.evolved }}" == "true" ]; then
+            echo "✅ Strategies evolved using genetic algorithm" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ -n "${{ steps.report.outputs.best_strategy }}" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Key Metrics" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- **Best Strategy**: ${{ steps.report.outputs.best_strategy }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Total Strategies**: ${{ steps.report.outputs.total_strategies }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Accuracy Score**: ${{ steps.report.outputs.accuracy_score }}%" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*🔧 Orchestrated by **@workflows-tech-lead** - Meta-learning system that learns to optimize workflow schedules*" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Comment on related issues
+        if: steps.report.outputs.accuracy_score != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find any open issues about workflow optimization
+          issue_numbers=$(gh issue list \
+            --label "workflows" \
+            --label "optimization" \
+            --state open \
+            --json number \
+            --jq '.[].number')
+          
+          if [ -n "$issue_numbers" ]; then
+            for issue_num in $issue_numbers; do
+              gh issue comment "$issue_num" --body "🎓 **Meta-Learning Update** (@workflows-tech-lead)
+
+The meta-learning scheduler has completed an optimization cycle:
+
+- **Best Strategy**: ${{ steps.report.outputs.best_strategy }}
+- **Accuracy**: ${{ steps.report.outputs.accuracy_score }}%
+- **Total Strategies**: ${{ steps.report.outputs.total_strategies }}
+
+The system is continuously learning and improving workflow schedules based on execution patterns.
+
+---
+*Automated by @workflows-tech-lead meta-learning system*"
+            done
+            
+            echo "✅ Posted updates to related issues"
+          else
+            echo "ℹ️  No related issues found"
+          fi
+
+# Workflow metadata
+# @workflows-tech-lead: Meta-learning system for continuous schedule optimization
+# Created: 2025-11-20
+# Innovation: Second-order learning - learns how to learn better schedules
