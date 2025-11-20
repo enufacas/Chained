@@ -1,0 +1,199 @@
+name: "Product Owner: Issue Enhancement"
+
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to enhance (leave empty to process all unenhanced open issues)'
+        required: false
+        type: string
+
+# This workflow runs BEFORE copilot assignment
+# Priority: Run first to enhance issues before they're assigned
+# Concurrency: Prevent multiple enhancements of the same issue
+concurrency:
+  group: product-owner-${{ github.event.issue.number || 'scheduled' }}
+  cancel-in-progress: false
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  enhance-issue:
+    runs-on: ubuntu-latest
+    # Skip if issue already has 'enhanced-by-po' label to prevent re-processing
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issues' && !contains(github.event.issue.labels.*.name, 'enhanced-by-po'))
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Check if issue needs enhancement
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+        run: |
+          echo "Checking if issue needs product owner enhancement..."
+          
+          # Get issue details
+          issue_data=$(gh issue view "$ISSUE_NUMBER" --json title,body,labels --repo ${{ github.repository }})
+          title=$(echo "$issue_data" | jq -r '.title // ""')
+          body=$(echo "$issue_data" | jq -r '.body // ""')
+          labels=$(echo "$issue_data" | jq -r '.labels[].name' | tr '\n' ' ')
+          
+          # Check if already enhanced
+          if echo "$labels" | grep -q "enhanced-by-po"; then
+            echo "Issue already enhanced by product owner"
+            echo "needs_enhancement=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Check if issue body already has structured format
+          if echo "$body" | grep -q "## 🎯 User Story"; then
+            echo "Issue already has structured format"
+            echo "needs_enhancement=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Heuristics to determine if issue needs enhancement
+          needs_enhancement=false
+          
+          # Very short body (< 100 chars) likely needs enhancement
+          body_length=${#body}
+          if [ "$body_length" -lt 100 ]; then
+            echo "Issue body is very short ($body_length chars) - needs enhancement"
+            needs_enhancement=true
+          fi
+          
+          # Check for vague language patterns
+          if echo "$body $title" | grep -qiE '\b(improve|enhance|better|fix|make it|should|need to|want to|could|vague|unclear)\b'; then
+            echo "Issue contains vague language - needs enhancement"
+            needs_enhancement=true
+          fi
+          
+          # Check if missing acceptance criteria
+          if ! echo "$body" | grep -qiE '(acceptance|criteria|success|expected|should)'; then
+            echo "Issue missing acceptance criteria - needs enhancement"
+            needs_enhancement=true
+          fi
+          
+          # Always enhance if workflow_dispatch (manual trigger)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual enhancement requested"
+            needs_enhancement=true
+          fi
+          
+          echo "needs_enhancement=$needs_enhancement" >> $GITHUB_OUTPUT
+      
+      - name: Assign to product owner agent
+        if: steps.check.outputs.needs_enhancement == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+        run: |
+          echo "🤖 Assigning issue to product owner agent for enhancement..."
+          
+          # Add label to prevent duplicate processing
+          gh issue edit "$ISSUE_NUMBER" --add-label "enhanced-by-po" --repo ${{ github.repository }}
+          
+          # Get Copilot actor ID (same logic as copilot-graphql-assign.yml)
+          issue_node_id=$(gh issue view "$ISSUE_NUMBER" --json id --jq '.id' --repo ${{ github.repository }})
+          
+          # Query for available assignees
+          assignable_users=$(gh api graphql -f query='
+            query($issueId: ID!) {
+              node(id: $issueId) {
+                ... on Issue {
+                  assignableUsers: assignees(first: 100) {
+                    nodes {
+                      id
+                      login
+                    }
+                  }
+                }
+              }
+            }' -f issueId="$issue_node_id" 2>&1)
+          
+          # Try to find Copilot actor
+          copilot_actor_id=$(echo "$assignable_users" | jq -r '.data.node.assignableUsers.nodes[] | select(.login | test("copilot"; "i")) | .id' | head -1)
+          
+          if [ -z "$copilot_actor_id" ]; then
+            echo "⚠️  Could not find Copilot actor - will add comment without assignment"
+          else
+            echo "✅ Found Copilot actor: $copilot_actor_id"
+            
+            # Assign to Copilot
+            gh api graphql -f query='
+              mutation($issueId: ID!, $actorId: ID!) {
+                replaceActorsForAssignable(input: {
+                  assignableId: $issueId,
+                  actorIds: [$actorId]
+                }) {
+                  assignable {
+                    ... on Issue {
+                      id
+                    }
+                  }
+                }
+              }' -f issueId="$issue_node_id" -f actorId="$copilot_actor_id" 2>&1
+          fi
+          
+          # Add directive comment for product owner agent
+          gh issue comment "$ISSUE_NUMBER" --repo ${{ github.repository }} --body "🤖 **Product Owner Enhancement Requested**
+
+This issue has been identified as needing product owner enhancement to improve consumability by the agent fleet.
+
+## 🎯 Product Owner Directive
+
+**@product-owner** - Please enhance this issue using the **product-owner** custom agent profile from \`.github/agents/product-owner.md\`.
+
+**Your task:**
+1. ✅ Analyze the original issue content carefully to understand the intent
+2. 📋 Transform it into a well-structured format with:
+   - **User Story**: Clear \"As a... I want... So that...\" format
+   - **Context & Background**: Why this is needed and how it fits the system
+   - **Acceptance Criteria**: Testable success conditions
+   - **Technical Considerations**: Relevant components and constraints
+   - **Examples**: Concrete usage scenarios
+3. 💾 **IMPORTANT**: Preserve the original content in a collapsible \`<details>\` section
+4. 🤖 Recommend the most appropriate specialized agent for implementation
+5. 🏷️  Add relevant labels to categorize the issue
+
+**Enhancement Format**: Use the template defined in your agent profile (\`.github/agents/product-owner.md\`)
+
+**IMPORTANT**: Always mention **@product-owner** by name in all your conversations related to this issue.
+
+## 📚 System Context
+- **Repository**: Chained autonomous AI ecosystem
+- **Agent System**: 40+ specialized agents with matching system
+- **Workflow**: This runs BEFORE standard copilot assignment
+- **Goal**: Make issues consumable by specialized implementation agents
+
+**Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+
+---
+*🤖 Automated via product owner pre-processing workflow*"
+      
+      - name: Summary
+        if: steps.check.outputs.needs_enhancement == 'true'
+        run: |
+          echo "✅ Issue assigned to product owner agent for enhancement"
+          echo "📋 Agent will transform the issue into a structured format"
+          echo "🔄 After enhancement, normal copilot assignment will proceed"
+      
+      - name: Skip notification
+        if: steps.check.outputs.needs_enhancement == 'false'
+        run: |
+          echo "ℹ️  Issue does not need product owner enhancement"
+          echo "✓ Issue already enhanced or has structured format"
+          echo "→ Proceeding with normal workflow"
