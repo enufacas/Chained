@@ -1,0 +1,89 @@
+name: Generate Reviewer Dashboard
+# @workflows-tech-lead - Dashboard generation workflow
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run daily at midnight UTC
+    - cron: '0 0 * * *'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/review-system/criteria.json'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate dashboard
+        run: |
+          python3 .github/review-system/generate_dashboard.py \
+            --criteria .github/review-system/criteria.json \
+            --output docs/reviewer-dashboard.html
+          
+          echo "✅ Dashboard generated"
+
+      - name: Commit dashboard if changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if dashboard changed
+          if git diff --quiet docs/reviewer-dashboard.html; then
+            echo "No dashboard changes"
+            exit 0
+          fi
+          
+          # Create branch for PR
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          RUN_ID="${{ github.run_id }}"
+          BRANCH_NAME="dashboard-update/${TIMESTAMP}-${RUN_ID}"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "${BRANCH_NAME}"
+          
+          git add docs/reviewer-dashboard.html
+          
+          git commit -m "chore: update reviewer dashboard (@workflows-tech-lead)" \
+            -m "" \
+            -m "Automated dashboard update reflecting latest criteria." \
+            -m "" \
+            -m "Updated by @workflows-tech-lead"
+          
+          git push origin "${BRANCH_NAME}"
+          
+          # Create PR
+          gh pr create \
+            --title "chore: update reviewer dashboard (@workflows-tech-lead)" \
+            --body "## 🤖 Automated Dashboard Update
+
+Updated reviewer effectiveness dashboard with latest criteria.
+
+**Changes:**
+- Refreshed category performance metrics
+- Updated effectiveness history
+- Synchronized with criteria evolution
+
+View the dashboard after merge: [reviewer-dashboard.html](https://enufacas.github.io/Chained/reviewer-dashboard.html)
+
+---
+
+*🤖 Created by workflow: [generate-reviewer-dashboard.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+            --label "automated,copilot" \
+            --base main \
+            --head "${BRANCH_NAME}"
+          
+          echo "✅ PR created for dashboard update"

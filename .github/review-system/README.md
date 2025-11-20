@@ -1,342 +1,402 @@
-# 🤖 Autonomous Code Reviewer with Self-Improving Criteria
+# 🤖 Autonomous Code Reviewer System
 
-> **Created by @workflows-tech-lead**  
-> A self-evolving code review system that learns from outcomes and continuously improves its review criteria.
+## Overview
 
-## 🌟 Overview
+The Autonomous Code Reviewer is a self-improving code review system that learns from PR outcomes to continuously refine its evaluation criteria. Built by **@workflows-tech-lead**, it combines automated code analysis with machine learning to provide increasingly accurate quality assessments.
 
-This autonomous code review system evaluates pull requests against a set of evolving criteria that improve over time based on real-world outcomes. Unlike traditional static linters, this system **learns** from:
+## 🎯 Key Features
 
-- ✅ Successfully merged PRs
-- ❌ Rejected PRs
-- 🔄 PRs that required significant changes
-- 💬 Reviewer feedback patterns
+### 1. **Automated PR Review**
+- Evaluates pull requests against multiple quality dimensions
+- Provides detailed feedback with issue identification
+- Suggests quality labels based on overall score
+- Posts comprehensive review comments automatically
 
-## 🏗️ Architecture
+### 2. **Self-Improving Criteria**
+- Learns from PR outcomes (merged vs rejected)
+- Adjusts criteria weights based on effectiveness
+- Tracks correlation between scores and success
+- Maintains transparency through evolution history
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    PR OPENED/UPDATED                     │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│         AUTONOMOUS CODE REVIEWER WORKFLOW                │
-│  • Load current criteria (criteria.json)                │
-│  • Fetch changed files from PR                          │
-│  • Apply pattern matching and heuristics                │
-│  • Calculate scores per category                        │
-│  • Generate review comment                              │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│           POST REVIEW & STORE RESULTS                    │
-│  • Comment on PR with findings                          │
-│  • Add quality label                                    │
-│  • Save review results to reviews/                      │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│               PR MERGED OR CLOSED                        │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│         LEARNING WORKFLOW (Daily @ 2 AM UTC)             │
-│  • Fetch closed PRs from last N days                    │
-│  • Match with review results                            │
-│  • Calculate outcome success                            │
-│  • Adjust criteria weights/thresholds                   │
-│  • Update effectiveness metrics                         │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│         CRITERIA EVOLUTION & PR CREATION                 │
-│  • Commit updated criteria.json                         │
-│  • Generate learning report                             │
-│  • Create PR with improvements                          │
-└─────────────────────────────────────────────────────────┘
-                     │
-                     └──────── (Loop Continues) ────────┐
-                                                         │
-                     ┌───────────────────────────────────┘
-                     ▼
-            🔄 CONTINUOUS IMPROVEMENT
-```
+### 3. **Multi-Dimensional Analysis**
+Categories evaluated:
+- **Correctness**: Error handling, null checks, logic bugs
+- **Clarity**: Naming, comments, code readability
+- **Security**: Input validation, sensitive data, authentication
+- **Maintainability**: Code complexity, duplication, documentation
+- **Workflow Specific**: Branch protection, agent attribution
 
-## 📁 File Structure
+### 4. **Comprehensive Monitoring**
+- Real-time effectiveness dashboard
+- Historical performance tracking
+- Category-level analytics
+- Transparent learning reports
+
+## 📁 System Architecture
 
 ```
 .github/review-system/
-├── criteria.json              # The evolving review criteria
-├── autonomous_reviewer.py     # Core reviewer logic
-├── reviews/                   # Stored review results
-│   ├── pr-123-1234567890.json
-│   ├── pr-124-1234567891.json
-│   └── ...
-└── README.md                  # This file
+├── autonomous_reviewer.py       # Core review engine
+├── learn_from_outcomes.py      # Learning algorithm
+├── generate_dashboard.py       # Dashboard generator
+├── criteria.json               # Review criteria (evolving)
+└── reviews/                    # Stored review results
+    └── pr-{number}-{timestamp}.json
 ```
 
-## 📊 Criteria Categories
+## 🚀 How It Works
 
-The autonomous reviewer evaluates PRs across multiple categories:
+### Review Cycle
 
-### 1. **Correctness** (Weight: 1.0)
-- Error handling present
-- Null/undefined checks
-- Boundary conditions handled
-- Tests present
-
-### 2. **Clarity** (Weight: 0.8)
-- Meaningful variable names
-- Reasonable function size
-- Complex logic explained
-- Reasonable nesting depth
-
-### 3. **Security** (Weight: 1.2) ⚡ High Priority
-- No hardcoded secrets
-- Input validation present
-- No SQL injection risks
-
-### 4. **Maintainability** (Weight: 0.7)
-- No obvious duplication (DRY)
-- Single responsibility principle
-- Public APIs documented
-
-### 5. **Workflow-Specific** (Weight: 1.0)
-- Actions pinned to SHA
-- Minimal permissions granted
-- Error handling in workflows
-- Concurrency controls
-
-## 🧠 Learning Mechanism
-
-### How It Learns
-
-1. **Data Collection**: Every review is stored with its results
-2. **Outcome Tracking**: PR merges/rejections are tracked
-3. **Effectiveness Calculation**: Each criterion's correlation with good outcomes is measured
-4. **Criteria Adjustment**: Weights and thresholds are adjusted based on effectiveness
-
-### Evolution Parameters
-
-```json
-{
-  "min_reviews_before_adjustment": 10,
-  "effectiveness_window": 30,
-  "weight_adjustment_rate": 0.1,
-  "threshold_adjustment_rate": 0.05,
-  "criteria_removal_threshold": 0.3,
-  "criteria_promotion_threshold": 0.85
-}
+```
+1. PR Created/Updated
+   ↓
+2. Workflow Triggered (autonomous-code-reviewer.yml)
+   ↓
+3. Fetch Changed Files
+   ↓
+4. Run Autonomous Reviewer
+   - Load current criteria
+   - Analyze each file
+   - Calculate category scores
+   - Generate overall score
+   ↓
+5. Post Review Comment
+   - Overall score & label suggestion
+   - Category breakdown
+   - Issue details
+   ↓
+6. Store Review Results
+   - Save to reviews/ directory
+   - Track for future learning
 ```
 
-### Adaptation Strategy
+### Learning Cycle
 
-- **Effective criteria** (>85% correlation): Increase weight, stricter threshold
-- **Neutral criteria** (30-85% correlation): Maintain current settings
-- **Ineffective criteria** (<30% correlation): Decrease weight, lenient threshold
+```
+1. Daily Schedule / Manual Trigger
+   ↓
+2. Workflow Triggered (review-criteria-learning.yml)
+   ↓
+3. Fetch Closed PRs (last 30 days)
+   ↓
+4. Load Review Results
+   ↓
+5. Match Reviews with Outcomes
+   - Merged PRs = success
+   - Rejected PRs = failure
+   ↓
+6. Calculate Effectiveness
+   - Per-category correlation
+   - Overall score correlation
+   - Success rate analysis
+   ↓
+7. Evolve Criteria
+   - Adjust weights based on effectiveness
+   - Update metadata
+   - Record in history
+   ↓
+8. Create PR with Changes
+   - Automated PR with learning report
+   - Human oversight
+   - Merge to apply evolution
+```
 
-## 🚀 Usage
+## 📊 Effectiveness Metrics
 
-### Automatic Review
+### Category Effectiveness
+Measures how well a category's score predicts PR success:
 
-The system automatically reviews all PRs when:
-- PR is opened
-- New commits are pushed
-- PR is reopened
+```
+Effectiveness = Avg(Merged Scores) - Avg(Rejected Scores)
 
-No configuration needed—it just works!
+> 0.1   = Effective (increase weight)
+< -0.1  = Ineffective (decrease weight)
+-0.1 to 0.1 = Neutral (no change)
+```
 
-### Manual Trigger
+### Overall Correlation
+Measures if higher scores correlate with merged PRs:
 
-To manually trigger learning from recent outcomes:
+```
+Correlation = Avg(All Merged Scores) - Avg(All Rejected Scores)
 
+Positive = Review scores predict success
+Negative = Review scores inversely predict success
+```
+
+### Weight Adjustment
+Criteria weights evolve based on effectiveness:
+
+```
+New Weight = Current Weight + (Learning Rate × Effectiveness)
+
+Min Weight: 0.1
+Max Weight: 2.0
+Default Learning Rate: 0.1
+```
+
+## 🛠️ Usage
+
+### Manual Review
 ```bash
-gh workflow run review-criteria-learning.yml
-```
-
-### Check Current Criteria
-
-```bash
-jq . .github/review-system/criteria.json
-```
-
-### View Learning History
-
-```bash
-jq '.history | .[-5:]' .github/review-system/criteria.json
-```
-
-## 📈 Metrics Tracked
-
-- **Total Reviews**: Cumulative count of all reviews performed
-- **Success Rate**: Percentage of reviews where PR was successfully merged
-- **Category Weights**: Dynamic weights for each criteria category
-- **Check Effectiveness**: Per-check effectiveness scores
-- **Historical Effectiveness**: Trend data for criteria evolution
-
-## 🎯 Goals & Success Criteria
-
-### Short-term Goals (30 days)
-- [ ] Review 50+ PRs
-- [ ] Achieve 70% success rate correlation
-- [ ] Identify top 3 most effective criteria
-- [ ] Remove or adjust ineffective criteria
-
-### Long-term Goals (90 days)
-- [ ] Review 200+ PRs
-- [ ] Achieve 80% success rate correlation
-- [ ] Fully automated criteria evolution
-- [ ] Integration with agent performance metrics
-
-## 🔧 Configuration
-
-### Adding New Criteria
-
-Edit `criteria.json` and add new checks:
-
-```json
-{
-  "id": "new_check",
-  "name": "New Check Name",
-  "weight": 0.3,
-  "patterns": ["regex_pattern"],
-  "effectiveness": 0.5,
-  "times_applied": 0
-}
-```
-
-### Adjusting Learning Rate
-
-Modify the category's `learning_rate`:
-
-```json
-{
-  "category_name": {
-    "learning_rate": 0.1  // 0.0 = no learning, 1.0 = instant adaptation
-  }
-}
-```
-
-### Changing Evolution Parameters
-
-Edit `evolution_config` in `criteria.json`:
-
-```json
-{
-  "evolution_config": {
-    "min_reviews_before_adjustment": 10,  // Wait for N reviews
-    "weight_adjustment_rate": 0.1         // Adjustment magnitude
-  }
-}
-```
-
-## 🧪 Testing
-
-### Test on Sample PR
-
-```bash
-python3 .github/review-system/autonomous_reviewer.py \
+# Review a PR
+python3 .github/review-system/autonomous_reviewer.py review \
   --pr-number 123 \
-  --comment
+  --output review_result.json
+
+# Review specific files
+python3 .github/review-system/autonomous_reviewer.py review \
+  --files '["file1.py", "file2.js"]' \
+  --output review_result.json
+
+# Check current criteria status
+python3 .github/review-system/autonomous_reviewer.py status
 ```
 
-### Simulate Learning
-
+### Manual Learning
 ```bash
-# Manually record an outcome
-python3 << 'EOF'
-import json
-from autonomous_reviewer import AutonomousReviewer
-
-reviewer = AutonomousReviewer()
-reviewer.learn_from_outcome('test-pr-001', {
-    'merged': True,
-    'major_changes_required': False
-})
-EOF
+# Run learning analysis
+python3 .github/review-system/learn_from_outcomes.py \
+  --repo enufacas/Chained \
+  --days 30 \
+  --learning-rate 0.1 \
+  --output-report learning_report.md
 ```
 
-## 📊 Performance Dashboard
-
-View current performance:
-
+### Generate Dashboard
 ```bash
-python3 << 'EOF'
-import json
-
-with open('.github/review-system/criteria.json') as f:
-    criteria = json.load(f)
-
-print(f"Total Reviews: {criteria['metadata']['total_reviews']}")
-print(f"Success Rate: {criteria['metadata']['success_rate']:.1%}")
-
-for name, cat in criteria['criteria'].items():
-    print(f"\n{name}:")
-    print(f"  Weight: {cat['weight']:.2f}")
-    print(f"  Threshold: {cat['threshold']:.0%}")
-    print(f"  Evaluated: {cat.get('times_evaluated', 0)} times")
-EOF
+# Generate effectiveness dashboard
+python3 .github/review-system/generate_dashboard.py \
+  --criteria .github/review-system/criteria.json \
+  --output docs/reviewer-dashboard.html
 ```
 
-## 🤝 Integration with Agent System
+## 📈 Dashboard
 
-This autonomous reviewer integrates with the broader Chained agent ecosystem:
+View the live effectiveness dashboard:
+- **Local**: `docs/reviewer-dashboard.html`
+- **GitHub Pages**: https://enufacas.github.io/Chained/reviewer-dashboard.html
 
-- **Metrics Collection**: Review outcomes feed into agent performance metrics
-- **Learning Feedback**: Successful patterns influence agent specializations
-- **Coordination**: Works alongside other quality agents (@assert-specialist, @coach-master)
-- **Evolution**: Criteria evolution mirrors agent evolution mechanisms
+The dashboard displays:
+- Overall performance metrics
+- Category effectiveness scores
+- Weight evolution over time
+- Historical learning data
 
-## 🔮 Future Enhancements
+## ⚙️ Configuration
 
-- [ ] **ML-based Pattern Recognition**: Train models on historical data
-- [ ] **Context-Aware Reviews**: Adapt criteria based on file types and project areas
-- [ ] **Collaborative Learning**: Learn from multiple repositories
-- [ ] **Predictive Scoring**: Estimate PR merge probability before review
-- [ ] **Natural Language Explanations**: Generate human-friendly explanations
-- [ ] **A/B Testing**: Test criteria variations to optimize effectiveness
+### Criteria File Structure
 
-## 📚 Resources
-
-- **CODE_REVIEW_CHECKLIST.md**: Human-oriented review checklist
-- **AUTONOMOUS_SYSTEM_ARCHITECTURE.md**: Overall system design
-- **Agent Evaluator**: Similar learning system for agent performance
-
-## 🐛 Troubleshooting
-
-### Reviews Not Running
-
-Check workflow permissions:
-```yaml
-permissions:
-  pull-requests: write  # Required to comment
-  contents: read        # Required to read files
+```json
+{
+  "version": "1.0",
+  "last_updated": "2025-01-01T00:00:00Z",
+  "metadata": {
+    "total_reviews": 50,
+    "success_rate": 0.72
+  },
+  "evolution_config": {
+    "learning_rate": 0.1,
+    "min_reviews_before_adjustment": 10,
+    "max_weight": 2.0,
+    "min_weight": 0.1
+  },
+  "criteria": {
+    "correctness": {
+      "weight": 1.2,
+      "threshold": 0.6,
+      "checks": [...]
+    }
+  },
+  "effectiveness_history": [...]
+}
 ```
 
-### Criteria Not Evolving
+### Adjustable Parameters
 
-Ensure enough reviews have occurred:
-```bash
-jq '.metadata.total_reviews' .github/review-system/criteria.json
+**In criteria.json:**
+- `learning_rate`: How quickly to adapt (0.1 = 10% adjustment)
+- `min_reviews_before_adjustment`: Minimum data before evolving
+- `max_weight`: Maximum category weight
+- `min_weight`: Minimum category weight
+
+**Per Category:**
+- `weight`: Importance multiplier (0.1 - 2.0)
+- `threshold`: Minimum score to pass (0.0 - 1.0)
+
+## 🔄 Workflows
+
+### 1. `autonomous-code-reviewer.yml`
+**Trigger**: PR opened, synchronized, reopened
+**Purpose**: Review PRs automatically
+**Actions**:
+- Fetch changed files
+- Run autonomous review
+- Post review comment
+- Add quality label
+- Store results
+
+### 2. `review-criteria-learning.yml`
+**Trigger**: Daily schedule + manual
+**Purpose**: Learn from outcomes and evolve criteria
+**Actions**:
+- Fetch closed PRs
+- Load review results
+- Calculate effectiveness
+- Adjust criteria weights
+- Create evolution PR
+
+### 3. `generate-reviewer-dashboard.yml`
+**Trigger**: Criteria changes, daily schedule
+**Purpose**: Update effectiveness dashboard
+**Actions**:
+- Generate HTML dashboard
+- Commit to docs/
+- Create PR if changed
+
+## 📖 Review Comment Format
+
+```markdown
+## 🤖 Autonomous Code Review
+
+✅ **Code Quality Good** / ⚠️ **Code Needs Improvement**
+
+**Overall Score:** 72.5% ✅
+
+### Category Scores
+
+- **Correctness**: 80% `████████░░`
+- **Clarity**: 70% `███████░░░`
+- **Security**: 65% `██████░░░░`
+- **Maintainability**: 75% `███████░░░`
+- **Workflow Specific**: 73% `███████░░░`
+
+### ⚠️ Issues Found
+
+- **Issue Type** (category)
+  - Details about the issue
+  - Impact and recommendation
+
+### 💡 Recommendations
+
+- Specific suggestions for improvement
+- Best practices to follow
+
+### 📊 Review Metadata
+
+- Score: 72.5%
+- Suggested Label: `quality:approved`
+- Review ID: `pr-123-20250120-120000`
 ```
 
-Minimum required: 10 reviews (configurable)
+## 🎓 Learning Examples
 
-### Low Success Rate
+### Example 1: Effective Security Category
 
-This is expected initially! The system needs time to learn. Success rate should improve over 20-30 reviews.
+**Scenario**: Security checks consistently score higher in merged PRs
 
-## 🙏 Credits
+**Data**:
+- Merged PRs: Avg security score = 78%
+- Rejected PRs: Avg security score = 45%
+- Effectiveness = +0.33
 
-**Created by**: @workflows-tech-lead  
-**Inspired by**: Agent evaluation system, adaptive thresholds, evolutionary algorithms  
-**Philosophy**: "The best reviewer is one that learns from experience"
+**Result**: Security weight increased from 1.0 → 1.03
+
+### Example 2: Ineffective Clarity Category
+
+**Scenario**: Clarity scores don't correlate with outcomes
+
+**Data**:
+- Merged PRs: Avg clarity score = 65%
+- Rejected PRs: Avg clarity score = 63%
+- Effectiveness = +0.02 (neutral)
+
+**Result**: Clarity weight unchanged at 1.0
+
+### Example 3: Strong Overall Correlation
+
+**Data**:
+- Merged PRs: Avg overall score = 72%
+- Rejected PRs: Avg overall score = 48%
+- Correlation = +0.24
+
+**Interpretation**: Review scores effectively predict success
+
+## 🔬 Technical Details
+
+### Review Algorithm
+
+1. **File Analysis**: Parse each changed file
+2. **Check Execution**: Run category-specific checks
+3. **Score Calculation**: Weighted average of categories
+4. **Threshold Evaluation**: Compare against category thresholds
+5. **Label Suggestion**: Map score to quality label
+
+### Learning Algorithm
+
+1. **Data Collection**: Match reviews with PR outcomes
+2. **Correlation Analysis**: Calculate per-category effectiveness
+3. **Weight Adjustment**: Apply learning rate to effective categories
+4. **History Tracking**: Record evolution for transparency
+5. **PR Generation**: Automated PR with learning report
+
+### Scoring Formula
+
+```
+Category Score = (Positive Matches / Total Checks)
+
+Overall Score = Σ(Category Score × Category Weight) / Σ(Category Weights)
+
+Label Mapping:
+  > 70% → quality:approved
+  50-70% → quality:review-needed
+  < 50% → quality:needs-work
+```
+
+## 🚧 Future Enhancements
+
+Potential improvements:
+- [ ] ML model for check weighting
+- [ ] Custom checks per language
+- [ ] Integration with static analysis tools
+- [ ] A/B testing different criteria
+- [ ] Team-specific criteria profiles
+- [ ] Real-time learning dashboard
+- [ ] Predictive PR success scoring
+- [ ] Natural language check descriptions
+
+## 🤝 Contributing
+
+To add new review checks:
+
+1. Edit `.github/review-system/criteria.json`
+2. Add check to appropriate category:
+```json
+{
+  "name": "Check Name",
+  "description": "What this checks for",
+  "positive_patterns": ["regex1", "regex2"],
+  "negative_patterns": ["anti-pattern"],
+  "weight": 1.0,
+  "effectiveness": 0.0
+}
+```
+3. Let the system learn its effectiveness over time
+
+## 📝 License
+
+Part of the Chained autonomous AI ecosystem.
+Created by **@workflows-tech-lead**.
+
+## 🙏 Acknowledgments
+
+Built on principles of:
+- Continuous improvement
+- Data-driven decision making
+- Transparent automation
+- Human-in-the-loop validation
 
 ---
 
-*🤖 This autonomous reviewer embodies the Chained principle: **everything should improve itself over time**.*
+*🤖 Self-improving since 2025 - Powered by @workflows-tech-lead*
