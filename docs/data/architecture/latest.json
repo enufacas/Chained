@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-20T01:58:15.511916",
-  "commit": "325cce90a0018a22a7ef2a0138960eb2ec261e00",
+  "timestamp": "2025-11-20T12:53:26.547840",
+  "commit": "cdeecdbee50faa4e401f3513c9cd429d135a7916",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 300,
-        "line_count": 122949,
+        "file_count": 303,
+        "line_count": 123795,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 602,
-        "line_count": 198554,
+        "file_count": 626,
+        "line_count": 204998,
         "files": [
           ".nojekyll",
           "AB_TESTING_BUG_REPORT.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 67,
-        "line_count": 4696280,
+        "file_count": 74,
+        "line_count": 4698779,
         "files": [
           "2025-11-14-04-00-27.json",
           "2025-11-14-04-00-36.json",
@@ -148,12 +148,17 @@
           "benchmark_results.json",
           "clustering_results.json",
           "commit_patterns.json",
+          "commit_strategy_investigation.md",
           "commit_strategy_report.md",
+          "commit_strategy_summary.md",
           "dependency-analysis-summary.md",
           "dependency-flow-report.json",
           "design-decisions-report.md",
           "discovered_patterns.json",
+          "diversity-alert-false-positive-response.md",
           "diversity-alert-investigation.md",
+          "diversity-alert-issue-investigation.md",
+          "diversity-alert-resolution-summary.md",
           "diversity-alert-resolution.md",
           "diversity-false-positive-investigation.md",
           "diversity-suggestions.md",
@@ -161,6 +166,7 @@
           "evolution.json",
           "hypothesis_results.json",
           "integrated-archaeology-report.md",
+          "issue-closure-recommendation.md",
           "issue-resolution-comment.md",
           "issue-resolution-summary.md",
           "latest.json",
@@ -172,18 +178,12 @@
           "merge_20251119_014636.json",
           "merge_20251119_014937.json",
           "pattern-analysis-report.json",
-          "pattern-diversity.json",
-          "patterns.json",
-          "repetition-report.json",
-          "snapshot_2025-11-12T06-42-24.json",
-          "snapshot_2025-11-12T06-42-25.json",
-          "snapshot_2025-11-12T06-42-50.json",
-          "snapshot_2025-11-12T06-44-23.json"
+          "pattern-diversity.json"
         ]
       },
       "learnings": {
-        "file_count": 277,
-        "line_count": 136431,
+        "file_count": 294,
+        "line_count": 151092,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -233,14 +233,14 @@
           "analysis_20251119_001931.json",
           "analysis_20251119_092426.json",
           "analysis_20251119_211631.json",
-          "anthropic_innovation_research_idea40.md",
-          "api_innovation_investigation_20251116.json"
+          "analysis_20251120_092249.json",
+          "anthropic_innovation_research_idea40.md"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 1246,
-    "total_lines": 5154214
+    "total_files": 1297,
+    "total_lines": 5178664
   },
   "dependencies": {
     "internal_imports": {
@@ -345,6 +345,7 @@
       "generate-agent-personality.py": [],
       "update_last_spawn.py": [],
       "inspect-issue-assignment.py": [],
+      "extract_workflow_data.py": [],
       "list_agents_from_registry.py": [],
       "fetch-github-copilot.py": [],
       "intelligent-content-parser.py": [],
@@ -354,9 +355,11 @@
       "agent_memory.py": [],
       "code-golf-optimizer.py": [],
       "knowledge_graph_query.py": [],
+      "generate_workflow_html.py": [],
       "issue-discussion-learner.py": [],
       "agent_memory_system_poc.py": [],
       "assign-mentor.py": [],
+      "analyze_workflows.py": [],
       "evaluate-mentorship.py": [],
       "hierarchical_agent_system.py": [],
       "cross-repo-analyzer.py": [],
@@ -395,15 +398,15 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 90,
+      "os": 92,
       "sys": 117,
       "json": 134,
-      "re": 62,
+      "re": 64,
       "ast": 17,
-      "datetime": 98,
-      "pathlib": 123,
+      "datetime": 101,
+      "pathlib": 125,
       "typing": 113,
-      "collections": 55,
+      "collections": 58,
       "functools": 9,
       "argparse": 103,
       "math": 7,
@@ -418,7 +421,7 @@
       "github_integration": 4,
       "ab_testing_engine": 4,
       "ab_testing_advanced": 2,
-      "yaml": 16,
+      "yaml": 19,
       "subprocess": 23,
       "hashlib": 15,
       "traceback": 11,
@@ -472,8 +475,8 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1246,
-    "total_lines": 5154214,
+    "total_files": 1297,
+    "total_lines": 5178664,
     "total_dependencies": 0,
     "external_libraries": 72,
     "coupling_score": 0.0,
@@ -482,7 +485,7 @@
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 136431,
+      "line_count": 151092,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -508,7 +511,7 @@
     },
     "agent_system": {
       "file_count": 2,
-      "line_count": 140186,
+      "line_count": 126994,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json"
@@ -516,7 +519,7 @@
     },
     "analysis_tools": {
       "file_count": 48,
-      "line_count": 4696280,
+      "line_count": 4698779,
       "files": [
         "2025-11-14-04-00-27.json",
         "2025-11-14-04-00-36.json",
@@ -536,13 +539,13 @@
         "benchmark_results.json",
         "clustering_results.json",
         "commit_patterns.json",
-        "commit_strategy_report.md",
-        "dependency-analysis-summary.md"
+        "commit_strategy_investigation.md",
+        "commit_strategy_report.md"
       ]
     },
     "documentation": {
       "file_count": 49,
-      "line_count": 198554,
+      "line_count": 204998,
       "files": [
         ".nojekyll",
         "AB_TESTING_BUG_REPORT.md",
@@ -568,14 +571,14 @@
     },
     "testing": {
       "file_count": 1,
-      "line_count": 70093,
+      "line_count": 63497,
       "files": [
         "latest_report.md"
       ]
     },
     "tools": {
       "file_count": 50,
-      "line_count": 122949,
+      "line_count": 123795,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
