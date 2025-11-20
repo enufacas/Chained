@@ -1,12 +1,8 @@
-name: "Autonomous Code Reviewer"
+name: Autonomous Code Reviewer
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - 'LICENSE'
 
 permissions:
   contents: read
@@ -16,212 +12,126 @@ permissions:
 jobs:
   review:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for better analysis
+          fetch-depth: 0
 
-      - name: Fetch PR details
-        id: pr_details
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Fetching PR #${{ github.event.pull_request.number }} details..."
-          
-          # Get list of changed files
-          gh pr view ${{ github.event.pull_request.number }} --json files --jq '.files[].path' > /tmp/changed_files.txt
-          
-          echo "Changed files:"
-          cat /tmp/changed_files.txt
-          
-          # Count files
-          file_count=$(wc -l < /tmp/changed_files.txt)
-          echo "file_count=$file_count" >> $GITHUB_OUTPUT
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-      - name: Download changed files
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get changed files
+        id: changed-files
         run: |
-          echo "Downloading file contents for analysis..."
-          mkdir -p /tmp/pr_files
-          
-          # Read each changed file
-          while IFS= read -r file; do
-            if [ -f "$file" ]; then
-              # Copy file to temp directory with same structure
-              mkdir -p "/tmp/pr_files/$(dirname "$file")"
-              cp "$file" "/tmp/pr_files/$file"
-              echo "Copied: $file"
-            fi
-          done < /tmp/changed_files.txt
+          git fetch origin ${{ github.base_ref }}
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | jq -R -s -c 'split("\n")[:-1]')
+          echo "files=${CHANGED_FILES}" >> $GITHUB_OUTPUT
+          echo "Changed files: ${CHANGED_FILES}"
 
       - name: Run autonomous review
         id: review
         run: |
-          echo "🤖 Running autonomous code review..."
+          cd .github/review-system
           
-          python3 << 'PYTHON_SCRIPT'
-          import json
-          import os
-          import sys
-          from pathlib import Path
+          # Run the reviewer
+          python3 autonomous_reviewer.py review \
+            --files '${{ steps.changed-files.outputs.files }}' \
+            --pr-number ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }}
           
-          # Import the reviewer
-          sys.path.insert(0, '.github/review-system')
-          from autonomous_reviewer import AutonomousReviewer
-          
-          # Initialize reviewer
-          reviewer = AutonomousReviewer()
-          
-          # Read changed files list
-          with open('/tmp/changed_files.txt', 'r') as f:
-              file_paths = [line.strip() for line in f if line.strip()]
-          
-          # Read file contents
-          file_contents = {}
-          for file_path in file_paths:
-              temp_file = Path(f'/tmp/pr_files/{file_path}')
-              if temp_file.exists():
-                  try:
-                      with open(temp_file, 'r', encoding='utf-8') as f:
-                          file_contents[file_path] = f.read()
-                  except Exception as e:
-                      print(f"Warning: Could not read {file_path}: {e}")
-          
-          # Perform review
-          results = reviewer.evaluate_pr_files(file_paths, file_contents)
-          
-          # Save results
-          with open('/tmp/review_results.json', 'w') as f:
-              json.dump(results, f, indent=2)
-          
-          # Generate comment
-          comment = reviewer.generate_review_comment(results)
-          with open('/tmp/review_comment.md', 'w') as f:
-              f.write(comment)
-          
-          # Save updated criteria
-          reviewer._save_criteria()
-          
-          # Output score for workflow decision
-          overall_score = results['overall_score']
-          print(f"Overall Score: {overall_score:.2%}")
-          
-          # Set outputs
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-              f.write(f"score={overall_score}\n")
-              f.write(f"passed={'true' if overall_score >= 0.6 else 'false'}\n")
-          
-          PYTHON_SCRIPT
+          # Store results
+          if [ -f review_result.json ]; then
+            SCORE=$(jq -r '.overall_score' review_result.json)
+            COMMENT=$(jq -r '.comment' review_result.json)
+            LABEL=$(jq -r '.suggested_label' review_result.json)
+            
+            echo "score=${SCORE}" >> $GITHUB_OUTPUT
+            echo "label=${LABEL}" >> $GITHUB_OUTPUT
+            echo "comment<<EOF" >> $GITHUB_OUTPUT
+            echo "${COMMENT}" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
 
       - name: Post review comment
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.review.outputs.comment != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = `${{ steps.review.outputs.comment }}`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
+
+      - name: Add quality label
+        if: steps.review.outputs.label != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const label = '${{ steps.review.outputs.label }}';
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: [label]
+            });
+
+      - name: Store review results
         run: |
-          if [ -f /tmp/review_comment.md ]; then
-            echo "📝 Posting review comment..."
-            gh pr comment ${{ github.event.pull_request.number }} --body-file /tmp/review_comment.md
-          fi
-
-      - name: Update review status
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          score="${{ steps.review.outputs.score }}"
-          
-          if (( $(echo "$score >= 0.8" | bc -l) )); then
-            status="✅ Excellent code quality"
-            label="quality: excellent"
-          elif (( $(echo "$score >= 0.6" | bc -l) )); then
-            status="👍 Good code quality"
-            label="quality: good"
-          elif (( $(echo "$score >= 0.4" | bc -l) )); then
-            status="⚠️ Needs improvement"
-            label="quality: needs-improvement"
-          else
-            status="❌ Significant issues"
-            label="quality: issues"
-          fi
-          
-          echo "$status (Score: $score)"
-          
-          # Add label (create if doesn't exist)
-          gh pr edit ${{ github.event.pull_request.number }} --add-label "$label" 2>/dev/null || true
-
-      - name: Commit updated criteria
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Check if criteria file changed
-          if git diff --quiet .github/review-system/criteria.json; then
-            echo "No criteria updates needed"
-          else
-            echo "📊 Criteria evolved based on this review"
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            
-            # Create unique branch name
-            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-            BRANCH_NAME="review-criteria-update/${TIMESTAMP}-${{ github.run_id }}"
-            
-            git checkout -b "$BRANCH_NAME"
-            git add .github/review-system/criteria.json
-            
-            total_reviews=$(jq -r '.metadata.total_reviews' .github/review-system/criteria.json)
-            success_rate=$(jq -r '.metadata.success_rate' .github/review-system/criteria.json)
-            
-            git commit -m "chore: update autonomous review criteria (@workflows-tech-lead)
-
-Criteria evolved based on PR #${{ github.event.pull_request.number }} review.
-
-- Total reviews: ${total_reviews}
-- Success rate: ${success_rate}
-
-Reviewed by @workflows-tech-lead
-
----
-*🤖 Created by workflow: [autonomous-code-reviewer.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - @workflows-tech-lead*"
-            
-            # Push to new branch
-            git push origin "$BRANCH_NAME"
-            
-            # Create PR for criteria update
-            gh pr create \
-              --title "🤖 Autonomous reviewer criteria update (@workflows-tech-lead)" \
-              --body "Criteria evolved based on PR #${{ github.event.pull_request.number }} review.
-
-## Stats
-
-- **Total reviews**: ${total_reviews}
-- **Success rate**: ${success_rate}
-
-The autonomous reviewer has adjusted its criteria based on observed outcomes.
-
----
-*🤖 Created by workflow: [autonomous-code-reviewer.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - @workflows-tech-lead*" \
-              --label "automated" \
-              --label "agent-system" \
-              --base main \
-              --head "$BRANCH_NAME" || echo "Could not create criteria update PR"
-          fi
-
-      - name: Store review data
-        if: always()
-        run: |
-          # Store review results for later learning
           mkdir -p .github/review-system/reviews
-          
-          review_id="pr-${{ github.event.pull_request.number }}-$(date +%s)"
-          
-          if [ -f /tmp/review_results.json ]; then
-            cp /tmp/review_results.json ".github/review-system/reviews/${review_id}.json"
-            echo "Stored review: ${review_id}"
+          if [ -f .github/review-system/review_result.json ]; then
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            cp .github/review-system/review_result.json \
+               .github/review-system/reviews/pr-${{ github.event.pull_request.number }}-${TIMESTAMP}.json
           fi
 
----
-
-*🤖 Created by workflow: [autonomous-code-reviewer.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - @workflows-tech-lead*
+      - name: Create PR for criteria update if needed
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd .github/review-system
+          
+          # Check if criteria was updated
+          if git diff --quiet criteria.json; then
+            echo "No criteria changes to commit"
+            exit 0
+          fi
+          
+          # Create branch
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          RUN_ID="${{ github.run_id }}"
+          BRANCH_NAME="criteria-evolution/${TIMESTAMP}-${RUN_ID}"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "${BRANCH_NAME}"
+          
+          git add criteria.json
+          
+          total_reviews=$(jq -r '.metadata.total_reviews' criteria.json)
+          success_rate=$(jq -r '.metadata.success_rate' criteria.json)
+          
+          git commit -m "chore: update autonomous review criteria (@workflows-tech-lead)" \
+            -m "" \
+            -m "Criteria evolved based on PR review." \
+            -m "" \
+            -m "- Total reviews: ${total_reviews}" \
+            -m "- Success rate: ${success_rate}" \
+            -m "" \
+            -m "Reviewed by @workflows-tech-lead"
+          
+          git push origin "${BRANCH_NAME}"
+          
+          gh pr create \
+            --title "chore: autonomous reviewer criteria evolution" \
+            --body "Automated criteria update by autonomous reviewer system." \
+            --label "automated,copilot" \
+            --base main \
+            --head "${BRANCH_NAME}"
