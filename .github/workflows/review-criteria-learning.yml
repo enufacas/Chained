@@ -81,10 +81,14 @@ jobs:
           # Read learning report
           REPORT=$(cat /tmp/learning_report.md)
           
+          # Build footer
+          WORKFLOW_LINK="[${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          FOOTER=$'\n\n'"---"$'\n\n'"*Created by workflow: ${WORKFLOW_LINK}*"
+          
           # Create PR with learning report
           gh pr create \
             --title "feat: autonomous reviewer criteria evolution (@workflows-tech-lead)" \
-            --body "${REPORT}"$'\n\n'"---"$'\n\n'"*Created by workflow: [review-criteria-learning.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+            --body "${REPORT}${FOOTER}" \
             --label "automated,copilot" \
             --base main \
             --head "${BRANCH_NAME}"

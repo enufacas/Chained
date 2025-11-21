@@ -71,10 +71,20 @@ class WorkflowValidator:
             except yaml.YAMLError as e:
                 error_msg = f"YAML syntax error in {filepath.name}: {e}"
                 # Add helpful context for common errors
-                if "expected a single document" in str(e):
-                    error_msg += "\n  💡 Tip: '---' inside strings causes document separation. Use bash string concatenation: \"text\"$'\\n\\n'\"---\"$'\\n\\n'\"more text\""
-                elif "could not find expected ':'" in str(e):
-                    error_msg += "\n  💡 Tip: Check for unclosed quotes in multi-line strings. Use bash concatenation instead."
+                error_str = str(e)
+                if "expected a single document" in error_str:
+                    tip = (
+                        "\n  💡 Tip: '---' inside strings causes document separation. "
+                        "Use bash string concatenation:\n"
+                        '     --body "text"$\'\\n\\n\'"---"$\'\\n\\n\'"more text"'
+                    )
+                    error_msg += tip
+                elif "could not find expected ':'" in error_str:
+                    tip = (
+                        "\n  💡 Tip: Check for unclosed quotes in multi-line strings. "
+                        "Use bash concatenation instead."
+                    )
+                    error_msg += tip
                 self.errors.append(error_msg)
                 return False
             
@@ -293,23 +303,21 @@ class WorkflowValidator:
                 for expr in expressions:
                     expr = expr.strip()
                     
-                    # Check for missing commas in concatenation
-                    # This is a heuristic - check if there are multiple github.* without operators
-                    github_refs = re.findall(r'github\.\w+', expr)
-                    if len(github_refs) > 1:
-                        # Check if there's an operator between them
-                        for i in range(len(github_refs) - 1):
-                            ref1 = github_refs[i]
-                            ref2 = github_refs[i + 1]
-                            # Check if they appear consecutively without operator
-                            pattern = rf'{re.escape(ref1)}\s*{re.escape(ref2)}'
-                            if re.search(pattern, expr):
+                    # Check for potentially invalid concatenation patterns
+                    # This is a heuristic to catch cases like: github.server_url, github.repository
+                    # which might be missing an operator
+                    if ',' in expr and 'github.' in expr:
+                        # Split by comma and check if consecutive parts look like bare references
+                        parts = [p.strip() for p in expr.split(',')]
+                        for i, part in enumerate(parts):
+                            # If a part is just a github.* reference with nothing else, warn
+                            if re.match(r'^github\.\w+$', part):
                                 self.warnings.append(
-                                    f"{filename}:{line_num}: Possible missing operator in GitHub expression"
+                                    f"{filename}:{line_num}: Possible invalid GitHub expression syntax"
                                     f"\n  Found: {line.strip()}"
-                                    f"\n  💡 Tip: Use proper string concatenation or operators between github.* references"
+                                    f"\n  💡 Tip: Comma inside ${{{{ }}}} might indicate a typo. "
+                                    f"Check if you meant to concatenate strings properly."
                                 )
-                                break
     
     def validate_directory(self, dirpath: Path) -> Tuple[int, int]:
         """
