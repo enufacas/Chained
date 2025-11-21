@@ -69,7 +69,13 @@ class WorkflowValidator:
             try:
                 workflow = yaml.safe_load(content)
             except yaml.YAMLError as e:
-                self.errors.append(f"YAML syntax error in {filepath.name}: {e}")
+                error_msg = f"YAML syntax error in {filepath.name}: {e}"
+                # Add helpful context for common errors
+                if "expected a single document" in str(e):
+                    error_msg += "\n  💡 Tip: '---' inside strings causes document separation. Use bash string concatenation: \"text\"$'\\n\\n'\"---\"$'\\n\\n'\"more text\""
+                elif "could not find expected ':'" in str(e):
+                    error_msg += "\n  💡 Tip: Check for unclosed quotes in multi-line strings. Use bash concatenation instead."
+                self.errors.append(error_msg)
                 return False
             
             # Validate workflow structure
@@ -88,6 +94,9 @@ class WorkflowValidator:
             
             # Check for script path triggers
             self._check_script_path_triggers(workflow, content, filepath.name)
+            
+            # Check for GitHub expression syntax issues
+            self._check_github_expressions(content, filepath.name)
             
             return len(self.errors) == 0
             
@@ -257,6 +266,50 @@ class WorkflowValidator:
                 "".join(f"          - '{script}'\n" for script in scripts[:3]) +
                 (f"          # ... and {len(scripts) - 3} more\n" if len(scripts) > 3 else "")
             )
+    
+    def _check_github_expressions(self, content: str, filename: str) -> None:
+        """Check for common GitHub expression syntax issues."""
+        lines = content.split('\n')
+        
+        for line_num, line in enumerate(lines, start=1):
+            # Check for unclosed expression braces
+            if '${{' in line:
+                # Count opening and closing braces
+                open_count = line.count('${{')
+                close_count = line.count('}}')
+                
+                if open_count != close_count:
+                    self.warnings.append(
+                        f"{filename}:{line_num}: Possible unclosed GitHub expression"
+                        f"\n  Found: {line.strip()}"
+                        f"\n  💡 Ensure all ${{{{ }}}} expressions are properly closed"
+                    )
+                
+                # Check for common syntax issues in expressions
+                # Extract expressions
+                expr_pattern = r'\$\{\{([^}]+)\}\}'
+                expressions = re.findall(expr_pattern, line)
+                
+                for expr in expressions:
+                    expr = expr.strip()
+                    
+                    # Check for missing commas in concatenation
+                    # This is a heuristic - check if there are multiple github.* without operators
+                    github_refs = re.findall(r'github\.\w+', expr)
+                    if len(github_refs) > 1:
+                        # Check if there's an operator between them
+                        for i in range(len(github_refs) - 1):
+                            ref1 = github_refs[i]
+                            ref2 = github_refs[i + 1]
+                            # Check if they appear consecutively without operator
+                            pattern = rf'{re.escape(ref1)}\s*{re.escape(ref2)}'
+                            if re.search(pattern, expr):
+                                self.warnings.append(
+                                    f"{filename}:{line_num}: Possible missing operator in GitHub expression"
+                                    f"\n  Found: {line.strip()}"
+                                    f"\n  💡 Tip: Use proper string concatenation or operators between github.* references"
+                                )
+                                break
     
     def validate_directory(self, dirpath: Path) -> Tuple[int, int]:
         """
