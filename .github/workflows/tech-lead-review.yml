@@ -302,7 +302,8 @@ jobs:
           
           # Check if reviewer is a tech lead (has tech-lead label)
           labels=$(gh pr view ${pr_num} --json labels --jq '.labels[].name' || echo "")
-          is_tech_lead=$(echo "${labels}" | grep -c "tech-lead:" || echo "0")
+          is_tech_lead=$(echo "${labels}" | grep -c "tech-lead:" || true)
+          is_tech_lead=${is_tech_lead:-0}
           
           if [ "${is_tech_lead}" -gt 0 ]; then
             echo "Review from Tech Lead detected"

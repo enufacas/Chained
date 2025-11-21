@@ -162,7 +162,8 @@ jobs:
           echo "has_actionable_feedback=true" >> $GITHUB_OUTPUT
           
           # Count action items (lines starting with - [ ] or numbered lists)
-          action_item_count=$(echo "${review_body}" | grep -c '^[-*] \[ \]\|^[0-9]\+\.' || echo "0")
+          action_item_count=$(echo "${review_body}" | grep -c '^[-*] \[ \]\|^[0-9]\+\.' || true)
+          action_item_count=${action_item_count:-0}
           echo "action_item_count=${action_item_count}" >> $GITHUB_OUTPUT
           
           echo "Found ${action_item_count} potential action items"
