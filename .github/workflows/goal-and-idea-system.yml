@@ -88,6 +88,8 @@ jobs:
           import json
           import os
           import random
+          import hashlib
+          from datetime import datetime, timezone
           
           focus = os.environ.get('FOCUS', 'auto')
           
@@ -109,9 +111,62 @@ jobs:
               "Meta-agent coordinating specialized AI agents"
           ]
           
-          idea = random.choice(ai_ideas)
-          print(f"::set-output name=idea::{idea}")
+          # **@refactor-champion** Enhancement: Load AI ideas history for deduplication
+          history_file = '.github/agent-system/ai_ideas_history.json'
           
+          try:
+              with open(history_file, 'r') as f:
+                  history = json.load(f)
+          except (FileNotFoundError, json.JSONDecodeError):
+              # Initialize empty history
+              history = {
+                  'idea_hashes': [],
+                  'created_ideas': [],
+                  'last_updated': None
+              }
+          
+          existing_hashes = set(history.get('idea_hashes', []))
+          
+          # **@refactor-champion** Enhancement: Find ideas that haven't been created yet
+          available_ideas = []
+          for idea_text in ai_ideas:
+              # Generate hash for this idea
+              idea_hash = hashlib.md5(idea_text.encode()).hexdigest()
+              
+              if idea_hash not in existing_hashes:
+                  available_ideas.append((idea_text, idea_hash))
+          
+          # Select from available ideas, or if all used, reset and start over
+          if available_ideas:
+              idea, idea_hash = random.choice(available_ideas)
+              print(f"✅ Selected new idea (hash: {idea_hash[:8]}...)")
+              print(f"   Available: {len(available_ideas)}/{len(ai_ideas)}")
+          else:
+              # All ideas have been used - reset the cycle
+              print(f"🔄 All ideas used! Resetting cycle...")
+              history['idea_hashes'] = []
+              history['created_ideas'] = []
+              
+              idea = random.choice(ai_ideas)
+              idea_hash = hashlib.md5(idea.encode()).hexdigest()
+              print(f"✅ Selected idea from fresh cycle (hash: {idea_hash[:8]}...)")
+          
+          # Record this idea in history
+          history['idea_hashes'].append(idea_hash)
+          history['created_ideas'].append({
+              'idea': idea,
+              'hash': idea_hash,
+              'created_at': datetime.now(timezone.utc).isoformat()
+          })
+          history['last_updated'] = datetime.now(timezone.utc).isoformat()
+          
+          # Save updated history
+          with open(history_file, 'w') as f:
+              json.dump(history, f, indent=2)
+          
+          print(f"📝 Updated history: {len(history['idea_hashes'])} total ideas created")
+          
+          # Output for next step
           with open('/tmp/idea.txt', 'w') as f:
               f.write(idea)
           PYTHON_SCRIPT
@@ -136,6 +191,58 @@ jobs:
           ---
           *🤖 Created by workflow: [goal-and-idea-system.yml](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) - AI Spawner (@workflows-tech-lead)*" \
             --label "idea,ai-generated,automated"
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and create PR for history changes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # **@refactor-champion** Enhancement: Use PR-based workflow for history updates
+          if git diff --quiet .github/agent-system/ai_ideas_history.json; then
+            echo "No changes to history file"
+          else
+            # Create unique branch name
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="ai-ideas-history/${TIMESTAMP}-${{ github.run_id }}"
+            
+            # Create branch and commit
+            git checkout -b "$BRANCH_NAME"
+            git add .github/agent-system/ai_ideas_history.json
+            git commit -m "Update AI ideas history - prevent duplicates
+
+          Track generated AI idea to ensure uniqueness across runs.
+          
+          ---
+          *🤖 Automated by @refactor-champion*"
+            
+            # Push to new branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create pull request
+            gh pr create \
+              --title "Update AI ideas history - $(date +%Y-%m-%d)" \
+              --body "## AI Ideas History Update
+
+          **@refactor-champion** has updated the AI ideas history file to track generated ideas.
+
+          ### Changes
+          - Added new AI idea hash to prevent future duplicates
+          - Updated timestamp
+
+          This ensures each AI idea is only generated once before the cycle resets.
+
+          ---
+          *🤖 Automated by @refactor-champion via [goal-and-idea-system.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+              --label "automated,refactor-champion" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ History PR created"
+          fi
 
       - name: Summary
         if: always()
