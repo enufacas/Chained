@@ -223,7 +223,7 @@ jobs:
           
           ---
           
-          *🤖 Coordination by **@meta-coordinator** via [Meta-Agent Coordination workflow](${{{{ github.server_url }}}}/${{{{ github.repository }}}}/actions/runs/${{{{ github.run_id }}}})*
+          *🤖 Coordination by **@meta-coordinator** via [Meta-Agent Coordination workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
           """
           
           # Post comment
@@ -316,7 +316,7 @@ jobs:
           
           ---
           
-          *🤖 Created by **@meta-coordinator** via [Meta-Agent Coordination workflow](${{{{ github.server_url }}}}/${{{{ github.repository }}}}/actions/runs/${{{{ github.run_id }}}})*
+          *🤖 Created by **@meta-coordinator** via [Meta-Agent Coordination workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
           """
               
               # Create the issue
