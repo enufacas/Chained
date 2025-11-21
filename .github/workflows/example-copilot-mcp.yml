@@ -1,0 +1,214 @@
+name: "Example: Copilot with MCP"
+
+# This is an example workflow demonstrating how to use the Chained Repository MCP server
+# with GitHub Copilot agents. Created by @APIs-architect.
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_issue_title:
+        description: 'Test issue title'
+        required: false
+        default: 'Optimize 3D rendering performance in organism.html'
+      test_issue_body:
+        description: 'Test issue body'
+        required: false
+        default: 'The Three.js scene needs performance optimization to achieve 60fps'
+
+jobs:
+  example-mcp-integration:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Setup Chained MCP Server
+        uses: ./.github/actions/setup-mcp-server
+        id: mcp
+        with:
+          debug: 'true'
+      
+      - name: Display MCP Configuration
+        run: |
+          echo "🎉 MCP Server configured successfully!"
+          echo ""
+          echo "📋 Configuration Details:"
+          echo "  Config Path: ${{ steps.mcp.outputs.config-path }}"
+          echo "  Server Path: ${{ steps.mcp.outputs.server-path }}"
+          echo "  Status: ${{ steps.mcp.outputs.status }}"
+          echo ""
+          echo "🌍 Environment Variables:"
+          echo "  MCP_SERVERS_CONFIG=$MCP_SERVERS_CONFIG"
+          echo "  CHAINED_REPO_PATH=$CHAINED_REPO_PATH"
+          echo "  CHAINED_MCP_DEBUG=$CHAINED_MCP_DEBUG"
+          echo ""
+          echo "📄 Configuration Contents:"
+          cat ${{ steps.mcp.outputs.config-path }}
+          echo ""
+      
+      - name: Test MCP Data Access (Direct File Access)
+        run: |
+          echo "🧪 Testing MCP data availability..."
+          echo ""
+          
+          # The MCP server would access these files via its tools
+          # Here we verify the data is accessible
+          
+          if [ -f ".github/agent-system/registry.json" ]; then
+            echo "✅ Agent registry found"
+            AGENT_COUNT=$(cat .github/agent-system/registry.json | jq '.agents | length')
+            echo "   Total agents: $AGENT_COUNT"
+          else
+            echo "❌ Agent registry not found"
+          fi
+          
+          if [ -d "learnings" ]; then
+            echo "✅ Learnings directory found"
+            LEARNING_FILES=$(find learnings -name "*.json" | wc -l)
+            echo "   Learning files: $LEARNING_FILES"
+          else
+            echo "❌ Learnings directory not found"
+          fi
+          
+          if [ -d "docs/data" ]; then
+            echo "✅ GitHub Pages data found"
+            ls -la docs/data/ | head -10
+          else
+            echo "❌ GitHub Pages data not found"
+          fi
+          
+          echo ""
+      
+      - name: Example - Match Issue to Agent (Using Python Tool)
+        id: match-agent
+        run: |
+          echo "🔍 Example: Finding best agent for issue..."
+          echo ""
+          echo "Issue Title: ${{ github.event.inputs.test_issue_title }}"
+          echo "Issue Body: ${{ github.event.inputs.test_issue_body }}"
+          echo ""
+          
+          # In a real Copilot workflow, this would be done via MCP tool call:
+          # {
+          #   "tool": "match_issue_to_agent",
+          #   "arguments": {
+          #     "title": "${{ github.event.inputs.test_issue_title }}",
+          #     "body": "${{ github.event.inputs.test_issue_body }}"
+          #   }
+          # }
+          
+          # For demonstration, we call the Python script directly
+          RESULT=$(python3 tools/match-issue-to-agent.py \
+            "${{ github.event.inputs.test_issue_title }}" \
+            "${{ github.event.inputs.test_issue_body }}")
+          
+          echo "$RESULT" | jq .
+          
+          AGENT=$(echo "$RESULT" | jq -r '.agent')
+          SCORE=$(echo "$RESULT" | jq -r '.score')
+          CONFIDENCE=$(echo "$RESULT" | jq -r '.confidence')
+          
+          echo ""
+          echo "🎯 Matched Agent: $AGENT"
+          echo "📊 Score: $SCORE"
+          echo "💯 Confidence: $CONFIDENCE"
+          echo ""
+          
+          echo "agent=$AGENT" >> $GITHUB_OUTPUT
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+          echo "confidence=$CONFIDENCE" >> $GITHUB_OUTPUT
+      
+      - name: Example - Get Agent Details (Using MCP)
+        run: |
+          echo "📖 Example: How Copilot would get agent details via MCP..."
+          echo ""
+          echo "MCP Tool Call:"
+          cat <<'EOF'
+          {
+            "tool": "get_agent_details",
+            "arguments": {
+              "agent_id": "${{ steps.match-agent.outputs.agent }}"
+            }
+          }
+          EOF
+          echo ""
+          
+          # The MCP server would return agent information
+          # For this demo, we read the agent file directly
+          AGENT="${{ steps.match-agent.outputs.agent }}"
+          
+          if [ -f ".github/agents/${AGENT}.md" ]; then
+            echo "Agent File Content:"
+            head -30 ".github/agents/${AGENT}.md"
+          else
+            echo "Agent file not found: .github/agents/${AGENT}.md"
+          fi
+          echo ""
+      
+      - name: Example - Search Learnings (Using MCP)
+        run: |
+          echo "📚 Example: How Copilot would search learnings via MCP..."
+          echo ""
+          echo "MCP Tool Call:"
+          cat <<'EOF'
+          {
+            "tool": "search_learnings",
+            "arguments": {
+              "keywords": ["performance", "optimization", "3d"],
+              "limit": 5
+            }
+          }
+          EOF
+          echo ""
+          
+          # The MCP server would search through learning data
+          # For this demo, we list recent learning files
+          echo "Recent Learning Files:"
+          find learnings -name "*.json" -type f -mtime -30 | head -5
+          echo ""
+      
+      - name: Example - List Available Tools (Using MCP)
+        run: |
+          echo "🛠️  Example: How Copilot would list tools via MCP..."
+          echo ""
+          echo "MCP Tool Call:"
+          cat <<'EOF'
+          {
+            "tool": "list_available_tools",
+            "arguments": {}
+          }
+          EOF
+          echo ""
+          
+          # The MCP server would list Python tools
+          # For this demo, we list the tools directory
+          echo "Available Tools:"
+          ls -la tools/*.py | awk '{print "  •", $9}' | head -15
+          echo ""
+      
+      - name: Summary
+        run: |
+          echo "✨ Example Workflow Complete!"
+          echo ""
+          echo "This workflow demonstrated:"
+          echo "  ✅ Installing the Chained MCP server globally"
+          echo "  ✅ Configuring MCP for GitHub Copilot"
+          echo "  ✅ Accessing repository data through MCP"
+          echo "  ✅ Matching issues to agents"
+          echo "  ✅ Searching learnings and tools"
+          echo ""
+          echo "In a real Copilot workflow, these operations would be performed"
+          echo "via MCP protocol calls instead of direct file access."
+          echo ""
+          echo "🔗 For more information:"
+          echo "  • Installation: mcp-servers/chained-repository/INSTALL.md"
+          echo "  • Copilot Integration: mcp-servers/chained-repository/GITHUB_COPILOT.md"
+          echo "  • MCP Server Docs: mcp-servers/chained-repository/README.md"
+          echo ""
+          echo "Made globally available by @APIs-architect 🌍✨"

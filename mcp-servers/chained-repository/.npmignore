@@ -1,0 +1,21 @@
+# Source files (only include dist/)
+src/
+*.ts
+!*.d.ts
+tsconfig.json
+
+# Development files
+test-server.sh
+node_modules/
+.DS_Store
+*.log
+*.swp
+*.swo
+*~
+
+# Git files
+.git/
+.gitignore
+
+# Build artifacts
+*.tsbuildinfo

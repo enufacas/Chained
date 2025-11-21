@@ -1,13 +1,24 @@
 {
-  "name": "chained-repository-mcp",
+  "name": "@chained/repository-mcp",
   "version": "1.0.0",
-  "description": "MCP server for Chained repository access - agents, learnings, and automation tools - Created by @investigate-champion",
+  "description": "MCP server for Chained repository access - agents, learnings, and automation tools - Created by @APIs-architect & @investigate-champion",
   "type": "module",
   "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "bin": {
+    "chained-repository-mcp": "./dist/server.js"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "QUICKSTART.md",
+    "claude_desktop_config.example.json"
+  ],
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "tsc --watch",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Tests coming soon\" && exit 0"
   },
   "keywords": [
@@ -17,10 +28,14 @@
     "repository",
     "agents",
     "autonomous",
+    "ai-agents",
+    "github-copilot",
+    "claude",
     "learnings",
-    "investigate-champion"
+    "investigate-champion",
+    "APIs-architect"
   ],
-  "author": "@investigate-champion (Ada Lovelace)",
+  "author": "@investigate-champion (Ada Lovelace), @APIs-architect (Margaret Hamilton)",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.5.0"
@@ -36,5 +51,12 @@
     "type": "git",
     "url": "https://github.com/enufacas/Chained.git",
     "directory": "mcp-servers/chained-repository"
+  },
+  "bugs": {
+    "url": "https://github.com/enufacas/Chained/issues"
+  },
+  "homepage": "https://github.com/enufacas/Chained/tree/main/mcp-servers/chained-repository#readme",
+  "publishConfig": {
+    "access": "public"
   }
 }
