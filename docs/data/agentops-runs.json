@@ -1,26 +1,26 @@
 {
-  "last_updated": "2025-11-21T20:11:44.210244+00:00",
+  "last_updated": "2025-11-21T22:10:20.274545+00:00",
   "summary": {
-    "total_runs": 120,
-    "completed": 120,
+    "total_runs": 121,
+    "completed": 121,
     "in_progress": 0,
-    "success": 93,
+    "success": 94,
     "failure": 20,
-    "success_rate": 77.5,
-    "avg_duration_seconds": 244.37,
+    "success_rate": 77.69,
+    "avg_duration_seconds": 242.69,
     "recent_failures_24h": 1
   },
   "agent_workload": {
+    "users": {
+      "total": 46,
+      "success": 37,
+      "failure": 8,
+      "in_progress": 0
+    },
     "engineer-master": {
       "total": 3,
       "success": 2,
       "failure": 1,
-      "in_progress": 0
-    },
-    "users": {
-      "total": 45,
-      "success": 36,
-      "failure": 8,
       "in_progress": 0
     },
     "example": {
@@ -97,19 +97,19 @@
     }
   },
   "workflow_stats": {
+    "learn-from-copilot.yml": {
+      "total": 11,
+      "success": 7,
+      "failure": 4,
+      "in_progress": 0,
+      "avg_duration": 74.18
+    },
     "copilot-graphql-assign.yml": {
       "total": 50,
       "success": 50,
       "failure": 0,
       "in_progress": 0,
       "avg_duration": 28.64
-    },
-    "learn-from-copilot.yml": {
-      "total": 10,
-      "success": 6,
-      "failure": 4,
-      "in_progress": 0,
-      "avg_duration": 77.4
     },
     "autonomous-pipeline.yml": {
       "total": 36,
@@ -134,6 +134,30 @@
     }
   },
   "runs": [
+    {
+      "id": 19583774563,
+      "run_number": 11,
+      "workflow_name": "Learning: GitHub Copilot",
+      "workflow_file": "learn-from-copilot.yml",
+      "display_title": "Learning: GitHub Copilot",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2025-11-21T21:18:17Z",
+      "updated_at": "2025-11-21T21:18:59Z",
+      "duration_seconds": 42.0,
+      "html_url": "https://github.com/enufacas/Chained/actions/runs/19583774563",
+      "run_started_at": "2025-11-21T21:18:17Z",
+      "triggering_actor": "enufacas",
+      "event": "schedule",
+      "head_branch": "main",
+      "head_sha": "3b813569",
+      "agent_name": "users",
+      "issue_number": 2266,
+      "pr_numbers": [
+        2266
+      ],
+      "pull_requests": []
+    },
     {
       "id": 19572426763,
       "run_number": 729,
@@ -2507,30 +2531,6 @@
       "issue_number": 1101,
       "pr_numbers": [
         1101
-      ],
-      "pull_requests": []
-    },
-    {
-      "id": 19397271390,
-      "run_number": 9,
-      "workflow_name": "Autonomous Learning Pipeline",
-      "workflow_file": "autonomous-pipeline.yml",
-      "display_title": "Autonomous Learning Pipeline",
-      "status": "completed",
-      "conclusion": "success",
-      "created_at": "2025-11-15T23:44:36Z",
-      "updated_at": "2025-11-15T23:48:04Z",
-      "duration_seconds": 208.0,
-      "html_url": "https://github.com/enufacas/Chained/actions/runs/19397271390",
-      "run_started_at": "2025-11-15T23:44:36Z",
-      "triggering_actor": "enufacas",
-      "event": "workflow_dispatch",
-      "head_branch": "main",
-      "head_sha": "fe84c5e2",
-      "agent_name": "investigate-champion",
-      "issue_number": 1096,
-      "pr_numbers": [
-        1096
       ],
       "pull_requests": []
     }
