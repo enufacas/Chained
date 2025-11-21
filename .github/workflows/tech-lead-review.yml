@@ -167,10 +167,15 @@ jobs:
           
           echo "Current labels: ${labels}"
           
-          # Check for review state labels
-          has_approved=$(echo "${labels}" | grep -c "tech-lead-approved" || echo "0")
-          has_changes_requested=$(echo "${labels}" | grep -c "tech-lead-changes-requested" || echo "0")
-          has_needs_review=$(echo "${labels}" | grep -c "needs-tech-lead-review" || echo "0")
+          # Check for review state labels (grep -c returns 1 if no match, so use || true)
+          has_approved=$(echo "${labels}" | grep -c "tech-lead-approved" || true)
+          has_changes_requested=$(echo "${labels}" | grep -c "tech-lead-changes-requested" || true)
+          has_needs_review=$(echo "${labels}" | grep -c "needs-tech-lead-review" || true)
+          
+          # Ensure we have valid numbers (default to 0 if empty)
+          has_approved=${has_approved:-0}
+          has_changes_requested=${has_changes_requested:-0}
+          has_needs_review=${has_needs_review:-0}
           
           echo "has_approved=${has_approved}" >> $GITHUB_OUTPUT
           echo "has_changes_requested=${has_changes_requested}" >> $GITHUB_OUTPUT
