@@ -86,6 +86,9 @@ jobs:
   analyzer:
     name: "Code Analyzer"
     runs-on: ubuntu-latest
+    outputs:
+      pr_created: ${{ steps.create_pr.outputs.pr_created }}
+      pr_number: ${{ steps.create_pr.outputs.pr_number }}
     if: |
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
@@ -128,6 +131,7 @@ jobs:
           echo "target_dir=${target_dir}" >> $GITHUB_OUTPUT
 
       - name: Commit analysis results
+        id: create_pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -137,6 +141,7 @@ jobs:
           git add analysis/
           if git diff --staged --quiet; then
             echo "No changes to commit"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
           else
             TIMESTAMP=$(date +%Y%m%d-%H%M%S)
             BRANCH_NAME="code-analysis/${TIMESTAMP}-${{ github.run_id }}"
@@ -154,7 +159,7 @@ jobs:
             git commit -m "Code analysis results - ${{ steps.analyze.outputs.target_dir }}"
             git push origin "$BRANCH_NAME"
             
-            PR_URL=$(gh pr create \
+            pr_url=$(gh pr create \
               --title "📊 Code Analysis Results" \
               --body "## Code Analysis Results
             
@@ -162,16 +167,18 @@ jobs:
             **Merge Success**: ${{ steps.analyze.outputs.merge_success }}
             
             ---
-            
-            *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Analyzer (@workflows-tech-lead)*" \
-              --label "automated,code-quality,auto-merge" \
+            *🤖 Created by workflow: [code-quality.yml](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Analyzer (@workflows-tech-lead)*" \
+              --label "automated,code-quality,copilot" \
               --base main \
-              --head "$BRANCH_NAME") || true
+              --head "$BRANCH_NAME" || true)
             
-            if [ -n "$PR_URL" ]; then
-              PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
-              gh workflow run auto-review-merge.yml --repo ${{ github.repository }} -f pr_number="$PR_NUMBER" || true
-              echo "✅ PR created and auto-merge triggered: #$PR_NUMBER"
+            if [ -n "$pr_url" ]; then
+              pr_number=$(echo "$pr_url" | grep -oP '/pull/\K\d+')
+              echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
+              echo "pr_created=true" >> $GITHUB_OUTPUT
+              echo "Created PR #$pr_number"
+            else
+              echo "pr_created=false" >> $GITHUB_OUTPUT
             fi
           fi
 
@@ -181,6 +188,71 @@ jobs:
           echo "## 📊 Code Analyzer" >> $GITHUB_STEP_SUMMARY
           echo "- **Directory**: ${{ steps.analyze.outputs.target_dir }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Status**: ${{ steps.analyze.outputs.merge_success }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.create_pr.outputs.pr_created }}" = "true" ]; then
+            echo "- **PR Created**: #${{ steps.create_pr.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ===================================================================================
+  # STAGE 1.5: Merge Analyzer PR
+  # ===================================================================================
+  merge-analyzer:
+    name: "Merge Analyzer PR"
+    runs-on: ubuntu-latest
+    needs: analyzer
+    if: |
+      needs.analyzer.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Trigger auto-review-merge workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ needs.analyzer.outputs.pr_number }}"
+          echo "Triggering auto-review-merge for PR #${pr_number}"
+          
+          gh workflow run auto-review-merge.yml \
+            -f pr_number="${pr_number}" \
+            --repo ${{ github.repository }}
+          
+          echo "✅ Triggered auto-review-merge workflow for PR #${pr_number}"
+      
+      - name: Wait for PR merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ needs.analyzer.outputs.pr_number }}"
+          echo "Waiting for PR #${pr_number} to be merged..."
+          
+          max_attempts=30
+          attempt=0
+          
+          while [ $attempt -lt $max_attempts ]; do
+            pr_state=$(gh pr view ${pr_number} --json state --jq '.state' || echo "UNKNOWN")
+            
+            if [ "$pr_state" = "MERGED" ]; then
+              echo "✅ PR #${pr_number} has been merged"
+              exit 0
+            elif [ "$pr_state" = "CLOSED" ]; then
+              echo "⚠️ PR #${pr_number} was closed without merging"
+              exit 1
+            fi
+            
+            attempt=$((attempt + 1))
+            echo "Attempt $attempt/$max_attempts: PR state is $pr_state, waiting..."
+            sleep 10
+          done
+          
+          echo "⚠️ Timeout waiting for PR #${pr_number} to merge"
+          exit 1
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🔀 Merge Analyzer PR" >> $GITHUB_STEP_SUMMARY
+          echo "- **PR**: #${{ needs.analyzer.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
 
   # ===================================================================================
   # STAGE 2: Code Archaeologist (from code-archaeologist.yml)
@@ -191,6 +263,9 @@ jobs:
     if: |
       (github.event_name == 'schedule' && github.event.schedule == '0 9 * * 1') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'archaeologist')
+    outputs:
+      pr_created: ${{ steps.create_pr.outputs.pr_created }}
+      pr_number: ${{ steps.create_pr.outputs.pr_number }}
     
     steps:
       - name: Checkout repository
@@ -241,6 +316,7 @@ jobs:
           fi
 
       - name: Commit archaeology data
+        id: create_pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -250,6 +326,7 @@ jobs:
           git add analysis/
           if git diff --staged --quiet; then
             echo "No changes to commit"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
           else
             TIMESTAMP=$(date +%Y%m%d-%H%M%S)
             BRANCH_NAME="archaeology/${TIMESTAMP}-${{ github.run_id }}"
@@ -267,7 +344,7 @@ jobs:
             git commit -m "Code archaeology analysis - ${{ steps.archaeology.outputs.commits_analyzed }} commits"
             git push origin "$BRANCH_NAME"
             
-            PR_URL=$(gh pr create \
+            pr_url=$(gh pr create \
               --title "🏛️ Code Archaeology Analysis" \
               --body "## Code Archaeology Results
             
@@ -278,16 +355,18 @@ jobs:
             **Recommendations**: ${{ steps.archaeology.outputs.recommendations }}
             
             ---
-            
-            *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Archaeologist (@workflows-tech-lead)*" \
-              --label "automated,code-quality,auto-merge" \
+            *🤖 Created by workflow: [code-quality.yml](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Archaeologist (@workflows-tech-lead)*" \
+              --label "automated,code-quality,copilot" \
               --base main \
-              --head "$BRANCH_NAME") || true
+              --head "$BRANCH_NAME" || true)
             
-            if [ -n "$PR_URL" ]; then
-              PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
-              gh workflow run auto-review-merge.yml --repo ${{ github.repository }} -f pr_number="$PR_NUMBER" || true
-              echo "✅ PR created and auto-merge triggered: #$PR_NUMBER"
+            if [ -n "$pr_url" ]; then
+              pr_number=$(echo "$pr_url" | grep -oP '/pull/\K\d+')
+              echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
+              echo "pr_created=true" >> $GITHUB_OUTPUT
+              echo "Created PR #$pr_number"
+            else
+              echo "pr_created=false" >> $GITHUB_OUTPUT
             fi
           fi
 
@@ -298,6 +377,71 @@ jobs:
           echo "- **Commits**: ${{ steps.archaeology.outputs.commits_analyzed }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Decisions**: ${{ steps.archaeology.outputs.decisions_found }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Patterns**: ${{ steps.archaeology.outputs.patterns_learned }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.create_pr.outputs.pr_created }}" = "true" ]; then
+            echo "- **PR Created**: #${{ steps.create_pr.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ===================================================================================
+  # STAGE 2.5: Merge Archaeologist PR
+  # ===================================================================================
+  merge-archaeologist:
+    name: "Merge Archaeologist PR"
+    runs-on: ubuntu-latest
+    needs: archaeologist
+    if: |
+      needs.archaeologist.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Trigger auto-review-merge workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ needs.archaeologist.outputs.pr_number }}"
+          echo "Triggering auto-review-merge for PR #${pr_number}"
+          
+          gh workflow run auto-review-merge.yml \
+            -f pr_number="${pr_number}" \
+            --repo ${{ github.repository }}
+          
+          echo "✅ Triggered auto-review-merge workflow for PR #${pr_number}"
+      
+      - name: Wait for PR merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ needs.archaeologist.outputs.pr_number }}"
+          echo "Waiting for PR #${pr_number} to be merged..."
+          
+          max_attempts=30
+          attempt=0
+          
+          while [ $attempt -lt $max_attempts ]; do
+            pr_state=$(gh pr view ${pr_number} --json state --jq '.state' || echo "UNKNOWN")
+            
+            if [ "$pr_state" = "MERGED" ]; then
+              echo "✅ PR #${pr_number} has been merged"
+              exit 0
+            elif [ "$pr_state" = "CLOSED" ]; then
+              echo "⚠️ PR #${pr_number} was closed without merging"
+              exit 1
+            fi
+            
+            attempt=$((attempt + 1))
+            echo "Attempt $attempt/$max_attempts: PR state is $pr_state, waiting..."
+            sleep 10
+          done
+          
+          echo "⚠️ Timeout waiting for PR #${pr_number} to merge"
+          exit 1
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🔀 Merge Archaeologist PR" >> $GITHUB_STEP_SUMMARY
+          echo "- **PR**: #${{ needs.archaeologist.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
 
   # ===================================================================================
   # STAGE 3: Code Golf Optimizer (from code-golf-optimizer.yml)
@@ -308,6 +452,9 @@ jobs:
     if: |
       (github.event_name == 'schedule' && github.event.schedule == '0 10 * * 1') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'golf-optimizer')
+    outputs:
+      pr_created: ${{ steps.create_pr.outputs.pr_created }}
+      pr_number: ${{ steps.create_pr.outputs.pr_number }}
     
     steps:
       - name: Checkout repository
@@ -367,9 +514,127 @@ jobs:
           echo "total_saved=0" >> $GITHUB_OUTPUT
           echo "files_processed=$files_processed" >> $GITHUB_OUTPUT
 
+      - name: Commit optimization results
+        id: create_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd tools
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add optimizations/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
+          else
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="golf-optimization/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            # Pull latest main to avoid conflicts
+            git fetch origin main
+            git merge origin/main --no-edit || {
+              # If merge conflicts, keep our changes
+              git checkout --ours tools/optimizations/
+              git add tools/optimizations/
+              git commit --no-edit
+            }
+            
+            git commit -m "Code golf optimization results - ${{ steps.optimize.outputs.files_processed }} files"
+            git push origin "$BRANCH_NAME"
+            
+            pr_url=$(gh pr create \
+              --title "⛳ Code Golf Optimization Results" \
+              --body "## Code Golf Optimization Results
+            
+            **Files Processed**: ${{ steps.optimize.outputs.files_processed }}  
+            **Bytes Saved**: ${{ steps.optimize.outputs.total_saved }}
+            
+            ---
+            *🤖 Created by workflow: [code-quality.yml](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) - Golf Optimizer (@workflows-tech-lead)*" \
+              --label "automated,code-quality,copilot" \
+              --base main \
+              --head "$BRANCH_NAME" || true)
+            
+            if [ -n "$pr_url" ]; then
+              pr_number=$(echo "$pr_url" | grep -oP '/pull/\K\d+')
+              echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
+              echo "pr_created=true" >> $GITHUB_OUTPUT
+              echo "Created PR #$pr_number"
+            else
+              echo "pr_created=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
       - name: Summary
         if: always()
         run: |
           echo "## ⛳ Code Golf Optimizer" >> $GITHUB_STEP_SUMMARY
           echo "- **Files**: ${{ steps.optimize.outputs.files_processed }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Saved**: ${{ steps.optimize.outputs.total_saved }} bytes" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.create_pr.outputs.pr_created }}" = "true" ]; then
+            echo "- **PR Created**: #${{ steps.create_pr.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ===================================================================================
+  # STAGE 3.5: Merge Golf Optimizer PR
+  # ===================================================================================
+  merge-golf-optimizer:
+    name: "Merge Golf Optimizer PR"
+    runs-on: ubuntu-latest
+    needs: golf-optimizer
+    if: |
+      needs.golf-optimizer.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Trigger auto-review-merge workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ needs.golf-optimizer.outputs.pr_number }}"
+          echo "Triggering auto-review-merge for PR #${pr_number}"
+          
+          gh workflow run auto-review-merge.yml \
+            -f pr_number="${pr_number}" \
+            --repo ${{ github.repository }}
+          
+          echo "✅ Triggered auto-review-merge workflow for PR #${pr_number}"
+      
+      - name: Wait for PR merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ needs.golf-optimizer.outputs.pr_number }}"
+          echo "Waiting for PR #${pr_number} to be merged..."
+          
+          max_attempts=30
+          attempt=0
+          
+          while [ $attempt -lt $max_attempts ]; do
+            pr_state=$(gh pr view ${pr_number} --json state --jq '.state' || echo "UNKNOWN")
+            
+            if [ "$pr_state" = "MERGED" ]; then
+              echo "✅ PR #${pr_number} has been merged"
+              exit 0
+            elif [ "$pr_state" = "CLOSED" ]; then
+              echo "⚠️ PR #${pr_number} was closed without merging"
+              exit 1
+            fi
+            
+            attempt=$((attempt + 1))
+            echo "Attempt $attempt/$max_attempts: PR state is $pr_state, waiting..."
+            sleep 10
+          done
+          
+          echo "⚠️ Timeout waiting for PR #${pr_number} to merge"
+          exit 1
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🔀 Merge Golf Optimizer PR" >> $GITHUB_STEP_SUMMARY
+          echo "- **PR**: #${{ needs.golf-optimizer.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
