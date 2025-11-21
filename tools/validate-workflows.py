@@ -73,12 +73,11 @@ class WorkflowValidator:
                 # Add helpful context for common errors
                 error_str = str(e)
                 if "expected a single document" in error_str:
-                    # Example of the bash concatenation pattern
-                    example = '--body "text"' + "$'\\n\\n'" + '"---"' + "$'\\n\\n'" + '"more text"'
+                    # Bash example: --body "text"$'\n\n'"---"$'\n\n'"more text"
                     tip = (
                         '\n  💡 Tip: "---" inside strings causes document separation. '
                         "Use bash string concatenation:\n"
-                        f'     {example}'
+                        '     --body "text"$\'\\n\\n\'"---"$\'\\n\\n\'"more text"'
                     )
                     error_msg += tip
                 elif "could not find expected ':'" in error_str:

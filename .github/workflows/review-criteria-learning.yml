@@ -81,8 +81,9 @@ jobs:
           # Read learning report
           REPORT=$(cat /tmp/learning_report.md)
           
-          # Build footer
+          # Build footer with workflow link
           WORKFLOW_LINK="[${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          # Use $'\n\n' for newlines and quote "---" to prevent YAML document separator issue
           FOOTER=$'\n\n'"---"$'\n\n'"*Created by workflow: ${WORKFLOW_LINK}*"
           
           # Create PR with learning report
