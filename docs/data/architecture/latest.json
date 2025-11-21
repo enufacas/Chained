@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-21T01:59:12.730814",
-  "commit": "cb9fb503786784e2be56b541c2b672c4bde6fd8e",
+  "timestamp": "2025-11-21T12:52:48.555922",
+  "commit": "8e7a144d05ac670f794e1c304612fa621da06804",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 307,
-        "line_count": 125887,
+        "file_count": 310,
+        "line_count": 127289,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 722,
-        "line_count": 221436,
+        "file_count": 736,
+        "line_count": 221552,
         "files": [
           ".nojekyll",
           "AB_TESTING_BUG_REPORT.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 81,
-        "line_count": 4700960,
+        "file_count": 82,
+        "line_count": 4701588,
         "files": [
           "2025-11-14-04-00-27.json",
           "2025-11-14-04-00-36.json",
@@ -182,8 +182,8 @@
         ]
       },
       "learnings": {
-        "file_count": 299,
-        "line_count": 153383,
+        "file_count": 307,
+        "line_count": 164020,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -239,8 +239,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 1409,
-    "total_lines": 5201666
+    "total_files": 1435,
+    "total_lines": 5214449
   },
   "dependencies": {
     "internal_imports": {
@@ -326,6 +326,7 @@
       "api_coordination_hub.py": [],
       "architecture-tracker.py": [],
       "integrated_workflow_orchestrator.py": [],
+      "spawning_decision_engine.py": [],
       "workflow_dependency_graph.py": [],
       "multi_source_aggregator.py": [],
       "optimized_learner.py": [],
@@ -334,6 +335,7 @@
       "code-smell-fixer.py": [],
       "copilot-usage-tracker.py": [],
       "github_integration.py": [],
+      "subagent_spawning_api.py": [],
       "creativity-leaderboard.py": [],
       "autonomous-refactoring-agent.py": [],
       "trend-analyzer.py": [],
@@ -346,6 +348,7 @@
       "code-style-transfer.py": [],
       "ab_testing_dashboard.py": [],
       "generate-agent-personality.py": [],
+      "workload_api_service.py": [],
       "update_last_spawn.py": [],
       "inspect-issue-assignment.py": [],
       "extract_workflow_data.py": [],
@@ -402,24 +405,24 @@
     },
     "external_imports": {
       "os": 95,
-      "sys": 120,
-      "json": 136,
+      "sys": 123,
+      "json": 139,
       "re": 64,
       "ast": 17,
-      "datetime": 103,
-      "pathlib": 129,
-      "typing": 115,
+      "datetime": 106,
+      "pathlib": 132,
+      "typing": 118,
       "collections": 60,
       "functools": 9,
-      "argparse": 105,
+      "argparse": 108,
       "math": 8,
       "random": 24,
-      "time": 24,
+      "time": 27,
       "statistics": 12,
-      "dataclasses": 59,
+      "dataclasses": 62,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
-      "workload_subagent_spawner": 1,
+      "workload_subagent_spawner": 2,
       "predictive_spawning_engine": 1,
       "github_integration": 4,
       "ab_testing_engine": 4,
@@ -432,7 +435,7 @@
       "csv": 1,
       "meta_agent_coordinator": 2,
       "ai_workflow_predictor": 3,
-      "tempfile": 3,
+      "tempfile": 4,
       "shutil": 7,
       "workflow_execution_tracker": 2,
       "fcntl": 1,
@@ -443,21 +446,24 @@
       "unsupervised_pattern_learner": 5,
       "requests": 3,
       "bs4": 3,
-      "urllib": 10,
+      "urllib": 12,
       "ipaddress": 1,
       "socket": 1,
       "validation_utils": 5,
       "workflow_dependency_graph": 1,
       "lazy_workflow_loader": 1,
-      "workload_monitor": 3,
+      "workload_monitor": 6,
       "pickle": 1,
-      "enum": 12,
-      "threading": 3,
+      "enum": 13,
+      "threading": 5,
       "semantic_similarity_engine": 2,
       "ab_testing_workflow_analyzer": 1,
       "copy": 1,
+      "api_coordination_hub": 2,
+      "api_monitoring_bridge": 2,
       "asyncio": 3,
       "aiohttp": 2,
+      "http": 2,
       "openai": 1,
       "anthropic": 1,
       "lazy_evaluation_system": 1,
@@ -470,7 +476,6 @@
       "abc": 1,
       "prompt_learning_integration": 1,
       "logging": 1,
-      "api_monitoring_bridge": 1,
       "hmac": 1,
       "inspect": 1
     },
@@ -478,17 +483,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1409,
-    "total_lines": 5201666,
+    "total_files": 1435,
+    "total_lines": 5214449,
     "total_dependencies": 0,
-    "external_libraries": 72,
+    "external_libraries": 74,
     "coupling_score": 0.0,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 153383,
+      "line_count": 164020,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -514,7 +519,7 @@
     },
     "agent_system": {
       "file_count": 2,
-      "line_count": 116072,
+      "line_count": 114672,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json"
@@ -522,7 +527,7 @@
     },
     "analysis_tools": {
       "file_count": 48,
-      "line_count": 4700960,
+      "line_count": 4701588,
       "files": [
         "2025-11-14-04-00-27.json",
         "2025-11-14-04-00-36.json",
@@ -548,7 +553,7 @@
     },
     "documentation": {
       "file_count": 49,
-      "line_count": 221436,
+      "line_count": 221552,
       "files": [
         ".nojekyll",
         "AB_TESTING_BUG_REPORT.md",
@@ -574,14 +579,14 @@
     },
     "testing": {
       "file_count": 1,
-      "line_count": 58036,
+      "line_count": 57336,
       "files": [
         "latest_report.md"
       ]
     },
     "tools": {
       "file_count": 50,
-      "line_count": 125887,
+      "line_count": 127289,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
