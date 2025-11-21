@@ -196,9 +196,12 @@ jobs:
               
               # Tech Lead Review System Integration
               # Check for tech lead review labels before proceeding with auto-merge
-              has_needs_tech_lead_review=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "needs-tech-lead-review" || echo "0")
-              has_tech_lead_changes_requested=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "tech-lead-changes-requested" || echo "0")
-              has_tech_lead_approved=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "tech-lead-approved" || echo "0")
+              has_needs_tech_lead_review=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "needs-tech-lead-review" || true)
+              has_needs_tech_lead_review=${has_needs_tech_lead_review:-0}
+              has_tech_lead_changes_requested=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "tech-lead-changes-requested" || true)
+              has_tech_lead_changes_requested=${has_tech_lead_changes_requested:-0}
+              has_tech_lead_approved=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "tech-lead-approved" || true)
+              has_tech_lead_approved=${has_tech_lead_approved:-0}
               
               # Block merge if tech lead review is needed but not approved
               if [ "${has_needs_tech_lead_review}" -gt 0 ] && [ "${has_tech_lead_approved}" -eq 0 ]; then
