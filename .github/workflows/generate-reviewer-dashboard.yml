@@ -65,23 +65,22 @@ jobs:
           
           git push origin "${BRANCH_NAME}"
           
+          # Build PR body
+          WORKFLOW_LINK="[${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          PR_BODY="## Automated Dashboard Update"
+          PR_BODY+=$'\n\n'"Updated reviewer effectiveness dashboard with latest criteria."
+          PR_BODY+=$'\n\n'"**Changes:**"
+          PR_BODY+=$'\n'"- Refreshed category performance metrics"
+          PR_BODY+=$'\n'"- Updated effectiveness history"
+          PR_BODY+=$'\n'"- Synchronized with criteria evolution"
+          PR_BODY+=$'\n\n'"View the dashboard after merge: [reviewer-dashboard.html](https://enufacas.github.io/Chained/reviewer-dashboard.html)"
+          PR_BODY+=$'\n\n'"---"
+          PR_BODY+=$'\n\n'"*Created by workflow: ${WORKFLOW_LINK}*"
+          
           # Create PR
           gh pr create \
             --title "chore: update reviewer dashboard (@workflows-tech-lead)" \
-            --body "## 🤖 Automated Dashboard Update
-
-Updated reviewer effectiveness dashboard with latest criteria.
-
-**Changes:**
-- Refreshed category performance metrics
-- Updated effectiveness history
-- Synchronized with criteria evolution
-
-View the dashboard after merge: [reviewer-dashboard.html](https://enufacas.github.io/Chained/reviewer-dashboard.html)
-
----
-
-*🤖 Created by workflow: [generate-reviewer-dashboard.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+            --body "${PR_BODY}" \
             --label "automated,copilot" \
             --base main \
             --head "${BRANCH_NAME}"
