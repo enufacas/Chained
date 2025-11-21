@@ -12,6 +12,9 @@
     "dist/**/*",
     "README.md",
     "QUICKSTART.md",
+    "CHANGELOG.md",
+    "INSTALL.md",
+    "GITHUB_COPILOT.md",
     "claude_desktop_config.example.json"
   ],
   "scripts": {
