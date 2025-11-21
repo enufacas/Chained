@@ -399,6 +399,22 @@
       },
       "component_count": 6,
       "file_count": 1297
+    },
+    {
+      "timestamp": "2025-11-21T01:59:12.730814",
+      "commit": "cb9fb503786784e2be56b541c2b672c4bde6fd8e",
+      "commit_message": "Merge pull request #2154 from enufacas/copilot/make-custom-mcp-available\n\nfeat: publish Chained MCP server as global npm package (@APIs-architect)",
+      "metrics": {
+        "total_components": 6,
+        "total_files": 1409,
+        "total_lines": 5201666,
+        "total_dependencies": 0,
+        "external_libraries": 72,
+        "coupling_score": 0.0,
+        "complexity_score": 1.0
+      },
+      "component_count": 6,
+      "file_count": 1409
     }
   ]
 }

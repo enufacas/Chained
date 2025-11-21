@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-20T12:53:26.547840",
-  "commit": "cdeecdbee50faa4e401f3513c9cd429d135a7916",
+  "timestamp": "2025-11-21T01:59:12.730814",
+  "commit": "cb9fb503786784e2be56b541c2b672c4bde6fd8e",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 303,
-        "line_count": 123795,
+        "file_count": 307,
+        "line_count": 125887,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 626,
-        "line_count": 204998,
+        "file_count": 722,
+        "line_count": 221436,
         "files": [
           ".nojekyll",
           "AB_TESTING_BUG_REPORT.md",
@@ -76,6 +76,7 @@
           "AGENTOPS_DASHBOARD.md",
           "AGENTOPS_DATA_EXTRACTION_SUMMARY.md",
           "AGENTOPS_ENHANCEMENT_ANALYSIS.md",
+          "AGENTS.md",
           "AGENT_ASSIGNMENT_DIVERSITY_FIX.md",
           "AGENT_ASSIGNMENT_FIX_SUMMARY.md",
           "AGENT_ATTRIBUTION_IMPLEMENTATION_SUMMARY.md",
@@ -94,6 +95,7 @@
           "AGENT_MISSION_PATTERN_MATCHING_FIX.md",
           "AGENT_NAME_UNIQUENESS_FIX.md",
           "AGENT_NAME_UNIQUENESS_FIX_SUMMARY.md",
+          "AGENT_QUICKSTART.md",
           "AGENT_SCORING_ANALYSIS_REPORT.md",
           "AGENT_WORKFLOW_SCENARIO.md",
           "AGENT_WORK_ATTRIBUTION.md",
@@ -102,17 +104,15 @@
           "AI_FRIEND_SUGGESTIONS_ANALYSIS.md",
           "AI_GOALS.md",
           "AI_ORCHESTRATOR_GUIDE.md",
+          "AI_SUBAGENT_SPAWNING.md",
           "AI_TEST_SUITE_SUMMARY.md",
           "ARCHAEOLOGY_ENHANCEMENT_IMPLEMENTATION_SUMMARY.md",
           "ARCHITECTURE.md",
           "ARCHITECTURE.md",
           "ARCHITECTURE_EVOLUTION.md",
           "ARCHITECTURE_EVOLUTION_TROUBLESHOOTING.md",
-          "AUTOMATION_EXECUTIVE_SUMMARY.md",
-          "AUTOMATION_FLOW_VISUAL.md",
-          "AUTOMATION_QUICK_REFERENCE.md",
-          "AUTOMATION_WORKFLOW_ANALYSIS.md",
-          "AUTONOMOUS_AB_TESTING.md"
+          "ARCHITECTURE_OVERVIEW.md",
+          "ARCHITECTURE_QUICK_REFERENCE.md"
         ]
       },
       ".github/workflows": {
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 74,
-        "line_count": 4698779,
+        "file_count": 81,
+        "line_count": 4700960,
         "files": [
           "2025-11-14-04-00-27.json",
           "2025-11-14-04-00-36.json",
@@ -136,6 +136,7 @@
           "actions-patterns.json",
           "agent-ecosystem-investigation.md",
           "agent-ecosystem-metrics.json",
+          "agents-tech-lead-diversity-alert-resolution.md",
           "archaeology-patterns.json",
           "archaeology.json",
           "archaeology_20251112_014409.json",
@@ -155,7 +156,9 @@
           "dependency-flow-report.json",
           "design-decisions-report.md",
           "discovered_patterns.json",
+          "diversity-alert-2025-11-20-response.md",
           "diversity-alert-false-positive-response.md",
+          "diversity-alert-investigation-summary.md",
           "diversity-alert-investigation.md",
           "diversity-alert-issue-investigation.md",
           "diversity-alert-resolution-summary.md",
@@ -166,24 +169,21 @@
           "evolution.json",
           "hypothesis_results.json",
           "integrated-archaeology-report.md",
+          "issue-closing-comment.md",
           "issue-closure-recommendation.md",
           "issue-resolution-comment.md",
           "issue-resolution-summary.md",
+          "issue-response-comment.md",
           "latest.json",
           "latest.json",
           "latest_report.md",
           "mcp_analysis_results.json",
-          "merge_20251109_160251.json",
-          "merge_20251119_011428.json",
-          "merge_20251119_014636.json",
-          "merge_20251119_014937.json",
-          "pattern-analysis-report.json",
-          "pattern-diversity.json"
+          "merge_20251109_160251.json"
         ]
       },
       "learnings": {
-        "file_count": 294,
-        "line_count": 151092,
+        "file_count": 299,
+        "line_count": 153383,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -234,13 +234,13 @@
           "analysis_20251119_092426.json",
           "analysis_20251119_211631.json",
           "analysis_20251120_092249.json",
-          "anthropic_innovation_research_idea40.md"
+          "analysis_20251120_211920.json"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 1297,
-    "total_lines": 5178664
+    "total_files": 1409,
+    "total_lines": 5201666
   },
   "dependencies": {
     "internal_imports": {
@@ -271,10 +271,12 @@
       "thematic-analyzer.py": [],
       "pr-content-analyzer.py": [],
       "dynamic-agent-spawner.py": [],
+      "meta_learning_scheduler.py": [],
       "registry_manager.py": [],
       "repetition-detector.py": [],
       "clustering_integration_example.py": [],
       "claude_code_integration_example.py": [],
+      "neural_workflow_adapter.py": [],
       "knowledge_graph_builder.py": [],
       "create_labels.py": [],
       "commit-strategy-learner.py": [],
@@ -302,6 +304,7 @@
       "ai_workflow_predictor.py": [],
       "agent-metrics-collector.py": [],
       "issue_clustering_system.py": [],
+      "test-tech-lead-system.py": [],
       "batch_update_agents.py": [],
       "monitor-mentorship-dashboard.py": [],
       "uniqueness-scorer.py": [],
@@ -398,22 +401,22 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 92,
-      "sys": 117,
-      "json": 134,
+      "os": 95,
+      "sys": 120,
+      "json": 136,
       "re": 64,
       "ast": 17,
-      "datetime": 101,
-      "pathlib": 125,
-      "typing": 113,
-      "collections": 58,
+      "datetime": 103,
+      "pathlib": 129,
+      "typing": 115,
+      "collections": 60,
       "functools": 9,
-      "argparse": 103,
-      "math": 7,
-      "random": 23,
+      "argparse": 105,
+      "math": 8,
+      "random": 24,
       "time": 24,
-      "statistics": 10,
-      "dataclasses": 57,
+      "statistics": 12,
+      "dataclasses": 59,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
       "workload_subagent_spawner": 1,
@@ -425,12 +428,13 @@
       "subprocess": 23,
       "hashlib": 15,
       "traceback": 11,
-      "importlib": 20,
+      "importlib": 23,
       "csv": 1,
       "meta_agent_coordinator": 2,
-      "ai_workflow_predictor": 2,
+      "ai_workflow_predictor": 3,
       "tempfile": 3,
       "shutil": 7,
+      "workflow_execution_tracker": 2,
       "fcntl": 1,
       "contextlib": 1,
       "issue_clustering_system": 1,
@@ -462,7 +466,6 @@
       "sqlite3": 1,
       "zipfile": 1,
       "psutil": 1,
-      "generate_new_agent": 1,
       "fnmatch": 1,
       "abc": 1,
       "prompt_learning_integration": 1,
@@ -475,8 +478,8 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1297,
-    "total_lines": 5178664,
+    "total_files": 1409,
+    "total_lines": 5201666,
     "total_dependencies": 0,
     "external_libraries": 72,
     "coupling_score": 0.0,
@@ -485,7 +488,7 @@
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 151092,
+      "line_count": 153383,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -511,7 +514,7 @@
     },
     "agent_system": {
       "file_count": 2,
-      "line_count": 126994,
+      "line_count": 116072,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json"
@@ -519,7 +522,7 @@
     },
     "analysis_tools": {
       "file_count": 48,
-      "line_count": 4698779,
+      "line_count": 4700960,
       "files": [
         "2025-11-14-04-00-27.json",
         "2025-11-14-04-00-36.json",
@@ -527,6 +530,7 @@
         "actions-patterns.json",
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json",
+        "agents-tech-lead-diversity-alert-resolution.md",
         "archaeology-patterns.json",
         "archaeology.json",
         "archaeology_20251112_014409.json",
@@ -539,13 +543,12 @@
         "benchmark_results.json",
         "clustering_results.json",
         "commit_patterns.json",
-        "commit_strategy_investigation.md",
-        "commit_strategy_report.md"
+        "commit_strategy_investigation.md"
       ]
     },
     "documentation": {
       "file_count": 49,
-      "line_count": 204998,
+      "line_count": 221436,
       "files": [
         ".nojekyll",
         "AB_TESTING_BUG_REPORT.md",
@@ -560,25 +563,25 @@
         "AGENTOPS_DASHBOARD.md",
         "AGENTOPS_DATA_EXTRACTION_SUMMARY.md",
         "AGENTOPS_ENHANCEMENT_ANALYSIS.md",
+        "AGENTS.md",
         "AGENT_ASSIGNMENT_DIVERSITY_FIX.md",
         "AGENT_ASSIGNMENT_FIX_SUMMARY.md",
         "AGENT_ATTRIBUTION_IMPLEMENTATION_SUMMARY.md",
         "AGENT_DELETION_FIX_DIAGRAM.md",
         "AGENT_DELETION_FIX_SUMMARY.md",
-        "AGENT_EVALUATION_COACHING_2025-11-13.md",
-        "AGENT_EVALUATION_COACHING_2025-11-14.md"
+        "AGENT_EVALUATION_COACHING_2025-11-13.md"
       ]
     },
     "testing": {
       "file_count": 1,
-      "line_count": 63497,
+      "line_count": 58036,
       "files": [
         "latest_report.md"
       ]
     },
     "tools": {
       "file_count": 50,
-      "line_count": 123795,
+      "line_count": 125887,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
