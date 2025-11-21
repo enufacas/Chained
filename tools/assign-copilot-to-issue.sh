@@ -170,6 +170,14 @@ The agent needs to be registered and active in the system before work can begin.
   echo "   Score: $agent_score | Confidence: $agent_confidence"
   echo "   Description: $agent_description"
   
+  # Check for suggested tech lead reviewers
+  suggested_reviewers=$(echo "$agent_match" | jq -r '.suggested_reviewers // empty')
+  if [ -n "$suggested_reviewers" ] && [ "$suggested_reviewers" != "null" ]; then
+    echo ""
+    echo "👀 Tech Lead Reviewers Suggested:"
+    echo "$agent_match" | jq -r '.suggested_reviewers[] | "   - @\(.agent) (score: \(.score))"'
+  fi
+  
   # Add agent-specific label to help Copilot identify which custom agent to use
   # Note: copilot-assigned label was already added earlier to claim the issue
   labels=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')
@@ -403,6 +411,20 @@ The implementation should align with the [$matched_agent agent definition](https
         agent_mention="**@$matched_agent**"
       fi
       
+      # Build tech lead reviewer section if suggested reviewers exist
+      tech_lead_section=""
+      if [ -n "$suggested_reviewers" ] && [ "$suggested_reviewers" != "null" ]; then
+        tech_lead_section="
+
+## 👀 Tech Lead Oversight
+
+The following tech leads have been identified for review and oversight based on their domain expertise:
+
+$(echo "$agent_match" | jq -r '.suggested_reviewers[] | "- **@\(.agent)** (match score: \(.score)) - Will provide oversight and review"')
+
+These tech leads will be notified and can provide guidance, review PRs, and ensure quality standards are maintained."
+      fi
+      
       gh issue comment "$issue_number" --repo "$GITHUB_REPOSITORY" --body "🤖 **Copilot Assigned Successfully**
 
 GitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.
@@ -418,6 +440,7 @@ $assignment_details
 **Estimated time:** Copilot typically starts work within a few minutes
 **Assigned agent:** $agent_mention ($matched_agent specialization)
 **Assigned at:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+$tech_lead_section
 
 ---
 *🤖 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*"
