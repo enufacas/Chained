@@ -74,9 +74,9 @@ class WorkflowValidator:
                 error_str = str(e)
                 if "expected a single document" in error_str:
                     tip = (
-                        "\n  💡 Tip: '---' inside strings causes document separation. "
+                        '\n  💡 Tip: "---" inside strings causes document separation. '
                         "Use bash string concatenation:\n"
-                        '     --body "text"$\'\\n\\n\'"---"$\'\\n\\n\'"more text"'
+                        r'     --body "text"$'"'"'\n\n'"'"'"---"$'"'"'\n\n'"'"'"more text"'
                     )
                     error_msg += tip
                 elif "could not find expected ':'" in error_str:
@@ -304,19 +304,24 @@ class WorkflowValidator:
                     expr = expr.strip()
                     
                     # Check for potentially invalid concatenation patterns
-                    # This is a heuristic to catch cases like: github.server_url, github.repository
-                    # which might be missing an operator
+                    # This is a heuristic to catch typos like: ${{ github.server_url, github.repository }}
+                    # (comma instead of proper concatenation operator)
+                    # Note: This may produce false positives for legitimate comma usage in arrays or function calls
+                    # such as [github.actor, github.repository] or contains(var, value)
                     if ',' in expr and 'github.' in expr:
                         # Split by comma and check if consecutive parts look like bare references
                         parts = [p.strip() for p in expr.split(',')]
                         for part in parts:
-                            # If a part is just a github.* reference with nothing else, warn
+                            # If a part is just a bare github.* reference (no operators/brackets), warn
+                            # This catches: github.server_url, github.repository (typo)
+                            # But may warn on: [github.actor, github.repository] (legitimate)
                             if re.match(r'^github\.\w+$', part):
                                 self.warnings.append(
                                     f"{filename}:{line_num}: Possible invalid GitHub expression syntax"
                                     f"\n  Found: {line.strip()}"
                                     "\n  💡 Tip: Comma inside ${{ }} might indicate a typo. "
-                                    f"Check if you meant to concatenate strings properly."
+                                    f"Check if you meant to concatenate strings properly. "
+                                    f"(Ignore this if using arrays or function calls.)"
                                 )
                                 break  # Only warn once per line
     
