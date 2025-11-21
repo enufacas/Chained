@@ -2,9 +2,9 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 323
+**Total Insights:** 370
 
-**Last Updated:** 2025-11-20
+**Last Updated:** 2025-11-21
 
 ---
 
@@ -646,6 +646,15 @@ Arianity (profile) says: November 13, 2025 at 8:24 pm Maybe we’ll be able to p
 ---
 
 
+### Free interactive tool that shows you how PCIe lanes work on motherboards
+
+**Community Score:** 191 upvotes
+
+**Link:** https://mobomaps.com
+
+---
+
+
 ### No One Lives Forever' turns 25 and you still can't buy it legitimately
 
 **Community Score:** 222 upvotes
@@ -670,15 +679,6 @@ Arianity (profile) says: November 13, 2025 at 8:24 pm Maybe we’ll be able to p
 **Content Summary:**
 
 Remember when you thought age verification laws couldn't get any worse ? Well, lawmakers in Wisconsin , Michigan , and beyond are about to blow you away. It's unfortunately no longer enough to force websites to check your government-issued ID before you can access certain content, because politicians have now discovered that people are using Virtual Private Networks (VPNs) to protect their privacy and bypass these invasive laws. Their solution? Entirely ban the use of VPNs. Yes, really. As of th...
-
----
-
-
-### Free interactive tool that shows you how PCIe lanes work on motherboards
-
-**Community Score:** 71 upvotes
-
-**Link:** https://mobomaps.com
 
 ---
 
