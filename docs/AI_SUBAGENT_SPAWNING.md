@@ -153,9 +153,9 @@ python3 tools/spawning_decision_engine.py --status
 ```
 
 **Decision Factors:**
-- **WORKLOAD** (30%): Open issues, pending PRs, bottleneck severity
+- **WORKLOAD** (35%): Open issues, pending PRs, bottleneck severity
 - **API_HEALTH** (25%): SLA compliance, error rates
-- **CIRCUIT_BREAKER** (20%): Circuit breaker state
+- **CIRCUIT_BREAKER** (15%): Circuit breaker state
 - **CAPACITY** (15%): Agent capacity utilization
 - **PRIORITY** (10%): Workload priority score
 

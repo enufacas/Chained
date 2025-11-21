@@ -219,7 +219,7 @@ class WorkloadAPIHandler(BaseHTTPRequestHandler):
             'message': 'Historical data storage not yet implemented',
             'timestamp': datetime.now().isoformat()
         }
-        self._send_json(response, status=501)
+        self._send_json(response, status=200)  # Use 200 with status in body for better API clarity
     
     def _handle_root(self):
         """Handle root endpoint - API info"""
