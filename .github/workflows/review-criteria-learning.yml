@@ -84,11 +84,7 @@ jobs:
           # Create PR with learning report
           gh pr create \
             --title "feat: autonomous reviewer criteria evolution (@workflows-tech-lead)" \
-            --body "${REPORT}
-
----
-
-*🤖 Created by workflow: [review-criteria-learning.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+            --body "${REPORT}"$'\n\n'"---"$'\n\n'"*Created by workflow: [review-criteria-learning.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
             --label "automated,copilot" \
             --base main \
             --head "${BRANCH_NAME}"

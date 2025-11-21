@@ -68,20 +68,7 @@ jobs:
           # Create PR
           gh pr create \
             --title "chore: update reviewer dashboard (@workflows-tech-lead)" \
-            --body "## 🤖 Automated Dashboard Update
-
-Updated reviewer effectiveness dashboard with latest criteria.
-
-**Changes:**
-- Refreshed category performance metrics
-- Updated effectiveness history
-- Synchronized with criteria evolution
-
-View the dashboard after merge: [reviewer-dashboard.html](https://enufacas.github.io/Chained/reviewer-dashboard.html)
-
----
-
-*🤖 Created by workflow: [generate-reviewer-dashboard.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+            --body "## Automated Dashboard Update"$'\n\n'"Updated reviewer effectiveness dashboard with latest criteria."$'\n\n'"**Changes:**"$'\n'"- Refreshed category performance metrics"$'\n'"- Updated effectiveness history"$'\n'"- Synchronized with criteria evolution"$'\n\n'"View the dashboard after merge: [reviewer-dashboard.html](https://enufacas.github.io/Chained/reviewer-dashboard.html)"$'\n\n'"---"$'\n\n'"*Created by workflow: [generate-reviewer-dashboard.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
             --label "automated,copilot" \
             --base main \
             --head "${BRANCH_NAME}"
