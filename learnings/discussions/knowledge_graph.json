@@ -5211,6 +5211,344 @@
         "agent"
       ],
       "timestamp": "2025-11-21T01:18:40Z"
+    },
+    "insight_2206_84028c3f2e5f": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "-- COPILOT_AGENT:investigate-champion -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfaf Liskov** (@investigate-champion) custom agent profile",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_5fa44190c8bd": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "process",
+      "content": "> \n> **@investigate-champion** - Please use the specialized approach and tools defined in [`",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_ec2bc5bd9da2": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_aa8f4a538118": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "---\n\n## AI Agent Diversity Alert\n\nThe uniqueness scoring system has identified AI agents with diversity scores below the threshold",
+      "confidence": 0.7,
+      "tags": [
+        "agent",
+        "ai"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_610e6d808170": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "### Summary:\n- **Agents Below Threshold:** 1\n- **Average Uniqueness Score:** 32",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_d95c6a62ddba": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "0\n- **Analysis Period:** Last 30 days\n\n### Agents Needing Improvement:\n- **enufacas**: Score 27",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_0eec8c13e499": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "process",
+      "content": "45 - low approach diversity (16",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_097cd7b6396f": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "process",
+      "content": "0)\n\n### What This Means:\nLow diversity scores may indicate:\n- Agents falling into habitual approaches\n- Limited variety in problem-solving strategies\n- Opportunities for broader skill application\n- Potential for more innovative solutions\n\n### Action Items:\n1",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_ea00ecb077e0": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "process",
+      "content": "**Review Diversity Suggestions**: Check `analysis/diversity-suggestions",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_7f00fc80bd1c": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "**Examine Recent Work**: Look at flagged agents' recent contributions to identify patterns\n3",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_87b84a178b60": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "**Encourage Exploration**: Consider assigning diverse types of issues to these agents\n4",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_612124d1c52e": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "**Learn from High Performers**: Share successful diverse patterns from agents above threshold\n\n### Analysis Reports:\n- \ud83d\udcca **Repetition Patterns**: `analysis/repetition-report",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_722b3a2e622c": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "technical",
+      "content": "json` - Code structure and commit patterns\n- \ud83c\udfaf **Uniqueness Scores**: `analysis/uniqueness-scores",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_46dc2c7dd016": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "json` - Agent diversity metrics\n- \ud83d\udca1 **Improvement Suggestions**: `analysis/diversity-suggestions",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_8e63a66c22f1": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "technical",
+      "content": "md` - Actionable recommendations\n\n### Note:\nThis alert focuses on **AI agent diversity**, not code quality",
+      "confidence": 0.7,
+      "tags": [
+        "agent",
+        "ai"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_56b1b1f60974": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "process",
+      "content": "All agents can improve by:\n- Working on varied issue types\n- Using different solution approaches\n- Exploring diverse technologies and domains\n\n---\n\n### \ud83d\udd0d Validation Metadata\n*Use this metadata to verify data freshness and trace back to source:*\n- **Workflow Run:** [19561957291](https://github",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "workflow",
+        "agent",
+        "ai"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_909ad59852cc": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "com/enufacas/Chained/commit/3dc1a4bacf42bafefe29a8f20728a5b5317cda93)\n\n<details>\n<summary>Validation Checklist</summary>\n\nBefore acting on this alert, verify:\n- [ ] Analysis data is recent (< 1 hour old)\n- [ ] Flagged agents exist in git history\n- [ ] Contribution counts are accurate\n- [ ] All flagged agents have \u2265 3 contributions\n- [ ] Cross-reference with `analysis/uniqueness-scores",
+      "confidence": 0.7,
+      "tags": [
+        "agent",
+        "ai"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_f867e3544feb": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "process",
+      "content": "json`\n\n</details>\n\n---\n*Automatically generated by the AI Pattern Repetition Detector*\n*Issue created by workflow: repetition-detector",
+      "confidence": 0.7,
+      "tags": [
+        "workflow",
+        "ai"
+      ],
+      "timestamp": "2025-11-21T06:21:32Z"
+    },
+    "insight_2206_dac0106fdb6c": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the \ud83c\udfaf **Liskov** (@investigate-champion) specialization:\n\n- **Agent**: \ud83c\udfaf **Liskov** (@investigate-champion)\n- **Match Confidence**: high\n- **Match Score**: 14\n- **Description**: Specialized agent for investigating metrics",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_697c873ac2a2": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "technical",
+      "content": "Focuses on code patterns, data flows, and dependencies",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_3e8e550be57c": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "- **Agent Path**: [`",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_6fd251e52e9b": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "github/agents/investigate-champion",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_73dc98fc51c8": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@investigate-champion** by name in all conversations related to this issue",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_16eb677710da": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@investigate-champion** - Please use the **investigate-champion** custom agent profile from `",
+      "confidence": 0.7,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_34b2ec0476de": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "process",
+      "content": "Follow the specialized approach, tools, and best practices defined in that agent's configuration",
+      "confidence": 0.6,
+      "tags": [
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_3c6cfb8d7127": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "technical",
+      "content": "The implementation should align with the [investigate-champion agent definition](https://github",
+      "confidence": 0.6,
+      "tags": [
+        "github",
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_553feb1935a5": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 **Liskov** (@investigate-champion) will analyze the issue requirements using the investigate-champion specialization\n2",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_fcf12e26adb7": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "process",
+      "content": "\ud83d\udcbb **Liskov** (@investigate-champion) will create a branch and implement the solution following the investigate-champion approach\n3",
+      "confidence": 0.7,
+      "tags": [],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_912834a9c39a": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "technical",
+      "content": "\ud83d\udcdd **Liskov** (@investigate-champion) will open a PR with the implementation\n4",
+      "confidence": 0.6,
+      "tags": [],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_87eb99b3426c": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "process",
+      "content": "\ud83d\udd0d Auto-review workflow will validate and merge\n5",
+      "confidence": 0.7,
+      "tags": [
+        "workflow"
+      ],
+      "timestamp": "2025-11-21T06:33:49Z"
+    },
+    "insight_2206_b77907dc2e4d": {
+      "issue_number": 2206,
+      "issue_title": "\u26a0\ufe0f AI Agent Diversity Alert: 1 agents below threshold",
+      "insight_type": "agent_behavior",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** **Liskov** (@investigate-champion) (investigate-champion specialization)\n**Assigned at:** 2025-11-21 06:33:48 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "confidence": 0.7999999999999999,
+      "tags": [
+        "github",
+        "api",
+        "agent"
+      ],
+      "timestamp": "2025-11-21T06:33:49Z"
     }
   },
   "connections": [
@@ -18569,12 +18907,803 @@
       "connection_type": "similar",
       "similarity_score": 0.782608695652174,
       "timestamp": "2025-11-21T01:56:52.330451+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_84028c3f2e5f",
+      "target_insight_id": "insight_2024_5302cc4ac0aa",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.127340+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_84028c3f2e5f",
+      "target_insight_id": "insight_1555_d1d078d38d26",
+      "connection_type": "similar",
+      "similarity_score": 0.8421052631578947,
+      "timestamp": "2025-11-21T13:42:50.127363+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_84028c3f2e5f",
+      "target_insight_id": "insight_1673_d2f6efc3a0d5",
+      "connection_type": "similar",
+      "similarity_score": 0.8421052631578947,
+      "timestamp": "2025-11-21T13:42:50.127374+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_84028c3f2e5f",
+      "target_insight_id": "insight_1919_a83af4966bee",
+      "connection_type": "similar",
+      "similarity_score": 0.8421052631578947,
+      "timestamp": "2025-11-21T13:42:50.127380+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_84028c3f2e5f",
+      "target_insight_id": "insight_1461_df7e683aa403",
+      "connection_type": "similar",
+      "similarity_score": 0.75,
+      "timestamp": "2025-11-21T13:42:50.127385+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_5fa44190c8bd",
+      "target_insight_id": "insight_2024_cc0f546fb020",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.133603+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_5fa44190c8bd",
+      "target_insight_id": "insight_1555_ff69f4c53f8f",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-21T13:42:50.133616+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_5fa44190c8bd",
+      "target_insight_id": "insight_1673_96fb03089486",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-21T13:42:50.133623+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_5fa44190c8bd",
+      "target_insight_id": "insight_1919_a75ceb2dea9f",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-21T13:42:50.133627+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_5fa44190c8bd",
+      "target_insight_id": "insight_1460_d821e026c58a",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-21T13:42:50.133632+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ec2bc5bd9da2",
+      "target_insight_id": "insight_2024_1a798c7685f1",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.138691+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ec2bc5bd9da2",
+      "target_insight_id": "insight_2024_f42ae230e5db",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.138704+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ec2bc5bd9da2",
+      "target_insight_id": "insight_1555_166e5af97f94",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.138710+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ec2bc5bd9da2",
+      "target_insight_id": "insight_1555_afa055acc2b7",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.138715+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ec2bc5bd9da2",
+      "target_insight_id": "insight_1673_ea87a68d6fe4",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.138719+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ec2bc5bd9da2",
+      "target_insight_id": "insight_2024_1a798c7685f1",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.143720+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ec2bc5bd9da2",
+      "target_insight_id": "insight_2024_f42ae230e5db",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.143731+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ec2bc5bd9da2",
+      "target_insight_id": "insight_1555_166e5af97f94",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.143737+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ec2bc5bd9da2",
+      "target_insight_id": "insight_1555_afa055acc2b7",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.143742+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ec2bc5bd9da2",
+      "target_insight_id": "insight_1673_ea87a68d6fe4",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.143751+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_aa8f4a538118",
+      "target_insight_id": "insight_1839_cf44ee001d33",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.150547+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_610e6d808170",
+      "target_insight_id": "insight_1839_5b40268010d7",
+      "connection_type": "similar",
+      "similarity_score": 0.6363636363636364,
+      "timestamp": "2025-11-21T13:42:50.156451+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_610e6d808170",
+      "target_insight_id": "insight_1460_df6ff630654f",
+      "connection_type": "similar",
+      "similarity_score": 0.42857142857142855,
+      "timestamp": "2025-11-21T13:42:50.156463+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_d95c6a62ddba",
+      "target_insight_id": "insight_1839_03546730ada2",
+      "connection_type": "similar",
+      "similarity_score": 0.625,
+      "timestamp": "2025-11-21T13:42:50.162658+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_0eec8c13e499",
+      "target_insight_id": "insight_1839_06eb97f05768",
+      "connection_type": "similar",
+      "similarity_score": 0.42857142857142855,
+      "timestamp": "2025-11-21T13:42:50.167983+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_0eec8c13e499",
+      "target_insight_id": "insight_1839_56b227a96159",
+      "connection_type": "similar",
+      "similarity_score": 0.42857142857142855,
+      "timestamp": "2025-11-21T13:42:50.167996+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_097cd7b6396f",
+      "target_insight_id": "insight_1839_33b27d7246d6",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.177117+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ea00ecb077e0",
+      "target_insight_id": "insight_1839_5b829623d2bd",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.182691+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_ea00ecb077e0",
+      "target_insight_id": "insight_1460_1b2eebeb5491",
+      "connection_type": "similar",
+      "similarity_score": 0.8,
+      "timestamp": "2025-11-21T13:42:50.182703+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_7f00fc80bd1c",
+      "target_insight_id": "insight_1839_6d3923886200",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.188908+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_7f00fc80bd1c",
+      "target_insight_id": "insight_1460_2eb8afa2a881",
+      "connection_type": "similar",
+      "similarity_score": 0.5,
+      "timestamp": "2025-11-21T13:42:50.188919+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_87b84a178b60",
+      "target_insight_id": "insight_1839_2218aaf07690",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.195022+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_612124d1c52e",
+      "target_insight_id": "insight_1839_277f5a973fd3",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.203282+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_722b3a2e622c",
+      "target_insight_id": "insight_1839_f83f246b7689",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.210064+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_46dc2c7dd016",
+      "target_insight_id": "insight_1839_3ddae1a19a25",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.216711+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_8e63a66c22f1",
+      "target_insight_id": "insight_1839_c767fca3ca52",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.223582+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_56b1b1f60974",
+      "target_insight_id": "insight_1839_7dfc2187b1ed",
+      "connection_type": "similar",
+      "similarity_score": 0.46511627906976744,
+      "timestamp": "2025-11-21T13:42:50.246948+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_dac0106fdb6c",
+      "target_insight_id": "insight_2024_78f4bf4df095",
+      "connection_type": "similar",
+      "similarity_score": 0.9259259259259259,
+      "timestamp": "2025-11-21T13:42:50.278726+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_dac0106fdb6c",
+      "target_insight_id": "insight_1673_3b61f9308257",
+      "connection_type": "similar",
+      "similarity_score": 0.7,
+      "timestamp": "2025-11-21T13:42:50.278741+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_dac0106fdb6c",
+      "target_insight_id": "insight_1919_b47981db1309",
+      "connection_type": "similar",
+      "similarity_score": 0.7,
+      "timestamp": "2025-11-21T13:42:50.278748+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_dac0106fdb6c",
+      "target_insight_id": "insight_1837_0c03571dcd90",
+      "connection_type": "similar",
+      "similarity_score": 0.6666666666666666,
+      "timestamp": "2025-11-21T13:42:50.278754+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_dac0106fdb6c",
+      "target_insight_id": "insight_1651_d960dcdc7f40",
+      "connection_type": "similar",
+      "similarity_score": 0.6451612903225806,
+      "timestamp": "2025-11-21T13:42:50.278759+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_697c873ac2a2",
+      "target_insight_id": "insight_2024_5831272f8f53",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.284516+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_3e8e550be57c",
+      "target_insight_id": "insight_1460_68aae128b455",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.289636+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_3e8e550be57c",
+      "target_insight_id": "insight_1461_468c5bac0631",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.289648+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_3e8e550be57c",
+      "target_insight_id": "insight_1458_c06c89414128",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.289654+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_3e8e550be57c",
+      "target_insight_id": "insight_1486_ff36f800939c",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.289659+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_3e8e550be57c",
+      "target_insight_id": "insight_1492_d9ca4fa7150b",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.289664+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2024_1a798c7685f1",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.294960+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2024_f42ae230e5db",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.294973+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2206_ec2bc5bd9da2",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.294980+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_1555_166e5af97f94",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.294985+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_1555_afa055acc2b7",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.294989+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2024_1a798c7685f1",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.300214+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2024_f42ae230e5db",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.300226+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2206_ec2bc5bd9da2",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.300232+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_1555_166e5af97f94",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.300237+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_1555_afa055acc2b7",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.300242+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_73dc98fc51c8",
+      "target_insight_id": "insight_2024_78c9e9e2f605",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.308182+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_73dc98fc51c8",
+      "target_insight_id": "insight_1673_c7ca7cb7418f",
+      "connection_type": "similar",
+      "similarity_score": 0.9130434782608695,
+      "timestamp": "2025-11-21T13:42:50.308195+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_73dc98fc51c8",
+      "target_insight_id": "insight_1919_2093317f27c1",
+      "connection_type": "similar",
+      "similarity_score": 0.9130434782608695,
+      "timestamp": "2025-11-21T13:42:50.308201+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_73dc98fc51c8",
+      "target_insight_id": "insight_1460_b8b5519c2025",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-21T13:42:50.308206+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_73dc98fc51c8",
+      "target_insight_id": "insight_1461_adf13f5f0e40",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-21T13:42:50.308210+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_16eb677710da",
+      "target_insight_id": "insight_2024_88708f1e2fb7",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.315974+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_16eb677710da",
+      "target_insight_id": "insight_1555_c74147e12a90",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-21T13:42:50.315987+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_16eb677710da",
+      "target_insight_id": "insight_1673_4a3f20323b07",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-21T13:42:50.315994+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_16eb677710da",
+      "target_insight_id": "insight_1919_675e7a967c1f",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-21T13:42:50.315998+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_16eb677710da",
+      "target_insight_id": "insight_1460_7d780ede38e3",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-21T13:42:50.316003+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2024_1a798c7685f1",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.321761+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2024_f42ae230e5db",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.321778+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2206_ec2bc5bd9da2",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.321785+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_1555_166e5af97f94",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.321790+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_1555_afa055acc2b7",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.321795+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_34b2ec0476de",
+      "target_insight_id": "insight_1460_734f5639eeb1",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.329069+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_34b2ec0476de",
+      "target_insight_id": "insight_1461_b02d3182b0fa",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.329086+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_34b2ec0476de",
+      "target_insight_id": "insight_1458_a11d8a8639cb",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.329093+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_34b2ec0476de",
+      "target_insight_id": "insight_1486_01c93ef9c5ae",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.329098+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_34b2ec0476de",
+      "target_insight_id": "insight_1492_1851bd63d4f6",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.329104+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_3c6cfb8d7127",
+      "target_insight_id": "insight_2024_7fa883ecff43",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.335497+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_3c6cfb8d7127",
+      "target_insight_id": "insight_1673_05d56fe1ab6e",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-21T13:42:50.335510+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_3c6cfb8d7127",
+      "target_insight_id": "insight_1919_4e62331cfce7",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333334,
+      "timestamp": "2025-11-21T13:42:50.335516+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_3c6cfb8d7127",
+      "target_insight_id": "insight_1536_887024f667e4",
+      "connection_type": "similar",
+      "similarity_score": 0.75,
+      "timestamp": "2025-11-21T13:42:50.335521+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_3c6cfb8d7127",
+      "target_insight_id": "insight_1460_81a0d37f9f19",
+      "connection_type": "similar",
+      "similarity_score": 0.6923076923076923,
+      "timestamp": "2025-11-21T13:42:50.335526+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2024_1a798c7685f1",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.340781+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2024_f42ae230e5db",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.340794+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_2206_ec2bc5bd9da2",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.340800+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_1555_166e5af97f94",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.340804+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_6fd251e52e9b",
+      "target_insight_id": "insight_1555_afa055acc2b7",
+      "connection_type": "similar",
+      "similarity_score": 0.6,
+      "timestamp": "2025-11-21T13:42:50.340809+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_553feb1935a5",
+      "target_insight_id": "insight_2024_6f1dd7a884d0",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.348328+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_553feb1935a5",
+      "target_insight_id": "insight_1673_679b76318582",
+      "connection_type": "similar",
+      "similarity_score": 0.75,
+      "timestamp": "2025-11-21T13:42:50.348342+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_553feb1935a5",
+      "target_insight_id": "insight_1919_4dc20172f0c0",
+      "connection_type": "similar",
+      "similarity_score": 0.75,
+      "timestamp": "2025-11-21T13:42:50.348348+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_553feb1935a5",
+      "target_insight_id": "insight_1461_dc1e63490ce7",
+      "connection_type": "similar",
+      "similarity_score": 0.6153846153846154,
+      "timestamp": "2025-11-21T13:42:50.348353+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_553feb1935a5",
+      "target_insight_id": "insight_1492_2b3d95533e12",
+      "connection_type": "similar",
+      "similarity_score": 0.6153846153846154,
+      "timestamp": "2025-11-21T13:42:50.348358+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_fcf12e26adb7",
+      "target_insight_id": "insight_2024_e7875c684511",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.356257+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_fcf12e26adb7",
+      "target_insight_id": "insight_1673_b710ce727c0e",
+      "connection_type": "similar",
+      "similarity_score": 0.9571428571428571,
+      "timestamp": "2025-11-21T13:42:50.356269+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_fcf12e26adb7",
+      "target_insight_id": "insight_1919_756d1d97ceb3",
+      "connection_type": "similar",
+      "similarity_score": 0.9571428571428571,
+      "timestamp": "2025-11-21T13:42:50.356274+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_fcf12e26adb7",
+      "target_insight_id": "insight_1680_624fcaed0fd3",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333333,
+      "timestamp": "2025-11-21T13:42:50.356279+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_fcf12e26adb7",
+      "target_insight_id": "insight_1822_b811905bf34c",
+      "connection_type": "similar",
+      "similarity_score": 0.8333333333333333,
+      "timestamp": "2025-11-21T13:42:50.356284+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_912834a9c39a",
+      "target_insight_id": "insight_2024_57f40442c0d5",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.363079+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_912834a9c39a",
+      "target_insight_id": "insight_1673_75daf9ef8e8a",
+      "connection_type": "similar",
+      "similarity_score": 0.75,
+      "timestamp": "2025-11-21T13:42:50.363090+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_912834a9c39a",
+      "target_insight_id": "insight_1919_b8aa268a6c7c",
+      "connection_type": "similar",
+      "similarity_score": 0.75,
+      "timestamp": "2025-11-21T13:42:50.363096+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_912834a9c39a",
+      "target_insight_id": "insight_1461_4c6aa98df983",
+      "connection_type": "similar",
+      "similarity_score": 0.6153846153846154,
+      "timestamp": "2025-11-21T13:42:50.363100+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_912834a9c39a",
+      "target_insight_id": "insight_1492_a5b3a8f1c5f6",
+      "connection_type": "similar",
+      "similarity_score": 0.6153846153846154,
+      "timestamp": "2025-11-21T13:42:50.363105+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_87eb99b3426c",
+      "target_insight_id": "insight_1460_c75ae1e65917",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.369271+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_87eb99b3426c",
+      "target_insight_id": "insight_1461_0515074995f0",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.369281+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_87eb99b3426c",
+      "target_insight_id": "insight_1458_d545b9f13794",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.369287+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_87eb99b3426c",
+      "target_insight_id": "insight_1486_676116f426a0",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.369292+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_87eb99b3426c",
+      "target_insight_id": "insight_1492_8250e22d8daf",
+      "connection_type": "similar",
+      "similarity_score": 1.0,
+      "timestamp": "2025-11-21T13:42:50.369296+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_b77907dc2e4d",
+      "target_insight_id": "insight_2024_48a8a8473f55",
+      "connection_type": "similar",
+      "similarity_score": 0.8260869565217391,
+      "timestamp": "2025-11-21T13:42:50.382600+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_b77907dc2e4d",
+      "target_insight_id": "insight_1536_8bb6ad3a2c9b",
+      "connection_type": "similar",
+      "similarity_score": 0.8043478260869565,
+      "timestamp": "2025-11-21T13:42:50.382613+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_b77907dc2e4d",
+      "target_insight_id": "insight_1486_c8630fc4c052",
+      "connection_type": "similar",
+      "similarity_score": 0.782608695652174,
+      "timestamp": "2025-11-21T13:42:50.382619+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_b77907dc2e4d",
+      "target_insight_id": "insight_1673_5a1ead88b5f3",
+      "connection_type": "similar",
+      "similarity_score": 0.782608695652174,
+      "timestamp": "2025-11-21T13:42:50.382624+00:00"
+    },
+    {
+      "source_insight_id": "insight_2206_b77907dc2e4d",
+      "target_insight_id": "insight_1509_26fdb4736a5f",
+      "connection_type": "similar",
+      "similarity_score": 0.7659574468085106,
+      "timestamp": "2025-11-21T13:42:50.382628+00:00"
     }
   ],
   "metadata": {
     "created": "2025-11-17T02:04:33.396572+00:00",
-    "last_updated": "2025-11-21T01:56:52.330462+00:00",
-    "total_insights": 472,
-    "total_connections": 1908
+    "last_updated": "2025-11-21T13:42:50.382639+00:00",
+    "total_insights": 503,
+    "total_connections": 2021
   }
 }
