@@ -881,7 +881,10 @@ def match_issue_to_agent(title, body="", exclude_tech_leads=True):
     
     # If no regular agents matched, but tech leads did, use tech leads
     # This ensures issues still get assigned even if only tech leads match
-    if (not scores or (scores and max(scores.values()) == 0)) and tech_lead_scores and max(tech_lead_scores.values()) > 0:
+    max_score = max(scores.values()) if scores else 0
+    max_tech_lead_score = max(tech_lead_scores.values()) if tech_lead_scores else 0
+    
+    if (not scores or max_score == 0) and tech_lead_scores and max_tech_lead_score > 0:
         # Use tech lead as fallback if they matched well
         best_tech_lead = max(tech_lead_scores.items(), key=lambda x: x[1])
         if best_tech_lead[1] >= 3:  # Only use tech lead if score is reasonable
@@ -899,7 +902,7 @@ def match_issue_to_agent(title, body="", exclude_tech_leads=True):
             }
     
     # Find the best match from regular agents
-    if not scores or max(scores.values()) == 0:
+    if not scores or max_score == 0:
         # No clear match - use fallback strategy with variety
         # Instead of always using create-guru, rotate through capable general agents
         fallback_agents = [
@@ -936,7 +939,8 @@ def match_issue_to_agent(title, body="", exclude_tech_leads=True):
         }
         
         # Include tech lead suggestions if any matched
-        if tech_lead_scores and tech_lead_scores.values() and max(tech_lead_scores.values()) > 0:
+        max_tech_lead_score = max(tech_lead_scores.values()) if tech_lead_scores else 0
+        if tech_lead_scores and max_tech_lead_score > 0:
             top_tech_leads = sorted(tech_lead_scores.items(), key=lambda x: x[1], reverse=True)[:3]
             result['suggested_reviewers'] = [
                 {'agent': tl[0], 'score': tl[1]} for tl in top_tech_leads if tl[1] > 0
@@ -989,7 +993,8 @@ def match_issue_to_agent(title, body="", exclude_tech_leads=True):
     }
     
     # Include tech lead suggestions for review/oversight if any matched well
-    if tech_lead_scores and tech_lead_scores.values() and max(tech_lead_scores.values()) >= 3:
+    max_tech_lead_score = max(tech_lead_scores.values()) if tech_lead_scores else 0
+    if tech_lead_scores and max_tech_lead_score >= 3:
         top_tech_leads = sorted(tech_lead_scores.items(), key=lambda x: x[1], reverse=True)[:3]
         result['suggested_reviewers'] = [
             {'agent': tl[0], 'score': tl[1]} for tl in top_tech_leads if tl[1] >= 3
