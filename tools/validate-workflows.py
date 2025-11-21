@@ -309,7 +309,7 @@ class WorkflowValidator:
                     if ',' in expr and 'github.' in expr:
                         # Split by comma and check if consecutive parts look like bare references
                         parts = [p.strip() for p in expr.split(',')]
-                        for i, part in enumerate(parts):
+                        for part in parts:
                             # If a part is just a github.* reference with nothing else, warn
                             if re.match(r'^github\.\w+$', part):
                                 self.warnings.append(
@@ -318,6 +318,7 @@ class WorkflowValidator:
                                     "\n  💡 Tip: Comma inside ${{ }} might indicate a typo. "
                                     f"Check if you meant to concatenate strings properly."
                                 )
+                                break  # Only warn once per line
     
     def validate_directory(self, dirpath: Path) -> Tuple[int, int]:
         """
