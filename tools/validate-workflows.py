@@ -73,10 +73,12 @@ class WorkflowValidator:
                 # Add helpful context for common errors
                 error_str = str(e)
                 if "expected a single document" in error_str:
+                    # Example of the bash concatenation pattern
+                    example = '--body "text"' + "$'\\n\\n'" + '"---"' + "$'\\n\\n'" + '"more text"'
                     tip = (
                         '\n  💡 Tip: "---" inside strings causes document separation. '
                         "Use bash string concatenation:\n"
-                        r'     --body "text"$'"'"'\n\n'"'"'"---"$'"'"'\n\n'"'"'"more text"'
+                        f'     {example}'
                     )
                     error_msg += tip
                 elif "could not find expected ':'" in error_str:
@@ -307,7 +309,10 @@ class WorkflowValidator:
                     # This is a heuristic to catch typos like: ${{ github.server_url, github.repository }}
                     # (comma instead of proper concatenation operator)
                     # Note: This may produce false positives for legitimate comma usage in arrays or function calls
-                    # such as [github.actor, github.repository] or contains(var, value)
+                    # Examples of when to ignore this warning:
+                    #   - Arrays: ${{ [github.actor, github.repository] }}
+                    #   - Function calls: ${{ contains(github.event.head_commit.message, 'skip') }}
+                    #   - fromJSON with arrays: ${{ fromJSON('[github.actor, github.repository]') }}
                     if ',' in expr and 'github.' in expr:
                         # Split by comma and check if consecutive parts look like bare references
                         parts = [p.strip() for p in expr.split(',')]
@@ -321,7 +326,7 @@ class WorkflowValidator:
                                     f"\n  Found: {line.strip()}"
                                     "\n  💡 Tip: Comma inside ${{ }} might indicate a typo. "
                                     f"Check if you meant to concatenate strings properly. "
-                                    f"(Ignore this if using arrays or function calls.)"
+                                    f"(Ignore if using arrays like [a, b] or function calls.)"
                                 )
                                 break  # Only warn once per line
     
