@@ -1,0 +1,135 @@
+name: 'Setup Chained MCP Server'
+description: 'Install and configure Chained Repository MCP server for use by GitHub Copilot and other agents'
+branding:
+  icon: 'server'
+  color: 'blue'
+
+inputs:
+  debug:
+    description: 'Enable debug logging'
+    required: false
+    default: 'false'
+  cache-dir:
+    description: 'Custom cache directory for MCP server'
+    required: false
+    default: '/tmp/mcp-cache'
+
+outputs:
+  config-path:
+    description: 'Path to MCP configuration file'
+    value: ${{ steps.configure.outputs.config-path }}
+  server-path:
+    description: 'Path to MCP server executable'
+    value: ${{ steps.install.outputs.server-path }}
+  status:
+    description: 'Installation status'
+    value: ${{ steps.verify.outputs.status }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Chained Repository MCP Server
+      id: install
+      shell: bash
+      run: |
+        echo "📦 Installing @chained/repository-mcp..."
+        
+        # Install globally via npm
+        npm install -g @chained/repository-mcp
+        
+        # Find installation path
+        SERVER_PATH=$(which chained-repository-mcp || echo "")
+        
+        if [ -z "$SERVER_PATH" ]; then
+          echo "❌ Failed to install chained-repository-mcp"
+          exit 1
+        fi
+        
+        echo "✅ MCP server installed at: $SERVER_PATH"
+        echo "server-path=$SERVER_PATH" >> $GITHUB_OUTPUT
+    
+    - name: Create MCP Configuration
+      id: configure
+      shell: bash
+      env:
+        DEBUG_MODE: ${{ inputs.debug }}
+        CACHE_DIR: ${{ inputs.cache-dir }}
+      run: |
+        CONFIG_PATH="/tmp/chained-mcp-config.json"
+        
+        # Create configuration with environment-specific settings
+        cat > "$CONFIG_PATH" <<EOF
+        {
+          "mcpServers": {
+            "chained-repository": {
+              "command": "chained-repository-mcp",
+              "description": "Chained Repository MCP - Agents, learnings, automation tools",
+              "env": {
+                "CHAINED_REPO_PATH": "${{ github.workspace }}",
+                "CHAINED_MCP_DEBUG": "$DEBUG_MODE",
+                "CHAINED_MCP_CACHE_DIR": "$CACHE_DIR"
+              }
+            }
+          }
+        }
+        EOF
+        
+        echo "📝 MCP configuration created at: $CONFIG_PATH"
+        echo "config-path=$CONFIG_PATH" >> $GITHUB_OUTPUT
+        
+        # Export environment variables for Copilot
+        echo "MCP_SERVERS_CONFIG=$CONFIG_PATH" >> $GITHUB_ENV
+        echo "CHAINED_REPO_PATH=${{ github.workspace }}" >> $GITHUB_ENV
+        echo "CHAINED_MCP_DEBUG=$DEBUG_MODE" >> $GITHUB_ENV
+        echo "CHAINED_MCP_CACHE_DIR=$CACHE_DIR" >> $GITHUB_ENV
+        
+        # Display configuration (for debugging)
+        if [ "$DEBUG_MODE" = "true" ]; then
+          echo "📋 Configuration contents:"
+          cat "$CONFIG_PATH"
+        fi
+    
+    - name: Verify Installation
+      id: verify
+      shell: bash
+      run: |
+        echo "🧪 Verifying MCP server installation..."
+        
+        # Check command exists
+        if ! command -v chained-repository-mcp &> /dev/null; then
+          echo "status=failed" >> $GITHUB_OUTPUT
+          echo "❌ Command not found"
+          exit 1
+        fi
+        
+        # Check Node.js version
+        NODE_VERSION=$(node --version)
+        echo "Node.js version: $NODE_VERSION"
+        
+        # Check repository structure
+        if [ ! -d "${{ github.workspace }}/.github/agent-system" ]; then
+          echo "⚠️  Warning: .github/agent-system directory not found"
+          echo "   MCP server may have limited functionality"
+        fi
+        
+        if [ ! -d "${{ github.workspace }}/learnings" ]; then
+          echo "⚠️  Warning: learnings directory not found"
+          echo "   Learning data tools will not be available"
+        fi
+        
+        echo "status=success" >> $GITHUB_OUTPUT
+        echo "✅ MCP server is ready to use"
+        echo ""
+        echo "Available MCP tools:"
+        echo "  • list_agents - List all agent specializations"
+        echo "  • get_agent_details - Get detailed agent information"
+        echo "  • search_agent_patterns - Find agents matching keywords"
+        echo "  • get_agent_metrics - View agent performance metrics"
+        echo "  • get_hall_of_fame - See top-performing agents"
+        echo "  • get_learning_data - Access TLDR, HN, GitHub Trending"
+        echo "  • search_learnings - Search through learning history"
+        echo "  • get_thematic_analysis - View learning themes"
+        echo "  • get_tool_documentation - Access tool docs"
+        echo "  • list_available_tools - List automation tools"
+        echo "  • match_issue_to_agent - Find best agent for an issue"
+        echo ""
