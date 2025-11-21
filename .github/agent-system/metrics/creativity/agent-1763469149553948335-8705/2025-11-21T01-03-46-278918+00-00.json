@@ -1,0 +1,29 @@
+{
+  "agent_id": "agent-1763469149553948335-8705",
+  "timestamp": "2025-11-21T01:03:46.278918+00:00",
+  "score": {
+    "novelty": 0.0,
+    "diversity": 0.42666666666666664,
+    "impact": 1.0,
+    "learning": 0.5,
+    "overall": 0.4316666666666667
+  },
+  "indicators": {
+    "novel_patterns": [],
+    "unique_approaches": 1,
+    "first_time_solutions": 0,
+    "cross_domain_contributions": 11,
+    "breakthrough_moments": [
+      "Broad system-wide impact"
+    ]
+  },
+  "metadata": {
+    "contributions_analyzed": 21,
+    "weights": {
+      "novelty": 0.35,
+      "diversity": 0.25,
+      "impact": 0.25,
+      "learning": 0.15
+    }
+  }
+}
