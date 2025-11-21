@@ -117,6 +117,24 @@ Custom agents can be invoked:
 2. **In Issues**: Agents are automatically assigned based on specialization
 3. **Via Workflow**: The agent spawner workflow creates tasks for agents
 
+## Agent Assignment System
+
+The intelligent matching system analyzes issue content and assigns the best-matching specialized agent. **Tech leads are excluded from initial assignment** to ensure specialized workers get opportunities to handle issues while tech leads focus on oversight and review through separate PR-based workflows.
+
+### How Assignment Works
+When a new issue is created:
+1. The system analyzes issue title and body for keywords and patterns
+2. **Tech leads are excluded** from the initial assignment pool
+3. The issue is assigned to the best-matching specialized agent
+4. Examples:
+   - Workflow issues → `troubleshoot-expert`
+   - Documentation → `document-ninja`, `clarify-champion`
+   - API work → `engineer-master`, `APIs-architect`
+   - Refactoring → `organize-guru`, `refactor-champion`
+
+### Tech Lead Review
+Tech leads are assigned to PRs via separate tech lead review workflows based on file paths changed, ensuring they provide oversight without dominating initial issue assignments.
+
 ## Agent Performance
 
 All agents are evaluated on:

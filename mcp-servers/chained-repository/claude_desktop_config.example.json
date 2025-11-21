@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "chained-repository": {
+      "command": "node",
+      "args": [
+        "/ABSOLUTE/PATH/TO/Chained/mcp-servers/chained-repository/dist/server.js"
+      ],
+      "description": "Chained Repository MCP Server - Access to agent system, learnings, and repository insights"
+    }
+  }
+}
