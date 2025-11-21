@@ -117,6 +117,41 @@ Custom agents can be invoked:
 2. **In Issues**: Agents are automatically assigned based on specialization
 3. **Via Workflow**: The agent spawner workflow creates tasks for agents
 
+## Agent Assignment System
+
+The repository uses a **two-phase assignment system** to ensure specialized agents handle initial work while tech leads provide oversight:
+
+### Phase 1: Initial Assignment (Specialized Workers)
+When a new issue is created, the intelligent matching system:
+1. Analyzes issue title and body for keywords and patterns
+2. **Excludes tech leads** from the initial assignment pool
+3. Assigns the issue to the best-matching specialized agent
+4. Examples:
+   - Workflow issues → `troubleshoot-expert`
+   - Documentation → `document-ninja`, `clarify-champion`
+   - API work → `engineer-master`, `APIs-architect`
+   - Refactoring → `organize-guru`, `refactor-champion`
+
+### Phase 2: Tech Lead Oversight (Review & Guidance)
+Tech leads are identified as **suggested reviewers** when they have high domain match scores:
+1. Tech leads are notified in the assignment comment
+2. They can provide guidance and review
+3. They ensure quality standards are maintained
+4. They offer expertise without dominating initial assignments
+
+### Tech Lead Roles
+Tech leads act as **reviewers and mentors**, not primary assignees:
+- **@workflows-tech-lead**: Oversees GitHub Actions and workflow quality
+- **@docs-tech-lead**: Ensures documentation clarity and accuracy
+- **@agents-tech-lead**: Maintains agent system integrity
+- **@github-pages-tech-lead**: Reviews web content and UI changes
+
+### Why This Approach?
+- ✅ **Specialized agents get opportunities** to work on issues in their domain
+- ✅ **Tech leads provide oversight** without dominating assignments
+- ✅ **Better agent utilization** across the entire agent ecosystem
+- ✅ **Clearer separation of roles** between workers and reviewers
+
 ## Agent Performance
 
 All agents are evaluated on:
