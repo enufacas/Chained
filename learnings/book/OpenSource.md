@@ -2,9 +2,9 @@
 
 > Open source projects, community insights, and collaboration
 
-**Total Insights:** 37
+**Total Insights:** 42
 
-**Last Updated:** 2025-11-20
+**Last Updated:** 2025-11-21
 
 ---
 
@@ -140,15 +140,6 @@ To use the Mastodon web application, please enable JavaScript. Alternatively, tr
 ---
 
 
-### The peaceful transfer of power in open source projects
-
-**Community Score:** 172 upvotes
-
-**Link:** https://shkspr.mobi/blog/2025/11/the-peaceful-transfer-of-power-in-open-source-projects/
-
----
-
-
 ### bobeff/open-source-games - A list of open source games.
 
 **Link:** https://github.com/bobeff/open-source-games
@@ -199,6 +190,15 @@ A list of open source games.
 **Content Summary:**
 
 To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
+
+---
+
+
+### The peaceful transfer of power in open source projects
+
+**Community Score:** 172 upvotes
+
+**Link:** https://shkspr.mobi/blog/2025/11/the-peaceful-transfer-of-power-in-open-source-projects/
 
 ---
 

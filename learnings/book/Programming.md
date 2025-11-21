@@ -2,9 +2,9 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 463
+**Total Insights:** 528
 
-**Last Updated:** 2025-11-20
+**Last Updated:** 2025-11-21
 
 ---
 
@@ -712,6 +712,15 @@ yt-dlp / yt-dlp Public Uh oh! There was an error while loading. Please reload th
 ---
 
 
+### GitHut – Programming Languages and GitHub (2014)
+
+**Community Score:** 68 upvotes
+
+**Link:** https://githut.info/
+
+---
+
+
 ### Go's Sweet 16
 
 **Community Score:** 142 upvotes
@@ -722,15 +731,6 @@ yt-dlp / yt-dlp Public Uh oh! There was an error while loading. Please reload th
 **Content Summary:**
 
 The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 This past Monday, November 10th, we celebrated the 16th anniversary of Go’s open source release ! We released Go 1.24 in February and Go 1.25 in August , following our now well-established and dependable release cadence. Continuing our mission to build the most productive language platform for building production systems, these releases included new APIs for building robust and reliable software, significant advances in ...
-
----
-
-
-### Go Cryptography State of the Union
-
-**Community Score:** 68 upvotes
-
-**Link:** https://words.filippo.io/2025-state/
 
 ---
 

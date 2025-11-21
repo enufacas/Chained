@@ -2,9 +2,9 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 181
+**Total Insights:** 208
 
-**Last Updated:** 2025-11-20
+**Last Updated:** 2025-11-21
 
 ---
 
@@ -300,6 +300,15 @@ Home Windows 11 Windows 11 Meta just killed native WhatsApp on Windows 11, now i
 ---
 
 
+### WebAssembly from the Ground Up
+
+**Community Score:** 71 upvotes
+
+**Link:** https://wasmgroundup.com/
+
+---
+
+
 ### The disguised return of EU Chat Control
 
 **Link:** https://reclaimthenet.org/the-disguised-return-of-the-eus-private-message-scanning-plot
@@ -472,15 +481,5 @@ Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
 
 
 Free and open-source API Client & Interceptor.
-
----
-
-
-### angular/angular - Deliver web apps with confidence 🚀
-
-**Link:** https://github.com/angular/angular
-
-
-Deliver web apps with confidence 🚀
 
 ---
