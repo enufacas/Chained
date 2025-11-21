@@ -294,29 +294,43 @@ async function buildGraphData() {
     let nodeId = 0;
     
     try {
-        // Try to fetch learning files from last 7 days
-        const learningFiles = [];
-        const today = new Date();
+        // Load the learnings manifest to get list of available files
+        let learningFiles = [];
         
-        // Scan last 7 days for learning files
-        for (let daysAgo = 0; daysAgo < 7; daysAgo++) {
-            const date = new Date(today);
-            date.setDate(today.getDate() - daysAgo);
-            const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
-            
-            // Try various time patterns that might exist
-            ['070000', '071000', '082000', '083000', '130000', '131000', '132000',
-             '185000', '186000', '190000', '191000', '202000', '202500'].forEach(time => {
-                learningFiles.push(`hn_${dateStr}_${time}.json`);
-                learningFiles.push(`tldr_${dateStr}_${time}.json`);
-            });
+        try {
+            const manifestResponse = await fetch('learnings/learnings-manifest.json');
+            if (manifestResponse.ok) {
+                const manifest = await manifestResponse.json();
+                // Get recent files from hacker_news, tldr, and github_trending
+                learningFiles = [
+                    ...(manifest.by_source.hacker_news || []).slice(0, 15),
+                    ...(manifest.by_source.tldr || []).slice(0, 15),
+                    ...(manifest.by_source.github_trending || []).slice(0, 10)
+                ];
+                console.log(`Loaded manifest with ${learningFiles.length} files to process`);
+            } else {
+                console.warn('Manifest not found, using fallback file list');
+                // Fallback: try some common recent patterns
+                const today = new Date();
+                for (let daysAgo = 0; daysAgo < 7; daysAgo++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() - daysAgo);
+                    const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
+                    ['190000', '082000', '202000'].forEach(time => {
+                        learningFiles.push(`hn_${dateStr}_${time}.json`);
+                        learningFiles.push(`tldr_${dateStr}_${time}.json`);
+                    });
+                }
+            }
+        } catch (e) {
+            console.error('Error loading manifest:', e);
         }
         
         let lastUpdate = null;
         
         for (const filename of learningFiles) {
             try {
-                const response = await fetch(`../learnings/${filename}`);
+                const response = await fetch(`learnings/${filename}`);
                 if (!response.ok) continue;
                 
                 const data = await response.json();
