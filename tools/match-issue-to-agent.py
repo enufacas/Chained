@@ -132,6 +132,49 @@ def load_registry():
     except (IOError, OSError, json.JSONDecodeError) as e:
         return None
 
+@lru_cache(maxsize=1)
+def load_config():
+    """Load the agent system configuration.
+    
+    Uses LRU cache since config doesn't change during execution.
+    """
+    config_path = Path(".github/agent-system/config.json")
+    try:
+        if not config_path.exists():
+            return None
+        
+        with open(config_path, 'r', encoding='utf-8') as f:
+            config = json.load(f)
+        
+        return config
+    except (IOError, OSError, json.JSONDecodeError) as e:
+        return None
+
+def is_tech_lead(agent_name):
+    """Check if an agent is a tech lead.
+    
+    Tech leads are agents with path-specific oversight responsibilities.
+    They should be involved in review/oversight rather than initial assignment.
+    
+    Returns:
+        bool: True if the agent is a tech lead
+    """
+    # Tech leads are identified by having "tech-lead" in their name
+    # or being listed in protected_specializations that end with "-tech-lead"
+    if '-tech-lead' in agent_name:
+        return True
+    
+    # Also check the config for protected tech leads
+    config = load_config()
+    if config and 'protected_specializations' in config:
+        protected = config['protected_specializations']
+        # Filter for tech leads in protected list
+        tech_leads = [p for p in protected if '-tech-lead' in p]
+        if agent_name in tech_leads:
+            return True
+    
+    return False
+
 def get_human_name_for_specialization(specialization):
     """Get a human-readable name for a specialization from the registry.
     
@@ -804,13 +847,15 @@ def calculate_match_score(text, agent_name):
     
     return score
 
-def match_issue_to_agent(title, body=""):
+def match_issue_to_agent(title, body="", exclude_tech_leads=True):
     """
     Match an issue to the most appropriate agent based on content.
     
     Args:
         title: Issue title
         body: Issue body/description
+        exclude_tech_leads: If True, tech leads are excluded from initial assignment
+                           but tracked separately for review/oversight roles
         
     Returns:
         Dictionary with matched agent info and confidence score
@@ -823,11 +868,37 @@ def match_issue_to_agent(title, body=""):
     
     # Calculate scores for each agent
     scores = {}
+    tech_lead_scores = {}  # Track tech lead scores separately
+    
     for agent_name in available_agents:
         score = calculate_match_score(combined_text, agent_name)
-        scores[agent_name] = score
+        
+        # Separate tech leads from regular agents for initial assignment
+        if exclude_tech_leads and is_tech_lead(agent_name):
+            tech_lead_scores[agent_name] = score
+        else:
+            scores[agent_name] = score
     
-    # Find the best match
+    # If no regular agents matched, but tech leads did, use tech leads
+    # This ensures issues still get assigned even if only tech leads match
+    if (not scores or max(scores.values()) == 0) and tech_lead_scores and max(tech_lead_scores.values()) > 0:
+        # Use tech lead as fallback if they matched well
+        best_tech_lead = max(tech_lead_scores.items(), key=lambda x: x[1])
+        if best_tech_lead[1] >= 3:  # Only use tech lead if score is reasonable
+            agent_info = get_agent_info(best_tech_lead[0])
+            human_name = get_human_name_for_specialization(best_tech_lead[0])
+            return {
+                'agent': best_tech_lead[0],
+                'human_name': human_name,
+                'score': best_tech_lead[1],
+                'confidence': 'medium' if best_tech_lead[1] >= 5 else 'low',
+                'emoji': agent_info['emoji'] if agent_info else '',
+                'description': agent_info['description'] if agent_info else '',
+                'is_tech_lead': True,
+                'reason': f'Tech lead @{best_tech_lead[0]} matched (no specialized agents available)'
+            }
+    
+    # Find the best match from regular agents
     if not scores or max(scores.values()) == 0:
         # No clear match - use fallback strategy with variety
         # Instead of always using create-guru, rotate through capable general agents
@@ -838,24 +909,40 @@ def match_issue_to_agent(title, body=""):
             'engineer-master',    # Systematic engineering
             'organize-guru',      # General organization
         ]
-        # Filter to available agents
-        available_fallback = [a for a in fallback_agents if a in available_agents]
+        # Filter to available agents (excluding tech leads)
+        available_fallback = [a for a in fallback_agents if a in available_agents and not is_tech_lead(a)]
         if not available_fallback:
-            available_fallback = list(available_agents)[:5]  # Use first 5 as fallback
+            # Fallback to first 5 non-tech-lead agents
+            available_fallback = [a for a in available_agents if not is_tech_lead(a)][:5]
+        
+        if not available_fallback:
+            # Extreme fallback - use any agent
+            available_fallback = list(available_agents)[:5]
         
         # Randomly select from fallback options for variety
         default_agent = random.choice(available_fallback)
         human_name = get_human_name_for_specialization(default_agent)
         agent_info = get_agent_info(default_agent)
-        return {
+        
+        result = {
             'agent': default_agent,
             'human_name': human_name,
             'score': 0,
             'confidence': 'low',
             'emoji': agent_info['emoji'] if agent_info else '',
             'description': agent_info['description'] if agent_info else '',
+            'is_tech_lead': is_tech_lead(default_agent),
             'reason': f'No specific keywords matched, selected @{default_agent} from general agents pool'
         }
+        
+        # Include tech lead suggestions if any matched
+        if tech_lead_scores and max(tech_lead_scores.values()) > 0:
+            top_tech_leads = sorted(tech_lead_scores.items(), key=lambda x: x[1], reverse=True)[:3]
+            result['suggested_reviewers'] = [
+                {'agent': tl[0], 'score': tl[1]} for tl in top_tech_leads if tl[1] > 0
+            ]
+        
+        return result
     
     # Find all agents with the maximum score (to handle ties)
     max_score = max(scores.values())
@@ -888,17 +975,27 @@ def match_issue_to_agent(title, body=""):
     agent_info = get_agent_info(best_agent)
     human_name = get_human_name_for_specialization(best_agent)
     
-    return {
+    result = {
         'agent': best_agent,
         'human_name': human_name,
         'score': best_score,
         'confidence': confidence,
         'emoji': agent_info['emoji'] if agent_info else '',
         'description': agent_info['description'] if agent_info else '',
+        'is_tech_lead': is_tech_lead(best_agent),
         'all_scores': scores,
         'top_agents': top_agents if len(top_agents) > 1 else None,  # Show ties
         'reason': f'Matched based on issue content analysis'
     }
+    
+    # Include tech lead suggestions for review/oversight if any matched well
+    if tech_lead_scores and max(tech_lead_scores.values()) >= 3:
+        top_tech_leads = sorted(tech_lead_scores.items(), key=lambda x: x[1], reverse=True)[:3]
+        result['suggested_reviewers'] = [
+            {'agent': tl[0], 'score': tl[1]} for tl in top_tech_leads if tl[1] >= 3
+        ]
+    
+    return result
 
 def main():
     """Command-line interface."""
