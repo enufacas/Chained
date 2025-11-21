@@ -292,7 +292,7 @@ class WorkflowValidator:
                     self.warnings.append(
                         f"{filename}:{line_num}: Possible unclosed GitHub expression"
                         f"\n  Found: {line.strip()}"
-                        f"\n  💡 Ensure all ${{{{ }}}} expressions are properly closed"
+                        "\n  💡 Ensure all ${{ }} expressions are properly closed"
                     )
                 
                 # Check for common syntax issues in expressions
@@ -315,7 +315,7 @@ class WorkflowValidator:
                                 self.warnings.append(
                                     f"{filename}:{line_num}: Possible invalid GitHub expression syntax"
                                     f"\n  Found: {line.strip()}"
-                                    f"\n  💡 Tip: Comma inside ${{{{ }}}} might indicate a typo. "
+                                    "\n  💡 Tip: Comma inside ${{ }} might indicate a typo. "
                                     f"Check if you meant to concatenate strings properly."
                                 )
     
