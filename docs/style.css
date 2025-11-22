@@ -321,8 +321,6 @@ header h1 {
 
 .home-button:hover {
     background: var(--card-bg-hover);
-.home-button:hover {
-    background: var(--card-bg-hover);
 }
 
 .home-button:focus {
