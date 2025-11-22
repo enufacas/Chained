@@ -498,8 +498,9 @@ def main():
     """Main entry point."""
     try:
         # **@construct-specialist** Enhancement: Enable deep discovery by default
+        # **@APIs-architect** Enhancement: Increased from 10 to 20 for more mission diversity
         # This creates more diverse missions from learning topics
-        summary = sync_learnings_to_ideas(max_ideas=10, enable_deep_discovery=True)
+        summary = sync_learnings_to_ideas(max_ideas=20, enable_deep_discovery=True)
         return 0
     except Exception as e:
         print(f"\n❌ Error during sync: {e}")
