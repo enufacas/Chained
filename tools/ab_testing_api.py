@@ -15,7 +15,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
 from http import HTTPStatus
-import traceback
 
 # Add tools to path
 sys.path.insert(0, str(Path(__file__).parent))

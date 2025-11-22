@@ -42,30 +42,42 @@ jobs:
           
           echo "🧪 Checking for active A/B test..."
           
-          # Participate in A/B test (will use default if no experiment exists)
-          RESULT=$(python3 tools/ab_testing_integration.py participate example-workflow \
-            --default-config "$DEFAULT_CONFIG" 2>&1)
+          # Run participation script and capture JSON output
+          RESULT_JSON=$(python3 -c "
+import sys
+import json
+sys.path.insert(0, 'tools')
+from ab_testing_integration import WorkflowIntegration
+
+integration = WorkflowIntegration('example-workflow')
+config = integration.participate(json.loads('$DEFAULT_CONFIG'))
+
+result = {
+    'config': config,
+    'is_participating': integration._is_participating,
+    'experiment_id': integration.experiment_id or '',
+    'variant': integration.variant_name or 'default'
+}
+
+print(json.dumps(result))
+" 2>&1)
           
-          echo "$RESULT"
+          echo "$RESULT_JSON"
           
-          # Parse configuration (this is simplified - in real usage, parse JSON properly)
-          CONFIG=$(echo "$RESULT" | grep -A 10 "Configuration to use:" | tail -n +2 | python3 -c "import sys, json; print(json.dumps(json.load(sys.stdin)))")
+          # Parse JSON result
+          CONFIG=$(echo "$RESULT_JSON" | jq -r '.config | @json')
+          IS_PARTICIPATING=$(echo "$RESULT_JSON" | jq -r '.is_participating')
+          EXPERIMENT_ID=$(echo "$RESULT_JSON" | jq -r '.experiment_id')
+          VARIANT=$(echo "$RESULT_JSON" | jq -r '.variant')
           
           echo "config=$CONFIG" >> $GITHUB_OUTPUT
+          echo "is_participating=$IS_PARTICIPATING" >> $GITHUB_OUTPUT
+          echo "experiment_id=$EXPERIMENT_ID" >> $GITHUB_OUTPUT
+          echo "variant=$VARIANT" >> $GITHUB_OUTPUT
           
-          # Check if participating
-          if echo "$RESULT" | grep -q "Participating in experiment"; then
-            IS_PARTICIPATING="true"
-            EXPERIMENT_ID=$(echo "$RESULT" | grep "experiment" | sed 's/.*experiment //' | awk '{print $1}')
-            VARIANT=$(echo "$RESULT" | grep "Variant:" | awk '{print $2}')
-            
-            echo "is_participating=true" >> $GITHUB_OUTPUT
-            echo "experiment_id=$EXPERIMENT_ID" >> $GITHUB_OUTPUT
-            echo "variant=$VARIANT" >> $GITHUB_OUTPUT
-            
+          if [ "$IS_PARTICIPATING" == "true" ]; then
             echo "✅ Participating in experiment $EXPERIMENT_ID as variant $VARIANT"
           else
-            echo "is_participating=false" >> $GITHUB_OUTPUT
             echo "📌 Not participating in any experiment - using default config"
           fi
       

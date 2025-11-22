@@ -264,7 +264,8 @@ class WorkflowIntegration:
 
 def get_config_from_env(
     env_var: str = "AB_TEST_CONFIG",
-    default_config: Optional[Dict[str, Any]] = None
+    default_config: Optional[Dict[str, Any]] = None,
+    max_size: int = 10240  # 10KB limit
 ) -> Dict[str, Any]:
     """
     Get A/B test configuration from environment variable.
@@ -274,6 +275,7 @@ def get_config_from_env(
     Args:
         env_var: Environment variable name
         default_config: Default configuration if env var not set
+        max_size: Maximum allowed size in bytes (default 10KB)
     
     Returns:
         Configuration dictionary
@@ -281,6 +283,11 @@ def get_config_from_env(
     config_json = os.environ.get(env_var)
     
     if config_json:
+        # Check size limit to prevent DoS
+        if len(config_json) > max_size:
+            print(f"⚠️  {env_var} exceeds size limit ({len(config_json)} > {max_size} bytes)")
+            return default_config or {}
+        
         try:
             return json.loads(config_json)
         except json.JSONDecodeError as e:
