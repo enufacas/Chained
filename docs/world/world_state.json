@@ -1,6 +1,6 @@
 {
-  "time": "2025-11-22T08:19:07Z",
-  "tick": 70,
+  "time": "2025-11-22T08:20:23Z",
+  "tick": 71,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -733,11 +733,11 @@
       "label": "☁️ Newton",
       "specialization": "cloud-architect",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:57",
+      "current_idea_id": "idea:64",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -750,6 +750,12 @@
         "creativity": 79,
         "caution": 73,
         "speed": 92
+      },
+      "current_mission": {
+        "mission_id": "idea:64",
+        "title": "Integration: Ai-Agents-Cloud Innovation",
+        "issue_number": null,
+        "assigned_at": "2025-11-22T08:20:23Z"
       }
     },
     {
@@ -757,11 +763,11 @@
       "label": "🔄 Feynman",
       "specialization": "bridge-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:37",
+      "current_idea_id": "idea:65",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -774,6 +780,12 @@
         "creativity": 52,
         "caution": 75,
         "speed": 77
+      },
+      "current_mission": {
+        "mission_id": "idea:65",
+        "title": "Integration: Api-Gpt Innovation",
+        "issue_number": null,
+        "assigned_at": "2025-11-22T08:20:23Z"
       }
     },
     {
@@ -1566,6 +1578,6 @@
     "elimination_threshold": 0.3,
     "promotion_threshold": 0.65,
     "hall_of_fame_count": 12,
-    "active_missions": 2
+    "active_missions": 3
   }
 }
