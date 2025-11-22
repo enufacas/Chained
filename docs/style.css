@@ -227,7 +227,7 @@ header h1 {
 }
 
 .nav-section-content.expanded {
-    max-height: 500px;
+    max-height: 1000px; /* Increased to accommodate more items if needed */
     opacity: 1;
     margin-top: 0.25rem;
 }

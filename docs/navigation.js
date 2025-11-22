@@ -69,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     toggleButtons.forEach(button => {
         button.addEventListener('click', function(e) {
-            e.preventDefault();
             e.stopPropagation();
             
             const isExpanded = this.getAttribute('aria-expanded') === 'true';
