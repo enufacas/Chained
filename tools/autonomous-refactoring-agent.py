@@ -59,21 +59,31 @@ def parse_iso_timestamp(timestamp_str: str) -> datetime:
     Returns:
         datetime object with timezone info
     """
+    if not timestamp_str:
+        return datetime.now(timezone.utc)
+    
     try:
-        # Try standard fromisoformat first (Python 3.7+)
-        # Handle 'Z' suffix by replacing with +00:00
+        # Python 3.7+: Handle 'Z' suffix by replacing with +00:00
         if timestamp_str.endswith('Z'):
             timestamp_str = timestamp_str[:-1] + '+00:00'
         return datetime.fromisoformat(timestamp_str)
     except (ValueError, AttributeError):
-        # Fallback: try parsing without timezone
+        # Fallback for older Python or malformed strings
+        # Try simple ISO format without timezone
         try:
-            dt = datetime.fromisoformat(timestamp_str.replace('Z', ''))
-            # Assume UTC if no timezone
+            # Remove timezone info and parse
+            dt_str = timestamp_str.split('+')[0].split('Z')[0]
+            dt = datetime.strptime(dt_str, '%Y-%m-%dT%H:%M:%S.%f')
             return dt.replace(tzinfo=timezone.utc)
         except ValueError:
-            # Last resort: return current time
-            return datetime.now(timezone.utc)
+            try:
+                # Try without microseconds
+                dt_str = timestamp_str.split('+')[0].split('Z')[0]
+                dt = datetime.strptime(dt_str, '%Y-%m-%dT%H:%M:%S')
+                return dt.replace(tzinfo=timezone.utc)
+            except ValueError:
+                # Last resort: return current time
+                return datetime.now(timezone.utc)
 
 
 # Get the tools directory
@@ -171,6 +181,15 @@ class StylePreferenceLearner:
             re.compile(pattern): (pref_type, confidence)
             for pattern, (pref_type, confidence) in self._review_patterns.items()
         }
+    
+    def _get_current_timestamp(self) -> str:
+        """
+        Get current timestamp in ISO format.
+        
+        Returns:
+            ISO formatted timestamp string
+        """
+        return datetime.now(timezone.utc).isoformat()
         
     def _load_preferences(self) -> Dict[str, StylePreference]:
         """Load learned style preferences from file."""
@@ -293,7 +312,7 @@ class StylePreferenceLearner:
                 - user: Comment author
                 - created_at: Timestamp
         """
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = self._get_current_timestamp()
         
         for comment in comments:
             body = comment.get('body', '').lower()
@@ -341,7 +360,7 @@ class StylePreferenceLearner:
             merged: Whether the PR was merged
             suggestions_applied: List of suggestion types that were applied
         """
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = self._get_current_timestamp()
         
         for suggestion_type in suggestions_applied:
             # Find preferences related to this suggestion type
@@ -364,7 +383,7 @@ class StylePreferenceLearner:
     
     def _update_preferences_from_features(self, features: Dict, source: str, success: bool):
         """Update preferences based on extracted style features."""
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = self._get_current_timestamp()
         
         # Update indentation preference
         indent_key = "indentation_style"
@@ -443,7 +462,7 @@ class StylePreferenceLearner:
         """Extract code style preference from a discussion insight."""
         # Parse the insight text for style-related information
         text = insight.get('text', '')
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = self._get_current_timestamp()
         
         # Look for specific patterns in the insight
         # This is a simplified example - could be extended with NLP
@@ -465,7 +484,7 @@ class StylePreferenceLearner:
     def _extract_preference_from_external(self, learning: Dict):
         """Extract code style preference from external learning source."""
         content = learning.get('content', '')
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = self._get_current_timestamp()
         
         # Look for specific best practice patterns
         # This could be enhanced with ML/NLP for better extraction
@@ -585,8 +604,8 @@ class StylePreferenceLearner:
                 "learning_velocity_24h": learning_velocity,
                 "strong_preferences_count": len(strong_preferences),
                 "uncertain_areas_count": len(uncertain_areas),
-                "average_confidence": sum(p.confidence for p in self.preferences.values()) / len(self.preferences) if self.preferences else 0.0,
-                "average_success_rate": sum(p.success_rate for p in self.preferences.values()) / len(self.preferences) if self.preferences else 0.0
+                "average_confidence": 0.0,
+                "average_success_rate": 0.0
             },
             "strong_preferences": [
                 {
@@ -601,6 +620,17 @@ class StylePreferenceLearner:
             "uncertain_areas": dict(uncertain_areas),
             "recommendations": []
         }
+        
+        # Calculate averages in a single pass for efficiency
+        if self.preferences:
+            total_confidence = 0.0
+            total_success = 0.0
+            for pref in self.preferences.values():
+                total_confidence += pref.confidence
+                total_success += pref.success_rate
+            count = len(self.preferences)
+            report["metrics"]["average_confidence"] = total_confidence / count
+            report["metrics"]["average_success_rate"] = total_success / count
         
         # Generate recommendations
         if learning_velocity < 5:
