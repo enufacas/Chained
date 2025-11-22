@@ -264,8 +264,8 @@ $(echo "$learning_guidance" | jq -r '.success_patterns[]' | sed 's/^/- /')
 > **@$matched_agent** - Please use the specialized approach and tools defined in [\`.github/agents/${matched_agent}.md\`](https://github.com/$GITHUB_REPOSITORY/blob/main/.github/agents/${matched_agent}.md).
 > 
 > **IMPORTANT**: Always mention **@$matched_agent** by name in all conversations, comments, and PRs related to this issue.
-
-${learning_section}---
+${learning_section}
+---
 
 "
     # Combine directive with original body

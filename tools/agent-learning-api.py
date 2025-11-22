@@ -292,9 +292,10 @@ class AgentLearningAPI:
             risk = 0.0
             
             # Check if file has been involved in past failures
+            # Note: This is a simple heuristic - could be optimized with indexed lookups for large datasets
             failures_with_file = [
                 f for f in self.pr_failures
-                if any(file_path in str(detail) for detail in f.get('failure_details', {}).values())
+                if file_path in str(f.get('failure_details', {}))
             ]
             
             if failures_with_file:

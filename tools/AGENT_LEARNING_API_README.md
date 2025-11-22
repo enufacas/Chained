@@ -380,7 +380,7 @@ gh workflow run copilot-graphql-assign.yml
 
 - **Query Response Time**: &lt;1 second typical
 - **Data Loading**: Cached on initialization
-- **Memory Usage**: &lt;50 MB typical
+- **Memory Usage**: <50 MB typical
 - **Reliability**: Graceful fallbacks ensure guidance always provided
 
 ## 🎯 Success Metrics

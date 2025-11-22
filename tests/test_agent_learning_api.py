@@ -40,11 +40,11 @@ class TestAgentLearningAPI(unittest.TestCase):
             text=True
         )
         
-        # If command failed, print stderr for debugging
-        if result.returncode != 0:
-            print(f"Command failed: {' '.join(command)}", file=sys.stderr)
-            print(f"stderr: {result.stderr}", file=sys.stderr)
-            print(f"stdout: {result.stdout}", file=sys.stderr)
+        # If command failed, provide debugging information
+        if result.returncode != 0 and self.verbose:
+            print(f"[DEBUG] Command failed: {' '.join(command)}", file=sys.stderr)
+            print(f"[DEBUG] stderr: {result.stderr}", file=sys.stderr)
+            print(f"[DEBUG] stdout: {result.stdout}", file=sys.stderr)
         
         self.assertEqual(result.returncode, 0, f"Command should succeed: {' '.join(command)}")
         
