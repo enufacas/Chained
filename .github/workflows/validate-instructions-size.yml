@@ -22,7 +22,13 @@ jobs:
         id: check_size
         run: |
           # Calculate total size of instruction files
-          TOTAL_BYTES=$(find .github/instructions -name "*.md" -type f -exec cat {} \; | wc -c)
+          # Handle case where .github/instructions may not exist or be empty
+          if [ -d ".github/instructions" ] && [ "$(find .github/instructions -name "*.md" -type f 2>/dev/null | wc -l)" -gt 0 ]; then
+            TOTAL_BYTES=$(find .github/instructions -name "*.md" -type f -exec cat {} \; | wc -c)
+          else
+            TOTAL_BYTES=0
+          fi
+          
           ROOT_SIZE=$(wc -c < .copilot-instructions.md 2>/dev/null || echo 0)
           TOTAL=$((TOTAL_BYTES + ROOT_SIZE))
           
