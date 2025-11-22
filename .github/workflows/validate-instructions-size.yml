@@ -78,20 +78,20 @@ jobs:
             
             const body = `## 📏 Copilot Instructions Size Check
             
-**${status}**
-
-**Current Size:**
-- Bytes: ${totalBytes} (${totalKB} KB)
-- Estimated tokens: ~${tokens}
-
-**Limits:**
-- Maximum: 60,000 bytes (60 KB)
-- Token estimate: < 15,000 tokens
-
-**Result:** ${message}
-
----
-*See [Context Size Optimization Guide](docs/guides/CONTEXT_SIZE_OPTIMIZATION.md) for best practices*`;
+            ${status}
+            
+            **Current Size:**
+            - Bytes: ${totalBytes} (${totalKB} KB)
+            - Estimated tokens: ~${tokens}
+            
+            **Limits:**
+            - Maximum: 60,000 bytes (60 KB)
+            - Token estimate: < 15,000 tokens
+            
+            **Result:** ${message}
+            
+            ---
+            *See [Context Size Optimization Guide](docs/guides/CONTEXT_SIZE_OPTIMIZATION.md) for best practices*`;
             
             // Find existing comment
             const comments = await github.rest.issues.listComments({
