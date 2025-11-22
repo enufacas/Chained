@@ -142,6 +142,103 @@ header h1 {
     transform: translateX(2px);
 }
 
+/* Navigation Sections and Organization */
+.nav-section {
+    margin: 1rem 0;
+    padding: 0;
+}
+
+.nav-section-title {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 1.2rem;
+    margin: 0.5rem 0 0.25rem 0;
+}
+
+/* Primary Navigation Links */
+.nav-link.nav-primary {
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.nav-link.nav-special {
+    color: #00d9ff;
+    border-left: 3px solid #00d9ff;
+}
+
+/* Anchor Links Styling */
+.nav-link.nav-anchor {
+    opacity: 0.8;
+    font-size: 0.95rem;
+}
+
+/* Collapsible Navigation Sections */
+.nav-collapsible {
+    margin: 0.5rem 0;
+}
+
+.nav-section-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.2rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0.25rem 0;
+}
+
+.nav-section-toggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(2px);
+}
+
+.nav-section-toggle:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+.toggle-icon {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.nav-section-toggle[aria-expanded="true"] .toggle-icon {
+    transform: rotate(90deg);
+}
+
+.nav-section-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    opacity: 0;
+}
+
+.nav-section-content.expanded {
+    max-height: 1000px; /* Increased to accommodate more items if needed */
+    opacity: 1;
+    margin-top: 0.25rem;
+}
+
+/* Footer section in nav */
+.nav-footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
 .tagline {
     font-size: 0.95rem;
     opacity: 0.9;
