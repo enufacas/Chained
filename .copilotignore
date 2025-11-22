@@ -1,0 +1,44 @@
+# Exclude large/build/generated folders and binary blobs
+node_modules/
+dist/
+build/
+out/
+coverage/
+.vscode/
+.idea/
+*.log
+*.zip
+*.tar
+*.tgz
+*.jar
+*.exe
+*.dll
+*.so
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.mov
+*.pdf
+
+# Git internals and large historical blobs
+.git/
+.git/**
+
+# Secrets and local env files
+.env
+.env.local
+secrets.*
+*.pem
+*.key
+
+# CI/build artifact dirs
+.cache/
+.parcel-cache/
+.next/
+vendor/
+bower_components/
+
+# Keep copilot setup workflow visible
+!.github/workflows/copilot-setup-steps.yml
