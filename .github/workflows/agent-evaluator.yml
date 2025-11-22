@@ -154,13 +154,17 @@ jobs:
                       print("🔄 Force mode: Refreshing ALL metrics from GitHub API...")
                   else:
                       print("🚀 Starting optimized evaluation (storage-first approach)...")
-                      print("   Checking stored metrics (freshness threshold: 12 hours)")
+                      print("   Checking stored metrics (freshness threshold: 24 hours)")
+                      print("   Lookback window: 3 days (recent activity focus)")
                   
                   # Use the new evaluate_all_agents() method that prefers stored metrics
                   # FIX: Now uses force_evaluation from workflow input
+                  # OPTIMIZATION: Reduced API calls by:
+                  # - Increasing cache window to 24h (aligns with daily schedule)
+                  # - Reducing lookback window to 3 days (more recent activity)
                   metrics_results = collector.evaluate_all_agents(
-                      since_days=7,
-                      max_age_hours=12.0,  # Use metrics stored within last 12 hours
+                      since_days=3,  # Focus on recent activity (was 7)
+                      max_age_hours=24.0,  # Align with daily schedule (was 12)
                       force_refresh=force_evaluation  # Now respects workflow input!
                   )
                   print(f"✅ Evaluation complete! Collected/loaded metrics for {len(metrics_results)} agents")
