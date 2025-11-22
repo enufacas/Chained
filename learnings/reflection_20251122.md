@@ -8,8 +8,8 @@
 ### 📖 Topics Reflected Upon:
 
 1. Checkout.com hacked, refuses ransom payment, donates to security labs
-2. Fighting the New York Times' invasion of user privacy
-3. Show HN: What Is Hacker News Working On?
+2. Reverse Engineering Yaesu FT-70D Firmware Encryption
+3. Fighting the New York Times' invasion of user privacy
 
 ### 💡 Key Takeaways:
 
