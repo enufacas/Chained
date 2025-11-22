@@ -18,18 +18,28 @@ permissions:
 jobs:
   trigger:
     runs-on: ubuntu-latest
-    # Only trigger for non-draft PRs
-    if: github.event.pull_request.draft == false
+    # Only skip for draft PRs on pull_request events
+    # pull_request_review events don't have github.event.pull_request, so always run
+    if: github.event_name == 'pull_request_review' || github.event.pull_request.draft == false
     steps:
       - name: Log PR event
         run: |
           echo "PR Event Detected"
           echo "Event: ${{ github.event_name }}"
           echo "Action: ${{ github.event.action }}"
-          echo "PR Number: ${{ github.event.pull_request.number }}"
-          echo "PR Title: ${{ github.event.pull_request.title }}"
-          echo "PR Author: ${{ github.event.pull_request.user.login }}"
-          echo "PR Draft: ${{ github.event.pull_request.draft }}"
+          
+          # Different events have different contexts
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "PR Number: ${{ github.event.pull_request.number }}"
+            echo "PR Title: ${{ github.event.pull_request.title }}"
+            echo "PR Author: ${{ github.event.pull_request.user.login }}"
+            echo "PR Draft: ${{ github.event.pull_request.draft }}"
+          elif [ "${{ github.event_name }}" = "pull_request_review" ]; then
+            echo "PR Number: ${{ github.event.pull_request.number }}"
+            echo "Reviewer: ${{ github.event.review.user.login }}"
+            echo "Review State: ${{ github.event.review.state }}"
+          fi
+          
           echo ""
           echo "This workflow triggers tech-lead-review.yml via workflow_run"
           echo "No approval required - read-only permissions"
