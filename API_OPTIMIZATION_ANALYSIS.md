@@ -189,9 +189,9 @@ else:
 **Impact**:
 ```
 Daily run at 00:00: Fresh metrics collected
-Daily run at 00:01 (accident): Uses cached (24h old)
+Daily run at 00:01 (accident): Uses cached (1 minute old)
 Manual run at 14:00: Uses cached (14h old)
-Next day at 00:00: Fresh metrics collected
+Next day at 00:00: Fresh metrics collected (cache expired at 24h)
 ```
 
 **API Call Reduction**: 0% (same on schedule), 100% (on accidents)
