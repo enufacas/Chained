@@ -32,6 +32,14 @@ from dataclasses import dataclass, asdict, field
 import importlib.util
 
 
+# Constants for source formatting
+SOURCE_FORMAT_PR = "PR#{pr_number}"
+SOURCE_FORMAT_PR_OUTCOME = "PR#{pr_number}_outcome"
+SOURCE_FORMAT_REPO = "repo_{filepath}"
+SOURCE_FORMAT_DISCUSSION = "discussion_{discussion_id}"
+SOURCE_FORMAT_EXTERNAL = "external_{source}"
+
+
 # Import existing code analysis tools
 def import_module_from_path(module_name: str, file_path: str):
     """Dynamically import a module from a file path."""
@@ -39,6 +47,33 @@ def import_module_from_path(module_name: str, file_path: str):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def parse_iso_timestamp(timestamp_str: str) -> datetime:
+    """
+    Robustly parse ISO timestamp strings with various timezone formats.
+    
+    Args:
+        timestamp_str: ISO formatted timestamp string
+        
+    Returns:
+        datetime object with timezone info
+    """
+    try:
+        # Try standard fromisoformat first (Python 3.7+)
+        # Handle 'Z' suffix by replacing with +00:00
+        if timestamp_str.endswith('Z'):
+            timestamp_str = timestamp_str[:-1] + '+00:00'
+        return datetime.fromisoformat(timestamp_str)
+    except (ValueError, AttributeError):
+        # Fallback: try parsing without timezone
+        try:
+            dt = datetime.fromisoformat(timestamp_str.replace('Z', ''))
+            # Assume UTC if no timezone
+            return dt.replace(tzinfo=timezone.utc)
+        except ValueError:
+            # Last resort: return current time
+            return datetime.now(timezone.utc)
 
 
 # Get the tools directory
@@ -105,6 +140,38 @@ class StylePreferenceLearner:
         self.code_analyzer = CodeAnalyzer()
         self.style_extractor = StyleExtractor()
         
+        # Compile regex patterns once for performance
+        self._review_patterns = {
+            # Naming preferences
+            r'use\s+(\w+case)': ('naming_convention', 0.8),
+            r'prefer\s+(\w+_\w+|\w+[A-Z]\w+)': ('naming_style', 0.7),
+            
+            # Indentation/formatting
+            r'indent(?:ation)?\s+(?:should\s+be\s+)?(\d+)\s+spaces?': ('indentation', 0.9),
+            r'use\s+(spaces|tabs)': ('indent_type', 0.9),
+            
+            # Line length
+            r'(?:line|lines?)\s+(?:too\s+)?long': ('line_length_violation', 0.8),
+            r'(?:keep|limit)\s+lines?\s+(?:to\s+)?(\d+)\s+characters?': ('max_line_length', 0.9),
+            
+            # Documentation
+            r'(?:add|missing|needs?)\s+docstring': ('docstring_required', 0.9),
+            r'(?:add|use)\s+type\s+hints?': ('type_hints_preferred', 0.8),
+            
+            # Code structure
+            r'(?:function|method)\s+too\s+long': ('function_length_violation', 0.7),
+            r'(?:extract|refactor)\s+(?:into\s+)?(?:separate\s+)?(?:function|method)': ('refactor_needed', 0.8),
+            
+            # Best practices
+            r'use\s+f-strings?': ('string_formatting', 0.8),
+            r'avoid\s+(\w+)': ('anti_pattern', 0.7),
+        }
+        # Compile patterns for better performance
+        self._compiled_patterns = {
+            re.compile(pattern): (pref_type, confidence)
+            for pattern, (pref_type, confidence) in self._review_patterns.items()
+        }
+        
     def _load_preferences(self) -> Dict[str, StylePreference]:
         """Load learned style preferences from file."""
         if os.path.exists(self.preferences_file):
@@ -164,7 +231,7 @@ class StylePreferenceLearner:
                     features = self.style_extractor.extract_from_code(code, file_path)
                     self._update_preferences_from_features(
                         asdict(features),
-                        source=f"PR#{pr_data.get('number', 'unknown')}",
+                        source=SOURCE_FORMAT_PR.format(pr_number=pr_data.get('number', 'unknown')),
                         success=True
                     )
                 except Exception as e:
@@ -258,13 +325,15 @@ class StylePreferenceLearner:
         for comment in comments:
             body = comment.get('body', '').lower()
             
-            for pattern, (pref_type, confidence) in style_patterns.items():
-                match = re.search(pattern, body)
+            # Use pre-compiled patterns for better performance
+            for compiled_pattern, (pref_type, confidence) in self._compiled_patterns.items():
+                match = compiled_pattern.search(body)
                 if match:
                     # Extract the specific value if captured
                     value = match.group(1) if match.groups() else True
                     
-                    pref_key = f"review_{pref_type}_{comment.get('user', 'unknown')}"
+                    user = comment.get('user', 'unknown')
+                    pref_key = f"review_{pref_type}_{user}"
                     
                     if pref_key in self.preferences:
                         pref = self.preferences[pref_key]
@@ -316,7 +385,7 @@ class StylePreferenceLearner:
                         pref.confidence = max(0.1, pref.confidence - 0.05)
                     
                     pref.last_seen = timestamp
-                    pref.sources.append(f"PR#{pr_number}_outcome")
+                    pref.sources.append(SOURCE_FORMAT_PR_OUTCOME.format(pr_number=pr_number))
         
         self._save_preferences()
     
@@ -498,7 +567,7 @@ class StylePreferenceLearner:
         
         for key, pref in self.preferences.items():
             try:
-                last_seen = datetime.fromisoformat(pref.last_seen.replace('Z', '+00:00'))
+                last_seen = parse_iso_timestamp(pref.last_seen)
                 if last_seen > recent_threshold:
                     summary["recent_learning"].append({
                         "key": key,

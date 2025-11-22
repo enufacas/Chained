@@ -66,7 +66,7 @@ jobs:
           
           # Check if there are changes to commit
           if [[ -n $(git status -s analysis/) ]]; then
-            git add analysis/style_preferences.json analysis/refactoring_patterns.json
+            git add analysis/*.json
             git commit -m "🤖 Learn style preferences from PR #${{ github.event.pull_request.number }}"
             git push
             echo "✅ Learned and committed new style preferences"
