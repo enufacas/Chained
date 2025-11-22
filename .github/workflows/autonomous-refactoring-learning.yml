@@ -110,18 +110,13 @@ jobs:
           echo "📋 Generating refactoring report..."
           python3 tools/autonomous-refactoring-agent.py report --source tools --output analysis/refactoring_report.json
           
-          # Show high-level stats
+          # Show high-level stats using helper script
           if [[ -f analysis/refactoring_report.json ]]; then
             echo ""
             echo "Report generated successfully!"
-            python3 -c "
-import json
-with open('analysis/refactoring_report.json', 'r') as f:
-    report = json.load(f)
-    print(f\"Files analyzed: {report['files_analyzed']}\")
-    print(f\"Total suggestions: {report['total_suggestions']}\")
-    print(f\"High priority files: {len(report['high_priority_files'])}\")
-            "
+            echo "Files analyzed: $(python3 tools/parse-refactoring-report.py analysis/refactoring_report.json total_files)"
+            echo "Total suggestions: $(python3 tools/parse-refactoring-report.py analysis/refactoring_report.json total_suggestions)"
+            echo "High priority files: $(python3 tools/parse-refactoring-report.py analysis/refactoring_report.json high_priority)"
           fi
       
       - name: Commit learning results
@@ -146,12 +141,7 @@ with open('analysis/refactoring_report.json', 'r') as f:
         run: |
           # Check if there are high-priority refactoring opportunities
           if [[ -f analysis/refactoring_report.json ]]; then
-            HIGH_PRIORITY=$(python3 -c "
-import json
-with open('analysis/refactoring_report.json', 'r') as f:
-    report = json.load(f)
-    print(len(report['high_priority_files']))
-            ")
+            HIGH_PRIORITY=$(python3 tools/parse-refactoring-report.py analysis/refactoring_report.json high_priority)
             
             if [[ $HIGH_PRIORITY -gt 0 ]]; then
               echo "Found $HIGH_PRIORITY high-priority refactoring opportunities"
@@ -216,12 +206,7 @@ The autonomous refactoring agent has learned style preferences from:
         id: check_opportunities
         run: |
           if [[ -f analysis/refactoring_report.json ]]; then
-            HIGH_PRIORITY=$(python3 -c "
-import json
-with open('analysis/refactoring_report.json', 'r') as f:
-    report = json.load(f)
-    print(len(report['high_priority_files']))
-            ")
+            HIGH_PRIORITY=$(python3 tools/parse-refactoring-report.py analysis/refactoring_report.json high_priority)
             echo "high_priority=$HIGH_PRIORITY" >> $GITHUB_OUTPUT
             
             if [[ $HIGH_PRIORITY -gt 0 ]]; then

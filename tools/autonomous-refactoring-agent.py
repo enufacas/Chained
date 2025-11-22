@@ -295,33 +295,6 @@ class StylePreferenceLearner:
         """
         timestamp = datetime.now(timezone.utc).isoformat()
         
-        # Patterns that indicate style preferences in review comments
-        style_patterns = {
-            # Naming preferences
-            r'use\s+(\w+case)': ('naming_convention', 0.8),
-            r'prefer\s+(\w+_\w+|\w+[A-Z]\w+)': ('naming_style', 0.7),
-            
-            # Indentation/formatting
-            r'indent(?:ation)?\s+(?:should\s+be\s+)?(\d+)\s+spaces?': ('indentation', 0.9),
-            r'use\s+(spaces|tabs)': ('indent_type', 0.9),
-            
-            # Line length
-            r'(?:line|lines?)\s+(?:too\s+)?long': ('line_length_violation', 0.8),
-            r'(?:keep|limit)\s+lines?\s+(?:to\s+)?(\d+)\s+characters?': ('max_line_length', 0.9),
-            
-            # Documentation
-            r'(?:add|missing|needs?)\s+docstring': ('docstring_required', 0.9),
-            r'(?:add|use)\s+type\s+hints?': ('type_hints_preferred', 0.8),
-            
-            # Code structure
-            r'(?:function|method)\s+too\s+long': ('function_length_violation', 0.7),
-            r'(?:extract|refactor)\s+(?:into\s+)?(?:separate\s+)?(?:function|method)': ('refactor_needed', 0.8),
-            
-            # Best practices
-            r'use\s+f-strings?': ('string_formatting', 0.8),
-            r'avoid\s+(\w+)': ('anti_pattern', 0.7),
-        }
-        
         for comment in comments:
             body = comment.get('body', '').lower()
             
@@ -341,8 +314,8 @@ class StylePreferenceLearner:
                         pref.last_seen = timestamp
                         # Increase confidence for repeated feedback
                         pref.confidence = min(1.0, pref.confidence + 0.1)
-                        if comment.get('user') not in pref.sources:
-                            pref.sources.append(comment.get('user', 'unknown'))
+                        if user not in pref.sources:
+                            pref.sources.append(user)
                     else:
                         self.preferences[pref_key] = StylePreference(
                             preference_type=pref_type,
@@ -350,7 +323,7 @@ class StylePreferenceLearner:
                             confidence=confidence,
                             occurrences=1,
                             last_seen=timestamp,
-                            sources=[comment.get('user', 'unknown')],
+                            sources=[user],
                             success_rate=0.9  # Review comments are high-quality signals
                         )
         
@@ -854,7 +827,7 @@ def main():
                         features = learner.style_extractor.extract_from_code(code, filepath)
                         learner._update_preferences_from_features(
                             asdict(features),
-                            source=f"repo_{filepath}",
+                            source=SOURCE_FORMAT_REPO.format(filepath=filepath),
                             success=True
                         )
                         tools_learned += 1
