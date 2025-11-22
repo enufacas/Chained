@@ -146,7 +146,9 @@ jobs:
           done
           
           matrix=$(jq -n --argjson items "${matrix_items}" '{"include": $items}')
-          echo "pr_matrix=${matrix}" >> $GITHUB_OUTPUT
+          echo "pr_matrix<<EOF" >> $GITHUB_OUTPUT
+          echo "${matrix}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
           echo "Built matrix with $(echo "${matrix}" | jq '.include | length') PRs"
 
   # Stage 2: Process each PR (tech lead review, labels, feedback)
