@@ -76,22 +76,24 @@ jobs:
             const tokens = '${{ steps.check_size.outputs.tokens }}';
             const message = '${{ steps.check_size.outputs.message }}';
             
-            const body = `## 📏 Copilot Instructions Size Check
-            
-**${status}**
-
-**Current Size:**
-- Bytes: ${totalBytes} (${totalKB} KB)
-- Estimated tokens: ~${tokens}
-
-**Limits:**
-- Maximum: 60,000 bytes (60 KB)
-- Token estimate: < 15,000 tokens
-
-**Result:** ${message}
-
----
-*See [Context Size Optimization Guide](docs/guides/CONTEXT_SIZE_OPTIMIZATION.md) for best practices*`;
+            const body = [
+              '## 📏 Copilot Instructions Size Check',
+              '',
+              '**' + status + '**',
+              '',
+              '**Current Size:**',
+              '- Bytes: ' + totalBytes + ' (' + totalKB + ' KB)',
+              '- Estimated tokens: ~' + tokens,
+              '',
+              '**Limits:**',
+              '- Maximum: 60,000 bytes (60 KB)',
+              '- Token estimate: < 15,000 tokens',
+              '',
+              '**Result:** ' + message,
+              '',
+              '---',
+              '*See [Context Size Optimization Guide](docs/guides/CONTEXT_SIZE_OPTIMIZATION.md) for best practices*'
+            ].join('\n');
             
             // Find existing comment
             const comments = await github.rest.issues.listComments({
