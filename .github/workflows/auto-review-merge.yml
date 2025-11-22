@@ -381,15 +381,19 @@ jobs:
           has_tech_lead_approved=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "tech-lead-approved" || echo "0")
           has_changes_requested=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "tech-lead-changes-requested" || echo "0")
           
-          echo "pr_state=${pr_state}" >> $GITHUB_OUTPUT
-          echo "is_draft=${is_draft}" >> $GITHUB_OUTPUT
-          echo "mergeable=${mergeable}" >> $GITHUB_OUTPUT
-          echo "author=${author}" >> $GITHUB_OUTPUT
-          echo "pr_title=${pr_title}" >> $GITHUB_OUTPUT
-          echo "has_copilot=${has_copilot}" >> $GITHUB_OUTPUT
-          echo "has_needs_tech_lead=${has_needs_tech_lead}" >> $GITHUB_OUTPUT
-          echo "has_tech_lead_approved=${has_tech_lead_approved}" >> $GITHUB_OUTPUT
-          echo "has_changes_requested=${has_changes_requested}" >> $GITHUB_OUTPUT
+          {
+            echo "pr_state=${pr_state}"
+            echo "is_draft=${is_draft}"
+            echo "mergeable=${mergeable}"
+            echo "author=${author}"
+            echo "pr_title<<EOF"
+            echo "${pr_title}"
+            echo "EOF"
+            echo "has_copilot=${has_copilot}"
+            echo "has_needs_tech_lead=${has_needs_tech_lead}"
+            echo "has_tech_lead_approved=${has_tech_lead_approved}"
+            echo "has_changes_requested=${has_changes_requested}"
+          } >> $GITHUB_OUTPUT
 
       - name: Check merge eligibility
         id: check_merge
@@ -405,8 +409,12 @@ jobs:
           
           # Skip if not open or still draft
           if [ "${pr_state}" != "OPEN" ] || [ "${is_draft}" = "true" ]; then
-            echo "eligible=false" >> $GITHUB_OUTPUT
-            echo "reason=PR not ready (state: ${pr_state}, draft: ${is_draft})" >> $GITHUB_OUTPUT
+            {
+              echo "eligible=false"
+              echo "reason<<EOF"
+              echo "PR not ready (state: ${pr_state}, draft: ${is_draft})"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
             exit 0
           fi
           
@@ -423,26 +431,42 @@ jobs:
           fi
           
           if [ "${is_trusted}" = "false" ]; then
-            echo "eligible=false" >> $GITHUB_OUTPUT
-            echo "reason=Not from trusted source (author: ${author}, copilot label: ${has_copilot})" >> $GITHUB_OUTPUT
+            {
+              echo "eligible=false"
+              echo "reason<<EOF"
+              echo "Not from trusted source (author: ${author}, copilot label: ${has_copilot})"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
             exit 0
           fi
           
           # Check tech lead review status
           if [ "${has_needs_tech_lead}" != "0" ] && [ "${has_tech_lead_approved}" = "0" ]; then
-            echo "eligible=false" >> $GITHUB_OUTPUT
-            echo "reason=Tech Lead review required but not yet approved" >> $GITHUB_OUTPUT
+            {
+              echo "eligible=false"
+              echo "reason<<EOF"
+              echo "Tech Lead review required but not yet approved"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
             exit 0
           fi
           
           if [ "${has_changes_requested}" != "0" ]; then
-            echo "eligible=false" >> $GITHUB_OUTPUT
-            echo "reason=Tech Lead requested changes" >> $GITHUB_OUTPUT
+            {
+              echo "eligible=false"
+              echo "reason<<EOF"
+              echo "Tech Lead requested changes"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
             exit 0
           fi
           
-          echo "eligible=true" >> $GITHUB_OUTPUT
-          echo "reason=All criteria met" >> $GITHUB_OUTPUT
+          {
+            echo "eligible=true"
+            echo "reason<<EOF"
+            echo "All criteria met"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Merge PR
         if: steps.check_merge.outputs.eligible == 'true'
