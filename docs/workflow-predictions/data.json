@@ -1,0 +1,125 @@
+{
+  "generated_at": "2025-11-22T16:16:56.342727+00:00",
+  "total_workflows": 10,
+  "total_executions": 100,
+  "workflows": [
+    {
+      "workflow_name": "workflow-0",
+      "recommended_schedule": "0 9 * * *",
+      "confidence": 0.6,
+      "expected_duration_seconds": 474.5,
+      "predicted_success_rate": 1.0,
+      "resource_impact": "medium",
+      "reasoning": [
+        "Selected hour 9 (least resource contention)",
+        "Often conflicts with: workflow-7, workflow-8, workflow-9"
+      ]
+    },
+    {
+      "workflow_name": "workflow-1",
+      "recommended_schedule": "0 1 * * *",
+      "confidence": 0.63,
+      "expected_duration_seconds": 304.8,
+      "predicted_success_rate": 1.0,
+      "resource_impact": "medium",
+      "reasoning": [
+        "Hour 1 has 100% success rate",
+        "Often conflicts with: workflow-6",
+        "Scheduled during off-peak hours"
+      ]
+    },
+    {
+      "workflow_name": "workflow-2",
+      "recommended_schedule": "0 9 * * *",
+      "confidence": 0.6,
+      "expected_duration_seconds": 462.0,
+      "predicted_success_rate": 0.9,
+      "resource_impact": "medium",
+      "reasoning": [
+        "Selected hour 9 (least resource contention)"
+      ]
+    },
+    {
+      "workflow_name": "workflow-3",
+      "recommended_schedule": "0 9 * * *",
+      "confidence": 0.58,
+      "expected_duration_seconds": 150.0,
+      "predicted_success_rate": 1.0,
+      "resource_impact": "low",
+      "reasoning": [
+        "Selected hour 9 (least resource contention)"
+      ]
+    },
+    {
+      "workflow_name": "workflow-4",
+      "recommended_schedule": "0 9 * * *",
+      "confidence": 0.59,
+      "expected_duration_seconds": 454.6,
+      "predicted_success_rate": 0.78,
+      "resource_impact": "medium",
+      "reasoning": [
+        "Selected hour 9 (least resource contention)"
+      ]
+    },
+    {
+      "workflow_name": "workflow-5",
+      "recommended_schedule": "0 9 * * *",
+      "confidence": 0.57,
+      "expected_duration_seconds": 562.8,
+      "predicted_success_rate": 0.86,
+      "resource_impact": "medium",
+      "reasoning": [
+        "Selected hour 9 (least resource contention)",
+        "Often conflicts with: workflow-7"
+      ]
+    },
+    {
+      "workflow_name": "workflow-6",
+      "recommended_schedule": "0 9 * * *",
+      "confidence": 0.59,
+      "expected_duration_seconds": 224.2,
+      "predicted_success_rate": 0.78,
+      "resource_impact": "medium",
+      "reasoning": [
+        "Selected hour 9 (least resource contention)",
+        "Often conflicts with: workflow-1"
+      ]
+    },
+    {
+      "workflow_name": "workflow-7",
+      "recommended_schedule": "0 9 * * *",
+      "confidence": 0.62,
+      "expected_duration_seconds": 301.9,
+      "predicted_success_rate": 0.58,
+      "resource_impact": "medium",
+      "reasoning": [
+        "Selected hour 9 (least resource contention)",
+        "Often conflicts with: workflow-5, workflow-8, workflow-0"
+      ]
+    },
+    {
+      "workflow_name": "workflow-8",
+      "recommended_schedule": "0 9 * * *",
+      "confidence": 0.6,
+      "expected_duration_seconds": 220.7,
+      "predicted_success_rate": 1.0,
+      "resource_impact": "medium",
+      "reasoning": [
+        "Selected hour 9 (least resource contention)",
+        "Often conflicts with: workflow-0, workflow-7, workflow-9"
+      ]
+    },
+    {
+      "workflow_name": "workflow-9",
+      "recommended_schedule": "0 9 * * *",
+      "confidence": 0.62,
+      "expected_duration_seconds": 332.6,
+      "predicted_success_rate": 0.67,
+      "resource_impact": "medium",
+      "reasoning": [
+        "Selected hour 9 (least resource contention)",
+        "Often conflicts with: workflow-8, workflow-0"
+      ]
+    }
+  ]
+}
