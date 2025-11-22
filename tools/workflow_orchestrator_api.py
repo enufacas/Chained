@@ -160,12 +160,24 @@ class WorkflowOrchestratorAPI:
         
         Args:
             workflow_name: Optional workflow name filter
-            limit: Maximum number of records to return
+            limit: Maximum number of records to return (1-1000)
             
         Returns:
             APIResponse with execution history
         """
         try:
+            # Validate limit
+            if not isinstance(limit, int) or limit < 1:
+                return APIResponse(
+                    success=False,
+                    data=None,
+                    message="Limit must be a positive integer",
+                    timestamp=datetime.now(timezone.utc).isoformat()
+                )
+            
+            # Cap limit to prevent memory issues
+            limit = min(limit, 1000)
+            
             history = self.predictor.execution_history
             
             # Filter by workflow name if specified
@@ -330,6 +342,14 @@ class WorkflowOrchestratorAPI:
             durations = [e.duration_seconds for e in history]
             successes = [e.success for e in history]
             
+            # Calculate most common hour safely
+            most_common_hour = 0
+            if history:
+                hour_counts = {}
+                for e in history:
+                    hour_counts[e.hour_of_day] = hour_counts.get(e.hour_of_day, 0) + 1
+                most_common_hour = max(hour_counts, key=hour_counts.get)
+            
             insights = {
                 'workflow_name': workflow_name,
                 'total_executions': len(history),
@@ -338,8 +358,7 @@ class WorkflowOrchestratorAPI:
                 'min_duration': round(min(durations), 1),
                 'max_duration': round(max(durations), 1),
                 'duration_std_dev': round(statistics.stdev(durations), 1) if len(durations) > 1 else 0,
-                'most_common_hour': max(set(e.hour_of_day for e in history), 
-                                       key=lambda x: sum(1 for e in history if e.hour_of_day == x)),
+                'most_common_hour': most_common_hour,
                 'recommended_schedule': prediction.recommended_time if prediction else None,
                 'prediction_confidence': round(prediction.confidence, 2) if prediction else None
             }

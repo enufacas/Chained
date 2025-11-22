@@ -69,6 +69,26 @@ class PredictionDashboard:
         accuracy_response = self.api.get_accuracy_metrics()
         accuracy_data = accuracy_response.data if accuracy_response.success else {}
         
+        # Helper function to format metrics safely
+        def format_metric(data, key, default='N/A', format_str='{:.0f}'):
+            if not data or key not in data:
+                return default
+            try:
+                value = data[key]
+                if isinstance(value, (int, float)):
+                    return format_str.format(value)
+                return str(value)
+            except (ValueError, KeyError):
+                return default
+        
+        # Calculate totals once for efficiency
+        total_workflows = len(workflows)
+        total_executions = len(self.api.predictor.execution_history)
+        accuracy_display = format_metric(accuracy_data, 'accuracy_score', 'N/A', '{:.0f}%')
+        if accuracy_display != 'N/A':
+            accuracy_display = format_metric(accuracy_data, 'accuracy_score', 'N/A', '{:.0f}%')
+        mae_display = format_metric(accuracy_data, 'mean_absolute_error', '--', '{:.0f}s')
+        
         # Generate HTML
         html = f"""
 <!DOCTYPE html>
@@ -273,19 +293,19 @@ class PredictionDashboard:
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-label">Total Workflows</div>
-                <div class="metric-value">{len(workflows)}</div>
+                <div class="metric-value">{total_workflows}</div>
             </div>
             <div class="metric-card">
                 <div class="metric-label">Total Executions</div>
-                <div class="metric-value">{len(self.api.predictor.execution_history)}</div>
+                <div class="metric-value">{total_executions}</div>
             </div>
             <div class="metric-card">
                 <div class="metric-label">Prediction Accuracy</div>
-                <div class="metric-value">{'N/A' if not accuracy_data else f"{accuracy_data.get('accuracy_score', 0)*100:.0f}%"}</div>
+                <div class="metric-value">{accuracy_display}</div>
             </div>
             <div class="metric-card">
                 <div class="metric-label">Avg Error (MAE)</div>
-                <div class="metric-value">{'--' if not accuracy_data else f"{accuracy_data.get('mean_absolute_error', 0):.0f}s"}</div>
+                <div class="metric-value">{mae_display}</div>
             </div>
         </div>
         

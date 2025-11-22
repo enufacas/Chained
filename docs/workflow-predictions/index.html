@@ -205,7 +205,7 @@
             </div>
             <div class="metric-card">
                 <div class="metric-label">Total Executions</div>
-                <div class="metric-value">330</div>
+                <div class="metric-value">350</div>
             </div>
             <div class="metric-card">
                 <div class="metric-label">Prediction Accuracy</div>
@@ -222,17 +222,17 @@
             <div class="workflow-card">
                 <div class="workflow-header">
                     <div class="workflow-name">workflow-0</div>
-                    <div class="confidence-badge confidence-high">72% High</div>
+                    <div class="confidence-badge confidence-high">79% High</div>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Expected Duration</span>
-                    <span class="info-value">384s</span>
+                    <span class="info-value">344s</span>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Success Rate</span>
-                    <span class="info-value">73%</span>
+                    <span class="info-value">76%</span>
                 </div>
                 
                 <div class="info-row">
@@ -242,22 +242,23 @@
 
                 <div class="info-row">
                     <span class="info-label">Total Executions</span>
-                    <span class="info-value">22</span>
+                    <span class="info-value">29</span>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Average Duration</span>
-                    <span class="info-value">384s</span>
+                    <span class="info-value">344s</span>
                 </div>
 
                 <div class="schedule">
-                    0 7 * * *
+                    0 20 * * *
                 </div>
 
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
-                    <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-8, workflow-9</div>
+                    <div class="reasoning-item">Hour 20 has 100% success rate</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-2, workflow-7, workflow-9</div>
+                    <div class="reasoning-item">Scheduled during off-peak hours</div>
 
                 </div>
 
@@ -266,17 +267,17 @@
             <div class="workflow-card">
                 <div class="workflow-header">
                     <div class="workflow-name">workflow-1</div>
-                    <div class="confidence-badge confidence-high">91% High</div>
+                    <div class="confidence-badge confidence-high">95% High</div>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Expected Duration</span>
-                    <span class="info-value">232s</span>
+                    <span class="info-value">268s</span>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Success Rate</span>
-                    <span class="info-value">80%</span>
+                    <span class="info-value">78%</span>
                 </div>
                 
                 <div class="info-row">
@@ -286,12 +287,12 @@
 
                 <div class="info-row">
                     <span class="info-label">Total Executions</span>
-                    <span class="info-value">41</span>
+                    <span class="info-value">46</span>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Average Duration</span>
-                    <span class="info-value">232s</span>
+                    <span class="info-value">268s</span>
                 </div>
 
                 <div class="schedule">
@@ -301,7 +302,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Hour 12 has 100% success rate</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-4, workflow-7, workflow-8</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-2, workflow-4, workflow-7</div>
 
                 </div>
 
@@ -345,7 +346,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-12, workflow-8, workflow-2</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-2, workflow-3, workflow-12</div>
 
                 </div>
 
@@ -389,7 +390,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-2, workflow-4</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-4, workflow-2</div>
 
                 </div>
 
@@ -433,7 +434,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-10, workflow-7, workflow-2</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-2, workflow-10</div>
 
                 </div>
 
@@ -477,7 +478,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Hour 15 has 100% success rate</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-8, workflow-2</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-2, workflow-7, workflow-1</div>
 
                 </div>
 
@@ -521,7 +522,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-10, workflow-1, workflow-3</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-3, workflow-1, workflow-10</div>
 
                 </div>
 
@@ -530,17 +531,17 @@
             <div class="workflow-card">
                 <div class="workflow-header">
                     <div class="workflow-name">workflow-2</div>
-                    <div class="confidence-badge confidence-high">80% High</div>
+                    <div class="confidence-badge confidence-high">88% High</div>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Expected Duration</span>
-                    <span class="info-value">397s</span>
+                    <span class="info-value">384s</span>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Success Rate</span>
-                    <span class="info-value">90%</span>
+                    <span class="info-value">89%</span>
                 </div>
                 
                 <div class="info-row">
@@ -550,12 +551,12 @@
 
                 <div class="info-row">
                     <span class="info-label">Total Executions</span>
-                    <span class="info-value">30</span>
+                    <span class="info-value">38</span>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Average Duration</span>
-                    <span class="info-value">397s</span>
+                    <span class="info-value">384s</span>
                 </div>
 
                 <div class="schedule">
@@ -565,7 +566,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Hour 9 has 100% success rate</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-12, workflow-7, workflow-8</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-10, workflow-7, workflow-1</div>
 
                 </div>
 
@@ -609,7 +610,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Hour 2 has 100% success rate</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-4, workflow-8</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-10, workflow-7, workflow-4</div>
                     <div class="reasoning-item">Scheduled during off-peak hours</div>
 
                 </div>
@@ -654,7 +655,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Hour 1 has 100% success rate</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-11, workflow-9</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-1, workflow-9</div>
                     <div class="reasoning-item">Scheduled during off-peak hours</div>
 
                 </div>
@@ -743,7 +744,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Hour 21 has 100% success rate</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-1, workflow-13, workflow-8</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-13, workflow-8, workflow-1</div>
                     <div class="reasoning-item">Scheduled during off-peak hours</div>
 
                 </div>
@@ -788,7 +789,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-12, workflow-4, workflow-8</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-2, workflow-4, workflow-13</div>
 
                 </div>
 
@@ -832,7 +833,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Hour 3 has 100% success rate</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-9, workflow-0</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-2, workflow-7, workflow-10</div>
                     <div class="reasoning-item">Scheduled during off-peak hours</div>
 
                 </div>
@@ -877,7 +878,7 @@
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
                     <div class="reasoning-item">Hour 11 has 100% success rate</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-4, workflow-8, workflow-0</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-2, workflow-4, workflow-1</div>
 
                 </div>
 
@@ -888,7 +889,7 @@
         <footer>
             <p><strong>AI-Powered Workflow Orchestrator</strong></p>
             <p>Built with machine learning to optimize workflow scheduling</p>
-            <p class="timestamp">Generated: 2025-11-22 16:22:48 UTC</p>
+            <p class="timestamp">Generated: 2025-11-22 16:25:06 UTC</p>
             <p>Created by <strong>@APIs-architect</strong> 🏭</p>
         </footer>
     </div>
