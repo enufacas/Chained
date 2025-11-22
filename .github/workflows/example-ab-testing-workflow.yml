@@ -66,7 +66,7 @@ except Exception as e:
     # Return error in JSON format for graceful handling
     error_result = {
         'config': json.loads('$DEFAULT_CONFIG'),
-        'is_participating': false,
+        'is_participating': False,
         'experiment_id': '',
         'variant': 'default',
         'error': str(e)
