@@ -3,6 +3,25 @@ const REPO_OWNER = 'enufacas';
 const REPO_NAME = 'Chained';
 const API_BASE = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`;
 
+// Helper function to safely set element content
+function safeSetContent(elementId, property, value) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        if (property === 'textContent' || property === 'innerHTML') {
+            element[property] = value;
+        } else {
+            // For nested properties like 'style.width'
+            const props = property.split('.');
+            let target = element;
+            for (let i = 0; i < props.length - 1; i++) {
+                target = target[props[i]];
+                if (!target) return;
+            }
+            target[props[props.length - 1]] = value;
+        }
+    }
+}
+
 // Workflow schedules mapping
 const WORKFLOW_SCHEDULES = {
     'Smart Idea Generator': { cron: '0 10 * * *', description: 'Daily at 10:00 AM UTC' },
@@ -16,7 +35,7 @@ const WORKFLOW_SCHEDULES = {
 };
 
 // Update last updated timestamp
-document.getElementById('last-updated').textContent = new Date().toLocaleString();
+safeSetContent('last-updated', 'textContent', new Date().toLocaleString());
 
 // Fetch and display AI Goal of the Day
 async function fetchAIGoal() {
@@ -35,34 +54,34 @@ async function fetchAIGoal() {
         const statusMatch = markdown.match(/\*\*Status\*\*:\s*(.+)/);
         
         if (categoryMatch && goalMatch && dateMatch) {
-            document.getElementById('goal-category').textContent = categoryMatch[1].trim();
-            document.getElementById('goal-description').textContent = goalMatch[1].trim();
-            document.getElementById('goal-date').textContent = dateMatch[1].trim();
+            safeSetContent('goal-category', 'textContent', categoryMatch[1].trim());
+            safeSetContent('goal-description', 'textContent', goalMatch[1].trim());
+            safeSetContent('goal-date', 'textContent', dateMatch[1].trim());
             
             if (statusMatch) {
-                document.getElementById('goal-status').textContent = statusMatch[1].trim();
+                safeSetContent('goal-status', 'textContent', statusMatch[1].trim());
             }
             
             // Parse progress from the markdown (look for progress updates)
             const progressMatches = markdown.match(/\((\d+)%\s*complete\)/);
             if (progressMatches) {
                 const progress = parseInt(progressMatches[1]);
-                document.getElementById('goal-progress').style.width = progress + '%';
-                document.getElementById('goal-progress-text').textContent = progress + '%';
+                safeSetContent('goal-progress', 'style.width', progress + '%');
+                safeSetContent('goal-progress-text', 'textContent', progress + '%');
             }
         } else {
             // No current goal
-            document.getElementById('goal-category').textContent = 'No Active Goal';
-            document.getElementById('goal-description').textContent = 'The next goal will be generated at 6 AM UTC. You can also trigger it manually via GitHub Actions.';
-            document.getElementById('goal-date').textContent = 'Pending';
-            document.getElementById('goal-status').textContent = '⏳ Pending';
+            safeSetContent('goal-category', 'textContent', 'No Active Goal');
+            safeSetContent('goal-description', 'textContent', 'The next goal will be generated at 6 AM UTC. You can also trigger it manually via GitHub Actions.');
+            safeSetContent('goal-date', 'textContent', 'Pending');
+            safeSetContent('goal-status', 'textContent', '⏳ Pending');
         }
     } catch (error) {
         console.error('Error fetching AI goal:', error);
-        document.getElementById('goal-category').textContent = 'Loading Error';
-        document.getElementById('goal-description').textContent = 'Could not load the current goal. Please check back later.';
-        document.getElementById('goal-date').textContent = '-';
-        document.getElementById('goal-status').textContent = '❌ Error';
+        safeSetContent('goal-category', 'textContent', 'Loading Error');
+        safeSetContent('goal-description', 'textContent', 'Could not load the current goal. Please check back later.');
+        safeSetContent('goal-date', 'textContent', '-');
+        safeSetContent('goal-status', 'textContent', '❌ Error');
     }
 }
 
@@ -74,10 +93,10 @@ async function fetchStats() {
             const statsResponse = await fetch('data/stats.json');
             if (statsResponse.ok) {
                 const stats = await statsResponse.json();
-                document.getElementById('total-ideas').textContent = stats.ai_generated || 0;
-                document.getElementById('total-prs').textContent = stats.merged_prs || 0;
-                document.getElementById('total-completed').textContent = stats.completed || 0;
-                document.getElementById('completion-rate').textContent = (stats.completion_rate || 0) + '%';
+                safeSetContent('total-ideas', 'textContent', stats.ai_generated || 0);
+                safeSetContent('total-prs', 'textContent', stats.merged_prs || 0);
+                safeSetContent('total-completed', 'textContent', stats.completed || 0);
+                safeSetContent('completion-rate', 'textContent', (stats.completion_rate || 0) + '%');
                 
                 // Load timeline from cached data
                 loadTimeline();
@@ -119,10 +138,10 @@ async function fetchStats() {
         const completionRate = aiGenerated > 0 ? ((completed / aiGenerated) * 100).toFixed(1) : 0;
         
         // Update stats
-        document.getElementById('total-ideas').textContent = aiGenerated;
-        document.getElementById('total-prs').textContent = mergedPrs;
-        document.getElementById('total-completed').textContent = completed;
-        document.getElementById('completion-rate').textContent = completionRate + '%';
+        safeSetContent('total-ideas', 'textContent', aiGenerated);
+        safeSetContent('total-prs', 'textContent', mergedPrs);
+        safeSetContent('total-completed', 'textContent', completed);
+        safeSetContent('completion-rate', 'textContent', completionRate + '%');
         
         // Load timeline
         loadTimeline();
@@ -151,6 +170,8 @@ async function loadWorkflowSchedules() {
 // Display workflow schedules with last run and next run info
 function displayWorkflowSchedules(workflows) {
     const container = document.getElementById('workflow-schedules-container');
+    if (!container) return; // Exit if container doesn't exist on this page
+    
     container.innerHTML = '';
     
     // Group workflows by name and find the most recent run
@@ -453,12 +474,14 @@ async function loadAutoLearnings() {
         const indexData = await indexResponse.json();
         
         // Update stats
-        document.getElementById('total-learnings').textContent = indexData.total_learnings || 0;
-        document.getElementById('tldr-learnings').textContent = indexData.sources?.tldr || 0;
-        document.getElementById('hn-learnings').textContent = indexData.sources?.hacker_news || 0;
+        safeSetContent('total-learnings', 'textContent', indexData.total_learnings || 0);
+        safeSetContent('tldr-learnings', 'textContent', indexData.sources?.tldr || 0);
+        safeSetContent('hn-learnings', 'textContent', indexData.sources?.hacker_news || 0);
         
         // Try to fetch recent files by looking at the current date pattern
         const container = document.getElementById('learning-files-container');
+        if (!container) return; // Exit if container doesn't exist on this page
+        
         container.innerHTML = '';
         
         // Fetch learning files - try common patterns for today
@@ -646,6 +669,8 @@ async function loadNewsFeed() {
 // Display news feed
 function displayNewsFeed(items) {
     const container = document.getElementById('news-feed-container');
+    if (!container) return; // Exit if container doesn't exist on this page
+    
     container.innerHTML = '';
     
     if (items.length === 0) {
@@ -778,9 +803,9 @@ async function loadLearningsIndex() {
         const indexResponse = await fetch('../learnings/index.json');
         if (indexResponse.ok) {
             const indexData = await indexResponse.json();
-            document.getElementById('index-total-learnings').textContent = indexData.total_learnings || 0;
-            document.getElementById('index-tldr-count').textContent = indexData.sources?.tldr || 0;
-            document.getElementById('index-hn-count').textContent = indexData.sources?.hacker_news || 0;
+            safeSetContent('index-total-learnings', 'textContent', indexData.total_learnings || 0);
+            safeSetContent('index-tldr-count', 'textContent', indexData.sources?.tldr || 0);
+            safeSetContent('index-hn-count', 'textContent', indexData.sources?.hacker_news || 0);
         }
 
         // Load all learning files
@@ -789,7 +814,10 @@ async function loadLearningsIndex() {
         displayTopics(learningFiles);
     } catch (error) {
         console.error('Error loading learnings index:', error);
-        document.getElementById('learnings-index-container').innerHTML = '<p style="color: var(--text-muted);">Unable to load learnings index.</p>';
+        const container = document.getElementById('learnings-index-container');
+        if (container) {
+            container.innerHTML = '<p style="color: var(--text-muted);">Unable to load learnings index.</p>';
+        }
     }
 }
 
@@ -838,6 +866,7 @@ async function fetchLearningFiles() {
 // Display learnings index
 function displayLearningsIndex(files) {
     const container = document.getElementById('learnings-index-container');
+    if (!container) return; // Exit if container doesn't exist on this page
     
     if (files.length === 0) {
         container.innerHTML = '<p style="color: var(--text-muted);">No learning files found yet.</p>';
@@ -877,6 +906,8 @@ function displayLearningsIndex(files) {
 // Display topics from learnings
 function displayTopics(files) {
     const container = document.getElementById('topics-container');
+    if (!container) return; // Exit if container doesn't exist on this page
+    
     const topicsSet = new Set();
 
     files.forEach(file => {
