@@ -1,0 +1,48 @@
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    name: Copilot setup steps
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository (full refs for diffs)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all refs (ensure diffs find base)
+        run: |
+          git remote set-url origin https://github.com/${{ github.repository }}
+          git fetch --no-tags --prune origin '+refs/heads/*:refs/remotes/origin/*' || true
+
+      - name: Prune large directories to keep workspace small
+        run: |
+          rm -rf node_modules dist build out .cache .parcel-cache .next || true
+          find . -maxdepth 2 -name '*.tar.gz' -o -name '*.zip' -o -name '*.tgz' -exec rm -f {} \; || true
+
+      - name: Setup minimal toolchain
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install only developer tooling (no large installs)
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --ignore-scripts --no-progress || true
+          fi
+
+      - name: Provide marker that agent should limit context
+        run: |
+          echo "COPILOT_LIMIT_CONTEXT=true" >> $GITHUB_ENV
+          echo "COPILOT_IGNORE_FILE=.copilotignore" >> $GITHUB_ENV
