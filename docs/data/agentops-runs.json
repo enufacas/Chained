@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-11-21T22:10:20.274545+00:00",
+  "last_updated": "2025-11-22T00:43:49.265716+00:00",
   "summary": {
     "total_runs": 121,
     "completed": 121,
@@ -8,7 +8,7 @@
     "failure": 20,
     "success_rate": 77.69,
     "avg_duration_seconds": 242.69,
-    "recent_failures_24h": 1
+    "recent_failures_24h": 0
   },
   "agent_workload": {
     "users": {
@@ -2535,30 +2535,5 @@
       "pull_requests": []
     }
   ],
-  "recent_failures": [
-    {
-      "id": 19556000354,
-      "run_number": 21,
-      "workflow_name": "Agent System: Evaluator",
-      "workflow_file": "agent-evaluator.yml",
-      "display_title": "Agent System: Evaluator",
-      "status": "completed",
-      "conclusion": "failure",
-      "created_at": "2025-11-21T00:41:35Z",
-      "updated_at": "2025-11-21T01:04:52Z",
-      "duration_seconds": 1397.0,
-      "html_url": "https://github.com/enufacas/Chained/actions/runs/19556000354",
-      "run_started_at": "2025-11-21T00:41:35Z",
-      "triggering_actor": "github-actions[bot]",
-      "event": "schedule",
-      "head_branch": "main",
-      "head_sha": "47e470e1",
-      "agent_name": "users",
-      "issue_number": 2132,
-      "pr_numbers": [
-        2132
-      ],
-      "pull_requests": []
-    }
-  ]
+  "recent_failures": []
 }
