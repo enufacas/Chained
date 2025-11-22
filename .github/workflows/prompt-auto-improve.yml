@@ -133,9 +133,9 @@ jobs:
           echo "  Total templates: $new_total_templates"
           echo "  Average quality: $new_avg_score"
           
-          # Calculate improvement
+          # Calculate improvement using Python for reliability
           old_score="${{ steps.assess.outputs.avg_score }}"
-          improvement=$(echo "scale=4; ($new_avg_score - $old_score) / $old_score * 100" | bc)
+          improvement=$(python3 -c "print(f'{(float('$new_avg_score') - float('$old_score')) / float('$old_score') * 100:.2f}')")
           echo "quality_improvement=$improvement" >> $GITHUB_OUTPUT
           
           echo "  Quality change: ${improvement}%"

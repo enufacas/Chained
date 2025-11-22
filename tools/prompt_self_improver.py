@@ -21,6 +21,15 @@ from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 from collections import defaultdict
 
+# Configuration constants
+MAX_SENTENCE_LENGTH = 200  # Maximum chars before considered too long
+MAX_COMBINED_BULLETS = 5   # Maximum bullet points when combining principles
+MAX_SUGGESTIONS_PER_PATTERN = 3  # Max suggestions extracted per pattern
+LEARNING_RATE = 0.1  # How much to adjust fitness on success
+DECAY_FACTOR = 0.9   # Decay rate for fitness moving average
+ELITE_PERCENTAGE = 0.2  # Top percentage to preserve in evolution
+MUTATION_CHANCE = 0.3  # Probability of mutation during evolution
+
 
 @dataclass
 class PromptQualityScore:
@@ -229,7 +238,7 @@ class PromptSelfImprover:
         
         # Negative indicators
         avg_sentence_length = len(text) / max(1, text.count('.'))
-        if avg_sentence_length > 200:  # Very long sentences
+        if avg_sentence_length > MAX_SENTENCE_LENGTH:  # Very long sentences
             score -= 0.1
         
         return max(0.0, min(1.0, score))
@@ -352,7 +361,7 @@ class PromptSelfImprover:
         
         for pattern in suggestion_patterns:
             matches = re.findall(pattern, text_lower, re.MULTILINE)
-            feedback["suggestions"].extend(matches[:3])  # Limit to 3 per pattern
+            feedback["suggestions"].extend(matches[:MAX_SUGGESTIONS_PER_PATTERN])  # Limit per pattern
         
         return feedback
     
@@ -407,7 +416,7 @@ class PromptSelfImprover:
             p2_bullets = re.findall(r'-\s+(.+)', p2_principles)
             
             # Combine unique bullets
-            all_bullets = list(set(p1_bullets + p2_bullets))[:5]  # Max 5
+            all_bullets = list(set(p1_bullets + p2_bullets))[:MAX_COMBINED_BULLETS]  # Max bullets
             
             if all_bullets:
                 principles_section = "**Key Principles:**\n" + '\n'.join(f"- {b}" for b in all_bullets)
@@ -541,8 +550,8 @@ class PromptSelfImprover:
         
         new_generation = []
         
-        # Elitism: Keep top 20%
-        elite_count = max(1, int(len(population) * 0.2))
+        # Elitism: Keep top performers using configured percentage
+        elite_count = max(1, int(len(population) * ELITE_PERCENTAGE))
         new_generation.extend([p[0] for p in population[:elite_count]])
         
         # Crossover: Create offspring from top performers
@@ -554,8 +563,8 @@ class PromptSelfImprover:
             # Crossover
             offspring = self.genetic_crossover(parent1, parent2)
             
-            # Maybe mutate (30% chance)
-            if random.random() < 0.3:
+            # Maybe mutate with configured probability
+            if random.random() < MUTATION_CHANCE:
                 offspring = self.mutate_prompt(offspring, mutation_strength=0.4)
             
             new_generation.append(offspring)
@@ -576,11 +585,11 @@ class PromptSelfImprover:
         if gene_id in self.prompt_genes:
             gene = self.prompt_genes[gene_id]
             
-            # Update fitness using simple moving average
+            # Update fitness using simple moving average with configurable learning rate
             if success:
-                gene.fitness_score = gene.fitness_score * 0.9 + 0.1  # Move towards 1.0
+                gene.fitness_score = gene.fitness_score * DECAY_FACTOR + LEARNING_RATE  # Move towards 1.0
             else:
-                gene.fitness_score = gene.fitness_score * 0.9  # Move towards 0.0
+                gene.fitness_score = gene.fitness_score * DECAY_FACTOR  # Move towards 0.0
             
             self._save_data()
     

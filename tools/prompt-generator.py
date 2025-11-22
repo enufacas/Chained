@@ -42,6 +42,10 @@ try:
 except ImportError:
     SELF_IMPROVER_AVAILABLE = False
 
+# Configuration constants
+MIN_OUTCOMES_FOR_IMPROVEMENT = 20  # Minimum outcomes needed for auto-improvement
+QUALITY_THRESHOLD = 0.6  # Minimum quality score to accept new templates
+
 
 @dataclass
 class PromptTemplate:
@@ -885,8 +889,8 @@ Follow best practices and the systematic approach defined in your agent profile.
         if not self.self_improver:
             return {"error": "Self-improver not available"}
         
-        if len(self.outcomes) < 20:
-            return {"error": "Need at least 20 outcomes for auto-improvement"}
+        if len(self.outcomes) < MIN_OUTCOMES_FOR_IMPROVEMENT:
+            return {"error": f"Need at least {MIN_OUTCOMES_FOR_IMPROVEMENT} outcomes for auto-improvement"}
         
         improvements = []
         
@@ -921,7 +925,7 @@ Follow best practices and the systematic approach defined in your agent profile.
             new_template_id = f"evolved_{category}_gen{len(self.evolution_history) + 1}_v{idx + 1}"
             
             # Only add if quality is good enough
-            if quality.overall_score >= 0.6:
+            if quality.overall_score >= QUALITY_THRESHOLD:
                 new_template = PromptTemplate(
                     template_id=new_template_id,
                     category=category,
