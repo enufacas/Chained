@@ -60,6 +60,8 @@ jobs:
           python3 tools/autonomous-refactoring-agent.py summary
       
       - name: Commit learned preferences
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -68,9 +70,49 @@ jobs:
           if [[ -n $(git status -s analysis/) ]]; then
             # Add only the preference and pattern files
             git add analysis/style_preferences.json analysis/refactoring_patterns.json 2>/dev/null || true
+            
+            # Create branch and PR instead of direct push
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="refactoring-learning/pr-${{ github.event.pull_request.number }}-${TIMESTAMP}"
+            
+            git checkout -b "$BRANCH_NAME"
             git commit -m "🤖 Learn style preferences from PR #${{ github.event.pull_request.number }}"
-            git push
-            echo "✅ Learned and committed new style preferences"
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            gh pr create \
+              --title "🤖 Learning: Style preferences from PR #${{ github.event.pull_request.number }}" \
+              --body "**@construct-specialist** learned new style preferences from merged PR #${{ github.event.pull_request.number }}.
+
+## Changes
+- Updated style_preferences.json
+- Updated refactoring_patterns.json
+
+This PR is automatically created by the autonomous refactoring learning system.
+
+---
+*🤖 Created by workflow: [Autonomous Refactoring Learning](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) (@construct-specialist)*" \
+              --base main \
+              --head "$BRANCH_NAME" \
+              --label "automated,learning,agent:construct-specialist" || {
+                echo "⚠️ PR creation with labels failed, retrying without labels..."
+                gh pr create \
+                  --title "🤖 Learning: Style preferences from PR #${{ github.event.pull_request.number }}" \
+                  --body "**@construct-specialist** learned new style preferences from merged PR #${{ github.event.pull_request.number }}.
+
+## Changes
+- Updated style_preferences.json
+- Updated refactoring_patterns.json
+
+This PR is automatically created by the autonomous refactoring learning system.
+
+---
+*🤖 Created by workflow: [Autonomous Refactoring Learning](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) (@construct-specialist)*" \
+                  --base main \
+                  --head "$BRANCH_NAME"
+              }
+            
+            echo "✅ Learned and committed new style preferences via PR"
           else
             echo "ℹ️ No new preferences learned"
           fi
@@ -121,6 +163,8 @@ jobs:
           fi
       
       - name: Commit learning results
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -128,9 +172,49 @@ jobs:
           # Check for changes
           if [[ -n $(git status -s analysis/) ]]; then
             git add analysis/
+            
+            # Create branch and PR instead of direct push
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="refactoring-learning/periodic-${TIMESTAMP}-${{ github.run_id }}"
+            
+            git checkout -b "$BRANCH_NAME"
             git commit -m "🤖 Autonomous style learning update - $(date +%Y-%m-%d)"
-            git push
-            echo "✅ Committed learning results"
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            gh pr create \
+              --title "🤖 Learning: Periodic style learning update - $(date +%Y-%m-%d)" \
+              --body "**@construct-specialist** performed periodic learning from repository history and external sources.
+
+## Changes
+- Updated analysis files with learned patterns
+- Generated refactoring report
+
+This PR is automatically created by the autonomous refactoring learning system.
+
+---
+*🤖 Created by workflow: [Autonomous Refactoring Learning](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) (@construct-specialist)*" \
+              --base main \
+              --head "$BRANCH_NAME" \
+              --label "automated,learning,agent:construct-specialist" || {
+                echo "⚠️ PR creation with labels failed, retrying without labels..."
+                gh pr create \
+                  --title "🤖 Learning: Periodic style learning update - $(date +%Y-%m-%d)" \
+                  --body "**@construct-specialist** performed periodic learning from repository history and external sources.
+
+## Changes
+- Updated analysis files with learned patterns
+- Generated refactoring report
+
+This PR is automatically created by the autonomous refactoring learning system.
+
+---
+*🤖 Created by workflow: [Autonomous Refactoring Learning](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) (@construct-specialist)*" \
+                  --base main \
+                  --head "$BRANCH_NAME"
+              }
+            
+            echo "✅ Committed learning results via PR"
           else
             echo "ℹ️ No changes to commit"
           fi
@@ -147,7 +231,7 @@ jobs:
             if [[ $HIGH_PRIORITY -gt 0 ]]; then
               echo "Found $HIGH_PRIORITY high-priority refactoring opportunities"
               
-              # Create a summary issue
+              # Create a summary issue with label fallback
               TIMESTAMP=$(date +%Y-%m-%d)
               gh issue create \
                 --title "🔧 Refactoring Opportunities - $TIMESTAMP" \
@@ -171,7 +255,31 @@ The autonomous refactoring agent has learned style preferences from:
 
 ---
 *🤖 Created by workflow: [Autonomous Refactoring Learning](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) (@construct-specialist)*" \
-                --label "refactoring,automated,agent:construct-specialist"
+                --label "refactoring,automated,agent:construct-specialist" || {
+                  echo "⚠️ Issue creation with labels failed, retrying without labels..."
+                  gh issue create \
+                    --title "🔧 Refactoring Opportunities - $TIMESTAMP" \
+                    --body "## Autonomous Refactoring Report
+
+**@construct-specialist** has identified refactoring opportunities based on learned style preferences.
+
+### Summary
+- **High Priority Files**: $HIGH_PRIORITY
+- **Report**: \`analysis/refactoring_report.json\`
+
+The autonomous refactoring agent has learned style preferences from:
+- Merged PRs
+- Code discussions
+- External best practices (TLDR, Hacker News)
+
+### Next Steps
+1. Review the report in \`analysis/refactoring_report.json\`
+2. Consider creating targeted refactoring PRs for high-priority files
+3. The agent will continue learning and improving its suggestions
+
+---
+*🤖 Created by workflow: [Autonomous Refactoring Learning](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) (@construct-specialist)*"
+                }
             else
               echo "No high-priority opportunities found at this time"
             fi
