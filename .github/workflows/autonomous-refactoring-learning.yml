@@ -1,0 +1,227 @@
+name: Autonomous Refactoring Learning
+
+on:
+  # Learn from merged PRs automatically
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+  
+  # Periodic learning from repository
+  schedule:
+    # Run every 6 hours to learn from recent changes
+    - cron: '0 */6 * * *'
+  
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      force_report:
+        description: 'Force generate refactoring report'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  learn-from-merged-pr:
+    name: Learn Style from Merged PR
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Learn from merged PR
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_MERGED: ${{ github.event.pull_request.merged }}
+        run: |
+          echo "Learning from merged PR #${PR_NUMBER}"
+          
+          # Run the learning command
+          python3 tools/autonomous-refactoring-agent.py learn
+          
+          # Show summary of learned preferences
+          python3 tools/autonomous-refactoring-agent.py summary
+      
+      - name: Commit learned preferences
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if there are changes to commit
+          if [[ -n $(git status -s analysis/) ]]; then
+            # Add only the preference and pattern files
+            git add analysis/style_preferences.json analysis/refactoring_patterns.json 2>/dev/null || true
+            git commit -m "🤖 Learn style preferences from PR #${{ github.event.pull_request.number }}"
+            git push
+            echo "✅ Learned and committed new style preferences"
+          else
+            echo "ℹ️ No new preferences learned"
+          fi
+
+  periodic-learning:
+    name: Periodic Style Learning
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Learn from all sources
+        run: |
+          echo "🧠 Learning style preferences from all sources..."
+          
+          # Learn from repository history, discussions, and external sources
+          python3 tools/autonomous-refactoring-agent.py learn
+          
+          echo ""
+          echo "📊 Style Preferences Summary:"
+          python3 tools/autonomous-refactoring-agent.py summary
+      
+      - name: Generate refactoring report
+        run: |
+          echo "📋 Generating refactoring report..."
+          python3 tools/autonomous-refactoring-agent.py report --source tools --output analysis/refactoring_report.json
+          
+          # Show high-level stats using helper script
+          if [[ -f analysis/refactoring_report.json ]]; then
+            echo ""
+            echo "Report generated successfully!"
+            echo "Files analyzed: $(python3 tools/parse-refactoring-report.py analysis/refactoring_report.json total_files)"
+            echo "Total suggestions: $(python3 tools/parse-refactoring-report.py analysis/refactoring_report.json total_suggestions)"
+            echo "High priority files: $(python3 tools/parse-refactoring-report.py analysis/refactoring_report.json high_priority)"
+          fi
+      
+      - name: Commit learning results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check for changes
+          if [[ -n $(git status -s analysis/) ]]; then
+            git add analysis/
+            git commit -m "🤖 Autonomous style learning update - $(date +%Y-%m-%d)"
+            git push
+            echo "✅ Committed learning results"
+          else
+            echo "ℹ️ No changes to commit"
+          fi
+      
+      - name: Create refactoring opportunities issue
+        if: github.event.inputs.force_report == 'true' || github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if there are high-priority refactoring opportunities
+          if [[ -f analysis/refactoring_report.json ]]; then
+            HIGH_PRIORITY=$(python3 tools/parse-refactoring-report.py analysis/refactoring_report.json high_priority)
+            
+            if [[ $HIGH_PRIORITY -gt 0 ]]; then
+              echo "Found $HIGH_PRIORITY high-priority refactoring opportunities"
+              
+              # Create a summary issue
+              TIMESTAMP=$(date +%Y-%m-%d)
+              gh issue create \
+                --title "🔧 Refactoring Opportunities - $TIMESTAMP" \
+                --body "## Autonomous Refactoring Report
+
+**@construct-specialist** has identified refactoring opportunities based on learned style preferences.
+
+### Summary
+- **High Priority Files**: $HIGH_PRIORITY
+- **Report**: \`analysis/refactoring_report.json\`
+
+The autonomous refactoring agent has learned style preferences from:
+- Merged PRs
+- Code discussions
+- External best practices (TLDR, Hacker News)
+
+### Next Steps
+1. Review the report in \`analysis/refactoring_report.json\`
+2. Consider creating targeted refactoring PRs for high-priority files
+3. The agent will continue learning and improving its suggestions
+
+---
+*🤖 Created by workflow: [Autonomous Refactoring Learning](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) (@construct-specialist)*" \
+                --label "refactoring,automated,agent:construct-specialist"
+            else
+              echo "No high-priority opportunities found at this time"
+            fi
+          fi
+
+  create-refactoring-pr:
+    name: Create Refactoring PR
+    runs-on: ubuntu-latest
+    # Only run on manual trigger when explicitly requested
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.force_report == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Generate refactoring suggestions
+        run: |
+          echo "🔍 Analyzing code for refactoring opportunities..."
+          python3 tools/autonomous-refactoring-agent.py report --source tools --output analysis/refactoring_report.json
+      
+      - name: Check for opportunities
+        id: check_opportunities
+        run: |
+          if [[ -f analysis/refactoring_report.json ]]; then
+            HIGH_PRIORITY=$(python3 tools/parse-refactoring-report.py analysis/refactoring_report.json high_priority)
+            echo "high_priority=$HIGH_PRIORITY" >> $GITHUB_OUTPUT
+            
+            if [[ $HIGH_PRIORITY -gt 0 ]]; then
+              echo "has_opportunities=true" >> $GITHUB_OUTPUT
+            else
+              echo "has_opportunities=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "has_opportunities=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Comment on trigger
+        if: steps.check_opportunities.outputs.has_opportunities == 'true'
+        run: |
+          echo "✅ Found refactoring opportunities!"
+          echo "In future versions, this will automatically create refactoring PRs."
+          echo "For now, review analysis/refactoring_report.json manually."
