@@ -209,184 +209,48 @@ jobs:
             gh pr edit ${pr_num} --add-label "tech-lead-review-cycle" --repo ${{ github.repository }} || true
           fi
 
-      - name: Request tech lead agent review
-        if: ${{ !matrix.has_wip && matrix.requires_tech_lead && matrix.tech_leads != '' && !matrix.has_tech_lead_approved && !matrix.needs_tech_lead_review }}
+      - name: Post initial tech lead analysis comment
+        if: ${{ !matrix.has_wip && matrix.requires_tech_lead && matrix.tech_leads != '' && github.event_name != 'schedule' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pr_num="${{ matrix.pr }}"
-          pr_title="${{ matrix.title }}"
           tech_leads="${{ matrix.tech_leads }}"
+          
+          # Only post if this is a new event (not scheduled sweep)
+          # Check if we already posted a comment
+          existing_comment=$(gh pr view ${pr_num} --json comments --jq '.comments[] | select(.body | contains("Tech Lead Review Analysis")) | .id' | head -1 || echo "")
+          
+          if [ -n "${existing_comment}" ]; then
+            echo "Already posted tech lead analysis comment"
+            exit 0
+          fi
           
           primary_lead=$(echo "${tech_leads}" | cut -d',' -f1)
           
-          # Check if we already requested review
-          existing_request=$(gh pr view ${pr_num} --json comments \
-            --jq '.comments[] | select(.body | contains("Tech Lead Review Request")) | .id' \
-            | head -1 || echo "")
+          gh pr comment ${pr_num} --body "## 🔒 Tech Lead Review Required
           
-          if [ -n "$existing_request" ]; then
-            echo "Review already requested for PR #${pr_num}"
-            exit 0
-          fi
+          This PR requires Tech Lead review before it can be merged.
           
-          # Request review from tech lead agent via PR comment
-          echo "Requesting review from @${primary_lead} on PR #${pr_num}..."
+          **Assigned Tech Lead:** @${primary_lead}
           
-          # Create comment body in a temp file to avoid YAML escaping issues
-          cat > /tmp/pr_comment.txt <<'EOF'
-## 🔒 Tech Lead Review Request
-
-**@TECH_LEAD** - Please review this PR according to your tech lead criteria.
-
-**Tech Lead Agent:** @TECH_LEAD
-**All Tech Leads:** ALL_LEADS
-
----
-
-## 🔍 Review Instructions for @TECH_LEAD
-
-Please review the changes and respond with your decision by commenting on this PR:
-
-### ✅ If Approved:
-```
-✅ APPROVED by @TECH_LEAD
-
-This PR meets all tech lead review criteria.
-Ready to merge.
-```
-
-### 🔄 If Changes Needed:
-```
-🔄 CHANGES REQUESTED by @TECH_LEAD
-
-Please address the following:
-1. [Change 1]
-2. [Change 2]
-```
-
----
-
-## 📋 Review Criteria
-
-- Modified protected paths (.github/workflows/, .github/agents/, etc.)
-- Security-related changes
-- Code quality and best practices
-- Documentation completeness
-- Test coverage
-
-See `.github/agents/TECH_LEAD.md` for your full review checklist.
-
----
-
-*🤖 Automated Tech Lead Review System - Monitoring for your response*
-EOF
+          **Tech Leads Identified:** ${tech_leads}
           
-          # Replace placeholders
-          sed -i "s/TECH_LEAD/${primary_lead}/g" /tmp/pr_comment.txt
-          sed -i "s/ALL_LEADS/${tech_leads}/g" /tmp/pr_comment.txt
+          **Next Steps:**
+          1. Tech Lead will review the changes
+          2. If approved, the \`tech-lead-approved\` label will be added
+          3. If changes are needed, the \`tech-lead-changes-requested\` label will be added
+          4. Once approved, auto-merge will proceed automatically
           
-          gh pr comment ${pr_num} --body-file /tmp/pr_comment.txt --repo ${{ github.repository }} || true
-
-      - name: Process tech lead agent responses
-        if: ${{ !matrix.has_wip && matrix.requires_tech_lead }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pr_num="${{ matrix.pr }}"
-          tech_leads="${{ matrix.tech_leads }}"
+          **Review Criteria:**
+          - Modified protected paths (.github/workflows/, .github/agents/, etc.)
+          - Security-related changes
+          - Large number of changes
+          - Multiple subsystems affected
           
-          echo "Checking for tech lead agent responses on PR #${pr_num}..."
-          
-          # Get PR comments, looking for tech lead responses
-          comments=$(gh pr view ${pr_num} --json comments --jq '.comments' || echo "[]")
-          
-          if [ "$comments" = "[]" ] || [ -z "$comments" ]; then
-            echo "No comments on PR #${pr_num}"
-            exit 0
-          fi
-          
-          # Look for the most recent comment from a tech lead agent
-          # Tech leads comment with their @name and either APPROVED or CHANGES REQUESTED
-          IFS=',' read -ra LEADS <<< "${tech_leads}"
-          latest_review=""
-          
-          for lead in "${LEADS[@]}"; do
-            if [ -z "${lead}" ]; then
-              continue
-            fi
-            
-            # Find latest comment mentioning this tech lead with a decision
-            lead_comment=$(echo "$comments" | jq -r --arg lead "@${lead}" \
-              '.[] | select(.body | contains($lead)) | select(.body | test("(✅|APPROVED|🔄|CHANGES.REQUESTED)"; "i")) | .body' \
-              | tail -1)
-            
-            if [ -n "$lead_comment" ]; then
-              latest_review="$lead_comment"
-              echo "Found review from ${lead}:"
-              echo "$latest_review"
-              break
-            fi
-          done
-          
-          if [ -z "$latest_review" ]; then
-            echo "No tech lead review decision found yet"
-            exit 0
-          fi
-          
-          # Check if approved
-          if echo "$latest_review" | grep -qiE "(✅|approved|lgtm)"; then
-            echo "Tech lead agent APPROVED the PR"
-            
-            # Update labels for approval
-            gh pr edit ${pr_num} --remove-label "needs-tech-lead-review" --repo ${{ github.repository }} 2>/dev/null || true
-            gh pr edit ${pr_num} --remove-label "tech-lead-changes-requested" --repo ${{ github.repository }} 2>/dev/null || true
-            gh pr edit ${pr_num} --add-label "tech-lead-approved" --repo ${{ github.repository }} || true
-            
-            # Comment on PR confirming approval processing
-            gh pr comment ${pr_num} --body "✅ **Tech Lead Approval Processed**
-
-Tech lead approval has been detected and labels updated.
-
-**Status Changes:**
-- ❌ Removed \`needs-tech-lead-review\` label
-- ✅ Added \`tech-lead-approved\` label
-
-**Next Steps:**
-This PR is now eligible for auto-merge if all other criteria are met.
-
----
-*Auto-review system processed tech lead approval*" --repo ${{ github.repository }} || true
-            
-          elif echo "$latest_review" | grep -qiE "(🔄|changes.requested|changes.needed|please.fix|please.address)"; then
-            echo "Tech lead agent REQUESTED CHANGES"
-            
-            # Update labels for changes requested
-            gh pr edit ${pr_num} --add-label "tech-lead-changes-requested" --repo ${{ github.repository }} || true
-            gh pr edit ${pr_num} --add-label "needs-tech-lead-review" --repo ${{ github.repository }} || true
-            gh pr edit ${pr_num} --remove-label "tech-lead-approved" --repo ${{ github.repository }} 2>/dev/null || true
-            
-            # Comment on PR confirming changes requested processing
-            gh pr comment ${pr_num} --body "🔄 **Tech Lead Changes Requested - Processed**
-
-Tech lead has requested changes. Labels have been updated.
-
-**Status Changes:**
-- ✅ Added \`tech-lead-changes-requested\` label (blocks merge)
-- ✅ Maintained \`needs-tech-lead-review\` label
-
-**Next Steps:**
-1. Review the tech lead's feedback above
-2. Address the requested changes
-3. Push updates to this PR
-4. Tech lead will be automatically notified to re-review
-
----
-*Auto-review system processed change request*" --repo ${{ github.repository }} || true
-          else
-            echo "Comment does not contain clear approval or change request"
-            echo "Waiting for explicit decision from tech lead agent"
-          fi
+          ---
+          *🤖 Automated Tech Lead Review System*
+          *Managed by @workflows-tech-lead*" --repo ${{ github.repository }} || true
 
       - name: Handle tech lead review state changes
         if: ${{ !matrix.has_wip && github.event_name == 'pull_request_review' }}
@@ -409,10 +273,6 @@ Tech lead has requested changes. Labels have been updated.
           
           review_state=$(echo "$reviews" | jq -r '.state')
           reviewer=$(echo "$reviews" | jq -r '.user')
-          
-          echo "Latest review: ${review_state} by ${reviewer}"
-          echo "Note: This workflow now primarily uses agent-based reviews via issues"
-          echo "Human reviews via GitHub UI are still supported as fallback"
           
           echo "Latest review: ${review_state} by ${reviewer}"
           
