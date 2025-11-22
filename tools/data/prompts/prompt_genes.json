@@ -1,0 +1,44 @@
+{
+  "structure_numbered_steps": {
+    "gene_id": "structure_numbered_steps",
+    "gene_type": "structure",
+    "content": "1. **Step**: Description\n2. **Step**: Description",
+    "fitness_score": 0.7
+  },
+  "structure_principles_section": {
+    "gene_id": "structure_principles_section",
+    "gene_type": "structure",
+    "content": "**Key Principles:**\n- Principle 1\n- Principle 2",
+    "fitness_score": 0.6
+  },
+  "instruction_test_thoroughly": {
+    "gene_id": "instruction_test_thoroughly",
+    "gene_type": "instruction",
+    "content": "Test your changes thoroughly, including edge cases",
+    "fitness_score": 0.8
+  },
+  "instruction_minimal_changes": {
+    "gene_id": "instruction_minimal_changes",
+    "gene_type": "instruction",
+    "content": "Make minimal, surgical changes to reduce risk",
+    "fitness_score": 0.75
+  },
+  "instruction_document_decisions": {
+    "gene_id": "instruction_document_decisions",
+    "gene_type": "instruction",
+    "content": "Document all design decisions and trade-offs",
+    "fitness_score": 0.65
+  },
+  "constraint_follow_conventions": {
+    "gene_id": "constraint_follow_conventions",
+    "gene_type": "constraint",
+    "content": "Follow existing code patterns and conventions",
+    "fitness_score": 0.7
+  },
+  "constraint_handle_errors": {
+    "gene_id": "constraint_handle_errors",
+    "gene_type": "constraint",
+    "content": "Handle all error conditions gracefully",
+    "fitness_score": 0.7
+  }
+}

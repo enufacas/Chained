@@ -6,9 +6,11 @@ Generates optimized prompts for GitHub Copilot interactions and learns from outc
 Tracks performance metrics to continuously improve prompt quality.
 
 Enhanced by @engineer-master with learning integration and self-improvement capabilities.
+Enhanced by @construct-specialist with genetic algorithm and multi-dimensional scoring.
 
 Part of the Chained autonomous AI ecosystem.
 Created by @engineer-master - systematic engineering approach inspired by Margaret Hamilton.
+Enhanced by @construct-specialist - direct and practical systems that work.
 """
 
 import json
@@ -32,6 +34,13 @@ try:
     REINFORCEMENT_AVAILABLE = True
 except ImportError:
     REINFORCEMENT_AVAILABLE = False
+
+# Import self-improvement engine if available
+try:
+    from prompt_self_improver import PromptSelfImprover
+    SELF_IMPROVER_AVAILABLE = True
+except ImportError:
+    SELF_IMPROVER_AVAILABLE = False
 
 
 @dataclass
@@ -97,7 +106,7 @@ class PromptGenerator:
     - Agent-specific optimizations
     """
     
-    def __init__(self, data_dir: str = "tools/data/prompts", enable_learning: bool = True, enable_reinforcement: bool = True):
+    def __init__(self, data_dir: str = "tools/data/prompts", enable_learning: bool = True, enable_reinforcement: bool = True, enable_self_improver: bool = True):
         """Initialize the prompt generator"""
         self.data_dir = Path(data_dir)
         self.data_dir.mkdir(parents=True, exist_ok=True)
@@ -126,6 +135,14 @@ class PromptGenerator:
                 self.reinforcement_learner = PromptReinforcementLearner(data_dir=str(self.data_dir))
             except Exception as e:
                 print(f"Warning: Could not initialize reinforcement learning: {e}")
+        
+        # Initialize self-improver with genetic algorithms
+        self.self_improver = None
+        if enable_self_improver and SELF_IMPROVER_AVAILABLE:
+            try:
+                self.self_improver = PromptSelfImprover(data_dir=str(self.data_dir))
+            except Exception as e:
+                print(f"Warning: Could not initialize self-improver: {e}")
         
         self._load_data()
         self._initialize_default_templates()
@@ -856,6 +873,172 @@ Follow best practices and the systematic approach defined in your agent profile.
                 return test
         
         return None
+    
+    def auto_improve_templates(self) -> Dict[str, Any]:
+        """
+        Automatically improve templates using genetic algorithms.
+        Uses self-improver to evolve prompts based on performance.
+        
+        Returns:
+            Report of improvements made
+        """
+        if not self.self_improver:
+            return {"error": "Self-improver not available"}
+        
+        if len(self.outcomes) < 20:
+            return {"error": "Need at least 20 outcomes for auto-improvement"}
+        
+        improvements = []
+        
+        # Build population from existing templates with their performance
+        population = []
+        for template in self.templates.values():
+            if template.total_uses >= 5:
+                # Use effectiveness score as fitness
+                population.append((template.template, template.effectiveness_score))
+        
+        if len(population) < 2:
+            return {"error": "Need at least 2 templates with usage data"}
+        
+        # Evolve the population
+        new_generation = self.self_improver.evolve_generation(population, target_size=min(5, len(population) + 2))
+        
+        # Create new templates from evolved prompts
+        for idx, evolved_prompt in enumerate(new_generation[len(population):]):  # Only new ones
+            # Determine category from content
+            category = "feature"  # default
+            if "bug" in evolved_prompt.lower():
+                category = "bug_fix"
+            elif "refactor" in evolved_prompt.lower():
+                category = "refactor"
+            elif "document" in evolved_prompt.lower():
+                category = "documentation"
+            
+            # Assess quality
+            quality = self.self_improver.assess_prompt_quality(evolved_prompt)
+            
+            # Create new template ID
+            new_template_id = f"evolved_{category}_gen{len(self.evolution_history) + 1}_v{idx + 1}"
+            
+            # Only add if quality is good enough
+            if quality.overall_score >= 0.6:
+                new_template = PromptTemplate(
+                    template_id=new_template_id,
+                    category=category,
+                    template=evolved_prompt,
+                    created_at=datetime.now(timezone.utc).isoformat()
+                )
+                
+                self.templates[new_template_id] = new_template
+                
+                improvements.append({
+                    "template_id": new_template_id,
+                    "category": category,
+                    "quality_score": quality.overall_score,
+                    "parent_count": len(population)
+                })
+        
+        # Track evolution in history
+        if not hasattr(self, 'evolution_history'):
+            self.evolution_history = []
+        
+        self.evolution_history.append({
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "population_size": len(population),
+            "new_templates": len(improvements),
+            "avg_quality": sum(i["quality_score"] for i in improvements) / len(improvements) if improvements else 0
+        })
+        
+        self._save_data()
+        
+        return {
+            "improvements_made": len(improvements),
+            "new_templates": improvements,
+            "evolution_generation": len(self.evolution_history)
+        }
+    
+    def assess_all_templates_quality(self) -> Dict[str, Any]:
+        """
+        Assess quality of all templates using multi-dimensional scoring.
+        
+        Returns:
+            Quality assessment report
+        """
+        if not self.self_improver:
+            return {"error": "Self-improver not available"}
+        
+        assessments = {}
+        
+        for template_id, template in self.templates.items():
+            quality = self.self_improver.assess_prompt_quality(
+                template.template,
+                historical_success_rate=template.success_rate
+            )
+            
+            assessments[template_id] = {
+                "category": template.category,
+                "clarity": quality.clarity,
+                "completeness": quality.completeness,
+                "actionability": quality.actionability,
+                "specificity": quality.specificity,
+                "success_rate": quality.success_rate,
+                "overall_score": quality.overall_score,
+                "total_uses": template.total_uses
+            }
+        
+        # Sort by overall score
+        sorted_assessments = sorted(
+            assessments.items(),
+            key=lambda x: x[1]["overall_score"],
+            reverse=True
+        )
+        
+        return {
+            "total_templates": len(assessments),
+            "avg_overall_score": sum(a["overall_score"] for a in assessments.values()) / len(assessments) if assessments else 0,
+            "top_performers": sorted_assessments[:5],
+            "needs_improvement": [
+                (tid, data) for tid, data in sorted_assessments
+                if data["overall_score"] < 0.6 and data["total_uses"] >= 3
+            ]
+        }
+    
+    def extract_pr_feedback(self, pr_number: int, review_body: str) -> Dict[str, Any]:
+        """
+        Extract actionable feedback from PR review.
+        Updates gene fitness based on feedback.
+        
+        Args:
+            pr_number: PR number
+            review_body: Review comment text
+        
+        Returns:
+            Structured feedback
+        """
+        if not self.self_improver:
+            return {"error": "Self-improver not available"}
+        
+        feedback = self.self_improver.extract_feedback_from_pr_review(review_body)
+        
+        # Update gene fitness based on feedback
+        if feedback["sentiment"] == "positive":
+            for pattern in feedback["positive_patterns"]:
+                # Find related genes
+                for gene_id, gene in self.self_improver.prompt_genes.items():
+                    if pattern in gene.content.lower():
+                        self.self_improver.update_gene_fitness(gene_id, success=True)
+        elif feedback["sentiment"] == "negative":
+            for pattern in feedback["negative_patterns"]:
+                # Find related genes and penalize
+                for gene_id, gene in self.self_improver.prompt_genes.items():
+                    if pattern.replace("_issue", "").replace("missing_", "") in gene.content.lower():
+                        self.self_improver.update_gene_fitness(gene_id, success=False)
+        
+        # Store feedback for learning
+        feedback["pr_number"] = pr_number
+        feedback["timestamp"] = datetime.now(timezone.utc).isoformat()
+        
+        return feedback
 
 
 def main():
@@ -867,7 +1050,7 @@ def main():
     )
     parser.add_argument(
         "command",
-        choices=["generate", "record", "report", "optimize", "evolve", "ab-test", "refresh-learnings"],
+        choices=["generate", "record", "report", "optimize", "evolve", "ab-test", "refresh-learnings", "auto-improve", "assess-quality", "extract-feedback"],
         help="Command to execute"
     )
     parser.add_argument("--issue-body", help="Issue body for prompt generation")
@@ -884,6 +1067,7 @@ def main():
     parser.add_argument("--template-b", help="Second template for A/B testing")
     parser.add_argument("--test-id", help="A/B test ID")
     parser.add_argument("--days", type=int, default=7, help="Days to look back for learnings")
+    parser.add_argument("--review-body", help="PR review body for feedback extraction")
     
     args = parser.parse_args()
     
@@ -966,6 +1150,34 @@ def main():
             print(f"Categories: {stats['categories']}")
         else:
             print("Learning integration not available")
+    
+    elif args.command == "auto-improve":
+        # Automatically improve templates using genetic algorithms
+        print("Running auto-improvement with genetic algorithms...")
+        result = generator.auto_improve_templates()
+        print(json.dumps(result, indent=2))
+    
+    elif args.command == "assess-quality":
+        # Assess quality of all templates
+        print("Assessing template quality with multi-dimensional scoring...")
+        result = generator.assess_all_templates_quality()
+        print(json.dumps(result, indent=2))
+    
+    elif args.command == "extract-feedback":
+        # Extract feedback from PR review
+        if not args.issue_number:
+            print("Error: --issue-number (PR number) required")
+            return 1
+        
+        # Use provided review body or prompt for input
+        review_body = args.review_body
+        if not review_body:
+            review_body = input("Enter PR review body (or press Enter for demo): ")
+            if not review_body:
+                review_body = "Good work! The implementation is clear and thorough. Tests are comprehensive."
+        
+        result = generator.extract_pr_feedback(args.issue_number, review_body)
+        print(json.dumps(result, indent=2))
     
     return 0
 
