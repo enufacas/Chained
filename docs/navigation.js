@@ -63,4 +63,30 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Collapsible Navigation Sections
+    const toggleButtons = document.querySelectorAll('.nav-section-toggle');
+    
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            const contentId = this.getAttribute('aria-controls');
+            const content = document.getElementById(contentId);
+            
+            if (content) {
+                if (isExpanded) {
+                    // Collapse
+                    this.setAttribute('aria-expanded', 'false');
+                    content.classList.remove('expanded');
+                } else {
+                    // Expand
+                    this.setAttribute('aria-expanded', 'true');
+                    content.classList.add('expanded');
+                }
+            }
+        });
+    });
 });
