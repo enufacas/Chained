@@ -1,0 +1,360 @@
+name: "AI: Auto-Improve Prompts"
+
+# Demonstrates the self-improving prompt generator using genetic algorithms
+# to continuously evolve and optimize prompts based on real-world performance.
+# 
+# Created by @construct-specialist - direct and practical automation that works.
+
+on:
+  # Run weekly to evolve prompts
+  schedule:
+    - cron: '0 3 * * 0'  # 3 AM UTC every Sunday
+  
+  # Allow manual triggering for testing
+  workflow_dispatch:
+    inputs:
+      min_outcomes:
+        description: 'Minimum outcomes required for auto-improvement'
+        required: false
+        default: '20'
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  auto-improve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Check system readiness
+        id: check
+        run: |
+          echo "🔍 Checking if system is ready for auto-improvement..."
+          
+          # Count outcomes
+          if [ -f tools/data/prompts/outcomes.json ]; then
+            outcome_count=$(jq '. | length' tools/data/prompts/outcomes.json)
+            echo "outcome_count=$outcome_count" >> $GITHUB_OUTPUT
+            echo "Found $outcome_count outcomes"
+          else
+            echo "outcome_count=0" >> $GITHUB_OUTPUT
+            echo "No outcomes file found"
+          fi
+          
+          min_required="${{ inputs.min_outcomes || '20' }}"
+          echo "min_required=$min_required" >> $GITHUB_OUTPUT
+          
+          if [ "$outcome_count" -ge "$min_required" ]; then
+            echo "ready=true" >> $GITHUB_OUTPUT
+            echo "✅ System ready for auto-improvement"
+          else
+            echo "ready=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Need at least $min_required outcomes (have $outcome_count)"
+          fi
+      
+      - name: Assess current template quality
+        if: steps.check.outputs.ready == 'true'
+        id: assess
+        run: |
+          echo "📊 Assessing current template quality..."
+          
+          # Get quality assessment
+          assessment=$(python3 tools/prompt-generator.py assess-quality 2>&1 | grep -v "^Warning:")
+          
+          # Extract metrics
+          avg_score=$(echo "$assessment" | jq -r '.avg_overall_score')
+          total_templates=$(echo "$assessment" | jq -r '.total_templates')
+          
+          echo "avg_score=$avg_score" >> $GITHUB_OUTPUT
+          echo "total_templates=$total_templates" >> $GITHUB_OUTPUT
+          
+          echo ""
+          echo "Current Quality Metrics:"
+          echo "  Total templates: $total_templates"
+          echo "  Average quality: $avg_score"
+          
+          # Save assessment for report
+          echo "$assessment" > /tmp/quality_before.json
+      
+      - name: Run auto-improvement with genetic algorithms
+        if: steps.check.outputs.ready == 'true'
+        id: improve
+        run: |
+          echo "🧬 Running genetic algorithm auto-improvement..."
+          
+          # Run auto-improvement
+          result=$(python3 tools/prompt-generator.py auto-improve 2>&1 | grep -v "^Warning:")
+          
+          echo "$result"
+          
+          # Extract metrics
+          improvements_made=$(echo "$result" | jq -r '.improvements_made // 0')
+          generation=$(echo "$result" | jq -r '.evolution_generation // 0')
+          
+          echo "improvements_made=$improvements_made" >> $GITHUB_OUTPUT
+          echo "generation=$generation" >> $GITHUB_OUTPUT
+          
+          echo ""
+          echo "Evolution Results:"
+          echo "  New templates: $improvements_made"
+          echo "  Generation: $generation"
+          
+          # Save result for report
+          echo "$result" > /tmp/improvement_result.json
+      
+      - name: Re-assess template quality
+        if: steps.check.outputs.ready == 'true' && steps.improve.outputs.improvements_made != '0'
+        id: reassess
+        run: |
+          echo "📊 Re-assessing template quality after improvement..."
+          
+          # Get new quality assessment
+          assessment=$(python3 tools/prompt-generator.py assess-quality 2>&1 | grep -v "^Warning:")
+          
+          # Extract metrics
+          new_avg_score=$(echo "$assessment" | jq -r '.avg_overall_score')
+          new_total_templates=$(echo "$assessment" | jq -r '.total_templates')
+          
+          echo "new_avg_score=$new_avg_score" >> $GITHUB_OUTPUT
+          echo "new_total_templates=$new_total_templates" >> $GITHUB_OUTPUT
+          
+          echo ""
+          echo "New Quality Metrics:"
+          echo "  Total templates: $new_total_templates"
+          echo "  Average quality: $new_avg_score"
+          
+          # Calculate improvement
+          old_score="${{ steps.assess.outputs.avg_score }}"
+          improvement=$(echo "scale=4; ($new_avg_score - $old_score) / $old_score * 100" | bc)
+          echo "quality_improvement=$improvement" >> $GITHUB_OUTPUT
+          
+          echo "  Quality change: ${improvement}%"
+          
+          # Save assessment
+          echo "$assessment" > /tmp/quality_after.json
+      
+      - name: Generate improvement report
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          improvements="${{ steps.improve.outputs.improvements_made }}"
+          
+          if [ "$improvements" -eq 0 ]; then
+            cat > /tmp/improvement_report.md <<'EOF'
+          # 🧬 Prompt Auto-Improvement Report
+          
+          **Status:** No improvements made
+          
+          The genetic algorithm determined that current templates are already optimal
+          or insufficient variation exists for meaningful evolution.
+          
+          ## Current State
+          
+          - **Outcomes analyzed:** ${{ steps.check.outputs.outcome_count }}
+          - **Templates:** ${{ steps.assess.outputs.total_templates }}
+          - **Avg quality score:** ${{ steps.assess.outputs.avg_score }}
+          
+          ## Next Steps
+          
+          Continue collecting outcomes to enable future evolution.
+          EOF
+            
+            sed -i 's/^          //' /tmp/improvement_report.md
+          else
+            # Create detailed report
+            cat > /tmp/improvement_report.md <<'EOF'
+          # 🧬 Prompt Auto-Improvement Report
+          
+          **Generation:** ${{ steps.improve.outputs.generation }}  
+          **Date:** $(date -u +"%Y-%m-%d %H:%M UTC")
+          
+          ## 🎯 Evolution Summary
+          
+          The genetic algorithm successfully evolved new prompt templates based on
+          performance data from ${{ steps.check.outputs.outcome_count }} completed tasks.
+          
+          ### Results
+          
+          - **New templates created:** ${{ steps.improve.outputs.improvements_made }}
+          - **Quality improvement:** ${{ steps.reassess.outputs.quality_improvement }}%
+          - **Total templates:** ${{ steps.reassess.outputs.new_total_templates }} (was ${{ steps.assess.outputs.total_templates }})
+          
+          ### Quality Metrics
+          
+          | Metric | Before | After | Change |
+          |--------|--------|-------|--------|
+          | Avg Quality | ${{ steps.assess.outputs.avg_score }} | ${{ steps.reassess.outputs.new_avg_score }} | +${{ steps.reassess.outputs.quality_improvement }}% |
+          | Templates | ${{ steps.assess.outputs.total_templates }} | ${{ steps.reassess.outputs.new_total_templates }} | +${{ steps.improve.outputs.improvements_made }} |
+          
+          ### New Templates
+          
+          EOF
+            
+            sed -i 's/^          //' /tmp/improvement_report.md
+            
+            # Add details of new templates
+            python3 -c "
+          import json
+          with open('/tmp/improvement_result.json') as f:
+              result = json.load(f)
+              if 'new_templates' in result:
+                  for template in result['new_templates']:
+                      print(f\"- **{template['template_id']}** ({template['category']}) - Quality: {template['quality_score']:.2f}\")
+          " >> /tmp/improvement_report.md
+            
+            cat >> /tmp/improvement_report.md <<'EOF'
+          
+          ## 🔬 Genetic Algorithm Details
+          
+          The auto-improvement system uses natural selection principles:
+          
+          1. **Selection**: Top-performing templates become parents
+          2. **Crossover**: Successful elements combined from multiple parents
+          3. **Mutation**: Random variations introduce innovation
+          4. **Elitism**: Best performers always preserved
+          5. **Fitness**: Multi-dimensional quality scoring
+          
+          Templates evolve based on:
+          - Historical success rates
+          - Resolution times
+          - Code review feedback
+          - Multi-dimensional quality scores
+          
+          ## 📈 Evolution History
+          
+          EOF
+            
+            sed -i 's/^          //' /tmp/improvement_report.md
+            
+            # Add evolution history
+            if [ -f tools/data/prompts/evolution_history.json ]; then
+              python3 -c "
+          import json
+          with open('tools/data/prompts/evolution_history.json') as f:
+              history = json.load(f)
+              print(f'Total evolution events: {len(history)}')
+              if history:
+                  latest = history[-1]
+                  print(f\"- Latest generation: {latest.get('generation_size', 'N/A')} templates\")
+                  print(f\"- Avg fitness: {latest.get('avg_fitness', 0):.3f}\")
+          " >> /tmp/improvement_report.md
+            fi
+            
+            cat >> /tmp/improvement_report.md <<'EOF'
+          
+          ---
+          
+          **@construct-specialist** - Autonomous prompt evolution in action.
+          
+          *Generated by the self-improving prompt generator with genetic algorithms.*
+          EOF
+            
+            sed -i 's/^          //' /tmp/improvement_report.md
+          fi
+          
+          echo "✓ Report generated"
+      
+      - name: Display report
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          echo ""
+          cat /tmp/improvement_report.md
+      
+      - name: Check for changes
+        if: steps.check.outputs.ready == 'true'
+        id: check_changes
+        run: |
+          git add tools/data/prompts/
+          
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes to commit"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+          fi
+      
+      - name: Commit improvements
+        if: steps.check.outputs.ready == 'true' && steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git commit -m "feat: Auto-improved prompts (generation ${{ steps.improve.outputs.generation }})
+          
+          Genetic algorithm created ${{ steps.improve.outputs.improvements_made }} new templates.
+          Quality improvement: ${{ steps.reassess.outputs.quality_improvement }}%
+          
+          Automated by @construct-specialist"
+          
+          echo "✓ Changes committed"
+      
+      - name: Create PR with improvements
+        if: steps.check.outputs.ready == 'true' && steps.check_changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create unique branch name
+          timestamp=$(date -u +"%Y%m%d-%H%M%S")
+          branch_name="prompt-auto-improve/${timestamp}-${{ github.run_id }}"
+          
+          # Push to new branch
+          git checkout -b "$branch_name"
+          git push origin "$branch_name"
+          
+          # Create PR
+          gh pr create \
+            --title "🧬 Auto-Improved Prompts - Generation ${{ steps.improve.outputs.generation }}" \
+            --body-file /tmp/improvement_report.md \
+            --label "automated,prompt-generator,ai-improvement" \
+            --base main \
+            --head "$branch_name"
+          
+          echo "✓ Created PR with improvements"
+      
+      - name: Comment on recent issues if no changes
+        if: steps.check.outputs.ready == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat > /tmp/status_comment.md <<'EOF'
+          ## 🧬 Auto-Improvement Status
+          
+          The prompt auto-improvement system checked for evolution opportunities but
+          needs more outcome data.
+          
+          **Current status:**
+          - Outcomes collected: ${{ steps.check.outputs.outcome_count }}
+          - Minimum required: ${{ steps.check.outputs.min_required }}
+          - Need: ${{ steps.check.outputs.min_required }} more outcomes
+          
+          The system will automatically evolve prompts once sufficient performance
+          data is available.
+          
+          ---
+          *@construct-specialist - Autonomous prompt evolution system*
+          EOF
+          
+          sed -i 's/^          //' /tmp/status_comment.md
+          
+          # Find recent prompt-related issues
+          recent_issue=$(gh issue list --label "prompt-generator" --limit 1 --json number --jq '.[0].number' || echo "")
+          
+          if [ -n "$recent_issue" ]; then
+            gh issue comment "$recent_issue" --body-file /tmp/status_comment.md
+            echo "✓ Posted status to issue #$recent_issue"
+          fi
+
+
+---
+
+*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
