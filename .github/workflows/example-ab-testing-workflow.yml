@@ -42,33 +42,65 @@ jobs:
           
           echo "🧪 Checking for active A/B test..."
           
-          # Run participation script and capture JSON output
+          # Run participation script and capture JSON output with error handling
+          set +e  # Don't exit on error, we'll handle it
           RESULT_JSON=$(python3 -c "
 import sys
 import json
 sys.path.insert(0, 'tools')
-from ab_testing_integration import WorkflowIntegration
-
-integration = WorkflowIntegration('example-workflow')
-config = integration.participate(json.loads('$DEFAULT_CONFIG'))
-
-result = {
-    'config': config,
-    'is_participating': integration._is_participating,
-    'experiment_id': integration.experiment_id or '',
-    'variant': integration.variant_name or 'default'
-}
-
-print(json.dumps(result))
+try:
+    from ab_testing_integration import WorkflowIntegration
+    
+    integration = WorkflowIntegration('example-workflow')
+    config = integration.participate(json.loads('$DEFAULT_CONFIG'))
+    
+    result = {
+        'config': config,
+        'is_participating': integration._is_participating,
+        'experiment_id': integration.experiment_id or '',
+        'variant': integration.variant_name or 'default'
+    }
+    
+    print(json.dumps(result))
+except Exception as e:
+    # Return error in JSON format for graceful handling
+    error_result = {
+        'config': json.loads('$DEFAULT_CONFIG'),
+        'is_participating': False,
+        'experiment_id': '',
+        'variant': 'default',
+        'error': str(e)
+    }
+    print(json.dumps(error_result), file=sys.stderr)
+    sys.exit(1)
 " 2>&1)
+          PYTHON_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
           
           echo "$RESULT_JSON"
           
-          # Parse JSON result
-          CONFIG=$(echo "$RESULT_JSON" | jq -r '.config | @json')
-          IS_PARTICIPATING=$(echo "$RESULT_JSON" | jq -r '.is_participating')
-          EXPERIMENT_ID=$(echo "$RESULT_JSON" | jq -r '.experiment_id')
-          VARIANT=$(echo "$RESULT_JSON" | jq -r '.variant')
+          # Check if Python script succeeded
+          if [ $PYTHON_EXIT_CODE -ne 0 ]; then
+            echo "⚠️  A/B testing integration failed, using default config"
+            CONFIG='$DEFAULT_CONFIG'
+            IS_PARTICIPATING="false"
+            EXPERIMENT_ID=""
+            VARIANT="default"
+          else
+            # Parse JSON result safely with error checking
+            if echo "$RESULT_JSON" | jq -e . >/dev/null 2>&1; then
+              CONFIG=$(echo "$RESULT_JSON" | jq -r '.config | @json')
+              IS_PARTICIPATING=$(echo "$RESULT_JSON" | jq -r '.is_participating')
+              EXPERIMENT_ID=$(echo "$RESULT_JSON" | jq -r '.experiment_id')
+              VARIANT=$(echo "$RESULT_JSON" | jq -r '.variant')
+            else
+              echo "⚠️  Invalid JSON response, using default config"
+              CONFIG='$DEFAULT_CONFIG'
+              IS_PARTICIPATING="false"
+              EXPERIMENT_ID=""
+              VARIANT="default"
+            fi
+          fi
           
           echo "config=$CONFIG" >> $GITHUB_OUTPUT
           echo "is_participating=$IS_PARTICIPATING" >> $GITHUB_OUTPUT
@@ -83,14 +115,19 @@ print(json.dumps(result))
       
       - name: Run workflow task
         id: run_task
+        continue-on-error: true  # Don't fail entire workflow if task fails
         run: |
           START_TIME=$(date +%s)
           
           echo "🚀 Running workflow task..."
           
-          # Run the example workflow
-          python3 examples/ab_testing_workflow_example.py
-          EXIT_CODE=$?
+          # Run the example workflow with error handling
+          if python3 examples/ab_testing_workflow_example.py; then
+            EXIT_CODE=0
+          else
+            EXIT_CODE=$?
+            echo "⚠️  Example workflow failed with exit code ${EXIT_CODE}"
+          fi
           
           END_TIME=$(date +%s)
           EXECUTION_TIME=$((END_TIME - START_TIME))
@@ -104,10 +141,12 @@ print(json.dumps(result))
             echo "❌ Task failed after ${EXECUTION_TIME}s"
           fi
           
-          exit $EXIT_CODE
+          # Don't exit with error code - let continue-on-error handle it
+          exit 0
       
       - name: Record metrics (success)
         if: steps.ab_test.outputs.is_participating == 'true' && steps.run_task.outputs.success == 'true'
+        continue-on-error: true  # Don't fail workflow if metrics recording fails
         run: |
           echo "📊 Recording successful run metrics..."
           
@@ -122,6 +161,7 @@ print(json.dumps(result))
       
       - name: Record metrics (failure)
         if: steps.ab_test.outputs.is_participating == 'true' && steps.run_task.outputs.success != 'true'
+        continue-on-error: true  # Don't fail workflow if metrics recording fails
         run: |
           echo "📊 Recording failed run metrics..."
           
