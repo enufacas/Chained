@@ -201,19 +201,19 @@
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-label">Total Workflows</div>
-                <div class="metric-value">10</div>
+                <div class="metric-value">15</div>
             </div>
             <div class="metric-card">
                 <div class="metric-label">Total Executions</div>
-                <div class="metric-value">100</div>
+                <div class="metric-value">330</div>
             </div>
             <div class="metric-card">
                 <div class="metric-label">Prediction Accuracy</div>
-                <div class="metric-value">0%</div>
+                <div class="metric-value">N/A</div>
             </div>
             <div class="metric-card">
                 <div class="metric-label">Avg Error (MAE)</div>
-                <div class="metric-value">0s</div>
+                <div class="metric-value">--</div>
             </div>
         </div>
         
@@ -222,17 +222,17 @@
             <div class="workflow-card">
                 <div class="workflow-header">
                     <div class="workflow-name">workflow-0</div>
-                    <div class="confidence-badge confidence-medium">60% Medium</div>
+                    <div class="confidence-badge confidence-high">72% High</div>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Expected Duration</span>
-                    <span class="info-value">474s</span>
+                    <span class="info-value">384s</span>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Success Rate</span>
-                    <span class="info-value">100%</span>
+                    <span class="info-value">73%</span>
                 </div>
                 
                 <div class="info-row">
@@ -242,21 +242,21 @@
 
                 <div class="info-row">
                     <span class="info-label">Total Executions</span>
-                    <span class="info-value">10</span>
+                    <span class="info-value">22</span>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Average Duration</span>
-                    <span class="info-value">474s</span>
+                    <span class="info-value">384s</span>
                 </div>
 
                 <div class="schedule">
-                    0 9 * * *
+                    0 7 * * *
                 </div>
 
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
-                    <div class="reasoning-item">Selected hour 9 (least resource contention)</div>
+                    <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
                     <div class="reasoning-item">Often conflicts with: workflow-7, workflow-8, workflow-9</div>
 
                 </div>
@@ -266,12 +266,144 @@
             <div class="workflow-card">
                 <div class="workflow-header">
                     <div class="workflow-name">workflow-1</div>
-                    <div class="confidence-badge confidence-medium">63% Medium</div>
+                    <div class="confidence-badge confidence-high">91% High</div>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Expected Duration</span>
-                    <span class="info-value">305s</span>
+                    <span class="info-value">232s</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Success Rate</span>
+                    <span class="info-value">80%</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Resource Impact</span>
+                    <span class="info-value">Medium</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Total Executions</span>
+                    <span class="info-value">41</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Average Duration</span>
+                    <span class="info-value">232s</span>
+                </div>
+
+                <div class="schedule">
+                    0 12 * * *
+                </div>
+
+                <div class="reasoning">
+                    <div class="reasoning-title">💡 Reasoning</div>
+                    <div class="reasoning-item">Hour 12 has 100% success rate</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-4, workflow-7, workflow-8</div>
+
+                </div>
+
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-name">workflow-10</div>
+                    <div class="confidence-badge confidence-medium">62% Medium</div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Expected Duration</span>
+                    <span class="info-value">114s</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Success Rate</span>
+                    <span class="info-value">83%</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Resource Impact</span>
+                    <span class="info-value">Low</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Total Executions</span>
+                    <span class="info-value">12</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Average Duration</span>
+                    <span class="info-value">114s</span>
+                </div>
+
+                <div class="schedule">
+                    0 7 * * *
+                </div>
+
+                <div class="reasoning">
+                    <div class="reasoning-title">💡 Reasoning</div>
+                    <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-12, workflow-8, workflow-2</div>
+
+                </div>
+
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-name">workflow-11</div>
+                    <div class="confidence-badge confidence-medium">56% Medium</div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Expected Duration</span>
+                    <span class="info-value">147s</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Success Rate</span>
+                    <span class="info-value">83%</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Resource Impact</span>
+                    <span class="info-value">Low</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Total Executions</span>
+                    <span class="info-value">6</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Average Duration</span>
+                    <span class="info-value">147s</span>
+                </div>
+
+                <div class="schedule">
+                    0 7 * * *
+                </div>
+
+                <div class="reasoning">
+                    <div class="reasoning-title">💡 Reasoning</div>
+                    <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-2, workflow-4</div>
+
+                </div>
+
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-name">workflow-12</div>
+                    <div class="confidence-badge confidence-medium">64% Medium</div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Expected Duration</span>
+                    <span class="info-value">590s</span>
                 </div>
                 
                 <div class="info-row">
@@ -286,23 +418,22 @@
 
                 <div class="info-row">
                     <span class="info-label">Total Executions</span>
-                    <span class="info-value">13</span>
+                    <span class="info-value">14</span>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Average Duration</span>
-                    <span class="info-value">305s</span>
+                    <span class="info-value">590s</span>
                 </div>
 
                 <div class="schedule">
-                    0 1 * * *
+                    0 7 * * *
                 </div>
 
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
-                    <div class="reasoning-item">Hour 1 has 100% success rate</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-6</div>
-                    <div class="reasoning-item">Scheduled during off-peak hours</div>
+                    <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-10, workflow-7, workflow-2</div>
 
                 </div>
 
@@ -310,13 +441,13 @@
 
             <div class="workflow-card">
                 <div class="workflow-header">
-                    <div class="workflow-name">workflow-2</div>
+                    <div class="workflow-name">workflow-13</div>
                     <div class="confidence-badge confidence-medium">60% Medium</div>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Expected Duration</span>
-                    <span class="info-value">462s</span>
+                    <span class="info-value">292s</span>
                 </div>
                 
                 <div class="info-row">
@@ -336,16 +467,17 @@
                 
                 <div class="info-row">
                     <span class="info-label">Average Duration</span>
-                    <span class="info-value">462s</span>
+                    <span class="info-value">292s</span>
                 </div>
 
                 <div class="schedule">
-                    0 9 * * *
+                    0 15 * * *
                 </div>
 
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
-                    <div class="reasoning-item">Selected hour 9 (least resource contention)</div>
+                    <div class="reasoning-item">Hour 15 has 100% success rate</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-8, workflow-2</div>
 
                 </div>
 
@@ -353,275 +485,13 @@
 
             <div class="workflow-card">
                 <div class="workflow-header">
-                    <div class="workflow-name">workflow-3</div>
-                    <div class="confidence-badge confidence-medium">58% Medium</div>
+                    <div class="workflow-name">workflow-14</div>
+                    <div class="confidence-badge confidence-medium">68% Medium</div>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Expected Duration</span>
-                    <span class="info-value">150s</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Success Rate</span>
-                    <span class="info-value">100%</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Resource Impact</span>
-                    <span class="info-value">Low</span>
-                </div>
-
-                <div class="info-row">
-                    <span class="info-label">Total Executions</span>
-                    <span class="info-value">8</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Average Duration</span>
-                    <span class="info-value">150s</span>
-                </div>
-
-                <div class="schedule">
-                    0 9 * * *
-                </div>
-
-                <div class="reasoning">
-                    <div class="reasoning-title">💡 Reasoning</div>
-                    <div class="reasoning-item">Selected hour 9 (least resource contention)</div>
-
-                </div>
-
-            </div>
-
-            <div class="workflow-card">
-                <div class="workflow-header">
-                    <div class="workflow-name">workflow-4</div>
-                    <div class="confidence-badge confidence-medium">59% Medium</div>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Expected Duration</span>
-                    <span class="info-value">455s</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Success Rate</span>
-                    <span class="info-value">78%</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Resource Impact</span>
-                    <span class="info-value">Medium</span>
-                </div>
-
-                <div class="info-row">
-                    <span class="info-label">Total Executions</span>
-                    <span class="info-value">9</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Average Duration</span>
-                    <span class="info-value">455s</span>
-                </div>
-
-                <div class="schedule">
-                    0 9 * * *
-                </div>
-
-                <div class="reasoning">
-                    <div class="reasoning-title">💡 Reasoning</div>
-                    <div class="reasoning-item">Selected hour 9 (least resource contention)</div>
-
-                </div>
-
-            </div>
-
-            <div class="workflow-card">
-                <div class="workflow-header">
-                    <div class="workflow-name">workflow-5</div>
-                    <div class="confidence-badge confidence-medium">57% Medium</div>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Expected Duration</span>
-                    <span class="info-value">563s</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Success Rate</span>
-                    <span class="info-value">86%</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Resource Impact</span>
-                    <span class="info-value">Medium</span>
-                </div>
-
-                <div class="info-row">
-                    <span class="info-label">Total Executions</span>
-                    <span class="info-value">7</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Average Duration</span>
-                    <span class="info-value">563s</span>
-                </div>
-
-                <div class="schedule">
-                    0 9 * * *
-                </div>
-
-                <div class="reasoning">
-                    <div class="reasoning-title">💡 Reasoning</div>
-                    <div class="reasoning-item">Selected hour 9 (least resource contention)</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-7</div>
-
-                </div>
-
-            </div>
-
-            <div class="workflow-card">
-                <div class="workflow-header">
-                    <div class="workflow-name">workflow-6</div>
-                    <div class="confidence-badge confidence-medium">59% Medium</div>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Expected Duration</span>
-                    <span class="info-value">224s</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Success Rate</span>
-                    <span class="info-value">78%</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Resource Impact</span>
-                    <span class="info-value">Medium</span>
-                </div>
-
-                <div class="info-row">
-                    <span class="info-label">Total Executions</span>
-                    <span class="info-value">9</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Average Duration</span>
-                    <span class="info-value">224s</span>
-                </div>
-
-                <div class="schedule">
-                    0 9 * * *
-                </div>
-
-                <div class="reasoning">
-                    <div class="reasoning-title">💡 Reasoning</div>
-                    <div class="reasoning-item">Selected hour 9 (least resource contention)</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-1</div>
-
-                </div>
-
-            </div>
-
-            <div class="workflow-card">
-                <div class="workflow-header">
-                    <div class="workflow-name">workflow-7</div>
-                    <div class="confidence-badge confidence-medium">62% Medium</div>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Expected Duration</span>
-                    <span class="info-value">302s</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Success Rate</span>
-                    <span class="info-value">58%</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Resource Impact</span>
-                    <span class="info-value">Medium</span>
-                </div>
-
-                <div class="info-row">
-                    <span class="info-label">Total Executions</span>
-                    <span class="info-value">12</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Average Duration</span>
-                    <span class="info-value">302s</span>
-                </div>
-
-                <div class="schedule">
-                    0 9 * * *
-                </div>
-
-                <div class="reasoning">
-                    <div class="reasoning-title">💡 Reasoning</div>
-                    <div class="reasoning-item">Selected hour 9 (least resource contention)</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-5, workflow-8, workflow-0</div>
-
-                </div>
-
-            </div>
-
-            <div class="workflow-card">
-                <div class="workflow-header">
-                    <div class="workflow-name">workflow-8</div>
-                    <div class="confidence-badge confidence-medium">60% Medium</div>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Expected Duration</span>
-                    <span class="info-value">221s</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Success Rate</span>
-                    <span class="info-value">100%</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Resource Impact</span>
-                    <span class="info-value">Medium</span>
-                </div>
-
-                <div class="info-row">
-                    <span class="info-label">Total Executions</span>
-                    <span class="info-value">10</span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Average Duration</span>
-                    <span class="info-value">221s</span>
-                </div>
-
-                <div class="schedule">
-                    0 9 * * *
-                </div>
-
-                <div class="reasoning">
-                    <div class="reasoning-title">💡 Reasoning</div>
-                    <div class="reasoning-item">Selected hour 9 (least resource contention)</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-0, workflow-7, workflow-9</div>
-
-                </div>
-
-            </div>
-
-            <div class="workflow-card">
-                <div class="workflow-header">
-                    <div class="workflow-name">workflow-9</div>
-                    <div class="confidence-badge confidence-medium">62% Medium</div>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label">Expected Duration</span>
-                    <span class="info-value">333s</span>
+                    <span class="info-value">300s</span>
                 </div>
                 
                 <div class="info-row">
@@ -636,12 +506,56 @@
 
                 <div class="info-row">
                     <span class="info-label">Total Executions</span>
-                    <span class="info-value">12</span>
+                    <span class="info-value">18</span>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">Average Duration</span>
-                    <span class="info-value">333s</span>
+                    <span class="info-value">300s</span>
+                </div>
+
+                <div class="schedule">
+                    0 7 * * *
+                </div>
+
+                <div class="reasoning">
+                    <div class="reasoning-title">💡 Reasoning</div>
+                    <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-10, workflow-1, workflow-3</div>
+
+                </div>
+
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-name">workflow-2</div>
+                    <div class="confidence-badge confidence-high">80% High</div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Expected Duration</span>
+                    <span class="info-value">397s</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Success Rate</span>
+                    <span class="info-value">90%</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Resource Impact</span>
+                    <span class="info-value">Medium</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Total Executions</span>
+                    <span class="info-value">30</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Average Duration</span>
+                    <span class="info-value">397s</span>
                 </div>
 
                 <div class="schedule">
@@ -650,8 +564,320 @@
 
                 <div class="reasoning">
                     <div class="reasoning-title">💡 Reasoning</div>
-                    <div class="reasoning-item">Selected hour 9 (least resource contention)</div>
-                    <div class="reasoning-item">Often conflicts with: workflow-8, workflow-0</div>
+                    <div class="reasoning-item">Hour 9 has 100% success rate</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-12, workflow-7, workflow-8</div>
+
+                </div>
+
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-name">workflow-3</div>
+                    <div class="confidence-badge confidence-high">74% High</div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Expected Duration</span>
+                    <span class="info-value">221s</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Success Rate</span>
+                    <span class="info-value">88%</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Resource Impact</span>
+                    <span class="info-value">Medium</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Total Executions</span>
+                    <span class="info-value">24</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Average Duration</span>
+                    <span class="info-value">221s</span>
+                </div>
+
+                <div class="schedule">
+                    0 2 * * *
+                </div>
+
+                <div class="reasoning">
+                    <div class="reasoning-title">💡 Reasoning</div>
+                    <div class="reasoning-item">Hour 2 has 100% success rate</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-4, workflow-8</div>
+                    <div class="reasoning-item">Scheduled during off-peak hours</div>
+
+                </div>
+
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-name">workflow-4</div>
+                    <div class="confidence-badge confidence-high">84% High</div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Expected Duration</span>
+                    <span class="info-value">235s</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Success Rate</span>
+                    <span class="info-value">79%</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Resource Impact</span>
+                    <span class="info-value">Medium</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Total Executions</span>
+                    <span class="info-value">34</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Average Duration</span>
+                    <span class="info-value">235s</span>
+                </div>
+
+                <div class="schedule">
+                    0 1 * * *
+                </div>
+
+                <div class="reasoning">
+                    <div class="reasoning-title">💡 Reasoning</div>
+                    <div class="reasoning-item">Hour 1 has 100% success rate</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-11, workflow-9</div>
+                    <div class="reasoning-item">Scheduled during off-peak hours</div>
+
+                </div>
+
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-name">workflow-5</div>
+                    <div class="confidence-badge confidence-high">72% High</div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Expected Duration</span>
+                    <span class="info-value">402s</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Success Rate</span>
+                    <span class="info-value">73%</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Resource Impact</span>
+                    <span class="info-value">Medium</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Total Executions</span>
+                    <span class="info-value">22</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Average Duration</span>
+                    <span class="info-value">402s</span>
+                </div>
+
+                <div class="schedule">
+                    0 7 * * *
+                </div>
+
+                <div class="reasoning">
+                    <div class="reasoning-title">💡 Reasoning</div>
+                    <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-1, workflow-9</div>
+
+                </div>
+
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-name">workflow-6</div>
+                    <div class="confidence-badge confidence-high">72% High</div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Expected Duration</span>
+                    <span class="info-value">214s</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Success Rate</span>
+                    <span class="info-value">82%</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Resource Impact</span>
+                    <span class="info-value">Medium</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Total Executions</span>
+                    <span class="info-value">22</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Average Duration</span>
+                    <span class="info-value">214s</span>
+                </div>
+
+                <div class="schedule">
+                    0 21 * * *
+                </div>
+
+                <div class="reasoning">
+                    <div class="reasoning-title">💡 Reasoning</div>
+                    <div class="reasoning-item">Hour 21 has 100% success rate</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-1, workflow-13, workflow-8</div>
+                    <div class="reasoning-item">Scheduled during off-peak hours</div>
+
+                </div>
+
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-name">workflow-7</div>
+                    <div class="confidence-badge confidence-high">77% High</div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Expected Duration</span>
+                    <span class="info-value">425s</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Success Rate</span>
+                    <span class="info-value">63%</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Resource Impact</span>
+                    <span class="info-value">Medium</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Total Executions</span>
+                    <span class="info-value">27</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Average Duration</span>
+                    <span class="info-value">425s</span>
+                </div>
+
+                <div class="schedule">
+                    0 7 * * *
+                </div>
+
+                <div class="reasoning">
+                    <div class="reasoning-title">💡 Reasoning</div>
+                    <div class="reasoning-item">Selected hour 7 (least resource contention)</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-12, workflow-4, workflow-8</div>
+
+                </div>
+
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-name">workflow-8</div>
+                    <div class="confidence-badge confidence-high">74% High</div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Expected Duration</span>
+                    <span class="info-value">334s</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Success Rate</span>
+                    <span class="info-value">79%</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Resource Impact</span>
+                    <span class="info-value">Medium</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Total Executions</span>
+                    <span class="info-value">24</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Average Duration</span>
+                    <span class="info-value">334s</span>
+                </div>
+
+                <div class="schedule">
+                    0 3 * * *
+                </div>
+
+                <div class="reasoning">
+                    <div class="reasoning-title">💡 Reasoning</div>
+                    <div class="reasoning-item">Hour 3 has 100% success rate</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-7, workflow-9, workflow-0</div>
+                    <div class="reasoning-item">Scheduled during off-peak hours</div>
+
+                </div>
+
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-name">workflow-9</div>
+                    <div class="confidence-badge confidence-high">74% High</div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Expected Duration</span>
+                    <span class="info-value">439s</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Success Rate</span>
+                    <span class="info-value">79%</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Resource Impact</span>
+                    <span class="info-value">Medium</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Total Executions</span>
+                    <span class="info-value">24</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Average Duration</span>
+                    <span class="info-value">439s</span>
+                </div>
+
+                <div class="schedule">
+                    0 11 * * *
+                </div>
+
+                <div class="reasoning">
+                    <div class="reasoning-title">💡 Reasoning</div>
+                    <div class="reasoning-item">Hour 11 has 100% success rate</div>
+                    <div class="reasoning-item">Often conflicts with: workflow-4, workflow-8, workflow-0</div>
 
                 </div>
 
@@ -662,7 +888,7 @@
         <footer>
             <p><strong>AI-Powered Workflow Orchestrator</strong></p>
             <p>Built with machine learning to optimize workflow scheduling</p>
-            <p class="timestamp">Generated: 2025-11-22 16:16:56 UTC</p>
+            <p class="timestamp">Generated: 2025-11-22 16:22:48 UTC</p>
             <p>Created by <strong>@APIs-architect</strong> 🏭</p>
         </footer>
     </div>

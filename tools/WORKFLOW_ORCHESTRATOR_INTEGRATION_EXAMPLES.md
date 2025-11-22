@@ -375,7 +375,7 @@ api.record_execution(...)
 ## Troubleshooting
 
 ### Low Prediction Confidence
-If confidence is low (&lt;60%), you need more data:
+If confidence is low (<60%), you need more data:
 ```bash
 # Check execution count
 python3 tools/workflow_orchestrator_api.py insights --workflow my-workflow

@@ -401,25 +401,29 @@ def main():
     """Generate the dashboard."""
     import argparse
     
+    # Simulation defaults
+    DEFAULT_WORKFLOWS = 10
+    DEFAULT_EXECUTIONS = 100
+    
     parser = argparse.ArgumentParser(
         description='Generate workflow prediction dashboard - @APIs-architect'
     )
     parser.add_argument('--output', help='Output directory (default: docs/workflow-predictions)')
     parser.add_argument('--simulate', action='store_true', help='Generate simulation data first')
+    parser.add_argument('--num-workflows', type=int, default=DEFAULT_WORKFLOWS,
+                       help=f'Number of workflows for simulation (default: {DEFAULT_WORKFLOWS})')
+    parser.add_argument('--num-executions', type=int, default=DEFAULT_EXECUTIONS,
+                       help=f'Number of executions for simulation (default: {DEFAULT_EXECUTIONS})')
     
     args = parser.parse_args()
     
     dashboard = PredictionDashboard()
     
-    # Simulation parameters
-    SIMULATION_WORKFLOWS = 10
-    SIMULATION_EXECUTIONS = 100
-    
     if args.simulate:
-        print("🎲 Generating simulation data...")
+        print(f"🎲 Generating simulation data ({args.num_workflows} workflows, {args.num_executions} executions)...")
         dashboard.api.predictor.simulate_execution_data(
-            num_workflows=SIMULATION_WORKFLOWS, 
-            num_executions=SIMULATION_EXECUTIONS
+            num_workflows=args.num_workflows, 
+            num_executions=args.num_executions
         )
         print("✓ Simulation data generated")
     
