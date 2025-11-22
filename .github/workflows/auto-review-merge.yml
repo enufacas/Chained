@@ -391,10 +391,18 @@ jobs:
             echo "pr_title<<EOF"
             echo "${pr_title}"
             echo "EOF"
-            echo "has_copilot=${has_copilot}"
-            echo "has_needs_tech_lead=${has_needs_tech_lead}"
-            echo "has_tech_lead_approved=${has_tech_lead_approved}"
-            echo "has_changes_requested=${has_changes_requested}"
+            echo "has_copilot<<EOF"
+            echo "${has_copilot}"
+            echo "EOF"
+            echo "has_needs_tech_lead<<EOF"
+            echo "${has_needs_tech_lead}"
+            echo "EOF"
+            echo "has_tech_lead_approved<<EOF"
+            echo "${has_tech_lead_approved}"
+            echo "EOF"
+            echo "has_changes_requested<<EOF"
+            echo "${has_changes_requested}"
+            echo "EOF"
           } >> $GITHUB_OUTPUT
 
       - name: Check merge eligibility
