@@ -124,8 +124,11 @@ class TestWorkflowOrchestratorAPI:
         
         response = self.api.predict_execution_time('nonexistent-workflow')
         
-        # Should return a default prediction with low confidence
-        assert response.success or not response.success, "Should handle gracefully"
+        # Should return a prediction (may be default with low confidence)
+        # System gracefully handles missing data by returning default predictions
+        assert isinstance(response.success, bool), "Should return valid response"
+        if response.success:
+            assert response.data.get('confidence', 0) <= 0.5, "Should have low confidence for unknown workflow"
         
         print("  ✓ Non-existent workflow handled correctly")
         self.results.append(("predict_nonexistent", True))

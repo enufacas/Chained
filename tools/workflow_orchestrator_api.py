@@ -283,11 +283,20 @@ class WorkflowOrchestratorAPI:
                 message="Execution recorded successfully",
                 timestamp=datetime.now(timezone.utc).isoformat()
             )
-        except Exception as e:
+        except ValueError as e:
             return APIResponse(
                 success=False,
                 data=None,
-                message=f"Error recording execution: {str(e)}",
+                message=f"Invalid execution data: {str(e)}",
+                timestamp=datetime.now(timezone.utc).isoformat()
+            )
+        except Exception as e:
+            # Log detailed error internally but return generic message
+            print(f"Internal error recording execution: {str(e)}", file=sys.stderr)
+            return APIResponse(
+                success=False,
+                data=None,
+                message="Failed to record execution. Check input data format.",
                 timestamp=datetime.now(timezone.utc).isoformat()
             )
     

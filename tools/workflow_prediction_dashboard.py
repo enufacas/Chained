@@ -281,11 +281,11 @@ class PredictionDashboard:
             </div>
             <div class="metric-card">
                 <div class="metric-label">Prediction Accuracy</div>
-                <div class="metric-value">{accuracy_data.get('accuracy_score', 0)*100:.0f}%</div>
+                <div class="metric-value">{'N/A' if not accuracy_data else f"{accuracy_data.get('accuracy_score', 0)*100:.0f}%"}</div>
             </div>
             <div class="metric-card">
                 <div class="metric-label">Avg Error (MAE)</div>
-                <div class="metric-value">{accuracy_data.get('mean_absolute_error', 0):.0f}s</div>
+                <div class="metric-value">{'--' if not accuracy_data else f"{accuracy_data.get('mean_absolute_error', 0):.0f}s"}</div>
             </div>
         </div>
         
@@ -411,9 +411,16 @@ def main():
     
     dashboard = PredictionDashboard()
     
+    # Simulation parameters
+    SIMULATION_WORKFLOWS = 10
+    SIMULATION_EXECUTIONS = 100
+    
     if args.simulate:
         print("🎲 Generating simulation data...")
-        dashboard.api.predictor.simulate_execution_data(num_workflows=10, num_executions=100)
+        dashboard.api.predictor.simulate_execution_data(
+            num_workflows=SIMULATION_WORKFLOWS, 
+            num_executions=SIMULATION_EXECUTIONS
+        )
         print("✓ Simulation data generated")
     
     print("\n🎨 Generating dashboard...")
