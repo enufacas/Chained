@@ -2,9 +2,9 @@
 
 > Security vulnerabilities, encryption, authentication, and privacy
 
-**Total Insights:** 83
+**Total Insights:** 93
 
-**Last Updated:** 2025-11-21
+**Last Updated:** 2025-11-22
 
 ---
 
@@ -190,15 +190,6 @@ This article dives into my full methodology for reverse engineering the tool men
 ---
 
 
-### Okta's NextJS-0auth troubles
-
-**Community Score:** 277 upvotes
-
-**Link:** https://joshua.hu/ai-slop-okta-nextjs-0auth-security-vulnerability
-
----
-
-
 ### Checkout.com hacked, refuses ransom payment, donates to security labs
 
 **Community Score:** 596 upvotes
@@ -321,7 +312,7 @@ This article dives into my full methodology for reverse engineering the tool men
 
 ### Okta's NextJS-0auth troubles
 
-**Community Score:** 128 upvotes
+**Community Score:** 277 upvotes
 
 **Link:** https://joshua.hu/ai-slop-okta-nextjs-0auth-security-vulnerability
 
@@ -361,5 +352,19 @@ Sign in Get in touch Resource center Search Text Link Thank you! Your submission
 **Community Score:** 160 upvotes
 
 **Link:** https://openai.com/index/fighting-nyt-user-privacy-invasion
+
+---
+
+
+### Bluetooth 6.2 – more responsive, improves security, USB comms, and testing
+
+**Community Score:** 215 upvotes
+
+**Link:** https://www.cnx-software.com/2025/11/05/bluetooth-6-2-gets-more-responsive-improves-security-usb-communication-and-testing-capabilities/
+
+
+**Content Summary:**
+
+Posted on November 5, 2025 November 5, 2025 by Jean-Luc Aufranc (CNXSoft) - 4 Comments on Bluetooth 6.2 gets more responsive, improves security, USB communication, and testing capabilities Bluetooth 6.2 gets more responsive, improves security, USB communication, and testing capabilities Bluetooth 6.2 specification has just been released with a range of new features to enhance responsiveness with shorter connection intervals, strengthen security against amplitude-based RF attacks, and improve com...
 
 ---

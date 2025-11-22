@@ -202,7 +202,7 @@ jobs:
             git commit -m "🧠 Neural workflow adaptation - ${{ steps.adapt.outputs.adapted_count }} workflows updated"
             git push origin "$BRANCH_NAME"
             
-            # Create PR
+            # Create PR with label fallback
             gh pr create \
               --title "🧠 Neural Workflow Adaptation - $(date +%Y-%m-%d)" \
               --body "## 🧠 Neural Workflow Adaptation
@@ -236,7 +236,42 @@ jobs:
             *Neural adaptation by **@workflows-tech-lead***" \
               --label "automated,neural-adaptation,workflows" \
               --base main \
-              --head "$BRANCH_NAME"
+              --head "$BRANCH_NAME" || {
+                echo "⚠️ PR creation with labels failed, retrying without labels..."
+                gh pr create \
+                  --title "🧠 Neural Workflow Adaptation - $(date +%Y-%m-%d)" \
+                  --body "## 🧠 Neural Workflow Adaptation
+            
+            **@workflows-tech-lead** has performed automatic neural adaptation of workflow configurations.
+            
+            ### 📊 Adaptation Results
+            
+            - **Workflows adapted**: ${{ steps.adapt.outputs.adapted_count }}
+            - **Timestamp**: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+            - **Triggered by**: ${{ github.event_name }}
+            
+            ### 🔄 How Neural Adaptation Works
+            
+            The neural workflow adapter uses a neural network-inspired architecture to:
+            
+            1. **Monitor** workflow success rates and performance metrics
+            2. **Learn** from execution history using gradient descent
+            3. **Adapt** parameters (timeouts, retries, concurrency) automatically
+            4. **Optimize** for 95% success rate target
+            
+            Each workflow has neural weights that are adjusted based on feedback, similar to backpropagation in neural networks.
+            
+            ### 📈 Configuration Updates
+            
+            This PR updates the neural configuration with optimized workflow parameters based on recent execution data.
+            
+            ---
+            
+            *🤖 Created by workflow: [neural-workflow-adaptation.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+            *Neural adaptation by **@workflows-tech-lead***" \
+                  --base main \
+                  --head "$BRANCH_NAME"
+              }
             
             echo "✅ Created PR for neural configuration updates"
           fi
