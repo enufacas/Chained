@@ -198,6 +198,62 @@ The agent needs to be registered and active in the system before work can begin.
       agent_name_display="**$agent_emoji $matched_agent**"
     fi
     
+    # 🧠 NEW: Query Agent Learning API for proactive guidance
+    echo "🧠 Querying Agent Learning API for proactive guidance..."
+    learning_guidance=$(python3 tools/agent-learning-api.py query \
+      --agent "$matched_agent" \
+      --task-type "general" \
+      --task-description "$issue_title" 2>/dev/null || echo '{}')
+    
+    # Extract key insights from learning guidance
+    if [ -n "$learning_guidance" ] && [ "$learning_guidance" != "{}" ]; then
+      risk_level=$(echo "$learning_guidance" | jq -r '.risk_level // "unknown"')
+      warnings_count=$(echo "$learning_guidance" | jq -r '.warnings | length')
+      recommendations_count=$(echo "$learning_guidance" | jq -r '.recommendations | length')
+      success_patterns_count=$(echo "$learning_guidance" | jq -r '.success_patterns | length')
+      
+      echo "   ✓ Risk level: $risk_level"
+      echo "   ✓ Warnings: $warnings_count"
+      echo "   ✓ Recommendations: $recommendations_count"
+      echo "   ✓ Success patterns: $success_patterns_count"
+      
+      # Build learning insights section
+      learning_section=""
+      if [ "$warnings_count" -gt 0 ]; then
+        learning_section="${learning_section}
+### ⚠️ Proactive Warnings
+
+Based on historical PR failures, **@$matched_agent** should be aware of:
+
+$(echo "$learning_guidance" | jq -r '.warnings[]' | sed 's/^/- /')
+
+"
+      fi
+      
+      if [ "$recommendations_count" -gt 0 ]; then
+        learning_section="${learning_section}
+### ✅ Recommended Approach
+
+$(echo "$learning_guidance" | jq -r '.recommendations[]' | sed 's/^/- /')
+
+"
+      fi
+      
+      if [ "$success_patterns_count" -gt 0 ]; then
+        learning_section="${learning_section}
+### 🎯 Success Patterns
+
+PRs that follow these patterns have high success rates:
+
+$(echo "$learning_guidance" | jq -r '.success_patterns[]' | sed 's/^/- /')
+
+"
+      fi
+    else
+      echo "   ℹ️ No learning guidance available (using defaults)"
+      learning_section=""
+    fi
+    
     # Prepend agent directive to issue body with @agent-name mention
     agent_directive="<!-- COPILOT_AGENT:$matched_agent -->
 
@@ -209,7 +265,7 @@ The agent needs to be registered and active in the system before work can begin.
 > 
 > **IMPORTANT**: Always mention **@$matched_agent** by name in all conversations, comments, and PRs related to this issue.
 
----
+${learning_section}---
 
 "
     # Combine directive with original body
@@ -217,7 +273,7 @@ The agent needs to be registered and active in the system before work can begin.
     
     # Update issue body using gh issue edit
     echo "$new_body" | gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --body-file -
-    echo "✓ Added agent directive with @$matched_agent mention to issue #$issue_number body"
+    echo "✓ Added agent directive with @$matched_agent mention and learning guidance to issue #$issue_number body"
   else
     echo "✓ Agent directive already exists in issue #$issue_number body"
   fi
