@@ -1,0 +1,66 @@
+{
+  "date": "2025-11-22T06:12:12.630178+00:00",
+  "title": "The Great Merge-athon",
+  "scenes": [
+    {
+      "bg": "lab",
+      "narration": "In the last 2 hours, 20 events unfolded in the Chained repository, orchestrated by 3 collaborators working in harmony.",
+      "characters": [
+        {
+          "name": "Build Guardian",
+          "side": "center",
+          "mood": "determined",
+          "line": "I've tracked 14 pull requests. Let's see what stories they tell."
+        }
+      ]
+    },
+    {
+      "bg": "calm",
+      "narration": "13 pull requests merged into main. The codebase evolves.",
+      "characters": [
+        {
+          "name": "Merge Oracle",
+          "side": "left",
+          "mood": "smug",
+          "line": "The merge is complete. Well done, github-actions[bot]."
+        },
+        {
+          "name": "Team (2 devs)",
+          "side": "right",
+          "mood": "happy",
+          "line": "Collaboration makes us stronger!"
+        }
+      ]
+    },
+    {
+      "bg": "night",
+      "narration": "PR #2299 awaits review. The code hangs in the balance.",
+      "characters": [
+        {
+          "name": "github-actions[bot]",
+          "side": "left",
+          "mood": "worried",
+          "line": "I hope the reviewers like my changes..."
+        },
+        {
+          "name": "Code Reviewer",
+          "side": "right",
+          "mood": "determined",
+          "line": "Let me examine this carefully. Quality matters."
+        }
+      ]
+    },
+    {
+      "bg": "calm",
+      "narration": "6 issues closed. The bug hunters have been busy.",
+      "characters": [
+        {
+          "name": "Issue Hunter",
+          "side": "center",
+          "mood": "happy",
+          "line": "Mission accomplished! 6 bug(s) eliminated."
+        }
+      ]
+    }
+  ]
+}

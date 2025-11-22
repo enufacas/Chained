@@ -26,6 +26,13 @@ try:
 except ImportError:
     LEARNING_INTEGRATION_AVAILABLE = False
 
+# Import reinforcement learning if available
+try:
+    from prompt_reinforcement import PromptReinforcementLearner
+    REINFORCEMENT_AVAILABLE = True
+except ImportError:
+    REINFORCEMENT_AVAILABLE = False
+
 
 @dataclass
 class PromptTemplate:
@@ -90,7 +97,7 @@ class PromptGenerator:
     - Agent-specific optimizations
     """
     
-    def __init__(self, data_dir: str = "tools/data/prompts", enable_learning: bool = True):
+    def __init__(self, data_dir: str = "tools/data/prompts", enable_learning: bool = True, enable_reinforcement: bool = True):
         """Initialize the prompt generator"""
         self.data_dir = Path(data_dir)
         self.data_dir.mkdir(parents=True, exist_ok=True)
@@ -111,6 +118,14 @@ class PromptGenerator:
                 self._refresh_learnings()
             except Exception as e:
                 print(f"Warning: Could not initialize learning integration: {e}")
+        
+        # Initialize reinforcement learning
+        self.reinforcement_learner = None
+        if enable_reinforcement and REINFORCEMENT_AVAILABLE:
+            try:
+                self.reinforcement_learner = PromptReinforcementLearner(data_dir=str(self.data_dir))
+            except Exception as e:
+                print(f"Warning: Could not initialize reinforcement learning: {e}")
         
         self._load_data()
         self._initialize_default_templates()
@@ -333,6 +348,10 @@ Security issue:
         if enable_learning_enhancement:
             prompt = self._enhance_with_learnings(prompt, learning_context, category)
         
+        # Enhance with reinforcement patterns if available
+        if self.reinforcement_learner:
+            prompt = self._enhance_with_reinforcement_patterns(prompt, category)
+        
         # Update template usage
         template.total_uses += 1
         template.last_used = datetime.now(timezone.utc).isoformat()
@@ -448,6 +467,36 @@ Follow best practices and the systematic approach defined in your agent profile.
         
         return prompt
     
+    def _enhance_with_reinforcement_patterns(
+        self,
+        prompt: str,
+        category: str
+    ) -> str:
+        """Enhance prompt with successful patterns from reinforcement learning"""
+        try:
+            # Get top patterns for this category
+            top_patterns = self.reinforcement_learner.get_top_patterns(
+                category=category,
+                min_effectiveness=0.7,
+                limit=3
+            )
+            
+            if not top_patterns:
+                return prompt
+            
+            # Add pattern-based guidance
+            guidance = "\n\n**Key Success Patterns (learned from outcomes):**\n"
+            for idx, pattern in enumerate(top_patterns, 1):
+                pattern_desc = pattern.pattern.replace("_", " ").title()
+                guidance += f"{idx}. {pattern_desc} (effectiveness: {pattern.effectiveness:.0%})\n"
+            
+            guidance += "\nApply these proven patterns to maximize success.\n"
+            
+            return prompt + guidance
+        except Exception as e:
+            print(f"Warning: Could not enhance with reinforcement patterns: {e}")
+            return prompt
+    
     def record_outcome(
         self,
         prompt_id: str,
@@ -455,7 +504,8 @@ Follow best practices and the systematic approach defined in your agent profile.
         success: bool,
         resolution_time_hours: float,
         agent_used: Optional[str] = None,
-        error_type: Optional[str] = None
+        error_type: Optional[str] = None,
+        feedback_text: Optional[str] = None
     ):
         """
         Record the outcome of using a prompt.
@@ -467,6 +517,7 @@ Follow best practices and the systematic approach defined in your agent profile.
             resolution_time_hours: Time taken to resolve (in hours)
             agent_used: Which agent was used
             error_type: Type of error if failed
+            feedback_text: Optional feedback text for reinforcement learning
         """
         outcome = PromptOutcome(
             prompt_id=prompt_id,
@@ -498,6 +549,19 @@ Follow best practices and the systematic approach defined in your agent profile.
                     alpha * resolution_time_hours +
                     (1 - alpha) * template.avg_resolution_time
                 )
+        
+        # Record feedback for reinforcement learning if available
+        if self.reinforcement_learner and feedback_text:
+            feedback_type = "issue_resolution"
+            sentiment = "positive" if success else "negative"
+            
+            self.reinforcement_learner.record_feedback(
+                prompt_id=prompt_id,
+                issue_number=issue_number,
+                feedback_type=feedback_type,
+                sentiment=sentiment,
+                feedback_text=feedback_text
+            )
         
         self._save_data()
         self._update_insights()
@@ -585,6 +649,13 @@ Follow best practices and the systematic approach defined in your agent profile.
                 "avg_resolution_time": template.avg_resolution_time
             }
         
+        # Add reinforcement learning metrics if available
+        if self.reinforcement_learner:
+            try:
+                report["reinforcement"] = self.reinforcement_learner.get_reinforcement_metrics()
+            except Exception as e:
+                print(f"Warning: Could not get reinforcement metrics: {e}")
+        
         return report
     
     def optimize_templates(self):
@@ -634,6 +705,19 @@ Follow best practices and the systematic approach defined in your agent profile.
         
         self.insights["optimization_suggestions"] = optimization_suggestions
         self._save_data()
+        
+        # Also get reinforcement learning recommendations
+        if self.reinforcement_learner:
+            try:
+                for template_id in self.templates.keys():
+                    rl_recommendations = self.reinforcement_learner.generate_optimization_recommendations(template_id)
+                    if rl_recommendations:
+                        for rec in rl_recommendations:
+                            rec["template_id"] = template_id
+                            rec["source"] = "reinforcement_learning"
+                            optimization_suggestions.append(rec)
+            except Exception as e:
+                print(f"Warning: Could not get RL recommendations: {e}")
         
         return optimization_suggestions
     

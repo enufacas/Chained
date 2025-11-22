@@ -342,7 +342,8 @@ jobs:
           echo ""
           
           # Get workflow runs from the last 100
-          runs_json=$(gh run list --limit 100 --json databaseId,name,status,conclusion,createdAt,displayTitle)
+          # Include workflowName to get the actual filename (e.g., validate-instructions-size.yml)
+          runs_json=$(gh run list --limit 100 --json databaseId,name,workflowName,status,conclusion,createdAt,displayTitle)
           
           # Count all runs by conclusion type
           total_runs=$(echo "$runs_json" | jq '. | length')
@@ -365,9 +366,10 @@ jobs:
           echo "  - Action Required: $action_required_runs"
           echo ""
           
-          # Analyze failed workflows by name
+          # Analyze failed workflows by workflowName (actual filename)
+          # This is more accurate than using display name
           echo "Failed workflows breakdown:"
-          failed_workflows=$(echo "$runs_json" | jq -r '[.[] | select(.conclusion == "failure") | .name] | group_by(.) | map({name: .[0], count: length}) | .[] | "\(.name):\(.count)"')
+          failed_workflows=$(echo "$runs_json" | jq -r '[.[] | select(.conclusion == "failure") | .workflowName] | group_by(.) | map({name: .[0], count: length}) | .[] | "\(.name):\(.count)"')
           
           if [ -n "$failed_workflows" ]; then
             echo "$failed_workflows" | while IFS=: read -r workflow_name fail_count; do
@@ -796,7 +798,7 @@ jobs:
           
           # Check 1: Verify agent spawner workflow exists and is enabled
           echo "Check 1: Agent Spawner Workflow"
-          if [ -f ".github/workflows/agent-spawner.yml" ]; then
+          if [ -f ".github/workflows/agent-spawning.yml" ]; then
             echo "✅ Agent spawner workflow exists"
             spawner_healthy=1
           else
@@ -888,7 +890,7 @@ jobs:
           
           # Check if agent spawner has recent runs
           echo "Checking agent spawner workflow runs..."
-          spawner_runs=$(gh run list --workflow=agent-spawner.yml --limit 10 --json conclusion,createdAt --jq 'length')
+          spawner_runs=$(gh run list --workflow=agent-spawning.yml --limit 10 --json conclusion,createdAt --jq 'length')
           
           if [ ${spawner_runs} -eq 0 ]; then
             echo "⚠️ Agent spawner has no recent runs"
@@ -897,10 +899,10 @@ jobs:
             echo "Agent spawner runs found: ${spawner_runs}"
             
             # Check for failures
-            failed_runs=$(gh run list --workflow=agent-spawner.yml --limit 10 --json conclusion --jq '[.[] | select(.conclusion == "failure")] | length')
+            failed_runs=$(gh run list --workflow=agent-spawning.yml --limit 10 --json conclusion --jq '[.[] | select(.conclusion == "failure")] | length')
             if [ ${failed_runs} -gt 0 ]; then
               echo "⚠️ Found ${failed_runs} failed spawner run(s)"
-              echo "Recommendation: Review agent-spawner.yml workflow logs"
+              echo "Recommendation: Review agent-spawning.yml workflow logs"
             fi
           fi
           

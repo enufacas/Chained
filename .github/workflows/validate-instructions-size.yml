@@ -22,7 +22,13 @@ jobs:
         id: check_size
         run: |
           # Calculate total size of instruction files
-          TOTAL_BYTES=$(find .github/instructions -name "*.md" -type f -exec cat {} \; | wc -c)
+          # Handle case where .github/instructions may not exist or be empty
+          if [ -d ".github/instructions" ] && [ "$(find .github/instructions -name "*.md" -type f 2>/dev/null | wc -l)" -gt 0 ]; then
+            TOTAL_BYTES=$(find .github/instructions -name "*.md" -type f -exec cat {} \; | wc -c)
+          else
+            TOTAL_BYTES=0
+          fi
+          
           ROOT_SIZE=$(wc -c < .copilot-instructions.md 2>/dev/null || echo 0)
           TOTAL=$((TOTAL_BYTES + ROOT_SIZE))
           
@@ -78,20 +84,20 @@ jobs:
             
             const body = `## 📏 Copilot Instructions Size Check
             
-**${status}**
-
-**Current Size:**
-- Bytes: ${totalBytes} (${totalKB} KB)
-- Estimated tokens: ~${tokens}
-
-**Limits:**
-- Maximum: 60,000 bytes (60 KB)
-- Token estimate: < 15,000 tokens
-
-**Result:** ${message}
-
----
-*See [Context Size Optimization Guide](docs/guides/CONTEXT_SIZE_OPTIMIZATION.md) for best practices*`;
+            ${status}
+            
+            **Current Size:**
+            - Bytes: ${totalBytes} (${totalKB} KB)
+            - Estimated tokens: ~${tokens}
+            
+            **Limits:**
+            - Maximum: 60,000 bytes (60 KB)
+            - Token estimate: < 15,000 tokens
+            
+            **Result:** ${message}
+            
+            ---
+            *See [Context Size Optimization Guide](docs/guides/CONTEXT_SIZE_OPTIMIZATION.md) for best practices*`;
             
             // Find existing comment
             const comments = await github.rest.issues.listComments({

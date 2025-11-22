@@ -382,7 +382,20 @@ def sync_learnings_to_ideas(max_ideas: int = 10, enable_deep_discovery: bool = T
     new_ideas = []
     updated_ideas = []
     skipped_duplicates = 0
-    idea_id_base = len(existing_ideas) + 1
+    
+    # **@APIs-architect** Fix: Use max ID instead of count to prevent duplicate IDs
+    # Extract numeric IDs and find the maximum
+    max_id = 0
+    for idea in existing_ideas:
+        idea_id = idea.get('id', 'idea:0')
+        if idea_id.startswith('idea:'):
+            try:
+                num = int(idea_id.split(':')[1])
+                max_id = max(max_id, num)
+            except (ValueError, IndexError):
+                pass
+    
+    idea_id_base = max_id + 1
     
     for i, tech in enumerate(top_technologies):
         # Create candidate idea
@@ -485,8 +498,9 @@ def main():
     """Main entry point."""
     try:
         # **@construct-specialist** Enhancement: Enable deep discovery by default
+        # **@APIs-architect** Enhancement: Increased from 10 to 20 for more mission diversity
         # This creates more diverse missions from learning topics
-        summary = sync_learnings_to_ideas(max_ideas=10, enable_deep_discovery=True)
+        summary = sync_learnings_to_ideas(max_ideas=20, enable_deep_discovery=True)
         return 0
     except Exception as e:
         print(f"\n❌ Error during sync: {e}")

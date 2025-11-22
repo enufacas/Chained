@@ -1,0 +1,69 @@
+name: Autonomous Refactoring Learning
+
+on:
+  # Learn from merged PRs automatically
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+  
+  # Periodic learning from repository
+  schedule:
+    # Run every 6 hours to learn from recent changes
+    - cron: '0 */6 * * *'
+  
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      force_report:
+        description: 'Force generate refactoring report'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  # TEMPORARILY DISABLED: These jobs perform direct git push to main branch
+  # which violates branch protection rules. They need to be refactored to use
+  # PR-based workflow pattern.
+  # Issue: https://github.com/enufacas/Chained/issues/[TBD]
+  # Fix by: @troubleshoot-expert
+  
+  workflow-status:
+    name: Workflow Status
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report Status
+        run: |
+          echo "⚠️ Autonomous Refactoring Learning workflow is temporarily disabled"
+          echo ""
+          echo "Reason: Branch protection violations (direct push to main)"
+          echo "Solution: Refactor to PR-based workflow"
+          echo ""
+          echo "The following jobs are disabled:"
+          echo "  - learn-from-merged-pr"
+          echo "  - periodic-learning" 
+          echo "  - create-refactoring-pr"
+          echo ""
+          echo "Fixed by: @troubleshoot-expert"
+
+  # learn-from-merged-pr:
+  #   name: Learn Style from Merged PR
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+  #   ... (job content disabled - see above)
+
+  # periodic-learning:
+  #   name: Periodic Style Learning
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+  #   ... (job content disabled - see above)
+
+  # create-refactoring-pr:
+  #   name: Create Refactoring PR
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'workflow_dispatch' && github.event.inputs.force_report == 'true'
+  #   ... (job content disabled - see above)

@@ -32,6 +32,14 @@ from dataclasses import dataclass, asdict, field
 import importlib.util
 
 
+# Constants for source formatting
+SOURCE_FORMAT_PR = "PR#{pr_number}"
+SOURCE_FORMAT_PR_OUTCOME = "PR#{pr_number}_outcome"
+SOURCE_FORMAT_REPO = "repo_{filepath}"
+SOURCE_FORMAT_DISCUSSION = "discussion_{discussion_id}"
+SOURCE_FORMAT_EXTERNAL = "external_{source}"
+
+
 # Import existing code analysis tools
 def import_module_from_path(module_name: str, file_path: str):
     """Dynamically import a module from a file path."""
@@ -39,6 +47,43 @@ def import_module_from_path(module_name: str, file_path: str):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def parse_iso_timestamp(timestamp_str: str) -> datetime:
+    """
+    Robustly parse ISO timestamp strings with various timezone formats.
+    
+    Args:
+        timestamp_str: ISO formatted timestamp string
+        
+    Returns:
+        datetime object with timezone info
+    """
+    if not timestamp_str:
+        return datetime.now(timezone.utc)
+    
+    try:
+        # Python 3.7+: Handle 'Z' suffix by replacing with +00:00
+        if timestamp_str.endswith('Z'):
+            timestamp_str = timestamp_str[:-1] + '+00:00'
+        return datetime.fromisoformat(timestamp_str)
+    except (ValueError, AttributeError):
+        # Fallback for older Python or malformed strings
+        # Try simple ISO format without timezone
+        try:
+            # Remove timezone info and parse
+            dt_str = timestamp_str.split('+')[0].split('Z')[0]
+            dt = datetime.strptime(dt_str, '%Y-%m-%dT%H:%M:%S.%f')
+            return dt.replace(tzinfo=timezone.utc)
+        except ValueError:
+            try:
+                # Try without microseconds
+                dt_str = timestamp_str.split('+')[0].split('Z')[0]
+                dt = datetime.strptime(dt_str, '%Y-%m-%dT%H:%M:%S')
+                return dt.replace(tzinfo=timezone.utc)
+            except ValueError:
+                # Last resort: return current time
+                return datetime.now(timezone.utc)
 
 
 # Get the tools directory
@@ -105,6 +150,47 @@ class StylePreferenceLearner:
         self.code_analyzer = CodeAnalyzer()
         self.style_extractor = StyleExtractor()
         
+        # Compile regex patterns once for performance
+        self._review_patterns = {
+            # Naming preferences
+            r'use\s+(\w+case)': ('naming_convention', 0.8),
+            r'prefer\s+(\w+_\w+|\w+[A-Z]\w+)': ('naming_style', 0.7),
+            
+            # Indentation/formatting
+            r'indent(?:ation)?\s+(?:should\s+be\s+)?(\d+)\s+spaces?': ('indentation', 0.9),
+            r'use\s+(spaces|tabs)': ('indent_type', 0.9),
+            
+            # Line length
+            r'(?:line|lines?)\s+(?:too\s+)?long': ('line_length_violation', 0.8),
+            r'(?:keep|limit)\s+lines?\s+(?:to\s+)?(\d+)\s+characters?': ('max_line_length', 0.9),
+            
+            # Documentation
+            r'(?:add|missing|needs?)\s+docstring': ('docstring_required', 0.9),
+            r'(?:add|use)\s+type\s+hints?': ('type_hints_preferred', 0.8),
+            
+            # Code structure
+            r'(?:function|method)\s+too\s+long': ('function_length_violation', 0.7),
+            r'(?:extract|refactor)\s+(?:into\s+)?(?:separate\s+)?(?:function|method)': ('refactor_needed', 0.8),
+            
+            # Best practices
+            r'use\s+f-strings?': ('string_formatting', 0.8),
+            r'avoid\s+(\w+)': ('anti_pattern', 0.7),
+        }
+        # Compile patterns for better performance
+        self._compiled_patterns = {
+            re.compile(pattern): (pref_type, confidence)
+            for pattern, (pref_type, confidence) in self._review_patterns.items()
+        }
+    
+    def _get_current_timestamp(self) -> str:
+        """
+        Get current timestamp in ISO format.
+        
+        Returns:
+            ISO formatted timestamp string
+        """
+        return datetime.now(timezone.utc).isoformat()
+        
     def _load_preferences(self) -> Dict[str, StylePreference]:
         """Load learned style preferences from file."""
         if os.path.exists(self.preferences_file):
@@ -164,7 +250,7 @@ class StylePreferenceLearner:
                     features = self.style_extractor.extract_from_code(code, file_path)
                     self._update_preferences_from_features(
                         asdict(features),
-                        source=f"PR#{pr_data.get('number', 'unknown')}",
+                        source=SOURCE_FORMAT_PR.format(pr_number=pr_data.get('number', 'unknown')),
                         success=True
                     )
                 except Exception as e:
@@ -213,9 +299,91 @@ class StylePreferenceLearner:
             ]):
                 self._extract_preference_from_external(learning)
     
+    def learn_from_review_comments(self, comments: List[Dict[str, Any]]):
+        """
+        Learn from code review comments to understand style preferences.
+        
+        This is a key enhancement for real-time learning from team feedback.
+        
+        Args:
+            comments: List of review comment dictionaries with:
+                - body: The comment text
+                - path: File path being reviewed
+                - user: Comment author
+                - created_at: Timestamp
+        """
+        timestamp = self._get_current_timestamp()
+        
+        for comment in comments:
+            body = comment.get('body', '').lower()
+            
+            # Use pre-compiled patterns for better performance
+            for compiled_pattern, (pref_type, confidence) in self._compiled_patterns.items():
+                match = compiled_pattern.search(body)
+                if match:
+                    # Extract the specific value if captured
+                    value = match.group(1) if match.groups() else True
+                    
+                    user = comment.get('user', 'unknown')
+                    pref_key = f"review_{pref_type}_{user}"
+                    
+                    if pref_key in self.preferences:
+                        pref = self.preferences[pref_key]
+                        pref.occurrences += 1
+                        pref.last_seen = timestamp
+                        # Increase confidence for repeated feedback
+                        pref.confidence = min(1.0, pref.confidence + 0.1)
+                        if user not in pref.sources:
+                            pref.sources.append(user)
+                    else:
+                        self.preferences[pref_key] = StylePreference(
+                            preference_type=pref_type,
+                            value=value,
+                            confidence=confidence,
+                            occurrences=1,
+                            last_seen=timestamp,
+                            sources=[user],
+                            success_rate=0.9  # Review comments are high-quality signals
+                        )
+        
+        self._save_preferences()
+    
+    def learn_from_pr_outcome(self, pr_number: int, merged: bool, 
+                             suggestions_applied: List[str]):
+        """
+        Learn from PR outcomes to adjust confidence in refactoring suggestions.
+        
+        This creates a feedback loop where the agent improves from experience.
+        
+        Args:
+            pr_number: PR number
+            merged: Whether the PR was merged
+            suggestions_applied: List of suggestion types that were applied
+        """
+        timestamp = self._get_current_timestamp()
+        
+        for suggestion_type in suggestions_applied:
+            # Find preferences related to this suggestion type
+            for key, pref in self.preferences.items():
+                if pref.preference_type == suggestion_type:
+                    # Update success rate based on outcome
+                    if merged:
+                        # Increase confidence for successful suggestions
+                        pref.success_rate = min(1.0, pref.success_rate * 1.1)
+                        pref.confidence = min(1.0, pref.confidence + 0.05)
+                    else:
+                        # Decrease confidence for rejected suggestions
+                        pref.success_rate = max(0.0, pref.success_rate * 0.9)
+                        pref.confidence = max(0.1, pref.confidence - 0.05)
+                    
+                    pref.last_seen = timestamp
+                    pref.sources.append(SOURCE_FORMAT_PR_OUTCOME.format(pr_number=pr_number))
+        
+        self._save_preferences()
+    
     def _update_preferences_from_features(self, features: Dict, source: str, success: bool):
         """Update preferences based on extracted style features."""
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = self._get_current_timestamp()
         
         # Update indentation preference
         indent_key = "indentation_style"
@@ -294,7 +462,7 @@ class StylePreferenceLearner:
         """Extract code style preference from a discussion insight."""
         # Parse the insight text for style-related information
         text = insight.get('text', '')
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = self._get_current_timestamp()
         
         # Look for specific patterns in the insight
         # This is a simplified example - could be extended with NLP
@@ -316,7 +484,7 @@ class StylePreferenceLearner:
     def _extract_preference_from_external(self, learning: Dict):
         """Extract code style preference from external learning source."""
         content = learning.get('content', '')
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = self._get_current_timestamp()
         
         # Look for specific best practice patterns
         # This could be enhanced with ML/NLP for better extraction
@@ -355,11 +523,16 @@ class StylePreferenceLearner:
             "total_preferences": len(self.preferences),
             "high_confidence_count": sum(1 for p in self.preferences.values() if p.confidence > 0.7),
             "preferences_by_type": defaultdict(int),
-            "top_preferences": []
+            "top_preferences": [],
+            "learning_sources": defaultdict(int),
+            "recent_learning": []
         }
         
         for pref in self.preferences.values():
             summary["preferences_by_type"][pref.preference_type] += 1
+            # Track learning sources
+            for source in pref.sources:
+                summary["learning_sources"][source] += 1
         
         # Get top preferences by confidence and occurrence
         sorted_prefs = sorted(
@@ -380,7 +553,94 @@ class StylePreferenceLearner:
             for key, pref in sorted_prefs[:10]
         ]
         
+        # Get recently learned preferences (last 24 hours)
+        now = datetime.now(timezone.utc)
+        recent_threshold = now - timedelta(hours=24)
+        
+        for key, pref in self.preferences.items():
+            try:
+                last_seen = parse_iso_timestamp(pref.last_seen)
+                if last_seen > recent_threshold:
+                    summary["recent_learning"].append({
+                        "key": key,
+                        "type": pref.preference_type,
+                        "value": pref.value,
+                        "learned": pref.last_seen
+                    })
+            except (ValueError, AttributeError):
+                pass
+        
         return summary
+    
+    def generate_learning_report(self) -> Dict[str, Any]:
+        """
+        Generate a detailed learning report for transparency and debugging.
+        
+        Returns:
+            Comprehensive report on what the agent has learned
+        """
+        summary = self.get_preferences_summary()
+        
+        # Analyze learning trends
+        recent_count = len(summary['recent_learning'])
+        learning_velocity = recent_count  # preferences learned in last 24h
+        
+        # Identify strongest preferences (high confidence + high success rate)
+        strong_preferences = [
+            pref for pref in self.preferences.values()
+            if pref.confidence > 0.8 and pref.success_rate > 0.8
+        ]
+        
+        # Identify areas needing more learning (low confidence)
+        uncertain_areas = defaultdict(int)
+        for pref in self.preferences.values():
+            if pref.confidence < 0.5:
+                uncertain_areas[pref.preference_type] += 1
+        
+        report = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "summary": summary,
+            "metrics": {
+                "learning_velocity_24h": learning_velocity,
+                "strong_preferences_count": len(strong_preferences),
+                "uncertain_areas_count": len(uncertain_areas),
+                "average_confidence": 0.0,
+                "average_success_rate": 0.0
+            },
+            "strong_preferences": [
+                {
+                    "type": p.preference_type,
+                    "value": p.value,
+                    "confidence": p.confidence,
+                    "success_rate": p.success_rate,
+                    "occurrences": p.occurrences
+                }
+                for p in sorted(strong_preferences, key=lambda x: x.confidence * x.success_rate, reverse=True)[:5]
+            ],
+            "uncertain_areas": dict(uncertain_areas),
+            "recommendations": []
+        }
+        
+        # Calculate averages in a single pass for efficiency
+        if self.preferences:
+            total_confidence = 0.0
+            total_success = 0.0
+            for pref in self.preferences.values():
+                total_confidence += pref.confidence
+                total_success += pref.success_rate
+            count = len(self.preferences)
+            report["metrics"]["average_confidence"] = total_confidence / count
+            report["metrics"]["average_success_rate"] = total_success / count
+        
+        # Generate recommendations
+        if learning_velocity < 5:
+            report["recommendations"].append("Consider learning from more sources (PRs, discussions, external)")
+        if len(strong_preferences) < 5:
+            report["recommendations"].append("More observations needed to build strong preferences")
+        if len(uncertain_areas) > 10:
+            report["recommendations"].append(f"High uncertainty in {len(uncertain_areas)} areas - need more data")
+        
+        return report
 
 
 class AutoRefactorer:
@@ -540,7 +800,7 @@ def main():
     )
     parser.add_argument(
         'command',
-        choices=['learn', 'analyze', 'report', 'summary'],
+        choices=['learn', 'analyze', 'report', 'summary', 'learning-report'],
         help='Command to execute'
     )
     parser.add_argument(
@@ -560,23 +820,57 @@ def main():
     
     if args.command == 'learn':
         # Learn from various sources
-        print("Learning from repository history...")
+        print("🧠 Learning from repository history...")
         
         # Learn from discussions
         discussions_dir = "learnings/discussions"
+        learned_discussions = 0
         if os.path.exists(discussions_dir):
             for file in os.listdir(discussions_dir):
                 if file.endswith('.json') and 'discussion_issue' in file:
                     learner.learn_from_discussion(os.path.join(discussions_dir, file))
+                    learned_discussions += 1
+        
+        print(f"  ✓ Learned from {learned_discussions} discussions")
         
         # Learn from external sources
         learnings_dir = "learnings"
+        learned_external = 0
         if os.path.exists(learnings_dir):
             for file in os.listdir(learnings_dir):
                 if file.startswith('tldr_') or file.startswith('hn_'):
                     learner.learn_from_external_source(os.path.join(learnings_dir, file))
+                    learned_external += 1
         
-        print("Learning complete!")
+        print(f"  ✓ Learned from {learned_external} external sources")
+        
+        # Learn from recent Python files in the repository
+        tools_learned = 0
+        for root, dirs, files in os.walk("tools"):
+            dirs[:] = [d for d in dirs if d not in ['.git', '__pycache__', 'venv', '.venv']]
+            for file in files:
+                if file.endswith('.py'):
+                    filepath = os.path.join(root, file)
+                    try:
+                        with open(filepath, 'r') as f:
+                            code = f.read()
+                        features = learner.style_extractor.extract_from_code(code, filepath)
+                        learner._update_preferences_from_features(
+                            asdict(features),
+                            source=SOURCE_FORMAT_REPO.format(filepath=filepath),
+                            success=True
+                        )
+                        tools_learned += 1
+                    except Exception:
+                        pass
+        
+        print(f"  ✓ Analyzed {tools_learned} repository files")
+        print("\n✅ Learning complete!")
+        
+        # Show quick summary
+        summary = learner.get_preferences_summary()
+        print(f"\nLearned {summary['total_preferences']} total preferences")
+        print(f"High confidence: {summary['high_confidence_count']}")
         
     elif args.command == 'analyze':
         source = args.source or "."
@@ -588,7 +882,7 @@ def main():
             
     elif args.command == 'report':
         source = args.source or "."
-        print(f"Generating refactoring report for {source}...")
+        print(f"📋 Generating refactoring report for {source}...")
         report = refactorer.generate_refactoring_report(source)
         
         output_file = args.output or "analysis/refactoring_report.json"
@@ -603,7 +897,7 @@ def main():
         for stype, count in sorted(report['suggestions_by_type'].items(), key=lambda x: x[1], reverse=True):
             print(f"  {stype}: {count}")
         print(f"\nHigh priority files: {len(report['high_priority_files'])}")
-        print(f"\nReport saved to: {output_file}")
+        print(f"\n✅ Report saved to: {output_file}")
         
     elif args.command == 'summary':
         summary = learner.get_preferences_summary()
@@ -613,9 +907,45 @@ def main():
         print(f"\nPreferences by type:")
         for ptype, count in sorted(summary['preferences_by_type'].items(), key=lambda x: x[1], reverse=True):
             print(f"  {ptype}: {count}")
-        print(f"\nTop 10 preferences:")
-        for pref in summary['top_preferences']:
-            print(f"  {pref['type']}: {pref['value']} (confidence: {pref['confidence']:.2f}, occurrences: {pref['occurrences']})")
+        
+        if summary['top_preferences']:
+            print(f"\n📊 Top 10 preferences:")
+            for pref in summary['top_preferences']:
+                print(f"  • {pref['type']}: {pref['value']}")
+                print(f"    Confidence: {pref['confidence']:.2f}, Occurrences: {pref['occurrences']}, Success: {pref['success_rate']:.1%}")
+        
+        if summary.get('recent_learning'):
+            print(f"\n🆕 Recently learned ({len(summary['recent_learning'])} in last 24h):")
+            for recent in summary['recent_learning'][:5]:
+                print(f"  • {recent['type']}: {recent['value']}")
+    
+    elif args.command == 'learning-report':
+        print("📊 Generating comprehensive learning report...")
+        report = learner.generate_learning_report()
+        
+        output_file = args.output or "analysis/learning_report.json"
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        with open(output_file, 'w') as f:
+            json.dump(report, f, indent=2)
+        
+        print(f"\n=== Learning Report ===")
+        print(f"Generated: {report['timestamp']}")
+        print(f"\nMetrics:")
+        for key, value in report['metrics'].items():
+            print(f"  {key}: {value:.2f}" if isinstance(value, float) else f"  {key}: {value}")
+        
+        if report['strong_preferences']:
+            print(f"\n💪 Strong Preferences ({len(report['strong_preferences'])}):")
+            for pref in report['strong_preferences']:
+                print(f"  • {pref['type']}: {pref['value']}")
+                print(f"    Confidence: {pref['confidence']:.2%}, Success: {pref['success_rate']:.2%}")
+        
+        if report['recommendations']:
+            print(f"\n💡 Recommendations:")
+            for rec in report['recommendations']:
+                print(f"  • {rec}")
+        
+        print(f"\n✅ Full report saved to: {output_file}")
 
 
 if __name__ == "__main__":
