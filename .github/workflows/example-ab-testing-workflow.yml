@@ -1,0 +1,145 @@
+name: Example Workflow with A/B Testing
+
+# This workflow demonstrates how to integrate A/B testing
+# using the new API and integration helpers.
+#
+# Author: @APIs-architect
+
+on:
+  workflow_dispatch:
+    inputs:
+      config_override:
+        description: 'Optional config override (JSON)'
+        required: false
+        default: '{}'
+
+permissions:
+  contents: read
+
+jobs:
+  run_with_ab_testing:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Participate in A/B test
+        id: ab_test
+        run: |
+          # Define default configuration
+          DEFAULT_CONFIG='{"timeout": 300, "max_retries": 3, "batch_size": 100}'
+          
+          # Override with input if provided
+          if [ "${{ github.event.inputs.config_override }}" != "{}" ]; then
+            DEFAULT_CONFIG="${{ github.event.inputs.config_override }}"
+          fi
+          
+          echo "🧪 Checking for active A/B test..."
+          
+          # Participate in A/B test (will use default if no experiment exists)
+          RESULT=$(python3 tools/ab_testing_integration.py participate example-workflow \
+            --default-config "$DEFAULT_CONFIG" 2>&1)
+          
+          echo "$RESULT"
+          
+          # Parse configuration (this is simplified - in real usage, parse JSON properly)
+          CONFIG=$(echo "$RESULT" | grep -A 10 "Configuration to use:" | tail -n +2 | python3 -c "import sys, json; print(json.dumps(json.load(sys.stdin)))")
+          
+          echo "config=$CONFIG" >> $GITHUB_OUTPUT
+          
+          # Check if participating
+          if echo "$RESULT" | grep -q "Participating in experiment"; then
+            IS_PARTICIPATING="true"
+            EXPERIMENT_ID=$(echo "$RESULT" | grep "experiment" | sed 's/.*experiment //' | awk '{print $1}')
+            VARIANT=$(echo "$RESULT" | grep "Variant:" | awk '{print $2}')
+            
+            echo "is_participating=true" >> $GITHUB_OUTPUT
+            echo "experiment_id=$EXPERIMENT_ID" >> $GITHUB_OUTPUT
+            echo "variant=$VARIANT" >> $GITHUB_OUTPUT
+            
+            echo "✅ Participating in experiment $EXPERIMENT_ID as variant $VARIANT"
+          else
+            echo "is_participating=false" >> $GITHUB_OUTPUT
+            echo "📌 Not participating in any experiment - using default config"
+          fi
+      
+      - name: Run workflow task
+        id: run_task
+        run: |
+          START_TIME=$(date +%s)
+          
+          echo "🚀 Running workflow task..."
+          
+          # Run the example workflow
+          python3 examples/ab_testing_workflow_example.py
+          EXIT_CODE=$?
+          
+          END_TIME=$(date +%s)
+          EXECUTION_TIME=$((END_TIME - START_TIME))
+          
+          echo "execution_time=$EXECUTION_TIME" >> $GITHUB_OUTPUT
+          echo "success=$([[ $EXIT_CODE -eq 0 ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "✅ Task completed successfully in ${EXECUTION_TIME}s"
+          else
+            echo "❌ Task failed after ${EXECUTION_TIME}s"
+          fi
+          
+          exit $EXIT_CODE
+      
+      - name: Record metrics (success)
+        if: steps.ab_test.outputs.is_participating == 'true' && steps.run_task.outputs.success == 'true'
+        run: |
+          echo "📊 Recording successful run metrics..."
+          
+          python3 tools/ab_testing_integration.py record example-workflow \
+            --experiment-id "${{ steps.ab_test.outputs.experiment_id }}" \
+            --variant "${{ steps.ab_test.outputs.variant }}" \
+            --execution-time ${{ steps.run_task.outputs.execution_time }} \
+            --success \
+            --metrics '{"workflow_run": "${{ github.run_id }}"}'
+          
+          echo "✅ Metrics recorded"
+      
+      - name: Record metrics (failure)
+        if: steps.ab_test.outputs.is_participating == 'true' && steps.run_task.outputs.success != 'true'
+        run: |
+          echo "📊 Recording failed run metrics..."
+          
+          python3 tools/ab_testing_integration.py record example-workflow \
+            --experiment-id "${{ steps.ab_test.outputs.experiment_id }}" \
+            --variant "${{ steps.ab_test.outputs.variant }}" \
+            --execution-time ${{ steps.run_task.outputs.execution_time || 0 }} \
+            --error "Workflow task failed" \
+            --metrics '{"workflow_run": "${{ github.run_id }}"}'
+          
+          echo "📊 Metrics recorded"
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## A/B Testing Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.ab_test.outputs.is_participating }}" == "true" ]; then
+            echo "🧪 **Experiment**: ${{ steps.ab_test.outputs.experiment_id }}" >> $GITHUB_STEP_SUMMARY
+            echo "📊 **Variant**: ${{ steps.ab_test.outputs.variant }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "📌 **No active experiment** - using default configuration" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⏱️ **Execution Time**: ${{ steps.run_task.outputs.execution_time }}s" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Status**: ${{ steps.run_task.outputs.success == 'true' && 'Success' || 'Failed' }}" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.ab_test.outputs.is_participating }}" == "true" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "📈 Metrics have been recorded for A/B test analysis" >> $GITHUB_STEP_SUMMARY
+          fi
