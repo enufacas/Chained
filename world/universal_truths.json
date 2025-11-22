@@ -1,0 +1,1692 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-22T04:49:02.297543",
+  "total_truths": 8,
+  "truths": {
+    "agent_performance_distribution": {
+      "truth_id": "agent_performance_distribution",
+      "category": "agent_behavior",
+      "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520",
+      "confidence": 0.85,
+      "evidence_count": 10,
+      "first_observed": "2025-11-22T04:47:08.624878",
+      "last_validated": "2025-11-22T04:49:02.292099",
+      "supporting_data": [
+        {
+          "timestamp": "2025-11-22T04:47:08.624878",
+          "data": {
+            "scores": [
+              0.764025,
+              0.764025,
+              0.764025,
+              0.7624642857142857,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7727499999999999,
+              0.0,
+              0.0,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.764025,
+              0.764025,
+              0.764025,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7624642857142857,
+              0.7727499999999999,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999
+            ],
+            "sample_size": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.229045",
+          "data": {
+            "scores": [
+              0.764025,
+              0.764025,
+              0.764025,
+              0.7624642857142857,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7727499999999999,
+              0.0,
+              0.0,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.764025,
+              0.764025,
+              0.764025,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7624642857142857,
+              0.7727499999999999,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999
+            ],
+            "sample_size": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.237016",
+          "data": {
+            "scores": [
+              0.764025,
+              0.764025,
+              0.764025,
+              0.7624642857142857,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7727499999999999,
+              0.0,
+              0.0,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.764025,
+              0.764025,
+              0.764025,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7624642857142857,
+              0.7727499999999999,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999
+            ],
+            "sample_size": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.244909",
+          "data": {
+            "scores": [
+              0.764025,
+              0.764025,
+              0.764025,
+              0.7624642857142857,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7727499999999999,
+              0.0,
+              0.0,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.764025,
+              0.764025,
+              0.764025,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7624642857142857,
+              0.7727499999999999,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999
+            ],
+            "sample_size": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.251978",
+          "data": {
+            "scores": [
+              0.764025,
+              0.764025,
+              0.764025,
+              0.7624642857142857,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7727499999999999,
+              0.0,
+              0.0,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.764025,
+              0.764025,
+              0.764025,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7624642857142857,
+              0.7727499999999999,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999
+            ],
+            "sample_size": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.259195",
+          "data": {
+            "scores": [
+              0.764025,
+              0.764025,
+              0.764025,
+              0.7624642857142857,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7727499999999999,
+              0.0,
+              0.0,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.764025,
+              0.764025,
+              0.764025,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7624642857142857,
+              0.7727499999999999,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999
+            ],
+            "sample_size": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.266712",
+          "data": {
+            "scores": [
+              0.764025,
+              0.764025,
+              0.764025,
+              0.7624642857142857,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7727499999999999,
+              0.0,
+              0.0,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.764025,
+              0.764025,
+              0.764025,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7624642857142857,
+              0.7727499999999999,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999
+            ],
+            "sample_size": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.274285",
+          "data": {
+            "scores": [
+              0.764025,
+              0.764025,
+              0.764025,
+              0.7624642857142857,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7727499999999999,
+              0.0,
+              0.0,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.764025,
+              0.764025,
+              0.764025,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7624642857142857,
+              0.7727499999999999,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999
+            ],
+            "sample_size": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.284068",
+          "data": {
+            "scores": [
+              0.764025,
+              0.764025,
+              0.764025,
+              0.7624642857142857,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7727499999999999,
+              0.0,
+              0.0,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.764025,
+              0.764025,
+              0.764025,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7624642857142857,
+              0.7727499999999999,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999
+            ],
+            "sample_size": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.292099",
+          "data": {
+            "scores": [
+              0.764025,
+              0.764025,
+              0.764025,
+              0.7624642857142857,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7727499999999999,
+              0.0,
+              0.0,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.764025,
+              0.764025,
+              0.764025,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7624642857142857,
+              0.7727499999999999,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999
+            ],
+            "sample_size": 43
+          }
+        }
+      ],
+      "counter_examples": [],
+      "evolution_history": [
+        {
+          "timestamp": "2025-11-22T04:47:08.624878",
+          "confidence": 0.85,
+          "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.229045",
+          "confidence": 0.85,
+          "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.237016",
+          "confidence": 0.85,
+          "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.244909",
+          "confidence": 0.85,
+          "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.251978",
+          "confidence": 0.85,
+          "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.259195",
+          "confidence": 0.85,
+          "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.266712",
+          "confidence": 0.85,
+          "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.274285",
+          "confidence": 0.85,
+          "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.284068",
+          "confidence": 0.85,
+          "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.292099",
+          "confidence": 0.85,
+          "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520"
+        }
+      ],
+      "related_truths": [
+        "agent_status_equilibrium"
+      ]
+    },
+    "specialization_diversity": {
+      "truth_id": "specialization_diversity",
+      "category": "system_dynamics",
+      "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)",
+      "confidence": 0.9,
+      "evidence_count": 10,
+      "first_observed": "2025-11-22T04:47:08.624902",
+      "last_validated": "2025-11-22T04:49:02.292115",
+      "supporting_data": [
+        {
+          "timestamp": "2025-11-22T04:47:08.624902",
+          "data": {
+            "specializations": [
+              "simplify-pro",
+              "secure-specialist",
+              "quality-assurance-expert",
+              "organize-guru",
+              "construct-specialist",
+              "secure-security-ninja",
+              "maintainability-sage",
+              "guardian-master",
+              "integrate-APIs-chief",
+              "troubleshoot-expert",
+              "optimize-director",
+              "create-guru",
+              "coordinate-wizard",
+              "cloud-architect",
+              "secure-pro",
+              "coach-master",
+              "validator-director",
+              "workflows-tech-lead",
+              "verify-maven",
+              "breakthrough-ideas-champion",
+              "investigate-champion",
+              "render-3d-master",
+              "mentor-ace"
+            ],
+            "total_agents": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.229066",
+          "data": {
+            "specializations": [
+              "breakthrough-ideas-champion",
+              "troubleshoot-expert",
+              "integrate-APIs-chief",
+              "organize-guru",
+              "simplify-pro",
+              "maintainability-sage",
+              "secure-specialist",
+              "create-guru",
+              "render-3d-master",
+              "optimize-director",
+              "guardian-master",
+              "verify-maven",
+              "quality-assurance-expert",
+              "workflows-tech-lead",
+              "investigate-champion",
+              "mentor-ace",
+              "cloud-architect",
+              "coordinate-wizard",
+              "secure-security-ninja",
+              "construct-specialist",
+              "validator-director",
+              "secure-pro",
+              "coach-master"
+            ],
+            "total_agents": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.237039",
+          "data": {
+            "specializations": [
+              "breakthrough-ideas-champion",
+              "troubleshoot-expert",
+              "integrate-APIs-chief",
+              "organize-guru",
+              "simplify-pro",
+              "maintainability-sage",
+              "secure-specialist",
+              "create-guru",
+              "render-3d-master",
+              "optimize-director",
+              "guardian-master",
+              "verify-maven",
+              "quality-assurance-expert",
+              "workflows-tech-lead",
+              "investigate-champion",
+              "mentor-ace",
+              "cloud-architect",
+              "coordinate-wizard",
+              "secure-security-ninja",
+              "construct-specialist",
+              "validator-director",
+              "secure-pro",
+              "coach-master"
+            ],
+            "total_agents": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.244925",
+          "data": {
+            "specializations": [
+              "breakthrough-ideas-champion",
+              "troubleshoot-expert",
+              "integrate-APIs-chief",
+              "organize-guru",
+              "simplify-pro",
+              "maintainability-sage",
+              "secure-specialist",
+              "create-guru",
+              "render-3d-master",
+              "optimize-director",
+              "guardian-master",
+              "verify-maven",
+              "quality-assurance-expert",
+              "workflows-tech-lead",
+              "investigate-champion",
+              "mentor-ace",
+              "cloud-architect",
+              "coordinate-wizard",
+              "secure-security-ninja",
+              "construct-specialist",
+              "validator-director",
+              "secure-pro",
+              "coach-master"
+            ],
+            "total_agents": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.251994",
+          "data": {
+            "specializations": [
+              "breakthrough-ideas-champion",
+              "troubleshoot-expert",
+              "integrate-APIs-chief",
+              "organize-guru",
+              "simplify-pro",
+              "maintainability-sage",
+              "secure-specialist",
+              "create-guru",
+              "render-3d-master",
+              "optimize-director",
+              "guardian-master",
+              "verify-maven",
+              "quality-assurance-expert",
+              "workflows-tech-lead",
+              "investigate-champion",
+              "mentor-ace",
+              "cloud-architect",
+              "coordinate-wizard",
+              "secure-security-ninja",
+              "construct-specialist",
+              "validator-director",
+              "secure-pro",
+              "coach-master"
+            ],
+            "total_agents": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.259211",
+          "data": {
+            "specializations": [
+              "breakthrough-ideas-champion",
+              "troubleshoot-expert",
+              "integrate-APIs-chief",
+              "organize-guru",
+              "simplify-pro",
+              "maintainability-sage",
+              "secure-specialist",
+              "create-guru",
+              "render-3d-master",
+              "optimize-director",
+              "guardian-master",
+              "verify-maven",
+              "quality-assurance-expert",
+              "workflows-tech-lead",
+              "investigate-champion",
+              "mentor-ace",
+              "cloud-architect",
+              "coordinate-wizard",
+              "secure-security-ninja",
+              "construct-specialist",
+              "validator-director",
+              "secure-pro",
+              "coach-master"
+            ],
+            "total_agents": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.266728",
+          "data": {
+            "specializations": [
+              "breakthrough-ideas-champion",
+              "troubleshoot-expert",
+              "integrate-APIs-chief",
+              "organize-guru",
+              "simplify-pro",
+              "maintainability-sage",
+              "secure-specialist",
+              "create-guru",
+              "render-3d-master",
+              "optimize-director",
+              "guardian-master",
+              "verify-maven",
+              "quality-assurance-expert",
+              "workflows-tech-lead",
+              "investigate-champion",
+              "mentor-ace",
+              "cloud-architect",
+              "coordinate-wizard",
+              "secure-security-ninja",
+              "construct-specialist",
+              "validator-director",
+              "secure-pro",
+              "coach-master"
+            ],
+            "total_agents": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.274301",
+          "data": {
+            "specializations": [
+              "breakthrough-ideas-champion",
+              "troubleshoot-expert",
+              "integrate-APIs-chief",
+              "organize-guru",
+              "simplify-pro",
+              "maintainability-sage",
+              "secure-specialist",
+              "create-guru",
+              "render-3d-master",
+              "optimize-director",
+              "guardian-master",
+              "verify-maven",
+              "quality-assurance-expert",
+              "workflows-tech-lead",
+              "investigate-champion",
+              "mentor-ace",
+              "cloud-architect",
+              "coordinate-wizard",
+              "secure-security-ninja",
+              "construct-specialist",
+              "validator-director",
+              "secure-pro",
+              "coach-master"
+            ],
+            "total_agents": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.284085",
+          "data": {
+            "specializations": [
+              "breakthrough-ideas-champion",
+              "troubleshoot-expert",
+              "integrate-APIs-chief",
+              "organize-guru",
+              "simplify-pro",
+              "maintainability-sage",
+              "secure-specialist",
+              "create-guru",
+              "render-3d-master",
+              "optimize-director",
+              "guardian-master",
+              "verify-maven",
+              "quality-assurance-expert",
+              "workflows-tech-lead",
+              "investigate-champion",
+              "mentor-ace",
+              "cloud-architect",
+              "coordinate-wizard",
+              "secure-security-ninja",
+              "construct-specialist",
+              "validator-director",
+              "secure-pro",
+              "coach-master"
+            ],
+            "total_agents": 43
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.292115",
+          "data": {
+            "specializations": [
+              "breakthrough-ideas-champion",
+              "troubleshoot-expert",
+              "integrate-APIs-chief",
+              "organize-guru",
+              "simplify-pro",
+              "maintainability-sage",
+              "secure-specialist",
+              "create-guru",
+              "render-3d-master",
+              "optimize-director",
+              "guardian-master",
+              "verify-maven",
+              "quality-assurance-expert",
+              "workflows-tech-lead",
+              "investigate-champion",
+              "mentor-ace",
+              "cloud-architect",
+              "coordinate-wizard",
+              "secure-security-ninja",
+              "construct-specialist",
+              "validator-director",
+              "secure-pro",
+              "coach-master"
+            ],
+            "total_agents": 43
+          }
+        }
+      ],
+      "counter_examples": [],
+      "evolution_history": [
+        {
+          "timestamp": "2025-11-22T04:47:08.624902",
+          "confidence": 0.9,
+          "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.229066",
+          "confidence": 0.9,
+          "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.237039",
+          "confidence": 0.9,
+          "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.244925",
+          "confidence": 0.9,
+          "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.251994",
+          "confidence": 0.9,
+          "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.259211",
+          "confidence": 0.9,
+          "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.266728",
+          "confidence": 0.9,
+          "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.274301",
+          "confidence": 0.9,
+          "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.284085",
+          "confidence": 0.9,
+          "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.292115",
+          "confidence": 0.9,
+          "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)"
+        }
+      ],
+      "related_truths": [
+        "actions_pattern_persistence",
+        "archaeology_pattern_persistence"
+      ]
+    },
+    "agent_status_equilibrium": {
+      "truth_id": "agent_status_equilibrium",
+      "category": "agent_behavior",
+      "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)",
+      "confidence": 0.7,
+      "evidence_count": 10,
+      "first_observed": "2025-11-22T04:47:08.624919",
+      "last_validated": "2025-11-22T04:49:02.292129",
+      "supporting_data": [
+        {
+          "timestamp": "2025-11-22T04:47:08.624919",
+          "data": {
+            "status_distribution": {
+              "exploring": 43
+            }
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.229082",
+          "data": {
+            "status_distribution": {
+              "exploring": 43
+            }
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.237053",
+          "data": {
+            "status_distribution": {
+              "exploring": 43
+            }
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.244962",
+          "data": {
+            "status_distribution": {
+              "exploring": 43
+            }
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.252008",
+          "data": {
+            "status_distribution": {
+              "exploring": 43
+            }
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.259225",
+          "data": {
+            "status_distribution": {
+              "exploring": 43
+            }
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.266742",
+          "data": {
+            "status_distribution": {
+              "exploring": 43
+            }
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.274314",
+          "data": {
+            "status_distribution": {
+              "exploring": 43
+            }
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.284099",
+          "data": {
+            "status_distribution": {
+              "exploring": 43
+            }
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.292129",
+          "data": {
+            "status_distribution": {
+              "exploring": 43
+            }
+          }
+        }
+      ],
+      "counter_examples": [],
+      "evolution_history": [
+        {
+          "timestamp": "2025-11-22T04:47:08.624919",
+          "confidence": 0.7,
+          "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.229082",
+          "confidence": 0.7,
+          "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.237053",
+          "confidence": 0.7,
+          "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.244962",
+          "confidence": 0.7,
+          "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.252008",
+          "confidence": 0.7,
+          "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.259225",
+          "confidence": 0.7,
+          "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.266742",
+          "confidence": 0.7,
+          "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.274314",
+          "confidence": 0.7,
+          "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.284099",
+          "confidence": 0.7,
+          "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.292129",
+          "confidence": 0.7,
+          "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)"
+        }
+      ],
+      "related_truths": [
+        "agent_performance_distribution"
+      ]
+    },
+    "learning_accumulation_rate": {
+      "truth_id": "learning_accumulation_rate",
+      "category": "evolution",
+      "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property",
+      "confidence": 0.85,
+      "evidence_count": 10,
+      "first_observed": "2025-11-22T04:47:08.626048",
+      "last_validated": "2025-11-22T04:49:02.292905",
+      "supporting_data": [
+        {
+          "timestamp": "2025-11-22T04:47:08.626048",
+          "data": {
+            "total_learnings": 99,
+            "recent_count": 48
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.230100",
+          "data": {
+            "total_learnings": 99,
+            "recent_count": 48
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.237840",
+          "data": {
+            "total_learnings": 99,
+            "recent_count": 48
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.245758",
+          "data": {
+            "total_learnings": 99,
+            "recent_count": 48
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.252786",
+          "data": {
+            "total_learnings": 99,
+            "recent_count": 48
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.260027",
+          "data": {
+            "total_learnings": 99,
+            "recent_count": 48
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.267548",
+          "data": {
+            "total_learnings": 99,
+            "recent_count": 48
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.275105",
+          "data": {
+            "total_learnings": 99,
+            "recent_count": 48
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.284879",
+          "data": {
+            "total_learnings": 99,
+            "recent_count": 48
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.292905",
+          "data": {
+            "total_learnings": 99,
+            "recent_count": 48
+          }
+        }
+      ],
+      "counter_examples": [],
+      "evolution_history": [
+        {
+          "timestamp": "2025-11-22T04:47:08.626048",
+          "confidence": 0.85,
+          "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.230100",
+          "confidence": 0.85,
+          "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.237840",
+          "confidence": 0.85,
+          "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.245758",
+          "confidence": 0.85,
+          "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.252786",
+          "confidence": 0.85,
+          "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.260027",
+          "confidence": 0.85,
+          "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.267548",
+          "confidence": 0.85,
+          "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.275105",
+          "confidence": 0.85,
+          "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.284879",
+          "confidence": 0.85,
+          "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.292905",
+          "confidence": 0.85,
+          "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property"
+        }
+      ],
+      "related_truths": [
+        "knowledge_interconnectedness",
+        "custom_example"
+      ]
+    },
+    "knowledge_interconnectedness": {
+      "truth_id": "knowledge_interconnectedness",
+      "category": "evolution",
+      "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure",
+      "confidence": 0.7999999999999999,
+      "evidence_count": 10,
+      "first_observed": "2025-11-22T04:47:08.630819",
+      "last_validated": "2025-11-22T04:49:02.296955",
+      "supporting_data": [
+        {
+          "timestamp": "2025-11-22T04:47:08.630819",
+          "data": {
+            "total_insights": 503,
+            "total_connections": 2021
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.234898",
+          "data": {
+            "total_insights": 503,
+            "total_connections": 2021
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.242862",
+          "data": {
+            "total_insights": 503,
+            "total_connections": 2021
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.249752",
+          "data": {
+            "total_insights": 503,
+            "total_connections": 2021
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.256771",
+          "data": {
+            "total_insights": 503,
+            "total_connections": 2021
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.264061",
+          "data": {
+            "total_insights": 503,
+            "total_connections": 2021
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.271533",
+          "data": {
+            "total_insights": 503,
+            "total_connections": 2021
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.279123",
+          "data": {
+            "total_insights": 503,
+            "total_connections": 2021
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.288896",
+          "data": {
+            "total_insights": 503,
+            "total_connections": 2021
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.296955",
+          "data": {
+            "total_insights": 503,
+            "total_connections": 2021
+          }
+        }
+      ],
+      "counter_examples": [],
+      "evolution_history": [
+        {
+          "timestamp": "2025-11-22T04:47:08.630819",
+          "confidence": 0.8,
+          "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.234898",
+          "confidence": 0.8,
+          "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.242862",
+          "confidence": 0.8,
+          "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.249752",
+          "confidence": 0.8,
+          "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.256771",
+          "confidence": 0.8,
+          "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.264061",
+          "confidence": 0.8,
+          "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.271533",
+          "confidence": 0.8,
+          "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.279123",
+          "confidence": 0.8,
+          "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.288896",
+          "confidence": 0.8,
+          "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.296955",
+          "confidence": 0.8,
+          "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
+        }
+      ],
+      "related_truths": [
+        "learning_accumulation_rate",
+        "custom_example"
+      ]
+    },
+    "actions_pattern_persistence": {
+      "truth_id": "actions_pattern_persistence",
+      "category": "system_dynamics",
+      "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants",
+      "confidence": 0.7,
+      "evidence_count": 10,
+      "first_observed": "2025-11-22T04:47:08.631474",
+      "last_validated": "2025-11-22T04:49:02.297481",
+      "supporting_data": [
+        {
+          "timestamp": "2025-11-22T04:47:08.631474",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "actions"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.235542",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "actions"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.243404",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "actions"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.250291",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "actions"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.257308",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "actions"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.264586",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "actions"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.272085",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "actions"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.279644",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "actions"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.289439",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "actions"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.297481",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "actions"
+          }
+        }
+      ],
+      "counter_examples": [],
+      "evolution_history": [
+        {
+          "timestamp": "2025-11-22T04:47:08.631474",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.235542",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.243404",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.250291",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.257308",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.264586",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.272085",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.279644",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.289439",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.297481",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
+        }
+      ],
+      "related_truths": [
+        "specialization_diversity",
+        "archaeology_pattern_persistence"
+      ]
+    },
+    "archaeology_pattern_persistence": {
+      "truth_id": "archaeology_pattern_persistence",
+      "category": "system_dynamics",
+      "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants",
+      "confidence": 0.7,
+      "evidence_count": 10,
+      "first_observed": "2025-11-22T04:47:08.631530",
+      "last_validated": "2025-11-22T04:49:02.297527",
+      "supporting_data": [
+        {
+          "timestamp": "2025-11-22T04:47:08.631530",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "archaeology"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.235593",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "archaeology"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.243452",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "archaeology"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.250337",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "archaeology"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.257356",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "archaeology"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.264632",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "archaeology"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.272132",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "archaeology"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.279691",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "archaeology"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.289486",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "archaeology"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.297527",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "archaeology"
+          }
+        }
+      ],
+      "counter_examples": [],
+      "evolution_history": [
+        {
+          "timestamp": "2025-11-22T04:47:08.631530",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.235593",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.243452",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.250337",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.257356",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.264632",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.272132",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.279691",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.289486",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-22T04:49:02.297527",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
+        }
+      ],
+      "related_truths": [
+        "specialization_diversity",
+        "actions_pattern_persistence"
+      ]
+    },
+    "custom_example": {
+      "truth_id": "custom_example",
+      "category": "evolution",
+      "statement": "Custom truth: The system exhibits emergent creativity in agent interactions",
+      "confidence": 0.7,
+      "evidence_count": 1,
+      "first_observed": "2025-11-22T04:49:02.281713",
+      "last_validated": "2025-11-22T04:49:02.281713",
+      "supporting_data": [
+        {
+          "timestamp": "2025-11-22T04:49:02.281713",
+          "data": {
+            "observation": "Novel solutions from agent collaboration",
+            "frequency": 5,
+            "sample_size": 10
+          }
+        }
+      ],
+      "counter_examples": [],
+      "evolution_history": [
+        {
+          "timestamp": "2025-11-22T04:49:02.281713",
+          "confidence": 0.7,
+          "statement": "Custom truth: The system exhibits emergent creativity in agent interactions"
+        }
+      ],
+      "related_truths": [
+        "learning_accumulation_rate",
+        "knowledge_interconnectedness"
+      ]
+    }
+  }
+}

@@ -1,0 +1,258 @@
+name: 🌌 Discover Universal Truths
+
+on:
+  # Run daily to discover truths
+  schedule:
+    - cron: '0 6 * * *'  # 6 AM UTC daily
+  
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      create_issue:
+        description: 'Create issue with discoveries'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  discover-truths:
+    name: Discover Universal Truths
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Run Universal Truth Evaluator
+        id: discovery
+        run: |
+          echo "🌌 Running Universal Truth Discovery..."
+          python3 tools/universal_truth_evaluator.py > truth_discovery_log.txt 2>&1
+          
+          # Capture key metrics
+          if [ -f world/universal_truths.json ]; then
+            total_truths=$(jq '.total_truths' world/universal_truths.json)
+            echo "total_truths=$total_truths" >> $GITHUB_OUTPUT
+            
+            # Check if we have insights
+            if [ -f analysis/universal_truths_insights.json ]; then
+              stable_truths=$(jq '.stable_truths' analysis/universal_truths_insights.json)
+              high_confidence=$(jq '.high_confidence_truths' analysis/universal_truths_insights.json)
+              echo "stable_truths=$stable_truths" >> $GITHUB_OUTPUT
+              echo "high_confidence=$high_confidence" >> $GITHUB_OUTPUT
+            fi
+          fi
+          
+          echo "✅ Truth discovery complete"
+      
+      - name: Check for changes
+        id: changes
+        run: |
+          git add world/universal_truths.json analysis/universal_truths_insights.json 2>/dev/null || true
+          
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No new truths discovered"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "New truths discovered!"
+          fi
+      
+      - name: Create PR with discoveries
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="universal-truths/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git checkout -b "$BRANCH_NAME"
+          git add world/universal_truths.json analysis/universal_truths_insights.json truth_discovery_log.txt
+          git commit -m "chore: discover universal truths - $(date +%Y-%m-%d)"
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR body
+          cat > pr_body.md << 'EOF'
+          ## 🌌 Universal Truth Discovery
+          
+          **@create-guru** has discovered new fundamental truths about the autonomous AI ecosystem.
+          
+          ### Discoveries
+          
+          - **Total Truths**: ${{ steps.discovery.outputs.total_truths }}
+          - **Stable Truths**: ${{ steps.discovery.outputs.stable_truths }}
+          - **High Confidence**: ${{ steps.discovery.outputs.high_confidence }}
+          
+          ### Changes
+          
+          - `world/universal_truths.json` - Updated truth database
+          - `analysis/universal_truths_insights.json` - Generated insights
+          - `truth_discovery_log.txt` - Discovery log
+          
+          ### Key Discoveries
+          
+          EOF
+          
+          # Extract key discoveries from insights
+          if [ -f analysis/universal_truths_insights.json ]; then
+            jq -r '.key_discoveries[] | "- **[\(.category)]** \(.statement | .[0:150])..."' \
+              analysis/universal_truths_insights.json >> pr_body.md
+          fi
+          
+          cat >> pr_body.md << 'EOF'
+          
+          ### Recommendations
+          
+          EOF
+          
+          # Extract recommendations
+          if [ -f analysis/universal_truths_insights.json ]; then
+            jq -r '.recommendations[] | "- \(. | .[0:200])..."' \
+              analysis/universal_truths_insights.json >> pr_body.md
+          fi
+          
+          cat >> pr_body.md << 'EOF'
+          
+          ---
+          
+          *🤖 Created by workflow: [Discover Universal Truths](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+          
+          *Inspired by Nikola Tesla's approach to discovering universal principles*
+          EOF
+          
+          # Create PR
+          gh pr create \
+            --title "🌌 Universal Truth Discovery - $(date +%Y-%m-%d)" \
+            --body-file pr_body.md \
+            --label "automated,infrastructure,truths" \
+            --base main \
+            --head "$BRANCH_NAME"
+          
+          PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --json number -q '.[0].number')
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+      
+      - name: Create discovery issue
+        if: |
+          steps.changes.outputs.has_changes == 'true' && 
+          (github.event_name == 'schedule' || github.event.inputs.create_issue == 'true')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create issue body
+          cat > issue_body.md << 'EOF'
+          ## 🌌 New Universal Truths Discovered
+          
+          The Universal Truth Evaluator has discovered new fundamental principles governing our autonomous AI ecosystem.
+          
+          ### Summary
+          
+          - **Total Truths**: ${{ steps.discovery.outputs.total_truths }}
+          - **Stable Truths**: ${{ steps.discovery.outputs.stable_truths }} (principles with consistent evidence)
+          - **High Confidence**: ${{ steps.discovery.outputs.high_confidence }} (confidence > 0.8)
+          
+          ### Top Discoveries
+          
+          EOF
+          
+          # Extract top 5 discoveries
+          if [ -f analysis/universal_truths_insights.json ]; then
+            jq -r '.key_discoveries[0:5] | .[] | "#### \(.category | ascii_upcase)\n\n**Statement**: \(.statement)\n\n**Confidence**: \(.confidence)\n"' \
+              analysis/universal_truths_insights.json >> issue_body.md
+          fi
+          
+          cat >> issue_body.md << 'EOF'
+          
+          ### Actionable Recommendations
+          
+          EOF
+          
+          if [ -f analysis/universal_truths_insights.json ]; then
+            jq -r '.recommendations[0:3] | .[] | "- \(.)"' \
+              analysis/universal_truths_insights.json >> issue_body.md
+          fi
+          
+          cat >> issue_body.md << 'EOF'
+          
+          ### Meta-Observations
+          
+          EOF
+          
+          if [ -f analysis/universal_truths_insights.json ]; then
+            jq -r '.meta_observations[] | "- \(.)"' \
+              analysis/universal_truths_insights.json >> issue_body.md
+          fi
+          
+          cat >> issue_body.md << 'EOF'
+          
+          ---
+          
+          ### 📊 View Full Data
+          
+          - **Truths Database**: `world/universal_truths.json`
+          - **Insights Report**: `analysis/universal_truths_insights.json`
+          - **Tool Documentation**: `tools/UNIVERSAL_TRUTH_EVALUATOR_README.md`
+          
+          ### 🔬 How These Truths Were Discovered
+          
+          The Universal Truth Evaluator analyzes:
+          - Agent behavior patterns from world state
+          - Learning accumulation rates
+          - Collaboration dynamics
+          - System-wide patterns and archaeology
+          
+          Each truth is backed by empirical evidence and validated through repeated observation.
+          
+          ---
+          
+          *🤖 Created by workflow: [Discover Universal Truths](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+          
+          *"The day science begins to study non-physical phenomena, it will make more progress in one decade than in all the previous centuries." - Nikola Tesla*
+          EOF
+          
+          # Create issue
+          gh issue create \
+            --title "🌌 Universal Truths Discovered - $(date +%Y-%m-%d)" \
+            --body-file issue_body.md \
+            --label "discovery,truths,insights"
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🌌 Universal Truth Discovery Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f world/universal_truths.json ]; then
+            echo "✅ **Discovery Successful**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- Total Truths: ${{ steps.discovery.outputs.total_truths }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Stable Truths: ${{ steps.discovery.outputs.stable_truths }}" >> $GITHUB_STEP_SUMMARY
+            echo "- High Confidence: ${{ steps.discovery.outputs.high_confidence }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **No truths file generated**" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ steps.changes.outputs.has_changes }}" = "true" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "📝 **PR Created**: New truths discovered and committed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "ℹ️ **No Changes**: No new truths discovered" >> $GITHUB_STEP_SUMMARY
+          fi
