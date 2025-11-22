@@ -32,7 +32,7 @@
 
 ### 1️⃣ Detailed Commit Messages ⭐⭐⭐
 - **Adoption Rate:** 90.4% (452/500 commits)
-- **Confidence Score:** 0.77 (HIGH)
+- **Confidence Score:** 0.7684 (HIGH)
 - **Impact:** Strongest success factor identified
 
 **Pattern:** Commits include explanatory body text beyond the subject line, providing context about the "why" behind changes.
@@ -70,7 +70,7 @@
 **@investigate-champion** extracted these strategic insights:
 
 ### 🎯 Message Quality is Paramount
-With 90.4% adoption and the highest confidence score (0.77), detailed commit messages are the #1 factor in commit success. The repository culture strongly emphasizes documentation and context-sharing.
+With 90.4% adoption and the highest confidence score (0.7684), detailed commit messages are the #1 factor in commit success. The repository culture strongly emphasizes documentation and context-sharing.
 
 ### 🎯 Organization Matters More Than Size
 Focused, logically cohesive commits (82.6% adoption) show stronger correlation than strict size limits. The repository successfully accommodates varying commit sizes while maintaining 100% success.

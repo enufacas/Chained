@@ -106,7 +106,7 @@ The **100% success rate** is remarkable but requires careful interpretation:
 
 | Pattern | Success Rate | Confidence | Occurrence | Assessment |
 |---------|--------------|------------|------------|------------|
-| Detailed Messages | 90.4% | 0.77 | 452/500 | **Strong** |
+| Detailed Messages | 90.4% | 0.7684 | 452/500 | **Strong** |
 | Focused Changes | 82.6% | 0.66 | 413/500 | **Solid** |
 | Optimal Size | 40.0% | 0.36 | 200/500 | **Moderate** |
 
