@@ -1,0 +1,84 @@
+{
+  "date": "2025-11-21T03:03:36.243776+00:00",
+  "title": "The Great Merge-athon",
+  "scenes": [
+    {
+      "bg": "lab",
+      "narration": "In the last 2 hours, 35 events unfolded in the Chained repository, orchestrated by 3 collaborators working in harmony.",
+      "characters": [
+        {
+          "name": "Build Guardian",
+          "side": "center",
+          "mood": "determined",
+          "line": "I've tracked 20 pull requests. Let's see what stories they tell."
+        }
+      ]
+    },
+    {
+      "bg": "calm",
+      "narration": "10 pull requests merged into main. The codebase evolves.",
+      "characters": [
+        {
+          "name": "Merge Oracle",
+          "side": "left",
+          "mood": "smug",
+          "line": "The merge is complete. Well done, github-actions[bot]."
+        },
+        {
+          "name": "Team (2 devs)",
+          "side": "right",
+          "mood": "happy",
+          "line": "Collaboration makes us stronger!"
+        }
+      ]
+    },
+    {
+      "bg": "night",
+      "narration": "PR #2174 awaits review. The code hangs in the balance.",
+      "characters": [
+        {
+          "name": "Copilot",
+          "side": "left",
+          "mood": "worried",
+          "line": "I hope the reviewers like my changes..."
+        },
+        {
+          "name": "Code Reviewer",
+          "side": "right",
+          "mood": "determined",
+          "line": "Let me examine this carefully. Quality matters."
+        }
+      ]
+    },
+    {
+      "bg": "alert",
+      "narration": "PR #2172 was closed without merging. Not every branch reaches main.",
+      "characters": [
+        {
+          "name": "github-actions[bot]",
+          "side": "left",
+          "mood": "worried",
+          "line": "Perhaps another approach is needed..."
+        },
+        {
+          "name": "Repository Guardian",
+          "side": "right",
+          "mood": "determined",
+          "line": "We maintain our standards. Try again."
+        }
+      ]
+    },
+    {
+      "bg": "calm",
+      "narration": "14 issues closed. The bug hunters have been busy.",
+      "characters": [
+        {
+          "name": "Issue Hunter",
+          "side": "center",
+          "mood": "happy",
+          "line": "Mission accomplished! 14 bug(s) eliminated."
+        }
+      ]
+    }
+  ]
+}

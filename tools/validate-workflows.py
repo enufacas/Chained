@@ -69,7 +69,24 @@ class WorkflowValidator:
             try:
                 workflow = yaml.safe_load(content)
             except yaml.YAMLError as e:
-                self.errors.append(f"YAML syntax error in {filepath.name}: {e}")
+                error_msg = f"YAML syntax error in {filepath.name}: {e}"
+                # Add helpful context for common errors
+                error_str = str(e)
+                if "expected a single document" in error_str:
+                    # Bash example: --body "text"$'\n\n'"---"$'\n\n'"more text"
+                    tip = (
+                        '\n  💡 Tip: "---" inside strings causes document separation. '
+                        "Use bash string concatenation:\n"
+                        '     --body "text"$\'\\n\\n\'"---"$\'\\n\\n\'"more text"'
+                    )
+                    error_msg += tip
+                elif "could not find expected ':'" in error_str:
+                    tip = (
+                        "\n  💡 Tip: Check for unclosed quotes in multi-line strings. "
+                        "Use bash concatenation instead."
+                    )
+                    error_msg += tip
+                self.errors.append(error_msg)
                 return False
             
             # Validate workflow structure
@@ -88,6 +105,9 @@ class WorkflowValidator:
             
             # Check for script path triggers
             self._check_script_path_triggers(workflow, content, filepath.name)
+            
+            # Check for GitHub expression syntax issues
+            self._check_github_expressions(content, filepath.name)
             
             return len(self.errors) == 0
             
@@ -257,6 +277,57 @@ class WorkflowValidator:
                 "".join(f"          - '{script}'\n" for script in scripts[:3]) +
                 (f"          # ... and {len(scripts) - 3} more\n" if len(scripts) > 3 else "")
             )
+    
+    def _check_github_expressions(self, content: str, filename: str) -> None:
+        """Check for common GitHub expression syntax issues."""
+        lines = content.split('\n')
+        
+        for line_num, line in enumerate(lines, start=1):
+            # Check for unclosed expression braces
+            if '${{' in line:
+                # Count opening and closing braces
+                open_count = line.count('${{')
+                close_count = line.count('}}')
+                
+                if open_count != close_count:
+                    self.warnings.append(
+                        f"{filename}:{line_num}: Possible unclosed GitHub expression"
+                        f"\n  Found: {line.strip()}"
+                        "\n  💡 Ensure all ${{ }} expressions are properly closed"
+                    )
+                
+                # Check for common syntax issues in expressions
+                # Extract expressions
+                expr_pattern = r'\$\{\{([^}]+)\}\}'
+                expressions = re.findall(expr_pattern, line)
+                
+                for expr in expressions:
+                    expr = expr.strip()
+                    
+                    # Check for potentially invalid concatenation patterns
+                    # This is a heuristic to catch typos like: ${{ github.server_url, github.repository }}
+                    # (comma instead of proper concatenation operator)
+                    # Note: This may produce false positives for legitimate comma usage in arrays or function calls
+                    # Examples of when to ignore this warning:
+                    #   - Arrays: ${{ [github.actor, github.repository] }}
+                    #   - Function calls: ${{ contains(github.event.head_commit.message, 'skip') }}
+                    #   - fromJSON with arrays: ${{ fromJSON('[github.actor, github.repository]') }}
+                    if ',' in expr and 'github.' in expr:
+                        # Split by comma and check if consecutive parts look like bare references
+                        parts = [p.strip() for p in expr.split(',')]
+                        for part in parts:
+                            # If a part is just a bare github.* reference (no operators/brackets), warn
+                            # This catches: github.server_url, github.repository (typo)
+                            # But may warn on: [github.actor, github.repository] (legitimate)
+                            if re.match(r'^github\.\w+$', part):
+                                self.warnings.append(
+                                    f"{filename}:{line_num}: Possible invalid GitHub expression syntax"
+                                    f"\n  Found: {line.strip()}"
+                                    "\n  💡 Tip: Comma inside ${{ }} might indicate a typo. "
+                                    f"Check if you meant to concatenate strings properly. "
+                                    f"(Ignore if using arrays like [a, b] or function calls.)"
+                                )
+                                break  # Only warn once per line
     
     def validate_directory(self, dirpath: Path) -> Tuple[int, int]:
         """

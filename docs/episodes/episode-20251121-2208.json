@@ -1,0 +1,30 @@
+{
+  "date": "2025-11-21T22:08:11.738217+00:00",
+  "title": "The Great Merge-athon",
+  "scenes": [
+    {
+      "bg": "lab",
+      "narration": "In the last 2 hours, 6 events unfolded in the Chained repository, driven by a lone developer's determination.",
+      "characters": [
+        {
+          "name": "Build Guardian",
+          "side": "center",
+          "mood": "determined",
+          "line": "I've tracked 4 pull requests. Let's see what stories they tell."
+        }
+      ]
+    },
+    {
+      "bg": "calm",
+      "narration": "4 pull requests merged into main. The codebase evolves.",
+      "characters": [
+        {
+          "name": "Merge Oracle",
+          "side": "left",
+          "mood": "smug",
+          "line": "The merge is complete. Well done, github-actions[bot]."
+        }
+      ]
+    }
+  ]
+}

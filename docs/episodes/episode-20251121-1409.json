@@ -1,0 +1,48 @@
+{
+  "date": "2025-11-21T14:09:02.661560+00:00",
+  "title": "Issue Hunters Strike",
+  "scenes": [
+    {
+      "bg": "lab",
+      "narration": "In the last 2 hours, 31 events unfolded in the Chained repository, orchestrated by 2 collaborators working in harmony.",
+      "characters": [
+        {
+          "name": "Build Guardian",
+          "side": "center",
+          "mood": "determined",
+          "line": "I've tracked 20 pull requests. Let's see what stories they tell."
+        }
+      ]
+    },
+    {
+      "bg": "alert",
+      "narration": "PR #2250 was closed without merging. Not every branch reaches main.",
+      "characters": [
+        {
+          "name": "github-actions[bot]",
+          "side": "left",
+          "mood": "worried",
+          "line": "Perhaps another approach is needed..."
+        },
+        {
+          "name": "Repository Guardian",
+          "side": "right",
+          "mood": "determined",
+          "line": "We maintain our standards. Try again."
+        }
+      ]
+    },
+    {
+      "bg": "calm",
+      "narration": "11 issues closed. The bug hunters have been busy.",
+      "characters": [
+        {
+          "name": "Issue Hunter",
+          "side": "center",
+          "mood": "happy",
+          "line": "Mission accomplished! 11 bug(s) eliminated."
+        }
+      ]
+    }
+  ]
+}

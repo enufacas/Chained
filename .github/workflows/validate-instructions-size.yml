@@ -1,0 +1,134 @@
+name: Validate Copilot Instructions Size
+
+on:
+  pull_request:
+    paths:
+      - '.github/instructions/**'
+      - '.copilot-instructions.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-instruction-size:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check instruction size
+        id: check_size
+        run: |
+          # Calculate total size of instruction files
+          TOTAL_BYTES=$(find .github/instructions -name "*.md" -type f -exec cat {} \; | wc -c)
+          ROOT_SIZE=$(wc -c < .copilot-instructions.md 2>/dev/null || echo 0)
+          TOTAL=$((TOTAL_BYTES + ROOT_SIZE))
+          
+          # Calculate estimated tokens (rough estimate: 1 token ≈ 4 bytes)
+          TOKENS=$((TOTAL / 4))
+          
+          echo "total_bytes=$TOTAL" >> $GITHUB_OUTPUT
+          echo "total_kb=$((TOTAL / 1024))" >> $GITHUB_OUTPUT
+          echo "tokens=$TOKENS" >> $GITHUB_OUTPUT
+          
+          # Check against limits
+          MAX_BYTES=60000  # 60KB limit
+          MAX_TOKENS=15000  # ~15K token limit
+          
+          if [ $TOTAL -gt $MAX_BYTES ]; then
+            echo "status=❌ FAILED" >> $GITHUB_OUTPUT
+            echo "message=Instructions exceed 60KB limit (${TOTAL} bytes)" >> $GITHUB_OUTPUT
+            exit 1
+          elif [ $TOKENS -gt $MAX_TOKENS ]; then
+            echo "status=⚠️ WARNING" >> $GITHUB_OUTPUT
+            echo "message=Instructions approaching token limit (~${TOKENS} tokens)" >> $GITHUB_OUTPUT
+          else
+            echo "status=✅ PASSED" >> $GITHUB_OUTPUT
+            echo "message=Instructions within limits" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Report results
+        if: always()
+        run: |
+          echo "## Copilot Instructions Size Check"
+          echo ""
+          echo "**Status:** ${{ steps.check_size.outputs.status }}"
+          echo ""
+          echo "**Size:** ${{ steps.check_size.outputs.total_bytes }} bytes (${{ steps.check_size.outputs.total_kb }} KB)"
+          echo "**Estimated Tokens:** ~${{ steps.check_size.outputs.tokens }}"
+          echo ""
+          echo "**Limits:**"
+          echo "- Maximum: 60,000 bytes (60 KB)"
+          echo "- Token estimate: < 15,000 tokens"
+          echo ""
+          echo "${{ steps.check_size.outputs.message }}"
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ steps.check_size.outputs.status }}';
+            const totalBytes = '${{ steps.check_size.outputs.total_bytes }}';
+            const totalKB = '${{ steps.check_size.outputs.total_kb }}';
+            const tokens = '${{ steps.check_size.outputs.tokens }}';
+            const message = '${{ steps.check_size.outputs.message }}';
+            
+            const body = `## 📏 Copilot Instructions Size Check
+            
+**${status}**
+
+**Current Size:**
+- Bytes: ${totalBytes} (${totalKB} KB)
+- Estimated tokens: ~${tokens}
+
+**Limits:**
+- Maximum: 60,000 bytes (60 KB)
+- Token estimate: < 15,000 tokens
+
+**Result:** ${message}
+
+---
+*See [Context Size Optimization Guide](docs/guides/CONTEXT_SIZE_OPTIMIZATION.md) for best practices*`;
+            
+            // Find existing comment
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            
+            const botComment = comments.data.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('Copilot Instructions Size Check')
+            );
+            
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+
+      - name: Fail if over limit
+        if: steps.check_size.outputs.status == '❌ FAILED'
+        run: |
+          echo "::error::Copilot instructions exceed size limit"
+          echo "Current: ${{ steps.check_size.outputs.total_bytes }} bytes"
+          echo "Maximum: 60,000 bytes"
+          echo ""
+          echo "See docs/guides/CONTEXT_SIZE_OPTIMIZATION.md for optimization tips"
+          exit 1
