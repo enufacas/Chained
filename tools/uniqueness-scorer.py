@@ -20,7 +20,7 @@ from typing import Dict, List, Any, Optional, Set, Tuple
 
 
 # System actors to exclude from diversity analysis
-# These are automation bots that perform repetitive tasks by design
+# These are automation bots and human maintainers that should be excluded from AI agent diversity analysis
 EXCLUDED_ACTORS = [
     'github-actions',
     'github-actions[bot]',
@@ -28,6 +28,7 @@ EXCLUDED_ACTORS = [
     'dependabot[bot]',
     'renovate',
     'renovate[bot]',
+    'enufacas',  # Human maintainer (Eric Smith) - should not be analyzed as AI agent
 ]
 
 
