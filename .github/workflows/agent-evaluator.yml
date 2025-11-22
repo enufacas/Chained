@@ -76,7 +76,7 @@ jobs:
           import subprocess
           import sys
           import os
-          from datetime import datetime, timedelta
+          from datetime import datetime, timedelta, timezone
           
           # Use registry manager
           sys.path.insert(0, 'tools')
@@ -95,13 +95,13 @@ jobs:
           if last_eval and not force_evaluation:
               try:
                   last_time = datetime.fromisoformat(last_eval.replace('Z', '+00:00'))
-                  hours_since_eval = (datetime.utcnow().replace(tzinfo=last_time.tzinfo) - last_time).total_seconds() / 3600
+                  hours_since_eval = (datetime.now(timezone.utc) - last_time).total_seconds() / 3600
                   print(f"⏱️  Last evaluation: {hours_since_eval:.1f}h ago ({last_eval})")
                   
                   if hours_since_eval < 20:
                       print(f"✅ Recent evaluation found (<20h ago). Skipping to avoid redundant API calls.")
                       print(f"   Use 'force_evaluation: true' to override this check.")
-                      exit(0)
+                      sys.exit(0)
               except Exception as e:
                   print(f"⚠️  Could not parse last evaluation time: {e}")
           
@@ -110,7 +110,7 @@ jobs:
           
           if not active_agents:
               print("No active agents to evaluate")
-              exit(0)
+              sys.exit(0)
           
           total_agents = len(active_agents)
           print(f"📊 Evaluating {total_agents} active agents...")
@@ -165,13 +165,16 @@ jobs:
                   )
                   print(f"✅ Evaluation complete! Collected/loaded metrics for {len(metrics_results)} agents")
                   
-                  # Log cache effectiveness
-                  if not force_evaluation:
-                      api_stats = collector.get_api_stats()
-                      print(f"📊 API Usage Stats:")
-                      print(f"   API calls made: {api_stats.get('api_calls', 0)}")
-                      print(f"   Cached issues: {api_stats.get('cached_issues', 0)}")
-                      print(f"   Cached PRs: {api_stats.get('cached_prs', 0)}")
+                  # Log cache effectiveness (only if collector is available)
+                  if not force_evaluation and 'collector' in locals():
+                      try:
+                          api_stats = collector.get_api_stats()
+                          print(f"📊 API Usage Stats:")
+                          print(f"   API calls made: {api_stats.get('api_calls', 0)}")
+                          print(f"   Cached issues: {api_stats.get('cached_issues', 0)}")
+                          print(f"   Cached PRs: {api_stats.get('cached_prs', 0)}")
+                      except Exception as e:
+                          print(f"⚠️  Could not retrieve API stats: {e}")
                       
               except Exception as e:
                   print(f"⚠️  Batch evaluation failed: {e}")
