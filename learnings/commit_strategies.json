@@ -1,11 +1,65 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-20T03:56:25.816183+00:00",
+  "last_updated": "2025-11-22T02:58:37.631686+00:00",
   "repository": "tmpn5gt3bt3",
-  "total_commits_analyzed": 2,
-  "successful_merges": 0,
+  "total_commits_analyzed": 500,
+  "successful_merges": 500,
   "failed_merges": 0,
-  "patterns_identified": [],
+  "patterns_identified": [
+    {
+      "pattern_name": "optimal_commit_size",
+      "pattern_type": "size",
+      "description": "Commits with focused changes (few files, moderate lines)",
+      "success_rate": 0.4,
+      "occurrence_count": 200,
+      "average_merge_time_hours": 0.0,
+      "common_attributes": {
+        "avg_files": 2.32,
+        "avg_lines": 33.26
+      },
+      "examples": [
+        "a1a7095f",
+        "bcb536a7",
+        "0a73423e"
+      ],
+      "confidence_score": 0.36000000000000004
+    },
+    {
+      "pattern_name": "detailed_messages",
+      "pattern_type": "message",
+      "description": "Commits with detailed message body",
+      "success_rate": 0.904,
+      "occurrence_count": 452,
+      "average_merge_time_hours": 0.0,
+      "common_attributes": {
+        "has_explanation": true,
+        "avg_message_length": 59.52654867256637
+      },
+      "examples": [
+        "a1a7095f",
+        "bcb536a7",
+        "0d09871e"
+      ],
+      "confidence_score": 0.7684
+    },
+    {
+      "pattern_name": "focused_changes",
+      "pattern_type": "organization",
+      "description": "Commits focused on single file type or related files",
+      "success_rate": 0.826,
+      "occurrence_count": 413,
+      "average_merge_time_hours": 0.0,
+      "common_attributes": {
+        "avg_file_types": 1.0702179176755449
+      },
+      "examples": [
+        "a1a7095f",
+        "bcb536a7",
+        "0d09871e"
+      ],
+      "confidence_score": 0.6608
+    }
+  ],
   "recommendations": [],
   "learning_history": []
 }
