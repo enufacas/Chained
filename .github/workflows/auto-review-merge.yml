@@ -322,13 +322,20 @@ jobs:
               matched_agent=$(echo "$agent_match" | jq -r '.agent')
               agent_emoji=$(echo "$agent_match" | jq -r '.emoji')
               
-              # Create follow-up issue with heredoc
+              # Create follow-up issue with fallback for missing labels
               gh issue create \
                 --repo ${{ github.repository }} \
                 --title "[Tech Lead Feedback] Address review comments for PR #${pr_num}" \
                 --body "**Agent:** @${matched_agent} | **Feedback:** See PR #${pr_num} review comments | **Action:** Address tech lead feedback and push changes" \
                 --label "tech-lead-feedback,agent:${matched_agent},linked-to-pr" \
-                --assignee copilot || echo "Could not create follow-up issue"
+                --assignee copilot || {
+                  echo "⚠️ Issue creation with labels failed, retrying without labels..."
+                  gh issue create \
+                    --repo ${{ github.repository }} \
+                    --title "[Tech Lead Feedback] Address review comments for PR #${pr_num}" \
+                    --body "**Agent:** @${matched_agent} | **Feedback:** See PR #${pr_num} review comments | **Action:** Address tech lead feedback and push changes" \
+                    --assignee copilot || echo "⚠️ Could not create follow-up issue"
+                }
             fi
             
             gh pr comment ${pr_num} --body "🔄 **Tech Lead Requested Changes**
