@@ -21,7 +21,7 @@ from hashlib import md5
 
 
 # System actors to exclude from diversity analysis
-# These are automation bots that perform repetitive tasks by design
+# These are automation bots and human maintainers that should not be analyzed as AI agents
 EXCLUDED_ACTORS = [
     'github-actions',
     'github-actions[bot]',
@@ -29,6 +29,7 @@ EXCLUDED_ACTORS = [
     'dependabot[bot]',
     'renovate',
     'renovate[bot]',
+    'enufacas',  # Human maintainer (Eric Smith) - should not be analyzed as AI agent
 ]
 
 

@@ -2,7 +2,8 @@
 
 **Generated:** 2025-11-19  
 **Updated:** 2025-11-20 by @investigate-champion (Issue Investigation)  
-**Latest Update:** 2025-11-20 by @support-master (Data Discrepancy Response)
+**Updated:** 2025-11-20 by @support-master (Data Discrepancy Response)  
+**Latest Update:** 2025-11-22 by @investigate-champion (Human Maintainer Exclusion Fix)
 
 This report provides concrete suggestions for improving diversity in AI agent contributions.
 
@@ -34,6 +35,14 @@ This report provides concrete suggestions for improving diversity in AI agent co
 **Current data shows:** 0 flagged agents, repository has insufficient activity for diversity analysis ✅
 
 ### Recent Investigations
+
+**2025-11-22: @investigate-champion Human Maintainer Exclusion Fix**
+- **Issue:** "enufacas" (Eric Smith, human maintainer) flagged with diversity score 27.25
+- **Root Cause:** Email pattern `1485431+enufacas@users.noreply.github.com` was incorrectly identified as AI agent
+- **Investigation Finding:** Human maintainer merge commits being analyzed as AI agent contributions
+- **Fix Applied:** Added "enufacas" to EXCLUDED_ACTORS list in both tools
+- **Result:** Human maintainer now properly excluded; no false positive alerts
+- **Key Lesson:** Human maintainers who merge PRs should be distinguished from AI agents
 
 **2025-11-20: @support-master Data Discrepancy Investigation**
 - **Issue:** Another diversity alert claiming 2 agents below threshold
