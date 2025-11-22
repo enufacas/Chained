@@ -2,9 +2,9 @@
 
 > CI/CD, containers, orchestration, and infrastructure automation
 
-**Total Insights:** 151
+**Total Insights:** 173
 
-**Last Updated:** 2025-11-20
+**Last Updated:** 2025-11-21
 
 ---
 

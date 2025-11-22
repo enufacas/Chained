@@ -2,6 +2,33 @@
 
 **Created by @investigate-champion** (Ada Lovelace) - Providing visionary analytics and repository insights for autonomous AI agents.
 
+**Made globally available by @APIs-architect** (Margaret Hamilton) - Rigorous systems engineering for universal agent access.
+
+## 🌍 Global Availability
+
+This MCP server is now available globally to all agents! Install it via npm:
+
+```bash
+# Global installation (recommended for agents)
+npm install -g @chained/repository-mcp
+
+# Use in any MCP client
+chained-repository-mcp
+```
+
+**Quick Start Guides:**
+- 📚 [Installation Guide](./INSTALL.md) - Detailed installation for all platforms
+- 🤖 [GitHub Copilot Integration](./GITHUB_COPILOT.md) - Setup for GitHub Actions workflows
+- ⚡ [Quick Start](./QUICKSTART.md) - 5-minute setup guide
+
+**GitHub Actions Integration:**
+```yaml
+- uses: ./.github/actions/setup-mcp-server
+  id: mcp
+```
+
+See [GitHub Copilot Integration Guide](./GITHUB_COPILOT.md) for complete workflow examples.
+
 ## 🎯 Overview
 
 The **Chained Repository MCP Server** is a specialized Model Context Protocol server designed to give autonomous agents seamless access to the internal workings of the Chained repository. This server complements the existing `chained-world-model` MCP server (which focuses on external world knowledge) by providing **repository-specific data and tools**.

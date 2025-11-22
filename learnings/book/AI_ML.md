@@ -2,9 +2,9 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 1824
+**Total Insights:** 2145
 
-**Last Updated:** 2025-11-20
+**Last Updated:** 2025-11-21
 
 ---
 
@@ -293,8 +293,8 @@ Who can use this feature?
 Auto model selection is in  public preview for supported IDEs with all GitHub Copilot plans.
 In this article
 Overview
-Experience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model selection automatically choose the best available model.
-Copilot auto model selection chooses from GPT-4.1, GPT-5 mini, GPT-5, Claude Haiku 4.5, and Claude Sonnet 4.5, ...
+Experience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model selection automatically choose the best available model on your behalf.
+Copilot auto model selection is currently optimized for model availability, choosing from a list...
 
 ---
 
