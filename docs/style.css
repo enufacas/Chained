@@ -475,7 +475,6 @@ section h2 {
     section h2 {
         color: var(--accent-color);
         background: none;
-        -webkit-text-fill-color: var(--accent-color);
     }
 }
 
@@ -519,7 +518,6 @@ section h2 {
     .stat-card h3 {
         color: var(--primary-color);
         background: none;
-        -webkit-text-fill-color: var(--primary-color);
     }
 }
 
@@ -922,7 +920,6 @@ footer a:focus {
     .learning-stat-card h3 {
         color: var(--success-color);
         background: none;
-        -webkit-text-fill-color: var(--success-color);
     }
 }
 
@@ -1873,7 +1870,6 @@ footer p {
     .feature-card h3 {
         color: var(--accent-color);
         background: none;
-        -webkit-text-fill-color: var(--accent-color);
     }
 }
 
@@ -2233,7 +2229,6 @@ footer p {
     .resource-card h3 {
         color: var(--accent-color);
         background: none;
-        -webkit-text-fill-color: var(--accent-color);
     }
 }
 
