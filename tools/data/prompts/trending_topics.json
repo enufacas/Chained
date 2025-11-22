@@ -1,95 +1,90 @@
 {
-  "last_updated": "2025-11-19T03:04:36.350442+00:00",
+  "last_updated": "2025-11-22T08:14:33.781262+00:00",
   "analysis_period_days": 7,
-  "total_insights": 44,
+  "total_insights": 4,
   "top_keywords": [
     {
-      "keyword": "openai",
-      "count": 17
-    },
-    {
-      "keyword": "your",
-      "count": 13
-    },
-    {
-      "keyword": "that",
-      "count": 13
-    },
-    {
-      "keyword": "with",
-      "count": 11
-    },
-    {
-      "keyword": "anthropic",
-      "count": 8
-    },
-    {
-      "keyword": "without",
-      "count": 7
-    },
-    {
       "keyword": "gpt-5",
-      "count": 6
+      "count": 2
     },
     {
       "keyword": "nano",
-      "count": 6
-    },
-    {
-      "keyword": "platform",
-      "count": 6
-    },
-    {
-      "keyword": "deploy",
-      "count": 5
-    },
-    {
-      "keyword": "data",
-      "count": 5
-    },
-    {
-      "keyword": "when",
-      "count": 5
-    },
-    {
-      "keyword": "gemini",
-      "count": 5
-    },
-    {
-      "keyword": "what",
-      "count": 5
-    },
-    {
-      "keyword": "banana",
-      "count": 4
+      "count": 2
     },
     {
       "keyword": "valuation",
-      "count": 4
+      "count": 2
+    },
+    {
+      "keyword": "banana",
+      "count": 2
+    },
+    {
+      "keyword": "advanced",
+      "count": 2
+    },
+    {
+      "keyword": "tips",
+      "count": 2
+    },
+    {
+      "keyword": "cursor",
+      "count": 2
+    },
+    {
+      "keyword": "learn",
+      "count": 1
+    },
+    {
+      "keyword": "comes",
+      "count": 1
+    },
+    {
+      "keyword": "processing",
+      "count": 1
     },
     {
       "keyword": "infrastructure",
-      "count": 4
+      "count": 1
     },
     {
-      "keyword": "they",
-      "count": 4
+      "keyword": "stability",
+      "count": 1
     },
     {
-      "keyword": "compiler",
-      "count": 3
+      "keyword": "flexibility",
+      "count": 1
     },
     {
-      "keyword": "becoming",
-      "count": 3
+      "keyword": "covered",
+      "count": 1
+    },
+    {
+      "keyword": "when",
+      "count": 1
+    },
+    {
+      "keyword": "pick",
+      "count": 1
+    },
+    {
+      "keyword": "cash",
+      "count": 1
+    },
+    {
+      "keyword": "spend",
+      "count": 1
+    },
+    {
+      "keyword": "solutions",
+      "count": 1
+    },
+    {
+      "keyword": "reliability",
+      "count": 1
     }
   ],
   "category_distribution": {
-    "ai_ml": 32,
-    "feature": 5,
-    "bug_fix": 3,
-    "refactor": 1,
-    "devops": 2,
-    "investigation": 1
+    "ai_ml": 4
   }
 }
