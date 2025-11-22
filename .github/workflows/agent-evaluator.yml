@@ -69,11 +69,13 @@ jobs:
         id: evaluate
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FORCE_EVALUATION: ${{ github.event.inputs.force_evaluation || 'false' }}
         run: |
           python3 << 'PYTHON_SCRIPT'
           import json
           import subprocess
           import sys
+          import os
           from datetime import datetime, timedelta
           
           # Use registry manager
@@ -81,6 +83,27 @@ jobs:
           from registry_manager import RegistryManager
           
           registry = RegistryManager()
+          
+          # Check if force_evaluation was requested
+          force_evaluation = os.environ.get('FORCE_EVALUATION', 'false').lower() == 'true'
+          if force_evaluation:
+              print("🔄 FORCE EVALUATION MODE: Will refresh all metrics from GitHub API")
+          
+          # Check last evaluation time (unless force mode)
+          metadata = registry.get_metadata()
+          last_eval = metadata.get('last_evaluation')
+          if last_eval and not force_evaluation:
+              try:
+                  last_time = datetime.fromisoformat(last_eval.replace('Z', '+00:00'))
+                  hours_since_eval = (datetime.utcnow().replace(tzinfo=last_time.tzinfo) - last_time).total_seconds() / 3600
+                  print(f"⏱️  Last evaluation: {hours_since_eval:.1f}h ago ({last_eval})")
+                  
+                  if hours_since_eval < 20:
+                      print(f"✅ Recent evaluation found (<20h ago). Skipping to avoid redundant API calls.")
+                      print(f"   Use 'force_evaluation: true' to override this check.")
+                      exit(0)
+              except Exception as e:
+                  print(f"⚠️  Could not parse last evaluation time: {e}")
           
           # Get active agents
           active_agents = registry.list_agents(status='active')
@@ -123,18 +146,33 @@ jobs:
           
           # OPTIMIZATION: Use evaluate_all_agents() which prefers stored metrics
           # This significantly reduces GitHub API calls by using stored data when fresh
+          # FIX: Now respects force_evaluation input parameter
           metrics_results = {}
           if use_real_metrics:
               try:
-                  print("🚀 Starting optimized evaluation (storage-first approach)...")
-                  print("   Checking stored metrics (freshness threshold: 12 hours)")
+                  if force_evaluation:
+                      print("🔄 Force mode: Refreshing ALL metrics from GitHub API...")
+                  else:
+                      print("🚀 Starting optimized evaluation (storage-first approach)...")
+                      print("   Checking stored metrics (freshness threshold: 12 hours)")
+                  
                   # Use the new evaluate_all_agents() method that prefers stored metrics
+                  # FIX: Now uses force_evaluation from workflow input
                   metrics_results = collector.evaluate_all_agents(
                       since_days=7,
                       max_age_hours=12.0,  # Use metrics stored within last 12 hours
-                      force_refresh=False  # Prefer stored data when available
+                      force_refresh=force_evaluation  # Now respects workflow input!
                   )
                   print(f"✅ Evaluation complete! Collected/loaded metrics for {len(metrics_results)} agents")
+                  
+                  # Log cache effectiveness
+                  if not force_evaluation:
+                      api_stats = collector.get_api_stats()
+                      print(f"📊 API Usage Stats:")
+                      print(f"   API calls made: {api_stats.get('api_calls', 0)}")
+                      print(f"   Cached issues: {api_stats.get('cached_issues', 0)}")
+                      print(f"   Cached PRs: {api_stats.get('cached_prs', 0)}")
+                      
               except Exception as e:
                   print(f"⚠️  Batch evaluation failed: {e}")
                   use_real_metrics = False
