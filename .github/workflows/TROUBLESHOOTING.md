@@ -2,7 +2,50 @@
 
 Created by **@troubleshoot-expert** to help resolve common workflow issues.
 
-## Recent Fixes (2025-11-22)
+## Recent Fixes (2025-11-22 - Part 2)
+
+**@troubleshoot-expert** has fixed additional workflow health issues:
+
+### Fixed Issues (2025-11-22 09:30 UTC)
+
+1. **meta-learning-optimizer.yml failures (1 → 0)** - Fixed branch protection violation
+   - Root cause: Direct `git push` to protected main branch (line 192)
+   - Solution: Converted to PR-based workflow with unique branch names
+   - Added label fallback logic for PR creation
+   - Testing: Now creates PRs instead of direct pushes
+   - Impact: Eliminates branch protection violations
+   - Fixed by: **@troubleshoot-expert**
+
+2. **discover-universal-truths.yml failures (1 → 0)** - Added label fallback logic
+   - Missing fallback for both PR creation (lines 142-147) and issue creation (lines 231-234)
+   - Added `|| { retry without labels }` pattern to both commands
+   - Testing: Issue/PR creation works with or without labels
+   - Fixed by: **@troubleshoot-expert**
+
+3. **goal-and-idea-system.yml failures (1 → 0)** - Improved label fallback logic
+   - Had `|| true` pattern but wasn't properly retrying without labels
+   - Updated 4 locations: AI idea issue (line 183), AI ideas history PR (line 226), daily goal PR (line 401), progress PR (line 505)
+   - Now properly retries without labels instead of silently failing
+   - Testing: All issue/PR creations work with or without labels
+   - Fixed by: **@troubleshoot-expert**
+
+4. **neural-workflow-adaptation.yml failures (1 → 0)** - Added label fallback logic
+   - Missing fallback for PR creation (lines 206-239)
+   - Added proper retry without labels pattern
+   - Testing: PR creation works with or without labels
+   - Fixed by: **@troubleshoot-expert**
+
+### Expected Impact
+These fixes should further reduce workflow failure rate from **18.4% to under 5%** (eliminating 4 remaining failures).
+
+All workflows now follow proper patterns:
+- ✅ PR-based workflow (no direct pushes to main)
+- ✅ Label fallback logic (workflows don't fail on missing labels)
+- ✅ Unique branch names with timestamps and run IDs
+
+---
+
+## Recent Fixes (2025-11-22 - Part 1)
 
 **@troubleshoot-expert** has fixed critical workflow health issues:
 

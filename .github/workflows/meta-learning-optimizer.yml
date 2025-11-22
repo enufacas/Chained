@@ -155,6 +155,8 @@ jobs:
       
       - name: Commit learned strategies
         if: steps.adapt.outputs.adapted == 'true' || steps.evolve.outputs.evolved == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Configure git
           git config user.name "github-actions[bot]"
@@ -177,6 +179,12 @@ jobs:
           if git diff --staged --quiet; then
             echo "ℹ️  No changes to commit"
           else
+            # Create unique branch name for PR-based workflow
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="meta-learning/${TIMESTAMP}-${{ github.run_id }}"
+            
+            git checkout -b "$BRANCH_NAME"
+            
             # Create commit message in parts to avoid YAML issues
             echo "chore: update learned scheduling strategies (@workflows-tech-lead)" > /tmp/commit_msg.txt
             echo "" >> /tmp/commit_msg.txt
@@ -189,8 +197,24 @@ jobs:
             echo "Automated by @workflows-tech-lead meta-learning system" >> /tmp/commit_msg.txt
             
             git commit -F /tmp/commit_msg.txt
-            git push
-            echo "✅ Learned strategies committed and pushed"
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR with label fallback
+            gh pr create \
+              --title "🎓 Meta-Learning Strategy Updates - $(date +%Y-%m-%d)" \
+              --body "## 🎓 Meta-Learning Optimization Results"$'\n\n'"**@workflows-tech-lead** has updated scheduling strategies based on meta-learning."$'\n\n'"### Optimization Results"$'\n'"- **Adapted**: ${{ steps.adapt.outputs.adapted }}"$'\n'"- **Evolved**: ${{ steps.evolve.outputs.evolved }}"$'\n'"- **Best Strategy**: ${{ steps.report.outputs.best_strategy || 'N/A' }}"$'\n'"- **Accuracy**: ${{ steps.report.outputs.accuracy_score || 'N/A' }}%"$'\n\n'"---"$'\n'"*🤖 Created by workflow: [Meta-Learning Workflow Optimizer](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+              --label "automated,meta-learning,workflows" \
+              --base main \
+              --head "$BRANCH_NAME" || {
+                echo "⚠️ PR creation with labels failed, retrying without labels..."
+                gh pr create \
+                  --title "🎓 Meta-Learning Strategy Updates - $(date +%Y-%m-%d)" \
+                  --body "## 🎓 Meta-Learning Optimization Results"$'\n\n'"**@workflows-tech-lead** has updated scheduling strategies based on meta-learning."$'\n\n'"### Optimization Results"$'\n'"- **Adapted**: ${{ steps.adapt.outputs.adapted }}"$'\n'"- **Evolved**: ${{ steps.evolve.outputs.evolved }}"$'\n'"- **Best Strategy**: ${{ steps.report.outputs.best_strategy || 'N/A' }}"$'\n'"- **Accuracy**: ${{ steps.report.outputs.accuracy_score || 'N/A' }}%"$'\n\n'"---"$'\n'"*🤖 Created by workflow: [Meta-Learning Workflow Optimizer](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+                  --base main \
+                  --head "$BRANCH_NAME"
+              }
+            
+            echo "✅ Learned strategies PR created"
           fi
       
       - name: Create summary

@@ -138,13 +138,20 @@ jobs:
           *Inspired by Nikola Tesla's approach to discovering universal principles*
           EOF
           
-          # Create PR
+          # Create PR with label fallback
           gh pr create \
             --title "🌌 Universal Truth Discovery - $(date +%Y-%m-%d)" \
             --body-file pr_body.md \
             --label "automated,infrastructure,truths" \
             --base main \
-            --head "$BRANCH_NAME"
+            --head "$BRANCH_NAME" || {
+              echo "⚠️ PR creation with labels failed, retrying without labels..."
+              gh pr create \
+                --title "🌌 Universal Truth Discovery - $(date +%Y-%m-%d)" \
+                --body-file pr_body.md \
+                --base main \
+                --head "$BRANCH_NAME"
+            }
           
           PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --json number -q '.[0].number')
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
@@ -227,11 +234,16 @@ jobs:
           *"The day science begins to study non-physical phenomena, it will make more progress in one decade than in all the previous centuries." - Nikola Tesla*
           EOF
           
-          # Create issue
+          # Create issue with label fallback
           gh issue create \
             --title "🌌 Universal Truths Discovered - $(date +%Y-%m-%d)" \
             --body-file issue_body.md \
-            --label "discovery,truths,insights"
+            --label "discovery,truths,insights" || {
+              echo "⚠️ Issue creation with labels failed, retrying without labels..."
+              gh issue create \
+                --title "🌌 Universal Truths Discovered - $(date +%Y-%m-%d)" \
+                --body-file issue_body.md
+            }
       
       - name: Summary
         if: always()
