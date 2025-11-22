@@ -1,12 +1,12 @@
 {
-  "timestamp": "2025-11-22T04:47:08.632069",
-  "total_truths": 7,
-  "stable_truths": 7,
+  "timestamp": "2025-11-22T06:20:26.154085",
+  "total_truths": 8,
+  "stable_truths": 8,
   "high_confidence_truths": 3,
   "category_distribution": {
     "agent_behavior": 2,
     "system_dynamics": 3,
-    "evolution": 2
+    "evolution": 3
   },
   "key_discoveries": [
     {
@@ -30,7 +30,7 @@
     {
       "truth_id": "knowledge_interconnectedness",
       "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure",
-      "confidence": 0.8,
+      "confidence": 0.7999999999999999,
       "category": "evolution"
     },
     {
@@ -50,6 +50,12 @@
       "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants",
       "confidence": 0.7,
       "category": "system_dynamics"
+    },
+    {
+      "truth_id": "custom_example",
+      "statement": "Custom truth: The system exhibits emergent creativity in agent interactions",
+      "confidence": 0.7,
+      "category": "evolution"
     }
   ],
   "recommendations": [
@@ -57,7 +63,8 @@
     "Diversity principle confirmed: Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core sys... Maintain specialization variety for system resilience."
   ],
   "meta_observations": [
-    "System stability: 7/7 truths are stable, indicating high system predictability.",
-    "7 truths are interconnected, revealing emergent systemic patterns beyond individual observations."
+    "System stability: 8/8 truths are stable, indicating high system predictability.",
+    "7 truths show significant evolution, suggesting the system is in active development phase.",
+    "8 truths are interconnected, revealing emergent systemic patterns beyond individual observations."
   ]
 }
