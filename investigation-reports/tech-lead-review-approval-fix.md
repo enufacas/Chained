@@ -21,9 +21,9 @@ When a bot (copilot-swe-agent) creates a PR, GitHub requires manual approval for
 4. **This fix**: Restored `pull_request_target` with correct documentation ✅
 
 ### The Confusion
-Commit a1a7095f had this incorrect comment:
+Commit a1a7095f had this **incorrect** comment (shown here for documentation):
 ```yaml
-# Use pull_request instead of pull_request_target to avoid approval requirements
+# ❌ INCORRECT: Use pull_request instead of pull_request_target to avoid approval requirements
 ```
 
 This is **backwards**. The correct relationship is:
@@ -80,7 +80,8 @@ Add labels and comments to PR
 The workflow script uses `gh CLI` to analyze PRs:
 ```python
 # From tools/match-pr-to-tech-lead.py
-gh pr view <pr_number> --repo <repo> --json files
+# Template: gh pr view ${pr_number} --repo ${repo} --json files
+gh pr view 2298 --repo enufacas/Chained --json files
 ```
 
 This gets all PR information without needing to check out the PR branch.

@@ -5,6 +5,7 @@ on:
   # This is safe because we only analyze PR metadata via GitHub API, not execute PR code
   # With pull_request_target, checkout gets the base branch (main), not the PR branch
   # This ensures we use trusted repository code to analyze PRs
+  # Note: This runs with write permissions to the base repo, but only performs safe API operations
   pull_request_target:
     types: [opened, synchronize, ready_for_review, reopened]
     # Trigger on all PR changes to re-evaluate tech lead requirements
