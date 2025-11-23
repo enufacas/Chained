@@ -1,0 +1,94 @@
+{
+  "version": "1.0",
+  "created_at": "2025-11-23T19:33:12.939330",
+  "last_updated": "2025-11-23T19:33:12.939733",
+  "runs": {
+    "total_runs": 2,
+    "successful_runs": 2,
+    "failed_runs": 0,
+    "last_run": {
+      "timestamp": "2025-11-23T19:33:12.939268",
+      "success": true,
+      "duration_seconds": 180,
+      "actions_taken": 1,
+      "session_id": "053fa9d2439b2d02"
+    },
+    "average_duration_seconds": 0
+  },
+  "pr_patterns": {
+    "total_prs_processed": 2,
+    "tech_leads_assigned": {
+      "agents-tech-lead": 2
+    },
+    "complexity_distribution": {
+      "high": 2
+    },
+    "review_cycles": {},
+    "approval_times": []
+  },
+  "issue_patterns": {
+    "total_issues_processed": 0,
+    "agents_assigned": {},
+    "agent_success_rates": {},
+    "assignment_times": []
+  },
+  "feedback_issues": {
+    "total_created": 0,
+    "by_tech_lead": {},
+    "resolution_times": [],
+    "duplicate_prevented": 0
+  },
+  "exceptions": {
+    "total_handled": 0,
+    "by_type": {},
+    "recent": []
+  },
+  "decisions": {
+    "recent": [
+      {
+        "type": "pr_assignment",
+        "description": "Assigned PR #2505 to agents-tech-lead",
+        "context": {
+          "pr_number": 2505,
+          "tech_lead": "agents-tech-lead",
+          "complexity": "high",
+          "files_changed": 4
+        },
+        "timestamp": "2025-11-23T19:33:12.939266",
+        "session_id": "053fa9d2439b2d02"
+      },
+      {
+        "type": "pr_assignment",
+        "description": "Assigned PR #2505 to agents-tech-lead",
+        "context": {
+          "pr_number": 2505,
+          "tech_lead": "agents-tech-lead",
+          "complexity": "high",
+          "files_changed": 4
+        },
+        "timestamp": "2025-11-23T19:33:12.939266",
+        "session_id": "053fa9d2439b2d02"
+      }
+    ],
+    "patterns": {}
+  },
+  "learnings": {
+    "insights": [
+      {
+        "insight": "Agent spawn PRs dominate the queue and need tech lead review",
+        "evidence": {
+          "agent_spawn_prs": 5,
+          "total_prs_sampled": 10
+        },
+        "timestamp": "2025-11-23T19:33:12.939618",
+        "session_id": "053fa9d2439b2d02"
+      }
+    ],
+    "recommendations": []
+  },
+  "system_health": {
+    "last_check": null,
+    "consistency_score": 1.0,
+    "issues_detected": []
+  }
+}
