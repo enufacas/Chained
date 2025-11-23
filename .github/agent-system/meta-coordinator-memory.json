@@ -36,6 +36,19 @@
       "feedback_issues_created": 0,
       "exceptions_handled": 0,
       "success": true
+    },
+    {
+      "timestamp": "2025-11-23T22:50:46.485712Z",
+      "run_id": "22:41",
+      "duration_seconds": 180,
+      "prs_processed": 18,
+      "prs_auto_merged": 1,
+      "prs_closed_conflicts": 4,
+      "tech_leads_assigned": 13,
+      "issues_assigned": 0,
+      "feedback_issues_created": 0,
+      "exceptions_handled": 0,
+      "success": true
     }
   ],
   "pr_assignments": [],
@@ -81,6 +94,15 @@
       "evidence": {
         "prs_needing_review": 14,
         "prs_with_conflicts": 5,
+        "auto_merge_success": 1
+      }
+    },
+    {
+      "timestamp": "2025-11-23T22:50:46.485718Z",
+      "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
+      "evidence": {
+        "prs_closed": 4,
+        "reason": "persistent_merge_conflicts",
         "auto_merge_success": 1
       }
     }
