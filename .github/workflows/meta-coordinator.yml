@@ -376,8 +376,53 @@ jobs:
           - `tools/meta-coordinator-memory.py` for persistent memory
           - GitHub API for complex queries
           - All repository files
-          - GitHub API for complex queries
-          - All repository files
+
+          ### 🔑 Token and Permissions Configuration
+
+          **CRITICAL FOR OPERATIONS:**
+
+          When executing in the Copilot agent environment, configure the GH_TOKEN properly:
+
+          ```bash
+          # Use COPILOT_PAT if available (provides wide access)
+          # Otherwise fall back to GITHUB_TOKEN (limited permissions)
+          # Note: Variables escaped (\$) for execution in Copilot environment
+          export GH_TOKEN="\${COPILOT_PAT:-\${GITHUB_TOKEN}}"
+          ```
+
+          **Token Availability Check:**
+          ```bash
+          # Note: Variables are escaped (\$VAR) because this code will be
+          # executed by Copilot agent, not by this workflow
+          if [ -n "\$COPILOT_PAT" ]; then
+            export GH_TOKEN="\$COPILOT_PAT"
+            echo "✅ Using COPILOT_PAT for wide access"
+          else
+            export GH_TOKEN="\$GITHUB_TOKEN"
+            echo "⚠️  Using GITHUB_TOKEN (limited permissions)"
+            echo "⚠️  Some operations may fail - see docs/COPILOT_ENVIRONMENT_SETUP.md"
+          fi
+          ```
+
+          **Permissions Required:**
+          - `contents: write` - Create branches, push changes
+          - `issues: write` - Create, edit, label issues
+          - `pull-requests: write` - Manage PRs, merge, labels
+          - `actions: read` - Read workflow run status
+
+          **Setup Instructions:**
+          If COPILOT_PAT is not available, the repository needs configuration:
+          1. See `docs/COPILOT_ENVIRONMENT_SETUP.md` for complete setup guide
+          2. Add COPILOT_PAT secret to the 'copilot' environment in repository settings
+          3. PAT must have 'repo' and 'workflow' scopes
+
+          **Graceful Degradation:**
+          If wide permissions unavailable:
+          - Continue with read operations (list, view, analyze)
+          - Skip write operations that fail
+          - Document skipped actions in summary
+          - Create follow-up issues for actions needing elevation
+          - Focus on assessment and recommendations
 
           ### Expected Output Format
 
