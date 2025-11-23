@@ -3,13 +3,16 @@ name: "Automation: Copilot PR Assignment"
 # This workflow assigns agents to address tech lead feedback on PRs
 # When a tech lead requests changes, this creates a feedback issue and assigns
 # the appropriate agent (via Copilot) to make the fixes
+#
+# STRATEGY: Schedule-primary for autonomous operation
+# - Scheduled runs avoid "awaiting approval" issues on fork PRs
+# - Runs every 15 minutes to sweep all PRs with tech-lead-changes-requested
+# - No event triggers needed - schedule is reliable and autonomous
 
 on:
-  pull_request:
-    types: [labeled]
-    # Trigger when tech-lead-changes-requested label added
   schedule:
     # Run every 15 minutes to sweep for PRs needing feedback issues
+    # This is the PRIMARY trigger - reliable and doesn't require approval
     - cron: '*/15 * * * *'
   workflow_dispatch:
     inputs:
@@ -17,10 +20,15 @@ on:
         description: 'PR number to create feedback issue for'
         required: false
         type: string
+  # NOTE: We deliberately do NOT use pull_request triggers because:
+  # - Fork PRs require workflow approval ("awaiting approval from maintainer")
+  # - This breaks autonomous operation
+  # - Schedule sweeps are sufficient (15 min latency is acceptable)
+  # - Manual dispatch available for immediate processing if needed
 
 # Prevent multiple concurrent runs
 concurrency:
-  group: copilot-pr-assignment-${{ github.event.pull_request.number || github.event.workflow_run.id || 'scheduled' }}
+  group: copilot-pr-assignment-${{ github.event.workflow_run.id || 'scheduled' }}
   cancel-in-progress: false
 
 permissions:
@@ -31,12 +39,9 @@ permissions:
 jobs:
   assign-agent-to-pr-feedback:
     runs-on: ubuntu-latest
-    # Only run if:
-    # - PR was just labeled with tech-lead-changes-requested, OR
-    # - Scheduled run, OR
-    # - Manual dispatch
+    # Only run on scheduled runs or manual dispatch
+    # No PR event triggers to avoid "awaiting approval" issues
     if: |
-      (github.event_name == 'pull_request' && github.event.label.name == 'tech-lead-changes-requested') ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
     
@@ -55,11 +60,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.pr_number }}" ]; then
+            # Manual dispatch with specific PR
             pr_numbers="${{ inputs.pr_number }}"
-          elif [ "${{ github.event_name }}" = "pull_request" ]; then
-            pr_numbers="${{ github.event.pull_request.number }}"
           else
             # Scheduled run - get all open PRs with tech-lead-changes-requested
+            # This is the primary mode of operation
             pr_numbers=$(gh pr list \
               --state open \
               --label "tech-lead-changes-requested" \

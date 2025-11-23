@@ -15,8 +15,10 @@ This document maps out the complete lifecycle of a Pull Request through tech lea
 |----------|------|---------|----------|
 | **Auto Review & Merge** | `auto-review-merge.yml` | Tech lead analysis, labeling, review handling, auto-merge | PR opened/sync, PR review submitted, scheduled (15min) |
 | **PR Auto Labeler** | `pr-auto-labeler.yml` | Content-based label analysis | PR opened/sync/reopened |
-| **Copilot PR Assignment** | `copilot-pr-assignment.yml` | **NEW** - Assign copilot to fix tech lead feedback | PR labeled, scheduled |
+| **Copilot PR Assignment** | `copilot-pr-assignment.yml` | **NEW** - Assign copilot to fix tech lead feedback | **Scheduled (15min) - PRIMARY**, manual dispatch |
 | **Copilot Issue Assignment** | `copilot-graphql-assign.yml` | Assign copilot to issues | Issue opened, scheduled (15min) |
+
+**Note on Triggers:** `copilot-pr-assignment.yml` uses schedule-only strategy to avoid "awaiting approval" issues on fork PRs.
 
 ### Labels
 
@@ -164,15 +166,24 @@ This document maps out the complete lifecycle of a Pull Request through tech lea
                           ↓
 ┌─────────────────────────────────────────────────────────────┐
 │ 🆕 NEW: copilot-pr-assignment.yml                          │
-│    Trigger: PR labeled (tech-lead-changes-requested)        │
+│    Trigger: Scheduled (every 15 minutes)                    │
 │                                                             │
-│    - Get PR number and review comments                      │
-│    - Run match-issue-to-agent.py on feedback                │
-│    - Create structured feedback issue                       │
-│    - Add agent directive with PR context                    │
-│    - Assign copilot via GraphQL API                        │
-│    - Add agent:X and tech-lead-feedback labels             │
-│    - Link issue to PR via comment                          │
+│    **Schedule-Primary Strategy:**                           │
+│    - Runs autonomously without approval requirements        │
+│    - Sweeps all PRs with tech-lead-changes-requested       │
+│    - Avoids "awaiting approval" issues on fork PRs         │
+│                                                             │
+│    Actions:                                                 │
+│    - Get all PRs with tech-lead-changes-requested label     │
+│    - For each PR:                                           │
+│      • Get review comments from tech lead                   │
+│      • Check if feedback issue already exists               │
+│      • Run match-issue-to-agent.py on feedback              │
+│      • Create structured feedback issue                     │
+│      • Add agent directive with PR context                  │
+│      • Assign copilot via GraphQL API                      │
+│      • Add agent:X and tech-lead-feedback labels           │
+│      • Link issue to PR via comment                        │
 └─────────────────────────────────────────────────────────────┘
                           ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -371,6 +382,67 @@ This document maps out the complete lifecycle of a Pull Request through tech lea
    - Easy to add new tech leads
    - Easy to add new agent types
    - Scalable to more review stages
+
+6. **Autonomous Operation**
+   - Schedule-primary strategy avoids approval gates
+   - Reliable execution on fork PRs
+   - 15-minute latency is acceptable trade-off
+   - Manual dispatch available for immediate processing
+
+## Schedule-Primary Strategy: Trade-offs
+
+### Why Not Event Triggers?
+
+**The Problem:**
+- Fork PRs require workflow approval: "This workflow is awaiting approval from a maintainer"
+- Security measure to prevent malicious workflow changes
+- Breaks autonomous operation - requires human intervention
+
+**Event-Based Trigger (NOT USED):**
+```yaml
+on:
+  pull_request:
+    types: [labeled]  # ❌ Requires approval on fork PRs
+```
+
+**Schedule-Based Trigger (OUR APPROACH):**
+```yaml
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # ✅ Runs autonomously without approval
+```
+
+### Latency vs Reliability
+
+| Approach | Latency | Reliability | Autonomous |
+|----------|---------|-------------|------------|
+| Event-triggered | Immediate | ❌ Breaks on forks | ❌ Requires approval |
+| Schedule-only | 15 minutes | ✅ Always works | ✅ Fully autonomous |
+| Hybrid (both) | Mixed | ⚠️ Partial | ⚠️ Sometimes |
+
+**Decision: Schedule-only** for consistent, autonomous operation.
+
+### Acceptable Latency?
+
+**15-minute latency is acceptable because:**
+1. Tech lead reviews are async (human-in-loop already)
+2. Agent work takes time anyway (reading, coding, testing)
+3. Total cycle time: Review → Assign → Fix → Re-review is hours/days
+4. 15-minute delay is negligible in this context
+5. Manual dispatch available for urgent cases
+
+**Timeline Example:**
+```
+10:00 AM - Tech lead reviews, requests changes
+10:00 AM - auto-review-merge adds tech-lead-changes-requested label
+10:15 AM - copilot-pr-assignment sweep creates feedback issue
+10:16 AM - Agent assigned and starts work
+10:45 AM - Agent completes fixes and pushes
+11:00 AM - Tech lead notified for re-review
+```
+
+Total added latency: **15 minutes** (vs immediate with events)  
+Total cycle time: **~1 hour** (same either way)
 
 ---
 
