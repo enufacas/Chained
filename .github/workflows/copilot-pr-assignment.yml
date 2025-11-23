@@ -1,12 +1,14 @@
 name: "Automation: Copilot PR Assignment"
 
-# This workflow assigns agents to address tech lead feedback on PRs
-# When a tech lead requests changes, this creates a feedback issue and assigns
-# the appropriate agent (via Copilot) to make the fixes
+# This workflow assigns agents to PRs that need tech lead attention
+# It handles two scenarios:
+# 1. When a tech lead requests changes - creates feedback issue for agent fixes
+# 2. When a PR is assigned to a tech lead - proactively assigns agent to help
 #
 # STRATEGY: Schedule-primary for autonomous operation
 # - Scheduled runs avoid "awaiting approval" issues on fork PRs
-# - Runs every 15 minutes to sweep all PRs with tech-lead-changes-requested
+# - Runs every 7 minutes to sweep all PRs with tech-lead labels
+# - Processes both tech-lead-changes-requested and tech-lead:* labels
 # - No event triggers needed - schedule is reliable and autonomous
 
 on:
@@ -63,13 +65,54 @@ jobs:
             # Manual dispatch with specific PR
             pr_numbers="${{ inputs.pr_number }}"
           else
-            # Scheduled run - get all open PRs with tech-lead-changes-requested
+            # Scheduled run - get all open PRs with tech-lead labels
+            # This includes both:
+            # 1. PRs with tech-lead-changes-requested (tech lead wants changes)
+            # 2. PRs with tech-lead:* labels (assigned to specific tech leads)
             # This is the primary mode of operation
-            pr_numbers=$(gh pr list \
+            
+            # Get PRs with tech-lead-changes-requested
+            prs_changes=$(gh pr list \
               --state open \
               --label "tech-lead-changes-requested" \
               --json number \
               --jq '.[].number' \
+              2>/dev/null | tr '\n' ' ')
+            
+            # Get PRs with any tech-lead:* identifier labels
+            prs_workflows=$(gh pr list \
+              --state open \
+              --label "tech-lead:workflows-tech-lead" \
+              --json number \
+              --jq '.[].number' \
+              2>/dev/null | tr '\n' ' ')
+            
+            prs_agents=$(gh pr list \
+              --state open \
+              --label "tech-lead:agents-tech-lead" \
+              --json number \
+              --jq '.[].number' \
+              2>/dev/null | tr '\n' ' ')
+            
+            prs_docs=$(gh pr list \
+              --state open \
+              --label "tech-lead:docs-tech-lead" \
+              --json number \
+              --jq '.[].number' \
+              2>/dev/null | tr '\n' ' ')
+            
+            prs_pages=$(gh pr list \
+              --state open \
+              --label "tech-lead:github-pages-tech-lead" \
+              --json number \
+              --jq '.[].number' \
+              2>/dev/null | tr '\n' ' ')
+            
+            # Combine and deduplicate PR numbers
+            pr_numbers=$(echo "${prs_changes} ${prs_workflows} ${prs_agents} ${prs_docs} ${prs_pages}" \
+              | tr ' ' '\n' \
+              | grep -v '^$' \
+              | sort -u \
               | tr '\n' ' ')
           fi
           
