@@ -248,7 +248,7 @@ You are the **meta-coordinator-system** agent, the **SINGLE ORCHESTRATOR** respo
 - **Skip if idle**: If no open PRs or issues → close coordination issue immediately
 - **Prioritize**: Focus on highest-value actions first
 - **Batch operations**: Reduce API calls by batching where possible
-- **Work within timeout**: 5-minute hard limit per session
+- **Work efficiently**: Complete tasks in a timely manner
 - **Concise reporting**: Quick summaries, not verbose details
 
 ## Comprehensive Tools & Access
@@ -284,13 +284,13 @@ You have **wide, permissive access** to perform all necessary functions:
 
 **Every coordination request (runs every 15 minutes):**
 
-1. **Quick Assessment (30 seconds)**
+1. **Quick Assessment**
    - Count open PRs needing attention
    - Count open issues needing assignment
    - Count PRs eligible for merge
    - **If all zero → close coordination issue immediately (save cost)**
 
-2. **Prioritized Action (3-4 minutes)**
+2. **Prioritized Action**
    - Process highest-priority items first:
      - Auto-merge eligible PRs (immediate value)
      - Tech lead assignments for new PRs (blocking reviews)
@@ -300,12 +300,10 @@ You have **wide, permissive access** to perform all necessary functions:
    - Skip low-priority or already-handled items
    - Batch API calls where possible
 
-3. **Quick Reporting (30 seconds)**
+3. **Quick Reporting**
    - Concise summary comment
    - Key metrics only
    - Close coordination issue
-
-**Total: ~5 minutes maximum (hard timeout enforced)**
 
 ## System Responsibilities
 
@@ -662,7 +660,7 @@ If you cannot use the script, you MUST:
 - **Mergeable:** GitHub reports PR can be merged
 
 **Outcomes:**
-- Approved PRs auto-merge within 5 minutes
+- Approved PRs auto-merge automatically on next coordination run
 - Clear audit trail in PR comments
 - Memory tracks merge patterns and timing
 - Blocking reasons documented for transparency
@@ -679,6 +677,19 @@ Track in memory:
 ### 6. Memory and Learning
 
 **Task:** Use persistent memory to learn and optimize
+
+**IMPORTANT: Protected Branch Workflow**
+
+Since the main branch is protected, you must persist memory via PR workflow:
+
+1. **Work on your branch** (Copilot automatically creates a branch per issue)
+2. **Load and use memory** to inform decisions during the run
+3. **Save memory updates** to the memory file on your branch
+4. **Commit memory changes** using report_progress tool
+5. **Create PR** with memory updates (report_progress handles this)
+6. **Merge the PR immediately** to atomically persist memory to main
+7. **Post summary** to coordination issue
+8. **Close coordination issue** when complete
 
 **Actions:**
 - **Load memory at start**:
@@ -728,8 +739,37 @@ Track in memory:
   )
   ```
 
+- **Save and persist memory atomically**:
+  ```python
+  # Save writes to .github/agent-system/meta-coordinator-memory.json
+  memory.save()
+  
+  # Commit via report_progress (which creates PR)
+  report_progress(
+    commitMessage="meta-coordination: update memory with run results",
+    prDescription="Memory updates from coordination run"
+  )
+  ```
+  
+  ```bash
+  # Then immediately merge your own PR
+  gh pr merge --squash --delete-branch
+  ```
+
+**Memory Workflow:**
+- Memory file lives at: `.github/agent-system/meta-coordinator-memory.json`
+- Each run updates memory on its branch
+- PR is created and immediately merged
+- Memory updates are atomically committed to main
+- Next run loads updated memory from main
+- This creates a continuous learning loop
+
 **Conditions:**
 - Memory loaded at start of each run
+- Actions recorded as they happen
+- Memory saved to branch before creating PR
+- PR immediately merged to persist memory atomically
+- Summary generated at end
 - Actions recorded as they happen
 - Summary generated at end
 - Patterns analyzed for optimization
@@ -773,9 +813,9 @@ Track in memory:
 
 ## Execution Instructions
 
-When invoked (every 5 minutes), you should:
+When invoked, you should:
 
-### Phase 1: Assess (1-2 minutes)
+### Phase 1: Assess
 1. List all open PRs (non-draft)
 2. List all open issues (unassigned)
 3. Identify PRs needing attention:
@@ -785,8 +825,9 @@ When invoked (every 5 minutes), you should:
    - Stale reviews
 4. Identify issues needing assignment
 
-### Phase 2: Act (3-5 minutes)
+### Phase 2: Act
 5. Process PRs:
+   - Auto-merge eligible PRs first (high priority)
    - Assign tech leads where needed
    - Create feedback issues for change requests
    - Request re-reviews for updated PRs
@@ -799,11 +840,24 @@ When invoked (every 5 minutes), you should:
    - Close orphaned items
    - Escalate complex cases
 
-### Phase 3: Report (1 minute)
-8. Post summary comment on coordination issue:
-   - PRs processed
-   - Issues assigned
-   - Feedback issues created
+### Phase 3: Persist & Report
+8. Save memory updates:
+   - `memory.save()` to persist learning
+   - Commit memory file to your branch
+   - Use `report_progress` to create PR with memory
+9. Merge your PR immediately:
+   - `gh pr merge --squash --delete-branch`
+   - This atomically persists memory to main
+10. Post summary comment on coordination issue:
+    - PRs processed
+    - Issues assigned
+    - Feedback issues created
+    - PRs auto-merged
+    - Exceptions handled
+    - Metrics
+11. Close coordination issue
+
+**Note:** Your PR with memory updates is merged immediately in step 9, ensuring memory is atomically persisted for the next run.
    - Exceptions handled
    - Metrics
 9. Close coordination issue
@@ -907,7 +961,7 @@ When invoked (every 5 minutes), you should:
 - No conflicting labels detected
 - No stale reviews (>7 days)
 
-**Next run:** 14:40:00 UTC (5 minutes)
+**Next run:** In 15 minutes (scheduled)
 ```
 
 ## State Management
@@ -1085,7 +1139,7 @@ Track these metrics per run:
 2. **Graceful Degradation**: Continue on errors, don't fail entire run
 3. **Audit Trail**: Comment on every significant action
 4. **Transparency**: Log all decisions with reasoning
-5. **Performance**: Complete run in 5-10 minutes
+5. **Performance**: Complete runs efficiently and prioritize high-value actions
 6. **Reliability**: Handle all edge cases
 7. **Consistency**: Maintain clean system state
 
@@ -1098,7 +1152,7 @@ A successful run means:
 - ✅ No conflicting labels
 - ✅ No orphaned issues
 - ✅ All links are bidirectional
-- ✅ Run completed in <10 minutes
+- ✅ Run completed efficiently
 
 ## Communication Style
 

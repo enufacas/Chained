@@ -8,6 +8,7 @@ name: "Meta-Coordinator: System Orchestration"
 # - Create feedback issues for change requests
 # - Assign agents to issues
 # - Manage review cycles
+# - Auto-merge approved PRs (non-draft, no WIP)
 # - Handle exceptions
 
 on:
@@ -142,7 +143,7 @@ jobs:
 
           ### Your Mission (@meta-coordinator-system)
 
-          As the **@meta-coordinator-system** agent, you are responsible for orchestrating the entire tech lead review and agent assignment system. You have **comprehensive access and tools** to manage system state.
+          As the **@meta-coordinator-system** agent, you are responsible for orchestrating the entire tech lead review, agent assignment, and **auto-merge** system. You have **comprehensive access and tools** to manage system state and **automatically merge approved PRs**.
 
           ### System State Assessment
 
@@ -281,7 +282,7 @@ jobs:
           - All required CI checks passed
 
           **Outcomes:**
-          - Approved PRs auto-merge within 5 minutes
+          - Approved PRs auto-merge automatically on next coordination run
           - Clear audit trail in comments
           - Blocking reasons documented
           - System moves PRs to completion autonomously
@@ -289,6 +290,19 @@ jobs:
           #### 6. Memory and Learning
 
           **Task:** Use persistent memory to learn and optimize
+
+          **IMPORTANT: Protected Branch Workflow**
+          
+          Since the main branch is protected, you must persist memory via PR workflow:
+          
+          1. **Work on your branch** (Copilot automatically creates a branch per issue)
+          2. **Load and use memory** to inform decisions during the run
+          3. **Save memory updates** to the memory file on your branch
+          4. **Commit memory changes** using report_progress tool
+          5. **Create PR** with memory updates (report_progress handles this)
+          6. **Merge the PR immediately** using auto-merge command
+          7. **Post summary** to coordination issue
+          8. **Close coordination issue** when complete
 
           **Actions to take:**
           - Load memory at start:
@@ -311,13 +325,36 @@ jobs:
             memory.record_exception(type, desc, context)
             memory.add_learning(insight, evidence)
             ```
-          - Save memory at end of run
+          - **Save memory to your branch**:
+            ```python
+            memory.save()  # Writes to .github/agent-system/meta-coordinator-memory.json
+            ```
+          - **Commit, create PR, and merge**:
+            ```bash
+            # Use report_progress to commit and create PR
+            report_progress(
+              commitMessage="meta-coordination: update memory with run results",
+              prDescription="Memory updates from coordination run"
+            )
+            
+            # Then immediately merge your own PR
+            gh pr merge --squash --delete-branch
+            ```
+
+          **Memory Workflow:**
+          - Memory file lives at: `.github/agent-system/meta-coordinator-memory.json`
+          - Each run updates memory on its branch
+          - PR is created and immediately merged
+          - Memory updates are atomically committed to main
+          - Next run loads updated memory from main
+          - This creates a continuous learning loop
 
           **Outcomes:**
           - Decisions informed by historical patterns
-          - Continuous learning and improvement
-          - Complete audit trail
-          - Data-driven orchestration
+          - Continuous learning and improvement via atomic PR merges
+          - Complete audit trail in version control
+          - Data-driven orchestration with safe persistence
+          - No accumulation of open memory PRs
 
           #### 7. Exception Handling
 
@@ -346,11 +383,23 @@ jobs:
 
           ### Execution Instructions
 
-          1. **Assess**: Analyze current state across all 7 areas (1-2 min)
-          2. **Prioritize**: Identify most critical actions needed
-          3. **Execute**: Take actions using available tools (3-5 min)
-          4. **Report**: Post summary comment on this issue (1 min)
-          5. **Close**: Close this coordination issue when complete
+          1. **Assess**: Analyze current state across all 7 areas
+          2. **Prioritize**: Identify most critical actions needed (auto-merge eligible PRs should be high priority)
+          3. **Execute**: Take actions using available tools
+             - Auto-merge approved PRs without WIP or draft status
+             - Assign tech leads to new PRs
+             - Create feedback issues for change requests
+             - Assign agents to open issues
+          4. **Persist Memory**: Save memory updates and commit to your branch
+             - `memory.save()` writes to `.github/agent-system/meta-coordinator-memory.json`
+             - Use `report_progress` to commit memory and create PR
+          5. **Merge Your PR**: Immediately merge your memory PR
+             - `gh pr merge --squash --delete-branch`
+             - This atomically commits memory updates to main
+          6. **Report**: Post summary comment on this coordination issue
+          7. **Close**: Close this coordination issue when complete
+          
+          **Note:** Your PR with memory updates is merged immediately as the final step, ensuring memory is atomically persisted for the next run.
 
           ### Focus Area
 
@@ -433,19 +482,17 @@ jobs:
           - **System Health**: Overall status
           - **Next Run**: When next coordination will occur
 
-          ### Time Limit & Cost Efficiency
-
-          **Timeout:** 5 minutes maximum (hard limit enforced)
+          ### Cost Efficiency
 
           **Cost efficiency guidelines:**
           - Quick assessment first: Is there work to do?
           - If nothing to do → close issue immediately, skip work
           - Focus on highest priority items first
           - Batch API calls where possible
-          - Work efficiently within timeout budget
+          - Work efficiently and prioritize high-value actions
           - Concise reporting (not verbose)
 
-          Complete within **5 minutes**. Focus on progress, not perfection. Next run is in 15 minutes.
+          Focus on progress, not perfection. Next run is in 15 minutes.
 
           ---
 
@@ -554,7 +601,7 @@ jobs:
           echo "3. Report results"
           echo "4. Close this issue"
           echo ""
-          echo "Expected completion: 5-10 minutes"
+          echo "Copilot will complete this coordination autonomously"
       
       - name: Summary
         if: always()
