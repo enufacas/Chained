@@ -305,31 +305,9 @@ jobs:
             gh pr edit ${pr_num} --add-label "tech-lead-changes-requested" --repo ${{ github.repository }} || true
             gh pr edit ${pr_num} --add-label "needs-tech-lead-review" --repo ${{ github.repository }} || true
             
-            # Store review body for potential agent follow-up
-            review_body=$(gh api /repos/${{ github.repository }}/pulls/${pr_num}/reviews \
-              --jq '.[] | select(.state == "CHANGES_REQUESTED") | .body' | tail -1)
-            
-            # Create follow-up issue for agent to fix (if review has actionable feedback)
-            if [ -n "$review_body" ] && [ "$review_body" != "null" ]; then
-              echo "Creating follow-up issue for agent..."
-              
-              # Match feedback to appropriate agent
-              agent_match=$(python3 tools/match-issue-to-agent.py \
-                "Fix tech lead feedback for PR #${pr_num}" \
-                "${review_body}" \
-                2>/dev/null || echo '{"agent":"create-guru","emoji":"🏗️"}')
-              
-              matched_agent=$(echo "$agent_match" | jq -r '.agent')
-              agent_emoji=$(echo "$agent_match" | jq -r '.emoji')
-              
-              # Create follow-up issue with heredoc
-              gh issue create \
-                --repo ${{ github.repository }} \
-                --title "[Tech Lead Feedback] Address review comments for PR #${pr_num}" \
-                --body "**Agent:** @${matched_agent} | **Feedback:** See PR #${pr_num} review comments | **Action:** Address tech lead feedback and push changes" \
-                --label "tech-lead-feedback,agent:${matched_agent},linked-to-pr" \
-                --assignee copilot || echo "Could not create follow-up issue"
-            fi
+            # NOTE: Feedback issue creation is now handled by copilot-pr-assignment.yml
+            # This workflow will be triggered automatically when tech-lead-changes-requested label is added
+            echo "ℹ️  Feedback issue will be created by copilot-pr-assignment workflow"
             
             gh pr comment ${pr_num} --body "🔄 **Tech Lead Requested Changes**
             
@@ -340,12 +318,20 @@ jobs:
             - ✅ Maintained \`needs-tech-lead-review\` label
             
             **Next Steps:**
-            1. Address the feedback comments
-            2. Push changes to the PR branch
-            3. Request re-review from the Tech Lead
+            1. Agent will be automatically assigned to address the feedback
+            2. A feedback issue will be created and linked to this PR
+            3. Agent will push fixes to this PR branch
+            4. Tech Lead will be notified for re-review
+            
+            **Automated Assignment:**
+            The \`copilot-pr-assignment\` workflow will:
+            - Create a feedback issue with the review comments
+            - Match and assign the appropriate agent
+            - Link the issue to this PR for tracking
             
             ---
-            *Tech Lead review cycle managed by @workflows-tech-lead*" --repo ${{ github.repository }} || true
+            *Tech Lead review cycle managed by @workflows-tech-lead*
+            *Agent assignment handled by copilot-pr-assignment workflow*" --repo ${{ github.repository }} || true
           fi
 
   # Stage 3: Auto-merge (runs after processing)

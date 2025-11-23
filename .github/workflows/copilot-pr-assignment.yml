@@ -1,0 +1,299 @@
+name: "Automation: Copilot PR Assignment"
+
+# This workflow assigns agents to address tech lead feedback on PRs
+# When a tech lead requests changes, this creates a feedback issue and assigns
+# the appropriate agent (via Copilot) to make the fixes
+#
+# STRATEGY: Schedule-primary for autonomous operation
+# - Scheduled runs avoid "awaiting approval" issues on fork PRs
+# - Runs every 15 minutes to sweep all PRs with tech-lead-changes-requested
+# - No event triggers needed - schedule is reliable and autonomous
+
+on:
+  schedule:
+    # Run every 7 minutes to sweep for PRs needing feedback issues
+    # This is the PRIMARY trigger - reliable and doesn't require approval
+    - cron: '*/7 * * * *'
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to create feedback issue for'
+        required: false
+        type: string
+  # NOTE: We deliberately do NOT use pull_request triggers because:
+  # - Fork PRs require workflow approval ("awaiting approval from maintainer")
+  # - This breaks autonomous operation
+  # - Schedule sweeps are sufficient (15 min latency is acceptable)
+  # - Manual dispatch available for immediate processing if needed
+
+# Prevent multiple concurrent runs
+concurrency:
+  group: copilot-pr-assignment-${{ github.event.workflow_run.id || 'scheduled' }}
+  cancel-in-progress: false
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  assign-agent-to-pr-feedback:
+    runs-on: ubuntu-latest
+    # Only run on scheduled runs or manual dispatch
+    # No PR event triggers to avoid "awaiting approval" issues
+    if: |
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Get PRs to process
+        id: get_prs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.pr_number }}" ]; then
+            # Manual dispatch with specific PR
+            pr_numbers="${{ inputs.pr_number }}"
+          else
+            # Scheduled run - get all open PRs with tech-lead-changes-requested
+            # This is the primary mode of operation
+            pr_numbers=$(gh pr list \
+              --state open \
+              --label "tech-lead-changes-requested" \
+              --json number \
+              --jq '.[].number' \
+              | tr '\n' ' ')
+          fi
+          
+          echo "pr_numbers=${pr_numbers}" >> $GITHUB_OUTPUT
+          echo "Found PRs to process: ${pr_numbers}"
+      
+      - name: Process each PR
+        if: steps.get_prs.outputs.pr_numbers != ''
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          pr_numbers="${{ steps.get_prs.outputs.pr_numbers }}"
+          
+          for pr_num in ${pr_numbers}; do
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Processing PR #${pr_num}"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            
+            # Get PR data
+            pr_data=$(gh pr view ${pr_num} --json number,title,body,author,labels,state,isDraft)
+            pr_state=$(echo "${pr_data}" | jq -r '.state')
+            is_draft=$(echo "${pr_data}" | jq -r '.isDraft')
+            pr_title=$(echo "${pr_data}" | jq -r '.title')
+            pr_author=$(echo "${pr_data}" | jq -r '.author.login')
+            
+            # Skip if PR is closed or draft
+            if [ "${pr_state}" != "OPEN" ] || [ "${is_draft}" = "true" ]; then
+              echo "⏭️  Skipping PR #${pr_num} (state: ${pr_state}, draft: ${is_draft})"
+              continue
+            fi
+            
+            # Check if feedback issue already exists
+            # Look for issues with tech-lead-feedback label and PR # in title
+            existing_issue=$(gh issue list \
+              --label "tech-lead-feedback" \
+              --state open \
+              --search "PR #${pr_num} in:title" \
+              --json number,title \
+              --jq ".[0].number" 2>/dev/null || echo "")
+            
+            if [ -n "${existing_issue}" ]; then
+              echo "✓ Feedback issue already exists: #${existing_issue}"
+              echo "  Skipping creation to avoid duplicates"
+              continue
+            fi
+            
+            # Get the most recent review that requested changes
+            echo "🔍 Fetching latest review comments..."
+            review_data=$(gh api "/repos/${{ github.repository }}/pulls/${pr_num}/reviews" \
+              --jq '.[] | select(.state == "CHANGES_REQUESTED") | {user: .user.login, body: .body, submitted_at: .submitted_at}' \
+              | jq -s 'sort_by(.submitted_at) | reverse | .[0]' 2>/dev/null || echo "{}")
+            
+            if [ "${review_data}" = "{}" ] || [ "${review_data}" = "null" ]; then
+              echo "⚠️  No change request review found for PR #${pr_num}"
+              echo "  Tech lead may have requested changes via comments only"
+              
+              # Fall back to getting PR review comments
+              review_body=$(gh api "/repos/${{ github.repository }}/pulls/${pr_num}/comments" \
+                --jq '[.[] | .body] | join("\n\n")' 2>/dev/null || echo "")
+              reviewer="tech-lead"
+            else
+              review_body=$(echo "${review_data}" | jq -r '.body // ""')
+              reviewer=$(echo "${review_data}" | jq -r '.user // "tech-lead"')
+            fi
+            
+            # If still no feedback, skip
+            if [ -z "${review_body}" ] || [ "${review_body}" = "null" ]; then
+              echo "⚠️  No review feedback found for PR #${pr_num}"
+              continue
+            fi
+            
+            echo "✓ Found review feedback from ${reviewer}"
+            echo "  Preview: $(echo "${review_body}" | head -c 100)..."
+            
+            # Match feedback to appropriate agent
+            echo "🧠 Matching feedback to agent..."
+            agent_match=$(python3 tools/match-issue-to-agent.py \
+              "Fix tech lead feedback for PR #${pr_num}: ${pr_title}" \
+              "${review_body}" \
+              2>/dev/null || echo '{"agent":"create-guru","score":0,"confidence":"low","emoji":"🏗️","description":"Infrastructure and feature development"}')
+            
+            matched_agent=$(echo "$agent_match" | jq -r '.agent')
+            agent_score=$(echo "$agent_match" | jq -r '.score')
+            agent_confidence=$(echo "$agent_match" | jq -r '.confidence')
+            agent_emoji=$(echo "$agent_match" | jq -r '.emoji')
+            agent_description=$(echo "$agent_match" | jq -r '.description')
+            
+            echo "✅ Matched to agent: ${agent_emoji} @${matched_agent}"
+            echo "   Score: ${agent_score} | Confidence: ${agent_confidence}"
+            
+            # Create feedback issue
+            echo "📝 Creating feedback issue..."
+            
+            # Build issue title
+            issue_title="[Tech Lead Feedback] PR #${pr_num} - ${pr_title}"
+            
+            # Build issue body with agent directive
+            issue_body="<!-- COPILOT_AGENT:${matched_agent} -->
+
+> **🤖 Agent Assignment**
+> 
+> This issue has been assigned to GitHub Copilot with the **${agent_emoji} @${matched_agent}** custom agent profile.
+> 
+> **@${matched_agent}** - Please use the specialized approach defined in [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md).
+> 
+> **IMPORTANT**: Always mention **@${matched_agent}** by name in all conversations, comments, and PRs related to this issue.
+
+---
+
+## 🔄 Tech Lead Feedback for PR #${pr_num}
+
+**Original PR:** #${pr_num} - ${pr_title}  
+**Author:** @${pr_author}  
+**Reviewer:** @${reviewer}  
+**Status:** Changes requested
+
+### 📋 Review Comments
+
+${review_body}
+
+---
+
+## 🎯 Your Task (@${matched_agent})
+
+1. **Review the PR:** Check out PR #${pr_num} and understand the changes
+2. **Review tech lead feedback:** Read and understand all requested changes above
+3. **Make the fixes:**
+   - Check out the PR branch
+   - Address each point in the review comments
+   - Follow the ${matched_agent} specialization approach
+   - Test your changes
+4. **Push updates:** Push your fixes to the PR branch
+5. **Update status:**
+   - Remove any [WIP] markers from PR title
+   - Comment on this issue with what you fixed
+   - Close this issue once complete
+6. **Request re-review:** The tech lead will automatically be notified
+
+### 🔗 Quick Links
+
+- **PR to fix:** [#${pr_num}](https://github.com/${{ github.repository }}/pull/${pr_num})
+- **PR files:** [View changes](https://github.com/${{ github.repository }}/pull/${pr_num}/files)
+- **Tech lead review:** [View review](https://github.com/${{ github.repository }}/pull/${pr_num}#pullrequestreview)
+- **Agent profile:** [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md)
+
+---
+
+*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+*Managed by @workflows-tech-lead*"
+            
+            # Create the issue
+            echo "Creating issue with title: ${issue_title}"
+            
+            issue_number=$(gh issue create \
+              --repo ${{ github.repository }} \
+              --title "${issue_title}" \
+              --body "${issue_body}" \
+              --label "tech-lead-feedback,agent:${matched_agent},linked-to-pr" \
+              --assignee copilot \
+              2>&1 | grep -oP '#\K\d+' | head -1 || echo "")
+            
+            if [ -n "${issue_number}" ]; then
+              echo "✅ Created feedback issue #${issue_number}"
+              
+              # Add agent:X label to PR for tracking
+              gh pr edit ${pr_num} --add-label "agent:${matched_agent}" --repo ${{ github.repository }} 2>/dev/null || true
+              
+              # Comment on PR linking to feedback issue
+              gh pr comment ${pr_num} --body "## 🔄 Agent Assigned to Address Feedback
+
+**@${matched_agent}** has been assigned to address the tech lead feedback.
+
+**Feedback Issue:** #${issue_number}  
+**Agent:** ${agent_emoji} @${matched_agent}  
+**Specialization:** ${agent_description}
+
+### What happens next:
+
+1. ✅ **@${matched_agent}** will review the tech lead feedback
+2. 💻 **@${matched_agent}** will make the requested changes
+3. 🔄 **@${matched_agent}** will push updates to this PR
+4. 📝 **@${matched_agent}** will update issue #${issue_number} when complete
+5. 🔍 Tech lead will be notified for re-review
+
+**Timeline:** Agent typically starts work within a few minutes
+
+---
+*🤖 Automated agent assignment - @${matched_agent} will handle this*
+*Created feedback issue #${issue_number}*" --repo ${{ github.repository }} || true
+              
+              echo "✅ Linked issue #${issue_number} to PR #${pr_num}"
+              
+            else
+              echo "❌ Failed to create feedback issue for PR #${pr_num}"
+              
+              # Comment on PR about the failure
+              gh pr comment ${pr_num} --body "⚠️ **Failed to Create Feedback Issue**
+
+The automated system attempted to create a feedback issue for the tech lead's requested changes, but the issue creation failed.
+
+**Workaround:**
+- The tech lead feedback is visible in the PR review comments
+- You can manually address the feedback by pushing changes to this PR
+- Or create a manual issue to track the work
+
+**Matched Agent:** ${agent_emoji} @${matched_agent}  
+**Agent Specialization:** ${agent_description}
+
+Please address the review feedback and push changes to this PR branch.
+
+---
+*🤖 Automated system - issue creation failed*" --repo ${{ github.repository }} || true
+            fi
+            
+          done
+          
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ PR feedback assignment complete"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      
+      - name: No PRs to process
+        if: steps.get_prs.outputs.pr_numbers == ''
+        run: |
+          echo "ℹ️ No PRs with tech-lead-changes-requested label found"
+          echo "Nothing to do"
