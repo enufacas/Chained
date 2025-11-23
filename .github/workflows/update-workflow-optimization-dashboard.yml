@@ -1,0 +1,123 @@
+name: "Update Workflow Optimization Dashboard"
+
+# Updates the workflow optimization dashboard with latest meta-learning data
+# Created by @create-guru for continuous dashboard updates
+
+on:
+  # Run after meta-learning optimization completes
+  workflow_run:
+    workflows: ["Meta-Learning Workflow Optimizer"]
+    types:
+      - completed
+  
+  # Run daily to ensure dashboard stays current
+  schedule:
+    - cron: '0 12 * * *'  # Daily at noon UTC
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  update-dashboard:
+    name: Update Optimization Dashboard
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Check for pyyaml for workflow parsing
+          pip list | grep -q PyYAML || pip install pyyaml || echo "PyYAML optional, skipping"
+      
+      - name: Generate dashboard data
+        run: |
+          echo "📊 Generating workflow optimization dashboard..."
+          
+          # Generate all dashboard outputs
+          python3 tools/workflow_schedule_dashboard.py --all
+          
+          echo "✅ Dashboard generation complete"
+      
+      - name: Check for changes
+        id: changes
+        run: |
+          git add docs/workflow-optimization.html docs/data/workflow-optimization.json
+          
+          if git diff --staged --quiet; then
+            echo "No dashboard changes"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Dashboard has been updated"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit dashboard updates
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Create unique branch
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="dashboard-update/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git commit -m "docs: update workflow optimization dashboard (@create-guru)
+
+Dashboard updated with latest meta-learning data:
+- HTML visualization refreshed
+- JSON data updated
+- Schedule recommendations updated
+
+Automated by workflow optimization dashboard updater"
+          
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR
+          gh pr create \
+            --title "📊 Update Workflow Optimization Dashboard - $(date +%Y-%m-%d)" \
+            --body "## 📊 Dashboard Update"$'\n\n'"**@create-guru** has updated the workflow optimization dashboard with latest meta-learning data."$'\n\n'"### What Changed"$'\n'"- HTML visualization refreshed"$'\n'"- JSON data file updated"$'\n'"- Schedule recommendations updated"$'\n\n'"### View Dashboard"$'\n'"Visit [workflow-optimization.html](https://enufacas.github.io/Chained/workflow-optimization.html) to see the latest optimization metrics."$'\n\n'"---"$'\n'"*🤖 Created by workflow: [Update Workflow Optimization Dashboard](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+            --label "automated,documentation,dashboard" \
+            --base main \
+            --head "$BRANCH_NAME"
+          
+          echo "✅ Dashboard update PR created"
+      
+      - name: Create summary
+        if: always()
+        run: |
+          echo "## 📊 Dashboard Update Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.changes.outputs.has_changes }}" == "true" ]; then
+            echo "✅ Dashboard updated with latest data" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "View at: [workflow-optimization.html](https://enufacas.github.io/Chained/workflow-optimization.html)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️  No changes detected - dashboard is current" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*🎨 Dashboard maintained by **@create-guru***" >> $GITHUB_STEP_SUMMARY
+
+# Workflow metadata
+# @create-guru: Automated dashboard updates for workflow optimization
+# Created: 2025-11-23
+# Purpose: Keep dashboard current with latest meta-learning insights
