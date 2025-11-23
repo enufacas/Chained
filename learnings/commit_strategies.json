@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-23T16:15:43.289924+00:00",
+  "last_updated": "2025-11-23T16:22:27.574051+00:00",
   "repository": "tmpn5gt3bt3",
   "total_commits_analyzed": 2,
   "successful_merges": 0,
@@ -26,6 +26,29 @@
       "confidence_score": 0.9
     }
   ],
-  "recommendations": [],
+  "recommendations": [
+    {
+      "recommendation_id": "rec_conventional_commits_feature",
+      "title": "Use Conventional Commit Format",
+      "description": "Follow the conventional commit format: type(scope): description. This pattern shows 85.0% success rate.",
+      "rationale": "Analysis of 50 successful commits shows that conventional commit format correlates with faster merges and fewer issues.",
+      "expected_improvement": "85.0% success rate",
+      "confidence_score": 0.9,
+      "applicable_contexts": [
+        "general",
+        "feature",
+        "bugfix",
+        "refactor",
+        "docs"
+      ],
+      "supporting_patterns": [
+        "conventional_commits"
+      ],
+      "example_commits": [
+        "abc123",
+        "def456"
+      ]
+    }
+  ],
   "learning_history": []
 }
