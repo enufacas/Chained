@@ -14,6 +14,12 @@ This directory contains data from multiple self-improving analyzers that learn f
 - **patterns.json**: The learning database that tracks good and bad code patterns discovered over time
 - **merge_*.json**: Individual analysis reports for each merge, containing detailed metrics and findings
 
+### Universal Truths 🌌 (NEW)
+- **universal_truths_insights.json**: Discovered fundamental principles governing the AI ecosystem
+- **universal_truths_investigation_*.md**: Deep analysis reports by @investigate-champion
+- **universal_truths_action_items.md**: Actionable recommendations derived from truths
+- **universal_truths_quickref.md**: Quick reference guide with key metrics and insights
+
 ## How It Works
 
 ### Code Archaeology with Active Learning
@@ -166,6 +172,56 @@ cat analysis/archaeology-patterns.json | jq '.patterns.success[:5]'
 cat analysis/archaeology-patterns.json | jq '.recommendations'
 ```
 
+## Universal Truths System
+
+### What Are Universal Truths?
+
+The Universal Truth Evaluator discovers fundamental principles that govern the autonomous AI ecosystem by analyzing:
+- Agent behavior patterns from world state
+- Learning accumulation rates
+- Collaboration dynamics
+- System-wide patterns and archaeology
+
+Each truth is validated through empirical evidence and repeated observation.
+
+### Current Truths (8 Discovered)
+
+**High Confidence (>0.8)**:
+1. **Specialization Diversity (0.90)**: 23 specializations across 43 agents (ratio: 0.53)
+2. **Performance Distribution (0.85)**: 55.8% high performers, natural bell curve
+3. **Learning Velocity (0.85)**: Consistent 48 learnings/week
+
+**Medium-High Confidence (0.7-0.8)**:
+4. **Knowledge Interconnectedness (0.80)**: 4.0 connections per insight
+5. **Agent Status Equilibrium (0.70)**: 100% exploring status
+6. **Action Patterns (0.70)**: 8 persistent patterns
+7. **Archaeology Patterns (0.70)**: 8 distinct patterns
+8. **Emergent Creativity (0.70)**: Novel combinations emerging
+
+### Key Insights
+
+- **System Maturity**: All truths are stable with 2-19 evidence points
+- **Interconnection**: 7 of 8 truths are interconnected (network density: medium)
+- **Self-Organization**: System demonstrates sophisticated emergent behavior
+- **Core Properties**: Diversity (0.53 ratio) and learning (48/week) are fundamental
+
+### Investigation Reports
+
+**@investigate-champion** has conducted deep analysis:
+- **Full Report**: `universal_truths_investigation_2025-11-23.md` (394 lines)
+- **Action Items**: `universal_truths_action_items.md` (8 prioritized recommendations)
+- **Quick Reference**: `universal_truths_quickref.md` (summary with metrics)
+
+### Actionable Recommendations
+
+1. **Protect Diversity**: Monitor 0.45-0.65 ratio, alert on violations
+2. **Create Dashboard**: Real-time metrics for all 8 truths
+3. **Optimize Assignment**: Match agents to issues by performance tier
+4. **Document Patterns**: Analyze and document the 8 action patterns
+5. **Enhance Knowledge**: Maintain 4.0+ connections per insight
+
+See `universal_truths_action_items.md` for full details.
+
 ## Automation
 
 GitHub Actions workflows automatically:
@@ -174,5 +230,8 @@ GitHub Actions workflows automatically:
 - Create issues with findings
 - Commit updated databases
 - Track prediction accuracy
+- **Discover universal truths daily** (6 AM UTC)
+- Generate truth insights and recommendations
+- Create discovery issues with findings
 
-See `.github/workflows/code-archaeologist.yml` for details.
+See `.github/workflows/code-archaeologist.yml` and `.github/workflows/discover-universal-truths.yml` for details.
