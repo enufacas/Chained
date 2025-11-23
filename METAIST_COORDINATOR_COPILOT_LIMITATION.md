@@ -187,16 +187,19 @@ jobs:
       # Each step has GH_TOKEN and executes directly
       
       - name: 1. PR Review Orchestration
+        id: orchestrate_prs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash .github/scripts/orchestrate-pr-reviews.sh
       
       - name: 2. Feedback Issue Creation
+        id: create_feedback
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash .github/scripts/create-feedback-issues.sh
       
       - name: 3. Agent Assignment
+        id: assign_agents
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -204,11 +207,13 @@ jobs:
         run: bash tools/assign-copilot-to-issue.sh
       
       - name: 4. Review Cycle Management
+        id: manage_reviews
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash .github/scripts/manage-review-cycles.sh
       
       - name: 5. Auto-Merge Execution
+        id: auto_merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash .github/scripts/auto-merge-eligible-prs.sh
@@ -223,6 +228,7 @@ jobs:
             --issues-assigned "${ISSUES_ASSIGNED}"
       
       - name: 7. Exception Handling
+        id: handle_exceptions
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash .github/scripts/handle-exceptions.sh
