@@ -526,6 +526,24 @@ AGENT_PATTERNS = {
             r'\bcollab', r'\bdecomposit', r'\bagent', r'\bdelegate\b'
         ]
     },
+    'meta-coordinator-system': {
+        'keywords': [
+            'meta-coordination', 'system orchestration', 'tech lead', 'tech-lead-review',
+            'agent assignment', 'pr review', 'feedback issue', 'review cycle',
+            'auto-merge', 'coordination request', 'system state', 'orchestrate',
+            'meta coordination', 'system-orchestration', 'tech lead review',
+            'agent-assignment', 'pr-review', 'feedback-issue', 'review-cycle',
+            'auto-merge-execution', 'coordination-request', 'system-state-assessment',
+            'pr orchestration', 'issue assignment', 'review management'
+        ],
+        'patterns': [
+            r'\bmeta[- ]coordinat', r'\bsystem\s*orchestrat', r'\btech\s*lead',
+            r'\bagent\s*assignment', r'\bpr\s*review', r'\bfeedback\s*issue',
+            r'\breview\s*cycle', r'\bauto[- ]merge', r'\bcoordination\s*request',
+            r'\bsystem\s*state', r'\borchestrat', r'\bpr\s*orchestrat',
+            r'\bissue\s*assignment', r'\breview\s*management'
+        ]
+    },
     'monitor-champion': {
         'keywords': [
             'security', 'monitor', 'surveillance', 'access control',
