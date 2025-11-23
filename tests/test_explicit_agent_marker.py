@@ -25,12 +25,15 @@ def run_marker_extraction_test(issue_body: str, expected_agent: str = None):
         Tuple of (success: bool, actual_agent: str or None)
     """
     # Use the same regex pattern as in the shell script
+    # Get repo root dynamically
+    repo_root = Path(__file__).parent.parent
+    
     result = subprocess.run(
         ['bash', '-c', 'echo "$1" | grep -oP \'<!-- COPILOT_AGENT:\\K[a-zA-Z0-9_-]+\' | head -1', 
          'bash', issue_body],
         capture_output=True,
         text=True,
-        cwd='/home/runner/work/Chained/Chained'
+        cwd=str(repo_root)
     )
     
     actual_agent = result.stdout.strip() if result.returncode == 0 and result.stdout.strip() else None
@@ -153,7 +156,9 @@ def test_agent_file_exists():
     print("\n🧪 Test 6: Agent definition file exists")
     print("-" * 60)
     
-    agent_file = Path("/home/runner/work/Chained/Chained/.github/agents/meta-coordinator-system.md")
+    # Get repo root dynamically
+    repo_root = Path(__file__).parent.parent
+    agent_file = repo_root / ".github" / "agents" / "meta-coordinator-system.md"
     
     if agent_file.exists():
         print(f"✅ PASSED: Agent file exists: {agent_file}")
