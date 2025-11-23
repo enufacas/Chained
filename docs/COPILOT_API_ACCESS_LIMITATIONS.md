@@ -450,9 +450,80 @@ If you believe API access should be available:
    - Update documentation as restrictions change
    - Share findings with community
 
-## Alternative Solution: Self-Hosted Runners with Firewall Disabled
+## Alternative Solutions for Full API Access
 
-### Overview
+### Solution 1: Custom Firewall Allowlist (RECOMMENDED)
+
+**The best solution:** Add `api.github.com` to the Copilot agent's custom firewall allowlist on GitHub-hosted runners.
+
+#### How It Works
+
+According to [GitHub's firewall documentation](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-firewall#allowlisting-additional-hosts-in-the-agents-firewall), you can configure a **custom allowlist** of specific hosts that the Copilot agent can access.
+
+**Configuration Steps:**
+1. Navigate to **Repository Settings** → **Copilot** → **coding agent**
+2. Click **Custom allowlist**
+3. Add the following domains:
+   - `api.github.com` (REQUIRED for gh CLI)
+   - `uploads.github.com` (optional, for file uploads)
+   - `user-images.githubusercontent.com` (optional, for images)
+4. Click **Add Rule**
+5. Click **Save changes**
+
+**Allowlist Format Options:**
+- **Domain**: `api.github.com` → allows api.github.com and all subdomains
+- **URL**: `https://api.github.com/repos/` → allows only specific paths
+
+#### Benefits
+
+✅ **Full API Access on GitHub-Hosted Runners**
+- All `gh` CLI commands work
+- Can create issues, merge PRs, add labels, post comments
+- @meta-coordinator-system can execute all operations directly
+- No hybrid pattern or self-hosted runners needed
+
+✅ **Zero Infrastructure Overhead**
+- Use standard GitHub-hosted runners (ubuntu-latest)
+- No ARC deployment required
+- No maintenance burden
+
+✅ **Simple Architecture**
+- Agent works as originally designed
+- Direct execution (no action plan intermediary)
+- Clean, straightforward code
+
+✅ **Scoped Security**
+- Specific domains allowlisted (not fully open firewall)
+- Uses authenticated COPILOT_PAT token
+- Better than disabling firewall entirely
+
+#### Security Considerations
+
+**Allowlisting api.github.com:**
+- ✅ Legitimate use case (authorized API operations)
+- ✅ Scoped to specific domain (not wildcard)
+- ✅ Protected by authentication (COPILOT_PAT)
+- ⚠️ Slightly increased attack surface if agent code compromised
+- ⚠️ Requires trusting Copilot agent code
+
+**Risk Assessment:**
+- **Low to Medium risk** for repositories with trusted agent code
+- **Acceptable** for most use cases with proper token management
+- **Recommended** when infrastructure overhead of self-hosted runners is undesirable
+
+#### Testing After Configuration
+
+```bash
+# After adding api.github.com to allowlist
+export GH_TOKEN="$COPILOT_PAT"
+
+# These should now work:
+gh api /user
+gh pr list
+gh issue create --title "Test" --body "Testing API access"
+```
+
+### Solution 2: Self-Hosted Runners with Firewall Disabled
 
 According to [GitHub's documentation](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment#repository-firewall-requirements), there is a **repository firewall** that can be **disabled for self-hosted runners**, which would provide full API access.
 
@@ -540,31 +611,43 @@ To enable full `gh` CLI and API access in Copilot environment:
 - Management and maintenance effort
 - Monitoring and security tooling
 
-### Comparison: GitHub-Hosted vs. Self-Hosted
+### Comparison: All Available Solutions
 
-| Aspect | GitHub-Hosted Runners | Self-Hosted Runners (Firewall Disabled) |
-|--------|----------------------|------------------------------------------|
-| **API Access** | ❌ Blocked (DNS proxy) | ✅ Full access |
-| **Setup Complexity** | ✅ None (provided by GitHub) | ❌ High (ARC + infrastructure) |
-| **Maintenance** | ✅ None | ❌ Ongoing |
-| **Cost** | ✅ Included in GitHub | ❌ Infrastructure costs |
-| **Security Isolation** | ✅ High | ⚠️ Reduced (requires controls) |
-| **Agent Capabilities** | ⚠️ Read-only (MCP tools) | ✅ Full orchestration |
-| **Architecture** | ⚠️ Hybrid pattern needed | ✅ Direct execution |
+| Aspect | Custom Allowlist | Self-Hosted + Disabled FW | Hybrid Pattern |
+|--------|------------------|---------------------------|----------------|
+| **API Access** | ✅ Full (allowlisted) | ✅ Full (unrestricted) | ⚠️ Read-only (MCP) + Write (workflow) |
+| **Setup Complexity** | ✅ Very Low (UI config) | ❌ High (ARC + infra) | ⚠️ Medium (pattern impl) |
+| **Infrastructure** | ✅ None (GitHub-hosted) | ❌ Self-hosted required | ✅ None (GitHub-hosted) |
+| **Maintenance** | ✅ None | ❌ Ongoing | ⚠️ Pattern maintenance |
+| **Cost** | ✅ Included in GitHub | ❌ Infrastructure costs | ✅ Included in GitHub |
+| **Security Isolation** | ⚠️ Scoped (allowlist) | ❌ Reduced (open FW) | ✅ High (isolated) |
+| **Agent Capabilities** | ✅ Full orchestration | ✅ Full orchestration | ⚠️ Hybrid coordination |
+| **Architecture** | ✅ Direct execution | ✅ Direct execution | ⚠️ 2-phase (analyze + execute) |
+| **Time to Deploy** | ✅ Minutes | ❌ Hours/Days | ⚠️ Hours |
 
-### Recommendation
+### Recommendation by Use Case
 
-**For Most Users:** Use GitHub-hosted runners with the hybrid orchestration pattern (MCP tools + action plan + workflow execution). This provides:
-- ✅ Zero infrastructure overhead
-- ✅ High security isolation
-- ✅ Achieves autonomous orchestration goals
-- ⚠️ Slightly more complex architecture
+**For Most Users: Custom Firewall Allowlist** ⭐ RECOMMENDED
+- ✅ Best balance of simplicity, security, and functionality
+- ✅ Quick to configure (minutes)
+- ✅ Zero infrastructure costs
+- ✅ Works on GitHub-hosted runners
+- ✅ Scoped to specific domains
+- **When to use**: Default choice unless specific requirements demand otherwise
 
-**For Advanced Users:** Consider self-hosted runners if:
-- You already have runner infrastructure
-- You need minimal latency
-- You have strong network security controls
-- You want simpler agent architecture
+**For High-Security Environments: Hybrid Pattern**
+- ✅ Maximum isolation
+- ✅ No additional firewall access
+- ⚠️ More complex architecture
+- ⚠️ Requires maintaining coordination pattern
+- **When to use**: Security requirements prohibit allowlisting external domains
+
+**For Advanced Users with Existing Infrastructure: Self-Hosted Runners**
+- ✅ Full control over environment
+- ✅ Can use existing runner infrastructure
+- ❌ Requires ongoing maintenance
+- ❌ Infrastructure and operation costs
+- **When to use**: Already have self-hosted runner infrastructure
 
 ## Summary
 
@@ -574,22 +657,31 @@ To enable full `gh` CLI and API access in Copilot environment:
 
 ### The Answer
 
-**On GitHub-hosted runners: No**, you cannot configure or bypass the DNS monitoring proxy. This is an infrastructure-level security measure.
+**Yes! You can use the custom firewall allowlist feature**, and this is actually the **BEST solution**.
 
-**However, you have two options:**
+**Three Options Available:**
 
-**Option 1: Use MCP Server Tools (Recommended for Most)**
-- ✅ Work in Copilot environment (tested and confirmed)
-- ✅ Provide comprehensive GitHub operations (read)
-- ✅ Use internal communication channels
-- ✅ Bypass HTTP API restrictions
-- ⚠️ Require hybrid pattern for write operations
+**Option 1: Custom Firewall Allowlist** ⭐ **RECOMMENDED**
+- ✅ Add `api.github.com` to agent's custom allowlist
+- ✅ Full `gh` CLI access on GitHub-hosted runners
+- ✅ Zero infrastructure overhead
+- ✅ Works with COPILOT_PAT
+- ✅ Simple configuration (minutes)
+- ✅ Scoped to specific domains
+- 📚 See: [Customize Agent Firewall](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-firewall#allowlisting-additional-hosts-in-the-agents-firewall)
 
-**Option 2: Use Self-Hosted Runners (Advanced)**
+**Option 2: Self-Hosted Runners with Disabled Firewall** (Advanced)
 - ✅ Full API access when repository firewall disabled
 - ✅ Direct agent orchestration (no hybrid pattern)
 - ❌ Requires infrastructure setup and maintenance
 - ⚠️ Reduced security isolation (requires compensating controls)
+- 📚 See: [Repository Firewall Requirements](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment#repository-firewall-requirements)
+
+**Option 3: Hybrid Orchestration on GitHub-Hosted** (Fallback)
+- ⚠️ Use MCP server tools for read + workflow for write
+- ✅ Maximum security isolation
+- ⚠️ More complex architecture
+- ✅ Works without any firewall changes
 
 ## References
 

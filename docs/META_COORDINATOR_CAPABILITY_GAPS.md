@@ -548,7 +548,41 @@ The @meta-coordinator-system agent directive was designed assuming **full gh CLI
 
 ## Recommended Solutions
 
-### Solution 1: Hybrid Orchestration Pattern (RECOMMENDED for GitHub-Hosted Runners)
+### Solution 1: Custom Firewall Allowlist (⭐ RECOMMENDED)
+
+**The optimal solution:** Configure Copilot agent's custom firewall allowlist to allow `api.github.com`.
+
+**How It Works:**
+1. Navigate to Repository Settings → Copilot → coding agent
+2. Click "Custom allowlist"
+3. Add `api.github.com` to allowlist
+4. Add optional: `uploads.github.com`, `user-images.githubusercontent.com`
+5. Save changes
+6. Agent now has full `gh` CLI access
+
+**Benefits:**
+- ✅ Full API access (all write operations work)
+- ✅ Zero infrastructure overhead (GitHub-hosted runners)
+- ✅ Simple configuration (takes minutes)
+- ✅ Direct execution (works as originally designed)
+- ✅ Scoped security (specific domains, not fully open)
+- ✅ Uses authenticated COPILOT_PAT token
+- ✅ No hybrid pattern complexity
+
+**Drawbacks:**
+- ⚠️ Slightly increased attack surface vs. full isolation
+- ⚠️ Requires repository admin access to configure
+
+**When to Use:**
+- Default choice for most users
+- You trust the Copilot agent code
+- You want full orchestration without infrastructure
+- Security requirements allow allowlisting GitHub's API
+
+**References:**
+- [Customize Agent Firewall](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-firewall#allowlisting-additional-hosts-in-the-agents-firewall)
+
+### Solution 2: Hybrid Orchestration Pattern (For High-Security Environments)
 
 **Architecture:**
 ```
@@ -643,7 +677,24 @@ jobs:
 - ⚠️ Harder to parse for metrics
 - ⚠️ Security concern (executing arbitrary script)
 
-### Solution 3: Self-Hosted Runners with Disabled Firewall (ADVANCED)
+### Solution 3: Script Generation Pattern
+
+**How It Works:**
+1. Copilot generates bash script with all `gh` commands
+2. Commits script to repository
+3. Workflow executes script
+
+**Benefits:**
+- ✅ Simple implementation
+- ✅ Easy to review (script is human-readable)
+- ✅ Flexible (any gh command supported)
+
+**Drawbacks:**
+- ⚠️ Less structured than JSON
+- ⚠️ Harder to parse for metrics
+- ⚠️ Security concern (executing arbitrary script)
+
+### Solution 4: Self-Hosted Runners with Disabled Firewall (ADVANCED)
 
 **How It Works:**
 1. Deploy self-hosted runners using Actions Runner Controller (ARC)
@@ -677,7 +728,7 @@ jobs:
 - [Customizing Agent Firewall](https://docs.github.com/en/copilot/customizing-copilot/customizing-or-disabling-the-firewall-for-copilot-coding-agent)
 - [Actions Runner Controller](https://docs.github.com/en/actions/concepts/runners/actions-runner-controller)
 
-### Solution 4: Direct Workflow Integration (FALLBACK)
+### Solution 5: Direct Workflow Integration (FALLBACK)
 
 **How It Works:**
 1. Keep current meta-coordinator.yml workflow
@@ -754,28 +805,35 @@ jobs:
 
 ## Conclusion
 
-The @meta-coordinator-system agent has **excellent analytical capabilities** but **cannot execute the actions** it determines are necessary due to API access restrictions **on GitHub-hosted runners**.
+The @meta-coordinator-system agent has **excellent analytical capabilities** but **cannot execute the actions** it determines are necessary due to API access restrictions **on GitHub-hosted runners with default firewall settings**.
 
 **Gap Summary:**
 - ✅ **100% capability** for read operations and analysis
-- ❌ **0% capability** for write operations and execution (on GitHub-hosted runners)
-- **Net result:** Agent is a **read-only analyst** not an **autonomous orchestrator**
+- ❌ **0% capability** for write operations (with default firewall on GitHub-hosted runners)
+- **Net result:** Agent is a **read-only analyst** not an **autonomous orchestrator** (by default)
 
-**Available Solutions:**
+**Available Solutions (Best to Fallback):**
 
-1. **Hybrid Orchestration** (Recommended for most)
+1. **Custom Firewall Allowlist** ⭐ **RECOMMENDED**
+   - Add `api.github.com` to agent's custom allowlist
+   - Full API access on GitHub-hosted runners
+   - Zero infrastructure overhead
+   - Simple configuration (minutes)
+   - Works as originally designed
+
+2. **Hybrid Orchestration** (High-security fallback)
    - Leverages Copilot intelligence + workflow execution
-   - No infrastructure requirements
-   - Achieves autonomous orchestration goal
+   - Maximum security isolation
+   - No firewall changes needed
    - Slightly more complex architecture
 
-2. **Self-Hosted Runners** (Advanced option)
+3. **Self-Hosted Runners** (Advanced option)
    - Requires disabling repository firewall
    - Provides full API access
    - Requires infrastructure and security controls
-   - Simpler agent code, direct execution
+   - More operational overhead
 
-**This is not a limitation of the agent—it's an architecture consideration.** The agent was designed for full API access, which is available via self-hosted runners with firewall disabled, or achievable via hybrid pattern on GitHub-hosted runners.
+**This is not a limitation of the agent—it's a configurable security measure.** The agent was designed for full API access, which is easily achievable by adding `api.github.com` to the custom firewall allowlist (recommended), or via self-hosted runners, or via hybrid pattern.
 
 ---
 
