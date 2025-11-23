@@ -691,9 +691,11 @@ fi
    - Changes authentication logic
    - Modifies access control
 
-3. **Large/Complex** (REVIEW if both):
-   - More than 10 files changed AND
+3. **Large/Complex** (REVIEW if both conditions met):
+   - More than 10 files changed **AND**
    - More than 200 lines changed
+   
+   **Note:** Both conditions must be true. Large file count OR large line count alone doesn't require review unless also meeting other criteria.
 
 **SKIP tech lead review for:**
 - ❌ Dependabot PRs (automated, low risk)
@@ -1703,14 +1705,26 @@ When invoked, you should:
 ### Phase 1: Assess
 
 **CRITICAL: Track metrics at start**
-```python
-from tools.meta_coordinator_memory import MetaCoordinatorMemory
-memory = MetaCoordinatorMemory()
+```bash
+# Import memory system
+export PYTHONPATH=/home/runner/work/Chained/Chained/tools:$PYTHONPATH
 
-# Count and record at START
-open_prs_start = len(gh pr list --state open --json number)
-open_issues_start = len(gh issue list --state open --json number)
-memory.record_open_counts(open_prs_start, open_issues_start)
+# Count and record at START (bash approach)
+open_prs_start=$(gh pr list --state open --json number --jq 'length')
+open_issues_start=$(gh issue list --state open --json number --jq 'length')
+
+# Record in Python
+python3 << EOF
+import sys
+sys.path.insert(0, 'tools')
+import importlib.util
+spec = importlib.util.spec_from_file_location("mcm", "tools/meta-coordinator-memory.py")
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+memory = module.MetaCoordinatorMemory()
+memory.record_open_counts(${open_prs_start}, ${open_issues_start})
+print(f"Recorded: {open_prs_start} PRs, {open_issues_start} issues")
+EOF
 ```
 
 1. List all open PRs (non-draft)
@@ -1757,15 +1771,24 @@ memory.record_open_counts(open_prs_start, open_issues_start)
 **IMPORTANT: Follow this exact order to prevent session termination before issue updates:**
 
 **STEP 1: Track metrics at END**
-```python
+```bash
 # Count at END
-open_prs_end = len(gh pr list --state open --json number)
-open_issues_end = len(gh issue list --state open --json number)
-memory.record_open_counts(open_prs_end, open_issues_end)
+open_prs_end=$(gh pr list --state open --json number --jq 'length')
+open_issues_end=$(gh issue list --state open --json number --jq 'length')
 
-# Calculate success score
-success_summary = memory.get_success_summary()
-print(success_summary)  # Shows score and metrics
+# Record and get success summary
+python3 << EOF
+import sys
+sys.path.insert(0, 'tools')
+import importlib.util
+spec = importlib.util.spec_from_file_location("mcm", "tools/meta-coordinator-memory.py")
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+memory = module.MetaCoordinatorMemory()
+memory.record_open_counts(${open_prs_end}, ${open_issues_end})
+print(memory.get_success_summary())
+memory.save()
+EOF
 ```
 
 **STEP 2: Post summary to ALL related issues FIRST:**

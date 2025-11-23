@@ -858,7 +858,8 @@ class MetaCoordinatorMemory:
             created = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
             closed = datetime.fromisoformat(closed_at.replace('Z', '+00:00'))
             duration_hours = (closed - created).total_seconds() / 3600
-        except:
+        except (ValueError, TypeError, AttributeError) as e:
+            print(f"Warning: Could not parse timestamps for PR {pr_number}: {e}")
             duration_hours = 0
         
         # Record cycle time
@@ -931,7 +932,8 @@ class MetaCoordinatorMemory:
             created = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
             closed = datetime.fromisoformat(closed_at.replace('Z', '+00:00'))
             duration_hours = (closed - created).total_seconds() / 3600
-        except:
+        except (ValueError, TypeError, AttributeError) as e:
+            print(f"Warning: Could not parse timestamps for issue {issue_number}: {e}")
             duration_hours = 0
         
         # Record cycle time
