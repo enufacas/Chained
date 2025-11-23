@@ -540,7 +540,7 @@ AGENT_PATTERNS = {
             r'\bmeta[- ]coordinat', r'\bsystem\s*orchestrat', r'\btech\s*lead',
             r'\bagent\s*assignment', r'\bpr\s*review', r'\bfeedback\s*issue',
             r'\breview\s*cycle', r'\bauto[- ]merge', r'\bcoordination\s*request',
-            r'\bsystem\s*state', r'\borchestrat', r'\bpr\s*orchestrat',
+            r'\bsystem\s*state', r'\bpr\s*orchestrat',
             r'\bissue\s*assignment', r'\breview\s*management'
         ]
     },
