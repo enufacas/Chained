@@ -73,7 +73,6 @@ OUTPUT:
     On error: Exits with non-zero code and error message to stderr
 
 EOF
-    exit 0
 }
 
 # Check gh CLI is available
@@ -304,10 +303,12 @@ main() {
                 ;;
             --help|-h)
                 usage
+                exit 0  # Help is not an error
                 ;;
             *)
                 log_error "Unknown option: $1"
                 usage
+                exit 1  # Unknown option IS an error
                 ;;
         esac
     done

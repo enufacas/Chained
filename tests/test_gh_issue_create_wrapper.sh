@@ -252,28 +252,37 @@ test_valid_body_file() {
         return 0
     fi
     
-    # Test that file is accepted (will fail at auth/API stage, which is expected)
-    local output
-    local exit_code=0
+    # Test that file is accepted for validation (will fail at auth, which is expected)
+    set +e
     export GITHUB_REPOSITORY="test/repo"
     export GH_TOKEN="test-token"
     export DEBUG=1
     
-    output=$("$WRAPPER_SCRIPT" --title "Test" --body-file "$temp_file" 2>&1 || exit_code=$?)
+    output=$("$WRAPPER_SCRIPT" --title "Test" --body-file "$temp_file" 2>&1)
+    local exit_code=$?
     
-    # Should pass validation and reach gh CLI execution
-    if echo "$output" | grep -q "Body: from file"; then
-        echo -e "${GREEN}✓${NC} Valid body file accepted"
+    unset GITHUB_REPOSITORY GH_TOKEN DEBUG
+    set -e
+    
+    rm -f "$temp_file"
+    
+    # Should pass validation stages and reach gh CLI execution
+    # Exit code 1 is expected (auth will fail with test token)
+    if echo "$output" | grep -q "Body file size:"; then
+        echo -e "${GREEN}✓${NC} Valid body file accepted and processed through validation"
+        ((TESTS_RUN++))
+        ((TESTS_PASSED++))
+    elif [ $exit_code -eq 1 ]; then
+        # Also acceptable - failed at expected auth stage
+        echo -e "${GREEN}✓${NC} Valid body file validation working (failed at auth as expected)"
         ((TESTS_RUN++))
         ((TESTS_PASSED++))
     else
-        echo -e "${YELLOW}~${NC} Body file validation unclear (output: $output)"
+        echo -e "${RED}✗${NC} Unexpected behavior (exit code: $exit_code)"
+        echo "Output: $output"
         ((TESTS_RUN++))
-        ((TESTS_PASSED++))  # Don't fail on this, as it's expected to fail at API stage
+        ((TESTS_FAILED++))
     fi
-    
-    rm -f "$temp_file"
-    unset GITHUB_REPOSITORY GH_TOKEN DEBUG
 }
 
 test_argument_parsing() {
