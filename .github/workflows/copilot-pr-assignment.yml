@@ -139,6 +139,17 @@ jobs:
             pr_title=$(echo "${pr_data}" | jq -r '.title')
             pr_author=$(echo "${pr_data}" | jq -r '.author.login')
             
+            # Extract tech lead agent from labels
+            # Labels like "tech-lead:workflows-tech-lead" indicate which tech lead agent is assigned
+            tech_lead_agent=$(echo "${pr_data}" | jq -r '.labels[].name' \
+              | grep '^tech-lead:' \
+              | sed 's/^tech-lead://' \
+              | head -1)
+            
+            if [ -n "${tech_lead_agent}" ]; then
+              echo "📋 Tech Lead Agent: @${tech_lead_agent}"
+            fi
+            
             # Skip if PR is closed or draft
             if [ "${pr_state}" != "OPEN" ] || [ "${is_draft}" = "true" ]; then
               echo "⏭️  Skipping PR #${pr_num} (state: ${pr_state}, draft: ${is_draft})"
@@ -168,15 +179,32 @@ jobs:
             
             if [ "${review_data}" = "{}" ] || [ "${review_data}" = "null" ]; then
               echo "⚠️  No change request review found for PR #${pr_num}"
-              echo "  Tech lead may have requested changes via comments only"
+              echo "  Tech lead agent may have requested changes via comments only"
               
               # Fall back to getting PR review comments
               review_body=$(gh api "/repos/${{ github.repository }}/pulls/${pr_num}/comments" \
                 --jq '[.[] | .body] | join("\n\n")' 2>/dev/null || echo "")
-              reviewer="tech-lead"
+              
+              # Use tech lead agent from label, or fall back to generic
+              if [ -n "${tech_lead_agent}" ]; then
+                reviewer="${tech_lead_agent}"
+              else
+                reviewer="tech-lead"
+              fi
             else
               review_body=$(echo "${review_data}" | jq -r '.body // ""')
-              reviewer=$(echo "${review_data}" | jq -r '.user // "tech-lead"')
+              reviewer_login=$(echo "${review_data}" | jq -r '.user // "tech-lead"')
+              
+              # If reviewer is Copilot or github-actions bot, use tech lead agent from label
+              if [ "${reviewer_login}" = "Copilot" ] || [ "${reviewer_login}" = "github-actions[bot]" ]; then
+                if [ -n "${tech_lead_agent}" ]; then
+                  reviewer="${tech_lead_agent}"
+                else
+                  reviewer="tech-lead"
+                fi
+              else
+                reviewer="${reviewer_login}"
+              fi
             fi
             
             # If still no feedback, skip
