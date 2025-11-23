@@ -1,12 +1,14 @@
 name: "Automation: Copilot PR Assignment"
 
-# This workflow assigns agents to address tech lead feedback on PRs
-# When a tech lead requests changes, this creates a feedback issue and assigns
-# the appropriate agent (via Copilot) to make the fixes
+# This workflow assigns agents to PRs that need tech lead attention
+# It handles two scenarios:
+# 1. When a tech lead requests changes - creates feedback issue for agent fixes
+# 2. When a PR is assigned to a tech lead - proactively assigns agent to help
 #
 # STRATEGY: Schedule-primary for autonomous operation
 # - Scheduled runs avoid "awaiting approval" issues on fork PRs
-# - Runs every 15 minutes to sweep all PRs with tech-lead-changes-requested
+# - Runs every 7 minutes to sweep all PRs with tech-lead labels
+# - Processes both tech-lead-changes-requested and tech-lead:* labels
 # - No event triggers needed - schedule is reliable and autonomous
 
 on:
@@ -63,13 +65,55 @@ jobs:
             # Manual dispatch with specific PR
             pr_numbers="${{ inputs.pr_number }}"
           else
-            # Scheduled run - get all open PRs with tech-lead-changes-requested
+            # Scheduled run - get all open PRs with tech-lead labels
+            # This includes both:
+            # 1. PRs with tech-lead-changes-requested (tech lead wants changes)
+            # 2. PRs with tech-lead:* labels (assigned to specific tech leads)
             # This is the primary mode of operation
-            pr_numbers=$(gh pr list \
+            
+            # Get PRs with tech-lead-changes-requested
+            prs_changes=$(gh pr list \
               --state open \
               --label "tech-lead-changes-requested" \
               --json number \
               --jq '.[].number' \
+              2>/dev/null | tr '\n' ' ')
+            
+            # Get PRs with any tech-lead:* identifier labels
+            prs_workflows=$(gh pr list \
+              --state open \
+              --label "tech-lead:workflows-tech-lead" \
+              --json number \
+              --jq '.[].number' \
+              2>/dev/null | tr '\n' ' ')
+            
+            prs_agents=$(gh pr list \
+              --state open \
+              --label "tech-lead:agents-tech-lead" \
+              --json number \
+              --jq '.[].number' \
+              2>/dev/null | tr '\n' ' ')
+            
+            prs_docs=$(gh pr list \
+              --state open \
+              --label "tech-lead:docs-tech-lead" \
+              --json number \
+              --jq '.[].number' \
+              2>/dev/null | tr '\n' ' ')
+            
+            prs_pages=$(gh pr list \
+              --state open \
+              --label "tech-lead:github-pages-tech-lead" \
+              --json number \
+              --jq '.[].number' \
+              2>/dev/null | tr '\n' ' ')
+            
+            # Combine and deduplicate PR numbers
+            # Using printf to safely handle empty variables and avoid trailing space issues
+            # Note: Variables are intentionally unquoted to allow word splitting
+            pr_numbers=$(printf '%s\n' ${prs_changes} ${prs_workflows} ${prs_agents} ${prs_docs} ${prs_pages} \
+              | grep -v '^$' \
+              | sort -u \
               | tr '\n' ' ')
           fi
           
@@ -95,6 +139,18 @@ jobs:
             is_draft=$(echo "${pr_data}" | jq -r '.isDraft')
             pr_title=$(echo "${pr_data}" | jq -r '.title')
             pr_author=$(echo "${pr_data}" | jq -r '.author.login')
+            
+            # Extract tech lead agent from labels
+            # Labels like "tech-lead:workflows-tech-lead" indicate which tech lead agent is assigned
+            # If multiple tech-lead labels exist, takes the first one (PRs should only have one)
+            tech_lead_agent=$(echo "${pr_data}" | jq -r '.labels[].name' 2>/dev/null \
+              | grep '^tech-lead:' \
+              | sed 's/^tech-lead://' \
+              | head -1 || echo "")
+            
+            if [ -n "${tech_lead_agent}" ]; then
+              echo "📋 Tech Lead Agent: @${tech_lead_agent}"
+            fi
             
             # Skip if PR is closed or draft
             if [ "${pr_state}" != "OPEN" ] || [ "${is_draft}" = "true" ]; then
@@ -125,15 +181,32 @@ jobs:
             
             if [ "${review_data}" = "{}" ] || [ "${review_data}" = "null" ]; then
               echo "⚠️  No change request review found for PR #${pr_num}"
-              echo "  Tech lead may have requested changes via comments only"
+              echo "  Tech lead agent may have requested changes via comments only"
               
               # Fall back to getting PR review comments
               review_body=$(gh api "/repos/${{ github.repository }}/pulls/${pr_num}/comments" \
                 --jq '[.[] | .body] | join("\n\n")' 2>/dev/null || echo "")
-              reviewer="tech-lead"
+              
+              # Use tech lead agent from label, or fall back to generic
+              if [ -n "${tech_lead_agent}" ]; then
+                reviewer="${tech_lead_agent}"
+              else
+                reviewer="tech-lead"
+              fi
             else
               review_body=$(echo "${review_data}" | jq -r '.body // ""')
-              reviewer=$(echo "${review_data}" | jq -r '.user // "tech-lead"')
+              reviewer_login=$(echo "${review_data}" | jq -r '.user // "tech-lead"')
+              
+              # If reviewer is Copilot or github-actions bot, use tech lead agent from label
+              if [ "${reviewer_login}" = "Copilot" ] || [ "${reviewer_login}" = "github-actions[bot]" ]; then
+                if [ -n "${tech_lead_agent}" ]; then
+                  reviewer="${tech_lead_agent}"
+                else
+                  reviewer="tech-lead"
+                fi
+              else
+                reviewer="${reviewer_login}"
+              fi
             fi
             
             # If still no feedback, skip
@@ -295,5 +368,6 @@ jobs:
       - name: No PRs to process
         if: steps.get_prs.outputs.pr_numbers == ''
         run: |
-          echo "ℹ️ No PRs with tech-lead-changes-requested label found"
+          echo "ℹ️ No PRs with tech-lead labels found"
+          echo "Searched for: tech-lead-changes-requested and tech-lead:* labels"
           echo "Nothing to do"
