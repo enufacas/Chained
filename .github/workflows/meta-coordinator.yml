@@ -418,6 +418,7 @@ jobs:
         if: steps.assess.outputs.skip != 'true' && steps.create_request.outputs.issue_number != ''
         env:
           GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
           GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
           ISSUE_NUMBER: ${{ steps.create_request.outputs.issue_number }}
