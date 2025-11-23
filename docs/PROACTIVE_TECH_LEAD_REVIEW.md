@@ -20,7 +20,7 @@ The workflow now detects this scenario and creates a **proactive review issue** 
 
 ## How It Works
 
-### 1. Detection Logic (Lines 213-256)
+### 1. Detection Logic (Lines 226-263)
 
 When no review feedback is found:
 
@@ -48,7 +48,7 @@ if [ -z "${review_body}" ] || [ "${review_body}" = "null" ]; then
 fi
 ```
 
-### 2. Review Type Detection (Lines 260-266)
+### 2. Review Type Detection (Lines 274-278)
 
 The workflow determines if this is a proactive review or reactive feedback:
 
@@ -59,7 +59,7 @@ if echo "${review_body}" | grep -q "Proactive review request - no prior feedback
 fi
 ```
 
-### 3. Agent Selection (Lines 268-290)
+### 3. Agent Selection (Lines 280-306)
 
 **For Proactive Reviews:**
 - Uses the tech lead agent directly from the label
@@ -70,7 +70,7 @@ fi
 - Uses AI matching to find the best agent to fix the issues
 - Calls `match-issue-to-agent.py` with feedback content
 
-### 4. Issue Creation (Lines 291-310)
+### 4. Issue Creation (Lines 308-424)
 
 Creates different issue types based on review mode:
 
@@ -202,13 +202,14 @@ It processes all open PRs with:
 **File:** `.github/workflows/copilot-pr-assignment.yml`
 
 **Key Lines:**
-- 213-256: Detection and proactive review body creation
-- 260-266: Review type detection
-- 268-290: Conditional agent selection
-- 291-310: Conditional issue title and labels
-- 316-396: Conditional issue body templates
-- 405-430: Issue creation with appropriate labels
-- 432-467: Conditional PR comments
+- 161-186: Check for existing feedback and review issues to prevent duplicates
+- 226-263: Detection and proactive review body creation
+- 274-278: Review type detection
+- 280-306: Conditional agent selection
+- 308-424: Conditional issue title and labels
+- 326-406: Conditional issue body templates
+- 419-441: Issue creation with appropriate labels
+- 443-478: Conditional PR comments
 
 **Validation:**
 - YAML syntax: ✅ Validated with actionlint
