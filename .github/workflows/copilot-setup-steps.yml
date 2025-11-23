@@ -47,7 +47,7 @@ jobs:
       - name: Prune large directories to keep workspace small
         run: |
           rm -rf node_modules dist build out .cache .parcel-cache .next || true
-          find . -maxdepth 2 -name '*.tar.gz' -o -name '*.zip' -o -name '*.tgz' -exec rm -f {} \; || true
+          find . -maxdepth 2 \( -name '*.tar.gz' -o -name '*.zip' -o -name '*.tgz' \) -exec rm -f {} \; || true
 
       - name: Setup minimal toolchain
         uses: actions/setup-node@v4
