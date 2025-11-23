@@ -242,7 +242,7 @@ coordination = coordinator.create_coordination(
     task_context={"priority": "high"}
 )
 
-print(f"Coordination ID: {coordination['coordination_id']}")
+print(f"Coordination ID: {coordination['id']}")
 for subtask_id, agent_id in coordination['assignments'].items():
     print(f"  {subtask_id} → @{agent_id}")
 ```

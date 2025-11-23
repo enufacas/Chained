@@ -14,7 +14,9 @@ import sys
 import os
 from pathlib import Path
 
-# Add tools to path
+# Add tools to path for module imports
+# This script should be run from the repository root:
+#   python3 tools/interactive_meta_demo.py
 sys.path.insert(0, str(Path(__file__).parent))
 
 from meta_agent_coordinator import MetaAgentCoordinator, TaskComplexity
@@ -154,7 +156,12 @@ def run_interactive_demo(task_description: str = None, non_interactive: bool = F
         task_description = input("Enter your task description (or press Enter for example #4): ").strip()
         
         if not task_description:
-            task_description = "Implement a complete user authentication system with JWT-based auth, password hashing, rate limiting, comprehensive tests, and API documentation"
+            # Default: comprehensive example for demonstration
+            task_description = (
+                "Implement a complete user authentication system with "
+                "JWT-based auth, password hashing, rate limiting, "
+                "comprehensive tests, and API documentation"
+            )
     
     print(f"\n📋 Task: {task_description}")
     
