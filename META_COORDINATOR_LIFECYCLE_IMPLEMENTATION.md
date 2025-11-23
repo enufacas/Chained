@@ -30,11 +30,11 @@ Added mandatory first step to every coordination run:
 
 Established strict ordering to prevent data loss:
 1. Post ALL issue updates FIRST
-2. Persist memory to branch
-3. Create and merge memory PR
-4. Finally close/merge work PRs and coordination issue
+2. Persist memory to branch and create PR
+3. **DO NOT merge memory PR** - let next cycle handle it
+4. Close coordination issue
 
-**Key Insight:** PR closure terminates copilot sessions, so all documentation must be posted BEFORE any closing operations.
+**Key Insight:** PR closure (including merging own memory PR) can terminate copilot sessions. Solution: Create memory PR but let NEXT coordination cycle merge it in Phase 0, eliminating self-termination risk.
 
 ### 3. Stale PR Management System
 
@@ -54,6 +54,7 @@ Comprehensive criteria for identifying stale PRs:
 
 1. **Phase 0: Cleanup Previous Session** (lines ~814-860)
    - New mandatory first step
+   - **Merge previous cycle's memory PR** (safe, no self-termination)
    - Check interrupted sessions
    - Complete pending updates
    - Close stale PRs
@@ -69,8 +70,9 @@ Comprehensive criteria for identifying stale PRs:
 3. **Updated Phase 3: Persist & Report** (lines ~940-1000)
    - Reordered steps with critical annotations
    - Issue updates BEFORE any closures
-   - Memory persistence BEFORE coordination closure
-   - Clear warnings about ordering requirements
+   - Create memory PR but DON'T merge it
+   - Let next cycle merge memory PR in Phase 0
+   - Clear warnings about self-termination prevention
 
 ### File 2: `.github/workflows/meta-coordinator.yml`
 

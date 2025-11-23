@@ -964,21 +964,30 @@ When invoked, you should:
 
 **ALWAYS start with this step to ensure clean session boundaries:**
 
-1. **Check for previous coordination session artifacts:**
+1. **Merge previous cycle's memory PR (if exists):**
+   - Check for open memory PRs from previous coordination sessions
+   - Look for PRs from `copilot/` branches with "meta-coordination: update memory" in title
+   - If found and all checks passed:
+     - Verify it's from a recent coordination run (< 24 hours old)
+     - Merge immediately: `gh pr merge --squash --delete-branch`
+     - This completes the memory persistence from previous cycle
+   - This prevents memory PRs from accumulating and ensures learning is captured
+
+2. **Check for previous coordination session artifacts:**
    - List recent coordination issues (closed in last 24h)
    - For each recent coordination issue:
      - Check if associated PR exists and is merged
      - Check if the issue itself was properly closed
      - Look for linked work issues that may need final updates
 
-2. **Complete any pending issue updates from previous sessions:**
+3. **Complete any pending issue updates from previous sessions:**
    - For coordination issues closed in last run but with open linked work:
      - Post final status update to linked issues
      - Update issue with PR merge confirmation
      - Close work issues that were completed
    - This ensures agent work is properly documented even if session was interrupted
 
-3. **Evaluate and cleanup stale PRs (reduce open PR count):**
+4. **Evaluate and cleanup stale PRs (reduce open PR count):**
    - List all open PRs older than 7 days
    - For each stale PR:
      - Check if it's a copilot/agent PR
@@ -990,7 +999,7 @@ When invoked, you should:
        - Delete branch if merged or abandoned
    - Document closed PRs in memory for learning
 
-4. **Load memory from previous runs:**
+5. **Load memory from previous runs:**
    ```python
    from tools.meta_coordinator_memory import MetaCoordinatorMemory
    memory = MetaCoordinatorMemory()
@@ -1000,6 +1009,7 @@ When invoked, you should:
 
 **Why This Matters:**
 - Prevents orphaned issues when PR closure terminates agent session
+- **Merges previous cycle's memory PR safely** - no self-termination risk
 - Reduces open PR count systematically
 - Ensures continuity across coordination sessions
 - Memory from previous runs available immediately
@@ -1044,25 +1054,24 @@ When invoked, you should:
    - `memory.save()` to persist learning
    - Commit memory file to your branch
    - Use `report_progress` to create PR with memory
+   - **DO NOT merge the memory PR yourself**
 
-10. **Merge your memory PR:**
-    - `gh pr merge --squash --delete-branch`
-    - This atomically persists memory to main
-    - Wait for merge to complete
-
-11. **Now safe to close coordination issue:**
+10. **Close coordination issue:**
     - All updates posted (step 8)
-    - Memory persisted (step 10)
+    - Memory PR created (step 9)
     - Session can terminate safely
     - `gh issue close $COORDINATION_ISSUE_NUM`
 
 **Critical Lifecycle Rule:**
 - **NEVER merge/close PRs before posting issue updates**
-- **NEVER close coordination issue before memory is persisted**
+- **NEVER merge your own memory PR** - let next cycle handle it in Phase 0
+- **NEVER close coordination issue before memory PR is created**
 - **ALWAYS post status updates BEFORE any closing actions**
 - This ensures work is documented even if session terminates unexpectedly
 
-**Note:** Steps 8-11 must happen in exact order to prevent data loss from session termination.
+**Note on Memory PR:** The memory PR will be merged by the NEXT coordination cycle during Phase 0 cleanup. This prevents self-termination and ensures safe persistence.
+
+**Note:** Steps 8-10 must happen in exact order to prevent data loss from session termination.
 
 ### Expected Output
 

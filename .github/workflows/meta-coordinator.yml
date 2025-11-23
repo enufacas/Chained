@@ -156,6 +156,12 @@ jobs:
           **Task:** Ensure clean session boundaries and reduce open PR count
 
           **Actions to take:**
+          - **Merge previous cycle's memory PR:**
+            - Check for open memory PRs from previous coordination sessions
+            - Look for PRs with "meta-coordination: update memory" in title
+            - If found and checks passed, merge immediately
+            - This completes memory persistence from previous cycle safely
+          
           - **Check for interrupted previous sessions:**
             - List coordination issues closed in last 24 hours
             - For each, verify linked work issues were updated
@@ -172,21 +178,23 @@ jobs:
               - Record in memory for learning
           
           - **Load memory context:**
-            - Load previous run data
+            - Load previous run data (now includes merged memory from previous cycle)
             - Review cleanup patterns
             - Identify recurring issues
           
           **Conditions:**
           - Run at START of every coordination session
+          - Merge previous memory PR FIRST (if exists)
           - Stale if: >7 days inactive, >14 days total, draft >7 days, or issue closed
           - Always document reason before closing
           - Track metrics for learning
           
           **Outcomes:**
+          - Previous cycle's memory safely persisted (no self-termination)
           - No orphaned work from interrupted sessions
           - Systematic reduction in open PR count
           - Clean state before starting new work
-          - Memory context available
+          - Memory context available with latest updates
 
           #### 1. PR Review Orchestration
 
@@ -423,6 +431,7 @@ jobs:
           ### Execution Instructions
 
           1. **Phase 0 - Cleanup Previous Session** (CRITICAL - Always do this first):
+             - **Merge previous cycle's memory PR** (if exists) - prevents self-termination
              - Check recent coordination issues for incomplete work
              - Complete any pending issue updates from interrupted sessions
              - Evaluate and close stale PRs (>7 days old, inactive, or completed)
@@ -443,19 +452,20 @@ jobs:
           6. **Persist Memory**: Save memory updates and commit to your branch
              - `memory.save()` writes to `.github/agent-system/meta-coordinator-memory.json`
              - Use `report_progress` to commit memory and create PR
-          7. **Merge Your PR**: Immediately merge your memory PR
-             - `gh pr merge --squash --delete-branch`
-             - This atomically commits memory updates to main
-          8. **Close Coordination Issue**: Now safe to close (all updates posted, memory persisted)
+             - **DO NOT merge the memory PR** - let next cycle handle it
+          7. **Close Coordination Issue**: Now safe to close (all updates posted, memory PR created)
              - `gh issue close $COORDINATION_ISSUE_NUM`
           
           **CRITICAL LIFECYCLE RULES:**
           - **NEVER merge/close PRs before posting issue updates**
-          - **NEVER close coordination issue before memory is persisted**
+          - **NEVER merge your own memory PR** - let next cycle merge it in Phase 0
+          - **NEVER close coordination issue before memory PR is created**
           - **ALWAYS complete Phase 0 cleanup to handle interrupted sessions**
           - **ALWAYS evaluate and close stale PRs to reduce open PR count**
           
-          **Note:** Steps 5-8 must happen in exact order to prevent data loss from session termination.
+          **Note on Memory Persistence:** Memory PR is created but NOT merged by current session. Next coordination cycle will merge it in Phase 0, preventing self-termination issues.
+          
+          **Note:** Steps 5-7 must happen in exact order to prevent data loss from session termination.
 
           ### Focus Area
 

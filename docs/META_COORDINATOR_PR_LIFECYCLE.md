@@ -278,31 +278,34 @@ When a PR is merged or closed, GitHub may terminate the copilot session that cre
 # This ensures updates are recorded even if session terminates
 
 # Update all related issues
-gh issue comment $WORK_ISSUE_NUM --body "✅ Work completed in PR #$PR_NUM - merging now"
+gh issue comment $WORK_ISSUE_NUM --body "✅ Work completed in PR #$PR_NUM - ready for review"
 gh issue comment $COORDINATION_ISSUE_NUM --body "## 🎯 Phase 2 Complete\n\nProcessed $count PRs..."
 
 # Wait a moment to ensure comments are saved
 sleep 2
 
 # ========================================
-# Step 2: PERSIST MEMORY
+# Step 2: PERSIST MEMORY (CREATE PR, DON'T MERGE)
 # ========================================
 memory.save()  # Save to file
-# Use report_progress to commit memory
-# (This creates a PR but doesn't close anything yet)
+# Use report_progress to commit memory and create PR
+# **DO NOT merge the memory PR yourself**
+# Next cycle will merge it in Phase 0
 
 # ========================================
-# Step 3: MERGE MEMORY PR (if created)
+# Step 3: CLOSE COORDINATION ISSUE
 # ========================================
-gh pr merge $MEMORY_PR_NUM --squash --delete-branch
-
-# ========================================
-# Step 4: NOW SAFE TO CLOSE/MERGE
-# ========================================
-# All updates posted, memory persisted
+# All updates posted, memory PR created
 # Session can terminate safely now
-gh pr merge $WORK_PR_NUM --squash --delete-branch
 gh issue close $COORDINATION_ISSUE_NUM
+
+# ========================================
+# Step 4: NEXT CYCLE MERGES MEMORY PR
+# ========================================
+# Phase 0 of next coordination run will:
+# - Find the memory PR from previous cycle
+# - Merge it safely (no self-termination risk)
+# - Load the updated memory for current session
 ```
 
 ### Code Pattern
@@ -312,18 +315,24 @@ gh issue close $COORDINATION_ISSUE_NUM
 gh pr merge $PR_NUM
 gh issue comment $ISSUE_NUM --body "Done!"  # Never executes!
 
-# ✅ CORRECT - Updates before termination
-gh issue comment $ISSUE_NUM --body "Merging PR #$PR_NUM now"
+# ❌ ALSO WRONG - Merging own PR can kill session
+gh issue comment $ISSUE_NUM --body "Creating PR"
+gh pr merge $MY_PR_NUM  # Kills session!
+
+# ✅ CORRECT - Updates first, create PR, let next cycle merge
+gh issue comment $ISSUE_NUM --body "Work complete - PR created"
 sleep 2
-gh pr merge $PR_NUM  # Safe - updates already posted
+# report_progress creates PR but doesn't merge
+# Next cycle will merge in Phase 0
+gh issue close $COORDINATION_ISSUE_NUM  # Safe to close now
 ```
 
 ### Exception Handling
 
 ```bash
-# Even if merge fails, updates are already posted
-if ! gh pr merge $PR_NUM; then
-  echo "Merge failed, but issue updates already posted"
+# Even if something fails, updates are already posted
+if ! gh issue close $COORDINATION_ISSUE_NUM; then
+  echo "Close failed, but all updates already posted"
   # Session can terminate, no data loss
 fi
 ```
