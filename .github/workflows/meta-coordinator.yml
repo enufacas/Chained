@@ -145,9 +145,48 @@ jobs:
 
           As the **@meta-coordinator-system** agent, you are responsible for orchestrating the entire tech lead review, agent assignment, and **auto-merge** system. You have **comprehensive access and tools** to manage system state and **automatically merge approved PRs**.
 
+          **NEW: You are also responsible for PR lifecycle management** - systematically reducing open PR count and ensuring clean session boundaries.
+
           ### System State Assessment
 
-          Please assess the current system state and take appropriate actions across all 7 core areas:
+          Please assess the current system state and take appropriate actions across all **8 core areas** (7 original + new lifecycle management):
+
+          #### 0. Session Lifecycle & PR Cleanup (NEW - ALWAYS DO FIRST)
+
+          **Task:** Ensure clean session boundaries and reduce open PR count
+
+          **Actions to take:**
+          - **Check for interrupted previous sessions:**
+            - List coordination issues closed in last 24 hours
+            - For each, verify linked work issues were updated
+            - If not, post final status updates now
+            - Complete any pending work documentation
+          
+          - **Evaluate and close stale PRs:**
+            - List all open PRs older than 7 days
+            - Apply stale PR criteria (see agent definition)
+            - For each stale PR:
+              - Post explanation comment with closure reason
+              - Close PR if criteria met
+              - Delete branch if safe (copilot/agent branches)
+              - Record in memory for learning
+          
+          - **Load memory context:**
+            - Load previous run data
+            - Review cleanup patterns
+            - Identify recurring issues
+          
+          **Conditions:**
+          - Run at START of every coordination session
+          - Stale if: >7 days inactive, >14 days total, draft >7 days, or issue closed
+          - Always document reason before closing
+          - Track metrics for learning
+          
+          **Outcomes:**
+          - No orphaned work from interrupted sessions
+          - Systematic reduction in open PR count
+          - Clean state before starting new work
+          - Memory context available
 
           #### 1. PR Review Orchestration
 
@@ -383,23 +422,40 @@ jobs:
 
           ### Execution Instructions
 
-          1. **Assess**: Analyze current state across all 7 areas
-          2. **Prioritize**: Identify most critical actions needed (auto-merge eligible PRs should be high priority)
-          3. **Execute**: Take actions using available tools
+          1. **Phase 0 - Cleanup Previous Session** (CRITICAL - Always do this first):
+             - Check recent coordination issues for incomplete work
+             - Complete any pending issue updates from interrupted sessions
+             - Evaluate and close stale PRs (>7 days old, inactive, or completed)
+             - Load memory from previous runs for context
+             - Document cleanup actions taken
+          2. **Assess**: Analyze current state across all 7 areas
+          3. **Prioritize**: Identify most critical actions needed (auto-merge eligible PRs should be high priority)
+          4. **Execute**: Take actions using available tools
              - Auto-merge approved PRs without WIP or draft status
              - Assign tech leads to new PRs
              - Create feedback issues for change requests
              - Assign agents to open issues
-          4. **Persist Memory**: Save memory updates and commit to your branch
+          5. **Post Updates FIRST** (CRITICAL - Before any closing actions):
+             - Post summary to coordination issue
+             - Update all linked work issues with status
+             - Post PR merge confirmations
+             - **DO NOT close anything yet**
+          6. **Persist Memory**: Save memory updates and commit to your branch
              - `memory.save()` writes to `.github/agent-system/meta-coordinator-memory.json`
              - Use `report_progress` to commit memory and create PR
-          5. **Merge Your PR**: Immediately merge your memory PR
+          7. **Merge Your PR**: Immediately merge your memory PR
              - `gh pr merge --squash --delete-branch`
              - This atomically commits memory updates to main
-          6. **Report**: Post summary comment on this coordination issue
-          7. **Close**: Close this coordination issue when complete
+          8. **Close Coordination Issue**: Now safe to close (all updates posted, memory persisted)
+             - `gh issue close $COORDINATION_ISSUE_NUM`
           
-          **Note:** Your PR with memory updates is merged immediately as the final step, ensuring memory is atomically persisted for the next run.
+          **CRITICAL LIFECYCLE RULES:**
+          - **NEVER merge/close PRs before posting issue updates**
+          - **NEVER close coordination issue before memory is persisted**
+          - **ALWAYS complete Phase 0 cleanup to handle interrupted sessions**
+          - **ALWAYS evaluate and close stale PRs to reduce open PR count**
+          
+          **Note:** Steps 5-8 must happen in exact order to prevent data loss from session termination.
 
           ### Focus Area
 

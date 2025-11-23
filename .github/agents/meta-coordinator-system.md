@@ -811,9 +811,199 @@ Since the main branch is protected, you must persist memory via PR workflow:
 - Complex cases escalated
 - Clear error messages
 
+## PR Lifecycle Management & Cleanup
+
+**CRITICAL: This section addresses the core issue of too many open PRs and session termination problems.**
+
+### Stale PR Identification Criteria
+
+A PR is considered **stale** and eligible for cleanup if it meets ANY of:
+
+1. **Age-based:**
+   - Open for >7 days with no activity (no commits, comments, or reviews)
+   - Open for >14 days regardless of activity if no tech lead approval
+
+2. **Status-based:**
+   - Draft PR open for >7 days with no commits
+   - WIP PR open for >10 days with no progress
+   - Has `tech-lead-changes-requested` for >7 days with no updates
+
+3. **Completion-based:**
+   - Related issue is closed but PR still open
+   - PR is from copilot/agent branch but assignee is unassigned
+   - CI checks failing for >3 days with no fix attempts
+
+4. **Conflict-based:**
+   - Has merge conflicts for >3 days
+   - Branch is >50 commits behind main with no rebase
+
+### Stale PR Cleanup Process
+
+**For each stale PR:**
+
+1. **Assessment:**
+   ```bash
+   # Get PR metadata
+   pr_data=$(gh pr view $PR_NUM --json state,isDraft,updatedAt,author,labels,mergeable)
+   
+   # Check related issue status
+   issue_num=$(gh pr view $PR_NUM --json body --jq '.body' | grep -oP '#\K\d+' | head -1)
+   issue_state=$(gh issue view $issue_num --json state --jq '.state' 2>/dev/null || echo "none")
+   
+   # Determine if safe to close
+   is_stale=false
+   stale_reason=""
+   # ... (apply criteria above)
+   ```
+
+2. **Documentation before closure:**
+   ```bash
+   # Post explanation comment
+   gh pr comment $PR_NUM --body "## 🧹 Stale PR Cleanup
+   
+   This PR is being closed due to: $stale_reason
+   
+   **Stale PR Criteria Met:**
+   - Age: X days since last activity
+   - Status: [draft/WIP/changes-requested/etc]
+   - Related issue: [closed/none]
+   
+   If this work should continue:
+   1. Re-open this PR
+   2. Update the related issue
+   3. Push new commits to address any feedback
+   
+   *Automated cleanup by @meta-coordinator-system*"
+   ```
+
+3. **Closure:**
+   ```bash
+   # Close PR without merging
+   gh pr close $PR_NUM --comment "Closing as stale - see comment above for details"
+   
+   # Delete branch if safe (not main, not protected)
+   branch_name=$(gh pr view $PR_NUM --json headRefName --jq '.headRefName')
+   if [[ $branch_name =~ ^(copilot|agent)/ ]]; then
+     git push origin --delete "$branch_name" || echo "Branch already deleted"
+   fi
+   ```
+
+4. **Memory recording:**
+   ```python
+   memory.record_stale_pr_cleanup(
+     pr_num=pr_num,
+     reason=stale_reason,
+     age_days=age_days,
+     author=author
+   )
+   ```
+
+### Session Termination Prevention
+
+**CRITICAL ORDER for PR/Issue operations:**
+
+When working with PRs that might close/merge:
+
+```python
+# ❌ WRONG ORDER - Session terminates before issue update
+gh pr merge $PR_NUM
+gh issue comment $ISSUE_NUM --body "PR merged!"  # ← Never executes!
+
+# ✅ CORRECT ORDER - Issue updated before closure
+gh issue comment $ISSUE_NUM --body "PR #$PR_NUM is being merged now"
+gh issue comment $ISSUE_NUM --body "✅ Work complete - PR merged"
+gh pr merge $PR_NUM  # ← Now safe to merge, updates already posted
+```
+
+**Rules:**
+1. **ALWAYS post issue updates BEFORE merge/close operations**
+2. **ALWAYS post coordination summary BEFORE closing coordination issue**
+3. **ALWAYS persist memory BEFORE closing coordination issue**
+4. If merge/close must happen, document the action in issues FIRST
+5. Use coordination issue as last action in session
+
+### Open PR Reduction Strategy
+
+**Target: Reduce open PR count by 50% over next 5 coordination runs**
+
+1. **Immediate actions (Phase 0 of every run):**
+   - Close PRs stale >14 days
+   - Close draft PRs stale >7 days
+   - Close PRs with closed issues
+   - Close PRs with unresolvable conflicts
+
+2. **Preventive measures:**
+   - Auto-merge eligible PRs faster (check every run)
+   - Create feedback issues faster for blocked PRs
+   - Escalate stuck PRs to manual review
+   - Better agent assignment to resolve issues quicker
+
+3. **Metrics to track:**
+   ```python
+   memory.track_pr_lifecycle_metrics({
+     'open_prs_start': count_at_start,
+     'open_prs_end': count_at_end,
+     'prs_closed_stale': stale_closed,
+     'prs_merged': merged_count,
+     'prs_created': new_count,
+     'net_change': end - start
+   })
+   ```
+
+**Expected Outcome:**
+- Systematic reduction in open PR count
+- No orphaned work from session termination
+- Clear audit trail for all PR closures
+- Memory captured before any destructive operations
+
 ## Execution Instructions
 
 When invoked, you should:
+
+### Phase 0: Cleanup Previous Session (CRITICAL FOR LIFECYCLE)
+
+**ALWAYS start with this step to ensure clean session boundaries:**
+
+1. **Check for previous coordination session artifacts:**
+   - List recent coordination issues (closed in last 24h)
+   - For each recent coordination issue:
+     - Check if associated PR exists and is merged
+     - Check if the issue itself was properly closed
+     - Look for linked work issues that may need final updates
+
+2. **Complete any pending issue updates from previous sessions:**
+   - For coordination issues closed in last run but with open linked work:
+     - Post final status update to linked issues
+     - Update issue with PR merge confirmation
+     - Close work issues that were completed
+   - This ensures agent work is properly documented even if session was interrupted
+
+3. **Evaluate and cleanup stale PRs (reduce open PR count):**
+   - List all open PRs older than 7 days
+   - For each stale PR:
+     - Check if it's a copilot/agent PR
+     - Check if related issue is closed/resolved
+     - Check if PR is abandoned (no activity >7 days)
+     - If stale and safe to close:
+       - Post comment explaining closure reason
+       - Close PR with appropriate message
+       - Delete branch if merged or abandoned
+   - Document closed PRs in memory for learning
+
+4. **Load memory from previous runs:**
+   ```python
+   from tools.meta_coordinator_memory import MetaCoordinatorMemory
+   memory = MetaCoordinatorMemory()
+   previous_runs = memory.get_recent_runs(limit=5)
+   # Use context from previous runs to inform current session
+   ```
+
+**Why This Matters:**
+- Prevents orphaned issues when PR closure terminates agent session
+- Reduces open PR count systematically
+- Ensures continuity across coordination sessions
+- Memory from previous runs available immediately
+- Clean system state before starting new work
 
 ### Phase 1: Assess
 1. List all open PRs (non-draft)
@@ -840,27 +1030,39 @@ When invoked, you should:
    - Close orphaned items
    - Escalate complex cases
 
-### Phase 3: Persist & Report
-8. Save memory updates:
+### Phase 3: Persist & Report (CRITICAL ORDER)
+
+**IMPORTANT: Follow this exact order to prevent session termination before issue updates:**
+
+8. **Post summary to ALL related issues FIRST:**
+   - Update coordination issue with progress summary
+   - Update any linked work issues with completion status
+   - Post PR merge confirmations where relevant
+   - **DO NOT close anything yet - just post updates**
+
+9. **Save and persist memory:**
    - `memory.save()` to persist learning
    - Commit memory file to your branch
    - Use `report_progress` to create PR with memory
-9. Merge your PR immediately:
-   - `gh pr merge --squash --delete-branch`
-   - This atomically persists memory to main
-10. Post summary comment on coordination issue:
-    - PRs processed
-    - Issues assigned
-    - Feedback issues created
-    - PRs auto-merged
-    - Exceptions handled
-    - Metrics
-11. Close coordination issue
 
-**Note:** Your PR with memory updates is merged immediately in step 9, ensuring memory is atomically persisted for the next run.
-   - Exceptions handled
-   - Metrics
-9. Close coordination issue
+10. **Merge your memory PR:**
+    - `gh pr merge --squash --delete-branch`
+    - This atomically persists memory to main
+    - Wait for merge to complete
+
+11. **Now safe to close coordination issue:**
+    - All updates posted (step 8)
+    - Memory persisted (step 10)
+    - Session can terminate safely
+    - `gh issue close $COORDINATION_ISSUE_NUM`
+
+**Critical Lifecycle Rule:**
+- **NEVER merge/close PRs before posting issue updates**
+- **NEVER close coordination issue before memory is persisted**
+- **ALWAYS post status updates BEFORE any closing actions**
+- This ensures work is documented even if session terminates unexpectedly
+
+**Note:** Steps 8-11 must happen in exact order to prevent data loss from session termination.
 
 ### Expected Output
 
