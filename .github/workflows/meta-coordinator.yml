@@ -386,11 +386,14 @@ jobs:
           ```bash
           # Use COPILOT_PAT if available (provides wide access)
           # Otherwise fall back to GITHUB_TOKEN (limited permissions)
+          # Note: Variables escaped (\$) for execution in Copilot environment
           export GH_TOKEN="\${COPILOT_PAT:-\${GITHUB_TOKEN}}"
           ```
 
           **Token Availability Check:**
           ```bash
+          # Note: Variables are escaped (\$VAR) because this code will be
+          # executed by Copilot agent, not by this workflow
           if [ -n "\$COPILOT_PAT" ]; then
             export GH_TOKEN="\$COPILOT_PAT"
             echo "✅ Using COPILOT_PAT for wide access"
