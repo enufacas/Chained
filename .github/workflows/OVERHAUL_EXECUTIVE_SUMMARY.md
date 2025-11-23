@@ -8,9 +8,12 @@
 
 ## TL;DR
 
-The Tech Lead Review System has become **overly complicated and broken**. This proposal simplifies it from **3 workflows to 2**, reduces **labels by 50%**, and improves **performance by 10-22x** through event-driven architecture.
+The Tech Lead Review System has become **overly complicated and broken**. This proposal offers **two approaches** to simplify it:
 
-**Recommendation: PROCEED** with 4-week migration plan.
+**Traditional Approach:** 3 workflows → 2, labels reduced 50%, 10-22x faster  
+**Alternative Approach:** 3 workflows → 1 meta-coordinator agent, even simpler
+
+**Recommendation: PROCEED** with one or both approaches (evaluate in parallel).
 
 ---
 
@@ -44,7 +47,11 @@ Proposed: 2 Workflows + 4 Labels + <60sec Latency
 
 ## The Solution
 
-### Simplify to 2 Workflows
+### Two Approaches Proposed
+
+#### Approach 1: Traditional Simplification (2 Workflows)
+
+Simplify to 2 workflows with clear responsibilities:
 
 #### 1. `copilot-agent-assignment.yml` (NEW - Unified)
 **Purpose:** Single workflow for ALL agent assignment (issues AND PRs)
@@ -56,6 +63,40 @@ Proposed: 2 Workflows + 4 Labels + <60sec Latency
 - ✅ Schedule fallback for safety
 
 **Benefit:** **From 3 workflows to 1 for agent assignment**
+
+#### Approach 2: Meta-Coordinator Agent (Alternative)
+
+Instead of 2 workflows, use **1 meta-coordinator agent** that orchestrates the entire system:
+
+**Key Features:**
+- ✅ Single workflow triggering @meta-coordinator agent
+- ✅ Agent instructions define all flows (not YAML)
+- ✅ Continuous assessment every 5 minutes
+- ✅ Agent reasons about system state
+- ✅ More flexible than predefined workflows
+
+**Benefit:** **Even simpler (1 workflow) with more intelligent orchestration**
+
+**Trade-off:** Different paradigm (agent-driven vs workflow-driven)
+
+See [OVERHAUL_ALTERNATIVE_META_COORDINATOR.md](OVERHAUL_ALTERNATIVE_META_COORDINATOR.md) for complete details.
+
+---
+
+### Comparison of Approaches
+
+| Aspect | Current | Traditional | Meta-Coordinator |
+|--------|---------|-------------|------------------|
+| Workflows | 3 | 2 | 1 |
+| Labels | 12 | 4 | 4 |
+| Logic | YAML | YAML | Agent instructions |
+| Flexibility | Low | Medium | High |
+| Predictability | Medium | High | Medium |
+| Latency | 22 min | <60s | ~5 min |
+
+Both approaches significantly improve on the current system. Choice depends on team preference for:
+- **Traditional:** Proven patterns, predictable behavior
+- **Meta-Coordinator:** Maximum flexibility, intelligent orchestration
 
 #### 2. `auto-review-merge.yml` (SIMPLIFIED)
 **Purpose:** PR tech lead analysis and auto-merge ONLY
@@ -157,6 +198,11 @@ Proposed: 2 Workflows + 4 Labels + <60sec Latency
 
 ### ✅ PROCEED with Overhaul
 
+**Which Approach:**
+- **Option A:** Implement traditional 2-workflow approach (proven, predictable)
+- **Option B:** Implement meta-coordinator agent approach (innovative, flexible)
+- **Option C:** Implement both in parallel and compare over 2-4 weeks
+
 **Why:**
 1. Addresses documented complexity and reliability issues
 2. Significant performance improvements (10-22x)
@@ -177,9 +223,9 @@ Proposed: 2 Workflows + 4 Labels + <60sec Latency
 
 ### Questions for Stakeholders
 
-1. **Architecture:** Is 2-workflow design acceptable?
-2. **Labels:** Are label simplifications agreeable?
-3. **Events:** Is event-driven + schedule fallback acceptable?
+1. **Approach:** Traditional 2-workflow or meta-coordinator agent? Or both?
+2. **Architecture:** Are the proposed designs acceptable?
+3. **Labels:** Are label simplifications agreeable?
 4. **Timeline:** Is 4-week migration realistic?
 5. **Priorities:** Are there blocking concerns?
 
@@ -196,9 +242,10 @@ Proposed: 2 Workflows + 4 Labels + <60sec Latency
 This executive summary is part of a comprehensive proposal:
 
 1. **OVERHAUL_EXECUTIVE_SUMMARY.md** ← You are here
-2. **TECH_LEAD_SYSTEM_OVERHAUL_PLAN.md** - Detailed implementation plan
-3. **TECH_LEAD_SYSTEM_COMPARISON.md** - Visual before/after comparison
-4. **TECH_LEAD_SYSTEM_README.md** - Current system documentation
+2. **TECH_LEAD_SYSTEM_OVERHAUL_PLAN.md** - Detailed traditional approach
+3. **OVERHAUL_ALTERNATIVE_META_COORDINATOR.md** - Alternative agent-driven approach
+4. **TECH_LEAD_SYSTEM_COMPARISON.md** - Visual before/after comparison
+5. **TECH_LEAD_SYSTEM_README.md** - Current system documentation
 
 **Review all documents for complete understanding.**
 
@@ -206,18 +253,25 @@ This executive summary is part of a comprehensive proposal:
 
 ## Conclusion
 
-The Tech Lead Review System needs simplification. This proposal provides a clear path to:
+The Tech Lead Review System needs simplification. This proposal provides **two viable paths**:
 
-- **Reduce complexity** by 30-50%
-- **Improve performance** by 10-22x
-- **Save time** 60% reduction in maintenance
-- **Better experience** for all users
+**Traditional (2 workflows):**
+- Reduce complexity by 30-50%
+- Improve performance by 10-22x
+- Save time: 60% reduction in maintenance
+- Proven patterns
 
-**@support-master** strongly recommends approval to proceed with this overhaul.
+**Meta-Coordinator (1 agent):**
+- Reduce complexity even further (1 workflow)
+- More flexible and intelligent
+- Different paradigm (agent-driven)
+- Innovative approach
+
+Both approaches significantly improve on current system. **@support-master** recommends implementing one or evaluating both in parallel.
 
 ---
 
 *Executive Summary prepared: 2025-11-23*  
-*Status: PROPOSAL - Awaiting stakeholder review and approval*
+*Status: PROPOSAL - Awaiting stakeholder review and approach selection*
 
 **Contact:** @support-master for questions or clarifications
