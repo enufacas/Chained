@@ -11,6 +11,19 @@
       "feedback_issues_created": 0,
       "exceptions_handled": 0,
       "success": true
+    },
+    {
+      "timestamp": "2025-11-23T20:58:54.879559",
+      "run_id": "20:51",
+      "duration_seconds": 107.5,
+      "prs_processed": 82,
+      "prs_auto_merged": 0,
+      "tech_leads_assigned": 2,
+      "issues_assigned": 0,
+      "feedback_issues_created": 0,
+      "deprecated_labels_cleaned": 27,
+      "exceptions_handled": 0,
+      "success": true
     }
   ],
   "pr_assignments": [],
@@ -32,6 +45,22 @@
       "evidence": {
         "agent_spawn_prs": 15,
         "all_required_review": true
+      }
+    },
+    {
+      "timestamp": "2025-11-23T20:58:54.879565",
+      "insight": "Cleaned up 27 deprecated tech-lead:X identifier labels - system now uses comments for tech lead mentions per latest architecture",
+      "evidence": {
+        "deprecated_labels_removed": 27,
+        "new_pattern": "comments_with_mentions"
+      }
+    },
+    {
+      "timestamp": "2025-11-23T20:58:54.879567",
+      "insight": "CI status checks were unavailable for all merge-eligible PRs - may need alternative check strategy",
+      "evidence": {
+        "eligible_prs": 29,
+        "ci_unavailable": 29
       }
     }
   ],
