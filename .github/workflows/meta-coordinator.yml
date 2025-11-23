@@ -404,7 +404,7 @@ jobs:
             --title "${ISSUE_TITLE}" \
             --body "${ISSUE_BODY}" \
             --label "meta-coordination,automated,system-orchestration" \
-            --assignee copilot 2>&1 | grep -oP '#\K\d+' | head -1 || echo "")
+            2>&1 | grep -oP '#\K\d+' | head -1 || echo "")
           
           if [ -n "${issue_number}" ]; then
             echo "✅ Created coordination issue #${issue_number}"
@@ -413,6 +413,18 @@ jobs:
             echo "❌ Failed to create coordination issue"
             exit 1
           fi
+      
+      - name: Assign Copilot to coordination issue
+        if: steps.assess.outputs.skip != 'true' && steps.create_request.outputs.issue_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+          ISSUE_NUMBER: ${{ steps.create_request.outputs.issue_number }}
+        run: |
+          echo "Assigning Copilot to coordination issue #${ISSUE_NUMBER}..."
+          bash tools/assign-copilot-to-issue.sh
       
       - name: Skip notification
         if: steps.assess.outputs.skip == 'true'
