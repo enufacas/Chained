@@ -251,7 +251,13 @@ class UnifiedCommitOptimizer:
         }
         
         # Pattern-based validation
-        metrics = self.strategy_learner._get_commit_metrics(commit_hash)
+        metrics = None
+        try:
+            # Use internal method - consider using public API in future refactor
+            metrics = self.strategy_learner._get_commit_metrics(commit_hash)
+        except AttributeError:
+            self._log("Could not access commit metrics (private API)")
+        
         if metrics:
             validation["pattern_check"] = {
                 "follows_conventional": metrics.follows_conventional,

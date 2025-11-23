@@ -79,6 +79,13 @@ SCALER_FILE = ML_MODELS_DIR / "feature_scaler.pkl"
 THRESHOLDS_FILE = ML_MODELS_DIR / "adaptive_thresholds.json"
 PREDICTIONS_LOG = LEARNINGS_DIR / "commit_predictions.json"
 
+# ML Configuration
+RANDOM_STATE = 42  # For reproducibility
+# Note: These hyperparameters could be made configurable in future versions:
+# - n_estimators, max_depth, min_samples_split for RandomForest
+# - test_size for train/test split
+# - cv folds for cross-validation
+
 
 @dataclass
 class CommitFeatures:
@@ -338,9 +345,9 @@ class MLCommitOptimizer:
         branches = self._run_git_command(['branch', '--contains', commit_hash])
         in_main = 'main' in branches or 'master' in branches
         
-        # Check if commit was reverted
+        # Check if commit was reverted (use longer hash prefix for safety)
         log = self._run_git_command([
-            'log', '--all', '--grep', f'revert.*{commit_hash[:8]}', '--format=%H'
+            'log', '--all', '--grep', f'revert.*{commit_hash[:12]}', '--format=%H'
         ])
         is_reverted = bool(log.strip())
         
@@ -401,7 +408,7 @@ class MLCommitOptimizer:
         
         # Split data
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
+            X, y, test_size=0.2, random_state=RANDOM_STATE
         )
         
         # Scale features
@@ -410,11 +417,13 @@ class MLCommitOptimizer:
         X_test_scaled = self.scaler.transform(X_test)
         
         # Train model (ensemble for robustness)
+        # Note: Hyperparameters optimized for general use. Could be made
+        # configurable for repository-specific tuning in future versions.
         self.model = RandomForestClassifier(
             n_estimators=100,
             max_depth=10,
             min_samples_split=5,
-            random_state=42,
+            random_state=RANDOM_STATE,
             n_jobs=-1
         )
         
