@@ -403,13 +403,16 @@ jobs:
           ISSUE_BODY="${ISSUE_BODY//\$\{RUN_ID\}/${RUN_ID}}"
           ISSUE_BODY="${ISSUE_BODY//\$\{DRY_RUN\}/${DRY_RUN}}"
           
+          # Write issue body to file to handle large content reliably
+          echo "$ISSUE_BODY" > /tmp/issue_body.md
+          
           # Create the coordination issue (without assignee - will assign via GraphQL after)
           echo "Creating coordination issue..."
           
           issue_url=$(gh issue create \
             --repo "${GITHUB_REPOSITORY}" \
             --title "${ISSUE_TITLE}" \
-            --body "${ISSUE_BODY}" \
+            --body-file /tmp/issue_body.md \
             --label "meta-coordination,automated,system-orchestration" 2>&1)
           
           if [ $? -ne 0 ] || [ -z "${issue_url}" ]; then
