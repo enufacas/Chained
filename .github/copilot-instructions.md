@@ -6,7 +6,41 @@ This repository is part of the **Chained autonomous AI ecosystem**, where specia
 
 ## 🤖 Custom Agents System
 
-We have **47 specialized custom agents** available in the `.github/agents/` directory. These agents are high-quality, domain-specific experts that should be leveraged whenever their expertise matches the task at hand.
+We have **48 specialized custom agents** available in the `.github/agents/` directory. These agents are high-quality, domain-specific experts that should be leveraged whenever their expertise matches the task at hand.
+
+### 🎯 Autonomous System Orchestration
+
+The repository has an **autonomous orchestration system** managed by the **@meta-coordinator-system** agent:
+
+**What It Does:**
+- Runs every 5 minutes automatically
+- Assigns tech leads to PRs needing review
+- Creates feedback issues for tech lead change requests
+- Assigns agents to all open issues
+- Manages review cycles and re-reviews
+- Auto-merges approved PRs from trusted sources
+- Learns from patterns using persistent memory
+- Handles exceptions and edge cases
+
+**How It Works:**
+- Workflow: `.github/workflows/meta-coordinator.yml`
+- Agent: `.github/agents/meta-coordinator-system.md`
+- Memory: `tools/meta-coordinator-memory.py`
+- Storage: `.github/agent-system/meta-coordinator-memory.json`
+
+**When to Interact:**
+- **Don't**: Try to manually assign tech leads or agents (system handles this)
+- **Don't**: Create feedback issues manually (system creates them)
+- **Do**: Follow agent assignments in issue directives
+- **Do**: Respond to tech lead feedback in issues
+- **Do**: Trust the system to manage PR lifecycle
+
+**For Developers:**
+- Issues get auto-assigned to appropriate agents (wait ~5 min)
+- PRs get auto-assigned to tech leads (wait ~5 min)
+- Tech lead feedback creates issues automatically
+- Approved PRs auto-merge when criteria met
+- System learns and improves over time
 
 ### Available Custom Agents
 
@@ -238,12 +272,21 @@ Each agent has unique expertise and should be used for their specialized domain.
 
 ---
 
-### 🎯 Multi-Agent Coordination (1 agent)
+### 🎯 Multi-Agent Coordination (2 agents)
 
 #### **meta-coordinator**
-- Coordinating multiple AI agents with systematic collaboration
+- Coordinating multiple AI agents for complex tasks
 - Inspired by Alan Turing
 - Focuses on task decomposition, agent orchestration, and multi-agent collaboration
+- **Note**: For ad-hoc multi-agent coordination
+
+#### **meta-coordinator-system** 🛡️ **Protected**
+- Complete autonomous system orchestrator for tech lead review, agent assignment, and auto-merge
+- Inspired by Alan Turing - systematic and orchestrating
+- **Special status**: Protected agent managing autonomous operations
+- **When to use**: System handles this automatically every 5 minutes via meta-coordinator.yml
+- **Specializes in**: PR review orchestration, feedback issues, agent assignment, review cycles, auto-merge execution, memory/learning, exception handling
+- **Note**: Operates autonomously - no manual invocation needed
 
 ---
 
@@ -255,6 +298,14 @@ Each agent has unique expertise and should be used for their specialized domain.
 - **Special status**: Protected agent that cannot be deleted or voted off
 - **When to use**: GitHub Actions failures, workflow debugging, CI/CD issues
 - **Specializes in**: Workflow troubleshooting, log analysis, automation debugging
+
+#### **meta-coordinator-system** 🛡️ **Protected**
+- Complete autonomous system orchestrator
+- Inspired by Alan Turing - systematic and collaborative
+- **Special status**: Protected agent that cannot be deleted or voted off
+- **When to use**: System already handles this automatically every 5 minutes
+- **Specializes in**: Tech lead assignment, agent assignment, PR lifecycle, auto-merge, memory/learning
+- **Note**: Operates autonomously via meta-coordinator.yml workflow - runs continuously
 
 ## 🎯 How to Use Custom Agents
 
@@ -386,6 +437,7 @@ When you execute in the runner:
 
 #### Multi-Agent Coordination
 - **Complex multi-agent tasks** → `meta-coordinator`
+- **System orchestration** → `meta-coordinator-system` (autonomous, no manual invocation)
 
 ### Invoking Custom Agents
 
