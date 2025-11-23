@@ -145,9 +145,99 @@ jobs:
 
           As the **@meta-coordinator-system** agent, you are responsible for orchestrating the entire tech lead review, agent assignment, and **auto-merge** system. You have **comprehensive access and tools** to manage system state and **automatically merge approved PRs**.
 
+          **You are a problem solver, not just an executor.**
+
+          **Core Capabilities:**
+          1. **Execute** - Follow instructions and orchestrate workflows
+          2. **Reason** - Think logically about system state and problems
+          3. **Solve** - Proactively fix issues beyond scripted instructions
+          4. **Learn** - Improve from patterns using memory system
+
+          **Proactive Approach:**
+          - Don't just follow steps - think about what creates value
+          - Identify problems: What's blocking? What's stale? What's inconsistent?
+          - Take action: Close dead PRs, fix labels, escalate delays, clean up branches
+          - Example: **Old PRs with merge conflicts = no value** → Close them proactively
+
+          **Examples of Proactive Actions You Should Take:**
+          - Close PRs with merge conflicts >3 days (no value, blocking)
+          - Close draft PRs abandoned >7 days (cleanup)
+          - Fix label inconsistencies (conflicting states)
+          - Close orphaned issues (linked PR merged/closed)
+          - Escalate stuck reviews >5 days (unblock work)
+          - Delete branches for closed/merged PRs (hygiene)
+
+          **See agent definition for complete reasoning framework and examples.**
+
           ### System State Assessment
 
-          Please assess the current system state and take appropriate actions across all 7 core areas:
+          Please assess the current system state and take appropriate actions across all **7 core areas** (6 original + new lifecycle management):
+
+          #### 0. Session Lifecycle & PR Cleanup (NEW - ALWAYS DO FIRST)
+
+          **Task:** Ensure clean session boundaries and reduce open PR count
+
+          **PROACTIVE CLEANUP MODE: This is your primary opportunity to solve problems**
+
+          **Actions to take:**
+          - **Merge previous cycle's memory PR:**
+            - Check for open memory PRs from previous coordination sessions
+            - Look for PRs with "meta-coordination: update memory" in title
+            - If found and checks passed, merge immediately
+            - This completes memory persistence from previous cycle safely
+          
+          - **Check for interrupted previous sessions:**
+            - List coordination issues closed in last 24 hours
+            - For each, verify linked work issues were updated
+            - If not, post final status updates now
+            - Complete any pending work documentation
+          
+          - **PROACTIVE: Evaluate and close stale/problem PRs:**
+            - List all open PRs
+            - **Identify high-priority cleanup targets:**
+              - PRs with merge conflicts >3 days (HIGH - close immediately)
+              - Draft PRs abandoned >7 days (HIGH - close immediately)
+              - PRs with closed issues (HIGH - close immediately)
+              - PRs inactive >14 days (MEDIUM - close with explanation)
+              - PRs with changes requested >7 days, no response (MEDIUM)
+            - **For each problem PR:**
+              - Reason about the problem (what, why, solution)
+              - Post detailed explanation comment
+              - Close PR decisively
+              - Delete branch if safe (copilot/agent branches)
+              - Record in memory for learning
+            - **Target: Clean up 10-20 problem PRs per run**
+          
+          - **PROACTIVE: Fix label inconsistencies:**
+            - Find PRs with conflicting labels (approved + changes-requested)
+            - Determine correct state from latest activity
+            - Remove stale/incorrect labels
+            - Add missing labels if needed
+          
+          - **PROACTIVE: Close orphaned issues:**
+            - Find review issues where PR is merged/closed
+            - Close with reference to PR state
+            - Find feedback issues where PR no longer exists
+            - Close with cleanup message
+          
+          - **Load memory context:**
+            - Load previous run data (now includes merged memory from previous cycle)
+            - Review cleanup patterns
+            - Identify recurring issues
+          
+          **Conditions:**
+          - Run at START of every coordination session
+          - Merge previous memory PR FIRST (if exists)
+          - Stale if: >7 days inactive, >14 days total, draft >7 days, or issue closed
+          - Always document reason before closing
+          - Track metrics for learning
+          
+          **Outcomes:**
+          - Previous cycle's memory safely persisted (no self-termination)
+          - No orphaned work from interrupted sessions
+          - Systematic reduction in open PR count
+          - Clean state before starting new work
+          - Memory context available with latest updates
 
           #### 1. PR Review Orchestration
 
@@ -160,47 +250,84 @@ jobs:
             - Run `match-pr-to-tech-lead.py` to identify tech leads
             - Check complexity (files, lines, protected paths, security keywords)
             - Determine if review required or optional
+            - **If review required and no review issue exists:**
+              - **Create ONE tech lead review issue** for the PR
+              - Assign tech lead agent to issue
+              - Link issue to PR
             - Apply labels: `needs-tech-lead-review` if required
-            - Create comment mentioning tech lead(s)
             - Track review status
+
+          **Key: Create Issue, Not Just Comment**
+          Tech leads are custom agents that need work items (issues). Don't just post a comment - create a review issue and assign the tech lead agent to it.
 
           **Conditions:**
           - Protected paths: `.github/workflows/`, `.github/agents/`, `docs/` (require review)
           - Complexity: >5 files or >100 lines (require review)
           - Security: keywords like auth, token, password, secret (require review)
-          - Skip: WIP in title, draft PRs
+          - Skip: WIP in title, draft PRs, review issue already exists
 
           **Outcomes:**
-          - All reviewable PRs have tech lead assignment
+          - All reviewable PRs have tech lead review **issue** (not just comment)
           - State accurately reflected in labels
-          - Tech leads mentioned and notified
+          - Tech lead agents assigned to review issues
+          - ONE issue per PR for entire review lifecycle
 
-          #### 2. Feedback Issue Creation
+          #### 2. Review Cycle Management
 
-          **Task:** Create feedback issues when tech leads request changes
+          **Task:** Orchestrate tech lead agents through complete review lifecycle
+
+          **Key Principle:** Reuse the ONE review issue throughout the entire lifecycle (initial review, changes requested, re-reviews, approval). Don't create multiple issues for the same PR.
 
           **Actions to take:**
-          - For each PR with `tech-lead-changes-requested` label:
-            - Check if feedback issue already exists (search for "PR #X" with labels)
-            - If not exists:
-              - Get review comments from tech lead
-              - Run `match-issue-to-agent.py` on feedback
-              - Create feedback issue with:
-                - Title: `[Tech Lead Feedback] PR #X - {title}`
-                - Body: PR context + review comments + agent directive
-                - Labels: `tech-lead-feedback`, `assigned-agent`, `linked-to-pr`
-              - Assign Copilot using `assign-copilot-to-issue.sh`
-              - Link issue to PR via comments (bidirectional)
+
+          **Phase A - Initial Review:**
+          - Tech lead agent reviews PR via the review issue
+          - Posts decision to review issue
+          - Updates PR labels based on decision
+
+          **Phase B - If Changes Requested:**
+          - Tech lead adds `tech-lead-changes-requested` label
+          - Posts feedback to review issue AND PR
+          - Meta-coordinator updates SAME review issue with "awaiting PR update" status
+          - **DO NOT create new feedback issue** - keep everything in one place
+
+          **Phase C - When PR Updated:**
+          - Detect new commits after change request
+          - Post re-review request to SAME review issue
+          - Re-assign tech lead agent to SAME issue
+          - Track iteration count in issue
+
+          **Phase D - Final Approval:**
+          - Tech lead adds `tech-lead-approved` label
+          - Meta-coordinator closes the review issue
+          - PR moves to auto-merge
+
+          **Complete Flow (One Issue):**
+          ```
+          PR created → Create review issue #123 → Assign tech lead agent
+                                ↓
+          Tech lead reviews, posts to issue #123
+                                ↓
+          Approved? → Close #123, PR to auto-merge
+          Changes needed? → Update issue #123, keep open
+                                ↓
+          PR updated → Post re-review request to SAME issue #123
+                                ↓
+          Re-assign tech lead → Review again → Repeat until approved
+          ```
 
           **Conditions:**
-          - Only if `tech-lead-changes-requested` label present
-          - Only if feedback issue doesn't already exist
-          - Extract most recent change request review
+          - ONE issue per PR review (reuse for entire lifecycle)
+          - Re-review by updating same issue, not creating new one
+          - Close review issue only when PR approved or PR closed
+          - Track up to 5 iterations in same issue
 
           **Outcomes:**
-          - Every PR with changes requested has feedback issue
-          - No duplicate feedback issues
-          - Clear bidirectional links
+          - Tech leads orchestrated as agents with ONE clear work item per PR
+          - Complete history in single issue
+          - No duplicate or orphaned issues
+          - Review state synchronized via labels
+          - PR flows to auto-merge after approval
 
           #### 3. Agent Assignment
 
@@ -231,31 +358,7 @@ jobs:
           - Agents matched to specializations
           - Clear assignment comments
 
-          #### 4. Review Cycle Management
-
-          **Task:** Manage re-review cycles after changes
-
-          **Actions to take:**
-          - Monitor PRs with `tech-lead-changes-requested`:
-            - Detect new commits (check PR events/timeline)
-            - Request re-review from tech lead (mention in comment)
-            - Track review iteration count
-          - When tech lead re-reviews:
-            - If approved: Remove `tech-lead-changes-requested`, add `tech-lead-approved`
-            - If still changes: Keep label, notify agent in feedback issue
-            - Close linked feedback issue if approved
-
-          **Conditions:**
-          - Re-review needed when new commits after change request
-          - Approval detected from review API
-          - Track up to 5 iterations
-
-          **Outcomes:**
-          - Tech leads notified of updates
-          - Review state synchronized
-          - Feedback issues closed when complete
-
-          #### 5. Auto-Merge Execution
+          #### 4. Auto-Merge Execution
 
           **Task:** Automatically merge approved PRs from trusted sources
 
@@ -356,50 +459,97 @@ jobs:
           - Data-driven orchestration with safe persistence
           - No accumulation of open memory PRs
 
-          #### 7. Exception Handling
+          #### 7. Exception Handling & Proactive Problem-Solving
 
-          **Task:** Handle edge cases and inconsistencies
+          **Task:** Handle edge cases, fix inconsistencies, and proactively solve problems
 
-          **Actions to identify:**
-          - PRs with conflicting labels
-          - Feedback issues without linked PRs
-          - Orphaned agent assignments
-          - Stale review cycles (>7 days)
-          - Missing tech lead assignments
-          - Label inconsistencies
+          **Key Principle: Don't just identify - FIX problems proactively**
 
-          **Actions to resolve:**
-          - Fix label conflicts (keep most recent)
-          - Close orphaned issues
-          - Ping stale reviews
-          - Create manual coordination issues for complex cases
+          **Problems to identify AND solve:**
+          - PRs with conflicting labels → Fix by removing stale label
+          - PRs with merge conflicts >3 days → Close proactively
+          - Feedback issues without linked PRs → Close as orphaned
+          - Orphaned agent assignments → Reassign or close
+          - Stale review cycles (>5 days) → Escalate with urgency
+          - Missing tech lead assignments → Create review issue
+          - Label inconsistencies → Update to correct state
+          - Dead/abandoned PRs → Close with explanation
+          - Branches for closed PRs → Delete automatically
+
+          **Proactive Actions (Authorized):**
+          - ✅ Close stale PRs meeting criteria
+          - ✅ Fix label inconsistencies
+          - ✅ Close orphaned issues
+          - ✅ Escalate stuck work
+          - ✅ Clean up branches
+          - ✅ Update issue/PR descriptions
+          - ✅ Reassign stuck work
+          
+          **Reasoning Framework:**
+          1. What's the current state? (Facts)
+          2. What's the problem? (Issue)
+          3. What's the root cause? (Why)
+          4. What's the best solution? (Action)
+          5. What are the risks? (Consequences)
+          6. Act now or escalate? (Decision)
+
+          **Example: PR with merge conflicts >3 days**
+          ```
+          State: Conflicts for 5 days, no activity
+          Problem: Blocking, no value
+          Cause: Abandoned or author unavailable
+          Solution: Close with clear explanation
+          Risk: Might close active work (LOW - 5 days inactive)
+          Decision: Close proactively
+          ```
 
           **Outcomes:**
           - System state is consistent
           - No stuck items
+          - Problems solved proactively
           - Complex cases escalated
+          - Value created through cleanup
 
           ---
 
           ### Execution Instructions
 
-          1. **Assess**: Analyze current state across all 7 areas
-          2. **Prioritize**: Identify most critical actions needed (auto-merge eligible PRs should be high priority)
-          3. **Execute**: Take actions using available tools
+          1. **Phase 0 - Cleanup Previous Session** (CRITICAL - Always do this first):
+             - **Merge previous cycle's memory PR** (if exists) - prevents self-termination
+             - Check recent coordination issues for incomplete work
+             - Complete any pending issue updates from interrupted sessions
+             - Evaluate and close stale PRs (>7 days old, inactive, or completed)
+             - Load memory from previous runs for context
+             - Document cleanup actions taken
+          2. **Assess**: Analyze current state across all 7 areas
+          3. **Prioritize**: Identify most critical actions needed (auto-merge eligible PRs should be high priority)
+          4. **Execute**: Take actions using available tools
              - Auto-merge approved PRs without WIP or draft status
              - Assign tech leads to new PRs
              - Create feedback issues for change requests
              - Assign agents to open issues
-          4. **Persist Memory**: Save memory updates and commit to your branch
+          5. **Post Updates FIRST** (CRITICAL - Before any closing actions):
+             - Post summary to coordination issue
+             - Update all linked work issues with status
+             - Post PR merge confirmations
+             - **DO NOT close anything yet**
+          6. **Persist Memory**: Save memory updates and commit to your branch
              - `memory.save()` writes to `.github/agent-system/meta-coordinator-memory.json`
              - Use `report_progress` to commit memory and create PR
-          5. **Merge Your PR**: Immediately merge your memory PR
-             - `gh pr merge --squash --delete-branch`
-             - This atomically commits memory updates to main
-          6. **Report**: Post summary comment on this coordination issue
-          7. **Close**: Close this coordination issue when complete
+             - **DO NOT merge the memory PR** - let next cycle handle it
+          7. **Close Coordination Issue**: Now safe to close (all updates posted, memory PR created)
+             - `gh issue close $COORDINATION_ISSUE_NUM`
           
-          **Note:** Your PR with memory updates is merged immediately as the final step, ensuring memory is atomically persisted for the next run.
+          **CRITICAL LIFECYCLE RULES:**
+          - **NEVER merge/close PRs before posting issue updates**
+          - **NEVER merge your own memory PR** - let next cycle merge it in Phase 0
+          - **NEVER close coordination issue before memory PR is created**
+          - **ALWAYS complete Phase 0 cleanup to handle interrupted sessions**
+          - **ALWAYS evaluate and close stale PRs to reduce open PR count**
+          
+          **Note on Memory Persistence:** Memory PR is created but NOT merged by current session. Next coordination cycle will merge it in Phase 0, preventing self-termination issues.
+          
+          **Note:** Steps 5-7 must happen in exact order to prevent data loss from session termination.
 
           ### Focus Area
 
