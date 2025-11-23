@@ -149,7 +149,7 @@ jobs:
 
           ### System State Assessment
 
-          Please assess the current system state and take appropriate actions across all **8 core areas** (7 original + new lifecycle management):
+          Please assess the current system state and take appropriate actions across all **7 core areas** (6 original + new lifecycle management):
 
           #### 0. Session Lifecycle & PR Cleanup (NEW - ALWAYS DO FIRST)
 
@@ -207,47 +207,84 @@ jobs:
             - Run `match-pr-to-tech-lead.py` to identify tech leads
             - Check complexity (files, lines, protected paths, security keywords)
             - Determine if review required or optional
+            - **If review required and no review issue exists:**
+              - **Create ONE tech lead review issue** for the PR
+              - Assign tech lead agent to issue
+              - Link issue to PR
             - Apply labels: `needs-tech-lead-review` if required
-            - Create comment mentioning tech lead(s)
             - Track review status
+
+          **Key: Create Issue, Not Just Comment**
+          Tech leads are custom agents that need work items (issues). Don't just post a comment - create a review issue and assign the tech lead agent to it.
 
           **Conditions:**
           - Protected paths: `.github/workflows/`, `.github/agents/`, `docs/` (require review)
           - Complexity: >5 files or >100 lines (require review)
           - Security: keywords like auth, token, password, secret (require review)
-          - Skip: WIP in title, draft PRs
+          - Skip: WIP in title, draft PRs, review issue already exists
 
           **Outcomes:**
-          - All reviewable PRs have tech lead assignment
+          - All reviewable PRs have tech lead review **issue** (not just comment)
           - State accurately reflected in labels
-          - Tech leads mentioned and notified
+          - Tech lead agents assigned to review issues
+          - ONE issue per PR for entire review lifecycle
 
-          #### 2. Feedback Issue Creation
+          #### 2. Review Cycle Management
 
-          **Task:** Create feedback issues when tech leads request changes
+          **Task:** Orchestrate tech lead agents through complete review lifecycle
+
+          **Key Principle:** Reuse the ONE review issue throughout the entire lifecycle (initial review, changes requested, re-reviews, approval). Don't create multiple issues for the same PR.
 
           **Actions to take:**
-          - For each PR with `tech-lead-changes-requested` label:
-            - Check if feedback issue already exists (search for "PR #X" with labels)
-            - If not exists:
-              - Get review comments from tech lead
-              - Run `match-issue-to-agent.py` on feedback
-              - Create feedback issue with:
-                - Title: `[Tech Lead Feedback] PR #X - {title}`
-                - Body: PR context + review comments + agent directive
-                - Labels: `tech-lead-feedback`, `assigned-agent`, `linked-to-pr`
-              - Assign Copilot using `assign-copilot-to-issue.sh`
-              - Link issue to PR via comments (bidirectional)
+
+          **Phase A - Initial Review:**
+          - Tech lead agent reviews PR via the review issue
+          - Posts decision to review issue
+          - Updates PR labels based on decision
+
+          **Phase B - If Changes Requested:**
+          - Tech lead adds `tech-lead-changes-requested` label
+          - Posts feedback to review issue AND PR
+          - Meta-coordinator updates SAME review issue with "awaiting PR update" status
+          - **DO NOT create new feedback issue** - keep everything in one place
+
+          **Phase C - When PR Updated:**
+          - Detect new commits after change request
+          - Post re-review request to SAME review issue
+          - Re-assign tech lead agent to SAME issue
+          - Track iteration count in issue
+
+          **Phase D - Final Approval:**
+          - Tech lead adds `tech-lead-approved` label
+          - Meta-coordinator closes the review issue
+          - PR moves to auto-merge
+
+          **Complete Flow (One Issue):**
+          ```
+          PR created → Create review issue #123 → Assign tech lead agent
+                                ↓
+          Tech lead reviews, posts to issue #123
+                                ↓
+          Approved? → Close #123, PR to auto-merge
+          Changes needed? → Update issue #123, keep open
+                                ↓
+          PR updated → Post re-review request to SAME issue #123
+                                ↓
+          Re-assign tech lead → Review again → Repeat until approved
+          ```
 
           **Conditions:**
-          - Only if `tech-lead-changes-requested` label present
-          - Only if feedback issue doesn't already exist
-          - Extract most recent change request review
+          - ONE issue per PR review (reuse for entire lifecycle)
+          - Re-review by updating same issue, not creating new one
+          - Close review issue only when PR approved or PR closed
+          - Track up to 5 iterations in same issue
 
           **Outcomes:**
-          - Every PR with changes requested has feedback issue
-          - No duplicate feedback issues
-          - Clear bidirectional links
+          - Tech leads orchestrated as agents with ONE clear work item per PR
+          - Complete history in single issue
+          - No duplicate or orphaned issues
+          - Review state synchronized via labels
+          - PR flows to auto-merge after approval
 
           #### 3. Agent Assignment
 
@@ -278,31 +315,7 @@ jobs:
           - Agents matched to specializations
           - Clear assignment comments
 
-          #### 4. Review Cycle Management
-
-          **Task:** Manage re-review cycles after changes
-
-          **Actions to take:**
-          - Monitor PRs with `tech-lead-changes-requested`:
-            - Detect new commits (check PR events/timeline)
-            - Request re-review from tech lead (mention in comment)
-            - Track review iteration count
-          - When tech lead re-reviews:
-            - If approved: Remove `tech-lead-changes-requested`, add `tech-lead-approved`
-            - If still changes: Keep label, notify agent in feedback issue
-            - Close linked feedback issue if approved
-
-          **Conditions:**
-          - Re-review needed when new commits after change request
-          - Approval detected from review API
-          - Track up to 5 iterations
-
-          **Outcomes:**
-          - Tech leads notified of updates
-          - Review state synchronized
-          - Feedback issues closed when complete
-
-          #### 5. Auto-Merge Execution
+          #### 4. Auto-Merge Execution
 
           **Task:** Automatically merge approved PRs from trusted sources
 

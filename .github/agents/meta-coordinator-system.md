@@ -318,9 +318,85 @@ You have **wide, permissive access** to perform all necessary functions:
   - Run `match-pr-to-tech-lead.py --check-complexity` for objective analysis
   - Check WIP markers in title (skip if present)
   - Determine if review required or optional
+  - If review required:
+    - **Create tech lead review issue** (not just a comment)
+    - Assign issue to appropriate tech lead agent
+    - Link issue to PR bidirectionally
   - Apply labels: `needs-tech-lead-review` (state only, NOT identifier labels)
-  - Create comment mentioning tech lead(s) by @name
   - Track review status
+
+**Tech Lead Review Issue Creation (NEW):**
+
+When a PR requires tech lead review, create an issue to handle the lifecycle:
+
+```bash
+# Get tech lead and complexity info
+tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --get-tech-lead)
+complexity=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --check-complexity)
+reasons=$(echo "$complexity" | jq -r '.complexity.reasons[]' | paste -sd, -)
+
+# Create review issue
+issue_title="[Tech Lead Review] PR #${pr_num}: ${pr_title}"
+issue_body="## 🔍 Tech Lead Review Required
+
+**PR:** #${pr_num}
+**Tech Lead:** @${tech_lead}
+**Review Reasons:** ${reasons}
+
+### Your Mission (@${tech_lead})
+
+Please review PR #${pr_num} according to your tech lead responsibilities.
+
+**Review Criteria:**
+- Code quality and best practices
+- Security implications
+- Architecture alignment
+- Documentation completeness
+- Test coverage
+
+**PR Context:**
+$(gh pr view $pr_num --json title,body,files --jq '.body')
+
+**Files Changed:**
+$(gh pr view $pr_num --json files --jq '.files[].path' | head -20)
+
+**After Review:**
+1. If approved: Add \`tech-lead-approved\` label to PR, close this issue
+2. If changes needed: Add \`tech-lead-changes-requested\` label, post detailed feedback
+3. Update this issue with your review summary
+
+*Automated tech lead assignment by @meta-coordinator-system*
+"
+
+# Create and assign issue to tech lead agent
+gh issue create \
+  --title "$issue_title" \
+  --body "$issue_body" \
+  --label "tech-lead-review,needs-review,linked-to-pr" \
+  --repo $REPO
+
+# Get issue number and assign to tech lead agent
+review_issue_num=$(gh issue list --label "tech-lead-review" --search "PR #${pr_num}" --json number --jq '.[0].number')
+
+# Assign using proven script with tech lead as agent
+export INPUT_ISSUE_NUMBER=$review_issue_num
+export FORCE_AGENT=$tech_lead
+./tools/assign-copilot-to-issue.sh
+
+# Link PR and issue bidirectionally
+gh pr comment $pr_num --body "🔍 Tech lead review requested. See issue #${review_issue_num} for details." --repo $REPO
+gh issue comment $review_issue_num --body "📋 Linked to PR #${pr_num}" --repo $REPO
+
+# Apply label to PR
+gh pr edit $pr_num --add-label "needs-tech-lead-review" --repo $REPO
+```
+
+**Why This Is Better:**
+- **Actionable work item** for tech lead agent (Copilot can execute)
+- **Complete lifecycle tracking** via issue state
+- **Clear assignment** using agent system
+- **Bidirectional linking** between PR and review issue
+- **Automatic cleanup** when review completes
 
 **Proven Patterns (from auto-review-merge.yml):**
 
@@ -362,14 +438,16 @@ You have **wide, permissive access** to perform all necessary functions:
   - More than 5 files changed
   - More than 100 lines changed
 - **Security keywords**: auth, token, password, secret, permission, security
-- **Skip if**: WIP in title, draft PR, already approved
+- **Skip if**: WIP in title, draft PR, already approved, or review issue already exists
 
 **Outcomes:**
-- All reviewable PRs have tech lead assignment
+- All reviewable PRs have tech lead review **issue** (not just comment)
+- Tech lead agents automatically assigned to review issues
+- Complete lifecycle tracking through issue state
 - State accurately reflected in labels (minimal labels)
-- Tech leads mentioned by @name in comments
+- Bidirectional links between PR and review issue
 - Review requirements based on objective criteria
-- Efficient processing (skip drafts, WIP, etc.)
+- Efficient processing (skip drafts, WIP, existing reviews)
 
 ### 2. Feedback Issue Creation
 
@@ -539,30 +617,228 @@ If you cannot use the script, you MUST:
 - Work distributed appropriately
 - **Issue body contains critical agent directive for Copilot**
 
-### 4. Review Cycle Management
+### 4. Review Cycle Management & Tech Lead Orchestration
 
-**Task:** Manage re-review cycles after changes
+**Task:** Orchestrate tech lead agents through complete review lifecycle
 
-**Actions:**
-- Monitor PRs with `tech-lead-changes-requested`:
-  - Detect new commits
-  - Request re-review from tech lead (mention in comment)
-  - Track review iteration count
-- When tech lead re-reviews:
-  - If approved: Remove `tech-lead-changes-requested`, add `tech-lead-approved`
-  - If still changes needed: Keep label, notify agent
-  - Close linked feedback issue if approved
+**Tech leads are custom agents** that need to be orchestrated through the review process. This section handles the complete lifecycle from review creation to PR approval/merge.
+
+**Key Principle: One Issue Per PR Review** - Reuse the original tech lead review issue throughout the entire lifecycle (initial review, feedback, re-reviews, approval).
+
+#### Phase A: Initial Tech Lead Review (from Section 1)
+
+1. **Tech lead review issue created** with agent assigned
+2. **Tech lead agent (Copilot) works on review issue:**
+   - Analyzes PR changes
+   - Checks code quality, security, architecture
+   - Makes decision: approve or request changes
+   - Updates labels on PR based on decision
+   - Posts review summary to **same review issue** (don't close yet)
+
+3. **Meta-coordinator monitors review issue for decision:**
+   - Check review issue for tech lead's decision
+   - Look for keywords like "APPROVED", "CHANGES REQUESTED", etc.
+   - Verify labels were applied to PR
+
+#### Phase B: Handle Review Outcome
+
+**If tech lead approved:**
+```bash
+# Tech lead agent should have already:
+# - Added `tech-lead-approved` label to PR
+# - Removed `needs-tech-lead-review` label
+# - Posted approval summary to review issue
+
+# Meta-coordinator verifies and closes review issue:
+has_approval=$(gh pr view $pr_num --json labels --jq '.labels[] | select(.name == "tech-lead-approved") | .name')
+
+if [ -n "$has_approval" ]; then
+  echo "✅ Tech lead approved - closing review issue"
+  
+  # Close the review issue now that it's complete
+  gh issue close $review_issue_num --comment "✅ Review complete - PR approved and ready for merge" --repo $REPO
+  
+  # PR will be picked up by auto-merge in Section 5
+fi
+```
+
+**If tech lead requested changes:**
+```bash
+# Tech lead agent should have already:
+# - Added `tech-lead-changes-requested` label to PR
+# - Posted detailed feedback to review issue
+# - Posted feedback comment on PR
+
+# Meta-coordinator REUSES the same review issue for feedback coordination
+# Instead of creating new feedback issue, update the existing one:
+
+gh issue comment $review_issue_num --body "## 🔄 Awaiting PR Updates
+
+@${tech_lead} has requested changes. 
+
+**Next Steps for PR Author Agent:**
+The agent working on this PR should:
+1. Review the feedback above
+2. Make necessary changes to PR #${pr_num}
+3. Push commits addressing the feedback
+4. Comment here when ready for re-review
+
+**This issue will remain open** until PR is approved or closed.
+
+*Status updated by @meta-coordinator-system*
+" --repo $REPO
+
+# Update issue labels to reflect waiting state
+gh issue edit $review_issue_num --add-label "awaiting-pr-update" --repo $REPO
+
+# NO new feedback issue created - everything stays in one place
+```
+
+#### Phase C: Monitor for Updates & Request Re-Review
+
+**Detect when PR is updated after change request:**
+```bash
+# For PRs with tech-lead-changes-requested label
+for pr_num in $(gh pr list --label "tech-lead-changes-requested" --json number --jq '.[].number'); do
+  # Find the existing review issue for this PR
+  review_issue_num=$(gh issue list --label "tech-lead-review" --state open --search "PR #${pr_num}" --json number --jq '.[0].number')
+  
+  if [ -z "$review_issue_num" ]; then
+    echo "No review issue found for PR #${pr_num}"
+    continue
+  fi
+  
+  # Get latest commit date
+  latest_commit_date=$(gh pr view $pr_num --json commits --jq '.commits[-1].committedDate')
+  
+  # Get when changes were requested
+  changes_requested_date=$(gh pr view $pr_num --json timelineItems --jq '.timelineItems[] | select(.event == "labeled" and .label.name == "tech-lead-changes-requested") | .createdAt' | tail -1)
+  
+  # If commits after change request
+  if [[ "$latest_commit_date" > "$changes_requested_date" ]]; then
+    echo "New commits detected on PR #${pr_num} - requesting re-review in same issue"
+    
+    # Update SAME review issue with re-review request (don't create new issue)
+    gh issue comment $review_issue_num --body "## 🔄 Re-Review Requested
+
+**PR author has pushed new commits addressing feedback.**
+
+### Changes Since Last Review:
+$(gh pr view $pr_num --json commits --jq '.commits[-3:] | .[] | "- \(.commit.message) (\(.committedDate | split("T")[0]))"')
+
+### Your Task (@${tech_lead}):
+1. Review the new changes in PR #${pr_num}
+2. Check if all feedback has been addressed
+3. Make decision:
+   - **If approved:** Add \`tech-lead-approved\` label to PR, remove \`tech-lead-changes-requested\`, post approval here
+   - **If more changes needed:** Keep label, post additional feedback here
+
+**This is review iteration $(gh issue view $review_issue_num --json comments --jq '[.comments[] | select(.body | contains("Re-Review"))] | length + 1')**
+
+*Automated re-review request by @meta-coordinator-system*
+" --repo $REPO
+    
+    # Update labels to show re-review needed
+    gh issue edit $review_issue_num --remove-label "awaiting-pr-update" --add-label "needs-re-review" --repo $REPO
+    
+    # Re-assign to tech lead agent (in case they unassigned)
+    export INPUT_ISSUE_NUMBER=$review_issue_num
+    export FORCE_AGENT=$tech_lead
+    ./tools/assign-copilot-to-issue.sh
+    
+    # Notify on PR
+    gh pr comment $pr_num --body "🔄 Re-review requested in issue #${review_issue_num}" --repo $REPO
+  fi
+done
+```
+
+#### Phase D: Final Approval & Cleanup
+
+**When tech lead approves (initial or after re-review):**
+```bash
+# Tech lead agent adds tech-lead-approved label
+# Meta-coordinator detects and cleans up
+
+for pr_num in $(gh pr list --label "tech-lead-approved" --json number --jq '.[].number'); do
+  # Remove blocking labels
+  gh pr edit $pr_num --remove-label "needs-tech-lead-review" --repo $REPO
+  gh pr edit $pr_num --remove-label "tech-lead-changes-requested" --repo $REPO
+  
+  # Find and close the review issue
+  review_issue_num=$(gh issue list --label "tech-lead-review" --state open --search "PR #${pr_num}" --json number --jq '.[0].number')
+  
+  if [ -n "$review_issue_num" ]; then
+    # Get review iteration count for summary
+    iteration_count=$(gh issue view $review_issue_num --json comments --jq '[.comments[] | select(.body | contains("Re-Review"))] | length + 1')
+    
+    gh issue close $review_issue_num --comment "✅ **Review Complete - PR Approved**
+
+**Review Summary:**
+- PR: #${pr_num}
+- Iterations: ${iteration_count}
+- Final Status: Approved
+- PR is now eligible for auto-merge
+
+*Tech lead review lifecycle complete*
+" --repo $REPO
+  fi
+  
+  # PR now eligible for auto-merge (Section 5)
+  echo "✅ PR #${pr_num} approved and cleaned up - ready for auto-merge"
+done
+```
+
+**Complete Lifecycle Flow (One Issue):**
+```
+1. PR created
+   ↓
+2. Meta-coordinator creates ONE tech lead review issue #123
+   ↓
+3. Assigns @tech-lead agent to issue #123
+   ↓
+4. Tech lead reviews, posts decision to issue #123
+   ↓
+5a. If APPROVED:                    5b. If CHANGES REQUESTED:
+    - Add tech-lead-approved            - Add tech-lead-changes-requested
+    - Post approval to issue #123       - Post feedback to issue #123
+    - Meta-coordinator closes #123      - Label: "awaiting-pr-update"
+    - PR → Auto-merge                   - Issue #123 stays open
+                                        ↓
+                                    6. PR author updates PR
+                                        ↓
+                                    7. Meta-coordinator detects update
+                                        ↓
+                                    8. Posts re-review request to SAME issue #123
+                                        ↓
+                                    9. Re-assigns @tech-lead to issue #123
+                                        ↓
+                                    10. Go to step 4 (up to 5 iterations)
+                                        ↓
+                                    11. Eventually approved → close issue #123
+```
+
+**Benefits of Single Issue Approach:**
+- **Complete history** in one place
+- **No issue proliferation** for same PR
+- **Easy to track** review progress
+- **Simpler cleanup** - just one issue to close
+- **Clear ownership** - same issue, same tech lead throughout
+- **Better context** for tech lead agent across iterations
 
 **Conditions:**
-- Re-review needed when new commits after change request
-- Approval detected from review API
-- Track up to 5 review iterations before escalation
+- Reuse existing review issue for entire lifecycle
+- Re-review by updating same issue with new request
+- Close review issue only when PR approved or PR closed
+- Track up to 5 review iterations in same issue before escalation
+- Always work through issues (tech leads are agents, not humans)
 
 **Outcomes:**
-- Tech leads notified of updates
-- Review state synchronized
-- Feedback issues closed when complete
-- Audit trail in comments
+- Tech leads orchestrated as custom agents with ONE clear work item per PR
+- Complete lifecycle tracking in single issue
+- Review state synchronized via labels
+- No duplicate or orphaned issues
+- All review history in one place
+- PR flows smoothly to auto-merge after approval
 
 ### 5. Auto-Merge Execution
 
