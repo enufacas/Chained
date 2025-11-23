@@ -1641,6 +1641,38 @@
       "mention_count": 290,
       "category": "Integration",
       "created_at": "2025-11-22T08:19:07Z"
+    },
+    {
+      "id": "idea:67",
+      "title": "Integration: Api-Ai Innovation",
+      "summary": "Exploring api-ai trends with 371 mentions. Web + AI: Build AI-powered web applications Also: Combining Api and Ai for better solutions",
+      "patterns": [
+        "api-ai",
+        "ai",
+        "api",
+        "integration"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 371,
+      "category": "Integration",
+      "created_at": "2025-11-23T20:18:02Z"
     }
   ]
 }
