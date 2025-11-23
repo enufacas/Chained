@@ -107,7 +107,7 @@ jobs:
           # Create coordination issue for meta-coordinator-system agent
           ISSUE_TITLE="🎯 Meta-Coordination: $(date +%H:%M)"
           
-          ISSUE_BODY=$(cat <<EOF
+          ISSUE_BODY=$(cat <<'EOF'
           ## 🎯 Meta-Coordination Request
 
           **Trigger:** ${TRIGGER_EVENT}
@@ -388,6 +388,14 @@ jobs:
           *This is a coordination request - complete your assessment, take actions, report results, and close this issue.*
           EOF
           )
+          
+          # Substitute variables in the issue body
+          ISSUE_BODY="${ISSUE_BODY//\$\{TRIGGER_EVENT\}/${TRIGGER_EVENT}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{FOCUS_AREA\}/${FOCUS_AREA}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{GITHUB_REPOSITORY\}/${GITHUB_REPOSITORY}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{TIMESTAMP\}/${TIMESTAMP}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{RUN_ID\}/${RUN_ID}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{DRY_RUN\}/${DRY_RUN}}"
           
           # Create the coordination issue
           echo "Creating coordination issue..."
