@@ -25,8 +25,8 @@
   },
   "learnings": [
     {
-      "title": "Commit evaluation pending: 2 commits analyzed",
-      "description": "2 commits found but merge status not yet evaluated. Success/failure metrics require PR/merge data.",
+      "title": "Evaluation Status: Merge data pending for 2 analyzed commits",
+      "description": "2 commits found in current branch state. Success/failure metrics require PR/merge data for evaluation.",
       "type": "evaluation_status",
       "category": "metadata"
     }
@@ -73,7 +73,7 @@
     }
   ],
   "_metadata": {
-    "note": "Success/failure metrics indicate merge status evaluation. A commit with 0 successful and 0 failed means commits have not yet been evaluated for merge success (pending evaluation). This is normal for recent commits that may not have associated PR/merge data.",
+    "note": "Success/failure metrics show merge evaluation status. 0/0 indicates pending evaluation (normal for recent commits without PR/merge data).",
     "evaluation_status": "Commits analyzed but merge status not yet evaluated"
   }
 }
