@@ -42,7 +42,7 @@ The meta-coordinator workflow should look like:
 name: Meta-Coordinator System
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Every 5 minutes
+    - cron: '*/15 * * * *'  # Every 15 minutes (cost-optimized)
   workflow_dispatch:
     inputs:
       focus:

@@ -13,6 +13,9 @@ This document simulates what the agent **WOULD** execute if properly configured 
 ### Actions
 
 ```bash
+# Set coordination issue number (passed as parameter)
+COORDINATION_ISSUE_NUMBER="${1:-}"
+
 # Count work items
 export GH_TOKEN=$GITHUB_TOKEN
 open_prs=$(gh pr list --state open --json number,isDraft --jq '[.[] | select(.isDraft == false)] | length')
@@ -27,7 +30,9 @@ echo "  - PRs eligible for merge: ${eligible_merges}"
 # Decision: Skip if all zero
 if [ "${open_prs}" = "0" ] && [ "${open_issues}" = "0" ] && [ "${eligible_merges}" = "0" ]; then
   echo "✅ System idle - closing coordination issue immediately"
-  gh issue close $COORDINATION_ISSUE_NUMBER --comment "System idle - no work needed"
+  if [ -n "$COORDINATION_ISSUE_NUMBER" ]; then
+    gh issue close $COORDINATION_ISSUE_NUMBER --comment "System idle - no work needed"
+  fi
   exit 0
 fi
 ```
@@ -168,15 +173,15 @@ for pr_num in $prs; do
   # Run complexity analysis
   complexity=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --check-complexity)
   requires_review=$(echo "$complexity" | jq -r '.complexity.requires_review')
-  tech_leads=$(echo "$complexity" | jq -r '.tech_leads[]')
+  tech_leads=$(echo "$complexity" | jq -r '.tech_leads | join(", ")')
   reasons=$(echo "$complexity" | jq -r '.complexity.reasons[]')
   
   if [ "$requires_review" = "true" ]; then
     # Apply label
     gh pr edit $pr_num --add-label "needs-tech-lead-review"
     
-    # Create comment mentioning tech leads
-    tech_lead_mentions=$(echo "$tech_leads" | sed 's/^/@/' | paste -sd ',' -)
+    # Create comment mentioning tech leads with @ prefix
+    tech_lead_mentions=$(echo "$tech_leads" | sed 's/\([a-z-]*\)/@\1/g')
     
     gh pr comment $pr_num --body "## 🔍 Tech Lead Review Required
 
@@ -251,12 +256,15 @@ ${review_comments}
 
 Once changes are complete, push updates to the PR and the tech lead will be notified for re-review."
 
-  issue_num=$(gh issue create \
+  issue_url=$(gh issue create \
     --title "[Tech Lead Feedback] PR #${pr_num} - ${pr_title}" \
     --body "${feedback_body}" \
     --label "tech-lead-feedback,assigned-agent,linked-to-pr")
   
-  echo "✅ Created feedback issue: ${issue_num}"
+  # Extract issue number from URL
+  issue_num=$(echo "$issue_url" | grep -oP '/issues/\K\d+')
+  
+  echo "✅ Created feedback issue: #${issue_num}"
   
   # Link issue to PR
   gh pr comment $pr_num --body "📋 Feedback issue created: ${issue_num}
@@ -388,8 +396,9 @@ done
 ## 📊 Phase 3: Report & Close (Target: 1 minute)
 
 ```bash
-# Post summary comment
-gh issue comment $COORDINATION_ISSUE_NUMBER --body "## 🎯 Meta-Coordination Summary
+# Post summary comment (requires COORDINATION_ISSUE_NUMBER from workflow)
+if [ -n "$COORDINATION_ISSUE_NUMBER" ]; then
+  gh issue comment $COORDINATION_ISSUE_NUMBER --body "## 🎯 Meta-Coordination Summary
 
 **@meta-coordinator-system** completed system orchestration.
 
@@ -443,8 +452,11 @@ gh issue comment $COORDINATION_ISSUE_NUMBER --body "## 🎯 Meta-Coordination Su
 
 **Next run:** $(date -u -d '+15 minutes' +"%H:%M:%S UTC") (15 minutes)"
 
-# Close coordination issue
-gh issue close $COORDINATION_ISSUE_NUMBER --comment "✅ Coordination complete"
+  # Close coordination issue
+  gh issue close $COORDINATION_ISSUE_NUMBER --comment "✅ Coordination complete"
+else
+  echo "⚠️  COORDINATION_ISSUE_NUMBER not set, skipping issue update"
+fi
 ```
 
 ---
