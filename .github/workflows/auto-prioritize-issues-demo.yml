@@ -1,0 +1,238 @@
+name: Auto-Prioritize Issues (Demo)
+
+# This workflow demonstrates how to integrate the autonomous issue prioritizer
+# with multi-armed bandits into the Chained system.
+#
+# Author: @APIs-architect
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to prioritize'
+        required: true
+        type: number
+      
+  # Uncomment to enable automatic prioritization:
+  # issues:
+  #   types: [opened, labeled]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  prioritize-issue:
+    runs-on: ubuntu-latest
+    name: Prioritize Issue with Thompson Sampling
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          pip install PyYAML
+      
+      - name: Get issue details
+        id: issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ inputs.issue_number || github.event.issue.number }}
+            });
+            
+            core.setOutput('title', issue.data.title);
+            core.setOutput('body', issue.data.body || '');
+            core.setOutput('labels', issue.data.labels.map(l => l.name).join(' '));
+            core.setOutput('state', issue.data.state);
+            
+            return issue.data;
+      
+      - name: Count open issues
+        id: count
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 1
+            });
+            
+            // Get count from Link header
+            const linkHeader = issues.headers.link;
+            let count = 0;
+            if (linkHeader) {
+              const match = linkHeader.match(/page=(\d+)>; rel="last"/);
+              count = match ? parseInt(match[1]) : issues.data.length;
+            }
+            
+            core.setOutput('open_count', count);
+            return count;
+      
+      - name: Prioritize issue with Thompson Sampling
+        id: prioritize
+        run: |
+          ISSUE_NUM=${{ inputs.issue_number || github.event.issue.number }}
+          
+          # Run prioritizer
+          RESULT=$(python3 tools/issue_prioritizer.py prioritize \
+            --title "${{ steps.issue.outputs.title }}" \
+            --body "${{ steps.issue.outputs.body }}" \
+            --issue-number "$ISSUE_NUM" \
+            --labels ${{ steps.issue.outputs.labels }} \
+            --registry .github/agent-system/issue_prioritizer.json)
+          
+          echo "$RESULT"
+          echo "$RESULT" >> $GITHUB_STEP_SUMMARY
+          
+          # Extract values for GitHub Actions
+          CATEGORY=$(echo "$RESULT" | grep "Category:" | awk '{print $2}')
+          PRIORITY=$(echo "$RESULT" | grep "Priority:" | awk '{print $2}')
+          CONFIDENCE=$(echo "$RESULT" | grep "Confidence:" | awk '{print $2}')
+          EST_TIME=$(echo "$RESULT" | grep "Est. Time:" | awk '{print $2}')
+          
+          echo "category=$CATEGORY" >> $GITHUB_OUTPUT
+          echo "priority=$PRIORITY" >> $GITHUB_OUTPUT
+          echo "confidence=$CONFIDENCE" >> $GITHUB_OUTPUT
+          echo "estimated_hours=$EST_TIME" >> $GITHUB_OUTPUT
+      
+      - name: Add priority label
+        if: steps.issue.outputs.state == 'open'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const priority = "${{ steps.prioritize.outputs.priority }}".toLowerCase();
+            const labelName = `priority:${priority}`;
+            
+            // Add priority label
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ inputs.issue_number || github.event.issue.number }},
+              labels: [labelName]
+            });
+      
+      - name: Comment on issue with prioritization
+        if: steps.issue.outputs.state == 'open'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## 🎯 Autonomous Priority Assessment (@APIs-architect)
+            
+            The issue prioritizer has analyzed this issue using **Thompson Sampling** (multi-armed bandits):
+            
+            | Metric | Value |
+            |--------|-------|
+            | **Category** | \`${{ steps.prioritize.outputs.category }}\` |
+            | **Priority** | \`${{ steps.prioritize.outputs.priority }}\` |
+            | **Confidence** | ${{ steps.prioritize.outputs.confidence }} |
+            | **Est. Resolution** | ${{ steps.prioritize.outputs.estimated_hours }} hours |
+            
+            ### What This Means
+            
+            This priority is based on historical success rates for **${{ steps.prioritize.outputs.category }}** issues. The system learns over time which issue categories are resolved most efficiently.
+            
+            **Thompson Sampling** balances:
+            - ⚖️ **Exploration**: Learning about new issue types
+            - 🎯 **Exploitation**: Prioritizing what works best
+            
+            As more issues are resolved, the prioritization becomes more accurate!
+            
+            ---
+            *Powered by the autonomous issue prioritizer with multi-armed bandits* 🎰`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ inputs.issue_number || github.event.issue.number }},
+              body: body
+            });
+      
+      - name: Generate statistics
+        run: |
+          echo "## 📊 Prioritizer Statistics" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          python3 tools/issue_prioritizer.py stats \
+            --registry .github/agent-system/issue_prioritizer.json \
+            >> $GITHUB_STEP_SUMMARY
+      
+      - name: Show top priorities
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🏆 Current Top Priority Categories" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          python3 tools/issue_prioritizer.py top -n 5 \
+            --registry .github/agent-system/issue_prioritizer.json \
+            >> $GITHUB_STEP_SUMMARY
+
+  # Future enhancement: Record outcomes when issues are closed
+  record-outcome:
+    runs-on: ubuntu-latest
+    name: Record Resolution Outcome
+    if: github.event_name == 'issues' && github.event.action == 'closed'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Calculate resolution time
+        id: time
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const created = new Date("${{ github.event.issue.created_at }}");
+            const closed = new Date("${{ github.event.issue.closed_at }}");
+            const diffMs = closed - created;
+            const diffHours = diffMs / (1000 * 60 * 60);
+            
+            core.setOutput('resolution_hours', diffHours.toFixed(1));
+            return diffHours;
+      
+      - name: Determine success
+        id: success
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Consider it successful if closed via PR or has "resolved" label
+            const issue = context.payload.issue;
+            const hasResolved = issue.labels.some(l => 
+              l.name === 'resolved' || l.name === 'completed'
+            );
+            const closedByPR = issue.pull_request !== undefined;
+            
+            const success = hasResolved || closedByPR;
+            core.setOutput('success', success);
+            return success;
+      
+      - name: Record outcome
+        run: |
+          # Extract category from labels or detect from title
+          CATEGORY=$(echo "${{ join(github.event.issue.labels.*.name, ' ') }}" | \
+            grep -oE "bug|feature|documentation|security|performance" | head -1)
+          
+          if [ -z "$CATEGORY" ]; then
+            CATEGORY="other"
+          fi
+          
+          python3 tools/issue_prioritizer.py record \
+            --issue-number ${{ github.event.issue.number }} \
+            --category "$CATEGORY" \
+            $(if [ "${{ steps.success.outputs.success }}" = "true" ]; then echo "--success"; fi) \
+            --resolution-time ${{ steps.time.outputs.resolution_hours }} \
+            --registry .github/agent-system/issue_prioritizer.json
+          
+          echo "✅ Recorded outcome for issue #${{ github.event.issue.number }}"
+          echo "- Category: $CATEGORY"
+          echo "- Success: ${{ steps.success.outputs.success }}"
+          echo "- Resolution time: ${{ steps.time.outputs.resolution_hours }} hours"
