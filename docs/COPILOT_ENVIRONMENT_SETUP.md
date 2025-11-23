@@ -195,6 +195,16 @@ The `copilot` environment provides:
 3. Verify all steps complete successfully
 4. Review setup step logs for failures
 
+### "DNS monitoring proxy" or HTTP 403 Errors
+
+**Cause:** GitHub API access is blocked at network level in Copilot environment
+
+**This is expected behavior!** See [COPILOT_API_ACCESS_LIMITATIONS.md](COPILOT_API_ACCESS_LIMITATIONS.md) for:
+- Why this happens (security measure)
+- What you can/cannot configure
+- How to use GitHub MCP Server tools (the solution)
+- Hybrid approaches for write operations
+
 ## Maintenance
 
 ### Regular Tasks
@@ -222,6 +232,7 @@ When PAT expires:
 - [GitHub Copilot Agent Environment Customization](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment)
 - [GitHub Actions Environments](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment)
 - [Creating Personal Access Tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+- **[Copilot API Access Limitations](COPILOT_API_ACCESS_LIMITATIONS.md)** - Understanding network restrictions and workarounds
 
 ## Quick Reference
 
