@@ -6,6 +6,7 @@ Tests file existence, data file content, HTML structure, and AI conversations.
 
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from html.parser import HTMLParser
 
@@ -173,8 +174,6 @@ def test_stats_json_content():
 
 def test_data_freshness():
     """Test that stats.json data is not stale (< 12 hours old)."""
-    from datetime import datetime, timezone
-    
     stats_path = Path('docs/data/stats.json')
     
     if not stats_path.exists():
@@ -193,7 +192,17 @@ def test_data_freshness():
         return False
     
     try:
-        last_updated = datetime.fromisoformat(stats['last_updated'].replace('Z', '+00:00'))
+        # Parse ISO 8601 timestamp with explicit handling of 'Z' timezone
+        timestamp_str = stats['last_updated']
+        if not timestamp_str:
+            print("❌ last_updated field is empty")
+            return False
+            
+        # Handle both 'Z' (UTC) and explicit '+00:00' timezone formats
+        if timestamp_str.endswith('Z'):
+            timestamp_str = timestamp_str[:-1] + '+00:00'
+        
+        last_updated = datetime.fromisoformat(timestamp_str)
         current = datetime.now(timezone.utc)
         age = current - last_updated
         age_hours = age.total_seconds() / 3600
@@ -207,7 +216,7 @@ def test_data_freshness():
         return True
         
     except (ValueError, TypeError) as e:
-        print(f"❌ Invalid last_updated format: {e}")
+        print(f"❌ Invalid last_updated format '{stats.get('last_updated', '')}': {e}")
         return False
 
 
