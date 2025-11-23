@@ -46,7 +46,7 @@ The workflow that invokes **@meta-coordinator-system** needs to include:
 ```yaml
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # GH_TOKEN is the primary variable used by gh CLI
 ```
 
 ### Workflow Location
@@ -140,7 +140,7 @@ Once authentication is available, execute full orchestration:
   uses: copilot-action@v1
   env:
     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # Only GH_TOKEN is needed for gh CLI
 ```
 
 ## Status
