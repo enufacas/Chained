@@ -158,17 +158,30 @@ jobs:
               continue
             fi
             
-            # Check if feedback issue already exists
-            # Look for issues with tech-lead-feedback label and PR # in title
-            existing_issue=$(gh issue list \
+            # Check if feedback or review issue already exists
+            # Look for issues with tech-lead-feedback or tech-lead-review label and PR # in title
+            existing_feedback_issue=$(gh issue list \
               --label "tech-lead-feedback" \
               --state open \
               --search "PR #${pr_num} in:title" \
               --json number,title \
               --jq ".[0].number" 2>/dev/null || echo "")
             
-            if [ -n "${existing_issue}" ]; then
-              echo "✓ Feedback issue already exists: #${existing_issue}"
+            existing_review_issue=$(gh issue list \
+              --label "tech-lead-review" \
+              --state open \
+              --search "PR #${pr_num} in:title" \
+              --json number,title \
+              --jq ".[0].number" 2>/dev/null || echo "")
+            
+            if [ -n "${existing_feedback_issue}" ]; then
+              echo "✓ Feedback issue already exists: #${existing_feedback_issue}"
+              echo "  Skipping creation to avoid duplicates"
+              continue
+            fi
+            
+            if [ -n "${existing_review_issue}" ]; then
+              echo "✓ Review issue already exists: #${existing_review_issue}"
               echo "  Skipping creation to avoid duplicates"
               continue
             fi
@@ -259,7 +272,7 @@ jobs:
             
             # Determine if this is a proactive review (no prior feedback) or feedback-based
             is_proactive_review="false"
-            if echo "${review_body}" | grep -q "🤖 Proactive review request"; then
+            if echo "${review_body}" | grep -q "Proactive review request - no prior feedback found"; then
               is_proactive_review="true"
               echo "📋 This is a proactive review request"
             fi

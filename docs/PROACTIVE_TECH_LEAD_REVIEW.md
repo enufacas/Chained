@@ -54,7 +54,7 @@ The workflow determines if this is a proactive review or reactive feedback:
 
 ```bash
 is_proactive_review="false"
-if echo "${review_body}" | grep -q "🤖 Proactive review request"; then
+if echo "${review_body}" | grep -q "Proactive review request - no prior feedback found"; then
   is_proactive_review="true"
 fi
 ```
