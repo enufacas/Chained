@@ -164,21 +164,125 @@ You have **wide, permissive access** to perform all necessary functions:
 
 ### 3. Agent Assignment
 
-**Task:** Assign agents to all open issues
+**Task:** Assign agents to all open issues using the proven method from copilot-graphql-assign.yml
 
-**Actions:**
-- For each open issue without assignment:
-  - Analyze title and body
-  - Run match-issue-to-agent.py
-  - Select best agent based on:
-    - Specialization match
-    - Performance score
-    - Current workload
-  - Assign Copilot with agent directive
-  - Post assignment comment with agent details
-  - Apply `assigned-agent` label
+**CRITICAL: Use the assign-copilot-to-issue.sh Script**
 
-**Agent Matching Logic:**
+The repository has a comprehensive script that handles the **SECRET SAUCE** of Copilot assignment: `tools/assign-copilot-to-issue.sh`
+
+**You MUST use this script** for agent assignments. It handles:
+- Agent matching via match-issue-to-agent.py
+- Learning guidance from agent-learning-api.py
+- Issue body updates with agent directives
+- GraphQL API actor assignment
+- Label management (copilot-assigned, agent:X)
+- Race condition prevention
+- Error handling and fallbacks
+
+**How to Use:**
+```bash
+# Set required environment variables
+export GH_TOKEN=$GITHUB_TOKEN
+export GITHUB_REPOSITORY="owner/repo"
+export GITHUB_REPOSITORY_OWNER="owner"
+export GITHUB_REPOSITORY_NAME="repo"
+
+# For specific issue
+export INPUT_ISSUE_NUMBER="123"
+./tools/assign-copilot-to-issue.sh
+
+# For all unassigned issues
+unset INPUT_ISSUE_NUMBER
+./tools/assign-copilot-to-issue.sh
+```
+
+**The Script Does (Secret Sauce):**
+
+1. **Intelligent Agent Matching**
+   ```bash
+   agent_match=$(python3 tools/match-issue-to-agent.py "$issue_title" "$issue_body")
+   matched_agent=$(echo "$agent_match" | jq -r '.agent')
+   agent_score=$(echo "$agent_match" | jq -r '.score')
+   ```
+
+2. **Learning Guidance** (Proactive warnings, recommendations, success patterns)
+   ```bash
+   learning_guidance=$(python3 tools/agent-learning-api.py query \
+     --agent "$matched_agent" \
+     --task-type "general" \
+     --task-description "$issue_title")
+   ```
+
+3. **Agent Directive Injection** (Critical!)
+   - Prepends to issue body with @agent-name mention
+   - Includes agent path, learning guidance, instructions
+   ```markdown
+   <!-- COPILOT_AGENT:matched_agent -->
+   
+   > **🤖 Agent Assignment**
+   > 
+   > This issue has been assigned to GitHub Copilot with the **@matched_agent** custom agent profile.
+   > 
+   > **@matched_agent** - Please use the specialized approach and tools defined in `.github/agents/${matched_agent}.md`.
+   > 
+   > **IMPORTANT**: Always mention **@matched_agent** by name in all conversations, comments, and PRs related to this issue.
+   
+   ### ⚠️ Proactive Warnings
+   (learning guidance warnings)
+   
+   ### ✅ Recommended Approach
+   (learning guidance recommendations)
+   
+   ### 🎯 Success Patterns
+   (learning guidance success patterns)
+   ```
+
+4. **Label Management**
+   - `copilot-assigned` - Immediate claim to prevent race conditions
+   - `agent:matched_agent` - Track which agent profile to use
+
+5. **GraphQL API Assignment**
+   - Try custom agent actor ID first (direct assignment)
+   - Fallback to generic Copilot with directives
+   ```bash
+   # Get actor ID from GraphQL
+   gh api graphql -f query='...'
+   
+   # Assign via mutation
+   gh api graphql -f query='mutation($issueId: ID!, $actorId: ID!) {
+     replaceActorsForAssignable(input: {
+       assignableId: $issueId,
+       actorIds: [$actorId]
+     }) { ... }
+   }'
+   ```
+
+6. **Success Comment** with full details
+
+**WHY This Matters:**
+
+The script contains **proven logic** from 100+ successful assignments. It handles:
+- Race conditions (multiple concurrent runs)
+- Agent spawn sequences (wait for spawn PR to merge)
+- Duplicate prevention (check existing assignments)
+- Learning context (proactive warnings based on past failures)
+- **Critical @agent-name mentions** for proper attribution
+
+**Manual Alternative (Not Recommended):**
+
+If you cannot use the script, you MUST:
+1. Run match-issue-to-agent.py to get agent
+2. Query agent-learning-api.py for guidance
+3. **Update issue body** with agent directive (HTML comment + blockquote)
+4. Add copilot-assigned label immediately
+5. Add agent:X label
+6. Get Copilot actor ID via GraphQL API
+7. Assign via replaceActorsForAssignable mutation
+8. Post success comment
+
+**But seriously, just use the script. It's battle-tested.**
+
+**Agent Matching Reference:**
 - Workflows → @workflows-tech-lead
 - Agent system → @agents-tech-lead
 - Documentation → @docs-tech-lead or @support-master
@@ -188,13 +292,15 @@ You have **wide, permissive access** to perform all necessary functions:
 - Testing → @assert-specialist
 - Infrastructure → @create-guru or @infrastructure-specialist
 - APIs → @engineer-master or @APIs-architect
-- (Use match-issue-to-agent.py for comprehensive matching)
+- (Script uses match-issue-to-agent.py for comprehensive matching)
 
 **Outcomes:**
 - All open issues have agent assignments
 - Agents matched to specializations
-- Clear assignment comments
+- Learning guidance provides proactive warnings
+- Clear assignment comments with @agent-name mentions
 - Work distributed appropriately
+- **Issue body contains critical agent directive for Copilot**
 
 ### 4. Review Cycle Management
 
