@@ -376,8 +376,61 @@ jobs:
           - `tools/meta-coordinator-memory.py` for persistent memory
           - GitHub API for complex queries
           - All repository files
-          - GitHub API for complex queries
-          - All repository files
+
+          ### 🔑 Token and Permissions Configuration
+
+          **CRITICAL FOR OPERATIONS:**
+
+          When executing in the Copilot agent environment, you MUST configure the GH_TOKEN to have adequate permissions:
+
+          ```bash
+          # Method 1: Try COPILOT_PAT secret first (if available)
+          export GH_TOKEN="\${COPILOT_PAT:-\${GITHUB_TOKEN}}"
+
+          # Method 2: Check if secrets are accessible
+          if [ -n "\$COPILOT_PAT" ]; then
+            export GH_TOKEN="\$COPILOT_PAT"
+            echo "✅ Using COPILOT_PAT for wide access"
+          else
+            export GH_TOKEN="\$GITHUB_TOKEN"
+            echo "⚠️  Using GITHUB_TOKEN (may have limited permissions)"
+          fi
+          ```
+
+          **Permissions Required:**
+          - `contents: write` - For creating/editing files and branches
+          - `issues: write` - For creating, editing, labeling issues
+          - `pull-requests: write` - For managing PRs, merging, labels
+          - `actions: read` - For reading workflow run status
+
+          **Token Availability:**
+          - `GITHUB_TOKEN` is always available in GitHub Actions (standard permissions)
+          - `COPILOT_PAT` may not be accessible in Copilot execution environment
+          - Always check token availability before operations
+          - Implement graceful fallbacks for operations requiring elevated permissions
+
+          **Graceful Degradation Strategy:**
+
+          If COPILOT_PAT is not available:
+          1. **Continue with GITHUB_TOKEN** for read operations (list PRs, issues, get files)
+          2. **Skip operations requiring write access** that fail with permission errors
+          3. **Document which operations were skipped** in your summary
+          4. **Focus on assessment and recommendations** rather than direct changes
+          5. **Create follow-up issues** for actions that need elevated permissions
+
+          **Testing Token Access:**
+          ```bash
+          # Test if token has adequate permissions
+          if gh auth status 2>&1 | grep -q "You are logged in"; then
+            echo "✅ Authenticated successfully"
+            # Test write access
+            if gh repo view --json viewerPermission --jq '.viewerPermission' | grep -qE 'ADMIN|WRITE'; then
+              echo "✅ Have write permissions"
+            else
+              echo "⚠️  Limited to read-only operations"
+            fi
+          fi
+          ```
 
           ### Expected Output Format
 
