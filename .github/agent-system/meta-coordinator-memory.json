@@ -1,0 +1,39 @@
+{
+  "runs": [
+    {
+      "timestamp": "2025-11-23T20:29:43.850644Z",
+      "run_id": "20:21",
+      "duration_seconds": 180,
+      "prs_processed": 84,
+      "prs_auto_merged": 6,
+      "tech_leads_assigned": 39,
+      "issues_assigned": 0,
+      "feedback_issues_created": 0,
+      "exceptions_handled": 0,
+      "success": true
+    }
+  ],
+  "pr_assignments": [],
+  "issue_assignments": [],
+  "feedback_issues": [],
+  "exceptions": [],
+  "learnings": [
+    {
+      "timestamp": "2025-11-23T20:29:43.850650Z",
+      "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
+      "evidence": {
+        "sample_size": 84,
+        "auto_merge_success_rate": 1.0
+      }
+    },
+    {
+      "timestamp": "2025-11-23T20:29:43.850651Z",
+      "insight": "Agent spawn PRs require tech lead review (agents-tech-lead) due to system changes",
+      "evidence": {
+        "agent_spawn_prs": 15,
+        "all_required_review": true
+      }
+    }
+  ],
+  "recommendations": []
+}
