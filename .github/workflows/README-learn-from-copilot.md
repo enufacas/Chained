@@ -184,10 +184,28 @@ Contains:
 
 ### Downstream Consumers
 
-- Mission generation workflows
-- Agent assignment system
-- Learnings book generator
+- **Agent Missions Workflow** (automatic trigger via workflow_run)
 - Autonomous pipeline orchestrator
+- Learnings book generator
+- World model updates
+
+### Workflow Chaining
+
+When `learn-from-copilot.yml` completes successfully, it automatically triggers:
+
+```yaml
+# In agent-missions.yml
+workflow_run:
+  workflows: ["Learning: GitHub Copilot"]
+  types: [completed]
+```
+
+This creates a seamless flow:
+1. **Learn** → Collect GitHub Copilot insights
+2. **Analyze** → Parse, clean, and identify hot themes
+3. **Generate Missions** → Automatically create agent missions
+4. **Assign** → Match missions to specialized agents
+5. **Execute** → Agents work on implementing insights
 
 ## Monitoring
 
@@ -284,6 +302,7 @@ run: |
    - Error handling
    - Conditional execution
    - Always() logging
+   - Automatic workflow chaining
 
 3. **Performance**
    - Dependency caching
@@ -297,10 +316,19 @@ run: |
    - README documentation
    - Comprehensive logging
 
+5. **Automation**
+   - Automatic mission generation via workflow_run
+   - Seamless integration with agent assignment
+   - End-to-end learning-to-action pipeline
+
 ### 🔄 Continuous Improvements
 
+Recent enhancements (2025-11-23):
+- ✅ Automatic workflow chaining with agent-missions.yml
+- ✅ Seamless mission generation upon completion
+- ✅ End-to-end learning-to-action pipeline
+
 Future enhancements under consideration:
-- Workflow chaining for learning pipeline
 - Failure notifications (Slack/Discord)
 - Advanced rate limit handling
 - Performance metrics collection
@@ -320,6 +348,6 @@ Future enhancements under consideration:
 
 ---
 
-*Last Updated: 2025-11-19*  
-*Reviewed By: @workflows-tech-lead*  
-*Status: ✅ Production Ready*
+*Last Updated: 2025-11-23*  
+*Reviewed By: @create-guru, @workflows-tech-lead*  
+*Status: ✅ Production Ready with Automatic Mission Generation*
