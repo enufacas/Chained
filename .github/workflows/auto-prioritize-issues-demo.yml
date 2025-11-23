@@ -87,12 +87,12 @@ jobs:
         run: |
           ISSUE_NUM=${{ inputs.issue_number || github.event.issue.number }}
           
-          # Run prioritizer
+          # Run prioritizer with properly quoted labels
           RESULT=$(python3 tools/issue_prioritizer.py prioritize \
             --title "${{ steps.issue.outputs.title }}" \
             --body "${{ steps.issue.outputs.body }}" \
             --issue-number "$ISSUE_NUM" \
-            --labels ${{ steps.issue.outputs.labels }} \
+            --labels "${{ steps.issue.outputs.labels }}" \
             --registry .github/agent-system/issue_prioritizer.json)
           
           echo "$RESULT"

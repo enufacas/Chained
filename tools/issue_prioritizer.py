@@ -151,9 +151,9 @@ class IssuePrioritizer:
                 "arms": {},
                 "history": [],
                 "stats": {
-                    "total_decisions": 0,
-                    "total_successes": 0,
-                    "total_failures": 0,
+                    "total_decisions": 0,  # Incremented by prioritize_issue()
+                    "total_successes": 0,  # Incremented by record_outcome()
+                    "total_failures": 0,   # Incremented by record_outcome()
                     "avg_resolution_time_hours": 0.0
                 }
             }
@@ -542,8 +542,10 @@ def main():
         print(f"  Total Decisions:  {overall['total_decisions']}")
         print(f"  Successes:        {overall['total_successes']}")
         print(f"  Failures:         {overall['total_failures']}")
-        if overall['total_decisions'] > 0:
-            success_rate = overall['total_successes'] / overall['total_decisions']
+        # Calculate success rate from successes + failures, not total_decisions
+        total_outcomes = overall['total_successes'] + overall['total_failures']
+        if total_outcomes > 0:
+            success_rate = overall['total_successes'] / total_outcomes
             print(f"  Success Rate:     {success_rate:.1%}")
         print(f"  Avg Resolution:   {overall['avg_resolution_time_hours']:.1f} hours")
         
