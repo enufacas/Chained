@@ -39,7 +39,8 @@
       "Analysis ran successfully but found limited recent activity on main branch",
       "Only 2 commits found in the last 30 days on the current branch state",
       "This is expected for a freshly cloned repository state",
-      "Historical analysis from Nov 22 showed 500 commits with rich patterns"
+      "Historical analysis from Nov 22 showed 500 commits with rich patterns",
+      "Commits are counted but not classified as successful/failed without merge data - this is expected behavior"
     ],
     "recommendations": [
       "Continue monitoring commit patterns as development progresses",
@@ -70,5 +71,9 @@
       ],
       "based_on": "Historical analysis file"
     }
-  ]
+  ],
+  "_metadata": {
+    "note": "Success/failure metrics indicate merge status evaluation. A commit with 0 successful and 0 failed means commits have not yet been evaluated for merge success (pending evaluation). This is normal for recent commits that may not have associated PR/merge data.",
+    "evaluation_status": "Commits analyzed but merge status not yet evaluated"
+  }
 }
