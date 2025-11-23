@@ -67,6 +67,19 @@ jobs:
         with:
           python-version: '3.11'
       
+      - name: Ensure required labels exist
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🏷️  Ensuring required labels exist..."
+          
+          # Create labels if they don't exist (idempotent operation)
+          gh label create "meta-coordination" --color "FF6B6B" --description "Meta-coordination system orchestration" --force || true
+          gh label create "automated" --color "FBCA04" --description "Automated action" --force || true
+          gh label create "system-orchestration" --color "0E8A16" --description "System orchestration task" --force || true
+          
+          echo "✅ Labels ready"
+      
       - name: Quick assessment (cost protection)
         id: assess
         env:
