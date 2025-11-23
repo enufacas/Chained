@@ -366,5 +366,6 @@ jobs:
       - name: No PRs to process
         if: steps.get_prs.outputs.pr_numbers == ''
         run: |
-          echo "ℹ️ No PRs with tech-lead-changes-requested label found"
+          echo "ℹ️ No PRs with tech-lead labels found"
+          echo "Searched for: tech-lead-changes-requested and tech-lead:* labels"
           echo "Nothing to do"
