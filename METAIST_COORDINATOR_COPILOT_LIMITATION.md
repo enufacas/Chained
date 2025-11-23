@@ -71,9 +71,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # For each open PR:
-          python3 tools/match-pr-to-tech-lead.py "$PR_NUM"
-          gh pr edit "$PR_NUM" --add-label "needs-tech-lead-review"
-          gh pr comment "$PR_NUM" --body "Tech lead: @$TECH_LEAD"
+          for pr_num in $(gh pr list --state open --json number --jq '.[].number'); do
+            # Match to tech lead
+            tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" | jq -r '.tech_lead')
+            # Apply label and comment
+            gh pr edit "$pr_num" --add-label "needs-tech-lead-review"
+            gh pr comment "$pr_num" --body "Tech lead: @$tech_lead"
+          done
       
       - name: Agent Assignment
         env:
@@ -210,6 +214,9 @@ jobs:
         run: bash .github/scripts/auto-merge-eligible-prs.sh
       
       - name: 6. Memory and Learning
+        env:
+          PRS_PROCESSED: ${{ steps.orchestrate_prs.outputs.count || '0' }}
+          ISSUES_ASSIGNED: ${{ steps.assign_agents.outputs.count || '0' }}
         run: |
           python3 tools/meta-coordinator-memory.py record-run \
             --prs-processed "${PRS_PROCESSED}" \

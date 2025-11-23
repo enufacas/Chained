@@ -2,7 +2,7 @@
 
 **Date:** 2025-11-23  
 **Time:** 17:50:00 UTC  
-**Run ID:** 19615030829  
+**Run ID:** 19615035408 (GitHub Actions run)  
 **Agent:** @meta-coordinator-system  
 **Focus:** all  
 **Dry Run:** false  
@@ -176,13 +176,24 @@ meta-coordinator.yml:
      env:
        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
      run: |
+       set -e  # Exit on error
        # List all open PRs
        for pr_num in $(gh pr list --state open --json number --jq '.[].number'); do
          # Match to tech lead
-         tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num")
-         # Apply label and comment
-         gh pr edit "$pr_num" --add-label "needs-tech-lead-review"
-         gh pr comment "$pr_num" --body "@${tech_lead} review needed"
+         if ! tech_lead_output=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" 2>&1); then
+           echo "Error matching tech lead for PR #$pr_num: $tech_lead_output"
+           continue
+         fi
+         tech_lead=$(echo "$tech_lead_output" | jq -r '.tech_lead // "workflows-tech-lead"')
+         
+         # Apply label and comment with error handling
+         if ! gh pr edit "$pr_num" --add-label "needs-tech-lead-review" 2>&1; then
+           echo "Warning: Could not add label to PR #$pr_num"
+         fi
+         
+         if ! gh pr comment "$pr_num" --body "@${tech_lead} review needed" 2>&1; then
+           echo "Warning: Could not comment on PR #$pr_num"
+         fi
        done
    ```
 
