@@ -104,6 +104,12 @@ jobs:
             "Assigned to github-pages-tech-lead for review" \
             "5319E7"
           
+          # Label 9: tech-lead-feedback (feedback issue label - ORANGE)
+          create_label \
+            "tech-lead-feedback" \
+            "Feedback issue created for Tech Lead requested changes" \
+            "FF8C00"
+          
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "✅ Tech Lead Review System labels are ready!"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -117,10 +123,11 @@ jobs:
           echo "  🟣 tech-lead:agents-tech-lead (identifier)"
           echo "  🟣 tech-lead:docs-tech-lead (identifier)"
           echo "  🟣 tech-lead:github-pages-tech-lead (identifier)"
+          echo "  🟠 tech-lead-feedback (feedback issue)"
           echo ""
           echo "These labels are now active and will be used by:"
-          echo "  • tech-lead-review.yml - For PR analysis and assignment"
-          echo "  • auto-review-merge.yml - For merge blocking/allowing"
+          echo "  • auto-review-merge.yml - For PR analysis and merge control"
+          echo "  • copilot-pr-assignment.yml - For agent assignment to feedback"
           echo ""
           echo "🎯 System Status: READY"
           echo ""

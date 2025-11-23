@@ -27,13 +27,14 @@ Tech Lead agents are specialized agents with deep expertise in specific areas of
 
 ### 2. Core Workflows
 
-#### `tech-lead-review.yml`
+#### `auto-review-merge.yml`
 
-**Purpose:** Analyzes PRs and assigns appropriate Tech Leads
+**Purpose:** Analyzes PRs, assigns Tech Leads, handles reviews, and manages auto-merge
 
 **Triggers:**
 - Pull request events: `opened`, `synchronize`, `ready_for_review`, `reopened`
 - Pull request review events: `submitted`
+- Schedule: Every 15 minutes (sweep all PRs)
 - Manual dispatch: `workflow_dispatch`
 
 **What it does:**
@@ -46,11 +47,41 @@ Tech Lead agents are specialized agents with deep expertise in specific areas of
 7. Assigns primary Tech Lead for review (via comment mention)
 8. Handles review state changes (approved, changes requested)
 9. Manages re-review cycles when changes are pushed
+10. Auto-merges eligible PRs
 
 **Complexity Thresholds:**
 - Small PR (optional review): ≤5 files, ≤100 lines changed
 - Protected paths: Always require review
 - Security keywords: Always require review (auth, token, password, secret, permission, security)
+
+#### `copilot-pr-assignment.yml` (NEW)
+
+**Purpose:** Assigns agents to address Tech Lead feedback on PRs
+
+**Triggers:**
+- Pull request labeled: `tech-lead-changes-requested`
+- Schedule: Every 15 minutes (sweep PRs needing feedback issues)
+- Manual dispatch: `workflow_dispatch`
+
+**What it does:**
+1. Detects PRs with `tech-lead-changes-requested` label
+2. Gets review comments from Tech Lead
+3. Checks if feedback issue already exists (prevents duplicates)
+4. Matches feedback to appropriate agent using `match-issue-to-agent.py`
+5. Creates feedback issue with:
+   - Agent directive (@agent-name mention)
+   - PR context and links
+   - Review comments
+   - Step-by-step instructions for agent
+6. Assigns Copilot via GraphQL API with agent profile
+7. Links issue to PR via comments (bidirectional)
+8. Adds `agent:X` label to PR for tracking
+
+**Integration:**
+- Works in tandem with `auto-review-merge.yml`
+- Triggered automatically when tech lead requests changes
+- Creates structured work items for agents
+- Tracks issue-PR relationship
 
 #### `setup-tech-lead-labels.yml`
 
@@ -72,20 +103,8 @@ Tech Lead agents are specialized agents with deep expertise in specific areas of
 | `tech-lead:agents-tech-lead` | 🟣 Purple | Agents Tech Lead assigned | ℹ️ Info |
 | `tech-lead:docs-tech-lead` | 🟣 Purple | Docs Tech Lead assigned | ℹ️ Info |
 | `tech-lead:github-pages-tech-lead` | 🟣 Purple | GitHub Pages Tech Lead assigned | ℹ️ Info |
-
-#### `tech-lead-feedback-handler.yml`
-
-**Purpose:** Handles Tech Lead review feedback and updates
-
-**Triggers:**
-- Pull request review submitted
-- Manual dispatch
-
-**What it does:**
-- Processes Tech Lead review submissions
-- Updates labels based on review state
-- Notifies relevant parties of review status
-- Manages review iteration cycles
+| `tech-lead-feedback` | 🟠 Orange | Feedback issue created | ℹ️ Info |
+| `agent:X` | 🟢 Green | Agent X assigned to fix | ℹ️ Info |
 
 ### 3. Supporting Scripts
 
@@ -190,13 +209,13 @@ tech-lead-approved label added
 Auto-merge unblocked
 ```
 
-#### Changes Requested Path
+#### Changes Requested Path (with Automated Agent Assignment)
 ```
 Tech Lead reviews PR
   ↓
 Tech Lead requests changes
   ↓
-tech-lead-review.yml triggered (on review submitted)
+auto-review-merge.yml triggered (on review submitted)
   ↓
 tech-lead-changes-requested label added
   ↓
@@ -204,14 +223,86 @@ needs-tech-lead-review label maintained
   ↓
 Auto-merge BLOCKED
   ↓
-PR author/agent pushes changes
+copilot-pr-assignment.yml triggered (on label added)
   ↓
-tech-lead-review.yml triggered (on synchronize)
+Creates feedback issue with:
+- Review comments
+- PR context and links
+- Agent directive (@agent-name)
+- Labels: tech-lead-feedback, agent:X, linked-to-pr
+  ↓
+Assigns Copilot with appropriate agent profile
+  ↓
+Links issue to PR via comments
+  ↓
+Agent (via Copilot) reads feedback issue
+  ↓
+Agent makes fixes and pushes to PR branch
+  ↓
+Agent updates feedback issue and closes it
+  ↓
+auto-review-merge.yml triggered (on synchronize)
   ↓
 Re-review request posted
   ↓
 Tech Lead reviews again → Cycle continues
 ```
+
+## Agent Assignment Integration
+
+The Tech Lead system now integrates with the Copilot agent assignment system to automatically assign agents to address feedback.
+
+### How It Works
+
+When a Tech Lead requests changes:
+1. **auto-review-merge.yml** adds the `tech-lead-changes-requested` label
+2. **copilot-pr-assignment.yml** is triggered by the label
+3. Workflow creates a feedback issue with:
+   - Original PR context and links
+   - Tech Lead's review comments
+   - Agent directive (e.g., `@workflows-tech-lead` for workflow changes)
+   - Clear instructions for fixing the feedback
+4. Agent is automatically assigned via Copilot GraphQL API
+5. Issue is linked to PR bidirectionally
+6. Agent reads feedback, makes fixes, and pushes to PR branch
+7. Tech Lead is notified for re-review
+
+### Agent Matching Logic
+
+The system uses `tools/match-issue-to-agent.py` to match feedback to the most appropriate agent:
+- Analyzes review comments and PR title
+- Scores agents based on keywords and patterns
+- Considers agent specializations (workflows, agents, docs, GitHub Pages, etc.)
+- Assigns the highest-scoring agent
+
+### Benefits
+
+1. **Automated Workflow**: No manual intervention needed to assign agents
+2. **Consistent Process**: Same agent matching logic as issue assignment
+3. **Traceability**: Clear issue-PR links for tracking work
+4. **Separation of Concerns**: Tech Lead reviews, agents fix
+5. **Faster Turnaround**: Agents start work immediately upon assignment
+
+### Example Flow
+
+```
+PR #123 touches .github/workflows/example.yml
+  ↓
+Tech Lead @workflows-tech-lead reviews
+  ↓
+Requests changes: "Add error handling to step 5"
+  ↓
+copilot-pr-assignment.yml creates issue #456
+  ↓
+Issue assigned to Copilot with @workflows-tech-lead profile
+  ↓
+Agent fixes the workflow and pushes
+  ↓
+Tech Lead notified for re-review
+  ↓
+Approves → PR merges automatically
+```
+
 
 ## Integration with Auto-Merge
 
@@ -431,8 +522,9 @@ Potential improvements:
 - [Workflow Documentation](/docs/WORKFLOWS.md)
 - [Custom Agents Directory](/.github/agents/README.md)
 - [Auto-Review-Merge Workflow](/docs/AUTO_REVIEW_MERGE.md)
+- [PR Tech Lead Agent Flow (Detailed)](/.github/workflows/PR_TECH_LEAD_AGENT_FLOW.md) - Complete sequence documentation
 
 ---
 
 *🤖 Maintained by **@workflows-tech-lead***  
-*Last Updated: 2025-11-20*
+*Last Updated: 2025-11-23*
