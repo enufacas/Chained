@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-22T04:53:15.092881",
+  "last_updated": "2025-11-23T06:21:44.041775",
   "total_truths": 8,
   "truths": {
     "agent_performance_distribution": {
@@ -8,9 +8,9 @@
       "category": "agent_behavior",
       "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520",
       "confidence": 0.85,
-      "evidence_count": 19,
+      "evidence_count": 20,
       "first_observed": "2025-11-22T04:47:08.624878",
-      "last_validated": "2025-11-22T04:53:15.087226",
+      "last_validated": "2025-11-23T06:21:44.035707",
       "supporting_data": [
         {
           "timestamp": "2025-11-22T04:47:08.624878",
@@ -980,6 +980,66 @@
             ],
             "sample_size": 43
           }
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.035707",
+          "data": {
+            "scores": [
+              0.764025,
+              0.764025,
+              0.764025,
+              0.7624642857142857,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7727499999999999,
+              0.0,
+              0.0,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.764025,
+              0.764025,
+              0.764025,
+              0.77325,
+              0.77325,
+              0.7749999999999999,
+              0.7624642857142857,
+              0.7727499999999999,
+              0.72075,
+              0.7560833333333333,
+              0.7727499999999999,
+              0.7737499999999999
+            ],
+            "sample_size": 52
+          }
         }
       ],
       "counter_examples": [],
@@ -1078,6 +1138,11 @@
           "timestamp": "2025-11-22T04:53:15.087226",
           "confidence": 0.85,
           "statement": "Agent performance follows a natural distribution with 55.8% high performers (>0.7) and 20.9% low performers (<0.4). Average score: 0.520"
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.035707",
+          "confidence": 0.85,
+          "statement": "Agent performance follows a natural distribution with 46.2% high performers (>0.7) and 34.6% low performers (<0.4). Average score: 0.430"
         }
       ],
       "related_truths": [
@@ -1089,9 +1154,9 @@
       "category": "system_dynamics",
       "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)",
       "confidence": 0.9,
-      "evidence_count": 19,
+      "evidence_count": 20,
       "first_observed": "2025-11-22T04:47:08.624902",
-      "last_validated": "2025-11-22T04:53:15.087242",
+      "last_validated": "2025-11-23T06:21:44.035731",
       "supporting_data": [
         {
           "timestamp": "2025-11-22T04:47:08.624902",
@@ -1681,6 +1746,46 @@
             ],
             "total_agents": 43
           }
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.035731",
+          "data": {
+            "specializations": [
+              "secure-pro",
+              "optimize-director",
+              "breakthrough-ideas-champion",
+              "coordinate-wizard",
+              "troubleshoot-expert",
+              "create-guru",
+              "harmonize-team-coordination-officer",
+              "integrate-data-flows-guru",
+              "bridge-master",
+              "refactor-champion",
+              "engineer-whiz",
+              "simplify-pro",
+              "workflows-tech-lead",
+              "integrate-APIs-chief",
+              "quality-assurance-expert",
+              "guardian-master",
+              "edge-cases-architect",
+              "cloud-architect",
+              "organize-guru",
+              "maintainability-sage",
+              "investigate-champion",
+              "construct-specialist",
+              "validator-director",
+              "verify-maven",
+              "render-3d-master",
+              "secure-security-ninja",
+              "create-champion",
+              "monitor-vulnerabilities-virtuoso",
+              "mentor-ace",
+              "align-director",
+              "coach-master",
+              "secure-specialist"
+            ],
+            "total_agents": 52
+          }
         }
       ],
       "counter_examples": [],
@@ -1779,6 +1884,11 @@
           "timestamp": "2025-11-22T04:53:15.087242",
           "confidence": 0.9,
           "statement": "Ecosystem maintains 23 distinct specializations across 43 agents, suggesting diversity is a core system property (diversity ratio: 0.53)"
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.035731",
+          "confidence": 0.9,
+          "statement": "Ecosystem maintains 32 distinct specializations across 52 agents, suggesting diversity is a core system property (diversity ratio: 0.62)"
         }
       ],
       "related_truths": [
@@ -1791,9 +1901,9 @@
       "category": "agent_behavior",
       "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)",
       "confidence": 0.7,
-      "evidence_count": 19,
+      "evidence_count": 20,
       "first_observed": "2025-11-22T04:47:08.624919",
-      "last_validated": "2025-11-22T04:53:15.087257",
+      "last_validated": "2025-11-23T06:21:44.035752",
       "supporting_data": [
         {
           "timestamp": "2025-11-22T04:47:08.624919",
@@ -1946,6 +2056,15 @@
               "exploring": 43
             }
           }
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.035752",
+          "data": {
+            "status_distribution": {
+              "working": 2,
+              "exploring": 50
+            }
+          }
         }
       ],
       "counter_examples": [],
@@ -2044,6 +2163,11 @@
           "timestamp": "2025-11-22T04:53:15.087257",
           "confidence": 0.7,
           "statement": "System tends toward equilibrium with 'exploring' as dominant status (100.0% of agents)"
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.035752",
+          "confidence": 0.7,
+          "statement": "System tends toward equilibrium with 'exploring' as dominant status (96.2% of agents)"
         }
       ],
       "related_truths": [
@@ -2055,9 +2179,9 @@
       "category": "evolution",
       "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property",
       "confidence": 0.85,
-      "evidence_count": 19,
+      "evidence_count": 20,
       "first_observed": "2025-11-22T04:47:08.626048",
-      "last_validated": "2025-11-22T04:53:15.088118",
+      "last_validated": "2025-11-23T06:21:44.036695",
       "supporting_data": [
         {
           "timestamp": "2025-11-22T04:47:08.626048",
@@ -2191,6 +2315,13 @@
             "total_learnings": 99,
             "recent_count": 48
           }
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.036695",
+          "data": {
+            "total_learnings": 102,
+            "recent_count": 34
+          }
         }
       ],
       "counter_examples": [],
@@ -2289,6 +2420,11 @@
           "timestamp": "2025-11-22T04:53:15.088118",
           "confidence": 0.85,
           "statement": "System accumulates knowledge at 48 learnings per week, indicating continuous learning is a fundamental property"
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.036695",
+          "confidence": 0.85,
+          "statement": "System accumulates knowledge at 34 learnings per week, indicating continuous learning is a fundamental property"
         }
       ],
       "related_truths": [
@@ -2301,9 +2437,9 @@
       "category": "evolution",
       "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure",
       "confidence": 0.7999999999999999,
-      "evidence_count": 19,
+      "evidence_count": 20,
       "first_observed": "2025-11-22T04:47:08.630819",
-      "last_validated": "2025-11-22T04:53:15.092251",
+      "last_validated": "2025-11-23T06:21:44.041071",
       "supporting_data": [
         {
           "timestamp": "2025-11-22T04:47:08.630819",
@@ -2437,6 +2573,13 @@
             "total_insights": 503,
             "total_connections": 2021
           }
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.041071",
+          "data": {
+            "total_insights": 503,
+            "total_connections": 2021
+          }
         }
       ],
       "counter_examples": [],
@@ -2533,6 +2676,11 @@
         },
         {
           "timestamp": "2025-11-22T04:53:15.092251",
+          "confidence": 0.8,
+          "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.041071",
           "confidence": 0.8,
           "statement": "Knowledge naturally forms interconnected networks with average 4.0 connections per insight, revealing emergent structure"
         }
@@ -2547,9 +2695,9 @@
       "category": "system_dynamics",
       "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants",
       "confidence": 0.7,
-      "evidence_count": 19,
+      "evidence_count": 20,
       "first_observed": "2025-11-22T04:47:08.631474",
-      "last_validated": "2025-11-22T04:53:15.092816",
+      "last_validated": "2025-11-23T06:21:44.041691",
       "supporting_data": [
         {
           "timestamp": "2025-11-22T04:47:08.631474",
@@ -2683,6 +2831,13 @@
             "pattern_count": 8,
             "pattern_type": "actions"
           }
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.041691",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "actions"
+          }
         }
       ],
       "counter_examples": [],
@@ -2779,6 +2934,11 @@
         },
         {
           "timestamp": "2025-11-22T04:53:15.092816",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.041691",
           "confidence": 0.7,
           "statement": "System exhibits persistent actions patterns (8 distinct patterns), indicating structural invariants"
         }
@@ -2793,9 +2953,9 @@
       "category": "system_dynamics",
       "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants",
       "confidence": 0.7,
-      "evidence_count": 19,
+      "evidence_count": 20,
       "first_observed": "2025-11-22T04:47:08.631530",
-      "last_validated": "2025-11-22T04:53:15.092863",
+      "last_validated": "2025-11-23T06:21:44.041753",
       "supporting_data": [
         {
           "timestamp": "2025-11-22T04:47:08.631530",
@@ -2929,6 +3089,13 @@
             "pattern_count": 8,
             "pattern_type": "archaeology"
           }
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.041753",
+          "data": {
+            "pattern_count": 8,
+            "pattern_type": "archaeology"
+          }
         }
       ],
       "counter_examples": [],
@@ -3025,6 +3192,11 @@
         },
         {
           "timestamp": "2025-11-22T04:53:15.092863",
+          "confidence": 0.7,
+          "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
+        },
+        {
+          "timestamp": "2025-11-23T06:21:44.041753",
           "confidence": 0.7,
           "statement": "System exhibits persistent archaeology patterns (8 distinct patterns), indicating structural invariants"
         }
