@@ -404,7 +404,7 @@ jobs:
             --title "${ISSUE_TITLE}" \
             --body "${ISSUE_BODY}" \
             --label "meta-coordination,automated,system-orchestration" \
-            2>&1 | grep -oP '#\K\d+' | head -1 || echo "")
+            2>&1 | grep -oP '/issues/\K\d+' | head -1 || echo "")
           
           if [ -n "${issue_number}" ]; then
             echo "✅ Created coordination issue #${issue_number}"
