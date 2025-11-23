@@ -34,7 +34,7 @@ Tech Lead agents are specialized agents with deep expertise in specific areas of
 **Triggers:**
 - Pull request events: `opened`, `synchronize`, `ready_for_review`, `reopened`
 - Pull request review events: `submitted`
-- Schedule: Every 15 minutes (sweep all PRs)
+- Schedule: Every 7 minutes (sweep all PRs)
 - Manual dispatch: `workflow_dispatch`
 
 **What it does:**
@@ -59,13 +59,13 @@ Tech Lead agents are specialized agents with deep expertise in specific areas of
 **Purpose:** Assigns agents to address Tech Lead feedback on PRs
 
 **Triggers:**
-- **Schedule: Every 15 minutes** (PRIMARY - reliable autonomous operation)
+- **Schedule: Every 7 minutes** (PRIMARY - reliable autonomous operation)
 - Manual dispatch: `workflow_dispatch`
 
 **Why Schedule-Primary?**
 - Fork PRs trigger "awaiting approval from maintainer" for workflows
 - Event-based triggers break autonomous operation
-- 15-minute sweep latency is acceptable
+- 7-minute sweep latency is acceptable
 - No approval required for scheduled runs
 
 **What it does:**

@@ -166,7 +166,7 @@ This document maps out the complete lifecycle of a Pull Request through tech lea
                           ↓
 ┌─────────────────────────────────────────────────────────────┐
 │ 🆕 NEW: copilot-pr-assignment.yml                          │
-│    Trigger: Scheduled (every 15 minutes)                    │
+│    Trigger: Scheduled (every 7 minutes)                    │
 │                                                             │
 │    **Schedule-Primary Strategy:**                           │
 │    - Runs autonomously without approval requirements        │
@@ -229,7 +229,7 @@ This document maps out the complete lifecycle of a Pull Request through tech lea
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ Scheduled Runs (every 15 minutes)                           │
+│ Scheduled Runs (every 7 minutes)                           │
 └─────────────────────────────────────────────────────────────┘
                           ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -297,7 +297,7 @@ This document maps out the complete lifecycle of a Pull Request through tech lea
 
 **Triggers:**
 - `pull_request` types: `labeled` (when tech-lead-changes-requested added)
-- `schedule`: Every 15 minutes (sweep for PRs needing feedback issues)
+- `schedule`: Every 7 minutes (sweep for PRs needing feedback issues)
 - `workflow_dispatch`: Manual trigger with PR number
 
 **Key Features:**
@@ -386,7 +386,7 @@ This document maps out the complete lifecycle of a Pull Request through tech lea
 6. **Autonomous Operation**
    - Schedule-primary strategy avoids approval gates
    - Reliable execution on fork PRs
-   - 15-minute latency is acceptable trade-off
+   - 7-minute latency is acceptable trade-off
    - Manual dispatch available for immediate processing
 
 ## Schedule-Primary Strategy: Trade-offs
@@ -417,18 +417,18 @@ on:
 | Approach | Latency | Reliability | Autonomous |
 |----------|---------|-------------|------------|
 | Event-triggered | Immediate | ❌ Breaks on forks | ❌ Requires approval |
-| Schedule-only | 15 minutes | ✅ Always works | ✅ Fully autonomous |
+| Schedule-only | 7 minutes | ✅ Always works | ✅ Fully autonomous |
 | Hybrid (both) | Mixed | ⚠️ Partial | ⚠️ Sometimes |
 
 **Decision: Schedule-only** for consistent, autonomous operation.
 
 ### Acceptable Latency?
 
-**15-minute latency is acceptable because:**
+**7-minute latency is acceptable because:**
 1. Tech lead reviews are async (human-in-loop already)
 2. Agent work takes time anyway (reading, coding, testing)
 3. Total cycle time: Review → Assign → Fix → Re-review is hours/days
-4. 15-minute delay is negligible in this context
+4. 7-minute delay is negligible in this context
 5. Manual dispatch available for urgent cases
 
 **Timeline Example:**
@@ -441,7 +441,7 @@ on:
 11:00 AM - Tech lead notified for re-review
 ```
 
-Total added latency: **15 minutes** (vs immediate with events)  
+Total added latency: **7 minutes** (vs immediate with events)  
 Total cycle time: **~1 hour** (same either way)
 
 ---

@@ -32,10 +32,10 @@ During implementation, we identified that event-based triggers (`pull_request: l
 
 **Solution:**
 Adopted schedule-only trigger strategy:
-- Runs every 15 minutes to sweep PRs
+- Runs every 7 minutes to sweep PRs
 - No approval gates
 - Fully autonomous operation
-- 15-minute latency is acceptable
+- 7-minute latency is acceptable
 
 ## Complete Flow
 
@@ -73,7 +73,7 @@ Tech Lead requests changes
   ↓
 auto-review-merge.yml adds tech-lead-changes-requested
   ↓
-[Wait up to 15 minutes for scheduled sweep]
+[Wait up to 7 minutes for scheduled sweep]
   ↓
 copilot-pr-assignment.yml runs (scheduled)
   ↓
@@ -144,7 +144,7 @@ Tech Lead reviews again
 - No approval gates
 - Works on fork PRs
 - Fully autonomous
-- 15-minute latency acceptable
+- 7-minute latency acceptable
 
 ## Labels Used
 
@@ -171,7 +171,7 @@ Tech Lead reviews again
            │ Adds tech-lead-changes-requested
            ↓
 ┌──────────────────────┐
-│ copilot-pr-assignment│ ← Scheduled (every 15 min)
+│ copilot-pr-assignment│ ← Scheduled (every 7 min)
 │ - Sweeps labeled PRs │
 │ - Creates feedback   │
 │ - Assigns agents     │
@@ -195,7 +195,7 @@ To validate this implementation:
 - [ ] Verify `needs-tech-lead-review` and `tech-lead:workflows-tech-lead` labels applied
 - [ ] Tech lead reviews and requests changes
 - [ ] Verify `tech-lead-changes-requested` label added
-- [ ] Wait for scheduled run (up to 15 minutes) or trigger manually
+- [ ] Wait for scheduled run (up to 7 minutes) or trigger manually
 - [ ] Verify feedback issue created with correct agent
 - [ ] Verify issue linked to PR (comments on both)
 - [ ] Verify Copilot assigned to feedback issue
@@ -243,7 +243,7 @@ on:
 - ✅ Always works (no approval needed)
 - ✅ Fully autonomous
 - ✅ Works on fork PRs
-- ⚠️ 15-minute latency
+- ⚠️ 7-minute latency
 
 **Decision:** Schedule-based for reliable, autonomous operation
 
@@ -254,20 +254,20 @@ on:
 1. **Human-in-loop**: Tech lead reviews are already async
 2. **Total cycle time**: Review → Fix → Re-review takes hours/days
 3. **Agent work time**: Coding, testing, committing takes 30+ minutes
-4. **Relative impact**: 15 minutes is <10% of total cycle
+4. **Relative impact**: 7 minutes is <10% of total cycle
 5. **Manual override**: `workflow_dispatch` for urgent cases
 
 **Example Timeline:**
 ```
 10:00 - Tech lead requests changes
-10:15 - Scheduled sweep creates issue (15 min delay)
+10:15 - Scheduled sweep creates issue (7 min delay)
 10:16 - Agent assigned and starts work
 10:45 - Agent completes fixes (29 min work)
 11:00 - Tech lead re-reviews
 ```
 
 **Total time:** ~1 hour  
-**Latency impact:** 15 minutes (25% of wait time, 15% of total)  
+**Latency impact:** 7 minutes (25% of wait time, 15% of total)  
 **With immediate trigger:** Still ~45 minutes total (agent work dominates)
 
 ### Alternative Considered: Hybrid Approach
@@ -321,7 +321,7 @@ To measure effectiveness:
 
 ## Conclusion
 
-This implementation successfully extends the Copilot assignment system to handle PR tech lead feedback through a schedule-primary strategy that ensures reliable, autonomous operation. The 15-minute latency trade-off is acceptable given the async nature of code reviews and the benefit of consistent operation across all PR types.
+This implementation successfully extends the Copilot assignment system to handle PR tech lead feedback through a schedule-primary strategy that ensures reliable, autonomous operation. The 7-minute latency trade-off is acceptable given the async nature of code reviews and the benefit of consistent operation across all PR types.
 
 ---
 

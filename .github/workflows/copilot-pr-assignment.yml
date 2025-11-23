@@ -11,9 +11,9 @@ name: "Automation: Copilot PR Assignment"
 
 on:
   schedule:
-    # Run every 15 minutes to sweep for PRs needing feedback issues
+    # Run every 7 minutes to sweep for PRs needing feedback issues
     # This is the PRIMARY trigger - reliable and doesn't require approval
-    - cron: '*/15 * * * *'
+    - cron: '*/7 * * * *'
   workflow_dispatch:
     inputs:
       pr_number:
