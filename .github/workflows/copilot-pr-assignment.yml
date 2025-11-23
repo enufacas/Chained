@@ -110,6 +110,7 @@ jobs:
             
             # Combine and deduplicate PR numbers
             # Using printf to safely handle empty variables and avoid trailing space issues
+            # Note: Variables are intentionally unquoted to allow word splitting
             pr_numbers=$(printf '%s\n' ${prs_changes} ${prs_workflows} ${prs_agents} ${prs_docs} ${prs_pages} \
               | grep -v '^$' \
               | sort -u \
@@ -142,10 +143,10 @@ jobs:
             # Extract tech lead agent from labels
             # Labels like "tech-lead:workflows-tech-lead" indicate which tech lead agent is assigned
             # If multiple tech-lead labels exist, takes the first one (PRs should only have one)
-            tech_lead_agent=$(echo "${pr_data}" | jq -r '.labels[].name' \
+            tech_lead_agent=$(echo "${pr_data}" | jq -r '.labels[].name' 2>/dev/null \
               | grep '^tech-lead:' \
               | sed 's/^tech-lead://' \
-              | head -1)
+              | head -1 || echo "")
             
             if [ -n "${tech_lead_agent}" ]; then
               echo "📋 Tech Lead Agent: @${tech_lead_agent}"
