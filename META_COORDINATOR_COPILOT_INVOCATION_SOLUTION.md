@@ -120,6 +120,9 @@ issue_url=$(gh issue create \
    ```
 
 3. **Add Agent Directive**
+   
+   The script prepends an agent directive to the issue body:
+   
    ```bash
    agent_directive="<!-- COPILOT_AGENT:$matched_agent -->
    > **🤖 Agent Assignment**

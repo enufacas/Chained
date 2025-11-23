@@ -104,10 +104,10 @@ jobs:
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
           RUN_ID="${{ github.run_id }}"
           
-          # Create coordination issue with direct Copilot assignment
+          # Create the coordination issue (assignment will be done in next step)
           ISSUE_TITLE="🎯 Meta-Coordination: $(date +%H:%M)"
           
-          # Create issue body from template
+          echo "Creating coordination issue..."
           ISSUE_BODY=$(cat <<'EOF'
           ## 🎯 Meta-Coordination Request
 
