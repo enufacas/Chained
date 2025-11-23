@@ -91,7 +91,7 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
       
-      - name: Create coordination request
+      - name: Create and assign coordination request
         if: steps.assess.outputs.skip != 'true'
         id: create_request
         env:
@@ -104,11 +104,17 @@ jobs:
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
           RUN_ID="${{ github.run_id }}"
           
-          # Create coordination issue for meta-coordinator-system agent
+          # Create coordination issue with direct Copilot assignment
           ISSUE_TITLE="🎯 Meta-Coordination: $(date +%H:%M)"
           
+          # Create issue body from template
           ISSUE_BODY=$(cat <<'EOF'
           ## 🎯 Meta-Coordination Request
+
+          > **🤖 Agent Profile**: This issue requires the **@meta-coordinator-system** agent.  
+          > Please use the specialized approach defined in `.github/agents/meta-coordinator-system.md`
+          >
+          > **IMPORTANT**: Always mention **@meta-coordinator-system** by name in all work.
 
           **Trigger:** ${TRIGGER_EVENT}
           **Focus:** ${FOCUS_AREA}
@@ -397,34 +403,34 @@ jobs:
           ISSUE_BODY="${ISSUE_BODY//\$\{RUN_ID\}/${RUN_ID}}"
           ISSUE_BODY="${ISSUE_BODY//\$\{DRY_RUN\}/${DRY_RUN}}"
           
-          # Create the coordination issue
-          echo "Creating coordination issue..."
-          issue_number=$(gh issue create \
+          # Create the issue and assign to Copilot in one step
+          echo "Creating coordination issue and assigning to Copilot..."
+          
+          issue_url=$(gh issue create \
             --repo "${GITHUB_REPOSITORY}" \
             --title "${ISSUE_TITLE}" \
             --body "${ISSUE_BODY}" \
             --label "meta-coordination,automated,system-orchestration" \
-            2>&1 | grep -oP '/issues/\K\d+' | head -1 || echo "")
+            --assignee "@copilot" 2>&1)
           
-          if [ -n "${issue_number}" ]; then
-            echo "✅ Created coordination issue #${issue_number}"
-            echo "issue_number=${issue_number}" >> $GITHUB_OUTPUT
+          if [ $? -eq 0 ] && [ -n "${issue_url}" ]; then
+            # Extract issue number from URL
+            issue_number=$(echo "${issue_url}" | grep -oP '/issues/\K\d+' | head -1)
+            
+            if [ -n "${issue_number}" ]; then
+              echo "✅ Created and assigned coordination issue #${issue_number}"
+              echo "   URL: ${issue_url}"
+              echo "issue_number=${issue_number}" >> $GITHUB_OUTPUT
+              echo "issue_url=${issue_url}" >> $GITHUB_OUTPUT
+            else
+              echo "⚠️  Issue created but couldn't extract number from: ${issue_url}"
+              echo "issue_url=${issue_url}" >> $GITHUB_OUTPUT
+            fi
           else
             echo "❌ Failed to create coordination issue"
+            echo "Error output: ${issue_url}"
             exit 1
           fi
-      
-      - name: Assign Copilot to coordination issue
-        if: steps.assess.outputs.skip != 'true' && steps.create_request.outputs.issue_number != ''
-        env:
-          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
-          ISSUE_NUMBER: ${{ steps.create_request.outputs.issue_number }}
-        run: |
-          echo "Assigning Copilot to coordination issue #${ISSUE_NUMBER}..."
-          bash tools/assign-copilot-to-issue.sh
       
       - name: Skip notification
         if: steps.assess.outputs.skip == 'true'
@@ -442,14 +448,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ steps.create_request.outputs.issue_number }}
+          ISSUE_URL: ${{ steps.create_request.outputs.issue_url }}
         run: |
-          echo "Monitoring coordination issue #${ISSUE_NUMBER}"
-          echo "Agent has been assigned and will begin work shortly"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Coordination Request Created & Assigned"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo ""
-          echo "View progress at:"
-          echo "${{ github.server_url }}/${{ github.repository }}/issues/${ISSUE_NUMBER}"
+          echo "Issue: #${ISSUE_NUMBER}"
+          echo "URL: ${ISSUE_URL:-${{ github.server_url }}/${{ github.repository }}/issues/${ISSUE_NUMBER}}"
+          echo "Agent: @meta-coordinator-system"
+          echo "Status: Assigned to Copilot"
           echo ""
-          echo "The agent will:"
+          echo "Copilot will:"
           echo "1. Assess system state"
           echo "2. Take necessary actions"
           echo "3. Report results"
@@ -468,6 +478,6 @@ jobs:
           echo "Focus: ${{ inputs.focus_area || 'all' }}"
           echo "Dry run: ${{ inputs.dry_run || 'false' }}"
           echo ""
-          echo "✅ Coordination request created and assigned to @meta-coordinator-system"
-          echo "📋 Agent will orchestrate system state and report results"
-          echo "🔄 Next run in 5 minutes (if scheduled)"
+          echo "✅ Coordination issue created and Copilot assigned in one step"
+          echo "📋 @meta-coordinator-system will orchestrate system state"
+          echo "🔄 Next run in 15 minutes (if scheduled)"
