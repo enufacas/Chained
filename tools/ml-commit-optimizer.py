@@ -35,8 +35,8 @@ Usage:
     # Analyze and optimize thresholds
     python ml-commit-optimizer.py --optimize
     
-    # Interactive validation before push
-    python ml-commit-optimizer.py --validate
+    # Check model and threshold status
+    python ml-commit-optimizer.py --status
 """
 
 import json
@@ -55,7 +55,7 @@ import argparse
 # ML imports (graceful degradation if not available)
 try:
     import numpy as np
-    from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+    from sklearn.ensemble import RandomForestClassifier
     from sklearn.preprocessing import StandardScaler
     from sklearn.model_selection import train_test_split, cross_val_score
     from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score

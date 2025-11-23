@@ -472,9 +472,10 @@ Examples:
             
             print("✅ Analysis complete!")
             print(f"\n📊 Results:")
-            print(f"   Commits analyzed: {results['pattern_analysis']['total_analyzed']}")
-            print(f"   Successful: {results['pattern_analysis']['successful']}")
-            print(f"   Patterns found: {results['pattern_analysis']['patterns_found']}")
+            pattern_data = results['pattern_analysis']
+            print(f"   Commits analyzed: {pattern_data.get('total_analyzed', 0)}")
+            print(f"   Successful: {pattern_data.get('successful', 0)}")
+            print(f"   Patterns found: {pattern_data.get('patterns_found', 0)}")
             
             if results['ml_training']:
                 print(f"\n🤖 ML Training:")
