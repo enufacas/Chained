@@ -169,57 +169,57 @@ jobs:
             
             # Build issue body with agent directive
             issue_body="<!-- COPILOT_AGENT:${matched_agent} -->
-
-> **🤖 Agent Assignment**
-> 
-> This issue has been assigned to GitHub Copilot with the **${agent_emoji} @${matched_agent}** custom agent profile.
-> 
-> **@${matched_agent}** - Please use the specialized approach defined in [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md).
-> 
-> **IMPORTANT**: Always mention **@${matched_agent}** by name in all conversations, comments, and PRs related to this issue.
-
----
-
-## 🔄 Tech Lead Feedback for PR #${pr_num}
-
-**Original PR:** #${pr_num} - ${pr_title}  
-**Author:** @${pr_author}  
-**Reviewer:** @${reviewer}  
-**Status:** Changes requested
-
-### 📋 Review Comments
-
-${review_body}
-
----
-
-## 🎯 Your Task (@${matched_agent})
-
-1. **Review the PR:** Check out PR #${pr_num} and understand the changes
-2. **Review tech lead feedback:** Read and understand all requested changes above
-3. **Make the fixes:**
-   - Check out the PR branch
-   - Address each point in the review comments
-   - Follow the ${matched_agent} specialization approach
-   - Test your changes
-4. **Push updates:** Push your fixes to the PR branch
-5. **Update status:**
-   - Remove any [WIP] markers from PR title
-   - Comment on this issue with what you fixed
-   - Close this issue once complete
-6. **Request re-review:** The tech lead will automatically be notified
-
-### 🔗 Quick Links
-
-- **PR to fix:** [#${pr_num}](https://github.com/${{ github.repository }}/pull/${pr_num})
-- **PR files:** [View changes](https://github.com/${{ github.repository }}/pull/${pr_num}/files)
-- **Tech lead review:** [View review](https://github.com/${{ github.repository }}/pull/${pr_num}#pullrequestreview)
-- **Agent profile:** [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md)
-
----
-
-*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
-*Managed by @workflows-tech-lead*"
+            
+            > **🤖 Agent Assignment**
+            > 
+            > This issue has been assigned to GitHub Copilot with the **${agent_emoji} @${matched_agent}** custom agent profile.
+            > 
+            > **@${matched_agent}** - Please use the specialized approach defined in [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md).
+            > 
+            > **IMPORTANT**: Always mention **@${matched_agent}** by name in all conversations, comments, and PRs related to this issue.
+            
+            ---
+            
+            ## 🔄 Tech Lead Feedback for PR #${pr_num}
+            
+            **Original PR:** #${pr_num} - ${pr_title}  
+            **Author:** @${pr_author}  
+            **Reviewer:** @${reviewer}  
+            **Status:** Changes requested
+            
+            ### 📋 Review Comments
+            
+            ${review_body}
+            
+            ---
+            
+            ## 🎯 Your Task (@${matched_agent})
+            
+            1. **Review the PR:** Check out PR #${pr_num} and understand the changes
+            2. **Review tech lead feedback:** Read and understand all requested changes above
+            3. **Make the fixes:**
+            - Check out the PR branch
+            - Address each point in the review comments
+            - Follow the ${matched_agent} specialization approach
+            - Test your changes
+            4. **Push updates:** Push your fixes to the PR branch
+            5. **Update status:**
+            - Remove any [WIP] markers from PR title
+            - Comment on this issue with what you fixed
+            - Close this issue once complete
+            6. **Request re-review:** The tech lead will automatically be notified
+            
+            ### 🔗 Quick Links
+            
+            - **PR to fix:** [#${pr_num}](https://github.com/${{ github.repository }}/pull/${pr_num})
+            - **PR files:** [View changes](https://github.com/${{ github.repository }}/pull/${pr_num}/files)
+            - **Tech lead review:** [View review](https://github.com/${{ github.repository }}/pull/${pr_num}#pullrequestreview)
+            - **Agent profile:** [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md)
+            
+            ---
+            
+            *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+            *Managed by @workflows-tech-lead*"
             
             # Create the issue
             echo "Creating issue with title: ${issue_title}"
@@ -240,26 +240,26 @@ ${review_body}
               
               # Comment on PR linking to feedback issue
               gh pr comment ${pr_num} --body "## 🔄 Agent Assigned to Address Feedback
-
-**@${matched_agent}** has been assigned to address the tech lead feedback.
-
-**Feedback Issue:** #${issue_number}  
-**Agent:** ${agent_emoji} @${matched_agent}  
-**Specialization:** ${agent_description}
-
-### What happens next:
-
-1. ✅ **@${matched_agent}** will review the tech lead feedback
-2. 💻 **@${matched_agent}** will make the requested changes
-3. 🔄 **@${matched_agent}** will push updates to this PR
-4. 📝 **@${matched_agent}** will update issue #${issue_number} when complete
-5. 🔍 Tech lead will be notified for re-review
-
-**Timeline:** Agent typically starts work within a few minutes
-
----
-*🤖 Automated agent assignment - @${matched_agent} will handle this*
-*Created feedback issue #${issue_number}*" --repo ${{ github.repository }} || true
+              
+              **@${matched_agent}** has been assigned to address the tech lead feedback.
+              
+              **Feedback Issue:** #${issue_number}  
+              **Agent:** ${agent_emoji} @${matched_agent}  
+              **Specialization:** ${agent_description}
+              
+              ### What happens next:
+              
+              1. ✅ **@${matched_agent}** will review the tech lead feedback
+              2. 💻 **@${matched_agent}** will make the requested changes
+              3. 🔄 **@${matched_agent}** will push updates to this PR
+              4. 📝 **@${matched_agent}** will update issue #${issue_number} when complete
+              5. 🔍 Tech lead will be notified for re-review
+              
+              **Timeline:** Agent typically starts work within a few minutes
+              
+              ---
+              *🤖 Automated agent assignment - @${matched_agent} will handle this*
+              *Created feedback issue #${issue_number}*" --repo ${{ github.repository }} || true
               
               echo "✅ Linked issue #${issue_number} to PR #${pr_num}"
               
@@ -268,21 +268,21 @@ ${review_body}
               
               # Comment on PR about the failure
               gh pr comment ${pr_num} --body "⚠️ **Failed to Create Feedback Issue**
-
-The automated system attempted to create a feedback issue for the tech lead's requested changes, but the issue creation failed.
-
-**Workaround:**
-- The tech lead feedback is visible in the PR review comments
-- You can manually address the feedback by pushing changes to this PR
-- Or create a manual issue to track the work
-
-**Matched Agent:** ${agent_emoji} @${matched_agent}  
-**Agent Specialization:** ${agent_description}
-
-Please address the review feedback and push changes to this PR branch.
-
----
-*🤖 Automated system - issue creation failed*" --repo ${{ github.repository }} || true
+              
+              The automated system attempted to create a feedback issue for the tech lead's requested changes, but the issue creation failed.
+              
+              **Workaround:**
+              - The tech lead feedback is visible in the PR review comments
+              - You can manually address the feedback by pushing changes to this PR
+              - Or create a manual issue to track the work
+              
+              **Matched Agent:** ${agent_emoji} @${matched_agent}  
+              **Agent Specialization:** ${agent_description}
+              
+              Please address the review feedback and push changes to this PR branch.
+              
+              ---
+              *🤖 Automated system - issue creation failed*" --repo ${{ github.repository }} || true
             fi
             
           done
