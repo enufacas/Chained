@@ -106,15 +106,45 @@ You have **wide, permissive access** to perform all necessary functions:
 **Task:** Ensure all PRs get appropriate tech lead review
 
 **Actions:**
-- List all open, non-draft PRs
+- List all open, non-draft PRs (EFFICIENT: use filters to avoid waste)
 - For each PR:
   - Get changed files
-  - Run match-pr-to-tech-lead.py to identify tech leads
-  - Check complexity (files changed, lines changed, protected paths, security keywords)
+  - Run `match-pr-to-tech-lead.py --check-complexity` for objective analysis
+  - Check WIP markers in title (skip if present)
   - Determine if review required or optional
-  - Apply labels: `needs-tech-lead-review`, `tech-lead:X`
-  - Create comment mentioning tech lead(s)
+  - Apply labels: `needs-tech-lead-review` (state only, NOT identifier labels)
+  - Create comment mentioning tech lead(s) by @name
   - Track review status
+
+**Proven Patterns (from auto-review-merge.yml):**
+
+1. **Smart PR Filtering** (avoid processing unnecessary PRs)
+   ```bash
+   # Get only open, non-draft PRs
+   gh pr list --state open --json number,isDraft \
+     --jq '.[] | select(.isDraft == false) | .number'
+   ```
+
+2. **WIP Detection** (skip work-in-progress)
+   ```bash
+   # Check title for WIP markers
+   if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'; then
+     echo "Skipping WIP PR"
+     continue
+   fi
+   ```
+
+3. **Complexity Analysis Tool** (objective, data-driven)
+   ```bash
+   # Use tool for structured analysis
+   complexity=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --check-complexity)
+   requires_review=$(echo "$complexity" | jq -r '.complexity.requires_review')
+   ```
+   
+   **What it checks:**
+   - Protected paths (`.github/workflows/**`, `.github/agents/**`, etc.)
+   - Sensitive keywords (secret, password, token, auth, permission, security)
+   - PR size (>5 files OR >100 lines changed)
 
 **Conditions:**
 - **Protected paths** always require review:
@@ -126,13 +156,14 @@ You have **wide, permissive access** to perform all necessary functions:
   - More than 5 files changed
   - More than 100 lines changed
 - **Security keywords**: auth, token, password, secret, permission, security
-- **Skip if**: WIP in title, draft PR
+- **Skip if**: WIP in title, draft PR, already approved
 
 **Outcomes:**
 - All reviewable PRs have tech lead assignment
-- State accurately reflected in labels
-- Tech leads mentioned and notified
-- Review requirements documented
+- State accurately reflected in labels (minimal labels)
+- Tech leads mentioned by @name in comments
+- Review requirements based on objective criteria
+- Efficient processing (skip drafts, WIP, etc.)
 
 ### 2. Feedback Issue Creation
 
@@ -340,67 +371,102 @@ If you cannot use the script, you MUST:
   - **CI check**: All required checks passed (use GitHub API)
   - **Mergeable check**: No merge conflicts
 - If ALL criteria met:
-  - **Execute merge** using `gh pr merge --squash --auto` (or `--merge` based on repo settings)
+  - **Execute merge** using merge strategy with fallback
   - Post success comment with details
   - Update memory with merge time and PR details
 - If not eligible:
-  - Document specific blocking reason in comment
+  - Document specific blocking reason (for transparency)
   - Update memory with blocking pattern
   - No action needed (will re-check next run)
 
-**Merge Strategy:**
-```bash
-# Check if PR is mergeable
-gh pr view $PR_NUM --json mergeable,mergeStateStatus
+**Proven Patterns (from auto-review-merge.yml):**
 
-# If eligible, merge with squash
-gh pr merge $PR_NUM \
-  --squash \
-  --auto \
-  --subject "PR #$PR_NUM: $TITLE" \
-  --body "Auto-merged by meta-coordinator after tech lead approval"
-```
+1. **Trust Verification Logic**
+   ```bash
+   # Verify PR is from trusted source
+   repo_owner="${GITHUB_REPOSITORY_OWNER}"
+   is_trusted=false
+   
+   if [ "${author}" = "${repo_owner}" ] && [ "${has_copilot}" != "0" ]; then
+     is_trusted=true
+   elif echo "${author}" | grep -qiE "^(github-actions\[bot\]|copilot)"; then
+     if [ "${has_copilot}" != "0" ]; then
+       is_trusted=true
+     fi
+   fi
+   ```
+   **Why useful:** Security check - only merge from trusted sources
+
+2. **Merge Strategy with Fallback**
+   ```bash
+   # Get mergeable status
+   mergeable=$(gh pr view $PR_NUM --json mergeable --jq '.mergeable')
+   
+   # Attempt immediate merge if mergeable
+   if [ "${mergeable}" = "MERGEABLE" ]; then
+     if gh pr merge ${PR_NUM} --squash --delete-branch; then
+       echo "✅ Merged successfully"
+     else
+       # Fallback to auto-merge (queued merge)
+       gh pr merge ${PR_NUM} --auto --squash --delete-branch
+       echo "✅ Auto-merge enabled (queued)"
+     fi
+   else
+     echo "⚠️ Not mergeable: ${mergeable}"
+   fi
+   ```
+   **Why useful:** Handles both immediate and queued merges gracefully
+
+3. **Complete Eligibility Check** (from auto-review-merge.yml)
+   ```bash
+   # All criteria in one pass
+   pr_data=$(gh pr view $PR_NUM --json state,isDraft,mergeable,author,labels,title)
+   
+   # State checks
+   pr_state=$(echo "$pr_data" | jq -r '.state')
+   is_draft=$(echo "$pr_data" | jq -r '.isDraft')
+   
+   # Skip if not ready
+   if [ "${pr_state}" != "OPEN" ] || [ "${is_draft}" = "true" ]; then
+     echo "Not ready (state: ${pr_state}, draft: ${is_draft})"
+     exit 0
+   fi
+   
+   # Trust + label checks combined
+   # ... (use trust verification logic above)
+   
+   # Review state checks
+   has_needs_review=$(echo "$pr_data" | jq -r '.labels[] | select(.name == "needs-tech-lead-review")')
+   has_approved=$(echo "$pr_data" | jq -r '.labels[] | select(.name == "tech-lead-approved")')
+   
+   # Only merge if approved or review not needed
+   if [ -n "$has_needs_review" ] && [ -z "$has_approved" ]; then
+     echo "Review required but not yet approved"
+     exit 0
+   fi
+   ```
 
 **Conditions:**
-- **Trust:** Only copilot or owner/maintainer PRs
+- **Trust:** Only copilot (with label) or owner/maintainer PRs
 - **Approval:** Tech lead approved OR review not required
 - **No blocks:** No change requests, WIP, or conflicts
 - **CI passed:** All required checks successful
 - **Mergeable:** GitHub reports PR can be merged
 
-**Safety Checks:**
-```bash
-# Verify copilot PR
-has_copilot_label=$(gh pr view $PR_NUM --json labels --jq '.labels[] | select(.name == "copilot")')
-author=$(gh pr view $PR_NUM --json author --jq '.author.login')
-
-# Verify not blocked
-has_changes_requested=$(gh pr view $PR_NUM --json labels --jq '.labels[] | select(.name == "tech-lead-changes-requested")')
-
-# Verify CI passed
-checks_status=$(gh pr checks $PR_NUM --json state --jq '[.[] | select(.state != "SUCCESS")] | length')
-
-# Merge only if all pass
-if [ -n "$has_copilot_label" ] && \
-   [ -z "$has_changes_requested" ] && \
-   [ "$checks_status" = "0" ]; then
-  gh pr merge $PR_NUM --squash --auto
-fi
-```
-
 **Outcomes:**
 - Approved PRs auto-merge within 5 minutes
 - Clear audit trail in PR comments
-- Memory tracks merge patterns
-- Blocking reasons documented
+- Memory tracks merge patterns and timing
+- Blocking reasons documented for transparency
 - System moves PRs to completion autonomously
+- Graceful handling of edge cases (queued merge)
 
 **Learning from Merges:**
 Track in memory:
-- Time from approval to merge
-- PR complexity vs merge success
-- Most common blocking reasons
-- Patterns for optimization
+- Time from approval to merge (optimize cycle time)
+- PR complexity vs merge success (identify patterns)
+- Most common blocking reasons (address systematically)
+- Fallback usage frequency (immediate vs queued)
 
 ### 6. Memory and Learning
 
