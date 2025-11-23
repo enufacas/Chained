@@ -122,6 +122,8 @@ jobs:
           
           echo "Creating coordination issue..."
           ISSUE_BODY=$(cat <<'EOF'
+          <!-- COPILOT_AGENT:meta-coordinator-system -->
+
           ## 🎯 Meta-Coordination Request
 
           > **🤖 Agent Profile**: This issue requires the **@meta-coordinator-system** agent.  
