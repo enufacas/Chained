@@ -1,5 +1,18 @@
 name: "Automation: Auto Review & Merge (Improved)"
 
+# ⚠️ DEPRECATED - FULLY REPLACED BY META-COORDINATOR
+# This workflow has been disabled and replaced by the meta-coordinator-system agent.
+# The meta-coordinator.yml workflow now handles ALL responsibilities:
+# - Tech lead assignment to PRs
+# - Feedback issue creation when changes requested
+# - Agent assignment to feedback issues
+# - Review state detection and label updates
+# - Auto-merge of approved PRs
+# - PR complexity analysis
+#
+# To re-enable this workflow, remove the 'if: false' condition in the jobs section.
+# See: .github/workflows/META_COORDINATOR_IMPLEMENTATION.md
+
 # This workflow combines auto-review, tech lead review, and auto-merge into a single,
 # maintainable workflow with clear stages. It replaces the fragile tech-lead-review system.
 
@@ -34,9 +47,12 @@ permissions:
   checks: read
 
 jobs:
+  # ⚠️ ALL JOBS DISABLED - Replaced by meta-coordinator-system
+  
   # Stage 1: Analyze PRs and determine which need tech lead review
   analyze-prs:
     runs-on: ubuntu-latest
+    if: false  # DISABLED - meta-coordinator handles this
     outputs:
       pr_matrix: ${{ steps.build_matrix.outputs.pr_matrix }}
     steps:
@@ -154,7 +170,7 @@ jobs:
   # Stage 2: Process each PR (tech lead review, labels, feedback)
   process-pr:
     needs: analyze-prs
-    if: needs.analyze-prs.outputs.pr_matrix != '{"include":[]}'
+    if: false  # DISABLED - meta-coordinator handles this
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.analyze-prs.outputs.pr_matrix) }}
@@ -337,7 +353,7 @@ jobs:
   # Stage 3: Auto-merge (runs after processing)
   auto-merge:
     needs: [analyze-prs, process-pr]
-    if: always() && needs.analyze-prs.outputs.pr_matrix != '{"include":[]}'
+    if: false  # DISABLED - meta-coordinator handles this
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.analyze-prs.outputs.pr_matrix) }}

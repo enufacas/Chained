@@ -1,0 +1,453 @@
+name: "Meta-Coordinator: System Orchestration"
+
+# This workflow invokes the meta-coordinator-system agent to orchestrate
+# the entire tech lead review and agent assignment system.
+#
+# The agent continuously assesses system state and takes appropriate actions:
+# - Assign tech leads to PRs
+# - Create feedback issues for change requests
+# - Assign agents to issues
+# - Manage review cycles
+# - Handle exceptions
+
+on:
+  schedule:
+    # Run every 15 minutes (cost-optimized from 5 min)
+    # Reduces scheduled runs by 67% while maintaining responsiveness
+    - cron: '*/15 * * * *'
+  
+  workflow_dispatch:
+    inputs:
+      focus_area:
+        description: 'Focus area: all, prs, issues, reviews'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - prs
+          - issues
+          - reviews
+      dry_run:
+        description: 'Dry run (no changes made)'
+        required: false
+        default: false
+        type: boolean
+  
+  # Optional: React to events for immediate response
+  # Commented out initially - can enable after testing
+  # issues:
+  #   types: [opened]
+  # pull_request:
+  #   types: [opened, synchronize, labeled]
+  # pull_request_review:
+  #   types: [submitted]
+
+concurrency:
+  group: meta-coordinator-system
+  cancel-in-progress: false  # Let runs complete
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5  # Hard limit: prevent runaway sessions
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Quick assessment (cost protection)
+        id: assess
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Quick assessment: Is there work to do?"
+          
+          # Count items needing attention
+          open_prs=$(gh pr list --state open --json number --jq 'length')
+          open_issues=$(gh issue list --state open --json number --jq 'length')
+          
+          echo "📊 Current state:"
+          echo "  - Open PRs: ${open_prs}"
+          echo "  - Open issues: ${open_issues}"
+          
+          # Decide if we should skip (nothing to do)
+          if [ "${open_prs}" = "0" ] && [ "${open_issues}" = "0" ]; then
+            echo "✅ System idle - no work needed"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "🎯 Work detected - proceeding with coordination"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create coordination request
+        if: steps.assess.outputs.skip != 'true'
+        id: create_request
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          TRIGGER_EVENT: ${{ github.event_name }}
+          FOCUS_AREA: ${{ inputs.focus_area || 'all' }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          RUN_ID="${{ github.run_id }}"
+          
+          # Create coordination issue for meta-coordinator-system agent
+          ISSUE_TITLE="🎯 Meta-Coordination: $(date +%H:%M)"
+          
+          ISSUE_BODY=$(cat <<'EOF'
+## 🎯 Meta-Coordination Request
+
+**Trigger:** ${{ github.event_name }}
+**Focus:** ${FOCUS_AREA}
+**Repository:** ${GITHUB_REPOSITORY}
+**Timestamp:** ${TIMESTAMP}
+**Run ID:** ${RUN_ID}
+**Dry Run:** ${DRY_RUN}
+
+---
+
+### Your Mission (@meta-coordinator-system)
+
+As the **@meta-coordinator-system** agent, you are responsible for orchestrating the entire tech lead review and agent assignment system. You have **comprehensive access and tools** to manage system state.
+
+### System State Assessment
+
+Please assess the current system state and take appropriate actions across all 7 core areas:
+
+#### 1. PR Review Orchestration
+
+**Task:** Ensure all PRs get appropriate tech lead review
+
+**Actions to take:**
+- List all open, non-draft PRs
+- For each PR:
+  - Get changed files
+  - Run `match-pr-to-tech-lead.py` to identify tech leads
+  - Check complexity (files, lines, protected paths, security keywords)
+  - Determine if review required or optional
+  - Apply labels: `needs-tech-lead-review` if required
+  - Create comment mentioning tech lead(s)
+  - Track review status
+
+**Conditions:**
+- Protected paths: `.github/workflows/`, `.github/agents/`, `docs/` (require review)
+- Complexity: >5 files or >100 lines (require review)
+- Security: keywords like auth, token, password, secret (require review)
+- Skip: WIP in title, draft PRs
+
+**Outcomes:**
+- All reviewable PRs have tech lead assignment
+- State accurately reflected in labels
+- Tech leads mentioned and notified
+
+#### 2. Feedback Issue Creation
+
+**Task:** Create feedback issues when tech leads request changes
+
+**Actions to take:**
+- For each PR with `tech-lead-changes-requested` label:
+  - Check if feedback issue already exists (search for "PR #X" with labels)
+  - If not exists:
+    - Get review comments from tech lead
+    - Run `match-issue-to-agent.py` on feedback
+    - Create feedback issue with:
+      - Title: `[Tech Lead Feedback] PR #X - {title}`
+      - Body: PR context + review comments + agent directive
+      - Labels: `tech-lead-feedback`, `assigned-agent`, `linked-to-pr`
+    - Assign Copilot using `assign-copilot-to-issue.sh`
+    - Link issue to PR via comments (bidirectional)
+
+**Conditions:**
+- Only if `tech-lead-changes-requested` label present
+- Only if feedback issue doesn't already exist
+- Extract most recent change request review
+
+**Outcomes:**
+- Every PR with changes requested has feedback issue
+- No duplicate feedback issues
+- Clear bidirectional links
+
+#### 3. Agent Assignment
+
+**Task:** Assign agents to all open issues
+
+**Actions to take:**
+- For each open issue without Copilot assignment:
+  - Analyze title and body
+  - Run `match-issue-to-agent.py`
+  - Select best agent based on specialization and score
+  - Use `assign-copilot-to-issue.sh` to assign
+  - Post assignment comment with agent details
+  - Apply `assigned-agent` label
+
+**Agent Matching Guidelines:**
+- Workflows → @workflows-tech-lead
+- Agents → @agents-tech-lead
+- Docs → @docs-tech-lead or @support-master
+- GitHub Pages → @github-pages-tech-lead
+- Security → @secure-specialist
+- Performance → @accelerate-master
+- Testing → @assert-specialist
+- Infrastructure → @create-guru
+- APIs → @engineer-master
+
+**Outcomes:**
+- All open issues have agent assignments
+- Agents matched to specializations
+- Clear assignment comments
+
+#### 4. Review Cycle Management
+
+**Task:** Manage re-review cycles after changes
+
+**Actions to take:**
+- Monitor PRs with `tech-lead-changes-requested`:
+  - Detect new commits (check PR events/timeline)
+  - Request re-review from tech lead (mention in comment)
+  - Track review iteration count
+- When tech lead re-reviews:
+  - If approved: Remove `tech-lead-changes-requested`, add `tech-lead-approved`
+  - If still changes: Keep label, notify agent in feedback issue
+  - Close linked feedback issue if approved
+
+**Conditions:**
+- Re-review needed when new commits after change request
+- Approval detected from review API
+- Track up to 5 iterations
+
+**Outcomes:**
+- Tech leads notified of updates
+- Review state synchronized
+- Feedback issues closed when complete
+
+#### 5. Auto-Merge Execution
+
+**Task:** Automatically merge approved PRs from trusted sources
+
+**Actions to take:**
+- For each open PR, check complete eligibility:
+  - **Trust check**: From copilot (with `copilot` label) OR repo owner/maintainer
+  - **State check**: Open, not draft, no WIP in title
+  - **Review check**: Has `tech-lead-approved` OR doesn't need review
+  - **Blocking check**: No `tech-lead-changes-requested` or other blocking labels
+  - **CI check**: All required checks passed (`gh pr checks $PR_NUM`)
+  - **Mergeable check**: No merge conflicts (`gh pr view --json mergeable`)
+- If ALL criteria met:
+  - Execute merge: `gh pr merge $PR_NUM --squash --auto`
+  - Post success comment with details
+  - Record in memory (`memory.record_run(...)`)
+- If not eligible:
+  - Document specific blocking reason
+  - Record blocking pattern in memory
+
+**Conditions:**
+- Only copilot or owner/maintainer PRs
+- Tech lead approved OR review not required
+- No blocking labels or conflicts
+- All required CI checks passed
+
+**Outcomes:**
+- Approved PRs auto-merge within 5 minutes
+- Clear audit trail in comments
+- Blocking reasons documented
+- System moves PRs to completion autonomously
+
+#### 6. Memory and Learning
+
+**Task:** Use persistent memory to learn and optimize
+
+**Actions to take:**
+- Load memory at start:
+  ```bash
+  python3 tools/meta-coordinator-memory.py summary
+  ```
+- Get decision context before actions:
+  ```python
+  context = memory.get_context_for_decision("pr_assignment")
+  agent_stats = memory.get_agent_performance("engineer-master")
+  ```
+- Record ALL actions taken:
+  ```python
+  memory.record_pr_assignment(pr_num, tech_lead, complexity, files)
+  memory.record_issue_assignment(issue_num, agent, score)
+  memory.record_feedback_issue(pr_num, issue_num, tech_lead, agent)
+  ```
+- Track exceptions and learnings:
+  ```python
+  memory.record_exception(type, desc, context)
+  memory.add_learning(insight, evidence)
+  ```
+- Save memory at end of run
+
+**Outcomes:**
+- Decisions informed by historical patterns
+- Continuous learning and improvement
+- Complete audit trail
+- Data-driven orchestration
+
+#### 7. Exception Handling
+
+**Task:** Handle edge cases and inconsistencies
+
+**Actions to identify:**
+- PRs with conflicting labels
+- Feedback issues without linked PRs
+- Orphaned agent assignments
+- Stale review cycles (>7 days)
+- Missing tech lead assignments
+- Label inconsistencies
+
+**Actions to resolve:**
+- Fix label conflicts (keep most recent)
+- Close orphaned issues
+- Ping stale reviews
+- Create manual coordination issues for complex cases
+
+**Outcomes:**
+- System state is consistent
+- No stuck items
+- Complex cases escalated
+
+---
+
+### Execution Instructions
+
+1. **Assess**: Analyze current state across all 7 areas (1-2 min)
+2. **Prioritize**: Identify most critical actions needed
+3. **Execute**: Take actions using available tools (3-5 min)
+4. **Report**: Post summary comment on this issue (1 min)
+5. **Close**: Close this coordination issue when complete
+
+### Focus Area
+
+**Current focus:** ${FOCUS_AREA}
+- `all`: Process all 7 areas
+- `prs`: Focus on PR review orchestration + feedback issues + auto-merge
+- `issues`: Focus on agent assignment
+- `reviews`: Focus on review cycles + exceptions
+
+### Dry Run Mode
+
+**Dry run:** ${DRY_RUN}
+- `true`: Assess and report what would be done, but don't make changes
+- `false`: Execute all actions
+
+### Tools Available
+
+You have access to:
+- `gh` CLI for all GitHub operations (PRs, issues, merges, labels, reviews)
+- `tools/match-issue-to-agent.py` for agent matching
+- `tools/match-pr-to-tech-lead.py` for tech lead matching
+- `tools/assign-copilot-to-issue.sh` for assignment
+- `tools/meta-coordinator-memory.py` for persistent memory
+- GitHub API for complex queries
+- All repository files
+- GitHub API for complex queries
+- All repository files
+
+### Expected Output Format
+
+Post a summary comment with:
+- **System State**: Current counts
+- **Actions Taken**: Numbered list with ✅ indicators
+- **Metrics**: Counts of operations
+- **System Health**: Overall status
+- **Next Run**: When next coordination will occur
+
+### Time Limit & Cost Efficiency
+
+**Timeout:** 5 minutes maximum (hard limit enforced)
+
+**Cost efficiency guidelines:**
+- Quick assessment first: Is there work to do?
+- If nothing to do → close issue immediately, skip work
+- Focus on highest priority items first
+- Batch API calls where possible
+- Work efficiently within timeout budget
+- Concise reporting (not verbose)
+
+Complete within **5 minutes**. Focus on progress, not perfection. Next run is in 15 minutes.
+
+---
+
+**Remember:** You have wide, permissive access to perform all necessary functions. Your goal is to move the system toward its desired state by orchestrating tech lead reviews and agent assignments.
+
+*This is a coordination request - complete your assessment, take actions, report results, and close this issue.*
+EOF
+)
+          
+          # Create the coordination issue
+          echo "Creating coordination issue..."
+          issue_number=$(gh issue create \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "${ISSUE_TITLE}" \
+            --body "${ISSUE_BODY}" \
+            --label "meta-coordination,automated,system-orchestration" \
+            --assignee copilot 2>&1 | grep -oP '#\K\d+' | head -1 || echo "")
+          
+          if [ -n "${issue_number}" ]; then
+            echo "✅ Created coordination issue #${issue_number}"
+            echo "issue_number=${issue_number}" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Failed to create coordination issue"
+            exit 1
+          fi
+      
+      - name: Skip notification
+        if: steps.assess.outputs.skip == 'true'
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "System Idle - Skipping Coordination"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "✅ No open PRs or issues requiring attention"
+          echo "💰 Skipping Copilot session (cost protection)"
+          echo "🔄 Next check in 15 minutes"
+      
+      - name: Monitor coordination progress
+        if: steps.assess.outputs.skip != 'true' && steps.create_request.outputs.issue_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ steps.create_request.outputs.issue_number }}
+        run: |
+          echo "Monitoring coordination issue #${ISSUE_NUMBER}"
+          echo "Agent has been assigned and will begin work shortly"
+          echo ""
+          echo "View progress at:"
+          echo "${{ github.server_url }}/${{ github.repository }}/issues/${ISSUE_NUMBER}"
+          echo ""
+          echo "The agent will:"
+          echo "1. Assess system state"
+          echo "2. Take necessary actions"
+          echo "3. Report results"
+          echo "4. Close this issue"
+          echo ""
+          echo "Expected completion: 5-10 minutes"
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Meta-Coordination Workflow Complete"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Focus: ${{ inputs.focus_area || 'all' }}"
+          echo "Dry run: ${{ inputs.dry_run || 'false' }}"
+          echo ""
+          echo "✅ Coordination request created and assigned to @meta-coordinator-system"
+          echo "📋 Agent will orchestrate system state and report results"
+          echo "🔄 Next run in 5 minutes (if scheduled)"
