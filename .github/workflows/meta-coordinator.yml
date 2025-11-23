@@ -12,8 +12,9 @@ name: "Meta-Coordinator: System Orchestration"
 
 on:
   schedule:
-    # Run every 5 minutes for continuous system orchestration
-    - cron: '*/5 * * * *'
+    # Run every 15 minutes (cost-optimized from 5 min)
+    # Reduces scheduled runs by 67% while maintaining responsiveness
+    - cron: '*/15 * * * *'
   
   workflow_dispatch:
     inputs:
@@ -55,6 +56,7 @@ permissions:
 jobs:
   orchestrate:
     runs-on: ubuntu-latest
+    timeout-minutes: 5  # Hard limit: prevent runaway sessions
     
     steps:
       - name: Checkout repository
@@ -65,7 +67,32 @@ jobs:
         with:
           python-version: '3.11'
       
+      - name: Quick assessment (cost protection)
+        id: assess
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Quick assessment: Is there work to do?"
+          
+          # Count items needing attention
+          open_prs=$(gh pr list --state open --json number --jq 'length')
+          open_issues=$(gh issue list --state open --json number --jq 'length')
+          
+          echo "📊 Current state:"
+          echo "  - Open PRs: ${open_prs}"
+          echo "  - Open issues: ${open_issues}"
+          
+          # Decide if we should skip (nothing to do)
+          if [ "${open_prs}" = "0" ] && [ "${open_issues}" = "0" ]; then
+            echo "✅ System idle - no work needed"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "🎯 Work detected - proceeding with coordination"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+      
       - name: Create coordination request
+        if: steps.assess.outputs.skip != 'true'
         id: create_request
         env:
           GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
@@ -340,9 +367,19 @@ Post a summary comment with:
 - **System Health**: Overall status
 - **Next Run**: When next coordination will occur
 
-### Time Limit
+### Time Limit & Cost Efficiency
 
-Complete within **10 minutes**. Focus on progress, not perfection. Next run is in 5 minutes.
+**Timeout:** 5 minutes maximum (hard limit enforced)
+
+**Cost efficiency guidelines:**
+- Quick assessment first: Is there work to do?
+- If nothing to do → close issue immediately, skip work
+- Focus on highest priority items first
+- Batch API calls where possible
+- Work efficiently within timeout budget
+- Concise reporting (not verbose)
+
+Complete within **5 minutes**. Focus on progress, not perfection. Next run is in 15 minutes.
 
 ---
 
@@ -369,8 +406,19 @@ EOF
             exit 1
           fi
       
+      - name: Skip notification
+        if: steps.assess.outputs.skip == 'true'
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "System Idle - Skipping Coordination"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "✅ No open PRs or issues requiring attention"
+          echo "💰 Skipping Copilot session (cost protection)"
+          echo "🔄 Next check in 15 minutes"
+      
       - name: Monitor coordination progress
-        if: steps.create_request.outputs.issue_number != ''
+        if: steps.assess.outputs.skip != 'true' && steps.create_request.outputs.issue_number != ''
         env:
           GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ steps.create_request.outputs.issue_number }}
