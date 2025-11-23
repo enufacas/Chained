@@ -1,5 +1,11 @@
 name: "Automation: Copilot PR Assignment"
 
+# ⚠️ DEPRECATED - REPLACED BY META-COORDINATOR
+# This workflow has been disabled and replaced by the meta-coordinator-system agent.
+# The meta-coordinator.yml workflow now handles all PR feedback issue creation.
+# To re-enable this workflow, remove the 'if: false' condition in the jobs section.
+# See: .github/workflows/META_COORDINATOR_IMPLEMENTATION.md
+
 # This workflow assigns agents to PRs that need tech lead attention
 # It handles two scenarios:
 # 1. When a tech lead requests changes - creates feedback issue for agent fixes
@@ -41,11 +47,12 @@ permissions:
 jobs:
   assign-agent-to-pr-feedback:
     runs-on: ubuntu-latest
-    # Only run on scheduled runs or manual dispatch
-    # No PR event triggers to avoid "awaiting approval" issues
-    if: |
-      github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch'
+    # ⚠️ WORKFLOW DISABLED - Replaced by meta-coordinator-system
+    if: false
+    # Original condition (disabled):
+    # if: |
+    #   github.event_name == 'schedule' ||
+    #   github.event_name == 'workflow_dispatch'
     
     steps:
       - name: Checkout repository

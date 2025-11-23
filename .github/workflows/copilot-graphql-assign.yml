@@ -1,5 +1,11 @@
 name: "Automation: Copilot Assignment"
 
+# ⚠️ DEPRECATED - REPLACED BY META-COORDINATOR
+# This workflow has been disabled and replaced by the meta-coordinator-system agent.
+# The meta-coordinator.yml workflow now handles all agent assignments.
+# To re-enable this workflow, remove the 'if: false' condition below.
+# See: .github/workflows/META_COORDINATOR_IMPLEMENTATION.md
+
 on:
   issues:
     types: [opened]
@@ -34,12 +40,14 @@ permissions:
 jobs:
   assign-to-copilot:
     runs-on: ubuntu-latest
-    # Run on issue events, schedule, manual trigger, or after specific workflows
-    if: |
-      github.event_name == 'issues' ||
-      github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    # ⚠️ WORKFLOW DISABLED - Replaced by meta-coordinator-system
+    if: false
+    # Original condition (disabled):
+    # if: |
+    #   github.event_name == 'issues' ||
+    #   github.event_name == 'schedule' ||
+    #   github.event_name == 'workflow_dispatch' ||
+    #   (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     steps:
       - name: Check for PAT configuration
         env:

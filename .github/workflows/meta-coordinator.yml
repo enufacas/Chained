@@ -98,7 +98,7 @@ As the **@meta-coordinator-system** agent, you are responsible for orchestrating
 
 ### System State Assessment
 
-Please assess the current system state and take appropriate actions across all 6 core areas:
+Please assess the current system state and take appropriate actions across all 7 core areas:
 
 #### 1. PR Review Orchestration
 
@@ -206,25 +206,72 @@ Please assess the current system state and take appropriate actions across all 6
 - Review state synchronized
 - Feedback issues closed when complete
 
-#### 5. Auto-Merge Eligibility
+#### 5. Auto-Merge Execution
 
-**Task:** Verify PRs ready for auto-merge
+**Task:** Automatically merge approved PRs from trusted sources
 
 **Actions to take:**
-- For each open PR, check:
-  - Is open and not draft
-  - From trusted source (copilot + `copilot` label, or repo owner)
-  - Has `tech-lead-approved` OR doesn't need review
-  - No `tech-lead-changes-requested` label
-  - No WIP markers in title
-- If eligible: Post comment indicating ready
-- If not: Document blocking reasons
+- For each open PR, check complete eligibility:
+  - **Trust check**: From copilot (with `copilot` label) OR repo owner/maintainer
+  - **State check**: Open, not draft, no WIP in title
+  - **Review check**: Has `tech-lead-approved` OR doesn't need review
+  - **Blocking check**: No `tech-lead-changes-requested` or other blocking labels
+  - **CI check**: All required checks passed (`gh pr checks $PR_NUM`)
+  - **Mergeable check**: No merge conflicts (`gh pr view --json mergeable`)
+- If ALL criteria met:
+  - Execute merge: `gh pr merge $PR_NUM --squash --auto`
+  - Post success comment with details
+  - Record in memory (`memory.record_run(...)`)
+- If not eligible:
+  - Document specific blocking reason
+  - Record blocking pattern in memory
+
+**Conditions:**
+- Only copilot or owner/maintainer PRs
+- Tech lead approved OR review not required
+- No blocking labels or conflicts
+- All required CI checks passed
 
 **Outcomes:**
-- Clear merge-ready indicators
+- Approved PRs auto-merge within 5 minutes
+- Clear audit trail in comments
 - Blocking reasons documented
+- System moves PRs to completion autonomously
 
-#### 6. Exception Handling
+#### 6. Memory and Learning
+
+**Task:** Use persistent memory to learn and optimize
+
+**Actions to take:**
+- Load memory at start:
+  ```bash
+  python3 tools/meta-coordinator-memory.py summary
+  ```
+- Get decision context before actions:
+  ```python
+  context = memory.get_context_for_decision("pr_assignment")
+  agent_stats = memory.get_agent_performance("engineer-master")
+  ```
+- Record ALL actions taken:
+  ```python
+  memory.record_pr_assignment(pr_num, tech_lead, complexity, files)
+  memory.record_issue_assignment(issue_num, agent, score)
+  memory.record_feedback_issue(pr_num, issue_num, tech_lead, agent)
+  ```
+- Track exceptions and learnings:
+  ```python
+  memory.record_exception(type, desc, context)
+  memory.add_learning(insight, evidence)
+  ```
+- Save memory at end of run
+
+**Outcomes:**
+- Decisions informed by historical patterns
+- Continuous learning and improvement
+- Complete audit trail
+- Data-driven orchestration
+
+#### 7. Exception Handling
 
 **Task:** Handle edge cases and inconsistencies
 
@@ -251,7 +298,7 @@ Please assess the current system state and take appropriate actions across all 6
 
 ### Execution Instructions
 
-1. **Assess**: Analyze current state across all 6 areas (1-2 min)
+1. **Assess**: Analyze current state across all 7 areas (1-2 min)
 2. **Prioritize**: Identify most critical actions needed
 3. **Execute**: Take actions using available tools (3-5 min)
 4. **Report**: Post summary comment on this issue (1 min)
@@ -260,8 +307,8 @@ Please assess the current system state and take appropriate actions across all 6
 ### Focus Area
 
 **Current focus:** ${FOCUS_AREA}
-- `all`: Process all 6 areas
-- `prs`: Focus on PR review orchestration + feedback issues
+- `all`: Process all 7 areas
+- `prs`: Focus on PR review orchestration + feedback issues + auto-merge
 - `issues`: Focus on agent assignment
 - `reviews`: Focus on review cycles + exceptions
 
@@ -274,10 +321,13 @@ Please assess the current system state and take appropriate actions across all 6
 ### Tools Available
 
 You have access to:
-- `gh` CLI for all GitHub operations
+- `gh` CLI for all GitHub operations (PRs, issues, merges, labels, reviews)
 - `tools/match-issue-to-agent.py` for agent matching
 - `tools/match-pr-to-tech-lead.py` for tech lead matching
 - `tools/assign-copilot-to-issue.sh` for assignment
+- `tools/meta-coordinator-memory.py` for persistent memory
+- GitHub API for complex queries
+- All repository files
 - GitHub API for complex queries
 - All repository files
 
