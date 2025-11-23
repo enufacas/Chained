@@ -220,35 +220,32 @@ jobs:
                 
                 # Set reviewer to tech lead agent and use proactive review body
                 reviewer="${tech_lead_agent}"
-                review_body=$(cat <<EOF
-## 🔍 Proactive Tech Lead Review Request
-
-This PR has been assigned to **@${tech_lead_agent}** for technical review.
-
-**PR Details:**
-- **Title:** ${pr_title}
-- **Author:** @${pr_author}
-- **Status:** Open and ready for review
-
-**Review Needed:**
-Please review this PR according to the **@${tech_lead_agent}** specialization and provide feedback on:
-- Code quality and best practices
-- Technical correctness
-- Security considerations
-- Performance implications
-- Documentation completeness
-- Test coverage
-
-**Instructions:**
-1. Review all changes in the PR
-2. Provide specific, actionable feedback
-3. Request changes if needed, or approve if ready
-4. Follow the tech lead responsibilities from [\`.github/agents/${tech_lead_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${tech_lead_agent}.md)
-
----
-*🤖 Proactive review request - no prior feedback found*
-EOF
-)
+                review_body="## 🔍 Proactive Tech Lead Review Request
+            
+            This PR has been assigned to **@${tech_lead_agent}** for technical review.
+            
+            **PR Details:**
+            - **Title:** ${pr_title}
+            - **Author:** @${pr_author}
+            - **Status:** Open and ready for review
+            
+            **Review Needed:**
+            Please review this PR according to the **@${tech_lead_agent}** specialization and provide feedback on:
+            - Code quality and best practices
+            - Technical correctness
+            - Security considerations
+            - Performance implications
+            - Documentation completeness
+            - Test coverage
+            
+            **Instructions:**
+            1. Review all changes in the PR
+            2. Provide specific, actionable feedback
+            3. Request changes if needed, or approve if ready
+            4. Follow the tech lead responsibilities from [\`.github/agents/${tech_lead_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${tech_lead_agent}.md)
+            
+            ---
+            *🤖 Proactive review request - no prior feedback found*"
                 
                 echo "✓ Will create proactive review issue for @${tech_lead_agent}"
               else
