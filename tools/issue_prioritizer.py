@@ -401,9 +401,8 @@ class IssuePrioritizer:
         arm.update(success, resolution_time_hours)
         registry["arms"][category] = asdict(arm)
         
-        # Update global stats
+        # Update global stats (outcomes only, not decisions)
         stats = registry["stats"]
-        stats["total_decisions"] += 1
         if success:
             stats["total_successes"] += 1
         else:
