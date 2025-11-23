@@ -171,6 +171,46 @@ def test_stats_json_content():
     return True
 
 
+def test_data_freshness():
+    """Test that stats.json data is not stale (< 12 hours old)."""
+    from datetime import datetime, timezone
+    
+    stats_path = Path('docs/data/stats.json')
+    
+    if not stats_path.exists():
+        print("❌ stats.json does not exist")
+        return False
+    
+    try:
+        with open(stats_path, 'r') as f:
+            stats = json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"❌ stats.json is not valid JSON: {e}")
+        return False
+    
+    if 'last_updated' not in stats:
+        print("❌ stats.json missing last_updated field")
+        return False
+    
+    try:
+        last_updated = datetime.fromisoformat(stats['last_updated'].replace('Z', '+00:00'))
+        current = datetime.now(timezone.utc)
+        age = current - last_updated
+        age_hours = age.total_seconds() / 3600
+        
+        # Health check threshold is 12 hours
+        if age_hours > 12:
+            print(f"❌ Data is stale: {age_hours:.1f} hours old (exceeds 12-hour threshold)")
+            return False
+        
+        print(f"✅ Data is fresh: {age_hours:.1f} hours old (within 12-hour threshold)")
+        return True
+        
+    except (ValueError, TypeError) as e:
+        print(f"❌ Invalid last_updated format: {e}")
+        return False
+
+
 def test_issues_json_not_empty():
     """Test that issues.json is not empty."""
     issues_path = Path('docs/data/issues.json')
@@ -526,6 +566,7 @@ def main():
         
         # Data File Content Tests
         ("stats.json Content", test_stats_json_content),
+        ("Data Freshness", test_data_freshness),
         ("issues.json Not Empty", test_issues_json_not_empty),
         ("pulls.json Not Empty", test_pulls_json_not_empty),
         ("workflows.json Not Empty", test_workflows_json_not_empty),
