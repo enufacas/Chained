@@ -60,11 +60,11 @@ According to [GitHub's documentation](https://docs.github.com/en/enterprise-clou
    - Install software, configure environment
    - Prepare data files
 
-## What You CANNOT Configure
+## What You CANNOT Configure (On GitHub-Hosted Runners)
 
 ### ❌ Infrastructure-Level Restrictions (Controlled by GitHub)
 
-These are **managed by GitHub** and cannot be modified through configuration:
+These are **managed by GitHub** on **GitHub-hosted runners** and cannot be modified through configuration:
 
 1. **Network Proxy Settings**
    - Cannot bypass the DNS monitoring proxy
@@ -82,9 +82,13 @@ These are **managed by GitHub** and cannot be modified through configuration:
    - Cannot use alternative DNS
 
 4. **Security Boundaries**
-   - Copilot environment is intentionally isolated
+   - Copilot environment is intentionally isolated on GitHub-hosted runners
    - Network access is restricted by design
    - Cannot escalate network privileges
+
+### ⚠️ Important Distinction: GitHub-Hosted vs. Self-Hosted Runners
+
+The API blocking described in this document applies to **GitHub-hosted runners** (ubuntu-latest, etc.). There is an alternative approach using **self-hosted runners** that provides full API access.
 
 ## The Solution: Use GitHub MCP Server Tools
 
@@ -446,6 +450,122 @@ If you believe API access should be available:
    - Update documentation as restrictions change
    - Share findings with community
 
+## Alternative Solution: Self-Hosted Runners with Firewall Disabled
+
+### Overview
+
+According to [GitHub's documentation](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment#repository-firewall-requirements), there is a **repository firewall** that can be **disabled for self-hosted runners**, which would provide full API access.
+
+### How It Works
+
+**GitHub-Hosted Runners** (Current Situation):
+```
+┌─────────────────────────────────────┐
+│  GitHub-Hosted Runner               │
+│  ├─ DNS Monitoring Proxy  ❌ BLOCKS │
+│  ├─ api.github.com        ❌ BLOCKED│
+│  └─ gh CLI operations     ❌ BLOCKED│
+└─────────────────────────────────────┘
+```
+
+**Self-Hosted Runners** (Alternative):
+```
+┌─────────────────────────────────────┐
+│  Self-Hosted Runner (ARC)           │
+│  ├─ Repository Firewall   ✅ CAN DISABLE│
+│  ├─ api.github.com        ✅ ACCESSIBLE│
+│  └─ gh CLI operations     ✅ WORKING│
+└─────────────────────────────────────┘
+```
+
+### Requirements for Full API Access
+
+To enable full `gh` CLI and API access in Copilot environment:
+
+1. **Set Up Self-Hosted Runners**
+   - Use [Actions Runner Controller (ARC)](https://docs.github.com/en/actions/concepts/runners/actions-runner-controller)
+   - Must be Ubuntu x64 Linux runners
+   - Deploy in your own infrastructure
+
+2. **Disable Repository Firewall**
+   - Go to repository settings
+   - Navigate to Copilot coding agent settings
+   - Disable the repository firewall
+   - See: [Customizing or disabling the firewall for GitHub Copilot coding agent](https://docs.github.com/en/copilot/customizing-copilot/customizing-or-disabling-the-firewall-for-copilot-coding-agent)
+
+3. **Configure Network Access**
+   - Ensure runners can reach these endpoints:
+     - `api.githubcopilot.com`
+     - `uploads.github.com`
+     - `user-images.githubusercontent.com`
+     - `api.github.com` (for gh CLI)
+
+4. **Implement Network Security**
+   - ⚠️ **Warning**: Disabling firewall reduces isolation
+   - Must implement alternative network security controls
+   - Consider VPNs, network segmentation, or other protections
+
+### Benefits of Self-Hosted Approach
+
+✅ **Full API Access**
+- All `gh` CLI commands work
+- Can create issues, merge PRs, add labels, post comments
+- @meta-coordinator-system can execute all operations directly
+- No hybrid pattern needed
+
+✅ **Direct Execution**
+- Agent can orchestrate end-to-end
+- No action plan intermediary required
+- Simpler architecture
+
+✅ **Better Performance**
+- No file-based coordination
+- Immediate execution
+- Lower latency
+
+### Drawbacks of Self-Hosted Approach
+
+❌ **Infrastructure Requirements**
+- Need to deploy and maintain self-hosted runners
+- Requires ARC setup (Kubernetes recommended)
+- Ongoing operational overhead
+
+❌ **Security Considerations**
+- Reduced isolation between Copilot and your infrastructure
+- Must implement compensating security controls
+- Potential attack surface if not properly secured
+
+❌ **Cost**
+- Infrastructure costs for runners
+- Management and maintenance effort
+- Monitoring and security tooling
+
+### Comparison: GitHub-Hosted vs. Self-Hosted
+
+| Aspect | GitHub-Hosted Runners | Self-Hosted Runners (Firewall Disabled) |
+|--------|----------------------|------------------------------------------|
+| **API Access** | ❌ Blocked (DNS proxy) | ✅ Full access |
+| **Setup Complexity** | ✅ None (provided by GitHub) | ❌ High (ARC + infrastructure) |
+| **Maintenance** | ✅ None | ❌ Ongoing |
+| **Cost** | ✅ Included in GitHub | ❌ Infrastructure costs |
+| **Security Isolation** | ✅ High | ⚠️ Reduced (requires controls) |
+| **Agent Capabilities** | ⚠️ Read-only (MCP tools) | ✅ Full orchestration |
+| **Architecture** | ⚠️ Hybrid pattern needed | ✅ Direct execution |
+
+### Recommendation
+
+**For Most Users:** Use GitHub-hosted runners with the hybrid orchestration pattern (MCP tools + action plan + workflow execution). This provides:
+- ✅ Zero infrastructure overhead
+- ✅ High security isolation
+- ✅ Achieves autonomous orchestration goals
+- ⚠️ Slightly more complex architecture
+
+**For Advanced Users:** Consider self-hosted runners if:
+- You already have runner infrastructure
+- You need minimal latency
+- You have strong network security controls
+- You want simpler agent architecture
+
 ## Summary
 
 ### What You Asked
@@ -454,17 +574,22 @@ If you believe API access should be available:
 
 ### The Answer
 
-**No, you cannot configure or bypass the DNS monitoring proxy through available customization options.** This is an infrastructure-level security measure controlled by GitHub.
+**On GitHub-hosted runners: No**, you cannot configure or bypass the DNS monitoring proxy. This is an infrastructure-level security measure.
 
-**However, you don't need to bypass it!** GitHub provides the **github-mcp-server tools** specifically designed to work within these constraints. These tools:
+**However, you have two options:**
 
+**Option 1: Use MCP Server Tools (Recommended for Most)**
 - ✅ Work in Copilot environment (tested and confirmed)
-- ✅ Provide comprehensive GitHub operations
+- ✅ Provide comprehensive GitHub operations (read)
 - ✅ Use internal communication channels
 - ✅ Bypass HTTP API restrictions
-- ✅ Support all meta-coordinator needs (read operations)
+- ⚠️ Require hybrid pattern for write operations
 
-For **write operations** (create, merge, label), use the **hybrid file-based approach** where Copilot analyzes and plans, then workflows execute.
+**Option 2: Use Self-Hosted Runners (Advanced)**
+- ✅ Full API access when repository firewall disabled
+- ✅ Direct agent orchestration (no hybrid pattern)
+- ❌ Requires infrastructure setup and maintenance
+- ⚠️ Reduced security isolation (requires compensating controls)
 
 ## References
 

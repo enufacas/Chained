@@ -548,7 +548,7 @@ The @meta-coordinator-system agent directive was designed assuming **full gh CLI
 
 ## Recommended Solutions
 
-### Solution 1: Hybrid Orchestration Pattern (RECOMMENDED)
+### Solution 1: Hybrid Orchestration Pattern (RECOMMENDED for GitHub-Hosted Runners)
 
 **Architecture:**
 ```
@@ -643,7 +643,41 @@ jobs:
 - ⚠️ Harder to parse for metrics
 - ⚠️ Security concern (executing arbitrary script)
 
-### Solution 3: Direct Workflow Integration
+### Solution 3: Self-Hosted Runners with Disabled Firewall (ADVANCED)
+
+**How It Works:**
+1. Deploy self-hosted runners using Actions Runner Controller (ARC)
+2. Disable repository firewall in Copilot settings
+3. Configure network access to required endpoints
+4. Agent has full `gh` CLI access directly
+
+**Benefits:**
+- ✅ Full API access (no write operation limitations)
+- ✅ Direct execution (no hybrid pattern needed)
+- ✅ Simpler architecture
+- ✅ Lower latency
+- ✅ Agent can orchestrate end-to-end as originally designed
+
+**Drawbacks:**
+- ❌ Requires infrastructure setup and maintenance
+- ❌ Need to deploy ARC on Kubernetes or similar
+- ❌ Reduced security isolation
+- ❌ Must implement compensating network security controls
+- ❌ Ongoing operational overhead
+
+**When to Use:**
+- You already have self-hosted runner infrastructure
+- You need minimal coordination latency
+- You have strong network security controls
+- Infrastructure costs are acceptable
+- You want simpler agent code
+
+**References:**
+- [Repository Firewall Requirements](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment#repository-firewall-requirements)
+- [Customizing Agent Firewall](https://docs.github.com/en/copilot/customizing-copilot/customizing-or-disabling-the-firewall-for-copilot-coding-agent)
+- [Actions Runner Controller](https://docs.github.com/en/actions/concepts/runners/actions-runner-controller)
+
+### Solution 4: Direct Workflow Integration (FALLBACK)
 
 **How It Works:**
 1. Keep current meta-coordinator.yml workflow
@@ -720,21 +754,28 @@ jobs:
 
 ## Conclusion
 
-The @meta-coordinator-system agent has **excellent analytical capabilities** but **cannot execute the actions** it determines are necessary due to API access restrictions in the Copilot environment.
+The @meta-coordinator-system agent has **excellent analytical capabilities** but **cannot execute the actions** it determines are necessary due to API access restrictions **on GitHub-hosted runners**.
 
 **Gap Summary:**
 - ✅ **100% capability** for read operations and analysis
-- ❌ **0% capability** for write operations and execution
+- ❌ **0% capability** for write operations and execution (on GitHub-hosted runners)
 - **Net result:** Agent is a **read-only analyst** not an **autonomous orchestrator**
 
-**Recommended Path Forward:**
-Implement the **Hybrid Orchestration Pattern** (Solution 1) which:
-1. Leverages Copilot's intelligence for analysis and decision-making
-2. Uses workflows for execution with proper permissions
-3. Maintains audit trail through action plan files
-4. Achieves the goal of autonomous system orchestration
+**Available Solutions:**
 
-**This is not a limitation of the agent—it's an architecture mismatch.** The agent was designed for an environment with write access, but operates in a read-only environment. The hybrid pattern bridges this gap effectively.
+1. **Hybrid Orchestration** (Recommended for most)
+   - Leverages Copilot intelligence + workflow execution
+   - No infrastructure requirements
+   - Achieves autonomous orchestration goal
+   - Slightly more complex architecture
+
+2. **Self-Hosted Runners** (Advanced option)
+   - Requires disabling repository firewall
+   - Provides full API access
+   - Requires infrastructure and security controls
+   - Simpler agent code, direct execution
+
+**This is not a limitation of the agent—it's an architecture consideration.** The agent was designed for full API access, which is available via self-hosted runners with firewall disabled, or achievable via hybrid pattern on GitHub-hosted runners.
 
 ---
 
