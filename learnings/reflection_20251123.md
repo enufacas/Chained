@@ -1,4 +1,3 @@
-
 ## 🧠 Daily Learning Reflection
 
 **Date:** 2025-11-23
@@ -13,10 +12,10 @@
 
 ### 💡 Key Takeaways:
 
-- Reviewed insights from the Database chapter of the learnings book
-- Connected patterns across 3 different sources
-- Identified potential applications for current projects
-- Deepened understanding of database concepts
+- Explored modern data processing tools comparing Polars, DuckDB, Daft, and Spark for large-scale data (650GB)
+- Learned about regression testing approaches for PostgreSQL queries to catch correctness and performance issues
+- Discovered data-at-rest encryption capabilities in DuckDB for enhanced security
+- Identified patterns in database technology evolution toward better performance and security
 
 ### 🎯 Action Items:
 
