@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-23T16:23:10.879122+00:00",
+  "strategy_effectiveness": {},
+  "optimization_history": [
+    {
+      "total_prs_analyzed": 0,
+      "successful_prs": 0,
+      "overall_success_rate": 0.0,
+      "top_strategies": [],
+      "timestamp": "2025-11-23T16:23:10.879114+00:00"
+    }
+  ],
+  "learning_rate": 0.1,
+  "confidence_threshold": 0.75
+}

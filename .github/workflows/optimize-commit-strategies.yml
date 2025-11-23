@@ -42,6 +42,8 @@ jobs:
     outputs:
       tracked: ${{ steps.track.outputs.tracked }}
       pr_number: ${{ steps.track.outputs.pr_number }}
+      agent: ${{ steps.track.outputs.agent }}
+      context: ${{ steps.track.outputs.context }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -49,7 +51,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -127,7 +129,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -195,50 +197,46 @@ jobs:
           
           git push origin "${BRANCH_NAME}"
           
-          # Create PR body
-          cat > /tmp/pr_body.txt << 'EOF'
-## 🔧 Commit Strategy Optimization Update
-
-**@create-guru** has optimized commit strategies based on real PR outcomes.
-
-### 📊 Optimization Results
-
-- **PRs Analyzed:** ${PRS_ANALYZED}
-- **Success Rate:** ${SUCCESS_RATE}%
-- **Patterns Updated:** Based on actual merge outcomes
-
-### 🎯 What's Improved
-
-This optimization enhances commit strategy recommendations by:
-
-1. **Learning from Outcomes**: Correlates commit patterns with PR success
-2. **Agent-Specific Strategies**: Tracks what works for each agent
-3. **Context Awareness**: Adapts recommendations per task type
-4. **Continuous Improvement**: Automatically refines based on new data
-
-### 📁 Files Updated
-
-- `analysis/commit_strategy_optimization.json` - Strategy effectiveness data
-- `analysis/agent_commit_strategies.json` - Agent-specific patterns
-- `learnings/pr_commit_outcomes.json` - PR outcome tracking
-- `analysis/commit_strategy_effectiveness.md` - Human-readable report
-
-### 🚀 Impact
-
-These optimizations help all agents:
-- Follow proven successful patterns
-- Adapt strategies to their work style
-- Increase PR merge success rate
-- Reduce review cycles
-
----
-
-*🤖 Created by workflow: [Optimize: Git Commit Strategies](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - @create-guru*
-EOF
-          
-          # Substitute variables
-          sed -i "s/\${PRS_ANALYZED}/${PRS_ANALYZED}/g" /tmp/pr_body.txt
-          sed -i "s/\${SUCCESS_RATE}/${SUCCESS_RATE}/g" /tmp/pr_body.txt
+          # Create PR body using echo to avoid YAML heredoc issues
+          {
+            echo "## 🔧 Commit Strategy Optimization Update"
+            echo ""
+            echo "**@create-guru** has optimized commit strategies based on real PR outcomes."
+            echo ""
+            echo "### 📊 Optimization Results"
+            echo ""
+            echo "- **PRs Analyzed:** ${PRS_ANALYZED}"
+            echo "- **Success Rate:** ${SUCCESS_RATE}%"
+            echo "- **Patterns Updated:** Based on actual merge outcomes"
+            echo ""
+            echo "### 🎯 What's Improved"
+            echo ""
+            echo "This optimization enhances commit strategy recommendations by:"
+            echo ""
+            echo "1. **Learning from Outcomes**: Correlates commit patterns with PR success"
+            echo "2. **Agent-Specific Strategies**: Tracks what works for each agent"
+            echo "3. **Context Awareness**: Adapts recommendations per task type"
+            echo "4. **Continuous Improvement**: Automatically refines based on new data"
+            echo ""
+            echo "### 📁 Files Updated"
+            echo ""
+            echo "- \`analysis/commit_strategy_optimization.json\` - Strategy effectiveness data"
+            echo "- \`analysis/agent_commit_strategies.json\` - Agent-specific patterns"
+            echo "- \`learnings/pr_commit_outcomes.json\` - PR outcome tracking"
+            echo "- \`analysis/commit_strategy_effectiveness.md\` - Human-readable report"
+            echo ""
+            echo "### 🚀 Impact"
+            echo ""
+            echo "These optimizations help all agents:"
+            echo "- Follow proven successful patterns"
+            echo "- Adapt strategies to their work style"
+            echo "- Increase PR merge success rate"
+            echo "- Reduce review cycles"
+            echo ""
+            echo "---"
+            echo ""
+            echo "*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - @create-guru*"
+          } > /tmp/pr_body.txt
           
           # Create PR
           gh pr create \
@@ -264,7 +262,7 @@ EOF
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
