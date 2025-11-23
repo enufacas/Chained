@@ -209,36 +209,100 @@ jobs:
               fi
             fi
             
-            # If still no feedback, skip
+            # If still no feedback, check if we should create a proactive review request
             if [ -z "${review_body}" ] || [ "${review_body}" = "null" ]; then
               echo "⚠️  No review feedback found for PR #${pr_num}"
-              continue
+              
+              # If tech lead agent is identified, create a proactive review request
+              if [ -n "${tech_lead_agent}" ]; then
+                echo "📋 Tech lead agent identified: @${tech_lead_agent}"
+                echo "🔄 Creating proactive review request for tech lead to review PR"
+                
+                # Set reviewer to tech lead agent and use proactive review body
+                reviewer="${tech_lead_agent}"
+                review_body=$(cat <<EOF
+## 🔍 Proactive Tech Lead Review Request
+
+This PR has been assigned to **@${tech_lead_agent}** for technical review.
+
+**PR Details:**
+- **Title:** ${pr_title}
+- **Author:** @${pr_author}
+- **Status:** Open and ready for review
+
+**Review Needed:**
+Please review this PR according to the **@${tech_lead_agent}** specialization and provide feedback on:
+- Code quality and best practices
+- Technical correctness
+- Security considerations
+- Performance implications
+- Documentation completeness
+- Test coverage
+
+**Instructions:**
+1. Review all changes in the PR
+2. Provide specific, actionable feedback
+3. Request changes if needed, or approve if ready
+4. Follow the tech lead responsibilities from [\`.github/agents/${tech_lead_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${tech_lead_agent}.md)
+
+---
+*🤖 Proactive review request - no prior feedback found*
+EOF
+)
+                
+                echo "✓ Will create proactive review issue for @${tech_lead_agent}"
+              else
+                echo "  No tech lead agent identified, skipping PR"
+                continue
+              fi
             fi
             
             echo "✓ Found review feedback from ${reviewer}"
             echo "  Preview: $(echo "${review_body}" | head -c 100)..."
             
-            # Match feedback to appropriate agent
-            echo "🧠 Matching feedback to agent..."
-            agent_match=$(python3 tools/match-issue-to-agent.py \
-              "Fix tech lead feedback for PR #${pr_num}: ${pr_title}" \
-              "${review_body}" \
-              2>/dev/null || echo '{"agent":"create-guru","score":0,"confidence":"low","emoji":"🏗️","description":"Infrastructure and feature development"}')
+            # Determine if this is a proactive review (no prior feedback) or feedback-based
+            is_proactive_review="false"
+            if echo "${review_body}" | grep -q "🤖 Proactive review request"; then
+              is_proactive_review="true"
+              echo "📋 This is a proactive review request"
+            fi
             
-            matched_agent=$(echo "$agent_match" | jq -r '.agent')
-            agent_score=$(echo "$agent_match" | jq -r '.score')
-            agent_confidence=$(echo "$agent_match" | jq -r '.confidence')
-            agent_emoji=$(echo "$agent_match" | jq -r '.emoji')
-            agent_description=$(echo "$agent_match" | jq -r '.description')
+            # For proactive reviews, use tech lead agent directly; otherwise match to appropriate agent
+            if [ "${is_proactive_review}" = "true" ]; then
+              # Use tech lead agent directly for proactive reviews
+              matched_agent="${tech_lead_agent}"
+              agent_score="N/A"
+              agent_confidence="direct"
+              agent_emoji="🔍"
+              agent_description="Tech Lead Review"
+              
+              echo "✅ Assigned to tech lead agent: @${matched_agent}"
+            else
+              # Match feedback to appropriate agent for reactive feedback handling
+              echo "🧠 Matching feedback to agent..."
+              agent_match=$(python3 tools/match-issue-to-agent.py \
+                "Fix tech lead feedback for PR #${pr_num}: ${pr_title}" \
+                "${review_body}" \
+                2>/dev/null || echo '{"agent":"create-guru","score":0,"confidence":"low","emoji":"🏗️","description":"Infrastructure and feature development"}')
+              
+              matched_agent=$(echo "$agent_match" | jq -r '.agent')
+              agent_score=$(echo "$agent_match" | jq -r '.score')
+              agent_confidence=$(echo "$agent_match" | jq -r '.confidence')
+              agent_emoji=$(echo "$agent_match" | jq -r '.emoji')
+              agent_description=$(echo "$agent_match" | jq -r '.description')
+              
+              echo "✅ Matched to agent: ${agent_emoji} @${matched_agent}"
+              echo "   Score: ${agent_score} | Confidence: ${agent_confidence}"
+            fi
             
-            echo "✅ Matched to agent: ${agent_emoji} @${matched_agent}"
-            echo "   Score: ${agent_score} | Confidence: ${agent_confidence}"
-            
-            # Create feedback issue
-            echo "📝 Creating feedback issue..."
-            
-            # Build issue title
-            issue_title="[Tech Lead Feedback] PR #${pr_num} - ${pr_title}"
+            # Create feedback or review issue
+            if [ "${is_proactive_review}" = "true" ]; then
+              echo "📝 Creating proactive review issue..."
+              issue_title="[Tech Lead Review] PR #${pr_num} - ${pr_title}"
+            else
+              echo "📝 Creating feedback issue..."
+              issue_title="[Tech Lead Feedback] PR #${pr_num} - ${pr_title}"
+            fi
             
             # Build issue body with agent directive
             issue_body="<!-- COPILOT_AGENT:${matched_agent} -->
@@ -251,7 +315,47 @@ jobs:
             > 
             > **IMPORTANT**: Always mention **@${matched_agent}** by name in all conversations, comments, and PRs related to this issue.
             
+            ---"
+            
+            # Add different content based on whether it's proactive or reactive
+            if [ "${is_proactive_review}" = "true" ]; then
+              issue_body+="
+            
+            ## 🔍 Tech Lead Review Request for PR #${pr_num}
+            
+            **PR to Review:** #${pr_num} - ${pr_title}  
+            **Author:** @${pr_author}  
+            **Tech Lead:** @${reviewer}  
+            **Status:** Awaiting tech lead review
+            
+            ### 📋 Review Instructions
+            
+            ${review_body}
+            
             ---
+            
+            ## 🎯 Your Task (@${matched_agent})
+            
+            1. **Review the PR:** Check out PR #${pr_num} and thoroughly review the changes
+            2. **Assess code quality:** Evaluate according to your tech lead specialization
+            3. **Provide feedback:**
+            - Add review comments on specific lines if needed
+            - Identify any issues or concerns
+            - Suggest improvements
+            - Follow the ${matched_agent} tech lead guidelines
+            4. **Submit review:** Use GitHub's review system to approve or request changes
+            5. **Update status:**
+            - Comment on this issue with your review summary
+            - Close this issue once review is complete
+            
+            ### 🔗 Quick Links
+            
+            - **PR to review:** [#${pr_num}](https://github.com/${{ github.repository }}/pull/${pr_num})
+            - **PR files:** [View changes](https://github.com/${{ github.repository }}/pull/${pr_num}/files)
+            - **Tech lead profile:** [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md)
+            "
+            else
+              issue_body+="
             
             ## 🔄 Tech Lead Feedback for PR #${pr_num}
             
@@ -288,31 +392,67 @@ jobs:
             - **PR files:** [View changes](https://github.com/${{ github.repository }}/pull/${pr_num}/files)
             - **Tech lead review:** [View review](https://github.com/${{ github.repository }}/pull/${pr_num}#pullrequestreview)
             - **Agent profile:** [\`.github/agents/${matched_agent}.md\`](https://github.com/${{ github.repository }}/blob/main/.github/agents/${matched_agent}.md)
+            "
+            fi
+            
+            issue_body+="
             
             ---
             
             *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
             *Managed by @workflows-tech-lead*"
             
-            # Create the issue
+            # Create the issue with appropriate labels
             echo "Creating issue with title: ${issue_title}"
+            
+            if [ "${is_proactive_review}" = "true" ]; then
+              issue_labels="tech-lead-review,agent:${matched_agent},linked-to-pr"
+            else
+              issue_labels="tech-lead-feedback,agent:${matched_agent},linked-to-pr"
+            fi
             
             issue_number=$(gh issue create \
               --repo ${{ github.repository }} \
               --title "${issue_title}" \
               --body "${issue_body}" \
-              --label "tech-lead-feedback,agent:${matched_agent},linked-to-pr" \
+              --label "${issue_labels}" \
               --assignee copilot \
               2>&1 | grep -oP '#\K\d+' | head -1 || echo "")
             
             if [ -n "${issue_number}" ]; then
-              echo "✅ Created feedback issue #${issue_number}"
+              if [ "${is_proactive_review}" = "true" ]; then
+                echo "✅ Created proactive review issue #${issue_number}"
+              else
+                echo "✅ Created feedback issue #${issue_number}"
+              fi
               
               # Add agent:X label to PR for tracking
               gh pr edit ${pr_num} --add-label "agent:${matched_agent}" --repo ${{ github.repository }} 2>/dev/null || true
               
-              # Comment on PR linking to feedback issue
-              gh pr comment ${pr_num} --body "## 🔄 Agent Assigned to Address Feedback
+              # Comment on PR linking to issue
+              if [ "${is_proactive_review}" = "true" ]; then
+                gh pr comment ${pr_num} --body "## 🔍 Tech Lead Review Requested
+              
+              **@${matched_agent}** has been assigned to review this PR.
+              
+              **Review Issue:** #${issue_number}  
+              **Tech Lead:** ${agent_emoji} @${matched_agent}  
+              **Specialization:** ${agent_description}
+              
+              ### What happens next:
+              
+              1. ✅ **@${matched_agent}** will review the PR changes
+              2. 💬 **@${matched_agent}** will provide feedback and suggestions
+              3. ✅ **@${matched_agent}** will approve or request changes
+              4. 📝 **@${matched_agent}** will update issue #${issue_number} when complete
+              
+              **Timeline:** Review typically starts within a few minutes
+              
+              ---
+              *🤖 Automated tech lead review request - @${matched_agent} will review this*
+              *Created review issue #${issue_number}*" --repo ${{ github.repository }} || true
+              else
+                gh pr comment ${pr_num} --body "## 🔄 Agent Assigned to Address Feedback
               
               **@${matched_agent}** has been assigned to address the tech lead feedback.
               
@@ -333,16 +473,23 @@ jobs:
               ---
               *🤖 Automated agent assignment - @${matched_agent} will handle this*
               *Created feedback issue #${issue_number}*" --repo ${{ github.repository }} || true
+              fi
               
               echo "✅ Linked issue #${issue_number} to PR #${pr_num}"
               
             else
-              echo "❌ Failed to create feedback issue for PR #${pr_num}"
+              if [ "${is_proactive_review}" = "true" ]; then
+                echo "❌ Failed to create review issue for PR #${pr_num}"
+                issue_type="review"
+              else
+                echo "❌ Failed to create feedback issue for PR #${pr_num}"
+                issue_type="feedback"
+              fi
               
               # Comment on PR about the failure
-              gh pr comment ${pr_num} --body "⚠️ **Failed to Create Feedback Issue**
+              gh pr comment ${pr_num} --body "⚠️ **Failed to Create ${issue_type^} Issue**
               
-              The automated system attempted to create a feedback issue for the tech lead's requested changes, but the issue creation failed.
+              The automated system attempted to create a ${issue_type} issue for the tech lead's requested changes, but the issue creation failed.
               
               **Workaround:**
               - The tech lead feedback is visible in the PR review comments
