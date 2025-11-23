@@ -8,6 +8,7 @@ name: "Meta-Coordinator: System Orchestration"
 # - Create feedback issues for change requests
 # - Assign agents to issues
 # - Manage review cycles
+# - Auto-merge approved PRs (non-draft, no WIP)
 # - Handle exceptions
 
 on:
@@ -142,7 +143,7 @@ jobs:
 
           ### Your Mission (@meta-coordinator-system)
 
-          As the **@meta-coordinator-system** agent, you are responsible for orchestrating the entire tech lead review and agent assignment system. You have **comprehensive access and tools** to manage system state.
+          As the **@meta-coordinator-system** agent, you are responsible for orchestrating the entire tech lead review, agent assignment, and **auto-merge** system. You have **comprehensive access and tools** to manage system state and **automatically merge approved PRs**.
 
           ### System State Assessment
 
@@ -281,7 +282,7 @@ jobs:
           - All required CI checks passed
 
           **Outcomes:**
-          - Approved PRs auto-merge within 5 minutes
+          - Approved PRs auto-merge automatically on next coordination run
           - Clear audit trail in comments
           - Blocking reasons documented
           - System moves PRs to completion autonomously
@@ -346,10 +347,14 @@ jobs:
 
           ### Execution Instructions
 
-          1. **Assess**: Analyze current state across all 7 areas (1-2 min)
-          2. **Prioritize**: Identify most critical actions needed
-          3. **Execute**: Take actions using available tools (3-5 min)
-          4. **Report**: Post summary comment on this issue (1 min)
+          1. **Assess**: Analyze current state across all 7 areas
+          2. **Prioritize**: Identify most critical actions needed (auto-merge eligible PRs should be high priority)
+          3. **Execute**: Take actions using available tools
+             - Auto-merge approved PRs without WIP or draft status
+             - Assign tech leads to new PRs
+             - Create feedback issues for change requests
+             - Assign agents to open issues
+          4. **Report**: Post summary comment on this issue
           5. **Close**: Close this coordination issue when complete
 
           ### Focus Area
@@ -433,19 +438,17 @@ jobs:
           - **System Health**: Overall status
           - **Next Run**: When next coordination will occur
 
-          ### Time Limit & Cost Efficiency
-
-          **Timeout:** 5 minutes maximum (hard limit enforced)
+          ### Cost Efficiency
 
           **Cost efficiency guidelines:**
           - Quick assessment first: Is there work to do?
           - If nothing to do → close issue immediately, skip work
           - Focus on highest priority items first
           - Batch API calls where possible
-          - Work efficiently within timeout budget
+          - Work efficiently and prioritize high-value actions
           - Concise reporting (not verbose)
 
-          Complete within **5 minutes**. Focus on progress, not perfection. Next run is in 15 minutes.
+          Focus on progress, not perfection. Next run is in 15 minutes.
 
           ---
 
@@ -554,7 +557,7 @@ jobs:
           echo "3. Report results"
           echo "4. Close this issue"
           echo ""
-          echo "Expected completion: 5-10 minutes"
+          echo "Copilot will complete this coordination autonomously"
       
       - name: Summary
         if: always()
