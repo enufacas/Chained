@@ -25,10 +25,10 @@
   },
   "learnings": [
     {
-      "title": "Commit success rate: 0.0%",
-      "description": "0 successful out of 2 total commits",
-      "type": "success_metric",
-      "category": "quality"
+      "title": "Commit evaluation pending: 2 commits analyzed",
+      "description": "2 commits found but merge status not yet evaluated. Success/failure metrics require PR/merge data.",
+      "type": "evaluation_status",
+      "category": "metadata"
     }
   ],
   "investigation": {
