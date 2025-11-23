@@ -1,0 +1,326 @@
+name: "Optimize: Git Commit Strategies"
+
+# Real-time learning workflow that optimizes commit strategies
+# based on PR outcomes. Runs after PRs are merged to continuously
+# improve recommendations through feedback loops.
+
+on:
+  pull_request:
+    types: [closed]
+  schedule:
+    # Run weekly optimization analysis
+    - cron: '0 3 * * 0'  # Sundays at 3 AM UTC
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to track (optional)'
+        required: false
+        type: number
+      force_optimize:
+        description: 'Force full optimization run'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: write
+
+concurrency:
+  group: optimize-commit-strategies-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  track-pr-outcome:
+    # Only run on merged PRs or manual trigger
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    outputs:
+      tracked: ${{ steps.track.outputs.tracked }}
+      pr_number: ${{ steps.track.outputs.pr_number }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Track PR outcome
+        id: track
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Determine PR number
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            MERGED="true"
+            echo "Tracking merged PR #${PR_NUMBER}"
+          elif [[ -n "${{ github.event.inputs.pr_number }}" ]]; then
+            PR_NUMBER="${{ github.event.inputs.pr_number }}"
+            MERGED="true"
+            echo "Tracking manually specified PR #${PR_NUMBER}"
+          else
+            echo "No PR to track (scheduled run)"
+            echo "tracked=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Extract agent from PR labels
+          AGENT_LABEL=$(gh pr view ${PR_NUMBER} --json labels --jq '.labels[] | select(.name | startswith("agent:")) | .name' | sed 's/agent://' | head -1)
+          
+          if [[ -z "${AGENT_LABEL}" ]]; then
+            AGENT_LABEL="unknown"
+          fi
+          
+          echo "Agent: ${AGENT_LABEL}"
+          
+          # Determine context from PR labels
+          CONTEXT="general"
+          if gh pr view ${PR_NUMBER} --json labels --jq '.labels[].name' | grep -q "feature"; then
+            CONTEXT="feature"
+          elif gh pr view ${PR_NUMBER} --json labels --jq '.labels[].name' | grep -q "bug"; then
+            CONTEXT="bugfix"
+          elif gh pr view ${PR_NUMBER} --json labels --jq '.labels[].name' | grep -q "refactor"; then
+            CONTEXT="refactor"
+          elif gh pr view ${PR_NUMBER} --json labels --jq '.labels[].name' | grep -q "documentation"; then
+            CONTEXT="docs"
+          fi
+          
+          echo "Context: ${CONTEXT}"
+          
+          # Track the PR outcome
+          python3 tools/commit-strategy-optimizer.py \
+            --track-pr ${PR_NUMBER} \
+            --agent "${AGENT_LABEL}" \
+            --context "${CONTEXT}" \
+            --verbose
+          
+          echo "tracked=true" >> $GITHUB_OUTPUT
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "agent=${AGENT_LABEL}" >> $GITHUB_OUTPUT
+          echo "context=${CONTEXT}" >> $GITHUB_OUTPUT
+
+  run-optimization:
+    needs: track-pr-outcome
+    # Run optimization after tracking or on schedule
+    if: |
+      always() &&
+      (needs.track-pr-outcome.outputs.tracked == 'true' || 
+       github.event_name == 'schedule' ||
+       github.event.inputs.force_optimize == 'true')
+    runs-on: ubuntu-latest
+    outputs:
+      has_updates: ${{ steps.optimize.outputs.has_updates }}
+      success_rate: ${{ steps.optimize.outputs.success_rate }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Run optimization analysis
+        id: optimize
+        run: |
+          echo "🔧 Running optimization analysis..."
+          
+          # Run optimization
+          OUTPUT=$(python3 tools/commit-strategy-optimizer.py --optimize --verbose 2>&1)
+          echo "${OUTPUT}"
+          
+          # Extract metrics
+          SUCCESS_RATE=$(echo "${OUTPUT}" | grep "Success rate:" | sed 's/.*: //; s/%//')
+          PRS_ANALYZED=$(echo "${OUTPUT}" | grep "PRs analyzed:" | sed 's/.*: //')
+          
+          if [[ -n "${SUCCESS_RATE}" ]]; then
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+            echo "success_rate=${SUCCESS_RATE}" >> $GITHUB_OUTPUT
+            echo "prs_analyzed=${PRS_ANALYZED}" >> $GITHUB_OUTPUT
+          else
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate effectiveness report
+        if: steps.optimize.outputs.has_updates == 'true'
+        run: |
+          echo "📊 Generating effectiveness report..."
+          python3 tools/commit-strategy-optimizer.py \
+            --report \
+            --output analysis/commit_strategy_effectiveness.md \
+            --verbose
+
+      - name: Store branch name for PR
+        id: branch_info
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="optimization/commit-strategies-${TIMESTAMP}-${{ github.run_id }}"
+          echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Create PR with optimization updates
+        if: steps.optimize.outputs.has_updates == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SUCCESS_RATE: ${{ steps.optimize.outputs.success_rate }}
+          PRS_ANALYZED: ${{ steps.optimize.outputs.prs_analyzed }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add optimization results
+          git add analysis/ learnings/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Create branch
+          BRANCH_NAME="${{ steps.branch_info.outputs.branch_name }}"
+          git checkout -b "${BRANCH_NAME}"
+          
+          # Commit changes
+          git commit -m "feat: optimize commit strategies based on ${PRS_ANALYZED} PRs - ${SUCCESS_RATE}% success rate (@create-guru)"
+          
+          git push origin "${BRANCH_NAME}"
+          
+          # Create PR body
+          cat > /tmp/pr_body.txt << 'EOF'
+## 🔧 Commit Strategy Optimization Update
+
+**@create-guru** has optimized commit strategies based on real PR outcomes.
+
+### 📊 Optimization Results
+
+- **PRs Analyzed:** ${PRS_ANALYZED}
+- **Success Rate:** ${SUCCESS_RATE}%
+- **Patterns Updated:** Based on actual merge outcomes
+
+### 🎯 What's Improved
+
+This optimization enhances commit strategy recommendations by:
+
+1. **Learning from Outcomes**: Correlates commit patterns with PR success
+2. **Agent-Specific Strategies**: Tracks what works for each agent
+3. **Context Awareness**: Adapts recommendations per task type
+4. **Continuous Improvement**: Automatically refines based on new data
+
+### 📁 Files Updated
+
+- `analysis/commit_strategy_optimization.json` - Strategy effectiveness data
+- `analysis/agent_commit_strategies.json` - Agent-specific patterns
+- `learnings/pr_commit_outcomes.json` - PR outcome tracking
+- `analysis/commit_strategy_effectiveness.md` - Human-readable report
+
+### 🚀 Impact
+
+These optimizations help all agents:
+- Follow proven successful patterns
+- Adapt strategies to their work style
+- Increase PR merge success rate
+- Reduce review cycles
+
+---
+
+*🤖 Created by workflow: [Optimize: Git Commit Strategies](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - @create-guru*
+EOF
+          
+          # Substitute variables
+          sed -i "s/\${PRS_ANALYZED}/${PRS_ANALYZED}/g" /tmp/pr_body.txt
+          sed -i "s/\${SUCCESS_RATE}/${SUCCESS_RATE}/g" /tmp/pr_body.txt
+          
+          # Create PR
+          gh pr create \
+            --title "🔧 Optimization Update: Commit Strategies - $(date -u +%Y-%m-%d)" \
+            --body-file /tmp/pr_body.txt \
+            --label "automated,optimization,learning,create-guru" \
+            --base main \
+            --head "${BRANCH_NAME}"
+          
+          echo "✅ Optimization PR created successfully"
+
+  provide-recommendations:
+    needs: [track-pr-outcome, run-optimization]
+    # Provide recommendations if we tracked a PR
+    if: |
+      always() &&
+      needs.track-pr-outcome.outputs.tracked == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Generate recommendations for agent
+        env:
+          AGENT: ${{ needs.track-pr-outcome.outputs.agent }}
+          CONTEXT: ${{ needs.track-pr-outcome.outputs.context }}
+        run: |
+          echo "💡 Generating recommendations for ${AGENT}..."
+          
+          python3 tools/commit-strategy-optimizer.py \
+            --recommend \
+            --agent "${AGENT}" \
+            --context "${CONTEXT}" \
+            --verbose \
+            > /tmp/recommendations.txt
+          
+          echo "✅ Recommendations generated"
+          cat /tmp/recommendations.txt
+
+      - name: Comment recommendations on PR
+        if: needs.track-pr-outcome.outputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ needs.track-pr-outcome.outputs.pr_number }}
+        run: |
+          # Only add comment if there are recommendations
+          if grep -q "Top.*Recommendations" /tmp/recommendations.txt; then
+            echo "## 💡 Optimized Commit Strategy Recommendations" > /tmp/comment.txt
+            echo "" >> /tmp/comment.txt
+            echo "Thanks for the merge! Here are optimized recommendations based on this and previous PRs:" >> /tmp/comment.txt
+            echo "" >> /tmp/comment.txt
+            cat /tmp/recommendations.txt >> /tmp/comment.txt
+            echo "" >> /tmp/comment.txt
+            echo "---" >> /tmp/comment.txt
+            echo "*Powered by @create-guru's real-time learning system*" >> /tmp/comment.txt
+            
+            gh pr comment ${PR_NUMBER} --body-file /tmp/comment.txt || echo "Could not add comment"
+          fi
+
+  log-activity:
+    needs: [track-pr-outcome, run-optimization]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log optimization activity
+        run: |
+          echo "===================="
+          echo "Commit Strategy Optimization"
+          echo "===================="
+          echo "Event: ${{ github.event_name }}"
+          echo "PR tracked: ${{ needs.track-pr-outcome.outputs.tracked }}"
+          echo "PR number: ${{ needs.track-pr-outcome.outputs.pr_number }}"
+          echo "Agent: ${{ needs.track-pr-outcome.outputs.agent }}"
+          echo "Optimization run: ${{ needs.run-optimization.outputs.has_updates }}"
+          echo "Success rate: ${{ needs.run-optimization.outputs.success_rate }}%"
+          echo "By: @create-guru"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "===================="
