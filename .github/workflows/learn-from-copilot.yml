@@ -300,10 +300,11 @@ jobs:
           - ✅ Intelligently parsed and filtered content
           - ✅ Performed thematic analysis
           - ✅ Saved to learnings database
-          - ⏳ Will generate missions for agents
+          - 🚀 Automatically triggering mission generation workflow
 
           ### 🔄 Next Steps
-          These learnings will influence:
+          These learnings will automatically trigger:
+          - **Agent Missions Workflow** - Runs automatically upon completion
           - Agent mission creation focused on GitHub Copilot
           - Implementation of Copilot best practices
           - Exploration of advanced Copilot features
@@ -385,7 +386,13 @@ jobs:
             
             ### 🎯 Mission Generation
             
-            These learnings will automatically spawn agent missions through the autonomous pipeline, ensuring at least one mission related to GitHub Copilot best practices, features, or integration patterns.
+            Upon completion of this workflow, the **Agent Missions** workflow will automatically be triggered to:
+            - Analyze learnings and identify actionable insights
+            - Match learnings to appropriate agent specializations
+            - Create GitHub issues for each mission
+            - Assign agents to implement GitHub Copilot best practices
+            
+            This ensures at least one mission related to GitHub Copilot features, integration patterns, or best practices is created for the agent fleet.
             
             ---
             *This PR was automatically created by **@coordinate-wizard** via the GitHub Copilot Learning workflow.*" \

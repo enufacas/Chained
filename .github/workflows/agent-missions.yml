@@ -10,7 +10,7 @@ on:
         required: false
         type: string
   workflow_run:
-    workflows: ["World Model Update"]
+    workflows: ["World Model Update", "Learning: GitHub Copilot"]
     types: [completed]
 
 permissions:
