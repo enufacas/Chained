@@ -381,56 +381,45 @@ jobs:
 
           **CRITICAL FOR OPERATIONS:**
 
-          When executing in the Copilot agent environment, you MUST configure the GH_TOKEN to have adequate permissions:
+          When executing in the Copilot agent environment, configure the GH_TOKEN properly:
 
           ```bash
-          # Method 1: Try COPILOT_PAT secret first (if available)
+          # Use COPILOT_PAT if available (provides wide access)
+          # Otherwise fall back to GITHUB_TOKEN (limited permissions)
           export GH_TOKEN="\${COPILOT_PAT:-\${GITHUB_TOKEN}}"
+          ```
 
-          # Method 2: Check if secrets are accessible
+          **Token Availability Check:**
+          ```bash
           if [ -n "\$COPILOT_PAT" ]; then
             export GH_TOKEN="\$COPILOT_PAT"
             echo "✅ Using COPILOT_PAT for wide access"
           else
             export GH_TOKEN="\$GITHUB_TOKEN"
-            echo "⚠️  Using GITHUB_TOKEN (may have limited permissions)"
+            echo "⚠️  Using GITHUB_TOKEN (limited permissions)"
+            echo "⚠️  Some operations may fail - see docs/COPILOT_ENVIRONMENT_SETUP.md"
           fi
           ```
 
           **Permissions Required:**
-          - `contents: write` - For creating/editing files and branches
-          - `issues: write` - For creating, editing, labeling issues
-          - `pull-requests: write` - For managing PRs, merging, labels
-          - `actions: read` - For reading workflow run status
+          - `contents: write` - Create branches, push changes
+          - `issues: write` - Create, edit, label issues
+          - `pull-requests: write` - Manage PRs, merge, labels
+          - `actions: read` - Read workflow run status
 
-          **Token Availability:**
-          - `GITHUB_TOKEN` is always available in GitHub Actions (standard permissions)
-          - `COPILOT_PAT` may not be accessible in Copilot execution environment
-          - Always check token availability before operations
-          - Implement graceful fallbacks for operations requiring elevated permissions
+          **Setup Instructions:**
+          If COPILOT_PAT is not available, the repository needs configuration:
+          1. See `docs/COPILOT_ENVIRONMENT_SETUP.md` for complete setup guide
+          2. Add COPILOT_PAT secret to the 'copilot' environment in repository settings
+          3. PAT must have 'repo' and 'workflow' scopes
 
-          **Graceful Degradation Strategy:**
-
-          If COPILOT_PAT is not available:
-          1. **Continue with GITHUB_TOKEN** for read operations (list PRs, issues, get files)
-          2. **Skip operations requiring write access** that fail with permission errors
-          3. **Document which operations were skipped** in your summary
-          4. **Focus on assessment and recommendations** rather than direct changes
-          5. **Create follow-up issues** for actions that need elevated permissions
-
-          **Testing Token Access:**
-          ```bash
-          # Test if token has adequate permissions
-          if gh auth status 2>&1 | grep -q "You are logged in"; then
-            echo "✅ Authenticated successfully"
-            # Test write access
-            if gh repo view --json viewerPermission --jq '.viewerPermission' | grep -qE 'ADMIN|WRITE'; then
-              echo "✅ Have write permissions"
-            else
-              echo "⚠️  Limited to read-only operations"
-            fi
-          fi
-          ```
+          **Graceful Degradation:**
+          If wide permissions unavailable:
+          - Continue with read operations (list, view, analyze)
+          - Skip write operations that fail
+          - Document skipped actions in summary
+          - Create follow-up issues for actions needing elevation
+          - Focus on assessment and recommendations
 
           ### Expected Output Format
 

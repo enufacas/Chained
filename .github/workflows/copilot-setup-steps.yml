@@ -1,5 +1,14 @@
 name: "Copilot Setup Steps"
 
+# This workflow is automatically executed by GitHub Copilot before the agent starts working.
+# It runs in the copilot execution environment and can:
+# - Install dependencies
+# - Set up toolchains
+# - Configure environment variables
+# - Access secrets from the 'copilot' environment
+#
+# Documentation: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment
+
 on:
   workflow_dispatch:
   push:
@@ -10,11 +19,20 @@ on:
       - .github/workflows/copilot-setup-steps.yml
 
 jobs:
+  # The job MUST be named 'copilot-setup-steps' for Copilot to recognize it
   copilot-setup-steps:
     name: Copilot setup steps
     runs-on: ubuntu-latest
+    
+    # Use the 'copilot' environment to access secrets needed by Copilot agents
+    # Secrets like COPILOT_PAT should be configured in: Settings → Environments → copilot
+    environment: copilot
+    
+    # Permissions for the setup steps only
+    # Copilot will receive its own separate token with permissions for its operations
     permissions:
-      contents: read
+      contents: read  # Needed to checkout code
+    
     steps:
       - name: Checkout repository (full refs for diffs)
         uses: actions/checkout@v4
@@ -35,6 +53,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+      
+      - name: Setup Python for tools
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -q -r requirements.txt
+          fi
 
       - name: Install only developer tooling (no large installs)
         run: |
@@ -42,7 +72,28 @@ jobs:
             npm ci --ignore-scripts --no-progress || true
           fi
 
-      - name: Provide marker that agent should limit context
+      - name: Configure environment for Copilot agents
         run: |
+          # These environment variables will be available to Copilot after setup
           echo "COPILOT_LIMIT_CONTEXT=true" >> $GITHUB_ENV
           echo "COPILOT_IGNORE_FILE=.copilotignore" >> $GITHUB_ENV
+      
+      - name: Configure secrets access for wide-access agents
+        env:
+          # Access COPILOT_PAT from the copilot environment
+          # This secret must be configured in: Settings → Environments → copilot → Secrets
+          COPILOT_PAT: ${{ secrets.COPILOT_PAT }}
+        run: |
+          # Make COPILOT_PAT available to Copilot if it exists
+          if [ -n "$COPILOT_PAT" ]; then
+            echo "✅ COPILOT_PAT secret is available from copilot environment"
+            # Export it for Copilot to use
+            echo "COPILOT_PAT_AVAILABLE=true" >> $GITHUB_ENV
+          else
+            echo "⚠️  COPILOT_PAT not configured in copilot environment"
+            echo "⚠️  Copilot will use standard GITHUB_TOKEN with limited permissions"
+            echo "COPILOT_PAT_AVAILABLE=false" >> $GITHUB_ENV
+          fi
+          
+          # Note: The actual COPILOT_PAT value is not exported here for security
+          # Copilot will access it directly from the environment when needed
