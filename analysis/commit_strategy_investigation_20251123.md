@@ -35,7 +35,7 @@ The workflow created an issue but the corresponding learning file was not commit
 - **Branch Analyzed**: main
 - **Days Analyzed**: 30
 - **Commits Found**: 2
-- **Success Rate**: 0.0% (no merge data available)
+- **Success Rate**: Pending evaluation (no merge data available)
 
 ### Key Findings
 
