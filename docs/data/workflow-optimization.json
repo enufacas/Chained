@@ -1,0 +1,155 @@
+{
+  "timestamp": "2025-11-23T20:26:47.899525+00:00",
+  "meta_learning": {
+    "best_strategy": "default",
+    "total_strategies": 1,
+    "accuracy_metrics": {
+      "total_predictions": 0,
+      "mean_error": 0.0,
+      "accuracy_score": 0.0,
+      "message": "No comparison data available"
+    },
+    "strategies": {
+      "default": {
+        "performance": 50.0,
+        "trend": "insufficient_data",
+        "parameters": {
+          "success_weight": 0.4,
+          "duration_weight": 0.3,
+          "conflict_weight": 0.3,
+          "confidence_threshold": 0.6,
+          "learning_rate": 0.1,
+          "exploration_rate": 0.15
+        },
+        "history_length": 0
+      }
+    },
+    "learning_log_size": 0
+  },
+  "recommendations": [
+    {
+      "workflow": "ab-testing-system",
+      "current_schedule": null,
+      "recommended_schedule": "0 3 * * *",
+      "confidence": 30.0,
+      "expected_duration": 300,
+      "reasoning": [
+        "No historical data available",
+        "Using conservative default schedule",
+        "Using strategy 'default' (performance: 0.0%)"
+      ]
+    },
+    {
+      "workflow": "actions-generator-agent",
+      "current_schedule": null,
+      "recommended_schedule": "0 5 * * *",
+      "confidence": 24.0,
+      "expected_duration": 300,
+      "reasoning": [
+        "No historical data available",
+        "Using conservative default schedule",
+        "Exploring alternative time slot (learning mode)"
+      ]
+    },
+    {
+      "workflow": "actions-generator-agent-DEMO",
+      "current_schedule": null,
+      "recommended_schedule": "0 3 * * *",
+      "confidence": 30.0,
+      "expected_duration": 300,
+      "reasoning": [
+        "No historical data available",
+        "Using conservative default schedule",
+        "Using strategy 'default' (performance: 0.0%)"
+      ]
+    },
+    {
+      "workflow": "agent-data-sync",
+      "current_schedule": null,
+      "recommended_schedule": "0 3 * * *",
+      "confidence": 30.0,
+      "expected_duration": 300,
+      "reasoning": [
+        "No historical data available",
+        "Using conservative default schedule",
+        "Using strategy 'default' (performance: 0.0%)"
+      ]
+    },
+    {
+      "workflow": "agent-evaluator",
+      "current_schedule": null,
+      "recommended_schedule": "0 3 * * *",
+      "confidence": 30.0,
+      "expected_duration": 300,
+      "reasoning": [
+        "No historical data available",
+        "Using conservative default schedule",
+        "Using strategy 'default' (performance: 0.0%)"
+      ]
+    },
+    {
+      "workflow": "agent-evolution",
+      "current_schedule": null,
+      "recommended_schedule": "0 3 * * *",
+      "confidence": 30.0,
+      "expected_duration": 300,
+      "reasoning": [
+        "No historical data available",
+        "Using conservative default schedule",
+        "Using strategy 'default' (performance: 0.0%)"
+      ]
+    },
+    {
+      "workflow": "agent-issue-discussion",
+      "current_schedule": null,
+      "recommended_schedule": "0 3 * * *",
+      "confidence": 30.0,
+      "expected_duration": 300,
+      "reasoning": [
+        "No historical data available",
+        "Using conservative default schedule",
+        "Using strategy 'default' (performance: 0.0%)"
+      ]
+    },
+    {
+      "workflow": "agent-missions",
+      "current_schedule": null,
+      "recommended_schedule": "0 7 * * *",
+      "confidence": 24.0,
+      "expected_duration": 300,
+      "reasoning": [
+        "No historical data available",
+        "Using conservative default schedule",
+        "Exploring alternative time slot (learning mode)"
+      ]
+    },
+    {
+      "workflow": "agent-spawning",
+      "current_schedule": null,
+      "recommended_schedule": "0 7 * * *",
+      "confidence": 24.0,
+      "expected_duration": 300,
+      "reasoning": [
+        "No historical data available",
+        "Using conservative default schedule",
+        "Exploring alternative time slot (learning mode)"
+      ]
+    },
+    {
+      "workflow": "agentops-data-sync",
+      "current_schedule": null,
+      "recommended_schedule": "0 3 * * *",
+      "confidence": 30.0,
+      "expected_duration": 300,
+      "reasoning": [
+        "No historical data available",
+        "Using conservative default schedule",
+        "Using strategy 'default' (performance: 0.0%)"
+      ]
+    }
+  ],
+  "workflow_stats": {
+    "total_workflows": 78,
+    "optimized_workflows": 10
+  }
+}
