@@ -447,14 +447,24 @@ jobs:
             exit 0
           fi
           
+          # Only block for tech-lead-changes-requested if tech lead review was actually required
+          # Check if this PR requires tech lead review or has tech leads assigned
           if [ "${has_changes_requested}" != "0" ]; then
-            {
-              echo "eligible=false"
-              echo "reason<<EOF"
-              echo "Tech Lead requested changes"
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
-            exit 0
+            # Check if tech lead review was required for this PR
+            if [ "${{ matrix.requires_tech_lead }}" = "true" ] || [ -n "${{ matrix.tech_leads }}" ]; then
+              {
+                echo "eligible=false"
+                echo "reason<<EOF"
+                echo "Tech Lead requested changes"
+                echo "EOF"
+              } >> $GITHUB_OUTPUT
+              exit 0
+            else
+              # tech-lead-changes-requested label exists but tech lead review wasn't required
+              # This is likely a stale or incorrectly applied label - ignore it
+              echo "⚠️ Warning: tech-lead-changes-requested label present but tech lead review not required"
+              echo "Ignoring label and proceeding with merge eligibility check"
+            fi
           fi
           
           {

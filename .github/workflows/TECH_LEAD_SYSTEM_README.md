@@ -315,12 +315,16 @@ The `auto-review-merge.yml` workflow checks Tech Lead labels before allowing mer
 
 **Blocking Conditions:**
 - `needs-tech-lead-review` label present AND `tech-lead-approved` label absent
-- `tech-lead-changes-requested` label present
+- `tech-lead-changes-requested` label present **AND** tech lead review was required for the PR
+  - Tech lead review is determined by: `requires_tech_lead` flag OR presence of tech lead assignments
 
 **Merge Allowed:**
 - No `needs-tech-lead-review` label (optional review)
 - `tech-lead-approved` label present (required review completed)
 - No `tech-lead-changes-requested` label
+- `tech-lead-changes-requested` label present but tech lead review was not required (stale/incorrect label)
+
+**Important:** The workflow now validates that `tech-lead-changes-requested` only blocks merge if tech lead review was actually required for the PR. This prevents false positives from stale or incorrectly applied labels.
 
 ## Adding a New Tech Lead
 
