@@ -24,6 +24,18 @@
       "deprecated_labels_cleaned": 27,
       "exceptions_handled": 0,
       "success": true
+    },
+    {
+      "timestamp": "2025-11-23T21:22:20.175511Z",
+      "run_id": "21:17",
+      "duration_seconds": 90,
+      "prs_processed": 20,
+      "prs_auto_merged": 1,
+      "tech_leads_assigned": 1,
+      "issues_assigned": 1,
+      "feedback_issues_created": 0,
+      "exceptions_handled": 0,
+      "success": true
     }
   ],
   "pr_assignments": [],
@@ -61,6 +73,15 @@
       "evidence": {
         "eligible_prs": 29,
         "ci_unavailable": 29
+      }
+    },
+    {
+      "timestamp": "2025-11-23T21:22:20.175520Z",
+      "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
+      "evidence": {
+        "prs_needing_review": 14,
+        "prs_with_conflicts": 5,
+        "auto_merge_success": 1
       }
     }
   ],
