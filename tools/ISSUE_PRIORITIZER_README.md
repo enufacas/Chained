@@ -206,7 +206,12 @@ prioritizer.record_outcome(
 
 # Get statistics
 stats = prioritizer.get_stats()
-print(f"Overall success rate: {stats['overall']['total_successes']/stats['overall']['total_decisions']:.1%}")
+
+# Calculate success rate from outcomes (not decisions)
+total_outcomes = stats['overall']['total_successes'] + stats['overall']['total_failures']
+if total_outcomes > 0:
+    success_rate = stats['overall']['total_successes'] / total_outcomes
+    print(f"Overall success rate: {success_rate:.1%}")
 
 # Get top priorities
 top_categories = prioritizer.get_top_priorities(n=5)

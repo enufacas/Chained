@@ -87,12 +87,21 @@ jobs:
         run: |
           ISSUE_NUM=${{ inputs.issue_number || github.event.issue.number }}
           
+          # Convert space-separated labels to array
+          IFS=' ' read -ra LABELS <<< "${{ steps.issue.outputs.labels }}"
+          
+          # Build labels argument
+          LABELS_ARG=""
+          for label in "${LABELS[@]}"; do
+            LABELS_ARG="$LABELS_ARG --labels $label"
+          done
+          
           # Run prioritizer with properly quoted labels
           RESULT=$(python3 tools/issue_prioritizer.py prioritize \
             --title "${{ steps.issue.outputs.title }}" \
             --body "${{ steps.issue.outputs.body }}" \
             --issue-number "$ISSUE_NUM" \
-            --labels "${{ steps.issue.outputs.labels }}" \
+            $LABELS_ARG \
             --registry .github/agent-system/issue_prioritizer.json)
           
           echo "$RESULT"
