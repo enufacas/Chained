@@ -57,6 +57,13 @@ for issue_number in $issue_numbers; do
     continue
   fi
   
+  # Skip issues with informational label (no action required - just reports/status updates)
+  if echo "$issue_labels" | grep -q "informational"; then
+    echo "⏭️  Skipping issue #$issue_number - has informational label (no action required)"
+    already_assigned_count=$((already_assigned_count + 1))
+    continue
+  fi
+  
   # Get current assignees
   assignees=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json assignees --jq '.assignees[].login')
   
