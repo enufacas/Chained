@@ -316,7 +316,5 @@ jobs:
           echo "- Check issue labels for updated priorities" >> $GITHUB_STEP_SUMMARY
           echo "- Review the priority report artifact" >> $GITHUB_STEP_SUMMARY
           echo "- System continues learning from issue outcomes" >> $GITHUB_STEP_SUMMARY
-
----
-
-*🤖 Created by workflow: [Autonomous Issue Prioritizer](https://github.com/enufacas/Chained/actions) - @create-guru*
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "*🤖 Created by workflow: Autonomous Issue Prioritizer - @create-guru*" >> $GITHUB_STEP_SUMMARY
