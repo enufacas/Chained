@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-11-24T05:56:51.845531",
+  "last_updated": "2025-11-24T10:54:58.013349",
   "runs": {
-    "total_runs": 6,
-    "successful_runs": 6,
+    "total_runs": 8,
+    "successful_runs": 8,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-11-23T22:50:46.485712Z",
@@ -22,10 +22,66 @@
     "approval_times": []
   },
   "issue_patterns": {
-    "total_issues_processed": 0,
-    "agents_assigned": {},
+    "total_issues_processed": 8,
+    "agents_assigned": {
+      "edge-cases-pro": 1,
+      "coach-master": 1,
+      "construct-specialist": 1,
+      "create-guru": 3,
+      "investigate-champion": 1,
+      "troubleshoot-expert": 1
+    },
     "agent_success_rates": {},
-    "assignment_times": []
+    "assignment_times": [
+      {
+        "issue": 2768,
+        "agent": "edge-cases-pro",
+        "timestamp": "2025-11-24T10:54:58.012983",
+        "score": 11
+      },
+      {
+        "issue": 2753,
+        "agent": "coach-master",
+        "timestamp": "2025-11-24T10:54:58.012998",
+        "score": 12
+      },
+      {
+        "issue": 2751,
+        "agent": "construct-specialist",
+        "timestamp": "2025-11-24T10:54:58.013006",
+        "score": 9
+      },
+      {
+        "issue": 2743,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013016",
+        "score": 14
+      },
+      {
+        "issue": 2733,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013023",
+        "score": 13
+      },
+      {
+        "issue": 2715,
+        "agent": "investigate-champion",
+        "timestamp": "2025-11-24T10:54:58.013030",
+        "score": 10
+      },
+      {
+        "issue": 2712,
+        "agent": "troubleshoot-expert",
+        "timestamp": "2025-11-24T10:54:58.013037",
+        "score": 15
+      },
+      {
+        "issue": 2689,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013048",
+        "score": 11
+      }
+    ]
   },
   "feedback_issues": {
     "total_created": 0,
@@ -39,11 +95,370 @@
     "recent": []
   },
   "decisions": {
-    "recent": [],
+    "recent": [
+      {
+        "type": "phase0_previous_cycle_pr_merged",
+        "description": "Merged PR #2766 from previous cycle (10:16) - memory persistence completed",
+        "context": {
+          "pr_number": 2766,
+          "cycle": "10:16"
+        },
+        "timestamp": "2025-11-24T10:51:03.010310",
+        "session_id": "f8fdd61a55ce1170"
+      },
+      {
+        "type": "phase0_previous_cycle_pr_merged",
+        "description": "Merged PR #2766 from previous cycle (10:16) - memory persistence completed",
+        "context": {
+          "pr_number": 2766,
+          "cycle": "10:16"
+        },
+        "timestamp": "2025-11-24T10:51:03.010310",
+        "session_id": "f8fdd61a55ce1170"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2768 to edge-cases-pro (score: 11.00)",
+        "context": {
+          "issue_number": 2768,
+          "agent": "edge-cases-pro",
+          "score": 11
+        },
+        "timestamp": "2025-11-24T10:54:58.012992",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2753 to coach-master (score: 12.00)",
+        "context": {
+          "issue_number": 2753,
+          "agent": "coach-master",
+          "score": 12
+        },
+        "timestamp": "2025-11-24T10:54:58.013001",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2751 to construct-specialist (score: 9.00)",
+        "context": {
+          "issue_number": 2751,
+          "agent": "construct-specialist",
+          "score": 9
+        },
+        "timestamp": "2025-11-24T10:54:58.013010",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2743 to create-guru (score: 14.00)",
+        "context": {
+          "issue_number": 2743,
+          "agent": "create-guru",
+          "score": 14
+        },
+        "timestamp": "2025-11-24T10:54:58.013018",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2733 to create-guru (score: 13.00)",
+        "context": {
+          "issue_number": 2733,
+          "agent": "create-guru",
+          "score": 13
+        },
+        "timestamp": "2025-11-24T10:54:58.013025",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2715 to investigate-champion (score: 10.00)",
+        "context": {
+          "issue_number": 2715,
+          "agent": "investigate-champion",
+          "score": 10
+        },
+        "timestamp": "2025-11-24T10:54:58.013033",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2712 to troubleshoot-expert (score: 15.00)",
+        "context": {
+          "issue_number": 2712,
+          "agent": "troubleshoot-expert",
+          "score": 15
+        },
+        "timestamp": "2025-11-24T10:54:58.013039",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2689 to create-guru (score: 11.00)",
+        "context": {
+          "issue_number": 2689,
+          "agent": "create-guru",
+          "score": 11
+        },
+        "timestamp": "2025-11-24T10:54:58.013052",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "phase1_skipped_trivial_prs",
+        "description": "Skipped tech lead review assignment for 3 automated sync PRs (trivial changes)",
+        "context": {
+          "pr_count": 3
+        },
+        "timestamp": "2025-11-24T10:54:58.013057",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "phase5_auto_merged",
+        "description": "Auto-merged PR #2769 (automated sync from trusted source, no CI checks required)",
+        "context": {
+          "pr_number": 2769,
+          "reason": "trusted_source_no_wip"
+        },
+        "timestamp": "2025-11-24T10:54:58.013060",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "phase7_closed_conflicting",
+        "description": "Closed PRs #2760 and #2725 (merge conflicts, superseded by merged PR #2769)",
+        "context": {
+          "pr_numbers": [
+            2760,
+            2725
+          ],
+          "reason": "conflicts_superseded"
+        },
+        "timestamp": "2025-11-24T10:54:58.013062",
+        "session_id": "a8f53e273f33a934"
+      }
+    ],
     "patterns": {}
   },
   "learnings": {
     "insights": [
+      {
+        "timestamp": "2025-11-23T21:22:20.175520Z",
+        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
+        "evidence": {
+          "prs_needing_review": 14,
+          "prs_with_conflicts": 5,
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T22:50:46.485718Z",
+        "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
+        "evidence": {
+          "prs_closed": 4,
+          "reason": "persistent_merge_conflicts",
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850650Z",
+        "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
+        "evidence": {
+          "sample_size": 84,
+          "auto_merge_success_rate": 1.0
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850651Z",
+        "insight": "Agent spawn PRs require tech lead review (agents-tech-lead) due to system changes",
+        "evidence": {
+          "agent_spawn_prs": 15,
+          "all_required_review": true
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879565",
+        "insight": "Cleaned up 27 deprecated tech-lead:X identifier labels - system now uses comments for tech lead mentions per latest architecture",
+        "evidence": {
+          "deprecated_labels_removed": 27,
+          "new_pattern": "comments_with_mentions"
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879567",
+        "insight": "CI status checks were unavailable for all merge-eligible PRs - may need alternative check strategy",
+        "evidence": {
+          "eligible_prs": 29,
+          "ci_unavailable": 29
+        }
+      },
+      {
+        "timestamp": "2025-11-23T21:22:20.175520Z",
+        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
+        "evidence": {
+          "prs_needing_review": 14,
+          "prs_with_conflicts": 5,
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T22:50:46.485718Z",
+        "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
+        "evidence": {
+          "prs_closed": 4,
+          "reason": "persistent_merge_conflicts",
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850650Z",
+        "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
+        "evidence": {
+          "sample_size": 84,
+          "auto_merge_success_rate": 1.0
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850651Z",
+        "insight": "Agent spawn PRs require tech lead review (agents-tech-lead) due to system changes",
+        "evidence": {
+          "agent_spawn_prs": 15,
+          "all_required_review": true
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879565",
+        "insight": "Cleaned up 27 deprecated tech-lead:X identifier labels - system now uses comments for tech lead mentions per latest architecture",
+        "evidence": {
+          "deprecated_labels_removed": 27,
+          "new_pattern": "comments_with_mentions"
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879567",
+        "insight": "CI status checks were unavailable for all merge-eligible PRs - may need alternative check strategy",
+        "evidence": {
+          "eligible_prs": 29,
+          "ci_unavailable": 29
+        }
+      },
+      {
+        "timestamp": "2025-11-23T21:22:20.175520Z",
+        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
+        "evidence": {
+          "prs_needing_review": 14,
+          "prs_with_conflicts": 5,
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T22:50:46.485718Z",
+        "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
+        "evidence": {
+          "prs_closed": 4,
+          "reason": "persistent_merge_conflicts",
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850650Z",
+        "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
+        "evidence": {
+          "sample_size": 84,
+          "auto_merge_success_rate": 1.0
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850651Z",
+        "insight": "Agent spawn PRs require tech lead review (agents-tech-lead) due to system changes",
+        "evidence": {
+          "agent_spawn_prs": 15,
+          "all_required_review": true
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879565",
+        "insight": "Cleaned up 27 deprecated tech-lead:X identifier labels - system now uses comments for tech lead mentions per latest architecture",
+        "evidence": {
+          "deprecated_labels_removed": 27,
+          "new_pattern": "comments_with_mentions"
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879567",
+        "insight": "CI status checks were unavailable for all merge-eligible PRs - may need alternative check strategy",
+        "evidence": {
+          "eligible_prs": 29,
+          "ci_unavailable": 29
+        }
+      },
+      {
+        "timestamp": "2025-11-23T21:22:20.175520Z",
+        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
+        "evidence": {
+          "prs_needing_review": 14,
+          "prs_with_conflicts": 5,
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T22:50:46.485718Z",
+        "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
+        "evidence": {
+          "prs_closed": 4,
+          "reason": "persistent_merge_conflicts",
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850650Z",
+        "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
+        "evidence": {
+          "sample_size": 84,
+          "auto_merge_success_rate": 1.0
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850651Z",
+        "insight": "Agent spawn PRs require tech lead review (agents-tech-lead) due to system changes",
+        "evidence": {
+          "agent_spawn_prs": 15,
+          "all_required_review": true
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879565",
+        "insight": "Cleaned up 27 deprecated tech-lead:X identifier labels - system now uses comments for tech lead mentions per latest architecture",
+        "evidence": {
+          "deprecated_labels_removed": 27,
+          "new_pattern": "comments_with_mentions"
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879567",
+        "insight": "CI status checks were unavailable for all merge-eligible PRs - may need alternative check strategy",
+        "evidence": {
+          "eligible_prs": 29,
+          "ci_unavailable": 29
+        }
+      },
+      {
+        "timestamp": "2025-11-23T21:22:20.175520Z",
+        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
+        "evidence": {
+          "prs_needing_review": 14,
+          "prs_with_conflicts": 5,
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T22:50:46.485718Z",
+        "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
+        "evidence": {
+          "prs_closed": 4,
+          "reason": "persistent_merge_conflicts",
+          "auto_merge_success": 1
+        }
+      },
       {
         "timestamp": "2025-11-23T20:29:43.850650Z",
         "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
