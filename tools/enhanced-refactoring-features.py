@@ -426,6 +426,8 @@ class AdvancedPatternRecognizer:
         """
         Extract advanced features from code for pattern recognition.
         
+        Uses AST parsing for accurate detection of Python constructs.
+        
         Args:
             code: Source code string
             filepath: Path to the file
@@ -441,15 +443,73 @@ class AdvancedPatternRecognizer:
             "context": {}
         }
         
-        # Analyze import statements
-        import_lines = [line for line in code.splitlines() if line.strip().startswith('import') or line.strip().startswith('from')]
-        features["complexity_indicators"]["import_count"] = len(import_lines)
-        
-        # Analyze function/class definitions
-        function_defs = len(re.findall(r'^def\s+\w+\s*\(', code, re.MULTILINE))
-        class_defs = len(re.findall(r'^class\s+\w+', code, re.MULTILINE))
-        features["complexity_indicators"]["function_count"] = function_defs
-        features["complexity_indicators"]["class_count"] = class_defs
+        # Try to parse with AST for accurate analysis
+        try:
+            import ast
+            tree = ast.parse(code)
+            
+            # Count imports
+            import_count = sum(1 for node in ast.walk(tree) 
+                             if isinstance(node, (ast.Import, ast.ImportFrom)))
+            features["complexity_indicators"]["import_count"] = import_count
+            
+            # Count function and class definitions
+            function_count = sum(1 for node in ast.walk(tree) 
+                               if isinstance(node, ast.FunctionDef))
+            class_count = sum(1 for node in ast.walk(tree) 
+                            if isinstance(node, ast.ClassDef))
+            features["complexity_indicators"]["function_count"] = function_count
+            features["complexity_indicators"]["class_count"] = class_count
+            
+            # Check for type hints (function annotations)
+            uses_type_hints = False
+            for node in ast.walk(tree):
+                if isinstance(node, ast.FunctionDef):
+                    if node.returns or any(arg.annotation for arg in node.args.args):
+                        uses_type_hints = True
+                        break
+            features["style_fingerprint"]["uses_type_hints"] = uses_type_hints
+            
+            # Check for f-strings
+            uses_f_strings = any(
+                isinstance(node, ast.JoinedStr)
+                for node in ast.walk(tree)
+            )
+            features["style_fingerprint"]["uses_f_strings"] = uses_f_strings
+            
+            # Check for docstrings (first statement in functions/classes is a string)
+            uses_docstrings = False
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.ClassDef, ast.Module)):
+                    if (node.body and isinstance(node.body[0], ast.Expr) and
+                        isinstance(node.body[0].value, ast.Constant) and
+                        isinstance(node.body[0].value.value, str)):
+                        uses_docstrings = True
+                        break
+            features["style_fingerprint"]["uses_docstrings"] = uses_docstrings
+            
+        except SyntaxError:
+            # Fallback to simpler analysis if AST parsing fails
+            import_lines = [line for line in code.splitlines() 
+                          if line.strip().startswith(('import ', 'from '))]
+            features["complexity_indicators"]["import_count"] = len(import_lines)
+            
+            # Use more precise regex for function/class definitions
+            function_defs = len(re.findall(r'^\s*def\s+\w+\s*\(', code, re.MULTILINE))
+            class_defs = len(re.findall(r'^\s*class\s+\w+[\s\(:)]', code, re.MULTILINE))
+            features["complexity_indicators"]["function_count"] = function_defs
+            features["complexity_indicators"]["class_count"] = class_defs
+            
+            # Simple heuristics as fallback
+            features["style_fingerprint"]["uses_type_hints"] = bool(
+                re.search(r'\w+\s*:\s*\w+', code) and '->' in code
+            )
+            features["style_fingerprint"]["uses_f_strings"] = bool(
+                re.search(r'[^a-zA-Z_]f["\']', code)
+            )
+            features["style_fingerprint"]["uses_docstrings"] = bool(
+                re.search(r'^\s*("""|\'\'\')[\s\S]*?\1', code, re.MULTILINE)
+            )
         
         # Analyze comment density
         comment_lines = len([l for l in code.splitlines() if l.strip().startswith('#')])
@@ -457,11 +517,10 @@ class AdvancedPatternRecognizer:
             comment_lines / len(code.splitlines()) if code.splitlines() else 0
         )
         
-        # Style fingerprint - unique characteristics of this code
-        features["style_fingerprint"]["uses_type_hints"] = ': ' in code and '->' in code
-        features["style_fingerprint"]["uses_f_strings"] = 'f"' in code or "f'" in code
-        features["style_fingerprint"]["uses_docstrings"] = '"""' in code or "'''" in code
-        features["style_fingerprint"]["has_main_guard"] = '__name__' in code and '__main__' in code
+        # Check for main guard (safe to use simple check)
+        features["style_fingerprint"]["has_main_guard"] = (
+            '__name__' in code and '__main__' in code
+        )
         
         # Context - what kind of file is this?
         features["context"]["is_test"] = 'test_' in filepath or '_test' in filepath
