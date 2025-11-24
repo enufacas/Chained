@@ -77,7 +77,8 @@
 
 **Token Setup:**
 ```bash
-export GH_TOKEN="${COPILOT_PAT:-${GITHUB_TOKEN}}"
+export GH_TOKEN="\$COPILOT_PAT or \$GITHUB_TOKEN"
+# See agent definition for full token configuration
 ```
 
 **Critical Order:**
