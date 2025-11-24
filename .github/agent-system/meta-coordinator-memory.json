@@ -20,7 +20,8 @@
       "tech_leads_assigned": 3,
       "agents_assigned": 2,
       "prs_merged": 17,
-      "prs_closed": 15
+      "prs_closed": 15,
+      "note": "13 new PRs created by automated workflows during run"
     }
   },
   "pr_patterns": {
@@ -69,7 +70,7 @@
     "snapshots": [
       {
         "timestamp": "2025-11-24T01:36:43.435872",
-        "open_prs": 62,
+        "open_prs": 108,
         "open_issues": 25
       },
       {
@@ -79,39 +80,39 @@
       },
       {
         "timestamp": "2025-11-24T01:42:43.015230",
-        "open_prs": 30,
+        "open_prs": 91,
         "open_issues": 24
       }
     ],
     "open_pr_trend": [
-      62,
-      0,
-      30
+      108,
+      91
     ],
     "open_issue_trend": [
       25,
-      0,
       24
     ],
     "prs_closed_count": 15,
     "issues_closed_count": 1,
     "stale_prs_closed": 15,
-    "baseline_open_prs": 62,
+    "baseline_open_prs": 108,
     "baseline_open_issues": 25
   },
   "success_score": {
-    "current_score": 100.0,
+    "current_score": 87.5,
     "score_history": [
       {
-        "timestamp": "2025-11-24T01:42:43.015238",
-        "score": 100.0,
-        "reduction_pct": 51.61290322580645,
-        "cleanup_rate": 46.875
+        "timestamp": "2025-11-24T01:45:07.057781",
+        "score": 87.5,
+        "reduction_pct": 29.629629629629626,
+        "cleanup_rate": 46.875,
+        "prs_removed": 32,
+        "baseline": 108
       }
     ],
     "factors": {
       "cycle_time_score": 0,
-      "reduction_score": 100,
+      "reduction_score": 75,
       "proactive_cleanup_score": 100
     }
   }
