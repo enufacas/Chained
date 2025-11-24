@@ -297,30 +297,30 @@ jobs:
             echo ""
             
             # Post error comment to issue
-            gh issue comment "${ISSUE_NUMBER}" --body "## ⚠️ Assignment Failed
-
-This meta-coordination issue was created but **Copilot assignment failed**.
-
-**Impact:**
-- No Copilot session will start
-- System orchestration will not occur
-- Issue will sit idle (orphaned)
-
-**Manual Recovery Steps:**
-1. Check workflow logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-2. Verify environment variables are set correctly
-3. Re-run the workflow with \`workflow_dispatch\`
-4. Or manually assign using:
-   \`\`\`bash
-   export GH_TOKEN=\$GITHUB_TOKEN
-   export INPUT_ISSUE_NUMBER=${ISSUE_NUMBER}
-   ./tools/assign-copilot-to-issue.sh
-   \`\`\`
-
-**If unable to fix:**
-Close this issue and create a new coordination request.
-
-*Automated error detection by meta-coordinator workflow*" || echo "Failed to post error comment"
+            gh issue comment "${ISSUE_NUMBER}" --body '## ⚠️ Assignment Failed
+          
+          This meta-coordination issue was created but **Copilot assignment failed**.
+          
+          **Impact:**
+          - No Copilot session will start
+          - System orchestration will not occur
+          - Issue will sit idle (orphaned)
+          
+          **Manual Recovery Steps:**
+          1. Check workflow logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          2. Verify environment variables are set correctly
+          3. Re-run the workflow with `workflow_dispatch`
+          4. Or manually assign using:
+             ```bash
+             export GH_TOKEN=$GITHUB_TOKEN
+             export INPUT_ISSUE_NUMBER='"${ISSUE_NUMBER}"'
+             ./tools/assign-copilot-to-issue.sh
+             ```
+          
+          **If unable to fix:**
+          Close this issue and create a new coordination request.
+          
+          *Automated error detection by meta-coordinator workflow*' || echo "Failed to post error comment"
             
             exit 1
           fi
