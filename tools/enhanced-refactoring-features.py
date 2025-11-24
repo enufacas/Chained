@@ -465,9 +465,15 @@ class AdvancedPatternRecognizer:
             uses_type_hints = False
             for node in ast.walk(tree):
                 if isinstance(node, ast.FunctionDef):
-                    if node.returns or any(arg.annotation for arg in node.args.args):
+                    # Check for return type annotation
+                    if node.returns:
                         uses_type_hints = True
                         break
+                    # Check for argument annotations (with None check)
+                    if node.args and hasattr(node.args, 'args'):
+                        if any(arg.annotation for arg in node.args.args):
+                            uses_type_hints = True
+                            break
             features["style_fingerprint"]["uses_type_hints"] = uses_type_hints
             
             # Check for f-strings
@@ -478,14 +484,21 @@ class AdvancedPatternRecognizer:
             features["style_fingerprint"]["uses_f_strings"] = uses_f_strings
             
             # Check for docstrings (first statement in functions/classes is a string)
+            # Compatible with Python 3.7+ (ast.Str) and 3.8+ (ast.Constant)
             uses_docstrings = False
             for node in ast.walk(tree):
                 if isinstance(node, (ast.FunctionDef, ast.ClassDef, ast.Module)):
-                    if (node.body and isinstance(node.body[0], ast.Expr) and
-                        isinstance(node.body[0].value, ast.Constant) and
-                        isinstance(node.body[0].value.value, str)):
-                        uses_docstrings = True
-                        break
+                    if node.body and isinstance(node.body[0], ast.Expr):
+                        value_node = node.body[0].value
+                        # Python 3.8+: ast.Constant with string value
+                        if (isinstance(value_node, ast.Constant) and 
+                            isinstance(value_node.value, str)):
+                            uses_docstrings = True
+                            break
+                        # Python 3.7: ast.Str node
+                        elif hasattr(ast, 'Str') and isinstance(value_node, ast.Str):
+                            uses_docstrings = True
+                            break
             features["style_fingerprint"]["uses_docstrings"] = uses_docstrings
             
         except SyntaxError:
@@ -625,9 +638,19 @@ class AdvancedPatternRecognizer:
         
         # Adjust confidence based on sample size
         # More samples = higher confidence in the estimate
+        # Reaches 100% confidence with 20+ samples
         confidence_adjustment = min(1.0, len(similar_outcomes) / 20.0)
         
-        # Blend with neutral (0.5) based on confidence
+        # Blend observed success rate with neutral baseline (0.5) based on confidence
+        # Formula: result = (observed_rate * confidence) + (neutral_rate * (1 - confidence))
+        # 
+        # Examples:
+        # - With 1 sample (5% confidence): heavily weighted toward neutral 0.5
+        # - With 10 samples (50% confidence): balanced between observed and neutral
+        # - With 20+ samples (100% confidence): fully use observed success rate
+        # 
+        # This prevents overconfidence from small samples while allowing data to
+        # dominate predictions when sufficient evidence exists.
         return success_rate * confidence_adjustment + 0.5 * (1.0 - confidence_adjustment)
     
     def record_pattern(self, features: Dict[str, Any], outcome: bool):
