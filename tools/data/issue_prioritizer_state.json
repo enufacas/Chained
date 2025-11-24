@@ -1,0 +1,258 @@
+{
+  "arms": {
+    "urgency": {
+      "name": "urgency",
+      "description": "Prioritize urgent and time-sensitive issues",
+      "successes": 0,
+      "failures": 0,
+      "pulls": 0,
+      "total_reward": 0.0
+    },
+    "complexity": {
+      "name": "complexity",
+      "description": "Prioritize simple issues for quick wins",
+      "successes": 1,
+      "failures": 1,
+      "pulls": 2,
+      "total_reward": 1.0
+    },
+    "impact": {
+      "name": "impact",
+      "description": "Prioritize high-impact issues",
+      "successes": 1,
+      "failures": 0,
+      "pulls": 1,
+      "total_reward": 1.0
+    },
+    "balanced": {
+      "name": "balanced",
+      "description": "Balanced approach considering all factors",
+      "successes": 1,
+      "failures": 0,
+      "pulls": 1,
+      "total_reward": 1.0
+    },
+    "exploration": {
+      "name": "exploration",
+      "description": "Try random prioritization to explore",
+      "successes": 2,
+      "failures": 1,
+      "pulls": 3,
+      "total_reward": 2.0
+    }
+  },
+  "history": [
+    {
+      "issue_number": 1,
+      "arm": "complexity",
+      "success": true,
+      "reward": 1.0,
+      "timestamp": "2025-11-24T16:23:38.210124+00:00"
+    },
+    {
+      "issue_number": 7,
+      "arm": "impact",
+      "success": true,
+      "reward": 1.0,
+      "timestamp": "2025-11-24T16:23:38.210900+00:00"
+    },
+    {
+      "issue_number": 4,
+      "arm": "exploration",
+      "success": true,
+      "reward": 1.0,
+      "timestamp": "2025-11-24T16:23:38.211530+00:00"
+    },
+    {
+      "issue_number": 2,
+      "arm": "balanced",
+      "success": true,
+      "reward": 1.0,
+      "timestamp": "2025-11-24T16:23:38.212136+00:00"
+    },
+    {
+      "issue_number": 3,
+      "arm": "exploration",
+      "success": false,
+      "reward": 0.0,
+      "timestamp": "2025-11-24T16:23:38.212707+00:00"
+    },
+    {
+      "issue_number": 5,
+      "arm": "exploration",
+      "success": true,
+      "reward": 1.0,
+      "timestamp": "2025-11-24T16:23:38.213252+00:00"
+    },
+    {
+      "issue_number": 6,
+      "arm": "complexity",
+      "success": false,
+      "reward": 0.0,
+      "timestamp": "2025-11-24T16:23:38.213814+00:00"
+    }
+  ],
+  "recommendations": [
+    {
+      "issue_number": 1,
+      "priority_score": 0.858,
+      "selected_arm": "complexity",
+      "confidence": 0.5,
+      "reasoning": "Strategy: complexity | Priority Score: 0.86 | Age: 45.0 days | Urgency: 1.00 | Complexity: 0.14 | Impact: 0.58",
+      "features": {
+        "age_days": 45.00000000099537,
+        "age_urgency": 1.0,
+        "label_urgency": 1.0,
+        "title_length": 0.25,
+        "body_length": 0.034,
+        "complexity": 0.14200000000000002,
+        "label_impact": 0.6666666666666666,
+        "keyword_impact": 0.5,
+        "impact": 0.5833333333333333,
+        "engagement": 1.0
+      },
+      "timestamp": "2025-11-24T16:23:38.209836+00:00"
+    },
+    {
+      "issue_number": 2,
+      "priority_score": 0.21066666667766204,
+      "selected_arm": "balanced",
+      "confidence": 0.5,
+      "reasoning": "Strategy: balanced | Priority Score: 0.21 | Age: 2.0 days | Urgency: 0.03 | Complexity: 0.11 | Impact: 0.00",
+      "features": {
+        "age_days": 2.0000000014930555,
+        "age_urgency": 0.06666666671643519,
+        "label_urgency": 0.0,
+        "title_length": 0.2,
+        "body_length": 0.01,
+        "complexity": 0.10500000000000001,
+        "label_impact": 0.0,
+        "keyword_impact": 0.0,
+        "impact": 0.0,
+        "engagement": 0.1
+      },
+      "timestamp": "2025-11-24T16:23:38.209875+00:00"
+    },
+    {
+      "issue_number": 3,
+      "priority_score": 0.13887492430481152,
+      "selected_arm": "exploration",
+      "confidence": 0.5,
+      "reasoning": "Strategy: exploration | Priority Score: 0.14 | Age: 10.0 days | Urgency: 0.17 | Complexity: 0.29 | Impact: 0.33",
+      "features": {
+        "age_days": 10.000000001909722,
+        "age_urgency": 0.3333333333969907,
+        "label_urgency": 0.0,
+        "title_length": 0.45,
+        "body_length": 0.134,
+        "complexity": 0.29200000000000004,
+        "label_impact": 0.6666666666666666,
+        "keyword_impact": 0.0,
+        "impact": 0.3333333333333333,
+        "engagement": 1.0
+      },
+      "timestamp": "2025-11-24T16:23:38.209914+00:00"
+    },
+    {
+      "issue_number": 4,
+      "priority_score": 0.7741917100091764,
+      "selected_arm": "exploration",
+      "confidence": 0.5,
+      "reasoning": "Strategy: exploration | Priority Score: 0.77 | Age: 7.0 days | Urgency: 0.62 | Complexity: 0.21 | Impact: 0.17",
+      "features": {
+        "age_days": 7.000000002291666,
+        "age_urgency": 0.2333333334097222,
+        "label_urgency": 1.0,
+        "title_length": 0.4,
+        "body_length": 0.028,
+        "complexity": 0.21400000000000002,
+        "label_impact": 0.3333333333333333,
+        "keyword_impact": 0.0,
+        "impact": 0.16666666666666666,
+        "engagement": 1.0
+      },
+      "timestamp": "2025-11-24T16:23:38.209946+00:00"
+    },
+    {
+      "issue_number": 5,
+      "priority_score": 0.7232871976087599,
+      "selected_arm": "exploration",
+      "confidence": 0.5,
+      "reasoning": "Strategy: exploration | Priority Score: 0.72 | Age: 20.0 days | Urgency: 0.33 | Complexity: 0.11 | Impact: 0.17",
+      "features": {
+        "age_days": 20.00000000263889,
+        "age_urgency": 0.6666666667546297,
+        "label_urgency": 0.0,
+        "title_length": 0.2,
+        "body_length": 0.02,
+        "complexity": 0.11,
+        "label_impact": 0.3333333333333333,
+        "keyword_impact": 0.0,
+        "impact": 0.16666666666666666,
+        "engagement": 0.8
+      },
+      "timestamp": "2025-11-24T16:23:38.209973+00:00"
+    },
+    {
+      "issue_number": 6,
+      "priority_score": 0.892,
+      "selected_arm": "complexity",
+      "confidence": 0.5,
+      "reasoning": "Strategy: complexity | Priority Score: 0.89 | Age: 60.0 days | Urgency: 0.50 | Complexity: 0.11 | Impact: 0.17",
+      "features": {
+        "age_days": 60.000000002916664,
+        "age_urgency": 1.0,
+        "label_urgency": 0.0,
+        "title_length": 0.2,
+        "body_length": 0.016,
+        "complexity": 0.10800000000000001,
+        "label_impact": 0.3333333333333333,
+        "keyword_impact": 0.0,
+        "impact": 0.16666666666666666,
+        "engagement": 0.3
+      },
+      "timestamp": "2025-11-24T16:23:38.209996+00:00"
+    },
+    {
+      "issue_number": 7,
+      "priority_score": 0.3,
+      "selected_arm": "impact",
+      "confidence": 0.5,
+      "reasoning": "Strategy: impact | Priority Score: 0.30 | Age: 0.3 days | Urgency: 0.50 | Complexity: 0.08 | Impact: 0.00",
+      "features": {
+        "age_days": 0.2500000032175926,
+        "age_urgency": 0.00833333344058642,
+        "label_urgency": 1.0,
+        "title_length": 0.15,
+        "body_length": 0.016,
+        "complexity": 0.08299999999999999,
+        "label_impact": 0.0,
+        "keyword_impact": 0.0,
+        "impact": 0.0,
+        "engagement": 1.0
+      },
+      "timestamp": "2025-11-24T16:23:38.210022+00:00"
+    },
+    {
+      "issue_number": 8,
+      "priority_score": 0.28000000006805553,
+      "selected_arm": "urgency",
+      "confidence": 0.5,
+      "reasoning": "Strategy: urgency | Priority Score: 0.28 | Age: 14.0 days | Urgency: 0.23 | Complexity: 0.14 | Impact: 0.17",
+      "features": {
+        "age_days": 14.000000003564814,
+        "age_urgency": 0.4666666667854938,
+        "label_urgency": 0.0,
+        "title_length": 0.25,
+        "body_length": 0.022,
+        "complexity": 0.136,
+        "label_impact": 0.3333333333333333,
+        "keyword_impact": 0.0,
+        "impact": 0.16666666666666666,
+        "engagement": 0.5
+      },
+      "timestamp": "2025-11-24T16:23:38.210051+00:00"
+    }
+  ],
+  "last_updated": "2025-11-24T16:23:38.214029+00:00"
+}
