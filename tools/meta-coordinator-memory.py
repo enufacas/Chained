@@ -125,7 +125,9 @@ class MetaCoordinatorMemory:
             try:
                 if self.memory_file.exists():
                     with open(self.memory_file, 'r') as f:
-                        return json.load(f)
+                        data = json.load(f)
+                        # Migrate old format to new format if needed
+                        return self._migrate_memory_if_needed(data)
                 else:
                     return self._initialize_memory()
             except json.JSONDecodeError as e:
@@ -142,6 +144,53 @@ class MetaCoordinatorMemory:
                 return self._initialize_memory()
         
         return self._initialize_memory()
+    
+    def _migrate_memory_if_needed(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Migrate old memory format to new format if needed."""
+        # Check if migration is needed (old format has 'runs' as a list)
+        if isinstance(data.get('runs'), list):
+            print("🔄 Migrating memory from old format to version 1.1...")
+            old_runs = data.get('runs', [])
+            old_learnings = data.get('learnings', [])
+            old_recommendations = data.get('recommendations', [])
+            
+            # Create new format
+            new_memory = self._initialize_memory()
+            
+            # Migrate runs data
+            if old_runs:
+                new_memory["runs"]["total_runs"] = len(old_runs)
+                new_memory["runs"]["successful_runs"] = sum(1 for r in old_runs if r.get('success', False))
+                new_memory["runs"]["failed_runs"] = len(old_runs) - new_memory["runs"]["successful_runs"]
+                
+                # Get last run
+                if old_runs:
+                    last_run = old_runs[-1]
+                    new_memory["runs"]["last_run"] = {
+                        "timestamp": last_run.get('timestamp'),
+                        "run_id": last_run.get('run_id'),
+                        "duration_seconds": last_run.get('duration_seconds', 0),
+                        "success": last_run.get('success', True)
+                    }
+                
+                # Calculate average duration
+                durations = [r.get('duration_seconds', 0) for r in old_runs if r.get('duration_seconds')]
+                if durations:
+                    new_memory["runs"]["average_duration_seconds"] = sum(durations) / len(durations)
+            
+            # Migrate learnings
+            if old_learnings:
+                new_memory["learnings"]["insights"] = old_learnings[:50]  # Keep recent 50
+            
+            # Migrate recommendations
+            if old_recommendations:
+                new_memory["learnings"]["recommendations"] = old_recommendations[:20]  # Keep recent 20
+            
+            print(f"✅ Migration complete: {len(old_runs)} runs, {len(old_learnings)} learnings migrated")
+            return new_memory
+        
+        # No migration needed, return as-is
+        return data
     
     def _initialize_memory(self) -> Dict[str, Any]:
         """Initialize empty memory structure."""
@@ -221,6 +270,17 @@ class MetaCoordinatorMemory:
             }
         }
     
+    def _convert_defaultdicts(self, obj: Any) -> Any:
+        """Recursively convert defaultdicts to regular dicts for JSON serialization."""
+        if isinstance(obj, defaultdict):
+            return {k: self._convert_defaultdicts(v) for k, v in obj.items()}
+        elif isinstance(obj, dict):
+            return {k: self._convert_defaultdicts(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._convert_defaultdicts(item) for item in obj]
+        else:
+            return obj
+    
     def save(self, merge_strategy: str = "append_lists"):
         """
         Save memory to disk with concurrent-safe merge.
@@ -252,6 +312,9 @@ class MetaCoordinatorMemory:
                     # Update timestamp
                     merged_memory["last_updated"] = datetime.utcnow().isoformat()
                     
+                    # Convert defaultdicts to regular dicts for JSON serialization
+                    merged_memory = self._convert_defaultdicts(merged_memory)
+                    
                     # Write atomically
                     temp_file = self.memory_file.with_suffix('.tmp')
                     with open(temp_file, 'w') as f:
@@ -280,7 +343,9 @@ class MetaCoordinatorMemory:
         """Load memory without lock (assumes caller holds lock)."""
         if self.memory_file.exists():
             with open(self.memory_file, 'r') as f:
-                return json.load(f)
+                data = json.load(f)
+                # Migrate if needed
+                return self._migrate_memory_if_needed(data)
         return self._initialize_memory()
     
     def _merge_memories(self, 
