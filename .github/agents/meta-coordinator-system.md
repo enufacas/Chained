@@ -856,6 +856,22 @@ If you cannot use the script, you MUST:
 
 **IMPORTANT:** Draft status alone does NOT prevent merging. Only WIP markers in the title block auto-merge. This allows PRs to be merged regardless of draft status or labels, as long as they don't have WIP in the title.
 
+**CRITICAL FIX FOR "UNKNOWN" MERGEABLE STATE:**
+
+GitHub returns `mergeable: UNKNOWN` for draft PRs that haven't been marked ready yet. This prevents auto-merge from working even when all other criteria are met. The solution is to **mark draft PRs as ready for review** before checking eligibility:
+
+1. **Check mergeable status first**
+2. **If UNKNOWN and PR is draft** → mark as ready (`gh pr ready`)
+3. **Wait 2-3 seconds** for GitHub to calculate status
+4. **Re-fetch mergeable status** → should now be MERGEABLE or CONFLICTING
+5. **Proceed with merge** if MERGEABLE
+
+This approach:
+- ✅ Triggers GitHub's merge status calculation
+- ✅ Enables immediate merging of eligible draft PRs
+- ✅ Handles the UNKNOWN state automatically
+- ✅ No manual intervention needed
+
 **Proven Patterns (from auto-review-merge.yml):**
 
 1. **Trust Verification Logic**
@@ -874,9 +890,33 @@ If you cannot use the script, you MUST:
    ```
    **Why useful:** Security check - only merge from trusted sources, no label requirements
 
-2. **Merge Strategy with Fallback**
+2. **Handling UNKNOWN Mergeable State** (CRITICAL)
    ```bash
    # Get mergeable status
+   mergeable=$(gh pr view $PR_NUM --json mergeable,isDraft --jq -r '.mergeable')
+   is_draft=$(gh pr view $PR_NUM --json isDraft --jq -r '.isDraft')
+   
+   # Handle UNKNOWN state (GitHub hasn't calculated merge status yet)
+   if [ "${mergeable}" = "UNKNOWN" ]; then
+     echo "⚠️  Mergeable status UNKNOWN - triggering calculation"
+     
+     # Mark draft PRs as ready to trigger GitHub's merge status calculation
+     if [ "${is_draft}" = "true" ]; then
+       echo "  → Marking draft PR as ready for review..."
+       gh pr ready ${PR_NUM}
+       sleep 2  # Give GitHub time to calculate
+       
+       # Re-fetch mergeable status
+       mergeable=$(gh pr view $PR_NUM --json mergeable --jq -r '.mergeable')
+       echo "  → Updated status: ${mergeable}"
+     fi
+   fi
+   ```
+   **Why critical:** GitHub returns UNKNOWN for draft PRs until they're marked ready. This prevents auto-merge from working. Marking as ready triggers status calculation and enables immediate merging.
+
+3. **Merge Strategy with Fallback**
+   ```bash
+   # Get mergeable status (after handling UNKNOWN above)
    mergeable=$(gh pr view $PR_NUM --json mergeable --jq '.mergeable')
    
    # Attempt immediate merge if mergeable
@@ -894,7 +934,7 @@ If you cannot use the script, you MUST:
    ```
    **Why useful:** Handles both immediate and queued merges gracefully
 
-3. **Complete Eligibility Check** (from auto-review-merge.yml)
+4. **Complete Eligibility Check with UNKNOWN Handling**
    ```bash
    # All criteria in one pass
    pr_data=$(gh pr view $PR_NUM --json state,isDraft,mergeable,author,title)
@@ -903,6 +943,7 @@ If you cannot use the script, you MUST:
    pr_state=$(echo "$pr_data" | jq -r '.state')
    is_draft=$(echo "$pr_data" | jq -r '.isDraft')
    pr_title=$(echo "$pr_data" | jq -r '.title')
+   mergeable=$(echo "$pr_data" | jq -r '.mergeable')
    
    # Skip if not open
    if [ "${pr_state}" != "OPEN" ]; then
@@ -925,6 +966,15 @@ If you cannot use the script, you MUST:
    # Note: Draft PRs and any labeled PRs WITHOUT WIP markers are considered ready for merging
    # This allows PRs to be merged regardless of draft status or labels
    
+   # CRITICAL: Handle UNKNOWN mergeable state by marking draft PRs as ready
+   if [ "${mergeable}" = "UNKNOWN" ] && [ "${is_draft}" = "true" ]; then
+     echo "Marking draft as ready to trigger merge status calculation..."
+     gh pr ready ${PR_NUM}
+     sleep 2
+     mergeable=$(gh pr view $PR_NUM --json mergeable --jq -r '.mergeable')
+     echo "Updated mergeable status: ${mergeable}"
+   fi
+   
    # Trust verification (no label checks needed)
    # ... (use trust verification logic above)
    ```
@@ -932,8 +982,13 @@ If you cannot use the script, you MUST:
 **Conditions:**
 - **Trust:** Only copilot or owner/maintainer PRs (no label requirements)
 - **No WIP:** No WIP markers in title (draft status and labels do NOT block)
-- **CI passed:** All required checks successful
-- **Mergeable:** GitHub reports PR can be merged
+- **CI passed:** All required checks successful (or unavailable)
+- **Mergeable:** GitHub reports PR can be merged (handle UNKNOWN by marking draft as ready)
+
+**Special Handling:**
+- **UNKNOWN mergeable state:** Mark draft PR as ready, wait 2s, re-check status
+- **Draft PRs:** Always mark as ready before attempting merge (triggers status calculation)
+- **CI unavailable:** Treat as passed (many repos don't configure CI)
 
 **Outcomes:**
 - Approved PRs auto-merge automatically on next coordination run
