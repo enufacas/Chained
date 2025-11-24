@@ -1358,6 +1358,98 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1763966290475152116-37400",
+      "name": "\ud83d\udcdd Darwin",
+      "human_name": "Darwin",
+      "specialization": "document-ninja",
+      "status": "active",
+      "spawned_at": "2025-11-24T06:38:10.791976Z",
+      "personality": "meticulous and careful",
+      "communication_style": "gets straight to the point",
+      "traits": {
+        "creativity": 95,
+        "caution": 96,
+        "speed": 96
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763972552672394057-36254",
+      "name": "\ud83d\udd2c Rosalind Franklin",
+      "human_name": "Rosalind Franklin",
+      "specialization": "examine-chief",
+      "status": "active",
+      "spawned_at": "2025-11-24T08:22:32.854101Z",
+      "personality": "detail-oriented and precise, with occasional wit",
+      "communication_style": "backs claims with evidence",
+      "traits": {
+        "creativity": 67,
+        "caution": 96,
+        "speed": 43
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763976684865128623-2841",
+      "name": "\u2705 Feynman",
+      "human_name": "Feynman",
+      "specialization": "verify-tests-adept",
+      "status": "active",
+      "spawned_at": "2025-11-24T09:31:25.173342Z",
+      "personality": "methodical and precise",
+      "communication_style": "adds encouraging emojis",
+      "traits": {
+        "creativity": 83,
+        "caution": 92,
+        "speed": 61
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763979513276712274-77424",
+      "name": "\ud83e\udd1d Mitchell Baker",
+      "human_name": "Mitchell Baker",
+      "specialization": "communications-wizard",
+      "status": "active",
+      "spawned_at": "2025-11-24T10:18:33.444185Z",
+      "personality": "community-focused, but more direct",
+      "communication_style": "enables collaboration",
+      "traits": {
+        "creativity": 69,
+        "caution": 65,
+        "speed": 81
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [

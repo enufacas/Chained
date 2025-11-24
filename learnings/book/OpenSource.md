@@ -2,9 +2,9 @@
 
 > Open source projects, community insights, and collaboration
 
-**Total Insights:** 53
+**Total Insights:** 58
 
-**Last Updated:** 2025-11-23
+**Last Updated:** 2025-11-24
 
 ---
 
@@ -140,15 +140,6 @@ To use the Mastodon web application, please enable JavaScript. Alternatively, tr
 ---
 
 
-### Moss Survives 9 Months in Space Vacuum
-
-**Community Score:** 58 upvotes
-
-**Link:** https://scienceclock.com/moss-survives-9-months-in-space-vacuum/
-
----
-
-
 ### bobeff/open-source-games - A list of open source games.
 
 **Link:** https://github.com/bobeff/open-source-games
@@ -199,6 +190,15 @@ A list of open source games.
 **Content Summary:**
 
 To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
+
+---
+
+
+### Moss Survives 9 Months in Space Vacuum
+
+**Community Score:** 140 upvotes
+
+**Link:** https://scienceclock.com/moss-survives-9-months-in-space-vacuum/
 
 ---
 
