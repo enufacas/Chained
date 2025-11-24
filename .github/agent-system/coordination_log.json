@@ -2024,12 +2024,368 @@
         "test-no-assign-subtask-1": "agent-1763087215"
       },
       "status": "active"
+    },
+    {
+      "id": "coord-issue-9-1763948575",
+      "task_id": "issue-9",
+      "created_at": "2025-11-24T01:42:55.872616+00:00",
+      "plan": {
+        "task_id": "issue-9",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-9-subtask-1",
+            "description": "Api work: Design and implement API endpoints for: Implement rate limiting for API endpoints",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-9-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "engineer-master",
+          "engineer-wizard"
+        ]
+      },
+      "assignments": {
+        "issue-9-subtask-1": "agent-1763087215"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-issue-11-1763948575",
+      "task_id": "issue-11",
+      "created_at": "2025-11-24T01:42:55.875696+00:00",
+      "plan": {
+        "task_id": "issue-11",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "issue-11-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Simple test task",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-11-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "issue-11-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-avg-test-1-1763948575",
+      "task_id": "avg-test-1",
+      "created_at": "2025-11-24T01:42:55.895199+00:00",
+      "plan": {
+        "task_id": "avg-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "avg-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task with multiple agents",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "avg-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "avg-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-stat-test-1-1763948575",
+      "task_id": "stat-test-1",
+      "created_at": "2025-11-24T01:42:55.898315+00:00",
+      "plan": {
+        "task_id": "stat-test-1",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "stat-test-1-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task for statistics",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "stat-test-1-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "stat-test-1-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-test-coordination-1763948575",
+      "task_id": "test-coordination",
+      "created_at": "2025-11-24T01:42:55.904855+00:00",
+      "plan": {
+        "task_id": "test-coordination",
+        "complexity": "moderate",
+        "sub_tasks": [
+          {
+            "id": "test-coordination-subtask-1",
+            "description": "Infrastructure work: Implement infrastructure and tooling for: Build API with tests and documentation",
+            "required_specializations": [
+              "create-guru",
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "Feature implemented and tested",
+              "Infrastructure is documented",
+              "Integration tests pass"
+            ]
+          },
+          {
+            "id": "test-coordination-subtask-2",
+            "description": "Api work: Design and implement API endpoints for: Build API with tests and documentation",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [
+              "test-coordination-subtask-1"
+            ],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "test-coordination-subtask-1",
+          "test-coordination-subtask-2"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "medium (4-8 hours)",
+        "required_agents": [
+          "engineer-master",
+          "engineer-wizard",
+          "create-guru"
+        ]
+      },
+      "assignments": {
+        "test-coordination-subtask-1": "agent-1763087215",
+        "test-coordination-subtask-2": "agent-1763087215"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-test-stats-1763948575",
+      "task_id": "test-stats",
+      "created_at": "2025-11-24T01:42:55.909162+00:00",
+      "plan": {
+        "task_id": "test-stats",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "test-stats-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task for statistics",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "test-stats-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "test-stats-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-test-auto-assign-1763948575",
+      "task_id": "test-auto-assign",
+      "created_at": "2025-11-24T01:42:55.918686+00:00",
+      "plan": {
+        "task_id": "test-auto-assign",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "test-auto-assign-subtask-1",
+            "description": "Infrastructure work: Implement infrastructure and tooling for: Build feature with tests",
+            "required_specializations": [
+              "create-guru",
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "Feature implemented and tested",
+              "Infrastructure is documented",
+              "Integration tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "test-auto-assign-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "engineer-master",
+          "engineer-wizard",
+          "create-guru"
+        ]
+      },
+      "assignments": {
+        "test-auto-assign-subtask-1": "agent-1763087215"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-test-no-assign-1763948575",
+      "task_id": "test-no-assign",
+      "created_at": "2025-11-24T01:42:55.921994+00:00",
+      "plan": {
+        "task_id": "test-no-assign",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "test-no-assign-subtask-1",
+            "description": "Infrastructure work: Implement infrastructure and tooling for: Build feature with tests",
+            "required_specializations": [
+              "create-guru",
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "Feature implemented and tested",
+              "Infrastructure is documented",
+              "Integration tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "test-no-assign-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "engineer-master",
+          "engineer-wizard",
+          "create-guru"
+        ]
+      },
+      "assignments": {
+        "test-no-assign-subtask-1": "agent-1763087215"
+      },
+      "status": "active"
     }
   ],
   "statistics": {
-    "total_coordinations": 42,
+    "total_coordinations": 50,
     "successful_coordinations": 0,
     "failed_coordinations": 0,
-    "avg_agents_per_task": 1.0714285714285714
+    "avg_agents_per_task": 1.08
   }
 }
