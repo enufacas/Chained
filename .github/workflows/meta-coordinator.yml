@@ -1,11 +1,9 @@
 name: "Meta-Coordinator: System Orchestration"
 
 # This workflow invokes the meta-coordinator-system agent to orchestrate
-# the entire tech lead review and agent assignment system.
+# the entire agent assignment system.
 #
 # The agent continuously assesses system state and takes appropriate actions:
-# - Assign tech leads to PRs
-# - Create feedback issues for change requests
 # - Assign agents to issues
 # - Manage review cycles
 # - Auto-merge approved PRs (no WIP in title; draft status doesn't block)
