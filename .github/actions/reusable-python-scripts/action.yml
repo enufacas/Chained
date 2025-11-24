@@ -92,7 +92,9 @@ runs:
         
         # Set environment variables if provided
         if [ -n "${{ inputs.env-vars }}" ]; then
-          echo '${{ inputs.env-vars }}' | jq -r 'to_entries[] | "export " + .key + "=\"" + .value + "\""' | while read -r line; do
+          # Use mapfile to avoid subshell issue
+          mapfile -t ENV_LINES < <(echo '${{ inputs.env-vars }}' | jq -r 'to_entries[] | "export " + .key + "=\"" + .value + "\""')
+          for line in "${ENV_LINES[@]}"; do
             eval "$line"
           done
         fi

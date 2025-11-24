@@ -74,8 +74,13 @@ runs:
         # Build grep/sed flags
         GREP_FLAGS=""
         SED_FLAGS=""
-        [ "${{ inputs.flags }}" =~ "i" ] && GREP_FLAGS="${GREP_FLAGS} -i" && SED_FLAGS="${SED_FLAGS}I"
-        [ "${{ inputs.flags }}" =~ "m" ] && GREP_FLAGS="${GREP_FLAGS} -z"
+        if [[ "${{ inputs.flags }}" =~ "i" ]]; then
+          GREP_FLAGS="${GREP_FLAGS} -i"
+          SED_FLAGS="${SED_FLAGS}I"
+        fi
+        if [[ "${{ inputs.flags }}" =~ "m" ]]; then
+          GREP_FLAGS="${GREP_FLAGS} -z"
+        fi
         
         RESULT=""
         MATCHES=0

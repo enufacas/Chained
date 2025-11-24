@@ -173,17 +173,19 @@ runs:
             
           clean)
             # Clean untracked files
-            FORCE_FLAG=""
-            [ "${{ inputs.force }}" = "true" ] && FORCE_FLAG="-f"
-            
             RESULT=$(git clean -n -d)
             if [ -z "$RESULT" ]; then
               echo "✅ No untracked files to clean"
             else
-              echo "🧹 Cleaning untracked files:"
+              echo "🧹 Untracked files to clean:"
               echo "$RESULT"
-              git clean $FORCE_FLAG -d
-              echo "✅ Cleaned untracked files"
+              
+              if [ "${{ inputs.force }}" = "true" ]; then
+                git clean -f -d
+                echo "✅ Cleaned untracked files"
+              else
+                echo "ℹ️  Set force=true to actually clean files"
+              fi
             fi
             ;;
             

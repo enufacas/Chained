@@ -94,10 +94,11 @@ runs:
         fi
         
         # Add custom headers
+        HEADER_ARGS=""
         if [ -n "${{ inputs.headers }}" ]; then
-          echo '${{ inputs.headers }}' | jq -r 'to_entries[] | "-H \"" + .key + ": " + .value + "\""' | while read -r header; do
-            CURL_CMD="$CURL_CMD $header"
-          done
+          while IFS= read -r header; do
+            [ -n "$header" ] && HEADER_ARGS="$HEADER_ARGS $header"
+          done < <(echo '${{ inputs.headers }}' | jq -r 'to_entries[] | "-H \"" + .key + ": " + .value + "\""')
         fi
         
         # Add body
@@ -125,15 +126,17 @@ runs:
           # Execute request and capture output
           TEMP_FILE=$(mktemp)
           TEMP_HEADERS=$(mktemp)
+          TEMP_STATUS=$(mktemp)
           
-          eval "$CURL_CMD -D $TEMP_HEADERS '${{ inputs.url }}'" > "$TEMP_FILE" 2>&1
-          CURL_EXIT=$?
+          # Use separate file for status code
+          eval "$CURL_CMD $HEADER_ARGS -w '%{http_code}' -o '$TEMP_FILE' '${{ inputs.url }}' 2>&1 | tee '$TEMP_STATUS'" > /dev/null || true
           
-          # Extract status code (last line)
-          STATUS=$(tail -n 2 "$TEMP_FILE" | head -n 1)
+          # Extract status code from status file or use 000 on failure
+          STATUS=$(cat "$TEMP_STATUS" 2>/dev/null | grep -o '[0-9]\{3\}' | tail -1)
+          [ -z "$STATUS" ] && STATUS="000"
           
-          # Extract response (everything except last 2 lines)
-          RESPONSE=$(head -n -2 "$TEMP_FILE")
+          # Extract response
+          RESPONSE=$(cat "$TEMP_FILE" 2>/dev/null || echo "")
           
           # Check if successful
           if [ $CURL_EXIT -eq 0 ] && [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 300 ]; then
@@ -149,7 +152,7 @@ runs:
         # Check final result
         if [ "$SUCCESS" = "false" ] && [ "${{ inputs.fail-on-error }}" = "true" ]; then
           echo "❌ Request failed after $MAX_RETRIES retries"
-          rm -f "$TEMP_FILE" "$TEMP_HEADERS"
+          rm -f "$TEMP_FILE" "$TEMP_HEADERS" "$TEMP_STATUS"
           exit 1
         fi
         
@@ -170,4 +173,4 @@ runs:
         echo "success=$SUCCESS" >> $GITHUB_OUTPUT
         
         # Clean up
-        rm -f "$TEMP_FILE" "$TEMP_HEADERS"
+        rm -f "$TEMP_FILE" "$TEMP_HEADERS" "$TEMP_STATUS"
