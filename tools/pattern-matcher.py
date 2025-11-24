@@ -153,6 +153,7 @@ class PatternMatcher:
                 {
                     'id': 'bash-unquoted-in-command',
                     'name': 'Potentially unquoted variable as command argument',
+                    # Match dangerous commands with unquoted variables: rm $file, cp $src $dst, etc.
                     'pattern': r'^(rm|cp|mv|chmod|chown|cat|grep|sed|awk)\s+[^"\']*\$\w+',
                     'severity': 'info',
                     'category': 'best-practices',
@@ -166,6 +167,7 @@ class PatternMatcher:
                 {
                     'id': 'bash-missing-shebang',
                     'name': 'Missing shebang',
+                    # Match lines that don't start with #! (after optional whitespace)
                     'pattern': r'^\s*(?!#!)',
                     'severity': 'info',
                     'category': 'portability',
@@ -176,7 +178,9 @@ class PatternMatcher:
                 {
                     'id': 'bash-no-set-e',
                     'name': 'Consider using set -e',
-                    'pattern': r'^\s*set\s+-[a-zA-Z]*e',  # Must be at start of line
+                    # Match 'set -e' command at start of line (checks if file contains this anywhere)
+                    # With invert=True, flags files that DON'T have 'set -e' command
+                    'pattern': r'^\s*set\s+-[a-zA-Z]*e',
                     'severity': 'info',
                     'category': 'error-handling',
                     'suggestion': 'Consider adding "set -e" near the top to exit on error',
