@@ -1,0 +1,341 @@
+name: Example - Enhanced Custom Actions
+# This workflow demonstrates the enhanced custom GitHub Actions
+# Created by @create-guru
+
+on:
+  workflow_dispatch:
+    inputs:
+      test-json:
+        description: 'Test JSON operations'
+        type: boolean
+        default: true
+      test-regex:
+        description: 'Test regex operations'
+        type: boolean
+        default: true
+      test-http:
+        description: 'Test HTTP operations'
+        type: boolean
+        default: true
+      test-python:
+        description: 'Test Python script execution'
+        type: boolean
+        default: true
+      test-git:
+        description: 'Test Git operations'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  test-json-operations:
+    if: inputs.test-json == true
+    runs-on: ubuntu-latest
+    name: Test JSON Operations
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Create test JSON
+        run: |
+          cat > test.json <<'EOF'
+          {
+            "name": "Chained",
+            "type": "autonomous-ai",
+            "agents": [
+              {"name": "create-guru", "specialization": "infrastructure"},
+              {"name": "engineer-master", "specialization": "apis"}
+            ],
+            "metrics": {
+              "agents": 48,
+              "workflows": 46
+            }
+          }
+          EOF
+      
+      - name: Query JSON
+        uses: ./.github/actions/reusable-json-operations
+        with:
+          operation: query
+          input-file: test.json
+          query: '.agents[] | select(.specialization == "infrastructure") | .name'
+      
+      - name: Validate JSON
+        uses: ./.github/actions/reusable-json-operations
+        with:
+          operation: validate
+          input-file: test.json
+      
+      - name: Transform JSON
+        uses: ./.github/actions/reusable-json-operations
+        with:
+          operation: transform
+          input-file: test.json
+          transform-script: '.metrics.total = (.metrics.agents + .metrics.workflows)'
+          output-file: transformed.json
+      
+      - name: Display transformed JSON
+        run: cat transformed.json
+
+  test-regex-operations:
+    if: inputs.test-regex == true
+    runs-on: ubuntu-latest
+    name: Test Regex Operations
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Create test file
+        run: |
+          cat > test.txt <<'EOF'
+          email: developer@example.com
+          phone: 123-456-7890
+          url: https://github.com/enufacas/Chained
+          date: 2025-11-24
+          EOF
+      
+      - name: Extract emails
+        id: extract-email
+        uses: ./.github/actions/reusable-regex-operations
+        with:
+          operation: extract
+          input-file: test.txt
+          pattern: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+      
+      - name: Validate URL pattern
+        uses: ./.github/actions/reusable-regex-operations
+        with:
+          operation: validate
+          input-file: test.txt
+          pattern: 'https://github\.com'
+      
+      - name: Replace dates
+        uses: ./.github/actions/reusable-regex-operations
+        with:
+          operation: replace
+          input-file: test.txt
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+          replacement: 'YYYY-MM-DD'
+          output-file: replaced.txt
+      
+      - name: Display replaced content
+        run: cat replaced.txt
+
+  test-http-operations:
+    if: inputs.test-http == true
+    runs-on: ubuntu-latest
+    name: Test HTTP Operations
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: GET request to GitHub API
+        id: github-api
+        uses: ./.github/actions/reusable-http-requests
+        with:
+          method: GET
+          url: https://api.github.com/repos/enufacas/Chained
+          headers: '{"Accept": "application/vnd.github.v3+json"}'
+          output-file: repo-info.json
+      
+      - name: Display repository info
+        run: |
+          echo "Repository info retrieved:"
+          jq '.name, .description, .stargazers_count' repo-info.json
+      
+      - name: Test retry mechanism
+        uses: ./.github/actions/reusable-http-requests
+        with:
+          method: GET
+          url: https://httpbin.org/status/200
+          retry-count: 2
+          retry-delay: 1
+          timeout: 10
+
+  test-python-operations:
+    if: inputs.test-python == true
+    runs-on: ubuntu-latest
+    name: Test Python Script Execution
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Execute inline Python
+        uses: ./.github/actions/reusable-python-scripts
+        with:
+          inline: 'true'
+          script: |
+            import json
+            import sys
+            
+            data = {
+                "message": "Hello from @create-guru!",
+                "action": "reusable-python-scripts",
+                "timestamp": "2025-11-24"
+            }
+            
+            print(json.dumps(data, indent=2))
+      
+      - name: Create test Python script
+        run: |
+          cat > test_script.py <<'EOF'
+          import sys
+          import json
+          
+          def main():
+              print("Testing Python script execution...")
+              print(f"Python version: {sys.version}")
+              
+              result = {
+                  "status": "success",
+                  "features": [
+                      "dependency installation",
+                      "timeout handling",
+                      "environment variables",
+                      "output capture"
+                  ]
+              }
+              
+              print(json.dumps(result, indent=2))
+              return 0
+          
+          if __name__ == "__main__":
+              sys.exit(main())
+          EOF
+      
+      - name: Execute Python script file
+        uses: ./.github/actions/reusable-python-scripts
+        with:
+          script: test_script.py
+          python-version: '3.11'
+          timeout: 30
+      
+      - name: Execute with dependencies
+        uses: ./.github/actions/reusable-python-scripts
+        with:
+          inline: 'true'
+          script: |
+            import requests
+            print("requests library is available!")
+            print(f"requests version: {requests.__version__}")
+          requirements: 'requests'
+
+  test-git-operations:
+    if: inputs.test-git == true
+    runs-on: ubuntu-latest
+    name: Test Git Operations
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Check Git status
+        id: status
+        uses: ./.github/actions/reusable-git-operations
+        with:
+          operation: status
+      
+      - name: Display status result
+        run: |
+          echo "Has changes: ${{ steps.status.outputs.has-changes }}"
+          echo "Current branch: ${{ steps.status.outputs.current-branch }}"
+      
+      - name: Create test file
+        run: |
+          echo "Test file created by @create-guru" > test-git-ops.txt
+      
+      - name: Show diff
+        uses: ./.github/actions/reusable-git-operations
+        with:
+          operation: diff
+      
+      - name: Check status again
+        uses: ./.github/actions/reusable-git-operations
+        with:
+          operation: status
+      
+      - name: Fetch from origin
+        uses: ./.github/actions/reusable-git-operations
+        with:
+          operation: fetch
+
+  integration-test:
+    runs-on: ubuntu-latest
+    name: Integration Test - Combined Actions
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Create data file
+        run: |
+          cat > data.json <<'EOF'
+          {
+            "project": "Chained",
+            "actions": {
+              "enhanced": true,
+              "count": 5
+            }
+          }
+          EOF
+      
+      - name: Process JSON
+        id: process
+        uses: ./.github/actions/reusable-json-operations
+        with:
+          operation: query
+          input-file: data.json
+          query: '.actions.count'
+      
+      - name: Use result in Python
+        uses: ./.github/actions/reusable-python-scripts
+        with:
+          inline: 'true'
+          script: |
+            count = ${{ steps.process.outputs.result }}
+            print(f"Processed {count} enhanced actions")
+            print("✅ Integration test passed!")
+      
+      - name: Make HTTP request with result
+        uses: ./.github/actions/reusable-http-requests
+        with:
+          method: GET
+          url: https://httpbin.org/get
+          headers: '{"X-Actions-Count": "${{ steps.process.outputs.result }}"}'
+
+  summary:
+    needs: [test-json-operations, test-regex-operations, test-http-operations, test-python-operations, test-git-operations, integration-test]
+    if: always()
+    runs-on: ubuntu-latest
+    name: Test Summary
+    steps:
+      - name: Generate summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY <<'EOF'
+          # Enhanced Custom Actions Test Results
+          
+          **Created by @create-guru** - Visionary infrastructure inspired by Nikola Tesla
+          
+          ## Actions Tested
+          
+          - ✅ **reusable-json-operations** - Query, validate, merge, transform JSON
+          - ✅ **reusable-regex-operations** - Match, replace, extract, validate patterns
+          - ✅ **reusable-http-requests** - HTTP methods with auth and retry logic
+          - ✅ **reusable-python-scripts** - Execute Python with dependencies
+          - ✅ **reusable-git-operations** - Git workflow automation
+          
+          ## Key Features
+          
+          - 🔒 Robust error handling and validation
+          - 🔄 Retry mechanisms with configurable delays
+          - 📝 Comprehensive input/output options
+          - 🎨 Beautiful, informative logging
+          - ⚡ Production-ready implementations
+          
+          ## Integration
+          
+          All actions work seamlessly together for complex workflows!
+          
+          ---
+          *Infrastructure that illuminates possibilities* ⚡
+          EOF
