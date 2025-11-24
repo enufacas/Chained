@@ -1318,12 +1318,362 @@
         "stat-test-1-subtask-1": "agent-1762918927"
       },
       "status": "active"
+    },
+    {
+      "id": "coord-issue-test-demo-1763948113",
+      "task_id": "issue-test-demo",
+      "created_at": "2025-11-24T01:35:13.428965+00:00",
+      "plan": {
+        "task_id": "issue-test-demo",
+        "complexity": "moderate",
+        "sub_tasks": [
+          {
+            "id": "issue-test-demo-subtask-1",
+            "description": "Api work: Design and implement API endpoints for: Implement user authentication with OAuth2, add integration tests, document API endpoints",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          },
+          {
+            "id": "issue-test-demo-subtask-2",
+            "description": "Documentation work: Create or update documentation for: Implement user authentication with OAuth2, add integration tests, document API endpoints",
+            "required_specializations": [
+              "support-master"
+            ],
+            "dependencies": [],
+            "priority": 2,
+            "estimated_effort": "low",
+            "status": "pending",
+            "assigned_agent": "agent-1763091768",
+            "completion_criteria": [
+              "Documentation complete and accurate",
+              "Examples provided",
+              "Documentation reviewed"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-test-demo-subtask-1",
+          "issue-test-demo-subtask-2"
+        ],
+        "parallel_groups": [
+          [
+            "issue-test-demo-subtask-1",
+            "issue-test-demo-subtask-2"
+          ]
+        ],
+        "estimated_duration": "medium (4-8 hours)",
+        "required_agents": [
+          "engineer-master",
+          "support-master",
+          "engineer-wizard"
+        ]
+      },
+      "assignments": {
+        "issue-test-demo-subtask-1": "agent-1763087215",
+        "issue-test-demo-subtask-2": "agent-1763091768"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-issue-payment-1763948215",
+      "task_id": "issue-payment",
+      "created_at": "2025-11-24T01:36:55.964000+00:00",
+      "plan": {
+        "task_id": "issue-payment",
+        "complexity": "complex",
+        "sub_tasks": [
+          {
+            "id": "issue-payment-subtask-1",
+            "description": "Api work: Design and implement API endpoints for: Add payment processing to the e-commerce platform:\n    - Integrate Stripe payment gateway\n    -...",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          },
+          {
+            "id": "issue-payment-subtask-2",
+            "description": "Security work: Audit and fix security vulnerabilities for: Add payment processing to the e-commerce platform:\n    - Integrate Stripe payment gateway\n    -...",
+            "required_specializations": [
+              "secure-specialist",
+              "monitor-champion"
+            ],
+            "dependencies": [],
+            "priority": 10,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": null,
+            "completion_criteria": [
+              "Vulnerabilities fixed",
+              "Security tests pass",
+              "Security review completed"
+            ]
+          },
+          {
+            "id": "issue-payment-subtask-3",
+            "description": "Documentation work: Create or update documentation for: Add payment processing to the e-commerce platform:\n    - Integrate Stripe payment gateway\n    -...",
+            "required_specializations": [
+              "support-master"
+            ],
+            "dependencies": [],
+            "priority": 2,
+            "estimated_effort": "low",
+            "status": "pending",
+            "assigned_agent": "agent-1763091768",
+            "completion_criteria": [
+              "Documentation complete and accurate",
+              "Examples provided",
+              "Documentation reviewed"
+            ]
+          }
+        ],
+        "execution_order": [
+          "issue-payment-subtask-2",
+          "issue-payment-subtask-1",
+          "issue-payment-subtask-3"
+        ],
+        "parallel_groups": [
+          [
+            "issue-payment-subtask-2",
+            "issue-payment-subtask-1",
+            "issue-payment-subtask-3"
+          ]
+        ],
+        "estimated_duration": "long (1-3 days)",
+        "required_agents": [
+          "engineer-master",
+          "engineer-wizard",
+          "monitor-champion",
+          "secure-specialist",
+          "support-master"
+        ]
+      },
+      "assignments": {
+        "issue-payment-subtask-1": "agent-1763087215",
+        "issue-payment-subtask-3": "agent-1763091768"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-test-coordination-1763948306",
+      "task_id": "test-coordination",
+      "created_at": "2025-11-24T01:38:26.428894+00:00",
+      "plan": {
+        "task_id": "test-coordination",
+        "complexity": "moderate",
+        "sub_tasks": [
+          {
+            "id": "test-coordination-subtask-1",
+            "description": "Infrastructure work: Implement infrastructure and tooling for: Build API with tests and documentation",
+            "required_specializations": [
+              "create-guru",
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "Feature implemented and tested",
+              "Infrastructure is documented",
+              "Integration tests pass"
+            ]
+          },
+          {
+            "id": "test-coordination-subtask-2",
+            "description": "Api work: Design and implement API endpoints for: Build API with tests and documentation",
+            "required_specializations": [
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [
+              "test-coordination-subtask-1"
+            ],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "API endpoints implemented",
+              "API documentation complete",
+              "API tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "test-coordination-subtask-1",
+          "test-coordination-subtask-2"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "medium (4-8 hours)",
+        "required_agents": [
+          "create-guru",
+          "engineer-master",
+          "engineer-wizard"
+        ]
+      },
+      "assignments": {
+        "test-coordination-subtask-1": "agent-1763087215",
+        "test-coordination-subtask-2": "agent-1763087215"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-test-stats-1763948306",
+      "task_id": "test-stats",
+      "created_at": "2025-11-24T01:38:26.432623+00:00",
+      "plan": {
+        "task_id": "test-stats",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "test-stats-subtask-1",
+            "description": "Testing work: Add comprehensive tests and improve coverage for: Test task for statistics",
+            "required_specializations": [
+              "assert-specialist"
+            ],
+            "dependencies": [],
+            "priority": 8,
+            "estimated_effort": "medium",
+            "status": "pending",
+            "assigned_agent": "agent-1762918927",
+            "completion_criteria": [
+              "Test coverage increased",
+              "All tests pass",
+              "Edge cases are covered"
+            ]
+          }
+        ],
+        "execution_order": [
+          "test-stats-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "assert-specialist"
+        ]
+      },
+      "assignments": {
+        "test-stats-subtask-1": "agent-1762918927"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-test-auto-assign-1763948306",
+      "task_id": "test-auto-assign",
+      "created_at": "2025-11-24T01:38:26.441494+00:00",
+      "plan": {
+        "task_id": "test-auto-assign",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "test-auto-assign-subtask-1",
+            "description": "Infrastructure work: Implement infrastructure and tooling for: Build feature with tests",
+            "required_specializations": [
+              "create-guru",
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "Feature implemented and tested",
+              "Infrastructure is documented",
+              "Integration tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "test-auto-assign-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "create-guru",
+          "engineer-master",
+          "engineer-wizard"
+        ]
+      },
+      "assignments": {
+        "test-auto-assign-subtask-1": "agent-1763087215"
+      },
+      "status": "active"
+    },
+    {
+      "id": "coord-test-no-assign-1763948306",
+      "task_id": "test-no-assign",
+      "created_at": "2025-11-24T01:38:26.444147+00:00",
+      "plan": {
+        "task_id": "test-no-assign",
+        "complexity": "simple",
+        "sub_tasks": [
+          {
+            "id": "test-no-assign-subtask-1",
+            "description": "Infrastructure work: Implement infrastructure and tooling for: Build feature with tests",
+            "required_specializations": [
+              "create-guru",
+              "engineer-master",
+              "engineer-wizard"
+            ],
+            "dependencies": [],
+            "priority": 6,
+            "estimated_effort": "high",
+            "status": "pending",
+            "assigned_agent": "agent-1763087215",
+            "completion_criteria": [
+              "Feature implemented and tested",
+              "Infrastructure is documented",
+              "Integration tests pass"
+            ]
+          }
+        ],
+        "execution_order": [
+          "test-no-assign-subtask-1"
+        ],
+        "parallel_groups": [],
+        "estimated_duration": "short (< 4 hours)",
+        "required_agents": [
+          "create-guru",
+          "engineer-master",
+          "engineer-wizard"
+        ]
+      },
+      "assignments": {
+        "test-no-assign-subtask-1": "agent-1763087215"
+      },
+      "status": "active"
     }
   ],
   "statistics": {
-    "total_coordinations": 28,
+    "total_coordinations": 34,
     "successful_coordinations": 0,
     "failed_coordinations": 0,
-    "avg_agents_per_task": 0.9642857142857143
+    "avg_agents_per_task": 1.0588235294117647
   }
 }
