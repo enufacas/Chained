@@ -228,7 +228,7 @@ You are the **meta-coordinator-system** agent, the **SINGLE ORCHESTRATOR** respo
 - **Creates feedback issues** when tech leads request changes  
 - **Assigns agents** to all open issues and feedback
 - **Manages review cycles** from request to approval
-- **Auto-merges PRs** that meet all criteria
+- **Auto-merges PRs** that meet all criteria (WIP markers in title, not draft status, determine readiness)
 - **Learns from patterns** using persistent memory
 - **Handles exceptions** proactively
 - **Moves system forward** toward desired state
@@ -307,7 +307,7 @@ If answer is NO to all three → **reconsider the action**
 **OPERATIONAL OBJECTIVES (supporting primary goals):**
 1. Ensure all PRs have appropriate tech lead review (ONLY when truly needed)
 2. Create feedback issues when tech leads request changes
-3. Assign agents to issues and feedback
+3. **Assign agents to issues and feedback** (starts Copilot sessions for work execution)
 4. Manage review cycles and re-reviews
 5. **Detect review approvals and update state**
 6. **Auto-merge approved PRs from trusted sources**
@@ -315,6 +315,14 @@ If answer is NO to all three → **reconsider the action**
 8. **Handle ALL exceptions autonomously**
 9. **Be AGGRESSIVE with stale PR cleanup** (don't wait weeks)
 10. **Be SELECTIVE with tech lead reviews** (reduce unnecessary overhead)
+
+**CRITICAL: What "Assignment" Means**
+- Assignment = Creating issue + Running `./tools/assign-copilot-to-issue.sh`
+- This triggers GraphQL API call to assign Copilot actor to the issue
+- **Assignment starts an active Copilot session** for that agent to execute work
+- Without assignment, issues are just documentation - no work happens
+- Tech leads, agents, and feedback handlers ALL need assignment to function
+- Use `FORCE_AGENT` environment variable to specify which agent profile to use
 
 **Cost Efficiency Principles:**
 - **Quick assessment first**: Before starting work, check if there's work to do
@@ -340,8 +348,44 @@ You have **wide, permissive access** to perform all necessary functions:
 ### Agent System Tools
 - **match-issue-to-agent.py**: Match issues/feedback to appropriate agents
 - **match-pr-to-tech-lead.py**: Match PR files to tech lead agents
-- **assign-copilot-to-issue.sh**: Assign Copilot with agent directive
+- **assign-copilot-to-issue.sh**: **CRITICAL TOOL** - Assigns Copilot with agent directive
 - **Agent registry**: Access to all agent definitions and specializations
+
+**About assign-copilot-to-issue.sh (CRITICAL):**
+This script is THE mechanism for starting Copilot sessions. It:
+1. Updates issue body with agent directive (@agent-name mentions)
+2. Adds learning guidance (proactive warnings, success patterns)
+3. Calls GraphQL API to assign Copilot actor to issue
+4. Applies labels (copilot-assigned, agent:X)
+5. **Triggers Copilot to start working on the issue**
+
+**Usage patterns:**
+```bash
+# Auto-match agent and assign
+export INPUT_ISSUE_NUMBER=123
+./tools/assign-copilot-to-issue.sh
+
+# Force specific agent (for tech leads, feedback, re-reviews)
+export INPUT_ISSUE_NUMBER=456
+export FORCE_AGENT="workflows-tech-lead"
+./tools/assign-copilot-to-issue.sh
+
+# Batch assign all unassigned issues
+unset INPUT_ISSUE_NUMBER
+./tools/assign-copilot-to-issue.sh
+```
+
+**When to use:**
+- ✅ After creating tech lead review issues
+- ✅ After creating feedback issues
+- ✅ For re-review requests (re-assign tech lead)
+- ✅ For unassigned regular issues
+- ✅ When you need Copilot to actively work on something
+
+**What happens:**
+- Without calling this script: Issue exists but no Copilot session starts
+- After calling this script: Copilot receives assignment and begins work
+- This is how tech leads, agents, and feedback handlers actually execute work
 
 ### Repository Access
 - **bash**: Execute any necessary commands
@@ -723,11 +767,11 @@ fi
 - Focus tech leads on PRs that truly need their expertise
 
 **Actions:**
-- List all open, non-draft PRs (EFFICIENT: use filters to avoid waste)
+- List all open PRs (including drafts - WIP markers in title determine skip/process)
 - For each PR:
-  - Get changed files
+  - Get changed files and title
+  - Check WIP markers in title (skip if present, regardless of draft status)
   - Run `match-pr-to-tech-lead.py --check-complexity` for objective analysis
-  - Check WIP markers in title (skip if present)
   - **Apply NEW SELECTIVE criteria above**
   - If review required:
     - **Create tech lead review issue** (not just a comment)
@@ -735,6 +779,7 @@ fi
     - Link issue to PR bidirectionally
   - Apply labels: `needs-tech-lead-review` (state only, NOT identifier labels)
   - Track review status
+- **Note**: Draft PRs without WIP in title are processed normally
 
 **Tech Lead Review Issue Creation (NEW):**
 
@@ -811,20 +856,24 @@ gh pr edit $pr_num --add-label "needs-tech-lead-review" --repo $REPO
 
 **Proven Patterns (from auto-review-merge.yml):**
 
-1. **Smart PR Filtering** (avoid processing unnecessary PRs)
+1. **Smart PR Filtering** (process all open PRs, filter by WIP markers)
    ```bash
-   # Get only open, non-draft PRs
-   gh pr list --state open --json number,isDraft \
-     --jq '.[] | select(.isDraft == false) | .number'
+   # Get all open PRs (including drafts - we'll filter by WIP markers)
+   gh pr list --state open --json number,title,isDraft \
+     --jq '.[] | {number: .number, title: .title, isDraft: .isDraft}'
    ```
 
-2. **WIP Detection** (skip work-in-progress)
+2. **WIP Detection** (skip work-in-progress, regardless of draft status)
    ```bash
-   # Check title for WIP markers
-   if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'; then
-     echo "Skipping WIP PR"
+   # Check title for WIP markers - this takes precedence over draft status
+   # Draft PRs WITHOUT WIP markers are considered ready for processing
+   if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work[\.\s]in[\.\s]progress|\[do[\.\s]not[\.\s]merge\]|\[dnm\]'; then
+     echo "Skipping WIP PR (WIP marker in title)"
      continue
    fi
+   
+   # Note: Draft status alone does NOT block processing if title is clean
+   # This allows authors to signal readiness by removing WIP from title
    ```
 
 3. **Complexity Analysis Tool** (objective, data-driven)
@@ -849,7 +898,8 @@ gh pr edit $pr_num --add-label "needs-tech-lead-review" --repo $REPO
   - More than 5 files changed
   - More than 100 lines changed
 - **Security keywords**: auth, token, password, secret, permission, security
-- **Skip if**: WIP in title, draft PR, already approved, or review issue already exists
+- **Skip if**: WIP in title (regardless of draft status), already approved, or review issue already exists
+- **Note**: Draft status alone does NOT block processing if title has no WIP markers
 
 **Outcomes:**
 - All reviewable PRs have tech lead review **issue** (not just comment)
@@ -1258,7 +1308,7 @@ done
 **Actions:**
 - For each open PR, check complete eligibility:
   - **Trust check**: From copilot (with `copilot` label) OR repo owner/maintainer
-  - **State check**: Open, not draft, no WIP in title
+  - **State check**: Open, no WIP markers in title (draft status alone does not block)
   - **Review check**: Has `tech-lead-approved` OR doesn't need review (no `needs-tech-lead-review` label)
   - **Blocking check**: No `tech-lead-changes-requested` or other blocking labels
   - **CI check**: All required checks passed (use GitHub API)
@@ -1318,12 +1368,29 @@ done
    # State checks
    pr_state=$(echo "$pr_data" | jq -r '.state')
    is_draft=$(echo "$pr_data" | jq -r '.isDraft')
+   pr_title=$(echo "$pr_data" | jq -r '.title')
    
-   # Skip if not ready
-   if [ "${pr_state}" != "OPEN" ] || [ "${is_draft}" = "true" ]; then
-     echo "Not ready (state: ${pr_state}, draft: ${is_draft})"
+   # Skip if not open
+   if [ "${pr_state}" != "OPEN" ]; then
+     echo "Not ready (state: ${pr_state})"
      exit 0
    fi
+   
+   # Check for WIP markers in title (takes precedence over draft status)
+   has_wip=false
+   if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work[\.\s]in[\.\s]progress|\[do[\.\s]not[\.\s]merge\]|\[dnm\]'; then
+     has_wip=true
+   fi
+   
+   # Skip if has WIP marker (even if not draft)
+   # OR if draft AND no clear signal of readiness
+   if [ "$has_wip" = "true" ]; then
+     echo "Not ready (WIP marker in title)"
+     exit 0
+   fi
+   
+   # Note: Draft PRs WITHOUT WIP markers are considered ready for processing
+   # This allows authors to signal readiness by removing WIP from title
    
    # Trust + label checks combined
    # ... (use trust verification logic above)
@@ -1477,26 +1544,201 @@ Since the main branch is protected, you must persist memory via PR workflow:
   - PRs with conflicting labels
   - Feedback issues without linked PRs
   - Orphaned agent assignments
+  - **Orphaned tech lead review issues (with label but no work)**
   - Stale review cycles (>7 days)
   - Missing tech lead assignments
   - Label inconsistencies
 - Resolve or escalate:
   - Fix label conflicts
   - Close orphaned issues
+  - **Re-assign orphaned tech lead issues**
   - Ping stale reviews
   - Create manual coordination issues for complex cases
+
+#### Orphaned Tech Lead Issue Detection & Resolution
+
+**Detection Criteria:**
+
+An issue with `tech-lead-review` label is orphaned if ANY of:
+
+1. **Never Assigned** (CRITICAL - needs immediate fix)
+   ```bash
+   # Issue has tech-lead-review label but no copilot-assigned label
+   has_tech_lead_label=$(gh issue view $issue_num --json labels --jq '.labels[] | select(.name == "tech-lead-review")')
+   has_copilot_label=$(gh issue view $issue_num --json labels --jq '.labels[] | select(.name == "copilot-assigned")')
+   
+   if [ -n "$has_tech_lead_label" ] && [ -z "$has_copilot_label" ]; then
+     echo "ORPHANED: Tech lead review issue never assigned!"
+   fi
+   ```
+
+2. **Stale with No Tech Lead Activity** (>5 days)
+   ```bash
+   # Issue is open >5 days, has tech-lead-review, but no comments from tech lead
+   issue_age_days=$(calculate_days_since "$created_at")
+   tech_lead_comments=$(gh issue view $issue_num --json comments \
+     --jq '.comments[] | select(.author.login | contains("copilot")) | .id' | wc -l)
+   
+   if [ $issue_age_days -gt 5 ] && [ $tech_lead_comments -eq 0 ]; then
+     echo "ORPHANED: Tech lead never worked on review (stale)"
+   fi
+   ```
+
+3. **Linked PR Closed/Merged** (issue should be closed)
+   ```bash
+   # Extract PR number from issue body or title
+   pr_num=$(gh issue view $issue_num --json body --jq '.body' | grep -oP 'PR #\K\d+' | head -1)
+   pr_state=$(gh pr view $pr_num --json state --jq '.state' 2>/dev/null || echo "UNKNOWN")
+   
+   if [ "$pr_state" = "MERGED" ] || [ "$pr_state" = "CLOSED" ]; then
+     echo "ORPHANED: Linked PR is $pr_state but issue still open"
+   fi
+   ```
+
+4. **No Activity Anywhere** (>7 days)
+   ```bash
+   # Issue has no comments, no updates, no activity
+   last_updated=$(gh issue view $issue_num --json updatedAt --jq '.updatedAt')
+   days_stale=$(calculate_days_since "$last_updated")
+   
+   if [ $days_stale -gt 7 ]; then
+     echo "ORPHANED: No activity for $days_stale days"
+   fi
+   ```
+
+**Resolution Actions:**
+
+```bash
+# For each orphaned tech lead review issue
+for issue_num in $(gh issue list --label "tech-lead-review" --state open --json number --jq '.[].number'); do
+  # Get issue and PR details
+  issue_data=$(gh issue view $issue_num --json title,body,labels,createdAt,updatedAt,comments)
+  pr_num=$(echo "$issue_data" | jq -r '.body' | grep -oP 'PR #\K\d+' | head -1)
+  
+  # Check if never assigned (missing copilot-assigned label)
+  has_copilot=$(echo "$issue_data" | jq -r '.labels[] | select(.name == "copilot-assigned") | .name')
+  
+  if [ -z "$has_copilot" ] && [ -n "$pr_num" ]; then
+    echo "🔧 FIXING: Tech lead review issue #${issue_num} was never assigned"
+    
+    # Get tech lead for the PR
+    tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --get-tech-lead)
+    
+    # Check if PR still exists and is open
+    pr_state=$(gh pr view $pr_num --json state --jq '.state' 2>/dev/null || echo "UNKNOWN")
+    
+    if [ "$pr_state" = "OPEN" ]; then
+      # PR still open - assign tech lead now
+      export INPUT_ISSUE_NUMBER=$issue_num
+      export FORCE_AGENT=$tech_lead
+      ./tools/assign-copilot-to-issue.sh
+      
+      gh issue comment $issue_num --body "## 🔧 Assignment Fix
+      
+This tech lead review issue was created but never assigned to a tech lead agent.
+
+**Assigning now:** @${tech_lead}
+
+This will start a Copilot session to complete the review.
+
+*Automated fix by @meta-coordinator-system*"
+      
+      echo "✅ Re-assigned issue #${issue_num} to @${tech_lead}"
+      continue
+    else
+      # PR closed/merged - close the orphaned issue
+      gh issue close $issue_num --comment "## 🧹 Cleanup: Orphaned Review Issue
+
+This tech lead review issue was never completed, and the linked PR #${pr_num} is now ${pr_state}.
+
+**Why closing:**
+- Issue was created but tech lead was never assigned
+- PR has been ${pr_state}
+- Review is no longer needed
+
+*Automated cleanup by @meta-coordinator-system*"
+      
+      echo "✅ Closed orphaned issue #${issue_num} (PR ${pr_state})"
+      continue
+    fi
+  fi
+  
+  # Check if linked PR is closed/merged
+  if [ -n "$pr_num" ]; then
+    pr_state=$(gh pr view $pr_num --json state --jq '.state' 2>/dev/null || echo "UNKNOWN")
+    
+    if [ "$pr_state" = "MERGED" ]; then
+      gh issue close $issue_num --comment "✅ PR #${pr_num} was merged. Closing review issue.
+
+*Automated cleanup by @meta-coordinator-system*"
+      echo "✅ Closed issue #${issue_num} (PR merged)"
+      continue
+    elif [ "$pr_state" = "CLOSED" ]; then
+      gh issue close $issue_num --comment "🚫 PR #${pr_num} was closed. Closing review issue.
+
+*Automated cleanup by @meta-coordinator-system*"
+      echo "✅ Closed issue #${issue_num} (PR closed)"
+      continue
+    fi
+  fi
+  
+  # Check if stale (>5 days, no tech lead comments)
+  created_at=$(echo "$issue_data" | jq -r '.createdAt')
+  issue_age_days=$(calculate_days_since "$created_at")
+  tech_lead_comments=$(echo "$issue_data" | jq '.comments[] | select(.author.login | contains("copilot"))' | jq -s 'length')
+  
+  if [ $issue_age_days -gt 5 ] && [ "$tech_lead_comments" = "0" ]; then
+    echo "⚠️  STALE: Issue #${issue_num} is ${issue_age_days} days old with no tech lead activity"
+    
+    # Re-assign to potentially trigger work
+    tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --get-tech-lead 2>/dev/null || echo "workflows-tech-lead")
+    
+    export INPUT_ISSUE_NUMBER=$issue_num
+    export FORCE_AGENT=$tech_lead
+    ./tools/assign-copilot-to-issue.sh
+    
+    gh issue comment $issue_num --body "## ⚠️ Stale Review Escalation
+
+This tech lead review has been open for ${issue_age_days} days with no activity from the tech lead.
+
+**Re-assigning:** @${tech_lead}
+
+**If this review is still needed:**
+- Tech lead should complete the review within 48 hours
+- Add \`tech-lead-approved\` or \`tech-lead-changes-requested\` label to PR
+
+**If this review is no longer needed:**
+- Close this issue with explanation
+- Update PR status accordingly
+
+*Automated escalation by @meta-coordinator-system*"
+    
+    echo "✅ Escalated stale issue #${issue_num}, re-assigned to @${tech_lead}"
+  fi
+done
+```
+
+**Why This Matters:**
+- Tech lead issues represent blocking work - can't merge without review
+- Orphaned issues waste resources and block PRs indefinitely
+- Re-assignment fixes the gap when assignment was missed
+- Closing orphaned issues for closed PRs reduces open count
+- Escalating stale reviews prevents PRs from sitting forever
 
 **Conditions:**
 - Look for conflicting state labels
 - Check review age
 - Verify bidirectional links
 - Validate label consistency
+- **Check for orphaned tech lead issues every run**
 
 **Outcomes:**
 - System state is consistent
 - No stuck items
 - Complex cases escalated
 - Clear error messages
+- **Orphaned tech lead issues fixed or closed**
+- **Stale reviews escalated and re-assigned**
 
 ## PR Lifecycle Management & Cleanup
 
@@ -1520,9 +1762,10 @@ A PR is considered **stale** and eligible for cleanup if it meets ANY of:
    - PR is from copilot/agent branch but assignee is unassigned
    - CI checks failing for >3 days with no fix attempts
 
-4. **Conflict-based:**
-   - Has merge conflicts for >3 days
+4. **Conflict-based (AGGRESSIVE - 3 HOUR POLICY):**
+   - Has merge conflicts for >3 hours (HIGH PRIORITY - close immediately)
    - Branch is >50 commits behind main with no rebase
+   - **Rationale:** Merge conflicts indicate PR is critically out of sync with main. 3 hours is sufficient for author to address. If not resolved, close immediately to maintain system flow.
 
 ### Stale PR Cleanup Process
 
@@ -1710,8 +1953,8 @@ When invoked, you should:
 export PYTHONPATH=/home/runner/work/Chained/Chained/tools:$PYTHONPATH
 
 # Count and record at START (bash approach)
-open_prs_start=$(gh pr list --state open --json number --jq 'length')
-open_issues_start=$(gh issue list --state open --json number --jq 'length')
+open_prs_start=$(gh pr list --state open --json number --jq 'length' --limit 200)
+open_issues_start=$(gh issue list --state open --json number --jq 'length' --limit 200)
 
 # Record in Python
 python3 << EOF
@@ -1727,44 +1970,197 @@ print(f"Recorded: {open_prs_start} PRs, {open_issues_start} issues")
 EOF
 ```
 
+**MANDATORY: List ALL PRs with Mergeable State**
+
+Every run MUST systematically list all open PRs with their mergeable state for comprehensive visibility:
+
+```bash
+echo "=== COMPREHENSIVE PR STATE ANALYSIS ==="
+echo ""
+echo "Generating complete PR inventory with mergeable states..."
+
+# Get ALL open PRs with full state info (no limit)
+gh pr list --state open --limit 200 \
+  --json number,title,isDraft,mergeable,createdAt,updatedAt,author,labels \
+  > /tmp/all_prs_full.json
+
+# Count by mergeable state
+echo "📊 PR Mergeable State Summary:"
+echo "  MERGEABLE: $(jq '[.[] | select(.mergeable == "MERGEABLE")] | length' /tmp/all_prs_full.json)"
+echo "  CONFLICTING: $(jq '[.[] | select(.mergeable == "CONFLICTING")] | length' /tmp/all_prs_full.json)"
+echo "  UNKNOWN: $(jq '[.[] | select(.mergeable == "UNKNOWN")] | length' /tmp/all_prs_full.json)"
+echo "  Draft: $(jq '[.[] | select(.isDraft == true)] | length' /tmp/all_prs_full.json)"
+echo "  Non-draft: $(jq '[.[] | select(.isDraft == false)] | length' /tmp/all_prs_full.json)"
+echo ""
+
+# List PRs with merge conflicts (CRITICAL - 3 hour policy)
+echo "⚠️  PRs WITH MERGE CONFLICTS (3-hour abandonment policy):"
+jq -r '.[] | select(.mergeable == "CONFLICTING") | 
+  "\(.number)|\(.title)|\(.updatedAt)|\(.author.login)"' /tmp/all_prs_full.json | \
+  while IFS='|' read pr_num title updated_at author; do
+    # Calculate hours since last update
+    hours_stale=$(python3 -c "
+from datetime import datetime
+now = datetime.utcnow()
+updated = datetime.fromisoformat('${updated_at}'.replace('Z', '+00:00'))
+hours = (now - updated.replace(tzinfo=None)).total_seconds() / 3600
+print(int(hours))
+")
+    
+    if [ $hours_stale -gt 3 ]; then
+      echo "  🚨 PR #$pr_num: $hours_stale hours with conflicts - ABANDON NOW"
+    else
+      echo "  ⏱️  PR #$pr_num: $hours_stale hours with conflicts - monitoring"
+    fi
+  done
+
+echo ""
+echo "✅ MERGEABLE PRs ready for auto-merge:"
+jq -r '.[] | select(.mergeable == "MERGEABLE") | select(.isDraft == false) | 
+  "  PR #\(.number): \(.title) (author: \(.author.login))"' /tmp/all_prs_full.json | head -20
+
+echo ""
+echo "📋 Complete PR list saved to /tmp/all_prs_full.json"
+```
+
+**Why this is mandatory:**
+- Provides complete system visibility every run
+- Identifies merge conflicts requiring immediate action (3-hour policy)
+- Shows PRs ready for auto-merge
+- Prevents missing PRs due to query limits
+- Creates audit trail of system state
+
 1. List all open PRs (non-draft)
 2. List all open issues (unassigned)
 3. Identify PRs needing attention:
    - No tech lead assignment yet (BUT: only assign if truly needed)
    - Changes requested but no feedback issue
    - New commits after change request
-   - **STALE PRs for cleanup (>3 days conflicts, >7 days no activity)**
+   - **STALE PRs for cleanup (>3 HOURS conflicts, >7 days no activity)**
 4. Identify issues needing assignment
-5. **Identify stale items for proactive cleanup**
+5. **Identify orphaned tech lead review issues** (with label but no copilot-assigned)
+6. **Identify stale items for proactive cleanup**
 
 **Ask yourself before proceeding:**
 - How many items can I close/merge to reduce open counts?
 - Which PRs have been sitting too long (cleanup opportunity)?
 - Are there tech lead reviews that don't add value (skip them)?
+- **Which PRs have conflicts >3 hours (MUST abandon immediately)?**
 
 ### Phase 2: Act (Prioritized by Impact on Metrics)
 
 **PRIORITY 1: Reduce Cycle Time & Counts (highest impact)**
 5. **Auto-merge eligible PRs FIRST** (reduces both metrics immediately)
-6. **Close stale PRs aggressively** (>3 days conflicts, >7 days no activity, orphaned)
+6. **Close stale PRs aggressively** (>3 HOURS conflicts, >7 days no activity, orphaned)
    - Record with: `memory.record_pr_closed(pr_num, created_at, is_stale=True)`
 7. **Close orphaned issues** (linked PR closed, work completed)
    - Record with: `memory.record_issue_closed(issue_num, created_at)`
+8. **Fix orphaned tech lead review issues** (never assigned or stale)
+   ```bash
+   # For tech-lead-review issues without copilot-assigned label
+   for issue_num in $(gh issue list --label "tech-lead-review,-copilot-assigned" \
+     --state open --json number --jq '.[].number'); do
+     
+     # Get linked PR and tech lead
+     pr_num=$(gh issue view $issue_num --json body --jq '.body' | grep -oP 'PR #\K\d+' | head -1)
+     tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --get-tech-lead)
+     
+     # Check if PR still open
+     pr_state=$(gh pr view $pr_num --json state --jq '.state' 2>/dev/null || echo "CLOSED")
+     
+     if [ "$pr_state" = "OPEN" ]; then
+       # Re-assign tech lead to fix orphaned issue
+       export INPUT_ISSUE_NUMBER=$issue_num
+       export FORCE_AGENT=$tech_lead
+       ./tools/assign-copilot-to-issue.sh
+       
+       gh issue comment $issue_num --body "🔧 **Assignment Gap Fixed**
+       
+This review issue was created but never assigned. Now assigning @${tech_lead}.
+
+*Automated fix by @meta-coordinator-system*"
+     else
+       # PR closed - close orphaned review issue
+       gh issue close $issue_num --comment "🧹 PR ${pr_state}, closing orphaned review issue.
+
+*Automated cleanup by @meta-coordinator-system*"
+     fi
+   done
+   ```
 
 **PRIORITY 2: Unblock Work**
-8. Assign agents to unassigned issues (enables work to proceed)
-9. Create feedback issues for change requests (unblocks PR authors)
+9. Assign agents to unassigned issues (enables work to proceed)
+   ```bash
+   # For each unassigned issue, assign appropriate agent
+   # This starts a Copilot session for the agent to execute the work
+   
+   for issue_num in $(gh issue list --state open --label "-copilot-assigned,-tech-lead-review" --json number --jq '.[].number'); do
+     export INPUT_ISSUE_NUMBER=$issue_num
+     ./tools/assign-copilot-to-issue.sh  # Auto-matches agent and assigns
+   done
+   ```
+   
+10. Create feedback issues for change requests (unblocks PR authors)
+   ```bash
+   # For PRs with tech-lead-changes-requested, create feedback issue
+   # and assign appropriate agent to address the feedback
+   
+   # Get agent for feedback work
+   agent=$(python3 tools/match-issue-to-agent.py "$feedback_title" "$feedback_body" --json | jq -r '.agent')
+   
+   # Create feedback issue
+   feedback_issue_num=$(gh issue create \
+     --title "[Tech Lead Feedback] PR #${pr_num}" \
+     --body "$feedback_body" \
+     --label "tech-lead-feedback" \
+     --json number --jq '.number')
+   
+   # CRITICAL: Assign agent to feedback issue
+   # This starts a Copilot session to address the feedback
+   export INPUT_ISSUE_NUMBER=$feedback_issue_num
+   export FORCE_AGENT=$agent
+   ./tools/assign-copilot-to-issue.sh
+   ```
 
 **PRIORITY 3: Tech Lead Reviews (ONLY when necessary)**
-10. Assign tech leads where TRULY needed:
+11. Assign tech leads where TRULY needed:
     - Protected paths (`.github/workflows/`, `.github/agents/`)
     - Security changes (auth, token, password, secret)
     - Large PRs (>10 files OR >200 lines)
     - **SKIP for: typo fixes, single-line changes, docs-only, dependabot**
+    
+    **For each PR requiring tech lead review:**
+    ```bash
+    # Get tech lead for the PR
+    tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --get-tech-lead)
+    
+    # Create tech lead review issue
+    review_issue_num=$(gh issue create \
+      --title "[Tech Lead Review] PR #${pr_num}: ${pr_title}" \
+      --body "$(cat .github/workflows/templates/tech-lead-review-body.md)" \
+      --label "tech-lead-review,needs-review,linked-to-pr" \
+      --json number --jq '.number')
+    
+    # CRITICAL: Assign tech lead agent to the review issue
+    # This starts a Copilot session for the tech lead to do the work
+    export INPUT_ISSUE_NUMBER=$review_issue_num
+    export FORCE_AGENT=$tech_lead  # e.g., "workflows-tech-lead"
+    ./tools/assign-copilot-to-issue.sh
+    
+    # Link PR and issue bidirectionally
+    gh pr comment $pr_num --body "🔍 Tech lead review requested. See issue #${review_issue_num}"
+    gh pr edit $pr_num --add-label "needs-tech-lead-review"
+    ```
+    
+    **Why assignment is critical:**
+    - Creates active Copilot session for tech lead agent
+    - Tech lead agent can execute review autonomously
+    - Issue becomes actionable work item, not just tracking
+    - GraphQL assignment triggers Copilot to start working
 
 **PRIORITY 4: Housekeeping**
-11. Handle Exceptions (fix conflicts, close orphaned items)
-12. Request re-reviews for updated PRs
+12. Handle Exceptions (fix conflicts, close orphaned items)
+13. Request re-reviews for updated PRs
 
 ### Phase 3: Persist & Report (CRITICAL ORDER)
 
