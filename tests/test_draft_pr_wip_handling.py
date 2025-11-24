@@ -28,7 +28,8 @@ def has_wip_marker(title: str) -> bool:
     - [dnm]
     """
     # Case-insensitive regex pattern matching the meta-coordinator logic
-    wip_pattern = r'\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'
+    # Match both "work.in.progress" and "work in progress" (with spaces or dots)
+    wip_pattern = r'\[WIP\]|^WIP:|WIP\s|work[.\s]in[.\s]progress|\[do[.\s]not[.\s]merge\]|\[dnm\]'
     return bool(re.search(wip_pattern, title, re.IGNORECASE))
 
 
