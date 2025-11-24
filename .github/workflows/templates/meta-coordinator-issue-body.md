@@ -283,12 +283,13 @@ Add comprehensive logging to identify why assignments may be failing.
 
 **Eligibility Criteria:**
 PRs must meet ALL of these criteria to be auto-merged:
-- PR has `approved` label
-- PR is NOT a draft
-- PR does NOT have WIP in title
+- PR has `approved` label OR doesn't need review (from trusted source)
+- PR does NOT have WIP markers in title (draft status alone does NOT block)
 - PR author is repository owner/maintainer OR PR has `copilot` label
 - **CI checks:** Either passed (green) OR unavailable (skip check if unavailable)
 - No merge conflicts (mergeable == "MERGEABLE")
+
+**Important:** Draft status is ignored. Only WIP markers in the PR title determine eligibility.
 
 **CI Check Strategy (Phase 6 - NEW):**
 ```bash
