@@ -8,7 +8,7 @@ name: "Meta-Coordinator: System Orchestration"
 # - Create feedback issues for change requests
 # - Assign agents to issues
 # - Manage review cycles
-# - Auto-merge approved PRs (non-draft, no WIP)
+# - Auto-merge approved PRs (no WIP in title; draft status doesn't block)
 # - Handle exceptions
 
 on:
@@ -157,22 +157,29 @@ jobs:
             > /tmp/all_prs.json
           
           # Count by state
+          # Note: Mergeable count excludes drafts for reporting clarity,
+          # but meta-coordinator agent will process draft PRs without WIP markers
           mergeable=$(jq '[.[] | select(.mergeable == "MERGEABLE" and .isDraft == false)] | length' /tmp/all_prs.json)
+          mergeable_draft=$(jq '[.[] | select(.mergeable == "MERGEABLE" and .isDraft == true)] | length' /tmp/all_prs.json)
           conflicting=$(jq '[.[] | select(.mergeable == "CONFLICTING")] | length' /tmp/all_prs.json)
           draft=$(jq '[.[] | select(.isDraft == true)] | length' /tmp/all_prs.json)
           unknown=$(jq '[.[] | select(.mergeable == "UNKNOWN")] | length' /tmp/all_prs.json)
           
           # Save to environment
           echo "MERGEABLE_PRS=${mergeable}" >> $GITHUB_ENV
+          echo "MERGEABLE_DRAFT_PRS=${mergeable_draft}" >> $GITHUB_ENV
           echo "CONFLICTING_PRS=${conflicting}" >> $GITHUB_ENV
           echo "DRAFT_PRS=${draft}" >> $GITHUB_ENV
           echo "UNKNOWN_PRS=${unknown}" >> $GITHUB_ENV
           
           echo "PR State Summary:"
           echo "  - ✅ Mergeable (non-draft): ${mergeable}"
+          echo "  - ✅ Mergeable (draft, may be ready if no WIP): ${mergeable_draft}"
           echo "  - ❌ Conflicting: ${conflicting}"
-          echo "  - 📝 Draft: ${draft}"
+          echo "  - 📝 Draft (total): ${draft}"
           echo "  - ❓ Unknown: ${unknown}"
+          echo ""
+          echo "Note: Draft PRs without WIP markers in title are eligible for processing"
           echo ""
       
       - name: Create and assign coordination request
