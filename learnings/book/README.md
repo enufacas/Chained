@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-24 09:27 UTC
+**Generated:** 2025-11-24 21:20 UTC
 
-**Total Learning Sessions:** 114
+**Total Learning Sessions:** 116
 
-**Total Insights:** 8672
+**Total Insights:** 8691
 
 ---
 
@@ -18,21 +18,21 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 3178
+**Insights:** 3197
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 724
+**Insights:** 721
 
 
 ### [🚀 DevOps & Infrastructure](./DevOps.md)
 
 CI/CD, containers, orchestration, and infrastructure automation
 
-**Insights:** 242
+**Insights:** 243
 
 
 ### [🗄️ Databases & Data Management](./Database.md)
@@ -74,14 +74,14 @@ IDEs, editors, debuggers, and productivity tools
 
 Open source projects, community insights, and collaboration
 
-**Insights:** 58
+**Insights:** 59
 
 
 ### [📚 General Tech Insights](./Other.md)
 
 General technology news and insights
 
-**Insights:** 3202
+**Insights:** 3203
 
 
 ## 📊 Statistics
@@ -89,13 +89,13 @@ General technology news and insights
 
 ### By Source
 
-- **Unknown:** 51 learning sessions
+- **Unknown:** 52 learning sessions
 
 - **Hacker News:** 26 learning sessions
 
 - **TLDR Tech:** 20 learning sessions
 
-- **GitHub Copilot (Combined):** 10 learning sessions
+- **GitHub Copilot (Combined):** 11 learning sessions
 
 - **GitHub Trending:** 4 learning sessions
 
@@ -106,11 +106,11 @@ General technology news and insights
 
 ### By Topic
 
-- **📚 General Tech Insights:** 3202 insights
+- **📚 General Tech Insights:** 3203 insights
 
-- **🤖 AI & Machine Learning:** 3178 insights
+- **🤖 AI & Machine Learning:** 3197 insights
 
-- **💻 Programming Languages & Frameworks:** 724 insights
+- **💻 Programming Languages & Frameworks:** 721 insights
 
 - **🔧 Developer Tools:** 510 insights
 
@@ -118,13 +118,13 @@ General technology news and insights
 
 - **⚡ Performance & Optimization:** 243 insights
 
-- **🚀 DevOps & Infrastructure:** 242 insights
+- **🚀 DevOps & Infrastructure:** 243 insights
 
 - **🗄️ Databases & Data Management:** 115 insights
 
 - **🔒 Security & Privacy:** 113 insights
 
-- **🌟 Open Source & Community:** 58 insights
+- **🌟 Open Source & Community:** 59 insights
 
 
 ## 💡 How to Use This Book

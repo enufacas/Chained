@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 3178
+**Total Insights:** 3197
 
 **Last Updated:** 2025-11-24
 
@@ -1269,36 +1269,38 @@ Essay | 10/03/2025 Economic / Social Policy - Rosalux International - UK / Irela
 ---
 
 
-### Fran Sans – font inspired by San Francisco light rail displays
+### Shai-Hulud Returns: Over 300 NPM Packages Infected
 
-**Community Score:** 848 upvotes
+**Community Score:** 704 upvotes
 
-**Link:** https://emilysneddon.com/fran-sans-essay
-
----
-
-
-### A free tool that stuns LLMs with thousands of invisible Unicode characters
-
-**Community Score:** 77 upvotes
-
-**Link:** https://gibberifier.com
+**Link:** https://helixguard.ai/blog/malicious-sha1hulud-2025-11-24
 
 ---
 
 
-### Ask HN: Hearing aid wearers, what's hot?
+### The Bitter Lesson of LLM Extensions
 
-**Community Score:** 151 upvotes
+**Community Score:** 41 upvotes
+
+**Link:** https://www.sawyerhood.com/blog/llm-extension
 
 ---
 
 
-### Show HN: Syd – An offline-first, AI-augmented workstation for blue teams
+### Three Years from GPT-3 to Gemini 3
 
-**Community Score:** 6 upvotes
+**Community Score:** 61 upvotes
 
-**Link:** https://www.sydsec.co.uk
+**Link:** https://www.oneusefulthing.org/p/three-years-from-gpt-3-to-gemini
+
+---
+
+
+### Implications of AI to schools
+
+**Community Score:** 80 upvotes
+
+**Link:** https://twitter.com/karpathy/status/1993010584175141038
 
 ---
 

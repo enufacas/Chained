@@ -594,6 +594,15 @@ Arianity (profile) says: November 13, 2025 at 8:24 pm Maybe we’ll be able to p
 ---
 
 
+### Claude Advanced Tool Use
+
+**Community Score:** 31 upvotes
+
+**Link:** https://www.anthropic.com/engineering/advanced-tool-use
+
+---
+
+
 ### Itiner-E – The Digital Atlas of Ancient Roads
 
 **Link:** https://itiner-e.org/
@@ -765,15 +774,5 @@ inp...
 ### 'No One Lives Forever' turns 25 and you still can't buy it legitimately
 
 **Link:** https://www.techdirt.com/2025/11/13/no-one-lives-forever-turns-25-you-still-cant-buy-it-legitimately/
-
----
-
-
-### Show HN: Dumbass Business Ideas
-
-**Link:** https://dumbassideas.com
-
-
-Discover hilariously terrible business ideas that probably shouldn&#x27;t exist. Get inspired by the worst startup concepts, share them with friends, and submit your own dumbass ideas!
 
 ---
