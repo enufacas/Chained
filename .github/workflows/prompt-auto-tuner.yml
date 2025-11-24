@@ -1,0 +1,319 @@
+name: "AI: Prompt Auto-Tuner"
+
+# Automatically tunes prompts based on historical performance data
+# This workflow runs periodically to evolve and optimize prompt templates
+# Created by @create-guru as part of the self-improving prompt generator
+
+on:
+  # Run weekly to optimize templates based on accumulated data
+  schedule:
+    - cron: '0 3 * * 0'  # 3 AM UTC every Sunday
+  
+  # Allow manual triggering for immediate optimization
+  workflow_dispatch:
+    inputs:
+      force_evolution:
+        description: 'Force template evolution even with limited data'
+        required: false
+        default: false
+        type: boolean
+      min_effectiveness:
+        description: 'Minimum effectiveness score to preserve templates'
+        required: false
+        default: '0.3'
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  auto-tune-prompts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Analyze current prompt performance
+        id: analyze
+        run: |
+          echo "📊 Analyzing prompt template performance..."
+          
+          # Get performance report
+          report=$(python3 tools/prompt-generator.py report 2>&1 | grep -v "^Warning:")
+          
+          # Extract metrics
+          total_prompts=$(echo "$report" | jq -r '.insights.overall.total_prompts_used // 0')
+          success_rate=$(echo "$report" | jq -r '.insights.overall.success_rate // 0')
+          
+          echo "total_prompts=$total_prompts" >> $GITHUB_OUTPUT
+          echo "success_rate=$success_rate" >> $GITHUB_OUTPUT
+          
+          echo "Current performance:"
+          echo "  Total prompts: $total_prompts"
+          echo "  Success rate: $(echo "$success_rate * 100" | bc)%"
+          
+          # Determine if we have enough data for tuning
+          min_data_threshold=10
+          if [ "$total_prompts" -lt "$min_data_threshold" ] && [ "${{ inputs.force_evolution }}" != "true" ]; then
+            echo "needs_tuning=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Not enough data yet ($total_prompts < $min_data_threshold). Skipping tuning."
+          else
+            echo "needs_tuning=true" >> $GITHUB_OUTPUT
+            echo "✓ Sufficient data for tuning"
+          fi
+      
+      - name: Identify optimization opportunities
+        if: steps.analyze.outputs.needs_tuning == 'true'
+        id: optimize
+        run: |
+          echo "🔍 Identifying templates that need optimization..."
+          
+          # Get optimization suggestions
+          suggestions=$(python3 tools/prompt-generator.py optimize 2>&1 | grep -v "^Warning:")
+          
+          echo "$suggestions" > /tmp/optimization_suggestions.json
+          
+          # Count templates needing attention
+          suggestion_count=$(echo "$suggestions" | jq '. | length')
+          echo "suggestion_count=$suggestion_count" >> $GITHUB_OUTPUT
+          
+          echo "Found $suggestion_count optimization opportunities"
+          
+          if [ "$suggestion_count" -gt 0 ]; then
+            echo ""
+            echo "Templates to optimize:"
+            echo "$suggestions" | jq -r '.[] | "  - \(.template_id): \(.issue) (\(.recommendation))"'
+          fi
+      
+      - name: Evolve underperforming templates
+        if: steps.analyze.outputs.needs_tuning == 'true' && steps.optimize.outputs.suggestion_count > 0
+        id: evolve
+        run: |
+          echo "🧬 Evolving underperforming templates..."
+          
+          suggestions=$(cat /tmp/optimization_suggestions.json)
+          min_effectiveness=${{ inputs.min_effectiveness || '0.3' }}
+          
+          evolved_count=0
+          evolved_templates=""
+          
+          # Process each suggestion
+          for template_id in $(echo "$suggestions" | jq -r '.[] | select(.issue == "low_effectiveness") | .template_id'); do
+            echo ""
+            echo "Evolving template: $template_id"
+            
+            # Try different mutation types
+            for mutation in "enhance" "focus" "simplify"; do
+              result=$(python3 tools/prompt-generator.py evolve \
+                --template-id "$template_id" \
+                --mutation "$mutation" 2>&1 | grep -v "^Warning:")
+              
+              if echo "$result" | grep -q "Created evolved template"; then
+                new_template=$(echo "$result" | grep "Created evolved template:" | cut -d: -f2 | xargs)
+                echo "  ✓ Created: $new_template (mutation: $mutation)"
+                evolved_count=$((evolved_count + 1))
+                evolved_templates="${evolved_templates}${new_template}\n"
+              fi
+            done
+          done
+          
+          echo "evolved_count=$evolved_count" >> $GITHUB_OUTPUT
+          echo "evolved_templates<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$evolved_templates" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo ""
+          echo "✓ Created $evolved_count evolved template variants"
+      
+      - name: Enable A/B testing for evolved templates
+        if: steps.evolve.outputs.evolved_count > 0
+        id: ab_test
+        run: |
+          echo "🧪 Setting up A/B tests for evolved templates..."
+          
+          evolved_templates="${{ steps.evolve.outputs.evolved_templates }}"
+          test_count=0
+          
+          # Set up A/B tests between base and evolved templates
+          while IFS= read -r evolved_template; do
+            if [ -z "$evolved_template" ]; then
+              continue
+            fi
+            
+            # Extract base template ID (remove _enhance_v2, _focus_v2, etc.)
+            base_template=$(echo "$evolved_template" | sed -E 's/_(enhance|focus|simplify)_v[0-9]+$//')
+            
+            echo "Setting up A/B test: $base_template vs $evolved_template"
+            
+            # Create A/B test
+            result=$(python3 tools/prompt-generator.py ab-test \
+              --template-a "$base_template" \
+              --template-b "$evolved_template" 2>&1 | grep -v "^Warning:")
+            
+            if echo "$result" | grep -q "test_id"; then
+              test_id=$(echo "$result" | jq -r '.test_id')
+              echo "  ✓ Created A/B test: $test_id"
+              test_count=$((test_count + 1))
+            fi
+          done <<< "$evolved_templates"
+          
+          echo "test_count=$test_count" >> $GITHUB_OUTPUT
+          echo "✓ Set up $test_count A/B tests"
+      
+      - name: Generate tuning report
+        if: steps.analyze.outputs.needs_tuning == 'true'
+        run: |
+          total_prompts="${{ steps.analyze.outputs.total_prompts }}"
+          success_rate="${{ steps.analyze.outputs.success_rate }}"
+          suggestion_count="${{ steps.optimize.outputs.suggestion_count }}"
+          evolved_count="${{ steps.evolve.outputs.evolved_count || 0 }}"
+          test_count="${{ steps.ab_test.outputs.test_count || 0 }}"
+          
+          success_pct=$(echo "$success_rate * 100" | bc)
+          
+          cat > /tmp/tuning_report.md <<EOF
+          # 🧬 Automated Prompt Tuning Report
+          
+          **Generated:** $(date -u +"%Y-%m-%d %H:%M UTC")
+          **By:** @create-guru (Prompt Auto-Tuner)
+          
+          ## 📊 Current Performance
+          
+          - **Total Prompts Used:** $total_prompts
+          - **Success Rate:** ${success_pct}%
+          - **Templates Needing Optimization:** $suggestion_count
+          
+          ## 🔧 Tuning Actions
+          
+          - **Templates Evolved:** $evolved_count
+          - **A/B Tests Created:** $test_count
+          
+          ## 🧬 Template Evolution
+          
+          The auto-tuner analyzed prompt performance and created evolved variants of underperforming templates. These variants use different strategies:
+          
+          - **Enhance**: Adds more specific guidance and best practices
+          - **Focus**: Emphasizes critical success factors
+          - **Simplify**: Removes verbose sections for faster execution
+          
+          ## 🧪 A/B Testing
+          
+          Evolved templates are now in active A/B testing against their base versions. As issues are resolved, the system will track which templates perform better and automatically promote winners.
+          
+          ## 📈 Continuous Improvement Process
+          
+          1. **Weekly Analysis**: Auto-tuner runs every Sunday to analyze performance
+          2. **Template Evolution**: Creates variants based on failure patterns
+          3. **A/B Testing**: Tests variants against base templates
+          4. **Automatic Selection**: Best performers are automatically selected
+          5. **Learning Integration**: Insights from TLDR/HN feed into templates
+          
+          ## 🎯 Next Steps
+          
+          The prompt generator will now:
+          - Use evolved templates in A/B rotation
+          - Track performance of all variants
+          - Automatically promote successful patterns
+          - Continue learning from real-world outcomes
+          
+          ---
+          
+          *This is an autonomous system. The prompt generator continuously evolves based on actual performance data, making each iteration more effective than the last.*
+          EOF
+          
+          sed -i 's/^          //' /tmp/tuning_report.md
+          
+          echo "✓ Tuning report generated"
+      
+      - name: Display tuning report
+        if: steps.analyze.outputs.needs_tuning == 'true'
+        run: |
+          echo ""
+          cat /tmp/tuning_report.md
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet tools/data/prompts/; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes to commit"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in prompt data"
+          fi
+      
+      - name: Commit tuning results
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add tools/data/prompts/
+          git commit -m "feat: auto-tune prompt templates (@create-guru)
+
+- Evolved ${{ steps.evolve.outputs.evolved_count || 0 }} templates
+- Created ${{ steps.ab_test.outputs.test_count || 0 }} A/B tests
+- Success rate: $(echo '${{ steps.analyze.outputs.success_rate }} * 100' | bc)%
+
+Automated by prompt auto-tuner (@create-guru)"
+          
+          echo "✓ Changes committed"
+      
+      - name: Create PR with tuning results
+        if: steps.check_changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          timestamp=$(date -u +"%Y%m%d-%H%M%S")
+          branch_name="prompt-tuning/${timestamp}-${{ github.run_id }}"
+          
+          git checkout -b "$branch_name"
+          git push origin "$branch_name"
+          
+          # Prepare PR body
+          if [ -f /tmp/tuning_report.md ]; then
+            pr_body=$(cat /tmp/tuning_report.md)
+          else
+            pr_body="Automated prompt template tuning by @create-guru"
+          fi
+          
+          # Add workflow reference
+          pr_body="${pr_body}
+
+---
+
+*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*"
+          
+          gh pr create \
+            --title "🧬 Auto-tune prompt templates - $(date -u +%Y-%m-%d)" \
+            --body "$pr_body" \
+            --label "automated,prompt-generator,enhancement" \
+            --base main \
+            --head "$branch_name" || {
+            echo "⚠️ PR creation with labels failed, retrying without labels..."
+            gh pr create \
+              --title "🧬 Auto-tune prompt templates - $(date -u +%Y-%m-%d)" \
+              --body "$pr_body" \
+              --base main \
+              --head "$branch_name"
+          }
+          
+          echo "✓ Created PR with tuning results"
+      
+      - name: Skip message
+        if: steps.analyze.outputs.needs_tuning == 'false'
+        run: |
+          echo ""
+          echo "ℹ️ Prompt auto-tuner: Not enough data yet for optimization"
+          echo "   Current: ${{ steps.analyze.outputs.total_prompts }} prompts"
+          echo "   Required: 10+ prompts"
+          echo ""
+          echo "The system will accumulate more data as issues are resolved."
+          echo "Next auto-tuning run: $(date -u -d 'next sunday 3:00' +'%Y-%m-%d %H:%M UTC')"
