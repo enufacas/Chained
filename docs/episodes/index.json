@@ -1,11 +1,17 @@
 {
-  "generated_at": "2025-11-24T03:15:32.106023+00:00",
-  "total_episodes": 110,
+  "generated_at": "2025-11-24T04:23:41.674855+00:00",
+  "total_episodes": 111,
   "dates": [
     {
       "date": "2025-11-24",
-      "episode_count": 2,
+      "episode_count": 3,
       "episodes": [
+        {
+          "filename": "episode-20251124-0423.json",
+          "title": "Code Review Chronicles",
+          "date": "2025-11-24T04:23:41.622197+00:00",
+          "scene_count": 4
+        },
         {
           "filename": "episode-20251124-0315.json",
           "title": "PR Storm Incoming",
