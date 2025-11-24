@@ -35,7 +35,7 @@ import urllib.request
 import urllib.error
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass, asdict
 
 
@@ -91,7 +91,7 @@ class WorkflowActivityReporter:
         if not self.token:
             print("Warning: No GitHub token found. API calls may fail or be rate-limited.", file=sys.stderr)
     
-    def _github_api_get(self, endpoint: str) -> Tuple[bool, any]:
+    def _github_api_get(self, endpoint: str) -> Tuple[bool, Union[Dict, str]]:
         """
         Make a GET request to the GitHub API.
         
@@ -319,17 +319,15 @@ class WorkflowActivityReporter:
                 score += 15
                 reasons.append(f"No runs in {days_since_last_run} days ({self.min_inactive_days}+ days)")
         elif total_runs == 0:
-            score += 40
-            reasons.append("Never been run")
+            # Never been run is a strong signal
+            score += 60
+            reasons.append("Never been run (zero total runs)")
         
-        # Low usage
-        if total_runs == 0:
-            score += 20
-            reasons.append("Zero total runs")
-        elif total_runs <= 5:
+        # Low usage (only for workflows that have runs)
+        if total_runs > 0 and total_runs <= 5:
             score += 10
             reasons.append(f"Very low usage ({total_runs} total runs)")
-        elif total_runs <= 20:
+        elif total_runs > 5 and total_runs <= 20:
             score += 5
             reasons.append(f"Low usage ({total_runs} total runs)")
         
@@ -626,13 +624,22 @@ def get_repo_info() -> Tuple[str, str]:
         )
         if result.returncode == 0:
             url = result.stdout.strip()
-            # Handle various URL formats
-            if 'github.com' in url:
-                # Extract owner/repo from URL
-                parts = url.replace('.git', '').split('github.com')[-1]
-                parts = parts.strip('/:').split('/')
-                if len(parts) >= 2:
-                    return parts[0], parts[1]
+            # Handle various GitHub URL formats:
+            # - https://github.com/owner/repo.git
+            # - git@github.com:owner/repo.git
+            # - https://github.com/owner/repo
+            import re
+            
+            # Match GitHub URLs more precisely
+            # HTTPS format
+            https_match = re.match(r'https://github\.com/([^/]+)/([^/]+?)(?:\.git)?$', url)
+            if https_match:
+                return https_match.group(1), https_match.group(2)
+            
+            # SSH format
+            ssh_match = re.match(r'git@github\.com:([^/]+)/([^/]+?)(?:\.git)?$', url)
+            if ssh_match:
+                return ssh_match.group(1), ssh_match.group(2)
     except Exception:
         pass
     

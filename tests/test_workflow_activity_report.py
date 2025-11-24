@@ -17,10 +17,18 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / 'tools'))
 
 
-def test_archival_score_calculation():
-    """Test that archival scores are calculated correctly."""
-    print("\n🧪 Testing archival score calculation")
-    print("-" * 60)
+# Cache the loaded module to avoid repeated loading
+_cached_module = None
+
+
+def load_workflow_activity_module():
+    """
+    Helper function to load the workflow-activity-report module.
+    Uses caching to avoid repeated loading across tests.
+    """
+    global _cached_module
+    if _cached_module is not None:
+        return _cached_module
     
     from importlib.util import spec_from_loader, module_from_spec
     from importlib.machinery import SourceFileLoader
@@ -33,6 +41,16 @@ def test_archival_score_calculation():
     )
     module = module_from_spec(spec)
     spec.loader.exec_module(module)
+    _cached_module = module
+    return module
+
+
+def test_archival_score_calculation():
+    """Test that archival scores are calculated correctly."""
+    print("\n🧪 Testing archival score calculation")
+    print("-" * 60)
+    
+    module = load_workflow_activity_module()
     
     reporter = module.WorkflowActivityReporter(
         owner='test',
@@ -144,16 +162,7 @@ def test_workflow_activity_dataclass():
     print("\n🧪 Testing WorkflowActivity dataclass")
     print("-" * 60)
     
-    from importlib.util import spec_from_loader, module_from_spec
-    from importlib.machinery import SourceFileLoader
-    
-    spec = spec_from_loader(
-        'workflow_activity_report',
-        SourceFileLoader('workflow_activity_report', 
-                        str(Path(__file__).parent.parent / 'tools' / 'workflow-activity-report.py'))
-    )
-    module = module_from_spec(spec)
-    spec.loader.exec_module(module)
+    module = load_workflow_activity_module()
     
     try:
         activity = module.WorkflowActivity(
@@ -206,16 +215,7 @@ def test_report_generation_mock():
     print("\n🧪 Testing report generation with mock data")
     print("-" * 60)
     
-    from importlib.util import spec_from_loader, module_from_spec
-    from importlib.machinery import SourceFileLoader
-    
-    spec = spec_from_loader(
-        'workflow_activity_report',
-        SourceFileLoader('workflow_activity_report', 
-                        str(Path(__file__).parent.parent / 'tools' / 'workflow-activity-report.py'))
-    )
-    module = module_from_spec(spec)
-    spec.loader.exec_module(module)
+    module = load_workflow_activity_module()
     
     reporter = module.WorkflowActivityReporter(
         owner='test',
@@ -367,16 +367,7 @@ def test_markdown_report_generation():
     print("\n🧪 Testing markdown report generation")
     print("-" * 60)
     
-    from importlib.util import spec_from_loader, module_from_spec
-    from importlib.machinery import SourceFileLoader
-    
-    spec = spec_from_loader(
-        'workflow_activity_report',
-        SourceFileLoader('workflow_activity_report', 
-                        str(Path(__file__).parent.parent / 'tools' / 'workflow-activity-report.py'))
-    )
-    module = module_from_spec(spec)
-    spec.loader.exec_module(module)
+    module = load_workflow_activity_module()
     
     reporter = module.WorkflowActivityReporter(
         owner='test',
@@ -472,16 +463,7 @@ def test_get_repo_info():
     print("\n🧪 Testing repo info extraction")
     print("-" * 60)
     
-    from importlib.util import spec_from_loader, module_from_spec
-    from importlib.machinery import SourceFileLoader
-    
-    spec = spec_from_loader(
-        'workflow_activity_report',
-        SourceFileLoader('workflow_activity_report', 
-                        str(Path(__file__).parent.parent / 'tools' / 'workflow-activity-report.py'))
-    )
-    module = module_from_spec(spec)
-    spec.loader.exec_module(module)
+    module = load_workflow_activity_module()
     
     try:
         owner, repo = module.get_repo_info()
