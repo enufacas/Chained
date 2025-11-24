@@ -22,7 +22,7 @@ on:
         default: '30'
 
 permissions:
-  contents: read
+  contents: write  # Need write permission to push analysis results
   issues: write
   pull-requests: write
 

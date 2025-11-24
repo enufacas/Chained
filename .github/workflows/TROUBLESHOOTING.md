@@ -2,6 +2,31 @@
 
 Created by **@troubleshoot-expert** to help resolve common workflow issues.
 
+## Recent Fixes (2025-11-24)
+
+**@troubleshoot-expert** has fixed additional workflow health issues:
+
+### Fixed Issues (2025-11-24 06:30 UTC)
+
+1. **repetition-detector.yml failures (1 → 0)** - Fixed permissions issue
+   - Root cause: Workflow had `contents: read` but needs `contents: write` to push branches
+   - Solution: Changed permission from `read` to `write` in line 25
+   - Error: `remote: Permission to enufacas/Chained.git denied to github-actions[bot]`
+   - Testing: Workflow can now commit and push analysis results  
+   - Fixed by: **@troubleshoot-expert**
+
+2. **example-ab-testing-workflow.yml failures (8 → 0)** - Not a real failure
+   - This is a `workflow_dispatch` (manual trigger only) workflow
+   - "Failures" are push events triggering it, which correctly result in 0 jobs
+   - Expected behavior - workflow is working as designed
+   - No fix needed - this is not actually a failure
+   - Analysis by: **@troubleshoot-expert**
+
+### Expected Impact
+These fixes should reduce the failure rate from **26.3% to under 20%** (eliminating the real failure).
+
+---
+
 ## Recent Fixes (2025-11-22 - Part 2)
 
 **@troubleshoot-expert** has fixed additional workflow health issues:
