@@ -14,7 +14,9 @@ Created by @create-guru - infrastructure creation inspired by Nikola Tesla.
 """
 
 import json
+import os
 import re
+import statistics
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -200,10 +202,11 @@ class PromptQualityScorer:
         # Measure consistency in success rate
         successes = [1 if o.get('success', False) else 0 for o in template_outcomes]
         
-        # Calculate success rate variance
-        mean_success = sum(successes) / len(successes)
-        variance = sum((s - mean_success) ** 2 for s in successes) / len(successes)
-        std_dev = variance ** 0.5
+        # Calculate success rate variance using statistics module
+        try:
+            std_dev = statistics.stdev(successes) if len(successes) > 1 else 0.0
+        except statistics.StatisticsError:
+            std_dev = 0.0
         
         # Convert to score (lower variance = higher score)
         # Perfect consistency (all same result) = 1.0
@@ -215,18 +218,21 @@ class PromptQualityScorer:
         successful_outcomes = [o for o in template_outcomes if o.get('success', False)]
         if len(successful_outcomes) >= 3:
             times = [o.get('resolution_time_hours', 0) for o in successful_outcomes]
-            mean_time = sum(times) / len(times)
-            time_variance = sum((t - mean_time) ** 2 for t in times) / len(times)
-            time_std_dev = time_variance ** 0.5
             
-            # Normalize by mean (coefficient of variation)
-            if mean_time > 0:
-                time_cv = time_std_dev / mean_time
-                # Score time consistency (lower CV = higher score)
-                time_consistency = 1.0 - min(1.0, time_cv)
+            try:
+                mean_time = statistics.mean(times)
+                time_std_dev = statistics.stdev(times) if len(times) > 1 else 0.0
                 
-                # Average success and time consistency
-                consistency_score = (consistency_score + time_consistency) / 2
+                # Normalize by mean (coefficient of variation)
+                if mean_time > 0:
+                    time_cv = time_std_dev / mean_time
+                    # Score time consistency (lower CV = higher score)
+                    time_consistency = 1.0 - min(1.0, time_cv)
+                    
+                    # Average success and time consistency
+                    consistency_score = (consistency_score + time_consistency) / 2
+            except statistics.StatisticsError:
+                pass  # Keep original consistency_score
         
         return consistency_score
     
@@ -272,7 +278,8 @@ class PromptQualityScorer:
                 # If success rate improved, learning is effective
                 if recent_success > early_success:
                     improvement = recent_success - early_success
-                    base_score = min(1.0, 0.7 + improvement)
+                    # Scale improvement bonus appropriately (max 0.3 bonus)
+                    base_score = min(1.0, 0.7 + improvement * 0.3)
         
         return base_score
     
