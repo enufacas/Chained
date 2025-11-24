@@ -669,7 +669,7 @@ jobs:
           
           # Attempt merge with auto strategy (squash for cleaner history)
           echo "🚀 Attempting to merge PR #$PR_NUMBER..."
-          if gh pr merge "$PR_NUMBER" --auto --squash --delete-branch; then
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
             echo "✅ PR #$PR_NUMBER merge initiated successfully!"
             echo "🎉 Learning PR merged - continuing to world model update"
             
@@ -685,7 +685,7 @@ jobs:
             echo "⚠️  Merge command failed, checking if PR can be force merged..."
             
             # Try regular merge without auto flag
-            if gh pr merge "$PR_NUMBER" --squash --delete-branch; then
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
               echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
               echo "🎉 Learning PR merged - continuing to world model update"
             else
@@ -851,7 +851,7 @@ jobs:
           
           # Attempt merge with auto strategy (squash for cleaner history)
           echo "🚀 Attempting to merge PR #$PR_NUMBER..."
-          if gh pr merge "$PR_NUMBER" --auto --squash --delete-branch; then
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
             echo "✅ PR #$PR_NUMBER merge initiated successfully!"
             echo "🎉 World model PR merged - continuing to agent missions"
             
@@ -867,7 +867,7 @@ jobs:
             echo "⚠️  Merge command failed, checking if PR can be force merged..."
             
             # Try regular merge without auto flag
-            if gh pr merge "$PR_NUMBER" --squash --delete-branch; then
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
               echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
               echo "🎉 World model PR merged - continuing to agent missions"
             else
@@ -1330,7 +1330,7 @@ jobs:
           
           # Attempt merge with auto strategy (squash for cleaner history)
           echo "🚀 Attempting to merge PR #$PR_NUMBER..."
-          if gh pr merge "$PR_NUMBER" --auto --squash --delete-branch; then
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
             echo "✅ PR #$PR_NUMBER merge initiated successfully!"
             echo "🎉 Pipeline complete - all PRs merged!"
             
@@ -1346,7 +1346,7 @@ jobs:
             echo "⚠️  Merge command failed, checking if PR can be force merged..."
             
             # Try regular merge without auto flag
-            if gh pr merge "$PR_NUMBER" --squash --delete-branch; then
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
               echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
               echo "🎉 Pipeline complete - all PRs merged!"
             else
@@ -1633,7 +1633,7 @@ jobs:
           
           # Attempt merge with auto strategy (squash for cleaner history)
           echo "🚀 Attempting to merge PR #$PR_NUMBER..."
-          if gh pr merge "$PR_NUMBER" --auto --squash --delete-branch; then
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
             echo "✅ Docs sync PR #$PR_NUMBER merged successfully!"
             echo "🎉 World state now published to GitHub Pages"
             
@@ -1649,7 +1649,7 @@ jobs:
             echo "⚠️  Merge command failed, checking if PR can be force merged..."
             
             # Try regular merge without auto flag
-            if gh pr merge "$PR_NUMBER" --squash --delete-branch; then
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
               echo "✅ Docs sync PR #$PR_NUMBER merged successfully (direct merge)!"
               echo "🎉 World state now published to GitHub Pages"
             else
