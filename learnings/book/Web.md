@@ -2,9 +2,9 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 260
+**Total Insights:** 287
 
-**Last Updated:** 2025-11-23
+**Last Updated:** 2025-11-24
 
 ---
 
@@ -426,6 +426,36 @@ Deliver web apps with confidence 🚀
 ---
 
 
+### Untitled
+
+**Link:** https://github.com/playcanvas/engine
+
+
+Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+
+---
+
+
+### Untitled
+
+**Link:** https://github.com/requestly/requestly
+
+
+Free and open-source API Client & Interceptor.
+
+---
+
+
+### Untitled
+
+**Link:** https://github.com/angular/angular
+
+
+Deliver web apps with confidence 🚀
+
+---
+
+
 ### playcanvas/engine - Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
 
 **Link:** https://github.com/playcanvas/engine
@@ -447,36 +477,6 @@ Free and open-source API Client & Interceptor.
 
 
 ### angular/angular - Deliver web apps with confidence 🚀
-
-**Link:** https://github.com/angular/angular
-
-
-Deliver web apps with confidence 🚀
-
----
-
-
-### Untitled
-
-**Link:** https://github.com/playcanvas/engine
-
-
-Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
-
----
-
-
-### Untitled
-
-**Link:** https://github.com/requestly/requestly
-
-
-Free and open-source API Client & Interceptor.
-
----
-
-
-### Untitled
 
 **Link:** https://github.com/angular/angular
 
