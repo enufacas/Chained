@@ -176,7 +176,7 @@ class PatternMatcher:
                 {
                     'id': 'bash-no-set-e',
                     'name': 'Consider using set -e',
-                    'pattern': r'set\s+-[a-zA-Z]*e',
+                    'pattern': r'^\s*set\s+-[a-zA-Z]*e',  # Must be at start of line
                     'severity': 'info',
                     'category': 'error-handling',
                     'suggestion': 'Consider adding "set -e" near the top to exit on error',

@@ -196,11 +196,6 @@ class TestPatternMatcher(unittest.TestCase):
         matches = self.matcher.scan_file(test_file)
         self.assertEqual(len(matches), 0)
 
-
-if __name__ == '__main__':
-    # Run tests
-    unittest.main()
-
     def test_bash_quoted_variables_no_warnings(self):
         """Test that properly quoted bash variables don't trigger warnings"""
         code = '''#!/bin/bash
