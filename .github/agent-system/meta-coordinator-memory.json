@@ -10,9 +10,17 @@
       "timestamp": "2025-11-24T01:36:43.435863",
       "duration_seconds": 0,
       "actions_taken": [
-        "phase0_cleanup"
+        "phase0_cleanup",
+        "tech_lead_assignment",
+        "agent_assignment",
+        "pr_auto_merge"
       ],
-      "success": true
+      "success": true,
+      "timestamp_end": "2025-11-24T01:42:14.398512",
+      "tech_leads_assigned": 3,
+      "agents_assigned": 2,
+      "prs_merged": 17,
+      "prs_closed": 15
     }
   },
   "pr_patterns": {
@@ -61,29 +69,50 @@
     "snapshots": [
       {
         "timestamp": "2025-11-24T01:36:43.435872",
+        "open_prs": 62,
+        "open_issues": 25
+      },
+      {
+        "timestamp": "2025-11-24T01:42:14.398501",
         "open_prs": 0,
         "open_issues": 0
+      },
+      {
+        "timestamp": "2025-11-24T01:42:43.015230",
+        "open_prs": 30,
+        "open_issues": 24
       }
     ],
     "open_pr_trend": [
-      0
+      62,
+      0,
+      30
     ],
     "open_issue_trend": [
-      0
+      25,
+      0,
+      24
     ],
     "prs_closed_count": 15,
     "issues_closed_count": 1,
     "stale_prs_closed": 15,
-    "baseline_open_prs": 0,
-    "baseline_open_issues": 0
+    "baseline_open_prs": 62,
+    "baseline_open_issues": 25
   },
   "success_score": {
-    "current_score": 0,
-    "score_history": [],
+    "current_score": 100.0,
+    "score_history": [
+      {
+        "timestamp": "2025-11-24T01:42:43.015238",
+        "score": 100.0,
+        "reduction_pct": 51.61290322580645,
+        "cleanup_rate": 46.875
+      }
+    ],
     "factors": {
       "cycle_time_score": 0,
-      "reduction_score": 0,
-      "proactive_cleanup_score": 0
+      "reduction_score": 100,
+      "proactive_cleanup_score": 100
     }
   }
 }
