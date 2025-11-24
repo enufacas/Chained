@@ -150,14 +150,42 @@ The agent needs to be registered and active in the system before work can begin.
   issue_title=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json title --jq '.title')
   issue_body=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json body --jq '.body // ""')
   
-  # Use intelligent matching to determine best agent
-  agent_match=$(python3 tools/match-issue-to-agent.py "$issue_title" "$issue_body" 2>/dev/null || echo '{"agent":"create-guru","score":0,"confidence":"low"}')
-  matched_agent=$(echo "$agent_match" | jq -r '.agent')
-  agent_score=$(echo "$agent_match" | jq -r '.score')
-  agent_confidence=$(echo "$agent_match" | jq -r '.confidence')
-  agent_emoji=$(echo "$agent_match" | jq -r '.emoji')
-  agent_description=$(echo "$agent_match" | jq -r '.description')
-  agent_human_name=$(echo "$agent_match" | jq -r '.human_name // "null"')
+  # Check for explicit agent marker in issue body (e.g., <!-- COPILOT_AGENT:meta-coordinator-system -->)
+  explicit_agent=$(echo "$issue_body" | grep -oP '<!-- COPILOT_AGENT:\K[a-zA-Z0-9_-]+' | head -1)
+  
+  if [ -n "$explicit_agent" ]; then
+    echo "🎯 Found explicit agent marker: $explicit_agent"
+    echo "   Using explicit agent instead of pattern matching"
+    
+    # Get agent info directly from the agent definition file
+    agent_info_file=".github/agents/${explicit_agent}.md"
+    if [ -f "$agent_info_file" ]; then
+      # Extract description from frontmatter
+      agent_description=$(grep '^description:' "$agent_info_file" | sed 's/^description: "//' | sed 's/"$//' || echo "Specialized agent")
+      # Extract emoji from first heading
+      agent_emoji=$(grep -oP '^#\s*\K\S+' "$agent_info_file" | head -1 || echo "🤖")
+      
+      matched_agent="$explicit_agent"
+      agent_score="explicit"
+      agent_confidence="explicit"
+      agent_human_name="null"
+    else
+      echo "   ⚠️ Agent definition file not found: $agent_info_file"
+      echo "   Falling back to pattern matching"
+      explicit_agent=""
+    fi
+  fi
+  
+  # If no explicit agent found, use intelligent matching to determine best agent
+  if [ -z "$explicit_agent" ]; then
+    agent_match=$(python3 tools/match-issue-to-agent.py "$issue_title" "$issue_body" 2>/dev/null || echo '{"agent":"create-guru","score":0,"confidence":"low"}')
+    matched_agent=$(echo "$agent_match" | jq -r '.agent')
+    agent_score=$(echo "$agent_match" | jq -r '.score')
+    agent_confidence=$(echo "$agent_match" | jq -r '.confidence')
+    agent_emoji=$(echo "$agent_match" | jq -r '.emoji')
+    agent_description=$(echo "$agent_match" | jq -r '.description')
+    agent_human_name=$(echo "$agent_match" | jq -r '.human_name // "null"')
+  fi
   
   # Build display name - show human name if available
   if [ "$agent_human_name" != "null" ] && [ -n "$agent_human_name" ]; then
