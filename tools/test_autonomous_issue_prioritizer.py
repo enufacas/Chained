@@ -397,14 +397,16 @@ class TestAutonomousIssuePrioritizer(unittest.TestCase):
         """Test that system balances exploration and exploitation"""
         issue = self._create_test_issue()
         
-        # Record many successful outcomes for one arm
+        # Record many successful outcomes for different arms
+        recommendations = []
         for _ in range(20):
             rec = self.prioritizer.prioritize_issue(issue)
+            recommendations.append(rec)
             # Always record as success
             self.prioritizer.record_outcome(issue.number, success=True)
         
         # Count how many different arms were selected
-        arms_used = set(rec.selected_arm for rec in self.prioritizer.recommendations)
+        arms_used = set(rec.selected_arm for rec in recommendations)
         
         # Should have tried multiple arms (exploration)
         # Not all recommendations should use the same arm

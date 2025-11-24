@@ -61,20 +61,53 @@ class BanditArm:
         return self._beta_sample(alpha, beta)
     
     def _beta_sample(self, alpha: float, beta: float) -> float:
-        """Simple Beta distribution sampling"""
-        # Use acceptance-rejection method for Beta distribution
-        # For simplicity, use a heuristic approximation
-        u1 = random.random()
-        u2 = random.random()
+        """
+        Beta distribution sampling using Gamma-based method.
         
-        # Simplified Beta sampling (works well for alpha, beta >= 1)
-        x = u1 ** (1.0 / alpha)
-        y = u2 ** (1.0 / beta)
+        Beta(α, β) can be sampled as: X ~ Gamma(α,1), Y ~ Gamma(β,1), then Beta = X/(X+Y)
+        This is mathematically correct and doesn't require numpy.
+        """
+        # Simple Gamma(shape, scale=1) sampling using Marsaglia and Tsang method
+        def gamma_sample(shape):
+            """Sample from Gamma(shape, 1) using acceptance-rejection"""
+            if shape < 1:
+                # For shape < 1, use Ahrens-Dieter method
+                shape_adj = shape + 1
+                gamma_val = gamma_sample(shape_adj)
+                u = random.random()
+                return gamma_val * (u ** (1.0 / shape))
+            
+            # For shape >= 1, use Marsaglia-Tsang method (simplified)
+            d = shape - 1.0 / 3.0
+            c = 1.0 / math.sqrt(9.0 * d)
+            
+            while True:
+                # Sample from standard normal (Box-Muller)
+                u1 = random.random()
+                u2 = random.random()
+                z = math.sqrt(-2.0 * math.log(u1)) * math.cos(2.0 * math.pi * u2)
+                
+                v = (1.0 + c * z) ** 3
+                
+                if v <= 0:
+                    continue
+                
+                u = random.random()
+                
+                if math.log(u) < 0.5 * z * z + d - d * v + d * math.log(v):
+                    return d * v
         
-        if x + y <= 1.0:
-            return x / (x + y) if (x + y) > 0 else 0.5
-        else:
-            return 1.0 - x / (x + y) if (x + y) > 0 else 0.5
+        # Sample from Beta using Gamma ratio
+        if alpha <= 0 or beta <= 0:
+            return 0.5  # Fallback for invalid parameters
+        
+        x = gamma_sample(alpha)
+        y = gamma_sample(beta)
+        
+        if x + y == 0:
+            return 0.5
+        
+        return x / (x + y)
     
     def update(self, reward: float):
         """Update arm statistics based on reward (0.0 to 1.0)"""
@@ -205,7 +238,9 @@ class AutonomousIssuePrioritizer:
         features = {}
         
         # Age-based urgency (older = more urgent)
-        created = datetime.fromisoformat(issue.created_at.replace('Z', '+00:00'))
+        # Handle both 'Z' suffix and timezone-aware formats
+        created_str = issue.created_at.replace('Z', '+00:00')
+        created = datetime.fromisoformat(created_str)
         age = (datetime.now(timezone.utc) - created).total_seconds() / 86400
         issue.age_days = age
         features['age_days'] = age
@@ -228,8 +263,10 @@ class AutonomousIssuePrioritizer:
         impact_keywords = {'critical', 'important', 'major', 'significant'}
         
         label_impact = sum(1 for label in issue.labels if label.lower() in impact_labels)
-        keyword_impact = sum(1 for keyword in impact_keywords 
-                           if keyword in issue.title.lower() or keyword in issue.body.lower())
+        
+        # Safely handle None body
+        issue_text = (issue.title + ' ' + (issue.body or '')).lower()
+        keyword_impact = sum(1 for keyword in impact_keywords if keyword in issue_text)
         
         features['label_impact'] = min(1.0, label_impact / 3.0)
         features['keyword_impact'] = min(1.0, keyword_impact / 2.0)
