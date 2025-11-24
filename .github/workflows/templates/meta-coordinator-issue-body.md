@@ -232,17 +232,21 @@ PRs must meet ALL of these criteria to be auto-merged:
 
 ```bash
 # AT START (after Phase 0, before main work)
-export OPEN_PRS_START=${OPEN_PRS_START}  # From environment
-export OPEN_ISSUES_START=${OPEN_ISSUES_START}  # From environment
+# Use values from workflow environment
+OPEN_PRS_START=${OPEN_PRS_START:-0}  # From workflow environment
+OPEN_ISSUES_START=${OPEN_ISSUES_START:-0}  # From workflow environment
 
 # Record in memory
-python3 << 'EOF'
+python3 << EOF
 import sys
+import os
 sys.path.insert(0, 'tools')
 from meta_coordinator_memory import MetaCoordinatorMemory
 memory = MetaCoordinatorMemory()
-memory.record_open_counts(${OPEN_PRS_START}, ${OPEN_ISSUES_START})
-print(f"📊 Recorded START: {${OPEN_PRS_START}} PRs, {${OPEN_ISSUES_START}} issues")
+open_prs = int(os.environ.get('OPEN_PRS_START', 0))
+open_issues = int(os.environ.get('OPEN_ISSUES_START', 0))
+memory.record_open_counts(open_prs, open_issues)
+print(f"📊 Recorded START: {open_prs} PRs, {open_issues} issues")
 memory.save()
 EOF
 ```
@@ -252,15 +256,22 @@ EOF
 open_prs_end=$(gh pr list --state open --json number --jq 'length' --limit 200)
 open_issues_end=$(gh issue list --state open --json number --jq 'length' --limit 200)
 
+# Export for Python to read
+export OPEN_PRS_END=$open_prs_end
+export OPEN_ISSUES_END=$open_issues_end
+
 # Record in memory and get success summary
-python3 << 'EOF'
+python3 << EOF
 import sys
+import os
 sys.path.insert(0, 'tools')
 from meta_coordinator_memory import MetaCoordinatorMemory
 memory = MetaCoordinatorMemory()
 
 # Record end counts
-memory.record_open_counts(${open_prs_end}, ${open_issues_end})
+open_prs = int(os.environ.get('OPEN_PRS_END', 0))
+open_issues = int(os.environ.get('OPEN_ISSUES_END', 0))
+memory.record_open_counts(open_prs, open_issues)
 
 # Calculate success score
 score = memory.calculate_success_score()

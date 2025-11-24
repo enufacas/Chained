@@ -146,13 +146,8 @@ ${reason_detail}
     return 1
   }
   
-  # Delete branch if safe (copilot/agent branches)
-  local branch_name
-  branch_name=$(gh pr view "${pr_num}" --json headRefName --jq '.headRefName' 2>/dev/null || echo "")
-  
-  if [[ $branch_name =~ ^(copilot|agent)/ ]]; then
-    git push origin --delete "${branch_name}" 2>/dev/null || echo "   Branch already deleted or protected: ${branch_name}"
-  fi
+  # Note: Branch name should be retrieved before closing PR
+  # Branch deletion handled separately if needed
   
   echo "   ✅ Closed PR #${pr_num}: ${reason_title}"
 }
@@ -277,7 +272,8 @@ if [ -n "$all_prs" ]; then
     pr_body=$(gh pr view "${pr_num}" --json body --jq '.body' 2>/dev/null || echo "")
     
     # Extract issue numbers (look for #123 patterns or "Fixes #123" or "Closes #123")
-    linked_issues=$(echo "$pr_body" | grep -oP '(?:Fixes|Closes|Resolves|Fix|Close|Resolve)\s+#\K\d+' | sort -u || echo "")
+    # Using case-insensitive matching
+    linked_issues=$(echo "$pr_body" | grep -oiP '(?:Fixes|Closes|Resolves|Fix|Close|Resolve)\s+#\K\d+' | sort -u || echo "")
     
     if [ -n "$linked_issues" ]; then
       while read -r issue_num; do
