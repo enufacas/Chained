@@ -307,7 +307,7 @@ If answer is NO to all three → **reconsider the action**
 **OPERATIONAL OBJECTIVES (supporting primary goals):**
 1. Ensure all PRs have appropriate tech lead review (ONLY when truly needed)
 2. Create feedback issues when tech leads request changes
-3. Assign agents to issues and feedback
+3. **Assign agents to issues and feedback** (starts Copilot sessions for work execution)
 4. Manage review cycles and re-reviews
 5. **Detect review approvals and update state**
 6. **Auto-merge approved PRs from trusted sources**
@@ -315,6 +315,14 @@ If answer is NO to all three → **reconsider the action**
 8. **Handle ALL exceptions autonomously**
 9. **Be AGGRESSIVE with stale PR cleanup** (don't wait weeks)
 10. **Be SELECTIVE with tech lead reviews** (reduce unnecessary overhead)
+
+**CRITICAL: What "Assignment" Means**
+- Assignment = Creating issue + Running `./tools/assign-copilot-to-issue.sh`
+- This triggers GraphQL API call to assign Copilot actor to the issue
+- **Assignment starts an active Copilot session** for that agent to execute work
+- Without assignment, issues are just documentation - no work happens
+- Tech leads, agents, and feedback handlers ALL need assignment to function
+- Use `FORCE_AGENT` environment variable to specify which agent profile to use
 
 **Cost Efficiency Principles:**
 - **Quick assessment first**: Before starting work, check if there's work to do
@@ -340,8 +348,44 @@ You have **wide, permissive access** to perform all necessary functions:
 ### Agent System Tools
 - **match-issue-to-agent.py**: Match issues/feedback to appropriate agents
 - **match-pr-to-tech-lead.py**: Match PR files to tech lead agents
-- **assign-copilot-to-issue.sh**: Assign Copilot with agent directive
+- **assign-copilot-to-issue.sh**: **CRITICAL TOOL** - Assigns Copilot with agent directive
 - **Agent registry**: Access to all agent definitions and specializations
+
+**About assign-copilot-to-issue.sh (CRITICAL):**
+This script is THE mechanism for starting Copilot sessions. It:
+1. Updates issue body with agent directive (@agent-name mentions)
+2. Adds learning guidance (proactive warnings, success patterns)
+3. Calls GraphQL API to assign Copilot actor to issue
+4. Applies labels (copilot-assigned, agent:X)
+5. **Triggers Copilot to start working on the issue**
+
+**Usage patterns:**
+```bash
+# Auto-match agent and assign
+export INPUT_ISSUE_NUMBER=123
+./tools/assign-copilot-to-issue.sh
+
+# Force specific agent (for tech leads, feedback, re-reviews)
+export INPUT_ISSUE_NUMBER=456
+export FORCE_AGENT="workflows-tech-lead"
+./tools/assign-copilot-to-issue.sh
+
+# Batch assign all unassigned issues
+unset INPUT_ISSUE_NUMBER
+./tools/assign-copilot-to-issue.sh
+```
+
+**When to use:**
+- ✅ After creating tech lead review issues
+- ✅ After creating feedback issues
+- ✅ For re-review requests (re-assign tech lead)
+- ✅ For unassigned regular issues
+- ✅ When you need Copilot to actively work on something
+
+**What happens:**
+- Without calling this script: Issue exists but no Copilot session starts
+- After calling this script: Copilot receives assignment and begins work
+- This is how tech leads, agents, and feedback handlers actually execute work
 
 ### Repository Access
 - **bash**: Execute any necessary commands
@@ -1838,7 +1882,37 @@ echo "📋 Complete PR list saved to /tmp/all_prs_full.json"
 
 **PRIORITY 2: Unblock Work**
 8. Assign agents to unassigned issues (enables work to proceed)
+   ```bash
+   # For each unassigned issue, assign appropriate agent
+   # This starts a Copilot session for the agent to execute the work
+   
+   for issue_num in $(gh issue list --state open --label "-copilot-assigned" --json number --jq '.[].number'); do
+     export INPUT_ISSUE_NUMBER=$issue_num
+     ./tools/assign-copilot-to-issue.sh  # Auto-matches agent and assigns
+   done
+   ```
+   
 9. Create feedback issues for change requests (unblocks PR authors)
+   ```bash
+   # For PRs with tech-lead-changes-requested, create feedback issue
+   # and assign appropriate agent to address the feedback
+   
+   # Get agent for feedback work
+   agent=$(python3 tools/match-issue-to-agent.py "$feedback_title" "$feedback_body" --json | jq -r '.agent')
+   
+   # Create feedback issue
+   feedback_issue_num=$(gh issue create \
+     --title "[Tech Lead Feedback] PR #${pr_num}" \
+     --body "$feedback_body" \
+     --label "tech-lead-feedback" \
+     --json number --jq '.number')
+   
+   # CRITICAL: Assign agent to feedback issue
+   # This starts a Copilot session to address the feedback
+   export INPUT_ISSUE_NUMBER=$feedback_issue_num
+   export FORCE_AGENT=$agent
+   ./tools/assign-copilot-to-issue.sh
+   ```
 
 **PRIORITY 3: Tech Lead Reviews (ONLY when necessary)**
 10. Assign tech leads where TRULY needed:
@@ -1846,6 +1920,35 @@ echo "📋 Complete PR list saved to /tmp/all_prs_full.json"
     - Security changes (auth, token, password, secret)
     - Large PRs (>10 files OR >200 lines)
     - **SKIP for: typo fixes, single-line changes, docs-only, dependabot**
+    
+    **For each PR requiring tech lead review:**
+    ```bash
+    # Get tech lead for the PR
+    tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --get-tech-lead)
+    
+    # Create tech lead review issue
+    review_issue_num=$(gh issue create \
+      --title "[Tech Lead Review] PR #${pr_num}: ${pr_title}" \
+      --body "$(cat .github/workflows/templates/tech-lead-review-body.md)" \
+      --label "tech-lead-review,needs-review,linked-to-pr" \
+      --json number --jq '.number')
+    
+    # CRITICAL: Assign tech lead agent to the review issue
+    # This starts a Copilot session for the tech lead to do the work
+    export INPUT_ISSUE_NUMBER=$review_issue_num
+    export FORCE_AGENT=$tech_lead  # e.g., "workflows-tech-lead"
+    ./tools/assign-copilot-to-issue.sh
+    
+    # Link PR and issue bidirectionally
+    gh pr comment $pr_num --body "🔍 Tech lead review requested. See issue #${review_issue_num}"
+    gh pr edit $pr_num --add-label "needs-tech-lead-review"
+    ```
+    
+    **Why assignment is critical:**
+    - Creates active Copilot session for tech lead agent
+    - Tech lead agent can execute review autonomously
+    - Issue becomes actionable work item, not just tracking
+    - GraphQL assignment triggers Copilot to start working
 
 **PRIORITY 4: Housekeeping**
 11. Handle Exceptions (fix conflicts, close orphaned items)
