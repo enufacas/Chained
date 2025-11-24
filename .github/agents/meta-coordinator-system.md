@@ -1435,9 +1435,10 @@ print(int(hours))
   done
 
 echo ""
-echo "✅ MERGEABLE PRs ready for auto-merge:"
-jq -r '.[] | select(.mergeable == "MERGEABLE") | select(.isDraft == false) | 
-  "  PR #\(.number): \(.title) (author: \(.author.login))"' /tmp/all_prs_full.json | head -20
+echo "✅ MERGEABLE PRs ready for auto-merge (checking for WIP markers):"
+jq -r '.[] | select(.mergeable == "MERGEABLE") | 
+  "  PR #\(.number): \(.title) (author: \(.author.login), draft: \(.isDraft))"' /tmp/all_prs_full.json | 
+  grep -v -i '\[WIP\]\|^.*WIP:\|^.*WIP\s\|work.*in.*progress\|\[do.*not.*merge\]\|\[dnm\]' | head -20
 
 echo ""
 echo "📋 Complete PR list saved to /tmp/all_prs_full.json"
@@ -1450,7 +1451,7 @@ echo "📋 Complete PR list saved to /tmp/all_prs_full.json"
 - Prevents missing PRs due to query limits
 - Creates audit trail of system state
 
-1. List all open PRs (non-draft)
+1. List all open PRs (including drafts - WIP markers in title block auto-merge)
 2. List all open issues (unassigned)
 3. Identify PRs needing attention:
    - Changes requested but no feedback issue
