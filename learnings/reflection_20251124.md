@@ -7,9 +7,9 @@
 
 ### 📖 Topics Reflected Upon:
 
-1. angular/angular - Deliver web apps with confidence 🚀
-2. playcanvas/engine - Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
-3. Visualize FastAPI endpoints with FastAPI-Voyager
+1. playcanvas/engine - Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+2. requestly/requestly - Free and open-source API Client & Interceptor
+3. angular/angular - Deliver web apps with confidence 🚀
 
 ### 💡 Key Takeaways:
 
