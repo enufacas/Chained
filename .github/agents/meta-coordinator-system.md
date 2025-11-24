@@ -1035,7 +1035,6 @@ When creating your PR with `report_progress`, use this format:
 
 **Labels:** `meta-coordination`, `automated`
 ```
-```
 
 **Actions:**
 - **Load memory at start** (from main branch):
