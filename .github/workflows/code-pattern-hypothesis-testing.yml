@@ -253,15 +253,14 @@ jobs:
           fi
           
           # Commit
-          git commit -m "feat: add AI hypothesis testing results for ${TIMESTAMP}
-
-          Generated ${{ steps.test_hypotheses.outputs.total }} hypotheses
-          Validated ${{ steps.test_hypotheses.outputs.validated }} hypotheses
-          Validation rate: ${{ steps.test_hypotheses.outputs.validation_rate }}
-          
-          Results saved to learnings/hypothesis_testing/
-          
-          Co-authored-by: @create-guru <create-guru@chained.ai>"
+          git commit -m "feat: add AI hypothesis testing results for ${TIMESTAMP}" \
+            -m "Generated ${{ steps.test_hypotheses.outputs.total }} hypotheses" \
+            -m "Validated ${{ steps.test_hypotheses.outputs.validated }} hypotheses" \
+            -m "Validation rate: ${{ steps.test_hypotheses.outputs.validation_rate }}" \
+            -m "" \
+            -m "Results saved to learnings/hypothesis_testing/" \
+            -m "" \
+            -m "Co-authored-by: @create-guru <create-guru@chained.ai>"
           
           # Push
           git push origin "${BRANCH_NAME}"

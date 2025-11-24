@@ -43,8 +43,7 @@ class TestHypothesisWorkflowIntegration(unittest.TestCase):
         # Create a sample Python file
         sample_file = os.path.join(test_repo, 'sample.py')
         with open(sample_file, 'w') as f:
-            f.write('''
-def simple_function(x, y):
+            f.write('''def simple_function(x, y):
     """A simple function with docstring"""
     return x + y
 
@@ -84,7 +83,9 @@ def long_function():
         self.assertGreater(len(results['hypotheses']), 0)
         
         # Verify output file was created
-        self.assertTrue(os.path.exists(self.output_file))
+        self.assertTrue(
+            os.path.exists(self.output_file)
+        )
         
         # Verify JSON is valid
         with open(self.output_file) as f:
