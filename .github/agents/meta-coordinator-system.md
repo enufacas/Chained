@@ -814,10 +814,6 @@ If you cannot use the script, you MUST:
 **But seriously, just use the script. It's battle-tested.**
 
 **Agent Matching Reference:**
-- Workflows → @workflows-tech-lead
-- Agent system → @agents-tech-lead
-- Documentation → @docs-tech-lead or @support-master
-- GitHub Pages → @github-pages-tech-lead
 - Security → @secure-specialist
 - Performance → @accelerate-master
 - Testing → @assert-specialist
@@ -833,223 +829,7 @@ If you cannot use the script, you MUST:
 - Work distributed appropriately
 - **Issue body contains critical agent directive for Copilot**
 
-### 4. Review Cycle Management & Tech Lead Orchestration
-
-**Task:** Orchestrate tech lead agents through complete review lifecycle
-
-**Tech leads are custom agents** that need to be orchestrated through the review process. This section handles the complete lifecycle from review creation to PR approval/merge.
-
-**Key Principle: One Issue Per PR Review** - Reuse the original tech lead review issue throughout the entire lifecycle (initial review, feedback, re-reviews, approval).
-
-#### Phase A: Initial Tech Lead Review (from Section 1)
-
-1. **Tech lead review issue created** with agent assigned
-2. **Tech lead agent (Copilot) works on review issue:**
-   - Analyzes PR changes
-   - Checks code quality, security, architecture
-   - Makes decision: approve or request changes
-   - Updates labels on PR based on decision
-   - Posts review summary to **same review issue** (don't close yet)
-
-3. **Meta-coordinator monitors review issue for decision:**
-   - Check review issue for tech lead's decision
-   - Look for keywords like "APPROVED", "CHANGES REQUESTED", etc.
-   - Verify labels were applied to PR
-
-#### Phase B: Handle Review Outcome
-
-**If tech lead approved:**
-```bash
-# Tech lead agent should have already:
-# - Added `tech-lead-approved` label to PR
-# - Removed `needs-tech-lead-review` label
-# - Posted approval summary to review issue
-
-# Meta-coordinator verifies and closes review issue:
-has_approval=$(gh pr view $pr_num --json labels --jq '.labels[] | select(.name == "tech-lead-approved") | .name')
-
-if [ -n "$has_approval" ]; then
-  echo "✅ Tech lead approved - closing review issue"
-  
-  # Close the review issue now that it's complete
-  gh issue close $review_issue_num --comment "✅ Review complete - PR approved and ready for merge" --repo $REPO
-  
-  # PR will be picked up by auto-merge in Section 5
-fi
-```
-
-**If tech lead requested changes:**
-```bash
-# Tech lead agent should have already:
-# - Added `tech-lead-changes-requested` label to PR
-# - Posted detailed feedback to review issue
-# - Posted feedback comment on PR
-
-# Meta-coordinator REUSES the same review issue for feedback coordination
-# Instead of creating new feedback issue, update the existing one:
-
-gh issue comment $review_issue_num --body "## 🔄 Awaiting PR Updates
-
-@${tech_lead} has requested changes. 
-
-**Next Steps for PR Author Agent:**
-The agent working on this PR should:
-1. Review the feedback above
-2. Make necessary changes to PR #${pr_num}
-3. Push commits addressing the feedback
-4. Comment here when ready for re-review
-
-**This issue will remain open** until PR is approved or closed.
-
-*Status updated by @meta-coordinator-system*
-" --repo $REPO
-
-# Update issue labels to reflect waiting state
-gh issue edit $review_issue_num --add-label "awaiting-pr-update" --repo $REPO
-
-# NO new feedback issue created - everything stays in one place
-```
-
-#### Phase C: Monitor for Updates & Request Re-Review
-
-**Detect when PR is updated after change request:**
-```bash
-# For PRs with tech-lead-changes-requested label
-for pr_num in $(gh pr list --label "tech-lead-changes-requested" --json number --jq '.[].number'); do
-  # Find the existing review issue for this PR
-  review_issue_num=$(gh issue list --label "tech-lead-review" --state open --search "PR #${pr_num}" --json number --jq '.[0].number')
-  
-  if [ -z "$review_issue_num" ]; then
-    echo "No review issue found for PR #${pr_num}"
-    continue
-  fi
-  
-  # Get latest commit date
-  latest_commit_date=$(gh pr view $pr_num --json commits --jq '.commits[-1].committedDate')
-  
-  # Get when changes were requested
-  changes_requested_date=$(gh pr view $pr_num --json timelineItems --jq '.timelineItems[] | select(.event == "labeled" and .label.name == "tech-lead-changes-requested") | .createdAt' | tail -1)
-  
-  # If commits after change request
-  if [[ "$latest_commit_date" > "$changes_requested_date" ]]; then
-    echo "New commits detected on PR #${pr_num} - requesting re-review in same issue"
-    
-    # Update SAME review issue with re-review request (don't create new issue)
-    gh issue comment $review_issue_num --body "## 🔄 Re-Review Requested
-
-**PR author has pushed new commits addressing feedback.**
-
-### Changes Since Last Review:
-$(gh pr view $pr_num --json commits --jq '.commits[-3:] | .[] | "- \(.commit.message) (\(.committedDate | split("T")[0]))"')
-
-### Your Task (@${tech_lead}):
-1. Review the new changes in PR #${pr_num}
-2. Check if all feedback has been addressed
-3. Make decision:
-   - **If approved:** Add \`tech-lead-approved\` label to PR, remove \`tech-lead-changes-requested\`, post approval here
-   - **If more changes needed:** Keep label, post additional feedback here
-
-**This is review iteration $(gh issue view $review_issue_num --json comments --jq '[.comments[] | select(.body | contains("Re-Review"))] | length + 1')**
-
-*Automated re-review request by @meta-coordinator-system*
-" --repo $REPO
-    
-    # Update labels to show re-review needed
-    gh issue edit $review_issue_num --remove-label "awaiting-pr-update" --add-label "needs-re-review" --repo $REPO
-    
-    # Re-assign to tech lead agent (in case they unassigned)
-    export INPUT_ISSUE_NUMBER=$review_issue_num
-    export FORCE_AGENT=$tech_lead
-    ./tools/assign-copilot-to-issue.sh
-    
-    # Notify on PR
-    gh pr comment $pr_num --body "🔄 Re-review requested in issue #${review_issue_num}" --repo $REPO
-  fi
-done
-```
-
-#### Phase D: Final Approval & Cleanup
-
-**When tech lead approves (initial or after re-review):**
-```bash
-# Tech lead agent adds tech-lead-approved label
-# Meta-coordinator detects and cleans up
-
-for pr_num in $(gh pr list --label "tech-lead-approved" --json number --jq '.[].number'); do
-  # Remove blocking labels
-  gh pr edit $pr_num --remove-label "needs-tech-lead-review" --repo $REPO
-  gh pr edit $pr_num --remove-label "tech-lead-changes-requested" --repo $REPO
-  
-  # Find and close the review issue
-  review_issue_num=$(gh issue list --label "tech-lead-review" --state open --search "PR #${pr_num}" --json number --jq '.[0].number')
-  
-  if [ -n "$review_issue_num" ]; then
-    # Get review iteration count for summary
-    iteration_count=$(gh issue view $review_issue_num --json comments --jq '[.comments[] | select(.body | contains("Re-Review"))] | length + 1')
-    
-    gh issue close $review_issue_num --comment "✅ **Review Complete - PR Approved**
-
-**Review Summary:**
-- PR: #${pr_num}
-- Iterations: ${iteration_count}
-- Final Status: Approved
-- PR is now eligible for auto-merge
-
-*Tech lead review lifecycle complete*
-" --repo $REPO
-  fi
-  
-  # PR now eligible for auto-merge (Section 5)
-  echo "✅ PR #${pr_num} approved and cleaned up - ready for auto-merge"
-done
-```
-
-**Complete Lifecycle Flow (One Issue):**
-```
-1. PR created
-   ↓
-2. Meta-coordinator creates ONE tech lead review issue #123
-   ↓
-3. Assigns @tech-lead agent to issue #123
-   ↓
-4. Tech lead reviews, posts decision to issue #123
-   ↓
-5a. If APPROVED:                    5b. If CHANGES REQUESTED:
-    - Add tech-lead-approved            - Add tech-lead-changes-requested
-    - Post approval to issue #123       - Post feedback to issue #123
-    - Meta-coordinator closes #123      - Label: "awaiting-pr-update"
-    - PR → Auto-merge                   - Issue #123 stays open
-                                        ↓
-                                    6. PR author updates PR
-                                        ↓
-                                    7. Meta-coordinator detects update
-                                        ↓
-                                    8. Posts re-review request to SAME issue #123
-                                        ↓
-                                    9. Re-assigns @tech-lead to issue #123
-                                        ↓
-                                    10. Go to step 4 (up to 5 iterations)
-                                        ↓
-                                    11. Eventually approved → close issue #123
-```
-
-**Benefits of Single Issue Approach:**
-- **Complete history** in one place
-- **No issue proliferation** for same PR
-- **Easy to track** review progress
-- **Simpler cleanup** - just one issue to close
-- **Clear ownership** - same issue, same tech lead throughout
-- **Better context** for tech lead agent across iterations
-
-**Conditions:**
-- Reuse existing review issue for entire lifecycle
-- Re-review by updating same issue with new request
-- Close review issue only when PR approved or PR closed
-- Track up to 5 review iterations in same issue before escalation
-- Always work through issues (tech leads are agents, not humans)
-
-**Outcomes:**
-- Tech leads orchestrated as custom agents with ONE clear work item per PR
+### 4. Review Cycle Management**Outcomes:**
 - Complete lifecycle tracking in single issue
 - Review state synchronized via labels
 - No duplicate or orphaned issues
@@ -1064,8 +844,7 @@ done
 - For each open PR, check complete eligibility:
   - **Trust check**: From copilot (with `copilot` label) OR repo owner/maintainer
   - **State check**: Open, no WIP markers in title (draft status alone does not block)
-  - **Review check**: Has `tech-lead-approved` OR doesn't need review (no `needs-tech-lead-review` label)
-  - **Blocking check**: No `tech-lead-changes-requested` or other blocking labels
+  - **Review check**: Approved by reviewers OR doesn't need review
   - **CI check**: All required checks passed (use GitHub API)
   - **Mergeable check**: No merge conflicts
 - If ALL criteria met:
@@ -1149,22 +928,11 @@ done
    
    # Trust + label checks combined
    # ... (use trust verification logic above)
-   
-   # Review state checks
-   has_needs_review=$(echo "$pr_data" | jq -r '.labels[] | select(.name == "needs-tech-lead-review")')
-   has_approved=$(echo "$pr_data" | jq -r '.labels[] | select(.name == "tech-lead-approved")')
-   
-   # Only merge if approved or review not needed
-   if [ -n "$has_needs_review" ] && [ -z "$has_approved" ]; then
-     echo "Review required but not yet approved"
-     exit 0
-   fi
    ```
 
 **Conditions:**
 - **Trust:** Only copilot (with label) or owner/maintainer PRs
-- **Approval:** Tech lead approved OR review not required
-- **No blocks:** No change requests, WIP, or conflicts
+- **No blocks:** No WIP, or conflicts
 - **CI passed:** All required checks successful
 - **Mergeable:** GitHub reports PR can be merged
 
@@ -1299,201 +1067,25 @@ Since the main branch is protected, you must persist memory via PR workflow:
   - PRs with conflicting labels
   - Feedback issues without linked PRs
   - Orphaned agent assignments
-  - **Orphaned tech lead review issues (with label but no work)**
   - Stale review cycles (>7 days)
-  - Missing tech lead assignments
   - Label inconsistencies
 - Resolve or escalate:
   - Fix label conflicts
   - Close orphaned issues
-  - **Re-assign orphaned tech lead issues**
   - Ping stale reviews
   - Create manual coordination issues for complex cases
-
-#### Orphaned Tech Lead Issue Detection & Resolution
-
-**Detection Criteria:**
-
-An issue with `tech-lead-review` label is orphaned if ANY of:
-
-1. **Never Assigned** (CRITICAL - needs immediate fix)
-   ```bash
-   # Issue has tech-lead-review label but no copilot-assigned label
-   has_tech_lead_label=$(gh issue view $issue_num --json labels --jq '.labels[] | select(.name == "tech-lead-review")')
-   has_copilot_label=$(gh issue view $issue_num --json labels --jq '.labels[] | select(.name == "copilot-assigned")')
-   
-   if [ -n "$has_tech_lead_label" ] && [ -z "$has_copilot_label" ]; then
-     echo "ORPHANED: Tech lead review issue never assigned!"
-   fi
-   ```
-
-2. **Stale with No Tech Lead Activity** (>5 days)
-   ```bash
-   # Issue is open >5 days, has tech-lead-review, but no comments from tech lead
-   issue_age_days=$(calculate_days_since "$created_at")
-   tech_lead_comments=$(gh issue view $issue_num --json comments \
-     --jq '.comments[] | select(.author.login | contains("copilot")) | .id' | wc -l)
-   
-   if [ $issue_age_days -gt 5 ] && [ $tech_lead_comments -eq 0 ]; then
-     echo "ORPHANED: Tech lead never worked on review (stale)"
-   fi
-   ```
-
-3. **Linked PR Closed/Merged** (issue should be closed)
-   ```bash
-   # Extract PR number from issue body or title
-   pr_num=$(gh issue view $issue_num --json body --jq '.body' | grep -oP 'PR #\K\d+' | head -1)
-   pr_state=$(gh pr view $pr_num --json state --jq '.state' 2>/dev/null || echo "UNKNOWN")
-   
-   if [ "$pr_state" = "MERGED" ] || [ "$pr_state" = "CLOSED" ]; then
-     echo "ORPHANED: Linked PR is $pr_state but issue still open"
-   fi
-   ```
-
-4. **No Activity Anywhere** (>7 days)
-   ```bash
-   # Issue has no comments, no updates, no activity
-   last_updated=$(gh issue view $issue_num --json updatedAt --jq '.updatedAt')
-   days_stale=$(calculate_days_since "$last_updated")
-   
-   if [ $days_stale -gt 7 ]; then
-     echo "ORPHANED: No activity for $days_stale days"
-   fi
-   ```
-
-**Resolution Actions:**
-
-```bash
-# For each orphaned tech lead review issue
-for issue_num in $(gh issue list --label "tech-lead-review" --state open --json number --jq '.[].number'); do
-  # Get issue and PR details
-  issue_data=$(gh issue view $issue_num --json title,body,labels,createdAt,updatedAt,comments)
-  pr_num=$(echo "$issue_data" | jq -r '.body' | grep -oP 'PR #\K\d+' | head -1)
-  
-  # Check if never assigned (missing copilot-assigned label)
-  has_copilot=$(echo "$issue_data" | jq -r '.labels[] | select(.name == "copilot-assigned") | .name')
-  
-  if [ -z "$has_copilot" ] && [ -n "$pr_num" ]; then
-    echo "🔧 FIXING: Tech lead review issue #${issue_num} was never assigned"
-    
-    # Get tech lead for the PR
-    tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --get-tech-lead)
-    
-    # Check if PR still exists and is open
-    pr_state=$(gh pr view $pr_num --json state --jq '.state' 2>/dev/null || echo "UNKNOWN")
-    
-    if [ "$pr_state" = "OPEN" ]; then
-      # PR still open - assign tech lead now
-      export INPUT_ISSUE_NUMBER=$issue_num
-      export FORCE_AGENT=$tech_lead
-      ./tools/assign-copilot-to-issue.sh
-      
-      gh issue comment $issue_num --body "## 🔧 Assignment Fix
-      
-This tech lead review issue was created but never assigned to a tech lead agent.
-
-**Assigning now:** @${tech_lead}
-
-This will start a Copilot session to complete the review.
-
-*Automated fix by @meta-coordinator-system*"
-      
-      echo "✅ Re-assigned issue #${issue_num} to @${tech_lead}"
-      continue
-    else
-      # PR closed/merged - close the orphaned issue
-      gh issue close $issue_num --comment "## 🧹 Cleanup: Orphaned Review Issue
-
-This tech lead review issue was never completed, and the linked PR #${pr_num} is now ${pr_state}.
-
-**Why closing:**
-- Issue was created but tech lead was never assigned
-- PR has been ${pr_state}
-- Review is no longer needed
-
-*Automated cleanup by @meta-coordinator-system*"
-      
-      echo "✅ Closed orphaned issue #${issue_num} (PR ${pr_state})"
-      continue
-    fi
-  fi
-  
-  # Check if linked PR is closed/merged
-  if [ -n "$pr_num" ]; then
-    pr_state=$(gh pr view $pr_num --json state --jq '.state' 2>/dev/null || echo "UNKNOWN")
-    
-    if [ "$pr_state" = "MERGED" ]; then
-      gh issue close $issue_num --comment "✅ PR #${pr_num} was merged. Closing review issue.
-
-*Automated cleanup by @meta-coordinator-system*"
-      echo "✅ Closed issue #${issue_num} (PR merged)"
-      continue
-    elif [ "$pr_state" = "CLOSED" ]; then
-      gh issue close $issue_num --comment "🚫 PR #${pr_num} was closed. Closing review issue.
-
-*Automated cleanup by @meta-coordinator-system*"
-      echo "✅ Closed issue #${issue_num} (PR closed)"
-      continue
-    fi
-  fi
-  
-  # Check if stale (>5 days, no tech lead comments)
-  created_at=$(echo "$issue_data" | jq -r '.createdAt')
-  issue_age_days=$(calculate_days_since "$created_at")
-  tech_lead_comments=$(echo "$issue_data" | jq '.comments[] | select(.author.login | contains("copilot"))' | jq -s 'length')
-  
-  if [ $issue_age_days -gt 5 ] && [ "$tech_lead_comments" = "0" ]; then
-    echo "⚠️  STALE: Issue #${issue_num} is ${issue_age_days} days old with no tech lead activity"
-    
-    # Re-assign to potentially trigger work
-    tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --get-tech-lead 2>/dev/null || echo "workflows-tech-lead")
-    
-    export INPUT_ISSUE_NUMBER=$issue_num
-    export FORCE_AGENT=$tech_lead
-    ./tools/assign-copilot-to-issue.sh
-    
-    gh issue comment $issue_num --body "## ⚠️ Stale Review Escalation
-
-This tech lead review has been open for ${issue_age_days} days with no activity from the tech lead.
-
-**Re-assigning:** @${tech_lead}
-
-**If this review is still needed:**
-- Tech lead should complete the review within 48 hours
-- Add \`tech-lead-approved\` or \`tech-lead-changes-requested\` label to PR
-
-**If this review is no longer needed:**
-- Close this issue with explanation
-- Update PR status accordingly
-
-*Automated escalation by @meta-coordinator-system*"
-    
-    echo "✅ Escalated stale issue #${issue_num}, re-assigned to @${tech_lead}"
-  fi
-done
-```
-
-**Why This Matters:**
-- Tech lead issues represent blocking work - can't merge without review
-- Orphaned issues waste resources and block PRs indefinitely
-- Re-assignment fixes the gap when assignment was missed
-- Closing orphaned issues for closed PRs reduces open count
-- Escalating stale reviews prevents PRs from sitting forever
 
 **Conditions:**
 - Look for conflicting state labels
 - Check review age
 - Verify bidirectional links
 - Validate label consistency
-- **Check for orphaned tech lead issues every run**
 
 **Outcomes:**
 - System state is consistent
 - No stuck items
 - Complex cases escalated
 - Clear error messages
-- **Orphaned tech lead issues fixed or closed**
-- **Stale reviews escalated and re-assigned**
 
 ## PR Lifecycle Management & Cleanup
 
@@ -1788,18 +1380,15 @@ echo "📋 Complete PR list saved to /tmp/all_prs_full.json"
 1. List all open PRs (non-draft)
 2. List all open issues (unassigned)
 3. Identify PRs needing attention:
-   - No tech lead assignment yet (BUT: only assign if truly needed)
    - Changes requested but no feedback issue
    - New commits after change request
    - **STALE PRs for cleanup (>3 HOURS conflicts, >7 days no activity)**
 4. Identify issues needing assignment
-5. **Identify orphaned tech lead review issues** (with label but no copilot-assigned)
-6. **Identify stale items for proactive cleanup**
+5. **Identify stale items for proactive cleanup**
 
 **Ask yourself before proceeding:**
 - How many items can I close/merge to reduce open counts?
 - Which PRs have been sitting too long (cleanup opportunity)?
-- Are there tech lead reviews that don't add value (skip them)?
 - **Which PRs have conflicts >3 hours (MUST abandon immediately)?**
 
 ### Phase 2: Act (Prioritized by Impact on Metrics)
@@ -1810,112 +1399,22 @@ echo "📋 Complete PR list saved to /tmp/all_prs_full.json"
    - Record with: `memory.record_pr_closed(pr_num, created_at, is_stale=True)`
 7. **Close orphaned issues** (linked PR closed, work completed)
    - Record with: `memory.record_issue_closed(issue_num, created_at)`
-8. **Fix orphaned tech lead review issues** (never assigned or stale)
-   ```bash
-   # For tech-lead-review issues without copilot-assigned label
-   for issue_num in $(gh issue list --label "tech-lead-review,-copilot-assigned" \
-     --state open --json number --jq '.[].number'); do
-     
-     # Get linked PR and tech lead
-     pr_num=$(gh issue view $issue_num --json body --jq '.body' | grep -oP 'PR #\K\d+' | head -1)
-     tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --get-tech-lead)
-     
-     # Check if PR still open
-     pr_state=$(gh pr view $pr_num --json state --jq '.state' 2>/dev/null || echo "CLOSED")
-     
-     if [ "$pr_state" = "OPEN" ]; then
-       # Re-assign tech lead to fix orphaned issue
-       export INPUT_ISSUE_NUMBER=$issue_num
-       export FORCE_AGENT=$tech_lead
-       ./tools/assign-copilot-to-issue.sh
-       
-       gh issue comment $issue_num --body "🔧 **Assignment Gap Fixed**
-       
-This review issue was created but never assigned. Now assigning @${tech_lead}.
 
-*Automated fix by @meta-coordinator-system*"
-     else
-       # PR closed - close orphaned review issue
-       gh issue close $issue_num --comment "🧹 PR ${pr_state}, closing orphaned review issue.
-
-*Automated cleanup by @meta-coordinator-system*"
-     fi
-   done
-   ```
-
-**PRIORITY 2: Unblock Work**
-9. Assign agents to unassigned issues (enables work to proceed)
+**PRIORITY 2: Agent Assignment (unblock work)**
+8. Assign agents to unassigned issues:
    ```bash
    # For each unassigned issue, assign appropriate agent
    # This starts a Copilot session for the agent to execute the work
    
-   for issue_num in $(gh issue list --state open --label "-copilot-assigned,-tech-lead-review" --json number --jq '.[].number'); do
+   for issue_num in $(gh issue list --state open --label "-copilot-assigned" --json number --jq '.[].number'); do
      export INPUT_ISSUE_NUMBER=$issue_num
      ./tools/assign-copilot-to-issue.sh  # Auto-matches agent and assigns
    done
    ```
-   
-10. Create feedback issues for change requests (unblocks PR authors)
-   ```bash
-   # For PRs with tech-lead-changes-requested, create feedback issue
-   # and assign appropriate agent to address the feedback
-   
-   # Get agent for feedback work
-   agent=$(python3 tools/match-issue-to-agent.py "$feedback_title" "$feedback_body" --json | jq -r '.agent')
-   
-   # Create feedback issue
-   feedback_issue_num=$(gh issue create \
-     --title "[Tech Lead Feedback] PR #${pr_num}" \
-     --body "$feedback_body" \
-     --label "tech-lead-feedback" \
-     --json number --jq '.number')
-   
-   # CRITICAL: Assign agent to feedback issue
-   # This starts a Copilot session to address the feedback
-   export INPUT_ISSUE_NUMBER=$feedback_issue_num
-   export FORCE_AGENT=$agent
-   ./tools/assign-copilot-to-issue.sh
-   ```
 
-**PRIORITY 3: Tech Lead Reviews (ONLY when necessary)**
-11. Assign tech leads where TRULY needed:
-    - Protected paths (`.github/workflows/`, `.github/agents/`)
-    - Security changes (auth, token, password, secret)
-    - Large PRs (>10 files OR >200 lines)
-    - **SKIP for: typo fixes, single-line changes, docs-only, dependabot**
-    
-    **For each PR requiring tech lead review:**
-    ```bash
-    # Get tech lead for the PR
-    tech_lead=$(python3 tools/match-pr-to-tech-lead.py "$pr_num" --get-tech-lead)
-    
-    # Create tech lead review issue
-    review_issue_num=$(gh issue create \
-      --title "[Tech Lead Review] PR #${pr_num}: ${pr_title}" \
-      --body "$(cat .github/workflows/templates/tech-lead-review-body.md)" \
-      --label "tech-lead-review,needs-review,linked-to-pr" \
-      --json number --jq '.number')
-    
-    # CRITICAL: Assign tech lead agent to the review issue
-    # This starts a Copilot session for the tech lead to do the work
-    export INPUT_ISSUE_NUMBER=$review_issue_num
-    export FORCE_AGENT=$tech_lead  # e.g., "workflows-tech-lead"
-    ./tools/assign-copilot-to-issue.sh
-    
-    # Link PR and issue bidirectionally
-    gh pr comment $pr_num --body "🔍 Tech lead review requested. See issue #${review_issue_num}"
-    gh pr edit $pr_num --add-label "needs-tech-lead-review"
-    ```
-    
-    **Why assignment is critical:**
-    - Creates active Copilot session for tech lead agent
-    - Tech lead agent can execute review autonomously
-    - Issue becomes actionable work item, not just tracking
-    - GraphQL assignment triggers Copilot to start working
-
-**PRIORITY 4: Housekeeping**
-12. Handle Exceptions (fix conflicts, close orphaned items)
-13. Request re-reviews for updated PRs
+**PRIORITY 3: Housekeeping**
+9. Handle Exceptions (fix conflicts, close orphaned items)
+10. Request re-reviews for updated PRs
 
 ### Phase 3: Persist & Report (CRITICAL ORDER)
 
@@ -2024,15 +1523,9 @@ EOF
 **MEDIUM IMPACT (Unblock Work):**
 9. ✅ Assigned @engineer-master to issue #1236 (API implementation)
 10. ✅ Assigned @secure-specialist to issue #1237 (security audit)
-11. ✅ Created feedback issue #1238 for PR #2587 (changes requested by @workflows-tech-lead)
-
-**LOW IMPACT (Tech Lead Reviews - Selective):**
-12. ✅ Assigned @workflows-tech-lead to PR #2590 (workflow changes)
-13. ⏭️ SKIPPED tech lead review for PR #2591 (1-line typo fix in docs)
-14. ⏭️ SKIPPED tech lead review for PR #2592 (dependabot update)
 
 **EXCEPTIONS HANDLED:**
-15. ✅ Fixed label conflict on PR #2586 (removed stale label)
+11. ✅ Fixed label conflict on PR #2586 (removed stale label)
 
 ### 📈 Metrics vs Goals
 - Cycle Time: ✅ Both metrics under target
@@ -2042,7 +1535,6 @@ EOF
 ### 🎯 Next Focus Areas
 1. Continue aggressive stale PR cleanup
 2. Auto-merge more approved PRs
-3. Reduce tech lead review overhead for trivial changes
 
 **Next run:** In 15 minutes (scheduled)
 ```
@@ -2051,37 +1543,8 @@ EOF
 
 ### 🔧 Actions Taken
 
-**PR Review Assignments (3)**
-1. PR #456 "Update workflow triggers"
-   - ✅ Matched to @workflows-tech-lead
-   - ✅ Applied labels: needs-tech-lead-review
-   - ✅ Posted assignment comment
-
-2. PR #457 "Fix security vulnerability"
-   - ✅ Matched to @secure-specialist (tech lead)
-   - ✅ Applied labels: needs-tech-lead-review
-   - ✅ Contains security keywords
-
-3. PR #458 "Add API documentation"
-   - ✅ Matched to @docs-tech-lead
-   - ✅ Optional review (small PR)
-   - ✅ Posted informational comment
-
-**Feedback Issues Created (2)**
-4. PR #450 - Changes requested by @workflows-tech-lead
-   - ✅ Created feedback issue #460
-   - ✅ Matched to @align-wizard
-   - ✅ Assigned agent
-   - ✅ Linked to PR
-
-5. PR #451 - Changes requested by @secure-specialist
-   - ✅ Created feedback issue #461
-   - ✅ Matched to @secure-ninja
-   - ✅ Assigned agent
-   - ✅ Linked to PR
-
 **Agent Assignments (5)**
-6. Issue #455 "Implement rate limiting"
+1. Issue #455 "Implement rate limiting"
    - ✅ Matched to @engineer-master (score: 8.5)
    - ✅ Assigned Copilot
    - ✅ Posted assignment details
@@ -2127,8 +1590,6 @@ EOF
 - Exceptions handled: 1
 
 ### ✅ System Health
-- All reviewable PRs have tech lead assignment
-- All PRs with changes requested have feedback issues
 - All open issues have agent assignment
 - No conflicting labels detected
 - No stale reviews (>7 days)
@@ -2140,17 +1601,11 @@ EOF
 
 ### Labels Used
 
-**Essential State (4):**
-- `needs-tech-lead-review` 🔴 - Blocks merge until approved
-- `tech-lead-approved` 🟢 - Allows merge
-- `tech-lead-changes-requested` 🟡 - Blocks merge, triggers feedback
+**Essential State (1):**
 - `copilot` 💙 - Indicates copilot-created PR
 
 **Removed (use comments instead):**
-- ❌ `tech-lead:X` - Use comments to mention tech lead
 - ❌ `agent:X` - Use comments to mention agent
-- ❌ `tech-lead-review-cycle` - Track in comments
-- ❌ `tech-lead-feedback` - Inferred from issue link
 
 **Tracking:**
 - `assigned-agent` - Generic label for agent assignment
@@ -2160,13 +1615,12 @@ EOF
 
 **Add label:**
 ```bash
-gh pr edit $PR_NUM --add-label "needs-tech-lead-review" --repo $REPO
 gh issue edit $ISSUE_NUM --add-label "assigned-agent" --repo $REPO
 ```
 
 **Remove label:**
 ```bash
-gh pr edit $PR_NUM --remove-label "tech-lead-changes-requested" --repo $REPO
+gh pr edit $PR_NUM --remove-label "old-label" --repo $REPO
 ```
 
 **Check labels:**
