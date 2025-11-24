@@ -1,33 +1,17 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-11-24T21:37:14.500201",
+  "last_updated": "2025-11-24T22:17:06.562447",
   "runs": {
-    "total_runs": 20,
-    "successful_runs": 20,
+    "total_runs": 22,
+    "successful_runs": 22,
     "failed_runs": 0,
     "last_run": {
-      "timestamp": "2025-11-24T21:33:37Z",
-      "run_id": "21:33",
-      "duration_seconds": 120,
+      "timestamp": "2025-11-24T22:17:06.558671",
       "success": true,
-      "actions": {
-        "prs_merged": 2,
-        "prs_closed": 2,
-        "issues_closed": 2,
-        "pr_ids_merged": [
-          2874,
-          2872
-        ],
-        "pr_ids_closed": [
-          2868,
-          2870
-        ],
-        "issue_ids_closed": [
-          2869,
-          2768
-        ]
-      }
+      "duration_seconds": 60,
+      "actions_taken": 2,
+      "session_id": "c816a02102be9d87"
     },
     "average_duration_seconds": 139.375
   },
@@ -41,12 +25,12 @@
   "issue_patterns": {
     "total_issues_processed": 8,
     "agents_assigned": {
-      "edge-cases-pro": 2048,
-      "coach-master": 2048,
-      "construct-specialist": 2048,
-      "create-guru": 6144,
-      "investigate-champion": 2048,
-      "troubleshoot-expert": 2048
+      "edge-cases-pro": 8192,
+      "coach-master": 8192,
+      "construct-specialist": 8192,
+      "create-guru": 24576,
+      "investigate-champion": 8192,
+      "troubleshoot-expert": 8192
     },
     "agent_success_rates": {},
     "assignment_times": [
@@ -1749,24 +1733,6 @@
   "learnings": {
     "insights": [
       {
-        "timestamp": "2025-11-23T21:22:20.175520Z",
-        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
-        "evidence": {
-          "prs_needing_review": 14,
-          "prs_with_conflicts": 5,
-          "auto_merge_success": 1
-        }
-      },
-      {
-        "timestamp": "2025-11-23T22:50:46.485718Z",
-        "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
-        "evidence": {
-          "prs_closed": 4,
-          "reason": "persistent_merge_conflicts",
-          "auto_merge_success": 1
-        }
-      },
-      {
         "timestamp": "2025-11-23T20:29:43.850650Z",
         "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
         "evidence": {
@@ -2165,6 +2131,40 @@
           "reason": "persistent_merge_conflicts",
           "auto_merge_success": 1
         }
+      },
+      {
+        "insight": "PR #2885 (AgentOps Dashboard) is merge-eligible: MERGEABLE status, from trusted github-actions bot, no WIP markers, has auto-merge label",
+        "evidence": {
+          "pr_number": 2885,
+          "mergeable": "MERGEABLE",
+          "author": "github-actions[bot]",
+          "labels": [
+            "auto-merge",
+            "copilot",
+            "automated",
+            "documentation"
+          ]
+        },
+        "timestamp": "2025-11-24T22:17:06.558663",
+        "session_id": "c816a02102be9d87"
+      },
+      {
+        "insight": "5 out of 6 open PRs have [WIP] markers indicating active agent work - system correctly blocking auto-merge for in-progress work",
+        "evidence": {
+          "wip_prs": [
+            2887,
+            2884,
+            2883,
+            2882,
+            2879
+          ],
+          "eligible_prs": [
+            2885
+          ],
+          "assessment_time": "2025-11-24T22:17:06.558667"
+        },
+        "timestamp": "2025-11-24T22:17:06.558668",
+        "session_id": "c816a02102be9d87"
       }
     ],
     "recommendations": []
