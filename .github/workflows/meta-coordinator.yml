@@ -89,12 +89,16 @@ jobs:
           echo "🔍 Quick assessment: Is there work to do?"
           
           # Count items needing attention
-          open_prs=$(gh pr list --state open --json number --jq 'length')
-          open_issues=$(gh issue list --state open --json number --jq 'length')
+          open_prs=$(gh pr list --state open --json number --jq 'length' --limit 200)
+          open_issues=$(gh issue list --state open --json number --jq 'length' --limit 200)
           
           echo "📊 Current state:"
           echo "  - Open PRs: ${open_prs}"
           echo "  - Open issues: ${open_issues}"
+          
+          # Save to environment for memory tracking
+          echo "OPEN_PRS_START=${open_prs}" >> $GITHUB_ENV
+          echo "OPEN_ISSUES_START=${open_issues}" >> $GITHUB_ENV
           
           # Decide if we should skip (nothing to do)
           if [ "${open_prs}" = "0" ] && [ "${open_issues}" = "0" ]; then
@@ -104,6 +108,72 @@ jobs:
             echo "🎯 Work detected - proceeding with coordination"
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
+      
+      - name: Phase 0 - Stale PR Cleanup (Phase 2)
+        if: steps.assess.outputs.skip != 'true'
+        id: cleanup
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🧹 Phase 0: Proactive Stale PR Cleanup"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          
+          # Run cleanup script
+          ./tools/cleanup-stale-prs.sh > /tmp/cleanup_summary.txt 2>&1 || true
+          
+          # Extract counts from summary
+          conflicts_closed=$(grep "Merge conflicts" /tmp/cleanup_summary.txt | grep -oP '\d+' | tail -1 || echo "0")
+          no_activity_closed=$(grep "No activity" /tmp/cleanup_summary.txt | grep -oP '\d+' | tail -1 || echo "0")
+          orphaned_closed=$(grep "Orphaned" /tmp/cleanup_summary.txt | grep -oP '\d+' | tail -1 || echo "0")
+          draft_closed=$(grep "Abandoned draft" /tmp/cleanup_summary.txt | grep -oP '\d+' | tail -1 || echo "0")
+          total_closed=$((conflicts_closed + no_activity_closed + orphaned_closed + draft_closed))
+          
+          # Save to environment for coordination issue
+          echo "CLEANUP_CONFLICTS=${conflicts_closed}" >> $GITHUB_ENV
+          echo "CLEANUP_NO_ACTIVITY=${no_activity_closed}" >> $GITHUB_ENV
+          echo "CLEANUP_ORPHANED=${orphaned_closed}" >> $GITHUB_ENV
+          echo "CLEANUP_DRAFT=${draft_closed}" >> $GITHUB_ENV
+          echo "CLEANUP_TOTAL=${total_closed}" >> $GITHUB_ENV
+          
+          echo ""
+          echo "✅ Cleanup complete: ${total_closed} stale PRs closed"
+          echo ""
+          cat /tmp/cleanup_summary.txt || echo "No cleanup summary available"
+      
+      - name: Phase 5 - PR State Analysis (Monitoring)
+        if: steps.assess.outputs.skip != 'true'
+        id: monitoring
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📊 Phase 5: PR State Analysis"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          
+          # Get all PR states
+          gh pr list --state open --limit 200 \
+            --json number,title,mergeable,isDraft,author \
+            > /tmp/all_prs.json
+          
+          # Count by state
+          mergeable=$(jq '[.[] | select(.mergeable == "MERGEABLE" and .isDraft == false)] | length' /tmp/all_prs.json)
+          conflicting=$(jq '[.[] | select(.mergeable == "CONFLICTING")] | length' /tmp/all_prs.json)
+          draft=$(jq '[.[] | select(.isDraft == true)] | length' /tmp/all_prs.json)
+          unknown=$(jq '[.[] | select(.mergeable == "UNKNOWN")] | length' /tmp/all_prs.json)
+          
+          # Save to environment
+          echo "MERGEABLE_PRS=${mergeable}" >> $GITHUB_ENV
+          echo "CONFLICTING_PRS=${conflicting}" >> $GITHUB_ENV
+          echo "DRAFT_PRS=${draft}" >> $GITHUB_ENV
+          echo "UNKNOWN_PRS=${unknown}" >> $GITHUB_ENV
+          
+          echo "PR State Summary:"
+          echo "  - ✅ Mergeable (non-draft): ${mergeable}"
+          echo "  - ❌ Conflicting: ${conflicting}"
+          echo "  - 📝 Draft: ${draft}"
+          echo "  - ❓ Unknown: ${unknown}"
+          echo ""
       
       - name: Create and assign coordination request
         if: steps.assess.outputs.skip != 'true'
