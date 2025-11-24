@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-11-24T10:54:58.013349",
+  "last_updated": "2025-11-24T14:03:41.358547",
   "runs": {
-    "total_runs": 8,
-    "successful_runs": 8,
+    "total_runs": 9,
+    "successful_runs": 9,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-11-23T22:50:46.485712Z",
@@ -24,15 +24,63 @@
   "issue_patterns": {
     "total_issues_processed": 8,
     "agents_assigned": {
-      "edge-cases-pro": 1,
-      "coach-master": 1,
-      "construct-specialist": 1,
-      "create-guru": 3,
-      "investigate-champion": 1,
-      "troubleshoot-expert": 1
+      "edge-cases-pro": 2,
+      "coach-master": 2,
+      "construct-specialist": 2,
+      "create-guru": 6,
+      "investigate-champion": 2,
+      "troubleshoot-expert": 2
     },
     "agent_success_rates": {},
     "assignment_times": [
+      {
+        "issue": 2768,
+        "agent": "edge-cases-pro",
+        "timestamp": "2025-11-24T10:54:58.012983",
+        "score": 11
+      },
+      {
+        "issue": 2753,
+        "agent": "coach-master",
+        "timestamp": "2025-11-24T10:54:58.012998",
+        "score": 12
+      },
+      {
+        "issue": 2751,
+        "agent": "construct-specialist",
+        "timestamp": "2025-11-24T10:54:58.013006",
+        "score": 9
+      },
+      {
+        "issue": 2743,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013016",
+        "score": 14
+      },
+      {
+        "issue": 2733,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013023",
+        "score": 13
+      },
+      {
+        "issue": 2715,
+        "agent": "investigate-champion",
+        "timestamp": "2025-11-24T10:54:58.013030",
+        "score": 10
+      },
+      {
+        "issue": 2712,
+        "agent": "troubleshoot-expert",
+        "timestamp": "2025-11-24T10:54:58.013037",
+        "score": 15
+      },
+      {
+        "issue": 2689,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013048",
+        "score": 11
+      },
       {
         "issue": 2768,
         "agent": "edge-cases-pro",
@@ -96,6 +144,146 @@
   },
   "decisions": {
     "recent": [
+      {
+        "type": "phase0_previous_cycle_pr_merged",
+        "description": "Merged PR #2766 from previous cycle (10:16) - memory persistence completed",
+        "context": {
+          "pr_number": 2766,
+          "cycle": "10:16"
+        },
+        "timestamp": "2025-11-24T10:51:03.010310",
+        "session_id": "f8fdd61a55ce1170"
+      },
+      {
+        "type": "phase0_previous_cycle_pr_merged",
+        "description": "Merged PR #2766 from previous cycle (10:16) - memory persistence completed",
+        "context": {
+          "pr_number": 2766,
+          "cycle": "10:16"
+        },
+        "timestamp": "2025-11-24T10:51:03.010310",
+        "session_id": "f8fdd61a55ce1170"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2768 to edge-cases-pro (score: 11.00)",
+        "context": {
+          "issue_number": 2768,
+          "agent": "edge-cases-pro",
+          "score": 11
+        },
+        "timestamp": "2025-11-24T10:54:58.012992",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2753 to coach-master (score: 12.00)",
+        "context": {
+          "issue_number": 2753,
+          "agent": "coach-master",
+          "score": 12
+        },
+        "timestamp": "2025-11-24T10:54:58.013001",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2751 to construct-specialist (score: 9.00)",
+        "context": {
+          "issue_number": 2751,
+          "agent": "construct-specialist",
+          "score": 9
+        },
+        "timestamp": "2025-11-24T10:54:58.013010",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2743 to create-guru (score: 14.00)",
+        "context": {
+          "issue_number": 2743,
+          "agent": "create-guru",
+          "score": 14
+        },
+        "timestamp": "2025-11-24T10:54:58.013018",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2733 to create-guru (score: 13.00)",
+        "context": {
+          "issue_number": 2733,
+          "agent": "create-guru",
+          "score": 13
+        },
+        "timestamp": "2025-11-24T10:54:58.013025",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2715 to investigate-champion (score: 10.00)",
+        "context": {
+          "issue_number": 2715,
+          "agent": "investigate-champion",
+          "score": 10
+        },
+        "timestamp": "2025-11-24T10:54:58.013033",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2712 to troubleshoot-expert (score: 15.00)",
+        "context": {
+          "issue_number": 2712,
+          "agent": "troubleshoot-expert",
+          "score": 15
+        },
+        "timestamp": "2025-11-24T10:54:58.013039",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #2689 to create-guru (score: 11.00)",
+        "context": {
+          "issue_number": 2689,
+          "agent": "create-guru",
+          "score": 11
+        },
+        "timestamp": "2025-11-24T10:54:58.013052",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "phase1_skipped_trivial_prs",
+        "description": "Skipped tech lead review assignment for 3 automated sync PRs (trivial changes)",
+        "context": {
+          "pr_count": 3
+        },
+        "timestamp": "2025-11-24T10:54:58.013057",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "phase5_auto_merged",
+        "description": "Auto-merged PR #2769 (automated sync from trusted source, no CI checks required)",
+        "context": {
+          "pr_number": 2769,
+          "reason": "trusted_source_no_wip"
+        },
+        "timestamp": "2025-11-24T10:54:58.013060",
+        "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "phase7_closed_conflicting",
+        "description": "Closed PRs #2760 and #2725 (merge conflicts, superseded by merged PR #2769)",
+        "context": {
+          "pr_numbers": [
+            2760,
+            2725
+          ],
+          "reason": "conflicts_superseded"
+        },
+        "timestamp": "2025-11-24T10:54:58.013062",
+        "session_id": "a8f53e273f33a934"
+      },
       {
         "type": "phase0_previous_cycle_pr_merged",
         "description": "Merged PR #2766 from previous cycle (10:16) - memory persistence completed",
