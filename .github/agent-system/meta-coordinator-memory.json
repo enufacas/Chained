@@ -1,7 +1,7 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-11-24T19:34:52.011834",
+  "last_updated": "2025-11-24T20:59:34.966448",
   "runs": {
     "total_runs": 17,
     "successful_runs": 17,
@@ -2165,22 +2165,49 @@
     "cycle_time_trend": []
   },
   "open_count_metrics": {
-    "snapshots": [],
-    "open_pr_trend": [],
-    "open_issue_trend": [],
-    "prs_closed_count": 0,
-    "issues_closed_count": 0,
-    "stale_prs_closed": 0,
-    "baseline_open_prs": null,
-    "baseline_open_issues": null
+    "snapshots": [
+      {
+        "timestamp": "2025-11-24T20:53:40.331399",
+        "open_prs": 8,
+        "open_issues": 5
+      },
+      {
+        "timestamp": "2025-11-24T20:59:34.966433",
+        "open_prs": 1,
+        "open_issues": 2
+      }
+    ],
+    "open_pr_trend": [
+      8,
+      1
+    ],
+    "open_issue_trend": [
+      5,
+      2
+    ],
+    "prs_closed_count": 7,
+    "issues_closed_count": 3,
+    "stale_prs_closed": 2,
+    "baseline_open_prs": 8,
+    "baseline_open_issues": 5
   },
   "success_score": {
-    "current_score": 0,
-    "score_history": [],
+    "current_score": 80.0,
+    "score_history": [
+      {
+        "timestamp": "2025-11-24T20:59:34.966446",
+        "score": 80.0,
+        "factors": {
+          "cycle_time_score": 50,
+          "reduction_score": 100,
+          "proactive_cleanup_score": 100
+        }
+      }
+    ],
     "factors": {
-      "cycle_time_score": 0,
-      "reduction_score": 0,
-      "proactive_cleanup_score": 0
+      "cycle_time_score": 50,
+      "reduction_score": 100,
+      "proactive_cleanup_score": 100
     }
   }
 }
