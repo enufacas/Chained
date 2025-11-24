@@ -11,9 +11,9 @@ name: "Meta-Coordinator: System Orchestration"
 
 on:
   schedule:
-    # Run every 15 minutes (cost-optimized from 5 min)
-    # Reduces scheduled runs by 67% while maintaining responsiveness
-    - cron: '*/15 * * * *'
+    # Run every 2 hours (cost-optimized from 15 min)
+    # Reduces scheduled runs by 88% while maintaining system coordination
+    - cron: '0 */2 * * *'
   
   workflow_dispatch:
     inputs:
@@ -336,7 +336,7 @@ jobs:
           echo ""
           echo "✅ No open PRs or issues requiring attention"
           echo "💰 Skipping Copilot session (cost protection)"
-          echo "🔄 Next check in 15 minutes"
+          echo "🔄 Next check in 2 hours"
       
       - name: Monitor coordination progress
         if: steps.assess.outputs.skip != 'true' && steps.create_request.outputs.issue_number != ''
@@ -375,4 +375,4 @@ jobs:
           echo ""
           echo "✅ Coordination issue created and Copilot assigned in one step"
           echo "📋 @meta-coordinator-system will orchestrate system state"
-          echo "🔄 Next run in 15 minutes (if scheduled)"
+          echo "🔄 Next run in 2 hours (if scheduled)"
