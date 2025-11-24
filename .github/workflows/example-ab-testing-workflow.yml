@@ -43,24 +43,25 @@ jobs:
           echo "🧪 Checking for active A/B test..."
           
           # Run participation script and capture JSON output
-          RESULT_JSON=$(python3 -c "
-import sys
-import json
-sys.path.insert(0, 'tools')
-from ab_testing_integration import WorkflowIntegration
+          RESULT_JSON=$(python3 << PYTHON_SCRIPT
+          import sys
+          import json
+          sys.path.insert(0, 'tools')
+          from ab_testing_integration import WorkflowIntegration
 
-integration = WorkflowIntegration('example-workflow')
-config = integration.participate(json.loads('$DEFAULT_CONFIG'))
+          integration = WorkflowIntegration('example-workflow')
+          config = integration.participate(json.loads('$DEFAULT_CONFIG'))
 
-result = {
-    'config': config,
-    'is_participating': integration._is_participating,
-    'experiment_id': integration.experiment_id or '',
-    'variant': integration.variant_name or 'default'
-}
+          result = {
+              'config': config,
+              'is_participating': integration._is_participating,
+              'experiment_id': integration.experiment_id or '',
+              'variant': integration.variant_name or 'default'
+          }
 
-print(json.dumps(result))
-" 2>&1)
+          print(json.dumps(result))
+          PYTHON_SCRIPT
+          )
           
           echo "$RESULT_JSON"
           

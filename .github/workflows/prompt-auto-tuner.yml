@@ -256,13 +256,17 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
           git add tools/data/prompts/
-          git commit -m "feat: auto-tune prompt templates (@create-guru)
-
-- Evolved ${{ steps.evolve.outputs.evolved_count || 0 }} templates
-- Created ${{ steps.ab_test.outputs.test_count || 0 }} A/B tests
-- Success rate: $(awk 'BEGIN {print ${{ steps.analyze.outputs.success_rate }} * 100}')%
-
-Automated by prompt auto-tuner (@create-guru)"
+          
+          # Calculate success percentage
+          success_pct=$(awk "BEGIN {print ${{ steps.analyze.outputs.success_rate }} * 100}")
+          
+          # Create commit message
+          git commit -m "feat: auto-tune prompt templates (@create-guru)" \
+            -m "• Evolved ${{ steps.evolve.outputs.evolved_count || 0 }} templates" \
+            -m "• Created ${{ steps.ab_test.outputs.test_count || 0 }} A/B tests" \
+            -m "• Success rate: ${success_pct}%" \
+            -m "" \
+            -m "Automated by prompt auto-tuner (@create-guru)"
           
           echo "✓ Changes committed"
       
@@ -284,12 +288,15 @@ Automated by prompt auto-tuner (@create-guru)"
             pr_body="Automated prompt template tuning by @create-guru"
           fi
           
-          # Add workflow reference
-          pr_body="${pr_body}
-
----
-
-*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*"
+          # Add workflow reference (use heredoc to avoid YAML issues with ---)
+          read -r -d '' workflow_ref << 'WORKFLOW_REF' || true
+          
+          ---
+          
+          *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+          WORKFLOW_REF
+          
+          pr_body="${pr_body}${workflow_ref}"
           
           gh pr create \
             --title "🧬 Auto-tune prompt templates - $(date -u +%Y-%m-%d)" \
