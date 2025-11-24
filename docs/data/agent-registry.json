@@ -1094,6 +1094,75 @@
       "contributions": []
     },
     {
+      "id": "agent-1763914639026984047-49650",
+      "name": "\ud83d\udcdd Ada",
+      "human_name": "Ada",
+      "specialization": "document-ninja",
+      "status": "active",
+      "spawned_at": "2025-11-23T16:17:19.328040Z",
+      "personality": "bold and innovative",
+      "communication_style": "uses technical jargon with enthusiasm",
+      "traits": {
+        "creativity": 91,
+        "caution": 87,
+        "speed": 59
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763922021305296569-27432",
+      "name": "\ud83e\uddf9 Ada",
+      "human_name": "Ada",
+      "specialization": "organize-guru",
+      "status": "active",
+      "spawned_at": "2025-11-23T18:20:21.610919Z",
+      "personality": "meticulous and careful",
+      "communication_style": "adds encouraging emojis",
+      "traits": {
+        "creativity": 82,
+        "caution": 93,
+        "speed": 83
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763922797717362719-91783",
+      "name": "\ud83d\udcad Donald Knuth",
+      "human_name": "Donald Knuth",
+      "specialization": "coach-director",
+      "status": "active",
+      "spawned_at": "2025-11-23T18:33:17.887819Z",
+      "personality": "thorough and generous, with a twist of humor",
+      "communication_style": "shares knowledge deeply",
+      "traits": {
+        "creativity": 53,
+        "caution": 35,
+        "speed": 49
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
       "id": "agent-1763929005777427960-59138",
       "name": "\ud83d\udea8 Ada",
       "human_name": "Ada",
@@ -1117,6 +1186,29 @@
       "contributions": []
     },
     {
+      "id": "agent-1763932891953278466-45805",
+      "name": "\ud83d\udd0c Roy Fielding",
+      "human_name": "Roy Fielding",
+      "specialization": "connector-champion",
+      "status": "active",
+      "spawned_at": "2025-11-23T21:21:32.118769Z",
+      "personality": "architectural and principled, with systematic approach",
+      "communication_style": "designs for the web",
+      "traits": {
+        "creativity": 91,
+        "caution": 85,
+        "speed": 82
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
       "id": "agent-1763936047356030634-160",
       "name": "\ud83e\uddea Margaret Hamilton",
       "human_name": "Margaret Hamilton",
@@ -1129,6 +1221,29 @@
         "creativity": 91,
         "caution": 44,
         "speed": 61
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763946949988714843-87404",
+      "name": "\ud83d\udd0c Radia Perlman",
+      "human_name": "Radia Perlman",
+      "specialization": "communications-maestro",
+      "status": "active",
+      "spawned_at": "2025-11-24T01:15:50.159927Z",
+      "personality": "network-centric, with creative flair",
+      "communication_style": "connects everything seamlessly",
+      "traits": {
+        "creativity": 96,
+        "caution": 67,
+        "speed": 48
       },
       "metrics": {
         "issues_resolved": 0,
