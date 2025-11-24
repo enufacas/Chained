@@ -93,11 +93,27 @@ def check_require_patterns(text: str, files: List[Dict]) -> Tuple[bool, str]:
     return False, ""
 
 
-def is_large_pr(pr_data: Dict[str, Any]) -> Tuple[bool, str]:
-    """Check if PR is large enough to require review."""
+def get_pr_change_stats(pr_data: Dict[str, Any]) -> Tuple[int, int, int]:
+    """
+    Extract change statistics from PR data.
+    
+    Returns:
+        (files_changed, additions, deletions)
+    """
     files_changed = len(pr_data.get("files", []))
     additions = pr_data.get("additions", 0)
     deletions = pr_data.get("deletions", 0)
+    return files_changed, additions, deletions
+
+
+def is_large_pr(pr_data: Dict[str, Any]) -> Tuple[bool, str]:
+    """
+    Check if PR is large enough to require review.
+    
+    Uses AND logic: Both many files AND many lines must be true.
+    This ensures we only flag truly large PRs that need careful review.
+    """
+    files_changed, additions, deletions = get_pr_change_stats(pr_data)
     total_lines = additions + deletions
     
     if files_changed > LARGE_PR_FILES and total_lines > LARGE_PR_LINES:
@@ -108,9 +124,7 @@ def is_large_pr(pr_data: Dict[str, Any]) -> Tuple[bool, str]:
 
 def is_single_line_change(pr_data: Dict[str, Any]) -> Tuple[bool, str]:
     """Check if PR is a single-line change."""
-    additions = pr_data.get("additions", 0)
-    deletions = pr_data.get("deletions", 0)
-    files_changed = len(pr_data.get("files", []))
+    files_changed, additions, deletions = get_pr_change_stats(pr_data)
     
     if files_changed == 1 and additions + deletions <= 3:
         return True, "single_line_change"
@@ -197,6 +211,10 @@ def main():
     
     skip, reason, context = should_skip_review(pr_number)
     
+    # Get PR stats
+    pr_data = context.get("pr_data", {})
+    files_changed, additions, deletions = get_pr_change_stats(pr_data)
+    
     # Output decision
     if skip:
         print(f"SKIP: PR #{pr_number} - {reason}")
@@ -204,10 +222,9 @@ def main():
             "pr_number": pr_number,
             "decision": "skip",
             "reason": reason,
-            "title": context.get("pr_data", {}).get("title", ""),
-            "files_changed": len(context.get("pr_data", {}).get("files", [])),
-            "lines_changed": context.get("pr_data", {}).get("additions", 0) + 
-                           context.get("pr_data", {}).get("deletions", 0)
+            "title": pr_data.get("title", ""),
+            "files_changed": files_changed,
+            "lines_changed": additions + deletions
         }, indent=2))
         sys.exit(1)  # Exit 1 = skip review
     else:
@@ -216,10 +233,9 @@ def main():
             "pr_number": pr_number,
             "decision": "require",
             "reason": reason,
-            "title": context.get("pr_data", {}).get("title", ""),
-            "files_changed": len(context.get("pr_data", {}).get("files", [])),
-            "lines_changed": context.get("pr_data", {}).get("additions", 0) + 
-                           context.get("pr_data", {}).get("deletions", 0)
+            "title": pr_data.get("title", ""),
+            "files_changed": files_changed,
+            "lines_changed": additions + deletions
         }, indent=2))
         sys.exit(0)  # Exit 0 = require review
 

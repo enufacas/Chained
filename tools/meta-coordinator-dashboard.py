@@ -194,10 +194,19 @@ def format_text(metrics: Dict[str, Any]) -> str:
         f"Issue Average: {cycle['issue_avg_formatted']} ({cycle['issue_count']} measured)",
         "",
         "## 📊 Open Counts",
+    ]
+    
+    # Handle None values safely for delta formatting
+    pr_delta = counts['prs']['delta']
+    pr_delta_str = f"{pr_delta:+d}" if pr_delta is not None else "N/A"
+    issue_delta = counts['issues']['delta']
+    issue_delta_str = f"{issue_delta:+d}" if issue_delta is not None else "N/A"
+    
+    lines.extend([
         f"PRs:    {counts['prs']['current']} (baseline: {counts['prs']['baseline']}, "
-        f"delta: {counts['prs']['delta']:+d} {counts['prs']['trend']})",
+        f"delta: {pr_delta_str} {counts['prs']['trend']})",
         f"Issues: {counts['issues']['current']} (baseline: {counts['issues']['baseline']}, "
-        f"delta: {counts['issues']['delta']:+d} {counts['issues']['trend']})",
+        f"delta: {issue_delta_str} {counts['issues']['trend']})",
         "",
         "## 🧹 Cleanup Activity",
         f"Stale PRs Closed: {cleanup['stale_prs_closed']}/{cleanup['total_prs_closed']} "
@@ -267,12 +276,21 @@ def format_markdown(metrics: Dict[str, Any]) -> str:
         "",
         "## 📊 Open Counts",
         "",
+    ]
+    
+    # Handle None values safely for delta formatting
+    pr_delta = counts['prs']['delta']
+    pr_delta_str = f"{pr_delta:+d}" if pr_delta is not None else "N/A"
+    issue_delta = counts['issues']['delta']
+    issue_delta_str = f"{issue_delta:+d}" if issue_delta is not None else "N/A"
+    
+    lines.extend([
         f"| Type | Current | Baseline | Change | Trend |",
         f"|------|---------|----------|--------|-------|",
         f"| PRs | {counts['prs']['current']} | {counts['prs']['baseline']} | "
-        f"{counts['prs']['delta']:+d} | {counts['prs']['trend']} |",
+        f"{pr_delta_str} | {counts['prs']['trend']} |",
         f"| Issues | {counts['issues']['current']} | {counts['issues']['baseline']} | "
-        f"{counts['issues']['delta']:+d} | {counts['issues']['trend']} |",
+        f"{issue_delta_str} | {counts['issues']['trend']} |",
         "",
         "## 🧹 Cleanup Activity",
         "",
