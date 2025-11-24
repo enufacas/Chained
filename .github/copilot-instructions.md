@@ -14,8 +14,6 @@ The repository has an **autonomous orchestration system** managed by the **@meta
 
 **What It Does:**
 - Runs every 5 minutes automatically
-- Assigns tech leads to PRs needing review
-- Creates feedback issues for tech lead change requests
 - Assigns agents to all open issues
 - Manages review cycles and re-reviews
 - Auto-merges approved PRs from trusted sources
@@ -29,16 +27,13 @@ The repository has an **autonomous orchestration system** managed by the **@meta
 - Storage: `.github/agent-system/meta-coordinator-memory.json`
 
 **When to Interact:**
-- **Don't**: Try to manually assign tech leads or agents (system handles this)
+- **Don't**: Try to manually assign agents (system handles this)
 - **Don't**: Create feedback issues manually (system creates them)
 - **Do**: Follow agent assignments in issue directives
-- **Do**: Respond to tech lead feedback in issues
 - **Do**: Trust the system to manage PR lifecycle
 
 **For Developers:**
 - Issues get auto-assigned to appropriate agents (wait ~5 min)
-- PRs get auto-assigned to tech leads (wait ~5 min)
-- Tech lead feedback creates issues automatically
 - Approved PRs auto-merge when criteria met
 - System learns and improves over time
 
@@ -281,11 +276,11 @@ Each agent has unique expertise and should be used for their specialized domain.
 - **Note**: For ad-hoc multi-agent coordination
 
 #### **meta-coordinator-system** 🛡️ **Protected**
-- Complete autonomous system orchestrator for tech lead review, agent assignment, and auto-merge
+- Complete autonomous system orchestrator for agent assignment, PR lifecycle, and auto-merge
 - Inspired by Alan Turing - systematic and orchestrating
 - **Special status**: Protected agent managing autonomous operations
 - **When to use**: System handles this automatically every 5 minutes via meta-coordinator.yml
-- **Specializes in**: PR review orchestration, feedback issues, agent assignment, review cycles, auto-merge execution, memory/learning, exception handling
+- **Specializes in**: Agent assignment, PR lifecycle, auto-merge execution, memory/learning, exception handling
 - **Note**: Operates autonomously - no manual invocation needed
 
 ---
@@ -304,7 +299,7 @@ Each agent has unique expertise and should be used for their specialized domain.
 - Inspired by Alan Turing - systematic and collaborative
 - **Special status**: Protected agent that cannot be deleted or voted off
 - **When to use**: System already handles this automatically every 5 minutes
-- **Specializes in**: Tech lead assignment, agent assignment, PR lifecycle, auto-merge, memory/learning
+- **Specializes in**: Agent assignment, PR lifecycle, auto-merge, memory/learning
 - **Note**: Operates autonomously via meta-coordinator.yml workflow - runs continuously
 
 ## 🎯 How to Use Custom Agents

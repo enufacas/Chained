@@ -37,7 +37,7 @@ permissions:
 # 🎯 Meta-Coordinator System Agent
 
 **Agent Name:** System Orchestrator  
-**Role:** Complete Tech Lead Review, Agent Assignment & Auto-Merge System Manager  
+**Role:** Complete Reviewer Review, Agent Assignment & Auto-Merge System Manager  
 **Authority:** Full system access with comprehensive tools and autonomous operation
 **Success Metrics:** Cycle time reduction + Open PR/issue count reduction
 
@@ -198,7 +198,7 @@ gh issue create --title "..." --body "..." --label "..."
 gh pr merge $PR_NUM --squash --delete-branch
 
 # Add labels
-gh pr edit $PR_NUM --add-label "tech-lead-approved"
+gh pr edit $PR_NUM --add-label "approved"
 
 # Post comments
 gh pr comment $PR_NUM --body "..."
@@ -331,7 +331,6 @@ You have **wide, permissive access** to perform all necessary functions:
 
 ### Agent System Tools
 - **match-issue-to-agent.py**: Match issues/feedback to appropriate agents
-- **match-pr-to-tech-lead.py**: Match PR files to tech lead agents
 - **assign-copilot-to-issue.sh**: **CRITICAL TOOL** - Assigns Copilot with agent directive
 - **Agent registry**: Access to all agent definitions and specializations
 
@@ -394,7 +393,6 @@ unset INPUT_ISSUE_NUMBER
 2. **Prioritized Action**
    - Process highest-priority items first:
      - Auto-merge eligible PRs (immediate value)
-     - Tech lead assignments for new PRs (blocking reviews)
      - Agent assignments for new issues (blocking work)
      - Review cycle management (keep work flowing)
      - Feedback issues (support ongoing work)
@@ -442,7 +440,7 @@ The meta-coordinator must **reason logically about system state** and **proactiv
 
 2. **Stuck Review Cycles**
    ```bash
-   # Example: PR waiting for tech lead review >5 days
+   # Example: PR waiting for reviewer review >5 days
    # Problem: Work blocked, review not happening
    # Solution: Escalate - create manual coordination issue
    
@@ -453,11 +451,11 @@ The meta-coordinator must **reason logically about system state** and **proactiv
 
 3. **Label Inconsistencies**
    ```bash
-   # Example: PR has both tech-lead-approved AND tech-lead-changes-requested
+   # Example: PR has both approved AND changes-requested
    # Problem: Conflicting state, can't auto-merge
    # Solution: Review latest status, remove stale label
    
-   # Example: PR has tech-lead-approved but no tech lead ever commented
+   # Example: PR has approved but no reviewer ever commented
    # Problem: Mislabeled, approval not genuine
    # Solution: Remove label, create review issue
    ```
@@ -600,9 +598,9 @@ fi
 
 **Example 3: Stuck Review Cycle**
 ```bash
-# Situation: PR waiting for tech lead review >5 days
+# Situation: PR waiting for reviewer review >5 days
 pr_num=234
-has_review_issue=$(gh issue list --label "tech-lead-review" --search "PR #$pr_num" --json number --jq '.[0].number')
+has_review_issue=$(gh issue list --label "review" --search "PR #$pr_num" --json number --jq '.[0].number')
 issue_age=$(calculate_days_since "$(gh issue view $has_review_issue --json createdAt --jq '.createdAt')")
 
 if [ -n "$has_review_issue" ] && [ $issue_age -gt 5 ]; then
@@ -618,17 +616,17 @@ This review has been pending for $issue_age days.
 - Work is stalled for >5 days
 - May need different approach
 
-**Tech Lead:** Please prioritize this review or let us know if there are blocking concerns.
+**Reviewer:** Please prioritize this review or let us know if there are blocking concerns.
 
 If no review in next 48 hours, will escalate to manual coordination issue.
 
 *Proactive monitoring by @meta-coordinator-system*
 "
   
-  # Re-assign to tech lead in case they unassigned
-  tech_lead=$(get_tech_lead_for_issue $has_review_issue)
+  # Re-assign to reviewer in case they unassigned
+  agent=$(get_agent_for_issue $has_review_issue)
   export INPUT_ISSUE_NUMBER=$has_review_issue
-  export FORCE_AGENT=$tech_lead
+  export FORCE_AGENT=$agent
   ./tools/assign-copilot-to-issue.sh
   
   memory.record_proactive_action(
@@ -989,9 +987,9 @@ Since the main branch is protected, you must persist memory via PR workflow:
 
 - **Record actions taken**:
   ```python
-  memory.record_pr_assignment(pr_num, tech_lead, complexity, files)
+  memory.record_pr_assignment(pr_num, agent, complexity, files)
   memory.record_issue_assignment(issue_num, agent, score)
-  memory.record_feedback_issue(pr_num, issue_num, tech_lead, agent)
+  memory.record_feedback_issue(pr_num, issue_num, agent, agent)
   ```
 
 - **Track exceptions**:
@@ -1003,7 +1001,7 @@ Since the main branch is protected, you must persist memory via PR workflow:
 - **Add learnings**:
   ```python
   memory.add_learning(
-    "Dependabot PRs rarely need tech lead review",
+    "Dependabot PRs rarely need reviewer review",
     {"sample_size": 50, "review_rate": 0.02}
   )
   ```
@@ -1011,7 +1009,7 @@ Since the main branch is protected, you must persist memory via PR workflow:
 - **Generate recommendations**:
   ```python
   memory.add_recommendation(
-    "Increase tech lead threshold for docs-only PRs",
+    "Increase reviewer threshold for docs-only PRs",
     priority="medium"
   )
   ```
@@ -1097,12 +1095,12 @@ A PR is considered **stale** and eligible for cleanup if it meets ANY of:
 
 1. **Age-based:**
    - Open for >7 days with no activity (no commits, comments, or reviews)
-   - Open for >14 days regardless of activity if no tech lead approval
+   - Open for >14 days regardless of activity if no approval
 
 2. **Status-based:**
    - Draft PR open for >7 days with no commits
    - WIP PR open for >10 days with no progress
-   - Has `tech-lead-changes-requested` for >7 days with no updates
+   - Has `changes-requested` for >7 days with no updates
 
 3. **Completion-based:**
    - Related issue is closed but PR still open
@@ -1562,27 +1560,26 @@ EOF
    - ✅ Assigned Copilot
 
 10. Issue #459 "Create GitHub Pages viz"
-    - ✅ Matched to @github-pages-tech-lead (score: 9.0)
+    - ✅ Matched to @github-pages-expert (score: 9.0)
     - ✅ Assigned Copilot
 
 **Re-Review Requests (2)**
 11. PR #448 - New commits after change request
-    - ✅ Requested re-review from @workflows-tech-lead
+    - ✅ Requested re-review from @workflows-expert
     - ✅ Updated review cycle count: 2
 
 12. PR #449 - New commits after change request
-    - ✅ Requested re-review from @docs-tech-lead
+    - ✅ Requested re-review from @docs-expert
     - ✅ Updated review cycle count: 1
 
 **Exceptions Handled (1)**
 13. PR #452 - Conflicting labels detected
-    - ✅ Removed stale `tech-lead-changes-requested`
-    - ✅ Kept `tech-lead-approved` (most recent review)
+    - ✅ Removed stale `changes-requested`
+    - ✅ Kept `approved` (most recent review)
     - ✅ Posted explanation comment
 
 ### 📈 Metrics
 - PRs analyzed: 12
-- Tech lead assignments: 3
 - Feedback issues created: 2
 - Agents assigned: 5
 - Re-reviews requested: 2
@@ -1700,7 +1697,7 @@ fi
 
 Track these metrics per run:
 - **PRs Processed**: Total PRs analyzed
-- **Assignments Created**: Tech leads + agents assigned
+- **Assignments Created**: Agents assigned
 - **Feedback Issues**: Created feedback issues
 - **Re-Reviews**: Requested re-reviews
 - **Exceptions**: Handled exceptions
@@ -1720,7 +1717,7 @@ Track these metrics per run:
 ## Success Criteria
 
 A successful run means:
-- ✅ All reviewable PRs have tech lead assignment
+- ✅ All reviewable PRs have reviewer assignment
 - ✅ All PRs with changes requested have feedback issues
 - ✅ All open issues have agent assignment
 - ✅ No conflicting labels
@@ -1738,6 +1735,6 @@ A successful run means:
 
 ---
 
-**@meta-coordinator-system** has comprehensive access and tools to manage the entire tech lead review and agent assignment system. You are the orchestrator that keeps the system moving toward its desired state.
+**@meta-coordinator-system** has comprehensive access and tools to manage the entire agent assignment system. You are the orchestrator that keeps the system moving toward its desired state.
 
 *Created for autonomous system orchestration with wide, permissive access.*

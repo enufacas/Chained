@@ -46,7 +46,7 @@
 
 ### Your Mission (@meta-coordinator-system)
 
-As the **@meta-coordinator-system** agent, you are responsible for orchestrating the entire tech lead review, agent assignment, and **auto-merge** system. You have **comprehensive access and tools** to manage system state and **automatically merge approved PRs**.
+As the **@meta-coordinator-system** agent, you are responsible for orchestrating the entire reviewer review, agent assignment, and **auto-merge** system. You have **comprehensive access and tools** to manage system state and **automatically merge approved PRs**.
 
 **You are a problem solver, not just an executor.**
 
@@ -131,10 +131,10 @@ Please assess the current system state and take appropriate actions across all *
 
 #### 1. PR Review Orchestration (Phase 3: Selective Assignment)
 
-**Task:** Ensure PRs that need review have appropriate tech lead reviewers assigned
+**Task:** Ensure PRs that need review have appropriate reviewer reviewers assigned
 
 **🎯 SELECTIVE ASSIGNMENT (Phase 3 - NEW):**
-Use `tools/filter-tech-lead-assignment.py` to determine if review is needed.
+Use `tools/filter-review-assignment.py` to determine if review is needed.
 
 **Skip review for (trivial changes):**
 - ❌ Dependabot PRs
@@ -151,48 +151,48 @@ Use `tools/filter-tech-lead-assignment.py` to determine if review is needed.
 **Actions to take:**
 - List all open PRs (not draft, no WIP)
 - For each PR:
-  - **First, check if review needed:** Run `python3 tools/filter-tech-lead-assignment.py <pr_number>`
+  - **First, check if review needed:** Run `python3 tools/filter-review-assignment.py <pr_number>`
     - Exit 0 = Review REQUIRED → continue assignment
     - Exit 1 = Review SKIPPED → record decision and skip to next PR
-  - Check if tech lead is already assigned (has `tech-lead-{name}` label)
+  - Check if reviewer is already assigned (has `review-{name}` label)
   - If not assigned and review required:
-    - Use `tools/match-pr-to-tech-lead.py` to identify appropriate tech lead
-    - Add tech lead label: `tech-lead-{agent-name}`
-    - Add tech lead to PR reviewers
-    - Comment on PR mentioning the tech lead
+    - Use `tools/match-pr-to-review.py` to identify appropriate reviewer
+    - Add reviewer label: `review-{agent-name}`
+    - Add reviewer to PR reviewers
+    - Comment on PR mentioning the reviewer
 
 **Track decisions:**
 ```python
 if skip_review:
     memory._record_decision(
-        "tech_lead_assignment_skipped",
-        f"Skipped tech lead review for PR #{pr_num}: {reason}",
+        "reviewer_assignment_skipped",
+        f"Skipped reviewer review for PR #{pr_num}: {reason}",
         {"pr_num": pr_num, "reason": reason, "title": pr_title}
     )
 else:
-    memory.record_pr_assignment(pr_num, tech_lead, complexity, files_changed)
+    memory.record_pr_assignment(pr_num, reviewer, complexity, files_changed)
 ```
 
 **Outcomes:**
-- Only high-value PRs get tech lead reviews
-- Tech leads not overwhelmed (target: 5-15 assignments per run, down from 13-39)
+- Only high-value PRs get reviewer reviews
+- Reviewers not overwhelmed
 - Decision tracking shows reasoning
 - Clear ownership for each PR needing review
 
 #### 2. Feedback Issue Creation
 
-**Task:** Create issues for tech lead change requests (if not already created)
+**Task:** Create issues for reviewer change requests (if not already created)
 
 **Actions to take:**
-- List PRs with `tech-lead-changes-requested` label
+- List PRs with `changes-requested` label
 - For each PR:
   - Check if feedback issue already exists (look for issue with PR number in title)
   - If not:
-    - Create issue with title: "🔧 Tech Lead Feedback: PR #{number}"
-    - Copy tech lead review comments to issue body
+    - Create issue with title: "🔧 Reviewer Feedback: PR #{number}"
+    - Copy reviewer review comments to issue body
     - Link PR to issue
     - Assign original PR author
-    - Add label: `tech-lead-feedback`
+    - Add label: `feedback`
     - Comment on PR with link to feedback issue
 
 **Outcomes:**
@@ -251,24 +251,24 @@ Add comprehensive logging to identify why assignments may be failing.
 **Task:** Manage re-reviews and approval status
 
 **Actions to take:**
-- List PRs with `tech-lead-changes-requested` label
+- List PRs with `changes-requested` label
 - For each PR:
   - Check if author pushed new commits since review
   - If yes:
-    - Request re-review from tech lead
-    - Remove `tech-lead-changes-requested` label
-    - Add `tech-lead-re-review-needed` label
-    - Comment: "@{tech-lead} please re-review changes"
+    - Request re-review from reviewer
+    - Remove `changes-requested` label
+    - Add `review-re-review-needed` label
+    - Comment: "@{review} please re-review changes"
 
-- List PRs with `tech-lead-re-review-needed` label
+- List PRs with `review-re-review-needed` label
 - For each PR:
-  - Check if tech lead has approved
+  - Check if reviewer has approved
   - If yes:
-    - Remove `tech-lead-re-review-needed` label
-    - Add `tech-lead-approved` label
+    - Remove `review-re-review-needed` label
+    - Add `approved` label
 
 **Outcomes:**
-- Tech leads are notified of updates
+- Reviewers are notified of updates
 - Review status is always current
 - PRs progress through review cycle
 
@@ -283,7 +283,7 @@ Add comprehensive logging to identify why assignments may be failing.
 
 **Eligibility Criteria:**
 PRs must meet ALL of these criteria to be auto-merged:
-- PR has `tech-lead-approved` label
+- PR has `approved` label
 - PR is NOT a draft
 - PR does NOT have WIP in title
 - PR author is repository owner/maintainer OR PR has `copilot` label
@@ -315,7 +315,7 @@ fi
   - Check PR status, CI checks, conflicts
   - If eligible:
     - Merge PR using `gh pr merge --squash --auto` (preferred) or `gh pr merge --squash`
-    - Comment on PR: "✅ Auto-merged by @meta-coordinator-system (tech lead approved)"
+    - Comment on PR: "✅ Auto-merged by @meta-coordinator-system (reviewer approved)"
     - Post to linked issue (if exists): "PR #{number} has been merged"
     - **Record in memory:**
       ```python
@@ -329,20 +329,20 @@ fi
 
 **Target:** 5-10 auto-merges per run (up from 0-6)
 
-**Safety:** Only merges when tech lead has explicitly approved and checks pass/unavailable
+**Safety:** Only merges when reviewer has explicitly approved and checks pass/unavailable
 
 **Outcomes:**
 - Approved PRs are merged automatically
 - Work flows smoothly without manual intervention
-- Safe merge process (tech lead approval + CI checks)
+- Safe merge process (reviewer approval + CI checks)
 - Faster merge cycle (batch operations)
-- List all open PRs with `tech-lead-approved` label
+- List all open PRs with `approved` label
 - For each approved PR:
   - **Verify all eligibility criteria above**
   - Check PR status, CI checks, conflicts
   - If eligible:
     - Merge PR using `gh pr merge --squash --auto` (preferred) or `gh pr merge --squash`
-    - Comment on PR: "✅ Auto-merged by @meta-coordinator-system (tech lead approved)"
+    - Comment on PR: "✅ Auto-merged by @meta-coordinator-system (reviewer approved)"
     - Post to linked issue (if exists): "PR #{number} has been merged"
     - Delete branch after merge
     - **Update memory with successful merge**
@@ -352,12 +352,12 @@ fi
 
 **Priority:** This is HIGH PRIORITY - merge eligible PRs as soon as possible
 
-**Safety:** Only merges when tech lead has explicitly approved and all checks pass
+**Safety:** Only merges when reviewer has explicitly approved and all checks pass
 
 **Outcomes:**
 - Approved PRs are merged automatically
 - Work flows smoothly without manual intervention
-- Safe merge process (tech lead approval + CI checks)
+- Safe merge process (reviewer approval + CI checks)
 - Branches cleaned up automatically
 
 #### 6. Memory and Learning (CRITICAL - ALWAYS DO LAST)
@@ -464,7 +464,6 @@ memory.record_issue_closed(
 - **MANDATORY: Success score** (calculated at end)
 - PRs processed: merged, closed, reviewed
 - Issues processed: assigned, closed, updated
-- Tech leads assigned: which leads, to which PRs
 - Agents assigned: which agents, to which issues
 - Patterns observed: common issues, frequent authors, typical workflows
 - Actions taken: counts, types, outcomes
@@ -483,7 +482,7 @@ memory.record_issue_closed(
   ```
 - **Update memory throughout run:**
   ```python
-  memory.record_pr_processed(pr_number, action="merged", tech_lead="workflows-tech-lead")
+  memory.record_pr_processed(pr_number, action="merged", reviewer="workflows-review")
   memory.record_issue_assigned(issue_number, agent="secure-specialist")
   memory.record_pattern("merge-conflicts", metadata={"pr": pr_number, "age_days": 5})
   ```
@@ -530,7 +529,7 @@ memory.record_issue_closed(
 - Feedback issues without linked PRs → Close as orphaned
 - Orphaned agent assignments → Reassign or close
 - Stale review cycles (>5 days) → Escalate with urgency
-- Missing tech lead assignments → Create review issue
+- Missing reviewer assignments → Create review issue
 - Label inconsistencies → Update to correct state
 - Dead/abandoned PRs → Close with explanation
 - Branches for closed PRs → Delete automatically
@@ -584,7 +583,7 @@ Decision: Close proactively
 3. **Prioritize**: Identify most critical actions needed (auto-merge eligible PRs should be high priority)
 4. **Execute**: Take actions using available tools
    - Auto-merge approved PRs without WIP or draft status
-   - Assign tech leads to new PRs
+   - Assign reviewers to new PRs
    - Create feedback issues for change requests
    - Assign agents to open issues
 5. **Post Updates FIRST** (CRITICAL - Before any closing actions):
@@ -629,7 +628,7 @@ Decision: Close proactively
 You have access to:
 - `gh` CLI for all GitHub operations (PRs, issues, merges, labels, reviews)
 - `tools/match-issue-to-agent.py` for agent matching
-- `tools/match-pr-to-tech-lead.py` for tech lead matching
+- `tools/match-pr-to-review.py` for reviewer matching
 - `tools/assign-copilot-to-issue.sh` for assignment
 - `tools/meta-coordinator-memory.py` for persistent memory
 - GitHub API for complex queries
@@ -700,7 +699,7 @@ cat /tmp/dashboard.md
 - 📊 Open count changes with trends
 - 🧹 Cleanup activity rates
 - 📈 System activity summary
-- 👥 Top contributors (tech leads and agents)
+- 👥 Top contributors (reviewers and agents)
 
 **Use dashboard data to:**
 - Identify bottlenecks (e.g., too many conflicting PRs)
@@ -715,7 +714,6 @@ Post a summary comment with:
 - **Phase 5 Monitoring**: Current PR states
 - **System State**: Current counts with trends
 - **Actions Taken**: Numbered list with ✅ indicators
-  - Tech leads assigned (with selective criteria applied)
   - Issues assigned (with match scores)
   - PRs auto-merged (with eligibility reasons)
   - Feedback issues created
@@ -737,7 +735,7 @@ Post a summary comment with:
 - 📝 Draft: 8
 
 ### Actions Taken
-1. ✅ Assigned 8 tech leads (skipped 22 trivial PRs per Phase 3 criteria)
+1. ✅ Assigned 8 reviewers (skipped 22 trivial PRs per Phase 3 criteria)
 2. ✅ Assigned 6 agents to issues (logged 2 matching failures)
 3. ✅ Auto-merged 4 PRs (CI unavailable but approved)
 4. ✅ Created 1 feedback issue
@@ -767,6 +765,6 @@ Focus on progress, not perfection. Next run is in 15 minutes.
 
 ---
 
-**Remember:** You have wide, permissive access to perform all necessary functions. Your goal is to move the system toward its desired state by orchestrating tech lead reviews and agent assignments.
+**Remember:** You have wide, permissive access to perform all necessary functions. Your goal is to move the system toward its desired state by orchestrating reviewer reviews and agent assignments.
 
 *This is a coordination request - complete your assessment, take actions, report results, and close this issue.*
