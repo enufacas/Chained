@@ -146,7 +146,7 @@ class MetaCoordinatorMemory:
     def _initialize_memory(self) -> Dict[str, Any]:
         """Initialize empty memory structure."""
         return {
-            "version": "1.0",
+            "version": "1.1",  # Updated for cycle time & open count tracking
             "created_at": datetime.utcnow().isoformat(),
             "last_updated": datetime.utcnow().isoformat(),
             "runs": {
@@ -192,6 +192,32 @@ class MetaCoordinatorMemory:
                 "last_check": None,
                 "consistency_score": 1.0,
                 "issues_detected": []
+            },
+            "cycle_time_metrics": {
+                "pr_cycle_times": [],  # List of {pr_num, created_at, closed_at, duration_hours}
+                "issue_cycle_times": [],  # List of {issue_num, created_at, closed_at, duration_hours}
+                "average_pr_cycle_time_hours": 0,
+                "average_issue_cycle_time_hours": 0,
+                "cycle_time_trend": []  # Track over time
+            },
+            "open_count_metrics": {
+                "snapshots": [],  # List of {timestamp, open_prs, open_issues}
+                "open_pr_trend": [],  # Track open PR count over time
+                "open_issue_trend": [],  # Track open issue count over time
+                "prs_closed_count": 0,  # Total PRs closed by meta-coordinator
+                "issues_closed_count": 0,  # Total issues closed by meta-coordinator
+                "stale_prs_closed": 0,  # Stale PRs proactively closed
+                "baseline_open_prs": None,  # Starting count for reduction target
+                "baseline_open_issues": None  # Starting count for reduction target
+            },
+            "success_score": {
+                "current_score": 0,  # Composite score based on cycle time + reduction
+                "score_history": [],  # Track score over time
+                "factors": {
+                    "cycle_time_score": 0,  # Lower cycle time = higher score
+                    "reduction_score": 0,  # More reduction = higher score
+                    "proactive_cleanup_score": 0  # More cleanup = higher score
+                }
             }
         }
     
@@ -746,6 +772,355 @@ class MetaCoordinatorMemory:
         
         return trends
     
+    def record_open_counts(self, open_prs: int, open_issues: int):
+        """
+        Record current open PR and issue counts.
+        
+        This is the PRIMARY SUCCESS METRIC - reducing these counts over time.
+        Call this at the start and end of each coordination run.
+        """
+        snapshot = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "open_prs": open_prs,
+            "open_issues": open_issues
+        }
+        
+        # Ensure keys exist (for backwards compatibility)
+        if "open_count_metrics" not in self.memory:
+            self.memory["open_count_metrics"] = {
+                "snapshots": [],
+                "open_pr_trend": [],
+                "open_issue_trend": [],
+                "prs_closed_count": 0,
+                "issues_closed_count": 0,
+                "stale_prs_closed": 0,
+                "baseline_open_prs": None,
+                "baseline_open_issues": None
+            }
+        
+        self.memory["open_count_metrics"]["snapshots"].append(snapshot)
+        self.memory["open_count_metrics"]["open_pr_trend"].append(open_prs)
+        self.memory["open_count_metrics"]["open_issue_trend"].append(open_issues)
+        
+        # Set baseline if first measurement
+        if self.memory["open_count_metrics"]["baseline_open_prs"] is None:
+            self.memory["open_count_metrics"]["baseline_open_prs"] = open_prs
+        if self.memory["open_count_metrics"]["baseline_open_issues"] is None:
+            self.memory["open_count_metrics"]["baseline_open_issues"] = open_issues
+        
+        # Keep last 100 snapshots
+        if len(self.memory["open_count_metrics"]["snapshots"]) > 100:
+            self.memory["open_count_metrics"]["snapshots"] = \
+                self.memory["open_count_metrics"]["snapshots"][-100:]
+            self.memory["open_count_metrics"]["open_pr_trend"] = \
+                self.memory["open_count_metrics"]["open_pr_trend"][-100:]
+            self.memory["open_count_metrics"]["open_issue_trend"] = \
+                self.memory["open_count_metrics"]["open_issue_trend"][-100:]
+    
+    def record_pr_closed(self, pr_number: int, created_at: str, closed_at: str = None, 
+                        is_stale: bool = False):
+        """
+        Record a PR being closed and calculate cycle time.
+        
+        Args:
+            pr_number: PR number
+            created_at: ISO timestamp when PR was created
+            closed_at: ISO timestamp when PR was closed (defaults to now)
+            is_stale: Whether this was a stale PR proactively closed
+        """
+        if closed_at is None:
+            closed_at = datetime.utcnow().isoformat()
+        
+        # Ensure keys exist
+        if "cycle_time_metrics" not in self.memory:
+            self.memory["cycle_time_metrics"] = {
+                "pr_cycle_times": [],
+                "issue_cycle_times": [],
+                "average_pr_cycle_time_hours": 0,
+                "average_issue_cycle_time_hours": 0,
+                "cycle_time_trend": []
+            }
+        
+        if "open_count_metrics" not in self.memory:
+            self.memory["open_count_metrics"] = {
+                "snapshots": [],
+                "open_pr_trend": [],
+                "open_issue_trend": [],
+                "prs_closed_count": 0,
+                "issues_closed_count": 0,
+                "stale_prs_closed": 0,
+                "baseline_open_prs": None,
+                "baseline_open_issues": None
+            }
+        
+        # Calculate cycle time in hours
+        try:
+            created = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+            closed = datetime.fromisoformat(closed_at.replace('Z', '+00:00'))
+            duration_hours = (closed - created).total_seconds() / 3600
+        except (ValueError, TypeError, AttributeError) as e:
+            print(f"Warning: Could not parse timestamps for PR {pr_number}: {e}")
+            duration_hours = 0
+        
+        # Record cycle time
+        cycle_record = {
+            "pr_number": pr_number,
+            "created_at": created_at,
+            "closed_at": closed_at,
+            "duration_hours": duration_hours,
+            "is_stale": is_stale
+        }
+        
+        self.memory["cycle_time_metrics"]["pr_cycle_times"].append(cycle_record)
+        
+        # Update counts
+        self.memory["open_count_metrics"]["prs_closed_count"] += 1
+        if is_stale:
+            self.memory["open_count_metrics"]["stale_prs_closed"] += 1
+        
+        # Recalculate average (last 50 PRs)
+        recent_cycles = [
+            r["duration_hours"] 
+            for r in self.memory["cycle_time_metrics"]["pr_cycle_times"][-50:]
+            if r["duration_hours"] > 0
+        ]
+        if recent_cycles:
+            self.memory["cycle_time_metrics"]["average_pr_cycle_time_hours"] = \
+                sum(recent_cycles) / len(recent_cycles)
+        
+        # Keep last 100
+        if len(self.memory["cycle_time_metrics"]["pr_cycle_times"]) > 100:
+            self.memory["cycle_time_metrics"]["pr_cycle_times"] = \
+                self.memory["cycle_time_metrics"]["pr_cycle_times"][-100:]
+    
+    def record_issue_closed(self, issue_number: int, created_at: str, closed_at: str = None):
+        """
+        Record an issue being closed and calculate cycle time.
+        
+        Args:
+            issue_number: Issue number
+            created_at: ISO timestamp when issue was created
+            closed_at: ISO timestamp when issue was closed (defaults to now)
+        """
+        if closed_at is None:
+            closed_at = datetime.utcnow().isoformat()
+        
+        # Ensure keys exist
+        if "cycle_time_metrics" not in self.memory:
+            self.memory["cycle_time_metrics"] = {
+                "pr_cycle_times": [],
+                "issue_cycle_times": [],
+                "average_pr_cycle_time_hours": 0,
+                "average_issue_cycle_time_hours": 0,
+                "cycle_time_trend": []
+            }
+        
+        if "open_count_metrics" not in self.memory:
+            self.memory["open_count_metrics"] = {
+                "snapshots": [],
+                "open_pr_trend": [],
+                "open_issue_trend": [],
+                "prs_closed_count": 0,
+                "issues_closed_count": 0,
+                "stale_prs_closed": 0,
+                "baseline_open_prs": None,
+                "baseline_open_issues": None
+            }
+        
+        # Calculate cycle time in hours
+        try:
+            created = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+            closed = datetime.fromisoformat(closed_at.replace('Z', '+00:00'))
+            duration_hours = (closed - created).total_seconds() / 3600
+        except (ValueError, TypeError, AttributeError) as e:
+            print(f"Warning: Could not parse timestamps for issue {issue_number}: {e}")
+            duration_hours = 0
+        
+        # Record cycle time
+        cycle_record = {
+            "issue_number": issue_number,
+            "created_at": created_at,
+            "closed_at": closed_at,
+            "duration_hours": duration_hours
+        }
+        
+        self.memory["cycle_time_metrics"]["issue_cycle_times"].append(cycle_record)
+        self.memory["open_count_metrics"]["issues_closed_count"] += 1
+        
+        # Recalculate average (last 50 issues)
+        recent_cycles = [
+            r["duration_hours"] 
+            for r in self.memory["cycle_time_metrics"]["issue_cycle_times"][-50:]
+            if r["duration_hours"] > 0
+        ]
+        if recent_cycles:
+            self.memory["cycle_time_metrics"]["average_issue_cycle_time_hours"] = \
+                sum(recent_cycles) / len(recent_cycles)
+        
+        # Keep last 100
+        if len(self.memory["cycle_time_metrics"]["issue_cycle_times"]) > 100:
+            self.memory["cycle_time_metrics"]["issue_cycle_times"] = \
+                self.memory["cycle_time_metrics"]["issue_cycle_times"][-100:]
+    
+    def calculate_success_score(self) -> float:
+        """
+        Calculate overall success score based on cycle time and open count reduction.
+        
+        Score components:
+        1. Cycle Time Score (40%): Lower average cycle time = higher score
+        2. Reduction Score (40%): More reduction in open counts = higher score  
+        3. Proactive Cleanup Score (20%): More stale PRs closed = higher score
+        
+        Returns:
+            Score from 0-100, where 100 is best
+        """
+        # Ensure keys exist
+        if "cycle_time_metrics" not in self.memory:
+            self.memory["cycle_time_metrics"] = {
+                "pr_cycle_times": [],
+                "issue_cycle_times": [],
+                "average_pr_cycle_time_hours": 0,
+                "average_issue_cycle_time_hours": 0,
+                "cycle_time_trend": []
+            }
+        
+        if "open_count_metrics" not in self.memory:
+            self.memory["open_count_metrics"] = {
+                "snapshots": [],
+                "open_pr_trend": [],
+                "open_issue_trend": [],
+                "prs_closed_count": 0,
+                "issues_closed_count": 0,
+                "stale_prs_closed": 0,
+                "baseline_open_prs": None,
+                "baseline_open_issues": None
+            }
+        
+        if "success_score" not in self.memory:
+            self.memory["success_score"] = {
+                "current_score": 0,
+                "score_history": [],
+                "factors": {
+                    "cycle_time_score": 0,
+                    "reduction_score": 0,
+                    "proactive_cleanup_score": 0
+                }
+            }
+        
+        # 1. Cycle Time Score (lower is better)
+        avg_pr_cycle = self.memory["cycle_time_metrics"]["average_pr_cycle_time_hours"]
+        avg_issue_cycle = self.memory["cycle_time_metrics"]["average_issue_cycle_time_hours"]
+        
+        # Target: 24 hours for PRs, 48 hours for issues
+        pr_target = 24
+        issue_target = 48
+        
+        pr_cycle_score = max(0, 100 - (avg_pr_cycle / pr_target * 100)) if avg_pr_cycle > 0 else 50
+        issue_cycle_score = max(0, 100 - (avg_issue_cycle / issue_target * 100)) if avg_issue_cycle > 0 else 50
+        cycle_time_score = (pr_cycle_score + issue_cycle_score) / 2
+        
+        # 2. Reduction Score (more reduction is better)
+        baseline_prs = self.memory["open_count_metrics"].get("baseline_open_prs", 0)
+        baseline_issues = self.memory["open_count_metrics"].get("baseline_open_issues", 0)
+        
+        current_prs = self.memory["open_count_metrics"]["open_pr_trend"][-1] if self.memory["open_count_metrics"]["open_pr_trend"] else baseline_prs
+        current_issues = self.memory["open_count_metrics"]["open_issue_trend"][-1] if self.memory["open_count_metrics"]["open_issue_trend"] else baseline_issues
+        
+        if baseline_prs and baseline_prs > 0:
+            pr_reduction_pct = ((baseline_prs - current_prs) / baseline_prs) * 100
+        else:
+            pr_reduction_pct = 0
+        
+        if baseline_issues and baseline_issues > 0:
+            issue_reduction_pct = ((baseline_issues - current_issues) / baseline_issues) * 100
+        else:
+            issue_reduction_pct = 0
+        
+        # Score: 50% reduction = 100 points, -50% (increase) = 0 points
+        reduction_score = max(0, min(100, 50 + pr_reduction_pct + issue_reduction_pct))
+        
+        # 3. Proactive Cleanup Score
+        stale_closed = self.memory["open_count_metrics"]["stale_prs_closed"]
+        total_closed = self.memory["open_count_metrics"]["prs_closed_count"]
+        
+        if total_closed > 0:
+            proactive_rate = (stale_closed / total_closed) * 100
+            proactive_cleanup_score = min(100, proactive_rate * 5)  # 20% stale = 100 points
+        else:
+            proactive_cleanup_score = 0
+        
+        # Weighted average
+        overall_score = (
+            cycle_time_score * 0.4 +
+            reduction_score * 0.4 +
+            proactive_cleanup_score * 0.2
+        )
+        
+        # Update memory
+        self.memory["success_score"]["current_score"] = overall_score
+        self.memory["success_score"]["factors"] = {
+            "cycle_time_score": cycle_time_score,
+            "reduction_score": reduction_score,
+            "proactive_cleanup_score": proactive_cleanup_score
+        }
+        
+        self.memory["success_score"]["score_history"].append({
+            "timestamp": datetime.utcnow().isoformat(),
+            "score": overall_score,
+            "factors": self.memory["success_score"]["factors"].copy()
+        })
+        
+        # Keep last 50 scores
+        if len(self.memory["success_score"]["score_history"]) > 50:
+            self.memory["success_score"]["score_history"] = \
+                self.memory["success_score"]["score_history"][-50:]
+        
+        return overall_score
+    
+    def get_success_summary(self) -> str:
+        """Get a summary of success metrics."""
+        score = self.calculate_success_score()
+        
+        cycle = self.memory.get("cycle_time_metrics", {})
+        counts = self.memory.get("open_count_metrics", {})
+        factors = self.memory.get("success_score", {}).get("factors", {})
+        
+        avg_pr_cycle = cycle.get("average_pr_cycle_time_hours", 0)
+        avg_issue_cycle = cycle.get("average_issue_cycle_time_hours", 0)
+        
+        baseline_prs = counts.get("baseline_open_prs") or 0
+        current_prs = counts.get("open_pr_trend", [baseline_prs])[-1] if counts.get("open_pr_trend") else baseline_prs
+        baseline_issues = counts.get("baseline_open_issues") or 0
+        current_issues = counts.get("open_issue_trend", [baseline_issues])[-1] if counts.get("open_issue_trend") else baseline_issues
+        
+        stale_closed = counts.get("stale_prs_closed", 0)
+        total_closed = counts.get("prs_closed_count", 0)
+        
+        # Handle None values
+        pr_delta = (current_prs - baseline_prs) if (current_prs is not None and baseline_prs is not None) else 0
+        issue_delta = (current_issues - baseline_issues) if (current_issues is not None and baseline_issues is not None) else 0
+        
+        return f"""
+## 🎯 Success Metrics Summary
+
+**Overall Success Score: {score:.1f}/100**
+
+### Cycle Time Performance (Target: 24h PRs, 48h issues)
+- Average PR cycle time: {avg_pr_cycle:.1f} hours
+- Average issue cycle time: {avg_issue_cycle:.1f} hours
+- Cycle Time Score: {factors.get('cycle_time_score', 0):.1f}/100
+
+### Open Count Reduction (Target: -50%)
+- PRs: {baseline_prs} → {current_prs} ({pr_delta:+d})
+- Issues: {baseline_issues} → {current_issues} ({issue_delta:+d})
+- Reduction Score: {factors.get('reduction_score', 0):.1f}/100
+
+### Proactive Cleanup
+- Stale PRs closed: {stale_closed}/{total_closed}
+- Proactive rate: {(stale_closed/total_closed*100) if total_closed > 0 else 0:.1f}%
+- Cleanup Score: {factors.get('proactive_cleanup_score', 0):.1f}/100
+"""
+    
     def get_context_for_decision(self, decision_type: str) -> Dict[str, Any]:
         """Get relevant historical context for a decision type."""
         # Get recent similar decisions
@@ -782,6 +1157,9 @@ def main():
     if command == "summary":
         print(memory.get_summary())
     
+    elif command == "success":
+        print(memory.get_success_summary())
+    
     elif command == "trends":
         trends = memory.analyze_trends()
         print(json.dumps(trends, indent=2))
@@ -816,7 +1194,7 @@ def main():
     
     else:
         print(f"Unknown command: {command}")
-        print("Available commands: summary, trends, agent, tech-lead, patterns, context")
+        print("Available commands: summary, success, trends, agent, tech-lead, patterns, context")
         sys.exit(1)
 
 

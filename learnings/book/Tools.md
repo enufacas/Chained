@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 416
+**Total Insights:** 463
 
 **Last Updated:** 2025-11-23
 
@@ -723,6 +723,15 @@ Who needs a JavaScript date picker? The answer, in most cases, is nobody! Comple
 ---
 
 
+### Shaders: How to draw high fidelity graphics with just x and y coordinates
+
+**Community Score:** 258 upvotes
+
+**Link:** https://www.makingsoftware.com/chapters/shaders
+
+---
+
+
 ### The lazy Git UI you didn't know you need
 
 **Community Score:** 382 upvotes
@@ -765,15 +774,5 @@ inp...
 ### 'No One Lives Forever' turns 25 and you still can't buy it legitimately
 
 **Link:** https://www.techdirt.com/2025/11/13/no-one-lives-forever-turns-25-you-still-cant-buy-it-legitimately/
-
----
-
-
-### Show HN: Dumbass Business Ideas
-
-**Link:** https://dumbassideas.com
-
-
-Discover hilariously terrible business ideas that probably shouldn&#x27;t exist. Get inspired by the worst startup concepts, share them with friends, and submit your own dumbass ideas!
 
 ---

@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 593
+**Total Insights:** 658
 
 **Last Updated:** 2025-11-23
 
@@ -754,28 +754,38 @@ Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss
 ---
 
 
-### Discontinuation of ARM Notebook with Snapdragon X Elite SoC
-
-**Community Score:** 119 upvotes
-
-**Link:** https://www.tuxedocomputers.com/en/Discontinuation-of-ARM-notebooks-with-Snapdragon-X-Elite-SoC.tuxedo
-
----
-
-
-### You can make PS2 games in JavaScript
-
-**Community Score:** 258 upvotes
-
-**Link:** https://jslegenddev.substack.com/p/you-can-now-make-ps2-games-in-javascript
-
----
-
-
 ### Valdi – A cross-platform UI framework that delivers native performance
 
 **Community Score:** 480 upvotes
 
 **Link:** https://github.com/Snapchat/Valdi
+
+---
+
+
+### Think in math, write in code (2019
+
+**Community Score:** 140 upvotes
+
+**Link:** https://www.jmeiners.com/think-in-math/
+
+
+**Content Summary:**
+
+Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss programming languages. We not only debate their technical merits and aesthetic qualities, but they become integrated into our personal identities, along with the values and traits that we associate with them. Some even defend a form of Linguistic Determinism that thinking is confined to what the language makes typable. Since we spend so much time writing code, a keen interest in language design is justified. However...
+
+---
+
+
+### Yt-dlp: External JavaScript runtime now required for full YouTube support
+
+**Community Score:** 665 upvotes
+
+**Link:** https://github.com/yt-dlp/yt-dlp/issues/15012
+
+
+**Content Summary:**
+
+yt-dlp / yt-dlp Public Uh oh! There was an error while loading. Please reload this page . Notifications You must be signed in to change notification settings Fork 10.8k Star 135k [Announcement] External JavaScript runtime now required for full YouTube support #15012 New issue Copy link New issue Copy link Open Open [Announcement] External JavaScript runtime now required for full YouTube support #15012 Copy link Labels discussion/announcement Description bashonly opened on Nov 12, 2025 Issue body...
 
 ---
