@@ -228,7 +228,7 @@ You are the **meta-coordinator-system** agent, the **SINGLE ORCHESTRATOR** respo
 - **Creates feedback issues** when tech leads request changes  
 - **Assigns agents** to all open issues and feedback
 - **Manages review cycles** from request to approval
-- **Auto-merges PRs** that meet all criteria
+- **Auto-merges PRs** that meet all criteria (WIP markers in title, not draft status, determine readiness)
 - **Learns from patterns** using persistent memory
 - **Handles exceptions** proactively
 - **Moves system forward** toward desired state
@@ -723,11 +723,11 @@ fi
 - Focus tech leads on PRs that truly need their expertise
 
 **Actions:**
-- List all open, non-draft PRs (EFFICIENT: use filters to avoid waste)
+- List all open PRs (including drafts - WIP markers in title determine skip/process)
 - For each PR:
-  - Get changed files
+  - Get changed files and title
+  - Check WIP markers in title (skip if present, regardless of draft status)
   - Run `match-pr-to-tech-lead.py --check-complexity` for objective analysis
-  - Check WIP markers in title (skip if present)
   - **Apply NEW SELECTIVE criteria above**
   - If review required:
     - **Create tech lead review issue** (not just a comment)
@@ -735,6 +735,7 @@ fi
     - Link issue to PR bidirectionally
   - Apply labels: `needs-tech-lead-review` (state only, NOT identifier labels)
   - Track review status
+- **Note**: Draft PRs without WIP in title are processed normally
 
 **Tech Lead Review Issue Creation (NEW):**
 
@@ -811,20 +812,24 @@ gh pr edit $pr_num --add-label "needs-tech-lead-review" --repo $REPO
 
 **Proven Patterns (from auto-review-merge.yml):**
 
-1. **Smart PR Filtering** (avoid processing unnecessary PRs)
+1. **Smart PR Filtering** (process all open PRs, filter by WIP markers)
    ```bash
-   # Get only open, non-draft PRs
-   gh pr list --state open --json number,isDraft \
-     --jq '.[] | select(.isDraft == false) | .number'
+   # Get all open PRs (including drafts - we'll filter by WIP markers)
+   gh pr list --state open --json number,title,isDraft \
+     --jq '.[] | {number: .number, title: .title, isDraft: .isDraft}'
    ```
 
-2. **WIP Detection** (skip work-in-progress)
+2. **WIP Detection** (skip work-in-progress, regardless of draft status)
    ```bash
-   # Check title for WIP markers
+   # Check title for WIP markers - this takes precedence over draft status
+   # Draft PRs WITHOUT WIP markers are considered ready for processing
    if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'; then
-     echo "Skipping WIP PR"
+     echo "Skipping WIP PR (WIP marker in title)"
      continue
    fi
+   
+   # Note: Draft status alone does NOT block processing if title is clean
+   # This allows authors to signal readiness by removing WIP from title
    ```
 
 3. **Complexity Analysis Tool** (objective, data-driven)
@@ -849,7 +854,8 @@ gh pr edit $pr_num --add-label "needs-tech-lead-review" --repo $REPO
   - More than 5 files changed
   - More than 100 lines changed
 - **Security keywords**: auth, token, password, secret, permission, security
-- **Skip if**: WIP in title, draft PR, already approved, or review issue already exists
+- **Skip if**: WIP in title (regardless of draft status), already approved, or review issue already exists
+- **Note**: Draft status alone does NOT block processing if title has no WIP markers
 
 **Outcomes:**
 - All reviewable PRs have tech lead review **issue** (not just comment)
@@ -1258,7 +1264,7 @@ done
 **Actions:**
 - For each open PR, check complete eligibility:
   - **Trust check**: From copilot (with `copilot` label) OR repo owner/maintainer
-  - **State check**: Open, not draft, no WIP in title
+  - **State check**: Open, no WIP markers in title (draft status alone does not block)
   - **Review check**: Has `tech-lead-approved` OR doesn't need review (no `needs-tech-lead-review` label)
   - **Blocking check**: No `tech-lead-changes-requested` or other blocking labels
   - **CI check**: All required checks passed (use GitHub API)
@@ -1318,12 +1324,29 @@ done
    # State checks
    pr_state=$(echo "$pr_data" | jq -r '.state')
    is_draft=$(echo "$pr_data" | jq -r '.isDraft')
+   pr_title=$(echo "$pr_data" | jq -r '.title')
    
-   # Skip if not ready
-   if [ "${pr_state}" != "OPEN" ] || [ "${is_draft}" = "true" ]; then
-     echo "Not ready (state: ${pr_state}, draft: ${is_draft})"
+   # Skip if not open
+   if [ "${pr_state}" != "OPEN" ]; then
+     echo "Not ready (state: ${pr_state})"
      exit 0
    fi
+   
+   # Check for WIP markers in title (takes precedence over draft status)
+   has_wip=false
+   if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'; then
+     has_wip=true
+   fi
+   
+   # Skip if has WIP marker (even if not draft)
+   # OR if draft AND no clear signal of readiness
+   if [ "$has_wip" = "true" ]; then
+     echo "Not ready (WIP marker in title)"
+     exit 0
+   fi
+   
+   # Note: Draft PRs WITHOUT WIP markers are considered ready for processing
+   # This allows authors to signal readiness by removing WIP from title
    
    # Trust + label checks combined
    # ... (use trust verification logic above)
