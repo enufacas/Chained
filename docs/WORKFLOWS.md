@@ -218,13 +218,25 @@ When you modify any workflow file, the PR check validates:
 
 **File**: `.github/workflows/agent-evaluator.yml`
 
-**Description**: Run daily at midnight UTC
+**Description**: Evaluates agent performance daily, promotes/eliminates agents based on metrics, and creates evaluation report issues
 
 **Schedule**:
 - Daily at midnight UTC
   - Cron: `0 0 * * *`
 
 **Triggers**: manual
+
+**Key Features**:
+- ✅ Performance-based agent evaluation
+- ✅ Automatic promotion to Hall of Fame (>65% score)
+- ✅ Automatic elimination (<30% score)
+- ✅ Creates **informational** report issues (not assigned to Copilot)
+- ✅ Syncs results to GitHub Pages
+- ✅ Auto-merges evaluation PRs
+
+**Labels Used**: `agent-system`, `evaluation`, `informational`, `automated`
+
+**Note**: Evaluation report issues are marked with the `informational` label and are not assigned to Copilot since they are view-only reports. See [Informational Issues Pattern](./INFORMATIONAL_ISSUES.md) for details.
 
 ---
 
