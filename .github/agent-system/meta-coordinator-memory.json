@@ -650,17 +650,6 @@
     "recent": [
       {
         "type": "issue_assignment",
-        "description": "Assigned issue #2751 to construct-specialist (score: 9.00)",
-        "context": {
-          "issue_number": 2751,
-          "agent": "construct-specialist",
-          "score": 9
-        },
-        "timestamp": "2025-11-24T10:54:58.013010",
-        "session_id": "a8f53e273f33a934"
-      },
-      {
-        "type": "issue_assignment",
         "description": "Assigned issue #2743 to create-guru (score: 14.00)",
         "context": {
           "issue_number": 2743,
@@ -1725,6 +1714,17 @@
         },
         "timestamp": "2025-11-24T10:54:58.013062",
         "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "tech_lead_assignment_skipped",
+        "description": "Skipped tech lead review for PR #2819: Automated data file update (trivial)",
+        "context": {
+          "pr_num": 2819,
+          "reason": "automated trivial change",
+          "title": "Update AI ideas history - 2025-11-24"
+        },
+        "timestamp": "2025-11-24T16:48:45.900297",
+        "session_id": "2558d13cf9329d86"
       }
     ],
     "patterns": {}
