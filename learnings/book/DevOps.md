@@ -2,7 +2,7 @@
 
 > CI/CD, containers, orchestration, and infrastructure automation
 
-**Total Insights:** 242
+**Total Insights:** 243
 
 **Last Updated:** 2025-11-24
 
@@ -199,6 +199,15 @@ Ingress NGINX Retirement: What You Need to Know By Tabitha Sable (Kubernetes SRC
 ## 📰 From Unknown
 
 
+### GrapheneOS migrates server infrastructure from France
+
+**Community Score:** 87 upvotes
+
+**Link:** https://www.privacyguides.org/news/2025/11/22/grapheneos-migrates-server-infrastructure-from-france-amid-police-intimidation-claims/
+
+---
+
+
 ### Kubernetes Ingress Nginx is retiring
 
 **Link:** https://www.kubernetes.dev/blog/2025/11/12/ingress-nginx-retirement/
@@ -386,15 +395,5 @@ Milvus is a high-performance, cloud-native vector database built for scalable ve
 
 
 A Kubernetes web UI that is fully-featured, user-friendly and extensible
-
----
-
-
-### serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly, and Fly.io
-
-**Link:** https://github.com/serverless-dns/serverless-dns
-
-
-The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly, and Fly.io
 
 ---

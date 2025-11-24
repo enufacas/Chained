@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 724
+**Total Insights:** 721
 
 **Last Updated:** 2025-11-24
 
@@ -641,47 +641,11 @@ The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 Th
 ---
 
 
-### The Rust Performance Book (2020)
+### Inside Rust's std and parking_lot mutexes – who wins?
 
-**Community Score:** 91 upvotes
+**Community Score:** 102 upvotes
 
-**Link:** https://nnethercote.github.io/perf-book/
-
----
-
-
-### µcad: New open source programming language that can generate 2D sketches and 3D
-
-**Community Score:** 177 upvotes
-
-**Link:** https://microcad.xyz/
-
----
-
-
-### The Cloudflare outage was a good thing
-
-**Community Score:** 121 upvotes
-
-**Link:** https://gist.github.com/jbreckmckye/32587f2907e473dd06d68b0362fb0048
-
----
-
-
-### Build desktop applications using Go and Web Technologies
-
-**Community Score:** 25 upvotes
-
-**Link:** https://github.com/wailsapp/wails
-
----
-
-
-### Ego, empathy, and humility at work
-
-**Community Score:** 48 upvotes
-
-**Link:** https://matthogg.fyi/a-unified-theory-of-ego-empathy-and-humility-at-work/
+**Link:** https://blog.cuongle.dev/p/inside-rusts-std-and-parking-lot-mutexes-who-win
 
 ---
 
@@ -774,6 +738,43 @@ The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 Th
 ### Think in math, write in code (2019
 
 **Community Score:** 178 upvotes
+
+**Link:** https://www.jmeiners.com/think-in-math/
+
+
+**Content Summary:**
+
+Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss programming languages. We not only debate their technical merits and aesthetic qualities, but they become integrated into our personal identities, along with the values and traits that we associate with them. Some even defend a form of Linguistic Determinism that thinking is confined to what the language makes typable. Since we spend so much time writing code, a keen interest in language design is justified. However...
+
+---
+
+
+### So, you want to design your own language? (2017)
+
+**Link:** https://cs.lmu.edu/~ray/notes/languagedesignnotes/
+
+---
+
+
+### AMD GPUs Go Brrr
+
+**Link:** https://hazyresearch.stanford.edu/blog/2025-11-09-amd-brr
+
+---
+
+
+### Valdi – A cross-platform UI framework that delivers native performance
+
+**Community Score:** 480 upvotes
+
+**Link:** https://github.com/Snapchat/Valdi
+
+---
+
+
+### Think in math, write in code (2019
+
+**Community Score:** 140 upvotes
 
 **Link:** https://www.jmeiners.com/think-in-math/
 
