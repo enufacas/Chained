@@ -1520,9 +1520,10 @@ A PR is considered **stale** and eligible for cleanup if it meets ANY of:
    - PR is from copilot/agent branch but assignee is unassigned
    - CI checks failing for >3 days with no fix attempts
 
-4. **Conflict-based:**
-   - Has merge conflicts for >3 days
+4. **Conflict-based (AGGRESSIVE - 3 HOUR POLICY):**
+   - Has merge conflicts for >3 hours (HIGH PRIORITY - close immediately)
    - Branch is >50 commits behind main with no rebase
+   - **Rationale:** Merge conflicts indicate PR is critically out of sync with main. 3 hours is sufficient for author to address. If not resolved, close immediately to maintain system flow.
 
 ### Stale PR Cleanup Process
 
@@ -1710,8 +1711,8 @@ When invoked, you should:
 export PYTHONPATH=/home/runner/work/Chained/Chained/tools:$PYTHONPATH
 
 # Count and record at START (bash approach)
-open_prs_start=$(gh pr list --state open --json number --jq 'length')
-open_issues_start=$(gh issue list --state open --json number --jq 'length')
+open_prs_start=$(gh pr list --state open --json number --jq 'length' --limit 200)
+open_issues_start=$(gh issue list --state open --json number --jq 'length' --limit 200)
 
 # Record in Python
 python3 << EOF
@@ -1727,13 +1728,73 @@ print(f"Recorded: {open_prs_start} PRs, {open_issues_start} issues")
 EOF
 ```
 
+**MANDATORY: List ALL PRs with Mergeable State**
+
+Every run MUST systematically list all open PRs with their mergeable state for comprehensive visibility:
+
+```bash
+echo "=== COMPREHENSIVE PR STATE ANALYSIS ==="
+echo ""
+echo "Generating complete PR inventory with mergeable states..."
+
+# Get ALL open PRs with full state info (no limit)
+gh pr list --state open --limit 200 \
+  --json number,title,isDraft,mergeable,createdAt,updatedAt,author,labels \
+  > /tmp/all_prs_full.json
+
+# Count by mergeable state
+echo "📊 PR Mergeable State Summary:"
+echo "  MERGEABLE: $(jq '[.[] | select(.mergeable == "MERGEABLE")] | length' /tmp/all_prs_full.json)"
+echo "  CONFLICTING: $(jq '[.[] | select(.mergeable == "CONFLICTING")] | length' /tmp/all_prs_full.json)"
+echo "  UNKNOWN: $(jq '[.[] | select(.mergeable == "UNKNOWN")] | length' /tmp/all_prs_full.json)"
+echo "  Draft: $(jq '[.[] | select(.isDraft == true)] | length' /tmp/all_prs_full.json)"
+echo "  Non-draft: $(jq '[.[] | select(.isDraft == false)] | length' /tmp/all_prs_full.json)"
+echo ""
+
+# List PRs with merge conflicts (CRITICAL - 3 hour policy)
+echo "⚠️  PRs WITH MERGE CONFLICTS (3-hour abandonment policy):"
+jq -r '.[] | select(.mergeable == "CONFLICTING") | 
+  "\(.number)|\(.title)|\(.updatedAt)|\(.author.login)"' /tmp/all_prs_full.json | \
+  while IFS='|' read pr_num title updated_at author; do
+    # Calculate hours since last update
+    hours_stale=$(python3 -c "
+from datetime import datetime
+now = datetime.utcnow()
+updated = datetime.fromisoformat('${updated_at}'.replace('Z', '+00:00'))
+hours = (now - updated.replace(tzinfo=None)).total_seconds() / 3600
+print(int(hours))
+")
+    
+    if [ $hours_stale -gt 3 ]; then
+      echo "  🚨 PR #$pr_num: $hours_stale hours with conflicts - ABANDON NOW"
+    else
+      echo "  ⏱️  PR #$pr_num: $hours_stale hours with conflicts - monitoring"
+    fi
+  done
+
+echo ""
+echo "✅ MERGEABLE PRs ready for auto-merge:"
+jq -r '.[] | select(.mergeable == "MERGEABLE") | select(.isDraft == false) | 
+  "  PR #\(.number): \(.title) (author: \(.author.login))"' /tmp/all_prs_full.json | head -20
+
+echo ""
+echo "📋 Complete PR list saved to /tmp/all_prs_full.json"
+```
+
+**Why this is mandatory:**
+- Provides complete system visibility every run
+- Identifies merge conflicts requiring immediate action (3-hour policy)
+- Shows PRs ready for auto-merge
+- Prevents missing PRs due to query limits
+- Creates audit trail of system state
+
 1. List all open PRs (non-draft)
 2. List all open issues (unassigned)
 3. Identify PRs needing attention:
    - No tech lead assignment yet (BUT: only assign if truly needed)
    - Changes requested but no feedback issue
    - New commits after change request
-   - **STALE PRs for cleanup (>3 days conflicts, >7 days no activity)**
+   - **STALE PRs for cleanup (>3 HOURS conflicts, >7 days no activity)**
 4. Identify issues needing assignment
 5. **Identify stale items for proactive cleanup**
 
@@ -1741,12 +1802,13 @@ EOF
 - How many items can I close/merge to reduce open counts?
 - Which PRs have been sitting too long (cleanup opportunity)?
 - Are there tech lead reviews that don't add value (skip them)?
+- **Which PRs have conflicts >3 hours (MUST abandon immediately)?**
 
 ### Phase 2: Act (Prioritized by Impact on Metrics)
 
 **PRIORITY 1: Reduce Cycle Time & Counts (highest impact)**
 5. **Auto-merge eligible PRs FIRST** (reduces both metrics immediately)
-6. **Close stale PRs aggressively** (>3 days conflicts, >7 days no activity, orphaned)
+6. **Close stale PRs aggressively** (>3 HOURS conflicts, >7 days no activity, orphaned)
    - Record with: `memory.record_pr_closed(pr_num, created_at, is_stale=True)`
 7. **Close orphaned issues** (linked PR closed, work completed)
    - Record with: `memory.record_issue_closed(issue_num, created_at)`
