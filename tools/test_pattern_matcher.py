@@ -196,7 +196,121 @@ class TestPatternMatcher(unittest.TestCase):
         matches = self.matcher.scan_file(test_file)
         self.assertEqual(len(matches), 0)
 
+    def test_bash_quoted_variables_no_warnings(self):
+        """Test that properly quoted bash variables don't trigger warnings"""
+        code = '''#!/bin/bash
+set -e
+
+# These should NOT trigger warnings
+echo "Processing issue #$issue_number"
+result="$value"
+if [ "$var" = "test" ]; then
+  echo "quoted"
+fi
+for item in "$list"; do
+  echo "item"
+done
+'''
+        temp_file = os.path.join(self.temp_dir, 'test_quoted.sh')
+        with open(temp_file, 'w') as f:
+            f.write(code)
+        
+        matches = self.matcher.scan_file(temp_file)
+        # Should have no warnings about unquoted variables
+        var_warnings = [m for m in matches if 'unquoted' in m.pattern_id.lower()]
+        self.assertEqual(len(var_warnings), 0, 
+                        f"Found unexpected unquoted variable warnings: {[m.matched_text for m in var_warnings]}")
+    
+    def test_bash_unquoted_in_test(self):
+        """Test detection of unquoted variables in test conditions"""
+        code = '''#!/bin/bash
+if [ $var = "test" ]; then
+  echo "bad"
+fi
+'''
+        temp_file = os.path.join(self.temp_dir, 'test_unquoted.sh')
+        with open(temp_file, 'w') as f:
+            f.write(code)
+        
+        matches = self.matcher.scan_file(temp_file)
+        test_warnings = [m for m in matches if m.pattern_id == 'bash-unquoted-in-test']
+        self.assertGreater(len(test_warnings), 0, "Should detect unquoted variable in test")
+    
+    def test_bash_shebang_first_line_only(self):
+        """Test that shebang check only applies to first line"""
+        code = '''#!/bin/bash
+set -e
+echo "line 2"
+echo "line 3"
+'''
+        temp_file = os.path.join(self.temp_dir, 'test_shebang.sh')
+        with open(temp_file, 'w') as f:
+            f.write(code)
+        
+        matches = self.matcher.scan_file(temp_file)
+        shebang_matches = [m for m in matches if m.pattern_id == 'bash-missing-shebang']
+        # Should have 0 matches since shebang is present on line 1
+        self.assertEqual(len(shebang_matches), 0, "Should not flag missing shebang when present")
+    
+    def test_bash_missing_shebang(self):
+        """Test detection of missing shebang"""
+        code = '''echo "no shebang"
+set -e
+'''
+        temp_file = os.path.join(self.temp_dir, 'test_no_shebang.sh')
+        with open(temp_file, 'w') as f:
+            f.write(code)
+        
+        matches = self.matcher.scan_file(temp_file)
+        shebang_matches = [m for m in matches if m.pattern_id == 'bash-missing-shebang']
+        self.assertGreater(len(shebang_matches), 0, "Should detect missing shebang")
+    
+    def test_bash_set_e_file_level(self):
+        """Test that set -e check is file-level, not per-line"""
+        code = '''#!/bin/bash
+set -e
+echo "line 1"
+echo "line 2"
+echo "line 3"
+'''
+        temp_file = os.path.join(self.temp_dir, 'test_set_e.sh')
+        with open(temp_file, 'w') as f:
+            f.write(code)
+        
+        matches = self.matcher.scan_file(temp_file)
+        set_e_matches = [m for m in matches if m.pattern_id == 'bash-no-set-e']
+        # Should have 0 matches since set -e is present
+        self.assertEqual(len(set_e_matches), 0, "Should not flag missing set -e when present")
+    
+    def test_bash_no_set_e(self):
+        """Test detection of missing set -e"""
+        code = '''#!/bin/bash
+echo "no set -e"
+'''
+        temp_file = os.path.join(self.temp_dir, 'test_no_set_e.sh')
+        with open(temp_file, 'w') as f:
+            f.write(code)
+        
+        matches = self.matcher.scan_file(temp_file)
+        set_e_matches = [m for m in matches if m.pattern_id == 'bash-no-set-e']
+        self.assertGreater(len(set_e_matches), 0, "Should detect missing set -e")
+        # Should only be reported once (file-level check)
+        self.assertEqual(len(set_e_matches), 1, "Should report missing set -e only once")
+    
+    def test_python_type_hints_removed(self):
+        """Test that type hints pattern was removed (was too noisy)"""
+        code = '''def function_without_hints(arg):
+    return arg
+'''
+        temp_file = os.path.join(self.temp_dir, 'test_hints.py')
+        with open(temp_file, 'w') as f:
+            f.write(code)
+        
+        matches = self.matcher.scan_file(temp_file)
+        hint_matches = [m for m in matches if 'type-hint' in m.pattern_id.lower()]
+        # Type hints pattern should be removed
+        self.assertEqual(len(hint_matches), 0, "Type hints pattern should be removed")
+
 
 if __name__ == '__main__':
-    # Run tests
     unittest.main()
