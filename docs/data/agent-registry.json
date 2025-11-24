@@ -1450,6 +1450,52 @@
         "overall_score": 0.0
       },
       "contributions": []
+    },
+    {
+      "id": "agent-1763987540635869416-28862",
+      "name": "\u267b\ufe0f Einstein",
+      "human_name": "Einstein",
+      "specialization": "organize-expert",
+      "status": "active",
+      "spawned_at": "2025-11-24T12:32:20.946557Z",
+      "personality": "enthusiastic and energetic",
+      "communication_style": "explains things with analogies",
+      "traits": {
+        "creativity": 92,
+        "caution": 83,
+        "speed": 93
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
+    },
+    {
+      "id": "agent-1763988835847674828-9024",
+      "name": "\ud83d\udd2c Einstein",
+      "human_name": "Einstein",
+      "specialization": "examine-chief",
+      "status": "active",
+      "spawned_at": "2025-11-24T12:53:56.148919Z",
+      "personality": "friendly and collaborative",
+      "communication_style": "gets straight to the point",
+      "traits": {
+        "creativity": 77,
+        "caution": 51,
+        "speed": 64
+      },
+      "metrics": {
+        "issues_resolved": 0,
+        "prs_merged": 0,
+        "reviews_given": 0,
+        "code_quality_score": 0.5,
+        "overall_score": 0.0
+      },
+      "contributions": []
     }
   ],
   "hall_of_fame": [
