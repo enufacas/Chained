@@ -16,6 +16,34 @@
 
 ---
 
+### 📊 Phase 0 Cleanup Results (Completed by Workflow)
+
+**Stale PRs Closed:** ${CLEANUP_TOTAL}
+- Merge conflicts (>3h): ${CLEANUP_CONFLICTS}
+- No activity (>7d): ${CLEANUP_NO_ACTIVITY}
+- Orphaned (closed issue): ${CLEANUP_ORPHANED}
+- Abandoned draft (>7d): ${CLEANUP_DRAFT}
+
+> These PRs were proactively closed by the workflow before your coordination work.
+> You don't need to worry about them - they're already handled.
+
+### 📈 Phase 5 Monitoring Data (From Workflow)
+
+**Current PR States:**
+- ✅ Mergeable (non-draft): ${MERGEABLE_PRS}
+- ❌ Conflicting: ${CONFLICTING_PRS}
+- 📝 Draft: ${DRAFT_PRS}
+- ❓ Unknown: ${UNKNOWN_PRS}
+
+**Starting Counts:**
+- Open PRs: ${OPEN_PRS_START}
+- Open Issues: ${OPEN_ISSUES_START}
+
+> Use the mergeable PR list for Phase 6 auto-merge operations.
+> These counts establish your baseline for metric tracking.
+
+---
+
 ### Your Mission (@meta-coordinator-system)
 
 As the **@meta-coordinator-system** agent, you are responsible for orchestrating the entire tech lead review, agent assignment, and **auto-merge** system. You have **comprehensive access and tools** to manage system state and **automatically merge approved PRs**.
@@ -101,24 +129,55 @@ Please assess the current system state and take appropriate actions across all *
 - Branches cleaned up
 - System ready for current cycle work
 
-#### 1. PR Review Orchestration
+#### 1. PR Review Orchestration (Phase 3: Selective Assignment)
 
-**Task:** Ensure all PRs have appropriate tech lead reviewers assigned
+**Task:** Ensure PRs that need review have appropriate tech lead reviewers assigned
+
+**🎯 SELECTIVE ASSIGNMENT (Phase 3 - NEW):**
+Use `tools/filter-tech-lead-assignment.py` to determine if review is needed.
+
+**Skip review for (trivial changes):**
+- ❌ Dependabot PRs
+- ❌ Single-line changes (<3 lines)
+- ❌ Typo/formatting fixes
+- ❌ Documentation-only changes
+- ❌ Draft PRs (work in progress)
+
+**Require review for (high-value changes):**
+- ✅ Security keywords (security, auth, crypto, etc.)
+- ✅ Protected paths (.github/workflows, .github/agents, tools/*.py)
+- ✅ Large PRs (>10 files AND >200 lines)
 
 **Actions to take:**
 - List all open PRs (not draft, no WIP)
 - For each PR:
+  - **First, check if review needed:** Run `python3 tools/filter-tech-lead-assignment.py <pr_number>`
+    - Exit 0 = Review REQUIRED → continue assignment
+    - Exit 1 = Review SKIPPED → record decision and skip to next PR
   - Check if tech lead is already assigned (has `tech-lead-{name}` label)
-  - If not assigned:
+  - If not assigned and review required:
     - Use `tools/match-pr-to-tech-lead.py` to identify appropriate tech lead
     - Add tech lead label: `tech-lead-{agent-name}`
     - Add tech lead to PR reviewers
     - Comment on PR mentioning the tech lead
 
+**Track decisions:**
+```python
+if skip_review:
+    memory._record_decision(
+        "tech_lead_assignment_skipped",
+        f"Skipped tech lead review for PR #{pr_num}: {reason}",
+        {"pr_num": pr_num, "reason": reason, "title": pr_title}
+    )
+else:
+    memory.record_pr_assignment(pr_num, tech_lead, complexity, files_changed)
+```
+
 **Outcomes:**
-- All eligible PRs have tech leads assigned
-- Tech leads know which PRs need their review
-- Clear ownership for each PR
+- Only high-value PRs get tech lead reviews
+- Tech leads not overwhelmed (target: 5-15 assignments per run, down from 13-39)
+- Decision tracking shows reasoning
+- Clear ownership for each PR needing review
 
 #### 2. Feedback Issue Creation
 
@@ -141,22 +200,51 @@ Please assess the current system state and take appropriate actions across all *
 - Authors know what needs to be fixed
 - Feedback doesn't get lost in PR comments
 
-#### 3. Agent Assignment
+#### 3. Agent Assignment (Phase 4: Enhanced Tracking)
 
 **Task:** Ensure all open issues have appropriate agents assigned
 
+**🔍 DEBUGGING (Phase 4 - NEW):**
+Add comprehensive logging to identify why assignments may be failing.
+
 **Actions to take:**
-- List all open issues without agent assignment
-- For each issue:
+- List ALL open issues (limit 100 to start)
+  ```bash
+  gh issue list --state open --limit 100 --json number,title,assignees,labels > /tmp/all_issues.json
+  ```
+- Filter to unassigned issues (no Copilot assignee):
+  ```bash
+  unassigned=$(jq '[.[] | select(.assignees | length == 0 or (.assignees | map(.login) | index("copilot") | not))]' /tmp/all_issues.json)
+  ```
+- Log findings:
+  ```bash
+  echo "📊 Found $(echo "$unassigned" | jq 'length') unassigned issues"
+  ```
+- For each unassigned issue:
   - Use `tools/match-issue-to-agent.py` to find best agent match
+  - Log match result: "Issue #X → Agent: @agent-name (score: Y)"
   - Use `tools/assign-copilot-to-issue.sh` to assign agent
   - Update issue with agent directive
   - Add label: `agent:{agent-name}`
+  - **Track success/failure:**
+    ```python
+    try:
+        memory.record_issue_assignment(issue_number, agent, score)
+    except Exception as e:
+        memory.record_exception("issue_assignment_failed", str(e), 
+                               {"issue": issue_number, "agent": agent})
+    ```
+
+**Failure Handling:**
+- If GraphQL API fails, log error with details
+- If matching returns no agent, log "No suitable agent found for issue #X"
+- If assignment script fails, log exit code and stderr
 
 **Outcomes:**
-- All issues have agents working on them
-- Clear responsibility for each issue
-- Agent specialization is utilized
+- 5-10 issues assigned per run (target, up from 0-1)
+- All open issues have agents
+- Assignment success rate tracked
+- Failure reasons logged for debugging
 
 #### 4. Review Cycle Management
 
@@ -184,9 +272,14 @@ Please assess the current system state and take appropriate actions across all *
 - Review status is always current
 - PRs progress through review cycle
 
-#### 5. Auto-Merge Execution (CRITICAL - HIGH PRIORITY)
+#### 5. Auto-Merge Execution (Phase 6: Optimized) (CRITICAL - HIGH PRIORITY)
 
 **Task:** Automatically merge approved PRs from trusted sources
+
+**🚀 OPTIMIZATION (Phase 6 - NEW):**
+- Alternative CI check strategy (CI often unavailable per learning insight)
+- Batch merge operations (all eligible PRs at once)
+- Pre-filtered by workflow monitoring step
 
 **Eligibility Criteria:**
 PRs must meet ALL of these criteria to be auto-merged:
@@ -194,10 +287,55 @@ PRs must meet ALL of these criteria to be auto-merged:
 - PR is NOT a draft
 - PR does NOT have WIP in title
 - PR author is repository owner/maintainer OR PR has `copilot` label
-- All CI checks have passed (green)
-- No merge conflicts
+- **CI checks:** Either passed (green) OR unavailable (skip check if unavailable)
+- No merge conflicts (mergeable == "MERGEABLE")
+
+**CI Check Strategy (Phase 6 - NEW):**
+```bash
+# Check CI status
+ci_status=$(gh pr view $pr_num --json statusCheckRollup --jq '.statusCheckRollup')
+
+# Decision logic:
+if [ "$ci_status" = "[]" ] || [ "$ci_status" = "null" ]; then
+  # No CI checks configured - safe to merge
+  ci_passed=true
+elif [ "$(echo "$ci_status" | jq '[.[] | select(.state != "SUCCESS")] | length')" = "0" ]; then
+  # All checks passed
+  ci_passed=true
+else
+  # Some checks failed
+  ci_passed=false
+fi
+```
 
 **Actions to take:**
+- Use ${MERGEABLE_PRS} from workflow monitoring step (pre-filtered)
+- For each approved PR from that list:
+  - **Verify all eligibility criteria above**
+  - Check PR status, CI checks, conflicts
+  - If eligible:
+    - Merge PR using `gh pr merge --squash --auto` (preferred) or `gh pr merge --squash`
+    - Comment on PR: "✅ Auto-merged by @meta-coordinator-system (tech lead approved)"
+    - Post to linked issue (if exists): "PR #{number} has been merged"
+    - **Record in memory:**
+      ```python
+      memory.record_pr_closed(pr_num, created_at, is_stale=False)
+      ```
+  - If not eligible:
+    - Log reason: "PR #X not eligible: {reason}"
+    - Leave PR open for manual intervention
+
+**Priority:** This is HIGH PRIORITY - merge eligible PRs as soon as possible
+
+**Target:** 5-10 auto-merges per run (up from 0-6)
+
+**Safety:** Only merges when tech lead has explicitly approved and checks pass/unavailable
+
+**Outcomes:**
+- Approved PRs are merged automatically
+- Work flows smoothly without manual intervention
+- Safe merge process (tech lead approval + CI checks)
+- Faster merge cycle (batch operations)
 - List all open PRs with `tech-lead-approved` label
 - For each approved PR:
   - **Verify all eligibility criteria above**
@@ -544,14 +682,76 @@ If wide permissions unavailable:
 - Create follow-up issues for actions needing elevation
 - Focus on assessment and recommendations
 
+### 📊 Final Reporting (Phase 5 Dashboard)
+
+**At the end of your coordination, generate a comprehensive summary using the dashboard:**
+
+```bash
+# Generate metrics dashboard in markdown format
+python3 tools/meta-coordinator-dashboard.py --format markdown > /tmp/dashboard.md
+
+# Include in your summary comment
+cat /tmp/dashboard.md
+```
+
+**Dashboard includes:**
+- 🎯 Overall health score with breakdown
+- ⏱️ Cycle time metrics (PR and issue averages)
+- 📊 Open count changes with trends
+- 🧹 Cleanup activity rates
+- 📈 System activity summary
+- 👥 Top contributors (tech leads and agents)
+
+**Use dashboard data to:**
+- Identify bottlenecks (e.g., too many conflicting PRs)
+- Track improvement (e.g., cycle times decreasing)
+- Celebrate wins (e.g., high auto-merge rate)
+- Plan next priorities (e.g., focus area for next run)
+
 ### Expected Output Format
 
 Post a summary comment with:
-- **System State**: Current counts
+- **Phase 0 Cleanup**: PRs closed by category
+- **Phase 5 Monitoring**: Current PR states
+- **System State**: Current counts with trends
 - **Actions Taken**: Numbered list with ✅ indicators
-- **Metrics**: Counts of operations
-- **System Health**: Overall status
+  - Tech leads assigned (with selective criteria applied)
+  - Issues assigned (with match scores)
+  - PRs auto-merged (with eligibility reasons)
+  - Feedback issues created
+- **Metrics Dashboard**: Full dashboard output (markdown)
+- **Memory Tracking**: Success score and key metrics
+- **System Health**: Overall status (🟢 🟡 🔴)
 - **Next Run**: When next coordination will occur
+
+**Example Summary:**
+```markdown
+## 🎯 Meta-Coordination Complete
+
+### Phase 0 Cleanup Results
+- ✅ Closed 12 stale PRs (5 conflicts, 4 no-activity, 2 orphaned, 1 draft)
+
+### Phase 5 Current State
+- 📊 Mergeable PRs: 15
+- ❌ Conflicting: 2
+- 📝 Draft: 8
+
+### Actions Taken
+1. ✅ Assigned 8 tech leads (skipped 22 trivial PRs per Phase 3 criteria)
+2. ✅ Assigned 6 agents to issues (logged 2 matching failures)
+3. ✅ Auto-merged 4 PRs (CI unavailable but approved)
+4. ✅ Created 1 feedback issue
+
+### Metrics Dashboard
+[full dashboard output here]
+
+### Success Score: 67.5/100 (🟡 IMPROVING)
+- Cycle Time: 72.0/100 (48h average)
+- Reduction: 65.0/100 (-8 PRs from baseline)
+- Cleanup: 65.0/100 (22% proactive rate)
+
+🟡 System is improving. Next run in 15 minutes.
+```
 
 ### Cost Efficiency
 
