@@ -110,11 +110,14 @@ Evaluated the learning system health:
 
 ## Verification
 
-**Learning File Location**: `origin/learning/commit-strategies-20251124-031645-19622186699`  
+**Learning Branch**: `origin/learning/commit-strategies-20251124-031645-19622186699` (pending merge)  
+**Learning File**: `learnings/commit_strategies_20251124_031643.json` (in learning branch)  
 **Analysis Timestamp**: 2025-11-24T03:16:43.350940+00:00  
 **Commits Analyzed**: 500 (last 30 days)  
 **Branch Analyzed**: main  
 **Patterns Found**: 3 (size, message, organization)
+
+> **Note**: The detailed learning file with 500 commits will be available once the learning branch is merged. The current `learnings/commit_strategies.json` in main reflects the grafted repository state with limited history.
 
 ## Conclusion
 

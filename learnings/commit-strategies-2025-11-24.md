@@ -3,7 +3,7 @@
 **Analysis Date**: 2025-11-24 03:16:43 UTC  
 **Analyzed by**: @workflows-tech-lead  
 **Reviewed by**: @create-guru  
-**Source**: `learnings/commit_strategies_20251124_031643.json`
+**Source**: `learnings/commit_strategies_20251124_031643.json` (in branch `origin/learning/commit-strategies-20251124-031645-19622186699`, pending merge)
 
 ## Executive Summary
 
