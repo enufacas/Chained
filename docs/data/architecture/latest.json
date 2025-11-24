@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-24T02:08:11.744323",
-  "commit": "c273294e08fbc0a3f2faa4780bff9e8a6f72b4bb",
+  "timestamp": "2025-11-24T12:55:45.661260",
+  "commit": "8916a9c7b190d467c7ea1c2da41a596f4c59e6ee",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 328,
-        "line_count": 135262,
+        "file_count": 329,
+        "line_count": 135723,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 797,
-        "line_count": 235950,
+        "file_count": 841,
+        "line_count": 239409,
         "files": [
           ".nojekyll",
           "AB_TESTING_API.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 93,
-        "line_count": 4705059,
+        "file_count": 94,
+        "line_count": 4705714,
         "files": [
           "2025-11-14-04-00-27.json",
           "2025-11-14-04-00-36.json",
@@ -182,8 +182,8 @@
         ]
       },
       "learnings": {
-        "file_count": 323,
-        "line_count": 185213,
+        "file_count": 327,
+        "line_count": 194371,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -239,8 +239,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 1541,
-    "total_lines": 5261484
+    "total_files": 1591,
+    "total_lines": 5275217
   },
   "dependencies": {
     "internal_imports": {
@@ -310,13 +310,11 @@
       "ai_workflow_predictor.py": [],
       "agent-metrics-collector.py": [],
       "issue_clustering_system.py": [],
-      "test-tech-lead-system.py": [],
       "batch_update_agents.py": [],
       "universal_truth_evaluator.py": [],
       "monitor-mentorship-dashboard.py": [],
       "uniqueness-scorer.py": [],
       "fetch-github-trending.py": [],
-      "filter-tech-lead-assignment.py": [],
       "validate-workflow-inputs.py": [],
       "archaeology-integration.py": [],
       "autonomous_experiment_creator.py": [],
@@ -340,6 +338,9 @@
       "optimized_learner.py": [],
       "hypothesis_testing_engine.py": [],
       "ab_testing_workflow_analyzer.py": [],
+      "run-meta-coordination.py": [
+        "tools"
+      ],
       "code-smell-fixer.py": [],
       "copilot-usage-tracker.py": [],
       "github_integration.py": [],
@@ -400,7 +401,6 @@
       "agent_memory_system.py": [],
       "generate-new-agent.py": [],
       "performance_benchmark.py": [],
-      "match-pr-to-tech-lead.py": [],
       "integrated-archaeology.py": [],
       "validate-workflows.py": [],
       "cross-repo-pattern-matcher.py": [],
@@ -418,20 +418,20 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 100,
-      "sys": 133,
-      "json": 148,
-      "re": 67,
+      "os": 99,
+      "sys": 131,
+      "json": 147,
+      "re": 65,
       "ast": 17,
-      "datetime": 112,
-      "pathlib": 139,
-      "typing": 125,
+      "datetime": 113,
+      "pathlib": 137,
+      "typing": 124,
       "collections": 65,
       "functools": 9,
       "argparse": 112,
       "math": 9,
       "random": 24,
-      "time": 28,
+      "time": 29,
       "statistics": 12,
       "dataclasses": 65,
       "adaptive_workload_monitor": 2,
@@ -442,7 +442,7 @@
       "ab_testing_engine": 5,
       "ab_testing_advanced": 2,
       "yaml": 19,
-      "subprocess": 24,
+      "subprocess": 23,
       "hashlib": 16,
       "traceback": 12,
       "importlib": 24,
@@ -488,7 +488,6 @@
       "sqlite3": 1,
       "zipfile": 1,
       "psutil": 1,
-      "fnmatch": 1,
       "abc": 1,
       "prompt_learning_integration": 1,
       "prompt_reinforcement": 1,
@@ -501,22 +500,27 @@
         "source": "example_truth_discovery.py",
         "target": "tools",
         "type": "imports"
+      },
+      {
+        "source": "run-meta-coordination.py",
+        "target": "tools",
+        "type": "imports"
       }
     ]
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1541,
-    "total_lines": 5261484,
-    "total_dependencies": 1,
-    "external_libraries": 77,
-    "coupling_score": 3.4806822137138876e-05,
+    "total_files": 1591,
+    "total_lines": 5275217,
+    "total_dependencies": 2,
+    "external_libraries": 76,
+    "coupling_score": 7.128599942971201e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 185213,
+      "line_count": 194371,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -542,7 +546,7 @@
     },
     "agent_system": {
       "file_count": 2,
-      "line_count": 101184,
+      "line_count": 100120,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json"
@@ -550,7 +554,7 @@
     },
     "analysis_tools": {
       "file_count": 48,
-      "line_count": 4705059,
+      "line_count": 4705714,
       "files": [
         "2025-11-14-04-00-27.json",
         "2025-11-14-04-00-36.json",
@@ -576,7 +580,7 @@
     },
     "documentation": {
       "file_count": 49,
-      "line_count": 235950,
+      "line_count": 239409,
       "files": [
         ".nojekyll",
         "AB_TESTING_API.md",
@@ -602,7 +606,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 135262,
+      "line_count": 135723,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
