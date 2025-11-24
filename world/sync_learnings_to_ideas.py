@@ -21,6 +21,10 @@ LEARNINGS_DIR = os.path.join(SCRIPT_DIR, '..', 'learnings')
 KNOWLEDGE_PATH = os.path.join(SCRIPT_DIR, 'knowledge.json')
 WORLD_STATE_PATH = os.path.join(SCRIPT_DIR, 'world_state.json')
 
+# Configuration constants
+# How long to retain old learning ideas (in days) before archiving
+IDEA_RETENTION_DAYS = 7
+
 # Technology to company/location mapping
 TECH_COMPANY_MAP = {
     'ai': [
@@ -167,15 +171,13 @@ def create_idea_from_technology(tech: Dict[str, Any], idea_id_base: int, is_deep
     # Extract more patterns from keywords and category
     patterns = list(set([tech_name] + keywords + [category.lower().replace(' ', '_')]))
     
-    # **@troubleshoot-expert** Fix: Include first sample title in patterns to create unique ideas
-    # This ensures that different daily learnings create different idea hashes,
-    # allowing missions to be generated even for the same technology categories
+    # **@troubleshoot-expert** Fix: Include sample title hash in patterns for uniqueness
+    # Uses MD5 hash of first sample title to create stable, collision-resistant fingerprint
+    # This is an additional uniqueness signal (date pattern is the primary one)
     if sample_titles:
-        # Create a short fingerprint from first sample title for uniqueness
-        first_title_words = sample_titles[0].lower().split()[:3]  # First 3 words
-        title_fingerprint = '_'.join(first_title_words).replace(',', '').replace('.', '')
-        if title_fingerprint and title_fingerprint not in patterns:
-            patterns.append(f"topic:{title_fingerprint}")
+        # Use hash of first sample title for stable fingerprint
+        title_hash = hashlib.md5(sample_titles[0].encode()).hexdigest()[:8]
+        patterns.append(f"topic:{title_hash}")
     
     # Get companies associated with this tech
     companies = TECH_COMPANY_MAP.get(tech_name, [
@@ -468,36 +470,33 @@ def sync_learnings_to_ideas(max_ideas: int = 10, enable_deep_discovery: bool = T
     other_ideas = [idea for idea in existing_ideas if idea.get('source') != 'learning_analysis']
     
     # **@troubleshoot-expert** Fix: Cleanup old learning ideas to prevent unbounded growth
-    # Keep only recent learning ideas (last 7 days) + ideas without missions
+    # Keep ideas without missions (regardless of age) + recent ideas with missions
     # This prevents the knowledge base from growing indefinitely with daily ideas
     from datetime import timedelta
-    cutoff_date = (datetime.now(timezone.utc) - timedelta(days=7)).strftime('%Y-%m-%d')
+    cutoff_date = (datetime.now(timezone.utc) - timedelta(days=IDEA_RETENTION_DAYS)).strftime('%Y-%m-%d')
     
     retained_learning_ideas = []
     archived_count = 0
     for idea in list(existing_content_hashes.values()):
         # Keep ideas that:
-        # 1. Don't have mission_created (still waiting for missions)
-        # 2. Have analysis_date within last 7 days
-        # 3. Don't have an analysis_date (old format, keep for now)
+        # 1. Don't have mission_created (still waiting for missions) - keep regardless of age
+        # 2. Have mission_created AND analysis_date within retention period
+        # 3. Have mission_created AND no analysis_date (old format) - archive these as they're legacy
         analysis_date = idea.get('analysis_date', '')
         has_mission = idea.get('mission_created', False)
         
         if not has_mission:
-            # Always keep ideas without missions
+            # Always keep ideas without missions - they need missions!
             retained_learning_ideas.append(idea)
-        elif not analysis_date:
-            # Old format ideas - archive them to reduce clutter
-            archived_count += 1
-        elif analysis_date >= cutoff_date:
-            # Recent ideas - keep them
+        elif analysis_date and analysis_date >= cutoff_date:
+            # Recent ideas with missions - keep them for reference
             retained_learning_ideas.append(idea)
         else:
-            # Old ideas with missions - archive them
+            # Old ideas with missions (with or without analysis_date) - archive them
             archived_count += 1
     
     if archived_count > 0:
-        print(f"\n🗑️  Archived {archived_count} old learning ideas (older than 7 days with missions)")
+        print(f"\n🗑️  Archived {archived_count} old learning ideas (older than {IDEA_RETENTION_DAYS} days with missions)")
     
     all_ideas = other_ideas + retained_learning_ideas + new_ideas
     

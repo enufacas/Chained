@@ -1,5 +1,5 @@
 {
-  "time": "2025-11-24T21:44:43Z",
+  "time": "2025-11-24T21:50:20Z",
   "tick": 77,
   "agents": [
     {
@@ -1846,7 +1846,7 @@
       "label": "San Francisco",
       "lat": 37.7749,
       "lng": -122.4194,
-      "idea_count": 24,
+      "idea_count": 44,
       "timezone": "America/Los_Angeles",
       "utc_offset": -8,
       "region_type": "innovation_hub",
@@ -1873,7 +1873,7 @@
       "label": "Seattle",
       "lat": 47.6062,
       "lng": -122.3321,
-      "idea_count": 2,
+      "idea_count": 3,
       "timezone": "America/Los_Angeles",
       "utc_offset": -8,
       "region_type": "tech_hub",
@@ -1926,7 +1926,7 @@
       "label": "Redmond",
       "lat": 47.674,
       "lng": -122.1215,
-      "idea_count": 3,
+      "idea_count": 5,
       "timezone": "America/Los_Angeles",
       "utc_offset": -8,
       "region_type": "corporate_hub",
@@ -2081,7 +2081,7 @@
       "label": "London",
       "lat": 51.5074,
       "lng": -0.1278,
-      "idea_count": 2,
+      "idea_count": 3,
       "timezone": "UTC",
       "utc_offset": 0,
       "region_type": "general",
@@ -2093,7 +2093,7 @@
       "label": "Austin",
       "lat": 30.2672,
       "lng": -97.7431,
-      "idea_count": 1,
+      "idea_count": 2,
       "timezone": "UTC",
       "utc_offset": 0,
       "region_type": "general",
@@ -2117,7 +2117,7 @@
     }
   ],
   "metrics": {
-    "total_ideas": 27,
+    "total_ideas": 47,
     "total_regions": 10,
     "ticks_completed": 77,
     "active_agents": 51,

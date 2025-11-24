@@ -230,40 +230,6 @@
       "id": "idea:33"
     },
     {
-      "id": "idea:67",
-      "title": "Integration: Api-Ai Innovation",
-      "summary": "Exploring api-ai trends with 371 mentions. Web + AI: Build AI-powered web applications Also: Combining Api and Ai for better solutions",
-      "patterns": [
-        "api-ai",
-        "ai",
-        "api",
-        "integration"
-      ],
-      "companies": [
-        {
-          "name": "Tech Hub",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 1.0
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 371,
-      "category": "Integration",
-      "created_at": "2025-11-23T20:18:02Z",
-      "mission_created": true,
-      "mission_created_at": "2025-11-24T21:46:12.287456+00:00"
-    },
-    {
       "id": "idea:68",
       "title": "Languages: Go (2025-11-24)",
       "summary": "Exploring go trends with 234 mentions. Zed is our office Also: Reverse Engineering Yaesu FT-70D Firmware Encryption",
@@ -436,7 +402,7 @@
     {
       "id": "idea:72",
       "title": "AI/ML: Gpt (2025-11-24)",
-      "summary": "Exploring gpt trends with 461 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+      "summary": "Exploring gpt trends with 461 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
       "patterns": [
         "ai/ml",
         "gpt",
@@ -469,11 +435,11 @@
     {
       "id": "idea:73",
       "title": "AI/ML: Claude (2025-11-24)",
-      "summary": "Exploring claude trends with 200 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring claude trends with 200 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "claude",
-        "topic:gpt-51_\ud83e\udd16_waymo",
+        "topic:gpt-51_🤖_waymo",
         "date:2025-11-24"
       ],
       "companies": [
@@ -502,11 +468,11 @@
     {
       "id": "idea:74",
       "title": "Languages: Typescript (2025-11-24)",
-      "summary": "Exploring typescript trends with 73 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Unofficial Microsoft Teams client for Linux",
+      "summary": "Exploring typescript trends with 73 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Unofficial Microsoft Teams client for Linux",
       "patterns": [
         "languages",
         "typescript",
-        "topic:gpt-51_\ud83e\udd16_waymo",
+        "topic:gpt-51_🤖_waymo",
         "date:2025-11-24"
       ],
       "companies": [
@@ -535,7 +501,7 @@
     {
       "id": "idea:75",
       "title": "AI/ML: Ai (2025-11-24)",
-      "summary": "Exploring ai trends with 1089 mentions. iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring ai trends with 1089 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "ai",
@@ -588,7 +554,7 @@
     {
       "id": "idea:76",
       "title": "AI/ML: Agents (2025-11-24)",
-      "summary": "Exploring agents trends with 380 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+      "summary": "Exploring agents trends with 380 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
       "patterns": [
         "agents",
         "ai/ml",
@@ -634,7 +600,7 @@
     {
       "id": "idea:77",
       "title": "Web: Api (2025-11-24)",
-      "summary": "Exploring api trends with 163 mentions. MSFT OpenAI docs leak \ud83d\udcc4, GPT-5.1 \ud83e\udd16, Anthropic\u2019s $50B Bet \ud83d\udcb0 Also: Go's Sweet 16",
+      "summary": "Exploring api trends with 163 mentions. MSFT OpenAI docs leak 📄, GPT-5.1 🤖, Anthropic’s $50B Bet 💰 Also: Go's Sweet 16",
       "patterns": [
         "api",
         "web",
@@ -700,7 +666,7 @@
     {
       "id": "idea:79",
       "title": "Google Innovation (2025-11-24)",
-      "summary": "Exploring google trends with 270 mentions. Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "summary": "Exploring google trends with 270 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
       "patterns": [
         "google",
         "company_innovation",
@@ -733,7 +699,7 @@
     {
       "id": "idea:80",
       "title": "Cloudflare Innovation (2025-11-24)",
-      "summary": "Exploring cloudflare trends with 97 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependen",
+      "summary": "Exploring cloudflare trends with 97 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependen",
       "patterns": [
         "company_innovation",
         "cloudflare",
@@ -766,7 +732,7 @@
     {
       "id": "idea:81",
       "title": "Apple Innovation (2025-11-24)",
-      "summary": "Exploring apple trends with 181 mentions. Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0 Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring apple trends with 181 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "company_innovation",
         "apple",
@@ -799,7 +765,7 @@
     {
       "id": "idea:82",
       "title": "Nvidia Innovation (2025-11-24)",
-      "summary": "Exploring nvidia trends with 144 mentions. SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb Also: Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+      "summary": "Exploring nvidia trends with 144 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻",
       "patterns": [
         "company_innovation",
         "nvidia",
@@ -1039,6 +1005,783 @@
       "category": "Integration",
       "analysis_date": "2025-11-24",
       "created_at": "2025-11-24T21:44:43Z"
+    },
+    {
+      "id": "idea:89",
+      "title": "Languages: Go (2025-11-24)",
+      "summary": "Exploring go trends with 234 mentions. Zed is our office Also: Reverse Engineering Yaesu FT-70D Firmware Encryption",
+      "patterns": [
+        "go",
+        "languages",
+        "topic:82bd93ca",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 234,
+      "category": "Languages",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:90",
+      "title": "DevOps: Cloud (2025-11-24)",
+      "summary": "Exploring cloud trends with 380 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs Also: We cut our Mongo DB costs by 90% by moving to Hetzner",
+      "patterns": [
+        "devops",
+        "cloud",
+        "topic:3ea9011d",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "AWS",
+          "city": "Seattle",
+          "country": "US",
+          "lat": 47.6062,
+          "lng": -122.3321
+        },
+        {
+          "name": "Microsoft Azure",
+          "city": "Redmond",
+          "country": "US",
+          "lat": 47.674,
+          "lng": -122.1215
+        },
+        {
+          "name": "Google Cloud",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:Seattle",
+          "lat": 47.6062,
+          "lng": -122.3321,
+          "weight": 0.33
+        },
+        {
+          "region_id": "US:Redmond",
+          "lat": 47.674,
+          "lng": -122.1215,
+          "weight": 0.33
+        },
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.33
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 380,
+      "category": "DevOps",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:91",
+      "title": "Security: Security (2025-11-24)",
+      "summary": "Exploring security trends with 415 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs Also: Android developer verification: Early access starts",
+      "patterns": [
+        "security",
+        "topic:3ea9011d",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Cloudflare",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "CrowdStrike",
+          "city": "Austin",
+          "country": "US",
+          "lat": 30.2672,
+          "lng": -97.7431
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.5
+        },
+        {
+          "region_id": "US:Austin",
+          "lat": 30.2672,
+          "lng": -97.7431,
+          "weight": 0.5
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 415,
+      "category": "Security",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:92",
+      "title": "DevOps: Aws (2025-11-24)",
+      "summary": "Exploring aws trends with 211 mentions. We cut our Mongo DB costs by 90% by moving to Hetzner Also: Messing with scraper bots",
+      "patterns": [
+        "aws",
+        "devops",
+        "topic:5330b4fa",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 211,
+      "category": "DevOps",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:93",
+      "title": "AI/ML: Gpt (2025-11-24)",
+      "summary": "Exploring gpt trends with 461 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
+      "patterns": [
+        "gpt",
+        "ai/ml",
+        "topic:7718b558",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 461,
+      "category": "AI/ML",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:94",
+      "title": "AI/ML: Claude (2025-11-24)",
+      "summary": "Exploring claude trends with 200 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
+      "patterns": [
+        "ai/ml",
+        "claude",
+        "topic:efafaf81",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 200,
+      "category": "AI/ML",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:95",
+      "title": "Languages: Typescript (2025-11-24)",
+      "summary": "Exploring typescript trends with 73 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Unofficial Microsoft Teams client for Linux",
+      "patterns": [
+        "typescript",
+        "languages",
+        "topic:efafaf81",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 73,
+      "category": "Languages",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:96",
+      "title": "AI/ML: Ai (2025-11-24)",
+      "summary": "Exploring ai trends with 1089 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
+      "patterns": [
+        "ai",
+        "ai/ml",
+        "topic:9b7b9c46",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "DeepMind",
+          "city": "London",
+          "country": "GB",
+          "lat": 51.5074,
+          "lng": -0.1278
+        },
+        {
+          "name": "Anthropic",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.67
+        },
+        {
+          "region_id": "GB:London",
+          "lat": 51.5074,
+          "lng": -0.1278,
+          "weight": 0.33
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 1089,
+      "category": "AI/ML",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:97",
+      "title": "AI/ML: Agents (2025-11-24)",
+      "summary": "Exploring agents trends with 380 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
+      "patterns": [
+        "agents",
+        "ai/ml",
+        "topic:acd2dc29",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "Microsoft",
+          "city": "Redmond",
+          "country": "US",
+          "lat": 47.674,
+          "lng": -122.1215
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.5
+        },
+        {
+          "region_id": "US:Redmond",
+          "lat": 47.674,
+          "lng": -122.1215,
+          "weight": 0.5
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 380,
+      "category": "AI/ML",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:98",
+      "title": "Web: Api (2025-11-24)",
+      "summary": "Exploring api trends with 163 mentions. MSFT OpenAI docs leak 📄, GPT-5.1 🤖, Anthropic’s $50B Bet 💰 Also: Go's Sweet 16",
+      "patterns": [
+        "web",
+        "api",
+        "topic:3001fe1e",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 163,
+      "category": "Web",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:99",
+      "title": "Github Innovation (2025-11-24)",
+      "summary": "Exploring github trends with 295 mentions. GitHub Partial Outage Also: GitHub Copilot Docs: About billing for GitHub Copilot in organizations and enter",
+      "patterns": [
+        "company_innovation",
+        "github",
+        "topic:ab93d59d",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 295,
+      "category": "Company Innovation",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:100",
+      "title": "Google Innovation (2025-11-24)",
+      "summary": "Exploring google trends with 270 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "patterns": [
+        "google",
+        "company_innovation",
+        "topic:89086c33",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 270,
+      "category": "Company Innovation",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:101",
+      "title": "Cloudflare Innovation (2025-11-24)",
+      "summary": "Exploring cloudflare trends with 97 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependen",
+      "patterns": [
+        "cloudflare",
+        "company_innovation",
+        "topic:e17b59bb",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 97,
+      "category": "Company Innovation",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:102",
+      "title": "Apple Innovation (2025-11-24)",
+      "summary": "Exploring apple trends with 181 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
+      "patterns": [
+        "apple",
+        "company_innovation",
+        "topic:0de24af9",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 181,
+      "category": "Company Innovation",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:103",
+      "title": "Nvidia Innovation (2025-11-24)",
+      "summary": "Exploring nvidia trends with 144 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻",
+      "patterns": [
+        "company_innovation",
+        "nvidia",
+        "topic:2fcf6690",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 144,
+      "category": "Company Innovation",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:104",
+      "title": "Emerging Theme: Ai Agents (2025-11-24)",
+      "summary": "Exploring ai-agents trends with 10 mentions. Explore Ai Agents innovations",
+      "patterns": [
+        "emerging_theme",
+        "ai",
+        "agents",
+        "ai-agents",
+        "topic:513e9258",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 10,
+      "category": "Emerging Theme",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:105",
+      "title": "Emerging Theme: Go Specialist (2025-11-24)",
+      "summary": "Exploring go-specialist trends with 10 mentions. Explore Go Specialist innovations",
+      "patterns": [
+        "go",
+        "emerging_theme",
+        "go-specialist",
+        "specialist",
+        "topic:19368490",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 10,
+      "category": "Emerging Theme",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:106",
+      "title": "Emerging Theme: Cloud Infrastructure (2025-11-24)",
+      "summary": "Exploring cloud-infrastructure trends with 10 mentions. Explore Cloud Infrastructure innovations",
+      "patterns": [
+        "emerging_theme",
+        "infrastructure",
+        "cloud-infrastructure",
+        "cloud",
+        "topic:e63a2b93",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 10,
+      "category": "Emerging Theme",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:107",
+      "title": "Integration: Agents-Cloud-Infrastructure (2025-11-24)",
+      "summary": "Exploring agents-cloud-infrastructure trends with 195 mentions. AI + Infrastructure: Integrate AI capabilities with cloud infrastructure Also: Combining Agents and Cloud-Infrastructure for better solutions",
+      "patterns": [
+        "agents",
+        "agents-cloud-infrastructure",
+        "infrastructure",
+        "cloud",
+        "integration",
+        "topic:f5a2956b",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 195,
+      "category": "Integration",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:108",
+      "title": "Integration: Security-Claude (2025-11-24)",
+      "summary": "Exploring security-claude trends with 307 mentions. Security + AI: Apply AI/ML to enhance security systems Also: Combining Security and Claude for better solutions",
+      "patterns": [
+        "security-claude",
+        "claude",
+        "security",
+        "integration",
+        "topic:e1d7cbc1",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 307,
+      "category": "Integration",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
+    },
+    {
+      "id": "idea:109",
+      "title": "Integration: Api-Ai (2025-11-24)",
+      "summary": "Exploring api-ai trends with 626 mentions. Web + AI: Build AI-powered web applications Also: Combining Api and Ai for better solutions",
+      "patterns": [
+        "api-ai",
+        "ai",
+        "integration",
+        "api",
+        "topic:b9bd9263",
+        "date:2025-11-24"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 626,
+      "category": "Integration",
+      "analysis_date": "2025-11-24",
+      "created_at": "2025-11-24T21:50:20Z"
     }
   ]
 }
