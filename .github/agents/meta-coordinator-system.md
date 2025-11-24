@@ -867,7 +867,7 @@ gh pr edit $pr_num --add-label "needs-tech-lead-review" --repo $REPO
    ```bash
    # Check title for WIP markers - this takes precedence over draft status
    # Draft PRs WITHOUT WIP markers are considered ready for processing
-   if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'; then
+   if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work[\.\s]in[\.\s]progress|\[do[\.\s]not[\.\s]merge\]|\[dnm\]'; then
      echo "Skipping WIP PR (WIP marker in title)"
      continue
    fi
@@ -1378,7 +1378,7 @@ done
    
    # Check for WIP markers in title (takes precedence over draft status)
    has_wip=false
-   if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'; then
+   if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work[\.\s]in[\.\s]progress|\[do[\.\s]not[\.\s]merge\]|\[dnm\]'; then
      has_wip=true
    fi
    

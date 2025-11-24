@@ -43,7 +43,7 @@ The following patterns in PR titles are considered WIP markers (case-insensitive
 ```bash
 # Check for WIP markers in title
 has_wip=false
-if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'; then
+if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work[\.\s]in[\.\s]progress|\[do[\.\s]not[\.\s]merge\]|\[dnm\]'; then
   has_wip=true
 fi
 
@@ -63,7 +63,8 @@ import re
 
 def has_wip_marker(title: str) -> bool:
     """Check if a PR title has WIP markers."""
-    wip_pattern = r'\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'
+    # Use [\.\s] to match literal dot or space
+    wip_pattern = r'\[WIP\]|^WIP:|WIP\s|work[\.\s]in[\.\s]progress|\[do[\.\s]not[\.\s]merge\]|\[dnm\]'
     return bool(re.search(wip_pattern, title, re.IGNORECASE))
 
 def should_process_pr(is_draft: bool, title: str) -> tuple[bool, str]:
@@ -178,7 +179,7 @@ fi
 # New logic - check WIP markers instead
 pr_title=$(gh pr view $PR_NUM --json title --jq '.title')
 
-if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work.in.progress|\[do.not.merge\]|\[dnm\]'; then
+if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work[\.\s]in[\.\s]progress|\[do[\.\s]not[\.\s]merge\]|\[dnm\]'; then
   echo "Skipping WIP PR"
   exit 0
 fi
