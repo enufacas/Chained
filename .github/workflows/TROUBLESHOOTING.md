@@ -15,7 +15,18 @@ Created by **@troubleshoot-expert** to help resolve common workflow issues.
    - Testing: Workflow can now commit and push analysis results  
    - Fixed by: **@troubleshoot-expert**
 
-2. **example-ab-testing-workflow.yml failures (8 → 0)** - Not a real failure
+2. **update-agent-investments.yml failures (1 → 0)** - Fixed method call errors
+   - Root cause: Workflow called non-existent methods on AgentInvestmentTracker
+   - Errors:
+     - `'AgentInvestmentTracker' object has no attribute 'save'`
+     - Method should be `find_cultivation_opportunities` not `suggest_cultivation_opportunities`
+   - Solution:
+     - Removed `tracker.save()` call (line 208) - `record_cultivation()` saves automatically
+     - Changed `suggest_cultivation_opportunities` to `find_cultivation_opportunities` (line 215)
+   - Testing: Workflow can now complete successfully with correct method calls
+   - Fixed by: **@troubleshoot-expert**
+
+3. **example-ab-testing-workflow.yml failures (8 → 0)** - Not a real failure
    - This is a `workflow_dispatch` (manual trigger only) workflow
    - "Failures" are push events triggering it, which correctly result in 0 jobs
    - Expected behavior - workflow is working as designed

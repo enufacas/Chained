@@ -204,15 +204,11 @@ jobs:
                   else:
                       print(f"✅ Recorded cultivation for {category} (new category)")
               
-              # Save tracker
-              tracker.save()
-              print()
-              print(f"💾 Saved investment tracker updates")
               
               # Identify opportunities for further cultivation
               print()
               print("🔍 Identifying cultivation opportunities...")
-              opportunities = tracker.suggest_cultivation_opportunities(
+              opportunities = tracker.find_cultivation_opportunities(
                   agent_id,
                   min_score=30.0,
                   max_suggestions=3
