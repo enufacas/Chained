@@ -641,7 +641,7 @@ jobs:
 
       - name: Merge PR directly
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
         run: |
           PR_NUMBER="${{ needs.combine-learnings.outputs.pr_number }}"
           echo "🔄 Merging Learning PR #$PR_NUMBER directly..."
@@ -823,7 +823,7 @@ jobs:
 
       - name: Merge PR directly
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
         run: |
           PR_NUMBER="${{ needs.world-update.outputs.pr_number }}"
           echo "🔄 Merging World PR #$PR_NUMBER directly..."
@@ -1302,7 +1302,7 @@ jobs:
 
       - name: Merge PR directly
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
         run: |
           PR_NUMBER="${{ needs.agent-missions.outputs.pr_number }}"
           echo "🔄 Merging Mission PR #$PR_NUMBER directly..."
@@ -1604,7 +1604,7 @@ jobs:
 
       - name: Merge PR directly
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
         run: |
           PR_NUMBER="${{ needs.sync-world-to-docs.outputs.pr_number }}"
           echo "🔄 Merging Docs Sync PR #$PR_NUMBER directly..."
