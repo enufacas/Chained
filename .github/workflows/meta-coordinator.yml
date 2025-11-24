@@ -89,12 +89,16 @@ jobs:
           echo "🔍 Quick assessment: Is there work to do?"
           
           # Count items needing attention
-          open_prs=$(gh pr list --state open --json number --jq 'length')
-          open_issues=$(gh issue list --state open --json number --jq 'length')
+          open_prs=$(gh pr list --state open --json number --jq 'length' --limit 200)
+          open_issues=$(gh issue list --state open --json number --jq 'length' --limit 200)
           
           echo "📊 Current state:"
           echo "  - Open PRs: ${open_prs}"
           echo "  - Open issues: ${open_issues}"
+          
+          # Save to environment for memory tracking
+          echo "OPEN_PRS_START=${open_prs}" >> $GITHUB_ENV
+          echo "OPEN_ISSUES_START=${open_issues}" >> $GITHUB_ENV
           
           # Decide if we should skip (nothing to do)
           if [ "${open_prs}" = "0" ] && [ "${open_issues}" = "0" ]; then

@@ -226,6 +226,74 @@ PRs must meet ALL of these criteria to be auto-merged:
 
 **Task:** Update persistent memory with run insights
 
+**🚨 MANDATORY SUCCESS METRICS TRACKING 🚨**
+
+**CRITICAL:** You MUST track these metrics at START and END of coordination:
+
+```bash
+# AT START (after Phase 0, before main work)
+export OPEN_PRS_START=${OPEN_PRS_START}  # From environment
+export OPEN_ISSUES_START=${OPEN_ISSUES_START}  # From environment
+
+# Record in memory
+python3 << 'EOF'
+import sys
+sys.path.insert(0, 'tools')
+from meta_coordinator_memory import MetaCoordinatorMemory
+memory = MetaCoordinatorMemory()
+memory.record_open_counts(${OPEN_PRS_START}, ${OPEN_ISSUES_START})
+print(f"📊 Recorded START: {${OPEN_PRS_START}} PRs, {${OPEN_ISSUES_START}} issues")
+memory.save()
+EOF
+```
+
+```bash
+# AT END (after all actions, before reporting)
+open_prs_end=$(gh pr list --state open --json number --jq 'length' --limit 200)
+open_issues_end=$(gh issue list --state open --json number --jq 'length' --limit 200)
+
+# Record in memory and get success summary
+python3 << 'EOF'
+import sys
+sys.path.insert(0, 'tools')
+from meta_coordinator_memory import MetaCoordinatorMemory
+memory = MetaCoordinatorMemory()
+
+# Record end counts
+memory.record_open_counts(${open_prs_end}, ${open_issues_end})
+
+# Calculate success score
+score = memory.calculate_success_score()
+print(f"\n📈 SUCCESS SCORE: {score:.1f}/100\n")
+print(memory.get_success_summary())
+
+memory.save()
+EOF
+```
+
+**WHEN CLOSING/MERGING PRs:**
+```python
+memory.record_pr_closed(
+    pr_number=123,
+    created_at='2025-11-23T10:00:00Z',
+    is_stale=True  # True if stale cleanup, False if normal merge
+)
+```
+
+**WHEN CLOSING ISSUES:**
+```python
+memory.record_issue_closed(
+    issue_number=456,
+    created_at='2025-11-23T10:00:00Z'
+)
+```
+
+**WHY THIS IS CRITICAL:**
+- Primary success metric: Cycle time reduction (< 24h PRs, < 48h issues)
+- Primary success metric: Open count reduction (-50% target)
+- Current score: **40/100 (FAILING)** - we're not tracking these!
+- Cannot improve what we don't measure
+
 **CRITICAL LIFECYCLE RULES:**
 1. **Save memory updates:** `memory.save()` writes to `.github/agent-system/meta-coordinator-memory.json`
 2. **Commit to your branch:** Use `report_progress` to commit memory file and create PR
@@ -241,6 +309,10 @@ PRs must meet ALL of these criteria to be auto-merged:
 - This creates atomic memory persistence without self-termination risk
 
 **Memory updates to track:**
+- **MANDATORY: Open counts** (start and end of run)
+- **MANDATORY: PR cycle times** (when closing/merging)
+- **MANDATORY: Issue cycle times** (when closing)
+- **MANDATORY: Success score** (calculated at end)
 - PRs processed: merged, closed, reviewed
 - Issues processed: assigned, closed, updated
 - Tech leads assigned: which leads, to which PRs
