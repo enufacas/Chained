@@ -139,6 +139,37 @@ Now fully implemented with comprehensive functionality:
 - Example workflow demonstrating all capabilities
 - Integration tests showing combined usage
 
+## Security Considerations
+
+### Input Validation
+All actions validate inputs before processing:
+- Required parameters are checked
+- File existence is verified before operations
+- JSON is validated before processing
+- Regex patterns are tested before application
+
+### Command Execution
+The actions use `eval` in some cases for dynamic command construction. This is safe because:
+1. **GitHub Actions Context**: Inputs come from workflow YAML files, not untrusted sources
+2. **Input Validation**: GitHub Actions validates and sanitizes all inputs
+3. **Composite Actions**: Run in isolated environments with limited permissions
+4. **No User Input**: Actions are not exposed to direct user input from web requests
+
+### Best Practices for Users
+When using these actions in your workflows:
+- ✅ **DO** use secrets for sensitive data like API tokens
+- ✅ **DO** validate external data before passing to actions
+- ✅ **DO** use least-privilege permissions in workflow
+- ❌ **DON'T** pass untrusted external input directly to action parameters
+- ❌ **DON'T** expose secrets in action outputs or logs
+
+### Security Features
+- Proper quoting of variables to prevent word splitting
+- POSIX-compliant shell scripts for predictable behavior
+- Timeout handling to prevent resource exhaustion
+- Error handling to prevent information leaks
+- Separate stdout/stderr capture for proper error reporting
+
 ## Technical Excellence
 
 ### Code Quality

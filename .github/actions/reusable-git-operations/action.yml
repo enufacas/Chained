@@ -82,8 +82,8 @@ runs:
               exit 1
             fi
             
-            # Add files
-            git add ${{ inputs.files }}
+            # Add files (properly quoted)
+            git add "${{ inputs.files }}"
             
             # Check if there are changes
             if git diff --staged --quiet; then

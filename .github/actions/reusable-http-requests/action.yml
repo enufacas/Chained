@@ -133,7 +133,7 @@ runs:
           eval "$CURL_CMD $HEADER_ARGS -w '%{http_code}' -o '$TEMP_FILE' '${{ inputs.url }}' 2>&1 | tee '$TEMP_STATUS'" > /dev/null || CURL_EXIT=$?
           
           # Extract status code from status file or use 000 on failure
-          STATUS=$(cat "$TEMP_STATUS" 2>/dev/null | grep -o '[0-9]\{3\}' | tail -1)
+          STATUS=$(cat "$TEMP_STATUS" 2>/dev/null | grep -E -o '[0-9]{3}' | tail -1)
           [ -z "$STATUS" ] && STATUS="000"
           
           # Extract response
