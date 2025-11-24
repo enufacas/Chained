@@ -222,13 +222,23 @@ def format_text(metrics: Dict[str, Any]) -> str:
         "Tech Leads:",
     ]
     
-    for name, count in metrics["top_contributors"]["tech_leads"]:
-        lines.append(f"  - {name}: {count} PRs")
+    tech_leads_data = metrics["top_contributors"]["tech_leads"]
+    if isinstance(tech_leads_data, dict):
+        for name, count in tech_leads_data.items():
+            lines.append(f"  - {name}: {count} PRs")
+    else:
+        for name, count in tech_leads_data:
+            lines.append(f"  - {name}: {count} PRs")
     
     lines.append("")
     lines.append("Agents:")
-    for name, count in metrics["top_contributors"]["agents"]:
-        lines.append(f"  - {name}: {count} issues")
+    agents_data = metrics["top_contributors"]["agents"]
+    if isinstance(agents_data, dict):
+        for name, count in agents_data.items():
+            lines.append(f"  - {name}: {count} issues")
+    else:
+        for name, count in agents_data:
+            lines.append(f"  - {name}: {count} issues")
     
     lines.append("")
     lines.append("=" * 60)
