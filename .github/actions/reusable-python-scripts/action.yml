@@ -90,13 +90,15 @@ runs:
       run: |
         set +e  # Don't exit on script errors
         
-        # Set environment variables if provided
+        # Set environment variables if provided (portable approach)
         if [ -n "${{ inputs.env-vars }}" ]; then
-          # Use mapfile to avoid subshell issue
-          mapfile -t ENV_LINES < <(echo '${{ inputs.env-vars }}' | jq -r 'to_entries[] | "export " + .key + "=\"" + .value + "\""')
-          for line in "${ENV_LINES[@]}"; do
-            eval "$line"
-          done
+          # Use temporary file instead of mapfile for portability
+          TEMP_ENV=$(mktemp)
+          echo '${{ inputs.env-vars }}' | jq -r 'to_entries[] | "export " + .key + "=\"" + .value + "\""' > "$TEMP_ENV"
+          while IFS= read -r line; do
+            [ -n "$line" ] && eval "$line"
+          done < "$TEMP_ENV"
+          rm -f "$TEMP_ENV"
         fi
         
         # Prepare script execution

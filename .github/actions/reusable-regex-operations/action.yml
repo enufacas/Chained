@@ -71,16 +71,20 @@ runs:
           INPUT_TEXT='${{ inputs.input-text }}'
         fi
         
-        # Build grep/sed flags
+        # Build grep/sed flags using case statement for portability
         GREP_FLAGS=""
         SED_FLAGS=""
-        if [[ "${{ inputs.flags }}" =~ "i" ]]; then
-          GREP_FLAGS="${GREP_FLAGS} -i"
-          SED_FLAGS="${SED_FLAGS}I"
-        fi
-        if [[ "${{ inputs.flags }}" =~ "m" ]]; then
-          GREP_FLAGS="${GREP_FLAGS} -z"
-        fi
+        case "${{ inputs.flags }}" in
+          *i*)
+            GREP_FLAGS="${GREP_FLAGS} -i"
+            SED_FLAGS="${SED_FLAGS}I"
+            ;;
+        esac
+        case "${{ inputs.flags }}" in
+          *m*)
+            GREP_FLAGS="${GREP_FLAGS} -z"
+            ;;
+        esac
         
         RESULT=""
         MATCHES=0
