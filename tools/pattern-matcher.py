@@ -37,7 +37,12 @@ class PatternMatcher:
         self.matches = []
         
     def _load_patterns(self) -> Dict:
-        """Load pattern definitions"""
+        """Load pattern definitions
+        
+        Patterns can be either:
+        - line-level: checked against each line
+        - file-level: checked against entire file content
+        """
         return {
             'python': [
                 {
@@ -47,7 +52,8 @@ class PatternMatcher:
                     'severity': 'warning',
                     'category': 'error-handling',
                     'suggestion': 'Use specific exception types instead of bare except:',
-                    'description': 'Bare except clauses catch all exceptions including system exits'
+                    'description': 'Bare except clauses catch all exceptions including system exits',
+                    'scope': 'line'
                 },
                 {
                     'id': 'py-print-debug',
@@ -56,7 +62,8 @@ class PatternMatcher:
                     'severity': 'info',
                     'category': 'debugging',
                     'suggestion': 'Use logging module instead of print for debugging',
-                    'description': 'Print statements for debugging should use logging'
+                    'description': 'Print statements for debugging should use logging',
+                    'scope': 'line'
                 },
                 {
                     'id': 'py-todo-comment',
@@ -65,16 +72,8 @@ class PatternMatcher:
                     'severity': 'info',
                     'category': 'maintenance',
                     'suggestion': 'Convert TODO comments to tracked issues',
-                    'description': 'TODO comments can be forgotten'
-                },
-                {
-                    'id': 'py-type-hints',
-                    'name': 'Missing type hints',
-                    'pattern': r'def\s+\w+\s*\([^)]*\)\s*:(?!\s*-\>)',
-                    'severity': 'info',
-                    'category': 'type-safety',
-                    'suggestion': 'Add type hints for better code clarity',
-                    'description': 'Type hints improve code documentation and IDE support'
+                    'description': 'TODO comments can be forgotten',
+                    'scope': 'line'
                 },
                 {
                     'id': 'py-hardcoded-secrets',
@@ -83,7 +82,8 @@ class PatternMatcher:
                     'severity': 'error',
                     'category': 'security',
                     'suggestion': 'Use environment variables or secret management',
-                    'description': 'Hardcoded secrets are a security risk'
+                    'description': 'Hardcoded secrets are a security risk',
+                    'scope': 'line'
                 },
                 {
                     'id': 'py-sql-injection',
@@ -92,7 +92,8 @@ class PatternMatcher:
                     'severity': 'error',
                     'category': 'security',
                     'suggestion': 'Use parameterized queries instead of string formatting',
-                    'description': 'String formatting in SQL queries can lead to injection'
+                    'description': 'String formatting in SQL queries can lead to injection',
+                    'scope': 'line'
                 },
             ],
             'javascript': [
@@ -103,7 +104,8 @@ class PatternMatcher:
                     'severity': 'info',
                     'category': 'debugging',
                     'suggestion': 'Remove or use proper logging framework',
-                    'description': 'Console.log should not be in production code'
+                    'description': 'Console.log should not be in production code',
+                    'scope': 'line'
                 },
                 {
                     'id': 'js-var-keyword',
@@ -112,7 +114,8 @@ class PatternMatcher:
                     'severity': 'warning',
                     'category': 'best-practices',
                     'suggestion': 'Use let or const instead of var',
-                    'description': 'var has function scope, let/const have block scope'
+                    'description': 'var has function scope, let/const have block scope',
+                    'scope': 'line'
                 },
                 {
                     'id': 'js-eval-usage',
@@ -121,7 +124,8 @@ class PatternMatcher:
                     'severity': 'error',
                     'category': 'security',
                     'suggestion': 'Avoid eval() for security reasons',
-                    'description': 'eval() can execute arbitrary code'
+                    'description': 'eval() can execute arbitrary code',
+                    'scope': 'line'
                 },
                 {
                     'id': 'js-todo-comment',
@@ -130,45 +134,54 @@ class PatternMatcher:
                     'severity': 'info',
                     'category': 'maintenance',
                     'suggestion': 'Convert TODO comments to tracked issues',
-                    'description': 'TODO comments can be forgotten'
-                },
-                {
-                    'id': 'js-equality-operator',
-                    'name': 'Loose equality operator',
-                    'pattern': r'[^!=]=[^=]',
-                    'severity': 'warning',
-                    'category': 'best-practices',
-                    'suggestion': 'Use === instead of == for type-safe comparison',
-                    'description': 'Loose equality can cause unexpected type coercion'
+                    'description': 'TODO comments can be forgotten',
+                    'scope': 'line'
                 },
             ],
             'bash': [
+                # Only flag truly dangerous unquoted variable patterns
                 {
-                    'id': 'bash-unquoted-vars',
-                    'name': 'Unquoted variables',
-                    'pattern': r'\$\w+(?!["\'])',
+                    'id': 'bash-unquoted-in-test',
+                    'name': 'Unquoted variable in test condition',
+                    'pattern': r'\[\s+\$\w+\s+[!=<>]',
                     'severity': 'warning',
                     'category': 'best-practices',
-                    'suggestion': 'Quote variables to prevent word splitting',
-                    'description': 'Unquoted variables can cause unexpected behavior'
+                    'suggestion': 'Quote variables in test conditions: [ "$var" = "value" ]',
+                    'description': 'Unquoted variables in tests can cause syntax errors',
+                    'scope': 'line'
                 },
+                {
+                    'id': 'bash-unquoted-in-command',
+                    'name': 'Potentially unquoted variable as command argument',
+                    'pattern': r'^(rm|cp|mv|chmod|chown|cat|grep|sed|awk)\s+[^"\']*\$\w+',
+                    'severity': 'info',
+                    'category': 'best-practices',
+                    'suggestion': 'Consider quoting variables in file operations: "$var"',
+                    'description': 'Unquoted variables can cause word splitting with spaces in filenames',
+                    'scope': 'line'
+                },
+            ],
+            'bash_file': [
+                # File-level checks for bash scripts
                 {
                     'id': 'bash-missing-shebang',
                     'name': 'Missing shebang',
-                    'pattern': r'^(?!#!)',
+                    'pattern': r'^\s*(?!#!)',
                     'severity': 'info',
                     'category': 'portability',
-                    'suggestion': 'Add shebang line (#!/bin/bash)',
-                    'description': 'Shebang ensures script runs with correct interpreter'
+                    'suggestion': 'Add shebang line (#!/bin/bash or #!/usr/bin/env bash)',
+                    'description': 'Shebang ensures script runs with correct interpreter',
+                    'check_first_line': True
                 },
                 {
-                    'id': 'bash-set-e',
-                    'name': 'Missing set -e',
-                    'pattern': r'^(?!.*set\s+-e)',
+                    'id': 'bash-no-set-e',
+                    'name': 'Consider using set -e',
+                    'pattern': r'set\s+-[a-zA-Z]*e',
                     'severity': 'info',
                     'category': 'error-handling',
-                    'suggestion': 'Add "set -e" to exit on error',
-                    'description': 'set -e makes scripts fail fast on errors'
+                    'suggestion': 'Consider adding "set -e" near the top to exit on error',
+                    'description': 'set -e makes scripts fail fast on errors (check entire file)',
+                    'invert': True  # Flag if pattern NOT found
                 },
             ],
             'yaml': [
@@ -179,7 +192,8 @@ class PatternMatcher:
                     'severity': 'error',
                     'category': 'security',
                     'suggestion': 'Use GitHub secrets or environment variables',
-                    'description': 'Hardcoded secrets in YAML are a security risk'
+                    'description': 'Hardcoded secrets in YAML are a security risk',
+                    'scope': 'line'
                 },
                 {
                     'id': 'yaml-todo-comment',
@@ -188,7 +202,8 @@ class PatternMatcher:
                     'severity': 'info',
                     'category': 'maintenance',
                     'suggestion': 'Convert TODO comments to tracked issues',
-                    'description': 'TODO comments can be forgotten'
+                    'description': 'TODO comments can be forgotten',
+                    'scope': 'line'
                 },
             ]
         }
@@ -217,9 +232,17 @@ class PatternMatcher:
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
-                
+            
+            # Get the content as a single string for file-level checks
+            content = ''.join(lines)
+            
+            # Line-level pattern checks
             for line_num, line in enumerate(lines, 1):
-                for pattern_def in self.patterns[language]:
+                for pattern_def in self.patterns.get(language, []):
+                    # Only check line-scoped patterns
+                    if pattern_def.get('scope', 'line') != 'line':
+                        continue
+                        
                     if re.search(pattern_def['pattern'], line, re.IGNORECASE):
                         match = PatternMatch(
                             pattern_id=pattern_def['id'],
@@ -232,6 +255,57 @@ class PatternMatcher:
                             category=pattern_def['category']
                         )
                         matches.append(match)
+            
+            # File-level pattern checks
+            file_patterns_key = f'{language}_file'
+            for pattern_def in self.patterns.get(file_patterns_key, []):
+                # Special handling for first-line checks
+                if pattern_def.get('check_first_line'):
+                    if lines and re.search(pattern_def['pattern'], lines[0].strip()):
+                        match = PatternMatch(
+                            pattern_id=pattern_def['id'],
+                            pattern_name=pattern_def['name'],
+                            severity=pattern_def['severity'],
+                            file_path=file_path,
+                            line_number=1,
+                            matched_text=lines[0].strip() if lines else '',
+                            suggestion=pattern_def['suggestion'],
+                            category=pattern_def['category']
+                        )
+                        matches.append(match)
+                # Inverted checks (flag if pattern NOT found)
+                elif pattern_def.get('invert'):
+                    if not re.search(pattern_def['pattern'], content, re.MULTILINE):
+                        match = PatternMatch(
+                            pattern_id=pattern_def['id'],
+                            pattern_name=pattern_def['name'],
+                            severity=pattern_def['severity'],
+                            file_path=file_path,
+                            line_number=1,
+                            matched_text='(entire file)',
+                            suggestion=pattern_def['suggestion'],
+                            category=pattern_def['category']
+                        )
+                        matches.append(match)
+                # Standard file-level check
+                else:
+                    for match_obj in re.finditer(pattern_def['pattern'], content, re.MULTILINE):
+                        # Calculate line number from position
+                        line_num = content[:match_obj.start()].count('\n') + 1
+                        matched_line = lines[line_num - 1].strip() if line_num <= len(lines) else match_obj.group()
+                        
+                        match = PatternMatch(
+                            pattern_id=pattern_def['id'],
+                            pattern_name=pattern_def['name'],
+                            severity=pattern_def['severity'],
+                            file_path=file_path,
+                            line_number=line_num,
+                            matched_text=matched_line,
+                            suggestion=pattern_def['suggestion'],
+                            category=pattern_def['category']
+                        )
+                        matches.append(match)
+                        
         except Exception as e:
             print(f"Error scanning {file_path}: {e}", file=sys.stderr)
         
