@@ -257,8 +257,8 @@ jobs:
           
           git add tools/data/prompts/
           
-          # Calculate success percentage
-          success_pct=$(awk "BEGIN {print ${{ steps.analyze.outputs.success_rate }} * 100}")
+          # Calculate success percentage (use single quotes to prevent shell expansion issues)
+          success_pct=$(awk 'BEGIN {print ${{ steps.analyze.outputs.success_rate }} * 100}')
           
           # Create commit message
           git commit -m "feat: auto-tune prompt templates (@create-guru)" \
@@ -289,6 +289,8 @@ jobs:
           fi
           
           # Add workflow reference (use heredoc to avoid YAML issues with ---)
+          # Note: `read -d ''` returns exit code 1 when it reaches EOF without a delimiter,
+          # so `|| true` is needed to prevent the script from failing. This is expected behavior.
           read -r -d '' workflow_ref << 'WORKFLOW_REF' || true
           
           ---
