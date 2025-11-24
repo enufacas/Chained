@@ -1,6 +1,6 @@
 {
-  "time": "2025-11-24T02:19:38Z",
-  "tick": 74,
+  "time": "2025-11-24T08:27:31Z",
+  "tick": 75,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -756,11 +756,11 @@
       "label": "🔄 Feynman",
       "specialization": "bridge-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:30",
+      "current_idea_id": "idea:67",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -773,6 +773,12 @@
         "creativity": 52,
         "caution": 75,
         "speed": 77
+      },
+      "current_mission": {
+        "mission_id": "idea:67",
+        "title": "Integration: Api-Ai Innovation",
+        "issue_number": null,
+        "assigned_at": "2025-11-24T08:27:31Z"
       }
     },
     {
@@ -2032,6 +2038,6 @@
     "elimination_threshold": 0.3,
     "promotion_threshold": 0.65,
     "hall_of_fame_count": 12,
-    "active_missions": 3
+    "active_missions": 1
   }
 }
