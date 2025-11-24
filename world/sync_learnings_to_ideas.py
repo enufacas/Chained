@@ -167,6 +167,16 @@ def create_idea_from_technology(tech: Dict[str, Any], idea_id_base: int, is_deep
     # Extract more patterns from keywords and category
     patterns = list(set([tech_name] + keywords + [category.lower().replace(' ', '_')]))
     
+    # **@troubleshoot-expert** Fix: Include first sample title in patterns to create unique ideas
+    # This ensures that different daily learnings create different idea hashes,
+    # allowing missions to be generated even for the same technology categories
+    if sample_titles:
+        # Create a short fingerprint from first sample title for uniqueness
+        first_title_words = sample_titles[0].lower().split()[:3]  # First 3 words
+        title_fingerprint = '_'.join(first_title_words).replace(',', '').replace('.', '')
+        if title_fingerprint and title_fingerprint not in patterns:
+            patterns.append(f"topic:{title_fingerprint}")
+    
     # Get companies associated with this tech
     companies = TECH_COMPANY_MAP.get(tech_name, [
         {'name': 'Tech Hub', 'city': 'San Francisco', 'country': 'US', 
@@ -202,13 +212,22 @@ def create_idea_from_technology(tech: Dict[str, Any], idea_id_base: int, is_deep
     else:
         summary_base += ". Hot topic in tech."
     
-    # Create idea with enhanced title based on category
+    # **@troubleshoot-expert** Fix: Include date in title for daily mission generation
+    # This ensures each day's analysis creates new ideas that can spawn missions
+    today_str = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    
+    # Create idea with enhanced title based on category - include date for uniqueness
     if category == 'Company Innovation':
-        title = f"{tech_name.title()} Innovation: Cutting-Edge Developments"
+        title = f"{tech_name.title()} Innovation ({today_str})"
     elif category == 'Emerging Theme':
-        title = f"Emerging Theme: {tech_name.replace('-', ' ').title()}"
+        title = f"Emerging Theme: {tech_name.replace('-', ' ').title()} ({today_str})"
     else:
-        title = f"{category}: {tech_name.title()} Innovation"
+        title = f"{category}: {tech_name.title()} ({today_str})"
+    
+    # Add date pattern for hash uniqueness
+    date_pattern = f"date:{today_str}"
+    if date_pattern not in patterns:
+        patterns.append(date_pattern)
     
     idea = {
         'id': f"idea:{idea_id_base}",
@@ -220,6 +239,7 @@ def create_idea_from_technology(tech: Dict[str, Any], idea_id_base: int, is_deep
         'source': 'learning_analysis',
         'mention_count': mention_count,
         'category': category,
+        'analysis_date': today_str,  # Track which day's analysis created this idea
         'created_at': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     }
     
@@ -446,7 +466,40 @@ def sync_learnings_to_ideas(max_ideas: int = 10, enable_deep_discovery: bool = T
     # **@align-wizard** Enhancement: Merge ideas intelligently
     # Keep non-learning ideas + existing learning ideas + new learning ideas
     other_ideas = [idea for idea in existing_ideas if idea.get('source') != 'learning_analysis']
-    all_ideas = other_ideas + list(existing_content_hashes.values()) + new_ideas
+    
+    # **@troubleshoot-expert** Fix: Cleanup old learning ideas to prevent unbounded growth
+    # Keep only recent learning ideas (last 7 days) + ideas without missions
+    # This prevents the knowledge base from growing indefinitely with daily ideas
+    from datetime import timedelta
+    cutoff_date = (datetime.now(timezone.utc) - timedelta(days=7)).strftime('%Y-%m-%d')
+    
+    retained_learning_ideas = []
+    archived_count = 0
+    for idea in list(existing_content_hashes.values()):
+        # Keep ideas that:
+        # 1. Don't have mission_created (still waiting for missions)
+        # 2. Have analysis_date within last 7 days
+        # 3. Don't have an analysis_date (old format, keep for now)
+        analysis_date = idea.get('analysis_date', '')
+        has_mission = idea.get('mission_created', False)
+        
+        if not has_mission:
+            # Always keep ideas without missions
+            retained_learning_ideas.append(idea)
+        elif not analysis_date:
+            # Old format ideas - archive them to reduce clutter
+            archived_count += 1
+        elif analysis_date >= cutoff_date:
+            # Recent ideas - keep them
+            retained_learning_ideas.append(idea)
+        else:
+            # Old ideas with missions - archive them
+            archived_count += 1
+    
+    if archived_count > 0:
+        print(f"\n🗑️  Archived {archived_count} old learning ideas (older than 7 days with missions)")
+    
+    all_ideas = other_ideas + retained_learning_ideas + new_ideas
     
     print(f"\n📊 Sync Summary:")
     print(f"   Existing learning ideas preserved: {len(existing_content_hashes)}")
