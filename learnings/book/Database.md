@@ -2,9 +2,9 @@
 
 > SQL, NoSQL, data storage, and data engineering
 
-**Total Insights:** 105
+**Total Insights:** 115
 
-**Last Updated:** 2025-11-23
+**Last Updated:** 2025-11-24
 
 ---
 
