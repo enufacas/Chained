@@ -268,23 +268,26 @@ class SubAgentPerformanceLearner:
             return None
     
     def _extract_workload_from_spawn_reason(self, agent: Dict[str, Any]) -> float:
-        """Extract workload from spawn_reason field"""
+        """
+        Extract workload from spawn_reason field.
+        
+        Uses regex pattern matching for robustness.
+        Format: "High workload: 8.5 items/agent" or similar variations
+        """
         spawn_reason = agent.get('spawn_reason', '')
         
-        # Try to parse workload from reason text
-        # Format: "High workload: 8.5 items/agent"
+        # Try to parse workload from reason text using regex
         try:
-            if 'items/agent' in spawn_reason:
-                parts = spawn_reason.split('items/agent')[0].split()
-                for part in reversed(parts):
-                    try:
-                        return float(part)
-                    except ValueError:
-                        continue
+            import re
+            # Pattern: Look for number followed by "items/agent"
+            pattern = r'(\d+\.?\d*)\s*items?/agent'
+            match = re.search(pattern, spawn_reason, re.IGNORECASE)
+            if match:
+                return float(match.group(1))
         except Exception:
             pass
         
-        return 5.0  # Default
+        return 5.0  # Default fallback
     
     def _group_by_specialization(
         self, 
@@ -414,8 +417,9 @@ class SubAgentPerformanceLearner:
         insight = PerformanceInsight(
             insight_type='threshold_recommendation',
             specialization=specialization,
-            confidence=min(len(successful) / max(len(analyses), 1), 1.0),  # Normalized 0-1, capped at 1.0
+            confidence=len(successful) / max(len(analyses), 1),  # Normalized 0-1 (always <= 1.0)
             description=f"Optimal spawning threshold for {specialization}",
+            evidence=evidence,
             recommendation=f"Set threshold to {optimal_threshold:.1f} items/agent",
             impact_score=70
         )

@@ -309,8 +309,15 @@ class EnhancedSubAgentSpawner:
             print(f"      Parent Score: {parent_info['score']:.1f}/100")
             
             if not dry_run:
-                # Here you would call the actual spawning logic
-                # For now, we'll create a mock entry
+                # TODO: Replace with actual agent spawning logic
+                # This is currently a placeholder that creates mock data
+                # In production, this should:
+                # 1. Generate unique agent ID
+                # 2. Register agent in registry
+                # 3. Create agent profile file
+                # 4. Set up parent-child relationship
+                # 5. Initialize metrics
+                
                 agent_data = {
                     'parent_id': parent_info['id'],
                     'parent_name': parent_info['name'],
@@ -318,10 +325,11 @@ class EnhancedSubAgentSpawner:
                     'category': decision['category'],
                     'spawned_at': datetime.now().isoformat(),
                     'reasoning': decision['reasoning'],
-                    'confidence': decision['confidence']
+                    'confidence': decision['confidence'],
+                    'is_mock': True  # Indicates this is placeholder data
                 }
                 spawned.append(agent_data)
-                print(f"      ✅ Spawned (mock)")
+                print(f"      ✅ Spawned (mock - replace with actual spawning)")
             else:
                 print(f"      ℹ️  Dry run - not creating")
                 spawned.append({
