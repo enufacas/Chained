@@ -1012,18 +1012,33 @@ This approach:
 **Eligibility Criteria (ALL must be met - DETERMINISTIC):**
 
 1. **State:** PR must be OPEN
-2. **No WIP:** No WIP markers in title (`[WIP]`, `WIP:`, `[DNM]`, etc.) - **ALWAYS BLOCKS regardless of draft status**
-3. **Trusted Author:** PR author must be repository owner OR copilot/github-actions bot - **ALWAYS REQUIRED**
-4. **Mergeable:** MERGEABLE status (handle UNKNOWN by marking draft as ready first)
-5. **CI Status:** All checks passed OR no checks configured (unavailable = OK)
+   - Closed PRs (including closed drafts) are automatically ineligible
+   - Open draft PRs without WIP markers are eligible
+2. **No WIP:** No WIP markers in title (`[WIP]`, `WIP:`, `[DNM]`, etc.)
+   - **ALWAYS BLOCKS** regardless of draft state
+   - Draft PRs with WIP markers → Not eligible
+   - Non-draft PRs with WIP markers → Not eligible
+   - Draft PRs without WIP markers → Eligible (if other criteria met)
+3. **Trusted Author:** PR author must be repository owner OR copilot/github-actions bot
+   - **ALWAYS REQUIRED** (security requirement)
+4. **Mergeable:** MERGEABLE status
+   - Handle UNKNOWN by marking draft as ready first
+5. **CI Status:** All checks passed OR no checks configured
+   - Unavailable = OK
+
+**Draft PR Handling (Clear Rules):**
+- ✅ **Open draft PR + No WIP in title + Trusted author** → Eligible
+- ❌ **Open draft PR + WIP in title** → Not eligible (WIP blocks)
+- ❌ **Closed draft PR** → Not eligible (closed state blocks)
+- ✅ **Draft status alone does NOT block** (only WIP markers block)
 
 **Decision Flow:**
 ```
-PR Open? → No → SKIP
-  ↓ Yes
-WIP in title? → Yes → SKIP (regardless of draft status)
-  ↓ No
-Trusted author? → No → SKIP (security requirement)
+PR Open? → No → SKIP (includes closed drafts)
+  ↓ Yes (open, may be draft)
+WIP in title? → Yes → SKIP (blocks all, including drafts)
+  ↓ No (draft or non-draft without WIP = eligible so far)
+Trusted author? → No → SKIP (security)
   ↓ Yes
 Mergeable UNKNOWN? → Yes → Mark ready, wait 2s, re-check
   ↓ No/Fixed
@@ -1031,7 +1046,7 @@ Mergeable? → No → SKIP
   ↓ Yes (MERGEABLE)
 CI failed? → Yes → SKIP
   ↓ No/Unavailable
-✅ MERGE
+✅ MERGE (draft or non-draft, doesn't matter)
 ```
 
 **Special Handling:**

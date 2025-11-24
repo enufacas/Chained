@@ -18,10 +18,23 @@
 ## Eligibility Criteria (ALL must be met)
 
 1. **State:** PR must be OPEN
+   - Closed PRs are automatically ineligible (including closed drafts)
 2. **No WIP:** No WIP markers in title (blocks regardless of draft status)
+   - Draft PRs with WIP → Not eligible
+   - Draft PRs without WIP → Eligible (if other criteria met)
 3. **Trusted Author:** Repository owner OR copilot/github-actions bot
 4. **Mergeable:** MERGEABLE status (handles UNKNOWN automatically)
 5. **CI Status:** All checks passed OR no checks configured
+
+## Draft PR Handling
+
+**Clear Rules:**
+- ✅ **Open draft + No WIP + Trusted** → Eligible for merge
+- ❌ **Open draft + WIP in title** → Not eligible (WIP blocks)
+- ❌ **Closed draft** → Not eligible (already closed)
+- ✅ **Draft status alone does NOT block** merging
+
+**Key Point:** Only draft PRs with WIP markers are skipped. Open draft PRs without WIP markers are fully eligible for auto-merge if other criteria are met.
 
 ## WIP Marker Detection
 

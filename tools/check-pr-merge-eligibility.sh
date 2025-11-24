@@ -43,19 +43,33 @@ echo ""
 echo "STEP 1: Check state..."
 if [ "${pr_state}" != "OPEN" ]; then
     echo "  ❌ FAIL: Not open (state: ${pr_state})"
+    if [ "${is_draft}" = "true" ]; then
+        echo "  Note: Closed draft PRs are never eligible (already closed)"
+    fi
     exit 1
 fi
 echo "  ✅ PASS: PR is open"
+if [ "${is_draft}" = "true" ]; then
+    echo "  Note: Draft PR (will check WIP markers in next step)"
+fi
 echo ""
 
 # STEP 2: Check for WIP markers in title (CRITICAL - ALWAYS BLOCKS)
 echo "STEP 2: Check for WIP markers in title..."
 if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work[\.\s]in[\.\s]progress|\[do[\.\s]not[\.\s]merge\]|\[dnm\]'; then
     echo "  ❌ FAIL: Has WIP marker in title"
-    echo "  Note: WIP markers block regardless of draft status"
+    if [ "${is_draft}" = "true" ]; then
+        echo "  Note: Draft PRs with WIP markers are not eligible"
+    else
+        echo "  Note: Non-draft PRs with WIP markers are not eligible"
+    fi
+    echo "  Note: WIP markers block regardless of draft state"
     exit 1
 fi
 echo "  ✅ PASS: No WIP markers in title"
+if [ "${is_draft}" = "true" ]; then
+    echo "  Note: Draft PR without WIP marker - eligible for processing"
+fi
 echo ""
 
 # STEP 3: Verify trusted author (CRITICAL - SECURITY)
