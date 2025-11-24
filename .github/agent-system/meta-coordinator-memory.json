@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-11-24T05:56:51.845531",
+  "last_updated": "2025-11-24T07:53:36.959746",
   "runs": {
-    "total_runs": 6,
-    "successful_runs": 6,
+    "total_runs": 8,
+    "successful_runs": 8,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-11-23T22:50:46.485712Z",
@@ -44,6 +44,224 @@
   },
   "learnings": {
     "insights": [
+      {
+        "timestamp": "2025-11-23T21:22:20.175520Z",
+        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
+        "evidence": {
+          "prs_needing_review": 14,
+          "prs_with_conflicts": 5,
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T22:50:46.485718Z",
+        "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
+        "evidence": {
+          "prs_closed": 4,
+          "reason": "persistent_merge_conflicts",
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850650Z",
+        "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
+        "evidence": {
+          "sample_size": 84,
+          "auto_merge_success_rate": 1.0
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850651Z",
+        "insight": "Agent spawn PRs require tech lead review (agents-tech-lead) due to system changes",
+        "evidence": {
+          "agent_spawn_prs": 15,
+          "all_required_review": true
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879565",
+        "insight": "Cleaned up 27 deprecated tech-lead:X identifier labels - system now uses comments for tech lead mentions per latest architecture",
+        "evidence": {
+          "deprecated_labels_removed": 27,
+          "new_pattern": "comments_with_mentions"
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879567",
+        "insight": "CI status checks were unavailable for all merge-eligible PRs - may need alternative check strategy",
+        "evidence": {
+          "eligible_prs": 29,
+          "ci_unavailable": 29
+        }
+      },
+      {
+        "timestamp": "2025-11-23T21:22:20.175520Z",
+        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
+        "evidence": {
+          "prs_needing_review": 14,
+          "prs_with_conflicts": 5,
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T22:50:46.485718Z",
+        "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
+        "evidence": {
+          "prs_closed": 4,
+          "reason": "persistent_merge_conflicts",
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850650Z",
+        "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
+        "evidence": {
+          "sample_size": 84,
+          "auto_merge_success_rate": 1.0
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850651Z",
+        "insight": "Agent spawn PRs require tech lead review (agents-tech-lead) due to system changes",
+        "evidence": {
+          "agent_spawn_prs": 15,
+          "all_required_review": true
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879565",
+        "insight": "Cleaned up 27 deprecated tech-lead:X identifier labels - system now uses comments for tech lead mentions per latest architecture",
+        "evidence": {
+          "deprecated_labels_removed": 27,
+          "new_pattern": "comments_with_mentions"
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879567",
+        "insight": "CI status checks were unavailable for all merge-eligible PRs - may need alternative check strategy",
+        "evidence": {
+          "eligible_prs": 29,
+          "ci_unavailable": 29
+        }
+      },
+      {
+        "timestamp": "2025-11-23T21:22:20.175520Z",
+        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
+        "evidence": {
+          "prs_needing_review": 14,
+          "prs_with_conflicts": 5,
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T22:50:46.485718Z",
+        "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
+        "evidence": {
+          "prs_closed": 4,
+          "reason": "persistent_merge_conflicts",
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850650Z",
+        "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
+        "evidence": {
+          "sample_size": 84,
+          "auto_merge_success_rate": 1.0
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850651Z",
+        "insight": "Agent spawn PRs require tech lead review (agents-tech-lead) due to system changes",
+        "evidence": {
+          "agent_spawn_prs": 15,
+          "all_required_review": true
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879565",
+        "insight": "Cleaned up 27 deprecated tech-lead:X identifier labels - system now uses comments for tech lead mentions per latest architecture",
+        "evidence": {
+          "deprecated_labels_removed": 27,
+          "new_pattern": "comments_with_mentions"
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879567",
+        "insight": "CI status checks were unavailable for all merge-eligible PRs - may need alternative check strategy",
+        "evidence": {
+          "eligible_prs": 29,
+          "ci_unavailable": 29
+        }
+      },
+      {
+        "timestamp": "2025-11-23T21:22:20.175520Z",
+        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
+        "evidence": {
+          "prs_needing_review": 14,
+          "prs_with_conflicts": 5,
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T22:50:46.485718Z",
+        "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
+        "evidence": {
+          "prs_closed": 4,
+          "reason": "persistent_merge_conflicts",
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850650Z",
+        "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
+        "evidence": {
+          "sample_size": 84,
+          "auto_merge_success_rate": 1.0
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:29:43.850651Z",
+        "insight": "Agent spawn PRs require tech lead review (agents-tech-lead) due to system changes",
+        "evidence": {
+          "agent_spawn_prs": 15,
+          "all_required_review": true
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879565",
+        "insight": "Cleaned up 27 deprecated tech-lead:X identifier labels - system now uses comments for tech lead mentions per latest architecture",
+        "evidence": {
+          "deprecated_labels_removed": 27,
+          "new_pattern": "comments_with_mentions"
+        }
+      },
+      {
+        "timestamp": "2025-11-23T20:58:54.879567",
+        "insight": "CI status checks were unavailable for all merge-eligible PRs - may need alternative check strategy",
+        "evidence": {
+          "eligible_prs": 29,
+          "ci_unavailable": 29
+        }
+      },
+      {
+        "timestamp": "2025-11-23T21:22:20.175520Z",
+        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
+        "evidence": {
+          "prs_needing_review": 14,
+          "prs_with_conflicts": 5,
+          "auto_merge_success": 1
+        }
+      },
+      {
+        "timestamp": "2025-11-23T22:50:46.485718Z",
+        "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
+        "evidence": {
+          "prs_closed": 4,
+          "reason": "persistent_merge_conflicts",
+          "auto_merge_success": 1
+        }
+      },
       {
         "timestamp": "2025-11-23T20:29:43.850650Z",
         "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
