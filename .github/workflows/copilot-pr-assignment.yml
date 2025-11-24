@@ -434,7 +434,7 @@ jobs:
               --body "${issue_body}" \
               --label "${issue_labels}" \
               --assignee copilot \
-              2>&1 | grep -oP '#\K\d+' | head -1 || echo "")
+              2>&1 | grep -oP '/issues/\K\d+' | head -1 || echo "")
             
             if [ -n "${issue_number}" ]; then
               if [ "${is_proactive_review}" = "true" ]; then
