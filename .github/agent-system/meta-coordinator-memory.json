@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-11-24T15:50:48.155587",
+  "last_updated": "2025-11-24T17:01:07.202655",
   "runs": {
-    "total_runs": 11,
-    "successful_runs": 11,
+    "total_runs": 13,
+    "successful_runs": 13,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-11-23T22:50:46.485712Z",
@@ -24,15 +24,231 @@
   "issue_patterns": {
     "total_issues_processed": 8,
     "agents_assigned": {
-      "edge-cases-pro": 8,
-      "coach-master": 8,
-      "construct-specialist": 8,
-      "create-guru": 24,
-      "investigate-champion": 8,
-      "troubleshoot-expert": 8
+      "edge-cases-pro": 32,
+      "coach-master": 32,
+      "construct-specialist": 32,
+      "create-guru": 96,
+      "investigate-champion": 32,
+      "troubleshoot-expert": 32
     },
     "agent_success_rates": {},
     "assignment_times": [
+      {
+        "issue": 2733,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013023",
+        "score": 13
+      },
+      {
+        "issue": 2715,
+        "agent": "investigate-champion",
+        "timestamp": "2025-11-24T10:54:58.013030",
+        "score": 10
+      },
+      {
+        "issue": 2712,
+        "agent": "troubleshoot-expert",
+        "timestamp": "2025-11-24T10:54:58.013037",
+        "score": 15
+      },
+      {
+        "issue": 2689,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013048",
+        "score": 11
+      },
+      {
+        "issue": 2768,
+        "agent": "edge-cases-pro",
+        "timestamp": "2025-11-24T10:54:58.012983",
+        "score": 11
+      },
+      {
+        "issue": 2753,
+        "agent": "coach-master",
+        "timestamp": "2025-11-24T10:54:58.012998",
+        "score": 12
+      },
+      {
+        "issue": 2751,
+        "agent": "construct-specialist",
+        "timestamp": "2025-11-24T10:54:58.013006",
+        "score": 9
+      },
+      {
+        "issue": 2743,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013016",
+        "score": 14
+      },
+      {
+        "issue": 2733,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013023",
+        "score": 13
+      },
+      {
+        "issue": 2715,
+        "agent": "investigate-champion",
+        "timestamp": "2025-11-24T10:54:58.013030",
+        "score": 10
+      },
+      {
+        "issue": 2712,
+        "agent": "troubleshoot-expert",
+        "timestamp": "2025-11-24T10:54:58.013037",
+        "score": 15
+      },
+      {
+        "issue": 2689,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013048",
+        "score": 11
+      },
+      {
+        "issue": 2768,
+        "agent": "edge-cases-pro",
+        "timestamp": "2025-11-24T10:54:58.012983",
+        "score": 11
+      },
+      {
+        "issue": 2753,
+        "agent": "coach-master",
+        "timestamp": "2025-11-24T10:54:58.012998",
+        "score": 12
+      },
+      {
+        "issue": 2751,
+        "agent": "construct-specialist",
+        "timestamp": "2025-11-24T10:54:58.013006",
+        "score": 9
+      },
+      {
+        "issue": 2743,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013016",
+        "score": 14
+      },
+      {
+        "issue": 2733,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013023",
+        "score": 13
+      },
+      {
+        "issue": 2715,
+        "agent": "investigate-champion",
+        "timestamp": "2025-11-24T10:54:58.013030",
+        "score": 10
+      },
+      {
+        "issue": 2712,
+        "agent": "troubleshoot-expert",
+        "timestamp": "2025-11-24T10:54:58.013037",
+        "score": 15
+      },
+      {
+        "issue": 2689,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013048",
+        "score": 11
+      },
+      {
+        "issue": 2768,
+        "agent": "edge-cases-pro",
+        "timestamp": "2025-11-24T10:54:58.012983",
+        "score": 11
+      },
+      {
+        "issue": 2753,
+        "agent": "coach-master",
+        "timestamp": "2025-11-24T10:54:58.012998",
+        "score": 12
+      },
+      {
+        "issue": 2751,
+        "agent": "construct-specialist",
+        "timestamp": "2025-11-24T10:54:58.013006",
+        "score": 9
+      },
+      {
+        "issue": 2743,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013016",
+        "score": 14
+      },
+      {
+        "issue": 2733,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013023",
+        "score": 13
+      },
+      {
+        "issue": 2715,
+        "agent": "investigate-champion",
+        "timestamp": "2025-11-24T10:54:58.013030",
+        "score": 10
+      },
+      {
+        "issue": 2712,
+        "agent": "troubleshoot-expert",
+        "timestamp": "2025-11-24T10:54:58.013037",
+        "score": 15
+      },
+      {
+        "issue": 2689,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013048",
+        "score": 11
+      },
+      {
+        "issue": 2768,
+        "agent": "edge-cases-pro",
+        "timestamp": "2025-11-24T10:54:58.012983",
+        "score": 11
+      },
+      {
+        "issue": 2753,
+        "agent": "coach-master",
+        "timestamp": "2025-11-24T10:54:58.012998",
+        "score": 12
+      },
+      {
+        "issue": 2751,
+        "agent": "construct-specialist",
+        "timestamp": "2025-11-24T10:54:58.013006",
+        "score": 9
+      },
+      {
+        "issue": 2743,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013016",
+        "score": 14
+      },
+      {
+        "issue": 2733,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013023",
+        "score": 13
+      },
+      {
+        "issue": 2715,
+        "agent": "investigate-champion",
+        "timestamp": "2025-11-24T10:54:58.013030",
+        "score": 10
+      },
+      {
+        "issue": 2712,
+        "agent": "troubleshoot-expert",
+        "timestamp": "2025-11-24T10:54:58.013037",
+        "score": 15
+      },
+      {
+        "issue": 2689,
+        "agent": "create-guru",
+        "timestamp": "2025-11-24T10:54:58.013048",
+        "score": 11
+      },
       {
         "issue": 2768,
         "agent": "edge-cases-pro",
@@ -434,28 +650,6 @@
     "recent": [
       {
         "type": "issue_assignment",
-        "description": "Assigned issue #2751 to construct-specialist (score: 9.00)",
-        "context": {
-          "issue_number": 2751,
-          "agent": "construct-specialist",
-          "score": 9
-        },
-        "timestamp": "2025-11-24T10:54:58.013010",
-        "session_id": "a8f53e273f33a934"
-      },
-      {
-        "type": "issue_assignment",
-        "description": "Assigned issue #2743 to create-guru (score: 14.00)",
-        "context": {
-          "issue_number": 2743,
-          "agent": "create-guru",
-          "score": 14
-        },
-        "timestamp": "2025-11-24T10:54:58.013018",
-        "session_id": "a8f53e273f33a934"
-      },
-      {
-        "type": "issue_assignment",
         "description": "Assigned issue #2733 to create-guru (score: 13.00)",
         "context": {
           "issue_number": 2733,
@@ -1509,6 +1703,31 @@
         },
         "timestamp": "2025-11-24T10:54:58.013062",
         "session_id": "a8f53e273f33a934"
+      },
+      {
+        "type": "coordination_session_started",
+        "description": "Meta-coordination cycle 16:54 started with 13 PRs and 12 issues",
+        "context": {
+          "timestamp": "2025-11-24T16:54:11Z",
+          "run_id": "19642308599"
+        },
+        "timestamp": "2025-11-24T17:00:35.840863",
+        "session_id": "aa2de6be213041ab"
+      },
+      {
+        "type": "coordination_session_completed",
+        "description": "Meta-coordination cycle 16:54 completed with 13 PRs and 12 issues",
+        "context": {
+          "timestamp": "2025-11-24T16:55:00Z",
+          "actions": [
+            "phase0_cleanup",
+            "phase1_reviews",
+            "phase3_agents",
+            "phase5_automerge"
+          ]
+        },
+        "timestamp": "2025-11-24T17:01:07.202070",
+        "session_id": "1e11ef49e506d6e3"
       }
     ],
     "patterns": {}
