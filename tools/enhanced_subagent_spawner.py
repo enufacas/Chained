@@ -257,8 +257,14 @@ class EnhancedSubAgentSpawner:
         return decision
     
     def _get_specializations_for_category(self, category: str) -> List[str]:
-        """Get specializations for a category"""
-        # Mapping from categories to specializations
+        """
+        Get specializations for a category.
+        
+        Note: This mapping should ideally be loaded from a configuration file
+        or discovered dynamically from the agent registry. Current implementation
+        is hardcoded for simplicity but can be enhanced in the future.
+        """
+        # TODO: Move to configuration file or make dynamically discoverable
         category_map = {
             'security': ['secure-specialist', 'secure-ninja', 'secure-pro'],
             'performance': ['accelerate-master', 'accelerate-specialist'],

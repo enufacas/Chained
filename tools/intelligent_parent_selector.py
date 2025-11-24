@@ -228,7 +228,8 @@ class IntelligentParentSelector:
         reviews = metrics.get('reviews_given', 0)
         
         # Activity bonus (more activity = more reliable)
-        activity_bonus = min((resolved + merged + reviews) / 10 * 10, 20)
+        # Cap at 20 points bonus
+        activity_bonus = min(resolved + merged + reviews, 20)
         
         # Combine scores
         base_score = (overall * 0.6 + quality * 0.4)

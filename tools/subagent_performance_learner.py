@@ -414,9 +414,8 @@ class SubAgentPerformanceLearner:
         insight = PerformanceInsight(
             insight_type='threshold_recommendation',
             specialization=specialization,
-            confidence=len(successful) / (len(analyses) * 2),  # Higher sample = higher confidence
+            confidence=min(len(successful) / max(len(analyses), 1), 1.0),  # Normalized 0-1, capped at 1.0
             description=f"Optimal spawning threshold for {specialization}",
-            evidence=evidence,
             recommendation=f"Set threshold to {optimal_threshold:.1f} items/agent",
             impact_score=70
         )
@@ -494,11 +493,16 @@ class SubAgentPerformanceLearner:
                 continue
             
             if insight.insight_type == 'threshold_recommendation':
-                # Extract threshold value
+                # Store threshold value - extract from recommendation text
+                # Format expected: "Set threshold to X.X items/agent"
                 try:
-                    threshold = float(insight.recommendation.split('to')[1].split('items')[0].strip())
-                    by_spec[insight.specialization]['optimal_threshold'] = threshold
-                except Exception:
+                    import re
+                    match = re.search(r'threshold to (\d+\.?\d*)', insight.recommendation)
+                    if match:
+                        threshold = float(match.group(1))
+                        by_spec[insight.specialization]['optimal_threshold'] = threshold
+                except Exception as e:
+                    print(f"⚠️  Could not extract threshold from recommendation: {e}")
                     pass
             
             # Calculate success rate
