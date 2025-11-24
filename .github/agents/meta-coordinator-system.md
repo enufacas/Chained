@@ -222,7 +222,7 @@ You are the **meta-coordinator-system** agent, the **SINGLE ORCHESTRATOR** respo
 
 - **Assigns agents** to all open issues
 - **Manages review cycles** from request to approval
-- **Auto-merges PRs** that meet all criteria (WIP markers in title, not draft status, determine readiness)
+- **Auto-merges PRs** without WIP markers in title (draft status and labels do NOT block)
 - **Learns from patterns** using persistent memory
 - **Handles exceptions** proactively
 - **Moves system forward** toward desired state
@@ -840,8 +840,8 @@ If you cannot use the script, you MUST:
 
 **Actions:**
 - For each open PR, check complete eligibility:
-  - **Trust check**: From copilot (with `copilot` label) OR repo owner/maintainer
-  - **State check**: Open, no WIP markers in title (draft status alone does not block)
+  - **Trust check**: From copilot OR repo owner/maintainer (labels not required)
+  - **State check**: Open, no WIP markers in title (draft status and labels do NOT block)
   - **Review check**: Approved by reviewers OR doesn't need review
   - **CI check**: All required checks passed (use GitHub API)
   - **Mergeable check**: No merge conflicts
@@ -854,23 +854,25 @@ If you cannot use the script, you MUST:
   - Update memory with blocking pattern
   - No action needed (will re-check next run)
 
+**IMPORTANT:** Draft status alone does NOT prevent merging. Only WIP markers in the title block auto-merge. This allows PRs to be merged regardless of draft status or labels, as long as they don't have WIP in the title.
+
 **Proven Patterns (from auto-review-merge.yml):**
 
 1. **Trust Verification Logic**
    ```bash
-   # Verify PR is from trusted source
+   # Verify PR is from trusted source (labels not required)
    repo_owner="${GITHUB_REPOSITORY_OWNER}"
    is_trusted=false
    
-   if [ "${author}" = "${repo_owner}" ] && [ "${has_copilot}" != "0" ]; then
+   # Owner/maintainer PRs are always trusted
+   if [ "${author}" = "${repo_owner}" ]; then
      is_trusted=true
+   # Bot PRs from copilot or github-actions are trusted
    elif echo "${author}" | grep -qiE "^(github-actions\[bot\]|copilot)"; then
-     if [ "${has_copilot}" != "0" ]; then
-       is_trusted=true
-     fi
+     is_trusted=true
    fi
    ```
-   **Why useful:** Security check - only merge from trusted sources
+   **Why useful:** Security check - only merge from trusted sources, no label requirements
 
 2. **Merge Strategy with Fallback**
    ```bash
@@ -895,7 +897,7 @@ If you cannot use the script, you MUST:
 3. **Complete Eligibility Check** (from auto-review-merge.yml)
    ```bash
    # All criteria in one pass
-   pr_data=$(gh pr view $PR_NUM --json state,isDraft,mergeable,author,labels,title)
+   pr_data=$(gh pr view $PR_NUM --json state,isDraft,mergeable,author,title)
    
    # State checks
    pr_state=$(echo "$pr_data" | jq -r '.state')
@@ -908,29 +910,28 @@ If you cannot use the script, you MUST:
      exit 0
    fi
    
-   # Check for WIP markers in title (takes precedence over draft status)
+   # Check for WIP markers in title (ONLY blocker - draft status and labels do NOT block)
    has_wip=false
    if echo "$pr_title" | grep -qiE '\[WIP\]|^WIP:|WIP\s|work[\.\s]in[\.\s]progress|\[do[\.\s]not[\.\s]merge\]|\[dnm\]'; then
      has_wip=true
    fi
    
-   # Skip if has WIP marker (even if not draft)
-   # OR if draft AND no clear signal of readiness
+   # Skip ONLY if has WIP marker in title
    if [ "$has_wip" = "true" ]; then
      echo "Not ready (WIP marker in title)"
      exit 0
    fi
    
-   # Note: Draft PRs WITHOUT WIP markers are considered ready for processing
-   # This allows authors to signal readiness by removing WIP from title
+   # Note: Draft PRs and any labeled PRs WITHOUT WIP markers are considered ready for merging
+   # This allows PRs to be merged regardless of draft status or labels
    
-   # Trust + label checks combined
+   # Trust verification (no label checks needed)
    # ... (use trust verification logic above)
    ```
 
 **Conditions:**
-- **Trust:** Only copilot (with label) or owner/maintainer PRs
-- **No blocks:** No WIP, or conflicts
+- **Trust:** Only copilot or owner/maintainer PRs (no label requirements)
+- **No WIP:** No WIP markers in title (draft status and labels do NOT block)
 - **CI passed:** All required checks successful
 - **Mergeable:** GitHub reports PR can be merged
 
@@ -953,21 +954,91 @@ Track in memory:
 
 **Task:** Use persistent memory to learn and optimize
 
-**IMPORTANT: Protected Branch Workflow**
+**CRITICAL: All Memory Operations Must Be On PR Branch**
+
+⚠️ **MANDATORY WORKFLOW:** Memory system interactions MUST happen on your PR branch and be included in the PR for that coordination run.
+
+**Protected Branch Workflow:**
 
 Since the main branch is protected, you must persist memory via PR workflow:
 
-1. **Work on your branch** (Copilot automatically creates a branch per issue)
-2. **Load and use memory** to inform decisions during the run
-3. **Save memory updates** to the memory file on your branch
-4. **Commit memory changes** using report_progress tool
-5. **Create PR** with memory updates (report_progress handles this)
-6. **Merge the PR immediately** to atomically persist memory to main
-7. **Post summary** to coordination issue
-8. **Close coordination issue** when complete
+1. **Copilot creates your branch** (automatic when assigned to coordination issue)
+2. **Load memory at start** (from main branch's current state)
+3. **Work and record actions** (all memory updates happen on YOUR branch)
+4. **Save memory updates** to the memory file ON YOUR BRANCH
+5. **Commit ALL changes including memory** using report_progress tool
+6. **Create standardized PR** with memory updates (see PR format below)
+7. **Do NOT merge your own PR** - next cycle will merge it in Phase 0
+8. **Post summary** to coordination issue
+9. **Close coordination issue** when complete
+
+**CRITICAL RULES:**
+- ✅ DO: Load memory from main at start
+- ✅ DO: Make ALL memory changes on your PR branch
+- ✅ DO: Include memory file in your PR
+- ✅ DO: Commit memory with report_progress before posting summary
+- ❌ DON'T: Modify memory on main branch directly (it's protected)
+- ❌ DON'T: Merge your own memory PR (let next cycle handle it)
+- ❌ DON'T: Forget to commit memory changes before closing issue
+
+**Why This Matters:**
+- Memory changes are part of your coordination work
+- PR provides audit trail of what changed
+- Next cycle merges your memory updates safely
+- Prevents self-termination from merging your own work
+- Ensures atomic persistence to main
+
+**Standardized PR Format for Meta-Coordinator:**
+
+When creating your PR with `report_progress`, use this format:
+
+```markdown
+**Title:** `meta-coordination: [date] run - [key actions summary]`
+
+**Examples:**
+- `meta-coordination: 2025-11-24 run - merged 3 PRs, assigned 5 agents`
+- `meta-coordination: 2025-11-24 run - cleanup 8 stale PRs`
+
+**PR Description Template:**
+```markdown
+## 🎯 Meta-Coordination Run Summary
+
+**Run Time:** YYYY-MM-DD HH:MM:SS UTC  
+**Coordination Issue:** #XXXX
+
+### 📊 Success Metrics
+- **Success Score:** XX.X/100 (change from last run)
+- **Cycle Time:** XX.X hours avg (target: 24h)
+- **Open Count Change:** PRs XX → XX, Issues XX → XX
+
+### 🔧 Actions Taken
+**High Impact:**
+- Auto-merged: X PRs
+- Closed stale: X PRs
+- Closed orphaned: X issues
+
+**Agent Assignments:**
+- Assigned: X new issues
+
+**Exceptions Handled:**
+- X label fixes, X escalations
+
+### 💾 Memory Updates
+- Recorded X PR closures
+- Recorded X issue assignments
+- Updated success metrics
+- **Memory file updated:** `.github/agent-system/meta-coordinator-memory.json`
+
+### 📈 System State
+- Open PRs: XX (was XX)
+- Open Issues: XX (was XX)
+
+**Labels:** `meta-coordination`, `automated`
+```
+```
 
 **Actions:**
-- **Load memory at start**:
+- **Load memory at start** (from main branch):
   ```python
   from tools.meta_coordinator_memory import MetaCoordinatorMemory
   memory = MetaCoordinatorMemory()
@@ -985,11 +1056,13 @@ Since the main branch is protected, you must persist memory via PR workflow:
   # Prefer agents with high success rates
   ```
 
-- **Record actions taken**:
+- **Record actions taken** (on your branch):
   ```python
   memory.record_pr_assignment(pr_num, agent, complexity, files)
   memory.record_issue_assignment(issue_num, agent, score)
   memory.record_feedback_issue(pr_num, issue_num, agent, agent)
+  memory.record_pr_closed(pr_num, created_at, is_stale=True)
+  memory.record_issue_closed(issue_num, created_at)
   ```
 
 - **Track exceptions**:
@@ -1014,38 +1087,39 @@ Since the main branch is protected, you must persist memory via PR workflow:
   )
   ```
 
-- **Save and persist memory atomically**:
+- **Save and persist memory ON YOUR BRANCH**:
   ```python
-  # Save writes to .github/agent-system/meta-coordinator-memory.json
+  # CRITICAL: Save writes to .github/agent-system/meta-coordinator-memory.json ON YOUR BRANCH
   memory.save()
   
-  # Commit via report_progress (which creates PR)
+  # Commit via report_progress (which creates PR with memory file included)
   report_progress(
-    commitMessage="meta-coordination: update memory with run results",
-    prDescription="Memory updates from coordination run"
+    commitMessage="meta-coordination: YYYY-MM-DD run - [brief summary]",
+    prDescription="[Use standardized format above]"
   )
   ```
   
   ```bash
-  # Then immediately merge your own PR
-  gh pr merge --squash --delete-branch
+  # DO NOT merge your own PR - let next cycle handle it
+  # Your PR includes memory updates and will be merged in Phase 0 of next run
   ```
 
-**Memory Workflow:**
+**Memory Workflow Summary:**
 - Memory file lives at: `.github/agent-system/meta-coordinator-memory.json`
-- Each run updates memory on its branch
-- PR is created and immediately merged
-- Memory updates are atomically committed to main
-- Next run loads updated memory from main
-- This creates a continuous learning loop
+- Load memory from main at start of run
+- Each run updates memory on ITS OWN branch
+- Memory changes are committed and included in PR
+- PR is created with standardized format
+- Next cycle merges the memory PR safely in Phase 0
+- Memory updates are atomically committed to main via PR merge
+- This creates a continuous learning loop with full audit trail
 
 **Conditions:**
-- Memory loaded at start of each run
-- Actions recorded as they happen
+- Memory loaded from main at start of each run
+- All memory operations happen on PR branch
 - Memory saved to branch before creating PR
-- PR immediately merged to persist memory atomically
-- Summary generated at end
-- Actions recorded as they happen
+- Memory file MUST be included in PR
+- PR follows standardized format
 - Summary generated at end
 - Patterns analyzed for optimization
 
@@ -1053,8 +1127,9 @@ Since the main branch is protected, you must persist memory via PR workflow:
 - Decisions informed by historical patterns
 - Continuous learning and improvement
 - Recommendations for system optimization
-- Complete audit trail
+- Complete audit trail of all memory changes
 - Data-driven orchestration
+- Memory updates safely persisted via PR workflow
 
 ### 7. Exception Handling
 
@@ -1450,11 +1525,49 @@ EOF
 - Post PR merge confirmations where relevant
 - **DO NOT close anything yet - just post updates**
 
-**STEP 3: Save and persist memory:**
-- `memory.save()` to persist learning
-- Commit memory file to your branch
-- Use `report_progress` to create PR with memory
-- **DO NOT merge the memory PR yourself**
+**STEP 3: Save and commit memory with standardized PR:**
+- `memory.save()` to persist learning on your branch
+- Commit memory file AND any other changes to your branch
+- Use `report_progress` to create PR with standardized format:
+  ```python
+  report_progress(
+    commitMessage="meta-coordination: YYYY-MM-DD run - [brief summary of key actions]",
+    prDescription="""## 🎯 Meta-Coordination Run Summary
+
+**Run Time:** YYYY-MM-DD HH:MM:SS UTC  
+**Coordination Issue:** #XXXX
+
+### 📊 Success Metrics
+- **Success Score:** XX.X/100 (change from last run)
+- **Cycle Time:** XX.X hours avg (target: 24h)
+- **Open Count Change:** PRs XX → XX, Issues XX → XX
+
+### 🔧 Actions Taken
+**High Impact:**
+- Auto-merged: X PRs
+- Closed stale: X PRs
+- Closed orphaned: X issues
+
+**Agent Assignments:**
+- Assigned: X new issues
+
+**Exceptions Handled:**
+- X label fixes, X escalations
+
+### 💾 Memory Updates
+- Recorded X PR closures
+- Recorded X issue assignments
+- Updated success metrics
+- **Memory file updated:** `.github/agent-system/meta-coordinator-memory.json`
+
+### 📈 System State
+- Open PRs: XX (was XX)
+- Open Issues: XX (was XX)
+"""
+  )
+  ```
+- Add labels: `meta-coordination`, `automated`
+- **DO NOT merge the memory PR yourself** - next cycle handles it in Phase 0
 
 **STEP 4: Close coordination issue:**
 - All updates posted (step 2)
