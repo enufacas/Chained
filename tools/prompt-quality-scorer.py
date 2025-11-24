@@ -204,7 +204,7 @@ class PromptQualityScorer:
         
         # Calculate success rate variance using statistics module
         try:
-            std_dev = statistics.stdev(successes) if len(successes) > 1 else 0.0
+            std_dev = statistics.stdev(successes)
         except statistics.StatisticsError:
             std_dev = 0.0
         
@@ -221,7 +221,7 @@ class PromptQualityScorer:
             
             try:
                 mean_time = statistics.mean(times)
-                time_std_dev = statistics.stdev(times) if len(times) > 1 else 0.0
+                time_std_dev = statistics.stdev(times)
                 
                 # Normalize by mean (coefficient of variation)
                 if mean_time > 0:

@@ -61,7 +61,7 @@ jobs:
           
           # Determine if we have enough data for tuning
           min_data_threshold=10
-          if [ "$total_prompts" -lt "$min_data_threshold" ] && [ "${{ inputs.force_evolution }}" != "true" ]; then
+          if [ "$total_prompts" -lt "$min_data_threshold" ] && [ "${{ inputs.force_evolution }}" = "false" ]; then
             echo "needs_tuning=false" >> $GITHUB_OUTPUT
             echo "⚠️ Not enough data yet ($total_prompts < $min_data_threshold). Skipping tuning."
           else
@@ -176,7 +176,7 @@ jobs:
           evolved_count="${{ steps.evolve.outputs.evolved_count || 0 }}"
           test_count="${{ steps.ab_test.outputs.test_count || 0 }}"
           
-          success_pct=$(echo "$success_rate * 100" | bc)
+          success_pct=$(awk "BEGIN {print $success_rate * 100}")
           
           cat > /tmp/tuning_report.md <<EOF
           # 🧬 Automated Prompt Tuning Report
@@ -260,7 +260,7 @@ jobs:
 
 - Evolved ${{ steps.evolve.outputs.evolved_count || 0 }} templates
 - Created ${{ steps.ab_test.outputs.test_count || 0 }} A/B tests
-- Success rate: $(echo '${{ steps.analyze.outputs.success_rate }} * 100' | bc)%
+- Success rate: $(awk 'BEGIN {print ${{ steps.analyze.outputs.success_rate }} * 100}')%
 
 Automated by prompt auto-tuner (@create-guru)"
           
