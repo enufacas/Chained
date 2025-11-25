@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-24T12:55:45.661260",
-  "commit": "8916a9c7b190d467c7ea1c2da41a596f4c59e6ee",
+  "timestamp": "2025-11-25T02:01:22.000019",
+  "commit": "2ae22a450f3ba8c9b615f303c81a7138e5e5c799",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 329,
-        "line_count": 135723,
+        "file_count": 351,
+        "line_count": 144871,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -24,7 +24,10 @@
           "API_TOOLS_INTEGRATION_GUIDE.md",
           "API_TOOLS_README.md",
           "ARCHAEOLOGY_ENHANCED_README.md",
+          "AUTONOMOUS_ISSUE_PRIORITIZER_QUICKREF.md",
+          "AUTONOMOUS_ISSUE_PRIORITIZER_README.md",
           "AUTONOMOUS_REFACTORING_AGENT_README.md",
+          "CHECK_PR_MERGE_ELIGIBILITY_README.md",
           "CLOUD_DEVOPS_ANALYZER_README.md",
           "CODE_ARCHAEOLOGIST.md",
           "CODE_SMELL_FIXER_README.md",
@@ -36,6 +39,7 @@
           "CREATIVITY_TOOLS_README.md",
           "CROSS_REPO_PATTERN_MATCHER_README.md",
           "DEPENDENCY_ANALYZER_README.md",
+          "ENHANCED_REFACTORING_FEATURES_README.md",
           "ENHANCED_SELF_DOCUMENTING_AI_README.md",
           "GITHUB_TRENDING_FETCHER_README.md",
           "HIERARCHICAL_AGENT_SYSTEM_QUICKSTART.md",
@@ -52,16 +56,12 @@
           "PARADIGM_TRANSLATOR_AUTONOMOUS_BENEFITS.md",
           "PARADIGM_TRANSLATOR_README.md",
           "PATTERN_MATCHER.md",
-          "PERFORMANCE_BENCHMARK_REPORT.md",
-          "PERFORMANCE_OPTIMIZATION.md",
-          "PROMPT_GENERATOR_README.md",
-          "PROMPT_GENERATOR_WORKFLOW_INTEGRATION.md",
-          "PR_FAILURE_INTELLIGENCE_README.md"
+          "PERFORMANCE_BENCHMARK_REPORT.md"
         ]
       },
       "docs": {
-        "file_count": 841,
-        "line_count": 239409,
+        "file_count": 847,
+        "line_count": 241220,
         "files": [
           ".nojekyll",
           "AB_TESTING_API.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 94,
-        "line_count": 4705714,
+        "file_count": 96,
+        "line_count": 4706427,
         "files": [
           "2025-11-14-04-00-27.json",
           "2025-11-14-04-00-36.json",
@@ -182,8 +182,8 @@
         ]
       },
       "learnings": {
-        "file_count": 327,
-        "line_count": 194371,
+        "file_count": 330,
+        "line_count": 195342,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -239,8 +239,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 1591,
-    "total_lines": 5275217
+    "total_files": 1624,
+    "total_lines": 5287860
   },
   "dependencies": {
     "internal_imports": {
@@ -274,9 +274,12 @@
       "debug_custom_agent_actors.py": [],
       "demo-agent-evolution.py": [],
       "thematic-analyzer.py": [],
+      "autonomous_issue_prioritizer.py": [],
+      "prompt-quality-scorer.py": [],
       "pr-content-analyzer.py": [],
       "dynamic-agent-spawner.py": [],
       "meta_learning_scheduler.py": [],
+      "subagent_performance_learner.py": [],
       "registry_manager.py": [],
       "repetition-detector.py": [],
       "clustering_integration_example.py": [],
@@ -286,9 +289,11 @@
       "create_labels.py": [],
       "commit-strategy-learner.py": [],
       "repo-time-travel.py": [],
+      "enhanced_subagent_spawner.py": [],
       "get-available-human-names.py": [],
       "benchmark_code_analyzer.py": [],
       "meta-coordinator-memory.py": [],
+      "example_autonomous_issue_prioritizer.py": [],
       "demo_hn_code_generator.py": [],
       "actions-pattern-analyzer.py": [],
       "creative-coding-challenge-generator.py": [],
@@ -315,6 +320,7 @@
       "monitor-mentorship-dashboard.py": [],
       "uniqueness-scorer.py": [],
       "fetch-github-trending.py": [],
+      "contextual-prompt-adapter.py": [],
       "validate-workflow-inputs.py": [],
       "archaeology-integration.py": [],
       "autonomous_experiment_creator.py": [],
@@ -360,6 +366,7 @@
       "ab_testing_dashboard.py": [],
       "generate-agent-personality.py": [],
       "workload_api_service.py": [],
+      "enhanced-refactoring-features.py": [],
       "update_last_spawn.py": [],
       "inspect-issue-assignment.py": [],
       "extract_workflow_data.py": [],
@@ -373,6 +380,7 @@
       "agent_memory.py": [],
       "code-golf-optimizer.py": [],
       "knowledge_graph_query.py": [],
+      "workflow-activity-report.py": [],
       "generate_workflow_html.py": [],
       "issue-discussion-learner.py": [],
       "agent_memory_system_poc.py": [],
@@ -394,6 +402,7 @@
       "agent-learning-api.py": [],
       "prompt_reinforcement.py": [],
       "__init__.py": [],
+      "intelligent_parent_selector.py": [],
       "demo_code.py": [],
       "unsupervised_pattern_learner.py": [],
       "generate-learning-inspired-agent.py": [],
@@ -401,6 +410,7 @@
       "agent_memory_system.py": [],
       "generate-new-agent.py": [],
       "performance_benchmark.py": [],
+      "demo_enhanced_spawning.py": [],
       "integrated-archaeology.py": [],
       "validate-workflows.py": [],
       "cross-repo-pattern-matcher.py": [],
@@ -418,22 +428,22 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 99,
-      "sys": 131,
-      "json": 147,
-      "re": 65,
-      "ast": 17,
-      "datetime": 113,
-      "pathlib": 137,
-      "typing": 124,
-      "collections": 65,
+      "os": 104,
+      "sys": 138,
+      "json": 157,
+      "re": 71,
+      "ast": 18,
+      "datetime": 122,
+      "pathlib": 146,
+      "typing": 132,
+      "collections": 70,
       "functools": 9,
-      "argparse": 112,
-      "math": 9,
-      "random": 24,
-      "time": 29,
-      "statistics": 12,
-      "dataclasses": 65,
+      "argparse": 119,
+      "math": 10,
+      "random": 25,
+      "time": 30,
+      "statistics": 15,
+      "dataclasses": 72,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
       "workload_subagent_spawner": 2,
@@ -442,7 +452,7 @@
       "ab_testing_engine": 5,
       "ab_testing_advanced": 2,
       "yaml": 19,
-      "subprocess": 23,
+      "subprocess": 24,
       "hashlib": 16,
       "traceback": 12,
       "importlib": 24,
@@ -452,27 +462,30 @@
       "tempfile": 6,
       "shutil": 8,
       "workflow_execution_tracker": 2,
+      "registry_manager": 13,
       "fcntl": 2,
       "contextlib": 1,
       "issue_clustering_system": 1,
-      "registry_manager": 9,
+      "workload_monitor": 7,
+      "intelligent_parent_selector": 2,
+      "subagent_performance_learner": 2,
+      "autonomous_issue_prioritizer": 1,
       "hn_code_generator": 1,
       "unsupervised_pattern_learner": 5,
       "requests": 3,
       "bs4": 3,
-      "urllib": 12,
+      "urllib": 14,
       "ipaddress": 1,
       "socket": 1,
       "validation_utils": 5,
       "workflow_dependency_graph": 1,
       "lazy_workflow_loader": 1,
-      "workload_monitor": 6,
       "pickle": 1,
       "enum": 13,
       "threading": 5,
       "semantic_similarity_engine": 2,
       "ab_testing_workflow_analyzer": 2,
-      "copy": 1,
+      "copy": 2,
       "api_coordination_hub": 2,
       "api_monitoring_bridge": 2,
       "asyncio": 3,
@@ -510,17 +523,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1591,
-    "total_lines": 5275217,
+    "total_files": 1624,
+    "total_lines": 5287860,
     "total_dependencies": 2,
-    "external_libraries": 76,
-    "coupling_score": 7.128599942971201e-05,
+    "external_libraries": 79,
+    "coupling_score": 6.347997206881229e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 194371,
+      "line_count": 195342,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -546,7 +559,7 @@
     },
     "agent_system": {
       "file_count": 2,
-      "line_count": 100120,
+      "line_count": 98050,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json"
@@ -554,7 +567,7 @@
     },
     "analysis_tools": {
       "file_count": 48,
-      "line_count": 4705714,
+      "line_count": 4706427,
       "files": [
         "2025-11-14-04-00-27.json",
         "2025-11-14-04-00-36.json",
@@ -580,7 +593,7 @@
     },
     "documentation": {
       "file_count": 49,
-      "line_count": 239409,
+      "line_count": 241220,
       "files": [
         ".nojekyll",
         "AB_TESTING_API.md",
@@ -606,7 +619,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 135723,
+      "line_count": 144871,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
@@ -625,9 +638,9 @@
         "API_TOOLS_INTEGRATION_GUIDE.md",
         "API_TOOLS_README.md",
         "ARCHAEOLOGY_ENHANCED_README.md",
-        "AUTONOMOUS_REFACTORING_AGENT_README.md",
-        "CLOUD_DEVOPS_ANALYZER_README.md",
-        "CODE_ARCHAEOLOGIST.md"
+        "AUTONOMOUS_ISSUE_PRIORITIZER_QUICKREF.md",
+        "AUTONOMOUS_ISSUE_PRIORITIZER_README.md",
+        "AUTONOMOUS_REFACTORING_AGENT_README.md"
       ]
     }
   }
