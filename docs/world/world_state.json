@@ -1,6 +1,6 @@
 {
-  "time": "2025-11-25T08:19:22Z",
-  "tick": 79,
+  "time": "2025-11-25T08:20:20Z",
+  "tick": 80,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -33,11 +33,11 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:116",
+      "current_idea_id": "idea:68",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -50,6 +50,12 @@
         "creativity": 66,
         "caution": 81,
         "speed": 78
+      },
+      "current_mission": {
+        "mission_id": "idea:68",
+        "title": "Languages: Go (2025-11-24)",
+        "issue_number": null,
+        "assigned_at": "2025-11-25T08:20:20Z"
       }
     },
     {
@@ -57,11 +63,11 @@
       "label": "🎯 Liskov",
       "specialization": "investigate-champion",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:74",
+      "current_idea_id": "idea:72",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -74,6 +80,12 @@
         "creativity": 78,
         "caution": 75,
         "speed": 95
+      },
+      "current_mission": {
+        "mission_id": "idea:72",
+        "title": "AI/ML: Gpt (2025-11-24)",
+        "issue_number": null,
+        "assigned_at": "2025-11-25T08:20:20Z"
       }
     },
     {
@@ -373,11 +385,11 @@
       "label": "🔐 Ada",
       "specialization": "monitor-champion",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:126",
+      "current_idea_id": "idea:70",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -390,6 +402,12 @@
         "creativity": 53,
         "caution": 32,
         "speed": 99
+      },
+      "current_mission": {
+        "mission_id": "idea:70",
+        "title": "Security: Security (2025-11-24)",
+        "issue_number": null,
+        "assigned_at": "2025-11-25T08:20:20Z"
       }
     },
     {
@@ -1675,6 +1693,6 @@
     "elimination_threshold": 0.3,
     "promotion_threshold": 0.65,
     "hall_of_fame_count": 12,
-    "active_missions": 1
+    "active_missions": 5
   }
 }
