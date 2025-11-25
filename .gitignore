@@ -34,3 +34,9 @@ Thumbs.db
 *.log
 /docs/libs/
 .github/workflow-history/
+
+# Gemini CLI settings
+.gemini/
+
+# GitHub App credentials
+gha-creds-*.json
