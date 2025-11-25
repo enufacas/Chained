@@ -1,6 +1,6 @@
 {
-  "last_updated": "2025-11-25T04:25:01.776802+00:00",
-  "total_experiences": 50,
+  "last_updated": "2025-11-25T04:38:54.785435+00:00",
+  "total_experiences": 70,
   "experiences": [
     {
       "state": {
@@ -13,7 +13,10 @@
         "success_rate": 0.7043840635130354,
         "resource_utilization": 0.5179896916972575,
         "time_of_day_bucket": 16,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "reduce_timeout",
       "reward": 0.17300508838606,
@@ -27,7 +30,10 @@
         "success_rate": 0.7125958518777343,
         "resource_utilization": 0.6179896916972575,
         "time_of_day_bucket": 16,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.685572+00:00"
@@ -43,7 +49,10 @@
         "success_rate": 0.9845910983432182,
         "resource_utilization": 0.7783418050648218,
         "time_of_day_bucket": 12,
-        "day_of_week": 1
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "enable_caching",
       "reward": 0.18637397951747298,
@@ -57,7 +66,10 @@
         "success_rate": 0.9976989644596936,
         "resource_utilization": 0.7783418050648218,
         "time_of_day_bucket": 12,
-        "day_of_week": 1
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.685937+00:00"
@@ -73,7 +85,10 @@
         "success_rate": 0.8227212417843858,
         "resource_utilization": 0.7817604816876821,
         "time_of_day_bucket": 4,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "serialize_jobs",
       "reward": 0.1599743455497087,
@@ -87,7 +102,10 @@
         "success_rate": 0.8487845401919677,
         "resource_utilization": 0.8317604816876821,
         "time_of_day_bucket": 4,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.686414+00:00"
@@ -103,7 +121,10 @@
         "success_rate": 0.8576445230300438,
         "resource_utilization": 0.43696516929400386,
         "time_of_day_bucket": 10,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "increase_concurrency",
       "reward": -0.06785744966306591,
@@ -117,7 +138,10 @@
         "success_rate": 0.8305221404379088,
         "resource_utilization": 0.43696516929400386,
         "time_of_day_bucket": 10,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.687016+00:00"
@@ -133,7 +157,10 @@
         "success_rate": 0.6589324284710101,
         "resource_utilization": 0.8694976639409258,
         "time_of_day_bucket": 19,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "parallelize_jobs",
       "reward": 0.21077588656131396,
@@ -147,7 +174,10 @@
         "success_rate": 0.6952196376849431,
         "resource_utilization": 0.8694976639409258,
         "time_of_day_bucket": 19,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.687612+00:00"
@@ -163,7 +193,10 @@
         "success_rate": 0.8086624294591372,
         "resource_utilization": 0.7557541743556684,
         "time_of_day_bucket": 9,
-        "day_of_week": 1
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "disable_caching",
       "reward": 0.04494340244244391,
@@ -177,7 +210,10 @@
         "success_rate": 0.8562356915870739,
         "resource_utilization": 0.7557541743556684,
         "time_of_day_bucket": 9,
-        "day_of_week": 1
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.688258+00:00"
@@ -193,7 +229,10 @@
         "success_rate": 0.993507108109007,
         "resource_utilization": 0.7589378850895909,
         "time_of_day_bucket": 4,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "no_change",
       "reward": -0.09470555947965636,
@@ -207,7 +246,10 @@
         "success_rate": 0.9665549652146639,
         "resource_utilization": 0.7589378850895909,
         "time_of_day_bucket": 4,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.688946+00:00"
@@ -223,7 +265,10 @@
         "success_rate": 0.6606262419058905,
         "resource_utilization": 0.5441224424394745,
         "time_of_day_bucket": 2,
-        "day_of_week": 0
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "no_change",
       "reward": -0.047105955192425275,
@@ -237,7 +282,10 @@
         "success_rate": 0.6539241845622972,
         "resource_utilization": 0.5441224424394745,
         "time_of_day_bucket": 2,
-        "day_of_week": 0
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.689747+00:00"
@@ -253,7 +301,10 @@
         "success_rate": 0.7264853133213358,
         "resource_utilization": 0.8844675438017804,
         "time_of_day_bucket": 17,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "reduce_timeout",
       "reward": -0.02337939309799994,
@@ -267,7 +318,10 @@
         "success_rate": 0.6811732002047219,
         "resource_utilization": 0.9844675438017804,
         "time_of_day_bucket": 17,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.690580+00:00"
@@ -283,7 +337,10 @@
         "success_rate": 0.7520560465240063,
         "resource_utilization": 0.44935943540408013,
         "time_of_day_bucket": 0,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "increase_concurrency",
       "reward": 0.12637521010650474,
@@ -297,7 +354,10 @@
         "success_rate": 0.7797298045701567,
         "resource_utilization": 0.44935943540408013,
         "time_of_day_bucket": 0,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.691436+00:00"
@@ -313,7 +373,10 @@
         "success_rate": 0.8482039951462201,
         "resource_utilization": 0.7123257377724679,
         "time_of_day_bucket": 9,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "no_change",
       "reward": -0.06941727993573486,
@@ -327,7 +390,10 @@
         "success_rate": 0.8194835206683475,
         "resource_utilization": 0.7123257377724679,
         "time_of_day_bucket": 9,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.692364+00:00"
@@ -343,7 +409,10 @@
         "success_rate": 0.7400612304953254,
         "resource_utilization": 0.5488411878623426,
         "time_of_day_bucket": 1,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "serialize_jobs",
       "reward": -0.19673670518772965,
@@ -357,7 +426,10 @@
         "success_rate": 0.6997093938942843,
         "resource_utilization": 0.5988411878623426,
         "time_of_day_bucket": 1,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.693325+00:00"
@@ -373,7 +445,10 @@
         "success_rate": 0.7768410719971613,
         "resource_utilization": 0.49757109265134597,
         "time_of_day_bucket": 17,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "no_change",
       "reward": -0.17540732172821466,
@@ -387,7 +462,10 @@
         "success_rate": 0.730779967029886,
         "resource_utilization": 0.49757109265134597,
         "time_of_day_bucket": 17,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.694398+00:00"
@@ -403,7 +481,10 @@
         "success_rate": 0.761675011477852,
         "resource_utilization": 0.7244604306194113,
         "time_of_day_bucket": 2,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "extend_timeout",
       "reward": 0.1853112208743234,
@@ -417,7 +498,10 @@
         "success_rate": 0.8164988274921504,
         "resource_utilization": 0.7244604306194113,
         "time_of_day_bucket": 2,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.695496+00:00"
@@ -433,7 +517,10 @@
         "success_rate": 0.821606347410351,
         "resource_utilization": 0.36213685531322826,
         "time_of_day_bucket": 23,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "enable_caching",
       "reward": -0.05161619191194872,
@@ -447,7 +534,10 @@
         "success_rate": 0.7785922562005188,
         "resource_utilization": 0.36213685531322826,
         "time_of_day_bucket": 23,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.696619+00:00"
@@ -463,7 +553,10 @@
         "success_rate": 0.8965145599499047,
         "resource_utilization": 0.3957309841310783,
         "time_of_day_bucket": 12,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "extend_timeout",
       "reward": -0.03535086169621443,
@@ -477,7 +570,10 @@
         "success_rate": 0.9191658149317519,
         "resource_utilization": 0.3957309841310783,
         "time_of_day_bucket": 12,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.699350+00:00"
@@ -493,7 +589,10 @@
         "success_rate": 0.6869480530820659,
         "resource_utilization": 0.35361830317717297,
         "time_of_day_bucket": 13,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "extend_timeout",
       "reward": 0.2609388106269188,
@@ -507,7 +606,10 @@
         "success_rate": 0.7508112878178025,
         "resource_utilization": 0.35361830317717297,
         "time_of_day_bucket": 13,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.700568+00:00"
@@ -523,7 +625,10 @@
         "success_rate": 0.923325989423577,
         "resource_utilization": 0.7174500449820309,
         "time_of_day_bucket": 20,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "decrease_concurrency",
       "reward": -0.03995548240641364,
@@ -537,7 +642,10 @@
         "success_rate": 0.946681040894803,
         "resource_utilization": 0.7174500449820309,
         "time_of_day_bucket": 20,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.701869+00:00"
@@ -553,7 +661,10 @@
         "success_rate": 0.7138470161471212,
         "resource_utilization": 0.6741430870381697,
         "time_of_day_bucket": 3,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "disable_caching",
       "reward": -0.011820374538046477,
@@ -567,7 +678,10 @@
         "success_rate": 0.7452730220114931,
         "resource_utilization": 0.6741430870381697,
         "time_of_day_bucket": 3,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.703230+00:00"
@@ -583,7 +697,10 @@
         "success_rate": 0.8845719118969445,
         "resource_utilization": 0.7045148399640011,
         "time_of_day_bucket": 16,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "no_change",
       "reward": -0.1434422180492519,
@@ -597,7 +714,10 @@
         "success_rate": 0.8522525399189597,
         "resource_utilization": 0.7045148399640011,
         "time_of_day_bucket": 16,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.704642+00:00"
@@ -613,7 +733,10 @@
         "success_rate": 0.9851204299609181,
         "resource_utilization": 0.851860442298813,
         "time_of_day_bucket": 6,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "enable_caching",
       "reward": 0.03704279051798501,
@@ -627,7 +750,10 @@
         "success_rate": 0.9685936283271992,
         "resource_utilization": 0.851860442298813,
         "time_of_day_bucket": 6,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.706160+00:00"
@@ -643,7 +769,10 @@
         "success_rate": 0.9527715845264352,
         "resource_utilization": 0.6809508680868734,
         "time_of_day_bucket": 9,
-        "day_of_week": 0
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "enable_caching",
       "reward": 0.28945575721824524,
@@ -657,7 +786,10 @@
         "success_rate": 1,
         "resource_utilization": 0.6809508680868734,
         "time_of_day_bucket": 9,
-        "day_of_week": 0
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.707688+00:00"
@@ -673,7 +805,10 @@
         "success_rate": 0.9096184773458253,
         "resource_utilization": 0.707101046712775,
         "time_of_day_bucket": 18,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "disable_caching",
       "reward": 0.0725897470296149,
@@ -687,7 +822,10 @@
         "success_rate": 0.9694205002794299,
         "resource_utilization": 0.707101046712775,
         "time_of_day_bucket": 18,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.709362+00:00"
@@ -703,7 +841,10 @@
         "success_rate": 0.9763322306557418,
         "resource_utilization": 0.6358438497637866,
         "time_of_day_bucket": 13,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "extend_timeout",
       "reward": -0.038704005527780694,
@@ -717,7 +858,10 @@
         "success_rate": 0.9617225430315537,
         "resource_utilization": 0.6358438497637866,
         "time_of_day_bucket": 13,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.710987+00:00"
@@ -733,7 +877,10 @@
         "success_rate": 0.6915881629439554,
         "resource_utilization": 0.46616633143337494,
         "time_of_day_bucket": 22,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "serialize_jobs",
       "reward": 0.2520217064401029,
@@ -747,7 +894,10 @@
         "success_rate": 0.7367819354435545,
         "resource_utilization": 0.516166331433375,
         "time_of_day_bucket": 22,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.712667+00:00"
@@ -763,7 +913,10 @@
         "success_rate": 0.9215289957297366,
         "resource_utilization": 0.4947692869467152,
         "time_of_day_bucket": 10,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "increase_concurrency",
       "reward": 0.006183157606837658,
@@ -777,7 +930,10 @@
         "success_rate": 0.9096734285088506,
         "resource_utilization": 0.4947692869467152,
         "time_of_day_bucket": 10,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.714416+00:00"
@@ -793,7 +949,10 @@
         "success_rate": 0.8035228886885516,
         "resource_utilization": 0.8567565906934496,
         "time_of_day_bucket": 3,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "decrease_concurrency",
       "reward": 0.19370436393719706,
@@ -807,7 +966,10 @@
         "success_rate": 0.8552257352964371,
         "resource_utilization": 0.8567565906934496,
         "time_of_day_bucket": 3,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.716209+00:00"
@@ -823,7 +985,10 @@
         "success_rate": 0.7164535091238404,
         "resource_utilization": 0.3314722854159681,
         "time_of_day_bucket": 15,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "decrease_concurrency",
       "reward": 0.05275948592471773,
@@ -837,7 +1002,10 @@
         "success_rate": 0.7242434870265407,
         "resource_utilization": 0.3314722854159681,
         "time_of_day_bucket": 15,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.718049+00:00"
@@ -853,7 +1021,10 @@
         "success_rate": 0.6375219269919302,
         "resource_utilization": 0.3790502587089361,
         "time_of_day_bucket": 7,
-        "day_of_week": 0
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "extend_timeout",
       "reward": -0.04301996841387401,
@@ -867,7 +1038,10 @@
         "success_rate": 0.6617368283586939,
         "resource_utilization": 0.3790502587089361,
         "time_of_day_bucket": 7,
-        "day_of_week": 0
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.719962+00:00"
@@ -883,7 +1057,10 @@
         "success_rate": 0.7048241839262765,
         "resource_utilization": 0.44081051794833237,
         "time_of_day_bucket": 22,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "serialize_jobs",
       "reward": 0.24276481071695172,
@@ -897,7 +1074,10 @@
         "success_rate": 0.7516520793408523,
         "resource_utilization": 0.49081051794833236,
         "time_of_day_bucket": 22,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.721919+00:00"
@@ -913,7 +1093,10 @@
         "success_rate": 0.7275905358525913,
         "resource_utilization": 0.5927473506224963,
         "time_of_day_bucket": 10,
-        "day_of_week": 4
+        "day_of_week": 4,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "enable_caching",
       "reward": -0.013858883072397549,
@@ -927,7 +1110,10 @@
         "success_rate": 0.6854459229771954,
         "resource_utilization": 0.5927473506224963,
         "time_of_day_bucket": 10,
-        "day_of_week": 4
+        "day_of_week": 4,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.723934+00:00"
@@ -943,7 +1129,10 @@
         "success_rate": 0.7134056141370361,
         "resource_utilization": 0.4239438516591332,
         "time_of_day_bucket": 13,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "parallelize_jobs",
       "reward": 0.04736042311430172,
@@ -957,7 +1146,10 @@
         "success_rate": 0.703167545091473,
         "resource_utilization": 0.4239438516591332,
         "time_of_day_bucket": 13,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.726024+00:00"
@@ -973,7 +1165,10 @@
         "success_rate": 0.6894117790798946,
         "resource_utilization": 0.5571214072506729,
         "time_of_day_bucket": 10,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "increase_concurrency",
       "reward": 0.15558173297639183,
@@ -987,7 +1182,10 @@
         "success_rate": 0.7289621428230287,
         "resource_utilization": 0.5571214072506729,
         "time_of_day_bucket": 10,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.728433+00:00"
@@ -1003,7 +1201,10 @@
         "success_rate": 0.9103433123542632,
         "resource_utilization": 0.6156014232970297,
         "time_of_day_bucket": 1,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "no_change",
       "reward": -0.12032589205141354,
@@ -1017,7 +1218,10 @@
         "success_rate": 0.8755833815507384,
         "resource_utilization": 0.6156014232970297,
         "time_of_day_bucket": 1,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.730809+00:00"
@@ -1033,7 +1237,10 @@
         "success_rate": 0.9740889169749314,
         "resource_utilization": 0.40559739894805,
         "time_of_day_bucket": 11,
-        "day_of_week": 0
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "extend_timeout",
       "reward": -0.176115025095233,
@@ -1047,7 +1254,10 @@
         "success_rate": 0.9553885767972137,
         "resource_utilization": 0.40559739894805,
         "time_of_day_bucket": 11,
-        "day_of_week": 0
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.733242+00:00"
@@ -1063,7 +1273,10 @@
         "success_rate": 0.9671507913492929,
         "resource_utilization": 0.6043472970962094,
         "time_of_day_bucket": 12,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "extend_timeout",
       "reward": 0.10273324460001174,
@@ -1077,7 +1290,10 @@
         "success_rate": 1,
         "resource_utilization": 0.6043472970962094,
         "time_of_day_bucket": 12,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.735710+00:00"
@@ -1093,7 +1309,10 @@
         "success_rate": 0.6018594178839564,
         "resource_utilization": 0.8402945700113922,
         "time_of_day_bucket": 13,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "serialize_jobs",
       "reward": -0.18916909546926372,
@@ -1107,7 +1326,10 @@
         "success_rate": 0.5655309403879075,
         "resource_utilization": 0.8902945700113922,
         "time_of_day_bucket": 13,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.738274+00:00"
@@ -1123,7 +1345,10 @@
         "success_rate": 0.6514752321702052,
         "resource_utilization": 0.6277379710559262,
         "time_of_day_bucket": 1,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "disable_caching",
       "reward": 0.26410903847344364,
@@ -1137,7 +1362,10 @@
         "success_rate": 0.7175892453789733,
         "resource_utilization": 0.6277379710559262,
         "time_of_day_bucket": 1,
-        "day_of_week": 3
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.740853+00:00"
@@ -1153,7 +1381,10 @@
         "success_rate": 0.7261043027447653,
         "resource_utilization": 0.4513603666693218,
         "time_of_day_bucket": 11,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "disable_caching",
       "reward": -0.08106618751020424,
@@ -1167,7 +1398,10 @@
         "success_rate": 0.7363172639147265,
         "resource_utilization": 0.4513603666693218,
         "time_of_day_bucket": 11,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.743490+00:00"
@@ -1183,7 +1417,10 @@
         "success_rate": 0.7018898496391076,
         "resource_utilization": 0.8506601306868726,
         "time_of_day_bucket": 2,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "no_change",
       "reward": -0.0002962377207282457,
@@ -1197,7 +1434,10 @@
         "success_rate": 0.6916037804227568,
         "resource_utilization": 0.8506601306868726,
         "time_of_day_bucket": 2,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.746185+00:00"
@@ -1213,7 +1453,10 @@
         "success_rate": 0.6368218373261714,
         "resource_utilization": 0.8616963736724614,
         "time_of_day_bucket": 22,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "no_change",
       "reward": -0.041396909648094796,
@@ -1227,7 +1470,10 @@
         "success_rate": 0.6311088829315279,
         "resource_utilization": 0.8616963736724614,
         "time_of_day_bucket": 22,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.748941+00:00"
@@ -1243,7 +1489,10 @@
         "success_rate": 0.9970107083834348,
         "resource_utilization": 0.6719330053981356,
         "time_of_day_bucket": 11,
-        "day_of_week": 0
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "reduce_timeout",
       "reward": -0.15697862087174647,
@@ -1257,7 +1506,10 @@
         "success_rate": 0.9524006551113198,
         "resource_utilization": 0.7719330053981356,
         "time_of_day_bucket": 11,
-        "day_of_week": 0
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.751757+00:00"
@@ -1273,7 +1525,10 @@
         "success_rate": 0.9643216748289415,
         "resource_utilization": 0.5532144544528678,
         "time_of_day_bucket": 3,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "enable_caching",
       "reward": 0.2093988081256053,
@@ -1287,7 +1542,10 @@
         "success_rate": 0.9974655208561655,
         "resource_utilization": 0.5532144544528678,
         "time_of_day_bucket": 3,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.754678+00:00"
@@ -1303,7 +1561,10 @@
         "success_rate": 0.6658070669462703,
         "resource_utilization": 0.6409430432405858,
         "time_of_day_bucket": 10,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "serialize_jobs",
       "reward": -0.17116110658194889,
@@ -1317,7 +1578,10 @@
         "success_rate": 0.6348178096700743,
         "resource_utilization": 0.6909430432405859,
         "time_of_day_bucket": 10,
-        "day_of_week": 5
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.757599+00:00"
@@ -1333,7 +1597,10 @@
         "success_rate": 0.784757372890837,
         "resource_utilization": 0.6091765076053441,
         "time_of_day_bucket": 20,
-        "day_of_week": 1
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "decrease_concurrency",
       "reward": 0.2566232753477793,
@@ -1347,7 +1614,10 @@
         "success_rate": 0.8621567876643979,
         "resource_utilization": 0.6091765076053441,
         "time_of_day_bucket": 20,
-        "day_of_week": 1
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.760575+00:00"
@@ -1363,7 +1633,10 @@
         "success_rate": 0.6825091559457637,
         "resource_utilization": 0.650667648025277,
         "time_of_day_bucket": 6,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "enable_caching",
       "reward": 0.04839689155845113,
@@ -1377,7 +1650,10 @@
         "success_rate": 0.6640682761360555,
         "resource_utilization": 0.650667648025277,
         "time_of_day_bucket": 6,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.763619+00:00"
@@ -1393,7 +1669,10 @@
         "success_rate": 0.8065371976675133,
         "resource_utilization": 0.43538967438696186,
         "time_of_day_bucket": 0,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "reduce_timeout",
       "reward": -0.1313386130592476,
@@ -1407,7 +1686,10 @@
         "success_rate": 0.7728518595871096,
         "resource_utilization": 0.5353896743869618,
         "time_of_day_bucket": 0,
-        "day_of_week": 2
+        "day_of_week": 2,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.766712+00:00"
@@ -1423,7 +1705,10 @@
         "success_rate": 0.6947182157309892,
         "resource_utilization": 0.5915566422613386,
         "time_of_day_bucket": 19,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "no_change",
       "reward": 0.1547619397867437,
@@ -1437,7 +1722,10 @@
         "success_rate": 0.7293807314869769,
         "resource_utilization": 0.5915566422613386,
         "time_of_day_bucket": 19,
-        "day_of_week": 6
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.769888+00:00"
@@ -1453,7 +1741,10 @@
         "success_rate": 0.6222450387869084,
         "resource_utilization": 0.31669431817082555,
         "time_of_day_bucket": 18,
-        "day_of_week": 4
+        "day_of_week": 4,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "increase_concurrency",
       "reward": 0.14563653269942556,
@@ -1467,7 +1758,10 @@
         "success_rate": 0.6516771450959206,
         "resource_utilization": 0.31669431817082555,
         "time_of_day_bucket": 18,
-        "day_of_week": 4
+        "day_of_week": 4,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.773065+00:00"
@@ -1483,7 +1777,10 @@
         "success_rate": 0.7510493315705288,
         "resource_utilization": 0.8979631478722667,
         "time_of_day_bucket": 14,
-        "day_of_week": 1
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "action": "disable_caching",
       "reward": -0.1942799684266025,
@@ -1497,10 +1794,733 @@
         "success_rate": 0.7350593031587986,
         "resource_utilization": 0.8979631478722667,
         "time_of_day_bucket": 14,
-        "day_of_week": 1
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
       },
       "done": false,
       "timestamp": "2025-11-25T04:25:01.776328+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-0",
+        "concurrency_limit": 3,
+        "timeout_minutes": 30,
+        "caching_enabled": true,
+        "parallel_jobs": 1,
+        "avg_duration_seconds": 213.31086975506457,
+        "success_rate": 0.7446697558180693,
+        "resource_utilization": 0.3319284054593439,
+        "time_of_day_bucket": 16,
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "serialize_jobs",
+      "reward": -0.07838985374396364,
+      "next_state": {
+        "workflow_name": "workflow-0",
+        "concurrency_limit": 3,
+        "timeout_minutes": 30,
+        "caching_enabled": true,
+        "parallel_jobs": 1,
+        "avg_duration_seconds": 198.77112605547384,
+        "success_rate": 0.6966255432124253,
+        "resource_utilization": 0.38192840545934387,
+        "time_of_day_bucket": 16,
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.698760+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 2,
+        "timeout_minutes": 120,
+        "caching_enabled": false,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 185.93927656650993,
+        "success_rate": 0.6603533653386143,
+        "resource_utilization": 0.43541301986414327,
+        "time_of_day_bucket": 12,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "disable_caching",
+      "reward": -0.1435144342703049,
+      "next_state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 2,
+        "timeout_minutes": 120,
+        "caching_enabled": false,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 190.1550472225832,
+        "success_rate": 0.6505118510484812,
+        "resource_utilization": 0.43541301986414327,
+        "time_of_day_bucket": 12,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.702877+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-4",
+        "concurrency_limit": 2,
+        "timeout_minutes": 120,
+        "caching_enabled": false,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 192.1589120670933,
+        "success_rate": 0.9961629574680668,
+        "resource_utilization": 0.43155999969142944,
+        "time_of_day_bucket": 18,
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "no_change",
+      "reward": -0.03588979117864504,
+      "next_state": {
+        "workflow_name": "workflow-4",
+        "concurrency_limit": 2,
+        "timeout_minutes": 120,
+        "caching_enabled": false,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 197.9675739736548,
+        "success_rate": 0.9893634089435291,
+        "resource_utilization": 0.43155999969142944,
+        "time_of_day_bucket": 18,
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.706895+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-0",
+        "concurrency_limit": 1,
+        "timeout_minutes": 120,
+        "caching_enabled": true,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 541.8732133197824,
+        "success_rate": 0.70776541069047,
+        "resource_utilization": 0.8400068388930448,
+        "time_of_day_bucket": 7,
+        "day_of_week": 4,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "increase_concurrency",
+      "reward": 0.1073935878870797,
+      "next_state": {
+        "workflow_name": "workflow-0",
+        "concurrency_limit": 2,
+        "timeout_minutes": 120,
+        "caching_enabled": true,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 459.60281002450245,
+        "success_rate": 0.7210977583523303,
+        "resource_utilization": 0.8400068388930448,
+        "time_of_day_bucket": 7,
+        "day_of_week": 4,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.711000+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-2",
+        "concurrency_limit": 3,
+        "timeout_minutes": 120,
+        "caching_enabled": true,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 271.10481755442964,
+        "success_rate": 0.8188831075105322,
+        "resource_utilization": 0.6055864807931497,
+        "time_of_day_bucket": 1,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "enable_caching",
+      "reward": 0.27853075851678605,
+      "next_state": {
+        "workflow_name": "workflow-2",
+        "concurrency_limit": 3,
+        "timeout_minutes": 120,
+        "caching_enabled": true,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 195.56161509507524,
+        "success_rate": 0.8666176752648392,
+        "resource_utilization": 0.6055864807931497,
+        "time_of_day_bucket": 1,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.715168+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-0",
+        "concurrency_limit": 2,
+        "timeout_minutes": 30,
+        "caching_enabled": true,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 88.82176626502488,
+        "success_rate": 0.8574320527756754,
+        "resource_utilization": 0.7496730720254596,
+        "time_of_day_bucket": 11,
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "reduce_timeout",
+      "reward": 0.251457210365459,
+      "next_state": {
+        "workflow_name": "workflow-0",
+        "concurrency_limit": 2,
+        "timeout_minutes": 15,
+        "caching_enabled": true,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 91.75139570855713,
+        "success_rate": 0.8973321972065217,
+        "resource_utilization": 0.8496730720254596,
+        "time_of_day_bucket": 11,
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.719347+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-4",
+        "concurrency_limit": 1,
+        "timeout_minutes": 60,
+        "caching_enabled": true,
+        "parallel_jobs": 1,
+        "avg_duration_seconds": 573.1565833447569,
+        "success_rate": 0.7890048617689852,
+        "resource_utilization": 0.7034286877256974,
+        "time_of_day_bucket": 7,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "no_change",
+      "reward": 0.20563796769790102,
+      "next_state": {
+        "workflow_name": "workflow-4",
+        "concurrency_limit": 1,
+        "timeout_minutes": 60,
+        "caching_enabled": true,
+        "parallel_jobs": 1,
+        "avg_duration_seconds": 521.8428823498392,
+        "success_rate": 0.8375267678001646,
+        "resource_utilization": 0.7034286877256974,
+        "time_of_day_bucket": 7,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.723579+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-2",
+        "concurrency_limit": 1,
+        "timeout_minutes": 60,
+        "caching_enabled": false,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 69.43524796587394,
+        "success_rate": 0.8378034018490581,
+        "resource_utilization": 0.5551688988352289,
+        "time_of_day_bucket": 12,
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "no_change",
+      "reward": -0.10965500156808013,
+      "next_state": {
+        "workflow_name": "workflow-2",
+        "concurrency_limit": 1,
+        "timeout_minutes": 60,
+        "caching_enabled": false,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 66.83003361053848,
+        "success_rate": 0.8021853950614706,
+        "resource_utilization": 0.5551688988352289,
+        "time_of_day_bucket": 12,
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.727938+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-2",
+        "concurrency_limit": 3,
+        "timeout_minutes": 180,
+        "caching_enabled": false,
+        "parallel_jobs": 3,
+        "avg_duration_seconds": 245.0697454577398,
+        "success_rate": 0.7670688281408703,
+        "resource_utilization": 0.4227296851691533,
+        "time_of_day_bucket": 20,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "reduce_timeout",
+      "reward": 0.041257967200107645,
+      "next_state": {
+        "workflow_name": "workflow-2",
+        "concurrency_limit": 3,
+        "timeout_minutes": 165,
+        "caching_enabled": false,
+        "parallel_jobs": 3,
+        "avg_duration_seconds": 258.44703811936535,
+        "success_rate": 0.7493808936663156,
+        "resource_utilization": 0.5227296851691533,
+        "time_of_day_bucket": 20,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.732327+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 1,
+        "timeout_minutes": 60,
+        "caching_enabled": true,
+        "parallel_jobs": 4,
+        "avg_duration_seconds": 589.4808417512651,
+        "success_rate": 0.6931556665900912,
+        "resource_utilization": 0.43376805650458716,
+        "time_of_day_bucket": 19,
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "decrease_concurrency",
+      "reward": 0.1354638760186827,
+      "next_state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 1,
+        "timeout_minutes": 60,
+        "caching_enabled": true,
+        "parallel_jobs": 4,
+        "avg_duration_seconds": 599.663394973874,
+        "success_rate": 0.7338337756782228,
+        "resource_utilization": 0.43376805650458716,
+        "time_of_day_bucket": 19,
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.736764+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 4,
+        "timeout_minutes": 60,
+        "caching_enabled": false,
+        "parallel_jobs": 4,
+        "avg_duration_seconds": 558.8234290041206,
+        "success_rate": 0.9763708517037083,
+        "resource_utilization": 0.6895624885749674,
+        "time_of_day_bucket": 19,
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "no_change",
+      "reward": -0.01745359638935883,
+      "next_state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 4,
+        "timeout_minutes": 60,
+        "caching_enabled": false,
+        "parallel_jobs": 4,
+        "avg_duration_seconds": 508.30853008662257,
+        "success_rate": 0.961053241476426,
+        "resource_utilization": 0.6895624885749674,
+        "time_of_day_bucket": 19,
+        "day_of_week": 3,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.741298+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-4",
+        "concurrency_limit": 4,
+        "timeout_minutes": 30,
+        "caching_enabled": false,
+        "parallel_jobs": 1,
+        "avg_duration_seconds": 367.7128566242918,
+        "success_rate": 0.7909855219251695,
+        "resource_utilization": 0.7538555776476197,
+        "time_of_day_bucket": 2,
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "no_change",
+      "reward": 0.11745519664113546,
+      "next_state": {
+        "workflow_name": "workflow-4",
+        "concurrency_limit": 4,
+        "timeout_minutes": 30,
+        "caching_enabled": false,
+        "parallel_jobs": 1,
+        "avg_duration_seconds": 371.9333387963183,
+        "success_rate": 0.8258558818056503,
+        "resource_utilization": 0.7538555776476197,
+        "time_of_day_bucket": 2,
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.745901+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-2",
+        "concurrency_limit": 4,
+        "timeout_minutes": 30,
+        "caching_enabled": false,
+        "parallel_jobs": 4,
+        "avg_duration_seconds": 455.4069243885902,
+        "success_rate": 0.9764033820039506,
+        "resource_utilization": 0.7077448413149926,
+        "time_of_day_bucket": 20,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "no_change",
+      "reward": 0.05600700636167262,
+      "next_state": {
+        "workflow_name": "workflow-2",
+        "concurrency_limit": 4,
+        "timeout_minutes": 30,
+        "caching_enabled": false,
+        "parallel_jobs": 4,
+        "avg_duration_seconds": 478.2718163014754,
+        "success_rate": 0.9981433960571956,
+        "resource_utilization": 0.7077448413149926,
+        "time_of_day_bucket": 20,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.750536+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-2",
+        "concurrency_limit": 4,
+        "timeout_minutes": 180,
+        "caching_enabled": false,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 220.71498747065885,
+        "success_rate": 0.6877374228746338,
+        "resource_utilization": 0.7989806351604894,
+        "time_of_day_bucket": 0,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "increase_concurrency",
+      "reward": 0.16873834113536967,
+      "next_state": {
+        "workflow_name": "workflow-2",
+        "concurrency_limit": 5,
+        "timeout_minutes": 180,
+        "caching_enabled": false,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 212.72024327432192,
+        "success_rate": 0.7318087172764294,
+        "resource_utilization": 0.7989806351604894,
+        "time_of_day_bucket": 0,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.755230+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-3",
+        "concurrency_limit": 2,
+        "timeout_minutes": 120,
+        "caching_enabled": false,
+        "parallel_jobs": 1,
+        "avg_duration_seconds": 217.180951131252,
+        "success_rate": 0.8487998312808904,
+        "resource_utilization": 0.4009583179718835,
+        "time_of_day_bucket": 3,
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "no_change",
+      "reward": -0.1451532119993366,
+      "next_state": {
+        "workflow_name": "workflow-3",
+        "concurrency_limit": 2,
+        "timeout_minutes": 120,
+        "caching_enabled": false,
+        "parallel_jobs": 1,
+        "avg_duration_seconds": 216.69655322585447,
+        "success_rate": 0.8070725834474698,
+        "resource_utilization": 0.4009583179718835,
+        "time_of_day_bucket": 3,
+        "day_of_week": 1,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.760053+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 2,
+        "timeout_minutes": 120,
+        "caching_enabled": true,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 282.758483488689,
+        "success_rate": 0.6481151708284391,
+        "resource_utilization": 0.3796996744146579,
+        "time_of_day_bucket": 12,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "no_change",
+      "reward": -0.05347784082485166,
+      "next_state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 2,
+        "timeout_minutes": 120,
+        "caching_enabled": true,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 261.35869559021677,
+        "success_rate": 0.6241863919142695,
+        "resource_utilization": 0.3796996744146579,
+        "time_of_day_bucket": 12,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.764864+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-3",
+        "concurrency_limit": 1,
+        "timeout_minutes": 180,
+        "caching_enabled": true,
+        "parallel_jobs": 3,
+        "avg_duration_seconds": 575.0106406520506,
+        "success_rate": 0.664939146878882,
+        "resource_utilization": 0.5813253146728048,
+        "time_of_day_bucket": 19,
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "reduce_timeout",
+      "reward": -0.04013042304275577,
+      "next_state": {
+        "workflow_name": "workflow-3",
+        "concurrency_limit": 1,
+        "timeout_minutes": 165,
+        "caching_enabled": true,
+        "parallel_jobs": 3,
+        "avg_duration_seconds": 590.1326861490892,
+        "success_rate": 0.6207645943397551,
+        "resource_utilization": 0.6813253146728048,
+        "time_of_day_bucket": 19,
+        "day_of_week": 6,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.769734+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-4",
+        "concurrency_limit": 4,
+        "timeout_minutes": 120,
+        "caching_enabled": false,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 471.090695280543,
+        "success_rate": 0.7403501218007027,
+        "resource_utilization": 0.8509975129947991,
+        "time_of_day_bucket": 13,
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "decrease_concurrency",
+      "reward": 0.3031084491015448,
+      "next_state": {
+        "workflow_name": "workflow-4",
+        "concurrency_limit": 3,
+        "timeout_minutes": 120,
+        "caching_enabled": false,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 434.4414591400569,
+        "success_rate": 0.8180615002556697,
+        "resource_utilization": 0.8509975129947991,
+        "time_of_day_bucket": 13,
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.774736+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 4,
+        "timeout_minutes": 60,
+        "caching_enabled": true,
+        "parallel_jobs": 4,
+        "avg_duration_seconds": 124.21902554751371,
+        "success_rate": 0.9649931893046166,
+        "resource_utilization": 0.7712830672321511,
+        "time_of_day_bucket": 5,
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "no_change",
+      "reward": 0.11780843975542708,
+      "next_state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 4,
+        "timeout_minutes": 60,
+        "caching_enabled": true,
+        "parallel_jobs": 4,
+        "avg_duration_seconds": 125.68338080921791,
+        "success_rate": 1,
+        "resource_utilization": 0.7712830672321511,
+        "time_of_day_bucket": 5,
+        "day_of_week": 0,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.779777+00:00"
+    },
+    {
+      "state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 2,
+        "timeout_minutes": 180,
+        "caching_enabled": true,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 371.03438070260427,
+        "success_rate": 0.8762307404412444,
+        "resource_utilization": 0.7623621888059482,
+        "time_of_day_bucket": 2,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "action": "decrease_concurrency",
+      "reward": 0.2395710431786541,
+      "next_state": {
+        "workflow_name": "workflow-1",
+        "concurrency_limit": 1,
+        "timeout_minutes": 180,
+        "caching_enabled": true,
+        "parallel_jobs": 2,
+        "avg_duration_seconds": 379.8872572550412,
+        "success_rate": 0.9474064659021374,
+        "resource_utilization": 0.7623621888059482,
+        "time_of_day_bucket": 2,
+        "day_of_week": 5,
+        "DURATION_BUCKET_SIZE_SECONDS": 120,
+        "MAX_DURATION_BUCKETS": 5,
+        "TIME_BUCKET_SIZE_HOURS": 6
+      },
+      "done": false,
+      "timestamp": "2025-11-25T04:38:54.784874+00:00"
     }
   ]
 }
