@@ -34,23 +34,28 @@ Examples:
 """
 
 import json
-import os
 import sys
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, asdict, field
-from collections import Counter, defaultdict
+from collections import Counter
 import argparse
-import re
 
-# Constants
+# Path Constants
 LEARNINGS_DIR = Path("learnings")
 PR_FAILURES_FILE = LEARNINGS_DIR / "pr_failures.json"
 INTELLIGENCE_DIR = LEARNINGS_DIR / "pr_intelligence"
 AGENT_PROFILES_DIR = INTELLIGENCE_DIR / "agent_profiles"
 PATTERNS_FILE = INTELLIGENCE_DIR / "code_patterns.json"
 AGENT_LEARNING_TRACKER_FILE = INTELLIGENCE_DIR / "agent_learning_tracker.json"
+
+# Threshold Constants - Configurable values for failure analysis
+SMALL_PR_FILE_THRESHOLD = 10  # PRs with <= this many files are considered "small"
+LARGE_PR_FILE_THRESHOLD = 20  # PRs with > this many files are considered "large"
+LARGE_PR_RATIO_THRESHOLD = 0.3  # If > 30% of failures are large PRs, warn about it
+HIGH_SUCCESS_RATE_THRESHOLD = 0.8  # Patterns with >= 80% success are recommended
+HISTORY_LIMIT = 50  # Maximum entries to keep in learning history per agent
 
 
 @dataclass
@@ -310,8 +315,8 @@ class PRFailureLearningIntegration:
             )
         
         # Warning for large PRs
-        large_prs = [f for f in failures if f.get('files_changed', 0) > 20]
-        if len(large_prs) > len(failures) * 0.3 and len(large_prs) > 0:
+        large_prs = [f for f in failures if f.get('files_changed', 0) > LARGE_PR_FILE_THRESHOLD]
+        if len(large_prs) > len(failures) * LARGE_PR_RATIO_THRESHOLD and len(large_prs) > 0:
             warnings.append(
                 "Large PRs tend to fail more often. "
                 "Consider breaking changes into smaller, focused PRs."
@@ -362,7 +367,7 @@ class PRFailureLearningIntegration:
         
         for pattern in self.patterns:
             success_rate = pattern.get('success_rate', 0)
-            if success_rate >= 0.8:  # Only high-success patterns
+            if success_rate >= HIGH_SUCCESS_RATE_THRESHOLD:  # Only high-success patterns
                 description = pattern.get('description', '')
                 if description:
                     success_patterns.append(description)
@@ -370,7 +375,7 @@ class PRFailureLearningIntegration:
         # Add default patterns if none found
         if not success_patterns:
             success_patterns = [
-                "Small PRs (≤10 files) have higher success rates",
+                f"Small PRs (≤{SMALL_PR_FILE_THRESHOLD} files) have higher success rates",
                 "PRs including test files succeed more often",
                 "PRs with conventional commit format have better outcomes"
             ]
@@ -437,8 +442,8 @@ class PRFailureLearningIntegration:
         })
         
         checklist_items.append({
-            'text': 'Check PR size (aim for ≤10 files)',
-            'priority': 'high' if any(f.get('files_changed', 0) > 20 for f in agent_failures) else 'low',
+            'text': f'Check PR size (aim for ≤{SMALL_PR_FILE_THRESHOLD} files)',
+            'priority': 'high' if any(f.get('files_changed', 0) > LARGE_PR_FILE_THRESHOLD for f in agent_failures) else 'low',
             'category': 'pr_size'
         })
         
@@ -529,11 +534,11 @@ class PRFailureLearningIntegration:
         if not success and failure_type:
             agent_data['failure_types'].append(failure_type)
         
-        # Keep only last 50 entries
-        if len(agent_data['success_history']) > 50:
-            agent_data['success_history'] = agent_data['success_history'][-50:]
-        if len(agent_data['pr_history']) > 50:
-            agent_data['pr_history'] = agent_data['pr_history'][-50:]
+        # Keep only the most recent entries based on configured limit
+        if len(agent_data['success_history']) > HISTORY_LIMIT:
+            agent_data['success_history'] = agent_data['success_history'][-HISTORY_LIMIT:]
+        if len(agent_data['pr_history']) > HISTORY_LIMIT:
+            agent_data['pr_history'] = agent_data['pr_history'][-HISTORY_LIMIT:]
         
         self._save_learning_tracker()
     
