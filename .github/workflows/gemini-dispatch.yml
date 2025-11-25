@@ -3,8 +3,14 @@ name: '🔀 Gemini Dispatch'
 # Central dispatcher for Gemini CLI - routes @gemini-cli commands to appropriate workflows
 # Part of the Chained autonomous AI ecosystem
 # 
-# MANUAL MODE: Only responds to @gemini-cli commands (no auto-triggers)
-# To enable auto-triggers, add back: pull_request and issues triggers
+# CURRENT MODE: Manual only (responds to @gemini-cli commands)
+# 
+# ============================================================================
+# TO ENABLE AUTO-TRIGGERS:
+# Uncomment the 'pull_request' and 'issues' sections below, then update
+# the dispatch job's 'if' condition and extract_command script accordingly.
+# See comments in those sections for details.
+# ============================================================================
 
 on:
   pull_request_review_comment:
@@ -16,6 +22,21 @@ on:
   issue_comment:
     types:
       - 'created'
+  
+  # -------------------------------------------------------------------------
+  # UNCOMMENT TO ENABLE AUTO-REVIEW ON PR OPEN:
+  # -------------------------------------------------------------------------
+  # pull_request:
+  #   types:
+  #     - 'opened'
+  
+  # -------------------------------------------------------------------------
+  # UNCOMMENT TO ENABLE AUTO-TRIAGE ON ISSUE OPEN:
+  # -------------------------------------------------------------------------
+  # issues:
+  #   types:
+  #     - 'opened'
+  #     - 'reopened'
 
 defaults:
   run:
@@ -42,8 +63,23 @@ jobs:
           env | grep '^DEBUG_'
 
   dispatch:
-    # MANUAL MODE: Only respond to @gemini-cli commands from OWNER/MEMBER/COLLABORATOR
-    # Auto-triggers for PR/issue open are disabled
+    # -------------------------------------------------------------------------
+    # CURRENT: Manual mode - only responds to @gemini-cli commands
+    # -------------------------------------------------------------------------
+    # TO ENABLE AUTO-TRIGGERS, replace this 'if' block with:
+    # if: |-
+    #   (
+    #     github.event_name == 'pull_request' &&
+    #     github.event.pull_request.head.repo.fork == false
+    #   ) || (
+    #     github.event_name == 'issues' &&
+    #     contains(fromJSON('["opened", "reopened"]'), github.event.action)
+    #   ) || (
+    #     github.event.sender.type == 'User' &&
+    #     startsWith(github.event.comment.body || github.event.review.body, '@gemini-cli') &&
+    #     contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association || github.event.review.author_association)
+    #   )
+    # -------------------------------------------------------------------------
     if: |-
       github.event.sender.type == 'User' &&
       startsWith(github.event.comment.body || github.event.review.body, '@gemini-cli') &&
@@ -71,7 +107,19 @@ jobs:
             const request = process.env.REQUEST;
             core.setOutput('request', request);
 
-            // MANUAL MODE: Only respond to @gemini-cli commands
+            // -----------------------------------------------------------------
+            // CURRENT: Manual mode - only responds to @gemini-cli commands
+            // -----------------------------------------------------------------
+            // TO ENABLE AUTO-TRIGGERS, add these cases before the @gemini-cli checks:
+            //
+            // if (eventType === 'pull_request.opened') {
+            //   core.setOutput('command', 'review');
+            // } else if (['issues.opened', 'issues.reopened'].includes(eventType)) {
+            //   core.setOutput('command', 'triage');
+            // } else if (request.startsWith("@gemini-cli /review")) {
+            //   ...
+            // -----------------------------------------------------------------
+
             if (request.startsWith("@gemini-cli /review")) {
               core.setOutput('command', 'review');
               const additionalContext = request.replace(/^@gemini-cli \/review/, '').trim();
