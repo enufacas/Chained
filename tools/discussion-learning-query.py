@@ -19,6 +19,7 @@ import json
 import re
 import os
 import sys
+import time
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass, asdict, field
@@ -127,9 +128,7 @@ class DiscussionLearningQuery:
                     'timestamp': data.get('timestamp', ''),
                     'insights_count': len(data.get('insights', [])),
                     'learning_quality': data.get('learning_quality', 0),
-                    'file': str(filepath.relative_to(self.learning_dir.parent.parent) 
-                               if filepath.is_relative_to(self.learning_dir.parent.parent) 
-                               else str(filepath))
+                    'file': str(filepath.name)
                 })
             except Exception as e:
                 print(f"Warning: Could not load {filepath}: {e}", file=sys.stderr)
@@ -169,7 +168,7 @@ class DiscussionLearningQuery:
         Returns:
             QueryResult with matching insights
         """
-        start_time = datetime.now()
+        start_time = time.perf_counter()
         matched_insights = []
         
         # Parse date filters
@@ -214,8 +213,8 @@ class DiscussionLearningQuery:
         total_matches = len(matched_insights)
         matched_insights = matched_insights[:limit]
         
-        # Calculate query time
-        query_time = (datetime.now() - start_time).total_seconds() * 1000
+        # Calculate query time using perf_counter for accuracy
+        query_time = (time.perf_counter() - start_time) * 1000
         
         # Build result
         return QueryResult(
@@ -603,7 +602,16 @@ def main():
     query = DiscussionLearningQuery(learning_dir=args.learning_dir)
     
     if args.command == 'query':
-        insight_type = InsightType(args.type) if args.type != 'all' else InsightType.ALL
+        # Map CLI argument to InsightType enum with validation
+        type_mapping = {
+            'technical': InsightType.TECHNICAL,
+            'process': InsightType.PROCESS,
+            'agent_behavior': InsightType.AGENT_BEHAVIOR,
+            'decision': InsightType.DECISION,
+            'all': InsightType.ALL
+        }
+        insight_type = type_mapping.get(args.type, InsightType.ALL)
+        
         result = query.query_insights(
             insight_type=insight_type,
             tags=args.tags,
