@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "generated_at": "2025-11-25T01:01:42.214558",
-    "analysis_period_days": 3,
-    "snapshots_analyzed": 3,
+    "generated_at": "2025-11-25T06:22:03.027045",
+    "analysis_period_days": 4,
+    "snapshots_analyzed": 4,
     "earliest_snapshot": "2025-11-14T04:00:27",
-    "latest_snapshot": "2025-11-25T01:01:20"
+    "latest_snapshot": "2025-11-25T06:21:37"
   },
   "diversity_trend": {
     "trend": "declining",
@@ -29,17 +29,23 @@
         "score": 0,
         "agents": 2,
         "flags": 2
+      },
+      {
+        "timestamp": "2025-11-25 06:21:37",
+        "score": 0,
+        "agents": 2,
+        "flags": 2
       }
     ],
-    "average_score": 66.66666666666667,
+    "average_score": 50.0,
     "score_stdev": 57.735026918962575
   },
   "agent_trends": {
     "copilot-swe-agent": {
       "trend": "stable",
-      "current_avg_flags": 0.3333333333333333,
+      "current_avg_flags": 0.6666666666666666,
       "previous_avg_flags": 0.3333333333333333,
-      "total_data_points": 3,
+      "total_data_points": 4,
       "history": [
         {
           "timestamp": "2025-11-14 04:00:27",
@@ -53,6 +59,11 @@
         },
         {
           "timestamp": "2025-11-25 01:01:20",
+          "flags": 1,
+          "total_contributions": 1
+        },
+        {
+          "timestamp": "2025-11-25 06:21:37",
           "flags": 1,
           "total_contributions": 1
         }
@@ -77,14 +88,28 @@
       ]
     },
     "copilot": {
-      "trend": "new",
-      "data_points": 1
+      "trend": "stable",
+      "current_avg_flags": 1,
+      "previous_avg_flags": 1,
+      "total_data_points": 2,
+      "history": [
+        {
+          "timestamp": "2025-11-25 01:01:20",
+          "flags": 1,
+          "total_contributions": 1
+        },
+        {
+          "timestamp": "2025-11-25 06:21:37",
+          "flags": 1,
+          "total_contributions": 1
+        }
+      ]
     }
   },
   "innovation_trend": {
     "trend": "stable",
-    "change": 0.0,
-    "current_average": 0.03276003276003276,
+    "change": 0.03223726627981947,
+    "current_average": 0.06499729903985223,
     "previous_average": 0.03276003276003276,
     "data_points": [
       {
@@ -104,6 +129,12 @@
         "index": 0.09828009828009827,
         "unique_approaches": 2,
         "total_contributions": 2035
+      },
+      {
+        "timestamp": "2025-11-25 06:21:37",
+        "index": 0.09671179883945842,
+        "unique_approaches": 2,
+        "total_contributions": 2068
       }
     ]
   },
