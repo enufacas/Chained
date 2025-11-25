@@ -11,9 +11,11 @@ Chained is a practical experiment in **AI agent orchestration**. The project exp
 1. **Custom Agent Definitions** - How to define specialized AI agents with distinct roles, personalities, and capabilities using GitHub conventions
 2. **Agent Instruction Design** - Patterns for crafting effective agent instructions that work well with GitHub Copilot sessions
 3. **Workflow Orchestration** - Techniques for building harnesses around agents using GitHub Actions and other workflow systems
-4. **Multi-Agent Coordination** - Methods for assigning, routing, and coordinating work across multiple specialized agents
+4. **Agent Assignment & Lifecycle** - Methods for matching issues to appropriate agents and managing PR lifecycle automation
 
 The repository serves as both a working implementation and a reference for how to structure agent-based automation in GitHub repositories.
+
+**Future Goal:** True multi-agent collaboration where agents work together on shared tasks. Currently, each agent works independently on individually assigned issues.
 
 **[📖 Documentation](./docs/INDEX.md)** | **[🤖 Agent Definitions](./.github/agents/)** | **[⚙️ Workflows](./.github/workflows/)**
 
@@ -55,6 +57,50 @@ Agents can be invoked in several ways:
 2. **Issue Assignment** - The system matches issues to agents based on content analysis
 3. **Workflow Dispatch** - Workflows can invoke specific agents programmatically
 4. **Copilot Coding Agent** - Agents execute via the GitHub Copilot coding agent runner
+
+### Instruction Architecture
+
+The system uses a **two-level instruction hierarchy** that combines with GitHub Copilot's built-in behavior:
+
+#### Base Instructions (`.github/copilot-instructions.md`)
+Repository-wide conventions that apply to all agent sessions:
+- Agent catalog and selection guidelines
+- Code quality, testing, and documentation standards
+- Branch protection and PR workflow requirements
+- Agent communication and attribution rules
+
+#### Agent-Level Instructions (`.github/agents/*.md`)
+Specialized instructions for individual agents:
+- Agent personality and communication style
+- Domain-specific expertise and approaches
+- Tool configurations and capabilities
+- Performance tracking criteria
+
+When Copilot runs, it combines its built-in instructions with the base instructions, then overlays agent-specific guidance when an agent is assigned.
+
+### Copilot Environment Setup
+
+The `copilot-setup-steps.yml` workflow configures the Copilot coding agent environment:
+
+```yaml
+# .github/workflows/copilot-setup-steps.yml
+jobs:
+  copilot-setup-steps:
+    environment: copilot  # Access secrets from 'copilot' environment
+```
+
+**Key Environment Variables:**
+- `COPILOT_PAT` - Personal Access Token with `repo` scope (for issues, PRs, and labels access)
+- `COPILOT_LIMIT_CONTEXT=true` - Optimize context window usage
+- `COPILOT_IGNORE_FILE=.copilotignore` - Exclude files from agent context
+
+**Setup Steps:**
+1. Full repository checkout (for diffs and history)
+2. Node.js and Python toolchain installation
+3. Python dependencies from `requirements.txt`
+4. Environment variable configuration for agent tools
+
+The `copilot` environment must be configured in repository settings with the `COPILOT_PAT` secret for agents requiring write access to issues, PRs, and labels.
 
 ### Gemini CLI Integration
 
@@ -147,13 +193,15 @@ When an issue is created, `tools/match-issue-to-agent.py` analyzes the content a
 
 The highest-scoring agent is assigned to the issue.
 
-### Tech Lead Review
-
-Tech lead agents (`workflows-tech-lead`, `agents-tech-lead`, `docs-tech-lead`, `github-pages-tech-lead`) provide specialized PR review based on file paths changed.
-
 ### Meta-Coordination
 
-For complex tasks, the `meta-coordinator` agent can decompose work across multiple specialized agents.
+The `meta-coordinator-system` agent manages the autonomous system lifecycle:
+- **Agent Assignment** - Matches issues to appropriate agents based on content analysis
+- **PR Lifecycle** - Tracks PR state and handles transitions (review, merge, close)
+- **Auto-Merge** - Automatically merges approved PRs from trusted sources
+- **Stale Cleanup** - Closes orphaned or abandoned PRs and issues
+
+This is orchestration automation, not multi-agent collaboration. Each agent works independently on its assigned issue. True multi-agent collaboration (agents working together on the same task) is a future goal but not yet implemented.
 
 ---
 
@@ -163,8 +211,10 @@ For complex tasks, the `meta-coordinator` agent can decompose work across multip
 2. **Instruction engineering** - Crafting prompts that work with GitHub Copilot
 3. **Workflow harnesses** - Building automation around agent invocations
 4. **Assignment algorithms** - Matching work to appropriate agents
-5. **Multi-agent coordination** - Orchestrating work across specialists
+5. **Orchestration automation** - Managing agent assignment, PR lifecycle, and auto-merge
 6. **Alternative AI systems** - Integrating Gemini alongside Copilot
+
+**Note:** Multi-agent collaboration (agents working together on shared tasks) is a future goal. Currently, each agent works independently on individually assigned issues.
 
 ---
 
@@ -216,7 +266,7 @@ All external PRs require manual review. See [Security Implementation](./docs/SEC
 
 - **Learning system quality**: Generated work items often lack relevance or novelty. All outputs require human review before acting on them.
 - **Agent matching accuracy**: The keyword-based matching sometimes assigns inappropriate agents. Manual reassignment is possible by editing issue labels.
-- **Multi-agent coordination**: The meta-coordinator is rudimentary. Complex multi-agent tasks often require manual intervention.
+- **No multi-agent collaboration**: Agents work independently on assigned issues. The meta-coordinator handles assignment and lifecycle automation, but agents do not yet work together on shared tasks or hand off work to each other.
 - **Gemini integration**: Requires a separate API key configuration (`GEMINI_API_KEY` secret).
 
 This is an experiment in agent orchestration patterns, not a production-ready system.
