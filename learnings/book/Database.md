@@ -157,7 +157,7 @@ Perkeep is under active development. If you're a programmer or fairly technical,
 
 ### Unpowered SSDs slowly lose data
 
-**Community Score:** 393 upvotes
+**Community Score:** 684 upvotes
 
 **Link:** https://www.xda-developers.com/your-unpowered-ssd-is-slowly-losing-your-data/
 

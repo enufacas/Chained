@@ -2,7 +2,7 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 3561
+**Total Insights:** 3586
 
 **Last Updated:** 2025-11-25
 
@@ -203,26 +203,6 @@ Docker compose is commonly used for local development and testing. We need an ab
 ---
 
 
-### GitHub Discussion: Ability to use Free Models (0x credits) in Copilot CLI
-
-**Link:** https://github.com/github/copilot-cli/issues/32
-
-
-**Content Summary:**
-
-### Describe the feature or problem you'd like to solve
-
-The Copilot CLI uses Sonnet 4 by default which incurs 1x cost / message.
-
-### Proposed solution
-
-In the Copilot CLI, I wish we could select from a list of free models provided by GitHub Copilot eg. GPT-4.1, GPT-4o, GPT-5 mini, Grok Code Fast 1 etc. This would let us optimize our monthly quota. Thank you for considering. 
-
-<img width="353" height="576" alt="Image" src="https://github.com/user-attachments/assets/3f25c7a5-6e48-49b4-b67f-b309f...
-
----
-
-
 ### GitHub Discussion: sync github copilot chat history across devices
 
 **Link:** https://github.com/microsoft/vscode-copilot-release/issues/991
@@ -231,6 +211,19 @@ In the Copilot CLI, I wish we could select from a list of free models provided b
 **Content Summary:**
 
 I really wish it were possible to sync copilot chat histories across devices, ex: I use a laptop on the go and a desktop at home. I usually keep both devices lock-step via GitHub but it sucks that the chat history is different on both devices. I can usually enter in the same prompt to get a similar answer but it just seems counter intuitive that the chats do not sync by default, or there is not at least an option to sync the chats. Thanks
+
+---
+
+
+### GitHub Discussion: Copilot Chat support
+
+**Link:** https://github.com/github/copilot.vim/issues/57
+
+
+**Content Summary:**
+
+Creating a placeholder as I know this is a [popular request](https://github.com/orgs/community/discussions/50939). I am exploring options here, but it is not officially on the roadmap at this time. If/when it does happen, it will almost certainly happen in tandem with [support in the Copilot Language Server SDK](https://github.com/github/copilot-language-server-release/issues/1).
+
 
 ---
 
@@ -1330,10 +1323,10 @@ Hi HN - I’m Peter, here with Harry (devhawk), and we’re building DBOS Java, 
 ---
 
 
-### Human brains are preconfigured with instructions for understanding the world
+### Trillions spent and big software projects are still failing
 
-**Community Score:** 47 upvotes
+**Community Score:** 159 upvotes
 
-**Link:** https://news.ucsc.edu/2025/11/sharf-preconfigured-brain/
+**Link:** https://spectrum.ieee.org/it-management-software-failures
 
 ---

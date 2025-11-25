@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-25 10:24 UTC
+**Generated:** 2025-11-25 21:20 UTC
 
-**Total Learning Sessions:** 118
+**Total Learning Sessions:** 124
 
-**Total Insights:** 9556
+**Total Insights:** 9586
 
 ---
 
@@ -18,14 +18,14 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 3561
+**Insights:** 3586
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 789
+**Insights:** 786
 
 
 ### [🚀 DevOps & Infrastructure](./DevOps.md)
@@ -46,7 +46,7 @@ SQL, NoSQL, data storage, and data engineering
 
 Web technologies, browsers, APIs, and frontend frameworks
 
-**Insights:** 313
+**Insights:** 315
 
 
 ### [🔒 Security & Privacy](./Security.md)
@@ -74,14 +74,14 @@ IDEs, editors, debuggers, and productivity tools
 
 Open source projects, community insights, and collaboration
 
-**Insights:** 65
+**Insights:** 64
 
 
 ### [📚 General Tech Insights](./Other.md)
 
 General technology news and insights
 
-**Insights:** 3493
+**Insights:** 3500
 
 
 ## 📊 Statistics
@@ -89,13 +89,13 @@ General technology news and insights
 
 ### By Source
 
-- **Unknown:** 53 learning sessions
+- **Unknown:** 57 learning sessions
 
 - **Hacker News:** 26 learning sessions
 
 - **TLDR Tech:** 20 learning sessions
 
-- **GitHub Copilot (Combined):** 12 learning sessions
+- **GitHub Copilot (Combined):** 13 learning sessions
 
 - **GitHub Trending:** 4 learning sessions
 
@@ -106,15 +106,15 @@ General technology news and insights
 
 ### By Topic
 
-- **🤖 AI & Machine Learning:** 3561 insights
+- **🤖 AI & Machine Learning:** 3586 insights
 
-- **📚 General Tech Insights:** 3493 insights
+- **📚 General Tech Insights:** 3500 insights
 
-- **💻 Programming Languages & Frameworks:** 789 insights
+- **💻 Programming Languages & Frameworks:** 786 insights
 
 - **🔧 Developer Tools:** 556 insights
 
-- **🌐 Web Development:** 313 insights
+- **🌐 Web Development:** 315 insights
 
 - **⚡ Performance & Optimization:** 265 insights
 
@@ -124,7 +124,7 @@ General technology news and insights
 
 - **🔒 Security & Privacy:** 123 insights
 
-- **🌟 Open Source & Community:** 65 insights
+- **🌟 Open Source & Community:** 64 insights
 
 
 ## 💡 How to Use This Book
