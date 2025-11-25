@@ -2,9 +2,9 @@
 
 > Performance tuning, benchmarks, and optimization techniques
 
-**Total Insights:** 243
+**Total Insights:** 265
 
-**Last Updated:** 2025-11-24
+**Last Updated:** 2025-11-25
 
 ---
 

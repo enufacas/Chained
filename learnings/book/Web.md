@@ -2,9 +2,9 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 287
+**Total Insights:** 313
 
-**Last Updated:** 2025-11-24
+**Last Updated:** 2025-11-25
 
 ---
 

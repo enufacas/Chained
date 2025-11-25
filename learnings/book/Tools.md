@@ -2,9 +2,9 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 510
+**Total Insights:** 556
 
-**Last Updated:** 2025-11-24
+**Last Updated:** 2025-11-25
 
 ---
 
@@ -594,18 +594,18 @@ Arianity (profile) says: November 13, 2025 at 8:24 pm Maybe we’ll be able to p
 ---
 
 
-### Claude Advanced Tool Use
+### Itiner-E – The Digital Atlas of Ancient Roads
 
-**Community Score:** 31 upvotes
-
-**Link:** https://www.anthropic.com/engineering/advanced-tool-use
+**Link:** https://itiner-e.org/
 
 ---
 
 
-### Itiner-E – The Digital Atlas of Ancient Roads
+### Claude Advanced Tool Use
 
-**Link:** https://itiner-e.org/
+**Community Score:** 473 upvotes
+
+**Link:** https://www.anthropic.com/engineering/advanced-tool-use
 
 ---
 
