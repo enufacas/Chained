@@ -54,7 +54,7 @@ for issue_number in $issue_numbers; do
   # Skip issues with spawn-pending label (waiting for agent spawn PR to merge)
   if echo "$issue_labels" | grep -q "spawn-pending"; then
     echo "⏭️  Skipping issue #$issue_number - has spawn-pending label (waiting for spawn PR to merge)"
-    already_assigned_count=$((already_assigned_count + 1))
+    skipped_count=$((skipped_count + 1))
     continue
   fi
   
