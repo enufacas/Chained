@@ -22,10 +22,9 @@ on:
   schedule:
     # Run daily at 2:00 AM UTC to collect workflow data
     - cron: '0 2 * * *'
-  # Also trigger after any workflow completes to capture fresh data
-  workflow_run:
-    workflows: ['*']
-    types: [completed]
+  # NOTE: workflow_run trigger with wildcard removed to avoid excessive executions
+  # The scheduled daily collection is sufficient for data gathering
+  # Manual dispatch is available for on-demand collection
 
 permissions:
   contents: write
@@ -50,7 +49,12 @@ jobs:
       
       - name: Install dependencies
         run: |
-          pip install PyYAML>=6.0 2>/dev/null || true
+          # PyYAML is optional - collector works without it but some integrations may need it
+          if pip install 'PyYAML>=6.0'; then
+            echo "✓ PyYAML installed successfully"
+          else
+            echo "ℹ️ PyYAML installation failed (may be optional for basic data collection)"
+          fi
       
       - name: Determine collection parameters
         id: params

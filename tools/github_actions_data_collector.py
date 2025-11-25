@@ -53,6 +53,16 @@ class WorkflowRunData:
     actor: str
 
 
+# Constants for resource estimation
+# These values are based on typical GitHub Actions runner characteristics
+RESOURCE_CPU_BASE_PERCENT = 20        # Base CPU usage percentage
+RESOURCE_CPU_PER_MINUTE = 5           # Additional CPU % per minute of runtime
+RESOURCE_CPU_MAX_PERCENT = 90         # Maximum CPU usage cap
+RESOURCE_MEMORY_BASE_MB = 256         # Base memory usage in MB
+RESOURCE_MEMORY_PER_MINUTE = 50       # Additional memory per minute of runtime
+RESOURCE_MEMORY_MAX_MB = 2048         # Maximum memory cap (2GB)
+
+
 class GitHubActionsDataCollector:
     """
     Collects workflow execution data from GitHub Actions API.
@@ -209,13 +219,19 @@ class GitHubActionsDataCollector:
                 duration_seconds=duration_seconds,
                 event=run.get('event', 'unknown'),
                 branch=run.get('headBranch', 'unknown'),
-                actor=run.get('actor', {}).get('login', 'unknown') if isinstance(run.get('actor'), dict) else 'unknown'
+                actor=self._extract_actor_name(run.get('actor'))
             )
             
             workflow_runs.append(workflow_run)
         
         print(f"✓ Fetched {len(workflow_runs)} workflow runs")
         return workflow_runs
+    
+    def _extract_actor_name(self, actor_data: Any) -> str:
+        """Extract actor login from API response, handling various formats."""
+        if isinstance(actor_data, dict):
+            return actor_data.get('login', 'unknown')
+        return 'unknown'
     
     def record_to_predictor(self, runs: List[WorkflowRunData]) -> int:
         """
@@ -242,13 +258,21 @@ class GitHubActionsDataCollector:
             success = run.conclusion in ['success', 'neutral', 'skipped']
             
             # Resource usage estimation based on duration
+            # Uses named constants for clarity and maintainability
+            duration_minutes = run.duration_seconds / 60
             resource_usage = {
                 'duration_seconds': run.duration_seconds,
                 'event': run.event,
                 'branch': run.branch,
                 'actor': run.actor,
-                'estimated_cpu_percent': min(90, 20 + (run.duration_seconds / 60) * 5),
-                'estimated_memory_mb': min(2048, 256 + (run.duration_seconds / 60) * 50)
+                'estimated_cpu_percent': min(
+                    RESOURCE_CPU_MAX_PERCENT,
+                    RESOURCE_CPU_BASE_PERCENT + duration_minutes * RESOURCE_CPU_PER_MINUTE
+                ),
+                'estimated_memory_mb': min(
+                    RESOURCE_MEMORY_MAX_MB,
+                    RESOURCE_MEMORY_BASE_MB + duration_minutes * RESOURCE_MEMORY_PER_MINUTE
+                )
             }
             
             try:
