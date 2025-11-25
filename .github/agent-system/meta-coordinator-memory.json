@@ -7,11 +7,11 @@
     "successful_runs": 33,
     "failed_runs": 0,
     "last_run": {
-      "timestamp": "2025-11-25T12:33:08.005019",
+      "timestamp": "2025-11-25T16:24:00.747465",
       "success": true,
-      "duration_seconds": 300,
-      "actions_taken": 1,
-      "session_id": "meta-coord-12-26"
+      "duration_seconds": 180,
+      "actions_taken": 10,
+      "session_id": "meta-coord-16-17"
     },
     "average_duration_seconds": 139.375
   },
@@ -2200,6 +2200,51 @@
       "pr": 2978,
       "timestamp": "2025-11-25T12:33:08.005029",
       "title": "AgentOps Dashboard Data Sync - 2025-11-25"
+    },
+    {
+      "pr": 2996,
+      "timestamp": "2025-11-25T16:24:00.747473",
+      "title": "Merged in 16:17 coordination run"
+    },
+    {
+      "pr": 2995,
+      "timestamp": "2025-11-25T16:24:00.747474",
+      "title": "Merged in 16:17 coordination run"
+    },
+    {
+      "pr": 2992,
+      "timestamp": "2025-11-25T16:24:00.747475",
+      "title": "Merged in 16:17 coordination run"
+    },
+    {
+      "pr": 2993,
+      "timestamp": "2025-11-25T16:24:00.747476",
+      "title": "Merged in 16:17 coordination run"
+    },
+    {
+      "pr": 2991,
+      "timestamp": "2025-11-25T16:24:00.747477",
+      "title": "Merged in 16:17 coordination run"
+    },
+    {
+      "pr": 2989,
+      "timestamp": "2025-11-25T16:24:00.747478",
+      "title": "Merged in 16:17 coordination run"
+    },
+    {
+      "pr": 2981,
+      "timestamp": "2025-11-25T16:24:00.747479",
+      "title": "Merged in 16:17 coordination run"
+    },
+    {
+      "pr": 2975,
+      "timestamp": "2025-11-25T16:24:00.747482",
+      "title": "Merged in 16:17 coordination run"
+    },
+    {
+      "pr": 2974,
+      "timestamp": "2025-11-25T16:24:00.747484",
+      "title": "Merged in 16:17 coordination run"
     }
   ]
 }

@@ -60,7 +60,7 @@ Agents can be invoked in several ways:
 
 ### Instruction Architecture
 
-The system uses a **three-level instruction hierarchy** that combines with GitHub Copilot's built-in behavior:
+The system uses a **two-level instruction hierarchy** that combines with GitHub Copilot's built-in behavior:
 
 #### Base Instructions (`.github/copilot-instructions.md`)
 Repository-wide conventions that apply to all agent sessions:
@@ -69,25 +69,6 @@ Repository-wide conventions that apply to all agent sessions:
 - Branch protection and PR workflow requirements
 - Agent communication and attribution rules
 
-#### Path-Level Instructions (`.github/instructions/*.md`)
-Context-specific guidance that applies when working on particular files or directories. Each instruction file uses YAML frontmatter to specify which paths it applies to:
-
-```yaml
----
-applyTo:
-  - ".github/workflows/**/*.yml"
-  - "tools/**/*.py"
----
-```
-
-Examples include:
-- **`agent-mentions.instructions.md`** - Rules for @agent-name attribution syntax
-- **`branch-protection.instructions.md`** - PR-based workflow requirements
-- **`workflow-agent-assignment.instructions.md`** - Agent assignment patterns in workflows
-- **`threejs-rendering.instructions.md`** - 3D rendering performance guidelines
-
-See [`.github/instructions/README.md`](./.github/instructions/README.md) for the complete list.
-
 #### Agent-Level Instructions (`.github/agents/*.md`)
 Specialized instructions for individual agents:
 - Agent personality and communication style
@@ -95,7 +76,7 @@ Specialized instructions for individual agents:
 - Tool configurations and capabilities
 - Performance tracking criteria
 
-When Copilot runs, it combines its built-in instructions with the base instructions, overlays any applicable path-level instructions, then adds agent-specific guidance when an agent is assigned.
+When Copilot runs, it combines its built-in instructions with the base instructions, then overlays agent-specific guidance when an agent is assigned.
 
 ### Copilot Environment Setup
 
@@ -211,37 +192,6 @@ When an issue is created, `tools/match-issue-to-agent.py` analyzes the content a
 - Agent availability and workload
 
 The highest-scoring agent is assigned to the issue.
-
-**Workflow Integration Example:**
-
-The matching script is invoked from GitHub Actions workflows to automate agent assignment. Here's how it integrates:
-
-```bash
-# Example: Match an issue or PR to the appropriate agent
-issue_title="Optimize API response time"
-issue_body="The /users endpoint is slow when fetching large datasets..."
-
-agent_match=$(python3 tools/match-issue-to-agent.py \
-  "$issue_title" \
-  "$issue_body")
-
-matched_agent=$(echo "$agent_match" | jq -r '.agent')
-agent_score=$(echo "$agent_match" | jq -r '.score')
-agent_confidence=$(echo "$agent_match" | jq -r '.confidence')
-
-echo "Matched to agent: @${matched_agent}"
-echo "Score: ${agent_score} | Confidence: ${agent_confidence}"
-```
-
-The script returns JSON with the matched agent name, confidence score, and other metadata. Workflows then use this to create issues with agent directives, add appropriate labels (`agent:agent-name`), and notify the assigned agent. See `autonomous-pipeline.yml` for a working example.
-
-**Command Line Usage:**
-
-```bash
-# Match an issue to the most appropriate agent
-python3 tools/match-issue-to-agent.py "Optimize API performance" "The endpoint is slow..."
-# Output: {"agent": "accelerate-master", "score": 8, "confidence": "high", ...}
-```
 
 ### Meta-Coordination
 
