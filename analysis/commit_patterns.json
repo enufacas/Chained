@@ -1,13 +1,72 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-20T03:53:13.593841+00:00",
+  "last_updated": "2025-11-25T03:08:13.792087+00:00",
   "message_patterns": {},
   "size_patterns": {},
   "organization_patterns": {},
   "timing_patterns": {},
   "success_metrics": {
-    "total_commits": 2,
-    "successful_commits": 0,
+    "total_commits": 500,
+    "successful_commits": 500,
     "failed_commits": 0
+  },
+  "size": {
+    "optimal_commit_size": {
+      "pattern_name": "optimal_commit_size",
+      "pattern_type": "size",
+      "description": "Commits with focused changes (few files, moderate lines)",
+      "success_rate": 0.484,
+      "occurrence_count": 242,
+      "average_merge_time_hours": 0.0,
+      "common_attributes": {
+        "avg_files": 1.8760330578512396,
+        "avg_lines": 28.210743801652892
+      },
+      "examples": [
+        "2ae22a45",
+        "f61f735b",
+        "e796a6be"
+      ],
+      "confidence_score": 0.4356
+    }
+  },
+  "message": {
+    "detailed_messages": {
+      "pattern_name": "detailed_messages",
+      "pattern_type": "message",
+      "description": "Commits with detailed message body",
+      "success_rate": 0.91,
+      "occurrence_count": 455,
+      "average_merge_time_hours": 0.0,
+      "common_attributes": {
+        "has_explanation": true,
+        "avg_message_length": 60.43076923076923
+      },
+      "examples": [
+        "2ae22a45",
+        "556652c1",
+        "f61f735b"
+      ],
+      "confidence_score": 0.7735
+    }
+  },
+  "organization": {
+    "focused_changes": {
+      "pattern_name": "focused_changes",
+      "pattern_type": "organization",
+      "description": "Commits focused on single file type or related files",
+      "success_rate": 0.81,
+      "occurrence_count": 405,
+      "average_merge_time_hours": 0.0,
+      "common_attributes": {
+        "avg_file_types": 1.0271604938271606
+      },
+      "examples": [
+        "2ae22a45",
+        "556652c1",
+        "f61f735b"
+      ],
+      "confidence_score": 0.6480000000000001
+    }
   }
 }
