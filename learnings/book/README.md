@@ -95,7 +95,7 @@ General technology news and insights
 
 - **TLDR Tech:** 20 learning sessions
 
-- **GitHub Copilot (Combined):** 11 learning sessions
+- **GitHub Copilot (Combined):** 12 learning sessions
 
 - **GitHub Trending:** 4 learning sessions
 
