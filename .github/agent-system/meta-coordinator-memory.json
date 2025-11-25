@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-11-25T08:26:23.952832",
+  "last_updated": "2025-11-25T12:33:08.005031",
   "runs": {
-    "total_runs": 30,
-    "successful_runs": 30,
+    "total_runs": 31,
+    "successful_runs": 31,
     "failed_runs": 0,
     "last_run": {
-      "timestamp": "2025-11-25T08:26:23.949100",
+      "timestamp": "2025-11-25T12:33:08.005019",
       "success": true,
       "duration_seconds": 300,
-      "actions_taken": 9,
-      "session_id": "b7d54eca2e4e6a4a"
+      "actions_taken": 1,
+      "session_id": "meta-coord-12-26"
     },
     "average_duration_seconds": 139.375
   },
@@ -2193,6 +2193,13 @@
       "open_issues_after": 3,
       "prs_merged": 2,
       "items_cleaned": 4
+    }
+  ],
+  "auto_merges": [
+    {
+      "pr": 2978,
+      "timestamp": "2025-11-25T12:33:08.005029",
+      "title": "AgentOps Dashboard Data Sync - 2025-11-25"
     }
   ]
 }
