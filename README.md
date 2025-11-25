@@ -60,23 +60,31 @@ Agents can be invoked in several ways:
 
 ### Instruction Architecture
 
-The system uses a **two-level instruction hierarchy** that combines with GitHub Copilot's built-in behavior:
+The system uses a **three-layer instruction hierarchy** that combines to create the complete instruction set for each agent:
 
-#### Base Instructions (`.github/copilot-instructions.md`)
+**[📊 Visual Diagram: Agent Instruction Architecture](./docs/diagrams/agent-instruction-architecture.md)**
+
+#### Layer 1: GitHub Copilot Built-in Instructions
+Platform-provided capabilities (universal, unchangeable):
+- Code completion and generation
+- Language and framework understanding
+- Tool usage fundamentals
+
+#### Layer 2: Base Instructions (`.copilot-instructions.md`)
 Repository-wide conventions that apply to all agent sessions:
 - Agent catalog and selection guidelines
 - Code quality, testing, and documentation standards
 - Branch protection and PR workflow requirements
 - Agent communication and attribution rules
 
-#### Agent-Level Instructions (`.github/agents/*.md`)
+#### Layer 3: Agent-Specific Instructions (`.github/agents/*.md`)
 Specialized instructions for individual agents:
 - Agent personality and communication style
 - Domain-specific expertise and approaches
 - Tool configurations and capabilities
 - Performance tracking criteria
 
-When Copilot runs, it combines its built-in instructions with the base instructions, then overlays agent-specific guidance when an agent is assigned.
+When Copilot runs, it combines all three layers - built-in capabilities, base instructions, and agent-specific guidance - to create the complete instruction set for the assigned agent.
 
 ### Copilot Environment Setup
 
