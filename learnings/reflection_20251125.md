@@ -8,8 +8,8 @@
 ### 📖 Topics Reflected Upon:
 
 1. Visualize FastAPI endpoints with FastAPI-Voyager
-2. Untitled
-3. HipKittens: Fast and furious AMD kernels
+2. .NET MAUI is coming to Linux and the browser
+3. Structured Outputs on the Claude Developer Platform (API)
 
 ### 💡 Key Takeaways:
 
