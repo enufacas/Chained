@@ -23,6 +23,11 @@ on:
         required: false
         default: '100'
         type: string
+      data_limit:
+        description: 'Number of workflow runs to collect for data'
+        required: false
+        default: '100'
+        type: string
   schedule:
     # Run weekly on Sunday at 3 AM UTC to train and generate recommendations
     - cron: '0 3 * * 0'
@@ -50,7 +55,8 @@ jobs:
       - name: Collect workflow data first
         run: |
           echo "📥 Collecting latest workflow execution data..."
-          python3 tools/github_actions_data_collector.py --collect --limit 100 || {
+          DATA_LIMIT="${{ github.event.inputs.data_limit || '100' }}"
+          python3 tools/github_actions_data_collector.py --collect --limit "$DATA_LIMIT" || {
             echo "⚠️ Data collection failed, continuing with existing data"
           }
         env:

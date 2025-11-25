@@ -60,13 +60,18 @@ class ResourceState:
     time_of_day_bucket: int  # 0-23 (hour)
     day_of_week: int  # 0-6
 
+    # Discretization constants for state key generation
+    DURATION_BUCKET_SIZE_SECONDS: int = 120  # 2-minute buckets
+    MAX_DURATION_BUCKETS: int = 5  # Maximum 5 buckets (0-5)
+    TIME_BUCKET_SIZE_HOURS: int = 6  # 6-hour buckets (0-3)
+
     def to_state_key(self) -> str:
         """Convert state to a hashable key for Q-table lookup."""
         # Discretize continuous values into buckets
-        duration_bucket = min(5, int(self.avg_duration_seconds / 120))  # 0-5 (2min buckets)
+        duration_bucket = min(self.MAX_DURATION_BUCKETS, int(self.avg_duration_seconds / self.DURATION_BUCKET_SIZE_SECONDS))
         success_bucket = int(self.success_rate * 10)  # 0-10
         util_bucket = int(self.resource_utilization * 5)  # 0-5
-        time_bucket = self.time_of_day_bucket // 6  # 0-3 (6-hour buckets)
+        time_bucket = self.time_of_day_bucket // self.TIME_BUCKET_SIZE_HOURS
 
         return f"{self.concurrency_limit}_{self.timeout_minutes // 60}_{int(self.caching_enabled)}_{self.parallel_jobs}_{duration_bucket}_{success_bucket}_{util_bucket}_{time_bucket}_{self.day_of_week}"
 
@@ -121,6 +126,14 @@ class RLResourceOptimizer:
     REWARD_WEIGHT_DURATION = 0.4
     REWARD_WEIGHT_SUCCESS = 0.35
     REWARD_WEIGHT_UTILIZATION = 0.25
+
+    # Scaling constants
+    Q_VALUE_TO_PERCENTAGE_SCALE = 10  # Scale Q-values to percentage improvements
+
+    # Simulation variance parameters
+    SIMULATION_DURATION_VARIANCE_MIN = 0.9
+    SIMULATION_DURATION_VARIANCE_MAX = 1.1
+    SIMULATION_SUCCESS_RATE_VARIANCE = 0.05
 
     def __init__(self, repo_root: str = None):
         """Initialize the RL optimizer."""
@@ -305,7 +318,7 @@ class RLResourceOptimizer:
         success_rate = sum(successes) / len(successes) if successes else 0.8
 
         # Estimate resource utilization based on duration variance
-        if len(durations) > 1:
+        if len(durations) > 1 and avg_duration > 0:
             duration_std = (sum((d - avg_duration) ** 2 for d in durations) / len(durations)) ** 0.5
             utilization = 1 - min(1, duration_std / avg_duration)
         else:
@@ -567,7 +580,7 @@ class RLResourceOptimizer:
             expected_improvement = 0.0
         else:
             best_q = action_values.get(best_action.value, 0)
-            expected_improvement = max(0, best_q * 10)  # Scale to percentage
+            expected_improvement = max(0, best_q * self.Q_VALUE_TO_PERCENTAGE_SCALE)
 
         # Generate reasoning
         reasoning = self._generate_reasoning(state, best_action, action_values)
@@ -579,7 +592,7 @@ class RLResourceOptimizer:
                 alternatives.append({
                     'action': action_name,
                     'q_value': q_value,
-                    'expected_improvement': max(0, q_value * 10)
+                    'expected_improvement': max(0, q_value * self.Q_VALUE_TO_PERCENTAGE_SCALE)
                 })
         alternatives = alternatives[:3]  # Top 3 alternatives
 
@@ -739,8 +752,14 @@ class RLResourceOptimizer:
             next_state = self.apply_action_to_state(state, action)
 
             # Add some randomness to simulate real-world variance
-            next_state.avg_duration_seconds *= random.uniform(0.9, 1.1)
-            next_state.success_rate = max(0, min(1, next_state.success_rate + random.uniform(-0.05, 0.05)))
+            next_state.avg_duration_seconds *= random.uniform(
+                self.SIMULATION_DURATION_VARIANCE_MIN,
+                self.SIMULATION_DURATION_VARIANCE_MAX
+            )
+            next_state.success_rate = max(0, min(1, next_state.success_rate + random.uniform(
+                -self.SIMULATION_SUCCESS_RATE_VARIANCE,
+                self.SIMULATION_SUCCESS_RATE_VARIANCE
+            )))
 
             # Learn from experience
             reward = self.learn_from_experience(state, action, next_state)
