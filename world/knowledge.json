@@ -2558,6 +2558,113 @@
       "category": "Integration",
       "analysis_date": "2025-11-25",
       "created_at": "2025-11-25T08:19:22Z"
+    },
+    {
+      "id": "idea:131",
+      "title": "Integration: Ai-Agents-Cloud (2025-11-25)",
+      "summary": "Exploring ai-agents-cloud trends with 117 mentions. AI + Infrastructure: Integrate AI capabilities with cloud infrastructure Also: Combining Ai-Agents and Cloud for better solutions",
+      "patterns": [
+        "ai-agents-cloud",
+        "integration",
+        "ai",
+        "cloud",
+        "agents",
+        "topic:f5a2956b",
+        "date:2025-11-25"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 117,
+      "category": "Integration",
+      "analysis_date": "2025-11-25",
+      "created_at": "2025-11-25T20:15:41Z"
+    },
+    {
+      "id": "idea:132",
+      "title": "Integration: Security-Ai-Agents (2025-11-25)",
+      "summary": "Exploring security-ai-agents trends with 123 mentions. Security + AI: Apply AI/ML to enhance security systems Also: Combining Security and Ai-Agents for better solutions",
+      "patterns": [
+        "security-ai-agents",
+        "integration",
+        "ai",
+        "agents",
+        "security",
+        "topic:e1d7cbc1",
+        "date:2025-11-25"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 123,
+      "category": "Integration",
+      "analysis_date": "2025-11-25",
+      "created_at": "2025-11-25T20:15:41Z"
+    },
+    {
+      "id": "idea:133",
+      "title": "Integration: Api-Gpt (2025-11-25)",
+      "summary": "Exploring api-gpt trends with 180 mentions. Web + AI: Build AI-powered web applications Also: Combining Api and Gpt for better solutions",
+      "patterns": [
+        "api",
+        "integration",
+        "gpt",
+        "api-gpt",
+        "topic:b9bd9263",
+        "date:2025-11-25"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 180,
+      "category": "Integration",
+      "analysis_date": "2025-11-25",
+      "created_at": "2025-11-25T20:15:41Z"
     }
   ]
 }
