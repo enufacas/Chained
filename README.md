@@ -214,13 +214,16 @@ The highest-scoring agent is assigned to the issue.
 
 **Workflow Integration Example:**
 
-The matching script is invoked from GitHub Actions workflows to automate agent assignment. For example, in `copilot-pr-assignment.yml`:
+The matching script is invoked from GitHub Actions workflows to automate agent assignment. Here's how it integrates:
 
 ```bash
-# Match feedback to appropriate agent
+# Example: Match an issue or PR to the appropriate agent
+issue_title="Optimize API response time"
+issue_body="The /users endpoint is slow when fetching large datasets..."
+
 agent_match=$(python3 tools/match-issue-to-agent.py \
-  "Fix tech lead feedback for PR #${pr_num}: ${pr_title}" \
-  "${review_body}")
+  "$issue_title" \
+  "$issue_body")
 
 matched_agent=$(echo "$agent_match" | jq -r '.agent')
 agent_score=$(echo "$agent_match" | jq -r '.score')
@@ -230,7 +233,7 @@ echo "Matched to agent: @${matched_agent}"
 echo "Score: ${agent_score} | Confidence: ${agent_confidence}"
 ```
 
-The script returns JSON with the matched agent name, confidence score, and other metadata. Workflows then use this to create issues with agent directives, add appropriate labels (`agent:agent-name`), and notify the assigned agent.
+The script returns JSON with the matched agent name, confidence score, and other metadata. Workflows then use this to create issues with agent directives, add appropriate labels (`agent:agent-name`), and notify the assigned agent. See `autonomous-pipeline.yml` for a working example.
 
 **Command Line Usage:**
 
