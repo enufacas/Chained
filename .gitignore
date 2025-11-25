@@ -1,6 +1,12 @@
 # Temporary test files
 learnings/agent_memory/*.json
 
+# Root directory protection - prevent pollution
+/actionlint
+/truth_discovery_log.txt
+/*_discovery_log.txt
+/*_temp.txt
+
 # Build artifacts
 __pycache__/
 *.pyc
