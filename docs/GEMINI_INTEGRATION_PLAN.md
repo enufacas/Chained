@@ -44,7 +44,7 @@ The Chained ecosystem currently uses:
 ### Why Gemini?
 
 Google Gemini offers unique capabilities:
-- **Long context window** (up to 1M tokens with Gemini 1.5 Pro)
+- **Long context window** (up to 2M tokens with Gemini 1.5 Pro)
 - **Multimodal understanding** (text, images, video, code)
 - **Strong code generation** capabilities
 - **Cost efficiency** compared to other providers
@@ -204,13 +204,25 @@ elif provider == AIProvider.GEMINI:
         )
     )
     
-    text = response.text
-    # Estimate tokens (Gemini uses different tokenization)
-    tokens = len(text.split()) * 1.3  # Rough estimate
+    # Safely extract response text with error handling
+    if not response.candidates:
+        raise Exception("Gemini returned no response candidates")
+    
+    text = response.text if hasattr(response, 'text') else ""
+    
+    # Token estimation: ~1.3 words per token is a rough approximation
+    # For production, use model.count_tokens() for accurate counting
+    tokens = len(text.split()) * 1.3
     cost = self._estimate_cost(provider, int(tokens))
+    
+    # Safely extract finish reason
+    finish_reason = "unknown"
+    if response.candidates and len(response.candidates) > 0:
+        finish_reason = response.candidates[0].finish_reason.name
+    
     metadata = {
         "model": "gemini-1.5-pro",
-        "finish_reason": response.candidates[0].finish_reason.name if response.candidates else "unknown"
+        "finish_reason": finish_reason
     }
 ```
 
@@ -369,6 +381,7 @@ jobs:
       
       - name: Analyze with Gemini
         id: gemini
+        # SECURITY: GEMINI_API_KEY is stored in GitHub Secrets and automatically masked in logs
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
@@ -377,7 +390,7 @@ jobs:
           import json
           import google.generativeai as genai
           
-          # Configure Gemini
+          # Configure Gemini (API key from environment, never logged)
           genai.configure(api_key=os.environ['GEMINI_API_KEY'])
           model = genai.GenerativeModel('gemini-1.5-pro')
           
@@ -562,12 +575,19 @@ Based on Gemini's unique capabilities, consider these specializations:
 
 ## 💰 Cost Considerations
 
+> **Note:** Pricing is approximate and may change. Always verify current rates at each provider's pricing page.
+
 | Provider | Model | Cost per 1K tokens | Notes |
 |----------|-------|-------------------|-------|
 | OpenAI | GPT-4 | ~$0.03 | Higher cost, strong reasoning |
 | Anthropic | Claude 3.5 | ~$0.015 | Good balance |
 | **Gemini** | **1.5 Pro** | **~$0.01** | **Most cost-effective** |
 | Gemini | 1.5 Flash | ~$0.0035 | Fastest, cheapest |
+
+**Current pricing sources:**
+- [Google AI Pricing](https://ai.google.dev/pricing)
+- [OpenAI Pricing](https://openai.com/pricing)
+- [Anthropic Pricing](https://www.anthropic.com/pricing)
 
 **Recommendation:** Use Gemini 1.5 Pro for complex analysis, Flash for simple tasks.
 
