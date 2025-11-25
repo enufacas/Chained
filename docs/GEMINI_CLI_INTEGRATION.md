@@ -205,14 +205,48 @@ The `run-gemini-cli` action integrates Google's Gemini AI into GitHub workflows,
 
 **Recommendation for Chained**: Start with API Key for simplicity.
 
-### B. Model Selection
+### B. Model Selection and Rate Limits
+
+> **⚠️ Free Tier Rate Limits**: Different Gemini models have different rate limits on the free tier. Choose your model carefully to avoid hitting rate limits.
+
+#### Free Tier Rate Limits by Model
+
+| Model | Requests per Minute (RPM) | Requests per Day (RPD) | Recommended |
+|-------|--------------------------|------------------------|-------------|
+| `gemini-2.0-flash` | 15 | 200 | ✅ **Default** - Best for high-volume use |
+| `gemini-2.5-flash-lite` | 15 | 1,000 | ✅ High daily limit |
+| `gemini-2.5-flash` | 10 | 250 | Good balance |
+| `gemini-2.5-pro` | 2 | 50 | ❌ Lowest RPM - avoid for frequent triggers |
+
+#### Configuration
+
+The workflows default to `gemini-2.0-flash` for optimal free tier usage. To override:
+
+**Option 1: Set Repository Variable (Recommended)**
+1. Go to **Settings > Secrets and variables > Actions > Variables**
+2. Create variable `GEMINI_MODEL` with your preferred model name
+
+**Option 2: Edit Workflow Files**
+```yaml
+# In workflow files:
+gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-2.0-flash'' }}'
+```
+
+#### Available Models
 
 ```yaml
-# Repository variable: GEMINI_MODEL
-gemini_model: 'gemini-2.0-flash-exp'  # Latest experimental
-# or
-gemini_model: 'gemini-1.5-pro'        # Stable, longer context
+# High RPM (recommended for free tier)
+gemini_model: 'gemini-2.0-flash'        # 15 RPM - Default
+gemini_model: 'gemini-2.5-flash-lite'   # 15 RPM, 1000 RPD
+
+# Balanced
+gemini_model: 'gemini-2.5-flash'        # 10 RPM
+
+# Low RPM (use sparingly)
+gemini_model: 'gemini-2.5-pro'          # 2 RPM only!
 ```
+
+**Reference**: [Gemini API Rate Limits](https://ai.google.dev/gemini-api/docs/rate-limits)
 
 ### C. MCP Server Tools
 
