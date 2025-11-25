@@ -1,17 +1,86 @@
-# Gemini CLI Integration Options for Chained
+# Gemini CLI Integration for Chained
 
-This document outlines customization options for integrating the [Gemini CLI GitHub Action](https://github.com/google-github-actions/run-gemini-cli) into the Chained repository.
+This document describes the Gemini CLI integration in the Chained repository and how to use it.
+
+## 🚀 Quick Start - How to Use
+
+> **Current Mode: Manual Only** - Gemini CLI only responds to explicit `@gemini-cli` commands.
+
+### Available Commands
+
+Use these commands in any issue or pull request comment:
+
+| Command | What It Does | Where to Use |
+|---------|--------------|--------------|
+| `@gemini-cli /review` | Request a code review with inline suggestions | PR comments |
+| `@gemini-cli /triage` | Request automatic issue labeling | Issue comments |
+| `@gemini-cli <your request>` | Free-form AI assistance | Issues or PRs |
+
+### Examples
+
+**Request a PR Review:**
+```
+@gemini-cli /review
+```
+
+**Request a PR Review with specific focus:**
+```
+@gemini-cli /review Please focus on security and performance
+```
+
+**Request Issue Triage:**
+```
+@gemini-cli /triage
+```
+
+**Ask for Help (General Assistant):**
+```
+@gemini-cli Explain what this function does and suggest improvements
+```
+
+```
+@gemini-cli Write unit tests for the changes in this PR
+```
+
+```
+@gemini-cli Help me debug why this workflow is failing
+```
+
+### Who Can Use It?
+
+Only users with these roles can trigger Gemini CLI:
+- **OWNER** - Repository owner
+- **MEMBER** - Organization member  
+- **COLLABORATOR** - Repository collaborator
+
+### What Happens When You Use It?
+
+1. **Acknowledgment**: Gemini posts a comment confirming it received your request
+2. **Processing**: Gemini analyzes the context and performs the requested action
+3. **Response**: Gemini posts results (review comments, labels applied, or answers)
+
+### Current Configuration
+
+| Setting | Value |
+|---------|-------|
+| **Mode** | Manual only (no auto-triggers) |
+| **Authentication** | API Key (`GEMINI_API_KEY` secret) |
+| **Fork PRs** | Skipped for security |
+| **Permissions** | OWNER, MEMBER, COLLABORATOR only |
+
+---
 
 ## 📋 Table of Contents
 
-1. [Overview](#overview)
-2. [Prerequisites](#prerequisites)
-3. [Available Workflow Types](#available-workflow-types)
-4. [Customization Options](#customization-options)
-5. [Integration with Chained's Agent System](#integration-with-chaineds-agent-system)
-6. [Recommended Configuration](#recommended-configuration)
-7. [Security Considerations](#security-considerations)
-8. [Discussion Points](#discussion-points)
+1. [Quick Start - How to Use](#-quick-start---how-to-use)
+2. [Overview](#overview)
+3. [Prerequisites](#prerequisites)
+4. [Available Workflow Types](#available-workflow-types)
+5. [Customization Options](#customization-options)
+6. [Integration with Chained's Agent System](#integration-with-chaineds-agent-system)
+7. [Recommended Configuration](#recommended-configuration)
+8. [Security Considerations](#security-considerations)
+9. [Enabling Auto-Triggers](#enabling-auto-triggers)
 
 ---
 
@@ -354,50 +423,65 @@ gemini_debug: ${{ fromJSON(vars.DEBUG || false) }}
 
 ---
 
-## Discussion Points
+## Enabling Auto-Triggers
 
-### Questions to Consider
+The current configuration uses **manual-only mode**. To enable automatic triggers in the future:
 
-1. **Scope**: Which workflow types should we implement?
-   - [ ] PR Review only
-   - [ ] Issue Triage only
-   - [ ] General Assistance
-   - [ ] All of the above
+### Enable Auto-Review on PR Open
 
-2. **Integration Depth**: How should Gemini interact with existing agents?
-   - [ ] Parallel (independent)
-   - [ ] Complementary (specific tasks)
-   - [ ] Integrated (as an agent type)
+Edit `.github/workflows/gemini-dispatch.yml`:
 
-3. **Trigger Preferences**: How should Gemini be activated?
-   - [ ] Automatic on PR open
-   - [ ] On-demand via `@gemini-cli`
-   - [ ] Scheduled triage
-   - [ ] All of the above
+1. **Uncomment the `pull_request` trigger:**
+   ```yaml
+   on:
+     # ... existing triggers ...
+     pull_request:
+       types:
+         - 'opened'
+   ```
 
-4. **Review Style**: For PR reviews, what approach?
-   - [ ] Comment-only feedback
-   - [ ] Code suggestions
-   - [ ] Approve/Request changes
+2. **Update the `if` condition** (see comments in the workflow file)
 
-5. **Authentication**: Which method?
-   - [ ] API Key (simplest)
-   - [ ] Vertex AI (GCP billing)
-   - [ ] Custom GitHub App (better identity)
+3. **Update the extract_command script** to handle `pull_request.opened` events
 
-6. **Customization Priority**: What should GEMINI.md emphasize?
-   - [ ] Chained architecture context
-   - [ ] Agent system understanding
-   - [ ] Code style guidelines
-   - [ ] Security practices
+### Enable Auto-Triage on Issue Open
 
-### Next Steps
+Edit `.github/workflows/gemini-dispatch.yml`:
 
-1. **Secret Setup**: Add `GEMINI_API_KEY` to repository secrets
-2. **Choose Workflows**: Select which workflow types to implement
-3. **Customize Prompts**: Create GEMINI.md and TOML configurations
-4. **Test**: Start with a disabled workflow and test manually
-5. **Enable**: Gradually enable triggers based on testing results
+1. **Uncomment the `issues` trigger:**
+   ```yaml
+   on:
+     # ... existing triggers ...
+     issues:
+       types:
+         - 'opened'
+         - 'reopened'
+   ```
+
+2. **Update the `if` condition and script** (detailed instructions in the workflow file comments)
+
+### Workflow File Reference
+
+All configuration options are documented with inline comments in:
+- `.github/workflows/gemini-dispatch.yml` - Main dispatcher with toggle instructions
+- `.github/workflows/gemini-review.yml` - PR review workflow
+- `.github/workflows/gemini-triage.yml` - Issue triage workflow
+- `.github/workflows/gemini-invoke.yml` - General assistant workflow
+
+---
+
+## Current Implementation Status
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `GEMINI_API_KEY` secret | ✅ Configured | Authentication ready |
+| `gemini-dispatch.yml` | ✅ Implemented | Manual-only mode |
+| `gemini-review.yml` | ✅ Implemented | PR code review |
+| `gemini-triage.yml` | ✅ Implemented | Issue labeling |
+| `gemini-invoke.yml` | ✅ Implemented | General assistant |
+| `GEMINI.md` | ✅ Created | Project context |
+| `.gitignore` | ✅ Updated | Excludes `.gemini/` |
+| Auto-triggers | ⏸️ Disabled | Can enable later |
 
 ---
 
@@ -410,5 +494,5 @@ gemini_debug: ${{ fromJSON(vars.DEBUG || false) }}
 
 ---
 
-*This document was created to discuss Gemini CLI integration options for the Chained autonomous AI ecosystem.*
+*Gemini CLI integration configured for the Chained autonomous AI ecosystem.*
 
