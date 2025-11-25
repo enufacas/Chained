@@ -645,6 +645,24 @@ If you prefer the simpler setup, get a **Google AI Studio API key** instead:
 - **Google AI Studio API Key** (`GEMINI_API_KEY`): Uses `generativelanguage.googleapis.com` - simpler, free tier
 - **Vertex AI API Key** (`GOOGLE_API_KEY` + `GOOGLE_GENAI_USE_VERTEXAI=true`): Uses `aiplatform.googleapis.com` - GCP integration
 
+### Error: "Update your environment and try again"
+
+**Full Error Message:**
+```
+Update your environment and try again (no reload needed if using .env)!
+```
+
+**Cause**: This generic error from the Gemini CLI indicates missing or misconfigured authentication. As of the latest update, the workflows now validate authentication **before** running Gemini CLI and provide specific guidance.
+
+**What to Look For**: Check the workflow logs for the new validation step that runs before Gemini CLI. You should now see one of these specific errors:
+
+1. **"Missing Vertex AI Configuration"**: If `GOOGLE_GENAI_USE_VERTEXAI=true` but `GOOGLE_API_KEY` secret is not set
+2. **"Missing Gemini API Key"**: If using default mode but `GEMINI_API_KEY` secret is not set
+
+**Solution**: Follow the step-by-step instructions shown in the workflow error message, or see the [Authentication Setup](#-step-1-authentication-setup-choose-one) section above.
+
+**Note**: If you still see the generic "Update your environment" error without the validation step, your workflows may need to be updated. Check that you're using the latest version of the Gemini workflows.
+
 ### Error: Rate Limit Exceeded
 
 If you see rate limit errors, check the [Model Selection and Rate Limits](#b-model-selection-and-rate-limits) section above. The default model (`gemini-2.0-flash`) has a 15 RPM limit on the free tier.
