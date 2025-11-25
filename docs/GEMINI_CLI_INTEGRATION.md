@@ -14,7 +14,8 @@ Use these commands in any issue or pull request comment:
 |---------|--------------|--------------|
 | `@gemini-cli /review` | Request a code review with inline suggestions | PR comments |
 | `@gemini-cli /triage` | Request automatic issue labeling | Issue comments |
-| `@gemini-cli <your request>` | Free-form AI assistance | Issues or PRs |
+| `@gemini-cli /fix` | Automatically fix an issue and create a PR | Issue comments |
+| `@gemini-cli <your request>` | Free-form AI assistance (requires approval for changes) | Issues or PRs |
 
 ### Examples
 
@@ -31,6 +32,16 @@ Use these commands in any issue or pull request comment:
 **Request Issue Triage:**
 ```
 @gemini-cli /triage
+```
+
+**Request Automatic Issue Fix:**
+```
+@gemini-cli /fix
+```
+
+**Request Automatic Issue Fix with context:**
+```
+@gemini-cli /fix Focus on improving performance
 ```
 
 **Ask for Help (General Assistant):**
@@ -139,7 +150,8 @@ The `run-gemini-cli` action integrates Google's Gemini AI into GitHub workflows,
 |---------|--------|
 | `@gemini-cli /review` | Trigger PR review |
 | `@gemini-cli /triage` | Trigger issue triage |
-| `@gemini-cli <request>` | Free-form AI assistance |
+| `@gemini-cli /fix` | Automatically fix issue and create PR |
+| `@gemini-cli <request>` | Free-form AI assistance (requires approval for changes) |
 
 **Customization Points**:
 - Author association filter (OWNER, MEMBER, COLLABORATOR)
@@ -398,7 +410,8 @@ Copy all four workflows from `google-github-actions/run-gemini-cli`:
 1. `gemini-dispatch.yml` - Central router
 2. `gemini-review.yml` - PR review
 3. `gemini-triage.yml` - Issue triage
-4. `gemini-invoke.yml` - General assistance
+4. `gemini-invoke.yml` - General assistance (requires approval for changes)
+5. `gemini-fix.yml` - Automatic issue fixer (creates PRs directly)
 
 Add custom TOML prompts tailored to Chained's ecosystem.
 
@@ -500,7 +513,8 @@ All configuration options are documented with inline comments in:
 - `.github/workflows/gemini-dispatch.yml` - Main dispatcher with toggle instructions
 - `.github/workflows/gemini-review.yml` - PR review workflow
 - `.github/workflows/gemini-triage.yml` - Issue triage workflow
-- `.github/workflows/gemini-invoke.yml` - General assistant workflow
+- `.github/workflows/gemini-invoke.yml` - General assistant workflow (requires approval)
+- `.github/workflows/gemini-fix.yml` - Automatic issue fixer workflow (creates PRs directly)
 
 ---
 
@@ -512,7 +526,8 @@ All configuration options are documented with inline comments in:
 | `gemini-dispatch.yml` | ✅ Implemented | Manual-only mode |
 | `gemini-review.yml` | ✅ Implemented | PR code review |
 | `gemini-triage.yml` | ✅ Implemented | Issue labeling |
-| `gemini-invoke.yml` | ✅ Implemented | General assistant |
+| `gemini-invoke.yml` | ✅ Implemented | General assistant (approval-based) |
+| `gemini-fix.yml` | ✅ Implemented | Automatic issue fixer |
 | `GEMINI.md` | ✅ Created | Project context |
 | `.gitignore` | ✅ Updated | Excludes `.gemini/` |
 | Auto-triggers | ⏸️ Disabled | Can enable later |
