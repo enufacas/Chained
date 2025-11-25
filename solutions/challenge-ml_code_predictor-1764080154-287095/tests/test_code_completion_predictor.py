@@ -376,7 +376,7 @@ class TestCodeCompletionPredictor(unittest.TestCase):
     def test_real_time_inference_requirement_4(self):
         """
         REQUIREMENT 4: Optimize for real-time inference
-        Target: <100ms for cold predictions, <10ms for cached
+        Target: <100ms for cold predictions, <50ms for cached
         """
         model = CodeCompletionPredictor('python')
         model.train(self.training_code)

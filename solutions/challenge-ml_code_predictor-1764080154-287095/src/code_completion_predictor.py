@@ -444,6 +444,10 @@ class CodeCompletionPredictor:
         'go': {'\n', ';', '}'}
     }
     
+    # Default token limits for predictions
+    DEFAULT_MAX_TOKENS = 10
+    FUNCTION_COMPLETION_MAX_TOKENS = 15
+    
     def __init__(self, language: str = 'python', n: int = 5):
         """
         Initialize code completion predictor.
@@ -550,7 +554,7 @@ class CodeCompletionPredictor:
             ('return False', 0.75)
         """
         # Similar to predict_next_line but allows multiple lines
-        return self.predict_next_line(partial_function, max_tokens=15)
+        return self.predict_next_line(partial_function, max_tokens=self.FUNCTION_COMPLETION_MAX_TOKENS)
     
     def get_predictions(self, code_context: str, top_k: int = 5) -> List[Tuple[str, float]]:
         """
