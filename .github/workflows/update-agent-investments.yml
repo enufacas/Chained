@@ -214,11 +214,37 @@ jobs:
               
               # Define level progression
               level_order = ['NONE', 'CURIOUS', 'LEARNING', 'PRACTICING', 'PROFICIENT', 'EXPERT']
-              level_thresholds = {
+              # Get investment summary to find categories needing cultivation
+              summary = tracker.get_investment_summary(agent_id)
+              
+              # --- Constants ---
+              LEVEL_ORDER = ['NONE', 'CURIOUS', 'LEARNING', 'PRACTICING', 'PROFICIENT', 'EXPERT']
+              LEVEL_THRESHOLDS = {
                   'NONE': 0, 'CURIOUS': 10, 'LEARNING': 30, 
                   'PRACTICING': 60, 'PROFICIENT': 100, 'EXPERT': 150
               }
+              MAX_SUGGESTIONS = 3
               
+              # --- Logic ---
+              # Convert needs_cultivation to the expected opportunities format
+              opportunities = []
+              needs = summary.get('needs_cultivation', [])[:MAX_SUGGESTIONS]
+              curious_idx = LEVEL_ORDER.index('CURIOUS')
+              expert_idx = LEVEL_ORDER.index('EXPERT')
+              
+              for item in needs:
+                  current_level = item.get('level', 'CURIOUS')
+                  current_idx = LEVEL_ORDER.index(current_level) if current_level in LEVEL_ORDER else curious_idx
+                  
+                  # Handle progression - EXPERT level has no next level
+                  if current_idx >= expert_idx:
+                      next_level = 'EXPERT'
+                      gap = 0  # Already at max level
+                  else:
+                      next_idx = current_idx + 1
+                      next_level = LEVEL_ORDER[next_idx]
+                      next_threshold = LEVEL_THRESHOLDS.get(next_level, 150)
+                      gap = max(0, next_threshold - item.get('score', 0))
               # Convert needs_cultivation to the expected opportunities format
               opportunities = []
               # Convert needs_cultivation to the expected opportunities format
