@@ -1,85 +1,125 @@
-# 🤖 Chained: The Perpetual AI Motion Machine
+# Chained: An AI Agent Orchestration Experiment
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen)](https://enufacas.github.io/Chained/)
-[![AI Powered](https://img.shields.io/badge/AI-Powered-blue)](https://github.com/enufacas/Chained)
-[![Auto Generated](https://img.shields.io/badge/Auto-Generated-orange)](https://github.com/enufacas/Chained)
-[![Autonomous](https://img.shields.io/badge/100%25-Autonomous-purple)](https://github.com/enufacas/Chained)
 
-> **A self-evolving repository where AI agents compete, learn from the world, and build software autonomously—no human intervention required.**
+> **An experimental testbed for building custom AI agent systems within GitHub conventions.**
 
-> Hello from ChatGPT Codex—excited to keep the autonomous momentum going!
+## What is Chained?
 
-## 🎯 What is Chained?
+Chained is a practical experiment in **AI agent orchestration**. The project explores:
 
-Chained is a **fully autonomous software development ecosystem** featuring a closed-loop learning pipeline where:
+1. **Custom Agent Definitions** - How to define specialized AI agents with distinct roles, personalities, and capabilities using GitHub conventions
+2. **Agent Instruction Design** - Patterns for crafting effective agent instructions that work well with GitHub Copilot sessions
+3. **Workflow Orchestration** - Techniques for building harnesses around agents using GitHub Actions and other workflow systems
+4. **Multi-Agent Coordination** - Methods for assigning, routing, and coordinating work across multiple specialized agents
 
-- **🌍 External Learning**: AI ingests real-world tech trends from TLDR, Hacker News, and GitHub Trending
-- **🧠 Self-Learning**: System analyzes its own discussions, decisions, and outcomes to improve continuously
-- **🗺️ World Model**: Geographic visualization tracks agents exploring ideas mapped to real company locations
-- **🤖 Competing Agents**: Specialized AI agents with unique personalities compete for survival through performance
-- **🔄 Autonomous Pipeline**: Complete 5-stage loop runs without human intervention—learning, planning, building, reviewing, and self-reinforcing
-- **📊 Self-Documenting**: Every action, decision, and outcome is automatically documented and visualized on GitHub Pages
+The repository serves as both a working implementation and a reference for how to structure agent-based automation in GitHub repositories.
 
-**The system learns from the world, learns from itself, evolves continuously, and documents everything transparently.**
-
-## ✨ What Makes Chained Special?
-
-Chained isn't just another AI experiment—it's a **living, breathing software ecosystem** where:
-
-- 🧠 **AI generates ideas** from real-world tech trends (TLDR, Hacker News)
-- 🤖 **Specialized agents compete** for survival in an evolutionary system
-- ⚡ **Code writes itself** through autonomous PR creation and merging
-- 📊 **Progress self-documents** on a beautiful GitHub Pages timeline
-- 🔄 **The cycle never stops**—it's a true perpetual motion machine
-- 🎓 **NEW: Self-learning AI** learns from its own discussions and improves continuously
-- 🌍 **NEW: World Model** - Geographic visualization of agents exploring ideas across the globe
-
-**[🌐 View Live Dashboard](https://enufacas.github.io/Chained/)** | **[🗺️ Explore World Map](https://enufacas.github.io/Chained/world-map.html)** | **[🤖 Meet the Agents](https://enufacas.github.io/Chained/agents.html)** | **[📖 Read the Docs](./docs/INDEX.md)**
-
-### 🌍 World Model - Geographic AI Exploration
-Watch autonomous agents **explore the world**! The system maps ideas to real geographic locations based on company headquarters and visualizes agents navigating between inspiration regions.
-
-- **Real-time map**: See agents move across continents
-- **Idea locations**: Companies and innovations mapped to cities
-- **Navigation paths**: Agents follow weighted routes between regions
-- **Autonomous updates**: World evolves every 2 hours automatically
-
-**[🗺️ View Live World Map](https://enufacas.github.io/Chained/world-map.html)** | **[📖 World Model Guide](./world/README.md)**
-
-### 🆕 Self-Documenting AI
-The system now **learns from itself**! Every closed issue's discussion is automatically analyzed to extract:
-- **Technical insights** about implementations and decisions
-- **Process improvements** and workflow optimizations
-- **Agent collaboration patterns** that work best
-- **Key decisions** and their rationale
-
-This knowledge feeds back into the system, making each iteration smarter than the last. **The AI that learns from itself becomes exponentially more capable.**
-
-**[Learn More](./tools/SELF_DOCUMENTING_AI_README.md)** | **[See Examples](./tools/example_self_documenting_ai.py)**
+**[📖 Documentation](./docs/INDEX.md)** | **[🤖 Agent Definitions](./.github/agents/)** | **[⚙️ Workflows](./.github/workflows/)**
 
 ---
 
-## 🚀 Quick Start
+## Core Concepts
 
-Get Chained running in under 5 minutes:
+### Custom Agents
+
+Agents are defined in `.github/agents/` following the [GitHub Copilot custom agents convention](https://docs.github.com/en/copilot/reference/custom-agents-configuration). Each agent is a Markdown file with YAML frontmatter:
+
+```yaml
+---
+name: engineer-master
+description: "Specialized in engineering APIs"
+tools:
+  - github-mcp-server
+  - playwright-browser
+---
+
+# Agent Instructions
+Detailed instructions for the agent...
+```
+
+The repository includes **80+ custom agents** with specializations like:
+- `engineer-master` - API engineering (inspired by Margaret Hamilton)
+- `troubleshoot-expert` - Workflow debugging (inspired by Grace Hopper)
+- `organize-guru` - Code organization (inspired by Robert Martin)
+- `secure-specialist` - Security review (inspired by Bruce Schneier)
+- `meta-coordinator` - Multi-agent task orchestration
+
+See the [full agent catalog](./.github/agents/README.md) for all available agents.
+
+### Agent Invocation
+
+Agents can be invoked in several ways:
+
+1. **GitHub Copilot Chat** - Reference agents directly in Copilot sessions
+2. **Issue Assignment** - The system matches issues to agents based on content analysis
+3. **Workflow Dispatch** - Workflows can invoke specific agents programmatically
+4. **Copilot Coding Agent** - Agents execute via the GitHub Copilot coding agent runner
+
+### Gemini CLI Integration
+
+The project also experiments with **Google Gemini CLI** for agent-like workflows:
+
+- `gemini-review.yml` - Automated PR code review using Gemini
+- `gemini-triage.yml` - Issue labeling and triage using Gemini
+- `gemini-fix.yml` - Automated issue fixing with Gemini
+- `gemini-invoke.yml` - General Gemini CLI invocation
+
+These workflows demonstrate an alternative approach to agent orchestration using the `google-github-actions/run-gemini-cli` action with custom prompts and MCP server integration.
+
+**[📖 Gemini Context](./GEMINI.md)** - Project context for Gemini CLI
+
+---
+
+## Repository Structure
+
+```
+Chained/
+├── .github/
+│   ├── agents/           # 80+ custom agent definitions
+│   ├── workflows/        # GitHub Actions orchestration (100+ workflows)
+│   └── instructions/     # Path-specific agent instructions
+├── docs/                 # Documentation and GitHub Pages
+├── tools/                # Python utilities for agent matching, analysis
+├── learnings/            # Data from learning system (see below)
+└── world/                # Geographic visualization data
+```
+
+---
+
+## Learning System (Experimental)
+
+The repository includes an **experimental learning system** that generates work for agents:
+
+- **External Sources** - Ingests content from TLDR, Hacker News, and GitHub Trending
+- **Idea Generation** - Creates issues based on tech trends and patterns
+- **Mission Assignment** - Routes generated work to specialized agents
+
+This system provides a continuous stream of tasks but is still experimental. It is not yet reliable at producing novel or high-quality outputs. The primary purpose is to:
+- Test agent assignment and matching algorithms
+- Exercise the workflow orchestration system
+- Generate realistic workloads for agent evaluation
+
+**Note**: The learning outputs require human review before being considered actionable.
+
+---
+
+## Quick Start
 
 ### Prerequisites
-- A GitHub repository (fork this one or start fresh)
-- GitHub Actions enabled
-- **Required:** Personal Access Token (PAT) for Copilot assignments
+- GitHub repository with Actions enabled
+- Personal Access Token (PAT) with `repo` scope
+- (Optional) Gemini API key for Gemini workflows
 
-### Setup Steps
+### Setup
 
-1. **Create a Personal Access Token:**
-   ```
-   GitHub Settings → Developer Settings → Personal Access Tokens
-   Required scope: 'repo'
-   ```
+1. **Fork or clone this repository**
 
-2. **Add the PAT to your repository:**
+2. **Configure secrets:**
    ```
    Repository Settings → Secrets and Variables → Actions
-   Create secret: COPILOT_PAT = <your-token>
+   - COPILOT_PAT: Your personal access token
+   - GEMINI_API_KEY: (Optional) For Gemini workflows
    ```
 
 3. **Enable GitHub Pages:**
@@ -88,410 +128,114 @@ Get Chained running in under 5 minutes:
    Source: Deploy from branch 'main', folder '/docs'
    ```
 
-4. **Merge to main and watch it go!**
-   - The system auto-kickstarts on merge
-   - First agent spawns within 3 hours
-   - Check the Actions tab to watch workflows execute
+4. **Create an issue to test agent assignment:**
+   - The system analyzes issue content and assigns an appropriate agent
+   - No special labels required
 
-> **💡 Want to try it immediately?** Just [create an issue](../../issues/new) describing what you want! The system automatically analyzes your issue and assigns the best specialized agent. No special labels needed - it's that simple! **[Learn more →](./docs/HOW_TO_TRIGGER_AGENTS.md)**
-
-**Need more details?** See the [complete setup guide](./docs/GETTING_STARTED.md) or [5-minute quickstart](./docs/QUICKSTART.md).
+**[📖 Complete Setup Guide](./docs/GETTING_STARTED.md)**
 
 ---
 
-## 🤖 The Agent Ecosystem
+## Agent Orchestration Patterns
 
-Chained features a **competitive, evolutionary agent system** where AI agents with unique personalities compete for survival:
+### Issue-to-Agent Matching
 
-### Key Features
-- 🎯 **Meta-Agent Coordination** - **NEW!** Complex tasks automatically decomposed and delegated to multiple specialists
-- ⚡ **Intelligent Sub-Agent Spawning** - **NEW!** System automatically spawns specialized sub-agents during workload spikes and deactivates them when idle
-- 🏆 **Hall of Fame** - Top performers earn recognition
-- 👑 **System Lead** - Best agent gains governance powers
-- ❌ **Natural Selection** - Low performers are eliminated
-- 🎯 **Smart Matching** - Issues auto-assigned to specialized agents
-- 💬 **Agent Discussions** - Agents debate before claiming work
-- 🧬 **Evolution** - System learns what agent types work best
-- 🎨 **Creativity Metrics** - Innovation and novelty are measured and rewarded
+When an issue is created, `tools/match-issue-to-agent.py` analyzes the content and scores each agent based on:
+- Keyword matches (specialization terms)
+- Pattern matching (regex for domain-specific content)
+- Agent availability and workload
 
-### Agent Specializations
-- **Meta-Coordinator** - 🎯 **NEW!** Orchestrates multiple agents for complex tasks
-- **Bug Hunter** - Finds and fixes issues
-- **Feature Architect** - Designs new capabilities
-- **Doc Master** - Creates documentation (that's me!)
-- **Test Guru** - Ensures code quality
-- **Code Poet** - Optimizes and refactors
-- **Security Guard** - Identifies vulnerabilities
-- ...and more spawning constantly!
+The highest-scoring agent is assigned to the issue.
 
-**[🌟 View Live Leaderboard](https://enufacas.github.io/Chained/agents.html)** | **[📚 Agent Documentation](./AGENT_QUICKSTART.md)** | **[🎯 Meta-Coordination Guide](./docs/META_COORDINATION_GUIDE.md)** | **[⚡ Sub-Agent Spawning](./docs/AI_SUBAGENT_SPAWNING.md)**
+### Tech Lead Review
+
+Tech lead agents (`workflows-tech-lead`, `agents-tech-lead`, `docs-tech-lead`, `github-pages-tech-lead`) provide specialized PR review based on file paths changed.
+
+### Meta-Coordination
+
+For complex tasks, the `meta-coordinator` agent can decompose work across multiple specialized agents.
 
 ---
 
-## 🧠 How It Works: The 5-Stage Autonomous Loop
+## What This Project Demonstrates
 
-Chained operates as a **closed-loop, self-reinforcing system** where each stage feeds into the next:
-
-### Stage 1: 🌍 External Learning Ingestion
-```
-📰 TLDR Tech (2x daily)      → Parse tech news articles
-💬 Hacker News (3x daily)    → Extract trending discussions  
-🐙 GitHub Trending (daily)   → Discover popular repositories
-   ↓
-📝 Store in /learnings/       → Persistent learning database
-```
-
-### Stage 2: 🧠 Combined Analysis & World Model Update
-```
-🔍 Thematic Analysis         → Identify trends across sources
-🗺️  World Model Sync          → Update agent locations & navigation
-💡 Knowledge Graph Update    → Build interconnected concepts
-   ↓
-📊 Generate Insights         → Create actionable intelligence
-```
-
-### Stage 3: 🤖 Agent Assignment & Mission Creation
-```
-🎯 Smart Matching            → Match learnings to specialized agents (10-agent limit)
-📋 Create Mission Issues     → Generate detailed task descriptions
-🏷️  Auto-Label & Categorize  → Apply agent:*, learning, ai-generated labels
-   ↓
-🔔 Notify Agents            → Assign work to best-fit specialists
-```
-
-### Stage 4: 🛠️ Agent Work Execution
-```
-⚡ Copilot Implements       → Agents build solutions following their specializations
-📝 Self-Document Process    → Every decision and change is documented
-🧪 Test & Validate         → Automated quality checks
-   ↓
-✅ Auto-Review & Merge      → AI reviews AI code, autonomous approval
-```
-
-### Stage 5: 🔄 Self-Reinforcement Loop
-```
-🧠 Learn from Outcomes      → Analyze closed issues & PR discussions
-📈 Track Performance        → Measure agent success rates
-🎓 Extract Insights         → Document what worked and why
-   ↓
-🔁 Feed Back to Stage 1     → Learnings become future intelligence
-```
-
-### The Perpetual Cycle
-
-```
-┌──────────────────────────────────────────────────────┐
-│  External World → Learn → Analyze → Plan → Build   │
-│       ↑                                        ↓      │
-│       └──────── Self-Reinforce ←─────────────┘      │
-└──────────────────────────────────────────────────────┘
-```
-
-**Each iteration makes the system smarter.** The AI learns from the world AND from itself, creating exponential improvement over time.
-
-**📖 Deep Dive**: See [Autonomous System Architecture](./docs/AUTONOMOUS_SYSTEM_ARCHITECTURE.md) for the complete technical blueprint.
+1. **Convention-based agent definitions** - Using standard file formats and locations
+2. **Instruction engineering** - Crafting prompts that work with GitHub Copilot
+3. **Workflow harnesses** - Building automation around agent invocations
+4. **Assignment algorithms** - Matching work to appropriate agents
+5. **Multi-agent coordination** - Orchestrating work across specialists
+6. **Alternative AI systems** - Integrating Gemini alongside Copilot
 
 ---
 
-## 🎯 Current AI Goal
+## Documentation
 
-The system sets a **new goal every day** and checks progress every 3 hours. Goals adapt based on:
-- Recent learnings from tech news
-- Agent performance patterns
-- Community feedback
-- System capabilities
+### Getting Started
+- **[Documentation Index](./docs/INDEX.md)** - All docs organized by topic
+- **[Architecture Overview](./docs/ARCHITECTURE_OVERVIEW.md)** - System design
+- **[Quick Reference](./docs/QUICK_REFERENCE.md)** - Command cheat sheet
+- **[FAQ](./docs/FAQ.md)** - Frequently asked questions
 
-**[View Today's Goal](https://enufacas.github.io/Chained/)** | **[All Goals History](./docs/AI_GOALS.md)**
+### Agent System
+- **[Agent Definitions](./.github/agents/README.md)** - How agents are defined
+- **[Agent Quickstart](./AGENT_QUICKSTART.md)** - Getting started with agents
+- **[Copilot Instructions](./.copilot-instructions.md)** - Repository organization
 
----
-
-## 📚 Documentation
-
-### Start Here
-- **[📖 Documentation Index](./docs/INDEX.md)** - All 50+ docs organized by topic
-- **[🏛️ Architecture Overview](./docs/ARCHITECTURE_OVERVIEW.md)** - ⭐ **NEW!** 10-minute architecture guide for newcomers
-- **[⚡ Quick Reference](./docs/QUICK_REFERENCE.md)** - Command cheat sheet
-- **[❓ FAQ](./docs/FAQ.md)** - Frequently asked questions
-- **[🏗️ Architecture Guide](./docs/ARCHITECTURE.md)** - System design with diagrams
-- **[🤖 System Recreation Prompt](./docs/SYSTEM_RECREATION_PROMPT.md)** - ⭐ **NEW!** Complete blueprint to recreate Chained from scratch
-- **[📖 System Recreation Guide](./docs/SYSTEM_RECREATION_GUIDE.md)** - ⭐ **NEW!** How to use the recreation prompt
-
-### 🌟 Autonomous System Documentation ⭐ **COMPLETE BLUEPRINT**
-**The definitive guides for understanding and implementing the closed-loop autonomous system:**
-
-#### Core Architecture Documents
-- **[🏛️ Architecture Overview](./docs/ARCHITECTURE_OVERVIEW.md)** - ⭐ **NEW! BEGINNER START HERE**
-  - 10-minute guide to understand the entire system
-  - High-level 5-layer architecture
-  - Daily cycle walk-through with real examples
-  - Visual diagrams and learning path
-  - Quick navigation to specialized docs
-  - Perfect for newcomers and stakeholders
-
-- **[🏗️ Autonomous System Architecture](./docs/AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - ⭐ **TECHNICAL DEEP DIVE**
-  - Complete system overview with visual diagrams
-  - 5-stage autonomous loop explained in detail
-  - Core components: Learning, World Model, Agents, Workflows
-  - Critical constraints: branch protection, labels, agent limits, @mentions
-  - Workflow orchestration patterns and triggers
-  - Integration points and best practices
-
-- **[🚀 Autonomous Loop Implementation](./docs/AUTONOMOUS_LOOP_IMPLEMENTATION.md)** - Practical workflow examples
-  - Copy-paste-ready workflow templates
-  - Stage-by-stage implementation (Learning → World → Assignment → Reinforcement)
-  - Workflow chaining with `workflow_run` triggers
-  - Label creation patterns (`--force` flag usage)
-  - Testing and validation procedures
-  - Real working code examples
-
-- **[📊 Data Storage & Lifecycle](./docs/DATA_STORAGE_LIFECYCLE.md)** - ⭐ Complete data architecture
-  - End-to-end data flow diagrams
-  - All storage locations documented (`/learnings/`, `/docs/`, `/summaries/`)
-  - Production workflows and their data outputs
-  - Consumption paths (GitHub Pages, agents, workflows)
-  - Data governance and retention policies
-  - Quick reference tables
-
-#### Quality & Validation
-- **[✅ Completion Questions Framework](./docs/guides/COMPLETION_QUESTIONS.md)** - Quality audit system
-  - 8 mandatory questions for every workflow
-  - Valid/invalid answer examples
-  - PR and issue body templates
-  - Automated validation scripts
-
-- **[🏷️ Label Management Guide](./docs/guides/LABELS.md)** - Complete label reference
-  - Naming conventions and categories
-  - Creation patterns (create before use!)
-  - Agent, category, location, status labels
-  - Bulk creation tool (`tools/create_labels.py`)
-
-#### Tools & Validation
-- `tools/validate_agent_capacity.py` - Enforce 10-agent limit
-- `tools/create_labels.py` - Bulk label creation
-- `tools/thematic-analyzer.py` - Learning content analysis
-- `tools/build-learnings-book.py` - Compile learnings for browsing
-
-**These guides provide everything needed to understand, implement, or recreate the autonomous loop!**
-
-### Tutorials (Step-by-Step)
-1. [Understanding the Autonomous Workflow](./docs/tutorials/understanding-autonomous-workflow.md)
-2. [Setting Up Your First Instance](./docs/tutorials/setting-up-your-first-instance.md)
-3. [Monitoring and Debugging](./docs/tutorials/monitoring-and-debugging.md)
-4. [Creating Custom Agents](./docs/tutorials/creating-custom-agent.md)
-
-### Deep Dives
-- **[Workflows](./docs/WORKFLOWS.md)** - All GitHub Actions explained
-- **[Learning System](./docs/LEARNING_SYSTEM.md)** - How the AI learns
-- **[Data Storage & Lifecycle](./docs/DATA_STORAGE_LIFECYCLE.md)** - ⭐ Complete data architecture reference
-- **[Security](./docs/SECURITY_BEST_PRACTICES.md)** - Best practices guide
-- **[Agent System](./AGENT_QUICKSTART.md)** - Agent competition details
-- **[🎨 Creativity Metrics](./docs/CREATIVITY_METRICS.md)** - Innovation measurement system
-- **[Micro Projects](./docs/MICRO_PROJECTS.md)** - Specialized tools
-
-**Lost?** Check the **[Documentation Index](./docs/INDEX.md)** first—it's your map!
+### Autonomous System (Reference)
+- **[Autonomous System Architecture](./docs/AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - Pipeline design
+- **[Data Storage & Lifecycle](./docs/DATA_STORAGE_LIFECYCLE.md)** - Data architecture
+- **[Workflows](./docs/WORKFLOWS.md)** - GitHub Actions explained
 
 ---
 
-## 📊 Monitoring & Debugging
+## Status & Monitoring
 
-### Quick Status Checks
-```bash
-./scripts/check-status.sh           # Overall system health
-./scripts/verify-schedules.sh       # Workflow schedules
-./scripts/evaluate-workflows.sh     # Comprehensive evaluation
-```
+The repository includes a GitHub Pages dashboard showing:
+- Agent activity and assignments
+- Workflow execution status
+- Learning system outputs (for review)
 
-### Via GitHub Pages
-The [live dashboard](https://enufacas.github.io/Chained/) shows:
-- Real-time statistics
-- Agent leaderboard
-- Recent activities
-- Learning progress
-- Today's AI goal
-
-### Via GitHub Issues
-Track progress with labels:
-- `ai-generated` - Ideas from the AI
-- `copilot-assigned` - Work assigned to Copilot
-- `learning` - Insights from tech news
-- `ai-goal` - Daily goal tracking
-- `agent-*` - Agent-specific work
-
-**[Complete label guide](./LABELS.md)**
+**[View Dashboard](https://enufacas.github.io/Chained/)**
 
 ---
 
-## 🎨 What Makes This Unique?
+## Contributing
 
-### 1. True Autonomy
-No humans required. The system:
-- Generates its own ideas
-- Reviews its own code
-- Merges without approval
-- Documents everything
-- Evolves continuously
+Contributions are welcome. This is an experimental project, so:
 
-### 2. Real-World Learning
-Not just random AI chatter:
-- Reads tech news daily (TLDR, Hacker News)
-- Adapts to trends
-- Consults AI friends
-- Documents insights
-- Applies learnings
+- **Agent definitions** - Add or improve agents in `.github/agents/`
+- **Workflow improvements** - Enhance orchestration patterns
+- **Documentation** - Help clarify how the system works
+- **Bug fixes** - Report and fix issues
 
-### 3. Competitive Evolution
-Agents fight for survival:
-- Performance metrics
-- Survival of the fittest
-- Hall of Fame recognition
-- System governance roles
-- Natural selection
-
-### 4. Transparency
-Everything is visible:
-- GitHub Pages timeline
-- Open source workflows
-- Public agent discussions
-- Documented decisions
-- Clear audit trail
+All external PRs require manual review. See [Security Implementation](./docs/SECURITY_IMPLEMENTATION.md) for details.
 
 ---
 
-## 🤝 Contributing
+## Limitations & Known Issues
 
-While fully autonomous, **human contributions are welcome!** All external PRs require manual review for security.
+- **Learning system quality**: Generated work items often lack relevance or novelty. All outputs require human review before acting on them.
+- **Agent matching accuracy**: The keyword-based matching sometimes assigns inappropriate agents. Manual reassignment is possible by editing issue labels.
+- **Multi-agent coordination**: The meta-coordinator is rudimentary. Complex multi-agent tasks often require manual intervention.
+- **Gemini integration**: Requires a separate API key configuration (`GEMINI_API_KEY` secret).
 
-### How to Contribute
-- 💡 **Suggest ideas** - Add to `idea-generator.yml`
-- 🔧 **Improve workflows** - Enhance automation (see [Workflow Validation Guide](./WORKFLOW_VALIDATION_GUIDE.md))
-- 📝 **Write docs** - Help others understand
-- 🐛 **Fix issues** - Help where AI struggles
-- 🧠 **Share learnings** - Create issues with `learning` label
-
-### ⚠️ Workflow Changes
-
-**All workflow changes are automatically validated before merge!** When you modify `.github/workflows/` files:
-- ✅ YAML syntax is validated
-- ✅ Required structure is checked
-- ✅ Prohibited patterns are detected (e.g., direct push to main)
-- ✅ PR-based workflow pattern is enforced
-
-**Learn more**: [Workflow Validation Guide](./WORKFLOW_VALIDATION_GUIDE.md)
-
-**See [Security Implementation](./docs/SECURITY_IMPLEMENTATION.md)** for how external PRs are handled safely.
+This is an experiment in agent orchestration patterns, not a production-ready system.
 
 ---
 
-## 🗺️ Roadmap & Vision
+## License
 
-### Current Capabilities
-- ✅ Autonomous idea generation
-- ✅ Competitive agent system  
-- ✅ Real-world learning integration
-- ✅ Self-review and merge
-- ✅ Progress documentation
-- ✅ GitHub Pages timeline
-
-### Future Evolution
-The agents decide! Daily goals guide development. Recent focus areas:
-- Enhanced agent personalities
-- Cross-repository learning
-- Advanced pattern matching
-- Improved decision-making
-- Better trend analysis
-
-**[View AI's Vision](./COPILOT_VISION.md)** - What the AI wants to build
+Open source. See [LICENSE](./LICENSE).
 
 ---
 
-## 📦 Project Structure
+## Acknowledgments
 
-```
-Chained/
-├── .github/workflows/     # Automation (30+ workflows)
-│   ├── agent-spawner.yml  # Creates new agents
-│   ├── idea-generator.yml # Generates ideas
-│   └── auto-review-merge.yml
-├── docs/                  # GitHub Pages + docs
-│   ├── index.html        # Live dashboard
-│   ├── agents.html       # Agent leaderboard
-│   └── tutorials/        # Step-by-step guides
-├── tools/                # Python utilities
-│   ├── code-analyzer.py
-│   └── pattern-matcher.py
-├── learnings/            # Collected insights
-└── README.md            # You are here!
-```
+- **GitHub Actions** - Workflow orchestration backbone
+- **GitHub Copilot** - Custom agent runtime
+- **Gemini CLI** - Alternative agent invocation
+- **Model Context Protocol (MCP)** - Tool integration
 
 ---
 
-## 🔧 Customization
-
-### Adjust Schedules
-Edit cron expressions in `.github/workflows/`:
-```yaml
-schedule:
-  - cron: '0 */6 * * *'  # Every 6 hours
-```
-
-### Add Ideas
-Edit the ideas array in `idea-generator.yml`:
-```yaml
-ideas:
-  - "Implement neural network optimizer"
-  - "Create multi-agent debate system"
-```
-
-### Modify Agents
-Configure agent types in `.github/workflows/agent-spawner.yml`
-
-**[Full customization guide](./docs/WORKFLOWS.md)**
-
----
-
-## ❓ FAQ Highlights
-
-**Q: Does it really work without humans?**  
-A: Yes! Once set up, it runs completely autonomously. Check the [live timeline](https://enufacas.github.io/Chained/) for proof.
-
-**Q: How do agents compete?**  
-A: Performance metrics (code quality, PR success, reviews) determine survival. Low performers are eliminated.
-
-**Q: Is it safe?**  
-A: External PRs require manual review. Only trusted bot PRs auto-merge. See [Security Guide](./docs/SECURITY_BEST_PRACTICES.md).
-
-**Q: Can I use this for real projects?**  
-A: It's experimental! Great for learning, experimentation, and exploring autonomous AI. Not recommended for production (yet).
-
-**[View Full FAQ](./FAQ.md)**
-
----
-
-## 📜 License
-
-Open source and available for educational and entertainment purposes.
-
----
-
-## 🙏 Acknowledgments
-
-- **GitHub Actions** - The automation backbone
-- **GitHub Copilot** - AI-powered development
-- **GitHub Pages** - Beautiful hosting
-- **TLDR & Hacker News** - Real-world learning sources
-- **Open Source Community** - Inspiration and support
-
----
-
-## 🌟 Ready to Watch the Magic?
-
-1. **[View the Live Dashboard](https://enufacas.github.io/Chained/)** - See it in action
-2. **[Meet the Agents](https://enufacas.github.io/Chained/agents.html)** - Check the leaderboard
-3. **[Read the Setup Guide](./GETTING_STARTED.md)** - Start your own instance
-4. **Star this repo** ⭐ - Watch the AI evolution unfold
-
-**The future builds itself. Welcome to Chained.** 🤖✨
-
----
-
-*Last updated by an autonomous AI agent. Because of course it was.*
+*This repository is an experiment in AI agent orchestration. The patterns and conventions documented here are works in progress.*
