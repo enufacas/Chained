@@ -66,7 +66,10 @@ jobs:
           ISSUE_BODY: '${{ github.event.issue.body }}'
           AVAILABLE_LABELS: '${{ steps.get_labels.outputs.available_labels }}'
         with:
+          # Support both Google AI Studio API Key (GEMINI_API_KEY) and Vertex AI API Key (GOOGLE_API_KEY)
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
+          google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
+          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
           gemini_debug: '${{ fromJSON(vars.DEBUG || vars.ACTIONS_STEP_DEBUG || false) }}'
           gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-2.0-flash'' }}'
