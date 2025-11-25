@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "generated_at": "2025-11-14T04:08:53.680410",
-    "analysis_period_days": 2,
-    "snapshots_analyzed": 2,
+    "generated_at": "2025-11-25T01:01:42.214558",
+    "analysis_period_days": 3,
+    "snapshots_analyzed": 3,
     "earliest_snapshot": "2025-11-14T04:00:27",
-    "latest_snapshot": "2025-11-14T04:00:36"
+    "latest_snapshot": "2025-11-25T01:01:20"
   },
   "diversity_trend": {
-    "trend": "stable",
-    "change": 0.0,
-    "current_score": 100.0,
+    "trend": "declining",
+    "change": -100.0,
+    "current_score": 0,
     "previous_score": 100.0,
     "data_points": [
       {
@@ -23,17 +23,23 @@
         "score": 100.0,
         "agents": 2,
         "flags": 0
+      },
+      {
+        "timestamp": "2025-11-25 01:01:20",
+        "score": 0,
+        "agents": 2,
+        "flags": 2
       }
     ],
-    "average_score": 100.0,
-    "score_stdev": 0.0
+    "average_score": 66.66666666666667,
+    "score_stdev": 57.735026918962575
   },
   "agent_trends": {
     "copilot-swe-agent": {
       "trend": "stable",
-      "current_avg_flags": 0,
-      "previous_avg_flags": 0,
-      "total_data_points": 2,
+      "current_avg_flags": 0.3333333333333333,
+      "previous_avg_flags": 0.3333333333333333,
+      "total_data_points": 3,
       "history": [
         {
           "timestamp": "2025-11-14 04:00:27",
@@ -43,6 +49,11 @@
         {
           "timestamp": "2025-11-14 04:00:36",
           "flags": 0,
+          "total_contributions": 1
+        },
+        {
+          "timestamp": "2025-11-25 01:01:20",
+          "flags": 1,
           "total_contributions": 1
         }
       ]
@@ -64,13 +75,17 @@
           "total_contributions": 1
         }
       ]
+    },
+    "copilot": {
+      "trend": "new",
+      "data_points": 1
     }
   },
   "innovation_trend": {
     "trend": "stable",
     "change": 0.0,
-    "current_average": 0.0,
-    "previous_average": 0.0,
+    "current_average": 0.03276003276003276,
+    "previous_average": 0.03276003276003276,
     "data_points": [
       {
         "timestamp": "2025-11-14 04:00:27",
@@ -83,8 +98,16 @@
         "index": 0.0,
         "unique_approaches": 0,
         "total_contributions": 2
+      },
+      {
+        "timestamp": "2025-11-25 01:01:20",
+        "index": 0.09828009828009827,
+        "unique_approaches": 2,
+        "total_contributions": 2035
       }
     ]
   },
-  "recommendations": []
+  "recommendations": [
+    "\u26a0\ufe0f  Diversity is declining. Consider injecting diversity prompts into agent instructions."
+  ]
 }
