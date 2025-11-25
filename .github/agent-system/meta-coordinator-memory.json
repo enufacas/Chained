@@ -1,33 +1,17 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-11-24T22:53:48.851805",
+  "last_updated": "2025-11-25T01:03:35.091568",
   "runs": {
-    "total_runs": 23,
-    "successful_runs": 23,
+    "total_runs": 25,
+    "successful_runs": 25,
     "failed_runs": 0,
     "last_run": {
-      "timestamp": "2025-11-24T21:33:37Z",
-      "run_id": "21:33",
-      "duration_seconds": 120,
+      "timestamp": "2025-11-25T01:03:35.088005",
       "success": true,
-      "actions": {
-        "prs_merged": 2,
-        "prs_closed": 2,
-        "issues_closed": 2,
-        "pr_ids_merged": [
-          2874,
-          2872
-        ],
-        "pr_ids_closed": [
-          2868,
-          2870
-        ],
-        "issue_ids_closed": [
-          2869,
-          2768
-        ]
-      }
+      "duration_seconds": 180,
+      "actions_taken": 3,
+      "session_id": "8e73dce4b35a568a"
     },
     "average_duration_seconds": 139.375
   },
@@ -41,12 +25,12 @@
   "issue_patterns": {
     "total_issues_processed": 8,
     "agents_assigned": {
-      "edge-cases-pro": 16384,
-      "coach-master": 16384,
-      "construct-specialist": 16384,
-      "create-guru": 49152,
-      "investigate-champion": 16384,
-      "troubleshoot-expert": 16384
+      "edge-cases-pro": 65536,
+      "coach-master": 65536,
+      "construct-specialist": 65536,
+      "create-guru": 196608,
+      "investigate-champion": 65536,
+      "troubleshoot-expert": 65536
     },
     "agent_success_rates": {},
     "assignment_times": [
@@ -1749,15 +1733,6 @@
   "learnings": {
     "insights": [
       {
-        "timestamp": "2025-11-23T21:22:20.175520Z",
-        "insight": "Most PRs are waiting for tech lead review - system is functioning correctly with review gates in place",
-        "evidence": {
-          "prs_needing_review": 14,
-          "prs_with_conflicts": 5,
-          "auto_merge_success": 1
-        }
-      },
-      {
         "timestamp": "2025-11-23T22:50:46.485718Z",
         "insight": "Proactive cleanup of merge-conflicted PRs reduces open PR queue and improves signal-to-noise ratio",
         "evidence": {
@@ -2165,6 +2140,15 @@
           "reason": "persistent_merge_conflicts",
           "auto_merge_success": 1
         }
+      },
+      {
+        "insight": "UNKNOWN mergeable state can be triggered to update by marking PRs as ready",
+        "evidence": {
+          "sample_size": 2,
+          "success_rate": 1.0
+        },
+        "timestamp": "2025-11-25T01:03:35.091192",
+        "session_id": "8e73dce4b35a568a"
       }
     ],
     "recommendations": []
