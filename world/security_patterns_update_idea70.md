@@ -65,7 +65,7 @@ description: |
 requirements:
   - legal_name_verification: required
   - government_id: required_for_individuals
-  - organization_verification: d_u_n_s_number
+  - organization_verification: D-U-N-S_number
   - device_verification: mobile_app_confirmation
 
 rollout_strategy:
