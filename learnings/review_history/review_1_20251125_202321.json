@@ -1,0 +1,23 @@
+{
+  "pr_number": 1,
+  "timestamp": "2025-11-25T20:23:21.661208+00:00",
+  "overall_score": 0.0,
+  "criteria_scores": {
+    "code_complexity": 0.0,
+    "code_style": 0.0,
+    "documentation": 0.0,
+    "test_coverage": 0.0,
+    "security": 0.0
+  },
+  "issues_found": [],
+  "suggestions": [
+    "Consider improving code_complexity: Measures code complexity and maintainability",
+    "Consider improving code_style: Checks for consistent code style and formatting",
+    "Consider improving documentation: Ensures adequate documentation and comments",
+    "Consider improving test_coverage: Checks for adequate test coverage",
+    "Consider improving security: Identifies potential security issues"
+  ],
+  "pass_threshold": 0.7,
+  "passed": false,
+  "reviewer_version": "1.0.0"
+}

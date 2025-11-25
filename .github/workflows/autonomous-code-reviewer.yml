@@ -124,35 +124,7 @@ jobs:
           fi
           
           # Create review comment
-          comment="## ${emoji} Autonomous Code Review
-          
-**Status:** ${status}
-**Overall Score:** ${score_pct}
-
-### Review Summary
-
-This PR has been automatically reviewed by the autonomous code reviewer system.
-
-**Issues Found:** ${issues_count}
-
-### Suggestions for Improvement
-
-${suggestions}
-
-### About This Review
-
-The autonomous code reviewer learns from PR outcomes to continuously improve its criteria. This review evaluates:
-- Code complexity and maintainability
-- Code style and formatting
-- Documentation quality
-- Test coverage
-- Security considerations
-
-**Note:** This is an automated assessment. Manual review by tech leads may still be required for protected paths.
-
----
-*🤖 Autonomous Code Reviewer v1.0 - @create-guru infrastructure*
-*This system learns and improves with each review cycle*"
+          comment="## ${emoji} Autonomous Code Review"$'\n\n'"**Status:** ${status}"$'\n'"**Overall Score:** ${score_pct}"$'\n\n'"### Review Summary"$'\n\n'"This PR has been automatically reviewed by the autonomous code reviewer system."$'\n\n'"**Issues Found:** ${issues_count}"$'\n\n'"### Suggestions for Improvement"$'\n\n'"${suggestions}"$'\n\n'"### About This Review"$'\n\n'"The autonomous code reviewer learns from PR outcomes to continuously improve its criteria. This review evaluates:"$'\n'"- Code complexity and maintainability"$'\n'"- Code style and formatting"$'\n'"- Documentation quality"$'\n'"- Test coverage"$'\n'"- Security considerations"$'\n\n'"**Note:** This is an automated assessment. Manual review by tech leads may still be required for protected paths."$'\n\n'"---"$'\n'"*🤖 Autonomous Code Reviewer v1.0 - @create-guru infrastructure*"$'\n'"*This system learns and improves with each review cycle*"
           
           # Post comment
           gh pr comment ${pr_num} --body "${comment}" --repo ${{ github.repository }}

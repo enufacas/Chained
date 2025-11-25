@@ -1,0 +1,14 @@
+{
+  "pr_number": 1,
+  "review_score": 0.0,
+  "outcome": "merged",
+  "outcome_timestamp": "2025-11-25T20:23:29.871421+00:00",
+  "manual_feedback": null,
+  "criteria_accuracy": {
+    "code_complexity": false,
+    "code_style": false,
+    "documentation": false,
+    "test_coverage": false,
+    "security": false
+  }
+}
