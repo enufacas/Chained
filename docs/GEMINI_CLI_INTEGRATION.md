@@ -6,6 +6,29 @@ This document describes the Gemini CLI integration in the Chained repository and
 
 > **Current Mode: Manual Only** - Gemini CLI only responds to explicit `@gemini-cli` commands.
 
+### 🔑 Step 1: Authentication Setup (Choose One)
+
+Before using Gemini CLI, you must set up authentication. Choose the method that fits your needs:
+
+#### Option A: Google AI Studio (Recommended for Quick Start)
+
+1. Get API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Go to **Settings > Secrets and variables > Actions > New repository secret**
+3. Name: `GEMINI_API_KEY`, Value: your API key
+4. Save and you're ready!
+
+#### Option B: Vertex AI (For GCP Users)
+
+1. Get API key from [GCP Console](https://cloud.google.com/vertex-ai/generative-ai/docs/start/api-keys)
+2. Go to **Settings > Secrets and variables > Actions**
+3. Create **Secret**: Name: `GOOGLE_API_KEY`, Value: your Vertex AI API key
+4. Create **Variable**: Name: `GOOGLE_GENAI_USE_VERTEXAI`, Value: `true`
+5. Save and you're ready!
+
+**✅ Quick Test**: Once configured, comment `@gemini-cli help` on any issue to verify authentication works.
+
+---
+
 ### Available Commands
 
 Use these commands in any issue or pull request comment:
@@ -115,9 +138,36 @@ The `run-gemini-cli` action integrates Google's Gemini AI into GitHub workflows,
 
 ### Required Setup
 
-1. **Gemini API Key** (simplest option)
-   - Get from [Google AI Studio](https://aistudio.google.com/apikey)
-   - Store as `GEMINI_API_KEY` secret in repository settings
+1. **Choose Your Authentication Method**
+
+   You have two options for authenticating with Gemini:
+
+   **Option A: Google AI Studio API Key (Recommended for Quick Start)**
+   - **Best for**: Quick setup, personal projects, free tier usage
+   - **Get your key**: [Google AI Studio](https://aistudio.google.com/app/apikey)
+   - **Pros**: Simplest setup, generous free quota
+   - **Cons**: No GCP integration, limited enterprise features
+   - **Setup**:
+     1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+     2. Click "Create API Key"
+     3. Store as `GEMINI_API_KEY` secret in repository settings
+
+   **Option B: Vertex AI API Key (For GCP Users)**
+   - **Best for**: Users with existing GCP projects, enterprise use cases
+   - **Get your key**: [Google Cloud Console](https://cloud.google.com/vertex-ai/generative-ai/docs/start/api-keys?usertype=newuser)
+   - **Pros**: Integrates with GCP, better for production, billing control
+   - **Cons**: Requires GCP project setup
+   - **Setup**:
+     1. Create or select a GCP project with billing enabled
+     2. Enable the Vertex AI API
+     3. Generate a Vertex AI API key from GCP Console
+     4. Store as `GOOGLE_API_KEY` secret in repository settings
+     5. Create a repository variable `GOOGLE_GENAI_USE_VERTEXAI` and set to `true`
+
+   **⚠️ IMPORTANT**: These are two different authentication systems. Do NOT mix them:
+   - Google AI Studio keys work with `generativelanguage.googleapis.com`
+   - Vertex AI keys work with `aiplatform.googleapis.com`
+   - Using the wrong type of key will result in authentication errors
 
 2. **Update `.gitignore`**
    ```gitignore
@@ -209,13 +259,27 @@ The `run-gemini-cli` action integrates Google's Gemini AI into GitHub workflows,
 
 ### A. Authentication Options
 
-| Option | Best For | Setup Complexity |
-|--------|----------|------------------|
-| **API Key** | Quick start, non-sensitive repos | Low |
-| **Vertex AI** | Enterprise, billing control | Medium |
-| **Workload Identity** | GCP-native, no secrets | High |
+The Gemini workflows now support **two authentication methods**. Choose based on your needs:
 
-**Recommendation for Chained**: Start with API Key for simplicity.
+| Option | Best For | Setup Complexity | Configuration |
+|--------|----------|------------------|---------------|
+| **Google AI Studio API Key** | Quick start, personal projects, free tier | Low | `GEMINI_API_KEY` secret |
+| **Vertex AI API Key** | GCP users, enterprise, billing control | Low-Medium | `GOOGLE_API_KEY` secret + `GOOGLE_GENAI_USE_VERTEXAI=true` variable |
+| **Workload Identity Federation** | GCP-native, keyless, production | High | WIF setup (see source repo docs) |
+
+**Current Implementation Status:**
+- ✅ **Google AI Studio API Key** - Fully supported (default)
+- ✅ **Vertex AI API Key** - Fully supported (as of this PR)
+- ⏸️ **Workload Identity Federation** - Not configured (optional advanced setup)
+
+**How the workflows choose authentication:**
+1. If `GOOGLE_API_KEY` secret exists AND `GOOGLE_GENAI_USE_VERTEXAI=true` → Use Vertex AI
+2. Else if `GEMINI_API_KEY` secret exists → Use Google AI Studio
+3. Else → Fail with authentication error
+
+**Recommendation for Chained**: 
+- New users: Start with **Google AI Studio API Key** for simplicity
+- GCP users: Use **Vertex AI API Key** for better integration with existing GCP projects
 
 ### B. Model Selection and Rate Limits
 
@@ -522,15 +586,89 @@ All configuration options are documented with inline comments in:
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| `GEMINI_API_KEY` secret | ✅ Configured | Authentication ready |
-| `gemini-dispatch.yml` | ✅ Implemented | Manual-only mode |
-| `gemini-review.yml` | ✅ Implemented | PR code review |
-| `gemini-triage.yml` | ✅ Implemented | Issue labeling |
-| `gemini-invoke.yml` | ✅ Implemented | General assistant (approval-based) |
-| `gemini-fix.yml` | ✅ Implemented | Automatic issue fixer |
+| **Authentication** | | |
+| Google AI Studio API Key | ✅ Supported | Default method via `GEMINI_API_KEY` |
+| Vertex AI API Key | ✅ Supported | Via `GOOGLE_API_KEY` + `GOOGLE_GENAI_USE_VERTEXAI=true` |
+| Workload Identity Federation | ⏸️ Available | Not configured, see source repo for setup |
+| **Workflows** | | |
+| `gemini-dispatch.yml` | ✅ Implemented | Manual-only mode, dual auth support |
+| `gemini-review.yml` | ✅ Implemented | PR code review, dual auth support |
+| `gemini-triage.yml` | ✅ Implemented | Issue labeling, dual auth support |
+| `gemini-invoke.yml` | ✅ Implemented | General assistant, dual auth support |
+| `gemini-fix.yml` | ✅ Implemented | Automatic issue fixer, dual auth support |
+| **Configuration** | | |
 | `GEMINI.md` | ✅ Created | Project context |
 | `.gitignore` | ✅ Updated | Excludes `.gemini/` |
 | Auto-triggers | ⏸️ Disabled | Can enable later |
+
+---
+
+## Troubleshooting
+
+### Error: "API keys are not supported by this API"
+
+**Full Error Message:**
+```
+API keys are not supported by this API. Expected OAuth2 access token or other authentication credentials that assert a principal.
+```
+
+**Cause**: You're using a Vertex AI API key but haven't configured the workflows to use Vertex AI mode.
+
+**Solution:**
+
+If you have a **Vertex AI API key** (from GCP Console):
+
+1. Store your API key as `GOOGLE_API_KEY` secret (NOT `GEMINI_API_KEY`):
+   - Go to **Settings > Secrets and variables > Actions > Repository secrets**
+   - Create a new secret named `GOOGLE_API_KEY`
+   - Paste your Vertex AI API key
+
+2. Create a repository variable to enable Vertex AI mode:
+   - Go to **Settings > Secrets and variables > Actions > Variables**
+   - Create a new variable named `GOOGLE_GENAI_USE_VERTEXAI`
+   - Set value to `true`
+
+3. Re-run the failed workflow
+
+**Alternative Solution:**
+
+If you prefer the simpler setup, get a **Google AI Studio API key** instead:
+
+1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Click "Create API Key" (NOT from Google Cloud Console)
+3. Copy the generated API key (starts with `AIza...`)
+4. Store as `GEMINI_API_KEY` secret in repository settings
+5. Do NOT set the `GOOGLE_GENAI_USE_VERTEXAI` variable
+6. Re-run the failed workflow
+
+**Key Difference:**
+- **Google AI Studio API Key** (`GEMINI_API_KEY`): Uses `generativelanguage.googleapis.com` - simpler, free tier
+- **Vertex AI API Key** (`GOOGLE_API_KEY` + `GOOGLE_GENAI_USE_VERTEXAI=true`): Uses `aiplatform.googleapis.com` - GCP integration
+
+### Error: Rate Limit Exceeded
+
+If you see rate limit errors, check the [Model Selection and Rate Limits](#b-model-selection-and-rate-limits) section above. The default model (`gemini-2.0-flash`) has a 15 RPM limit on the free tier.
+
+**Solutions:**
+- Wait for rate limit to reset (1 minute)
+- Use a different model with higher limits (e.g., `gemini-2.5-flash-lite`)
+- Upgrade to a paid Google AI Studio plan
+
+### Workflow Doesn't Respond to @gemini-cli
+
+**Check:**
+1. Your user role (must be OWNER, MEMBER, or COLLABORATOR)
+2. The `GEMINI_API_KEY` secret is configured correctly
+3. The command syntax is correct (e.g., `@gemini-cli /review`, not `@gemini-cli/review`)
+
+### Gemini Creates Plan But Doesn't Execute
+
+This is expected behavior for the `/invoke` command. Gemini requires human approval before making changes:
+1. Gemini posts a plan in the issue/PR
+2. Human reviews and approves
+3. Gemini executes the approved plan
+
+Use `/fix` instead if you want automatic execution without approval.
 
 ---
 
@@ -538,7 +676,7 @@ All configuration options are documented with inline comments in:
 
 - [run-gemini-cli Repository](https://github.com/google-github-actions/run-gemini-cli)
 - [Gemini CLI Documentation](https://github.com/google-gemini/gemini-cli)
-- [Google AI Studio](https://aistudio.google.com/apikey)
+- [Google AI Studio](https://aistudio.google.com/app/apikey) - **Get your API key here**
 - [Chained Agent System](/docs/AGENT_QUICKSTART.md)
 
 ---
