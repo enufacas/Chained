@@ -221,9 +221,10 @@ jobs:
               
               # Convert needs_cultivation to the expected opportunities format
               opportunities = []
-              needs = summary.get('needs_cultivation', [])[:3]
-              curious_idx = level_order.index('CURIOUS')
-              expert_idx = level_order.index('EXPERT')
+              # Convert needs_cultivation to the expected opportunities format
+              MAX_SUGGESTIONS = 3
+              opportunities = []
+              needs = summary.get('needs_cultivation', [])[:MAX_SUGGESTIONS]
               
               for item in needs:
                   current_level = item.get('level', 'CURIOUS')
