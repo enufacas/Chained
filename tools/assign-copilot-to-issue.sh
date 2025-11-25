@@ -38,6 +38,7 @@ echo "Found issues to check: $issue_numbers"
 
 success_count=0
 already_assigned_count=0
+skipped_count=0
 failed_count=0
 
 # Process each issue
@@ -53,7 +54,14 @@ for issue_number in $issue_numbers; do
   # Skip issues with spawn-pending label (waiting for agent spawn PR to merge)
   if echo "$issue_labels" | grep -q "spawn-pending"; then
     echo "⏭️  Skipping issue #$issue_number - has spawn-pending label (waiting for spawn PR to merge)"
-    already_assigned_count=$((already_assigned_count + 1))
+    skipped_count=$((skipped_count + 1))
+    continue
+  fi
+  
+  # Skip issues with gemini label (handled by Gemini workflow instead)
+  if echo "$issue_labels" | grep -qi "gemini"; then
+    echo "⏭️  Skipping issue #$issue_number - has gemini label (handled by Gemini workflow)"
+    skipped_count=$((skipped_count + 1))
     continue
   fi
   
@@ -557,5 +565,6 @@ echo "📊 Summary"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "✅ Successfully assigned: $success_count"
 echo "✓ Already assigned: $already_assigned_count"
+echo "⏭️  Skipped (gemini/other): $skipped_count"
 echo "❌ Failed: $failed_count"
 echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

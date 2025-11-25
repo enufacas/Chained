@@ -695,6 +695,11 @@ fi
 
 **Task:** Assign agents to all open issues using the proven method from copilot-graphql-assign.yml
 
+**Labels That Skip Assignment:**
+- `spawn-pending` - Waiting for agent spawn PR to merge
+- `gemini` - Handled by Gemini workflow instead (do not assign Copilot)
+- `copilot-assigned` - Already assigned
+
 **CRITICAL: Use the assign-copilot-to-issue.sh Script**
 
 The repository has a comprehensive script that handles the **SECRET SAUCE** of Copilot assignment: `tools/assign-copilot-to-issue.sh`
@@ -707,6 +712,7 @@ The repository has a comprehensive script that handles the **SECRET SAUCE** of C
 - Label management (copilot-assigned, agent:X)
 - Race condition prevention
 - Error handling and fallbacks
+- **Skipping issues with `gemini` label** (handled by Gemini workflow instead)
 
 **How to Use:**
 ```bash
