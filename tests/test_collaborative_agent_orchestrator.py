@@ -97,7 +97,7 @@ class TestCollaborativeAgentOrchestrator:
     def teardown(self):
         """Clean up test environment"""
         if self.temp_dir and self.temp_dir.exists():
-            shutil.rmtree(self.temp_dir)
+            shutil.rmtree(self.temp_dir, ignore_errors=True)
     
     def test_orchestrator_initialization(self):
         """Test orchestrator initializes correctly"""

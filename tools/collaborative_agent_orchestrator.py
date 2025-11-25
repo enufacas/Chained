@@ -25,7 +25,6 @@ from typing import Dict, List, Optional, Tuple, Any, Set
 from dataclasses import dataclass, field
 from pathlib import Path
 from enum import Enum
-import hashlib
 import uuid
 
 # Add tools directory to path
@@ -228,7 +227,8 @@ class CollaborativeAgentOrchestrator:
     def _generate_session_id(self, task_id: str) -> str:
         """Generate a unique session ID"""
         timestamp = datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')
-        unique = hashlib.md5(f"{task_id}{timestamp}{uuid.uuid4()}".encode()).hexdigest()[:8]
+        # Use uuid4 for uniqueness (cryptographically secure)
+        unique = uuid.uuid4().hex[:8]
         return f"collab-{task_id}-{timestamp}-{unique}"
     
     def _generate_message_id(self) -> str:
@@ -406,7 +406,11 @@ class CollaborativeAgentOrchestrator:
         if not session:
             raise ValueError(f"Session {session_id} not found")
         
-        session.progress[subtask_id] = min(max(progress, 0.0), 100.0)
+        # Validate progress is within acceptable range
+        if progress < 0.0 or progress > 100.0:
+            raise ValueError(f"Progress must be between 0.0 and 100.0, got {progress}")
+        
+        session.progress[subtask_id] = progress
         session.updated_at = datetime.now(timezone.utc).isoformat()
         
         # Send progress update message
@@ -534,19 +538,36 @@ class CollaborativeAgentOrchestrator:
     
     def _calculate_duration(self, session: CollaborationSession) -> str:
         """Calculate the duration of a session"""
-        start = datetime.fromisoformat(session.created_at.replace('Z', '+00:00'))
-        end_str = session.completed_at or session.updated_at
-        end = datetime.fromisoformat(end_str.replace('Z', '+00:00'))
-        
-        delta = end - start
-        hours = delta.total_seconds() / 3600
-        
-        if hours < 1:
-            return f"{int(delta.total_seconds() / 60)} minutes"
-        elif hours < 24:
-            return f"{hours:.1f} hours"
-        else:
-            return f"{hours / 24:.1f} days"
+        try:
+            # Handle ISO format timestamps with or without 'Z' suffix
+            start_str = session.created_at
+            if start_str.endswith('Z'):
+                start_str = start_str[:-1] + '+00:00'
+            elif not ('+' in start_str or start_str.endswith('+00:00')):
+                start_str = start_str + '+00:00'
+            start = datetime.fromisoformat(start_str)
+            
+            end_raw = session.completed_at or session.updated_at
+            if end_raw.endswith('Z'):
+                end_raw = end_raw[:-1] + '+00:00'
+            elif not ('+' in end_raw or end_raw.endswith('+00:00')):
+                end_raw = end_raw + '+00:00'
+            end = datetime.fromisoformat(end_raw)
+            
+            delta = end - start
+            total_seconds = delta.total_seconds()
+            hours = total_seconds / 3600
+            
+            if total_seconds < 60:
+                return f"{max(1, int(total_seconds))} seconds"
+            elif hours < 1:
+                return f"{max(1, int(total_seconds / 60))} minutes"
+            elif hours < 24:
+                return f"{hours:.1f} hours"
+            else:
+                return f"{hours / 24:.1f} days"
+        except (ValueError, TypeError):
+            return "unknown"
     
     def get_pending_messages(
         self,
@@ -565,7 +586,11 @@ class CollaborativeAgentOrchestrator:
         """
         pending = []
         
-        sessions = [self.sessions[session_id]] if session_id else self.sessions.values()
+        if session_id:
+            session = self.sessions.get(session_id)
+            sessions = [session] if session else []
+        else:
+            sessions = list(self.sessions.values())
         
         for session in sessions:
             for msg in session.messages:
