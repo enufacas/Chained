@@ -229,20 +229,25 @@ jobs:
           *🤖 Created by workflow: [Mentorship Monitoring Dashboard](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})*
           "
           
-          # Check if similar issue already exists
+          # Check if similar issue already exists (search without labels to avoid dependency)
           EXISTING_ISSUE=$(gh issue list \
-            --label "mentorship-system,automated" \
             --state open \
             --search "Mentorship System Alert" \
             --json number \
             --jq '.[0].number' || echo "")
           
           if [ -z "$EXISTING_ISSUE" ]; then
-            # Create new issue
-            gh issue create \
+            # Create new issue - try with labels, fall back to no labels if labels don't exist
+            if ! gh issue create \
               --title "🚨 Mentorship System Alert - $(date +%Y-%m-%d)" \
               --body "$ISSUE_BODY" \
-              --label "mentorship-system,automated,alert"
+              --label "mentorship-system,automated,alert" 2>/dev/null; then
+              
+              echo "⚠️ Labels not found, creating issue without labels"
+              gh issue create \
+                --title "🚨 Mentorship System Alert - $(date +%Y-%m-%d)" \
+                --body "$ISSUE_BODY"
+            fi
             
             echo "✅ Alert issue created"
           else

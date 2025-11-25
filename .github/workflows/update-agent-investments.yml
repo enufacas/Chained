@@ -208,11 +208,44 @@ jobs:
               # Identify opportunities for further cultivation
               print()
               print("🔍 Identifying cultivation opportunities...")
-              opportunities = tracker.find_cultivation_opportunities(
-                  agent_id,
-                  min_score=30.0,
-                  max_suggestions=3
-              )
+              
+              # Get investment summary to find categories needing cultivation
+              summary = tracker.get_investment_summary(agent_id)
+              
+              # Define level progression
+              level_order = ['NONE', 'CURIOUS', 'LEARNING', 'PRACTICING', 'PROFICIENT', 'EXPERT']
+              level_thresholds = {
+                  'NONE': 0, 'CURIOUS': 10, 'LEARNING': 30, 
+                  'PRACTICING': 60, 'PROFICIENT': 100, 'EXPERT': 150
+              }
+              
+              # Convert needs_cultivation to the expected opportunities format
+              opportunities = []
+              needs = summary.get('needs_cultivation', [])[:3]
+              curious_idx = level_order.index('CURIOUS')
+              expert_idx = level_order.index('EXPERT')
+              
+              for item in needs:
+                  current_level = item.get('level', 'CURIOUS')
+                  current_idx = level_order.index(current_level) if current_level in level_order else curious_idx
+                  
+                  # Handle progression - EXPERT level has no next level
+                  if current_idx >= expert_idx:
+                      next_level = 'EXPERT'
+                      gap = 0  # Already at max level
+                  else:
+                      next_idx = current_idx + 1
+                      next_level = level_order[next_idx]
+                      next_threshold = level_thresholds.get(next_level, 150)
+                      gap = max(0, next_threshold - item.get('score', 0))
+                  
+                  opportunities.append({
+                      'category': item.get('category', 'unknown'),
+                      'current_level': current_level,
+                      'next_level': next_level,
+                      'score': item.get('score', 0),
+                      'gap_to_next': gap
+                  })
               
               # Save data for next steps
               output_data = {
