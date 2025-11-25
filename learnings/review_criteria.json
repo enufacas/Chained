@@ -1,0 +1,88 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-25T20:21:23.581751+00:00",
+  "criteria": [
+    {
+      "name": "code_complexity",
+      "description": "Measures code complexity and maintainability",
+      "weight": 0.25,
+      "threshold": 0.6,
+      "patterns": [
+        "def \\w+\\([^)]*\\):",
+        "class \\w+"
+      ],
+      "anti_patterns": [
+        "def \\w+\\([^)]{100,}\\):",
+        "if.*if.*if.*if"
+      ],
+      "success_rate": 0.7,
+      "total_evaluations": 0
+    },
+    {
+      "name": "code_style",
+      "description": "Checks for consistent code style and formatting",
+      "weight": 0.15,
+      "threshold": 0.7,
+      "patterns": [
+        "^import \\w+$",
+        "^from \\w+ import"
+      ],
+      "anti_patterns": [
+        "import \\*",
+        "\\s{4,}\\w"
+      ],
+      "success_rate": 0.8,
+      "total_evaluations": 0
+    },
+    {
+      "name": "documentation",
+      "description": "Ensures adequate documentation and comments",
+      "weight": 0.2,
+      "threshold": 0.5,
+      "patterns": [
+        "\"\"\".*?\"\"\"",
+        "#\\s+\\w+",
+        "^def \\w+\\([^)]*\\):\\s*\\n\\s*\\\"\\\"\\\""
+      ],
+      "anti_patterns": [
+        "TODO|FIXME|XXX"
+      ],
+      "success_rate": 0.75,
+      "total_evaluations": 0
+    },
+    {
+      "name": "test_coverage",
+      "description": "Checks for adequate test coverage",
+      "weight": 0.2,
+      "threshold": 0.6,
+      "patterns": [
+        "def test_\\w+",
+        "class Test\\w+",
+        "assert\\s+"
+      ],
+      "anti_patterns": [
+        "pass\\s*#.*test"
+      ],
+      "success_rate": 0.85,
+      "total_evaluations": 0
+    },
+    {
+      "name": "security",
+      "description": "Identifies potential security issues",
+      "weight": 0.2,
+      "threshold": 0.8,
+      "patterns": [
+        "input\\(.*\\)",
+        "os\\.environ\\.get\\("
+      ],
+      "anti_patterns": [
+        "eval\\(",
+        "exec\\(",
+        "os\\.system\\(",
+        "subprocess\\.call\\(.+shell=True"
+      ],
+      "success_rate": 0.9,
+      "total_evaluations": 0
+    }
+  ]
+}
