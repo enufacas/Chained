@@ -14,6 +14,11 @@ __pycache__/
 dist/
 build/
 
+# JavaScript
+node_modules/
+mcp-servers/chained-world-model/node_modules/
+tools/mcp-server/node_modules/
+
 # IDEs
 .vscode/
 .idea/
