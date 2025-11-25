@@ -136,8 +136,6 @@ The `run-gemini-cli` action integrates Google's Gemini AI into GitHub workflows,
 
 ## Prerequisites
 
-## Prerequisites
-
 ### Required Setup
 
 1. **Choose Your Authentication Method**
