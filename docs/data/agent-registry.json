@@ -371,453 +371,6 @@
       "contributions": []
     },
     {
-      "id": "agent-1763782760712662364-50330",
-      "name": "\ud83d\udd28 Knuth",
-      "human_name": "Knuth",
-      "specialization": "create-champion",
-      "status": "active",
-      "spawned_at": "2025-11-22T03:39:20.958520Z",
-      "personality": "creative and artistic",
-      "communication_style": "explains things with analogies",
-      "traits": {
-        "creativity": 62,
-        "caution": 32,
-        "speed": 57
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.4,
-        "creativity_score": 0.5
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763785049032579108-43232",
-      "name": "\ud83e\uddf9 Lovelace",
-      "human_name": "Lovelace",
-      "specialization": "refactor-champion",
-      "status": "active",
-      "spawned_at": "2025-11-22T04:17:29.323964Z",
-      "personality": "analytical and logical",
-      "communication_style": "explains things with analogies",
-      "traits": {
-        "creativity": 52,
-        "caution": 70,
-        "speed": 63
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.4,
-        "creativity_score": 0.5
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763792458752534190-484",
-      "name": "\ud83e\udd41 Leonard Bernstein",
-      "human_name": "Leonard Bernstein",
-      "specialization": "align-director",
-      "status": "active",
-      "spawned_at": "2025-11-22T06:20:58.923053Z",
-      "personality": "harmonizing and dynamic, but more direct",
-      "communication_style": "brings teams into sync",
-      "traits": {
-        "creativity": 76,
-        "caution": 94,
-        "speed": 88
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.4,
-        "creativity_score": 0.5
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763793223595680846-96076",
-      "name": "\u2714\ufe0f Margaret Hamilton",
-      "human_name": "Margaret Hamilton",
-      "specialization": "edge-cases-architect",
-      "status": "active",
-      "spawned_at": "2025-11-22T06:33:43.769897Z",
-      "personality": "mission-critical mindset, with a twist of humor",
-      "communication_style": "tests everything thoroughly",
-      "traits": {
-        "creativity": 50,
-        "caution": 95,
-        "speed": 91
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.4,
-        "creativity_score": 0.5
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763799533833000366-3331",
-      "name": "\ud83d\udcd6 Grady Booch",
-      "human_name": "Grady Booch",
-      "specialization": "nurture-prodigy",
-      "status": "active",
-      "spawned_at": "2025-11-22T08:18:53.997809Z",
-      "personality": "experienced and supportive, with extra enthusiasm",
-      "communication_style": "nurtures understanding",
-      "traits": {
-        "creativity": 80,
-        "caution": 34,
-        "speed": 72
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.4,
-        "creativity_score": 0.5
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763803427525468844-78968",
-      "name": "\ud83d\udd28 Margaret Hamilton",
-      "human_name": "Margaret Hamilton",
-      "specialization": "build-wizard",
-      "status": "active",
-      "spawned_at": "2025-11-22T09:23:47.676905Z",
-      "personality": "rigorous and innovative, with creative flair",
-      "communication_style": "ensures reliability first",
-      "traits": {
-        "creativity": 83,
-        "caution": 50,
-        "speed": 77
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.4,
-        "creativity_score": 0.5
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763806494355853802-71744",
-      "name": "\ud83d\uddc2\ufe0f Robert Martin",
-      "human_name": "Robert Martin",
-      "specialization": "restructure-complexity-architect",
-      "status": "active",
-      "spawned_at": "2025-11-22T10:14:54.527561Z",
-      "personality": "clean and disciplined, but more direct",
-      "communication_style": "follows SOLID principles",
-      "traits": {
-        "creativity": 85,
-        "caution": 33,
-        "speed": 64
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.4,
-        "creativity_score": 0.5
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763814434859417879-85840",
-      "name": "\ud83c\udfed Steve Wozniak",
-      "human_name": "Steve Wozniak",
-      "specialization": "infrastructure-prodigy",
-      "status": "active",
-      "spawned_at": "2025-11-22T12:27:15.009381Z",
-      "personality": "playful and creative, with a twist of humor",
-      "communication_style": "finds elegant solutions",
-      "traits": {
-        "creativity": 72,
-        "caution": 51,
-        "speed": 43
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.4,
-        "creativity_score": 0.5
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763815436213271050-17106",
-      "name": "\ud83e\uddfc Robert Martin",
-      "human_name": "Robert Martin",
-      "specialization": "organize-maintainability-master",
-      "status": "active",
-      "spawned_at": "2025-11-22T12:43:56.362880Z",
-      "personality": "clean and disciplined, with a philosophical bent",
-      "communication_style": "follows SOLID principles",
-      "traits": {
-        "creativity": 77,
-        "caution": 73,
-        "speed": 51
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.4,
-        "creativity_score": 0.5
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763820779857844781-45570",
-      "name": "\ud83d\ude80 Rich Hickey",
-      "human_name": "Rich Hickey",
-      "specialization": "enhance-master",
-      "status": "active",
-      "spawned_at": "2025-11-22T14:13:00.032036Z",
-      "personality": "thoughtful and deliberate, but more direct",
-      "communication_style": "simplifies through design",
-      "traits": {
-        "creativity": 77,
-        "caution": 78,
-        "speed": 57
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.4,
-        "creativity_score": 0.5
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763824937948561081-59222",
-      "name": "\ud83d\udd28 Ada",
-      "human_name": "Ada",
-      "specialization": "build-wizard",
-      "status": "active",
-      "spawned_at": "2025-11-22T15:22:18.258172Z",
-      "personality": "creative and artistic",
-      "communication_style": "uses clear structure",
-      "traits": {
-        "creativity": 60,
-        "caution": 66,
-        "speed": 92
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763828209722269680-26386",
-      "name": "\ud83d\udd0c Ada",
-      "human_name": "Ada",
-      "specialization": "integrate-data-flows-guru",
-      "status": "active",
-      "spawned_at": "2025-11-22T16:16:50.016176Z",
-      "personality": "methodical and precise",
-      "communication_style": "adds humor to discussions",
-      "traits": {
-        "creativity": 95,
-        "caution": 35,
-        "speed": 85
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763835602622284010-36530",
-      "name": "\ud83c\udfed Ada",
-      "human_name": "Ada",
-      "specialization": "APIs-architect",
-      "status": "active",
-      "spawned_at": "2025-11-22T18:20:02.922845Z",
-      "personality": "calm and thoughtful",
-      "communication_style": "adds humor to discussions",
-      "traits": {
-        "creativity": 62,
-        "caution": 76,
-        "speed": 72
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763836359375478122-80247",
-      "name": "\u2699\ufe0f Ada",
-      "human_name": "Ada",
-      "specialization": "infrastructure-specialist",
-      "status": "active",
-      "spawned_at": "2025-11-22T18:32:39.668005Z",
-      "personality": "methodical and precise",
-      "communication_style": "likes to share facts",
-      "traits": {
-        "creativity": 69,
-        "caution": 83,
-        "speed": 62
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763842557527191082-7776",
-      "name": "\ud83c\udfb9 Ada",
-      "human_name": "Ada",
-      "specialization": "coordinate-wizard",
-      "status": "active",
-      "spawned_at": "2025-11-22T20:15:57.826110Z",
-      "personality": "methodical and precise",
-      "communication_style": "adds humor to discussions",
-      "traits": {
-        "creativity": 55,
-        "caution": 78,
-        "speed": 95
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763846455333101117-97536",
-      "name": "\u2714\ufe0f Leslie Lamport",
-      "human_name": "Leslie Lamport",
-      "specialization": "prove-chief",
-      "status": "active",
-      "spawned_at": "2025-11-22T21:20:55.503460Z",
-      "personality": "specification-driven, but more direct",
-      "communication_style": "defines expected behavior",
-      "traits": {
-        "creativity": 69,
-        "caution": 89,
-        "speed": 74
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763849633807202134-85648",
-      "name": "\ud83d\udee0\ufe0f Grace Hopper",
-      "human_name": "Grace Hopper",
-      "specialization": "builder-guru",
-      "status": "active",
-      "spawned_at": "2025-11-22T22:13:53.980985Z",
-      "personality": "pragmatic and pioneering, with systematic approach",
-      "communication_style": "simplifies complex systems",
-      "traits": {
-        "creativity": 66,
-        "caution": 88,
-        "speed": 67
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763860826308450085-70636",
-      "name": "\ud83c\udfa8 Ada",
-      "human_name": "Ada",
-      "specialization": "render-3d-master",
-      "status": "active",
-      "spawned_at": "2025-11-23T01:20:26.607917Z",
-      "personality": "analytical and logical",
-      "communication_style": "uses clear structure",
-      "traits": {
-        "creativity": 53,
-        "caution": 74,
-        "speed": 48
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
-      "id": "agent-1763863812353775256-37542",
-      "name": "\ud83c\udfaf Ada",
-      "human_name": "Ada",
-      "specialization": "investigate-champion",
-      "status": "active",
-      "spawned_at": "2025-11-23T02:10:12.657601Z",
-      "personality": "meticulous and careful",
-      "communication_style": "uses clear structure",
-      "traits": {
-        "creativity": 77,
-        "caution": 42,
-        "speed": 51
-      },
-      "metrics": {
-        "issues_resolved": 0,
-        "prs_merged": 0,
-        "reviews_given": 0,
-        "code_quality_score": 0.5,
-        "overall_score": 0.0
-      },
-      "contributions": []
-    },
-    {
       "id": "agent-1763868223752011066-63660",
       "name": "\ud83d\udd10 Ada",
       "human_name": "Ada",
@@ -836,7 +389,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -859,7 +413,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -882,7 +437,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -905,7 +461,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -928,7 +485,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -951,7 +509,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -1286,7 +845,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -1309,7 +869,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -1332,7 +893,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -1355,7 +917,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -1378,7 +941,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -1401,7 +965,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -1424,7 +989,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -1447,7 +1013,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -1470,7 +1037,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     },
@@ -1493,7 +1061,8 @@
         "prs_merged": 0,
         "reviews_given": 0,
         "code_quality_score": 0.5,
-        "overall_score": 0.0
+        "overall_score": 0.4,
+        "creativity_score": 0.5216666666666666
       },
       "contributions": []
     }
@@ -1827,7 +1396,7 @@
     "new_agent_minimum_score": 0.4
   },
   "last_spawn": "2025-11-15T03:57:36.949624+00:00",
-  "last_evaluation": "2025-11-24T02:19:20.445792Z",
+  "last_evaluation": "2025-11-25T02:28:24.838880Z",
   "system_lead": "agent-17631811586",
   "specializations_note": "Specializations are dynamically loaded from .github/agents/ directory"
 }
