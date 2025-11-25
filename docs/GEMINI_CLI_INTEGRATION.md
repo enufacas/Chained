@@ -116,7 +116,9 @@ The `run-gemini-cli` action integrates Google's Gemini AI into GitHub workflows,
 ### Required Setup
 
 1. **Gemini API Key** (simplest option)
-   - Get from [Google AI Studio](https://aistudio.google.com/apikey)
+   - **IMPORTANT**: Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+   - **⚠️ DO NOT use API keys from Google Cloud Platform Console** - these are different and will not work
+   - The workflows use the `generativelanguage.googleapis.com` API which requires Google AI Studio API keys
    - Store as `GEMINI_API_KEY` secret in repository settings
 
 2. **Update `.gitignore`**
@@ -534,11 +536,61 @@ All configuration options are documented with inline comments in:
 
 ---
 
+## Troubleshooting
+
+### Error: "API keys are not supported by this API"
+
+**Full Error Message:**
+```
+API keys are not supported by this API. Expected OAuth2 access token or other authentication credentials that assert a principal.
+```
+
+**Cause**: You're using an API key from the wrong source. The Gemini workflows use the Google AI Studio API (`generativelanguage.googleapis.com`), which only accepts Google AI Studio API keys.
+
+**Solution:**
+1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Click "Create API Key" (NOT from Google Cloud Console)
+3. Copy the generated API key (starts with `AIza...`)
+4. Update your `GEMINI_API_KEY` secret in repository settings:
+   - Go to **Settings > Secrets and variables > Actions > Repository secrets**
+   - Edit the `GEMINI_API_KEY` secret
+   - Paste the new API key from Google AI Studio
+5. Re-run the failed workflow
+
+**Common Mistake**: Creating an API key from `https://console.cloud.google.com/marketplace/product/google/aiplatform.googleapis.com` (GCP Console) instead of Google AI Studio. These are different services with different authentication methods.
+
+### Error: Rate Limit Exceeded
+
+If you see rate limit errors, check the [Model Selection and Rate Limits](#b-model-selection-and-rate-limits) section above. The default model (`gemini-2.0-flash`) has a 15 RPM limit on the free tier.
+
+**Solutions:**
+- Wait for rate limit to reset (1 minute)
+- Use a different model with higher limits (e.g., `gemini-2.5-flash-lite`)
+- Upgrade to a paid Google AI Studio plan
+
+### Workflow Doesn't Respond to @gemini-cli
+
+**Check:**
+1. Your user role (must be OWNER, MEMBER, or COLLABORATOR)
+2. The `GEMINI_API_KEY` secret is configured correctly
+3. The command syntax is correct (e.g., `@gemini-cli /review`, not `@gemini-cli/review`)
+
+### Gemini Creates Plan But Doesn't Execute
+
+This is expected behavior for the `/invoke` command. Gemini requires human approval before making changes:
+1. Gemini posts a plan in the issue/PR
+2. Human reviews and approves
+3. Gemini executes the approved plan
+
+Use `/fix` instead if you want automatic execution without approval.
+
+---
+
 ## Related Resources
 
 - [run-gemini-cli Repository](https://github.com/google-github-actions/run-gemini-cli)
 - [Gemini CLI Documentation](https://github.com/google-gemini/gemini-cli)
-- [Google AI Studio](https://aistudio.google.com/apikey)
+- [Google AI Studio](https://aistudio.google.com/app/apikey) - **Get your API key here**
 - [Chained Agent System](/docs/AGENT_QUICKSTART.md)
 
 ---

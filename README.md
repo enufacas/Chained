@@ -163,7 +163,7 @@ This system provides a continuous stream of tasks but is still experimental. It 
 ### Prerequisites
 - GitHub repository with Actions enabled
 - Personal Access Token (PAT) with `repo` scope
-- (Optional) Gemini API key for Gemini workflows
+- (Optional) Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey) for Gemini workflows
 
 ### Setup
 
@@ -173,7 +173,7 @@ This system provides a continuous stream of tasks but is still experimental. It 
    ```
    Repository Settings → Secrets and Variables → Actions
    - COPILOT_PAT: Your personal access token
-   - GEMINI_API_KEY: (Optional) For Gemini workflows
+   - GEMINI_API_KEY: (Optional) Get from https://aistudio.google.com/app/apikey (NOT from GCP Console)
    ```
 
 3. **Enable GitHub Pages:**
