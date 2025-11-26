@@ -25,13 +25,14 @@ Usage:
 
 __version__ = "0.1.0"
 
-from .agent_card import generate_agent_card, parse_agent_definition
+from .agent_card import generate_agent_card, parse_agent_definition, generate_all_agent_cards
 from .agent_executor import ChainedAgentExecutor
 from .utils import get_agent_port, get_discovery_url
 
 __all__ = [
     "generate_agent_card",
     "parse_agent_definition",
+    "generate_all_agent_cards",
     "ChainedAgentExecutor",
     "get_agent_port",
     "get_discovery_url",
