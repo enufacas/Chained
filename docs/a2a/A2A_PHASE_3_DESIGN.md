@@ -7,9 +7,18 @@
 
 ## Executive Summary
 
-Phase 3 integrates A2A protocol capabilities into the existing meta-coordinator system, enabling intelligent task decomposition and multi-agent delegation. This phase transforms the meta-coordinator from a simple agent assignment system into a sophisticated orchestration engine capable of coordinating complex multi-agent workflows.
+Phase 3 creates a new **a2a-coordinator** agent alongside the existing meta-coordinator, enabling intelligent task decomposition and multi-agent delegation through A2A protocol. This approach reduces risk by keeping the proven meta-coordinator system intact while building new A2A orchestration capabilities as a parallel system.
 
 ## Background
+
+### Design Decision: Side-by-Side Architecture
+
+To minimize risk to existing production workflows, we are creating an **a2a-coordinator** as a separate agent rather than modifying the existing meta-coordinator. This allows:
+
+- **Zero Risk**: Current meta-coordinator workflows remain unchanged and production-stable
+- **Parallel Development**: A2A features can be developed and tested independently
+- **Clear Separation**: Single-agent assignment (meta-coordinator) vs multi-agent orchestration (a2a-coordinator)
+- **Gradual Migration**: Can move functionality over time if desired, or keep both systems
 
 ### Current Meta-coordinator Capabilities
 The existing meta-coordinator:
@@ -17,9 +26,17 @@ The existing meta-coordinator:
 - Manages agent performance tracking
 - Handles PR lifecycle (review, approval, merge)
 - Maintains agent registry
-- No multi-agent coordination
-- No task decomposition
-- Sequential execution only
+- Proven, production-stable system
+- **Remains unchanged**
+
+### New A2A-coordinator Capabilities
+The new a2a-coordinator will:
+- Decompose complex tasks into subtasks
+- Delegate work to multiple agents via A2A protocol
+- Coordinate agent collaboration (Tier 1 or Tier 2)
+- Track multi-agent workflows
+- Handle dependencies between subtasks
+- Aggregate results from multiple agents
 
 ### A2A Infrastructure (Phase 1-2B)
 Now available:
@@ -30,10 +47,10 @@ Now available:
 - ✅ Client library for agent-to-agent calls
 - ✅ Test infrastructure and examples
 
-### Gap
-The meta-coordinator cannot yet:
+### Gap Addressed by A2A-coordinator
+The new a2a-coordinator will fill the multi-agent orchestration gap:
 - Decompose complex tasks into subtasks
-- Delegate work to multiple agents
+- Delegate work to multiple agents via A2A
 - Coordinate agent collaboration
 - Track multi-agent workflows
 - Handle dependencies between subtasks
@@ -41,10 +58,12 @@ The meta-coordinator cannot yet:
 ## Goals
 
 ### Primary Goals
-1. **Enable Task Decomposition**: Meta-coordinator can break complex tasks into manageable subtasks
-2. **Multi-Agent Delegation**: Assign subtasks to appropriate specialized agents
-3. **Workflow Coordination**: Track and coordinate multi-agent workflows
-4. **Intelligent Routing**: Choose between Tier 1 (fast) and Tier 2 (parallel) based on task characteristics
+1. **Create A2A-Coordinator Agent**: New agent definition for A2A orchestration
+2. **Enable Task Decomposition**: A2A-coordinator can break complex tasks into manageable subtasks
+3. **Multi-Agent Delegation**: Assign subtasks to appropriate specialized agents via A2A
+4. **Workflow Coordination**: Track and coordinate multi-agent workflows
+5. **Intelligent Routing**: Choose between Tier 1 (fast) and Tier 2 (parallel) based on task characteristics
+6. **Zero Risk to Meta-coordinator**: Keep existing meta-coordinator completely unchanged
 
 ### Secondary Goals
 1. **Error Handling**: Retry failed subtasks, handle agent failures gracefully
@@ -64,7 +83,8 @@ The meta-coordinator cannot yet:
                          │
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              Meta-Coordinator (Enhanced)                     │
+│              A2A-Coordinator (NEW)                           │
+│          (Meta-coordinator remains unchanged)                │
 │                                                              │
 │  1. Task Analysis & Decomposition                           │
 │     - Understand requirements                               │
@@ -77,7 +97,7 @@ The meta-coordinator cannot yet:
 │     - Choose tier (1 or 2)                                  │
 │                                                              │
 │  3. Workflow Orchestration                                  │
-│     - Execute subtasks                                      │
+│     - Execute subtasks via A2A                              │
 │     - Track progress                                        │
 │     - Handle failures                                       │
 │                                                              │
@@ -260,9 +280,66 @@ class ResultAggregator:
         """Generate human-readable report."""
 ```
 
+## Side-by-Side Architecture
+
+### A2A-Coordinator vs Meta-Coordinator
+
+This design intentionally creates a **separate a2a-coordinator agent** rather than modifying the existing meta-coordinator:
+
+| Aspect | Meta-Coordinator | A2A-Coordinator |
+|--------|------------------|-----------------|
+| **Purpose** | Single-agent assignment | Multi-agent orchestration |
+| **Scope** | Issue → Agent matching | Task decomposition & delegation |
+| **Communication** | GitHub (issues, PRs) | A2A Protocol (Tier 1 & 2) |
+| **Status** | Production, stable | New, experimental |
+| **Protection** | System agent | Protected from deletion |
+| **Risk** | Zero (unchanged) | Isolated, no impact on existing |
+
+### Benefits of Side-by-Side Design
+
+1. **Zero Risk**: Existing meta-coordinator workflows remain completely untouched
+2. **Parallel Development**: Can develop and test A2A features independently
+3. **Clear Separation**: Different agents, different purposes, no confusion
+4. **Gradual Adoption**: Can use both systems simultaneously
+5. **Rollback Safety**: Can disable a2a-coordinator without affecting production
+6. **Learning Period**: Can iterate on A2A design without production pressure
+
+### When to Use Which Coordinator
+
+**Use Meta-Coordinator when:**
+- Simple, single-agent tasks
+- Standard issue assignment
+- Proven, stable workflows
+- Quick turnaround needed
+
+**Use A2A-Coordinator when:**
+- Complex, multi-step tasks
+- Multiple specialized agents needed
+- Task decomposition required
+- Agent collaboration beneficial
+
+### Integration Strategy
+
+Both coordinators can coexist peacefully:
+- **Manual selection**: Add label `a2a-orchestration` for A2A coordinator
+- **Automatic routing**: Based on issue complexity (future enhancement)
+- **No conflict**: Different triggers, different workflows
+
+### Protected Status
+
+The **a2a-coordinator is protected** from elimination:
+- Listed in `.github/agent-system/config.json` under `protected_specializations`
+- Cannot be deleted through performance evaluation
+- Essential for A2A orchestration capabilities
+- Maintained indefinitely as core infrastructure
+
 ## Implementation Plan
 
 ### Phase 3.1: Core Infrastructure (Week 1)
+
+#### Agent Definition Created ✅
+- **`.github/agents/a2a-coordinator.md`** - Agent definition with protected status
+- **`.github/agent-system/config.json`** - Added to protected_specializations list
 
 #### Files to Create
 1. **`tools/a2a/task_analyzer.py`**
@@ -298,24 +375,28 @@ class ResultAggregator:
 - `tests/test_a2a_workflow_orchestrator.py`
 - `tests/test_a2a_result_aggregator.py`
 
-### Phase 3.2: Meta-coordinator Integration (Week 2)
+### Phase 3.2: A2A-Coordinator Workflows (Week 2)
 
-#### Files to Modify
-1. **Meta-coordinator tool** (identify exact file)
-   - Add A2A client capabilities
-   - Integrate task analyzer
-   - Add workflow orchestration
+**Note:** Meta-coordinator remains unchanged. All new functionality goes into a2a-coordinator.
 
-2. **Meta-coordinator workflow** (`.github/workflows/meta-coordinator.yml`)
-   - Add A2A dependencies
-   - Update execution flow
-   - Add progress reporting
-
-#### New Workflows
-1. **`.github/workflows/a2a-meta-orchestration.yml`**
-   - Dedicated workflow for multi-agent tasks
-   - Demonstrates meta-coordinator orchestration
+#### New Workflows to Create
+1. **`.github/workflows/a2a-orchestration.yml`**
+   - Dedicated workflow for a2a-coordinator
+   - Triggers on issues with `a2a-orchestration` label
+   - Invokes a2a-coordinator agent for multi-agent tasks
    - Example of complex task delegation
+
+2. **`.github/workflows/a2a-coordinator-runner.yml`**
+   - Runner workflow for a2a-coordinator
+   - Handles workflow execution
+   - Progress reporting
+   - Integration with A2A infrastructure
+
+#### Tools to Create
+1. **`tools/a2a/a2a_coordinator.py`**
+   - Main coordination logic for a2a-coordinator
+   - Integrates TaskAnalyzer, AgentSelector, etc.
+   - Command-line interface for workflow invocation
 
 ### Phase 3.3: Production Workflows (Week 3)
 
