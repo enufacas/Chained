@@ -46,14 +46,12 @@
     },
     "engineer-master": {
       "agent_name": "engineer-master",
-      "port": 9992,
-      "url": "http://localhost:9992/",
-      "card_url": "http://localhost:9992/.well-known/agent-card",
-      "status": "unknown",
+      "port": 17519,
+      "url": "http://localhost:17519/",
+      "card_url": "http://localhost:17519/.well-known/agent-card",
+      "status": "active",
       "last_health_check": null,
-      "skills": [
-        "engineer_master"
-      ]
+      "skills": []
     },
     "organize-guru": {
       "agent_name": "organize-guru",

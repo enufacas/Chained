@@ -61,18 +61,22 @@ jobs:
           echo "=== Performance Metrics ==="
           python3 -c "
           import time
+          import asyncio
           from tools.a2a import generate_agent_card, get_discovery_service
           
-          # Quick performance check
-          start = time.time()
-          discovery = get_discovery_service()
-          for i in range(5):
-              card = generate_agent_card('engineer-master')
-              discovery.register_agent(card)
-          elapsed = (time.time() - start) * 1000
+          async def perf_test():
+              # Quick performance check
+              start = time.time()
+              discovery = get_discovery_service()
+              for i in range(5):
+                  card = generate_agent_card('engineer-master')
+                  await discovery.register_agent(card)
+              elapsed = (time.time() - start) * 1000
+              
+              print(f'⚡ Setup overhead (5 agents): {elapsed:.2f}ms')
+              print(f'⚡ Per-agent average: {elapsed/5:.2f}ms')
           
-          print(f'⚡ Setup overhead (5 agents): {elapsed:.2f}ms')
-          print(f'⚡ Per-agent average: {elapsed/5:.2f}ms')
+          asyncio.run(perf_test())
           "
       
       - name: Full suite summary

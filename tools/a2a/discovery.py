@@ -5,18 +5,19 @@ This module provides a discovery service that maintains a registry of available
 agents and their capabilities, enabling agents to discover each other.
 """
 
-import json
 import asyncio
-from typing import Dict, List, Optional, Set
-from pathlib import Path
-from dataclasses import dataclass, asdict
+import json
+import re
+from dataclasses import asdict, dataclass
 from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional, Set
 
 import httpx
 from a2a.types import AgentCard
 
-from .agent_card import generate_all_agent_cards
-from .utils import get_agent_port, get_agent_base_url
+from .agent_card import generate_agent_card, generate_all_agent_cards
+from .utils import get_agent_base_url, get_agent_port
 
 
 @dataclass
@@ -62,6 +63,7 @@ class AgentRegistry:
         agent_name: str,
         port: Optional[int] = None,
         skills: Optional[List[str]] = None,
+        status: str = "unknown",
     ) -> AgentRegistration:
         """
         Register an agent in the registry.
@@ -70,6 +72,7 @@ class AgentRegistry:
             agent_name: Name of the agent
             port: Port the agent is running on (auto-assigned if None)
             skills: List of skill IDs the agent provides
+            status: Initial status (default: "unknown", use "active" for testing)
             
         Returns:
             AgentRegistration object
@@ -86,7 +89,7 @@ class AgentRegistry:
             port=port,
             url=url,
             card_url=card_url,
-            status="unknown",
+            status=status,
             skills=skills or [],
         )
         
@@ -128,7 +131,7 @@ class AgentRegistry:
         
         Args:
             status: Filter by status ("active", "inactive", "unknown")
-            skill: Filter by skill ID
+            skill: Filter by skill ID (supports substring matching)
             
         Returns:
             List of agent registrations matching criteria
@@ -139,7 +142,11 @@ class AgentRegistry:
             agents = [a for a in agents if a.status == status]
         
         if skill:
-            agents = [a for a in agents if skill in (a.skills or [])]
+            # Support substring matching for skills
+            agents = [
+                a for a in agents 
+                if any(skill in s for s in (a.skills or []))
+            ]
         
         return agents
     
@@ -242,8 +249,55 @@ class DiscoveryService:
             registry_file: Path to persist registry
         """
         self.registry = AgentRegistry(registry_file)
+        # Store full agent cards for later retrieval
+        self._cards: Dict[str, AgentCard] = {}
     
-    def auto_register_all_agents(self) -> int:
+    async def register_agent(self, card: AgentCard) -> AgentRegistration:
+        """
+        Register an agent from an AgentCard.
+        
+        Args:
+            card: AgentCard to register
+            
+        Returns:
+            AgentRegistration object
+        """
+        # Store the full card
+        self._cards[card.name] = card
+        
+        # Extract port from URL
+        port_match = re.search(r':(\d+)/', card.url)
+        port = int(port_match.group(1)) if port_match else get_agent_port(card.name)
+        
+        # Extract skills from card
+        skills = [skill.id for skill in card.skills] if card.skills else []
+        
+        # Register as active by default (tests/development mode)
+        return self.registry.register_agent(card.name, port, skills, status="active")
+    
+    async def get_agent(self, agent_name: str) -> Optional[AgentCard]:
+        """
+        Get AgentCard for a specific agent.
+        
+        Args:
+            agent_name: Name of the agent
+            
+        Returns:
+            AgentCard if found, None otherwise
+        """
+        # Return stored card if available
+        if agent_name in self._cards:
+            return self._cards[agent_name]
+        
+        # Otherwise try to generate it
+        try:
+            card = generate_agent_card(agent_name)
+            self._cards[agent_name] = card
+            return card
+        except Exception:
+            return None
+    
+    async def auto_register_all_agents(self) -> int:
         """
         Auto-register all Chained agents.
         
@@ -254,13 +308,17 @@ class DiscoveryService:
         count = 0
         
         for agent_name, card in cards.items():
+            # Store the card
+            self._cards[agent_name] = card
+            
             # Extract skills from card
             skills = [skill.id for skill in card.skills] if card.skills else []
             
             # Extract port from URL
             port = get_agent_port(agent_name)
             
-            self.registry.register_agent(agent_name, port, skills)
+            # Register as active
+            self.registry.register_agent(agent_name, port, skills, status="active")
             count += 1
         
         return count
@@ -341,7 +399,8 @@ if __name__ == "__main__":
     service = get_discovery_service()
     
     if len(sys.argv) > 1 and sys.argv[1] == "register-all":
-        count = service.auto_register_all_agents()
+        # Run async function
+        count = asyncio.run(service.auto_register_all_agents())
         print(f"Registered {count} agents")
         print(f"Registry saved to: {service.registry.registry_file}")
     else:

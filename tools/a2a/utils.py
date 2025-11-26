@@ -2,6 +2,7 @@
 Utility functions for A2A integration.
 """
 
+import hashlib
 import os
 from typing import Optional
 
@@ -9,6 +10,8 @@ from typing import Optional
 def get_agent_port(agent_name: str, base_port: int = 9001) -> int:
     """
     Get the A2A server port for a given agent.
+    
+    Uses SHA256 for highly collision-resistant port assignment.
     
     Args:
         agent_name: Name of the agent
@@ -22,10 +25,12 @@ def get_agent_port(agent_name: str, base_port: int = 9001) -> int:
     if env_var in os.environ:
         return int(os.environ[env_var])
     
-    # Simple hash-based port assignment
-    # This ensures consistent port assignment across runs
-    hash_value = abs(hash(agent_name)) % 1000
-    return base_port + hash_value
+    # Use SHA256 for better distribution and collision resistance
+    sha = hashlib.sha256(agent_name.encode('utf-8')).digest()
+    # Use first 4 bytes as integer
+    port_offset = int.from_bytes(sha[:4], 'big') % 50000
+    # This gives us port range 9001-59000 with excellent distribution
+    return base_port + port_offset
 
 
 def get_discovery_url() -> str:
