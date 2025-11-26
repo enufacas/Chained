@@ -2,7 +2,7 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 602
+**Total Insights:** 601
 
 **Last Updated:** 2025-11-26
 
@@ -676,7 +676,7 @@ Remember when you thought age verification laws couldn't get any worse ? Well, l
 
 ### Copyparty, the FOSS file server [video]
 
-**Community Score:** 25 upvotes
+**Community Score:** 203 upvotes
 
 **Link:** https://www.youtube.com/watch?v=15_-hgsX2V0
 

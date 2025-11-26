@@ -2,7 +2,7 @@
 
 > Open source projects, community insights, and collaboration
 
-**Total Insights:** 70
+**Total Insights:** 69
 
 **Last Updated:** 2025-11-26
 
@@ -82,15 +82,6 @@ To use the Mastodon web application, please enable JavaScript. Alternatively, tr
 **Content Summary:**
 
 To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
-
----
-
-
-### BebboSSH: SSH2 implementation for Amiga systems (68000, GPLv3)
-
-**Community Score:** 24 upvotes
-
-**Link:** https://franke.ms/git/bebbo/bebbossh
 
 ---
 
@@ -262,6 +253,16 @@ A list of open source games.
 **Content Summary:**
 
 To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
 
 ---
 

@@ -2,7 +2,7 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 854
+**Total Insights:** 855
 
 **Last Updated:** 2025-11-26
 
@@ -726,38 +726,47 @@ The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 Th
 ---
 
 
+### A Fast 64-Bit Date Algorithm (30–40% faster by counting dates backwards)
+
+**Community Score:** 133 upvotes
+
+**Link:** https://www.benjoffe.com/fast-date-64
+
+---
+
+
+### Statistical Process Control in Python
+
+**Community Score:** 168 upvotes
+
+**Link:** https://timothyfraser.com/sigma/statistical-process-control-in-python.html
+
+---
+
+
+### DRAM prices are spiking, but I don't trust the industry's why
+
+**Community Score:** 91 upvotes
+
+**Link:** https://www.xda-developers.com/dram-prices-spiking-dont-trust-industry-reasons/
+
+---
+
+
+### JOPA: Java compiler in C++, Jikes modernized to Java 6 with Claude
+
+**Community Score:** 36 upvotes
+
+**Link:** https://github.com/7mind/jopa
+
+---
+
+
 ### Surprisingly, Emacs on Android is pretty good
 
-**Community Score:** 114 upvotes
+**Community Score:** 214 upvotes
 
 **Link:** https://kristofferbalintona.me/posts/202505291438/
-
----
-
-
-### Java Decompiler
-
-**Community Score:** 59 upvotes
-
-**Link:** http://java-decompiler.github.io
-
----
-
-
-### Google Antigravity exfiltrates data via indirect prompt injection attack
-
-**Community Score:** 646 upvotes
-
-**Link:** https://www.promptarmor.com/resources/google-antigravity-exfiltrates-data
-
----
-
-
-### Python is not a great language for data science
-
-**Community Score:** 211 upvotes
-
-**Link:** https://blog.genesmindsmachines.com/p/python-is-not-a-great-language-for
 
 ---
 
@@ -772,12 +781,5 @@ The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 Th
 **Content Summary:**
 
 Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss programming languages. We not only debate their technical merits and aesthetic qualities, but they become integrated into our personal identities, along with the values and traits that we associate with them. Some even defend a form of Linguistic Determinism that thinking is confined to what the language makes typable. Since we spend so much time writing code, a keen interest in language design is justified. However...
-
----
-
-
-### So, you want to design your own language? (2017)
-
-**Link:** https://cs.lmu.edu/~ray/notes/languagedesignnotes/
 
 ---

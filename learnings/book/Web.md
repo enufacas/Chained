@@ -2,7 +2,7 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 343
+**Total Insights:** 341
 
 **Last Updated:** 2025-11-26
 
@@ -300,24 +300,6 @@ Home Windows 11 Windows 11 Meta just killed native WhatsApp on Windows 11, now i
 ---
 
 
-### Show HN: We built an open source, zero webhooks payment processor
-
-**Community Score:** 294 upvotes
-
-**Link:** https://github.com/flowglad/flowglad
-
----
-
-
-### How to repurpose your old phone into a web server
-
-**Community Score:** 223 upvotes
-
-**Link:** https://far.computer/how-to/
-
----
-
-
 ### The disguised return of EU Chat Control
 
 **Link:** https://reclaimthenet.org/the-disguised-return-of-the-eus-private-message-scanning-plot
@@ -480,5 +462,25 @@ Deliver web apps with confidence 🚀
 
 
 Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
+
+---
+
+
+### Untitled
+
+**Link:** https://github.com/requestly/requestly
+
+
+Free and open-source API Client & Interceptor.
+
+---
+
+
+### Untitled
+
+**Link:** https://github.com/angular/angular
+
+
+Deliver web apps with confidence 🚀
 
 ---
