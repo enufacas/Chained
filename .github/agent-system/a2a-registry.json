@@ -46,9 +46,9 @@
     },
     "engineer-master": {
       "agent_name": "engineer-master",
-      "port": 9280,
-      "url": "http://localhost:9280/",
-      "card_url": "http://localhost:9280/.well-known/agent-card",
+      "port": 9992,
+      "url": "http://localhost:9992/",
+      "card_url": "http://localhost:9992/.well-known/agent-card",
       "status": "unknown",
       "last_health_check": null,
       "skills": [
@@ -57,9 +57,9 @@
     },
     "organize-guru": {
       "agent_name": "organize-guru",
-      "port": 9654,
-      "url": "http://localhost:9654/",
-      "card_url": "http://localhost:9654/.well-known/agent-card",
+      "port": 9570,
+      "url": "http://localhost:9570/",
+      "card_url": "http://localhost:9570/.well-known/agent-card",
       "status": "unknown",
       "last_health_check": null,
       "skills": [
@@ -420,9 +420,9 @@
     },
     "secure-specialist": {
       "agent_name": "secure-specialist",
-      "port": 9690,
-      "url": "http://localhost:9690/",
-      "card_url": "http://localhost:9690/.well-known/agent-card",
+      "port": 9788,
+      "url": "http://localhost:9788/",
+      "card_url": "http://localhost:9788/.well-known/agent-card",
       "status": "unknown",
       "last_health_check": null,
       "skills": [
