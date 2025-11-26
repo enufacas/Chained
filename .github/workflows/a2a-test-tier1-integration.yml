@@ -55,19 +55,23 @@ jobs:
         run: |
           echo "=== Testing Discovery with Multiple Agents ==="
           python3 -c "
+          import asyncio
           from tools.a2a import generate_agent_card, get_discovery_service
           
-          discovery = get_discovery_service()
+          async def test_discovery():
+              discovery = get_discovery_service()
+              
+              # Register multiple agents
+              agents = ['engineer-master', 'secure-specialist', 'organize-guru', 
+                        'troubleshoot-expert', 'document-ninja']
+              for agent_name in agents:
+                  card = generate_agent_card(agent_name)
+                  await discovery.register_agent(card)
+                  print(f'✅ Registered {agent_name} at {card.url}')
+              
+              print(f'\n📊 Total agents registered: {len(discovery.registry.agents)}')
           
-          # Register multiple agents
-          agents = ['engineer-master', 'secure-specialist', 'organize-guru', 
-                    'troubleshoot-expert', 'document-ninja']
-          for agent_name in agents:
-              card = generate_agent_card(agent_name)
-              discovery.register_agent(card)
-              print(f'✅ Registered {agent_name} at {card.url}')
-          
-          print(f'\n📊 Total agents registered: {len(discovery.registry)}')
+          asyncio.run(test_discovery())
           "
       
       - name: Performance benchmark
@@ -75,25 +79,29 @@ jobs:
           echo "=== Performance Benchmarks ==="
           python3 -c "
           import time
+          import asyncio
           from tools.a2a import generate_agent_card, get_discovery_service
           
-          # Benchmark agent card generation
-          start = time.time()
-          for i in range(10):
-              card = generate_agent_card('engineer-master')
-          card_time = (time.time() - start) / 10 * 1000
+          async def perf_test():
+              # Benchmark agent card generation
+              start = time.time()
+              for i in range(10):
+                  card = generate_agent_card('engineer-master')
+              card_time = (time.time() - start) / 10 * 1000
+              
+              # Benchmark discovery registration
+              discovery = get_discovery_service()
+              start = time.time()
+              for i in range(10):
+                  card = generate_agent_card('engineer-master')
+                  await discovery.register_agent(card)
+              reg_time = (time.time() - start) / 10 * 1000
+              
+              print(f'⚡ Agent card generation: {card_time:.2f}ms per agent')
+              print(f'⚡ Discovery registration: {reg_time:.2f}ms per agent')
+              print(f'⚡ Total setup overhead: {card_time + reg_time:.2f}ms per agent')
           
-          # Benchmark discovery registration
-          discovery = get_discovery_service()
-          start = time.time()
-          for i in range(10):
-              card = generate_agent_card('engineer-master')
-              discovery.register_agent(card)
-          reg_time = (time.time() - start) / 10 * 1000
-          
-          print(f'⚡ Agent card generation: {card_time:.2f}ms per agent')
-          print(f'⚡ Discovery registration: {reg_time:.2f}ms per agent')
-          print(f'⚡ Total setup overhead: {card_time + reg_time:.2f}ms per agent')
+          asyncio.run(perf_test())
           "
       
       - name: Integration summary

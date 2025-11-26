@@ -51,14 +51,16 @@
       "card_url": "http://localhost:17519/.well-known/agent-card",
       "status": "active",
       "last_health_check": null,
-      "skills": []
+      "skills": [
+        "engineer_master"
+      ]
     },
     "organize-guru": {
       "agent_name": "organize-guru",
-      "port": 9570,
-      "url": "http://localhost:9570/",
-      "card_url": "http://localhost:9570/.well-known/agent-card",
-      "status": "unknown",
+      "port": 21346,
+      "url": "http://localhost:21346/",
+      "card_url": "http://localhost:21346/.well-known/agent-card",
+      "status": "active",
       "last_health_check": null,
       "skills": [
         "organize_guru"
@@ -418,10 +420,10 @@
     },
     "secure-specialist": {
       "agent_name": "secure-specialist",
-      "port": 9788,
-      "url": "http://localhost:9788/",
-      "card_url": "http://localhost:9788/.well-known/agent-card",
-      "status": "unknown",
+      "port": 28504,
+      "url": "http://localhost:28504/",
+      "card_url": "http://localhost:28504/.well-known/agent-card",
+      "status": "active",
       "last_health_check": null,
       "skills": [
         "secure_specialist"
@@ -616,10 +618,10 @@
     },
     "document-ninja": {
       "agent_name": "document-ninja",
-      "port": 9085,
-      "url": "http://localhost:9085/",
-      "card_url": "http://localhost:9085/.well-known/agent-card",
-      "status": "unknown",
+      "port": 31230,
+      "url": "http://localhost:31230/",
+      "card_url": "http://localhost:31230/.well-known/agent-card",
+      "status": "active",
       "last_health_check": null,
       "skills": [
         "document_ninja"
@@ -649,10 +651,10 @@
     },
     "troubleshoot-expert": {
       "agent_name": "troubleshoot-expert",
-      "port": 9497,
-      "url": "http://localhost:9497/",
-      "card_url": "http://localhost:9497/.well-known/agent-card",
-      "status": "unknown",
+      "port": 31930,
+      "url": "http://localhost:31930/",
+      "card_url": "http://localhost:31930/.well-known/agent-card",
+      "status": "active",
       "last_health_check": null,
       "skills": [
         "troubleshoot_expert"
