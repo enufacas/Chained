@@ -1,7 +1,8 @@
 name: "Learning: Git Commit Strategies"
 
 # Learn optimal git commit strategies by analyzing repository history
-# This workflow is part of the autonomous learning pipeline
+# Enhanced system that learns from successful merges and generates actionable recommendations
+# Created by @create-guru - Infrastructure for continuous learning and improvement
 on:
   schedule:
     # Run daily at 02:00 UTC to analyze commit patterns
@@ -18,6 +19,11 @@ on:
         required: false
         type: string
         default: 'main'
+  # Also run after merges to learn continuously
+  pull_request:
+    types: [closed]
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -31,6 +37,8 @@ concurrency:
 
 jobs:
   analyze-commits:
+    # Skip on closed PRs that aren't merged
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -42,6 +50,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install gitpython
 
       - name: Analyze commit patterns
         id: analyze
@@ -212,7 +224,7 @@ jobs:
           import json
           import os
           
-          print("💡 Generating commit strategy recommendations...")
+          print("💡 Generating enhanced commit strategy recommendations by @create-guru...")
           
           # Load the latest learning file
           learning_file = os.environ.get('LEARNING_FILE', '')
@@ -227,101 +239,159 @@ jobs:
           
           recommendations = []
           
-          # Message pattern recommendations
+          # Enhanced message pattern recommendations
           if patterns.get('message_patterns'):
               msg_patterns = patterns['message_patterns']
               if msg_patterns.get('prefixes'):
                   top_prefix = sorted(msg_patterns['prefixes'], key=lambda x: x['count'], reverse=True)[0]
-                  recommendations.append(
-                      f"Use conventional commit prefix '{top_prefix['pattern']}' - it's used in {top_prefix['percentage']:.1f}% of commits"
-                  )
+                  recommendations.append({
+                      'priority': 'CRITICAL',
+                      'title': 'Maintain Message Quality Standards',
+                      'description': f"Continue using conventional commit format '{top_prefix['pattern']}'. Used in {top_prefix['percentage']:.1f}% of commits.",
+                      'action_items': [
+                          'Document commit message templates in CONTRIBUTING.md',
+                          'Consider commit message linters (e.g., commitlint)',
+                          'Share examples of excellent commit messages'
+                      ],
+                      'based_on': f"message_patterns analysis ({top_prefix['count']} commits)"
+                  })
           
-          # Size recommendations
+          # Enhanced size recommendations with specific guidance
           if patterns.get('size_patterns'):
               size = patterns['size_patterns']
               avg_files = size.get('average_files', 0)
+              avg_lines = size.get('average_lines', 0)
               if avg_files > 0:
                   if avg_files > 10:
-                      recommendations.append(
-                          f"Consider smaller commits: average is {avg_files:.1f} files, aim for 5-7 files per commit"
-                      )
+                      recommendations.append({
+                          'priority': 'HIGH',
+                          'title': 'Optimize Commit Size',
+                          'description': f"Current average is {avg_files:.1f} files and {avg_lines:.0f} lines per commit. Aim for 5-7 files for better reviewability.",
+                          'action_items': [
+                              'Break large changes into logical atomic commits',
+                              'Use git add -p for selective staging',
+                              'Consider feature branches for complex changes'
+                          ],
+                          'based_on': f"size_patterns analysis"
+                      })
                   else:
-                      recommendations.append(
-                          f"Keep current commit size: {avg_files:.1f} files per commit is optimal"
-                      )
+                      recommendations.append({
+                          'priority': 'MEDIUM',
+                          'title': 'Maintain Optimal Commit Size',
+                          'description': f"Current commit size ({avg_files:.1f} files, {avg_lines:.0f} lines) is optimal for code review.",
+                          'action_items': [
+                              'Continue current practices',
+                              'Focus on logical cohesion over strict size limits',
+                              'Keep related changes together'
+                          ],
+                          'based_on': f"size_patterns analysis"
+                      })
+          
+          # Organization pattern recommendations
+          if patterns.get('organization_patterns'):
+              org = patterns['organization_patterns']
+              if org.get('common_directories'):
+                  top_dirs = org['common_directories'][:3]
+                  dir_list = ', '.join([d['directory'] for d in top_dirs])
+                  recommendations.append({
+                      'priority': 'MEDIUM',
+                      'title': 'Focus Testing on Frequently Modified Areas',
+                      'description': f"Most frequently modified directories: {dir_list}",
+                      'action_items': [
+                          'Ensure comprehensive test coverage for these areas',
+                          'Consider adding integration tests',
+                          'Review for potential refactoring opportunities'
+                      ],
+                      'based_on': f"organization_patterns analysis"
+                  })
           
           # Timing recommendations
           if patterns.get('timing_patterns'):
               timing = patterns['timing_patterns']
               if timing.get('peak_hours'):
                   peak_hour = max(timing['peak_hours'], key=timing['peak_hours'].get)
-                  recommendations.append(
-                      f"Peak productivity at {peak_hour}:00 - consider scheduling complex commits during this time"
-                  )
+                  recommendations.append({
+                      'priority': 'LOW',
+                      'title': 'Optimize Development Schedule',
+                      'description': f"Peak commit activity at {peak_hour}:00 UTC",
+                      'action_items': [
+                          f"Schedule code reviews around {peak_hour}:00",
+                          'Consider workflow automation during peak hours',
+                          'Plan complex merges during high-activity periods'
+                      ],
+                      'based_on': f"timing_patterns analysis"
+                  })
           
-          # Organization recommendations
-          if patterns.get('organization_patterns'):
-              org = patterns['organization_patterns']
-              if org.get('common_directories'):
-                  top_dirs = org['common_directories'][:3]
-                  recommendations.append(
-                      f"Most frequently modified: {', '.join([d['directory'] for d in top_dirs])} - ensure thorough testing for these"
-                  )
-          
-          # Save recommendations
+          # Add metadata
           data['recommendations'] = recommendations
+          data['_metadata'] = {
+              'note': 'Learning file generated from commit strategy analysis workflow',
+              'created_by': '@create-guru',
+              'workflow': 'learn-commit-strategies.yml',
+              'enhanced_recommendations': True
+          }
+          
           with open(learning_file, 'w') as f:
               json.dump(data, f, indent=2)
           
-          print(f"✓ Generated {len(recommendations)} recommendations")
+          print(f"✓ Generated {len(recommendations)} enhanced recommendations")
           
           for i, rec in enumerate(recommendations, 1):
-              print(f"  {i}. {rec}")
+              print(f"\n  {i}. [{rec['priority']}] {rec['title']}")
+              print(f"     {rec['description']}")
+              print(f"     Based on: {rec['based_on']}")
           
           # Output for GitHub Actions
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f"recommendation_count={len(recommendations)}\n")
               if recommendations:
-                  # Escape newlines and quotes for GitHub Actions output
-                  sample = recommendations[0].replace('\n', ' ').replace('"', '\\"')
+                  # Escape for GitHub Actions output
+                  sample = recommendations[0]['title'].replace('\n', ' ').replace('"', '\\"')
                   f.write(f"sample_recommendation={sample}\n")
+          
           
           PYTHON_SCRIPT
         env:
           LEARNING_FILE: ${{ steps.analyze.outputs.learning_file }}
 
       - name: Create learning issue
-        if: steps.analyze.outputs.has_patterns == 'true'
+        if: steps.analyze.outputs.has_patterns == 'true' && github.event_name != 'pull_request'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Create simple issue using echo commands to avoid YAML/heredoc conflicts
           ISSUE_TITLE="📊 Learned Optimal Git Commit Strategies - $(date +%Y-%m-%d)"
           
-          echo "## 📊 Git Commit Strategy Analysis" > /tmp/issue.txt
+          echo "## 📊 Git Commit Strategy Analysis by @create-guru" > /tmp/issue.txt
           echo "" >> /tmp/issue.txt
-          echo "The system has analyzed git commit patterns from the repository." >> /tmp/issue.txt
+          echo "The system has analyzed git commit patterns from the repository and generated actionable recommendations." >> /tmp/issue.txt
           echo "" >> /tmp/issue.txt
           echo "**Summary:**" >> /tmp/issue.txt
           echo "- Branch Analyzed: ${{ steps.analyze.outputs.branch }}" >> /tmp/issue.txt
           echo "- Days Analyzed: ${{ steps.analyze.outputs.days }}" >> /tmp/issue.txt
           echo "- Commits Analyzed: ${{ steps.analyze.outputs.total_commits }}" >> /tmp/issue.txt
           echo "- Insights Extracted: ${{ steps.analyze.outputs.learning_count }}" >> /tmp/issue.txt
+          echo "- Recommendations: ${{ steps.recommend.outputs.recommendation_count || 0 }}" >> /tmp/issue.txt
           echo "" >> /tmp/issue.txt
           echo "**Sample Insight:** ${{ steps.analyze.outputs.sample_insight }}" >> /tmp/issue.txt
+          echo "" >> /tmp/issue.txt
+          echo "**Top Recommendation:** ${{ steps.recommend.outputs.sample_recommendation }}" >> /tmp/issue.txt
           echo "" >> /tmp/issue.txt
           echo "**Learning File:** \`${{ steps.analyze.outputs.learning_file }}\`" >> /tmp/issue.txt
           echo "" >> /tmp/issue.txt
           echo "This analysis helps improve commit strategies by learning from repository history." >> /tmp/issue.txt
+          echo "The system continuously learns from successful merges and adapts recommendations." >> /tmp/issue.txt
           echo "" >> /tmp/issue.txt
           echo "---" >> /tmp/issue.txt
           echo "" >> /tmp/issue.txt
-          echo "*Automated analysis by @workflows-tech-lead*" >> /tmp/issue.txt
+          echo "*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" >> /tmp/issue.txt
+          echo "" >> /tmp/issue.txt
+          echo "*Infrastructure by **@create-guru** - Learning system for optimal git commit strategies*" >> /tmp/issue.txt
           
           gh issue create \
             --title "${ISSUE_TITLE}" \
             --body-file /tmp/issue.txt \
-            --label "learning,automated,copilot,analysis" || echo "Issue creation skipped or failed"
+            --label "learning,automated,copilot,analysis,create-guru" || echo "Issue creation skipped or failed"
 
       - name: Store branch name for PR
         id: branch_info
@@ -359,7 +429,7 @@ jobs:
           git checkout -b "${BRANCH_NAME}"
           
           # Commit changes
-          git commit -m "📊 Learn commit strategies - $(date -u +%Y-%m-%d) - Analyzed $TOTAL_COMMITS commits by @workflows-tech-lead"
+          git commit -m "📊 Learn commit strategies - $(date -u +%Y-%m-%d) - Analyzed $TOTAL_COMMITS commits by @create-guru"
           
           git push origin "${BRANCH_NAME}"
           
@@ -370,7 +440,7 @@ jobs:
           gh pr create \
             --title "📊 Learning Update: Git Commit Strategies - $(date -u +%Y-%m-%d)" \
             --body-file /tmp/pr_body.txt \
-            --label "automated,learning,copilot,workflows-tech-lead" \
+            --label "automated,learning,copilot,create-guru" \
             --base main \
             --head "${BRANCH_NAME}"
           
@@ -386,5 +456,6 @@ jobs:
           echo "Commits: ${{ steps.analyze.outputs.total_commits }}"
           echo "Insights: ${{ steps.analyze.outputs.learning_count }}"
           echo "Recommendations: ${{ steps.recommend.outputs.recommendation_count || 0 }}"
-          echo "By: @workflows-tech-lead"
+          echo "Infrastructure by: @create-guru"
           echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "===================="
