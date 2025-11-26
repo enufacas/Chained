@@ -1,8 +1,12 @@
 # A2A Protocol on GitHub Actions Runners - Architecture Analysis
 
+**Official GitHub Documentation**: [About GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners)
+
+**Compliance Document**: See `A2A_GITHUB_RUNNERS_COMPLIANCE.md` for detailed constraint analysis and verification.
+
 ## GitHub Actions Runner Constraints
 
-### What We Know About GitHub Actions Runners
+### What We Know About GitHub Actions Runners (Verified)
 
 **Environment:**
 - Ephemeral VMs that spin up for each job
