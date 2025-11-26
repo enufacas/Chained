@@ -14,7 +14,7 @@ Created as part of the direct custom agent assignment test.
 import json
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 class AgentAssignmentValidator:
@@ -42,18 +42,26 @@ class AgentAssignmentValidator:
         if content.startswith("---"):
             parts = content.split("---", 2)
             if len(parts) >= 3:
-                # Very basic YAML parsing (just for simple fields)
-                frontmatter = parts[1]
-                info = {}
-                for line in frontmatter.strip().split("\n"):
-                    if ":" in line:
-                        key, value = line.split(":", 1)
-                        info[key.strip()] = value.strip().strip('"')
-                return info
+                try:
+                    import yaml
+                    frontmatter = parts[1]
+                    info = yaml.safe_load(frontmatter)
+                    return info if isinstance(info, dict) else {}
+                except ImportError:
+                    # Fallback to simple parsing if yaml not available
+                    frontmatter = parts[1]
+                    info = {}
+                    for line in frontmatter.strip().split("\n"):
+                        if ":" in line and not line.strip().startswith("-"):
+                            key, value = line.split(":", 1)
+                            info[key.strip()] = value.strip().strip('"')
+                    return info
+                except Exception:
+                    return {}
         
         return {}
     
-    def validate_agent_directive(self, directive: str, agent_name: str) -> Dict[str, any]:
+    def validate_agent_directive(self, directive: str, agent_name: str) -> Dict[str, Any]:
         """Validate that an agent directive is properly formatted."""
         results = {
             "valid": True,
@@ -116,7 +124,7 @@ class AgentAssignmentValidator:
             print(f"⚠️  Could not parse agent info")
         
         # Check 3: Verify agent tools
-        if info and 'tools' in str(info):
+        if info and 'tools' in info:
             print(f"✅ Agent has tools configured")
         
         print("=" * 70)
