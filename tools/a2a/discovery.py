@@ -5,18 +5,19 @@ This module provides a discovery service that maintains a registry of available
 agents and their capabilities, enabling agents to discover each other.
 """
 
-import json
 import asyncio
-from typing import Dict, List, Optional, Set
-from pathlib import Path
-from dataclasses import dataclass, asdict
+import json
+import re
+from dataclasses import asdict, dataclass
 from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional, Set
 
 import httpx
 from a2a.types import AgentCard
 
-from .agent_card import generate_all_agent_cards
-from .utils import get_agent_port, get_agent_base_url
+from .agent_card import generate_agent_card, generate_all_agent_cards
+from .utils import get_agent_base_url, get_agent_port
 
 
 @dataclass
@@ -265,7 +266,6 @@ class DiscoveryService:
         self._cards[card.name] = card
         
         # Extract port from URL
-        import re
         port_match = re.search(r':(\d+)/', card.url)
         port = int(port_match.group(1)) if port_match else get_agent_port(card.name)
         
@@ -291,7 +291,6 @@ class DiscoveryService:
         
         # Otherwise try to generate it
         try:
-            from .agent_card import generate_agent_card
             card = generate_agent_card(agent_name)
             self._cards[agent_name] = card
             return card

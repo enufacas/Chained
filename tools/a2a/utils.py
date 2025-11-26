@@ -2,6 +2,7 @@
 Utility functions for A2A integration.
 """
 
+import hashlib
 import os
 from typing import Optional
 
@@ -25,7 +26,6 @@ def get_agent_port(agent_name: str, base_port: int = 9001) -> int:
         return int(os.environ[env_var])
     
     # Use SHA256 for better distribution and collision resistance
-    import hashlib
     sha = hashlib.sha256(agent_name.encode('utf-8')).digest()
     # Use first 4 bytes as integer
     port_offset = int.from_bytes(sha[:4], 'big') % 50000
