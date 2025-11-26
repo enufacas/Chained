@@ -583,8 +583,7 @@ class TestCommitValidation(unittest.TestCase):
             lines_changed=10
         )
         
-        # Should not raise
-        import json
+        # Should not raise - json is imported at module level
         json_str = json.dumps(result)
         self.assertIsInstance(json_str, str)
 

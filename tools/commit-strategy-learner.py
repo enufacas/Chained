@@ -872,7 +872,9 @@ class CommitStrategyLearner:
         Returns:
             Dictionary with validation result and suggestions
         """
-        self._log(f"Validating commit message: {message[:50]}...")
+        # Sanitize message for logging (remove control characters)
+        safe_msg = ''.join(c if c.isprintable() or c.isspace() else '?' for c in message[:50])
+        self._log(f"Validating commit message: {safe_msg}...")
         
         file_types = file_types or []
         issues: List[Dict[str, Any]] = []
@@ -972,8 +974,8 @@ class CommitStrategyLearner:
             score -= 5
             suggestions.append("Consider separating unrelated changes into different commits")
         
-        # Determine overall status
-        score = max(0, score)  # Ensure non-negative
+        # Determine overall status (ensure score is within 0-100 range)
+        score = min(100, max(0, score))
         
         if score >= 90:
             status = "excellent"
