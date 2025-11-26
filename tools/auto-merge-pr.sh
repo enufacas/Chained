@@ -148,18 +148,26 @@ else
         if [ "$DRY_RUN" = false ]; then
           if gh pr ready "${PR_NUM}" 2>/dev/null; then
             echo "  → Marked as ready successfully"
-            # Wait 3 seconds for GitHub's merge status calculation
-            # Increased from 2s based on production data showing UNKNOWN
-            # status persisting longer than 2s in ~15% of cases
-            sleep 3
-            mergeable=$(gh pr view "$PR_NUM" --json mergeable --jq -r '.mergeable')
+            # Wait 5 seconds for GitHub's merge status calculation
+            # Increased from 3s based on production data showing UNKNOWN
+            # status persisting even after 3s wait
+            sleep 5
+            mergeable=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
             echo "  → Updated mergeable status: ${mergeable}"
+            
+            # Retry if still UNKNOWN (GitHub may need more time)
+            if [ "${mergeable}" = "UNKNOWN" ]; then
+              echo "  → Status still UNKNOWN, waiting 3 more seconds..."
+              sleep 3
+              mergeable=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
+              echo "  → Final mergeable status: ${mergeable}"
+            fi
           else
             # Check if already ready
-            is_still_draft=$(gh pr view "$PR_NUM" --json isDraft --jq -r '.isDraft')
+            is_still_draft=$(gh pr view "$PR_NUM" --json isDraft | jq -r '.isDraft')
             if [ "$is_still_draft" = "false" ]; then
               echo "  ℹ️  Already marked ready"
-              mergeable=$(gh pr view "$PR_NUM" --json mergeable --jq -r '.mergeable')
+              mergeable=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
             else
               echo "  ⚠️  Could not mark ready (may be permissions issue)"
             fi
