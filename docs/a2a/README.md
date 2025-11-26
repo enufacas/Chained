@@ -19,6 +19,7 @@ This directory contains all documentation related to the Agent2Agent (A2A) Proto
 - **[A2A_MCP_TRANSPORT_DESIGN.md](./A2A_MCP_TRANSPORT_DESIGN.md)** - MCP (Model Context Protocol) transport design for Copilot agents
 
 ### Implementation Status
+- **[A2A_STATUS.md](./A2A_STATUS.md)** - **⭐ Current implementation status and roadmap**
 - **[A2A_IMPLEMENTATION_SUMMARY.md](./A2A_IMPLEMENTATION_SUMMARY.md)** - Phase 1 implementation summary
 - **[A2A_PHASE_2B_TESTING_SUMMARY.md](./A2A_PHASE_2B_TESTING_SUMMARY.md)** - Phase 2B testing results and findings
 
@@ -146,14 +147,15 @@ Different communication mechanisms for different contexts:
 
 If you're new to the A2A implementation, read in this order:
 
-1. **A2A_INTEGRATION_README.md** - Start here for quick overview
-2. **A2A_GITHUB_RUNNERS_ARCHITECTURE.md** - Understand the architecture
-3. **A2A_INTEGRATION_DESIGN.md** - Detailed component design
-4. **A2A_IMPLEMENTATION_SUMMARY.md** - What was built in Phase 1
-5. **A2A_PHASE_2B_TESTING_SUMMARY.md** - Testing results
-6. **A2A_TRANSPORT_COMPARISON.md** - Transport options
-7. **A2A_GITHUB_RUNNERS_COMPLIANCE.md** - Constraints and limitations
-8. **A2A_MCP_TRANSPORT_DESIGN.md** - Future MCP integration
+1. **A2A_STATUS.md** - ⭐ Start here for current status and roadmap
+2. **A2A_INTEGRATION_README.md** - Quick start guide and examples
+3. **A2A_GITHUB_RUNNERS_ARCHITECTURE.md** - Understand the architecture
+4. **A2A_INTEGRATION_DESIGN.md** - Detailed component design
+5. **A2A_IMPLEMENTATION_SUMMARY.md** - What was built in Phase 1
+6. **A2A_PHASE_2B_TESTING_SUMMARY.md** - Testing results
+7. **A2A_TRANSPORT_COMPARISON.md** - Transport options
+8. **A2A_GITHUB_RUNNERS_COMPLIANCE.md** - Constraints and limitations
+9. **A2A_MCP_TRANSPORT_DESIGN.md** - Future MCP integration
 
 ## 🔗 External Resources
 
