@@ -79,6 +79,9 @@ async function fetchStats() {
                 document.getElementById('total-completed').textContent = stats.completed || 0;
                 document.getElementById('completion-rate').textContent = (stats.completion_rate || 0) + '%';
                 
+                // Update footer stats
+                updateFooterStats(stats);
+                
                 // Load timeline from cached data
                 loadTimeline();
                 
@@ -124,11 +127,41 @@ async function fetchStats() {
         document.getElementById('total-completed').textContent = completed;
         document.getElementById('completion-rate').textContent = completionRate + '%';
         
+        // Update footer stats with fallback data
+        updateFooterStats({
+            total_issues: issues.length,
+            merged_prs: mergedPrs,
+            completion_rate: completionRate,
+            learning_sessions: 0
+        });
+        
         // Load timeline
         loadTimeline();
     } catch (error) {
         console.error('Error fetching stats:', error);
         // Keep default values on error
+    }
+}
+
+// Update footer stats display
+function updateFooterStats(stats) {
+    const footerTotalIssues = document.getElementById('footer-total-issues');
+    const footerMergedPrs = document.getElementById('footer-merged-prs');
+    const footerCompletionRate = document.getElementById('footer-completion-rate');
+    const footerLearningSessions = document.getElementById('footer-learning-sessions');
+    
+    if (footerTotalIssues) {
+        footerTotalIssues.textContent = stats.total_issues || 0;
+    }
+    if (footerMergedPrs) {
+        footerMergedPrs.textContent = stats.merged_prs || 0;
+    }
+    if (footerCompletionRate) {
+        const rate = parseFloat(stats.completion_rate) || 0;
+        footerCompletionRate.textContent = (rate > 100 ? 100 : rate.toFixed(1)) + '%';
+    }
+    if (footerLearningSessions) {
+        footerLearningSessions.textContent = stats.learning_sessions || 0;
     }
 }
 
