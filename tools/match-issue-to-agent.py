@@ -450,6 +450,27 @@ AGENT_PATTERNS = {
             r'\bintegrat', r'\binventive\b', r'\bbold\b'
         ]
     },
+    'gemini-specialist': {
+        'keywords': [
+            'gemini', 'gemini api', 'google ai', 'vertex ai', 'genai',
+            'google ai studio', 'ai studio', 'gemini cli', 'gemini-cli',
+            '@gemini-cli', 'gemini workflow', 'gemini review', 'gemini triage',
+            'gemini fix', 'gemini invoke', 'gemini dispatch', 'google genai',
+            'gemini model', 'gemini-2.0-flash', 'gemini-pro', 'gemini flash',
+            'run-gemini-cli', 'google-github-actions', 'aiplatform.endpoints.predict',
+            'google_api_key', 'gemini_api_key', 'use_vertex_ai', 'vertexai',
+            'google cloud ai', 'gcp ai', 'generative ai', 'llm integration'
+        ],
+        'patterns': [
+            r'\bgemini\b', r'\bgemini[- ]api\b', r'\bgoogle\s*ai\b', r'\bvertex\s*ai\b',
+            r'\bgenai\b', r'\bai\s*studio\b', r'\bgemini[- ]cli\b', r'@gemini-cli\b',
+            r'\bgemini[- ]workflow', r'\bgemini[- ]review\b', r'\bgemini[- ]triage\b',
+            r'\bgemini[- ]fix\b', r'\bgemini[- ]invoke\b', r'\bgemini[- ]dispatch\b',
+            r'\bgemini[- ]model\b', r'\bgemini[- ]flash\b', r'\bgemini[- ]pro\b',
+            r'\brun[- ]gemini[- ]cli\b', r'\bgoogle[- ]github[- ]actions\b',
+            r'\baiplatform\.endpoints\b', r'\bvertexai\b', r'\bgcp\s*ai\b'
+        ]
+    },
     'guide-wizard': {
         'keywords': [
             'guide', 'mentor', 'skill building', 'teach', 'review',
