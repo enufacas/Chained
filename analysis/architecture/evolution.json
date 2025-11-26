@@ -543,6 +543,22 @@
       },
       "component_count": 5,
       "file_count": 1648
+    },
+    {
+      "timestamp": "2025-11-26T02:01:32.810971",
+      "commit": "3a397a39d0c62033d4b70a32275aebf68f22bf30",
+      "commit_message": "Fix meta-coordinator non-deterministic PR/issue processing (#3062)\n\n* Initial plan\n\n* Improve meta-coordinator tooling for deterministic outcomes\n\n- Fixed check-pr-merge-eligibility.sh to check WIP before marking ready\n- Added 3-second wait for more reliable GitHub status calculation\n- Created auto-merge-pr.sh as single source of truth for merge logic\n- Improved cleanup-stale-prs.sh to output JSON for reliable parsing\n- Enhanced workflow to use memory system for tracking metrics\n- Added comprehensive documentation for tooling usage\n- Created quick reference guide for meta-coordinator agent\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n* Systematically improve agent instructions to call out tool usage\n\n- Added copy-paste execution template at top of agent file\n- Expanded tool descriptions with usage examples\n- Added tool decision matrix showing when to use each tool\n- Created test suite to validate tool improvements\n- Added common mistakes section highlighting tool usage\n- Made tooling section more prominent with detailed examples\n- Addressed new requirement to clean up instructions\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n* Add comprehensive summary of meta-coordinator improvements\n\n- Created summary document explaining all changes\n- Documented problem, solution, and results\n- Listed all files changed/created\n- Provided usage guidance for agents and developers\n- Ready for production deployment\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n* Address code review feedback\n\n- Added detailed comment explaining 3-second wait time choice\n- Optimized JSON parsing to single jq call instead of 4 separate calls\n- Improved efficiency of workflow script\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n---------\n\nCo-authored-by: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>",
+      "metrics": {
+        "total_components": 6,
+        "total_files": 1706,
+        "total_lines": 5323376,
+        "total_dependencies": 2,
+        "external_libraries": 81,
+        "coupling_score": 6.004924037710923e-05,
+        "complexity_score": 1.0
+      },
+      "component_count": 5,
+      "file_count": 1706
     }
   ]
 }
