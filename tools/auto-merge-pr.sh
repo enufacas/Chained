@@ -189,12 +189,14 @@ else
         echo "     Waiting for merge status to be computed..."
         
         retry_count=0
+        actual_wait_time=0  # Track actual time spent waiting
         
         while [ "${mergeable}" = "UNKNOWN" ] && [ $retry_count -lt $MAX_RETRIES ]; do
           # Safely get wait time with fallback
           wait_time=${WAIT_TIMES_ARRAY[$retry_count]:-15}
           echo "     Attempt $((retry_count + 1))/${MAX_RETRIES}: Waiting ${wait_time}s..."
           sleep ${wait_time}
+          actual_wait_time=$((actual_wait_time + wait_time))
           
           # Re-fetch mergeable status
           mergeable=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
@@ -205,12 +207,7 @@ else
         
         # Final evaluation after retries
         if [ "${mergeable}" = "UNKNOWN" ]; then
-          # Calculate total wait time
-          total_wait=0
-          for t in "${WAIT_TIMES_ARRAY[@]}"; do
-            total_wait=$((total_wait + t))
-          done
-          echo "  ⚠️  Status still UNKNOWN after ${retry_count} retries (${total_wait}s total)"
+          echo "  ⚠️  Status still UNKNOWN after ${retry_count} retries (${actual_wait_time}s total)"
           echo "     This PR may need more time or manual inspection"
         fi
       fi
@@ -242,10 +239,16 @@ else
         echo "  ❌ FAIL: ${REASON}"
         ELIGIBLE=false
       elif [ "${mergeable}" = "UNKNOWN" ]; then
-        REASON="Mergeable status still UNKNOWN after waiting 40s (GitHub needs more time)"
+        # Calculate actual max possible wait time for error message
+        max_wait=0
+        for ((i=0; i<MAX_RETRIES; i++)); do
+          max_wait=$((max_wait + ${WAIT_TIMES_ARRAY[$i]:-15}))
+        done
+        REASON="Mergeable status still UNKNOWN after waiting (GitHub needs more time)"
         echo "  ❌ FAIL: ${REASON}"
         echo "  Note: This PR will be retried in the next run (every 2 hours)"
         echo "        GitHub may need more time to calculate merge status"
+        echo "        (Max retry time: ${max_wait}s)"
         ELIGIBLE=false
       else
         REASON="Unexpected mergeable status: ${mergeable}"
