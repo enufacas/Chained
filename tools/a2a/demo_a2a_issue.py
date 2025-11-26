@@ -115,6 +115,7 @@ async def call_agent_with_gemini(
 Respond with ONLY the JSON, no markdown formatting or extra text.
 """
 
+    response_text = ''
     try:
         model = genai.GenerativeModel(model_name='gemini-1.5-flash')
         response = model.generate_content(prompt)
@@ -136,7 +137,7 @@ Respond with ONLY the JSON, no markdown formatting or extra text.
             'agent': agent_name,
             'status': 'error',
             'error': f'Failed to parse Gemini response as JSON: {e}',
-            'raw_response': response_text[:500] if 'response_text' in dir() else 'No response'
+            'raw_response': response_text[:500] if response_text else 'No response'
         }
     except Exception as e:
         return {
