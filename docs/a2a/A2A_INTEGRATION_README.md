@@ -253,7 +253,9 @@ A2A_TASK_TIMEOUT=3600  # seconds
 
 ## Documentation
 
+- **[A2A Documentation Index](./README.md)**: Complete documentation index
 - **[Design Document](./A2A_INTEGRATION_DESIGN.md)**: Complete architecture and implementation plan
+- **[Architecture](./A2A_GITHUB_RUNNERS_ARCHITECTURE.md)**: Three-tier architecture for GitHub Actions
 - **[A2A Protocol](https://a2a-protocol.org)**: Official A2A specification
 - **[A2A Python SDK](https://github.com/a2aproject/a2a-python)**: SDK documentation
 

@@ -223,9 +223,10 @@ All tests should pass with these results:
 
 ## 📚 Related Documentation
 
-- `docs/A2A_PHASE_2B_TESTING_SUMMARY.md` - Testing results and findings
-- `docs/A2A_GITHUB_RUNNERS_ARCHITECTURE.md` - Three-tier architecture
-- `docs/A2A_INTEGRATION_README.md` - Quick start guide
+- `docs/a2a/A2A_PHASE_2B_TESTING_SUMMARY.md` - Testing results and findings
+- `docs/a2a/A2A_GITHUB_RUNNERS_ARCHITECTURE.md` - Three-tier architecture
+- `docs/a2a/A2A_INTEGRATION_README.md` - Quick start guide
+- `docs/a2a/README.md` - A2A documentation index
 - `tests/` - Test source files
 
 ---
