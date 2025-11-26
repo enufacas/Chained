@@ -91,33 +91,36 @@ if [ "${is_trusted}" = "false" ]; then
 fi
 echo ""
 
-# STEP 4: Handle UNKNOWN mergeable state
-echo "STEP 4: Check mergeable status..."
-if [ "${mergeable}" = "UNKNOWN" ]; then
-    echo "  ⚠️  Status UNKNOWN"
-    
-    if [ "${is_draft}" = "true" ]; then
-        echo "  → Marking draft as ready to trigger calculation..."
-        if gh pr ready "${PR_NUM}" 2>/dev/null; then
-            echo "  → Waiting 2 seconds for status update..."
-            sleep 2
-            mergeable=$(gh pr view "$PR_NUM" --json mergeable --jq -r '.mergeable')
-            echo "  → Updated status: ${mergeable}"
-        else
-            echo "  ⚠️  Failed to mark ready (may already be ready)"
-        fi
+# STEP 4: Mark draft PRs as ready (ALWAYS - triggers status calculation)
+echo "STEP 4: Handle draft status..."
+if [ "${is_draft}" = "true" ]; then
+    echo "  ⚠️  PR is draft - marking as ready (required for auto-merge)..."
+    if gh pr ready "${PR_NUM}" 2>/dev/null; then
+        echo "  → Marked as ready successfully"
+        echo "  → Waiting 2 seconds for GitHub to update merge status..."
+        sleep 2
+        # Re-fetch mergeable status after marking ready
+        mergeable=$(gh pr view "$PR_NUM" --json mergeable --jq -r '.mergeable')
+        echo "  → Updated mergeable status: ${mergeable}"
     else
-        echo "  ⚠️  Status UNKNOWN but not draft - cannot fix"
+        echo "  ⚠️  Failed to mark ready (may already be ready)"
+        # Continue anyway - it might already be ready
     fi
+else
+    echo "  ✅ PASS: Not a draft (no action needed)"
 fi
+echo ""
 
+# STEP 5: Check mergeable status
+echo "STEP 5: Check mergeable status..."
 if [ "${mergeable}" = "MERGEABLE" ]; then
     echo "  ✅ PASS: Mergeable"
 elif [ "${mergeable}" = "CONFLICTING" ]; then
     echo "  ❌ FAIL: Has merge conflicts"
     exit 1
 elif [ "${mergeable}" = "UNKNOWN" ]; then
-    echo "  ❌ FAIL: Status still UNKNOWN after handling"
+    echo "  ❌ FAIL: Status still UNKNOWN"
+    echo "  Note: GitHub may still be calculating - try again in a moment"
     exit 1
 else
     echo "  ❌ FAIL: Unexpected status (${mergeable})"
@@ -125,8 +128,8 @@ else
 fi
 echo ""
 
-# STEP 5: Check CI status (optional - unavailable is OK)
-echo "STEP 5: Check CI status..."
+# STEP 6: Check CI status (optional - unavailable is OK)
+echo "STEP 6: Check CI status..."
 if [ "$ci_checks" = "[]" ] || [ "$ci_checks" = "null" ]; then
     echo "  ✅ PASS: No CI checks configured (OK)"
 else
