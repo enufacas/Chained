@@ -2,7 +2,7 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 313
+**Total Insights:** 315
 
 **Last Updated:** 2025-11-25
 
@@ -277,6 +277,24 @@ Related post: <a href="https:&#x2F;&#x2F;hazyresearch.stanford.edu&#x2F;blog&#x2
 ---
 
 
+### how to repurpose your old phone into a web server
+
+**Community Score:** 69 upvotes
+
+**Link:** https://far.computer/how-to/
+
+---
+
+
+### Show HN: We built an open source, zero webhooks payment processor
+
+**Community Score:** 115 upvotes
+
+**Link:** https://github.com/flowglad/flowglad
+
+---
+
+
 ### Meta replaces WhatsApp for Windows with web wrapper that uses 1 GB RAM when idle
 
 **Community Score:** 103 upvotes
@@ -462,25 +480,5 @@ Deliver web apps with confidence 🚀
 
 
 Powerful web graphics runtime built on WebGL, WebGPU, WebXR and glTF
-
----
-
-
-### requestly/requestly - Free and open-source API Client & Interceptor.
-
-**Link:** https://github.com/requestly/requestly
-
-
-Free and open-source API Client & Interceptor.
-
----
-
-
-### angular/angular - Deliver web apps with confidence 🚀
-
-**Link:** https://github.com/angular/angular
-
-
-Deliver web apps with confidence 🚀
 
 ---

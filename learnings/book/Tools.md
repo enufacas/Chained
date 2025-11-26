@@ -601,11 +601,11 @@ Arianity (profile) says: November 13, 2025 at 8:24 pm Maybe we’ll be able to p
 ---
 
 
-### Claude Advanced Tool Use
+### IQ differences of identical twins reared apart are influenced by education
 
-**Community Score:** 473 upvotes
+**Community Score:** 35 upvotes
 
-**Link:** https://www.anthropic.com/engineering/advanced-tool-use
+**Link:** https://www.sciencedirect.com/science/article/pii/S0001691825003853
 
 ---
 

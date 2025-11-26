@@ -104,6 +104,19 @@ Comprehensive visual troubleshooting guide with 7 diagrams:
 
 **Use this to**: Systematically diagnose and resolve issues across all system components.
 
+### 8. [Agent Instruction Architecture](./agent-instruction-architecture.md) ⭐ NEW
+**Type**: Layered Architecture & Venn Diagrams (Mermaid)  
+**Created by**: @document-ninja
+
+Visualizes how instruction layers combine to create the complete agent instruction set:
+- Three instruction layers (Built-in Copilot + Base + Agent-specific)
+- Venn diagram showing instruction composition
+- Agent invocation methods (Chat, Issue Assignment, Workflow, Coding Agent)
+- Complete instruction flow from invocation to execution
+- Examples with detailed layer breakdowns
+
+**Use this to**: Understand how agents receive and combine instructions, and how to invoke agents effectively.
+
 ## Diagram Formats
 
 All diagrams are created using **Mermaid**, a markdown-based diagramming tool that renders beautifully on GitHub.
@@ -144,8 +157,9 @@ All diagrams are created using **Mermaid**, a markdown-based diagramming tool th
 ### For New Contributors
 Start with:
 1. **System Architecture** - Get the big picture
-2. **Agent Lifecycle** - Understand agent behavior
-3. **Workflow Timeline** - Know when things happen
+2. **Agent Instruction Architecture** - Understand how agents work
+3. **Agent Lifecycle** - Understand agent behavior
+4. **Workflow Timeline** - Know when things happen
 
 ### For Developers
 Refer to:
@@ -228,7 +242,7 @@ We use consistent colors across diagrams:
 ---
 
 **Created by**: @assert-specialist, @clarify-champion  
-**Last Updated**: 2025-11-17  
-**Status**: ✅ Complete - 7 comprehensive diagrams (including troubleshooting)
+**Last Updated**: 2025-11-25  
+**Status**: ✅ Complete - 8 comprehensive diagrams (including troubleshooting and agent instruction architecture)
 
 💡 **Tip**: Bookmark this directory for quick reference when working on the Chained system!
