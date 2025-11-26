@@ -11,6 +11,7 @@ This tool verifies:
 Created as part of the direct custom agent assignment test.
 """
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -54,7 +55,7 @@ class AgentAssignmentValidator:
             if len(parts) >= 3:
                 frontmatter = parts[1]
                 
-                # Use yaml if available, otherwise fallback
+                # Use yaml for proper parsing (required in requirements.txt)
                 if HAS_YAML:
                     try:
                         info = yaml.safe_load(frontmatter)
@@ -62,7 +63,9 @@ class AgentAssignmentValidator:
                     except Exception:
                         return {}
                 else:
-                    # Fallback to simple parsing if yaml not available
+                    # Simple fallback if yaml somehow not available
+                    # Note: PyYAML is in requirements.txt and should always be available
+                    # This fallback only handles simple key:value pairs
                     info = {}
                     for line in frontmatter.strip().split("\n"):
                         if ":" in line and not line.strip().startswith("-"):
@@ -73,7 +76,20 @@ class AgentAssignmentValidator:
         return {}
     
     def validate_agent_directive(self, directive: str, agent_name: str) -> Dict[str, Any]:
-        """Validate that an agent directive is properly formatted."""
+        """
+        Validate that an agent directive is properly formatted.
+        
+        Note: This method is designed for future use when validating issue bodies
+        or PR descriptions that contain agent directives. Currently not called
+        in the CLI interface, but available for programmatic use.
+        
+        Args:
+            directive: The directive text to validate
+            agent_name: The agent name expected in the directive
+            
+        Returns:
+            Dict with 'valid' boolean and list of 'issues' found
+        """
         results = {
             "valid": True,
             "issues": []
@@ -160,8 +176,6 @@ class AgentAssignmentValidator:
 
 def main():
     """Main entry point for the validation tool."""
-    import argparse
-    
     parser = argparse.ArgumentParser(
         description="Validate agent assignments in the Chained repository"
     )
