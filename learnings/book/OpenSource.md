@@ -2,7 +2,7 @@
 
 > Open source projects, community insights, and collaboration
 
-**Total Insights:** 65
+**Total Insights:** 64
 
 **Last Updated:** 2025-11-25
 
@@ -82,15 +82,6 @@ To use the Mastodon web application, please enable JavaScript. Alternatively, tr
 **Content Summary:**
 
 To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
-
----
-
-
-### Pebble Watch software is now 100% open source
-
-**Community Score:** 904 upvotes
-
-**Link:** https://ericmigi.com/blog/pebble-watch-software-is-now-100percent-open-source
 
 ---
 
@@ -271,6 +262,16 @@ To use the Mastodon web application, please enable JavaScript. Alternatively, tr
 **Community Score:** 140 upvotes
 
 **Link:** https://scienceclock.com/moss-survives-9-months-in-space-vacuum/
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
 
 ---
 
