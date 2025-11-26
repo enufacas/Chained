@@ -130,7 +130,7 @@ else
     if [ "${author}" = "${REPO_OWNER}" ]; then
       is_trusted=true
       echo "  ✅ PASS: Repository owner (${author})"
-    elif echo "${author}" | grep -qiE "^app/copilot|^copilot|^github-actions"; then
+    elif echo "${author}" | grep -qiE "^app/copilot|^copilot|^app/github-actions|^github-actions\[bot\]"; then
       is_trusted=true
       echo "  ✅ PASS: Trusted bot (${author})"
     else
