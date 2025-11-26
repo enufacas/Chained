@@ -1,0 +1,163 @@
+name: a2a Local Orchestration Example
+
+# This workflow demonstrates Tier 1 A2A: multiple agents communicating
+# via HTTP within the same GitHub Actions runner.
+#
+# Use case: Quick multi-agent collaboration for tasks that can complete
+# in a single workflow run (< 6 hours).
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_description:
+        description: 'Task to execute with multi-agent collaboration'
+        required: true
+        default: 'Design and implement a secure REST API for user authentication'
+      agents:
+        description: 'Comma-separated list of agents to use'
+        required: true
+        default: 'engineer-master,secure-specialist,document-ninja'
+
+jobs:
+  local-a2a-orchestration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Register all agents in discovery service
+        run: |
+          echo "📋 Registering agents in local discovery service..."
+          python3 -m tools.a2a.discovery register-all
+      
+      - name: Start agent servers in background
+        run: |
+          echo "🚀 Starting agent servers..."
+          
+          # Parse agents from input
+          IFS=',' read -ra AGENTS <<< "${{ github.event.inputs.agents }}"
+          
+          for agent in "${AGENTS[@]}"; do
+            agent=$(echo "$agent" | xargs)  # trim whitespace
+            echo "  Starting $agent..."
+            
+            # Start agent server in background
+            python3 -m tools.a2a.agent_server "$agent" &
+            
+            # Give it a moment to start
+            sleep 2
+            
+            # Get the port and test health
+            port=$(python3 -c "from tools.a2a import get_agent_port; print(get_agent_port('$agent'))")
+            echo "    → http://localhost:$port/"
+            
+            # Wait for server to be ready
+            for i in {1..10}; do
+              if curl -s "http://localhost:$port/health" > /dev/null 2>&1; then
+                echo "    ✅ $agent is ready"
+                break
+              fi
+              sleep 1
+            done
+          done
+          
+          echo ""
+          echo "✅ All agent servers started"
+      
+      - name: Execute multi-agent task
+        run: |
+          echo "🎯 Executing task with multi-agent collaboration..."
+          echo ""
+          echo "Task: ${{ github.event.inputs.task_description }}"
+          echo "Agents: ${{ github.event.inputs.agents }}"
+          echo ""
+          
+          # For now, this is a demonstration
+          # In Phase 3, the meta-coordinator will orchestrate actual work
+          
+          python3 << 'EOF'
+          import asyncio
+          import sys
+          sys.path.insert(0, '/home/runner/work/Chained/Chained')
+          
+          from tools.a2a.client import ChainedA2AClient
+          
+          async def execute_task():
+              task = """${{ github.event.inputs.task_description }}"""
+              agents = [a.strip() for a in """${{ github.event.inputs.agents }}""".split(',')]
+              
+              print(f"📋 Task: {task}")
+              print(f"🤖 Agents: {', '.join(agents)}")
+              print()
+              
+              async with ChainedA2AClient() as client:
+                  results = {}
+                  
+                  for agent in agents:
+                      print(f"→ Sending task to {agent}...")
+                      
+                      try:
+                          result = await client.send_message(agent, task)
+                          if result:
+                              results[agent] = result
+                              print(f"  ✅ {agent} responded")
+                          else:
+                              print(f"  ❌ {agent} failed to respond")
+                      except Exception as e:
+                          print(f"  ❌ {agent} error: {e}")
+                      
+                      print()
+                  
+                  print("=" * 60)
+                  print("📊 Results Summary:")
+                  print("=" * 60)
+                  
+                  for agent, result in results.items():
+                      print(f"\n{agent}:")
+                      print(f"  Status: Completed")
+                      # Result details would be extracted here
+                  
+                  return results
+          
+          results = asyncio.run(execute_task())
+          print("\n✅ Multi-agent task completed")
+          EOF
+      
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "🧹 Stopping agent servers..."
+          # Kill background processes
+          pkill -f "tools.a2a.agent_server" || true
+          echo "✅ Cleanup complete"
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## A2A Local Orchestration Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Task:** ${{ github.event.inputs.task_description }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Agents Used:**" >> $GITHUB_STEP_SUMMARY
+          
+          IFS=',' read -ra AGENTS <<< "${{ github.event.inputs.agents }}"
+          for agent in "${AGENTS[@]}"; do
+            agent=$(echo "$agent" | xargs)
+            echo "- $agent" >> $GITHUB_STEP_SUMMARY
+          done
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Mode:** Tier 1 (Same-Runner A2A)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This workflow demonstrated multi-agent collaboration using HTTP communication within a single GitHub Actions runner." >> $GITHUB_STEP_SUMMARY
