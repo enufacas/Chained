@@ -48,11 +48,11 @@ jobs:
         run: |
           echo "=== Testing Discovery Service ==="
           python3 -c "
-from tools.a2a import get_discovery_service
-discovery = get_discovery_service()
-print(f'✅ Discovery service initialized')
-print(f'Registry file: {discovery.registry_file}')
-"
+          from tools.a2a import get_discovery_service
+          discovery = get_discovery_service()
+          print(f'✅ Discovery service initialized')
+          print(f'Registry file: {discovery.registry_file}')
+          "
       
       - name: Validation summary
         if: success()
