@@ -8,8 +8,9 @@ This directory contains all documentation related to the Agent2Agent (A2A) Proto
 
 ### Quick Start
 - **[A2A_INTEGRATION_README.md](./A2A_INTEGRATION_README.md)** - Quick start guide, examples, and basic usage
+- **[A2A_GEMINI_IMPLEMENTATION.md](./A2A_GEMINI_IMPLEMENTATION.md)** - 🚀 **NEW: Gemini AI implementation design for A2A orchestration**
 - **[A2A_COPILOT_SESSIONS_EXPLAINED.md](./A2A_COPILOT_SESSIONS_EXPLAINED.md)** - 📘 **How Copilot sessions interact with A2A framework**
-- **[A2A_COPILOT_CLI_INVESTIGATION.md](./A2A_COPILOT_CLI_INVESTIGATION.md)** - 🔍 **NEW: Copilot CLI headless auth & custom agent delegation research**
+- **[A2A_COPILOT_CLI_INVESTIGATION.md](./A2A_COPILOT_CLI_INVESTIGATION.md)** - 🔍 **Copilot CLI investigation (concluded: not viable for orchestration)**
 
 ### Architecture & Design
 - **[A2A_GITHUB_RUNNERS_ARCHITECTURE.md](./A2A_GITHUB_RUNNERS_ARCHITECTURE.md)** - Core architecture for running A2A on GitHub Actions runners, three-tier design
@@ -109,11 +110,23 @@ Chained/
 - Performance benchmarks
 - Test workflows with auto-run
 
-### 🔄 Phase 3: Meta-coordinator Integration (In Progress)
-- Meta-coordinator A2A support
-- Task decomposition and delegation
-- Production multi-agent workflows
-- Advanced orchestration patterns
+### 🔄 Phase 3: Orchestration (In Progress)
+**Two parallel implementation paths:**
+
+#### 3A: Gemini A2A Orchestration (NEW - PRIMARY PATH)
+- ✅ Design document complete
+- 🔄 gemini-a2a-coordinator.yml workflow
+- 🔄 Tier 1: Sequential workflow_call orchestration
+- 🔄 Tier 2: Parallel sub-issue orchestration
+- 🔄 Specialized Gemini agent workflows
+- 🔄 Task decomposition and delegation
+
+#### 3B: Copilot A2A Orchestration (ALTERNATE PATH)
+- ✅ Design document complete
+- ✅ GraphQL direct agent assignment (proven)
+- ✅ Branch-based communication (designed)
+- 🔄 a2a-coordinator agent integration
+- 🔄 Multi-agent workflow coordination
 
 ### 📋 Future Phases
 - Phase 4: Advanced Features (streaming, artifacts, forms)
@@ -157,12 +170,23 @@ If you're new to the A2A implementation, read in this order:
 2. **A2A_INTEGRATION_README.md** - Quick start guide and examples
 3. **A2A_GITHUB_RUNNERS_ARCHITECTURE.md** - Understand the architecture
 4. **A2A_INTEGRATION_DESIGN.md** - Detailed component design
-5. **A2A_PHASE_3_DESIGN.md** - 📋 Future: Meta-coordinator integration plan
-6. **A2A_IMPLEMENTATION_SUMMARY.md** - What was built in Phase 1
-7. **A2A_PHASE_2B_TESTING_SUMMARY.md** - Testing results
-8. **A2A_TRANSPORT_COMPARISON.md** - Transport options
-9. **A2A_GITHUB_RUNNERS_COMPLIANCE.md** - Constraints and limitations
-10. **A2A_MCP_TRANSPORT_DESIGN.md** - Future MCP integration
+
+**For Gemini AI Implementation (NEW - PRIMARY):**
+5. **A2A_GEMINI_IMPLEMENTATION.md** - 🚀 Gemini A2A orchestration design
+
+**For Copilot Implementation (ALTERNATE):**
+6. **A2A_PHASE_3_DESIGN.md** - 📋 Copilot orchestration plan  
+7. **A2A_VIABLE_PATH_FORWARD.md** - GraphQL direct assignment approach
+8. **A2A_BRANCH_BASED_COORDINATION.md** - Branch communication strategy
+9. **A2A_COPILOT_REALITY_CHECK.md** - Copilot execution model limitations
+10. **A2A_COPILOT_CLI_INVESTIGATION.md** - CLI investigation (concluded not viable)
+
+**Additional Resources:**
+11. **A2A_IMPLEMENTATION_SUMMARY.md** - What was built in Phase 1
+12. **A2A_PHASE_2B_TESTING_SUMMARY.md** - Testing results
+13. **A2A_TRANSPORT_COMPARISON.md** - Transport options
+14. **A2A_GITHUB_RUNNERS_COMPLIANCE.md** - Constraints and limitations
+15. **A2A_MCP_TRANSPORT_DESIGN.md** - Future MCP integration
 
 ## 🔗 External Resources
 
