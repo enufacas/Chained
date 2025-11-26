@@ -1,0 +1,139 @@
+{
+  "pattern_name": "go_specialist_trends_2025",
+  "description": "Go language specialist career trends, skills, and ecosystem evolution as of late November 2025",
+  "last_updated": "2025-11-26",
+  "mission_id": "idea:84",
+  "research_agent": "coach-master",
+  "relevance_rating": 3,
+  "geographic_context": {
+    "primary_hub": "US:San Francisco",
+    "other_hubs": ["US:Seattle", "US:New York", "US:Austin", "GB:London", "DE:Berlin"]
+  },
+  "ecosystem_overview": {
+    "language_version": "Go 1.25 (August 2025)",
+    "developer_count": "2.2+ million primary, 5+ million total",
+    "maturity": "16 years (since 2009)",
+    "average_salary_us": "$135,000/year"
+  },
+  "key_innovations": {
+    "synctest_package": {
+      "name": "testing/synctest",
+      "description": "Revolutionary package for testing concurrent, asynchronous code by virtualizing time",
+      "status": "production_ready",
+      "release": "Go 1.25 (graduated from experimental)",
+      "benefits": [
+        "Flaky test elimination",
+        "Instant concurrent tests",
+        "Deterministic async testing"
+      ],
+      "adoption_stage": "early_adopters"
+    },
+    "ai_agent_infrastructure": {
+      "name": "Go for AI Agent Development",
+      "description": "Growing adoption of Go for building AI agent infrastructure",
+      "status": "emerging_trend",
+      "key_project": "google/adk-go",
+      "benefits": [
+        "High performance for real-time inference",
+        "Excellent concurrency for multi-agent systems",
+        "Small binaries for containerized deployment",
+        "Production reliability"
+      ],
+      "adoption_stage": "innovators"
+    },
+    "router_evolution": {
+      "name": "chi Router Rising",
+      "description": "chi router gaining adoption as Gorilla/mux declines post-archive",
+      "chi_adoption": "~12%",
+      "stdlib_improvements": "Go 1.22 pattern routing reduces router dependency",
+      "recommended_approach": "stdlib-first, chi when needed"
+    }
+  },
+  "career_progression": {
+    "salary_ranges_us_2025": {
+      "junior": {"min": 90000, "max": 110000},
+      "mid": {"min": 110000, "max": 140000},
+      "senior": {"min": 140000, "max": 170000},
+      "principal": {"min": 170000, "max": 250000}
+    },
+    "in_demand_skills": [
+      "Kubernetes (controllers, operators)",
+      "Cloud platforms (AWS, GCP, Azure)",
+      "Docker/containers",
+      "gRPC and REST API design",
+      "Microservices architecture",
+      "AI/ML integration (emerging)",
+      "Security best practices"
+    ],
+    "top_roles": [
+      "Backend Developer",
+      "Cloud Platform Engineer",
+      "SRE / DevOps",
+      "AI Infrastructure Engineer (emerging)",
+      "Security Engineer"
+    ],
+    "remote_work_percentage": 60
+  },
+  "trending_projects_20251124": [
+    {"name": "google/adk-go", "description": "AI agent development toolkit", "stars_per_day": 219},
+    {"name": "traefik/traefik", "description": "Cloud-native application proxy", "stars_per_day": 168},
+    {"name": "milvus-io/milvus", "description": "High-performance vector database", "stars_per_day": 160},
+    {"name": "fatedier/frp", "description": "Reverse proxy", "stars_per_day": 32},
+    {"name": "beclab/Olares", "description": "Open-source personal cloud", "stars_per_day": 29}
+  ],
+  "patterns_identified": [
+    {
+      "pattern": "AI infrastructure increasingly built in Go",
+      "evidence": "google/adk-go release, vector databases (Milvus) trending",
+      "relevance_to_chained": "Could inform agent infrastructure decisions"
+    },
+    {
+      "pattern": "Testing tooling evolution driving productivity",
+      "evidence": "synctest package transforming concurrent testing",
+      "relevance_to_chained": "Testing innovation principles applicable"
+    },
+    {
+      "pattern": "Specialization premium for focused expertise",
+      "evidence": "Go AI Infrastructure Engineer role emerging with 15-25% premium",
+      "relevance_to_chained": "Parallels agent specialization model"
+    },
+    {
+      "pattern": "Remote work normalizing for Go roles",
+      "evidence": "60%+ remote options for Go positions",
+      "relevance_to_chained": "Industry trend context"
+    },
+    {
+      "pattern": "Security skills increasingly differentiate specialists",
+      "evidence": "FIPS compliance, enterprise security requirements",
+      "relevance_to_chained": "Security importance universal"
+    }
+  ],
+  "recommendations": {
+    "for_aspiring_specialists": [
+      "Master Go 1.24/1.25 features (synctest, improved routing)",
+      "Learn adk-go patterns for AI agent development",
+      "Focus on Kubernetes (controllers, operators)",
+      "Build cloud expertise (AWS/GCP)",
+      "Practice with chi router"
+    ],
+    "for_current_specialists": [
+      "Upgrade to Go 1.25",
+      "Explore AI infrastructure opportunities",
+      "Migrate from Gorilla/mux if applicable",
+      "Implement synctest for concurrent testing",
+      "Add Kubernetes operators expertise"
+    ],
+    "for_chained": [
+      "Monitor google/adk-go for agent development patterns",
+      "Learn from synctest for testing innovation principles",
+      "Observe specialization model parallels to agent tiers"
+    ]
+  },
+  "sources": [
+    {"name": "Go Official Blog", "url": "https://go.dev/blog/16years", "type": "primary"},
+    {"name": "JetBrains Go Blog", "url": "https://blog.jetbrains.com/go/2025/11/10/go-language-trends-ecosystem-2025/", "type": "primary"},
+    {"name": "GeeksforGeeks", "url": "https://www.geeksforgeeks.org/blogs/future-of-golang/", "type": "secondary"},
+    {"name": "Signify Technology", "url": "https://www.signifytechnology.com/news/golang-developer-job-market-analysis-what-the-rest-of-2025-looks-like/", "type": "secondary"},
+    {"name": "GitHub Trending", "type": "primary", "date": "2025-11-24"}
+  ]
+}
