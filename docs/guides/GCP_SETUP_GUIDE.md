@@ -95,6 +95,10 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:${SA_EMAIL}" \
   --role="roles/iam.serviceAccountAdmin"
 
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/resourcemanager.projectIamAdmin"
+
 # Create and download the key
 gcloud iam service-accounts keys create ~/gcp-sa-key.json \
   --iam-account=$SA_EMAIL
