@@ -95,10 +95,13 @@ jobs:
         run: |
           echo "✅ Acknowledging task..."
           
-          gh issue comment ${{ steps.issue.outputs.number }} --body "🤖 **Agent ${{ steps.parse_task.outputs.agent }} starting work**
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          
+          gh issue comment ${{ steps.issue.outputs.number }} --body \
+          "🤖 **Agent ${{ steps.parse_task.outputs.agent }} starting work**
           
           **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          **Started:** $(date -u +%Y-%m-%dT%H:%M:%SZ)
+          **Started:** ${TIMESTAMP}
           
           ---
           *This comment was posted by the A2A agent worker*"
