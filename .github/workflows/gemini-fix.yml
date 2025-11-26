@@ -43,6 +43,51 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 'Validate authentication configuration'
+        env:
+          GEMINI_API_KEY: '${{ secrets.GEMINI_API_KEY }}'
+          GOOGLE_API_KEY: '${{ secrets.GOOGLE_API_KEY }}'
+          USE_VERTEX_AI: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+        run: |
+          # Check if authentication is properly configured
+          if [[ "$USE_VERTEX_AI" == "true" ]]; then
+            if [[ -z "$GOOGLE_API_KEY" ]]; then
+              echo "::error title=Missing Vertex AI Configuration::When GOOGLE_GENAI_USE_VERTEXAI is set to 'true', you must configure the GOOGLE_API_KEY secret."
+              echo ""
+              echo "To fix this issue, follow these steps:"
+              echo "1. Go to Settings > Secrets and variables > Actions"
+              echo "2. Click 'New repository secret'"
+              echo "3. Name: GOOGLE_API_KEY"
+              echo "4. Value: Your Vertex AI API key from Google Cloud Console"
+              echo ""
+              echo "Alternatively, if you prefer to use Google AI Studio instead:"
+              echo "1. Go to Settings > Secrets and variables > Actions > Variables"
+              echo "2. Delete or set GOOGLE_GENAI_USE_VERTEXAI to 'false'"
+              echo "3. Create a GEMINI_API_KEY secret with your Google AI Studio API key"
+              echo ""
+              echo "See docs/GEMINI_CLI_INTEGRATION.md for detailed setup instructions."
+              exit 1
+            fi
+          else
+            if [[ -z "$GEMINI_API_KEY" ]]; then
+              echo "::error title=Missing Gemini API Key::No authentication credentials found. You must configure either GEMINI_API_KEY or GOOGLE_API_KEY secret."
+              echo ""
+              echo "Option 1 - Google AI Studio (Recommended for quick start):"
+              echo "1. Get API key from https://aistudio.google.com/app/apikey"
+              echo "2. Go to Settings > Secrets and variables > Actions"
+              echo "3. Create secret: Name=GEMINI_API_KEY, Value=your API key"
+              echo ""
+              echo "Option 2 - Vertex AI (For GCP users):"
+              echo "1. Get API key from Google Cloud Console"
+              echo "2. Create secret: Name=GOOGLE_API_KEY, Value=your Vertex AI API key"
+              echo "3. Create variable: Name=GOOGLE_GENAI_USE_VERTEXAI, Value=true"
+              echo ""
+              echo "See docs/GEMINI_CLI_INTEGRATION.md for detailed setup instructions."
+              exit 1
+            fi
+          fi
+          echo "✅ Authentication configuration validated successfully"
+
       - name: 'Run Gemini CLI'
         id: 'run_gemini'
         uses: 'google-github-actions/run-gemini-cli@v0'
