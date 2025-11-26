@@ -37,9 +37,22 @@ jobs:
         with:
           python-version: '3.11'
       
+      - name: Setup Go for actionlint
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      
       - name: Install dependencies
         run: |
           pip install pyyaml
+          
+          # Install actionlint for workflow linting
+          echo "📦 Installing actionlint..."
+          go install github.com/rhysd/actionlint/cmd/actionlint@latest
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+          
+          # Verify installation
+          actionlint -version
       
       - name: Get changed workflow files
         id: changed-files
@@ -153,27 +166,27 @@ jobs:
             exit 1
           fi
       
-      - name: Test workflow file syntax with GitHub Actions
+      - name: Test workflow file syntax with actionlint
         if: steps.changed-files.outputs.count > 0
         run: |
-          echo "🔧 Testing workflow YAML syntax..."
+          echo "🔧 Testing workflow YAML syntax with actionlint..."
           
-          # Use actionlint if available, otherwise just yamllint
-          if command -v actionlint &> /dev/null; then
-            while IFS= read -r workflow_file; do
-              if [ -f "$workflow_file" ]; then
-                echo "Checking $workflow_file with actionlint..."
-                actionlint "$workflow_file" || true
+          has_errors=false
+          
+          while IFS= read -r workflow_file; do
+            if [ -f "$workflow_file" ]; then
+              echo "Checking $workflow_file with actionlint..."
+              if ! actionlint "$workflow_file"; then
+                has_errors=true
               fi
-            done < /tmp/changed_workflows.txt
+            fi
+          done < /tmp/changed_workflows.txt
+          
+          if [ "$has_errors" = true ]; then
+            echo "❌ actionlint found errors in workflow files"
+            exit 1
           else
-            echo "ℹ️  actionlint not available, using yamllint..."
-            while IFS= read -r workflow_file; do
-              if [ -f "$workflow_file" ]; then
-                echo "Checking $workflow_file with yamllint..."
-                yamllint -d relaxed "$workflow_file" || true
-              fi
-            done < /tmp/changed_workflows.txt
+            echo "✅ All workflow files passed actionlint validation"
           fi
       
       - name: Run changed workflows (dry-run)
@@ -230,6 +243,7 @@ jobs:
               body += '✅ **All workflow validations passed!**\n\n';
               body += `Validated ${changedCount} workflow file(s).\n\n`;
               body += '### Checks Performed\n';
+              body += '- ✅ actionlint syntax and best practices\n';
               body += '- ✅ YAML syntax validation\n';
               body += '- ✅ Required workflow structure\n';
               body += '- ✅ Prohibited patterns (direct push to main)\n';
@@ -239,11 +253,22 @@ jobs:
               body += '❌ **Workflow validation failed!**\n\n';
               body += 'Please review the validation errors above and fix the issues.\n\n';
               body += '### Common Issues\n';
+              body += '- actionlint errors (syntax, type mismatches, invalid inputs)\n';
+              body += '- Script injection vulnerabilities\n';
+              body += '- Invalid runner labels or action inputs\n';
               body += '- Direct `git push` without branch specification\n';
               body += '- Direct push to main branch\n';
               body += '- YAML syntax errors\n';
               body += '- Missing required workflow fields\n';
               body += '- **Missing path triggers for script dependencies**\n\n';
+              body += '### How to Fix actionlint Issues\n';
+              body += 'Run actionlint locally to see detailed errors:\n';
+              body += '```bash\n';
+              body += '# Install actionlint\n';
+              body += 'go install github.com/rhysd/actionlint/cmd/actionlint@latest\n\n';
+              body += '# Run on your workflow\n';
+              body += 'actionlint .github/workflows/your-workflow.yml\n';
+              body += '```\n\n';
               body += '### How to Fix Script Dependency Issues\n';
               body += 'If your workflow uses scripts from `tools/` or `scripts/`, add them to path triggers:\n';
               body += '```yaml\n';
@@ -255,8 +280,9 @@ jobs:
               body += '```\n\n';
               body += '### General Fix Steps\n';
               body += '1. Review the error messages in the workflow run\n';
-              body += '2. Fix the issues in your workflow files\n';
-              body += '3. Push the changes - validation will run again\n';
+              body += '2. Run `actionlint` locally for detailed feedback\n';
+              body += '3. Fix the issues in your workflow files\n';
+              body += '4. Push the changes - validation will run again\n';
             }
             
             body += '\n---\n*Automated validation by workflow-validation.yml*';

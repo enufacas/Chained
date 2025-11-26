@@ -26,16 +26,19 @@ GitHub Copilot has context size limits. Exceeding them causes HTTP 413 errors an
 5. **`branch-protection.instructions.md`** - PR-based workflow requirements
 6. **`workflow-reference.instructions.md`** - Workflow attribution
 7. **`workflow-agent-assignment.instructions.md`** - Agent assignment patterns
+8. **`workflow-linting.instructions.md`** - actionlint usage for workflow validation
 
 ### Tech Lead Instructions
-8. **`workflows-tech-lead.instructions.md`** - Workflow reviews
-9. **`agents-tech-lead.instructions.md`** - Agent system reviews
-10. **`docs-tech-lead.instructions.md`** - Documentation reviews
-11. **`github-pages-tech-lead.instructions.md`** - Web content reviews
+9. **`workflows-tech-lead.instructions.md`** - Workflow reviews
+10. **`agents-tech-lead.instructions.md`** - Agent system reviews
+11. **`docs-tech-lead.instructions.md`** - Documentation reviews
+12. **`github-pages-tech-lead.instructions.md`** - Web content reviews
 
 ### Domain-Specific Instructions
-12. **`threejs-rendering.instructions.md`** - 3D rendering quick reference
-13. **`github-pages-testing.instructions.md`** - Pages testing quick reference
+13. **`threejs-rendering.instructions.md`** - 3D rendering quick reference
+14. **`github-pages-testing.instructions.md`** - Pages testing quick reference
+15. **`root-directory-protection.instructions.md`** - File placement rules
+16. **`meta-coordinator-system.instructions.md`** - Meta-coordinator system
 
 ## Detailed Guides
 

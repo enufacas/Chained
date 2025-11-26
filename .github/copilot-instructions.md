@@ -500,6 +500,15 @@ In your code and comments, reference agents explicitly:
 - See `.github/instructions/agent-issue-updates.instructions.md` for details
 - This ensures transparency and keeps stakeholders informed
 
+### Workflow Linting (CRITICAL for Workflow Changes)
+- **ALWAYS use actionlint** before committing workflow changes
+- **Install**: `go install github.com/rhysd/actionlint/cmd/actionlint@latest`
+- **Usage**: `actionlint .github/workflows/your-workflow.yml`
+- **Catches**: Syntax errors, type mismatches, script injection, invalid inputs
+- **Security**: Prevents script injection and credential leaks
+- See `.github/instructions/workflow-linting.instructions.md` for detailed guide
+- See https://github.com/rhysd/actionlint for documentation
+
 ### Python Standards (when applicable)
 - Follow PEP 8 style guide
 - Use type hints for function signatures
