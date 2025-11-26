@@ -19,11 +19,46 @@ Before using Gemini CLI, you must set up authentication. Choose the method that 
 
 #### Option B: Vertex AI (For GCP Users)
 
-1. Get API key from [GCP Console](https://cloud.google.com/vertex-ai/generative-ai/docs/start/api-keys)
-2. Go to **Settings > Secrets and variables > Actions**
-3. Create **Secret**: Name: `GOOGLE_API_KEY`, Value: your Vertex AI API key
-4. Create **Variable**: Name: `GOOGLE_GENAI_USE_VERTEXAI`, Value: `true`
-5. Save and you're ready!
+**Prerequisites:**
+- Active GCP project with billing enabled
+- Vertex AI API enabled in your project
+
+**Setup Steps:**
+
+1. **Enable Vertex AI API**
+   - Go to: https://console.cloud.google.com/apis/library/aiplatform.googleapis.com
+   - Click "Enable" if not already enabled
+
+2. **Create API Key with Vertex AI Permissions**
+   - Go to: https://console.cloud.google.com/apis/credentials
+   - Click "Create Credentials" → "API Key"
+   - Click on the newly created key to edit it
+   - Under "API restrictions", select "Restrict key"
+   - Select "Vertex AI API" from the dropdown
+   - Click "Save"
+
+3. **Configure Repository Secrets**
+   - Go to **Settings > Secrets and variables > Actions**
+   - Create **Secret**: 
+     - Name: `GOOGLE_API_KEY`
+     - Value: Your Vertex AI API key (from step 2)
+
+4. **Configure Repository Variables**
+   - Go to **Settings > Secrets and variables > Actions > Variables**
+   - Create **Variable**: 
+     - Name: `GOOGLE_GENAI_USE_VERTEXAI`
+     - Value: `true`
+
+5. **Verify Setup**
+   - Ensure billing is enabled on your GCP project
+   - Comment `@gemini-cli help` on any issue to test
+
+**Important Notes:**
+- Vertex AI requires a billing account (has free tier, but billing must be enabled)
+- API key must have "Vertex AI API" enabled in restrictions
+- Changes may take 2-3 minutes to propagate
+
+**Troubleshooting:** If you get permission errors, see the [detailed troubleshooting guide](#error-permission-aiplatformendpointspredict-denied) below.
 
 **✅ Quick Test**: Once configured, comment `@gemini-cli help` on any issue to verify authentication works.
 
@@ -687,6 +722,172 @@ This is expected behavior for the `/invoke` command. Gemini requires human appro
 3. Gemini executes the approved plan
 
 Use `/fix` instead if you want automatic execution without approval.
+
+### Error: "Permission 'aiplatform.endpoints.predict' denied"
+
+**Full Error Message:**
+```
+Permission 'aiplatform.endpoints.predict' denied on resource 
+'//aiplatform.googleapis.com/projects/XXXXX/locations/us-central1/publishers/google/models/gemini-2.0-flash' 
+(or it may not exist).
+```
+
+**Cause**: You're using Vertex AI mode (`GOOGLE_GENAI_USE_VERTEXAI=true`) and your API key exists, but it lacks the required permissions to access Vertex AI resources.
+
+**This Error Means:**
+- ✅ Your `GOOGLE_API_KEY` secret is configured correctly
+- ✅ The workflow validation passes (secret exists)
+- ❌ Your API key doesn't have permission to use Vertex AI
+
+---
+
+#### 📋 Solution 1: Enable Vertex AI API for Your API Key (Recommended)
+
+**For API Keys created in Google Cloud Console:**
+
+1. **Go to Google Cloud Console**
+   - Open: https://console.cloud.google.com/apis/credentials
+
+2. **Find Your API Key**
+   - Locate the API key you stored as `GOOGLE_API_KEY`
+   - Click on the key name to edit it
+
+3. **Enable Vertex AI API**
+   - Scroll to "API restrictions"
+   - Select "Restrict key"
+   - In the dropdown, search for and select:
+     - ✅ **Vertex AI API** (this is the key one!)
+     - Optionally add: **Generative Language API** (for broader access)
+   - Click "Save"
+
+4. **Enable Vertex AI API for Your Project**
+   - Go to: https://console.cloud.google.com/apis/library/aiplatform.googleapis.com
+   - Click "Enable" if not already enabled
+   - Wait 2-3 minutes for changes to propagate
+
+5. **Verify Billing is Enabled**
+   - Vertex AI requires a billing account
+   - Go to: https://console.cloud.google.com/billing
+   - Ensure your project has a billing account linked
+   - Note: Vertex AI has a free tier, but billing must be enabled
+
+6. **Test the Configuration**
+   - Re-run your failed workflow
+   - It should now work without permission errors
+
+**Visual Guide:**
+```
+GCP Console → APIs & Services → Credentials
+  → [Your API Key] → Edit
+    → API restrictions: "Restrict key"
+      → Select APIs: ✅ Vertex AI API
+        → Save
+```
+
+---
+
+#### 📋 Solution 2: Use Service Account with IAM Roles (Enterprise Setup)
+
+**For production/enterprise use, service accounts are more secure:**
+
+1. **Create a Service Account**
+   - Go to: https://console.cloud.google.com/iam-admin/serviceaccounts
+   - Click "Create Service Account"
+   - Name: `gemini-cli-github-actions`
+   - Description: "Service account for GitHub Actions Gemini CLI"
+
+2. **Grant Required Roles**
+   - In the service account creation wizard, add these roles:
+     - ✅ **Vertex AI User** (`roles/aiplatform.user`)
+     - Optional: **Logs Writer** (`roles/logging.logWriter`) for debugging
+   - Click "Done"
+
+3. **Create API Key for Service Account**
+   - Click on your new service account
+   - Go to "Keys" tab
+   - Click "Add Key" → "Create new key" → JSON
+   - Download the JSON key file (keep it secure!)
+
+4. **Configure GitHub Secret**
+   - Go to your repository: Settings → Secrets and variables → Actions
+   - Update `GOOGLE_API_KEY` with the service account key
+   - Ensure `GOOGLE_GENAI_USE_VERTEXAI` variable is set to `true`
+
+5. **Test the Configuration**
+   - Re-run your workflow
+   - Service account should have all required permissions
+
+**Required IAM Permissions:**
+- `aiplatform.endpoints.predict` (included in Vertex AI User role)
+- `aiplatform.endpoints.get` (included in Vertex AI User role)
+
+---
+
+#### 📋 Solution 3: Switch to Google AI Studio (Simplest)
+
+**If Vertex AI setup is too complex, switch to Google AI Studio:**
+
+1. **Get Google AI Studio API Key**
+   - Go to: https://aistudio.google.com/app/apikey
+   - Click "Create API Key"
+   - Copy the key (starts with `AIza...`)
+
+2. **Update Repository Secrets**
+   - Go to: Settings → Secrets and variables → Actions
+   - **Delete** the `GOOGLE_API_KEY` secret
+   - **Create new secret**: 
+     - Name: `GEMINI_API_KEY`
+     - Value: Your Google AI Studio key
+
+3. **Update Repository Variables**
+   - Go to: Settings → Secrets and variables → Actions → Variables
+   - **Delete** or set `GOOGLE_GENAI_USE_VERTEXAI` to `false`
+
+4. **Benefits of Google AI Studio**
+   - ✅ No GCP project required
+   - ✅ No billing account required
+   - ✅ Generous free tier (1500 requests/day)
+   - ✅ Simpler setup (no IAM/permissions)
+   - ✅ Same Gemini models available
+
+5. **Limitations of Google AI Studio**
+   - ❌ No integration with GCP projects
+   - ❌ Limited to API key auth (no service accounts)
+   - ❌ Lower rate limits on free tier
+
+---
+
+#### 🔍 Debugging Checklist
+
+If you're still having permission issues:
+
+- [ ] **Verify API is enabled**: https://console.cloud.google.com/apis/library/aiplatform.googleapis.com
+- [ ] **Check project billing**: Vertex AI requires billing to be enabled
+- [ ] **Verify API key restrictions**: Key should have Vertex AI API enabled
+- [ ] **Wait for propagation**: IAM changes can take 2-5 minutes
+- [ ] **Check project ID**: Ensure using correct GCP project
+- [ ] **Verify location**: Default is `us-central1`, ensure it's enabled in your project
+- [ ] **Review IAM audit logs**: Check for permission denied events
+
+**Quick Test Command** (from Cloud Shell):
+```bash
+# Test if your credentials work
+gcloud auth application-default print-access-token | \
+curl -X POST \
+  -H "Authorization: Bearer $(cat -)" \
+  -H "Content-Type: application/json" \
+  https://us-central1-aiplatform.googleapis.com/v1/projects/YOUR_PROJECT_ID/locations/us-central1/publishers/google/models/gemini-2.0-flash:generateContent \
+  -d '{"contents":[{"role":"user","parts":[{"text":"Hello"}]}]}'
+```
+
+---
+
+#### 📚 Additional Resources
+
+- **Vertex AI Quickstart**: https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal
+- **Vertex AI API Keys Guide**: https://cloud.google.com/vertex-ai/generative-ai/docs/start/api-keys
+- **IAM Roles for Vertex AI**: https://cloud.google.com/vertex-ai/docs/general/access-control
+- **Troubleshooting Vertex AI**: https://cloud.google.com/vertex-ai/docs/troubleshooting
 
 ---
 

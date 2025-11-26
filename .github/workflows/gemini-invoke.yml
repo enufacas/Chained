@@ -57,6 +57,8 @@ jobs:
               echo "See docs/GEMINI_CLI_INTEGRATION.md for detailed setup instructions."
               exit 1
             fi
+            echo "⚠️  Warning: Using Vertex AI mode. Ensure your API key has 'aiplatform.endpoints.predict' permission."
+            echo "   If you encounter permission errors, see troubleshooting guide in workflow logs."
           else
             if [[ -z "$GEMINI_API_KEY" ]]; then
               echo "::error title=Missing Gemini API Key::No authentication credentials found. You must configure either GEMINI_API_KEY or GOOGLE_API_KEY secret."
@@ -156,3 +158,76 @@ jobs:
               }
             }
           prompt: '/gemini-invoke'
+
+      - name: 'Diagnose Vertex AI Permission Errors'
+        if: failure() && steps.run_gemini.conclusion == 'failure'
+        env:
+          GEMINI_ERRORS: '${{ steps.run_gemini.outputs.gemini_errors }}'
+          USE_VERTEX_AI: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+        run: |
+          # Check if this is a Vertex AI permission error
+          if [[ "$USE_VERTEX_AI" == "true" ]] && echo "$GEMINI_ERRORS" | grep -q "aiplatform.endpoints.predict"; then
+            echo "::error title=Vertex AI Permission Error::Your GOOGLE_API_KEY lacks the required 'aiplatform.endpoints.predict' permission."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "🔐 VERTEX AI PERMISSION ERROR DETECTED"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "The error indicates your API key doesn't have permission to use Vertex AI."
+            echo ""
+            echo "📋 SOLUTION OPTIONS:"
+            echo ""
+            echo "Option 1: Enable Vertex AI Permissions (if using GCP API key)"
+            echo "  1. Go to Google Cloud Console: https://console.cloud.google.com"
+            echo "  2. Navigate to IAM & Admin > Service Accounts"
+            echo "  3. Find the service account associated with your API key"
+            echo "  4. Click 'Edit' and add these roles:"
+            echo "     • Vertex AI User (roles/aiplatform.user)"
+            echo "  5. Alternatively, enable the Vertex AI API for API keys:"
+            echo "     • Go to APIs & Services > Credentials"
+            echo "     • Edit your API key and ensure 'Vertex AI API' is enabled"
+            echo "  6. Wait a few minutes for permissions to propagate"
+            echo ""
+            echo "Option 2: Switch to Google AI Studio (Recommended - Simpler Setup)"
+            echo "  1. Get a free API key from: https://aistudio.google.com/app/apikey"
+            echo "  2. Go to Settings > Secrets and variables > Actions"
+            echo "  3. Delete the GOOGLE_API_KEY secret"
+            echo "  4. Create a new secret:"
+            echo "     • Name: GEMINI_API_KEY"
+            echo "     • Value: Your Google AI Studio API key"
+            echo "  5. Go to Variables tab and set:"
+            echo "     • Name: GOOGLE_GENAI_USE_VERTEXAI"
+            echo "     • Value: false"
+            echo "  6. Re-run this workflow"
+            echo ""
+            echo "Option 3: Create a new Vertex AI API key with correct permissions"
+            echo "  1. Go to Google Cloud Console > APIs & Services > Credentials"
+            echo "  2. Click 'Create Credentials' > 'API Key'"
+            echo "  3. Edit the API key and restrict to:"
+            echo "     • API restrictions: Vertex AI API"
+            echo "  4. Update your GOOGLE_API_KEY secret with this new key"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "📚 ADDITIONAL RESOURCES:"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "• Vertex AI API Keys: https://cloud.google.com/vertex-ai/generative-ai/docs/start/api-keys"
+            echo "• Repository Setup Guide: docs/GEMINI_CLI_INTEGRATION.md"
+            echo "• Original Error: Check 'Run Gemini CLI' step logs above"
+            echo ""
+            exit 1
+          elif [[ "$USE_VERTEX_AI" == "true" ]] && echo "$GEMINI_ERRORS" | grep -q "PERMISSION_DENIED"; then
+            echo "::error title=Vertex AI Permission Denied::Your API key was denied access to Vertex AI resources."
+            echo ""
+            echo "This usually means:"
+            echo "  • Your API key doesn't have Vertex AI API enabled"
+            echo "  • Your GCP project doesn't have Vertex AI API enabled"
+            echo "  • You need to add the 'Vertex AI User' role"
+            echo ""
+            echo "Consider switching to Google AI Studio (Option 2 above) for easier setup."
+            exit 1
+          fi
+          
+          # If not a Vertex AI permission error, show generic error
+          echo "::error title=Gemini CLI Execution Failed::The Gemini CLI encountered an error. Check the 'Run Gemini CLI' step above for details."
+          exit 1
