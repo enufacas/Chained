@@ -42,6 +42,13 @@ from typing import Any, Dict, List, Optional, Tuple
 sys.path.insert(0, os.path.dirname(__file__))
 
 
+# Neural network constants
+SIGMOID_CLAMP_MIN = -500  # Minimum value for sigmoid input clamping
+SIGMOID_CLAMP_MAX = 500   # Maximum value for sigmoid input clamping
+WEIGHT_CLIP_MIN = -5.0    # Minimum weight value to prevent explosion
+WEIGHT_CLIP_MAX = 5.0     # Maximum weight value to prevent explosion
+
+
 @dataclass
 class Neuron:
     """
@@ -79,7 +86,7 @@ class Neuron:
         z += self.bias
         
         # Sigmoid activation for bounded output
-        self.activation = 1.0 / (1.0 + math.exp(-max(-500, min(500, z))))
+        self.activation = 1.0 / (1.0 + math.exp(-max(SIGMOID_CLAMP_MIN, min(SIGMOID_CLAMP_MAX, z))))
         return self.activation
     
     def adjust_weights(self, gradient: float, learning_rate: float = 0.01):
@@ -88,7 +95,7 @@ class Neuron:
         for input_id in self.weights:
             self.weights[input_id] -= learning_rate * gradient
             # Clip weights to prevent explosion
-            self.weights[input_id] = max(-5.0, min(5.0, self.weights[input_id]))
+            self.weights[input_id] = max(WEIGHT_CLIP_MIN, min(WEIGHT_CLIP_MAX, self.weights[input_id]))
         self.bias -= learning_rate * gradient
 
 
@@ -195,6 +202,9 @@ class SelfEvolvingNeuralArchitecture:
         # Architecture components
         self.layers: Dict[int, Layer] = {}
         self.config = ArchitectureEvolutionConfig()
+        
+        # Neuron ID counter for deterministic ID generation
+        self._neuron_counter: int = 0
         
         # Performance tracking
         self.success_history: deque = deque(maxlen=100)
@@ -317,6 +327,7 @@ class SelfEvolvingNeuralArchitecture:
             self.last_evolution_time = data.get('last_evolution_time')
             self.current_learning_rate = data.get('current_learning_rate', 0.01)
             self.architecture_fitness = data.get('architecture_fitness', 0.5)
+            self._neuron_counter = data.get('neuron_counter', 0)
             
             # Restore patterns
             for pattern_data in data.get('patterns', []):
@@ -354,6 +365,7 @@ class SelfEvolvingNeuralArchitecture:
             'last_evolution_time': self.last_evolution_time,
             'current_learning_rate': self.current_learning_rate,
             'architecture_fitness': self.architecture_fitness,
+            'neuron_counter': self._neuron_counter,
             'patterns': []
         }
         
@@ -636,8 +648,9 @@ class SelfEvolvingNeuralArchitecture:
                 return
             
             for i in range(count):
-                # Create new neuron
-                new_id = f"hidden{layer_id}_{len(layer.neurons)}_{int(datetime.now().timestamp())}"
+                # Create new neuron with deterministic ID
+                self._neuron_counter += 1
+                new_id = f"hidden{layer_id}_neuron_{self._neuron_counter}"
                 
                 # Connect to all neurons in previous layer
                 prev_layer = self.layers.get(layer_id - 1)
