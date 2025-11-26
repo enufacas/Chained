@@ -1,0 +1,187 @@
+# Self-Evolving Neural Architecture Workflow
+# Created by @create-guru
+#
+# This workflow integrates the self-evolving neural architecture system
+# with GitHub Actions to automatically adapt workflows based on success rates.
+#
+# Features:
+# - Monitors workflow execution outcomes
+# - Records success/failure data for neural learning
+# - Triggers architecture evolution when performance drops
+# - Generates recommendations for workflow optimization
+
+name: Neural Architecture Evolution
+
+on:
+  # Run on schedule to process recent workflow data
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Operation mode'
+        required: true
+        default: 'evolve'
+        type: choice
+        options:
+          - evolve
+          - report
+          - summary
+      workflow_name:
+        description: 'Specific workflow to process (optional)'
+        required: false
+        type: string
+
+  # React to workflow runs for real-time learning
+  workflow_run:
+    workflows: ["*"]
+    types:
+      - completed
+
+concurrency:
+  group: neural-architecture-evolution
+  cancel-in-progress: false
+
+jobs:
+  record-execution:
+    name: Record Workflow Execution
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_run'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Record execution result
+        run: |
+          WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+          CONCLUSION="${{ github.event.workflow_run.conclusion }}"
+          
+          # Determine success
+          if [ "$CONCLUSION" = "success" ]; then
+            SUCCESS="success"
+          else
+            SUCCESS="failure"
+          fi
+          
+          echo "Recording $SUCCESS for workflow: $WORKFLOW_NAME"
+          
+          cd tools
+          python self_evolving_neural_architecture.py \
+            --workflow "$WORKFLOW_NAME" \
+            --record "$SUCCESS"
+
+  evolve-architectures:
+    name: Evolve Neural Architectures
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'evolve')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Run evolution cycle
+        run: |
+          cd tools
+          
+          if [ -n "${{ inputs.workflow_name }}" ]; then
+            echo "🧬 Evolving specific workflow: ${{ inputs.workflow_name }}"
+            python self_evolving_neural_architecture.py \
+              --workflow "${{ inputs.workflow_name }}" \
+              --evolve
+          else
+            echo "🧬 Running evolution cycle for all workflows"
+            python self_evolving_neural_architecture.py --evolve-all
+          fi
+      
+      - name: Generate evolution report
+        id: report
+        run: |
+          cd tools
+          python self_evolving_neural_architecture.py --report > /tmp/evolution_report.txt
+          echo "report<<EOF" >> $GITHUB_OUTPUT
+          cat /tmp/evolution_report.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Commit updated architectures
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "🧬 Neural architecture evolution cycle"
+          file_pattern: ".github/agent-system/evolving_architectures/*.json"
+          commit_author: "create-guru[bot] <create-guru[bot]@users.noreply.github.com>"
+      
+      - name: Add summary
+        run: |
+          echo "## 🧠 Neural Architecture Evolution Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat /tmp/evolution_report.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+  generate-report:
+    name: Generate Neural Architecture Report
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'report'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Generate detailed report
+        run: |
+          cd tools
+          python self_evolving_neural_architecture.py --report
+      
+      - name: Generate JSON summary
+        run: |
+          cd tools
+          python self_evolving_neural_architecture.py --summary --json > /tmp/summary.json
+          
+          echo "## 📊 Neural Architecture Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          cat /tmp/summary.json >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+  generate-summary:
+    name: Generate Quick Summary
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'summary'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Generate summary
+        run: |
+          cd tools
+          python self_evolving_neural_architecture.py --summary
