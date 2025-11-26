@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "last_updated": "2025-11-26T08:26:28.754865+00:00",
+  "learning_sessions": [
+    {
+      "session_id": 1,
+      "timestamp": "2025-11-26T08:26:19.110213+00:00",
+      "days_analyzed": 7,
+      "commits_analyzed": 2,
+      "learning_rate": 0.1,
+      "new_insights": 0,
+      "patterns_updated": 0
+    },
+    {
+      "session_id": 2,
+      "timestamp": "2025-11-26T08:26:28.754849+00:00",
+      "days_analyzed": 30,
+      "commits_analyzed": 2,
+      "learning_rate": 0.095,
+      "new_insights": 0,
+      "patterns_updated": 0
+    }
+  ],
+  "active_learnings": [],
+  "validated_patterns": [],
+  "invalidated_patterns": [],
+  "cumulative_insights": 0,
+  "learning_velocity": 0.0
+}

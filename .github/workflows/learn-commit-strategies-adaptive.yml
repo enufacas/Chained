@@ -1,0 +1,300 @@
+name: "Adaptive Learning: Git Commit Strategies"
+
+# Adaptive learning system that continuously improves commit strategy recommendations
+# Created by @create-guru - Infrastructure that learns and evolves
+on:
+  schedule:
+    # Run twice daily - morning and evening UTC
+    - cron: '0 6,18 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Learning mode'
+        required: false
+        type: choice
+        options:
+          - incremental
+          - validate
+          - full-report
+        default: 'incremental'
+      days_lookback:
+        description: 'Days to analyze (for incremental mode)'
+        required: false
+        type: number
+        default: 7
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+# Prevent concurrent runs to avoid analysis conflicts
+concurrency:
+  group: adaptive-commit-learning-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  adaptive-learning:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for comprehensive analysis
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install gitpython
+
+      - name: Determine learning mode
+        id: mode
+        run: |
+          # Use input mode if provided, otherwise use incremental for scheduled runs
+          MODE="${{ github.event.inputs.mode || 'incremental' }}"
+          DAYS="${{ github.event.inputs.days_lookback || '7' }}"
+          
+          echo "mode=${MODE}" >> $GITHUB_OUTPUT
+          echo "days=${DAYS}" >> $GITHUB_OUTPUT
+          
+          echo "🎯 Learning mode: ${MODE}"
+          echo "📅 Days lookback: ${DAYS}"
+
+      - name: Perform incremental learning
+        id: learn
+        if: steps.mode.outputs.mode == 'incremental'
+        run: |
+          python3 tools/adaptive-commit-learner.py \
+            --learn \
+            --days ${{ steps.mode.outputs.days }} \
+            --verbose > /tmp/learn_output.txt 2>&1
+          
+          cat /tmp/learn_output.txt
+          
+          # Extract metrics from output
+          SESSION=$(grep "Session:" /tmp/learn_output.txt | awk '{print $2}' | tr -d '#')
+          COMMITS=$(grep "Commits analyzed:" /tmp/learn_output.txt | awk '{print $3}')
+          INSIGHTS=$(grep "New insights:" /tmp/learn_output.txt | awk '{print $3}')
+          VELOCITY=$(grep "Learning velocity:" /tmp/learn_output.txt | awk '{print $3}')
+          
+          echo "has_updates=true" >> $GITHUB_OUTPUT
+          echo "session_id=${SESSION:-1}" >> $GITHUB_OUTPUT
+          echo "commits_analyzed=${COMMITS:-0}" >> $GITHUB_OUTPUT
+          echo "new_insights=${INSIGHTS:-0}" >> $GITHUB_OUTPUT
+          echo "learning_velocity=${VELOCITY:-0.0}" >> $GITHUB_OUTPUT
+
+      - name: Validate recommendations
+        id: validate
+        if: steps.mode.outputs.mode == 'validate' || steps.learn.outputs.has_updates == 'true'
+        run: |
+          python3 tools/adaptive-commit-learner.py \
+            --validate \
+            --validation-window 30 \
+            --verbose > /tmp/validate_output.txt 2>&1
+          
+          cat /tmp/validate_output.txt
+          
+          # Extract validation metrics
+          VALIDATED=$(grep "Validated:" /tmp/validate_output.txt | awk '{print $2}')
+          INVALIDATED=$(grep "Invalidated:" /tmp/validate_output.txt | awk '{print $2}')
+          ACTIVE=$(grep "Still active:" /tmp/validate_output.txt | awk '{print $3}')
+          
+          echo "validated=${VALIDATED:-0}" >> $GITHUB_OUTPUT
+          echo "invalidated=${INVALIDATED:-0}" >> $GITHUB_OUTPUT
+          echo "active_learnings=${ACTIVE:-0}" >> $GITHUB_OUTPUT
+
+      - name: Generate adaptive report
+        id: report
+        if: steps.mode.outputs.mode == 'full-report' || steps.learn.outputs.has_updates == 'true'
+        run: |
+          mkdir -p analysis
+          
+          python3 tools/adaptive-commit-learner.py \
+            --report \
+            --output analysis/adaptive_commit_learning_report.md \
+            --verbose
+          
+          echo "report_generated=true" >> $GITHUB_OUTPUT
+          echo "report_file=analysis/adaptive_commit_learning_report.md" >> $GITHUB_OUTPUT
+
+      - name: Store branch name for PR
+        id: branch_info
+        if: steps.learn.outputs.has_updates == 'true'
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="learning/adaptive-commits-${TIMESTAMP}-${{ github.run_id }}"
+          echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+          echo "workflow_run_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
+
+      - name: Create PR for learning updates
+        if: steps.learn.outputs.has_updates == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add learning files
+          git add learnings/adaptive_commit_learning.json
+          git add analysis/pattern_evolution.json
+          git add analysis/commit_patterns.json
+          
+          if [ -f "analysis/adaptive_commit_learning_report.md" ]; then
+            git add analysis/adaptive_commit_learning_report.md
+          fi
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Create branch
+          BRANCH_NAME="${{ steps.branch_info.outputs.branch_name }}"
+          git checkout -b "${BRANCH_NAME}"
+          
+          # Commit changes
+          SESSION_ID="${{ steps.learn.outputs.session_id }}"
+          COMMITS="${{ steps.learn.outputs.commits_analyzed }}"
+          INSIGHTS="${{ steps.learn.outputs.new_insights }}"
+          
+          git commit -m "🧠 Adaptive learning session #${SESSION_ID} - ${COMMITS} commits, ${INSIGHTS} insights
+
+Performed by @create-guru adaptive learning system
+- Incremental learning from last ${{ steps.mode.outputs.days }} days
+- ${INSIGHTS} new insights discovered
+- Learning velocity: ${{ steps.learn.outputs.learning_velocity }} insights/session
+- Validated: ${{ steps.validate.outputs.validated }} patterns
+- Active learnings: ${{ steps.validate.outputs.active_learnings }}
+
+Part of continuous improvement of commit strategy recommendations."
+          
+          git push origin "${BRANCH_NAME}"
+          
+          # Create PR body
+          cat > /tmp/pr_body.txt << 'PRBODY'
+## 🧠 Adaptive Commit Strategy Learning Update (@create-guru)
+
+**@create-guru** has performed adaptive learning analysis to continuously improve commit strategy recommendations.
+
+### 📊 Learning Session #${{ steps.learn.outputs.session_id }}
+
+| Metric | Value |
+|--------|-------|
+| Commits Analyzed | ${{ steps.learn.outputs.commits_analyzed }} |
+| New Insights | ${{ steps.learn.outputs.new_insights }} |
+| Learning Velocity | ${{ steps.learn.outputs.learning_velocity }} insights/session |
+| Days Analyzed | ${{ steps.mode.outputs.days }} |
+
+### ✅ Validation Results
+
+| Status | Count |
+|--------|-------|
+| Validated Patterns | ${{ steps.validate.outputs.validated }} |
+| Invalidated Patterns | ${{ steps.validate.outputs.invalidated }} |
+| Active Learnings | ${{ steps.validate.outputs.active_learnings }} |
+
+### 🎯 What's New
+
+This adaptive learning system:
+
+- **Incremental Learning**: Learns from recent commits without reprocessing all history
+- **Adaptive Learning Rates**: Adjusts learning speed based on confidence levels
+- **Pattern Evolution**: Tracks how commit patterns change over time
+- **Recommendation Validation**: Validates previous recommendations with feedback loop
+- **Temporal Awareness**: Recognizes time-based patterns in commit activity
+
+### 📁 Files Updated
+
+- `learnings/adaptive_commit_learning.json` - Adaptive learning database
+- `analysis/pattern_evolution.json` - Pattern evolution tracking
+- `analysis/commit_patterns.json` - Updated commit patterns
+- `analysis/adaptive_commit_learning_report.md` - Comprehensive report
+
+### 🔄 How It Works
+
+1. **Analyze** recent commits (last ${{ steps.mode.outputs.days }} days)
+2. **Extract** insights with confidence scoring
+3. **Track** pattern evolution over time
+4. **Validate** previous recommendations
+5. **Adapt** learning rate based on results
+
+This creates a feedback loop where the system continuously improves its understanding of what makes a good commit.
+
+---
+
+*🤖 Created by workflow: [${{ github.workflow }}](${{ steps.branch_info.outputs.workflow_run_url }}) - @create-guru*
+PRBODY
+          
+          # Create PR
+          gh pr create \
+            --title "🧠 Adaptive Learning Update: Commit Strategies #${{ steps.learn.outputs.session_id }}" \
+            --body-file /tmp/pr_body.txt \
+            --label "automated,learning,copilot,create-guru" \
+            --base main \
+            --head "${BRANCH_NAME}"
+          
+          echo "✅ PR created successfully"
+
+      - name: Create learning notification issue
+        if: steps.learn.outputs.new_insights > 5  # Only for significant learning sessions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat > /tmp/issue.txt << 'ISSUEBODY'
+## 🧠 Significant Learning Session Detected
+
+**@create-guru**'s adaptive learning system has discovered ${{ steps.learn.outputs.new_insights }} new insights from analyzing recent commits.
+
+### Session Summary
+
+- **Session ID:** #${{ steps.learn.outputs.session_id }}
+- **Commits Analyzed:** ${{ steps.learn.outputs.commits_analyzed }}
+- **New Insights:** ${{ steps.learn.outputs.new_insights }}
+- **Learning Velocity:** ${{ steps.learn.outputs.learning_velocity }} insights/session
+
+### What This Means
+
+The system has identified new patterns in our commit practices. These insights will help improve:
+
+- Commit message quality recommendations
+- Optimal commit size guidance  
+- File organization patterns
+- Timing strategies for complex changes
+
+### Next Steps
+
+1. Review the generated PR for detailed insights
+2. Consider incorporating high-confidence patterns into guidelines
+3. Monitor pattern evolution for emerging trends
+
+---
+
+*Automated notification from adaptive learning system*
+*@create-guru - Infrastructure that learns and evolves*
+ISSUEBODY
+          
+          gh issue create \
+            --title "🧠 Adaptive Learning Insights: Session #${{ steps.learn.outputs.session_id }} (${{ steps.learn.outputs.new_insights }} insights)" \
+            --body-file /tmp/issue.txt \
+            --label "learning,automated,copilot,create-guru,insights" || echo "Issue creation skipped or failed"
+
+      - name: Log activity summary
+        run: |
+          echo "=========================================="
+          echo "Adaptive Commit Strategy Learning Complete"
+          echo "=========================================="
+          echo "Mode: ${{ steps.mode.outputs.mode }}"
+          echo "Session: #${{ steps.learn.outputs.session_id }}"
+          echo "Commits: ${{ steps.learn.outputs.commits_analyzed }}"
+          echo "Insights: ${{ steps.learn.outputs.new_insights }}"
+          echo "Velocity: ${{ steps.learn.outputs.learning_velocity }}"
+          echo "Validated: ${{ steps.validate.outputs.validated }}"
+          echo "Invalidated: ${{ steps.validate.outputs.invalidated }}"
+          echo "Active: ${{ steps.validate.outputs.active_learnings }}"
+          echo "By: @create-guru"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "=========================================="
