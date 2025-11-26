@@ -16,6 +16,16 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+# Try to import yaml, but have a fallback
+try:
+    import yaml
+    HAS_YAML = True
+except ImportError:
+    HAS_YAML = False
+
+# Files to exclude from agent listing
+EXCLUDED_AGENT_FILES = ["README.md", ".context.md"]
+
 
 class AgentAssignmentValidator:
     """Validates agent assignments in the repository."""
@@ -42,22 +52,23 @@ class AgentAssignmentValidator:
         if content.startswith("---"):
             parts = content.split("---", 2)
             if len(parts) >= 3:
-                try:
-                    import yaml
-                    frontmatter = parts[1]
-                    info = yaml.safe_load(frontmatter)
-                    return info if isinstance(info, dict) else {}
-                except ImportError:
+                frontmatter = parts[1]
+                
+                # Use yaml if available, otherwise fallback
+                if HAS_YAML:
+                    try:
+                        info = yaml.safe_load(frontmatter)
+                        return info if isinstance(info, dict) else {}
+                    except Exception:
+                        return {}
+                else:
                     # Fallback to simple parsing if yaml not available
-                    frontmatter = parts[1]
                     info = {}
                     for line in frontmatter.strip().split("\n"):
                         if ":" in line and not line.strip().startswith("-"):
                             key, value = line.split(":", 1)
                             info[key.strip()] = value.strip().strip('"')
                     return info
-                except Exception:
-                    return {}
         
         return {}
     
@@ -95,7 +106,7 @@ class AgentAssignmentValidator:
         agents = []
         if self.agents_dir.exists():
             for agent_file in self.agents_dir.glob("*.md"):
-                if agent_file.name not in ["README.md", ".context.md"]:
+                if agent_file.name not in EXCLUDED_AGENT_FILES:
                     agents.append(agent_file.stem)
         return sorted(agents)
     
@@ -124,8 +135,18 @@ class AgentAssignmentValidator:
             print(f"⚠️  Could not parse agent info")
         
         # Check 3: Verify agent tools
-        if info and 'tools' in info:
-            print(f"✅ Agent has tools configured")
+        tools = info.get('tools') if info else None
+        if tools and isinstance(tools, list) and len(tools) > 0:
+            print(f"✅ Agent has tools configured ({len(tools)} tools)")
+            if verbose:
+                for tool in tools[:5]:  # Show first 5 tools
+                    print(f"   • {tool}")
+                if len(tools) > 5:
+                    print(f"   ... and {len(tools) - 5} more")
+        elif info and 'tools' in info:
+            print(f"⚠️  Agent has 'tools' key but no tools listed")
+        else:
+            print(f"⚠️  Agent has no tools configured")
         
         print("=" * 70)
         
