@@ -181,18 +181,21 @@ jobs:
       - name: 'Diagnose Vertex AI Permission Errors'
         if: failure() && steps.run_gemini.conclusion == 'failure'
         env:
-          GEMINI_ERRORS: '${{ steps.run_gemini.outputs.gemini_errors }}'
           USE_VERTEX_AI: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
         run: |
-          # Check if this is a Vertex AI permission error
-          if [[ "$USE_VERTEX_AI" == "true" ]] && echo "$GEMINI_ERRORS" | grep -q "aiplatform.endpoints.predict"; then
-            echo "::error title=Vertex AI Permission Error::Your GOOGLE_API_KEY lacks the required 'aiplatform.endpoints.predict' permission."
+          # If using Vertex AI mode and the workflow failed, provide helpful troubleshooting
+          if [[ "$USE_VERTEX_AI" == "true" ]]; then
+            echo "::error title=Vertex AI Workflow Failure::The Gemini CLI workflow failed while using Vertex AI mode."
             echo ""
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "🔐 VERTEX AI PERMISSION ERROR DETECTED"
+            echo "🔐 VERTEX AI TROUBLESHOOTING GUIDE"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo ""
-            echo "The error indicates your API key doesn't have permission to use Vertex AI."
+            echo "Common causes of Vertex AI failures:"
+            echo "  • API key lacks 'aiplatform.endpoints.predict' permission"
+            echo "  • Vertex AI API not enabled for API key"
+            echo "  • Vertex AI API not enabled for GCP project"
+            echo "  • Billing not enabled on GCP project"
             echo ""
             echo "📋 SOLUTION OPTIONS:"
             echo ""
@@ -223,21 +226,11 @@ jobs:
             echo ""
             echo "• Vertex AI API Keys: https://cloud.google.com/vertex-ai/generative-ai/docs/start/api-keys"
             echo "• Repository Setup Guide: docs/GEMINI_CLI_INTEGRATION.md"
-            echo "• Original Error: Check 'Run Gemini CLI' step logs above"
+            echo "• Original Error: Check 'Run Gemini CLI' step logs above for details"
             echo ""
-            exit 1
-          elif [[ "$USE_VERTEX_AI" == "true" ]] && echo "$GEMINI_ERRORS" | grep -q "PERMISSION_DENIED"; then
-            echo "::error title=Vertex AI Permission Denied::Your API key was denied access to Vertex AI resources."
-            echo ""
-            echo "This usually means:"
-            echo "  • Your API key doesn't have Vertex AI API enabled"
-            echo "  • Your GCP project doesn't have Vertex AI API enabled"
-            echo "  • Billing is not enabled on your GCP project"
-            echo ""
-            echo "See docs/GEMINI_CLI_INTEGRATION.md for detailed troubleshooting."
             exit 1
           fi
           
-          # If not a Vertex AI permission error, show generic error
+          # If not using Vertex AI, show generic error
           echo "::error title=Gemini CLI Execution Failed::The Gemini CLI encountered an error. Check the 'Run Gemini CLI' step above for details."
           exit 1
