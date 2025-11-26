@@ -289,10 +289,12 @@ class WorkflowABTestingIntegration:
         active_workflows = {exp["workflow_name"] for exp in active_experiments}
         
         # Filter out workflows with active experiments
-        available_opportunities = [
-            opp for opp in opportunities
-            if (opp.get("workflow_name") or opp.get("workflow")) not in active_workflows
-        ]
+        # Get workflow name from opportunity (handles both 'workflow_name' and 'workflow' keys)
+        available_opportunities = []
+        for opp in opportunities:
+            workflow_name = opp.get("workflow_name") or opp.get("workflow")
+            if workflow_name and workflow_name not in active_workflows:
+                available_opportunities.append(opp)
         
         # Sort by priority
         priority_levels = {"low": 0, "medium": 1, "high": 2}

@@ -328,16 +328,25 @@ class WorkflowConfigGenerator:
         
         # Generate variants based on optimization type
         if optimization_type == "schedule":
-            # Handle 'on' being parsed as True in YAML
-            triggers = workflow_data.get('on', workflow_data.get(True, {}))
+            # Handle YAML parsing: 'on' keyword may be parsed as boolean True
+            # Try 'on' first, fall back to True key if present
+            triggers = None
+            if 'on' in workflow_data:
+                triggers = workflow_data['on']
+            elif True in workflow_data:
+                # YAML parsers may convert 'on:' to True
+                triggers = workflow_data[True]
+            else:
+                raise ValueError("Workflow does not have 'on' trigger configuration")
+            
             schedule_list = triggers.get('schedule', [])
             if not schedule_list:
                 raise ValueError("Workflow does not have a schedule configuration")
             if not isinstance(schedule_list, list):
                 raise ValueError("Schedule configuration must be a list")
             
-            # Get cron from first schedule entry
-            first_schedule = schedule_list[0] if schedule_list else {}
+            # Get cron from first schedule entry (validated as non-empty above)
+            first_schedule = schedule_list[0]
             schedule = first_schedule.get('cron', '0 0 * * *') if isinstance(first_schedule, dict) else '0 0 * * *'
             variants = self.generate_schedule_variants(schedule, workflow_name)
         
