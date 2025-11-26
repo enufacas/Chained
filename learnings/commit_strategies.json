@@ -1,31 +1,74 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-26T12:30:15.594148+00:00",
+  "last_updated": "2025-11-26T22:13:18.280337+00:00",
   "repository": "tmpn5gt3bt3",
-  "total_commits_analyzed": 2,
-  "successful_merges": 0,
+  "total_commits_analyzed": 500,
+  "successful_merges": 500,
   "failed_merges": 0,
   "patterns_identified": [
     {
-      "pattern_name": "conventional_commits",
-      "pattern_type": "message",
-      "description": "Conventional commit format",
-      "success_rate": 0.85,
-      "occurrence_count": 50,
-      "average_merge_time_hours": 2.0,
+      "pattern_name": "optimal_commit_size",
+      "pattern_type": "size",
+      "description": "Commits with focused changes (few files, moderate lines)",
+      "success_rate": 0.436,
+      "occurrence_count": 218,
+      "average_merge_time_hours": 0.0,
       "common_attributes": {
-        "most_common_types": [
-          "feat",
-          "fix"
-        ]
+        "avg_files": 1.7706422018348624,
+        "avg_lines": 25.912844036697248
       },
       "examples": [
-        "abc123",
-        "def456"
+        "54af798b",
+        "2116b3df",
+        "ca3dfc8d"
       ],
-      "confidence_score": 0.9
+      "confidence_score": 0.3924
+    },
+    {
+      "pattern_name": "detailed_messages",
+      "pattern_type": "message",
+      "description": "Commits with detailed message body",
+      "success_rate": 0.94,
+      "occurrence_count": 470,
+      "average_merge_time_hours": 0.0,
+      "common_attributes": {
+        "has_explanation": true,
+        "avg_message_length": 60.161702127659574
+      },
+      "examples": [
+        "f4ba68bb",
+        "f4ef688a",
+        "2f78e4d0"
+      ],
+      "confidence_score": 0.7989999999999999
+    },
+    {
+      "pattern_name": "focused_changes",
+      "pattern_type": "organization",
+      "description": "Commits focused on single file type or related files",
+      "success_rate": 0.828,
+      "occurrence_count": 414,
+      "average_merge_time_hours": 0.0,
+      "common_attributes": {
+        "avg_file_types": 1.1014492753623188
+      },
+      "examples": [
+        "f4ba68bb",
+        "14bb6ad8",
+        "e35e3a8f"
+      ],
+      "confidence_score": 0.6624
     }
   ],
   "recommendations": [],
-  "learning_history": []
+  "learning_history": [
+    {
+      "timestamp": "2025-11-26T22:13:18.280218+00:00",
+      "commits_analyzed": 500,
+      "successful": 500,
+      "failed": 0,
+      "patterns_count": 3,
+      "since_days": 30
+    }
+  ]
 }
