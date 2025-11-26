@@ -1,0 +1,163 @@
+name: '🎯 Gemini A2A Coordinator'
+
+# Phase 3A Implementation: Multi-agent task decomposition and orchestration
+# This workflow coordinates multiple Gemini AI agents to solve complex tasks
+# through sequential or parallel delegation.
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to process for A2A orchestration'
+        required: true
+        type: number
+      orchestration_tier:
+        description: 'Orchestration tier: tier1 (sequential) or tier2 (parallel)'
+        required: false
+        default: 'tier1'
+        type: choice
+        options:
+          - tier1
+          - tier2
+
+  issue_comment:
+    types:
+      - 'created'
+
+defaults:
+  run:
+    shell: 'bash'
+
+jobs:
+  check_trigger:
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'read'
+    outputs:
+      should_run: '${{ steps.check.outputs.should_run }}'
+      issue_number: '${{ steps.check.outputs.issue_number }}'
+      orchestration_tier: '${{ steps.check.outputs.orchestration_tier }}'
+    steps:
+      - name: 'Check if workflow should run'
+        id: 'check'
+        run: |
+          # Check if this is a workflow_dispatch or @gemini-a2a-coordinator command
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+            echo "issue_number=${{ inputs.issue_number }}" >> $GITHUB_OUTPUT
+            echo "orchestration_tier=${{ inputs.orchestration_tier }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "issue_comment" ]; then
+            comment_body="${{ github.event.comment.body }}"
+            if [[ "$comment_body" =~ ^@gemini-a2a-coordinator ]]; then
+              # Check user permissions
+              author_association="${{ github.event.comment.author_association }}"
+              if [[ "$author_association" =~ ^(OWNER|MEMBER|COLLABORATOR)$ ]]; then
+                echo "should_run=true" >> $GITHUB_OUTPUT
+                echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+                # Extract tier if specified, default to tier1
+                if [[ "$comment_body" =~ tier2 ]]; then
+                  echo "orchestration_tier=tier2" >> $GITHUB_OUTPUT
+                else
+                  echo "orchestration_tier=tier1" >> $GITHUB_OUTPUT
+                fi
+              else
+                echo "should_run=false" >> $GITHUB_OUTPUT
+                echo "⚠️ User does not have permission to trigger A2A coordinator"
+              fi
+            else
+              echo "should_run=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
+  coordinator:
+    needs: 'check_trigger'
+    if: needs.check_trigger.outputs.should_run == 'true'
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 30
+    permissions:
+      contents: 'write'
+      id-token: 'write'
+      issues: 'write'
+      pull-requests: 'write'
+    steps:
+      - name: 'Checkout repository'
+        uses: 'actions/checkout@v4'
+
+      - name: 'Set up Python'
+        uses: 'actions/setup-python@v5'
+        with:
+          python-version: '3.11'
+
+      - name: 'Install dependencies'
+        run: |
+          pip install google-generativeai requests
+
+      - name: 'Acknowledge coordination request'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --body "🎯 **A2A Coordinator Activated**
+
+I'm analyzing this task and will decompose it into specialized sub-tasks for collaborative agent execution.
+
+**Orchestration Tier**: ${{ needs.check_trigger.outputs.orchestration_tier }}
+**Progress**: [Track in workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+Please wait while I coordinate the multi-agent workflow..."
+
+      - name: 'Analyze task and create execution plan'
+        id: 'analyze'
+        env:
+          GEMINI_API_KEY: '${{ secrets.GEMINI_API_KEY }}'
+          GOOGLE_API_KEY: '${{ secrets.GOOGLE_API_KEY }}'
+          USE_VERTEX_AI: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+          ORCHESTRATION_TIER: '${{ needs.check_trigger.outputs.orchestration_tier }}'
+        run: |
+          python3 tools/a2a/gemini_task_analyzer.py
+
+      - name: 'Execute Tier 1 orchestration (sequential)'
+        if: needs.check_trigger.outputs.orchestration_tier == 'tier1'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+          EXECUTION_PLAN: '${{ steps.analyze.outputs.execution_plan }}'
+        run: |
+          python3 tools/a2a/gemini_tier1_orchestrator.py
+
+      - name: 'Execute Tier 2 orchestration (parallel)'
+        if: needs.check_trigger.outputs.orchestration_tier == 'tier2'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+          EXECUTION_PLAN: '${{ steps.analyze.outputs.execution_plan }}'
+        run: |
+          python3 tools/a2a/gemini_tier2_orchestrator.py
+
+      - name: 'Aggregate and report results'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+        run: |
+          python3 tools/a2a/gemini_result_aggregator.py
+
+      - name: 'Handle errors'
+        if: failure()
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --body "❌ **A2A Coordination Failed**
+
+The multi-agent orchestration encountered an error. Please check the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
+
+**Troubleshooting**:
+- Verify Gemini API key is configured
+- Check if issue description provides enough context
+- Try re-running with simpler scope
+
+You can retry by commenting \`@gemini-a2a-coordinator\` or use workflow_dispatch."
