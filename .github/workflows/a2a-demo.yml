@@ -3,8 +3,9 @@ name: "A2A Demo - Live Multi-Agent Communication"
 # Demonstrates real A2A (Agent-to-Agent) communication by coordinating
 # multiple agents via Gemini AI to collaboratively analyze a GitHub issue.
 # 
-# Each agent uses Gemini AI to process tasks from their specialized perspective,
-# demonstrating the A2A protocol's multi-agent coordination capabilities.
+# Uses the same google-github-actions/run-gemini-cli action as other Gemini
+# workflows (gemini-invoke.yml, gemini-fix.yml, etc.) to ensure proper
+# authentication with both Google AI Studio and Vertex AI.
 
 on:
   workflow_dispatch:
@@ -21,6 +22,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
   issues: write
 
 jobs:
@@ -32,29 +34,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip'
-      
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install google-generativeai
-      
-      - name: Verify Gemini API access
+      - name: Validate authentication configuration
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          USE_VERTEX_AI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI || 'false' }}
         run: |
-          if [ -z "$GEMINI_API_KEY" ] && [ -z "$GOOGLE_API_KEY" ]; then
-            echo "ERROR: No Gemini API key configured"
-            echo "Please set GEMINI_API_KEY or GOOGLE_API_KEY secret"
-            exit 1
+          # Use the same validation pattern as existing Gemini CLI workflows
+          if [[ "$USE_VERTEX_AI" == "true" ]]; then
+            if [[ -z "$GOOGLE_API_KEY" ]]; then
+              echo "::error title=Missing Vertex AI Configuration::When GOOGLE_GENAI_USE_VERTEXAI is set to 'true', you must configure the GOOGLE_API_KEY secret."
+              exit 1
+            fi
+            echo "✅ Using Vertex AI mode with GOOGLE_API_KEY"
+          else
+            if [[ -z "$GEMINI_API_KEY" ]]; then
+              echo "::error title=Missing Gemini API Key::No authentication credentials found."
+              exit 1
+            fi
+            echo "✅ Using Google AI Studio mode with GEMINI_API_KEY"
           fi
-          echo "Gemini API key is configured"
       
       - name: Fetch issue details
         id: issue
@@ -63,16 +62,17 @@ jobs:
           ISSUE_NUMBER: ${{ inputs.issue_number }}
         run: |
           echo "Fetching issue #$ISSUE_NUMBER..."
-          
-          # Get issue details
           ISSUE_DATA=$(gh issue view "$ISSUE_NUMBER" --json title,body,labels --jq '.')
           ISSUE_TITLE=$(echo "$ISSUE_DATA" | jq -r '.title')
           ISSUE_BODY=$(echo "$ISSUE_DATA" | jq -r '.body // "No description provided"')
           
-          echo "title=$ISSUE_TITLE" >> $GITHUB_OUTPUT
+          echo "title<<EOF" >> $GITHUB_OUTPUT
+          echo "$ISSUE_TITLE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
           
-          # Save body to file to handle multi-line content
-          echo "$ISSUE_BODY" > /tmp/issue_body.txt
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$ISSUE_BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
           
           echo "Issue loaded: $ISSUE_TITLE"
       
@@ -88,82 +88,126 @@ jobs:
           
           Multi-Agent Communication Demo using Real Gemini AI
           
-          I'm demonstrating A2A (Agent-to-Agent) protocol by coordinating multiple agents to analyze this issue. Each agent uses Gemini AI to process the task from their specialized perspective.
+          I'm demonstrating A2A (Agent-to-Agent) protocol by coordinating multiple agents to analyze this issue. Each agent uses Gemini AI (via the official Gemini CLI) to process the task from their specialized perspective.
           
           Configuration:
-          - Mode: LIVE (Real Gemini API calls)
+          - Mode: LIVE (Real Gemini API calls via run-gemini-cli action)
           - Agents: $(echo $AGENTS | tr ',' ', ')
           - Workflow: [View Logs]($RUN_URL)
           
           What's happening:
-          1. Registering agents in discovery service
-          2. Each agent analyzes the issue using Gemini AI
-          3. Agents provide specialized recommendations
-          4. Results are aggregated and summarized
+          1. Each agent analyzes the issue using Gemini CLI
+          2. Agents provide specialized recommendations
+          3. Results are aggregated and summarized
           
           Please wait while agents collaborate...
           EOF
-      
-      - name: Run A2A Demo
-        id: demo
+
+      # Run Gemini CLI for agent analysis using the same action as other workflows
+      # Using /gemini-invoke prompt which is the general-purpose assistant
+      - name: 'Multi-Agent Analysis via Gemini CLI'
+        id: analysis
+        uses: 'google-github-actions/run-gemini-cli@v0'
         env:
+          TITLE: ${{ steps.issue.outputs.title }}
+          DESCRIPTION: ${{ steps.issue.outputs.body }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
-          ISSUE_TITLE: ${{ steps.issue.outputs.title }}
           AGENTS: ${{ inputs.agents }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-        run: |
-          echo "Starting A2A Demo with real Gemini AI..."
-          echo ""
-          
-          python3 tools/a2a/demo_a2a_issue.py
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          # Additional context for the agent personas
+          ADDITIONAL_CONTEXT: |
+            This is an A2A (Agent-to-Agent) demonstration. Please analyze issue #${{ inputs.issue_number }} from the perspective of these specialized agents: ${{ inputs.agents }}.
+            
+            For each agent:
+            1. Identify their specialization from .github/agents/{agent-name}.md
+            2. Provide analysis from that agent's perspective
+            3. Give specific, actionable recommendations
+            
+            Format your response with a section for each agent, including their analysis and recommendations.
+        with:
+          # Use same auth pattern as gemini-invoke.yml, gemini-fix.yml, etc.
+          gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
+          google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
+          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+          gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-2.0-flash'' }}'
+          gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
+          gemini_debug: '${{ fromJSON(vars.DEBUG || vars.ACTIONS_STEP_DEBUG || false) }}'
+          upload_artifacts: '${{ vars.UPLOAD_ARTIFACTS || false }}'
+          workflow_name: 'a2a-demo'
+          settings: |-
+            {
+              "model": {
+                "maxSessionTurns": 25
+              },
+              "telemetry": {
+                "enabled": true,
+                "target": "local",
+                "outfile": ".gemini/telemetry.log"
+              },
+              "mcpServers": {
+                "github": {
+                  "command": "docker",
+                  "args": [
+                    "run",
+                    "-i",
+                    "--rm",
+                    "-e",
+                    "GITHUB_PERSONAL_ACCESS_TOKEN",
+                    "ghcr.io/github/github-mcp-server:v0.18.0"
+                  ],
+                  "includeTools": [
+                    "add_issue_comment",
+                    "get_issue",
+                    "get_issue_comments",
+                    "get_file_contents"
+                  ],
+                  "env": {
+                    "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+                  }
+                }
+              }
+            }
+          prompt: '/gemini-invoke'
       
       - name: Post demo results to issue
+        if: success()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
+          AGENTS: ${{ inputs.agents }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          if [ -f /tmp/demo_results.md ]; then
-            cat << 'EOF' > /tmp/comment_footer.md
+          cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
+          ## A2A Demo Completed - LIVE
+          
+          **Issue:** #$ISSUE_NUMBER
+          **Mode:** Real Gemini AI calls via run-gemini-cli action (same as gemini-invoke.yml)
+          
+          ### Agents Coordinated
+          
+          $(echo $AGENTS | tr ',' '\n' | while read agent; do
+            agent=$(echo "$agent" | xargs)
+            echo "- **@$agent**"
+          done)
+          
+          ### Demo Statistics
+          
+          | Metric | Value |
+          |--------|-------|
+          | Agents | $(echo $AGENTS | tr ',' '\n' | wc -l | xargs) |
+          | Mode | Live Gemini AI (via run-gemini-cli) |
+          | A2A Tier | Tier 1 (Same-Runner) |
           
           ---
           ### What was demonstrated
           
-          - Agent discovery and registration in local service
-          - Real Gemini AI calls with agent-specific personas
-          - Multi-agent task analysis and recommendations
-          - Result aggregation across specialized agents
+          - Real Gemini AI calls using the official run-gemini-cli action
+          - Same authentication pattern as gemini-invoke.yml, gemini-fix.yml, etc.
+          - Multi-agent task analysis from specialized perspectives
           
-          ### A2A Communication Pattern
-          
-          ```
-          Coordinator -> Discovery Service -> Agent Registry
-               |
-          Task Delegation -> @agent-1 (Gemini AI) -> Analysis
-               |
-          Task Delegation -> @agent-2 (Gemini AI) -> Analysis
-               |
-          Task Delegation -> @agent-3 (Gemini AI) -> Analysis
-               |
-          Result Aggregation -> Summary
-          ```
-          
+          [Full Workflow Logs]($RUN_URL)
           EOF
-            
-            echo "" >> /tmp/demo_results.md
-            cat /tmp/comment_footer.md >> /tmp/demo_results.md
-            echo "" >> /tmp/demo_results.md
-            echo "[Full Workflow Logs]($RUN_URL)" >> /tmp/demo_results.md
-            
-            gh issue comment "$ISSUE_NUMBER" --body-file /tmp/demo_results.md
-          else
-            gh issue comment "$ISSUE_NUMBER" --body "## A2A Demo Completed
-
-          Demo ran but results file was not generated. Check workflow logs for details.
-
-          [View Logs]($RUN_URL)"
-          fi
       
       - name: Handle failure
         if: failure()
@@ -171,18 +215,30 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          USE_VERTEX_AI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI || 'false' }}
+          REPO: ${{ github.repository }}
         run: |
-          gh issue comment "$ISSUE_NUMBER" --body "## A2A Demo Failed
-
-          The multi-agent demonstration encountered an error.
-
+          if [[ "$USE_VERTEX_AI" == "true" ]]; then
+            cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
+          ## A2A Demo Failed
+          
+          The demo encountered an error while using **Vertex AI mode**.
+          
           [View Error Logs]($RUN_URL)
-
-          Troubleshooting:
-          - Check if GEMINI_API_KEY or GOOGLE_API_KEY is configured
-          - Check if the issue number is valid
-          - Ensure all dependencies are installed
-          - Review workflow logs for specific errors"
+          
+          See [docs/GEMINI_CLI_INTEGRATION.md](https://github.com/${REPO}/blob/main/docs/GEMINI_CLI_INTEGRATION.md) for troubleshooting.
+          EOF
+          else
+            cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
+          ## A2A Demo Failed
+          
+          The demo encountered an error.
+          
+          [View Error Logs]($RUN_URL)
+          
+          See [docs/GEMINI_CLI_INTEGRATION.md](https://github.com/${REPO}/blob/main/docs/GEMINI_CLI_INTEGRATION.md) for setup instructions.
+          EOF
+          fi
       
       - name: Generate summary
         if: always()
@@ -195,7 +251,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Issue: #$ISSUE_NUMBER - $ISSUE_TITLE" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Mode: LIVE (Real Gemini AI)" >> $GITHUB_STEP_SUMMARY
+          echo "Mode: LIVE (Real Gemini AI via run-gemini-cli action)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Agents:" >> $GITHUB_STEP_SUMMARY
           IFS=',' read -ra AGENT_LIST <<< "$AGENTS"
@@ -204,4 +260,4 @@ jobs:
             echo "- @$agent" >> $GITHUB_STEP_SUMMARY
           done
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "This workflow demonstrated the A2A protocol's ability to coordinate multiple agents using real Gemini AI to collaboratively analyze a GitHub issue." >> $GITHUB_STEP_SUMMARY
+          echo "This workflow uses the same google-github-actions/run-gemini-cli action as other Gemini workflows to ensure proper authentication." >> $GITHUB_STEP_SUMMARY
