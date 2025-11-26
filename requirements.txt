@@ -6,3 +6,4 @@ html5lib>=1.1
 psutil>=5.9.0
 # A2A Protocol Support
 a2a-sdk[http-server]>=0.2.0  # Agent-to-Agent protocol with HTTP server support
+uvicorn>=0.30.0  # ASGI server for A2A agent servers

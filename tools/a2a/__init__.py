@@ -23,17 +23,39 @@ Usage:
     server = create_a2a_server(executor, card, port=9001)
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from .agent_card import generate_agent_card, parse_agent_definition, generate_all_agent_cards
 from .agent_executor import ChainedAgentExecutor
+from .agent_server import create_agent_server, run_agent_server
+from .client import ChainedA2AClient, discover_agents_by_skill, send_to_agent
+from .discovery import get_discovery_service, DiscoveryService, AgentRegistry
+from .github_transport import GitHubA2ATransport, send_task_via_github, wait_for_task_completion
 from .utils import get_agent_port, get_discovery_url
 
 __all__ = [
+    # Agent cards
     "generate_agent_card",
     "parse_agent_definition",
     "generate_all_agent_cards",
+    # Execution
     "ChainedAgentExecutor",
+    # Server (Tier 1)
+    "create_agent_server",
+    "run_agent_server",
+    # Client (Tier 1)
+    "ChainedA2AClient",
+    "discover_agents_by_skill",
+    "send_to_agent",
+    # Discovery
+    "get_discovery_service",
+    "DiscoveryService",
+    "AgentRegistry",
+    # GitHub transport (Tier 2)
+    "GitHubA2ATransport",
+    "send_task_via_github",
+    "wait_for_task_completion",
+    # Utils
     "get_agent_port",
     "get_discovery_url",
 ]

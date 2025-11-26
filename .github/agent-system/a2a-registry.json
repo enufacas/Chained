@@ -1,0 +1,1129 @@
+{
+  "agents": {
+    "construct-specialist": {
+      "agent_name": "construct-specialist",
+      "port": 9457,
+      "url": "http://localhost:9457/",
+      "card_url": "http://localhost:9457/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "construct_specialist"
+      ]
+    },
+    "optimize-director": {
+      "agent_name": "optimize-director",
+      "port": 9623,
+      "url": "http://localhost:9623/",
+      "card_url": "http://localhost:9623/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "optimize_director"
+      ]
+    },
+    "validator-specialist": {
+      "agent_name": "validator-specialist",
+      "port": 9932,
+      "url": "http://localhost:9932/",
+      "card_url": "http://localhost:9932/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "validator_specialist"
+      ]
+    },
+    "verify-maven": {
+      "agent_name": "verify-maven",
+      "port": 9100,
+      "url": "http://localhost:9100/",
+      "card_url": "http://localhost:9100/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "verify_maven"
+      ]
+    },
+    "engineer-master": {
+      "agent_name": "engineer-master",
+      "port": 9280,
+      "url": "http://localhost:9280/",
+      "card_url": "http://localhost:9280/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "engineer_master"
+      ]
+    },
+    "organize-guru": {
+      "agent_name": "organize-guru",
+      "port": 9654,
+      "url": "http://localhost:9654/",
+      "card_url": "http://localhost:9654/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "organize_guru"
+      ]
+    },
+    "skill-building-maven": {
+      "agent_name": "skill-building-maven",
+      "port": 9579,
+      "url": "http://localhost:9579/",
+      "card_url": "http://localhost:9579/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "skill_building_maven"
+      ]
+    },
+    "validator-pro": {
+      "agent_name": "validator-pro",
+      "port": 9776,
+      "url": "http://localhost:9776/",
+      "card_url": "http://localhost:9776/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "validator_pro"
+      ]
+    },
+    "pioneer-pro": {
+      "agent_name": "pioneer-pro",
+      "port": 9546,
+      "url": "http://localhost:9546/",
+      "card_url": "http://localhost:9546/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "pioneer_pro"
+      ]
+    },
+    "harmonize-team-coordination-officer": {
+      "agent_name": "harmonize-team-coordination-officer",
+      "port": 9181,
+      "url": "http://localhost:9181/",
+      "card_url": "http://localhost:9181/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "harmonize_team_coordination_officer"
+      ]
+    },
+    "guide-knowledge-sharing-specialist": {
+      "agent_name": "guide-knowledge-sharing-specialist",
+      "port": 9879,
+      "url": "http://localhost:9879/",
+      "card_url": "http://localhost:9879/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "guide_knowledge_sharing_specialist"
+      ]
+    },
+    "meta-coordinator": {
+      "agent_name": "meta-coordinator",
+      "port": 9709,
+      "url": "http://localhost:9709/",
+      "card_url": "http://localhost:9709/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "meta_coordinator"
+      ]
+    },
+    "communications-maestro": {
+      "agent_name": "communications-maestro",
+      "port": 9904,
+      "url": "http://localhost:9904/",
+      "card_url": "http://localhost:9904/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "communications_maestro"
+      ]
+    },
+    "accelerate-master": {
+      "agent_name": "accelerate-master",
+      "port": 9884,
+      "url": "http://localhost:9884/",
+      "card_url": "http://localhost:9884/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "accelerate_master"
+      ]
+    },
+    "monitor-vulnerabilities-virtuoso": {
+      "agent_name": "monitor-vulnerabilities-virtuoso",
+      "port": 9961,
+      "url": "http://localhost:9961/",
+      "card_url": "http://localhost:9961/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "monitor_vulnerabilities_virtuoso"
+      ]
+    },
+    "restructure-master": {
+      "agent_name": "restructure-master",
+      "port": 9897,
+      "url": "http://localhost:9897/",
+      "card_url": "http://localhost:9897/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "restructure_master"
+      ]
+    },
+    "guard-compliance-specialist": {
+      "agent_name": "guard-compliance-specialist",
+      "port": 9488,
+      "url": "http://localhost:9488/",
+      "card_url": "http://localhost:9488/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "guard_compliance_specialist"
+      ]
+    },
+    "connector-ninja": {
+      "agent_name": "connector-ninja",
+      "port": 9592,
+      "url": "http://localhost:9592/",
+      "card_url": "http://localhost:9592/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "connector_ninja"
+      ]
+    },
+    "develop-specialist": {
+      "agent_name": "develop-specialist",
+      "port": 9147,
+      "url": "http://localhost:9147/",
+      "card_url": "http://localhost:9147/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "develop_specialist"
+      ]
+    },
+    "refactor-champion": {
+      "agent_name": "refactor-champion",
+      "port": 9044,
+      "url": "http://localhost:9044/",
+      "card_url": "http://localhost:9044/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "refactor_champion"
+      ]
+    },
+    "accelerate-specialist": {
+      "agent_name": "accelerate-specialist",
+      "port": 9787,
+      "url": "http://localhost:9787/",
+      "card_url": "http://localhost:9787/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "accelerate_specialist"
+      ]
+    },
+    "align-automation-engineer": {
+      "agent_name": "align-automation-engineer",
+      "port": 9419,
+      "url": "http://localhost:9419/",
+      "card_url": "http://localhost:9419/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "align_automation_engineer"
+      ]
+    },
+    "align-automation-maven": {
+      "agent_name": "align-automation-maven",
+      "port": 9091,
+      "url": "http://localhost:9091/",
+      "card_url": "http://localhost:9091/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "align_automation_maven"
+      ]
+    },
+    "cleaner-master": {
+      "agent_name": "cleaner-master",
+      "port": 9578,
+      "url": "http://localhost:9578/",
+      "card_url": "http://localhost:9578/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "cleaner_master"
+      ]
+    },
+    "secure-ninja": {
+      "agent_name": "secure-ninja",
+      "port": 9650,
+      "url": "http://localhost:9650/",
+      "card_url": "http://localhost:9650/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "secure_ninja"
+      ]
+    },
+    "engineer-whiz": {
+      "agent_name": "engineer-whiz",
+      "port": 9044,
+      "url": "http://localhost:9044/",
+      "card_url": "http://localhost:9044/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "engineer_whiz"
+      ]
+    },
+    "guardian-master": {
+      "agent_name": "guardian-master",
+      "port": 9019,
+      "url": "http://localhost:9019/",
+      "card_url": "http://localhost:9019/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "guardian_master"
+      ]
+    },
+    "integrate-data-flows-guru": {
+      "agent_name": "integrate-data-flows-guru",
+      "port": 9407,
+      "url": "http://localhost:9407/",
+      "card_url": "http://localhost:9407/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "integrate_data_flows_guru"
+      ]
+    },
+    "mentor-ace": {
+      "agent_name": "mentor-ace",
+      "port": 9489,
+      "url": "http://localhost:9489/",
+      "card_url": "http://localhost:9489/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "mentor_ace"
+      ]
+    },
+    "connect-wizard": {
+      "agent_name": "connect-wizard",
+      "port": 9911,
+      "url": "http://localhost:9911/",
+      "card_url": "http://localhost:9911/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "connect_wizard"
+      ]
+    },
+    "enhance-master": {
+      "agent_name": "enhance-master",
+      "port": 9884,
+      "url": "http://localhost:9884/",
+      "card_url": "http://localhost:9884/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "enhance_master"
+      ]
+    },
+    "build-wizard": {
+      "agent_name": "build-wizard",
+      "port": 9218,
+      "url": "http://localhost:9218/",
+      "card_url": "http://localhost:9218/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "build_wizard"
+      ]
+    },
+    "organize-maintainability-master": {
+      "agent_name": "organize-maintainability-master",
+      "port": 9100,
+      "url": "http://localhost:9100/",
+      "card_url": "http://localhost:9100/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "organize_maintainability_master"
+      ]
+    },
+    "validator-director": {
+      "agent_name": "validator-director",
+      "port": 9354,
+      "url": "http://localhost:9354/",
+      "card_url": "http://localhost:9354/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "validator_director"
+      ]
+    },
+    "create-champion": {
+      "agent_name": "create-champion",
+      "port": 9611,
+      "url": "http://localhost:9611/",
+      "card_url": "http://localhost:9611/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "create_champion"
+      ]
+    },
+    "orchestrator-guru": {
+      "agent_name": "orchestrator-guru",
+      "port": 9627,
+      "url": "http://localhost:9627/",
+      "card_url": "http://localhost:9627/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "orchestrator_guru"
+      ]
+    },
+    "APIs-architect": {
+      "agent_name": "APIs-architect",
+      "port": 9799,
+      "url": "http://localhost:9799/",
+      "card_url": "http://localhost:9799/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "APIs_architect"
+      ]
+    },
+    "prototype-interfaces-maven": {
+      "agent_name": "prototype-interfaces-maven",
+      "port": 9670,
+      "url": "http://localhost:9670/",
+      "card_url": "http://localhost:9670/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "prototype_interfaces_maven"
+      ]
+    },
+    "secure-specialist": {
+      "agent_name": "secure-specialist",
+      "port": 9690,
+      "url": "http://localhost:9690/",
+      "card_url": "http://localhost:9690/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "secure_specialist"
+      ]
+    },
+    "integrate-specialist": {
+      "agent_name": "integrate-specialist",
+      "port": 9939,
+      "url": "http://localhost:9939/",
+      "card_url": "http://localhost:9939/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "integrate_specialist"
+      ]
+    },
+    "coordinate-wizard": {
+      "agent_name": "coordinate-wizard",
+      "port": 9698,
+      "url": "http://localhost:9698/",
+      "card_url": "http://localhost:9698/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "coordinate_wizard"
+      ]
+    },
+    "designer-chief": {
+      "agent_name": "designer-chief",
+      "port": 9845,
+      "url": "http://localhost:9845/",
+      "card_url": "http://localhost:9845/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "designer_chief"
+      ]
+    },
+    "examine-chief": {
+      "agent_name": "examine-chief",
+      "port": 9804,
+      "url": "http://localhost:9804/",
+      "card_url": "http://localhost:9804/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "examine_chief"
+      ]
+    },
+    "infrastructure-prodigy": {
+      "agent_name": "infrastructure-prodigy",
+      "port": 9265,
+      "url": "http://localhost:9265/",
+      "card_url": "http://localhost:9265/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "infrastructure_prodigy"
+      ]
+    },
+    "clarify-champion": {
+      "agent_name": "clarify-champion",
+      "port": 9446,
+      "url": "http://localhost:9446/",
+      "card_url": "http://localhost:9446/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "clarify_champion"
+      ]
+    },
+    "render-3d-master": {
+      "agent_name": "render-3d-master",
+      "port": 9881,
+      "url": "http://localhost:9881/",
+      "card_url": "http://localhost:9881/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "render_3d_master"
+      ]
+    },
+    "investigate-champion": {
+      "agent_name": "investigate-champion",
+      "port": 9690,
+      "url": "http://localhost:9690/",
+      "card_url": "http://localhost:9690/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "investigate_champion"
+      ]
+    },
+    "product-owner": {
+      "agent_name": "product-owner",
+      "port": 9002,
+      "url": "http://localhost:9002/",
+      "card_url": "http://localhost:9002/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "product_owner"
+      ]
+    },
+    "builder-guru": {
+      "agent_name": "builder-guru",
+      "port": 9491,
+      "url": "http://localhost:9491/",
+      "card_url": "http://localhost:9491/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "builder_guru"
+      ]
+    },
+    "enhance-resource-usage-architect": {
+      "agent_name": "enhance-resource-usage-architect",
+      "port": 9032,
+      "url": "http://localhost:9032/",
+      "card_url": "http://localhost:9032/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "enhance_resource_usage_architect"
+      ]
+    },
+    "restructure-complexity-architect": {
+      "agent_name": "restructure-complexity-architect",
+      "port": 9049,
+      "url": "http://localhost:9049/",
+      "card_url": "http://localhost:9049/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "restructure_complexity_architect"
+      ]
+    },
+    "ai-specialist": {
+      "agent_name": "ai-specialist",
+      "port": 9286,
+      "url": "http://localhost:9286/",
+      "card_url": "http://localhost:9286/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "ai_specialist"
+      ]
+    },
+    "bridge-master": {
+      "agent_name": "bridge-master",
+      "port": 9120,
+      "url": "http://localhost:9120/",
+      "card_url": "http://localhost:9120/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "bridge_master"
+      ]
+    },
+    "guide-wizard": {
+      "agent_name": "guide-wizard",
+      "port": 9009,
+      "url": "http://localhost:9009/",
+      "card_url": "http://localhost:9009/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "guide_wizard"
+      ]
+    },
+    "nurture-team-development-wizard": {
+      "agent_name": "nurture-team-development-wizard",
+      "port": 9972,
+      "url": "http://localhost:9972/",
+      "card_url": "http://localhost:9972/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "nurture_team_development_wizard"
+      ]
+    },
+    "edge-cases-pro": {
+      "agent_name": "edge-cases-pro",
+      "port": 9807,
+      "url": "http://localhost:9807/",
+      "card_url": "http://localhost:9807/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "edge_cases_pro"
+      ]
+    },
+    "document-ninja": {
+      "agent_name": "document-ninja",
+      "port": 9085,
+      "url": "http://localhost:9085/",
+      "card_url": "http://localhost:9085/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "document_ninja"
+      ]
+    },
+    "investigate-specialist": {
+      "agent_name": "investigate-specialist",
+      "port": 9013,
+      "url": "http://localhost:9013/",
+      "card_url": "http://localhost:9013/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "investigate_specialist"
+      ]
+    },
+    "assert-whiz": {
+      "agent_name": "assert-whiz",
+      "port": 9158,
+      "url": "http://localhost:9158/",
+      "card_url": "http://localhost:9158/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "assert_whiz"
+      ]
+    },
+    "troubleshoot-expert": {
+      "agent_name": "troubleshoot-expert",
+      "port": 9497,
+      "url": "http://localhost:9497/",
+      "card_url": "http://localhost:9497/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "troubleshoot_expert"
+      ]
+    },
+    "secure-security-ninja": {
+      "agent_name": "secure-security-ninja",
+      "port": 9153,
+      "url": "http://localhost:9153/",
+      "card_url": "http://localhost:9153/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "secure_security_ninja"
+      ]
+    },
+    "monitor-champion": {
+      "agent_name": "monitor-champion",
+      "port": 9494,
+      "url": "http://localhost:9494/",
+      "card_url": "http://localhost:9494/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "monitor_champion"
+      ]
+    },
+    "nurture-prodigy": {
+      "agent_name": "nurture-prodigy",
+      "port": 9240,
+      "url": "http://localhost:9240/",
+      "card_url": "http://localhost:9240/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "nurture_prodigy"
+      ]
+    },
+    "meta-coordinator-system": {
+      "agent_name": "meta-coordinator-system",
+      "port": 9903,
+      "url": "http://localhost:9903/",
+      "card_url": "http://localhost:9903/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "system_orchestration",
+        "system_orchestration_2",
+        "system_orchestration_3",
+        "system_orchestration_4"
+      ]
+    },
+    "orchestrator-adept": {
+      "agent_name": "orchestrator-adept",
+      "port": 9212,
+      "url": "http://localhost:9212/",
+      "card_url": "http://localhost:9212/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "orchestrator_adept"
+      ]
+    },
+    "breakthrough-ideas-champion": {
+      "agent_name": "breakthrough-ideas-champion",
+      "port": 9961,
+      "url": "http://localhost:9961/",
+      "card_url": "http://localhost:9961/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "breakthrough_ideas_champion"
+      ]
+    },
+    "edge-cases-architect": {
+      "agent_name": "edge-cases-architect",
+      "port": 9692,
+      "url": "http://localhost:9692/",
+      "card_url": "http://localhost:9692/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "edge_cases_architect"
+      ]
+    },
+    "designer-engineer": {
+      "agent_name": "designer-engineer",
+      "port": 9895,
+      "url": "http://localhost:9895/",
+      "card_url": "http://localhost:9895/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "designer_engineer"
+      ]
+    },
+    "engineer-tools-guru": {
+      "agent_name": "engineer-tools-guru",
+      "port": 9506,
+      "url": "http://localhost:9506/",
+      "card_url": "http://localhost:9506/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "engineer_tools_guru"
+      ]
+    },
+    "communications-wizard": {
+      "agent_name": "communications-wizard",
+      "port": 9423,
+      "url": "http://localhost:9423/",
+      "card_url": "http://localhost:9423/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "communications_wizard"
+      ]
+    },
+    "secure-pro": {
+      "agent_name": "secure-pro",
+      "port": 9892,
+      "url": "http://localhost:9892/",
+      "card_url": "http://localhost:9892/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "secure_pro"
+      ]
+    },
+    "align-wizard": {
+      "agent_name": "align-wizard",
+      "port": 9967,
+      "url": "http://localhost:9967/",
+      "card_url": "http://localhost:9967/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "align_wizard"
+      ]
+    },
+    "cloud-architect": {
+      "agent_name": "cloud-architect",
+      "port": 9071,
+      "url": "http://localhost:9071/",
+      "card_url": "http://localhost:9071/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "cloud_architect"
+      ]
+    },
+    "prove-chief": {
+      "agent_name": "prove-chief",
+      "port": 9662,
+      "url": "http://localhost:9662/",
+      "card_url": "http://localhost:9662/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "prove_chief"
+      ]
+    },
+    "simplify-pro": {
+      "agent_name": "simplify-pro",
+      "port": 9862,
+      "url": "http://localhost:9862/",
+      "card_url": "http://localhost:9862/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "simplify_pro"
+      ]
+    },
+    "infrastructure-specialist": {
+      "agent_name": "infrastructure-specialist",
+      "port": 9773,
+      "url": "http://localhost:9773/",
+      "card_url": "http://localhost:9773/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "infrastructure_specialist"
+      ]
+    },
+    "align-director": {
+      "agent_name": "align-director",
+      "port": 9349,
+      "url": "http://localhost:9349/",
+      "card_url": "http://localhost:9349/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "align_director"
+      ]
+    },
+    "security-prodigy": {
+      "agent_name": "security-prodigy",
+      "port": 9921,
+      "url": "http://localhost:9921/",
+      "card_url": "http://localhost:9921/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "security_prodigy"
+      ]
+    },
+    "create-guru": {
+      "agent_name": "create-guru",
+      "port": 9536,
+      "url": "http://localhost:9536/",
+      "card_url": "http://localhost:9536/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "create_guru"
+      ]
+    },
+    "tools-analyst": {
+      "agent_name": "tools-analyst",
+      "port": 9080,
+      "url": "http://localhost:9080/",
+      "card_url": "http://localhost:9080/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "tools_analyst"
+      ]
+    },
+    "orchestrator-director": {
+      "agent_name": "orchestrator-director",
+      "port": 9751,
+      "url": "http://localhost:9751/",
+      "card_url": "http://localhost:9751/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "orchestrator_director"
+      ]
+    },
+    "nurture-specialist": {
+      "agent_name": "nurture-specialist",
+      "port": 9821,
+      "url": "http://localhost:9821/",
+      "card_url": "http://localhost:9821/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "nurture_specialist"
+      ]
+    },
+    "coach-master": {
+      "agent_name": "coach-master",
+      "port": 9097,
+      "url": "http://localhost:9097/",
+      "card_url": "http://localhost:9097/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "coach_master"
+      ]
+    },
+    "engineer-tools-virtuoso": {
+      "agent_name": "engineer-tools-virtuoso",
+      "port": 9747,
+      "url": "http://localhost:9747/",
+      "card_url": "http://localhost:9747/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "engineer_tools_virtuoso"
+      ]
+    },
+    "validate-officer": {
+      "agent_name": "validate-officer",
+      "port": 9955,
+      "url": "http://localhost:9955/",
+      "card_url": "http://localhost:9955/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "validate_officer"
+      ]
+    },
+    "verify-tests-adept": {
+      "agent_name": "verify-tests-adept",
+      "port": 9916,
+      "url": "http://localhost:9916/",
+      "card_url": "http://localhost:9916/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "verify_tests_adept"
+      ]
+    },
+    "guardian-officer": {
+      "agent_name": "guardian-officer",
+      "port": 9436,
+      "url": "http://localhost:9436/",
+      "card_url": "http://localhost:9436/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "guardian_officer"
+      ]
+    },
+    "pioneer-sage": {
+      "agent_name": "pioneer-sage",
+      "port": 9366,
+      "url": "http://localhost:9366/",
+      "card_url": "http://localhost:9366/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "pioneer_sage"
+      ]
+    },
+    "optimizer-architect": {
+      "agent_name": "optimizer-architect",
+      "port": 9690,
+      "url": "http://localhost:9690/",
+      "card_url": "http://localhost:9690/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "optimizer_architect"
+      ]
+    },
+    "connector-champion": {
+      "agent_name": "connector-champion",
+      "port": 9672,
+      "url": "http://localhost:9672/",
+      "card_url": "http://localhost:9672/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "connector_champion"
+      ]
+    },
+    "coach-wizard": {
+      "agent_name": "coach-wizard",
+      "port": 9788,
+      "url": "http://localhost:9788/",
+      "card_url": "http://localhost:9788/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "coach_wizard"
+      ]
+    },
+    "organize-specialist": {
+      "agent_name": "organize-specialist",
+      "port": 9011,
+      "url": "http://localhost:9011/",
+      "card_url": "http://localhost:9011/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "organize_specialist"
+      ]
+    },
+    "quality-assurance-expert": {
+      "agent_name": "quality-assurance-expert",
+      "port": 9282,
+      "url": "http://localhost:9282/",
+      "card_url": "http://localhost:9282/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "quality_assurance_expert"
+      ]
+    },
+    "organize-expert": {
+      "agent_name": "organize-expert",
+      "port": 9946,
+      "url": "http://localhost:9946/",
+      "card_url": "http://localhost:9946/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "organize_expert"
+      ]
+    },
+    "coach-director": {
+      "agent_name": "coach-director",
+      "port": 9859,
+      "url": "http://localhost:9859/",
+      "card_url": "http://localhost:9859/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "coach_director"
+      ]
+    },
+    "assert-specialist": {
+      "agent_name": "assert-specialist",
+      "port": 9684,
+      "url": "http://localhost:9684/",
+      "card_url": "http://localhost:9684/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "assert_specialist"
+      ]
+    },
+    "engineer-wizard": {
+      "agent_name": "engineer-wizard",
+      "port": 9474,
+      "url": "http://localhost:9474/",
+      "card_url": "http://localhost:9474/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "engineer_wizard"
+      ]
+    },
+    "steam-machine": {
+      "agent_name": "steam-machine",
+      "port": 9280,
+      "url": "http://localhost:9280/",
+      "card_url": "http://localhost:9280/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "steam_machine"
+      ]
+    },
+    "support-master": {
+      "agent_name": "support-master",
+      "port": 9506,
+      "url": "http://localhost:9506/",
+      "card_url": "http://localhost:9506/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "support_master"
+      ]
+    },
+    "communicator-maestro": {
+      "agent_name": "communicator-maestro",
+      "port": 9324,
+      "url": "http://localhost:9324/",
+      "card_url": "http://localhost:9324/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "communicator_maestro"
+      ]
+    },
+    "maintainability-sage": {
+      "agent_name": "maintainability-sage",
+      "port": 9920,
+      "url": "http://localhost:9920/",
+      "card_url": "http://localhost:9920/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "maintainability_sage"
+      ]
+    },
+    "integrate-APIs-chief": {
+      "agent_name": "integrate-APIs-chief",
+      "port": 9170,
+      "url": "http://localhost:9170/",
+      "card_url": "http://localhost:9170/.well-known/agent-card",
+      "status": "unknown",
+      "last_health_check": null,
+      "skills": [
+        "integrate_APIs_chief"
+      ]
+    }
+  }
+}
