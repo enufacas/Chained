@@ -46,3 +46,17 @@ Thumbs.db
 
 # GitHub App credentials
 gha-creds-*.json
+
+# Terraform
+infrastructure/terraform/.terraform/
+infrastructure/terraform/.terraform.lock.hcl
+infrastructure/terraform/*.tfstate
+infrastructure/terraform/*.tfstate.backup
+infrastructure/terraform/*.tfplan
+infrastructure/terraform/tfplan
+infrastructure/terraform/terraform.tfvars
+infrastructure/terraform/crash.log
+
+# GCP credentials
+*-sa-key.json
+gcp-*.json
