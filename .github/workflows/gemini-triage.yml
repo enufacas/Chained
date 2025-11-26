@@ -141,7 +141,7 @@ jobs:
           prompt: '/gemini-triage'
 
       - name: 'Diagnose Vertex AI Permission Errors'
-        if: failure() && steps.run_gemini.conclusion == 'failure'
+        if: failure() && steps.gemini_analysis.conclusion == 'failure'
         env:
           USE_VERTEX_AI: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
         run: |
