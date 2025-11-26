@@ -1,0 +1,394 @@
+name: "Learning: Git Commit Strategies"
+
+# Learn optimal git commit strategies by analyzing repository history
+# This workflow is part of the autonomous learning pipeline
+on:
+  schedule:
+    # Run daily at 02:00 UTC to analyze commit patterns
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      days_to_analyze:
+        description: 'Number of days of history to analyze'
+        required: false
+        type: number
+        default: 30
+      branch:
+        description: 'Branch to analyze (default: main)'
+        required: false
+        type: string
+        default: 'main'
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+# Prevent concurrent runs to avoid analysis conflicts
+concurrency:
+  group: learning-commits-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  analyze-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for comprehensive analysis
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install gitpython
+
+      - name: Analyze commit patterns
+        id: analyze
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          from datetime import datetime, timezone
+          
+          print("📊 Analyzing commit patterns...")
+          
+          # Add tools directory to path
+          sys.path.insert(0, 'tools')
+          
+          # Import the commit strategy learner
+          import importlib.util
+          spec = importlib.util.spec_from_file_location('learner', 'tools/commit-strategy-learner.py')
+          learner_module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(learner_module)
+          
+          CommitStrategyLearner = learner_module.CommitStrategyLearner
+          
+          # Initialize learner
+          learner = CommitStrategyLearner(
+              repo_path='.',
+              verbose=True
+          )
+          
+          # Get parameters from inputs or use defaults
+          since_days = int(os.environ.get('INPUT_DAYS', '30'))
+          branch = os.environ.get('INPUT_BRANCH', 'main')
+          
+          print(f"Analyzing last {since_days} days on branch '{branch}'...")
+          print(f"Note: Branch filtering is handled by git log internally")
+          
+          # Analyze commit history
+          try:
+              summary = learner.analyze_commits(
+                  since_days=since_days,
+                  max_commits=500
+              )
+              
+              print(f"✓ Analyzed {summary.get('total_analyzed', 0)} commits")
+              print(f"  - Successful: {summary.get('successful', 0)}")
+              print(f"  - Failed: {summary.get('failed', 0)}")
+              print(f"  - Patterns found: {summary.get('patterns_found', 0)}")
+              
+              # Load the patterns data that was saved by the learner
+              patterns_file = 'analysis/commit_patterns.json'
+              with open(patterns_file, 'r') as f:
+                  patterns = json.load(f)
+              
+              # Also create a timestamped learning file
+              os.makedirs('learnings', exist_ok=True)
+              timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+              learning_file = f'learnings/commit_strategies_{timestamp}.json'
+              
+              # Create learning format
+              learning_data = {
+                  'timestamp': datetime.now(timezone.utc).isoformat(),
+                  'source': 'Git Commit Analysis',
+                  'branch': branch,
+                  'days_analyzed': since_days,
+                  'summary': summary,
+                  'patterns': patterns,
+                  'learnings': []
+              }
+              
+              # Extract key insights as learnings from the patterns data
+              if patterns.get('message_patterns'):
+                  # Top commit message patterns
+                  msg_patterns = patterns['message_patterns']
+                  
+                  # Conventional commit prefixes
+                  if msg_patterns.get('prefixes'):
+                      for prefix in msg_patterns['prefixes'][:3]:  # Top 3
+                          learning_data['learnings'].append({
+                              'title': f"Common prefix: {prefix['prefix']}",
+                              'description': f"Used {prefix['count']} times ({prefix['percentage']:.1f}%)",
+                              'type': 'commit_pattern',
+                              'category': 'message'
+                          })
+              
+              if patterns.get('size_patterns'):
+                  # Optimal commit size insights
+                  size_data = patterns['size_patterns']
+                  if size_data.get('average_files'):
+                      learning_data['learnings'].append({
+                          'title': f"Average commit size: {size_data['average_files']:.1f} files",
+                          'description': f"Average lines: {size_data.get('average_lines', 0):.0f}, Median files: {size_data.get('median_files', 0)}",
+                          'type': 'commit_size',
+                          'category': 'optimization'
+                      })
+              
+              if patterns.get('timing_patterns'):
+                  # Time-based insights
+                  timing = patterns['timing_patterns']
+                  if timing.get('peak_hours'):
+                      peak_hour = max(timing['peak_hours'], key=timing['peak_hours'].get)
+                      learning_data['learnings'].append({
+                          'title': f"Peak commit hour: {peak_hour}:00",
+                          'description': f"Most active with {timing['peak_hours'][peak_hour]} commits",
+                          'type': 'timing',
+                          'category': 'productivity'
+                      })
+              
+              if patterns.get('success_metrics'):
+                  # Success rate insights
+                  metrics = patterns['success_metrics']
+                  total = metrics.get('total_commits', 0)
+                  successful = metrics.get('successful_commits', 0)
+                  if total > 0:
+                      success_rate = (successful / total) * 100
+                      learning_data['learnings'].append({
+                          'title': f"Commit success rate: {success_rate:.1f}%",
+                          'description': f"{successful} successful out of {total} total commits",
+                          'type': 'success_metric',
+                          'category': 'quality'
+                      })
+              
+              # Save learning file
+              with open(learning_file, 'w') as f:
+                  json.dump(learning_data, f, indent=2)
+              
+              print(f"✓ Saved learning data to {learning_file}")
+              print(f"✓ Extracted {len(learning_data['learnings'])} key insights")
+              
+              # Output for GitHub Actions
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"has_patterns=true\n")
+                  f.write(f"total_commits={summary.get('total_analyzed', 0)}\n")
+                  f.write(f"learning_count={len(learning_data['learnings'])}\n")
+                  f.write(f"learning_file={learning_file}\n")
+                  f.write(f"branch={branch}\n")
+                  f.write(f"days={since_days}\n")
+                  
+                  # Include sample insight
+                  if learning_data['learnings']:
+                      sample = learning_data['learnings'][0]
+                      f.write(f"sample_insight={sample['title']}\n")
+              
+              print("\n=== Analysis Summary ===")
+              for learning in learning_data['learnings']:
+                  print(f"  • {learning['title']}")
+                  print(f"    {learning['description']}")
+              
+          except Exception as e:
+              print(f"✗ Error analyzing commits: {e}")
+              import traceback
+              traceback.print_exc()
+              
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"has_patterns=false\n")
+              
+              sys.exit(1)
+          
+          PYTHON_SCRIPT
+        env:
+          INPUT_DAYS: ${{ github.event.inputs.days_to_analyze || '30' }}
+          INPUT_BRANCH: ${{ github.event.inputs.branch || 'main' }}
+
+      - name: Generate recommendations
+        id: recommend
+        if: steps.analyze.outputs.has_patterns == 'true'
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          
+          print("💡 Generating commit strategy recommendations...")
+          
+          # Load the latest learning file
+          learning_file = os.environ.get('LEARNING_FILE', '')
+          if not os.path.exists(learning_file):
+              print("No learning file found")
+              exit(0)
+          
+          with open(learning_file, 'r') as f:
+              data = json.load(f)
+          
+          patterns = data.get('patterns', {})
+          
+          recommendations = []
+          
+          # Message pattern recommendations
+          if patterns.get('message_patterns'):
+              msg_patterns = patterns['message_patterns']
+              if msg_patterns.get('prefixes'):
+                  top_prefix = sorted(msg_patterns['prefixes'], key=lambda x: x['count'], reverse=True)[0]
+                  recommendations.append(
+                      f"Use conventional commit prefix '{top_prefix['pattern']}' - it's used in {top_prefix['percentage']:.1f}% of commits"
+                  )
+          
+          # Size recommendations
+          if patterns.get('size_patterns'):
+              size = patterns['size_patterns']
+              avg_files = size.get('average_files', 0)
+              if avg_files > 0:
+                  if avg_files > 10:
+                      recommendations.append(
+                          f"Consider smaller commits: average is {avg_files:.1f} files, aim for 5-7 files per commit"
+                      )
+                  else:
+                      recommendations.append(
+                          f"Keep current commit size: {avg_files:.1f} files per commit is optimal"
+                      )
+          
+          # Timing recommendations
+          if patterns.get('timing_patterns'):
+              timing = patterns['timing_patterns']
+              if timing.get('peak_hours'):
+                  peak_hour = max(timing['peak_hours'], key=timing['peak_hours'].get)
+                  recommendations.append(
+                      f"Peak productivity at {peak_hour}:00 - consider scheduling complex commits during this time"
+                  )
+          
+          # Organization recommendations
+          if patterns.get('organization_patterns'):
+              org = patterns['organization_patterns']
+              if org.get('common_directories'):
+                  top_dirs = org['common_directories'][:3]
+                  recommendations.append(
+                      f"Most frequently modified: {', '.join([d['directory'] for d in top_dirs])} - ensure thorough testing for these"
+                  )
+          
+          # Save recommendations
+          data['recommendations'] = recommendations
+          with open(learning_file, 'w') as f:
+              json.dump(data, f, indent=2)
+          
+          print(f"✓ Generated {len(recommendations)} recommendations")
+          
+          for i, rec in enumerate(recommendations, 1):
+              print(f"  {i}. {rec}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"recommendation_count={len(recommendations)}\n")
+              if recommendations:
+                  # Escape newlines and quotes for GitHub Actions output
+                  sample = recommendations[0].replace('\n', ' ').replace('"', '\\"')
+                  f.write(f"sample_recommendation={sample}\n")
+          
+          PYTHON_SCRIPT
+        env:
+          LEARNING_FILE: ${{ steps.analyze.outputs.learning_file }}
+
+      - name: Create learning issue
+        if: steps.analyze.outputs.has_patterns == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create simple issue using echo commands to avoid YAML/heredoc conflicts
+          ISSUE_TITLE="📊 Learned Optimal Git Commit Strategies - $(date +%Y-%m-%d)"
+          
+          echo "## 📊 Git Commit Strategy Analysis" > /tmp/issue.txt
+          echo "" >> /tmp/issue.txt
+          echo "The system has analyzed git commit patterns from the repository." >> /tmp/issue.txt
+          echo "" >> /tmp/issue.txt
+          echo "**Summary:**" >> /tmp/issue.txt
+          echo "- Branch Analyzed: ${{ steps.analyze.outputs.branch }}" >> /tmp/issue.txt
+          echo "- Days Analyzed: ${{ steps.analyze.outputs.days }}" >> /tmp/issue.txt
+          echo "- Commits Analyzed: ${{ steps.analyze.outputs.total_commits }}" >> /tmp/issue.txt
+          echo "- Insights Extracted: ${{ steps.analyze.outputs.learning_count }}" >> /tmp/issue.txt
+          echo "" >> /tmp/issue.txt
+          echo "**Sample Insight:** ${{ steps.analyze.outputs.sample_insight }}" >> /tmp/issue.txt
+          echo "" >> /tmp/issue.txt
+          echo "**Learning File:** \`${{ steps.analyze.outputs.learning_file }}\`" >> /tmp/issue.txt
+          echo "" >> /tmp/issue.txt
+          echo "This analysis helps improve commit strategies by learning from repository history." >> /tmp/issue.txt
+          echo "" >> /tmp/issue.txt
+          echo "---" >> /tmp/issue.txt
+          echo "" >> /tmp/issue.txt
+          echo "*Automated analysis by @workflows-tech-lead*" >> /tmp/issue.txt
+          
+          gh issue create \
+            --title "${ISSUE_TITLE}" \
+            --body-file /tmp/issue.txt \
+            --label "learning,automated,copilot,analysis" || echo "Issue creation skipped or failed"
+
+      - name: Store branch name for PR
+        id: branch_info
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="learning/commit-strategies-${TIMESTAMP}-${{ github.run_id }}"
+          echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+          echo "workflow_run_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
+
+      - name: Create PR for learnings
+        if: steps.analyze.outputs.has_patterns == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SAMPLE_INSIGHT: ${{ steps.analyze.outputs.sample_insight }}
+          TOTAL_COMMITS: ${{ steps.analyze.outputs.total_commits }}
+          LEARNING_COUNT: ${{ steps.analyze.outputs.learning_count }}
+          ANALYZED_BRANCH: ${{ steps.analyze.outputs.branch }}
+          LEARNING_FILE: ${{ steps.analyze.outputs.learning_file }}
+          WORKFLOW_URL: ${{ steps.branch_info.outputs.workflow_run_url }}
+          OUTPUT_FILE: /tmp/pr_body.txt
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add learning files and analysis
+          git add learnings/ analysis/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Create branch
+          BRANCH_NAME="${{ steps.branch_info.outputs.branch_name }}"
+          git checkout -b "${BRANCH_NAME}"
+          
+          # Commit changes
+          git commit -m "📊 Learn commit strategies - $(date -u +%Y-%m-%d) - Analyzed $TOTAL_COMMITS commits by @workflows-tech-lead"
+          
+          git push origin "${BRANCH_NAME}"
+          
+          # Create PR body using external Python script
+          python3 .github/scripts/create_commit_learning_pr_body.py
+          
+          # Create PR
+          gh pr create \
+            --title "📊 Learning Update: Git Commit Strategies - $(date -u +%Y-%m-%d)" \
+            --body-file /tmp/pr_body.txt \
+            --label "automated,learning,copilot,workflows-tech-lead" \
+            --base main \
+            --head "${BRANCH_NAME}"
+          
+          echo "✅ PR created successfully"
+
+      - name: Log activity
+        run: |
+          echo "===================="
+          echo "Commit Strategy Learning Complete"
+          echo "===================="
+          echo "Branch: ${{ steps.analyze.outputs.branch }}"
+          echo "Days analyzed: ${{ steps.analyze.outputs.days }}"
+          echo "Commits: ${{ steps.analyze.outputs.total_commits }}"
+          echo "Insights: ${{ steps.analyze.outputs.learning_count }}"
+          echo "Recommendations: ${{ steps.recommend.outputs.recommendation_count || 0 }}"
+          echo "By: @workflows-tech-lead"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

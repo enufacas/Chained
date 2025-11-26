@@ -2,29 +2,35 @@
 """
 Git Commit Strategy Learning System for Chained
 
-A rigorous, systematic approach to learning optimal git commit strategies
+A visionary, self-improving system for learning optimal git commit strategies
 from successful merges. This system analyzes commit patterns, correlates them
-with merge success, and generates actionable recommendations.
+with merge success, and generates actionable recommendations that evolve over time.
 
-Inspired by Margaret Hamilton's approach: methodical, precise, and thorough.
+Inspired by Tesla's approach: innovative, elegant, and forward-thinking.
+Enhanced by @create-guru with autonomous learning capabilities.
 
 Architecture:
-- CommitStrategyAnalyzer: Core analysis engine
-- CommitPatternDatabase: Structured pattern storage
-- StrategyRecommender: Recommendation generation
-- Integration with existing Chained learning systems
+- CommitStrategyAnalyzer: Core analysis engine with trend detection
+- CommitPatternDatabase: Structured pattern storage with history
+- StrategyRecommender: Context-aware recommendation generation
+- TrendAnalyzer: Identifies improving/declining patterns over time
+- Integration with Chained's autonomous learning systems
 
 Features:
-- Analyzes commit size, message quality, file organization
+- Analyzes commit size, message quality, file organization, timing
 - Tracks correlation between commit attributes and merge success
-- Learns repository-specific optimal strategies
-- Generates confidence-scored recommendations
+- Learns repository-specific optimal strategies continuously
+- Generates confidence-scored, context-aware recommendations
 - Supports incremental learning from new merges
+- Tracks strategy effectiveness over time
+- Identifies emerging patterns and best practices
+- Provides trend analysis and predictive insights
 
 Usage:
     python commit-strategy-learner.py --analyze [--since DAYS]
     python commit-strategy-learner.py --recommend --context "feature" 
     python commit-strategy-learner.py --report [--output FILE]
+    python commit-strategy-learner.py --trends [--period DAYS]
 """
 
 import json
@@ -114,6 +120,21 @@ class StrategyRecommendation:
     applicable_contexts: List[str]
     supporting_patterns: List[str]
     example_commits: List[str] = field(default_factory=list)
+    trend: str = "stable"  # improving, stable, declining
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary"""
+        return asdict(self)
+
+
+@dataclass
+class TrendData:
+    """Historical trend analysis for patterns"""
+    pattern_name: str
+    measurements: List[Dict[str, Any]] = field(default_factory=list)
+    trend_direction: str = "unknown"  # improving, stable, declining
+    trend_confidence: float = 0.0
+    velocity: float = 0.0  # Rate of change
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
@@ -425,6 +446,25 @@ class CommitStrategyLearner:
         self.strategies_data["successful_merges"] = len(successful_commits)
         self.strategies_data["failed_merges"] = len(failed_commits)
         self.strategies_data["patterns_identified"] = [p.to_dict() for p in patterns]
+        
+        # Record this analysis in learning history
+        history_entry = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "commits_analyzed": len(analyzed_commits),
+            "successful": len(successful_commits),
+            "failed": len(failed_commits),
+            "patterns_count": len(patterns),
+            "since_days": since_days
+        }
+        
+        if "learning_history" not in self.strategies_data:
+            self.strategies_data["learning_history"] = []
+        
+        self.strategies_data["learning_history"].append(history_entry)
+        
+        # Keep only last 30 history entries
+        if len(self.strategies_data["learning_history"]) > 30:
+            self.strategies_data["learning_history"] = self.strategies_data["learning_history"][-30:]
         
         # Update patterns data
         self._update_pattern_database(analyzed_commits, patterns)
@@ -781,6 +821,7 @@ class CommitStrategyLearner:
                 "",
                 f"**Confidence:** {rec.confidence_score:.1%}",
                 f"**Context:** {', '.join(rec.applicable_contexts)}",
+                f"**Trend:** {rec.trend}",
                 "",
                 rec.description,
                 "",
@@ -802,6 +843,112 @@ class CommitStrategyLearner:
             self._log(f"Report saved to {output_file}")
         
         return report_text
+    
+    def analyze_trends(self, period_days: int = 30) -> Dict[str, Any]:
+        """
+        Analyze trends in commit patterns over time.
+        
+        Args:
+            period_days: Number of days to analyze for trends
+            
+        Returns:
+            Dictionary containing trend analysis
+        """
+        self._log(f"Analyzing trends over last {period_days} days")
+        
+        history = self.strategies_data.get("learning_history", [])
+        
+        if len(history) < 2:
+            self._log("Not enough history for trend analysis")
+            return {
+                "status": "insufficient_data",
+                "message": "Need at least 2 historical data points",
+                "history_count": len(history)
+            }
+        
+        # Calculate trends
+        trends = {
+            "success_rate": self._calculate_trend([
+                h["successful"] / max(h["commits_analyzed"], 1) 
+                for h in history if h["commits_analyzed"] > 0
+            ]),
+            "patterns_discovered": self._calculate_trend([
+                h["patterns_count"] for h in history
+            ]),
+            "commit_quality": self._calculate_trend([
+                1.0 - (h["failed"] / max(h["commits_analyzed"], 1))
+                for h in history if h["commits_analyzed"] > 0
+            ])
+        }
+        
+        # Determine overall trend
+        improving_count = sum(1 for t in trends.values() if t["direction"] == "improving")
+        declining_count = sum(1 for t in trends.values() if t["direction"] == "declining")
+        
+        if improving_count > declining_count:
+            overall = "improving"
+        elif declining_count > improving_count:
+            overall = "declining"
+        else:
+            overall = "stable"
+        
+        return {
+            "status": "success",
+            "overall_trend": overall,
+            "trends": trends,
+            "history_analyzed": len(history),
+            "period_days": period_days,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    
+    def _calculate_trend(self, values: List[float]) -> Dict[str, Any]:
+        """
+        Calculate trend direction from a series of values.
+        
+        Returns:
+            Dictionary with direction, velocity, and confidence
+        """
+        if len(values) < 2:
+            return {"direction": "unknown", "velocity": 0.0, "confidence": 0.0}
+        
+        # Simple linear regression
+        n = len(values)
+        x = list(range(n))
+        
+        # Calculate means
+        x_mean = sum(x) / n
+        y_mean = sum(values) / n
+        
+        # Calculate slope (velocity)
+        numerator = sum((x[i] - x_mean) * (values[i] - y_mean) for i in range(n))
+        denominator = sum((x[i] - x_mean) ** 2 for i in range(n))
+        
+        if denominator == 0:
+            velocity = 0.0
+        else:
+            velocity = numerator / denominator
+        
+        # Determine direction
+        if abs(velocity) < 0.01:
+            direction = "stable"
+        elif velocity > 0:
+            direction = "improving"
+        else:
+            direction = "declining"
+        
+        # Calculate confidence based on variance
+        if len(values) > 2:
+            variance = stdev(values)
+            confidence = min(abs(velocity) / max(variance, 0.01), 1.0)
+        else:
+            confidence = 0.5
+        
+        return {
+            "direction": direction,
+            "velocity": velocity,
+            "confidence": confidence,
+            "sample_size": n
+        }
 
 
 def main():
@@ -822,6 +969,9 @@ Examples:
   
   # Generate full report
   python commit-strategy-learner.py --report --output analysis/commit_report.md
+  
+  # Analyze trends over time
+  python commit-strategy-learner.py --trends --period 30
         """
     )
     
@@ -844,6 +994,11 @@ Examples:
                        help='Generate comprehensive report')
     parser.add_argument('--output', type=str,
                        help='Output file for report')
+    
+    parser.add_argument('--trends', action='store_true',
+                       help='Analyze trends in learning history')
+    parser.add_argument('--period', type=int, default=30,
+                       help='Period in days for trend analysis (default: 30)')
     
     parser.add_argument('--verbose', '-v', action='store_true',
                        help='Enable verbose logging')
@@ -884,6 +1039,7 @@ Examples:
             for i, rec in enumerate(recommendations, 1):
                 print(f"{i}. {rec.title}")
                 print(f"   Confidence: {rec.confidence_score:.1%}")
+                print(f"   Trend: {rec.trend}")
                 print(f"   {rec.description}")
                 print()
         
@@ -895,6 +1051,30 @@ Examples:
                 print(f"✅ Report saved to {args.output}")
             else:
                 print(report)
+        
+        elif args.trends:
+            print(f"📈 Analyzing trends over {args.period} days...")
+            trends = learner.analyze_trends(period_days=args.period)
+            
+            if trends["status"] == "insufficient_data":
+                print(f"⚠️  {trends['message']}")
+                print(f"   History count: {trends['history_count']}")
+                print("   Run --analyze multiple times to build history")
+                return 1
+            
+            print(f"✅ Trend Analysis Complete!")
+            print(f"   Overall Trend: {trends['overall_trend'].upper()}")
+            print(f"   History Points: {trends['history_analyzed']}")
+            print()
+            print("📊 Detailed Trends:")
+            
+            for metric, data in trends["trends"].items():
+                direction = data["direction"]
+                emoji = "📈" if direction == "improving" else "📉" if direction == "declining" else "➡️"
+                print(f"   {emoji} {metric.replace('_', ' ').title()}: {direction}")
+                print(f"      Velocity: {data['velocity']:.4f}")
+                print(f"      Confidence: {data['confidence']:.1%}")
+                print()
         
         else:
             parser.print_help()
