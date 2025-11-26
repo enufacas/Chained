@@ -22,6 +22,16 @@ from typing import Dict, List, Optional, Any, Tuple
 import argparse
 
 
+# Configuration constants
+CONVENTIONAL_COMMIT_TYPES = [
+    'feat', 'fix', 'docs', 'style', 'refactor', 
+    'test', 'chore', 'perf', 'ci', 'build', 'revert'
+]
+
+# Default success rate for commits with message bodies
+DEFAULT_BODY_SUCCESS_RATE = 90.4
+
+
 def load_strategies() -> Dict[str, Any]:
     """Load learned commit strategies."""
     learnings_dir = Path("learnings")
@@ -52,8 +62,9 @@ def is_conventional_commit(message: str) -> Tuple[bool, Optional[str]]:
     Returns:
         (is_conventional, type)
     """
-    # Conventional commit pattern: type(scope): description
-    pattern = r'^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .+'
+    # Build pattern from configured types
+    types_pattern = '|'.join(CONVENTIONAL_COMMIT_TYPES)
+    pattern = f'^({types_pattern})(\\(.+\\))?: .+'
     match = re.match(pattern, message, re.IGNORECASE)
     
     if match:
@@ -294,10 +305,18 @@ def main():
     
     # Recommend body if missing
     if not message_validation['has_body']:
+        # Get success rate from strategies or use default
+        body_success_rate = DEFAULT_BODY_SUCCESS_RATE
+        patterns = strategies.get('patterns', {})
+        msg_patterns = patterns.get('message', {})
+        detailed_msg = msg_patterns.get('detailed_messages', {})
+        if detailed_msg and 'success_rate' in detailed_msg:
+            body_success_rate = detailed_msg['success_rate'] * 100
+        
         all_issues.append({
             'severity': 'info',
             'message': 'No commit message body',
-            'suggestion': 'Add a body explaining why changes were made (90.4% of successful commits have bodies)'
+            'suggestion': f'Add a body explaining why changes were made ({body_success_rate:.1f}% of successful commits have bodies)'
         })
     
     # Size and organization issues

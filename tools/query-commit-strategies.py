@@ -22,6 +22,11 @@ from datetime import datetime
 import argparse
 
 
+# Configuration constants
+VALID_CONTEXTS = ['general', 'feature', 'bugfix', 'refactor', 'docs']
+VALID_PRIORITIES = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']
+
+
 def load_latest_strategies() -> Optional[Dict[str, Any]]:
     """Load the most recent commit strategies file."""
     learnings_dir = Path("learnings")
@@ -234,14 +239,14 @@ Examples:
     parser.add_argument(
         '--context',
         type=str,
-        choices=['general', 'feature', 'bugfix', 'refactor', 'docs'],
+        choices=VALID_CONTEXTS,
         help='Context for recommendations'
     )
     
     parser.add_argument(
         '--priority',
         type=str,
-        choices=['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'],
+        choices=VALID_PRIORITIES,
         help='Filter by priority level'
     )
     
