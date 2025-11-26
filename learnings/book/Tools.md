@@ -2,9 +2,9 @@
 
 > IDEs, editors, debuggers, and productivity tools
 
-**Total Insights:** 556
+**Total Insights:** 602
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2025-11-26
 
 ---
 
@@ -601,15 +601,6 @@ Arianity (profile) says: November 13, 2025 at 8:24 pm Maybe we’ll be able to p
 ---
 
 
-### IQ differences of identical twins reared apart are influenced by education
-
-**Community Score:** 35 upvotes
-
-**Link:** https://www.sciencedirect.com/science/article/pii/S0001691825003853
-
----
-
-
 ### DNS Provider Quad9 Sees Piracy Blocking Orders as "Existential Threat"
 
 **Community Score:** 207 upvotes
@@ -679,6 +670,15 @@ Arianity (profile) says: November 13, 2025 at 8:24 pm Maybe we’ll be able to p
 **Content Summary:**
 
 Remember when you thought age verification laws couldn't get any worse ? Well, lawmakers in Wisconsin , Michigan , and beyond are about to blow you away. It's unfortunately no longer enough to force websites to check your government-issued ID before you can access certain content, because politicians have now discovered that people are using Virtual Private Networks (VPNs) to protect their privacy and bypass these invasive laws. Their solution? Entirely ban the use of VPNs. Yes, really. As of th...
+
+---
+
+
+### Copyparty, the FOSS file server [video]
+
+**Community Score:** 25 upvotes
+
+**Link:** https://www.youtube.com/watch?v=15_-hgsX2V0
 
 ---
 

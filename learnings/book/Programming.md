@@ -2,9 +2,9 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 786
+**Total Insights:** 854
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2025-11-26
 
 ---
 
@@ -648,15 +648,6 @@ The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 Th
 ---
 
 
-### Google Antigravity Exfiltrates Data
-
-**Community Score:** 248 upvotes
-
-**Link:** https://www.promptarmor.com/resources/google-antigravity-exfiltrates-data
-
----
-
-
 ### Google will allow users to sideload Android apps without verification
 
 **Community Score:** 653 upvotes
@@ -735,6 +726,42 @@ The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 Th
 ---
 
 
+### Surprisingly, Emacs on Android is pretty good
+
+**Community Score:** 114 upvotes
+
+**Link:** https://kristofferbalintona.me/posts/202505291438/
+
+---
+
+
+### Java Decompiler
+
+**Community Score:** 59 upvotes
+
+**Link:** http://java-decompiler.github.io
+
+---
+
+
+### Google Antigravity exfiltrates data via indirect prompt injection attack
+
+**Community Score:** 646 upvotes
+
+**Link:** https://www.promptarmor.com/resources/google-antigravity-exfiltrates-data
+
+---
+
+
+### Python is not a great language for data science
+
+**Community Score:** 211 upvotes
+
+**Link:** https://blog.genesmindsmachines.com/p/python-is-not-a-great-language-for
+
+---
+
+
 ### Think in math, write in code (2019
 
 **Community Score:** 178 upvotes
@@ -752,35 +779,5 @@ Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss
 ### So, you want to design your own language? (2017)
 
 **Link:** https://cs.lmu.edu/~ray/notes/languagedesignnotes/
-
----
-
-
-### AMD GPUs Go Brrr
-
-**Link:** https://hazyresearch.stanford.edu/blog/2025-11-09-amd-brr
-
----
-
-
-### Valdi – A cross-platform UI framework that delivers native performance
-
-**Community Score:** 480 upvotes
-
-**Link:** https://github.com/Snapchat/Valdi
-
----
-
-
-### Think in math, write in code (2019
-
-**Community Score:** 140 upvotes
-
-**Link:** https://www.jmeiners.com/think-in-math/
-
-
-**Content Summary:**
-
-Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss programming languages. We not only debate their technical merits and aesthetic qualities, but they become integrated into our personal identities, along with the values and traits that we associate with them. Some even defend a form of Linguistic Determinism that thinking is confined to what the language makes typable. Since we spend so much time writing code, a keen interest in language design is justified. However...
 
 ---
