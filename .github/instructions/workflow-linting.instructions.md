@@ -45,8 +45,8 @@ actionlint
 # Lint specific workflow file
 actionlint .github/workflows/my-workflow.yml
 
-# Lint with shellcheck integration (if shellcheck installed)
-actionlint -shellcheck=
+# actionlint automatically uses shellcheck if installed in PATH
+actionlint
 
 # Ignore specific rules (use sparingly)
 actionlint -ignore 'SC2086:.*'
