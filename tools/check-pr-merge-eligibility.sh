@@ -110,7 +110,7 @@ if [ "${is_draft}" = "true" ]; then
         sleep 3  # Increased from 2 to 3 for more reliable status update
         
         # Re-fetch mergeable status after marking ready
-        mergeable_after=$(gh pr view "$PR_NUM" --json mergeable --jq -r '.mergeable')
+        mergeable_after=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
         echo "  → Updated mergeable status: ${mergeable_after}"
         
         # Update mergeable variable for next check
@@ -124,11 +124,11 @@ if [ "${is_draft}" = "true" ]; then
         fi
     else
         # Verify if it's already ready (expected) or an actual error
-        is_still_draft=$(gh pr view "$PR_NUM" --json isDraft --jq -r '.isDraft')
+        is_still_draft=$(gh pr view "$PR_NUM" --json isDraft | jq -r '.isDraft')
         if [ "$is_still_draft" = "false" ]; then
             echo "  ℹ️  PR was already marked ready (no action needed)"
             # Still need to get updated status
-            mergeable=$(gh pr view "$PR_NUM" --json mergeable --jq -r '.mergeable')
+            mergeable=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
             echo "  → Current mergeable status: ${mergeable}"
         else
             echo "  ⚠️  Failed to mark ready - possible network/permission issue"
