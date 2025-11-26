@@ -135,11 +135,9 @@ jobs:
           else
             # Parse JSON summary (more reliable than grep)
             if [ -f /tmp/cleanup_summary.json ]; then
-              conflicts_closed=$(jq -r '.by_reason.merge_conflicts' /tmp/cleanup_summary.json || echo "0")
-              no_activity_closed=$(jq -r '.by_reason.no_activity' /tmp/cleanup_summary.json || echo "0")
-              orphaned_closed=$(jq -r '.by_reason.orphaned' /tmp/cleanup_summary.json || echo "0")
-              draft_closed=$(jq -r '.by_reason.abandoned_draft' /tmp/cleanup_summary.json || echo "0")
-              total_closed=$(jq -r '.total_closed' /tmp/cleanup_summary.json || echo "0")
+              # Extract all counts in a single jq call for efficiency
+              counts=$(jq -r '[.by_reason.merge_conflicts, .by_reason.no_activity, .by_reason.orphaned, .by_reason.abandoned_draft, .total_closed] | @tsv' /tmp/cleanup_summary.json)
+              read -r conflicts_closed no_activity_closed orphaned_closed draft_closed total_closed <<< "$counts"
             else
               # Fallback to text parsing if JSON not available
               conflicts_closed=$(grep "Merge conflicts" /tmp/cleanup_output.txt | grep -oP '\d+' | tail -1 || echo "0")

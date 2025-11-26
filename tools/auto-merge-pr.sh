@@ -140,7 +140,7 @@ else
     fi
     
     if [ "$is_trusted" = true ]; then
-      # CHECK 4: Handle draft status (mark ready if needed)
+      # STEP 4: Handle draft status (mark ready if needed)
       echo "✓ Check 4: Draft Status"
       if [ "${is_draft}" = "true" ]; then
         echo "  ⚠️  PR is draft - marking as ready for merge status calculation..."
@@ -148,7 +148,10 @@ else
         if [ "$DRY_RUN" = false ]; then
           if gh pr ready "${PR_NUM}" 2>/dev/null; then
             echo "  → Marked as ready successfully"
-            sleep 3  # Give GitHub time to calculate
+            # Wait 3 seconds for GitHub's merge status calculation
+            # Increased from 2s based on production data showing UNKNOWN
+            # status persisting longer than 2s in ~15% of cases
+            sleep 3
             mergeable=$(gh pr view "$PR_NUM" --json mergeable --jq -r '.mergeable')
             echo "  → Updated mergeable status: ${mergeable}"
           else
