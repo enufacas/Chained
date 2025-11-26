@@ -328,18 +328,31 @@ class WorkflowConfigGenerator:
         
         # Generate variants based on optimization type
         if optimization_type == "schedule":
-            schedule = workflow_data.get('on', {}).get('schedule', [{}])[0].get('cron', '0 0 * * *')
+            # Handle 'on' being parsed as True in YAML
+            triggers = workflow_data.get('on', workflow_data.get(True, {}))
+            schedule_list = triggers.get('schedule', [])
+            if not schedule_list:
+                raise ValueError("Workflow does not have a schedule configuration")
+            if not isinstance(schedule_list, list):
+                raise ValueError("Schedule configuration must be a list")
+            
+            # Get cron from first schedule entry
+            first_schedule = schedule_list[0] if schedule_list else {}
+            schedule = first_schedule.get('cron', '0 0 * * *') if isinstance(first_schedule, dict) else '0 0 * * *'
             variants = self.generate_schedule_variants(schedule, workflow_name)
         
         elif optimization_type == "timeout":
             # Get first job's timeout
             jobs = workflow_data.get('jobs', {})
-            first_job = list(jobs.values())[0] if jobs else {}
+            if not jobs:
+                raise ValueError("Workflow does not have any jobs defined")
+            first_job_name = list(jobs.keys())[0]
+            first_job = jobs[first_job_name]
             current_timeout = first_job.get('timeout-minutes')
             variants = self.generate_timeout_variants(
                 current_timeout,
                 workflow_name,
-                list(jobs.keys())[0] if jobs else "job"
+                first_job_name
             )
         
         elif optimization_type == "concurrency":

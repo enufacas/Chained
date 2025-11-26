@@ -291,7 +291,7 @@ class WorkflowABTestingIntegration:
         # Filter out workflows with active experiments
         available_opportunities = [
             opp for opp in opportunities
-            if opp.get("workflow_name") or opp.get("workflow") not in active_workflows
+            if (opp.get("workflow_name") or opp.get("workflow")) not in active_workflows
         ]
         
         # Sort by priority
