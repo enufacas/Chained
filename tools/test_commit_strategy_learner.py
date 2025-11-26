@@ -481,6 +481,114 @@ class TestRecommendationGeneration(unittest.TestCase):
                 self.assertIn(context, rec.applicable_contexts)
 
 
+class TestCommitValidation(unittest.TestCase):
+    """Test commit validation functionality"""
+    
+    def setUp(self):
+        """Set up test learner with sample data"""
+        self.test_dir = tempfile.mkdtemp()
+        self.learner = CommitStrategyLearner(repo_path=self.test_dir)
+        
+        # Add sample patterns for validation context
+        sample_pattern = CommitPattern(
+            pattern_name="conventional_commits",
+            pattern_type="message",
+            description="Conventional commit format",
+            success_rate=0.85,
+            occurrence_count=50,
+            average_merge_time_hours=2.0,
+            common_attributes={"most_common_types": ["feat", "fix"]},
+            examples=["abc123", "def456"],
+            confidence_score=0.9
+        )
+        
+        self.learner.strategies_data["patterns_identified"] = [sample_pattern.to_dict()]
+    
+    def tearDown(self):
+        """Clean up"""
+        shutil.rmtree(self.test_dir)
+    
+    def test_validate_good_commit(self):
+        """Test validation of a good conventional commit"""
+        result = self.learner.validate_commit(
+            message="feat: add new authentication feature",
+            files_changed=3,
+            lines_changed=50
+        )
+        
+        self.assertEqual(result['status'], 'excellent')
+        self.assertEqual(result['score'], 100)
+        self.assertEqual(len(result['issues']), 0)
+        self.assertTrue(result['message_analysis']['follows_conventional'])
+    
+    def test_validate_bad_message_format(self):
+        """Test validation of commit with bad message format"""
+        result = self.learner.validate_commit(
+            message="update",
+            files_changed=1,
+            lines_changed=10
+        )
+        
+        self.assertIn(result['status'], ['good', 'acceptable', 'needs_improvement'])
+        self.assertLess(result['score'], 100)
+        
+        # Should have issues about format and length
+        issue_types = [issue['type'] for issue in result['issues']]
+        self.assertIn('message_format', issue_types)
+        self.assertIn('message_length', issue_types)
+    
+    def test_validate_large_commit(self):
+        """Test validation of oversized commit"""
+        result = self.learner.validate_commit(
+            message="feat: add features",
+            files_changed=20,
+            lines_changed=600
+        )
+        
+        self.assertLess(result['score'], 70)
+        
+        # Should have issues about size
+        issue_types = [issue['type'] for issue in result['issues']]
+        self.assertIn('commit_size', issue_types)
+        self.assertIn('lines_changed', issue_types)
+    
+    def test_validate_missing_body_for_large_commit(self):
+        """Test that large commits without body get flagged"""
+        result = self.learner.validate_commit(
+            message="feat: add many changes",
+            files_changed=8,
+            lines_changed=200
+        )
+        
+        # Should suggest adding body
+        issue_types = [issue['type'] for issue in result['issues']]
+        self.assertIn('missing_body', issue_types)
+    
+    def test_validate_returns_patterns(self):
+        """Test that validation returns applicable patterns"""
+        result = self.learner.validate_commit(
+            message="fix: correct bug",
+            files_changed=2,
+            lines_changed=30
+        )
+        
+        self.assertIn('applicable_patterns', result)
+        self.assertGreater(len(result['applicable_patterns']), 0)
+    
+    def test_validate_json_serializable(self):
+        """Test that validation result can be JSON serialized"""
+        result = self.learner.validate_commit(
+            message="docs: update readme",
+            files_changed=1,
+            lines_changed=10
+        )
+        
+        # Should not raise
+        import json
+        json_str = json.dumps(result)
+        self.assertIsInstance(json_str, str)
+
+
 def run_tests():
     """Run all tests with detailed output"""
     loader = unittest.TestLoader()
@@ -493,6 +601,7 @@ def run_tests():
     suite.addTests(loader.loadTestsFromTestCase(TestCommitStrategyLearner))
     suite.addTests(loader.loadTestsFromTestCase(TestPatternIdentification))
     suite.addTests(loader.loadTestsFromTestCase(TestRecommendationGeneration))
+    suite.addTests(loader.loadTestsFromTestCase(TestCommitValidation))
     
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)

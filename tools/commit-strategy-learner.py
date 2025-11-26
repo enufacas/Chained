@@ -850,6 +850,171 @@ class CommitStrategyLearner:
         
         return report_text
     
+    def validate_commit(
+        self, 
+        message: str, 
+        files_changed: int = 0, 
+        lines_changed: int = 0,
+        file_types: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Validate a commit against learned optimal strategies.
+        
+        This method enables pre-commit hooks or CI validation to check
+        if a commit follows the learned patterns for successful merges.
+        
+        Args:
+            message: The commit message to validate
+            files_changed: Number of files in the commit
+            lines_changed: Total lines added/deleted
+            file_types: List of file extensions being changed
+            
+        Returns:
+            Dictionary with validation result and suggestions
+        """
+        self._log(f"Validating commit message: {message[:50]}...")
+        
+        file_types = file_types or []
+        issues: List[Dict[str, Any]] = []
+        suggestions: List[str] = []
+        score = 100  # Start with perfect score
+        
+        # Analyze the message
+        msg_analysis = self._analyze_commit_message(message)
+        
+        # Check conventional commit format
+        if not msg_analysis["follows_conventional"]:
+            issues.append({
+                "type": "message_format",
+                "severity": "warning",
+                "message": "Commit message doesn't follow conventional format (type: description)",
+                "suggestion": "Use format like: feat: add feature, fix: correct bug, docs: update readme"
+            })
+            score -= 15
+            suggestions.append("Consider using conventional commit format: type(scope): description")
+        
+        # Check message length
+        if not msg_analysis["is_descriptive"]:
+            issues.append({
+                "type": "message_length",
+                "severity": "warning",
+                "message": f"Commit message is too short ({msg_analysis['length']} chars)",
+                "suggestion": f"Aim for at least {MIN_MESSAGE_LENGTH} characters for clarity"
+            })
+            score -= 10
+            suggestions.append(f"Add more detail to your commit message (current: {msg_analysis['length']} chars)")
+        
+        if not msg_analysis["is_concise"]:
+            issues.append({
+                "type": "message_length", 
+                "severity": "info",
+                "message": f"First line is long ({msg_analysis['length']} chars)",
+                "suggestion": f"Keep first line under {MAX_MESSAGE_LENGTH} characters"
+            })
+            score -= 5
+        
+        # Check for body in complex commits
+        if files_changed > 5 and not msg_analysis["has_body"]:
+            issues.append({
+                "type": "missing_body",
+                "severity": "suggestion",
+                "message": "Large commit lacks detailed explanation",
+                "suggestion": "Add a body explaining the changes when modifying many files"
+            })
+            score -= 10
+            suggestions.append("Add a commit body explaining why these changes were made")
+        
+        # Check commit size
+        if files_changed > MAX_FILES_PER_COMMIT:
+            issues.append({
+                "type": "commit_size",
+                "severity": "warning",
+                "message": f"Commit changes {files_changed} files (recommended: <{MAX_FILES_PER_COMMIT})",
+                "suggestion": "Consider breaking into smaller, focused commits"
+            })
+            score -= 20
+            suggestions.append(f"Consider splitting into smaller commits (~{IDEAL_FILES_PER_COMMIT} files each)")
+        elif files_changed > IDEAL_FILES_PER_COMMIT:
+            issues.append({
+                "type": "commit_size",
+                "severity": "info",
+                "message": f"Commit changes {files_changed} files (optimal: ~{IDEAL_FILES_PER_COMMIT})",
+                "suggestion": "Smaller commits are easier to review"
+            })
+            score -= 5
+        
+        # Check lines changed
+        if lines_changed > MAX_LINES_CHANGED:
+            issues.append({
+                "type": "lines_changed",
+                "severity": "warning",
+                "message": f"Commit changes {lines_changed} lines (recommended: <{MAX_LINES_CHANGED})",
+                "suggestion": "Large changes are harder to review"
+            })
+            score -= 15
+        elif lines_changed > IDEAL_LINES_CHANGED:
+            issues.append({
+                "type": "lines_changed",
+                "severity": "info",
+                "message": f"Commit changes {lines_changed} lines (optimal: ~{IDEAL_LINES_CHANGED})",
+                "suggestion": "Consider if this can be broken down"
+            })
+            score -= 5
+        
+        # Check file type focus
+        if file_types and len(file_types) > 3:
+            issues.append({
+                "type": "file_focus",
+                "severity": "info",
+                "message": f"Commit touches {len(file_types)} different file types",
+                "suggestion": "Keep commits focused on related changes"
+            })
+            score -= 5
+            suggestions.append("Consider separating unrelated changes into different commits")
+        
+        # Determine overall status
+        score = max(0, score)  # Ensure non-negative
+        
+        if score >= 90:
+            status = "excellent"
+            status_emoji = "✅"
+        elif score >= 70:
+            status = "good"
+            status_emoji = "👍"
+        elif score >= 50:
+            status = "acceptable"
+            status_emoji = "⚠️"
+        else:
+            status = "needs_improvement"
+            status_emoji = "❌"
+        
+        # Get patterns for context
+        patterns = self.strategies_data.get("patterns_identified", [])
+        applicable_patterns = []
+        for pattern in patterns:
+            if isinstance(pattern, dict):
+                applicable_patterns.append({
+                    "name": pattern.get("pattern_name", "unknown"),
+                    "success_rate": pattern.get("success_rate", 0),
+                    "confidence": pattern.get("confidence_score", 0)
+                })
+        
+        return {
+            "status": status,
+            "status_emoji": status_emoji,
+            "score": score,
+            "issues": issues,
+            "suggestions": suggestions,
+            "message_analysis": msg_analysis,
+            "commit_metrics": {
+                "files_changed": files_changed,
+                "lines_changed": lines_changed,
+                "file_types": file_types
+            },
+            "applicable_patterns": applicable_patterns,
+            "validated_at": datetime.now(timezone.utc).isoformat()
+        }
+
     def analyze_trends(self, period_days: int = 30) -> Dict[str, Any]:
         """
         Analyze trends in commit patterns over time.
@@ -982,6 +1147,12 @@ Examples:
   
   # Analyze trends over time
   python commit-strategy-learner.py --trends --period 30
+  
+  # Validate a commit message
+  python commit-strategy-learner.py --validate "feat: add new feature"
+  
+  # Validate with file info
+  python commit-strategy-learner.py --validate "fix: bug fix" --files 3 --lines 50
         """
     )
     
@@ -1009,6 +1180,15 @@ Examples:
                        help='Analyze trends in learning history')
     parser.add_argument('--period', type=int, default=30,
                        help='Period in days for trend analysis (default: 30)')
+    
+    parser.add_argument('--validate', type=str, metavar='MESSAGE',
+                       help='Validate a commit message against learned strategies')
+    parser.add_argument('--files', type=int, default=0,
+                       help='Number of files changed (for validation)')
+    parser.add_argument('--lines', type=int, default=0,
+                       help='Number of lines changed (for validation)')
+    parser.add_argument('--json', action='store_true',
+                       help='Output validation result as JSON')
     
     parser.add_argument('--verbose', '-v', action='store_true',
                        help='Enable verbose logging')
@@ -1085,6 +1265,42 @@ Examples:
                 print(f"      Velocity: {data['velocity']:.4f}")
                 print(f"      Confidence: {data['confidence']:.1%}")
                 print()
+        
+        elif args.validate:
+            result = learner.validate_commit(
+                message=args.validate,
+                files_changed=args.files,
+                lines_changed=args.lines
+            )
+            
+            if args.json:
+                print(json.dumps(result, indent=2))
+            else:
+                print(f"{result['status_emoji']} Commit Validation: {result['status'].upper()}")
+                print(f"   Score: {result['score']}/100")
+                print()
+                
+                if result['issues']:
+                    print("📋 Issues Found:")
+                    for issue in result['issues']:
+                        severity_emoji = "⚠️" if issue['severity'] == 'warning' else "ℹ️" if issue['severity'] == 'info' else "💡"
+                        print(f"   {severity_emoji} [{issue['severity'].upper()}] {issue['message']}")
+                        print(f"      → {issue['suggestion']}")
+                    print()
+                
+                if result['suggestions']:
+                    print("💡 Suggestions:")
+                    for suggestion in result['suggestions']:
+                        print(f"   • {suggestion}")
+                    print()
+                
+                if result['applicable_patterns']:
+                    print("📊 Based on Learned Patterns:")
+                    for pattern in result['applicable_patterns']:
+                        print(f"   • {pattern['name']}: {pattern['success_rate']:.1%} success rate")
+            
+            # Return exit code based on validation status
+            return 0 if result['status'] in ['excellent', 'good'] else 1
         
         else:
             parser.print_help()
