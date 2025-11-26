@@ -19,6 +19,14 @@
 
 set -euo pipefail
 
+# Configuration - Retry Logic for UNKNOWN Status
+# These can be overridden via environment variables for testing/tuning
+MAX_RETRIES="${AUTO_MERGE_MAX_RETRIES:-4}"
+RETRY_WAIT_TIMES="${AUTO_MERGE_RETRY_WAIT_TIMES:-5 8 12 15}"  # Space-separated wait times in seconds
+
+# Parse retry wait times into array
+IFS=' ' read -ra WAIT_TIMES_ARRAY <<< "$RETRY_WAIT_TIMES"
+
 # Configuration
 PR_NUM=""
 DRY_RUN=false
@@ -148,20 +156,13 @@ else
         if [ "$DRY_RUN" = false ]; then
           if gh pr ready "${PR_NUM}" 2>/dev/null; then
             echo "  → Marked as ready successfully"
-            # Wait 5 seconds for GitHub's merge status calculation
-            # Increased from 3s based on production data showing UNKNOWN
-            # status persisting even after 3s wait
+            # Wait for GitHub's merge status calculation
+            # Give GitHub time to compute merge status after marking ready
             sleep 5
             mergeable=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
             echo "  → Updated mergeable status: ${mergeable}"
             
-            # Retry if still UNKNOWN (GitHub may need more time)
-            if [ "${mergeable}" = "UNKNOWN" ]; then
-              echo "  → Status still UNKNOWN, waiting 3 more seconds..."
-              sleep 3
-              mergeable=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
-              echo "  → Final mergeable status: ${mergeable}"
-            fi
+            # Note: Further UNKNOWN retries happen in Check 5 below
           else
             # Check if already ready
             is_still_draft=$(gh pr view "$PR_NUM" --json isDraft | jq -r '.isDraft')
@@ -179,8 +180,39 @@ else
         echo "  ✅ PASS: Not a draft"
       fi
       
-      # CHECK 5: Mergeable status
+      # CHECK 5: Mergeable status (with retry for UNKNOWN)
       echo "✓ Check 5: Mergeable Status"
+      
+      # Retry logic for UNKNOWN status (GitHub needs time to calculate)
+      if [ "${mergeable}" = "UNKNOWN" ]; then
+        echo "  ⏳ Status is UNKNOWN - GitHub still calculating"
+        echo "     Waiting for merge status to be computed..."
+        
+        retry_count=0
+        actual_wait_time=0  # Track actual time spent waiting
+        
+        while [ "${mergeable}" = "UNKNOWN" ] && [ $retry_count -lt $MAX_RETRIES ]; do
+          # Safely get wait time with fallback
+          wait_time=${WAIT_TIMES_ARRAY[$retry_count]:-15}
+          echo "     Attempt $((retry_count + 1))/${MAX_RETRIES}: Waiting ${wait_time}s..."
+          sleep ${wait_time}
+          actual_wait_time=$((actual_wait_time + wait_time))
+          
+          # Re-fetch mergeable status
+          mergeable=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
+          echo "     → Status after wait: ${mergeable}"
+          
+          retry_count=$((retry_count + 1))
+        done
+        
+        # Final evaluation after retries
+        if [ "${mergeable}" = "UNKNOWN" ]; then
+          echo "  ⚠️  Status still UNKNOWN after ${retry_count} retries (${actual_wait_time}s total)"
+          echo "     This PR may need more time or manual inspection"
+        fi
+      fi
+      
+      # Now check the final mergeable status
       if [ "${mergeable}" = "MERGEABLE" ]; then
         echo "  ✅ PASS: PR is mergeable"
         
@@ -207,9 +239,16 @@ else
         echo "  ❌ FAIL: ${REASON}"
         ELIGIBLE=false
       elif [ "${mergeable}" = "UNKNOWN" ]; then
-        REASON="Mergeable status is UNKNOWN (GitHub still calculating)"
+        # Calculate actual max possible wait time for error message
+        max_wait=0
+        for ((i=0; i<MAX_RETRIES; i++)); do
+          max_wait=$((max_wait + ${WAIT_TIMES_ARRAY[$i]:-15}))
+        done
+        REASON="Mergeable status still UNKNOWN after waiting (GitHub needs more time)"
         echo "  ❌ FAIL: ${REASON}"
-        echo "  Note: Try again in a few seconds"
+        echo "  Note: This PR will be retried in the next run (every 2 hours)"
+        echo "        GitHub may need more time to calculate merge status"
+        echo "        (Max retry time: ${max_wait}s)"
         ELIGIBLE=false
       else
         REASON="Unexpected mergeable status: ${mergeable}"

@@ -6,8 +6,13 @@ name: "Meta-Coordinator: System Orchestration"
 # The agent continuously assesses system state and takes appropriate actions:
 # - Assign agents to issues
 # - Manage review cycles
-# - Auto-merge approved PRs (no WIP in title; draft status doesn't block)
+# - Auto-merge approved PRs (processes all eligible PRs; intelligent retry for UNKNOWN status)
 # - Handle exceptions
+#
+# Recent improvements:
+# - Intelligent retry logic: Waits up to 40s for GitHub to calculate merge status
+# - No PR limit: Processes all eligible PRs (workflow timeout naturally limits if needed)
+# - Increased timeout: 15 minutes (from 5) to handle larger PR queues
 
 on:
   schedule:
@@ -55,7 +60,8 @@ permissions:
 jobs:
   orchestrate:
     runs-on: ubuntu-latest
-    timeout-minutes: 5  # Hard limit: prevent runaway sessions
+    timeout-minutes: 15  # Increased from 5min to handle multiple PRs with retry logic
+                          # With 40s max per PR, this allows ~20 PRs safely
     
     steps:
       - name: Checkout repository
@@ -194,15 +200,11 @@ jobs:
           echo "Eligible PRs found: $(echo "$eligible_prs" | wc -w)"
           echo ""
           
-          # Process up to 10 PRs per run to avoid timeout
+          # Process all eligible PRs (no artificial limit)
+          # Workflow timeout (15 min) will naturally limit processing if needed
+          # With 40s max per PR, we can safely handle ~20 PRs
           for pr in $eligible_prs; do
             pr_count=$((pr_count + 1))
-            
-            if [ $pr_count -gt 10 ]; then
-              echo "⚠️  Stopping after 10 PRs to avoid timeout"
-              echo "   Remaining PRs will be processed in next run"
-              break
-            fi
             
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "[${pr_count}] Processing PR #${pr}..."
