@@ -702,6 +702,542 @@ gh api graphql -f mutation='mutation {
 # 5. Coordinator polls branch for result
 ```
 
+## Complete Multi-Agent Scenario: API Feature Development
+
+This section demonstrates a realistic scenario where **a2a-coordinator** orchestrates **engineer-master** (API agent), **support-master** (documentation agent), and **accelerate-master** (performance agent) to implement a new API endpoint.
+
+### Scenario: "Add rate-limited user search API endpoint"
+
+**Parent Issue #500**: User story requesting a new search endpoint with rate limiting and documentation.
+
+#### Phase 1: Coordination Agent Decomposes Task
+
+**a2a-coordinator** analyzes the issue and creates a task decomposition:
+
+```bash
+# a2a-coordinator session (Run #19700001)
+
+# Step 1: Analyze and decompose
+TASKS=(
+  "design_and_implement_api:engineer-master"
+  "add_documentation:support-master"
+  "optimize_performance:accelerate-master"
+)
+
+# Step 2: Create sub-issues for agent assignment
+gh issue create \
+  --title "[API] Implement rate-limited user search endpoint" \
+  --body "Design and implement /api/v1/users/search with rate limiting..." \
+  --label "api,backend"
+
+gh issue create \
+  --title "[Docs] Document user search API endpoint" \
+  --body "Create API documentation for new search endpoint..." \
+  --label "documentation"
+
+gh issue create \
+  --title "[Perf] Optimize user search performance" \
+  --body "Profile and optimize search query performance..." \
+  --label "performance"
+
+# Step 3: Assign custom agents to sub-issues (via GraphQL)
+# (This triggers Copilot sessions for each agent)
+```
+
+#### Phase 2: Engineer-Master Implements API
+
+**engineer-master** session starts (Run #19700010), assigned to issue #501:
+
+```bash
+# engineer-master Copilot session (Run #19700010)
+
+# Step 1: Check issue body for A2A coordination context
+ISSUE_BODY=$(gh issue view 501 --json body -q .body)
+PARENT_ISSUE=$(echo "$ISSUE_BODY" | grep "Parent: #500" | cut -d'#' -f2)
+
+# Step 2: Implement the API endpoint
+# (Creates src/api/search.py with rate limiting)
+
+# Step 3: Create A2A task branch for documentation agent
+TASK_ID="doc-search-api-$(date +%s)"
+BRANCH_NAME="a2a-tasks/${TASK_ID}"
+
+git checkout -b "$BRANCH_NAME"
+
+# Write task for documentation agent
+cat > task.json <<EOF
+{
+  "jsonrpc": "2.0",
+  "id": "$TASK_ID",
+  "method": "agent.document_api",
+  "params": {
+    "agent": "support-master",
+    "task": "document_new_endpoint",
+    "context": {
+      "parent_issue": 500,
+      "implementation_pr": 3100,
+      "endpoint": "/api/v1/users/search",
+      "files_to_document": [
+        "src/api/search.py"
+      ],
+      "api_spec": {
+        "method": "GET",
+        "path": "/api/v1/users/search",
+        "query_params": {
+          "q": "Search query (required)",
+          "limit": "Max results (optional, default 20)",
+          "offset": "Pagination offset (optional, default 0)"
+        },
+        "rate_limit": "100 requests/minute per user",
+        "response": {
+          "users": "Array of user objects",
+          "total": "Total matching users",
+          "has_more": "Boolean pagination indicator"
+        }
+      }
+    },
+    "requirements": {
+      "add_openapi_spec": true,
+      "add_usage_examples": true,
+      "add_rate_limit_docs": true,
+      "update_changelog": true
+    }
+  },
+  "metadata": {
+    "created_at": "2025-11-26T07:00:00Z",
+    "coordinator": "engineer-master",
+    "coordinator_run_id": "19700010",
+    "parent_task": "design_and_implement_api",
+    "timeout_seconds": 600
+  }
+}
+EOF
+
+# Write status
+cat > status.json <<EOF
+{
+  "status": "submitted",
+  "submitted_at": "2025-11-26T07:00:00Z",
+  "assigned_to": "support-master"
+}
+EOF
+
+git add task.json status.json
+git commit -m "A2A task: Document search API endpoint"
+git push origin "$BRANCH_NAME"
+
+# Step 4: Add branch reference to issue for support-master
+gh issue comment 502 --body "A2A-TASK-BRANCH: ${BRANCH_NAME}
+Please document the new search API endpoint. Implementation details in task.json."
+
+# Step 5: Continue with own work - create PR for API implementation
+# (engineer-master creates PR #3100)
+```
+
+#### Phase 3: Support-Master Documents API
+
+**support-master** session starts (Run #19700020), assigned to issue #502:
+
+```bash
+# support-master Copilot session (Run #19700020)
+
+# Step 1: Check for A2A task branch
+ISSUE_BODY=$(gh issue view 502 --json body,comments -q .)
+TASK_BRANCH=$(echo "$ISSUE_BODY" | grep "A2A-TASK-BRANCH:" | cut -d' ' -f2)
+
+if [ -n "$TASK_BRANCH" ]; then
+  # Step 2: Fetch and read task
+  git fetch origin "$TASK_BRANCH"
+  TASK_JSON=$(git show "origin/${TASK_BRANCH}:task.json")
+  
+  # Parse task details
+  ENDPOINT=$(echo "$TASK_JSON" | jq -r '.params.context.endpoint')
+  API_SPEC=$(echo "$TASK_JSON" | jq -r '.params.context.api_spec')
+  
+  # Step 3: Create documentation
+  # - Add OpenAPI spec to docs/api/openapi.yml
+  # - Create docs/api/user-search.md with usage examples
+  # - Update CHANGELOG.md
+  # - Add rate limiting documentation
+  
+  # Step 4: Write result back to A2A branch
+  git checkout "$TASK_BRANCH"
+  
+  cat > result.json <<EOF
+{
+  "jsonrpc": "2.0",
+  "id": "$(echo "$TASK_JSON" | jq -r '.id')",
+  "result": {
+    "success": true,
+    "files_created": [
+      "docs/api/user-search.md",
+      "docs/api/rate-limiting.md"
+    ],
+    "files_updated": [
+      "docs/api/openapi.yml",
+      "CHANGELOG.md"
+    ],
+    "documentation_pr": 3101,
+    "review_notes": "Added comprehensive usage examples including rate limit handling"
+  },
+  "metadata": {
+    "completed_at": "2025-11-26T07:05:00Z",
+    "agent": "support-master",
+    "run_id": "19700020"
+  }
+}
+EOF
+
+  # Update status
+  cat > status.json <<EOF
+{
+  "status": "completed",
+  "submitted_at": "2025-11-26T07:00:00Z",
+  "started_at": "2025-11-26T07:02:00Z",
+  "completed_at": "2025-11-26T07:05:00Z",
+  "assigned_to": "support-master"
+}
+EOF
+
+  git add result.json status.json
+  git commit -m "A2A result: Documentation completed"
+  git push origin "$TASK_BRANCH"
+  
+  # Step 5: Create task for performance agent
+  PERF_TASK_ID="perf-search-api-$(date +%s)"
+  PERF_BRANCH="a2a-tasks/${PERF_TASK_ID}"
+  
+  git checkout -b "$PERF_BRANCH"
+  
+  cat > task.json <<EOF
+{
+  "jsonrpc": "2.0",
+  "id": "$PERF_TASK_ID",
+  "method": "agent.optimize_performance",
+  "params": {
+    "agent": "accelerate-master",
+    "task": "optimize_search_query",
+    "context": {
+      "parent_issue": 500,
+      "implementation_pr": 3100,
+      "documentation_pr": 3101,
+      "target_endpoint": "/api/v1/users/search",
+      "current_implementation": "src/api/search.py",
+      "performance_requirements": {
+        "p95_latency": "<100ms",
+        "throughput": ">1000 req/s",
+        "database_queries": "<=2 per request"
+      }
+    },
+    "requirements": {
+      "profile_current_performance": true,
+      "optimize_database_queries": true,
+      "add_caching": true,
+      "add_performance_tests": true
+    }
+  },
+  "metadata": {
+    "created_at": "2025-11-26T07:06:00Z",
+    "coordinator": "support-master",
+    "coordinator_run_id": "19700020",
+    "parent_task": "add_documentation",
+    "timeout_seconds": 900
+  }
+}
+EOF
+
+  cat > status.json <<EOF
+{
+  "status": "submitted",
+  "submitted_at": "2025-11-26T07:06:00Z",
+  "assigned_to": "accelerate-master"
+}
+EOF
+
+  git add task.json status.json
+  git commit -m "A2A task: Optimize search performance"
+  git push origin "$PERF_BRANCH"
+  
+  # Notify performance agent
+  gh issue comment 503 --body "A2A-TASK-BRANCH: ${PERF_BRANCH}
+Please optimize the search API endpoint. Requirements in task.json."
+fi
+
+# Step 6: Create PR for documentation
+# (support-master creates PR #3101)
+```
+
+#### Phase 4: Accelerate-Master Optimizes Performance
+
+**accelerate-master** session starts (Run #19700030), assigned to issue #503:
+
+```bash
+# accelerate-master Copilot session (Run #19700030)
+
+# Step 1: Read A2A task from branch
+ISSUE_COMMENTS=$(gh issue view 503 --json comments -q '.comments[].body')
+TASK_BRANCH=$(echo "$ISSUE_COMMENTS" | grep "A2A-TASK-BRANCH:" | cut -d' ' -f2)
+
+git fetch origin "$TASK_BRANCH"
+TASK_JSON=$(git show "origin/${TASK_BRANCH}:task.json")
+
+# Step 2: Profile current performance
+python tools/profile_api.py --endpoint /api/v1/users/search \
+  --requests 1000 --output profile-before.json
+
+# Current: p95=250ms, 400 req/s, 5 DB queries per request
+
+# Step 3: Optimize implementation
+# - Add database indexes on user.name, user.email
+# - Implement Redis caching for common searches
+# - Optimize SQL query (reduce 5 queries to 1)
+# - Add query result pagination at DB level
+
+# Step 4: Profile optimized performance
+python tools/profile_api.py --endpoint /api/v1/users/search \
+  --requests 1000 --output profile-after.json
+
+# Optimized: p95=45ms, 1500 req/s, 1 DB query per request ✅
+
+# Step 5: Request opinion from engineer-master on approach
+OPINION_TASK_ID="opinion-caching-$(date +%s)"
+OPINION_BRANCH="a2a-tasks/${OPINION_TASK_ID}"
+
+git checkout -b "$OPINION_BRANCH"
+
+cat > task.json <<EOF
+{
+  "jsonrpc": "2.0",
+  "id": "$OPINION_TASK_ID",
+  "method": "agent.provide_opinion",
+  "params": {
+    "agent": "engineer-master",
+    "task": "review_caching_strategy",
+    "context": {
+      "optimization_pr": 3102,
+      "caching_approach": "Redis with 5-minute TTL",
+      "cache_key_pattern": "search:{query}:{limit}:{offset}",
+      "invalidation_strategy": "Time-based (5min) + event-based (user updates)",
+      "concern": "Is 5-minute TTL too aggressive for user data?"
+    },
+    "question": "Should we use shorter TTL (1 min) or is 5 minutes acceptable given user update frequency?"
+  },
+  "metadata": {
+    "created_at": "2025-11-26T07:15:00Z",
+    "coordinator": "accelerate-master",
+    "coordinator_run_id": "19700030",
+    "timeout_seconds": 300,
+    "priority": "medium"
+  }
+}
+EOF
+
+cat > status.json <<EOF
+{
+  "status": "submitted",
+  "submitted_at": "2025-11-26T07:15:00Z",
+  "assigned_to": "engineer-master"
+}
+EOF
+
+git add task.json status.json
+git commit -m "A2A task: Opinion on caching TTL"
+git push origin "$OPINION_BRANCH"
+
+# Notify engineer-master (comment on original issue or new issue)
+gh issue comment 501 --body "A2A-TASK-BRANCH: ${OPINION_BRANCH}
+@engineer-master - Please review caching strategy for search optimization."
+
+# Step 6: Wait for opinion (poll branch)
+for i in {1..10}; do
+  git fetch origin "$OPINION_BRANCH"
+  if git show "origin/${OPINION_BRANCH}:result.json" &>/dev/null; then
+    OPINION=$(git show "origin/${OPINION_BRANCH}:result.json")
+    RECOMMENDATION=$(echo "$OPINION" | jq -r '.result.recommendation')
+    
+    echo "Received opinion: $RECOMMENDATION"
+    # Opinion: "5 min TTL acceptable, user updates are rare, add event-based invalidation"
+    break
+  fi
+  sleep 30
+done
+
+# Step 7: Write performance optimization result
+git checkout "$TASK_BRANCH"
+
+cat > result.json <<EOF
+{
+  "jsonrpc": "2.0",
+  "id": "$(echo "$TASK_JSON" | jq -r '.id')",
+  "result": {
+    "success": true,
+    "optimizations_applied": [
+      "Added database indexes (user.name, user.email)",
+      "Implemented Redis caching (5-min TTL + event-based invalidation)",
+      "Optimized SQL query (5 queries → 1 query)",
+      "Added query result pagination at DB level"
+    ],
+    "performance_improvement": {
+      "before": {
+        "p95_latency_ms": 250,
+        "throughput_rps": 400,
+        "db_queries_per_request": 5
+      },
+      "after": {
+        "p95_latency_ms": 45,
+        "throughput_rps": 1500,
+        "db_queries_per_request": 1
+      }
+    },
+    "all_requirements_met": true,
+    "performance_pr": 3102,
+    "test_coverage": "Added load tests covering 1000+ req/s scenarios"
+  },
+  "metadata": {
+    "completed_at": "2025-11-26T07:20:00Z",
+    "agent": "accelerate-master",
+    "run_id": "19700030"
+  }
+}
+EOF
+
+cat > status.json <<EOF
+{
+  "status": "completed",
+  "submitted_at": "2025-11-26T07:06:00Z",
+  "started_at": "2025-11-26T07:10:00Z",
+  "completed_at": "2025-11-26T07:20:00Z",
+  "assigned_to": "accelerate-master"
+}
+EOF
+
+git add result.json status.json
+git commit -m "A2A result: Performance optimization completed"
+git push origin "$TASK_BRANCH"
+
+# Step 8: Create PR for performance optimizations
+# (accelerate-master creates PR #3102)
+```
+
+#### Phase 5: Coordinator Aggregates Results
+
+**a2a-coordinator** polls task branches and aggregates final results:
+
+```bash
+# a2a-coordinator session (Run #19700001 or new run)
+
+# Step 1: Poll all task branches for completion
+TASK_BRANCHES=(
+  "a2a-tasks/doc-search-api-1732600000"
+  "a2a-tasks/perf-search-api-1732600360"
+)
+
+ALL_COMPLETE=false
+TIMEOUT=1800  # 30 minutes
+
+START_TIME=$(date +%s)
+while [ "$ALL_COMPLETE" = false ]; do
+  CURRENT_TIME=$(date +%s)
+  if [ $((CURRENT_TIME - START_TIME)) -gt $TIMEOUT ]; then
+    echo "Timeout waiting for task completion"
+    break
+  fi
+  
+  COMPLETE_COUNT=0
+  for BRANCH in "${TASK_BRANCHES[@]}"; do
+    git fetch origin "$BRANCH"
+    STATUS=$(git show "origin/${BRANCH}:status.json" | jq -r '.status')
+    if [ "$STATUS" = "completed" ]; then
+      ((COMPLETE_COUNT++))
+    fi
+  done
+  
+  if [ $COMPLETE_COUNT -eq ${#TASK_BRANCHES[@]} ]; then
+    ALL_COMPLETE=true
+  else
+    sleep 30
+  fi
+done
+
+# Step 2: Aggregate results from all branches
+declare -A RESULTS
+
+for BRANCH in "${TASK_BRANCHES[@]}"; do
+  RESULT=$(git show "origin/${BRANCH}:result.json")
+  AGENT=$(echo "$RESULT" | jq -r '.metadata.agent')
+  RESULTS[$AGENT]=$RESULT
+done
+
+# Step 3: Create summary on parent issue
+SUMMARY="## Multi-Agent Task Completion Summary
+
+### Task: Add rate-limited user search API endpoint
+
+All sub-tasks completed successfully! 🎉
+
+#### 1. API Implementation (engineer-master)
+- **PR**: #3100
+- **Status**: ✅ Merged
+- **Implementation**: \`/api/v1/users/search\` with rate limiting
+- **Files**: \`src/api/search.py\`
+
+#### 2. Documentation (support-master)
+- **PR**: #3101
+- **Status**: ✅ Merged
+- **Created**: API docs, OpenAPI spec, rate limit docs
+- **Updated**: CHANGELOG.md
+
+#### 3. Performance Optimization (accelerate-master)
+- **PR**: #3102
+- **Status**: ✅ Merged
+- **Performance Improvement**:
+  - Latency: 250ms → 45ms (82% faster)
+  - Throughput: 400 req/s → 1500 req/s (3.75x)
+  - DB queries: 5 → 1 per request (80% reduction)
+
+#### Agent Collaboration
+- engineer-master → support-master: Provided API spec for documentation
+- support-master → accelerate-master: Passed implementation details
+- accelerate-master → engineer-master: Requested caching strategy review
+
+**Total execution time**: 25 minutes (parallel + sequential phases)
+**A2A branches cleaned up**: ✅
+**All requirements met**: ✅"
+
+gh issue comment 500 --body "$SUMMARY"
+gh issue close 500 --comment "Feature complete and deployed!"
+
+# Step 4: Cleanup A2A branches
+for BRANCH in "${TASK_BRANCHES[@]}"; do
+  git push origin --delete "$BRANCH"
+done
+
+# Also cleanup opinion branch
+git push origin --delete "a2a-tasks/opinion-caching-1732600500"
+```
+
+### Key Takeaways from This Scenario
+
+1. **Sequential + Parallel Execution**: 
+   - API implementation (parallel with docs planning)
+   - Documentation (after API details available)
+   - Performance optimization (after implementation)
+   - Opinion request (parallel within optimization phase)
+
+2. **Rich Inter-Agent Communication**:
+   - engineer-master shares API spec with support-master
+   - support-master forwards context to accelerate-master
+   - accelerate-master requests opinion from engineer-master
+   - All via A2A task branches
+
+3. **Autonomy**: Each agent works independently but coordinates through branches
+
+4. **Transparency**: All coordination visible in branches, easy to audit
+
+5. **Resilience**: Timeouts, status tracking, and error handling built-in
+
+This demonstrates how **branch-based A2A enables sophisticated multi-agent workflows** that would be impossible with simple sequential tool calls!
+
 ## Next Steps
 
 To implement branch-based A2A coordination:
