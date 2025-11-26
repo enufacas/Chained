@@ -257,7 +257,7 @@ The `run-gemini-cli` action integrates Google's Gemini AI into GitHub workflows,
 - Review criteria prioritization
 - Severity thresholds
 - Custom review prompts via TOML
-- Model selection (`gemini-3-pro-latest`, etc.)
+- Model selection (`gemini-2.0-flash-exp`, `gemini-1.5-pro-latest`, etc.)
 
 ### 3. 🏷️ Gemini Issue Triage
 
@@ -324,15 +324,14 @@ The Gemini workflows now support **two authentication methods**. Choose based on
 
 | Model | Requests per Minute (RPM) | Requests per Day (RPD) | Recommended |
 |-------|--------------------------|------------------------|-------------|
-| `gemini-3-pro-latest` | 15 | 1,500 | ✅ **Default** - Latest model with best capabilities |
-| `gemini-2.0-flash` | 15 | 200 | ✅ Good for high-volume use |
-| `gemini-2.5-flash-lite` | 15 | 1,000 | ✅ High daily limit |
-| `gemini-2.5-flash` | 10 | 250 | Good balance |
-| `gemini-2.5-pro` | 2 | 50 | ❌ Lowest RPM - avoid for frequent triggers |
+| `gemini-2.0-flash-exp` | 15 | 1,500 | ✅ **Default** - Latest Gemini 2.0 experimental model |
+| `gemini-1.5-pro-latest` | 2 | 50 | ✅ Stable production model |
+| `gemini-1.5-flash-latest` | 15 | 1,500 | ✅ Good balance of speed and capability |
+| `gemini-1.0-pro` | 15 | 1,500 | Legacy model, use newer versions |
 
 #### Configuration
 
-The workflows default to `gemini-3-pro-latest` for optimal capabilities and performance. To override:
+The workflows default to `gemini-2.0-flash-exp` for optimal capabilities and performance. To override:
 
 **Option 1: Set Repository Variable (Recommended)**
 1. Go to **Settings > Secrets and variables > Actions > Variables**
@@ -341,24 +340,21 @@ The workflows default to `gemini-3-pro-latest` for optimal capabilities and perf
 **Option 2: Edit Workflow Files**
 ```yaml
 # In workflow files:
-gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-latest'' }}'
+gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-2.0-flash-exp'' }}'
 ```
 
 #### Available Models
 
 ```yaml
-# Latest and recommended
-gemini_model: 'gemini-3-pro-latest'       # Latest Gemini 3 Pro model
+# Latest and recommended (experimental)
+gemini_model: 'gemini-2.0-flash-exp'    # Latest Gemini 2.0 experimental - Default
 
-# High RPM (recommended for free tier)
-gemini_model: 'gemini-2.0-flash'        # 15 RPM - Previous default
-gemini_model: 'gemini-2.5-flash-lite'   # 15 RPM, 1000 RPD
+# Stable models
+gemini_model: 'gemini-1.5-pro-latest'   # Stable, production-ready
+gemini_model: 'gemini-1.5-flash-latest' # Fast and efficient
 
-# Balanced
-gemini_model: 'gemini-2.5-flash'        # 10 RPM
-
-# Low RPM (use sparingly)
-gemini_model: 'gemini-2.5-pro'          # 2 RPM only!
+# Legacy models
+gemini_model: 'gemini-1.0-pro'          # Older generation
 ```
 
 **Reference**: [Gemini API Rate Limits](https://ai.google.dev/gemini-api/docs/rate-limits)
@@ -704,7 +700,7 @@ Update your environment and try again (no reload needed if using .env)!
 
 ### Error: Rate Limit Exceeded
 
-If you see rate limit errors, check the [Model Selection and Rate Limits](#b-model-selection-and-rate-limits) section above. The default model (`gemini-3-pro-latest`) provides excellent performance and capabilities.
+If you see rate limit errors, check the [Model Selection and Rate Limits](#b-model-selection-and-rate-limits) section above. The default model (`gemini-2.0-flash-exp`) provides excellent performance and capabilities.
 
 **Solutions:**
 - Wait for rate limit to reset (1 minute)
@@ -732,7 +728,7 @@ Use `/fix` instead if you want automatic execution without approval.
 **Full Error Message:**
 ```
 Permission 'aiplatform.endpoints.predict' denied on resource 
-'//aiplatform.googleapis.com/projects/XXXXX/locations/us-central1/publishers/google/models/gemini-3-pro-latest' 
+'//aiplatform.googleapis.com/projects/XXXXX/locations/us-central1/publishers/google/models/gemini-2.0-flash-exp' 
 (or it may not exist).
 ```
 
