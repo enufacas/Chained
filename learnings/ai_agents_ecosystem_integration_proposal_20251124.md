@@ -78,7 +78,7 @@ Implements security controls based on Anthropic's recommendations
 import json
 import time
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
 
 @dataclass
@@ -120,7 +120,7 @@ class SecurityMonitor:
         self.suspended_agents: set = set()
         self.alerts: List[Dict] = []
         
-    def check_action(self, action: AgentAction) -> tuple[bool, Optional[str]]:
+    def check_action(self, action: AgentAction) -> Tuple[bool, Optional[str]]:
         """
         Validate an action against security policies
         Returns: (allowed, reason_if_denied)
@@ -444,7 +444,7 @@ class AgentMemory:
         elif any(k in memory.keywords for k in ["doc", "document", "readme"]):
             pattern_type = "docs"
         
-        pattern_id = hashlib.md5(memory.solution_summary.encode()).hexdigest()[:8]
+        pattern_id = hashlib.sha256(memory.solution_summary.encode()).hexdigest()[:8]
         
         # Check if pattern exists
         existing = next((p for p in self.pattern_memories if p.pattern_id == pattern_id), None)
