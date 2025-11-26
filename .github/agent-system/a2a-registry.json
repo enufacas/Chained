@@ -49,7 +49,7 @@
       "port": 17519,
       "url": "http://localhost:17519/",
       "card_url": "http://localhost:17519/.well-known/agent-card",
-      "status": "active",
+      "status": "unknown",
       "last_health_check": null,
       "skills": [
         "engineer_master"
@@ -423,7 +423,7 @@
       "port": 28504,
       "url": "http://localhost:28504/",
       "card_url": "http://localhost:28504/.well-known/agent-card",
-      "status": "active",
+      "status": "unknown",
       "last_health_check": null,
       "skills": [
         "secure_specialist"

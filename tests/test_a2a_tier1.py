@@ -12,6 +12,8 @@ import sys
 import time
 from pathlib import Path
 
+import pytest
+
 # Add tools to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -23,6 +25,7 @@ from tools.a2a import (
 )
 
 
+@pytest.mark.asyncio
 async def test_server_startup():
     """Test that agent servers can start and respond."""
     print("=" * 60)
@@ -49,6 +52,7 @@ async def test_server_startup():
     return True
 
 
+@pytest.mark.asyncio
 async def test_discovery_integration():
     """Test that discovery service works with agent servers."""
     print("\n" + "=" * 60)
@@ -76,6 +80,7 @@ async def test_discovery_integration():
     return True
 
 
+@pytest.mark.asyncio
 async def test_client_discovery():
     """Test that client can discover agents."""
     print("\n" + "=" * 60)
@@ -104,6 +109,7 @@ async def test_client_discovery():
     return True
 
 
+@pytest.mark.asyncio
 async def test_tier1_orchestration_simulation():
     """Simulate Tier 1 multi-agent orchestration pattern."""
     print("\n" + "=" * 60)
@@ -150,6 +156,7 @@ async def test_tier1_orchestration_simulation():
     return True
 
 
+@pytest.mark.asyncio
 async def test_performance_estimate():
     """Estimate Tier 1 performance characteristics."""
     print("\n" + "=" * 60)

@@ -9,12 +9,15 @@ import sys
 import tempfile
 from pathlib import Path
 
+import pytest
+
 # Add tools to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from tools.a2a import get_discovery_service, generate_agent_card
 
 
+@pytest.mark.asyncio
 async def test_discovery_registration():
     """Test agent registration in discovery service."""
     print("=" * 60)
@@ -54,6 +57,7 @@ async def test_discovery_registration():
         Path(temp_registry).unlink(missing_ok=True)
 
 
+@pytest.mark.asyncio
 async def test_discovery_skill_search():
     """Test skill-based agent discovery."""
     print("\n" + "=" * 60)
@@ -107,6 +111,7 @@ async def test_discovery_skill_search():
         Path(temp_registry).unlink(missing_ok=True)
 
 
+@pytest.mark.asyncio
 async def test_discovery_auto_register():
     """Test auto-registration of all agents."""
     print("\n" + "=" * 60)
@@ -142,6 +147,7 @@ async def test_discovery_auto_register():
         Path(temp_registry).unlink(missing_ok=True)
 
 
+@pytest.mark.asyncio
 async def test_discovery_persistence():
     """Test that registry persists between service instances."""
     print("\n" + "=" * 60)
