@@ -95,16 +95,27 @@ echo ""
 echo "STEP 4: Handle draft status..."
 if [ "${is_draft}" = "true" ]; then
     echo "  ⚠️  PR is draft - marking as ready (required for auto-merge)..."
+    echo "  → Original mergeable status: ${mergeable}"
+    
     if gh pr ready "${PR_NUM}" 2>/dev/null; then
         echo "  → Marked as ready successfully"
         echo "  → Waiting 2 seconds for GitHub to update merge status..."
         sleep 2
         # Re-fetch mergeable status after marking ready
-        mergeable=$(gh pr view "$PR_NUM" --json mergeable --jq -r '.mergeable')
-        echo "  → Updated mergeable status: ${mergeable}"
+        mergeable_after=$(gh pr view "$PR_NUM" --json mergeable --jq -r '.mergeable')
+        echo "  → Updated mergeable status: ${mergeable_after}"
+        
+        # Update mergeable variable for next check
+        mergeable="$mergeable_after"
     else
-        echo "  ⚠️  Failed to mark ready (may already be ready)"
-        # Continue anyway - it might already be ready
+        # Verify if it's already ready (expected) or an actual error
+        is_still_draft=$(gh pr view "$PR_NUM" --json isDraft --jq -r '.isDraft')
+        if [ "$is_still_draft" = "false" ]; then
+            echo "  ℹ️  PR was already marked ready (no action needed)"
+        else
+            echo "  ⚠️  Failed to mark ready - possible network/permission issue"
+            echo "  → Continuing with existing status: ${mergeable}"
+        fi
     fi
 else
     echo "  ✅ PASS: Not a draft (no action needed)"
