@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-11-26T16:26:20.855332",
+  "last_updated": "2025-11-26T18:22:30.925050",
   "runs": {
-    "total_runs": 36,
-    "successful_runs": 36,
+    "total_runs": 38,
+    "successful_runs": 38,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-11-26T16:26:20.855357",
@@ -25,12 +25,12 @@
   "issue_patterns": {
     "total_issues_processed": 8,
     "agents_assigned": {
-      "edge-cases-pro": 16777216,
-      "coach-master": 16777216,
-      "construct-specialist": 16777216,
-      "create-guru": 50331648,
-      "investigate-champion": 16777216,
-      "troubleshoot-expert": 16777216
+      "edge-cases-pro": 67108864,
+      "coach-master": 67108864,
+      "construct-specialist": 67108864,
+      "create-guru": 201326592,
+      "investigate-champion": 67108864,
+      "troubleshoot-expert": 67108864
     },
     "agent_success_rates": {},
     "assignment_times": [
@@ -1732,14 +1732,6 @@
   },
   "learnings": {
     "insights": [
-      {
-        "timestamp": "2025-11-23T20:29:43.850650Z",
-        "insight": "Most PRs in this run were pipeline PRs (World Model, Learning, AgentOps) - these follow predictable patterns",
-        "evidence": {
-          "sample_size": 84,
-          "auto_merge_success_rate": 1.0
-        }
-      },
       {
         "timestamp": "2025-11-23T20:29:43.850651Z",
         "insight": "Agent spawn PRs require tech lead review (agents-tech-lead) due to system changes",
