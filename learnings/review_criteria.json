@@ -1,0 +1,88 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-25T20:23:29.871892+00:00",
+  "criteria": [
+    {
+      "name": "code_complexity",
+      "description": "Measures code complexity and maintainability",
+      "weight": 0.24999999999999994,
+      "threshold": 0.57,
+      "patterns": [
+        "def \\w+\\([^)]*\\):",
+        "class \\w+"
+      ],
+      "anti_patterns": [
+        "def \\w+\\([^)]{100,}\\):",
+        "if.*if.*if.*if"
+      ],
+      "success_rate": 0.63,
+      "total_evaluations": 1
+    },
+    {
+      "name": "code_style",
+      "description": "Checks for consistent code style and formatting",
+      "weight": 0.15,
+      "threshold": 0.6649999999999999,
+      "patterns": [
+        "^import \\w+$",
+        "^from \\w+ import"
+      ],
+      "anti_patterns": [
+        "import \\*",
+        "\\s{4,}\\w"
+      ],
+      "success_rate": 0.7200000000000001,
+      "total_evaluations": 1
+    },
+    {
+      "name": "documentation",
+      "description": "Ensures adequate documentation and comments",
+      "weight": 0.19999999999999998,
+      "threshold": 0.475,
+      "patterns": [
+        "\"\"\".*?\"\"\"",
+        "#\\s+\\w+",
+        "^def \\w+\\([^)]*\\):\\s*\\n\\s*\\\"\\\"\\\""
+      ],
+      "anti_patterns": [
+        "TODO|FIXME|XXX"
+      ],
+      "success_rate": 0.675,
+      "total_evaluations": 1
+    },
+    {
+      "name": "test_coverage",
+      "description": "Checks for adequate test coverage",
+      "weight": 0.19999999999999998,
+      "threshold": 0.57,
+      "patterns": [
+        "def test_\\w+",
+        "class Test\\w+",
+        "assert\\s+"
+      ],
+      "anti_patterns": [
+        "pass\\s*#.*test"
+      ],
+      "success_rate": 0.765,
+      "total_evaluations": 1
+    },
+    {
+      "name": "security",
+      "description": "Identifies potential security issues",
+      "weight": 0.19999999999999998,
+      "threshold": 0.76,
+      "patterns": [
+        "input\\(.*\\)",
+        "os\\.environ\\.get\\("
+      ],
+      "anti_patterns": [
+        "eval\\(",
+        "exec\\(",
+        "os\\.system\\(",
+        "subprocess\\.call\\(.+shell=True"
+      ],
+      "success_rate": 0.81,
+      "total_evaluations": 1
+    }
+  ]
+}
