@@ -1,0 +1,298 @@
+# =============================================================================
+# Chained GCP Infrastructure - CI/CD Pipeline
+# =============================================================================
+# This workflow builds and deploys the Chained infrastructure to GCP.
+#
+# Triggers:
+# - Push to main branch (auto-deploy to dev)
+# - Manual workflow dispatch (choose environment)
+#
+# Required Secrets (see docs/guides/GCP_SETUP_GUIDE.md):
+# - GCP_PROJECT_ID: Your GCP project ID
+# - GCP_SA_KEY: Service account key JSON (or use Workload Identity)
+# - GCP_REGION: Deployment region (default: us-central1)
+# =============================================================================
+
+name: Deploy GCP Infrastructure
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/deploy-gcp-infrastructure.yml'
+  
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+      
+      deploy_terraform:
+        description: 'Deploy Terraform infrastructure'
+        required: true
+        default: true
+        type: boolean
+      
+      deploy_services:
+        description: 'Build and deploy container services'
+        required: true
+        default: true
+        type: boolean
+
+env:
+  GCP_REGION: ${{ secrets.GCP_REGION || 'us-central1' }}
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  TERRAFORM_VERSION: '1.6.0'
+
+jobs:
+  # ===========================================================================
+  # Validation Job
+  # ===========================================================================
+  validate:
+    name: Validate Configuration
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy_terraform: ${{ steps.check.outputs.terraform }}
+      should_deploy_services: ${{ steps.check.outputs.services }}
+      environment: ${{ steps.check.outputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check deployment flags
+        id: check
+        run: |
+          # Determine what to deploy based on trigger
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "terraform=${{ github.event.inputs.deploy_terraform }}" >> $GITHUB_OUTPUT
+            echo "services=${{ github.event.inputs.deploy_services }}" >> $GITHUB_OUTPUT
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          else
+            # Push to main - deploy everything to dev
+            echo "terraform=true" >> $GITHUB_OUTPUT
+            echo "services=true" >> $GITHUB_OUTPUT
+            echo "environment=dev" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Validate secrets
+        run: |
+          if [ -z "${{ secrets.GCP_PROJECT_ID }}" ]; then
+            echo "❌ GCP_PROJECT_ID secret is not set"
+            echo "Please set up the required secrets. See docs/guides/GCP_SETUP_GUIDE.md"
+            exit 1
+          fi
+          
+          if [ -z "${{ secrets.GCP_SA_KEY }}" ]; then
+            echo "❌ GCP_SA_KEY secret is not set"
+            echo "Please set up the required secrets. See docs/guides/GCP_SETUP_GUIDE.md"
+            exit 1
+          fi
+          
+          echo "✅ Required secrets are configured"
+
+  # ===========================================================================
+  # Terraform Infrastructure Job
+  # ===========================================================================
+  terraform:
+    name: Deploy Terraform
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.should_deploy_terraform == 'true'
+    
+    defaults:
+      run:
+        working-directory: infrastructure/terraform
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+      
+      - name: Terraform Init
+        run: terraform init
+      
+      - name: Terraform Validate
+        run: terraform validate
+      
+      - name: Terraform Plan
+        run: |
+          terraform plan \
+            -var="project_id=${{ env.GCP_PROJECT_ID }}" \
+            -var="region=${{ env.GCP_REGION }}" \
+            -var="environment=${{ needs.validate.outputs.environment }}" \
+            -out=tfplan
+      
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        run: terraform apply -auto-approve tfplan
+      
+      - name: Get Terraform Outputs
+        id: outputs
+        run: |
+          echo "website_url=$(terraform output -raw website_url)" >> $GITHUB_OUTPUT
+          echo "agent_gateway_url=$(terraform output -raw agent_gateway_url)" >> $GITHUB_OUTPUT
+          echo "artifact_registry=$(terraform output -raw artifact_registry_repository)" >> $GITHUB_OUTPUT
+      
+      - name: Summary
+        run: |
+          echo "## 🏗️ Terraform Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Resource | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Website URL | ${{ steps.outputs.outputs.website_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Agent Gateway | ${{ steps.outputs.outputs.agent_gateway_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Container Registry | ${{ steps.outputs.outputs.artifact_registry }} |" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Build and Deploy Services Job
+  # ===========================================================================
+  build-deploy:
+    name: Build and Deploy Services
+    runs-on: ubuntu-latest
+    needs: [validate, terraform]
+    if: |
+      always() &&
+      needs.validate.outputs.should_deploy_services == 'true' &&
+      (needs.terraform.result == 'success' || needs.terraform.result == 'skipped')
+    
+    strategy:
+      matrix:
+        service:
+          - name: website
+            path: infrastructure/docker/website
+          - name: agent-gateway
+            path: infrastructure/docker/agent-gateway
+          - name: agent-worker
+            path: infrastructure/docker/agent-worker
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+      
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
+      
+      - name: Build Container Image
+        run: |
+          IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/${{ matrix.service.name }}:${{ github.sha }}"
+          IMAGE_LATEST="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/${{ matrix.service.name }}:latest"
+          
+          docker build -t $IMAGE -t $IMAGE_LATEST ${{ matrix.service.path }}
+          docker push $IMAGE
+          docker push $IMAGE_LATEST
+          
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+      
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy chained-${{ matrix.service.name }} \
+            --image ${{ env.IMAGE }} \
+            --region ${{ env.GCP_REGION }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --memory 512Mi \
+            --cpu 1 \
+            --min-instances 0 \
+            --max-instances 5 \
+            --set-env-vars "ENVIRONMENT=${{ needs.validate.outputs.environment }}"
+      
+      - name: Get Service URL
+        id: url
+        run: |
+          URL=$(gcloud run services describe chained-${{ matrix.service.name }} \
+            --region ${{ env.GCP_REGION }} \
+            --format 'value(status.url)')
+          echo "url=$URL" >> $GITHUB_OUTPUT
+      
+      - name: Summary
+        run: |
+          echo "## 🚀 Service Deployed: ${{ matrix.service.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL:** ${{ steps.url.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image:** ${{ env.IMAGE }}" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Post-Deployment Verification
+  # ===========================================================================
+  verify:
+    name: Verify Deployment
+    runs-on: ubuntu-latest
+    needs: [validate, build-deploy]
+    if: always() && needs.build-deploy.result == 'success'
+    
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+      
+      - name: Verify Services
+        run: |
+          echo "## 🔍 Deployment Verification" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          for service in website agent-gateway agent-worker; do
+            URL=$(gcloud run services describe chained-$service \
+              --region ${{ env.GCP_REGION }} \
+              --format 'value(status.url)' 2>/dev/null || echo "not-found")
+            
+            if [ "$URL" != "not-found" ]; then
+              # Check health endpoint
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL/health" || echo "000")
+              if [ "$STATUS" == "200" ]; then
+                echo "| chained-$service | ✅ Healthy | $URL |" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "| chained-$service | ⚠️ HTTP $STATUS | $URL |" >> $GITHUB_STEP_SUMMARY
+              fi
+            else
+              echo "| chained-$service | ❌ Not Found | - |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+      
+      - name: Final Summary
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "### 📋 Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "1. Visit the website URL to verify the deployment" >> $GITHUB_STEP_SUMMARY
+          echo "2. Test the agent gateway API at /a2a/task" >> $GITHUB_STEP_SUMMARY
+          echo "3. Monitor costs in the GCP Console" >> $GITHUB_STEP_SUMMARY

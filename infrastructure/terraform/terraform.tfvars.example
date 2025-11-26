@@ -1,0 +1,32 @@
+# =============================================================================
+# Chained GCP Infrastructure - Example Variable Values
+# =============================================================================
+# Copy this file to terraform.tfvars and update with your values.
+# DO NOT commit terraform.tfvars with sensitive values to version control.
+# =============================================================================
+
+# Required: Your GCP project ID
+project_id = "your-gcp-project-id"
+
+# Optional: Override default region (us-central1 is recommended for cost)
+region = "us-central1"
+
+# Optional: Environment name
+environment = "dev"
+
+# Optional: Email for infrastructure alerts
+alert_email = "your-email@example.com"
+
+# Optional: Monthly budget for cost alerts (default: $50)
+monthly_budget = 50
+
+# =============================================================================
+# Container Images
+# =============================================================================
+# Leave these empty initially - they'll be populated after first image build
+# Format: REGION-docker.pkg.dev/PROJECT_ID/chained/IMAGE_NAME:TAG
+# =============================================================================
+
+# website_image = "us-central1-docker.pkg.dev/your-project/chained/website:latest"
+# agent_gateway_image = "us-central1-docker.pkg.dev/your-project/chained/agent-gateway:latest"
+# agent_worker_image = "us-central1-docker.pkg.dev/your-project/chained/agent-worker:latest"
