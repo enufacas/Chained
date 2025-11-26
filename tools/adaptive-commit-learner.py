@@ -42,8 +42,17 @@ PATTERN_EVOLUTION_FILE = ANALYSIS_DIR / "pattern_evolution.json"
 # Learning parameters
 LEARNING_RATE_BASE = 0.1
 LEARNING_RATE_DECAY = 0.95
+MIN_LEARNING_RATE = 0.001  # Minimum to prevent underflow
 MIN_PATTERN_CONFIDENCE = 0.6
 PATTERN_EVOLUTION_WINDOW = 90  # days
+
+# Validation thresholds
+VALIDATION_THRESHOLD = 0.9  # 90% - pattern is validated
+INVALIDATION_THRESHOLD = 0.7  # 70% - pattern is invalidated
+
+# Trend calculation parameters
+TREND_WINDOW_SIZE = 6  # Total observations for trend
+TREND_COMPARISON_SIZE = 3  # Recent vs previous comparison size
 
 
 @dataclass
@@ -95,20 +104,34 @@ class AdaptiveCommitLearner:
         self.adaptive_data = self._load_adaptive_data()
         self.evolution_data = self._load_evolution_data()
         
-        # Import base learner dynamically
-        import importlib.util
-        spec = importlib.util.spec_from_file_location(
-            'base_learner', 
-            Path(__file__).parent / 'commit-strategy-learner.py'
-        )
-        learner_module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(learner_module)
-        self.CommitStrategyLearner = learner_module.CommitStrategyLearner
-        
-        self.base_learner = self.CommitStrategyLearner(
-            repo_path=repo_path, 
-            verbose=verbose
-        )
+        # Import base learner dynamically with error handling
+        try:
+            import importlib.util
+            base_learner_path = Path(__file__).parent / 'commit-strategy-learner.py'
+            if not base_learner_path.exists():
+                raise FileNotFoundError(
+                    f"Base learner not found at {base_learner_path}. "
+                    "Please ensure commit-strategy-learner.py is present."
+                )
+            
+            spec = importlib.util.spec_from_file_location(
+                'base_learner', 
+                base_learner_path
+            )
+            learner_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(learner_module)
+            self.CommitStrategyLearner = learner_module.CommitStrategyLearner
+            
+            self.base_learner = self.CommitStrategyLearner(
+                repo_path=repo_path, 
+                verbose=verbose
+            )
+        except Exception as e:
+            self._log(f"Failed to load base learner: {e}", "ERROR")
+            raise RuntimeError(
+                "Cannot initialize adaptive learner without base learner. "
+                "Please ensure commit-strategy-learner.py is available."
+            ) from e
     
     def _log(self, message: str, level: str = "INFO"):
         """Log message if verbose mode enabled"""
@@ -148,28 +171,40 @@ class AdaptiveCommitLearner:
         }
     
     def _save_adaptive_data(self):
-        """Save adaptive learning data"""
+        """Save adaptive learning data with atomic write"""
         self.adaptive_data["last_updated"] = datetime.now(timezone.utc).isoformat()
         LEARNINGS_DIR.mkdir(parents=True, exist_ok=True)
         
         temp_file = ADAPTIVE_LEARNINGS_FILE.with_suffix('.json.tmp')
-        with open(temp_file, 'w') as f:
-            json.dump(self.adaptive_data, f, indent=2)
-        temp_file.replace(ADAPTIVE_LEARNINGS_FILE)
-        
-        self._log(f"Saved adaptive data to {ADAPTIVE_LEARNINGS_FILE}")
+        try:
+            with open(temp_file, 'w') as f:
+                json.dump(self.adaptive_data, f, indent=2)
+            # Atomic replace (works on Unix/Linux, careful on Windows)
+            temp_file.replace(ADAPTIVE_LEARNINGS_FILE)
+            self._log(f"Saved adaptive data to {ADAPTIVE_LEARNINGS_FILE}")
+        except Exception as e:
+            self._log(f"Error saving adaptive data: {e}", "ERROR")
+            if temp_file.exists():
+                temp_file.unlink()
+            raise
     
     def _save_evolution_data(self):
-        """Save pattern evolution data"""
+        """Save pattern evolution data with atomic write"""
         self.evolution_data["last_updated"] = datetime.now(timezone.utc).isoformat()
         ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
         
         temp_file = PATTERN_EVOLUTION_FILE.with_suffix('.json.tmp')
-        with open(temp_file, 'w') as f:
-            json.dump(self.evolution_data, f, indent=2)
-        temp_file.replace(PATTERN_EVOLUTION_FILE)
-        
-        self._log(f"Saved evolution data to {PATTERN_EVOLUTION_FILE}")
+        try:
+            with open(temp_file, 'w') as f:
+                json.dump(self.evolution_data, f, indent=2)
+            # Atomic replace (works on Unix/Linux, careful on Windows)
+            temp_file.replace(PATTERN_EVOLUTION_FILE)
+            self._log(f"Saved evolution data to {PATTERN_EVOLUTION_FILE}")
+        except Exception as e:
+            self._log(f"Error saving evolution data: {e}", "ERROR")
+            if temp_file.exists():
+                temp_file.unlink()
+            raise
     
     def incremental_learn(self, days_lookback: int = 7) -> Dict[str, Any]:
         """
@@ -191,9 +226,12 @@ class AdaptiveCommitLearner:
             max_commits=100
         )
         
-        # Calculate learning rate for this session
+        # Calculate learning rate for this session with minimum threshold
         session_count = len(self.adaptive_data["learning_sessions"])
-        learning_rate = LEARNING_RATE_BASE * (LEARNING_RATE_DECAY ** session_count)
+        learning_rate = max(
+            LEARNING_RATE_BASE * (LEARNING_RATE_DECAY ** session_count),
+            MIN_LEARNING_RATE
+        )
         
         self._log(f"Learning rate for session {session_count + 1}: {learning_rate:.3f}")
         
@@ -351,11 +389,15 @@ class AdaptiveCommitLearner:
                     "value": occurrence
                 })
                 
-                # Calculate trend (simple: last 3 vs previous 3)
+                # Calculate trend using configured window sizes
                 conf_hist = pattern_evo["confidence_history"]
-                if len(conf_hist) >= 6:
-                    recent_avg = sum(c["value"] for c in conf_hist[-3:]) / 3
-                    previous_avg = sum(c["value"] for c in conf_hist[-6:-3]) / 3
+                if len(conf_hist) >= TREND_WINDOW_SIZE:
+                    recent_avg = sum(
+                        c["value"] for c in conf_hist[-TREND_COMPARISON_SIZE:]
+                    ) / TREND_COMPARISON_SIZE
+                    previous_avg = sum(
+                        c["value"] for c in conf_hist[-TREND_WINDOW_SIZE:-TREND_COMPARISON_SIZE]
+                    ) / TREND_COMPARISON_SIZE
                     
                     if recent_avg > previous_avg * 1.1:
                         pattern_evo["trend"] = "improving"
@@ -406,12 +448,12 @@ class AdaptiveCommitLearner:
                 for pattern_name, pattern_data in patterns_data[pattern_type].items():
                     new_confidence = pattern_data.get("confidence_score", 0.0)
                     
-                    if new_confidence >= current_confidence * 0.9:
+                    if new_confidence >= current_confidence * VALIDATION_THRESHOLD:
                         learning_dict["validation_status"] = "validated"
                         self.adaptive_data["validated_patterns"].append(learning_dict)
                         validated += 1
                         break
-                    elif new_confidence < current_confidence * 0.7:
+                    elif new_confidence < current_confidence * INVALIDATION_THRESHOLD:
                         learning_dict["validation_status"] = "invalidated"
                         self.adaptive_data["invalidated_patterns"].append(learning_dict)
                         invalidated += 1

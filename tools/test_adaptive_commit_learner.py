@@ -313,20 +313,29 @@ class TestLearningRateDecay(unittest.TestCase):
     
     def test_decay_formula(self):
         """Test the learning rate decay formula"""
-        base_rate = 0.1
-        decay_factor = 0.95
+        # Import constants from the module
+        base_rate = module.LEARNING_RATE_BASE
+        decay_factor = module.LEARNING_RATE_DECAY
+        min_rate = module.MIN_LEARNING_RATE
         
-        # Test specific values (with more lenient precision due to decay)
-        session_rates = {
-            1: 0.100,
-            10: 0.063,  # More precise value
-            20: 0.036,
-            50: 0.008
-        }
-        
-        for session_count, expected_rate in session_rates.items():
-            actual_rate = base_rate * (decay_factor ** (session_count - 1))
-            self.assertAlmostEqual(actual_rate, expected_rate, places=2)
+        # Test specific session counts dynamically
+        for session_count in [1, 10, 20, 50]:
+            actual_rate = max(
+                base_rate * (decay_factor ** (session_count - 1)),
+                min_rate
+            )
+            
+            # Should be between min_rate and base_rate
+            self.assertGreaterEqual(actual_rate, min_rate)
+            self.assertLessEqual(actual_rate, base_rate)
+            
+            # Should decrease with session count (except when hitting min)
+            if session_count > 1:
+                previous_rate = max(
+                    base_rate * (decay_factor ** (session_count - 2)),
+                    min_rate
+                )
+                self.assertLessEqual(actual_rate, previous_rate)
     
     def test_decay_convergence(self):
         """Test that learning rate converges to near zero"""

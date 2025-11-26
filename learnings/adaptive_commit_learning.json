@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "last_updated": "2025-11-26T08:26:28.754865+00:00",
+  "last_updated": "2025-11-26T08:32:09.815504+00:00",
   "learning_sessions": [
     {
       "session_id": 1,
@@ -17,6 +17,15 @@
       "days_analyzed": 30,
       "commits_analyzed": 2,
       "learning_rate": 0.095,
+      "new_insights": 0,
+      "patterns_updated": 0
+    },
+    {
+      "session_id": 3,
+      "timestamp": "2025-11-26T08:32:09.815486+00:00",
+      "days_analyzed": 7,
+      "commits_analyzed": 4,
+      "learning_rate": 0.09025,
       "new_insights": 0,
       "patterns_updated": 0
     }

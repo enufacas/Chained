@@ -22,6 +22,11 @@ on:
         required: false
         type: number
         default: 7
+      significant_threshold:
+        description: 'Minimum insights for notification issue'
+        required: false
+        type: number
+        default: 5
 
 permissions:
   contents: write
@@ -240,7 +245,7 @@ PRBODY
           echo "✅ PR created successfully"
 
       - name: Create learning notification issue
-        if: steps.learn.outputs.new_insights > 5  # Only for significant learning sessions
+        if: steps.learn.outputs.new_insights > ${{ github.event.inputs.significant_threshold || '5' }}  # Configurable threshold
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
