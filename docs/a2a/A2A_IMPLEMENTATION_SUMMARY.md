@@ -13,7 +13,7 @@ Successfully implemented the foundational infrastructure for integrating the Age
 ## What Was Built
 
 ### 1. Comprehensive Design Document
-**File**: `docs/A2A_INTEGRATION_DESIGN.md`
+**File**: `docs/a2a/A2A_INTEGRATION_DESIGN.md`
 
 - Complete architecture and component design
 - Data models and API specifications
@@ -297,8 +297,9 @@ requirements.txt                      - Added a2a-sdk dependency
 ## Resources
 
 ### Documentation
-- Design: `docs/A2A_INTEGRATION_DESIGN.md`
-- User Guide: `docs/A2A_INTEGRATION_README.md`
+- Design: `docs/a2a/A2A_INTEGRATION_DESIGN.md`
+- User Guide: `docs/a2a/A2A_INTEGRATION_README.md`
+- Index: `docs/a2a/README.md`
 - A2A Protocol: https://a2a-protocol.org
 - A2A Python SDK: https://github.com/a2aproject/a2a-python
 
