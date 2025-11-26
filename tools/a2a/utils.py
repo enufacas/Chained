@@ -5,7 +5,7 @@ Utility functions for A2A integration.
 import hashlib
 import os
 import socket
-from typing import Optional, Set
+from typing import Optional
 
 
 def get_agent_port(agent_name: str, base_port: int = 9001) -> int:
@@ -74,14 +74,20 @@ def get_available_port(agent_name: str, base_port: int = 9001, max_attempts: int
     """
     # Start with the deterministic port
     port = get_agent_port(agent_name, base_port)
+    initial_port = port
+    max_port = base_port + 50000
     
     for attempt in range(max_attempts):
         if check_port_available(port):
             return port
         # Try next port
         port += 1
-        if port > base_port + 50000:
+        # Wrap around if we exceed max_port, but don't retry initial_port
+        if port > max_port:
             port = base_port
+            # Skip back to initial_port+1 if we've wrapped around
+            if port == initial_port:
+                port = initial_port + 1
     
     raise RuntimeError(f"Could not find available port for {agent_name} after {max_attempts} attempts")
 
