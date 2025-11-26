@@ -92,7 +92,7 @@ jobs:
 
       - name: 'Install dependencies'
         run: |
-          pip install google-generativeai requests
+          pip install google-generativeai requests PyGithub
 
       - name: 'Acknowledge coordination request'
         env:

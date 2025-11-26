@@ -33,7 +33,8 @@ def get_custom_agent_actor_id(repo_owner, repo_name, agent_name):
         ['gh', 'api', 'graphql', '-f', f'query={query}', 
          '-f', f'owner={repo_owner}', '-f', f'repo={repo_name}'],
         capture_output=True,
-        text=True
+        text=True,
+        check=False  # Don't raise on non-zero exit
     )
     
     if result.returncode != 0:
@@ -73,7 +74,8 @@ def assign_agent_to_issue(issue_id, actor_id):
         ['gh', 'api', 'graphql', '-f', f'query={mutation}',
          '-f', f'issueId={issue_id}', '-f', f'actorId={actor_id}'],
         capture_output=True,
-        text=True
+        text=True,
+        check=False  # Don't raise on non-zero exit
     )
     
     return result.returncode == 0
@@ -130,7 +132,7 @@ def main():
 ### A2A Communication
 This task is part of branch-based A2A coordination. 
 
-**A2A-TASK-BRANCH**: `a2a-tasks/{task_id}-{{{{timestamp}}}}`
+**A2A-TASK-BRANCH**: `a2a-tasks/{task_id}-<timestamp>`
 
 When you complete your work, push results to the A2A task branch as `result.json`.
 

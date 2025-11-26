@@ -63,7 +63,7 @@ def main():
 
 ---
 *This is an automated sub-task created by Gemini A2A Coordinator*
-*Workflow Run: ${{{{ github.server_url }}}}/${{{{ github.repository }}}}/actions/runs/${{{{ github.run_id }}}}*"""
+*Workflow Run: https://github.com/{os.getenv('GITHUB_REPOSITORY', '')}/actions/runs/{os.getenv('GITHUB_RUN_ID', 'unknown')}*"""
         
         # Create the sub-issue
         sub_issue = repo.create_issue(
