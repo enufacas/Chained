@@ -148,20 +148,13 @@ else
         if [ "$DRY_RUN" = false ]; then
           if gh pr ready "${PR_NUM}" 2>/dev/null; then
             echo "  → Marked as ready successfully"
-            # Wait 5 seconds for GitHub's merge status calculation
-            # Increased from 3s based on production data showing UNKNOWN
-            # status persisting even after 3s wait
+            # Wait for GitHub's merge status calculation
+            # Give GitHub time to compute merge status after marking ready
             sleep 5
             mergeable=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
             echo "  → Updated mergeable status: ${mergeable}"
             
-            # Retry if still UNKNOWN (GitHub may need more time)
-            if [ "${mergeable}" = "UNKNOWN" ]; then
-              echo "  → Status still UNKNOWN, waiting 3 more seconds..."
-              sleep 3
-              mergeable=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
-              echo "  → Final mergeable status: ${mergeable}"
-            fi
+            # Note: Further UNKNOWN retries happen in Check 5 below
           else
             # Check if already ready
             is_still_draft=$(gh pr view "$PR_NUM" --json isDraft | jq -r '.isDraft')
@@ -179,8 +172,38 @@ else
         echo "  ✅ PASS: Not a draft"
       fi
       
-      # CHECK 5: Mergeable status
+      # CHECK 5: Mergeable status (with retry for UNKNOWN)
       echo "✓ Check 5: Mergeable Status"
+      
+      # Retry logic for UNKNOWN status (GitHub needs time to calculate)
+      if [ "${mergeable}" = "UNKNOWN" ]; then
+        echo "  ⏳ Status is UNKNOWN - GitHub still calculating"
+        echo "     Waiting for merge status to be computed..."
+        
+        max_retries=4
+        retry_count=0
+        wait_times=(5 8 12 15)  # Progressive backoff: 5s, 8s, 12s, 15s = 40s total
+        
+        while [ "${mergeable}" = "UNKNOWN" ] && [ $retry_count -lt $max_retries ]; do
+          wait_time=${wait_times[$retry_count]}
+          echo "     Attempt $((retry_count + 1))/${max_retries}: Waiting ${wait_time}s..."
+          sleep ${wait_time}
+          
+          # Re-fetch mergeable status
+          mergeable=$(gh pr view "$PR_NUM" --json mergeable | jq -r '.mergeable')
+          echo "     → Status after wait: ${mergeable}"
+          
+          retry_count=$((retry_count + 1))
+        done
+        
+        # Final evaluation after retries
+        if [ "${mergeable}" = "UNKNOWN" ]; then
+          echo "  ⚠️  Status still UNKNOWN after ${max_retries} retries (40s total)"
+          echo "     This PR may need more time or manual inspection"
+        fi
+      fi
+      
+      # Now check the final mergeable status
       if [ "${mergeable}" = "MERGEABLE" ]; then
         echo "  ✅ PASS: PR is mergeable"
         
@@ -207,9 +230,10 @@ else
         echo "  ❌ FAIL: ${REASON}"
         ELIGIBLE=false
       elif [ "${mergeable}" = "UNKNOWN" ]; then
-        REASON="Mergeable status is UNKNOWN (GitHub still calculating)"
+        REASON="Mergeable status still UNKNOWN after waiting 40s (GitHub needs more time)"
         echo "  ❌ FAIL: ${REASON}"
-        echo "  Note: Try again in a few seconds"
+        echo "  Note: This PR will be retried in the next run (every 2 hours)"
+        echo "        GitHub may need more time to calculate merge status"
         ELIGIBLE=false
       else
         REASON="Unexpected mergeable status: ${mergeable}"
