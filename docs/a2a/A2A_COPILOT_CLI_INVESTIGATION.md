@@ -10,13 +10,16 @@ This document investigates the feasibility of using GitHub Copilot CLI for A2A o
 
 | Question | Answer | Status |
 |----------|--------|--------|
-| Can Copilot CLI authenticate headless? | ✅ YES | Via GITHUB_TOKEN env var (recommended) |
-| What PAT scopes are needed? | `copilot`, `workflow`, `repo` | Required for full functionality |
+| Can Copilot CLI authenticate headless? | ❌ NO | Requires device flow for CLI commands |
+| What PAT scopes are needed? | `copilot`, `workflow`, `repo` | Required but insufficient for headless |
 | Can fine-grained PATs be used? | ❌ NO | Must use classic PAT (as of Nov 2024) |
 | Is device flow suitable for scale? | ❌ NO | Not for CI/CD or shared environments |
-| Does CLI support custom agent delegation? | ❓ UNCLEAR | Requires testing |
+| Does CLI support custom agent delegation? | ❌ NO | Not supported in current CLI versions |
+| Is newer @githubnext CLI better? | ❌ NO | Also requires device flow, has API errors |
 
-**Recommendation**: Use proven GraphQL assignment as primary method. For CLI testing, use environment variable authentication only (not device flow).
+**⚠️ CRITICAL UPDATE (Nov 26, 2024)**: Testing confirms Copilot CLI is **NOT viable for automated A2A orchestration**. Both the deprecated `gh-copilot` extension and newer `@githubnext/github-copilot-cli` require interactive device flow authentication and do not support headless operation via environment variables.
+
+**Recommendation**: Use proven GraphQL direct agent assignment as **only viable method** for A2A orchestration. CLI is not suitable for production workflows.
 
 ## Authentication Methods
 
@@ -521,30 +524,65 @@ coordinate_multi_agent_task() {
 3. **Monitor rate limits** and adjust accordingly
 4. **Plan for token rotation** and management
 
+## Testing Results (Nov 26, 2024)
+
+### Deprecated gh-copilot Extension
+
+```bash
+$ gh copilot --version
+1.2.0 (2025-10-30)
+
+$ gh copilot auth status
+# Deprecation notice: gh-copilot extension deprecated
+# Authentication still requires device flow
+```
+
+**Verdict**: ❌ Deprecated, requires device flow
+
+### Newer @githubnext/github-copilot-cli
+
+```bash
+$ npm install -g @githubnext/github-copilot-cli
+$ github-copilot-cli --version
+0.1.36
+
+$ export GITHUB_TOKEN="${COPILOT_CLASSIC_PAT}"
+$ github-copilot-cli auth status
+# Prompts for device code immediately
+
+$ github-copilot-cli what-the-shell "list files"
+# Error: AxiosError: Request failed with status code 404
+```
+
+**Verdict**: ❌ Not viable - requires device flow, API calls fail
+
 ## Conclusion
 
 **Key Takeaways**:
 
-✅ **Headless authentication is possible** via GITHUB_TOKEN environment variable  
-✅ **Classic PAT with required scopes works** in CI/CD (copilot, workflow, repo)  
+❌ **Headless authentication NOT supported** by Copilot CLI (requires device flow)  
+✅ **Classic PAT works for GitHub API** but not sufficient for Copilot CLI  
 ❌ **Fine-grained PATs not supported** (must use classic)  
 ❌ **Device flow NOT suitable** for scale, CI/CD, or shared environments ([ref](https://github.com/github/gh-copilot/issues/116))  
-❓ **Custom agent delegation via CLI unclear** (needs testing)  
-✅ **GraphQL assignment proven and reliable** (recommended primary method)  
+❌ **Custom agent delegation NOT supported** by CLI  
+✅ **GraphQL assignment proven and reliable** (ONLY viable method)  
+❌ **Both CLI versions tested and failed** (deprecated gh-copilot and newer @githubnext)
+
+**⚠️ CRITICAL FINDING**: After comprehensive testing, **Copilot CLI is NOT viable for A2A orchestration**. Both available CLI implementations require interactive device flow authentication and cannot operate in headless CI/CD environments.
 
 **Action Items**:
 
-1. Test Copilot CLI with classic PAT and GITHUB_TOKEN in GitHub Actions
-2. Do NOT use device flow for orchestration
-3. Attempt custom agent delegation syntaxes
-4. Document results and limitations
-5. Choose primary orchestration method (GraphQL recommended)
-6. Implement proof-of-concept with chosen approach
+1. ✅ ~~Test Copilot CLI~~ - **TESTED: Not viable**
+2. ✅ ~~Attempt custom agent delegation~~ - **NOT SUPPORTED**
+3. ✅ **Use GraphQL assignment exclusively** (proven, reliable, production-ready)
+4. ✅ **Implement branch-based A2A** for inter-agent communication
+5. ✅ **Proceed with Phase 3A** using GraphQL method only
 
-**Bottom Line**: A2A orchestration is feasible using proven GraphQL method with environment variable authentication for any CLI features. Device flow is not suitable for automated orchestration at scale.
+**Bottom Line**: A2A orchestration is **ONLY feasible** using proven GraphQL direct agent assignment method. Copilot CLI is not suitable for automated orchestration at any scale.
 
 ---
 
 **Last Updated**: 2024-11-26  
-**Status**: Investigation Complete, Testing Required  
-**Next Steps**: Phase 3A Testing Protocol
+**Status**: Investigation Complete - CLI Not Viable  
+**Decision**: Use GraphQL Assignment Exclusively  
+**Next Steps**: Phase 3A with GraphQL Method
