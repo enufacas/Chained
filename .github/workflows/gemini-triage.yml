@@ -161,7 +161,7 @@ jobs:
             echo "Option 1: Enable Vertex AI Permissions (if using GCP API key)"
             echo "  1. Go to Google Cloud Console: https://console.cloud.google.com"
             echo "  2. Navigate to APIs & Services > Credentials"
-            echo "  3. Edit your API key and ensure 'Vertex AI API' is enabled"
+            echo "  3. Edit your API key and ensure 'Vertex AI API' is enabled under API restrictions"
             echo "  4. Go to APIs & Services > Library"
             echo "  5. Enable 'Vertex AI API' if not already enabled"
             echo "  6. Ensure billing is enabled on your GCP project"

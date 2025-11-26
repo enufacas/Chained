@@ -213,9 +213,9 @@ jobs:
             echo "This usually means:"
             echo "  • Your API key doesn't have Vertex AI API enabled"
             echo "  • Your GCP project doesn't have Vertex AI API enabled"
-            echo "  • You need to add the 'Vertex AI User' role"
+            echo "  • Billing is not enabled on your GCP project"
             echo ""
-            echo "Consider switching to Google AI Studio (Option 2 above) for easier setup."
+            echo "See docs/GEMINI_CLI_INTEGRATION.md for detailed troubleshooting."
             exit 1
           fi
           
