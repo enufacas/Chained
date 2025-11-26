@@ -197,20 +197,5 @@ jobs:
           fi
           
           # If not using Vertex AI, show generic error
-          echo "::error title=Gemini CLI Execution Failed::The Gemini CLI encountered an error. Check the 'Run Gemini CLI' step above for details."
-          exit 1
-          elif [[ "$USE_VERTEX_AI" == "true" ]] && echo "$GEMINI_ERRORS" | grep -q "PERMISSION_DENIED"; then
-            echo "::error title=Vertex AI Permission Denied::Your API key was denied access to Vertex AI resources."
-            echo ""
-            echo "This usually means:"
-            echo "  • Your API key doesn't have Vertex AI API enabled"
-            echo "  • Your GCP project doesn't have Vertex AI API enabled"
-            echo "  • Billing is not enabled on your GCP project"
-            echo ""
-            echo "See docs/GEMINI_CLI_INTEGRATION.md for detailed troubleshooting."
-            exit 1
-          fi
-          
-          # If not a Vertex AI permission error, show generic error
           echo "::error title=Gemini CLI Execution Failed::The Gemini CLI encountered an error. Check the 'Run Gemini pull request review' step above for details."
           exit 1
