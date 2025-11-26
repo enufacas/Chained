@@ -154,7 +154,7 @@ jobs:
                 "Implement A/B testing for AI-generated features",
                 "Add a 'what-if' simulator to test ideas before implementation"
               ],
-              "model": "gemini-3-pro-latest"
+              "model": "gemini-3-pro-preview"
             },
             {
               "advice": "Your GitHub Pages integration is excellent! I recommend adding interactive elements where users can guide the AI's learning or suggest improvement areas.",
