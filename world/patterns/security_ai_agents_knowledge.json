@@ -1,0 +1,276 @@
+{
+  "version": "1.0.0",
+  "mission_id": "idea:87",
+  "created_date": "2025-11-26",
+  "created_by": "@engineer-wizard",
+  "topic": "security-ai-agents",
+  "patterns": [
+    {
+      "pattern_id": "agent_identity_management",
+      "category": "security_infrastructure",
+      "type": "identity_and_access",
+      "confidence": 0.95,
+      "source": "Microsoft Security Blog, NIST AI RMF",
+      "description": "Every AI agent must have a unique, verifiable identity with cryptographically signed credentials for audit trails, access control, and trust management",
+      "implementation": {
+        "agent_id": "UUID + cryptographic signature",
+        "least_privilege": "dynamic, context-aware permissions",
+        "authentication": "continuous verification",
+        "audit_logging": "every action traceable"
+      },
+      "applicability": [
+        "autonomous_agent_ecosystems",
+        "multi_agent_collaboration",
+        "enterprise_ai_systems"
+      ],
+      "chained_relevance": 10
+    },
+    {
+      "pattern_id": "zero_trust_agent_architecture",
+      "category": "security_architecture",
+      "type": "network_security",
+      "confidence": 0.90,
+      "source": "AWS, NIST AI RMF",
+      "description": "No implicit trust between agents. Every interaction requires verification. Agents operate in isolated environments with strict boundary controls",
+      "principles": {
+        "never_trust_always_verify": true,
+        "assume_breach": true,
+        "explicit_verification": "required",
+        "least_privilege": "enforced"
+      },
+      "implementation": {
+        "isolation": "sandboxed_execution",
+        "verification": "per_request_authentication",
+        "monitoring": "behavioral_analytics",
+        "response": "automatic_isolation_on_anomaly"
+      },
+      "chained_relevance": 9
+    },
+    {
+      "pattern_id": "prompt_injection_defense",
+      "category": "input_security",
+      "type": "attack_prevention",
+      "confidence": 0.85,
+      "source": "OWASP Agentic AI Security Guide",
+      "description": "Protection against malicious instructions embedded in data through multi-layer validation of all inputs",
+      "attack_vectors": [
+        "direct_prompt_injection",
+        "indirect_prompt_injection",
+        "context_poisoning",
+        "agent_impersonation"
+      ],
+      "defenses": {
+        "input_sanitization": "required",
+        "context_validation": "required",
+        "semantic_analysis": "recommended",
+        "guardrails": "required",
+        "human_oversight": "high_risk_operations"
+      },
+      "chained_relevance": 8
+    },
+    {
+      "pattern_id": "behavioral_guardrails",
+      "category": "operational_security",
+      "type": "behavior_control",
+      "confidence": 0.90,
+      "source": "McKinsey, DextraLabs",
+      "description": "Layered framework of guardrails, permissions, and audit trails to control agent behavior and ensure accountability",
+      "layers": {
+        "guardrails": [
+          "prevent out-of-scope actions",
+          "block harmful behaviors",
+          "enforce ethical boundaries"
+        ],
+        "permissions": [
+          "define allowed operations",
+          "scope resource access",
+          "limit autonomy levels"
+        ],
+        "auditability": [
+          "log all decisions",
+          "trace reasoning chains",
+          "enable forensic review"
+        ]
+      },
+      "autonomy_levels": {
+        "advisory": "no_agency, suggestions_only",
+        "supervised": "requires_human_approval",
+        "autonomous": "operates_independently",
+        "fully_autonomous": "self_directed, high_oversight"
+      },
+      "chained_relevance": 10
+    },
+    {
+      "pattern_id": "continuous_security_monitoring",
+      "category": "operational_security",
+      "type": "threat_detection",
+      "confidence": 0.88,
+      "source": "Industry Best Practices",
+      "description": "Real-time behavioral analytics and anomaly detection for AI agents",
+      "components": {
+        "action_logging": "all agent actions recorded",
+        "behavioral_profiling": "baseline behavior per agent",
+        "anomaly_detection": "statistical deviation detection",
+        "risk_scoring": "dynamic risk assessment"
+      },
+      "alerts": {
+        "info": "normal operations",
+        "warning": "unusual behavior detected",
+        "critical": "immediate intervention required"
+      },
+      "chained_relevance": 9
+    },
+    {
+      "pattern_id": "ai_security_governance",
+      "category": "governance",
+      "type": "compliance",
+      "confidence": 0.85,
+      "source": "EU AI Act, NIST AI RMF, ISO 42001",
+      "description": "Cross-functional governance framework for AI agent security",
+      "requirements": {
+        "risk_management": "continuous assessment",
+        "compliance": "regulatory alignment",
+        "audit_trails": "complete traceability",
+        "incident_response": "defined procedures"
+      },
+      "frameworks": [
+        "NIST AI RMF",
+        "ISO 42001",
+        "EU AI Act",
+        "OWASP Agentic AI"
+      ],
+      "chained_relevance": 7
+    }
+  ],
+  "threat_landscape": {
+    "attack_vectors": [
+      {
+        "name": "prompt_injection",
+        "description": "Malicious instructions embedded in data",
+        "severity": "critical",
+        "mitigation": "input_validation, guardrails"
+      },
+      {
+        "name": "agent_impersonation",
+        "description": "Fake agents in multi-agent systems",
+        "severity": "critical",
+        "mitigation": "cryptographic_identity"
+      },
+      {
+        "name": "model_poisoning",
+        "description": "Corrupting agent's underlying model",
+        "severity": "critical",
+        "mitigation": "model_integrity_checks"
+      },
+      {
+        "name": "data_exfiltration",
+        "description": "Leaking sensitive data through agents",
+        "severity": "high",
+        "mitigation": "data_classification, DLP"
+      },
+      {
+        "name": "privilege_escalation",
+        "description": "Agents gaining unauthorized access",
+        "severity": "high",
+        "mitigation": "least_privilege, monitoring"
+      },
+      {
+        "name": "emergent_behavior",
+        "description": "Unintended behaviors from agent collaboration",
+        "severity": "high",
+        "mitigation": "behavioral_analytics"
+      }
+    ]
+  },
+  "industry_trends": {
+    "mentions": 212,
+    "date_range": "2024-11 to 2025-11",
+    "key_players": [
+      {
+        "name": "Microsoft",
+        "product": "Security Copilot",
+        "focus": "AI agents for security operations"
+      },
+      {
+        "name": "AWS",
+        "product": "Agentic AI Security Scoping Matrix",
+        "focus": "Autonomy scoping framework"
+      },
+      {
+        "name": "OWASP",
+        "product": "Agentic AI Security Guide",
+        "focus": "Open-source security best practices"
+      },
+      {
+        "name": "McKinsey",
+        "product": "Agentic AI Security Playbook",
+        "focus": "Governance and risk management"
+      }
+    ],
+    "emerging_technologies": [
+      "AI-powered threat hunting",
+      "Federated security models",
+      "Behavioral fingerprinting",
+      "Quantum-resistant cryptography"
+    ]
+  },
+  "predictions": [
+    {
+      "prediction": "AI security agents become standard",
+      "confidence": 0.90,
+      "timeline": "2025"
+    },
+    {
+      "prediction": "Zero Trust required for all AI systems",
+      "confidence": 0.85,
+      "timeline": "2025-2026"
+    },
+    {
+      "prediction": "Automated compliance verification",
+      "confidence": 0.80,
+      "timeline": "2026"
+    },
+    {
+      "prediction": "AI-vs-AI security battles escalate",
+      "confidence": 0.75,
+      "timeline": "2025-2027"
+    },
+    {
+      "prediction": "Behavioral biometrics for agents",
+      "confidence": 0.70,
+      "timeline": "2026-2027"
+    }
+  ],
+  "chained_integration": {
+    "overall_relevance": 10,
+    "applicable_systems": [
+      "agent_system",
+      "ai_system",
+      "workflow_automation"
+    ],
+    "priority": "high",
+    "recommended_actions": [
+      "Implement AgentSecurityIdentity system",
+      "Add behavioral guardrails",
+      "Enable continuous monitoring",
+      "Update universal truths with security patterns"
+    ]
+  },
+  "geographic_data": {
+    "primary_location": "US:San Francisco",
+    "key_regions": [
+      {
+        "region": "US:San Francisco",
+        "focus": "AI security innovation hub"
+      },
+      {
+        "region": "US:Seattle",
+        "focus": "Cloud security (AWS, Microsoft)"
+      },
+      {
+        "region": "EU:Brussels",
+        "focus": "Regulatory frameworks (EU AI Act)"
+      }
+    ]
+  }
+}
