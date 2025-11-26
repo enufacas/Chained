@@ -113,34 +113,91 @@ jobs:
 
 ### 5. PR Review Automation
 
-Add commit quality checks to PR reviews:
+Add commit quality checks to PR reviews using the built-in validation:
 
 ```python
 # In auto-review-merge workflow
 learner = CommitStrategyLearner()
 
-# Analyze PR commits
+# Analyze PR commits using the validate_commit method
 pr_commits = get_pr_commits(pr_number)
 issues = []
 
 for commit in pr_commits:
-    metrics = learner._get_commit_metrics(commit.sha)
+    result = learner.validate_commit(
+        message=commit.message,
+        files_changed=commit.files_changed,
+        lines_changed=commit.lines_changed
+    )
     
-    # Check message quality
-    if not metrics.follows_conventional:
-        issues.append(f"Commit {commit.sha[:7]} doesn't follow conventional format")
-    
-    # Check commit size
-    if metrics.files_changed > 15:
-        issues.append(f"Commit {commit.sha[:7]} changes too many files ({metrics.files_changed})")
-    
-    # Check message length
-    if metrics.message_length < 10:
-        issues.append(f"Commit {commit.sha[:7]} has too short message")
+    if result['status'] == 'needs_improvement':
+        issues.append(f"Commit {commit.sha[:7]}: {result['status']} (score: {result['score']})")
+        for issue in result['issues']:
+            issues.append(f"  - {issue['message']}")
 
 # Add review comments if issues found
 if issues:
     add_review_comment("### Commit Quality Issues\n\n" + "\n".join(f"- {i}" for i in issues))
+```
+
+### 6. Pre-Commit Validation Hook
+
+Use the validation feature in a pre-commit hook:
+
+```bash
+#!/bin/bash
+# .git/hooks/commit-msg
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Validate the commit message
+result=$(python tools/commit-strategy-learner.py --validate "$COMMIT_MSG" --json)
+status=$(echo "$result" | jq -r '.status')
+
+if [ "$status" = "needs_improvement" ]; then
+    echo "⚠️  Commit message needs improvement:"
+    echo "$result" | jq -r '.issues[] | "  - " + .message'
+    echo ""
+    echo "💡 Suggestions:"
+    echo "$result" | jq -r '.suggestions[] | "  • " + .'
+    exit 1
+fi
+
+echo "✅ Commit message validated successfully"
+exit 0
+```
+
+### 7. CI/CD Commit Validation
+
+Add commit validation to your CI/CD pipeline:
+
+```yaml
+# .github/workflows/validate-commits.yml
+name: Validate Commits
+on: pull_request
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Validate PR commits
+        run: |
+          for commit in $(git log origin/main..HEAD --format=%H); do
+            msg=$(git log -1 --format=%B "$commit")
+            files=$(git diff-tree --no-commit-id --name-only -r "$commit" | wc -l)
+            lines=$(git diff-tree --no-commit-id --stat "$commit" | tail -1 | grep -oE '[0-9]+' | paste -sd+ | bc 2>/dev/null || echo 0)
+            
+            python tools/commit-strategy-learner.py --validate "$msg" --files $files --lines $lines || {
+              echo "❌ Commit $commit failed validation"
+              exit 1
+            }
+          done
+          echo "✅ All commits validated successfully"
 ```
 
 ## Data Flow
@@ -174,12 +231,13 @@ if issues:
 │  Generation             │
 └────────┬────────────────┘
          │
-         ├──────────────────┐
-         │                  │
-         ▼                  ▼
-┌─────────────────┐  ┌─────────────────┐
-│  Agent System   │  │  PR Reviews     │
-└─────────────────┘  └─────────────────┘
+         ├──────────────────┬───────────────┐
+         │                  │               │
+         ▼                  ▼               ▼
+┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+│  Agent System   │  │  PR Reviews     │  │  Pre-Commit     │
+└─────────────────┘  └─────────────────┘  │  Validation     │
+                                          └─────────────────┘
 ```
 
 ## Database Schema
@@ -261,6 +319,31 @@ report_text = learner.generate_report(
     output_file="analysis/report.md"  # Optional output file
 )
 # Returns: str (markdown report)
+```
+
+##### validate_commit()
+```python
+result = learner.validate_commit(
+    message="feat: add feature",     # Commit message to validate
+    files_changed=5,                 # Number of files (optional)
+    lines_changed=100,               # Lines added/deleted (optional)
+    file_types=["py", "md"]          # File extensions (optional)
+)
+# Returns: {
+#     "status": "excellent|good|acceptable|needs_improvement",
+#     "score": 0-100,
+#     "issues": [{"type": str, "severity": str, "message": str, "suggestion": str}],
+#     "suggestions": [str],
+#     "applicable_patterns": [{"name": str, "success_rate": float}]
+# }
+```
+
+##### analyze_trends()
+```python
+trends = learner.analyze_trends(
+    period_days=30      # Analysis period
+)
+# Returns: {"overall_trend": str, "trends": dict, "status": str}
 ```
 
 ## Best Practices

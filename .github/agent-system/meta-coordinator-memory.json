@@ -1,17 +1,17 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-11-26T02:09:13.457262",
+  "last_updated": "2025-11-26T16:26:20.855332",
   "runs": {
-    "total_runs": 33,
-    "successful_runs": 33,
+    "total_runs": 36,
+    "successful_runs": 36,
     "failed_runs": 0,
     "last_run": {
-      "timestamp": "2025-11-25T16:24:00.747465",
+      "timestamp": "2025-11-26T16:26:20.855357",
       "success": true,
       "duration_seconds": 180,
-      "actions_taken": 10,
-      "session_id": "meta-coord-16-17"
+      "actions_taken": 8,
+      "session_id": "meta-coord-16-19"
     },
     "average_duration_seconds": 139.375
   },
@@ -25,12 +25,12 @@
   "issue_patterns": {
     "total_issues_processed": 8,
     "agents_assigned": {
-      "edge-cases-pro": 4194304,
-      "coach-master": 4194304,
-      "construct-specialist": 4194304,
-      "create-guru": 12582912,
-      "investigate-champion": 4194304,
-      "troubleshoot-expert": 4194304
+      "edge-cases-pro": 16777216,
+      "coach-master": 16777216,
+      "construct-specialist": 16777216,
+      "create-guru": 50331648,
+      "investigate-champion": 16777216,
+      "troubleshoot-expert": 16777216
     },
     "agent_success_rates": {},
     "assignment_times": [
@@ -2149,6 +2149,16 @@
         },
         "timestamp": "2025-11-25T08:26:23.952458",
         "session_id": "b7d54eca2e4e6a4a"
+      },
+      {
+        "timestamp": "2025-11-26T16:26:20.855364",
+        "insight": "Aggressive 3-hour conflict cleanup reduces open PR count significantly - 8 PRs cleaned in one run",
+        "evidence": {
+          "prs_closed": 8,
+          "time_threshold": "3 hours",
+          "pr_reduction": "42.1%"
+        },
+        "session_id": "meta-coord-16-19"
       }
     ],
     "recommendations": []
@@ -2169,9 +2179,9 @@
     "snapshots": [],
     "open_pr_trend": [],
     "open_issue_trend": [],
-    "prs_closed_count": 0,
+    "prs_closed_count": 8,
     "issues_closed_count": 0,
-    "stale_prs_closed": 0,
+    "stale_prs_closed": 8,
     "baseline_open_prs": null,
     "baseline_open_issues": null
   },
@@ -2193,6 +2203,16 @@
       "open_issues_after": 3,
       "prs_merged": 2,
       "items_cleaned": 4
+    },
+    {
+      "timestamp": "2025-11-26T16:26:20.855339Z",
+      "open_prs_before": 19,
+      "open_prs_after": 11,
+      "open_issues_before": 14,
+      "open_issues_after": 14,
+      "prs_merged": 0,
+      "items_cleaned": 8,
+      "coordination_issue": 3158
     }
   ],
   "auto_merges": [
@@ -2245,6 +2265,48 @@
       "pr": 2974,
       "timestamp": "2025-11-25T16:24:00.747484",
       "title": "Merged in 16:17 coordination run"
+    }
+  ],
+  "stale_closures": [
+    {
+      "pr": 3133,
+      "timestamp": "2025-11-26T16:26:20.855342",
+      "reason": "merge_conflicts_over_3h"
+    },
+    {
+      "pr": 3132,
+      "timestamp": "2025-11-26T16:26:20.855344",
+      "reason": "merge_conflicts_over_3h"
+    },
+    {
+      "pr": 3125,
+      "timestamp": "2025-11-26T16:26:20.855345",
+      "reason": "merge_conflicts_over_3h"
+    },
+    {
+      "pr": 3123,
+      "timestamp": "2025-11-26T16:26:20.855346",
+      "reason": "merge_conflicts_over_3h"
+    },
+    {
+      "pr": 3102,
+      "timestamp": "2025-11-26T16:26:20.855347",
+      "reason": "merge_conflicts_over_3h"
+    },
+    {
+      "pr": 3096,
+      "timestamp": "2025-11-26T16:26:20.855348",
+      "reason": "merge_conflicts_over_3h"
+    },
+    {
+      "pr": 3079,
+      "timestamp": "2025-11-26T16:26:20.855348",
+      "reason": "merge_conflicts_over_3h"
+    },
+    {
+      "pr": 3139,
+      "timestamp": "2025-11-26T16:26:20.855352",
+      "reason": "merge_conflicts_over_3h"
     }
   ]
 }

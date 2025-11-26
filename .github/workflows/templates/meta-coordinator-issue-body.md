@@ -18,13 +18,17 @@
 
 ### 📊 System State (From Workflow)
 
+**Auto-Merge Completed (Phase 1):** ${AUTOMERGE_MERGED} PRs merged
+- Processed: ${AUTOMERGE_PROCESSED}
+- Failed: ${AUTOMERGE_FAILED}
+
 **Stale PRs Closed (Phase 0):** ${CLEANUP_TOTAL}
 - Merge conflicts: ${CLEANUP_CONFLICTS}
 - No activity: ${CLEANUP_NO_ACTIVITY}
 - Orphaned: ${CLEANUP_ORPHANED}
 - Abandoned draft: ${CLEANUP_DRAFT}
 
-**Current PR States:**
+**Current PR States (after workflow automation):**
 - ✅ Mergeable (non-draft): ${MERGEABLE_PRS}
 - ❌ Conflicting: ${CONFLICTING_PRS}
 - 📝 Draft: ${DRAFT_PRS}
@@ -38,15 +42,15 @@
 
 ### 🎯 Your Mission
 
-**@meta-coordinator-system** - Orchestrate the complete system across all responsibilities defined in your agent profile.
+**@meta-coordinator-system** - Orchestrate remaining coordination tasks. **Note:** Cleanup and auto-merge are now handled by the workflow before your session.
 
-**Core Responsibilities (see agent definition for details):**
-1. **Session Lifecycle & Cleanup** - Merge previous memory PR, close stale PRs
+**Core Responsibilities:**
+1. ~~**Session Lifecycle & Cleanup**~~ - **✅ DONE by workflow Phase 0**
 2. **PR Review Orchestration** - Assign reviewers where needed
-3. **Feedback Issues** - Create issues for change requests
+3. **Feedback Issues** - Create issues for change requests  
 4. **Agent Assignment** - Assign agents to open issues
 5. **Review Cycles** - Manage re-reviews and approvals
-6. **Auto-Merge** - Merge eligible approved PRs
+6. ~~**Auto-Merge**~~ - **✅ DONE by workflow Phase 1**
 7. **Memory & Learning** - Track metrics and persist insights
 
 **Critical Success Metrics:**

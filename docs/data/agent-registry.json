@@ -908,7 +908,8 @@
       "agents-tech-lead",
       "workflows-tech-lead",
       "docs-tech-lead",
-      "github-pages-tech-lead"
+      "github-pages-tech-lead",
+      "a2a-coordinator"
     ],
     "_comment_protected_tech_leads": "Tech leads (ending in -tech-lead) are excluded from initial issue assignment to prevent dominating assignments. Tech lead review is handled separately via PR-based workflows. See match-issue-to-agent.py for implementation.",
     "strict_pr_attribution": true,

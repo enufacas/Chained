@@ -191,5 +191,5 @@ Both are correct for their respective contexts. The current implementation is pr
 
 - **Current Transports:** `tools/a2a/github_transport.py`, `tools/a2a/github_branch_transport.py`
 - **MCP Design:** `tools/a2a/mcp_transport.py` (conceptual)
-- **Architecture:** `docs/A2A_GITHUB_RUNNERS_ARCHITECTURE.md`
-- **Transport Comparison:** `docs/A2A_TRANSPORT_COMPARISON.md`
+- **Architecture:** `docs/a2a/A2A_GITHUB_RUNNERS_ARCHITECTURE.md`
+- **Transport Comparison:** `docs/a2a/A2A_TRANSPORT_COMPARISON.md`

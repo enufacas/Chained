@@ -49,7 +49,7 @@ from .discovery import get_discovery_service, DiscoveryService, AgentRegistry
 from .github_transport import GitHubA2ATransport, send_task_via_github, wait_for_task_completion
 from .github_branch_transport import GitHubBranchTransport, send_task_via_branch, wait_for_task_completion_branch
 from .mcp_transport import MCPTransport, MCPTransportTask
-from .utils import get_agent_port, get_discovery_url
+from .utils import get_agent_port, get_discovery_url, check_port_available, get_available_port
 
 __all__ = [
     # Agent cards
@@ -83,4 +83,6 @@ __all__ = [
     # Utils
     "get_agent_port",
     "get_discovery_url",
+    "check_port_available",
+    "get_available_port",
 ]
