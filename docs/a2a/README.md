@@ -8,6 +8,7 @@ This directory contains all documentation related to the Agent2Agent (A2A) Proto
 
 ### Quick Start
 - **[A2A_INTEGRATION_README.md](./A2A_INTEGRATION_README.md)** - Quick start guide, examples, and basic usage
+- **[A2A_COPILOT_SESSIONS_EXPLAINED.md](./A2A_COPILOT_SESSIONS_EXPLAINED.md)** - 📘 **How Copilot sessions interact with A2A framework**
 
 ### Architecture & Design
 - **[A2A_GITHUB_RUNNERS_ARCHITECTURE.md](./A2A_GITHUB_RUNNERS_ARCHITECTURE.md)** - Core architecture for running A2A on GitHub Actions runners, three-tier design
