@@ -1,4 +1,4 @@
-name: A2A Agent Worker
+name: a2a Agent Worker
 
 # This workflow implements Tier 2 A2A: cross-runner agent communication
 # using GitHub Issues as a message bus.
@@ -95,14 +95,13 @@ jobs:
         run: |
           echo "✅ Acknowledging task..."
           
-          gh issue comment ${{ steps.issue.outputs.number }} \
-            --body "🤖 **Agent ${{ steps.parse_task.outputs.agent }} starting work**
+          gh issue comment ${{ steps.issue.outputs.number }} --body "🤖 **Agent ${{ steps.parse_task.outputs.agent }} starting work**
 
-**Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})  
-**Started:** $(date -u +%Y-%m-%dT%H:%M:%SZ)
+          **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          **Started:** $(date -u +%Y-%m-%dT%H:%M:%SZ)
 
----
-*This comment was posted by the A2A agent worker*"
+          ---
+          *This comment was posted by the A2A agent worker*"
           
           # Update status label
           python3 << 'EOF'
@@ -251,20 +250,19 @@ jobs:
             icon="❌"
           fi
           
-          gh issue comment ${{ steps.issue.outputs.number }} \
-            --body "$icon **Task $status**
-
-**Agent:** ${{ steps.parse_task.outputs.agent }}  
-**Completed:** $(date -u +%Y-%m-%dT%H:%M:%SZ)
-
-### A2A Result
-
-\`\`\`json
-$result
-\`\`\`
-
----
-*Posted by A2A agent worker*"
+          gh issue comment ${{ steps.issue.outputs.number }} --body "$icon **Task $status**
+          
+          **Agent:** ${{ steps.parse_task.outputs.agent }}
+          **Completed:** $(date -u +%Y-%m-%dT%H:%M:%SZ)
+          
+          ### A2A Result
+          
+          \`\`\`json
+          $result
+          \`\`\`
+          
+          ---
+          *Posted by A2A agent worker*"
           
           # Update status label
           python3 << 'EOF'
