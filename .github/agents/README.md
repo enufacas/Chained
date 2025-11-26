@@ -69,6 +69,9 @@ Specialized in engineering APIs. Inspired by Margaret Hamilton - rigorous and in
 ### ⚙️ [engineer-wizard.md](./engineer-wizard.md)
 Specialized in engineering APIs. Inspired by Nikola Tesla - inventive and visionary, with extra enthusiasm. Focuses on features, infrastructure, and tools.
 
+### 🌟 [gemini-specialist.md](./gemini-specialist.md)
+Specialized in Google Gemini API and Vertex AI integrations. Expert in Gemini workflows (dispatch, invoke, review, triage, fix), Google AI Studio, and GenAI automation. Focuses on Gemini CLI, API configuration, and Google Cloud AI services.
+
 ### 🔍 [investigate-champion.md](./investigate-champion.md)
 Specialized in investigating metrics. Inspired by Ada Lovelace - visionary and analytical, with occasional wit. Focuses on code patterns, data flows, and dependencies.
 
