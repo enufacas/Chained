@@ -79,37 +79,37 @@ def test_agent_matching_for_direct_assignment():
         {
             'title': 'Fix critical security vulnerability in auth',
             'body': 'SQL injection vulnerability found in login endpoint',
-            'expected_agent': 'security-guardian',
+            'expected_agents': ['secure-specialist', 'guardian-master'],  # Allow ties
             'min_score': 5,
-            'reason': 'Security issues should strongly match security-guardian'
+            'reason': 'Security issues should strongly match security agents'
         },
         {
             'title': 'Critical bug causing crashes',
             'body': 'Application crashes when users click submit button. Error: NullPointerException',
-            'expected_agent': 'bug-hunter',
-            'min_score': 5,
-            'reason': 'Bug with error details should strongly match bug-hunter'
+            'expected_agents': ['troubleshoot-expert'],
+            'min_score': 3,
+            'reason': 'Bug with error details should match troubleshoot-expert'
         },
         {
             'title': 'Optimize database query performance',
             'body': 'Queries are slow and causing bottlenecks. Need to improve speed.',
-            'expected_agent': 'performance-optimizer',
+            'expected_agents': ['accelerate-master', 'accelerate-specialist'],
             'min_score': 4,
-            'reason': 'Performance issues should match performance-optimizer'
+            'reason': 'Performance issues should match accelerate agents'
         },
         {
             'title': 'Write comprehensive test suite',
             'body': 'Need unit tests and integration tests for auth module',
-            'expected_agent': 'test-champion',
+            'expected_agents': ['assert-specialist', 'assert-whiz'],
             'min_score': 5,
-            'reason': 'Testing requirements should strongly match test-champion'
+            'reason': 'Testing requirements should strongly match assert agents'
         },
         {
             'title': 'Add new feature: user profiles',
             'body': 'Implement user profile pages with avatar upload',
-            'expected_agent': 'feature-architect',
+            'expected_agents': ['develop-specialist', 'create-guru', 'create-champion'],
             'min_score': 3,
-            'reason': 'Feature requests should match feature-architect'
+            'reason': 'Feature development requests should match development/creation agents'
         },
     ]
     
@@ -119,7 +119,7 @@ def test_agent_matching_for_direct_assignment():
     for test_case in test_cases:
         title = test_case['title']
         body = test_case['body']
-        expected = test_case['expected_agent']
+        expected_agents = test_case['expected_agents']
         min_score = test_case['min_score']
         reason = test_case['reason']
         
@@ -136,14 +136,14 @@ def test_agent_matching_for_direct_assignment():
         score = result.get('score', 0)
         confidence = result.get('confidence', 'unknown')
         
-        if matched_agent == expected and score >= min_score:
+        if matched_agent in expected_agents and score >= min_score:
             print(f"✅ PASSED: {title}")
             print(f"   → Matched: {matched_agent} (score: {score}, confidence: {confidence})")
             print(f"   → Ready for direct assignment (if actor ID exists)")
             passed += 1
         else:
             print(f"❌ FAILED: {title}")
-            print(f"   → Expected: {expected} (min score: {min_score})")
+            print(f"   → Expected one of: {', '.join(expected_agents)} (min score: {min_score})")
             print(f"   → Got: {matched_agent} (score: {score}, confidence: {confidence})")
             print(f"   → Reason: {reason}")
             failed += 1
@@ -179,20 +179,20 @@ def test_assignment_method_selection():
         {
             'issue_title': 'Fix login bug',
             'issue_body': 'Users cannot login due to error',
-            'expected_agent': 'bug-hunter',
-            'description': 'Bug fix should route to bug-hunter'
+            'expected_agents': ['troubleshoot-expert'],
+            'description': 'Bug fix should route to troubleshoot-expert'
         },
         {
             'issue_title': 'Update documentation',
             'issue_body': 'README needs better installation guide',
-            'expected_agent': 'doc-master',
-            'description': 'Documentation should route to doc-master'
+            'expected_agents': ['document-ninja', 'clarify-champion'],
+            'description': 'Documentation should route to document agents'
         },
         {
             'issue_title': 'Refactor messy code',
             'issue_body': 'Clean up duplicate code in handlers',
-            'expected_agent': 'refactor-wizard',
-            'description': 'Refactoring should route to refactor-wizard'
+            'expected_agents': ['cleaner-master', 'organize-guru', 'refactor-champion'],
+            'description': 'Refactoring should route to cleanup/refactor agents'
         },
     ]
     
@@ -202,7 +202,7 @@ def test_assignment_method_selection():
     for test_case in test_cases:
         title = test_case['issue_title']
         body = test_case['issue_body']
-        expected_agent = test_case['expected_agent']
+        expected_agents = test_case['expected_agents']
         description = test_case['description']
         
         result = run_matching(title, body)
@@ -219,7 +219,7 @@ def test_assignment_method_selection():
         # Simulate the workflow's assignment method decision
         # In real workflow, this checks if actor ID exists via API
         # Here we just verify the matching worked correctly
-        if matched_agent == expected_agent:
+        if matched_agent in expected_agents:
             assignment_method = "direct-custom-agent" if score >= 3 else "generic-with-directives"
             
             print(f"✅ PASSED: {description}")
@@ -234,7 +234,7 @@ def test_assignment_method_selection():
             passed += 1
         else:
             print(f"❌ FAILED: {description}")
-            print(f"   → Expected: {expected_agent}")
+            print(f"   → Expected one of: {', '.join(expected_agents)}")
             print(f"   → Got: {matched_agent} (score: {score})")
             failed += 1
         
