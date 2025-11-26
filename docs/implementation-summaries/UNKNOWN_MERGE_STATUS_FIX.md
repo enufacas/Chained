@@ -257,5 +257,13 @@ git revert 1d1dc291
 ---
 
 *Implementation completed: 2025-11-26*
-*Commit: 1d1dc291*
+*Primary commits: 1d1dc291, 955ac690*
 *Author: Copilot (troubleshoot-expert)*
+
+## Revision History
+
+### v2 - Removed PR Processing Limit (2025-11-26)
+- Removed arbitrary 10 PR limit from workflow
+- Increased workflow timeout from 5 to 15 minutes
+- Now processes all eligible PRs (limited only by workflow timeout)
+- With 40s max per PR, can handle ~20 PRs safely within timeout

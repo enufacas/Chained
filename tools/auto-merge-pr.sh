@@ -19,6 +19,14 @@
 
 set -euo pipefail
 
+# Configuration - Retry Logic for UNKNOWN Status
+# These can be overridden via environment variables for testing/tuning
+MAX_RETRIES="${AUTO_MERGE_MAX_RETRIES:-4}"
+RETRY_WAIT_TIMES="${AUTO_MERGE_RETRY_WAIT_TIMES:-5 8 12 15}"  # Space-separated wait times in seconds
+
+# Parse retry wait times into array
+IFS=' ' read -ra WAIT_TIMES_ARRAY <<< "$RETRY_WAIT_TIMES"
+
 # Configuration
 PR_NUM=""
 DRY_RUN=false
@@ -180,13 +188,12 @@ else
         echo "  ⏳ Status is UNKNOWN - GitHub still calculating"
         echo "     Waiting for merge status to be computed..."
         
-        max_retries=4
         retry_count=0
-        wait_times=(5 8 12 15)  # Progressive backoff: 5s, 8s, 12s, 15s = 40s total
         
-        while [ "${mergeable}" = "UNKNOWN" ] && [ $retry_count -lt $max_retries ]; do
-          wait_time=${wait_times[$retry_count]}
-          echo "     Attempt $((retry_count + 1))/${max_retries}: Waiting ${wait_time}s..."
+        while [ "${mergeable}" = "UNKNOWN" ] && [ $retry_count -lt $MAX_RETRIES ]; do
+          # Safely get wait time with fallback
+          wait_time=${WAIT_TIMES_ARRAY[$retry_count]:-15}
+          echo "     Attempt $((retry_count + 1))/${MAX_RETRIES}: Waiting ${wait_time}s..."
           sleep ${wait_time}
           
           # Re-fetch mergeable status
@@ -198,7 +205,12 @@ else
         
         # Final evaluation after retries
         if [ "${mergeable}" = "UNKNOWN" ]; then
-          echo "  ⚠️  Status still UNKNOWN after ${max_retries} retries (40s total)"
+          # Calculate total wait time
+          total_wait=0
+          for t in "${WAIT_TIMES_ARRAY[@]}"; do
+            total_wait=$((total_wait + t))
+          done
+          echo "  ⚠️  Status still UNKNOWN after ${retry_count} retries (${total_wait}s total)"
           echo "     This PR may need more time or manual inspection"
         fi
       fi
