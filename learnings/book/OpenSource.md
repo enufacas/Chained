@@ -2,9 +2,9 @@
 
 > Open source projects, community insights, and collaboration
 
-**Total Insights:** 64
+**Total Insights:** 70
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2025-11-26
 
 ---
 
@@ -70,6 +70,69 @@ To use the Mastodon web application, please enable JavaScript. Alternatively, tr
 
 
 ## 📰 From Unknown
+
+
+### Android 16 QPR1 is being pushed to the Android Open Source Project
+
+**Community Score:** 217 upvotes
+
+**Link:** https://grapheneos.social/@GrapheneOS/115533432439509433
+
+
+**Content Summary:**
+
+To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
+
+---
+
+
+### BebboSSH: SSH2 implementation for Amiga systems (68000, GPLv3)
+
+**Community Score:** 24 upvotes
+
+**Link:** https://franke.ms/git/bebbo/bebbossh
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
+
+---
 
 
 ### Android 16 QPR1 is being pushed to the Android Open Source Project
@@ -199,69 +262,6 @@ A list of open source games.
 **Content Summary:**
 
 To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
-
----
-
-
-### bobeff/open-source-games - A list of open source games.
-
-**Link:** https://github.com/bobeff/open-source-games
-
-
-A list of open source games.
-
----
-
-
-### bobeff/open-source-games - A list of open source games.
-
-**Link:** https://github.com/bobeff/open-source-games
-
-
-A list of open source games.
-
----
-
-
-### bobeff/open-source-games - A list of open source games.
-
-**Link:** https://github.com/bobeff/open-source-games
-
-
-A list of open source games.
-
----
-
-
-### bobeff/open-source-games - A list of open source games.
-
-**Link:** https://github.com/bobeff/open-source-games
-
-
-A list of open source games.
-
----
-
-
-### Android 16 QPR1 is being pushed to the Android Open Source Project
-
-**Community Score:** 217 upvotes
-
-**Link:** https://grapheneos.social/@GrapheneOS/115533432439509433
-
-
-**Content Summary:**
-
-To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
-
----
-
-
-### Moss Survives 9 Months in Space Vacuum
-
-**Community Score:** 140 upvotes
-
-**Link:** https://scienceclock.com/moss-survives-9-months-in-space-vacuum/
 
 ---
 
