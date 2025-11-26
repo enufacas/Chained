@@ -1,0 +1,104 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-26T10:29:17.500718+00:00",
+  "repository": "Chained",
+  "total_decisions": 3,
+  "decisions": [
+    {
+      "id": "DD-84e92210",
+      "title": "docs: Add comprehensive API access limitations guide for Copilot environment",
+      "date": "2025-11-23T18:23:43+00:00",
+      "status": "accepted",
+      "category": "api",
+      "context": "docs: Add comprehensive API access limitations guide for Copilot environment\n- Created COPILOT_API_ACCESS_LIMITATIONS.md with detailed analysis\n- Documented network-level restrictions and why they exist\n- Provided github-mcp-server tools as the solution\n- Tested and confirmed MCP tools work in Copilot environment\n- Added hybrid approaches for write operations\n- Updated COPILOT_ENVIRONMENT_SETUP.md with references\n- Addressed DNS monitoring proxy blocking issue",
+      "decision": "docs: Add comprehensive API access limitations guide for Copilot environment",
+      "consequences": "",
+      "alternatives": "",
+      "commit": "84e9221",
+      "author": "copilot-swe-agent[bot]",
+      "metadata": {
+        "files_affected": [
+          "docs/COPILOT_API_ACCESS_LIMITATIONS.md",
+          "docs/COPILOT_ENVIRONMENT_SETUP.md"
+        ],
+        "commit_timestamp": 1763922223
+      }
+    },
+    {
+      "id": "DD-45ed43e4",
+      "title": "docs: Add comprehensive implementation summary",
+      "date": "2025-11-23T03:13:55+00:00",
+      "status": "accepted",
+      "category": "general",
+      "context": "docs: Add comprehensive implementation summary\nCreated PR_AGENT_ASSIGNMENT_SUMMARY.md with:\n- Complete problem statement and solution overview\n- Detailed flow diagrams for all scenarios\n- Schedule-primary strategy deep dive\n- Trade-off analysis (latency vs reliability)\n- Testing checklist\n- Success metrics\n- Future enhancements",
+      "decision": "docs: Add comprehensive implementation summary",
+      "consequences": "",
+      "alternatives": "",
+      "commit": "45ed43e",
+      "author": "copilot-swe-agent[bot]",
+      "metadata": {
+        "files_affected": [
+          ".github/workflows/PR_AGENT_ASSIGNMENT_SUMMARY.md"
+        ],
+        "commit_timestamp": 1763867635
+      }
+    },
+    {
+      "id": "DD-03f69b25",
+      "title": "fix: Change to schedule-primary strategy to avoid approval gates",
+      "date": "2025-11-23T03:12:28+00:00",
+      "status": "accepted",
+      "category": "general",
+      "context": "fix: Change to schedule-primary strategy to avoid approval gates\nBREAKING: Removed pull_request event triggers from copilot-pr-assignment.yml",
+      "decision": "fix: Change to schedule-primary strategy to avoid approval gates",
+      "consequences": "",
+      "alternatives": "",
+      "commit": "03f69b2",
+      "author": "copilot-swe-agent[bot]",
+      "metadata": {
+        "files_affected": [
+          ".github/workflows/PR_TECH_LEAD_AGENT_FLOW.md",
+          ".github/workflows/TECH_LEAD_SYSTEM_README.md",
+          ".github/workflows/copilot-pr-assignment.yml"
+        ],
+        "commit_timestamp": 1763867548
+      }
+    }
+  ],
+  "index": {
+    "by_status": {
+      "accepted": [
+        0,
+        1,
+        2
+      ]
+    },
+    "by_category": {
+      "api": [
+        0
+      ],
+      "general": [
+        1,
+        2
+      ]
+    },
+    "by_date": {
+      "2025-11": [
+        0,
+        1,
+        2
+      ]
+    },
+    "by_hash": {
+      "DD-84e92210": 0,
+      "DD-45ed43e4": 1,
+      "DD-03f69b25": 2
+    }
+  },
+  "statistics": {
+    "accepted": 3,
+    "rejected": 0,
+    "deprecated": 0,
+    "proposed": 0
+  }
+}
