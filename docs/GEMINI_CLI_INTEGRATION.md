@@ -869,16 +869,7 @@ If you're still having permission issues:
 - [ ] **Verify location**: Default is `us-central1`, ensure it's enabled in your project
 - [ ] **Review IAM audit logs**: Check for permission denied events
 
-**Quick Test Command** (from Cloud Shell):
-```bash
-# Test if your credentials work with Vertex AI
-ACCESS_TOKEN=$(gcloud auth application-default print-access-token)
-curl -X POST \
-  -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-  -H "Content-Type: application/json" \
-  https://us-central1-aiplatform.googleapis.com/v1/projects/YOUR_PROJECT_ID/locations/us-central1/publishers/google/models/gemini-2.0-flash:generateContent \
-  -d '{"contents":[{"role":"user","parts":[{"text":"Hello"}]}]}'
-```
+**Note**: Testing API key permissions requires using the Gemini CLI or making direct API calls with your key, which is best done through the workflows themselves.
 
 ---
 
