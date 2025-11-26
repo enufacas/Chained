@@ -112,7 +112,7 @@ jobs:
           suggestions=$(cat "${output_file}" | jq -r '.suggestions[]' 2>/dev/null | sed 's/^/- /' || echo "- No specific suggestions")
           
           # Format score as percentage
-          score_pct=$(python3 -c "print(f'{float('${overall_score}') * 100:.1f}%')")
+          score_pct=$(python3 -c "print(f'{float(\"${overall_score}\") * 100:.1f}%')")
           
           # Determine emoji and status
           if [ "${passed}" = "true" ]; then
