@@ -53,6 +53,12 @@ COMMIT_STRATEGIES_FILE = LEARNINGS_DIR / "commit_strategies.json"
 ANALYSIS_DIR = Path("analysis")
 COMMIT_PATTERNS_FILE = ANALYSIS_DIR / "commit_patterns.json"
 
+# Trend constants
+TREND_IMPROVING = "improving"
+TREND_STABLE = "stable"
+TREND_DECLINING = "declining"
+TREND_UNKNOWN = "unknown"
+
 # Commit quality thresholds
 MIN_MESSAGE_LENGTH = 10
 MAX_MESSAGE_LENGTH = 72  # First line
@@ -120,7 +126,7 @@ class StrategyRecommendation:
     applicable_contexts: List[str]
     supporting_patterns: List[str]
     example_commits: List[str] = field(default_factory=list)
-    trend: str = "stable"  # improving, stable, declining
+    trend: str = TREND_STABLE  # Use constant instead of magic string
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
@@ -132,7 +138,7 @@ class TrendData:
     """Historical trend analysis for patterns"""
     pattern_name: str
     measurements: List[Dict[str, Any]] = field(default_factory=list)
-    trend_direction: str = "unknown"  # improving, stable, declining
+    trend_direction: str = TREND_UNKNOWN
     trend_confidence: float = 0.0
     velocity: float = 0.0  # Rate of change
     
@@ -881,16 +887,16 @@ class CommitStrategyLearner:
             ])
         }
         
-        # Determine overall trend
-        improving_count = sum(1 for t in trends.values() if t["direction"] == "improving")
-        declining_count = sum(1 for t in trends.values() if t["direction"] == "declining")
+        # Determine overall trend using constants
+        improving_count = sum(1 for t in trends.values() if t["direction"] == TREND_IMPROVING)
+        declining_count = sum(1 for t in trends.values() if t["direction"] == TREND_DECLINING)
         
         if improving_count > declining_count:
-            overall = "improving"
+            overall = TREND_IMPROVING
         elif declining_count > improving_count:
-            overall = "declining"
+            overall = TREND_DECLINING
         else:
-            overall = "stable"
+            overall = TREND_STABLE
         
         return {
             "status": "success",
@@ -909,7 +915,7 @@ class CommitStrategyLearner:
             Dictionary with direction, velocity, and confidence
         """
         if len(values) < 2:
-            return {"direction": "unknown", "velocity": 0.0, "confidence": 0.0}
+            return {"direction": TREND_UNKNOWN, "velocity": 0.0, "confidence": 0.0}
         
         # Simple linear regression
         n = len(values)
@@ -928,18 +934,22 @@ class CommitStrategyLearner:
         else:
             velocity = numerator / denominator
         
-        # Determine direction
+        # Determine direction using constants
         if abs(velocity) < 0.01:
-            direction = "stable"
+            direction = TREND_STABLE
         elif velocity > 0:
-            direction = "improving"
+            direction = TREND_IMPROVING
         else:
-            direction = "declining"
+            direction = TREND_DECLINING
         
         # Calculate confidence based on variance
         if len(values) > 2:
-            variance = stdev(values)
-            confidence = min(abs(velocity) / max(variance, 0.01), 1.0)
+            try:
+                variance = stdev(values)
+                confidence = min(abs(velocity) / max(variance, 0.01), 1.0)
+            except Exception:
+                # Handle case where all values are identical
+                confidence = 0.5
         else:
             confidence = 0.5
         

@@ -43,10 +43,6 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          pip install gitpython
-
       - name: Analyze commit patterns
         id: analyze
         run: |

@@ -270,8 +270,14 @@ jobs:
           *✨ Powered by autonomous learning infrastructure (@create-guru)*
           EOF_MARKER
           
-          # Substitute environment variables in PR body
-          envsubst < /tmp/pr_body.txt > /tmp/pr_body_final.txt
+          # Substitute environment variables in PR body using sed (compatible with all runners)
+          sed -e "s|\${REC_COUNT}|${REC_COUNT}|g" \
+              -e "s|\${TREND}|${TREND}|g" \
+              -e "s|\${TOP_REC}|${TOP_REC}|g" \
+              -e "s|\${TOP_CONF}|${TOP_CONF}|g" \
+              -e "s|\${GUIDE_PATH}|${GUIDE_PATH}|g" \
+              -e "s|\${WORKFLOW_URL}|${WORKFLOW_URL}|g" \
+              /tmp/pr_body.txt > /tmp/pr_body_final.txt
           
           # Create PR
           gh pr create \
@@ -323,8 +329,11 @@ jobs:
           *🤖 Automated analysis by @create-guru's learning infrastructure*
           EOF_MARKER
           
-          # Substitute environment variables
-          envsubst < /tmp/issue.txt > /tmp/issue_final.txt
+          # Substitute environment variables using sed
+          sed -e "s|\${REC_COUNT}|${REC_COUNT}|g" \
+              -e "s|\${TREND}|${TREND}|g" \
+              -e "s|\${TOP_REC}|${TOP_REC}|g" \
+              /tmp/issue.txt > /tmp/issue_final.txt
           
           gh issue create \
             --title "${ISSUE_TITLE}" \
