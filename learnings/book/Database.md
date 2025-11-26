@@ -2,9 +2,9 @@
 
 > SQL, NoSQL, data storage, and data engineering
 
-**Total Insights:** 126
+**Total Insights:** 136
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2025-11-26
 
 ---
 
@@ -155,15 +155,6 @@ Perkeep is under active development. If you're a programmer or fairly technical,
 ---
 
 
-### Unpowered SSDs slowly lose data
-
-**Community Score:** 684 upvotes
-
-**Link:** https://www.xda-developers.com/your-unpowered-ssd-is-slowly-losing-your-data/
-
----
-
-
 ### Cops Can Get Your Private Online Data
 
 **Community Score:** 147 upvotes
@@ -286,6 +277,15 @@ Perkeep is under active development. If you're a programmer or fairly technical,
 ### 650GB of Data (Delta Lake on S3). Polars vs. DuckDB vs. Daft vs. Spark
 
 **Link:** https://dataengineeringcentral.substack.com/p/650gb-of-data-delta-lake-on-s3-polars
+
+---
+
+
+### Unpowered SSDs slowly lose data
+
+**Community Score:** 684 upvotes
+
+**Link:** https://www.xda-developers.com/your-unpowered-ssd-is-slowly-losing-your-data/
 
 ---
 
