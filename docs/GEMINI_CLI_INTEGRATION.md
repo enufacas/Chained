@@ -871,10 +871,10 @@ If you're still having permission issues:
 
 **Quick Test Command** (from Cloud Shell):
 ```bash
-# Test if your credentials work
-gcloud auth application-default print-access-token | \
+# Test if your credentials work with Vertex AI
+ACCESS_TOKEN=$(gcloud auth application-default print-access-token)
 curl -X POST \
-  -H "Authorization: Bearer $(cat -)" \
+  -H "Authorization: Bearer ${ACCESS_TOKEN}" \
   -H "Content-Type: application/json" \
   https://us-central1-aiplatform.googleapis.com/v1/projects/YOUR_PROJECT_ID/locations/us-central1/publishers/google/models/gemini-2.0-flash:generateContent \
   -d '{"contents":[{"role":"user","parts":[{"text":"Hello"}]}]}'
