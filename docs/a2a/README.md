@@ -12,6 +12,7 @@ This directory contains all documentation related to the Agent2Agent (A2A) Proto
 ### Architecture & Design
 - **[A2A_GITHUB_RUNNERS_ARCHITECTURE.md](./A2A_GITHUB_RUNNERS_ARCHITECTURE.md)** - Core architecture for running A2A on GitHub Actions runners, three-tier design
 - **[A2A_INTEGRATION_DESIGN.md](./A2A_INTEGRATION_DESIGN.md)** - Complete integration design, components, and API specifications
+- **[A2A_PHASE_3_DESIGN.md](./A2A_PHASE_3_DESIGN.md)** - **📋 Phase 3 design: Meta-coordinator integration and multi-agent orchestration**
 - **[A2A_GITHUB_RUNNERS_COMPLIANCE.md](./A2A_GITHUB_RUNNERS_COMPLIANCE.md)** - GitHub Actions runner constraints and compliance analysis
 
 ### Transport Layers
@@ -151,11 +152,12 @@ If you're new to the A2A implementation, read in this order:
 2. **A2A_INTEGRATION_README.md** - Quick start guide and examples
 3. **A2A_GITHUB_RUNNERS_ARCHITECTURE.md** - Understand the architecture
 4. **A2A_INTEGRATION_DESIGN.md** - Detailed component design
-5. **A2A_IMPLEMENTATION_SUMMARY.md** - What was built in Phase 1
-6. **A2A_PHASE_2B_TESTING_SUMMARY.md** - Testing results
-7. **A2A_TRANSPORT_COMPARISON.md** - Transport options
-8. **A2A_GITHUB_RUNNERS_COMPLIANCE.md** - Constraints and limitations
-9. **A2A_MCP_TRANSPORT_DESIGN.md** - Future MCP integration
+5. **A2A_PHASE_3_DESIGN.md** - 📋 Future: Meta-coordinator integration plan
+6. **A2A_IMPLEMENTATION_SUMMARY.md** - What was built in Phase 1
+7. **A2A_PHASE_2B_TESTING_SUMMARY.md** - Testing results
+8. **A2A_TRANSPORT_COMPARISON.md** - Transport options
+9. **A2A_GITHUB_RUNNERS_COMPLIANCE.md** - Constraints and limitations
+10. **A2A_MCP_TRANSPORT_DESIGN.md** - Future MCP integration
 
 ## 🔗 External Resources
 
