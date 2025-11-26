@@ -118,10 +118,11 @@ jobs:
           echo ""
           
           # Run cleanup script with proper error handling
-          if ! ./tools/cleanup-stale-prs.sh > /tmp/cleanup_summary.txt 2>&1; then
+          # Script now outputs JSON summary for reliable parsing
+          if ! ./tools/cleanup-stale-prs.sh 2>&1 | tee /tmp/cleanup_output.txt; then
             echo "⚠️  Warning: Cleanup script encountered errors"
             echo ""
-            cat /tmp/cleanup_summary.txt || echo "No output captured"
+            cat /tmp/cleanup_output.txt || echo "No output captured"
             echo ""
             echo "Continuing with remaining workflow steps..."
             echo ""
@@ -132,12 +133,21 @@ jobs:
             echo "CLEANUP_DRAFT=0" >> $GITHUB_ENV
             echo "CLEANUP_TOTAL=0" >> $GITHUB_ENV
           else
-            # Extract counts from summary
-            conflicts_closed=$(grep "Merge conflicts" /tmp/cleanup_summary.txt | grep -oP '\d+' | tail -1 || echo "0")
-            no_activity_closed=$(grep "No activity" /tmp/cleanup_summary.txt | grep -oP '\d+' | tail -1 || echo "0")
-            orphaned_closed=$(grep "Orphaned" /tmp/cleanup_summary.txt | grep -oP '\d+' | tail -1 || echo "0")
-            draft_closed=$(grep "Abandoned draft" /tmp/cleanup_summary.txt | grep -oP '\d+' | tail -1 || echo "0")
-            total_closed=$((conflicts_closed + no_activity_closed + orphaned_closed + draft_closed))
+            # Parse JSON summary (more reliable than grep)
+            if [ -f /tmp/cleanup_summary.json ]; then
+              conflicts_closed=$(jq -r '.by_reason.merge_conflicts' /tmp/cleanup_summary.json || echo "0")
+              no_activity_closed=$(jq -r '.by_reason.no_activity' /tmp/cleanup_summary.json || echo "0")
+              orphaned_closed=$(jq -r '.by_reason.orphaned' /tmp/cleanup_summary.json || echo "0")
+              draft_closed=$(jq -r '.by_reason.abandoned_draft' /tmp/cleanup_summary.json || echo "0")
+              total_closed=$(jq -r '.total_closed' /tmp/cleanup_summary.json || echo "0")
+            else
+              # Fallback to text parsing if JSON not available
+              conflicts_closed=$(grep "Merge conflicts" /tmp/cleanup_output.txt | grep -oP '\d+' | tail -1 || echo "0")
+              no_activity_closed=$(grep "No activity" /tmp/cleanup_output.txt | grep -oP '\d+' | tail -1 || echo "0")
+              orphaned_closed=$(grep "Orphaned" /tmp/cleanup_output.txt | grep -oP '\d+' | tail -1 || echo "0")
+              draft_closed=$(grep "Abandoned draft" /tmp/cleanup_output.txt | grep -oP '\d+' | tail -1 || echo "0")
+              total_closed=$((conflicts_closed + no_activity_closed + orphaned_closed + draft_closed))
+            fi
             
             # Save to environment for coordination issue
             echo "CLEANUP_CONFLICTS=${conflicts_closed}" >> $GITHUB_ENV
@@ -149,7 +159,7 @@ jobs:
             echo ""
             echo "✅ Cleanup complete: ${total_closed} stale PRs closed"
             echo ""
-            cat /tmp/cleanup_summary.txt || echo "No cleanup summary available"
+            cat /tmp/cleanup_output.txt || echo "No cleanup details available"
           fi
       
       - name: Phase 1 - PR State Analysis (Monitoring)

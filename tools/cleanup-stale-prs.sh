@@ -309,6 +309,8 @@ echo "   Closed ${prs_closed_orphaned} orphaned PRs"
 echo ""
 
 # Summary
+total_closed=$((prs_closed_conflicts + prs_closed_no_activity + prs_closed_orphaned + prs_closed_draft))
+
 echo "========================================="
 echo "Cleanup Summary"
 echo "========================================="
@@ -321,7 +323,7 @@ echo "  - No activity (>7d): ${prs_closed_no_activity}"
 echo "  - Orphaned (closed issue): ${prs_closed_orphaned}"
 echo "  - Abandoned draft (>7d): ${prs_closed_draft}"
 echo ""
-echo "Total closed: $((prs_closed_conflicts + prs_closed_no_activity + prs_closed_orphaned + prs_closed_draft))"
+echo "Total closed: ${total_closed}"
 echo ""
 
 if [ "$DRY_RUN" = true ]; then
@@ -331,5 +333,24 @@ fi
 
 echo ""
 echo "✅ Cleanup complete"
+
+# Output JSON summary for programmatic consumption
+# This enables workflow to extract counts reliably
+cat > /tmp/cleanup_summary.json <<EOF
+{
+  "total_prs_checked": ${total_prs},
+  "total_closed": ${total_closed},
+  "by_reason": {
+    "merge_conflicts": ${prs_closed_conflicts},
+    "no_activity": ${prs_closed_no_activity},
+    "orphaned": ${prs_closed_orphaned},
+    "abandoned_draft": ${prs_closed_draft}
+  },
+  "dry_run": ${DRY_RUN}
+}
+EOF
+
+echo ""
+echo "📊 JSON summary written to /tmp/cleanup_summary.json"
 
 exit 0
