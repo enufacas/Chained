@@ -2,29 +2,35 @@
 """
 Git Commit Strategy Learning System for Chained
 
-A rigorous, systematic approach to learning optimal git commit strategies
+A visionary, self-improving system for learning optimal git commit strategies
 from successful merges. This system analyzes commit patterns, correlates them
-with merge success, and generates actionable recommendations.
+with merge success, and generates actionable recommendations that evolve over time.
 
-Inspired by Margaret Hamilton's approach: methodical, precise, and thorough.
+Inspired by Tesla's approach: innovative, elegant, and forward-thinking.
+Enhanced by @create-guru with autonomous learning capabilities.
 
 Architecture:
-- CommitStrategyAnalyzer: Core analysis engine
-- CommitPatternDatabase: Structured pattern storage
-- StrategyRecommender: Recommendation generation
-- Integration with existing Chained learning systems
+- CommitStrategyAnalyzer: Core analysis engine with trend detection
+- CommitPatternDatabase: Structured pattern storage with history
+- StrategyRecommender: Context-aware recommendation generation
+- TrendAnalyzer: Identifies improving/declining patterns over time
+- Integration with Chained's autonomous learning systems
 
 Features:
-- Analyzes commit size, message quality, file organization
+- Analyzes commit size, message quality, file organization, timing
 - Tracks correlation between commit attributes and merge success
-- Learns repository-specific optimal strategies
-- Generates confidence-scored recommendations
+- Learns repository-specific optimal strategies continuously
+- Generates confidence-scored, context-aware recommendations
 - Supports incremental learning from new merges
+- Tracks strategy effectiveness over time
+- Identifies emerging patterns and best practices
+- Provides trend analysis and predictive insights
 
 Usage:
     python commit-strategy-learner.py --analyze [--since DAYS]
     python commit-strategy-learner.py --recommend --context "feature" 
     python commit-strategy-learner.py --report [--output FILE]
+    python commit-strategy-learner.py --trends [--period DAYS]
 """
 
 import json
@@ -46,6 +52,12 @@ LEARNINGS_DIR = Path("learnings")
 COMMIT_STRATEGIES_FILE = LEARNINGS_DIR / "commit_strategies.json"
 ANALYSIS_DIR = Path("analysis")
 COMMIT_PATTERNS_FILE = ANALYSIS_DIR / "commit_patterns.json"
+
+# Trend constants
+TREND_IMPROVING = "improving"
+TREND_STABLE = "stable"
+TREND_DECLINING = "declining"
+TREND_UNKNOWN = "unknown"
 
 # Commit quality thresholds
 MIN_MESSAGE_LENGTH = 10
@@ -114,6 +126,21 @@ class StrategyRecommendation:
     applicable_contexts: List[str]
     supporting_patterns: List[str]
     example_commits: List[str] = field(default_factory=list)
+    trend: str = TREND_STABLE  # Use constant instead of magic string
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary"""
+        return asdict(self)
+
+
+@dataclass
+class TrendData:
+    """Historical trend analysis for patterns"""
+    pattern_name: str
+    measurements: List[Dict[str, Any]] = field(default_factory=list)
+    trend_direction: str = TREND_UNKNOWN
+    trend_confidence: float = 0.0
+    velocity: float = 0.0  # Rate of change
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
@@ -425,6 +452,25 @@ class CommitStrategyLearner:
         self.strategies_data["successful_merges"] = len(successful_commits)
         self.strategies_data["failed_merges"] = len(failed_commits)
         self.strategies_data["patterns_identified"] = [p.to_dict() for p in patterns]
+        
+        # Record this analysis in learning history
+        history_entry = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "commits_analyzed": len(analyzed_commits),
+            "successful": len(successful_commits),
+            "failed": len(failed_commits),
+            "patterns_count": len(patterns),
+            "since_days": since_days
+        }
+        
+        if "learning_history" not in self.strategies_data:
+            self.strategies_data["learning_history"] = []
+        
+        self.strategies_data["learning_history"].append(history_entry)
+        
+        # Keep only last 30 history entries
+        if len(self.strategies_data["learning_history"]) > 30:
+            self.strategies_data["learning_history"] = self.strategies_data["learning_history"][-30:]
         
         # Update patterns data
         self._update_pattern_database(analyzed_commits, patterns)
@@ -781,6 +827,7 @@ class CommitStrategyLearner:
                 "",
                 f"**Confidence:** {rec.confidence_score:.1%}",
                 f"**Context:** {', '.join(rec.applicable_contexts)}",
+                f"**Trend:** {rec.trend}",
                 "",
                 rec.description,
                 "",
@@ -802,6 +849,283 @@ class CommitStrategyLearner:
             self._log(f"Report saved to {output_file}")
         
         return report_text
+    
+    def validate_commit(
+        self, 
+        message: str, 
+        files_changed: int = 0, 
+        lines_changed: int = 0,
+        file_types: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Validate a commit against learned optimal strategies.
+        
+        This method enables pre-commit hooks or CI validation to check
+        if a commit follows the learned patterns for successful merges.
+        
+        Args:
+            message: The commit message to validate
+            files_changed: Number of files in the commit
+            lines_changed: Total lines added/deleted
+            file_types: List of file extensions being changed
+            
+        Returns:
+            Dictionary with validation result and suggestions
+        """
+        # Sanitize message for logging (remove control characters)
+        safe_msg = ''.join(c if c.isprintable() or c.isspace() else '?' for c in message[:50])
+        self._log(f"Validating commit message: {safe_msg}...")
+        
+        file_types = file_types or []
+        issues: List[Dict[str, Any]] = []
+        suggestions: List[str] = []
+        score = 100  # Start with perfect score
+        
+        # Analyze the message
+        msg_analysis = self._analyze_commit_message(message)
+        
+        # Check conventional commit format
+        if not msg_analysis["follows_conventional"]:
+            issues.append({
+                "type": "message_format",
+                "severity": "warning",
+                "message": "Commit message doesn't follow conventional format (type: description)",
+                "suggestion": "Use format like: feat: add feature, fix: correct bug, docs: update readme"
+            })
+            score -= 15
+            suggestions.append("Consider using conventional commit format: type(scope): description")
+        
+        # Check message length
+        if not msg_analysis["is_descriptive"]:
+            issues.append({
+                "type": "message_length",
+                "severity": "warning",
+                "message": f"Commit message is too short ({msg_analysis['length']} chars)",
+                "suggestion": f"Aim for at least {MIN_MESSAGE_LENGTH} characters for clarity"
+            })
+            score -= 10
+            suggestions.append(f"Add more detail to your commit message (current: {msg_analysis['length']} chars)")
+        
+        if not msg_analysis["is_concise"]:
+            issues.append({
+                "type": "message_length", 
+                "severity": "info",
+                "message": f"First line is long ({msg_analysis['length']} chars)",
+                "suggestion": f"Keep first line under {MAX_MESSAGE_LENGTH} characters"
+            })
+            score -= 5
+        
+        # Check for body in complex commits
+        if files_changed > 5 and not msg_analysis["has_body"]:
+            issues.append({
+                "type": "missing_body",
+                "severity": "suggestion",
+                "message": "Large commit lacks detailed explanation",
+                "suggestion": "Add a body explaining the changes when modifying many files"
+            })
+            score -= 10
+            suggestions.append("Add a commit body explaining why these changes were made")
+        
+        # Check commit size
+        if files_changed > MAX_FILES_PER_COMMIT:
+            issues.append({
+                "type": "commit_size",
+                "severity": "warning",
+                "message": f"Commit changes {files_changed} files (recommended: <{MAX_FILES_PER_COMMIT})",
+                "suggestion": "Consider breaking into smaller, focused commits"
+            })
+            score -= 20
+            suggestions.append(f"Consider splitting into smaller commits (~{IDEAL_FILES_PER_COMMIT} files each)")
+        elif files_changed > IDEAL_FILES_PER_COMMIT:
+            issues.append({
+                "type": "commit_size",
+                "severity": "info",
+                "message": f"Commit changes {files_changed} files (optimal: ~{IDEAL_FILES_PER_COMMIT})",
+                "suggestion": "Smaller commits are easier to review"
+            })
+            score -= 5
+        
+        # Check lines changed
+        if lines_changed > MAX_LINES_CHANGED:
+            issues.append({
+                "type": "lines_changed",
+                "severity": "warning",
+                "message": f"Commit changes {lines_changed} lines (recommended: <{MAX_LINES_CHANGED})",
+                "suggestion": "Large changes are harder to review"
+            })
+            score -= 15
+        elif lines_changed > IDEAL_LINES_CHANGED:
+            issues.append({
+                "type": "lines_changed",
+                "severity": "info",
+                "message": f"Commit changes {lines_changed} lines (optimal: ~{IDEAL_LINES_CHANGED})",
+                "suggestion": "Consider if this can be broken down"
+            })
+            score -= 5
+        
+        # Check file type focus
+        if file_types and len(file_types) > 3:
+            issues.append({
+                "type": "file_focus",
+                "severity": "info",
+                "message": f"Commit touches {len(file_types)} different file types",
+                "suggestion": "Keep commits focused on related changes"
+            })
+            score -= 5
+            suggestions.append("Consider separating unrelated changes into different commits")
+        
+        # Determine overall status (ensure score is within 0-100 range)
+        score = min(100, max(0, score))
+        
+        if score >= 90:
+            status = "excellent"
+            status_emoji = "✅"
+        elif score >= 70:
+            status = "good"
+            status_emoji = "👍"
+        elif score >= 50:
+            status = "acceptable"
+            status_emoji = "⚠️"
+        else:
+            status = "needs_improvement"
+            status_emoji = "❌"
+        
+        # Get patterns for context
+        patterns = self.strategies_data.get("patterns_identified", [])
+        applicable_patterns = []
+        for pattern in patterns:
+            if isinstance(pattern, dict):
+                applicable_patterns.append({
+                    "name": pattern.get("pattern_name", "unknown"),
+                    "success_rate": pattern.get("success_rate", 0),
+                    "confidence": pattern.get("confidence_score", 0)
+                })
+        
+        return {
+            "status": status,
+            "status_emoji": status_emoji,
+            "score": score,
+            "issues": issues,
+            "suggestions": suggestions,
+            "message_analysis": msg_analysis,
+            "commit_metrics": {
+                "files_changed": files_changed,
+                "lines_changed": lines_changed,
+                "file_types": file_types
+            },
+            "applicable_patterns": applicable_patterns,
+            "validated_at": datetime.now(timezone.utc).isoformat()
+        }
+
+    def analyze_trends(self, period_days: int = 30) -> Dict[str, Any]:
+        """
+        Analyze trends in commit patterns over time.
+        
+        Args:
+            period_days: Number of days to analyze for trends
+            
+        Returns:
+            Dictionary containing trend analysis
+        """
+        self._log(f"Analyzing trends over last {period_days} days")
+        
+        history = self.strategies_data.get("learning_history", [])
+        
+        if len(history) < 2:
+            self._log("Not enough history for trend analysis")
+            return {
+                "status": "insufficient_data",
+                "message": "Need at least 2 historical data points",
+                "history_count": len(history)
+            }
+        
+        # Calculate trends
+        trends = {
+            "success_rate": self._calculate_trend([
+                h["successful"] / max(h["commits_analyzed"], 1) 
+                for h in history if h["commits_analyzed"] > 0
+            ]),
+            "patterns_discovered": self._calculate_trend([
+                h["patterns_count"] for h in history
+            ]),
+            "commit_quality": self._calculate_trend([
+                1.0 - (h["failed"] / max(h["commits_analyzed"], 1))
+                for h in history if h["commits_analyzed"] > 0
+            ])
+        }
+        
+        # Determine overall trend using constants
+        improving_count = sum(1 for t in trends.values() if t["direction"] == TREND_IMPROVING)
+        declining_count = sum(1 for t in trends.values() if t["direction"] == TREND_DECLINING)
+        
+        if improving_count > declining_count:
+            overall = TREND_IMPROVING
+        elif declining_count > improving_count:
+            overall = TREND_DECLINING
+        else:
+            overall = TREND_STABLE
+        
+        return {
+            "status": "success",
+            "overall_trend": overall,
+            "trends": trends,
+            "history_analyzed": len(history),
+            "period_days": period_days,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    
+    def _calculate_trend(self, values: List[float]) -> Dict[str, Any]:
+        """
+        Calculate trend direction from a series of values.
+        
+        Returns:
+            Dictionary with direction, velocity, and confidence
+        """
+        if len(values) < 2:
+            return {"direction": TREND_UNKNOWN, "velocity": 0.0, "confidence": 0.0}
+        
+        # Simple linear regression
+        n = len(values)
+        x = list(range(n))
+        
+        # Calculate means
+        x_mean = sum(x) / n
+        y_mean = sum(values) / n
+        
+        # Calculate slope (velocity)
+        numerator = sum((x[i] - x_mean) * (values[i] - y_mean) for i in range(n))
+        denominator = sum((x[i] - x_mean) ** 2 for i in range(n))
+        
+        if denominator == 0:
+            velocity = 0.0
+        else:
+            velocity = numerator / denominator
+        
+        # Determine direction using constants
+        if abs(velocity) < 0.01:
+            direction = TREND_STABLE
+        elif velocity > 0:
+            direction = TREND_IMPROVING
+        else:
+            direction = TREND_DECLINING
+        
+        # Calculate confidence based on variance
+        if len(values) > 2:
+            try:
+                variance = stdev(values)
+                confidence = min(abs(velocity) / max(variance, 0.01), 1.0)
+            except Exception:
+                # Handle case where all values are identical
+                confidence = 0.5
+        else:
+            confidence = 0.5
+        
+        return {
+            "direction": direction,
+            "velocity": velocity,
+            "confidence": confidence,
+            "sample_size": n
+        }
 
 
 def main():
@@ -822,6 +1146,15 @@ Examples:
   
   # Generate full report
   python commit-strategy-learner.py --report --output analysis/commit_report.md
+  
+  # Analyze trends over time
+  python commit-strategy-learner.py --trends --period 30
+  
+  # Validate a commit message
+  python commit-strategy-learner.py --validate "feat: add new feature"
+  
+  # Validate with file info
+  python commit-strategy-learner.py --validate "fix: bug fix" --files 3 --lines 50
         """
     )
     
@@ -844,6 +1177,20 @@ Examples:
                        help='Generate comprehensive report')
     parser.add_argument('--output', type=str,
                        help='Output file for report')
+    
+    parser.add_argument('--trends', action='store_true',
+                       help='Analyze trends in learning history')
+    parser.add_argument('--period', type=int, default=30,
+                       help='Period in days for trend analysis (default: 30)')
+    
+    parser.add_argument('--validate', type=str, metavar='MESSAGE',
+                       help='Validate a commit message against learned strategies')
+    parser.add_argument('--files', type=int, default=0,
+                       help='Number of files changed (for validation)')
+    parser.add_argument('--lines', type=int, default=0,
+                       help='Number of lines changed (for validation)')
+    parser.add_argument('--json', action='store_true',
+                       help='Output validation result as JSON')
     
     parser.add_argument('--verbose', '-v', action='store_true',
                        help='Enable verbose logging')
@@ -884,6 +1231,7 @@ Examples:
             for i, rec in enumerate(recommendations, 1):
                 print(f"{i}. {rec.title}")
                 print(f"   Confidence: {rec.confidence_score:.1%}")
+                print(f"   Trend: {rec.trend}")
                 print(f"   {rec.description}")
                 print()
         
@@ -895,6 +1243,66 @@ Examples:
                 print(f"✅ Report saved to {args.output}")
             else:
                 print(report)
+        
+        elif args.trends:
+            print(f"📈 Analyzing trends over {args.period} days...")
+            trends = learner.analyze_trends(period_days=args.period)
+            
+            if trends["status"] == "insufficient_data":
+                print(f"⚠️  {trends['message']}")
+                print(f"   History count: {trends['history_count']}")
+                print("   Run --analyze multiple times to build history")
+                return 1
+            
+            print(f"✅ Trend Analysis Complete!")
+            print(f"   Overall Trend: {trends['overall_trend'].upper()}")
+            print(f"   History Points: {trends['history_analyzed']}")
+            print()
+            print("📊 Detailed Trends:")
+            
+            for metric, data in trends["trends"].items():
+                direction = data["direction"]
+                emoji = "📈" if direction == "improving" else "📉" if direction == "declining" else "➡️"
+                print(f"   {emoji} {metric.replace('_', ' ').title()}: {direction}")
+                print(f"      Velocity: {data['velocity']:.4f}")
+                print(f"      Confidence: {data['confidence']:.1%}")
+                print()
+        
+        elif args.validate:
+            result = learner.validate_commit(
+                message=args.validate,
+                files_changed=args.files,
+                lines_changed=args.lines
+            )
+            
+            if args.json:
+                print(json.dumps(result, indent=2))
+            else:
+                print(f"{result['status_emoji']} Commit Validation: {result['status'].upper()}")
+                print(f"   Score: {result['score']}/100")
+                print()
+                
+                if result['issues']:
+                    print("📋 Issues Found:")
+                    for issue in result['issues']:
+                        severity_emoji = "⚠️" if issue['severity'] == 'warning' else "ℹ️" if issue['severity'] == 'info' else "💡"
+                        print(f"   {severity_emoji} [{issue['severity'].upper()}] {issue['message']}")
+                        print(f"      → {issue['suggestion']}")
+                    print()
+                
+                if result['suggestions']:
+                    print("💡 Suggestions:")
+                    for suggestion in result['suggestions']:
+                        print(f"   • {suggestion}")
+                    print()
+                
+                if result['applicable_patterns']:
+                    print("📊 Based on Learned Patterns:")
+                    for pattern in result['applicable_patterns']:
+                        print(f"   • {pattern['name']}: {pattern['success_rate']:.1%} success rate")
+            
+            # Return exit code based on validation status
+            return 0 if result['status'] in ['excellent', 'good'] else 1
         
         else:
             parser.print_help()

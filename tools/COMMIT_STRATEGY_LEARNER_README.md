@@ -112,6 +112,45 @@ Create a comprehensive analysis report:
 python tools/commit-strategy-learner.py --report --output analysis/commit_report.md
 ```
 
+### Validate Commits
+
+Validate a commit message against learned strategies:
+
+```bash
+# Basic validation
+python tools/commit-strategy-learner.py --validate "feat: add new feature"
+
+# Validation with file metrics
+python tools/commit-strategy-learner.py --validate "fix: bug fix" --files 5 --lines 100
+
+# Get JSON output for automation
+python tools/commit-strategy-learner.py --validate "docs: update readme" --json
+```
+
+The validation feature:
+- Checks conventional commit format compliance
+- Validates message length and quality
+- Assesses commit size appropriateness
+- Provides actionable suggestions
+- Returns exit code 0 for good commits, 1 for commits needing improvement
+
+Example output:
+```
+✅ Commit Validation: EXCELLENT
+   Score: 100/100
+
+📊 Based on Learned Patterns:
+   • conventional_commits: 85.0% success rate
+```
+
+### Analyze Trends
+
+Track strategy effectiveness over time:
+
+```bash
+python tools/commit-strategy-learner.py --trends --period 30
+```
+
 ### Verbose Mode
 
 See detailed logging:

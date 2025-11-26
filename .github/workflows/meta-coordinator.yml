@@ -6,8 +6,13 @@ name: "Meta-Coordinator: System Orchestration"
 # The agent continuously assesses system state and takes appropriate actions:
 # - Assign agents to issues
 # - Manage review cycles
-# - Auto-merge approved PRs (no WIP in title; draft status doesn't block)
+# - Auto-merge approved PRs (processes all eligible PRs; intelligent retry for UNKNOWN status)
 # - Handle exceptions
+#
+# Recent improvements:
+# - Intelligent retry logic: Waits up to 40s for GitHub to calculate merge status
+# - No PR limit: Processes all eligible PRs (workflow timeout naturally limits if needed)
+# - Increased timeout: 15 minutes (from 5) to handle larger PR queues
 
 on:
   schedule:
@@ -55,7 +60,8 @@ permissions:
 jobs:
   orchestrate:
     runs-on: ubuntu-latest
-    timeout-minutes: 5  # Hard limit: prevent runaway sessions
+    timeout-minutes: 15  # Increased from 5min to handle multiple PRs with retry logic
+                          # With 40s max per PR, this allows ~20 PRs safely
     
     steps:
       - name: Checkout repository
@@ -160,24 +166,97 @@ jobs:
             cat /tmp/cleanup_output.txt || echo "No cleanup details available"
           fi
       
-      - name: Phase 1 - PR State Analysis (Monitoring)
+      - name: Phase 1 - Auto-Merge Eligible PRs
+        if: steps.assess.outputs.skip != 'true'
+        id: automerge
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔀 Phase 1: Auto-Merge Eligible PRs"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          
+          # Get eligible PRs (mergeable, no WIP, trusted author, not draft OR draft without WIP)
+          gh pr list --state open --limit 100 \
+            --json number,title,isDraft,mergeable,author,statusCheckRollup \
+            > /tmp/all_prs.json
+          
+          # Find PRs eligible for auto-merge:
+          # - MERGEABLE status
+          # - Not draft OR draft without WIP marker
+          # - No WIP marker in title
+          # - Trusted author (copilot, github-actions, owner)
+          # - No CI checks OR CI checks passing
+          eligible_prs=$(jq -r '.[] | select(
+            .mergeable == "MERGEABLE" and
+            (.title | test("\\[WIP\\]|^WIP:|WIP\\s"; "i") | not) and
+            (.author.login | test("^app/copilot|^copilot|^app/github-actions|^github-actions"; "i"))
+          ) | .number' /tmp/all_prs.json)
+          
+          merged_count=0
+          failed_count=0
+          pr_count=0
+          
+          echo "Eligible PRs found: $(echo "$eligible_prs" | wc -w)"
+          echo ""
+          
+          # Process all eligible PRs (no artificial limit)
+          # Workflow timeout (15 min) will naturally limit processing if needed
+          # With 40s max per PR, we can safely handle ~20 PRs
+          for pr in $eligible_prs; do
+            pr_count=$((pr_count + 1))
+            
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "[${pr_count}] Processing PR #${pr}..."
+            echo ""
+            
+            # Run auto-merge script
+            if ./tools/auto-merge-pr.sh ${pr}; then
+              echo "✅ Merged PR #${pr}"
+              merged_count=$((merged_count + 1))
+            else
+              exit_code=$?
+              if [ $exit_code -eq 1 ]; then
+                echo "⚠️  PR #${pr} not eligible (see output above)"
+              else
+                echo "❌ PR #${pr} merge failed"
+                failed_count=$((failed_count + 1))
+              fi
+            fi
+            
+            echo ""
+            sleep 1  # Rate limiting
+          done
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Auto-Merge Summary"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "PRs processed: ${pr_count}"
+          echo "Successfully merged: ${merged_count}"
+          echo "Failed: ${failed_count}"
+          echo ""
+          
+          # Save to environment for reporting
+          echo "AUTOMERGE_PROCESSED=${pr_count}" >> $GITHUB_ENV
+          echo "AUTOMERGE_MERGED=${merged_count}" >> $GITHUB_ENV
+          echo "AUTOMERGE_FAILED=${failed_count}" >> $GITHUB_ENV
+      
+      - name: Phase 2 - PR State Analysis (Monitoring)
         if: steps.assess.outputs.skip != 'true'
         id: monitoring
         env:
           GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
         run: |
-          echo "📊 Phase 1: PR State Analysis"
+          echo "📊 Phase 2: PR State Analysis"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo ""
           
-          # Get all PR states
+          # Get all PR states (after auto-merge)
           gh pr list --state open --limit 200 \
             --json number,title,mergeable,isDraft,author \
             > /tmp/all_prs.json
           
           # Count by state
-          # Note: Mergeable count excludes drafts for reporting clarity,
-          # but meta-coordinator agent will process draft PRs without WIP markers
           mergeable=$(jq '[.[] | select(.mergeable == "MERGEABLE" and .isDraft == false)] | length' /tmp/all_prs.json)
           mergeable_draft=$(jq '[.[] | select(.mergeable == "MERGEABLE" and .isDraft == true)] | length' /tmp/all_prs.json)
           conflicting=$(jq '[.[] | select(.mergeable == "CONFLICTING")] | length' /tmp/all_prs.json)
@@ -191,17 +270,15 @@ jobs:
           echo "DRAFT_PRS=${draft}" >> $GITHUB_ENV
           echo "UNKNOWN_PRS=${unknown}" >> $GITHUB_ENV
           
-          echo "PR State Summary:"
+          echo "PR State Summary (after auto-merge):"
           echo "  - ✅ Mergeable (non-draft): ${mergeable}"
-          echo "  - ✅ Mergeable (draft, may be ready if no WIP): ${mergeable_draft}"
+          echo "  - ✅ Mergeable (draft): ${mergeable_draft}"
           echo "  - ❌ Conflicting: ${conflicting}"
           echo "  - 📝 Draft (total): ${draft}"
           echo "  - ❓ Unknown: ${unknown}"
           echo ""
-          echo "Note: Draft PRs without WIP markers in title are eligible for processing"
-          echo ""
       
-      - name: Phase 2 - Create coordination request
+      - name: Phase 3 - Create coordination request
         if: steps.assess.outputs.skip != 'true'
         id: create_request
         env:
@@ -269,7 +346,7 @@ jobs:
           echo "issue_number=${issue_number}" >> $GITHUB_OUTPUT
           echo "issue_url=${issue_url}" >> $GITHUB_OUTPUT
       
-      - name: Phase 3 - Assign Copilot to coordination issue
+      - name: Phase 4 - Assign Copilot to coordination issue
         if: steps.assess.outputs.skip != 'true' && steps.create_request.outputs.issue_number != ''
         env:
           GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}

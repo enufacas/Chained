@@ -55,19 +55,31 @@ The script checks 6 criteria in order:
 
 ### 4. Draft Status (Handled automatically)
 - Draft PRs without WIP markers are marked as ready
-- Waits 3 seconds for GitHub to calculate merge status
+- Waits 5 seconds for GitHub to calculate merge status
 - Updates mergeable status after marking ready
+- Further retries handled in Check 5 if status still UNKNOWN
 
-### 5. Mergeable Status
+### 5. Mergeable Status (with intelligent retry)
 - `MERGEABLE` → passes
 - `CONFLICTING` → fails (has merge conflicts)
-- `UNKNOWN` → fails (GitHub still calculating)
+- `UNKNOWN` → retries up to 4 times with progressive backoff (5s, 8s, 12s, 15s = 40s total)
+- **Retry logic:** Waits for GitHub to finish calculating merge status
+- **Graceful handling:** If still UNKNOWN after 40s, fails with helpful message
 
 ### 6. CI Checks
 - All checks must pass OR no checks configured
 - Unavailable checks treated as passed
 
 ## Key Decisions
+
+### Why Progressive Backoff for UNKNOWN Status?
+**Problem:** GitHub's mergeable status calculation can be slow, especially for PRs with complex branch states. Immediate rejection meant many eligible PRs were skipped unnecessarily.
+
+**Solution:** 
+- Retry up to 4 times with progressive backoff: 5s → 8s → 12s → 15s (40s total)
+- Gives GitHub adequate time to calculate merge status
+- Reduces false negatives from temporary UNKNOWN status
+- More graceful error messages when status truly unavailable
 
 ### Why Check WIP Before Marking Ready?
 **Problem:** Original logic marked drafts ready first, then checked WIP markers. This could process WIP PRs incorrectly.
@@ -159,7 +171,10 @@ done
 ### "Mergeable status is UNKNOWN"
 **Cause:** GitHub still calculating merge status (usually for recently updated PRs)
 
-**Solution:** Wait 5-10 seconds and try again
+**Solution:** 
+- Script now automatically retries with progressive backoff (up to 40s)
+- If still UNKNOWN after retries, PR will be checked again in next run (every 2 hours)
+- Manual intervention rarely needed unless PR has complex merge requirements
 
 ### "Failed to mark ready"
 **Cause:** Permission issues or PR already ready

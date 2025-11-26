@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-26T02:01:32.810971",
-  "commit": "3a397a39d0c62033d4b70a32275aebf68f22bf30",
+  "timestamp": "2025-11-26T12:56:38.371527",
+  "commit": "f02a3d473e40ef964251a0a12be11f11f3dcb1ef",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 368,
-        "line_count": 151395,
+        "file_count": 382,
+        "line_count": 155696,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,10 +60,18 @@
         ]
       },
       "docs": {
-        "file_count": 889,
-        "line_count": 254161,
+        "file_count": 901,
+        "line_count": 257918,
         "files": [
           ".nojekyll",
+          "A2A_GITHUB_RUNNERS_ARCHITECTURE.md",
+          "A2A_GITHUB_RUNNERS_COMPLIANCE.md",
+          "A2A_IMPLEMENTATION_SUMMARY.md",
+          "A2A_INTEGRATION_DESIGN.md",
+          "A2A_INTEGRATION_README.md",
+          "A2A_MCP_TRANSPORT_DESIGN.md",
+          "A2A_PHASE_2B_TESTING_SUMMARY.md",
+          "A2A_TRANSPORT_COMPARISON.md",
           "AB_TESTING_API.md",
           "AB_TESTING_API_SUMMARY.md",
           "AB_TESTING_BUG_REPORT.md",
@@ -104,15 +112,7 @@
           "AGENT_WORKFLOW_SCENARIO.md",
           "AGENT_WORK_ATTRIBUTION.md",
           "AI_AGENT_GUIDE.md",
-          "AI_DIVERSITY_SYSTEM_FIX.md",
-          "AI_FRIEND_SUGGESTIONS_ANALYSIS.md",
-          "AI_GOALS.md",
-          "AI_ORCHESTRATOR_GUIDE.md",
-          "AI_SUBAGENT_SPAWNING.md",
-          "AI_TEST_SUITE_SUMMARY.md",
-          "API_OPTIMIZATION_ANALYSIS.md",
-          "ARCHAEOLOGY_ENHANCEMENT_IMPLEMENTATION_SUMMARY.md",
-          "ARCHITECTURE.md"
+          "AI_DIVERSITY_SYSTEM_FIX.md"
         ]
       },
       ".github/workflows": {
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 102,
-        "line_count": 4709770,
+        "file_count": 104,
+        "line_count": 4710805,
         "files": [
           "2025-11-14-04-00-27.json",
           "2025-11-14-04-00-36.json",
@@ -135,6 +135,7 @@
           "2025-11-25-06-21-37.json",
           "2025-11-25-12-28-25.json",
           "2025-11-25-18-20-47.json",
+          "2025-11-26-01-01-59.json",
           "README.md",
           "README.md",
           "actions-patterns.json",
@@ -177,13 +178,12 @@
           "hypothesis_results.json",
           "integrated-archaeology-report.md",
           "issue-closing-comment.md",
-          "issue-closure-recommendation.md",
-          "issue-resolution-comment.md"
+          "issue-closure-recommendation.md"
         ]
       },
       "learnings": {
-        "file_count": 347,
-        "line_count": 208050,
+        "file_count": 357,
+        "line_count": 220207,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -239,8 +239,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 1706,
-    "total_lines": 5323376
+    "total_files": 1744,
+    "total_lines": 5344626
   },
   "dependencies": {
     "internal_imports": {
@@ -280,6 +280,7 @@
       "dynamic-agent-spawner.py": [],
       "meta_learning_scheduler.py": [],
       "subagent_performance_learner.py": [],
+      "autonomous-code-reviewer.py": [],
       "registry_manager.py": [],
       "repetition-detector.py": [],
       "clustering_integration_example.py": [],
@@ -294,12 +295,14 @@
       "benchmark_code_analyzer.py": [],
       "meta-coordinator-memory.py": [],
       "example_autonomous_issue_prioritizer.py": [],
+      "workflow_config_generator.py": [],
       "demo_hn_code_generator.py": [],
       "actions-pattern-analyzer.py": [],
       "creative-coding-challenge-generator.py": [],
       "profile_learner.py": [],
       "pr-failure-intelligence.py": [],
       "build-learnings-book.py": [],
+      "workflow_ab_testing_integration.py": [],
       "discussion-learning-query.py": [],
       "fetch-web-content.py": [],
       "ab_testing_helper.py": [],
@@ -433,33 +436,33 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 108,
-      "sys": 143,
-      "json": 162,
-      "re": 72,
+      "os": 109,
+      "sys": 145,
+      "json": 165,
+      "re": 73,
       "ast": 18,
-      "datetime": 127,
-      "pathlib": 151,
-      "typing": 137,
-      "collections": 73,
+      "datetime": 130,
+      "pathlib": 154,
+      "typing": 140,
+      "collections": 74,
       "functools": 9,
-      "argparse": 124,
+      "argparse": 127,
       "math": 11,
       "random": 26,
       "time": 31,
       "statistics": 15,
-      "dataclasses": 77,
+      "dataclasses": 78,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
       "workload_subagent_spawner": 2,
       "predictive_spawning_engine": 1,
       "github_integration": 4,
-      "ab_testing_engine": 5,
+      "ab_testing_engine": 6,
       "ab_testing_advanced": 2,
-      "yaml": 19,
+      "yaml": 20,
       "subprocess": 25,
       "hashlib": 17,
-      "traceback": 12,
+      "traceback": 13,
       "importlib": 24,
       "csv": 1,
       "meta_agent_coordinator": 3,
@@ -477,6 +480,8 @@
       "autonomous_issue_prioritizer": 1,
       "hn_code_generator": 1,
       "unsupervised_pattern_learner": 5,
+      "workflow_config_generator": 1,
+      "ab_testing_workflow_analyzer": 3,
       "enum": 16,
       "requests": 3,
       "bs4": 3,
@@ -489,7 +494,6 @@
       "pickle": 1,
       "threading": 5,
       "semantic_similarity_engine": 2,
-      "ab_testing_workflow_analyzer": 2,
       "copy": 2,
       "api_coordination_hub": 2,
       "api_monitoring_bridge": 2,
@@ -530,17 +534,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1706,
-    "total_lines": 5323376,
+    "total_files": 1744,
+    "total_lines": 5344626,
     "total_dependencies": 2,
-    "external_libraries": 81,
-    "coupling_score": 6.004924037710923e-05,
+    "external_libraries": 82,
+    "coupling_score": 5.812263876780006e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 208050,
+      "line_count": 220207,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -566,7 +570,7 @@
     },
     "agent_system": {
       "file_count": 2,
-      "line_count": 92348,
+      "line_count": 90592,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json"
@@ -574,7 +578,7 @@
     },
     "analysis_tools": {
       "file_count": 49,
-      "line_count": 4709770,
+      "line_count": 4710805,
       "files": [
         "2025-11-14-04-00-27.json",
         "2025-11-14-04-00-36.json",
@@ -582,6 +586,7 @@
         "2025-11-25-06-21-37.json",
         "2025-11-25-12-28-25.json",
         "2025-11-25-18-20-47.json",
+        "2025-11-26-01-01-59.json",
         "README.md",
         "actions-patterns.json",
         "agent-ecosystem-investigation.md",
@@ -594,15 +599,22 @@
         "archaeology_20251114_040659.json",
         "archaeology_learning_20251112_014409.md",
         "archaeology_learning_20251112_015207.md",
-        "archaeology_learning_20251114_040659.md",
-        "architecture.mmd"
+        "archaeology_learning_20251114_040659.md"
       ]
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 254161,
+      "line_count": 257918,
       "files": [
         ".nojekyll",
+        "A2A_GITHUB_RUNNERS_ARCHITECTURE.md",
+        "A2A_GITHUB_RUNNERS_COMPLIANCE.md",
+        "A2A_IMPLEMENTATION_SUMMARY.md",
+        "A2A_INTEGRATION_DESIGN.md",
+        "A2A_INTEGRATION_README.md",
+        "A2A_MCP_TRANSPORT_DESIGN.md",
+        "A2A_PHASE_2B_TESTING_SUMMARY.md",
+        "A2A_TRANSPORT_COMPARISON.md",
         "AB_TESTING_API.md",
         "AB_TESTING_API_SUMMARY.md",
         "AB_TESTING_BUG_REPORT.md",
@@ -613,20 +625,12 @@
         "ACTIONS_INVESTIGATION_REPORT.md",
         "ACTIONS_MIGRATION_EXAMPLE.md",
         "ACTIONS_RECOMMENDATIONS_SUMMARY.md",
-        "ACTOR_ID_SYSTEM.md",
-        "AGENTOPS_DASHBOARD.md",
-        "AGENTOPS_DATA_EXTRACTION_SUMMARY.md",
-        "AGENTOPS_ENHANCEMENT_ANALYSIS.md",
-        "AGENTS.md",
-        "AGENT_ASSIGNMENT_DIVERSITY_FIX.md",
-        "AGENT_ASSIGNMENT_FIX_SUMMARY.md",
-        "AGENT_ATTRIBUTION_IMPLEMENTATION_SUMMARY.md",
-        "AGENT_DELETION_FIX_DIAGRAM.md"
+        "ACTOR_ID_SYSTEM.md"
       ]
     },
     "tools": {
       "file_count": 50,
-      "line_count": 151395,
+      "line_count": 155696,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
