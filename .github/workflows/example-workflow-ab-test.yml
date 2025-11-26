@@ -1,0 +1,109 @@
+name: Example - Create Workflow A/B Test
+
+# This workflow demonstrates how to create and manage A/B tests
+# for workflow configurations using the new tools created by @create-guru
+
+on:
+  workflow_dispatch:
+    inputs:
+      workflow_name:
+        description: 'Workflow to test (without .yml extension)'
+        required: true
+        type: string
+      optimization_type:
+        description: 'Type of optimization to test'
+        required: true
+        type: choice
+        options:
+          - schedule
+          - timeout
+          - concurrency
+          - retry
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - create_experiment
+          - get_recommendations
+          - generate_report
+      experiment_id:
+        description: 'Experiment ID (for generate_report action)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  workflow-ab-testing:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+      
+      - name: Create Experiment
+        if: github.event.inputs.action == 'create_experiment'
+        run: |
+          echo "🧪 Creating A/B testing experiment"
+          echo "Workflow: ${{ github.event.inputs.workflow_name }}"
+          echo "Optimization: ${{ github.event.inputs.optimization_type }}"
+          echo ""
+          
+          python3 tools/workflow_ab_testing_integration.py create \
+            .github/workflows/${{ github.event.inputs.workflow_name }}.yml \
+            ${{ github.event.inputs.optimization_type }}
+      
+      - name: Get Recommendations
+        if: github.event.inputs.action == 'get_recommendations'
+        run: |
+          echo "💡 Getting experiment recommendations"
+          echo ""
+          
+          python3 tools/workflow_ab_testing_integration.py recommend --limit 10
+      
+      - name: Generate Report
+        if: github.event.inputs.action == 'generate_report'
+        run: |
+          if [ -z "${{ github.event.inputs.experiment_id }}" ]; then
+            echo "❌ Experiment ID is required for report generation"
+            exit 1
+          fi
+          
+          echo "📊 Generating experiment report"
+          echo "Experiment ID: ${{ github.event.inputs.experiment_id }}"
+          echo ""
+          
+          python3 tools/workflow_ab_testing_integration.py report \
+            ${{ github.event.inputs.experiment_id }} \
+            --format markdown
+      
+      - name: Generate Summary
+        run: |
+          echo "## 🧪 Workflow A/B Testing" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Action**: ${{ github.event.inputs.action }}" >> "$GITHUB_STEP_SUMMARY"
+          
+          if [ "${{ github.event.inputs.action }}" = "create_experiment" ]; then
+            echo "**Workflow**: ${{ github.event.inputs.workflow_name }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Optimization Type**: ${{ github.event.inputs.optimization_type }}" >> "$GITHUB_STEP_SUMMARY"
+          elif [ "${{ github.event.inputs.action }}" = "generate_report" ]; then
+            echo "**Experiment ID**: ${{ github.event.inputs.experiment_id }}" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "---" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" >> "$GITHUB_STEP_SUMMARY"
+          echo "*🏭 Tools by @create-guru*" >> "$GITHUB_STEP_SUMMARY"
