@@ -24,7 +24,7 @@ Chained/
 │   └── instructions/  # Path-specific instructions
 ├── docs/              # All documentation
 ├── tools/             # Python utilities and scripts
-├── learnings/         # Collected insights from AI learning
+├── learnings/         # AI learning
 ├── world/             # World model data (geographic visualization)
 └── tests/             # Test files
 ```
@@ -110,3 +110,6 @@ Use conventional commits:
 - [Autonomous System Architecture](/docs/AUTONOMOUS_SYSTEM_ARCHITECTURE.md)
 - [Workflow Documentation](/docs/WORKFLOWS.md)
 - [GitHub Pages Dashboard](https://enufacas.github.io/Chained/)
+
+## Gemini CLI Integration
+The Gemini CLI leverages the Vertex AI API for enhanced functionality.
