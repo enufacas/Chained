@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "generated_at": "2025-11-26T01:02:24.743143",
-    "analysis_period_days": 7,
-    "snapshots_analyzed": 7,
+    "generated_at": "2025-11-26T12:28:47.465984",
+    "analysis_period_days": 8,
+    "snapshots_analyzed": 8,
     "earliest_snapshot": "2025-11-14T04:00:27",
-    "latest_snapshot": "2025-11-26T01:01:59"
+    "latest_snapshot": "2025-11-26T12:28:20"
   },
   "diversity_trend": {
     "trend": "declining",
@@ -53,17 +53,23 @@
         "score": 0,
         "agents": 2,
         "flags": 2
+      },
+      {
+        "timestamp": "2025-11-26 12:28:20",
+        "score": 0,
+        "agents": 2,
+        "flags": 2
       }
     ],
-    "average_score": 28.571428571428573,
-    "score_stdev": 48.79500364742666
+    "average_score": 25.0,
+    "score_stdev": 46.29100498862757
   },
   "agent_trends": {
     "copilot-swe-agent": {
       "trend": "declining",
       "current_avg_flags": 1,
       "previous_avg_flags": 0.3333333333333333,
-      "total_data_points": 7,
+      "total_data_points": 8,
       "history": [
         {
           "timestamp": "2025-11-14 04:00:27",
@@ -97,6 +103,11 @@
         },
         {
           "timestamp": "2025-11-26 01:01:59",
+          "flags": 1,
+          "total_contributions": 1
+        },
+        {
+          "timestamp": "2025-11-26 12:28:20",
           "flags": 1,
           "total_contributions": 1
         }
@@ -124,7 +135,7 @@
       "trend": "stable",
       "current_avg_flags": 1,
       "previous_avg_flags": 1,
-      "total_data_points": 5,
+      "total_data_points": 6,
       "history": [
         {
           "timestamp": "2025-11-25 01:01:20",
@@ -150,14 +161,19 @@
           "timestamp": "2025-11-26 01:01:59",
           "flags": 1,
           "total_contributions": 1
+        },
+        {
+          "timestamp": "2025-11-26 12:28:20",
+          "flags": 1,
+          "total_contributions": 1
         }
       ]
     }
   },
   "innovation_trend": {
     "trend": "stable",
-    "change": 0.062309378644598644,
-    "current_average": 0.0950694114046314,
+    "change": 0.05971272679303687,
+    "current_average": 0.09247275955306963,
     "previous_average": 0.03276003276003276,
     "data_points": [
       {
@@ -201,6 +217,12 @@
         "index": 0.09363295880149813,
         "unique_approaches": 2,
         "total_contributions": 2136
+      },
+      {
+        "timestamp": "2025-11-26 12:28:20",
+        "index": 0.08845643520566121,
+        "unique_approaches": 2,
+        "total_contributions": 2261
       }
     ]
   },
