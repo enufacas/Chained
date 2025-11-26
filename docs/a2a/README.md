@@ -9,6 +9,7 @@ This directory contains all documentation related to the Agent2Agent (A2A) Proto
 ### Quick Start
 - **[A2A_INTEGRATION_README.md](./A2A_INTEGRATION_README.md)** - Quick start guide, examples, and basic usage
 - **[A2A_GEMINI_IMPLEMENTATION.md](./A2A_GEMINI_IMPLEMENTATION.md)** - 🚀 **NEW: Gemini AI implementation design for A2A orchestration**
+- **[A2A_CROSS_PLATFORM_ORCHESTRATION.md](./A2A_CROSS_PLATFORM_ORCHESTRATION.md)** - 🌐 **NEW: Cross-platform Gemini ↔ Copilot orchestration**
 - **[A2A_COPILOT_SESSIONS_EXPLAINED.md](./A2A_COPILOT_SESSIONS_EXPLAINED.md)** - 📘 **How Copilot sessions interact with A2A framework**
 - **[A2A_COPILOT_CLI_INVESTIGATION.md](./A2A_COPILOT_CLI_INVESTIGATION.md)** - 🔍 **Copilot CLI investigation (concluded: not viable for orchestration)**
 
@@ -174,19 +175,22 @@ If you're new to the A2A implementation, read in this order:
 **For Gemini AI Implementation (NEW - PRIMARY):**
 5. **A2A_GEMINI_IMPLEMENTATION.md** - 🚀 Gemini A2A orchestration design
 
+**For Cross-Platform Orchestration (NEW - ADVANCED):**
+6. **A2A_CROSS_PLATFORM_ORCHESTRATION.md** - 🌐 Gemini ↔ Copilot mixed-platform coordination
+
 **For Copilot Implementation (ALTERNATE):**
-6. **A2A_PHASE_3_DESIGN.md** - 📋 Copilot orchestration plan  
-7. **A2A_VIABLE_PATH_FORWARD.md** - GraphQL direct assignment approach
-8. **A2A_BRANCH_BASED_COORDINATION.md** - Branch communication strategy
-9. **A2A_COPILOT_REALITY_CHECK.md** - Copilot execution model limitations
-10. **A2A_COPILOT_CLI_INVESTIGATION.md** - CLI investigation (concluded not viable)
+7. **A2A_PHASE_3_DESIGN.md** - 📋 Copilot orchestration plan  
+8. **A2A_VIABLE_PATH_FORWARD.md** - GraphQL direct assignment approach
+9. **A2A_BRANCH_BASED_COORDINATION.md** - Branch communication strategy
+10. **A2A_COPILOT_REALITY_CHECK.md** - Copilot execution model limitations
+11. **A2A_COPILOT_CLI_INVESTIGATION.md** - CLI investigation (concluded not viable)
 
 **Additional Resources:**
-11. **A2A_IMPLEMENTATION_SUMMARY.md** - What was built in Phase 1
-12. **A2A_PHASE_2B_TESTING_SUMMARY.md** - Testing results
-13. **A2A_TRANSPORT_COMPARISON.md** - Transport options
-14. **A2A_GITHUB_RUNNERS_COMPLIANCE.md** - Constraints and limitations
-15. **A2A_MCP_TRANSPORT_DESIGN.md** - Future MCP integration
+12. **A2A_IMPLEMENTATION_SUMMARY.md** - What was built in Phase 1
+13. **A2A_PHASE_2B_TESTING_SUMMARY.md** - Testing results
+14. **A2A_TRANSPORT_COMPARISON.md** - Transport options
+15. **A2A_GITHUB_RUNNERS_COMPLIANCE.md** - Constraints and limitations
+16. **A2A_MCP_TRANSPORT_DESIGN.md** - Future MCP integration
 
 ## 🔗 External Resources
 
