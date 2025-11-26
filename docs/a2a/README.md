@@ -9,12 +9,16 @@ This directory contains all documentation related to the Agent2Agent (A2A) Proto
 ### Quick Start
 - **[A2A_INTEGRATION_README.md](./A2A_INTEGRATION_README.md)** - Quick start guide, examples, and basic usage
 - **[A2A_COPILOT_SESSIONS_EXPLAINED.md](./A2A_COPILOT_SESSIONS_EXPLAINED.md)** - 📘 **How Copilot sessions interact with A2A framework**
+- **[A2A_COPILOT_CLI_INVESTIGATION.md](./A2A_COPILOT_CLI_INVESTIGATION.md)** - 🔍 **NEW: Copilot CLI headless auth & custom agent delegation research**
 
 ### Architecture & Design
 - **[A2A_GITHUB_RUNNERS_ARCHITECTURE.md](./A2A_GITHUB_RUNNERS_ARCHITECTURE.md)** - Core architecture for running A2A on GitHub Actions runners, three-tier design
 - **[A2A_INTEGRATION_DESIGN.md](./A2A_INTEGRATION_DESIGN.md)** - Complete integration design, components, and API specifications
 - **[A2A_PHASE_3_DESIGN.md](./A2A_PHASE_3_DESIGN.md)** - **📋 Phase 3 design: Meta-coordinator integration and multi-agent orchestration**
 - **[A2A_GITHUB_RUNNERS_COMPLIANCE.md](./A2A_GITHUB_RUNNERS_COMPLIANCE.md)** - GitHub Actions runner constraints and compliance analysis
+- **[A2A_COPILOT_REALITY_CHECK.md](./A2A_COPILOT_REALITY_CHECK.md)** - ⚠️ **Critical corrections on Copilot execution model limitations**
+- **[A2A_VIABLE_PATH_FORWARD.md](./A2A_VIABLE_PATH_FORWARD.md)** - 🚀 **Breakthrough: Direct agent assignment via GraphQL API**
+- **[A2A_BRANCH_BASED_COORDINATION.md](./A2A_BRANCH_BASED_COORDINATION.md)** - 🌿🎯 **Cross-runner communication via Git branches + detailed 4-agent scenario**
 
 ### Transport Layers
 - **[A2A_TRANSPORT_COMPARISON.md](./A2A_TRANSPORT_COMPARISON.md)** - Comparison of different transport mechanisms (HTTP, GitHub Issues, GitHub Branches)
