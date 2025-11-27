@@ -123,6 +123,12 @@ jobs:
             # Get diverse agents from different categories
             AVAILABLE=$(ls .github/agents/*.md 2>/dev/null | xargs -I {} basename {} .md | grep -v -E '^(README|META_|a2a-)' | sort -u)
             
+            # Validate that agents are available
+            if [[ -z "$AVAILABLE" ]]; then
+              echo "::error::No agents found in .github/agents/"
+              exit 1
+            fi
+            
             CATEGORIES=(
               "engineer|build|create|develop"
               "secure|guard|monitor"
@@ -318,10 +324,10 @@ jobs:
         with:
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
           google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
-          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || ''false'' }}'
           gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
-          gemini_debug: '${{ vars.DEBUG || false }}'
+          gemini_debug: '${{ vars.DEBUG || ''false'' }}'
           upload_artifacts: 'true'
           workflow_name: 'a2a-agent-${{ matrix.agent }}'
           settings: |-
@@ -611,10 +617,10 @@ jobs:
         with:
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
           google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
-          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || ''false'' }}'
           gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
-          gemini_debug: '${{ vars.DEBUG || false }}'
+          gemini_debug: '${{ vars.DEBUG || ''false'' }}'
           upload_artifacts: 'true'
           workflow_name: 'a2a-implement'
           settings: |-
