@@ -210,12 +210,32 @@ jobs:
             AGENT_LIST="- *(No agents selected)*"
           fi
           
+          # Build A2A communication pattern diagram with actual agent names
+          # Create the agent delegation lines dynamically
+          AGENT_LINES=""
+          while IFS= read -r agent; do
+            agent=$(echo "$agent" | xargs)
+            if [[ -n "$agent" ]]; then
+              AGENT_LINES="${AGENT_LINES}     |
+          Task Delegation -> @${agent} (Gemini AI) -> Analysis
+          "
+            fi
+          done <<< "$(echo "$AGENTS" | tr ',' '\n')"
+          
           cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
           ## 🚀 A2A Demo Starting - LIVE
           
           **Multi-Agent Communication Demo** using Real Gemini AI
           
           I'm demonstrating A2A (Agent-to-Agent) protocol by coordinating **$AGENT_COUNT agents** to analyze this issue. Each agent uses Gemini AI to process the task from their specialized perspective.
+          
+          ### 🔄 A2A Communication Pattern
+          
+          \`\`\`
+          Coordinator -> Discovery Service -> Agent Registry
+          ${AGENT_LINES}     |
+          Result Aggregation -> Implementation Plan -> PR Creation
+          \`\`\`
           
           ### 🤖 Selected Agents
           
@@ -336,6 +356,17 @@ jobs:
           # Get agent count
           AGENT_COUNT=$(echo $AGENTS | tr ',' '\n' | wc -l | xargs)
           
+          # Build A2A communication pattern diagram with completed status
+          AGENT_LINES=""
+          while IFS= read -r agent; do
+            agent=$(echo "$agent" | xargs)
+            if [[ -n "$agent" ]]; then
+              AGENT_LINES="${AGENT_LINES}     |
+          Task Delegation -> @${agent} (Gemini AI) -> ✅ Analysis Complete
+          "
+            fi
+          done <<< "$(echo "$AGENTS" | tr ',' '\n')"
+          
           # Determine next step message based on auto_execute
           if [[ "$AUTO_EXECUTE" == "true" ]]; then
             NEXT_STEP="🚀 **Auto-executing**: Proceeding to implement changes and create PR..."
@@ -349,11 +380,19 @@ jobs:
           **Issue:** #$ISSUE_NUMBER
           **Mode:** Real Gemini AI calls via run-gemini-cli action
           
+          ### 🔄 A2A Communication Pattern - Analysis Phase Complete
+          
+          \`\`\`
+          Coordinator -> Discovery Service -> Agent Registry
+          ${AGENT_LINES}     |
+          ⏳ Result Aggregation -> Implementation Plan -> PR Creation
+          \`\`\`
+          
           ### 🤖 Agents Coordinated
           
           $(echo $AGENTS | tr ',' '\n' | while read agent; do
             agent=$(echo "$agent" | xargs)
-            echo "- **@$agent**"
+            echo "- **@$agent** ✅"
           done)
           
           ### 📊 Demo Statistics
@@ -495,32 +534,43 @@ jobs:
         run: |
           echo "Checking for PR from branch: $BRANCH_NAME"
           
-          # Wait a moment for GitHub to process the PR creation
-          sleep 3
-          
-          # Search for any open PRs from the a2a branch
-          PR_JSON=$(gh pr list --head "$BRANCH_NAME" --json number,url,title --jq '.[0]' 2>/dev/null || echo "")
-          
-          if [[ -n "$PR_JSON" && "$PR_JSON" != "null" ]]; then
-            PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number')
-            PR_URL=$(echo "$PR_JSON" | jq -r '.url')
-            PR_TITLE=$(echo "$PR_JSON" | jq -r '.title')
-            echo "✅ Found PR #$PR_NUMBER: $PR_TITLE"
-            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-            echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
-            echo "pr_found=true" >> $GITHUB_OUTPUT
-          else
-            echo "⚠️ No PR found from branch $BRANCH_NAME"
-            echo "pr_found=false" >> $GITHUB_OUTPUT
+          # Retry mechanism: check up to 3 times with increasing delays
+          # This handles race conditions where the PR might not be immediately visible
+          for attempt in 1 2 3; do
+            echo "Attempt $attempt: Looking for PR..."
             
-            # Check if the branch exists
-            if gh api repos/${{ github.repository }}/branches/$BRANCH_NAME --jq '.name' 2>/dev/null; then
-              echo "Branch exists but no PR was created"
-              echo "branch_exists=true" >> $GITHUB_OUTPUT
-            else
-              echo "Branch does not exist"
-              echo "branch_exists=false" >> $GITHUB_OUTPUT
+            # Search for open PRs from the a2a branch, sorted by creation date (newest first)
+            PR_JSON=$(gh pr list --head "$BRANCH_NAME" --state open --json number,url,title,createdAt --jq 'sort_by(.createdAt) | reverse | .[0]' 2>/dev/null || echo "")
+            
+            if [[ -n "$PR_JSON" && "$PR_JSON" != "null" ]]; then
+              PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number')
+              PR_URL=$(echo "$PR_JSON" | jq -r '.url')
+              PR_TITLE=$(echo "$PR_JSON" | jq -r '.title')
+              echo "✅ Found PR #$PR_NUMBER: $PR_TITLE"
+              echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+              echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+              echo "pr_found=true" >> $GITHUB_OUTPUT
+              exit 0
             fi
+            
+            # Wait before retry (exponential backoff: 2s, 4s, 8s)
+            if [[ $attempt -lt 3 ]]; then
+              delay=$((2 ** attempt))
+              echo "No PR found yet, waiting ${delay}s before retry..."
+              sleep $delay
+            fi
+          done
+          
+          echo "⚠️ No PR found from branch $BRANCH_NAME after 3 attempts"
+          echo "pr_found=false" >> $GITHUB_OUTPUT
+          
+          # Check if the branch exists using the git refs API endpoint
+          if gh api "repos/${{ github.repository }}/git/refs/heads/$BRANCH_NAME" --silent 2>/dev/null; then
+            echo "Branch exists but no PR was created"
+            echo "branch_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Branch does not exist"
+            echo "branch_exists=false" >> $GITHUB_OUTPUT
           fi
       
       - name: Post execution complete notification
@@ -528,17 +578,39 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
+          AGENTS: ${{ steps.agents.outputs.agents }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           PR_FOUND: ${{ steps.verify_pr.outputs.pr_found }}
           PR_NUMBER: ${{ steps.verify_pr.outputs.pr_number }}
           PR_URL: ${{ steps.verify_pr.outputs.pr_url }}
           BRANCH_EXISTS: ${{ steps.verify_pr.outputs.branch_exists }}
         run: |
+          # Build A2A communication pattern diagram with all steps complete
+          AGENT_LINES=""
+          while IFS= read -r agent; do
+            agent=$(echo "$agent" | xargs)
+            if [[ -n "$agent" ]]; then
+              AGENT_LINES="${AGENT_LINES}     |
+          Task Delegation -> @${agent} (Gemini AI) -> ✅ Analysis Complete
+          "
+            fi
+          done <<< "$(echo "$AGENTS" | tr ',' '\n')"
+          
           if [[ "$PR_FOUND" == "true" ]]; then
             cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
           ## ✅ A2A Pipeline Complete - PR Created
           
-          The A2A pipeline has completed the full cycle:
+          The A2A pipeline has completed the full cycle!
+          
+          ### 🔄 A2A Communication Pattern - Complete
+          
+          \`\`\`
+          Coordinator -> Discovery Service -> Agent Registry
+          ${AGENT_LINES}     |
+          ✅ Result Aggregation -> ✅ Implementation -> ✅ PR #$PR_NUMBER Created
+          \`\`\`
+          
+          ### 📋 Pipeline Status
           
           1. ✅ Multi-agent analysis complete
           2. ✅ Implementation executed
@@ -558,7 +630,15 @@ jobs:
               cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
           ## ⚠️ A2A Pipeline Complete - PR Not Created
           
-          The A2A pipeline completed but a PR was not created:
+          ### 🔄 A2A Communication Pattern - Partial
+          
+          \`\`\`
+          Coordinator -> Discovery Service -> Agent Registry
+          ${AGENT_LINES}     |
+          ✅ Result Aggregation -> ✅ Implementation -> ⚠️ PR Creation Failed
+          \`\`\`
+          
+          ### 📋 Pipeline Status
           
           1. ✅ Multi-agent analysis complete
           2. ✅ Implementation executed (branch created)
@@ -581,7 +661,15 @@ jobs:
               cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
           ## ⚠️ A2A Pipeline Issue - No Changes Made
           
-          The A2A pipeline completed but no changes were made:
+          ### 🔄 A2A Communication Pattern - Incomplete
+          
+          \`\`\`
+          Coordinator -> Discovery Service -> Agent Registry
+          ${AGENT_LINES}     |
+          ✅ Result Aggregation -> ⚠️ Implementation Failed -> ❌ No PR
+          \`\`\`
+          
+          ### 📋 Pipeline Status
           
           1. ✅ Multi-agent analysis complete
           2. ⚠️ Implementation did not create any files
