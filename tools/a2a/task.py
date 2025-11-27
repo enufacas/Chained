@@ -32,10 +32,12 @@ class TaskState(str, Enum):
     - submitted: Task created and submitted to agent
     - working: Agent is actively processing
     - input-required: Paused, waiting for more information
+    - auth-required: Paused, waiting for authentication
     - completed: Successfully finished
     - canceled: Terminated by client
     - rejected: Agent declined the task
     - failed: Task encountered an error
+    - unknown: State cannot be determined (extension for error handling)
     """
     SUBMITTED = "submitted"
     WORKING = "working"
@@ -45,7 +47,7 @@ class TaskState(str, Enum):
     CANCELED = "canceled"
     REJECTED = "rejected"
     FAILED = "failed"
-    UNKNOWN = "unknown"
+    UNKNOWN = "unknown"  # Extension for error handling
     
     def is_terminal(self) -> bool:
         """Check if this is a terminal state (task cannot restart)."""
@@ -361,9 +363,26 @@ class Task:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Task":
         """Deserialize from dictionary."""
+        # Reconstruct TaskStatus with message if present
+        status_data = data["status"]
+        message = None
+        if "message" in status_data and status_data["message"]:
+            msg_data = status_data["message"]
+            if "parts" in msg_data and msg_data["parts"]:
+                # Take the first text part as the message
+                for part_data in msg_data["parts"]:
+                    if part_data.get("kind") == "text":
+                        message = Part(
+                            kind=part_data["kind"],
+                            text=part_data.get("text"),
+                            metadata=part_data.get("metadata"),
+                        )
+                        break
+        
         status = TaskStatus(
-            state=TaskState(data["status"]["state"]),
-            timestamp=data["status"].get("timestamp"),
+            state=TaskState(status_data["state"]),
+            message=message,
+            timestamp=status_data.get("timestamp"),
         )
         
         artifacts = []
