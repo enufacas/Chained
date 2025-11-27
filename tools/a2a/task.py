@@ -15,6 +15,7 @@ Key Concepts:
 - referenceTaskIds: Links follow-up tasks to previous tasks
 """
 
+import base64
 import json
 import uuid
 from dataclasses import asdict, dataclass, field
@@ -95,7 +96,6 @@ class Part:
     @classmethod
     def file_part(cls, name: str, mime_type: str, content: bytes) -> "Part":
         """Create a FilePart."""
-        import base64
         return cls(
             kind="file",
             file={
@@ -469,7 +469,17 @@ class TaskStore:
         if not completed_tasks:
             return []
         
-        # Return artifacts from the last completed task
+        # Sort by timestamp to get the truly most recent task
+        # Tasks with no timestamp are considered oldest
+        def get_timestamp(task):
+            ts = task.status.timestamp
+            if ts is None:
+                return ""
+            return ts
+        
+        completed_tasks.sort(key=get_timestamp)
+        
+        # Return artifacts from the most recent completed task
         return completed_tasks[-1].artifacts
     
     def _persist(self) -> None:
@@ -580,8 +590,16 @@ def aggregate_artifacts(tasks: List[Task]) -> Dict[str, Any]:
     Returns:
         Aggregated artifact data
     """
+    if not tasks:
+        return {
+            "contextId": None,
+            "taskIds": [],
+            "agents": {},
+            "combinedAnalysis": [],
+        }
+    
     result = {
-        "contextId": tasks[0].context_id if tasks else None,
+        "contextId": tasks[0].context_id,
         "taskIds": [t.id for t in tasks],
         "agents": {},
         "combinedAnalysis": [],

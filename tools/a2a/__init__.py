@@ -34,8 +34,13 @@ Task Lifecycle (per A2A spec "Life of a Task"):
 
 Usage:
     from tools.a2a import (
-        Task, TaskState, Artifact, create_analysis_task, aggregate_artifacts,
-        generate_agent_card, GeminiAgentExecutor
+        # Task management (§4.1.1-4.1.9)
+        Task, TaskState, TaskStatus, Artifact, Part, TaskStore,
+        create_analysis_task, create_implementation_task, aggregate_artifacts,
+        # Agent discovery (§4.4.1, §8)
+        generate_agent_card, DiscoveryService, AgentRegistry,
+        # Execution
+        GeminiAgentExecutor, ChainedAgentExecutor,
     )
     
     # Create an analysis task (§4.1.1)
