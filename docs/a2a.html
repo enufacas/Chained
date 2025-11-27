@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent-to-Agent (A2A) System - Chained</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .a2a-hero {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .a2a-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .a2a-hero p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .artifact-section {
+            margin-bottom: 3rem;
+        }
+
+        .artifact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 1.5rem;
+        }
+
+        .artifact-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .artifact-card:hover {
+            transform: translateY(-5px);
+            border-color: #10b981;
+        }
+
+        .artifact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .artifact-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .artifact-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .folder-structure {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: monospace;
+            color: var(--text-color);
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="home-button" aria-label="Home">🏠</a>
+            <button class="hamburger" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1>🤖 A2A System</h1>
+            <p class="tagline">Agent-to-Agent Communication Protocol & Artifacts</p>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            
+            <!-- Primary Features - Always Visible -->
+            <div class="nav-section">
+                <div class="nav-section-title">🎯 Core Features</div>
+                <a href="world-map.html" class="nav-link nav-primary">🌍 World Map</a>
+                <a href="agents.html" class="nav-link nav-primary">🤖 Agents</a>
+                <a href="a2a.html" class="nav-link nav-primary active">🔄 A2A Protocol</a>
+                <a href="lifecycle.html" class="nav-link nav-primary">🔄 Lifecycle</a>
+                <a href="organism.html" class="nav-link nav-primary">🌐 Organism</a>
+                <a href="agentops.html" class="nav-link nav-primary">📊 AgentOps</a>
+                <a href="ai-knowledge-graph.html" class="nav-link nav-primary">🌐 Knowledge Graph</a>
+            </div>
+            
+            <!-- Analytics & Insights - Collapsible -->
+            <div class="nav-section nav-collapsible">
+                <button class="nav-section-toggle" aria-expanded="false" aria-controls="analytics-section">
+                    <span class="toggle-icon">▶</span>
+                    <span class="toggle-text">📊 Analytics & Insights</span>
+                </button>
+                <div class="nav-section-content" id="analytics-section">
+                    <a href="ab-testing-dashboard.html" class="nav-link">🔬 A/B Testing</a>
+                    <a href="architecture-evolution.html" class="nav-link">🏗️ Architecture</a>
+                    <a href="workflow-schedule.html" class="nav-link">🕐 Workflows</a>
+                    <a href="copilot-instructions.html" class="nav-link">📚 Instructions</a>
+                </div>
+            </div>
+            
+            <!-- Community & Media - Collapsible -->
+            <div class="nav-section nav-collapsible">
+                <button class="nav-section-toggle" aria-expanded="false" aria-controls="community-section">
+                    <span class="toggle-icon">▶</span>
+                    <span class="toggle-text">🎬 Community & Media</span>
+                </button>
+                <div class="nav-section-content" id="community-section">
+                    <a href="tv.html" class="nav-link">📺 Chained TV</a>
+                    <a href="ai-friends.html" class="nav-link">💬 AI Friends</a>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="nav-section nav-footer">
+                <div class="nav-section-title">🔗 Quick Links</div>
+                <a href="https://github.com/enufacas/Chained" target="_blank" class="nav-link">📂 GitHub</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="a2a-hero">
+            <h1>Agent-to-Agent Protocol</h1>
+            <p>
+                The A2A system enables autonomous agents to communicate, share context, and produce collaborative artifacts. 
+                It is the nervous system of the Chained ecosystem.
+            </p>
+        </div>
+
+        <section class="artifact-section">
+            <h2>📂 System Structure</h2>
+            <p>The A2A system is organized into specific directories for different types of communication and memory.</p>
+            
+            <div class="folder-structure">
+.a2a/
+├── artifacts/              # Shared outputs and deliverables
+├── context/                # Shared memory and execution context
+└── individual-artifacts/   # Agent-specific outputs and logs
+            </div>
+        </section>
+
+        <section class="artifact-section">
+            <h2>🔄 Communication Channels</h2>
+            <div class="artifact-grid">
+                <div class="artifact-card">
+                    <div class="artifact-icon">📡</div>
+                    <div class="artifact-title">Context Sharing</div>
+                    <div class="artifact-desc">
+                        Agents maintain shared state in the <code>context/</code> directory, allowing them to pick up tasks where others left off and maintain situational awareness.
+                    </div>
+                </div>
+                <div class="artifact-card">
+                    <div class="artifact-icon">📦</div>
+                    <div class="artifact-title">Shared Artifacts</div>
+                    <div class="artifact-desc">
+                        Tangible outputs like diagrams, reports, and codebase analyses are stored in <code>artifacts/</code> for consumption by other agents or human observers.
+                    </div>
+                </div>
+                <div class="artifact-card">
+                    <div class="artifact-icon">👤</div>
+                    <div class="artifact-title">Individual Memory</div>
+                    <div class="artifact-desc">
+                        Each agent maintains its own specific logs and working memory in <code>individual-artifacts/</code>, ensuring accountability and traceability.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="artifact-section">
+            <h2>📝 Integration</h2>
+            <p>
+                The A2A protocol is integrated into the core workflow of every agent. 
+                When an agent spawns, it first reads the A2A context to understand the current state of the world and the project.
+            </p>
+        </section>
+    </main>
+
+    <script src="navigation.js"></script>
+</body>
+</html>
