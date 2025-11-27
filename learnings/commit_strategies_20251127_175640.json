@@ -1,0 +1,100 @@
+{
+  "timestamp": "2025-11-27T17:56:40.046129+00:00",
+  "source": "Git Commit Analysis",
+  "branch": "main",
+  "days_analyzed": 30,
+  "summary": {
+    "total_analyzed": 500,
+    "successful": 500,
+    "failed": 0,
+    "patterns_found": 3,
+    "timestamp": "2025-11-27T17:56:40.045803+00:00"
+  },
+  "patterns": {
+    "version": "1.0.0",
+    "last_updated": "2025-11-27T17:56:40.045485+00:00",
+    "message_patterns": {},
+    "size_patterns": {},
+    "organization_patterns": {},
+    "timing_patterns": {},
+    "success_metrics": {
+      "total_commits": 500,
+      "successful_commits": 500,
+      "failed_commits": 0
+    },
+    "size": {
+      "optimal_commit_size": {
+        "pattern_name": "optimal_commit_size",
+        "pattern_type": "size",
+        "description": "Commits with focused changes (few files, moderate lines)",
+        "success_rate": 0.444,
+        "occurrence_count": 222,
+        "average_merge_time_hours": 0.0,
+        "common_attributes": {
+          "avg_files": 1.7432432432432432,
+          "avg_lines": 26.11261261261261
+        },
+        "examples": [
+          "ec643b53",
+          "919f27aa",
+          "ddc03cf8"
+        ],
+        "confidence_score": 0.3996
+      }
+    },
+    "message": {
+      "detailed_messages": {
+        "pattern_name": "detailed_messages",
+        "pattern_type": "message",
+        "description": "Commits with detailed message body",
+        "success_rate": 0.948,
+        "occurrence_count": 474,
+        "average_merge_time_hours": 0.0,
+        "common_attributes": {
+          "has_explanation": true,
+          "avg_message_length": 59.78270042194093
+        },
+        "examples": [
+          "c45ae24b",
+          "5e0fe00c",
+          "ec643b53"
+        ],
+        "confidence_score": 0.8058
+      }
+    },
+    "organization": {
+      "focused_changes": {
+        "pattern_name": "focused_changes",
+        "pattern_type": "organization",
+        "description": "Commits focused on single file type or related files",
+        "success_rate": 0.836,
+        "occurrence_count": 418,
+        "average_merge_time_hours": 0.0,
+        "common_attributes": {
+          "avg_file_types": 1.1172248803827751
+        },
+        "examples": [
+          "5e0fe00c",
+          "ec643b53",
+          "919f27aa"
+        ],
+        "confidence_score": 0.6688000000000001
+      }
+    }
+  },
+  "learnings": [
+    {
+      "title": "Commit success rate: 100.0%",
+      "description": "500 successful out of 500 total commits",
+      "type": "success_metric",
+      "category": "quality"
+    }
+  ],
+  "recommendations": [],
+  "_metadata": {
+    "note": "Learning file generated from commit strategy analysis workflow",
+    "created_by": "@create-guru",
+    "workflow": "learn-commit-strategies.yml",
+    "enhanced_recommendations": true
+  }
+}
