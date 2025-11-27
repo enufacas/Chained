@@ -2,50 +2,129 @@
 
 ## Overview
 
-The **ADK Dev UI** (Agent Development Kit Development User Interface) is a web-based interface provided by Google's Agent Development Kit for interacting with, testing, and debugging AI agents. In the Chained repository, the ADK Dev UI is automatically accessible when agents are deployed to Cloud Run.
+The **ADK Dev UI** (Agent Development Kit Development User Interface) is a web-based interface provided by Google's Agent Development Kit for interacting with, testing, and debugging AI agents. The Chained repository now includes an **ADK API Server** that bridges Google's [adk-web](https://github.com/google/adk-web) frontend with the deployed A2A protocol agents.
 
-## How ADK Dev UI Works in Chained
+## Quick Start: Using google/adk-web
 
-When you deploy ADK agents to Cloud Run (as seen in the [workflow run](https://github.com/enufacas/Chained/actions/runs/19739435100/job/56559442823)), each agent exposes endpoints that power the Dev UI experience:
+### 1. Get the ADK API Server URL
+
+After deploying ADK agents (via the `deploy-adk-agents` workflow), you'll have an ADK API Server URL:
 
 ```
-ADK Dev UI is accessible at each agent's root endpoint:
-- Academic Research: https://chained-academic-research-sguacxy5gq-uc.a.run.app
-- Blog Writer: https://chained-blog-writer-sguacxy5gq-uc.a.run.app
-- Google Trends: https://chained-google-trends-sguacxy5gq-uc.a.run.app
-
-Health checks available at /health endpoint for each service.
-A2A Agent Cards available at /.well-known/agent.json
+ADK API Server: https://chained-adk-api-server-xxx.a.run.app
 ```
+
+### 2. Clone and Configure adk-web
+
+```bash
+# Clone google/adk-web
+git clone https://github.com/google/adk-web
+cd adk-web
+
+# Install dependencies
+npm install
+
+# Configure the API URL (edit src/environments/environment.ts)
+# Set apiUrl to your ADK API Server URL
+```
+
+### 3. Run adk-web
+
+```bash
+npm start
+# Open http://localhost:4200
+```
+
+The adk-web UI will connect to your ADK API Server and display the available agents.
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           ADK Dev UI Flow                                │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│   ┌────────────────┐         ┌──────────────────────┐                   │
-│   │   Browser UI   │◀───────▶│  Cloud Run Service   │                   │
-│   │   (Dev UI)     │   HTTP  │  (Agent Backend)     │                   │
-│   └────────────────┘         └──────────────────────┘                   │
-│          │                              │                                │
-│          │                              │                                │
-│          ▼                              ▼                                │
-│   ┌────────────────┐         ┌──────────────────────┐                   │
-│   │   Interactive  │         │   A2A Protocol API   │                   │
-│   │   Chat/Debug   │         │   ├─ /a2a/tasks      │                   │
-│   │   Interface    │         │   ├─ /health         │                   │
-│   └────────────────┘         │   └─ /.well-known/   │                   │
-│                              │       agent.json     │                   │
-│                              └──────────────────────┘                   │
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      ADK-Web Integration Architecture                        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌─────────────┐    HTTP/SSE    ┌──────────────────┐                        │
+│  │             │◀──────────────▶│                  │                        │
+│  │  adk-web    │                │  ADK API Server  │                        │
+│  │  (Angular)  │                │  (FastAPI)       │                        │
+│  │             │                │                  │                        │
+│  └─────────────┘                └────────┬─────────┘                        │
+│       Local                              │                                   │
+│                                          │ A2A Protocol                      │
+│                                          ▼                                   │
+│                     ┌────────────────────────────────────────┐              │
+│                     │           A2A Agents                    │              │
+│                     │  ┌────────────┐ ┌────────────┐         │              │
+│                     │  │ Academic   │ │ Blog       │         │              │
+│                     │  │ Research   │ │ Writer     │         │              │
+│                     │  └────────────┘ └────────────┘         │              │
+│                     │  ┌────────────┐                        │              │
+│                     │  │ Google     │                        │              │
+│                     │  │ Trends     │                        │              │
+│                     │  └────────────┘                        │              │
+│                     └────────────────────────────────────────┘              │
+│                              Cloud Run                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Key Endpoints
+## ADK API Server Endpoints
 
-Each deployed agent in Chained exposes these endpoints:
+The ADK API Server implements the ADK API interface expected by adk-web:
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/list-apps` | GET | List available agent applications |
+| `/apps/{app}/users/{user}/sessions` | POST | Create a new session |
+| `/apps/{app}/users/{user}/sessions` | GET | List user sessions |
+| `/apps/{app}/users/{user}/sessions/{id}` | GET | Get session details |
+| `/apps/{app}/users/{user}/sessions/{id}` | DELETE | Delete session |
+| `/run` | POST | Run agent synchronously |
+| `/run_sse` | POST | Run agent with SSE streaming |
+| `/health` | GET | Health check |
+
+### Example: List Available Apps
+
+```bash
+curl https://chained-adk-api-server-xxx.a.run.app/list-apps
+
+# Response:
+[
+  {
+    "name": "academic-research",
+    "description": "Discovers and analyzes academic research topics for blog content",
+    "version": "1.0.0",
+    "skills": [...]
+  },
+  {
+    "name": "blog-writer",
+    "description": "Writes engaging blog posts from research and trend data",
+    ...
+  },
+  {
+    "name": "google-trends",
+    "description": "Analyzes Google Trends data to identify trending topics for SEO",
+    ...
+  }
+]
+```
+
+### Example: Run an Agent
+
+```bash
+curl -X POST https://chained-adk-api-server-xxx.a.run.app/run \
+  -H "Content-Type: application/json" \
+  -d '{
+    "appName": "academic-research",
+    "userId": "user-123",
+    "sessionId": "session-456",
+    "newMessage": "Find AI research topics"
+  }'
+```
+
+## A2A Agent Endpoints
+
+Each deployed A2A agent exposes these endpoints:
 
 | Endpoint | Purpose | Example |
 |----------|---------|---------|
@@ -54,7 +133,7 @@ Each deployed agent in Chained exposes these endpoints:
 | `POST /a2a/tasks` | Send message to agent | Submit tasks and receive results |
 | `GET /health` | Health check | Service status verification |
 
-## Using the Dev UI
+## Using the Agents Directly
 
 ### 1. Accessing an Agent
 
