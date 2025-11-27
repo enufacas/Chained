@@ -425,7 +425,7 @@ jobs:
           echo ""
           echo "Directory structure:"
           find .a2a/agent-artifacts/ -type f 2>/dev/null | sort | while read f; do
-            SIZE=$(stat -c%s "$f" 2>/dev/null || echo "?")
+            SIZE=$(wc -c < "$f" 2>/dev/null | tr -d ' ' || echo "?")
             echo "  📄 $f (${SIZE} bytes)"
           done
           echo ""
@@ -433,7 +433,12 @@ jobs:
           find .a2a/agent-artifacts/ -name "*.json" -type f 2>/dev/null | while read f; do
             echo ""
             echo "--- $f ---"
-            jq '.' "$f" 2>/dev/null | head -20 || cat "$f" | head -20
+            if jq '.' "$f" 2>/dev/null | head -20; then
+              :  # jq succeeded
+            else
+              echo "(Raw text fallback - file may not be valid JSON):"
+              cat "$f" | head -20
+            fi
           done
           echo ""
           echo "=================================================="
@@ -732,8 +737,8 @@ jobs:
             "## 📦 Acknowledging Downloaded A2A Artifacts
             
             I have received and processed the analysis artifacts from the previous parallel agent jobs:
-            - Source: aggregated-analysis.json (A2A v{version}, timestamp: {timestamp})
-            - Reference Tasks: {list the task IDs}
+            - Source: aggregated-analysis.json (A2A v${{ steps.context.outputs.artifact_version }}, timestamp: ${{ steps.context.outputs.artifact_timestamp }})
+            - Reference Tasks: ${{ needs.aggregate.outputs.reference_task_ids }}
             
             ### Summary of Agent Recommendations:
             [Brief summary of each agent's key points]
