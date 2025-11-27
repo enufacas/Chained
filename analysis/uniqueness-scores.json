@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2025-11-26T18:17:53.498120+00:00",
+    "generated_at": "2025-11-27T01:01:27.710006+00:00",
     "repository": ".",
     "threshold": 30.0,
     "min_contributions": 3,
@@ -9,107 +9,111 @@
     "insufficient_data_agents": 0
   },
   "scores": {
-    "copilot": {
-      "agent_id": "copilot",
-      "overall_score": 35.23,
+    "copilot-swe-agent": {
+      "agent_id": "copilot-swe-agent",
+      "overall_score": 33.17,
       "metrics": {
         "structural_uniqueness": 100,
-        "approach_diversity": 10.19,
-        "innovation_index": 3.85
+        "approach_diversity": 3.24,
+        "innovation_index": 6.25
       },
       "details": {
-        "total_contributions": 556,
+        "total_contributions": 1749,
         "unique_approaches": 17,
-        "unique_file_types": 13,
+        "unique_file_types": 16,
         "approaches_used": [
-          "bug_fixing",
-          "enhancement",
-          "feature_addition",
-          "updating",
-          "refactoring",
-          "testing",
-          "security",
-          "removal",
-          "documentation",
-          "optimization",
-          "performance",
-          "implementation",
-          "improvement",
-          "creation",
           "deletion",
           "workflow",
-          "automation"
+          "automation",
+          "improvement",
+          "implementation",
+          "security",
+          "feature_addition",
+          "optimization",
+          "bug_fixing",
+          "enhancement",
+          "updating",
+          "creation",
+          "documentation",
+          "refactoring",
+          "performance",
+          "removal",
+          "testing"
         ],
         "file_types_used": [
+          ".lock",
+          ".ts",
+          ".sh",
+          ".yml",
+          ".tf",
+          ".pyc",
           ".css",
           ".js",
-          ".sh",
-          ".html",
-          ".json",
-          ".ts",
-          ".png",
           ".txt",
           ".backup",
-          ".md",
-          ".mmd",
-          ".yml",
-          ".py"
+          ".py",
+          ".json",
+          ".backup_1763948174",
+          ".html",
+          ".example",
+          ".md"
         ]
       }
     },
-    "copilot-swe-agent": {
-      "agent_id": "copilot-swe-agent",
-      "overall_score": 33.45,
+    "copilot": {
+      "agent_id": "copilot",
+      "overall_score": 34.94,
       "metrics": {
         "structural_uniqueness": 100,
-        "approach_diversity": 3.28,
-        "innovation_index": 7.14
+        "approach_diversity": 9.84,
+        "innovation_index": 3.33
       },
       "details": {
-        "total_contributions": 1729,
+        "total_contributions": 576,
         "unique_approaches": 17,
-        "unique_file_types": 14,
+        "unique_file_types": 15,
         "approaches_used": [
-          "bug_fixing",
-          "enhancement",
-          "feature_addition",
-          "updating",
-          "testing",
-          "security",
-          "removal",
-          "documentation",
-          "optimization",
-          "automation",
-          "performance",
-          "implementation",
-          "improvement",
-          "creation",
           "deletion",
           "workflow",
-          "refactoring"
+          "automation",
+          "implementation",
+          "refactoring",
+          "improvement",
+          "feature_addition",
+          "optimization",
+          "bug_fixing",
+          "enhancement",
+          "updating",
+          "creation",
+          "documentation",
+          "removal",
+          "performance",
+          "security",
+          "testing"
         ],
         "file_types_used": [
+          ".mmd",
+          ".ts",
+          ".sh",
+          ".png",
+          ".yml",
+          ".tf",
           ".css",
           ".js",
-          ".sh",
-          ".html",
-          ".json",
-          ".lock",
-          ".pyc",
-          ".ts",
-          ".backup_1763948174",
           ".txt",
           ".backup",
-          ".md",
-          ".yml",
-          ".py"
+          ".html",
+          ".json",
+          ".py",
+          ".example",
+          ".md"
         ]
       }
     }
   },
   "flagged_agents": [],
   "summary": {
-    "average_score": 34.34,
+    "average_score": 34.05,
     "agents_below_threshold": 0,
     "agents_above_threshold": 2,
     "total_agents": 2
