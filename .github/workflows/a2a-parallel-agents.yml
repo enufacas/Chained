@@ -337,7 +337,7 @@ jobs:
                 "github": {
                   "command": "docker",
                   "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server:v0.18.0"],
-                  "includeTools": ["get_issue", "get_file_contents", "add_issue_comment"],
+                  "includeTools": ["get_issue", "get_file_contents"],
                   "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" }
                 }
               }
@@ -855,3 +855,100 @@ jobs:
           
           [View All Jobs]($RUN_URL)
           EOF
+
+  # ==========================================================================
+  # JOB 5: STATUS NOTIFICATION (ALWAYS RUNS)
+  # ==========================================================================
+  # Posts a final status notification to the issue indicating the ACTUAL
+  # workflow outcome, including which jobs succeeded, failed, or were cancelled.
+  # This ensures consistency between workflow status and issue comments.
+  # ==========================================================================
+  status-notification:
+    needs: [setup, agent, aggregate, implement]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    
+    steps:
+      - name: Post final status notification
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          AGENTS: ${{ needs.setup.outputs.agents }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SETUP_RESULT: ${{ needs.setup.result }}
+          AGENT_RESULT: ${{ needs.agent.result }}
+          AGGREGATE_RESULT: ${{ needs.aggregate.result }}
+          IMPLEMENT_RESULT: ${{ needs.implement.result }}
+        run: |
+          # Determine overall workflow status
+          WORKFLOW_STATUS="success"
+          HAS_CANCELLED="false"
+          HAS_FAILED="false"
+          
+          for result in "$SETUP_RESULT" "$AGENT_RESULT" "$AGGREGATE_RESULT" "$IMPLEMENT_RESULT"; do
+            case "$result" in
+              cancelled) HAS_CANCELLED="true"; WORKFLOW_STATUS="cancelled" ;;
+              failure) HAS_FAILED="true"; WORKFLOW_STATUS="failure" ;;
+            esac
+          done
+          
+          # Override: failure takes precedence over cancelled
+          [[ "$HAS_FAILED" == "true" ]] && WORKFLOW_STATUS="failure"
+          
+          # Build job status table
+          status_emoji() {
+            case "$1" in
+              success) echo "✅" ;;
+              failure) echo "❌" ;;
+              cancelled) echo "🚫" ;;
+              skipped) echo "⏭️" ;;
+              *) echo "❓" ;;
+            esac
+          }
+          
+          JOB_TABLE="| Job | Status |\n|-----|--------|\n"
+          JOB_TABLE="${JOB_TABLE}| setup | $(status_emoji "$SETUP_RESULT") $SETUP_RESULT |\n"
+          
+          # Add agent matrix job (shows overall matrix result)
+          # Note: Matrix jobs report aggregate result - if any job in the matrix fails/cancels,
+          # the overall result reflects that. Individual job outcomes are visible in the workflow run.
+          AGENT_COUNT=$(echo "$AGENTS" | tr ',' '\n' | grep -v '^$' | wc -l | tr -d ' ')
+          JOB_TABLE="${JOB_TABLE}| agent (${AGENT_COUNT} parallel jobs) | $(status_emoji "$AGENT_RESULT") $AGENT_RESULT |\n"
+          
+          JOB_TABLE="${JOB_TABLE}| aggregate | $(status_emoji "$AGGREGATE_RESULT") $AGGREGATE_RESULT |\n"
+          JOB_TABLE="${JOB_TABLE}| implement | $(status_emoji "$IMPLEMENT_RESULT") $IMPLEMENT_RESULT |"
+          
+          # Determine header emoji and title
+          case "$WORKFLOW_STATUS" in
+            success)
+              HEADER="## ✅ A2A Parallel Orchestration Completed Successfully"
+              NOTE=""
+              ;;
+            cancelled)
+              HEADER="## ⚠️ A2A Parallel Orchestration Interrupted"
+              NOTE="\n\n> ⚠️ **Note**: Some agents may have posted partial analysis before being cancelled. The workflow was interrupted and did not complete normally."
+              ;;
+            failure)
+              HEADER="## ❌ A2A Parallel Orchestration Failed"
+              NOTE="\n\n> ❌ **Note**: One or more jobs failed. Check the workflow logs for details. Some agents may have posted partial analysis before the failure occurred."
+              ;;
+          esac
+          
+          # Post the status notification
+          cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
+          ${HEADER}
+          
+          **Workflow Status**: \`${WORKFLOW_STATUS}\`
+          **Context ID**: \`${CONTEXT_ID}\`
+          
+          ### Job Summary
+          
+          $(printf '%b\n' "$JOB_TABLE")
+          ${NOTE}
+          
+          [View Workflow Run](${RUN_URL})
+          EOF
+          
+          echo "✅ Posted final status notification: $WORKFLOW_STATUS"
