@@ -714,6 +714,127 @@ jobs:
             }
           prompt: '/gemini-invoke'
       
+      # Create proper A2A Task objects with Artifacts per spec §4.1.1 and §4.1.9
+      # This follows the "Life of a Task" pattern from https://a2a-protocol.org/latest/topics/life-of-a-task/
+      - name: 'A2A Task: Create Analysis Tasks with Artifacts'
+        id: a2a_tasks
+        if: success()
+        env:
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          AGENTS: ${{ steps.agents.outputs.agents }}
+          RUN_ID: ${{ github.run_id }}
+          ANALYSIS_RESPONSE: ${{ steps.analysis.outputs.gemini_response }}
+        run: |
+          cat << 'PYTHON' > /tmp/create_a2a_tasks.py
+          import os
+          import json
+          import sys
+          sys.path.insert(0, os.getcwd())
+          
+          from tools.a2a.task import (
+              Task, TaskState, Artifact, Part, TaskStore,
+              create_analysis_task, create_implementation_task, aggregate_artifacts
+          )
+          
+          issue_number = int(os.environ.get('ISSUE_NUMBER', 0))
+          run_id = os.environ.get('RUN_ID', 'unknown')
+          agents_str = os.environ.get('AGENTS', '')
+          analysis_response = os.environ.get('ANALYSIS_RESPONSE', '')
+          
+          agents = [a.strip() for a in agents_str.split(',') if a.strip()]
+          
+          print("=" * 60)
+          print("A2A TASK CREATION (Spec §4.1.1)")
+          print("=" * 60)
+          print(f"Issue: #{issue_number}")
+          print(f"Run ID: {run_id}")
+          print(f"Agents: {', '.join(agents)}")
+          print()
+          
+          # Shared context ID for all tasks in this interaction
+          # Per "Life of a Task": contextId groups related tasks together
+          context_id = f"issue-{issue_number}"
+          
+          # Create a task for each agent's analysis
+          analysis_tasks = []
+          for agent_name in agents:
+              task = create_analysis_task(
+                  issue_number=issue_number,
+                  agent_name=agent_name,
+                  run_id=run_id,
+                  context_id=context_id,
+              )
+              
+              # Transition to working then completed
+              task.set_working(f"Analyzing issue #{issue_number}...")
+              
+              # Add artifact with analysis content
+              # In a real implementation, we'd parse the response per agent
+              # For now, we add the combined analysis as the artifact
+              artifact = task.add_text_artifact(
+                  name=f"{agent_name}-analysis",
+                  text=f"Analysis from @{agent_name} for issue #{issue_number}. See full analysis in Gemini response.",
+                  description=f"Analysis artifact from {agent_name}"
+              )
+              
+              task.complete(f"Analysis complete from @{agent_name}")
+              analysis_tasks.append(task)
+              
+              print(f"✅ Created Task for @{agent_name}:")
+              print(f"   taskId: {task.id}")
+              print(f"   contextId: {task.context_id}")
+              print(f"   state: {task.status.state.value}")
+              print(f"   artifactId: {artifact.artifact_id}")
+              print()
+          
+          # Aggregate artifacts from all analysis tasks
+          # Per "Life of a Task": referenceTaskIds links follow-up tasks to previous tasks
+          aggregated = aggregate_artifacts(analysis_tasks)
+          
+          # Add the full analysis response as combined artifact
+          aggregated['fullAnalysis'] = analysis_response
+          
+          # Save tasks and aggregated data for the implementation step
+          task_data = {
+              'contextId': context_id,
+              'analysisTasks': [t.to_dict() for t in analysis_tasks],
+              'aggregatedArtifacts': aggregated,
+              'referenceTaskIds': [t.id for t in analysis_tasks],
+          }
+          
+          output_path = '.a2a/tasks'
+          os.makedirs(output_path, exist_ok=True)
+          
+          with open(f'{output_path}/analysis-tasks.json', 'w') as f:
+              json.dump(task_data, f, indent=2)
+          
+          print("=" * 60)
+          print("A2A TASK AGGREGATION (Life of a Task)")
+          print("=" * 60)
+          print(f"Context ID: {context_id}")
+          print(f"Analysis Tasks: {len(analysis_tasks)}")
+          print(f"Reference Task IDs: {', '.join([t.id for t in analysis_tasks])}")
+          print()
+          print("Per A2A spec 'Life of a Task':")
+          print("- contextId groups these tasks together")
+          print("- referenceTaskIds will link implementation task to analysis tasks")
+          print("- Artifacts are versioned and can be refined in follow-up tasks")
+          print()
+          print(f"Saved to: {output_path}/analysis-tasks.json")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"context_id={context_id}\n")
+              f.write(f"reference_task_ids={','.join([t.id for t in analysis_tasks])}\n")
+              f.write(f"task_count={len(analysis_tasks)}\n")
+              f.write(f"tasks_path={output_path}/analysis-tasks.json\n")
+          
+          print()
+          print("✅ A2A Tasks created and saved")
+          PYTHON
+          
+          python /tmp/create_a2a_tasks.py
+
       - name: Post analysis complete notification
         if: success()
         env:
@@ -723,6 +844,8 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           RUN_ID: ${{ github.run_id }}
           AUTO_EXECUTE: ${{ inputs.auto_execute }}
+          CONTEXT_ID: ${{ steps.a2a_tasks.outputs.context_id }}
+          REFERENCE_TASK_IDS: ${{ steps.a2a_tasks.outputs.reference_task_ids }}
         run: |
           # Get agent count
           AGENT_COUNT=$(echo $AGENTS | tr ',' '\n' | wc -l | xargs)
@@ -818,6 +941,19 @@ jobs:
           
           ---
           
+          ### 📋 A2A Task Linking (Life of a Task)
+          
+          Per [Life of a Task](https://a2a-protocol.org/latest/topics/life-of-a-task/):
+          
+          | Property | Value |
+          |----------|-------|
+          | \`contextId\` | \`${CONTEXT_ID}\` |
+          | \`referenceTaskIds\` | ${REFERENCE_TASK_IDS} |
+          
+          > The implementation task will use \`referenceTaskIds\` to link back to these analysis tasks.
+          
+          ---
+          
           $NEXT_STEP
           
           [View Logs]($RUN_URL) | [A2A Spec](https://a2a-protocol.org/latest/specification/) | [A2A GitHub](https://github.com/a2aproject/A2A)
@@ -826,6 +962,7 @@ jobs:
           EOF
 
       # AUTOMATIC EXECUTION: Implement the plan and create PR
+      # Per A2A "Life of a Task": This is a follow-up task that references previous analysis tasks
       - name: 'Auto-Execute: Implement changes via Gemini CLI'
         if: success() && inputs.auto_execute == true
         id: execute
@@ -841,17 +978,34 @@ jobs:
           ISSUE_BODY: ${{ steps.issue.outputs.body }}
           TRIGGERING_ACTOR: ${{ github.triggering_actor }}
           BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
+          # A2A Task linking per "Life of a Task" spec
+          A2A_CONTEXT_ID: ${{ steps.a2a_tasks.outputs.context_id }}
+          A2A_REFERENCE_TASK_IDS: ${{ steps.a2a_tasks.outputs.reference_task_ids }}
+          A2A_TASKS_PATH: ${{ steps.a2a_tasks.outputs.tasks_path }}
           # CRITICAL: Pass the multi-agent analysis results to the implementation step
           MULTI_AGENT_ANALYSIS: ${{ steps.analysis.outputs.gemini_response }}
           # Context for the implementation - includes both agent info AND their recommendations
+          # Per A2A spec: This is a follow-up task that references previous analysis task artifacts
           ADDITIONAL_CONTEXT: |
-            This is an A2A (Agent-to-Agent) autonomous implementation.
+            # A2A Implementation Task (Follow-up per "Life of a Task")
             
-            The following specialized agents have analyzed issue #${{ inputs.issue_number }}:
+            This is an A2A (Agent-to-Agent) implementation task that references previous analysis tasks.
+            
+            ## A2A Task Linking (per https://a2a-protocol.org/latest/topics/life-of-a-task/)
+            
+            - **contextId**: ${{ steps.a2a_tasks.outputs.context_id }}
+            - **referenceTaskIds**: ${{ steps.a2a_tasks.outputs.reference_task_ids }}
+            
+            Per the A2A spec "Life of a Task":
+            - This task uses the same contextId to group with previous analysis tasks
+            - The referenceTaskIds link this implementation to the analysis artifacts
+            - Artifacts from referenced tasks inform this implementation
+            
+            ## Agents who analyzed issue #${{ inputs.issue_number }}:
             ${{ steps.agents.outputs.agents }}
             
-            ============ MULTI-AGENT ANALYSIS RESULTS ============
-            The agents provided the following analysis and recommendations:
+            ============ MULTI-AGENT ANALYSIS ARTIFACTS ============
+            The agents provided the following analysis and recommendations (Artifacts per §4.1.9):
             
             ${{ steps.analysis.outputs.gemini_response }}
             
