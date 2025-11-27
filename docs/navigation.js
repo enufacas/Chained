@@ -88,4 +88,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Inject Standard Footer if missing
+    if (!document.querySelector('footer')) {
+        const footer = document.createElement('footer');
+        footer.innerHTML = `
+            <div class="footer-info">
+                <p>&copy; ${new Date().getFullYear()} Chained - The Perpetual AI Motion Machine</p>
+                <p>
+                    <a href="https://github.com/enufacas/Chained" target="_blank">View on GitHub</a> • 
+                    <a href="agents.html">Agent Leaderboard</a> • 
+                    <a href="organism.html">Digital Organism</a>
+                </p>
+            </div>
+        `;
+        document.body.appendChild(footer);
+    }
 });
