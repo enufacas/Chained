@@ -239,14 +239,14 @@ jobs:
 
           for SERVICE_NAME in "${!SERVICES[@]}"; do
             TF_RESOURCE="${SERVICES[$SERVICE_NAME]}"
-            
+
             echo "Checking for existing Cloud Run service: $SERVICE_NAME"
             if gcloud run services describe "$SERVICE_NAME" --region="${{ env.GCP_REGION }}" 2>/dev/null; then
               echo "✅ Found existing Cloud Run service: $SERVICE_NAME"
-              
-              # Check if already in Terraform state
+
+              # Check if already in Terraform state using exit code
               echo "Checking Terraform state for $TF_RESOURCE..."
-              if terraform state show "$TF_RESOURCE" 2>&1 | grep -q "name"; then
+              if terraform state show "$TF_RESOURCE" >/dev/null 2>&1; then
                 echo "✅ $SERVICE_NAME already in Terraform state"
               else
                 echo "📥 Importing $SERVICE_NAME into Terraform state..."
