@@ -151,8 +151,8 @@ jobs:
         run: |
           echo "📦 Installing A2A Protocol tooling..."
           pip install -q pyyaml httpx
-          # Install a2a-sdk for official protocol support
-          pip install -q 'a2a-sdk[http-server]>=0.2.0' || echo "a2a-sdk not installed, using local implementation"
+          # Install a2a-sdk with http-server extras (includes uvicorn)
+          pip install -q 'a2a-sdk[http-server]>=0.2.0'
           echo "✅ A2A tooling ready"
       
       - name: Validate authentication configuration
