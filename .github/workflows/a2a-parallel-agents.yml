@@ -327,7 +327,7 @@ jobs:
           use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || ''false'' }}'
           gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
-          gemini_debug: '${{ vars.DEBUG || ''false'' }}'
+          gemini_debug: '${{ vars.DEBUG || ''true'' }}'
           upload_artifacts: 'false'  # Disabled: Use custom upload with unique name per A2A taskId
           workflow_name: 'a2a-agent-${{ matrix.agent }}'
           settings: |-
@@ -382,20 +382,15 @@ jobs:
           echo "task_id=$TASK_ID" >> $GITHUB_OUTPUT
           echo "✅ Artifact created for @${AGENT_NAME}"
       
-      - name: Upload agent artifact
+      - name: Upload agent artifact (includes analysis JSON and Gemini output)
         uses: actions/upload-artifact@v4.4.3
         with:
-          name: agent-analysis-${{ steps.artifact.outputs.task_id }}
-          path: .a2a/artifacts/${{ matrix.agent }}-analysis.json
+          name: a2a-task-${{ steps.artifact.outputs.task_id }}
+          path: |
+            .a2a/artifacts/${{ matrix.agent }}-analysis.json
+            gemini-artifacts/
           retention-days: 7
-      
-      - name: Upload Gemini output with A2A taskId
-        uses: actions/upload-artifact@v4.4.3
-        with:
-          name: gemini-output-${{ steps.artifact.outputs.task_id }}
-          path: gemini-artifacts/
-          retention-days: 7
-          if-no-files-found: ignore
+          if-no-files-found: warn
 
   # ==========================================================================
   # JOB 3: AGGREGATE
@@ -418,16 +413,35 @@ jobs:
       - name: Download all agent artifacts
         uses: actions/download-artifact@v4.1.8
         with:
-          pattern: agent-analysis-*
+          pattern: a2a-task-*
           path: .a2a/agent-artifacts/
           merge-multiple: false
       
-      - name: List downloaded artifacts
+      - name: '📦 List downloaded artifacts (PROOF OF DOWNLOAD)'
         run: |
-          echo "📦 Downloaded agent artifacts:"
-          find .a2a/agent-artifacts/ -type f -name "*.json" | while read f; do
-            echo "  - $f"
+          echo "=================================================="
+          echo "📦 DOWNLOADED A2A TASK ARTIFACTS"
+          echo "=================================================="
+          echo ""
+          echo "Directory structure:"
+          find .a2a/agent-artifacts/ -type f 2>/dev/null | sort | while read f; do
+            SIZE=$(wc -c < "$f" 2>/dev/null | tr -d ' ' || echo "?")
+            echo "  📄 $f (${SIZE} bytes)"
           done
+          echo ""
+          echo "JSON artifact contents:"
+          find .a2a/agent-artifacts/ -name "*.json" -type f 2>/dev/null | while read f; do
+            echo ""
+            echo "--- $f ---"
+            if jq '.' "$f" 2>/dev/null | head -20; then
+              :  # jq succeeded
+            else
+              echo "(Raw text fallback - file may not be valid JSON):"
+              cat "$f" | head -20
+            fi
+          done
+          echo ""
+          echo "=================================================="
       
       - name: Aggregate agent analyses
         id: aggregate
@@ -545,13 +559,68 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Download aggregated analysis
+      - name: Download aggregated analysis artifact
         uses: actions/download-artifact@v4.1.8
         with:
           name: aggregated-analysis
           path: .a2a/artifacts/
       
-      - name: Prepare implementation context
+      - name: Download all individual agent task artifacts
+        uses: actions/download-artifact@v4.1.8
+        with:
+          pattern: a2a-task-*
+          path: .a2a/individual-artifacts/
+          merge-multiple: false
+      
+      - name: '📦 Display downloaded artifacts (PROOF OF ARTIFACT USAGE)'
+        id: display_artifacts
+        env:
+          AGENTS: ${{ needs.setup.outputs.agents }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          REFERENCE_TASK_IDS: ${{ needs.aggregate.outputs.reference_task_ids }}
+        run: |
+          echo "=================================================="
+          echo "📦 A2A ARTIFACT DOWNLOAD PROOF"
+          echo "=================================================="
+          echo ""
+          echo "🔗 Context ID: ${CONTEXT_ID}"
+          echo "📋 Reference Task IDs: ${REFERENCE_TASK_IDS}"
+          echo ""
+          
+          echo "=================================================="
+          echo "📁 Aggregated Analysis Artifact:"
+          echo "=================================================="
+          if [[ -f ".a2a/artifacts/aggregated-analysis.json" ]]; then
+            echo "✅ File exists: .a2a/artifacts/aggregated-analysis.json"
+            echo ""
+            echo "--- Artifact Metadata ---"
+            jq '{a2a_version, artifact_type, context_id, reference_task_ids, agent_count, timestamp}' .a2a/artifacts/aggregated-analysis.json
+            echo ""
+            echo "--- Combined Analysis (first 2000 chars) ---"
+            jq -r '.content.combined_analysis' .a2a/artifacts/aggregated-analysis.json | head -c 2000
+            echo ""
+            echo "[... truncated for log readability ...]"
+          else
+            echo "❌ ERROR: Aggregated analysis artifact NOT FOUND!"
+            exit 1
+          fi
+          
+          echo ""
+          echo "=================================================="
+          echo "📁 Individual Agent Artifacts:"
+          echo "=================================================="
+          find .a2a/individual-artifacts/ -name "*.json" -type f 2>/dev/null | while read artifact_file; do
+            echo ""
+            echo "--- Artifact: $artifact_file ---"
+            jq '{task_id, agent_name, status, timestamp}' "$artifact_file" 2>/dev/null || echo "Could not parse $artifact_file"
+          done
+          
+          echo ""
+          echo "=================================================="
+          echo "✅ ARTIFACT DOWNLOAD AND DISPLAY COMPLETE"
+          echo "=================================================="
+      
+      - name: Prepare implementation context from artifacts
         id: context
         env:
           AGENTS: ${{ needs.setup.outputs.agents }}
@@ -561,11 +630,27 @@ jobs:
         run: |
           mkdir -p .a2a/context
           
-          # Read the aggregated analysis
+          # Read the aggregated analysis from the downloaded artifact
+          echo "📖 Reading aggregated analysis from downloaded artifact..."
           ANALYSIS=$(jq -r '.content.combined_analysis' .a2a/artifacts/aggregated-analysis.json)
+          
+          # Extract metadata from the artifact
+          ARTIFACT_VERSION=$(jq -r '.a2a_version' .a2a/artifacts/aggregated-analysis.json)
+          ARTIFACT_TIMESTAMP=$(jq -r '.timestamp' .a2a/artifacts/aggregated-analysis.json)
+          AGENT_COUNT=$(jq -r '.agent_count' .a2a/artifacts/aggregated-analysis.json)
+          
+          echo "📦 Artifact A2A Version: ${ARTIFACT_VERSION}"
+          echo "📦 Artifact Timestamp: ${ARTIFACT_TIMESTAMP}"
+          echo "📦 Artifact Agent Count: ${AGENT_COUNT}"
           
           cat > .a2a/context/implementation.md << CONTEXT_EOF
           # A2A Implementation Task
+          
+          ## ⚠️ IMPORTANT: This context was extracted from downloaded A2A artifacts
+          
+          **Source Artifact**: \`.a2a/artifacts/aggregated-analysis.json\`
+          **Artifact A2A Version**: ${ARTIFACT_VERSION}
+          **Artifact Timestamp**: ${ARTIFACT_TIMESTAMP}
           
           ## Task Linking (per "Life of a Task")
           
@@ -573,7 +658,7 @@ jobs:
           - **referenceTaskIds**: ${REFERENCE_TASK_IDS}
           - **Issue**: #${ISSUE_NUMBER}
           
-          ## Agent Analysis (from parallel jobs)
+          ## Agent Analysis (from parallel jobs - ${AGENT_COUNT} agents)
           
           The following agents analyzed this issue in parallel:
           $(echo "$AGENTS" | tr ',' '\n' | while read agent; do echo "- @$agent"; done)
@@ -588,12 +673,22 @@ jobs:
           
           ## Implementation Instructions
           
-          Based on the above agent analyses, implement the recommended changes.
+          Based on the above agent analyses (downloaded from A2A artifacts), implement the recommended changes.
           Use "Fixes #${ISSUE_NUMBER}" in the PR body.
           CONTEXT_EOF
           
+          # Also store the analysis content as an output for direct use in prompt
+          {
+            echo "analysis<<ANALYSIS_EOF"
+            echo "$ANALYSIS"
+            echo "ANALYSIS_EOF"
+          } >> $GITHUB_OUTPUT
+          
           echo "context_file=.a2a/context/implementation.md" >> $GITHUB_OUTPUT
-          echo "✅ Implementation context prepared"
+          echo "artifact_version=${ARTIFACT_VERSION}" >> $GITHUB_OUTPUT
+          echo "artifact_timestamp=${ARTIFACT_TIMESTAMP}" >> $GITHUB_OUTPUT
+          echo "agent_count=${AGENT_COUNT}" >> $GITHUB_OUTPUT
+          echo "✅ Implementation context prepared from downloaded artifacts"
       
       - name: 'A2A: Implement changes'
         id: implement
@@ -604,6 +699,9 @@ jobs:
           ISSUE_BODY: ${{ needs.setup.outputs.issue_body }}
           CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
           REFERENCE_TASK_IDS: ${{ needs.aggregate.outputs.reference_task_ids }}
+          ARTIFACT_VERSION: ${{ steps.context.outputs.artifact_version }}
+          ARTIFACT_TIMESTAMP: ${{ steps.context.outputs.artifact_timestamp }}
+          AGENT_COUNT: ${{ steps.context.outputs.agent_count }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           TRIGGERING_ACTOR: ${{ github.triggering_actor }}
@@ -611,24 +709,49 @@ jobs:
           ADDITIONAL_CONTEXT: |
             # A2A Implementation Task
             
-            CRITICAL: First read the implementation context file that contains the aggregated
-            multi-agent analysis: .a2a/context/implementation.md
+            ⚠️ IMPORTANT: You are implementing based on DOWNLOADED A2A ARTIFACTS from previous agent analysis jobs.
             
-            This implementation references previous analysis tasks:
-            - contextId: ${{ needs.setup.outputs.context_id }}
-            - referenceTaskIds: ${{ needs.aggregate.outputs.reference_task_ids }}
+            ## Artifact Source Information
+            - **Source Artifact**: `.a2a/artifacts/aggregated-analysis.json` (DOWNLOADED from GitHub Actions artifacts)
+            - **Artifact A2A Version**: ${{ steps.context.outputs.artifact_version }}
+            - **Artifact Timestamp**: ${{ steps.context.outputs.artifact_timestamp }}
+            - **Number of Agents**: ${{ steps.context.outputs.agent_count }}
             
-            After reading the context file:
+            ## A2A Protocol Task Linking
+            - **contextId**: ${{ needs.setup.outputs.context_id }}
+            - **referenceTaskIds**: ${{ needs.aggregate.outputs.reference_task_ids }}
+            
+            ## Your First Actions
+            1. Read the implementation context file: `.a2a/context/implementation.md`
+               - This file was generated FROM the downloaded artifact `.a2a/artifacts/aggregated-analysis.json`
+            2. Acknowledge in your first response that you have received the previous agent analyses
+            3. Summarize the key recommendations from each agent before proceeding
+            
+            ## Implementation Steps
             1. Create branch: a2a/fix-issue-${{ inputs.issue_number }}
-            2. Implement the recommended changes
+            2. Implement the recommended changes based on the multi-agent analysis
             3. Create a PR with "Fixes #${{ inputs.issue_number }}" in the body
+            
+            ## Response Format
+            Your FIRST message should start with:
+            "## 📦 Acknowledging Downloaded A2A Artifacts
+            
+            I have received and processed the analysis artifacts from the previous parallel agent jobs:
+            - Source: aggregated-analysis.json (A2A v${{ steps.context.outputs.artifact_version }}, timestamp: ${{ steps.context.outputs.artifact_timestamp }})
+            - Reference Tasks: ${{ needs.aggregate.outputs.reference_task_ids }}
+            
+            ### Summary of Agent Recommendations:
+            [Brief summary of each agent's key points]
+            
+            ### My Implementation Plan:
+            [Your plan based on the agent analyses]"
         with:
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
           google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
           use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || ''false'' }}'
           gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
-          gemini_debug: '${{ vars.DEBUG || ''false'' }}'
+          gemini_debug: '${{ vars.DEBUG || ''true'' }}'
           upload_artifacts: 'false'  # Disabled: Use custom upload with unique A2A taskId name
           workflow_name: 'a2a-implement'
           settings: |-
