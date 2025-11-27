@@ -639,6 +639,7 @@ jobs:
           AGENTS: ${{ steps.agents.outputs.agents }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
+          AUTO_EXECUTE: ${{ inputs.auto_execute }}
           # A2A Protocol: Message with role="user" and TextPart content (§4.1.4)
           ADDITIONAL_CONTEXT: |
             # A2A Protocol Implementation
@@ -668,6 +669,18 @@ jobs:
             3. Any tests or validations needed
             
             This implementation plan will be the Artifact passed to the execution step.
+            
+            ## IMPORTANT: Auto-Execute Mode
+            Auto-execute mode is: ${{ inputs.auto_execute }}
+            
+            If auto_execute is true:
+            - DO NOT ask for approval or present /approve and /deny options
+            - DO NOT wait for user confirmation
+            - Simply provide the analysis and implementation plan as an A2A Artifact
+            - The implementation will proceed automatically after this analysis step
+            
+            If auto_execute is false:
+            - Present the plan and wait for user approval
         with:
           # Use same auth pattern as gemini-invoke.yml, gemini-fix.yml, etc.
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
@@ -714,6 +727,59 @@ jobs:
             }
           prompt: '/gemini-invoke'
       
+      # CRITICAL: Capture the analysis from the issue comment
+      # The run-gemini-cli action posts analysis to the issue but does NOT return it as an output
+      # We need to fetch the most recent comment which contains the multi-agent analysis
+      - name: 'A2A: Capture Analysis Artifacts from Issue'
+        id: capture_analysis
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+        run: |
+          echo "📥 Capturing analysis artifacts from issue comments..."
+          
+          # Fetch all comments on the issue
+          COMMENTS=$(gh issue view "$ISSUE_NUMBER" --comments --json comments -q '.comments')
+          
+          # Get the most recent comment that looks like an analysis (contains "Agent" or "Plan" or "Implementation")
+          # The analysis comment should contain the multi-agent recommendations
+          ANALYSIS_COMMENT=$(echo "$COMMENTS" | jq -r '
+            [.[] | select(
+              (.body | contains("Agent")) and 
+              (.body | contains("Plan") or contains("Implementation") or contains("Artifact") or contains("Analysis"))
+            )] | last | .body // ""
+          ')
+          
+          if [[ -z "$ANALYSIS_COMMENT" || "$ANALYSIS_COMMENT" == "null" ]]; then
+            echo "⚠️ No analysis comment found, checking for any recent bot comment..."
+            # Fallback: get the most recent bot comment
+            ANALYSIS_COMMENT=$(echo "$COMMENTS" | jq -r '
+              [.[] | select(.author.login == "github-actions[bot]")] | 
+              last | .body // ""
+            ')
+          fi
+          
+          if [[ -n "$ANALYSIS_COMMENT" && "$ANALYSIS_COMMENT" != "null" ]]; then
+            echo "✅ Captured analysis artifact (${#ANALYSIS_COMMENT} chars)"
+            
+            # Save to file for multiline output handling
+            echo "$ANALYSIS_COMMENT" > /tmp/analysis_artifact.md
+            
+            # Create output (use file-based approach for large content)
+            {
+              echo "analysis_captured=true"
+              echo "analysis_file=/tmp/analysis_artifact.md"
+            } >> "$GITHUB_OUTPUT"
+            
+            # Preview first few lines
+            echo "📋 Analysis preview:"
+            echo "$ANALYSIS_COMMENT" | head -20
+          else
+            echo "⚠️ No analysis comment found"
+            echo "analysis_captured=false" >> "$GITHUB_OUTPUT"
+          fi
+      
       # Create proper A2A Task objects with Artifacts per spec §4.1.1 and §4.1.9
       # This follows the "Life of a Task" pattern from https://a2a-protocol.org/latest/topics/life-of-a-task/
       - name: 'A2A Task: Create Analysis Tasks with Artifacts'
@@ -723,7 +789,8 @@ jobs:
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           AGENTS: ${{ steps.agents.outputs.agents }}
           RUN_ID: ${{ github.run_id }}
-          ANALYSIS_RESPONSE: ${{ steps.analysis.outputs.gemini_response }}
+          ANALYSIS_CAPTURED: ${{ steps.capture_analysis.outputs.analysis_captured }}
+          ANALYSIS_FILE: ${{ steps.capture_analysis.outputs.analysis_file }}
         run: |
           cat << 'PYTHON' > /tmp/create_a2a_tasks.py
           import os
@@ -739,7 +806,18 @@ jobs:
           issue_number = int(os.environ.get('ISSUE_NUMBER', 0))
           run_id = os.environ.get('RUN_ID', 'unknown')
           agents_str = os.environ.get('AGENTS', '')
-          analysis_response = os.environ.get('ANALYSIS_RESPONSE', '')
+          
+          # Read analysis from captured file instead of env var (more reliable for large content)
+          analysis_captured = os.environ.get('ANALYSIS_CAPTURED', 'false') == 'true'
+          analysis_file = os.environ.get('ANALYSIS_FILE', '')
+          analysis_response = ''
+          
+          if analysis_captured and analysis_file and os.path.exists(analysis_file):
+              with open(analysis_file, 'r') as f:
+                  analysis_response = f.read()
+              print(f"✅ Loaded analysis from file: {len(analysis_response)} chars")
+          else:
+              print("⚠️ No analysis file found, proceeding with empty analysis")
           
           agents = [a.strip() for a in agents_str.split(',') if a.strip()]
           
@@ -749,6 +827,7 @@ jobs:
           print(f"Issue: #{issue_number}")
           print(f"Run ID: {run_id}")
           print(f"Agents: {', '.join(agents)}")
+          print(f"Analysis captured: {analysis_captured}")
           print()
           
           # Shared context ID for all tasks in this interaction
@@ -961,6 +1040,83 @@ jobs:
           [Full Workflow Logs]($RUN_URL)
           EOF
 
+      # Prepare execution context by reading the captured analysis
+      # This step outputs the analysis content so it can be used in the ADDITIONAL_CONTEXT
+      - name: 'A2A: Prepare Execution Context'
+        id: execution_context
+        if: success() && inputs.auto_execute == true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          AGENTS: ${{ steps.agents.outputs.agents }}
+          ANALYSIS_FILE: ${{ steps.capture_analysis.outputs.analysis_file }}
+          ANALYSIS_CAPTURED: ${{ steps.capture_analysis.outputs.analysis_captured }}
+          CONTEXT_ID: ${{ steps.a2a_tasks.outputs.context_id }}
+          REFERENCE_TASK_IDS: ${{ steps.a2a_tasks.outputs.reference_task_ids }}
+        run: |
+          echo "📦 Preparing execution context with analysis artifacts..."
+          
+          # Read analysis from file or fetch from issue
+          if [[ "$ANALYSIS_CAPTURED" == "true" && -f "$ANALYSIS_FILE" ]]; then
+            ANALYSIS_CONTENT=$(cat "$ANALYSIS_FILE")
+            echo "✅ Loaded analysis from file: ${#ANALYSIS_CONTENT} chars"
+          else
+            echo "⚠️ Analysis file not found, fetching from issue comments..."
+            # Fetch the analysis from issue comments as fallback
+            ANALYSIS_CONTENT=$(gh issue view "$ISSUE_NUMBER" --comments --json comments -q '
+              [.comments[] | select(
+                (.body | contains("Agent")) and 
+                (.body | contains("Plan") or contains("Implementation") or contains("Analysis"))
+              )] | last | .body // "No analysis found"
+            ')
+          fi
+          
+          # Save the prepared context to a file that will be used by the execution step
+          # The file path is committed to the repo so Gemini can read it via MCP
+          mkdir -p .a2a/context
+          
+          # Create the full implementation context
+          cat > .a2a/context/implementation-task.md << CONTEXT_EOF
+          # A2A Implementation Task (Follow-up per "Life of a Task")
+          
+          This is an A2A (Agent-to-Agent) implementation task that references previous analysis tasks.
+          
+          ## A2A Task Linking (per https://a2a-protocol.org/latest/topics/life-of-a-task/)
+          
+          - **contextId**: ${CONTEXT_ID}
+          - **referenceTaskIds**: ${REFERENCE_TASK_IDS}
+          
+          Per the A2A spec "Life of a Task":
+          - This task uses the same contextId to group with previous analysis tasks
+          - The referenceTaskIds link this implementation to the analysis artifacts
+          - Artifacts from referenced tasks inform this implementation
+          
+          ## Agents who analyzed issue #${ISSUE_NUMBER}:
+          ${AGENTS}
+          
+          ============ MULTI-AGENT ANALYSIS ARTIFACTS ============
+          The agents provided the following analysis and recommendations (Artifacts per §4.1.9):
+          
+          ${ANALYSIS_CONTENT}
+          
+          ============ END OF ANALYSIS RESULTS ============
+          
+          IMPORTANT: Implement the changes recommended by the agents above and create a PR.
+          
+          Use the github MCP tools to:
+          1. Create a feature branch (a2a/fix-issue-${ISSUE_NUMBER})
+          2. Make the necessary file changes based on the agent recommendations above
+          3. Create a pull request linking to issue #${ISSUE_NUMBER} using "Fixes #${ISSUE_NUMBER}" in the PR body
+          CONTEXT_EOF
+          
+          echo "✅ Implementation context saved to .a2a/context/implementation-task.md"
+          echo "context_file=.a2a/context/implementation-task.md" >> "$GITHUB_OUTPUT"
+          echo "context_prepared=true" >> "$GITHUB_OUTPUT"
+          
+          # Preview the context
+          echo "📋 Context preview (first 30 lines):"
+          head -30 .a2a/context/implementation-task.md
+
       # AUTOMATIC EXECUTION: Implement the plan and create PR
       # Per A2A "Life of a Task": This is a follow-up task that references previous analysis tasks
       - name: 'Auto-Execute: Implement changes via Gemini CLI'
@@ -982,42 +1138,31 @@ jobs:
           A2A_CONTEXT_ID: ${{ steps.a2a_tasks.outputs.context_id }}
           A2A_REFERENCE_TASK_IDS: ${{ steps.a2a_tasks.outputs.reference_task_ids }}
           A2A_TASKS_PATH: ${{ steps.a2a_tasks.outputs.tasks_path }}
-          # CRITICAL: Pass the multi-agent analysis results to the implementation step
-          MULTI_AGENT_ANALYSIS: ${{ steps.analysis.outputs.gemini_response }}
-          # Context for the implementation - includes both agent info AND their recommendations
-          # Per A2A spec: This is a follow-up task that references previous analysis task artifacts
+          # Implementation context is saved in .a2a/context/implementation-task.md
+          CONTEXT_FILE: ${{ steps.execution_context.outputs.context_file }}
+          # Context for the implementation - tells Gemini to read the full context from the file
+          # The file contains the multi-agent analysis artifacts that should guide implementation
           ADDITIONAL_CONTEXT: |
-            # A2A Implementation Task (Follow-up per "Life of a Task")
+            # A2A Implementation Task
             
-            This is an A2A (Agent-to-Agent) implementation task that references previous analysis tasks.
+            CRITICAL: Before implementing, you MUST read the implementation context file that contains
+            the multi-agent analysis artifacts. Use get_file_contents to read:
             
-            ## A2A Task Linking (per https://a2a-protocol.org/latest/topics/life-of-a-task/)
+            **File to read**: .a2a/context/implementation-task.md
             
-            - **contextId**: ${{ steps.a2a_tasks.outputs.context_id }}
-            - **referenceTaskIds**: ${{ steps.a2a_tasks.outputs.reference_task_ids }}
+            This file contains:
+            - A2A Task Linking information (contextId, referenceTaskIds)
+            - Multi-agent analysis and recommendations from: ${{ steps.agents.outputs.agents }}
+            - Specific implementation instructions
             
-            Per the A2A spec "Life of a Task":
-            - This task uses the same contextId to group with previous analysis tasks
-            - The referenceTaskIds link this implementation to the analysis artifacts
-            - Artifacts from referenced tasks inform this implementation
-            
-            ## Agents who analyzed issue #${{ inputs.issue_number }}:
-            ${{ steps.agents.outputs.agents }}
-            
-            ============ MULTI-AGENT ANALYSIS ARTIFACTS ============
-            The agents provided the following analysis and recommendations (Artifacts per §4.1.9):
-            
-            ${{ steps.analysis.outputs.gemini_response }}
-            
-            ============ END OF ANALYSIS RESULTS ============
-            
-            IMPORTANT: Implement the changes recommended by the agents above and create a PR.
-            Follow the original issue request: "${{ steps.issue.outputs.title }}"
+            After reading the context file, implement the changes recommended by the agents
+            and create a PR that fixes issue #${{ inputs.issue_number }}.
             
             Use the github MCP tools to:
-            1. Create a feature branch (a2a/fix-issue-${{ inputs.issue_number }})
-            2. Make the necessary file changes based on the agent recommendations above
-            3. Create a pull request linking to issue #${{ inputs.issue_number }} using "Fixes #${{ inputs.issue_number }}" in the PR body
+            1. Read the implementation context file (.a2a/context/implementation-task.md)
+            2. Create a feature branch (a2a/fix-issue-${{ inputs.issue_number }})
+            3. Make the necessary file changes based on the agent recommendations
+            4. Create a pull request linking to issue #${{ inputs.issue_number }} using "Fixes #${{ inputs.issue_number }}" in the PR body
         with:
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
           google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
