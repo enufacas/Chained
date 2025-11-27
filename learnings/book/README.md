@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-11-26 21:19 UTC
+**Generated:** 2025-11-27 09:24 UTC
 
-**Total Learning Sessions:** 133
+**Total Learning Sessions:** 136
 
-**Total Insights:** 10499
+**Total Insights:** 10509
 
 ---
 
@@ -18,7 +18,7 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 3999
+**Insights:** 4009
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
@@ -89,13 +89,13 @@ General technology news and insights
 
 ### By Source
 
-- **Unknown:** 64 learning sessions
+- **Unknown:** 66 learning sessions
 
 - **Hacker News:** 26 learning sessions
 
 - **TLDR Tech:** 20 learning sessions
 
-- **GitHub Copilot (Combined):** 15 learning sessions
+- **GitHub Copilot (Combined):** 16 learning sessions
 
 - **GitHub Trending:** 4 learning sessions
 
@@ -106,7 +106,7 @@ General technology news and insights
 
 ### By Topic
 
-- **🤖 AI & Machine Learning:** 3999 insights
+- **🤖 AI & Machine Learning:** 4009 insights
 
 - **📚 General Tech Insights:** 3791 insights
 
