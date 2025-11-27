@@ -741,37 +741,43 @@ jobs:
           AGENTS: ${{ steps.agents.outputs.agents }}
           RUN_ID: ${{ github.run_id }}
         run: |
-          # First, capture the analysis from issue comments (Gemini posts there via MCP)
-          echo "📥 Fetching analysis from issue #$ISSUE_NUMBER comments..."
+          # Read the analysis from the gemini-artifacts directory
+          # The run-gemini-cli action saves output there when upload_artifacts is true
+          echo "📥 Reading analysis from gemini-artifacts directory..."
           
-          ANALYSIS_RESPONSE=$(gh issue view "$ISSUE_NUMBER" --comments --json comments -q '
-            [.[] | select(
-              (.author.login == "github-actions[bot]" or (.author.login | test("bot$"))) and
-              (
-                (.body | test("(?i)multi-?agent|a2a|agent.*analysis|implementation.*plan")) or
-                (.body | test("(?i)## .*plan|## .*implementation|## .*artifact"))
-              )
-            )] | last | .body // ""
-          ')
+          ANALYSIS_FILE=""
           
-          if [[ -z "$ANALYSIS_RESPONSE" || "$ANALYSIS_RESPONSE" == "null" ]]; then
-            echo "⚠️ No A2A-specific comment found, trying broader match..."
-            ANALYSIS_RESPONSE=$(gh issue view "$ISSUE_NUMBER" --comments --json comments -q '
-              [.[] | select(
-                (.author.login == "github-actions[bot]") and
-                (.body | test("(?i)plan|implementation|recommend|artifact"))
-              )] | last | .body // ""
-            ')
+          # Check for the response file in gemini-artifacts (created by run-gemini-cli)
+          if [[ -f "gemini-artifacts/response.md" ]]; then
+            ANALYSIS_FILE="gemini-artifacts/response.md"
+            echo "✅ Found analysis at gemini-artifacts/response.md"
+          elif [[ -f "gemini-artifacts/stdout.log" ]]; then
+            ANALYSIS_FILE="gemini-artifacts/stdout.log"
+            echo "✅ Found analysis at gemini-artifacts/stdout.log"
+          elif [[ -d "gemini-artifacts" ]]; then
+            # List what's actually in the directory
+            echo "📂 Contents of gemini-artifacts/:"
+            ls -la gemini-artifacts/ || true
+            # Try to find any file with content
+            for f in gemini-artifacts/*; do
+              if [[ -f "$f" && -s "$f" ]]; then
+                ANALYSIS_FILE="$f"
+                echo "✅ Found analysis at $f"
+                break
+              fi
+            done
           fi
           
-          if [[ -n "$ANALYSIS_RESPONSE" && "$ANALYSIS_RESPONSE" != "null" ]]; then
-            echo "✅ Captured analysis (${#ANALYSIS_RESPONSE} chars)"
-            # Save to file for Python to read
-            echo "$ANALYSIS_RESPONSE" > /tmp/analysis_from_issue.md
-            ANALYSIS_FILE="/tmp/analysis_from_issue.md"
-          else
-            echo "⚠️ No analysis found in issue comments"
-            ANALYSIS_FILE=""
+          # Fallback: check .gemini directory for telemetry/logs
+          if [[ -z "$ANALYSIS_FILE" && -d ".gemini" ]]; then
+            echo "📂 Checking .gemini directory..."
+            ls -la .gemini/ || true
+          fi
+          
+          # If still not found, the workflow runs in same filesystem - artifacts exist
+          if [[ -z "$ANALYSIS_FILE" ]]; then
+            echo "⚠️ No analysis artifact file found in gemini-artifacts/"
+            echo "   Note: upload_artifacts must be 'true' for the analysis step"
           fi
           
           export ANALYSIS_FILE
@@ -791,14 +797,14 @@ jobs:
           run_id = os.environ.get('RUN_ID', 'unknown')
           agents_str = os.environ.get('AGENTS', '')
           
-          # Read analysis from the file captured from issue comments
+          # Read analysis from the gemini-artifacts file (saved by run-gemini-cli action)
           analysis_file = os.environ.get('ANALYSIS_FILE', '')
           analysis_response = ''
           
           if analysis_file and os.path.exists(analysis_file):
               with open(analysis_file, 'r') as f:
                   analysis_response = f.read()
-              print(f"✅ Loaded analysis from issue comments: {len(analysis_response)} chars")
+              print(f"✅ Loaded analysis from {analysis_file}: {len(analysis_response)} chars")
           else:
               print("⚠️ No analysis file found, proceeding with empty analysis")
           
