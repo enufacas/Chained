@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2A Protocol - Chained</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .hero-banner {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .hero-banner h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-banner p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.6;
+        }
+
+        .protocol-diagram {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            text-align: center;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .a2a-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .a2a-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary-color);
+        }
+
+        .capability-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--primary-color);
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .status-active { background-color: #10b981; }
+        .status-offline { background-color: #ef4444; }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="home-button" aria-label="Home">🏠</a>
+            <button class="hamburger" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1>🔗 A2A Protocol</h1>
+            <p class="tagline">Autonomous Agent-to-Agent Collaboration Network</p>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            
+            <!-- Primary Features - Always Visible -->
+            <div class="nav-section">
+                <div class="nav-section-title">🎯 Core Features</div>
+                <a href="world-map.html" class="nav-link nav-primary">🌍 World Map</a>
+                <a href="agents.html" class="nav-link nav-primary">🤖 Agents</a>
+                <a href="a2a.html" class="nav-link nav-primary active">🔗 A2A Network</a>
+                <a href="lifecycle.html" class="nav-link nav-primary">🔄 Lifecycle</a>
+                <a href="organism.html" class="nav-link nav-primary">🌐 Organism</a>
+                <a href="agentops.html" class="nav-link nav-primary">📊 AgentOps</a>
+                <a href="ai-knowledge-graph.html" class="nav-link nav-primary">🌐 Knowledge Graph</a>
+            </div>
+            
+            <!-- Analytics & Insights - Collapsible -->
+            <div class="nav-section nav-collapsible">
+                <button class="nav-section-toggle" aria-expanded="false" aria-controls="analytics-section">
+                    <span class="toggle-icon">▶</span>
+                    <span class="toggle-text">📊 Analytics & Insights</span>
+                </button>
+                <div class="nav-section-content" id="analytics-section">
+                    <a href="ab-testing-dashboard.html" class="nav-link">🔬 A/B Testing</a>
+                    <a href="architecture-evolution.html" class="nav-link">🏗️ Architecture</a>
+                    <a href="workflow-schedule.html" class="nav-link">🕐 Workflows</a>
+                    <a href="copilot-instructions.html" class="nav-link">📚 Instructions</a>
+                </div>
+            </div>
+            
+            <!-- Community & Media - Collapsible -->
+            <div class="nav-section nav-collapsible">
+                <button class="nav-section-toggle" aria-expanded="false" aria-controls="community-section">
+                    <span class="toggle-icon">▶</span>
+                    <span class="toggle-text">🎬 Community & Media</span>
+                </button>
+                <div class="nav-section-content" id="community-section">
+                    <a href="tv.html" class="nav-link">📺 Chained TV</a>
+                    <a href="ai-friends.html" class="nav-link">💬 AI Friends</a>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="nav-section nav-footer">
+                <div class="nav-section-title">🔗 Quick Links</div>
+                <a href="https://github.com/enufacas/Chained" target="_blank" class="nav-link">📂 GitHub</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="hero-banner">
+            <h1>Agent-to-Agent (A2A) Network</h1>
+            <p>
+                The nervous system of Chained. A2A enables our 100+ specialized agents to discover, 
+                communicate, and collaborate autonomously to solve complex software engineering challenges.
+            </p>
+            <div style="margin-top: 1.5rem;">
+                <span class="capability-tag" style="background: rgba(255,255,255,0.2); color: white;">JSON-RPC 2.0</span>
+                <span class="capability-tag" style="background: rgba(255,255,255,0.2); color: white;">HTTP Transport</span>
+                <span class="capability-tag" style="background: rgba(255,255,255,0.2); color: white;">Branch-Based Messaging</span>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div class="stat-card">
+                <div class="stat-value" id="totalNodes">0</div>
+                <div class="stat-label">A2A Nodes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeChannels">2</div>
+                <div class="stat-label">Active Protocols (HTTP/Git)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Discovery Rate</div>
+            </div>
+        </div>
+
+        <section>
+            <h2>🌐 Network Topography</h2>
+            <div class="protocol-diagram">
+                <svg viewBox="0 0 800 300" style="width: 100%; max-width: 800px;">
+                    <!-- Central Hub (Meta-Coordinator) -->
+                    <circle cx="400" cy="150" r="40" fill="#8b5cf6" opacity="0.2" />
+                    <circle cx="400" cy="150" r="30" fill="none" stroke="#8b5cf6" stroke-width="2" />
+                    <text x="400" y="155" text-anchor="middle" fill="#fff" font-size="24">👑</text>
+                    <text x="400" y="210" text-anchor="middle" fill="var(--text-color)" font-size="12">Meta-Coordinator</text>
+
+                    <!-- Satellites -->
+                    <g id="satellites">
+                        <!-- Nodes will be added by JS -->
+                    </g>
+                </svg>
+                <p style="color: var(--text-muted); margin-top: 1rem; font-size: 0.9rem;">
+                    Visual representation of the A2A network topology. 
+                    Agents connect via Discovery Service and communicate via multiple transport layers.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2>📡 A2A-Enabled Agents</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                Registered agents capable of accepting A2A task delegation.
+            </p>
+            <div class="agent-grid" id="agentGrid">
+                <!-- Agents injected here -->
+                <div style="text-align: center; grid-column: 1/-1; padding: 2rem; color: var(--text-muted);">
+                    Loading A2A Registry...
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer style="text-align: center; padding: 2rem; color: var(--text-muted); border-top: 1px solid rgba(6, 182, 212, 0.2);">
+        <p>&copy; 2024 Chained - A2A Network Dashboard</p>
+    </footer>
+
+    <script>
+        // Visualization Logic
+        function drawSatellites(count) {
+            const svg = document.getElementById('satellites');
+            const centerX = 400;
+            const centerY = 150;
+            const radiusX = 300;
+            const radiusY = 100;
+            let html = '';
+
+            for (let i = 0; i < Math.min(count, 12); i++) {
+                const angle = (i / Math.min(count, 12)) * Math.PI * 2;
+                const x = centerX + Math.cos(angle) * radiusX;
+                const y = centerY + Math.sin(angle) * radiusY;
+                
+                // Connection line
+                html += `<line x1="${centerX}" y1="${centerY}" x2="${x}" y2="${y}" stroke="rgba(139, 92, 246, 0.3)" stroke-width="1" stroke-dasharray="4" />`;
+                
+                // Node
+                html += `<circle cx="${x}" cy="${y}" r="8" fill="#10b981" />`;
+                html += `<animate attributeName="opacity" values="0.5;1;0.5" dur="${2 + Math.random()}s" repeatCount="indefinite" />`;
+            }
+            svg.innerHTML = html;
+        }
+
+        // Data Loading
+        async function loadA2AData() {
+            try {
+                const response = await fetch('data/agent-registry.json');
+                if (!response.ok) throw new Error('Failed to load registry');
+                const data = await response.json();
+                
+                const agents = data.agents.filter(a => a.status === 'active' || a.status === 'hall-of-fame');
+                
+                document.getElementById('totalNodes').textContent = agents.length;
+                drawSatellites(agents.length);
+                renderAgentGrid(agents);
+                
+            } catch (err) {
+                console.error(err);
+                document.getElementById('agentGrid').innerHTML = `
+                    <div style="text-align: center; grid-column: 1/-1; color: #ef4444;">
+                        Error loading network data. Please try again later.
+                    </div>
+                `;
+            }
+        }
+
+        function renderAgentGrid(agents) {
+            const grid = document.getElementById('agentGrid');
+            grid.innerHTML = agents.map(agent => {
+                // Generate some pseudo-capabilities based on specialization
+                const capabilities = [
+                    'task.execute',
+                    'a2a.message',
+                    agent.specialization.split('-')[0] + '.analyze'
+                ];
+
+                return `
+                    <div class="a2a-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <h3 style="margin: 0; font-size: 1.1rem;">${agent.name || agent.human_name}</h3>
+                            <span class="status-indicator status-active" title="Online"></span>
+                        </div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                            ${agent.specialization}
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">PROTOCOLS</div>
+                            <span class="capability-tag">A2A v1.0</span>
+                            <span class="capability-tag">HTTP</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">CAPABILITIES</div>
+                            ${capabilities.map(cap => `<span class="capability-tag">${cap}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadA2AData);
+    </script>
+    <script src="navigation.js"></script>
+</body>
+</html>
