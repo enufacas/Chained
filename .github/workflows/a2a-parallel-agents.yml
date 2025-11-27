@@ -385,7 +385,7 @@ jobs:
       - name: Upload agent artifact
         uses: actions/upload-artifact@v4.4.3
         with:
-          name: agent-analysis-${{ matrix.agent }}
+          name: agent-analysis-${{ steps.artifact.outputs.task_id }}
           path: .a2a/artifacts/${{ matrix.agent }}-analysis.json
           retention-days: 7
       
