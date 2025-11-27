@@ -20,6 +20,7 @@ Reference:
 """
 
 import json
+import logging
 import os
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -38,6 +39,9 @@ from session_store import (
     get_session_store,
 )
 from a2a_adapter import A2AAdapter, AgentConfig, create_adapter
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 # =============================================================================
 # Configuration
@@ -112,6 +116,20 @@ class RunResponse(BaseModel):
 
     class Config:
         populate_by_name = True
+
+
+# =============================================================================
+# Helper Functions
+# =============================================================================
+
+
+def serialize_message(message: Message) -> Dict[str, Any]:
+    """Serialize a Message to a dictionary for API responses."""
+    return {
+        "role": message.role,
+        "content": message.content,
+        "timestamp": message.timestamp,
+    }
 
 
 # =============================================================================
@@ -318,7 +336,7 @@ async def create_session(
         id=session.id,
         userId=session.user_id,
         appName=session.app_name,
-        messages=[m.__dict__ for m in session.messages],
+        messages=[serialize_message(m) for m in session.messages],
         state=session.state,
         createdAt=session.created_at,
         updatedAt=session.updated_at,
@@ -340,7 +358,7 @@ async def list_sessions(app_name: str, user_id: str):
             id=s.id,
             userId=s.user_id,
             appName=s.app_name,
-            messages=[m.__dict__ for m in s.messages],
+            messages=[serialize_message(m) for m in s.messages],
             state=s.state,
             createdAt=s.created_at,
             updatedAt=s.updated_at,
@@ -366,7 +384,7 @@ async def get_session(app_name: str, user_id: str, session_id: str):
         id=session.id,
         userId=session.user_id,
         appName=session.app_name,
-        messages=[m.__dict__ for m in session.messages],
+        messages=[serialize_message(m) for m in session.messages],
         state=session.state,
         createdAt=session.created_at,
         updatedAt=session.updated_at,
@@ -465,7 +483,8 @@ async def run_agent(request: RunRequest):
         )
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Agent execution failed: {str(e)}")
+        logger.error(f"Agent execution failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Agent execution failed. Please try again.")
 
 
 @app.post("/run_sse")

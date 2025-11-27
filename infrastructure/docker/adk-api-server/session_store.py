@@ -14,6 +14,11 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
+import logging
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
 # Try to import Firestore, fallback to in-memory if not available
 try:
     from google.cloud import firestore
@@ -21,6 +26,7 @@ try:
     FIRESTORE_AVAILABLE = True
 except ImportError:
     FIRESTORE_AVAILABLE = False
+    logger.info("google-cloud-firestore not available, using in-memory session store")
 
 
 @dataclass

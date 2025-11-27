@@ -7,12 +7,16 @@ to A2A protocol calls for communication with deployed A2A agents.
 """
 
 import json
+import logging
 import os
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Dict, List, Optional, AsyncIterator
 
 import httpx
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -136,7 +140,7 @@ class A2AAdapter:
             response.raise_for_status()
             return response.json()
         except Exception as e:
-            print(f"Error fetching agent card from {agent_url}: {e}")
+            logger.warning(f"Error fetching agent card from {agent_url}: {e}")
             return None
 
     async def refresh_agent_details(self, agent_name: str) -> Optional[AgentConfig]:

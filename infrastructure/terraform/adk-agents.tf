@@ -413,9 +413,11 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
       }
 
       # CORS configuration for adk-web
+      # In production, restrict to specific origins. For development, allow localhost.
+      # Configure CORS_ORIGINS environment variable to comma-separated allowed origins.
       env {
         name  = "CORS_ORIGINS"
-        value = "*"
+        value = var.environment == "prod" ? "https://enufacas.github.io" : "http://localhost:4200,http://localhost:4201,http://127.0.0.1:4200"
       }
 
       # Use Firestore for session persistence in production
