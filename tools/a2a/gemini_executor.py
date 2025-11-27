@@ -12,8 +12,6 @@ Based on the helloworld sample structure:
 
 import asyncio
 import os
-import subprocess
-import tempfile
 from typing import Optional
 
 from a2a.server.agent_execution import AgentExecutor, RequestContext
@@ -92,24 +90,19 @@ Provide a helpful, detailed response from your specialized perspective.
         This uses the gemini CLI tool which is the official way to
         interact with Gemini in GitHub Actions workflows.
         """
-        # Create a temporary file for the prompt
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
-            f.write(prompt)
-            prompt_file = f.name
+        # Build the gemini command
+        cmd = [
+            "gemini",
+            "--model", self.model,
+        ]
+        
+        if self.api_key:
+            env = os.environ.copy()
+            env["GEMINI_API_KEY"] = self.api_key
+        else:
+            env = os.environ.copy()
         
         try:
-            # Build the gemini command
-            cmd = [
-                "gemini",
-                "--model", self.model,
-            ]
-            
-            if self.api_key:
-                env = os.environ.copy()
-                env["GEMINI_API_KEY"] = self.api_key
-            else:
-                env = os.environ.copy()
-            
             # Run gemini with the prompt from stdin
             process = await asyncio.create_subprocess_exec(
                 *cmd,
@@ -127,9 +120,9 @@ Provide a helpful, detailed response from your specialized perspective.
             
             return stdout.decode().strip()
             
-        finally:
-            # Clean up temp file
-            os.unlink(prompt_file)
+        except FileNotFoundError:
+            # gemini CLI not installed, fall back to Python API
+            return await self._run_gemini_python(prompt)
     
     async def _run_gemini_python(self, prompt: str) -> str:
         """
