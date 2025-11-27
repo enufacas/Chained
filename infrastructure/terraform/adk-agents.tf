@@ -9,39 +9,13 @@
 # Reference:
 # - ADK Cloud Run Deployment: https://google.github.io/adk-docs/deploy/cloud-run/
 # - A2A Protocol: https://a2a-protocol.org/
+#
+# NOTE: This file uses variables and providers defined in main.tf and variables.tf
 # =============================================================================
 
-terraform {
-  required_version = ">= 1.0.0"
-
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 5.0"
-    }
-  }
-}
-
 # =============================================================================
-# Variables
+# Additional Variables for ADK Agents
 # =============================================================================
-
-variable "project_id" {
-  description = "GCP Project ID"
-  type        = string
-}
-
-variable "region" {
-  description = "GCP Region for Cloud Run services"
-  type        = string
-  default     = "us-central1"
-}
-
-variable "environment" {
-  description = "Environment (dev, staging, prod)"
-  type        = string
-  default     = "dev"
-}
 
 variable "gemini_api_key_secret" {
   description = "Secret Manager resource name for Gemini API key"
@@ -53,32 +27,6 @@ variable "google_api_key_secret" {
   description = "Secret Manager resource name for Google API key"
   type        = string
   default     = ""
-}
-
-# =============================================================================
-# Provider Configuration
-# =============================================================================
-
-provider "google" {
-  project = var.project_id
-  region  = var.region
-}
-
-# =============================================================================
-# Enable Required APIs
-# =============================================================================
-
-resource "google_project_service" "required_apis" {
-  for_each = toset([
-    "run.googleapis.com",
-    "cloudbuild.googleapis.com",
-    "artifactregistry.googleapis.com",
-    "secretmanager.googleapis.com",
-  ])
-
-  project            = var.project_id
-  service            = each.value
-  disable_on_destroy = false
 }
 
 # =============================================================================

@@ -83,14 +83,17 @@ jobs:
           fi
 
       - name: Validate secrets
+        env:
+          GCP_PROJECT_ID_SECRET: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_SA_KEY_SECRET: ${{ secrets.GCP_SA_KEY }}
         run: |
-          if [[ -z "${{ secrets.GCP_PROJECT_ID }}" ]]; then
+          if [[ -z "$GCP_PROJECT_ID_SECRET" ]]; then
             echo "❌ GCP_PROJECT_ID secret not configured"
             echo "See infrastructure/README.md for setup instructions"
             exit 1
           fi
 
-          if [[ -z "${{ secrets.GCP_SA_KEY }}" ]]; then
+          if [[ -z "$GCP_SA_KEY_SECRET" ]]; then
             echo "❌ GCP_SA_KEY secret not configured"
             exit 1
           fi
