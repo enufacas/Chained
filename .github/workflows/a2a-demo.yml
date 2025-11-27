@@ -1,15 +1,21 @@
 name: "A2A Demo - Live Multi-Agent Communication"
 
-# Demonstrates real A2A (Agent-to-Agent) communication by coordinating
-# multiple agents via Gemini AI to collaboratively analyze a GitHub issue,
-# then automatically implements the plan and creates a PR.
-# 
+# Demonstrates A2A (Agent-to-Agent) protocol patterns inspired by
+# https://github.com/a2aproject/A2A - the open protocol for agent interoperability.
+#
+# A2A PROTOCOL ELEMENTS DEMONSTRATED:
+# 1. Agent Discovery - Agents discovered from .github/agents/ registry (like AgentCards)
+# 2. Agent Capabilities - Each agent has defined skills/specializations  
+# 3. Task Lifecycle - Tasks progress through states (submitted→working→completed)
+# 4. Message Exchange - Structured communication between coordinator and agents
+# 5. Result Aggregation - Combining outputs from multiple opaque agents
+#
 # FULLY AUTONOMOUS: No human intervention required. The workflow:
-# 1. Dynamically selects agents from the registry based on agent_count
-# 2. Analyzes the issue with multiple specialized agents (with visible reasoning)
-# 3. Generates a collaborative plan
-# 4. Automatically implements the changes
-# 5. Opens a PR with the implementation
+# 1. Dynamically selects agents from the registry based on agent_count (Agent Discovery)
+# 2. Sends task to each agent for analysis (Task Delegation via message/send)
+# 3. Collects agent responses (Artifact collection)
+# 4. Aggregates recommendations into implementation plan
+# 5. Executes implementation and creates PR
 #
 # Uses the same google-github-actions/run-gemini-cli action as other Gemini
 # workflows (gemini-invoke.yml, gemini-fix.yml, etc.) to ensure proper
@@ -196,70 +202,105 @@ jobs:
           AGENT_COUNT: ${{ steps.agents.outputs.count }}
           SHOW_REASONING: ${{ inputs.show_reasoning }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          RUN_ID: ${{ github.run_id }}
         run: |
-          # Build agent list for display
-          AGENT_LIST=""
+          # Build agent list with A2A-style AgentCard info
+          AGENT_CARDS=""
+          TASK_ID="task-${RUN_ID}-${ISSUE_NUMBER}"
+          
           if [[ -n "$AGENTS" ]]; then
-            AGENT_LIST=$(echo "$AGENTS" | tr ',' '\n' | while read agent; do
+            while IFS= read -r agent; do
               agent=$(echo "$agent" | xargs)
               if [[ -n "$agent" ]]; then
-                echo "- **@$agent**"
+                # Read agent specialization from the agent file if it exists
+                AGENT_FILE=".github/agents/${agent}.md"
+                if [[ -f "$AGENT_FILE" ]]; then
+                  # Extract first line of description (simplified AgentCard)
+                  DESCRIPTION=$(head -20 "$AGENT_FILE" | grep -A1 "description:" | tail -1 | sed 's/^[[:space:]]*//' | head -c 80)
+                  if [[ -z "$DESCRIPTION" ]]; then
+                    DESCRIPTION="Specialized agent"
+                  fi
+                else
+                  DESCRIPTION="Specialized agent"
+                fi
+                AGENT_CARDS="${AGENT_CARDS}
+          | \`@${agent}\` | ${DESCRIPTION}... | \`submitted\` |"
               fi
-            done)
-          else
-            AGENT_LIST="- *(No agents selected)*"
+            done <<< "$(echo "$AGENTS" | tr ',' '\n')"
           fi
           
           # Build A2A communication pattern diagram with actual agent names
-          # Create the agent delegation lines dynamically
           AGENT_LINES=""
           while IFS= read -r agent; do
             agent=$(echo "$agent" | xargs)
             if [[ -n "$agent" ]]; then
               AGENT_LINES="${AGENT_LINES}     |
-          Task Delegation -> @${agent} (Gemini AI) -> Analysis
+          message/send -> @${agent} (Gemini AI) -> TaskStatus: working
           "
             fi
           done <<< "$(echo "$AGENTS" | tr ',' '\n')"
           
           cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
-          ## 🚀 A2A Demo Starting - LIVE
+          ## 🚀 A2A Protocol Demo Starting
           
-          **Multi-Agent Communication Demo** using Real Gemini AI
+          Demonstrating [Agent2Agent (A2A) Protocol](https://github.com/a2aproject/A2A) patterns with real Gemini AI.
           
-          I'm demonstrating A2A (Agent-to-Agent) protocol by coordinating **$AGENT_COUNT agents** to analyze this issue. Each agent uses Gemini AI to process the task from their specialized perspective.
+          ### 📋 A2A Protocol Elements
           
-          ### 🔄 A2A Communication Pattern
+          | Element | Description |
+          |---------|-------------|
+          | **Agent Discovery** | Agents discovered from \`.github/agents/\` registry |
+          | **Agent Cards** | Each agent has defined capabilities and skills |
+          | **Task ID** | \`${TASK_ID}\` |
+          | **Task State** | \`submitted\` → \`working\` → \`completed\` |
+          | **Message Format** | JSON-RPC 2.0 style via Gemini CLI |
+          
+          ### 🔄 A2A Communication Flow
           
           \`\`\`
-          Coordinator -> Discovery Service -> Agent Registry
-          ${AGENT_LINES}     |
-          Result Aggregation -> Implementation Plan -> PR Creation
+          ┌─────────────────────────────────────────────────────────────────┐
+          │  A2A PROTOCOL FLOW                                              │
+          ├─────────────────────────────────────────────────────────────────┤
+          │                                                                 │
+          │  Coordinator (GitHub Actions)                                   │
+          │       │                                                         │
+          │       ├── Agent Discovery ──► .github/agents/ (AgentCard registry)
+          │       │                                                         │
+          ${AGENT_LINES}     │                                                                 │
+          │       ├── Result Aggregation (Artifacts)                        │
+          │       │                                                         │
+          │       └── Implementation ──► PR Creation                        │
+          │                                                                 │
+          └─────────────────────────────────────────────────────────────────┘
           \`\`\`
           
-          ### 🤖 Selected Agents
+          ### 🤖 Agent Cards (Discovered from Registry)
           
-          $AGENT_LIST
+          | Agent | Capabilities | Task State |
+          |-------|--------------|------------|${AGENT_CARDS}
           
-          ### ⚙️ Configuration
+          ### ⚙️ Task Configuration
           
-          | Setting | Value |
-          |---------|-------|
-          | Mode | LIVE (Real Gemini API) |
-          | Agent Count | $AGENT_COUNT (auto-selected) |
-          | Show Reasoning | $SHOW_REASONING |
-          | Auto-Execute | ${{ inputs.auto_execute }} |
+          | Property | Value |
+          |----------|-------|
+          | \`taskId\` | \`${TASK_ID}\` |
+          | \`contextId\` | \`issue-${ISSUE_NUMBER}\` |
+          | \`agentCount\` | ${AGENT_COUNT} |
+          | \`autoExecute\` | ${{ inputs.auto_execute }} |
+          | \`showReasoning\` | ${SHOW_REASONING} |
           
-          ### 📋 Pipeline Steps
+          ### 📊 Task Lifecycle
           
-          1. ⏳ Multi-agent analysis (each agent provides perspective)
-          2. ⏳ Aggregate recommendations
-          3. ⏳ Auto-implement changes
-          4. ⏳ Create PR
+          1. ⏳ \`submitted\` - Task created, agents selected
+          2. ⏳ \`working\` - Agents analyzing issue  
+          3. ⏳ \`working\` - Aggregating recommendations
+          4. ⏳ \`working\` - Implementing changes
+          5. ⏳ \`completed\` - PR created
           
-          [View Live Logs]($RUN_URL)
+          [View Live Logs]($RUN_URL) | [A2A Protocol Spec](https://a2a-protocol.org)
           
-          *Please wait while agents collaborate...*
+          ---
+          *🔗 Inspired by [A2A Protocol](https://github.com/a2aproject/A2A) - enabling agent interoperability*
           EOF
 
       # Run Gemini CLI for agent analysis using the same action as other workflows
@@ -351,62 +392,94 @@ jobs:
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           AGENTS: ${{ steps.agents.outputs.agents }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          RUN_ID: ${{ github.run_id }}
           AUTO_EXECUTE: ${{ inputs.auto_execute }}
         run: |
           # Get agent count
           AGENT_COUNT=$(echo $AGENTS | tr ',' '\n' | wc -l | xargs)
+          TASK_ID="task-${RUN_ID}-${ISSUE_NUMBER}"
+          
+          # Build agent status table with A2A TaskState
+          AGENT_STATUS=""
+          while IFS= read -r agent; do
+            agent=$(echo "$agent" | xargs)
+            if [[ -n "$agent" ]]; then
+              AGENT_STATUS="${AGENT_STATUS}
+          | \`@${agent}\` | \`completed\` | Artifact generated |"
+            fi
+          done <<< "$(echo "$AGENTS" | tr ',' '\n')"
           
           # Build A2A communication pattern diagram with completed status
           AGENT_LINES=""
           while IFS= read -r agent; do
             agent=$(echo "$agent" | xargs)
             if [[ -n "$agent" ]]; then
-              AGENT_LINES="${AGENT_LINES}     |
-          Task Delegation -> @${agent} (Gemini AI) -> ✅ Analysis Complete
+              AGENT_LINES="${AGENT_LINES}     │
+          │  message/send ──► @${agent} ──► TaskStatus: completed ✅
           "
             fi
           done <<< "$(echo "$AGENTS" | tr ',' '\n')"
           
           # Determine next step message based on auto_execute
           if [[ "$AUTO_EXECUTE" == "true" ]]; then
-            NEXT_STEP="🚀 **Auto-executing**: Proceeding to implement changes and create PR..."
+            NEXT_STEP="🚀 **Next**: Proceeding to implement changes (\`message/send\` to executor agent)..."
+            NEXT_STATE="Implementation in progress"
           else
             NEXT_STEP="ℹ️ Manual mode: Use \`/approve\` to implement this plan."
+            NEXT_STATE="Awaiting approval"
           fi
           
           cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
-          ## 🎯 A2A Multi-Agent Analysis Complete
+          ## 🎯 A2A Analysis Phase Complete
           
-          **Issue:** #$ISSUE_NUMBER
-          **Mode:** Real Gemini AI calls via run-gemini-cli action
+          All agents have completed their analysis. Task artifacts collected.
           
-          ### 🔄 A2A Communication Pattern - Analysis Phase Complete
+          ### 📋 A2A Task Status
+          
+          | Property | Value |
+          |----------|-------|
+          | \`taskId\` | \`${TASK_ID}\` |
+          | \`contextId\` | \`issue-${ISSUE_NUMBER}\` |
+          | \`state\` | \`working\` (analysis complete, implementation pending) |
+          
+          ### 🔄 A2A Protocol Flow - Analysis Complete
           
           \`\`\`
-          Coordinator -> Discovery Service -> Agent Registry
-          ${AGENT_LINES}     |
-          ⏳ Result Aggregation -> Implementation Plan -> PR Creation
+          ┌─────────────────────────────────────────────────────────────────┐
+          │  A2A TASK LIFECYCLE - Analysis Phase                           │
+          ├─────────────────────────────────────────────────────────────────┤
+          │                                                                 │
+          │  Coordinator                                                    │
+          │       │                                                         │
+          │       ├── ✅ Agent Discovery (completed)                        │
+          │       │                                                         │
+          ${AGENT_LINES}     │                                                                 │
+          │       ├── ⏳ Result Aggregation (Artifacts → Plan)              │
+          │       │                                                         │
+          │       └── ⏳ Implementation → PR Creation                       │
+          │                                                                 │
+          └─────────────────────────────────────────────────────────────────┘
           \`\`\`
           
-          ### 🤖 Agents Coordinated
+          ### 🤖 Agent Task States (A2A TaskStatus)
           
-          $(echo $AGENTS | tr ',' '\n' | while read agent; do
-            agent=$(echo "$agent" | xargs)
-            echo "- **@$agent** ✅"
-          done)
+          | Agent | TaskState | Artifact |
+          |-------|-----------|----------|${AGENT_STATUS}
           
-          ### 📊 Demo Statistics
+          ### 📊 A2A Protocol Metrics
           
           | Metric | Value |
           |--------|-------|
-          | Agents | $AGENT_COUNT |
-          | Mode | Live Gemini AI (via run-gemini-cli) |
-          | A2A Tier | Tier 1 (Same-Runner) |
-          | Auto-Execute | $AUTO_EXECUTE |
+          | Agents Coordinated | ${AGENT_COUNT} |
+          | Messages Sent | ${AGENT_COUNT} (\`message/send\`) |
+          | Artifacts Collected | ${AGENT_COUNT} (recommendations) |
+          | Protocol | JSON-RPC 2.0 style via Gemini CLI |
           
           ---
           
           $NEXT_STEP
+          
+          [View Logs]($RUN_URL) | [A2A Spec](https://a2a-protocol.org/latest/specification/)
           
           [Full Workflow Logs]($RUN_URL)
           EOF
@@ -580,65 +653,126 @@ jobs:
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           AGENTS: ${{ steps.agents.outputs.agents }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          RUN_ID: ${{ github.run_id }}
           PR_FOUND: ${{ steps.verify_pr.outputs.pr_found }}
           PR_NUMBER: ${{ steps.verify_pr.outputs.pr_number }}
           PR_URL: ${{ steps.verify_pr.outputs.pr_url }}
           BRANCH_EXISTS: ${{ steps.verify_pr.outputs.branch_exists }}
         run: |
+          TASK_ID="task-${RUN_ID}-${ISSUE_NUMBER}"
+          AGENT_COUNT=$(echo $AGENTS | tr ',' '\n' | wc -l | xargs)
+          
+          # Build agent status table with A2A TaskState
+          AGENT_STATUS=""
+          while IFS= read -r agent; do
+            agent=$(echo "$agent" | xargs)
+            if [[ -n "$agent" ]]; then
+              AGENT_STATUS="${AGENT_STATUS}
+          | \`@${agent}\` | \`completed\` | ✅ |"
+            fi
+          done <<< "$(echo "$AGENTS" | tr ',' '\n')"
+          
           # Build A2A communication pattern diagram with all steps complete
           AGENT_LINES=""
           while IFS= read -r agent; do
             agent=$(echo "$agent" | xargs)
             if [[ -n "$agent" ]]; then
-              AGENT_LINES="${AGENT_LINES}     |
-          Task Delegation -> @${agent} (Gemini AI) -> ✅ Analysis Complete
+              AGENT_LINES="${AGENT_LINES}     │
+          │  message/send ──► @${agent} ──► ✅ completed
           "
             fi
           done <<< "$(echo "$AGENTS" | tr ',' '\n')"
           
           if [[ "$PR_FOUND" == "true" ]]; then
             cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
-          ## ✅ A2A Pipeline Complete - PR Created
+          ## ✅ A2A Task Complete - PR Created
           
-          The A2A pipeline has completed the full cycle!
+          The A2A protocol task has completed successfully!
           
-          ### 🔄 A2A Communication Pattern - Complete
+          ### 📋 A2A Task Final Status
+          
+          | Property | Value |
+          |----------|-------|
+          | \`taskId\` | \`${TASK_ID}\` |
+          | \`contextId\` | \`issue-${ISSUE_NUMBER}\` |
+          | \`state\` | \`completed\` ✅ |
+          | \`artifact\` | [PR #$PR_NUMBER]($PR_URL) |
+          
+          ### 🔄 A2A Protocol Flow - Complete
           
           \`\`\`
-          Coordinator -> Discovery Service -> Agent Registry
-          ${AGENT_LINES}     |
-          ✅ Result Aggregation -> ✅ Implementation -> ✅ PR #$PR_NUMBER Created
+          ┌─────────────────────────────────────────────────────────────────┐
+          │  A2A TASK LIFECYCLE - COMPLETED                                │
+          ├─────────────────────────────────────────────────────────────────┤
+          │                                                                 │
+          │  Coordinator                                                    │
+          │       │                                                         │
+          │       ├── ✅ Agent Discovery                                    │
+          │       │                                                         │
+          ${AGENT_LINES}     │                                                                 │
+          │       ├── ✅ Result Aggregation                                 │
+          │       │                                                         │
+          │       └── ✅ Artifact: PR #$PR_NUMBER                           │
+          │                                                                 │
+          └─────────────────────────────────────────────────────────────────┘
           \`\`\`
           
-          ### 📋 Pipeline Status
+          ### 🤖 Agent Task States
           
-          1. ✅ Multi-agent analysis complete
-          2. ✅ Implementation executed
-          3. ✅ Pull request created: [PR #$PR_NUMBER]($PR_URL)
+          | Agent | TaskState | Artifact |
+          |-------|-----------|----------|${AGENT_STATUS}
+          | \`executor\` | \`completed\` | ✅ |
           
-          **Next Steps:**
-          - Review the PR linked above
+          ### 📊 A2A Protocol Summary
           
-          [View Full Workflow Logs]($RUN_URL)
+          | Metric | Value |
+          |--------|-------|
+          | Total Agents | ${AGENT_COUNT} + 1 executor |
+          | Messages Sent | $((AGENT_COUNT + 1)) |
+          | Final Artifact | [PR #$PR_NUMBER]($PR_URL) |
+          | Task Duration | See workflow logs |
           
           ---
-          *🤖 A2A Autonomous Pipeline - No human intervention required*
+          
+          **Next Steps:** Review the PR linked above
+          
+          [View Logs]($RUN_URL) | [A2A Protocol](https://github.com/a2aproject/A2A)
+          
+          *🔗 Demonstrating [A2A Protocol](https://a2a-protocol.org) patterns for agent interoperability*
           EOF
           else
             # PR was not created - report this accurately
             if [[ "$BRANCH_EXISTS" == "true" ]]; then
               cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
-          ## ⚠️ A2A Pipeline Complete - PR Not Created
+          ## ⚠️ A2A Task Incomplete - PR Not Created
           
-          ### 🔄 A2A Communication Pattern - Partial
+          ### 📋 A2A Task Status
+          
+          | Property | Value |
+          |----------|-------|
+          | \`taskId\` | \`${TASK_ID}\` |
+          | \`state\` | \`failed\` (PR creation failed) |
+          
+          ### 🔄 A2A Protocol Flow - Partial
           
           \`\`\`
-          Coordinator -> Discovery Service -> Agent Registry
-          ${AGENT_LINES}     |
-          ✅ Result Aggregation -> ✅ Implementation -> ⚠️ PR Creation Failed
+          ┌─────────────────────────────────────────────────────────────────┐
+          │  A2A TASK LIFECYCLE - PARTIAL                                  │
+          ├─────────────────────────────────────────────────────────────────┤
+          │                                                                 │
+          │  Coordinator                                                    │
+          │       │                                                         │
+          │       ├── ✅ Agent Discovery                                    │
+          │       │                                                         │
+          ${AGENT_LINES}     │                                                                 │
+          │       ├── ✅ Result Aggregation                                 │
+          │       │                                                         │
+          │       └── ⚠️ Artifact: Branch created, PR failed               │
+          │                                                                 │
+          └─────────────────────────────────────────────────────────────────┘
           \`\`\`
           
-          ### 📋 Pipeline Status
+          ### 📋 Task Status
           
           1. ✅ Multi-agent analysis complete
           2. ✅ Implementation executed (branch created)
