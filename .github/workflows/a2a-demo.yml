@@ -265,12 +265,19 @@ jobs:
             1. First, read their specialization from .github/agents/{agent-name}.md
             2. REASONING: Explain what aspects of the issue this agent would focus on and why
             3. ANALYSIS: Provide the agent's detailed analysis from their perspective
-            4. RECOMMENDATIONS: Give specific, actionable recommendations
+            4. RECOMMENDATIONS: Give specific, actionable recommendations including file paths and changes
             
             Format your response with clear sections for each agent, showing:
             - 🤔 **Reasoning**: Why this agent's perspective matters for this issue
             - 📋 **Analysis**: The agent's detailed findings
-            - ✅ **Recommendations**: Specific actions to take
+            - ✅ **Recommendations**: Specific actions to take (include file paths if applicable)
+            
+            CRITICAL: At the end of your response, include a consolidated "## Implementation Plan" section that lists:
+            1. All files that need to be created or modified
+            2. The specific changes to make in each file
+            3. Any tests or validations needed
+            
+            This implementation plan will be passed to the next step to actually implement the changes.
         with:
           # Use same auth pattern as gemini-invoke.yml, gemini-fix.yml, etc.
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
@@ -381,24 +388,29 @@ jobs:
           ISSUE_BODY: ${{ steps.issue.outputs.body }}
           TRIGGERING_ACTOR: ${{ github.triggering_actor }}
           BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
-          # Context for the implementation - agents are dynamically selected
+          # CRITICAL: Pass the multi-agent analysis results to the implementation step
+          MULTI_AGENT_ANALYSIS: ${{ steps.analysis.outputs.gemini_response }}
+          # Context for the implementation - includes both agent info AND their recommendations
           ADDITIONAL_CONTEXT: |
             This is an A2A (Agent-to-Agent) autonomous implementation.
             
             The following specialized agents have analyzed issue #${{ inputs.issue_number }}:
             ${{ steps.agents.outputs.agents }}
             
-            Each agent has provided recommendations from their specialized perspective.
-            The agents were dynamically selected to provide diverse viewpoints including
-            engineering, security, testing, documentation, and organizational insights.
+            ============ MULTI-AGENT ANALYSIS RESULTS ============
+            The agents provided the following analysis and recommendations:
             
-            IMPORTANT: Implement the changes recommended by the agents and create a PR.
+            ${{ steps.analysis.outputs.gemini_response }}
+            
+            ============ END OF ANALYSIS RESULTS ============
+            
+            IMPORTANT: Implement the changes recommended by the agents above and create a PR.
             Follow the original issue request: "${{ steps.issue.outputs.title }}"
             
             Use the github MCP tools to:
             1. Create a feature branch (a2a/fix-issue-${{ inputs.issue_number }})
-            2. Make the necessary file changes
-            3. Create a pull request linking to issue #${{ inputs.issue_number }}
+            2. Make the necessary file changes based on the agent recommendations above
+            3. Create a pull request linking to issue #${{ inputs.issue_number }} using "Fixes #${{ inputs.issue_number }}" in the PR body
         with:
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
           google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
@@ -473,31 +485,119 @@ jobs:
           # It uses the MCP server tools configured above to interact with GitHub.
           prompt: '/gemini-issue-fixer'
       
+      - name: Verify PR was created and link to issue
+        if: success() && inputs.auto_execute == true
+        id: verify_pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
+        run: |
+          echo "Checking for PR from branch: $BRANCH_NAME"
+          
+          # Wait a moment for GitHub to process the PR creation
+          sleep 3
+          
+          # Search for any open PRs from the a2a branch
+          PR_JSON=$(gh pr list --head "$BRANCH_NAME" --json number,url,title --jq '.[0]' 2>/dev/null || echo "")
+          
+          if [[ -n "$PR_JSON" && "$PR_JSON" != "null" ]]; then
+            PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number')
+            PR_URL=$(echo "$PR_JSON" | jq -r '.url')
+            PR_TITLE=$(echo "$PR_JSON" | jq -r '.title')
+            echo "✅ Found PR #$PR_NUMBER: $PR_TITLE"
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+            echo "pr_found=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ No PR found from branch $BRANCH_NAME"
+            echo "pr_found=false" >> $GITHUB_OUTPUT
+            
+            # Check if the branch exists
+            if gh api repos/${{ github.repository }}/branches/$BRANCH_NAME --jq '.name' 2>/dev/null; then
+              echo "Branch exists but no PR was created"
+              echo "branch_exists=true" >> $GITHUB_OUTPUT
+            else
+              echo "Branch does not exist"
+              echo "branch_exists=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+      
       - name: Post execution complete notification
         if: success() && inputs.auto_execute == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PR_FOUND: ${{ steps.verify_pr.outputs.pr_found }}
+          PR_NUMBER: ${{ steps.verify_pr.outputs.pr_number }}
+          PR_URL: ${{ steps.verify_pr.outputs.pr_url }}
+          BRANCH_EXISTS: ${{ steps.verify_pr.outputs.branch_exists }}
         run: |
-          cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
+          if [[ "$PR_FOUND" == "true" ]]; then
+            cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
           ## ✅ A2A Pipeline Complete - PR Created
           
           The A2A pipeline has completed the full cycle:
           
           1. ✅ Multi-agent analysis complete
           2. ✅ Implementation executed
-          3. ✅ Pull request created
+          3. ✅ Pull request created: [PR #$PR_NUMBER]($PR_URL)
           
           **Next Steps:**
-          - Review the PR created by this workflow
-          - The PR should be linked to this issue
+          - Review the PR linked above
           
           [View Full Workflow Logs]($RUN_URL)
           
           ---
           *🤖 A2A Autonomous Pipeline - No human intervention required*
           EOF
+          else
+            # PR was not created - report this accurately
+            if [[ "$BRANCH_EXISTS" == "true" ]]; then
+              cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
+          ## ⚠️ A2A Pipeline Complete - PR Not Created
+          
+          The A2A pipeline completed but a PR was not created:
+          
+          1. ✅ Multi-agent analysis complete
+          2. ✅ Implementation executed (branch created)
+          3. ⚠️ Pull request NOT created
+          
+          **What happened:**
+          - The branch \`a2a/fix-issue-$ISSUE_NUMBER\` was created
+          - But the PR creation step did not complete
+          
+          **Next Steps:**
+          - Check the workflow logs for details
+          - You may need to manually create a PR from the branch
+          
+          [View Full Workflow Logs]($RUN_URL)
+          
+          ---
+          *🤖 A2A Autonomous Pipeline*
+          EOF
+            else
+              cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
+          ## ⚠️ A2A Pipeline Issue - No Changes Made
+          
+          The A2A pipeline completed but no changes were made:
+          
+          1. ✅ Multi-agent analysis complete
+          2. ⚠️ Implementation did not create any files
+          3. ❌ No pull request created
+          
+          **Next Steps:**
+          - Review the workflow logs for any errors
+          - The implementation step may have encountered issues
+          
+          [View Full Workflow Logs]($RUN_URL)
+          
+          ---
+          *🤖 A2A Autonomous Pipeline*
+          EOF
+            fi
+          fi
       
       - name: Handle failure
         if: failure()
