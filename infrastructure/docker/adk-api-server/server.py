@@ -24,12 +24,15 @@ import logging
 import os
 from contextlib import asynccontextmanager
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 
 from session_store import (
@@ -53,6 +56,10 @@ ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
 # CORS configuration
 CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*").split(",")
+
+# Template configuration
+BASE_DIR = Path(__file__).resolve().parent
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 # =============================================================================
 # Pydantic Models
@@ -214,9 +221,25 @@ async def health():
     }
 
 
-@app.get("/")
-async def root():
-    """Root endpoint with API information."""
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    """Root endpoint - serves the Agent Console GUI."""
+    agents = app_state.a2a_adapter.list_agents() if app_state.a2a_adapter else []
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "service_name": "ADK API Server",
+            "version": "1.0.0",
+            "environment": ENVIRONMENT,
+            "agent_count": len(agents),
+        }
+    )
+
+
+@app.get("/api")
+async def api_info():
+    """API information endpoint (JSON)."""
     return {
         "service": "ADK API Server",
         "description": "API server for google/adk-web, bridging to A2A protocol agents",
@@ -230,6 +253,12 @@ async def root():
             "run": "POST /run",
             "run_sse": "POST /run_sse",
             "health": "GET /health",
+        },
+        "gui": "GET /",
+        "docs": {
+            "ag_ui_protocol": "https://docs.ag-ui.com/",
+            "copilotkit": "https://docs.copilotkit.ai/",
+            "google_adk": "https://google.github.io/adk-docs/",
         },
     }
 

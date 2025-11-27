@@ -14,5 +14,8 @@ pydantic>=2.0.0
 # Server-Sent Events
 sse-starlette>=1.6.0
 
+# Templating for GUI
+jinja2>=3.1.0
+
 # Google Cloud clients (optional - for Firestore session storage)
 google-cloud-firestore>=2.11.0
