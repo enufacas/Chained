@@ -137,6 +137,84 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
       
+      - name: Import Existing Resources
+        id: import
+        continue-on-error: true
+        run: |
+          # Import existing GCP resources into Terraform state
+          # This allows Terraform to manage resources that were created outside of Terraform
+          # or whose state was lost between runs
+          
+          echo "🔄 Attempting to import existing resources..."
+          
+          # Define common variables
+          PROJECT_ID="${{ env.GCP_PROJECT_ID }}"
+          REGION="${{ env.GCP_REGION }}"
+          
+          # Function to import a resource if it exists
+          import_if_exists() {
+            local resource_type="$1"
+            local resource_name="$2"
+            local resource_id="$3"
+            
+            # Check if resource is already in state
+            if terraform state show "$resource_type.$resource_name" &>/dev/null; then
+              echo "✅ $resource_type.$resource_name already in state"
+              return 0
+            fi
+            
+            # Try to import
+            echo "📥 Importing $resource_type.$resource_name..."
+            if terraform import \
+              -var="project_id=$PROJECT_ID" \
+              -var="region=$REGION" \
+              -var="environment=${{ needs.validate.outputs.environment }}" \
+              -var="firestore_location=nam5" \
+              "$resource_type.$resource_name" "$resource_id" 2>/dev/null; then
+              echo "✅ Successfully imported $resource_type.$resource_name"
+            else
+              echo "ℹ️ Could not import $resource_type.$resource_name (may not exist yet)"
+            fi
+          }
+          
+          # Import service accounts
+          import_if_exists "google_service_account" "agent_gateway" \
+            "projects/$PROJECT_ID/serviceAccounts/chained-agent-gateway@$PROJECT_ID.iam.gserviceaccount.com"
+          
+          import_if_exists "google_service_account" "agent_worker" \
+            "projects/$PROJECT_ID/serviceAccounts/chained-agent-worker@$PROJECT_ID.iam.gserviceaccount.com"
+          
+          # Import Pub/Sub resources
+          import_if_exists "google_pubsub_topic" "agent_tasks" \
+            "projects/$PROJECT_ID/topics/chained-agent-tasks"
+          
+          import_if_exists "google_pubsub_topic" "agent_tasks_dlq" \
+            "projects/$PROJECT_ID/topics/chained-agent-tasks-dlq"
+          
+          import_if_exists "google_pubsub_subscription" "agent_tasks" \
+            "projects/$PROJECT_ID/subscriptions/chained-agent-tasks-sub"
+          
+          # Import Firestore database
+          import_if_exists "google_firestore_database" "default" \
+            "projects/$PROJECT_ID/databases/(default)"
+          
+          # Import Artifact Registry
+          import_if_exists "google_artifact_registry_repository" "chained" \
+            "projects/$PROJECT_ID/locations/$REGION/repositories/chained"
+          
+          # Import Cloud Run services
+          import_if_exists "google_cloud_run_v2_service" "website" \
+            "projects/$PROJECT_ID/locations/$REGION/services/chained-website"
+          
+          import_if_exists "google_cloud_run_v2_service" "agent_gateway" \
+            "projects/$PROJECT_ID/locations/$REGION/services/chained-agent-gateway"
+          
+          import_if_exists "google_cloud_run_v2_service" "agent_worker" \
+            "projects/$PROJECT_ID/locations/$REGION/services/chained-agent-worker"
+          
+          echo ""
+          echo "✅ Import step completed"
+      
       - name: Terraform Plan
         run: |
           terraform plan \
