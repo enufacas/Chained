@@ -140,14 +140,16 @@ The project implements the **[A2A Protocol](https://github.com/a2aproject/A2A)**
 
 #### GCP Cloud Run A2A Services
 
-When deployed to GCP, the following A2A-enabled services are available:
+When deployed to GCP, the following A2A-enabled services are available (Cloud Run URLs are dynamically generated):
 
-| Service | Endpoint | Description |
-|---------|----------|-------------|
+| Service | Cloud Run Service Name | Description |
+|---------|------------------------|-------------|
 | **ADK API Server** | `chained-adk-api-server` | Bridge server for [google/adk-web](https://github.com/google/adk-web) integration |
 | **Academic Research Agent** | `chained-academic-research` | Discovers and analyzes academic research topics |
 | **Blog Writer Agent** | `chained-blog-writer` | Writes engaging blog posts from research data |
 | **Google Trends Agent** | `chained-google-trends` | Analyzes Google Trends for SEO insights |
+
+> **Note**: After deployment, Cloud Run URLs follow the pattern: `https://{service-name}-{hash}-{region}.a.run.app`. Run `terraform output` to get the actual URLs.
 
 Each service exposes:
 - `/health` - Health check endpoint
