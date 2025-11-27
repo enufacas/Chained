@@ -54,13 +54,21 @@ class A2AMessage(BaseModel):
 class A2AClient:
     """Client for communicating with A2A agents."""
 
-    def __init__(self, base_url: str):
+    def __init__(self, base_url: str, timeout: float = 30.0):
         self.base_url = base_url.rstrip("/")
-        self.client = httpx.AsyncClient(timeout=30.0)
+        self._timeout = timeout
+        self._client: Optional[httpx.AsyncClient] = None
+
+    async def _get_client(self) -> httpx.AsyncClient:
+        """Get or create the HTTP client."""
+        if self._client is None:
+            self._client = httpx.AsyncClient(timeout=self._timeout)
+        return self._client
 
     async def get_agent_card(self) -> AgentCard:
         """Fetch agent card from .well-known endpoint."""
-        response = await self.client.get(
+        client = await self._get_client()
+        response = await client.get(
             f"{self.base_url}/.well-known/agent.json"
         )
         response.raise_for_status()
@@ -84,7 +92,8 @@ class A2AClient:
         if reference_task_ids:
             payload["referenceTaskIds"] = reference_task_ids
 
-        response = await self.client.post(
+        client = await self._get_client()
+        response = await client.post(
             f"{self.base_url}/a2a/tasks",
             json=payload,
         )
@@ -93,7 +102,8 @@ class A2AClient:
 
     async def get_task_status(self, task_id: str) -> Task:
         """Get the status of a task."""
-        response = await self.client.get(
+        client = await self._get_client()
+        response = await client.get(
             f"{self.base_url}/a2a/tasks/{task_id}"
         )
         response.raise_for_status()
@@ -101,7 +111,17 @@ class A2AClient:
 
     async def close(self):
         """Close the HTTP client."""
-        await self.client.aclose()
+        if self._client is not None:
+            await self._client.aclose()
+            self._client = None
+
+    async def __aenter__(self):
+        """Async context manager entry."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Async context manager exit - ensures client is closed."""
+        await self.close()
 
 
 def create_task_id() -> str:

@@ -29,7 +29,7 @@ The pipeline consists of three specialized agents that communicate using the A2A
 ### 2. Google Trends Agent
 **Purpose**: Analyzes Google Trends data to identify trending topics for SEO.
 
-- **Port**: 8082
+- **Port**: 8083
 - **Skills**:
   - `analyze-trends`: Analyze Google Trends data
   - `get-keywords`: Extract trending keywords
@@ -37,7 +37,7 @@ The pipeline consists of three specialized agents that communicate using the A2A
 ### 3. Blog Writer Agent
 **Purpose**: Writes engaging blog posts from research and trend data.
 
-- **Port**: 8083
+- **Port**: 8082
 - **Skills**:
   - `write-blog`: Generate a complete blog post
   - `deploy-blog`: Deploy to the website

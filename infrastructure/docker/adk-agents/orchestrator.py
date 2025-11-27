@@ -19,25 +19,33 @@ from typing import Any, Dict, List, Optional
 
 import httpx
 
+# Import shared utilities
+try:
+    from shared.a2a_utils import get_agent_urls
+except ImportError:
+    # Fallback if shared module not available
+    def get_agent_urls() -> Dict[str, str]:
+        return {
+            "academic-research": os.getenv(
+                "ACADEMIC_RESEARCH_URL",
+                "http://localhost:8081"
+            ),
+            "blog-writer": os.getenv(
+                "BLOG_WRITER_URL",
+                "http://localhost:8082"
+            ),
+            "google-trends": os.getenv(
+                "GOOGLE_TRENDS_URL",
+                "http://localhost:8083"
+            ),
+        }
+
 
 # =============================================================================
 # Configuration
 # =============================================================================
 
-AGENT_URLS = {
-    "academic-research": os.getenv(
-        "ACADEMIC_RESEARCH_URL",
-        "http://localhost:8081"
-    ),
-    "blog-writer": os.getenv(
-        "BLOG_WRITER_URL",
-        "http://localhost:8082"
-    ),
-    "google-trends": os.getenv(
-        "GOOGLE_TRENDS_URL",
-        "http://localhost:8083"
-    ),
-}
+AGENT_URLS = get_agent_urls()
 
 
 # =============================================================================
