@@ -17,6 +17,9 @@ COPY session_store.py /app/session_store.py
 COPY a2a_adapter.py /app/a2a_adapter.py
 COPY server.py /app/server.py
 
+# Copy templates for GUI
+COPY templates /app/templates
+
 # Set environment variables
 ENV PORT=8080
 ENV HOST=0.0.0.0

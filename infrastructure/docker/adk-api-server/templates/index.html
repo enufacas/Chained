@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADK API Server - Agent Console</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --bg-card: #15151f;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6a6a7a;
+            --accent-primary: #7c3aed;
+            --accent-secondary: #a855f7;
+            --accent-glow: rgba(124, 58, 237, 0.3);
+            --border-color: #2a2a3a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background effects */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 0%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            min-height: calc(100vh - 150px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .card-header .icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        .card-body {
+            padding: 16px 20px;
+        }
+
+        /* Agent List */
+        .agent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .agent-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .agent-item:hover {
+            border-color: var(--accent-primary);
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        .agent-item.active {
+            border-color: var(--accent-primary);
+            background: rgba(124, 58, 237, 0.15);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .agent-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .agent-info h3 {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .agent-info p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .no-agents {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+        }
+
+        .no-agents svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            background: var(--bg-tertiary);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Chat Area */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 150px);
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-title h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .chat-title span {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Messages */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+            align-self: flex-end;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: var(--info);
+        }
+
+        .message.agent .message-avatar {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        .message-content {
+            background: var(--bg-tertiary);
+            padding: 14px 18px;
+            border-radius: 16px;
+            border-top-left-radius: 4px;
+        }
+
+        .message.user .message-content {
+            background: var(--accent-primary);
+            border-top-left-radius: 16px;
+            border-top-right-radius: 4px;
+        }
+
+        .message-content p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        .message.user .message-time {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .welcome-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+
+        .welcome-screen h2 {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+        }
+
+        .welcome-screen p {
+            color: var(--text-secondary);
+            max-width: 400px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .feature-item svg {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 10px;
+            color: var(--accent-secondary);
+        }
+
+        .feature-item h4 {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .feature-item p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .input-container {
+            flex: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-end;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-container:focus-within {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .input-container textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 14px 16px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+            max-height: 150px;
+        }
+
+        .input-container textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            opacity: 0.9;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .send-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Loading */
+        .loading-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 18px;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: bounce 1.4s ease-in-out infinite both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* API Info Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h2 {
+            font-size: 1.2rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .endpoint-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .endpoint {
+            background: var(--bg-tertiary);
+            padding: 14px 16px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .endpoint-method {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .endpoint-method.get { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .endpoint-method.post { background: rgba(59, 130, 246, 0.2); color: var(--info); }
+        .endpoint-method.delete { background: rgba(239, 68, 68, 0.2); color: var(--error); }
+
+        .endpoint-path {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+            
+            .chat-container {
+                order: 1;
+                min-height: 500px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🤖</div>
+                <div class="logo-text">
+                    <h1>ADK API Server</h1>
+                    <span>A2A Protocol Agent Console</span>
+                </div>
+            </div>
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span id="serverStatus">Connected</span>
+            </div>
+        </header>
+
+        <main class="main-grid">
+            <aside class="sidebar">
+                <!-- Agents Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        <h2>Available Agents</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="agentList" class="agent-list">
+                            <div class="no-agents">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                <p>Loading agents...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        <h2>Statistics</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value" id="agentCount">0</div>
+                                <div class="stat-label">Agents</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="messageCount">0</div>
+                                <div class="stat-label">Messages</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Info Button -->
+                <button class="btn btn-secondary" style="width: 100%;" onclick="showApiInfo()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    View API Endpoints
+                </button>
+            </aside>
+
+            <section class="card chat-container">
+                <div class="chat-header">
+                    <div class="chat-title">
+                        <h2 id="chatTitle">Agent Console</h2>
+                        <span id="chatSubtitle">Select an agent to start</span>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="btn btn-secondary" onclick="clearChat()">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                <div id="messagesContainer" class="messages-container">
+                    <div class="welcome-screen">
+                        <div class="welcome-icon">✨</div>
+                        <h2>Welcome to Agent Console</h2>
+                        <p>Select an agent from the sidebar to start a conversation. Our AI agents are ready to help you with various tasks.</p>
+                        
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                                </svg>
+                                <h4>Real-time Chat</h4>
+                                <p>Stream responses</p>
+                            </div>
+                            <div class="feature-item">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                                <h4>Multiple Agents</h4>
+                                <p>Specialized AI</p>
+                            </div>
+                            <div class="feature-item">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                <h4>Secure</h4>
+                                <p>Session-based</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <div class="input-wrapper">
+                        <div class="input-container">
+                            <textarea 
+                                id="messageInput" 
+                                placeholder="Type a message... (Press Enter to send, Shift+Enter for new line)"
+                                rows="1"
+                                disabled
+                            ></textarea>
+                        </div>
+                        <button id="sendBtn" class="send-btn" disabled onclick="sendMessage()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- API Info Modal -->
+    <div class="modal-overlay" id="apiModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>API Endpoints</h2>
+                <button class="modal-close" onclick="hideApiInfo()">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="endpoint-list">
+                    <div class="endpoint">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-path">/list-apps</span>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-path">/apps/{app}/users/{user}/sessions</span>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method post">POST</span>
+                        <span class="endpoint-path">/apps/{app}/users/{user}/sessions</span>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-path">/apps/{app}/users/{user}/sessions/{id}</span>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method delete">DELETE</span>
+                        <span class="endpoint-path">/apps/{app}/users/{user}/sessions/{id}</span>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method post">POST</span>
+                        <span class="endpoint-path">/run</span>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method post">POST</span>
+                        <span class="endpoint-path">/run_sse</span>
+                    </div>
+                    <div class="endpoint">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-path">/health</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let selectedAgent = null;
+        let sessionId = null;
+        let userId = 'web-user-' + Math.random().toString(36).slice(2, 11);
+        let messages = [];
+        let messageCount = 0;
+
+        // DOM Elements
+        const agentList = document.getElementById('agentList');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatTitle = document.getElementById('chatTitle');
+        const chatSubtitle = document.getElementById('chatSubtitle');
+        const agentCountEl = document.getElementById('agentCount');
+        const messageCountEl = document.getElementById('messageCount');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAgents();
+            setupInputHandlers();
+        });
+
+        // Load agents from API
+        async function loadAgents() {
+            try {
+                const response = await fetch('/list-apps');
+                const agents = await response.json();
+                
+                agentCountEl.textContent = agents.length;
+                
+                if (agents.length === 0) {
+                    agentList.innerHTML = `
+                        <div class="no-agents">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                            </svg>
+                            <p>No agents configured</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                agentList.innerHTML = agents.map(agent => `
+                    <div class="agent-item" onclick="selectAgent('${escapeHtml(agent.name)}', '${escapeHtml(agent.description || '')}')">
+                        <div class="agent-avatar">${getAgentEmoji(agent.name)}</div>
+                        <div class="agent-info">
+                            <h3>${escapeHtml(formatAgentName(agent.name))}</h3>
+                            <p>${escapeHtml(agent.description || 'AI Agent')}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load agents:', error);
+                agentList.innerHTML = `
+                    <div class="no-agents">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <p>Failed to load agents</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Select an agent
+        async function selectAgent(name, description) {
+            // Update UI
+            document.querySelectorAll('.agent-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            selectedAgent = name;
+            chatTitle.textContent = formatAgentName(name);
+            chatSubtitle.textContent = description || 'AI Agent';
+            
+            // Enable input
+            messageInput.disabled = false;
+            sendBtn.disabled = false;
+            messageInput.focus();
+            
+            // Create session
+            try {
+                const response = await fetch(`/apps/${name}/users/${userId}/sessions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                const session = await response.json();
+                sessionId = session.id;
+                
+                // Clear messages and show welcome
+                messages = [];
+                messagesContainer.innerHTML = `
+                    <div class="message agent">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <p>Hello! I'm ${formatAgentName(name)}. ${description || 'How can I help you today?'}</p>
+                            <div class="message-time">${formatTime(new Date())}</div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Failed to create session:', error);
+            }
+        }
+
+        // Setup input handlers
+        function setupInputHandlers() {
+            messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            messageInput.addEventListener('input', () => {
+                messageInput.style.height = 'auto';
+                messageInput.style.height = Math.min(messageInput.scrollHeight, 150) + 'px';
+            });
+        }
+
+        // Send message
+        async function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text || !selectedAgent || !sessionId) return;
+            
+            // Clear input
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            
+            // Add user message
+            addMessage('user', text);
+            messageCount++;
+            messageCountEl.textContent = messageCount;
+            
+            // Show loading
+            const loadingId = showLoading();
+            
+            try {
+                const response = await fetch('/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        appName: selectedAgent,
+                        userId: userId,
+                        sessionId: sessionId,
+                        newMessage: text
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Remove loading
+                hideLoading(loadingId);
+                
+                // Add agent response
+                if (result.message) {
+                    addMessage('agent', result.message);
+                    messageCount++;
+                    messageCountEl.textContent = messageCount;
+                } else {
+                    addMessage('agent', 'I processed your request but have no text response.');
+                }
+            } catch (error) {
+                console.error('Send failed:', error);
+                hideLoading(loadingId);
+                addMessage('agent', 'Sorry, something went wrong. Please try again.');
+            }
+        }
+
+        // Add message to UI
+        function addMessage(role, content) {
+            const time = formatTime(new Date());
+            const avatar = role === 'user' ? '👤' : '🤖';
+            
+            const messageHtml = `
+                <div class="message ${role}">
+                    <div class="message-avatar">${avatar}</div>
+                    <div class="message-content">
+                        <p>${escapeHtml(content)}</p>
+                        <div class="message-time">${time}</div>
+                    </div>
+                </div>
+            `;
+            
+            messagesContainer.insertAdjacentHTML('beforeend', messageHtml);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Show loading indicator
+        function showLoading() {
+            const id = 'loading-' + Date.now();
+            const loadingHtml = `
+                <div class="message agent" id="${id}">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <div class="loading-indicator">
+                            <div class="loading-dot"></div>
+                            <div class="loading-dot"></div>
+                            <div class="loading-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.insertAdjacentHTML('beforeend', loadingHtml);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return id;
+        }
+
+        // Hide loading indicator
+        function hideLoading(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        // Clear chat
+        function clearChat() {
+            if (!selectedAgent) return;
+            messages = [];
+            messagesContainer.innerHTML = `
+                <div class="message agent">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <p>Chat cleared. How can I help you?</p>
+                        <div class="message-time">${formatTime(new Date())}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show API info modal
+        function showApiInfo() {
+            document.getElementById('apiModal').classList.add('active');
+        }
+
+        // Hide API info modal
+        function hideApiInfo() {
+            document.getElementById('apiModal').classList.remove('active');
+        }
+
+        // Close modal on overlay click
+        document.getElementById('apiModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) hideApiInfo();
+        });
+
+        // Utility functions
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatAgentName(name) {
+            return name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function getAgentEmoji(name) {
+            const emojis = {
+                'academic-research': '📚',
+                'blog-writer': '✍️',
+                'google-trends': '📈',
+                'code-reviewer': '💻',
+                'data-analyst': '📊',
+                'content-creator': '🎨',
+                'support-agent': '💬'
+            };
+            return emojis[name] || '🤖';
+        }
+    </script>
+</body>
+</html>

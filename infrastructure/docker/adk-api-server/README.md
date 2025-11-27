@@ -1,30 +1,58 @@
 # ADK API Server
 
-API server that bridges [google/adk-web](https://github.com/google/adk-web) to A2A protocol-based agents deployed on GCP Cloud Run.
+API server that bridges [google/adk-web](https://github.com/google/adk-web) to A2A protocol-based agents deployed on GCP Cloud Run. Now includes a built-in **Agent Console GUI** for easy interaction with your agents.
 
 ## Overview
 
-The ADK API Server implements the ADK API interface expected by google/adk-web, allowing you to use the full ADK developer UI with your A2A agents.
+The ADK API Server implements the ADK API interface expected by google/adk-web, allowing you to use the full ADK developer UI with your A2A agents. It also provides a standalone web GUI following modern dashboard design best practices.
 
 ```
-┌─────────────┐    HTTP/SSE    ┌──────────────────┐    A2A Protocol   ┌─────────────┐
-│  adk-web    │◀──────────────▶│  ADK API Server  │◀─────────────────▶│  A2A Agents │
-│  (Angular)  │                │  (FastAPI)       │                    │  (Cloud Run)│
-└─────────────┘                └──────────────────┘                    └─────────────┘
+┌─────────────────┐    HTTP/SSE    ┌──────────────────┐    A2A Protocol   ┌─────────────┐
+│  Agent Console  │◀──────────────▶│  ADK API Server  │◀─────────────────▶│  A2A Agents │
+│  (Built-in GUI) │                │  (FastAPI)       │                    │  (Cloud Run)│
+└─────────────────┘                └──────────────────┘                    └─────────────┘
+         ▲                                  ▲
+         │                                  │
+┌────────┴────────┐              ┌──────────┴──────────┐
+│   adk-web       │              │  CopilotKit/AG-UI   │
+│   (Angular)     │              │  (React/Angular)    │
+└─────────────────┘              └─────────────────────┘
 ```
 
 ## Features
 
+- **Built-in Agent Console GUI**: Modern, responsive chat interface at the root URL
 - **ADK API Compatibility**: Implements the API expected by google/adk-web
+- **AG-UI Protocol Ready**: Compatible with [AG-UI](https://docs.ag-ui.com/) for advanced frontends
 - **Session Management**: In-memory (dev) or Firestore (production) session storage
 - **Agent Discovery**: Automatically discovers agents from environment variables
 - **SSE Streaming**: Server-Sent Events support for real-time responses
 - **CORS Support**: Configurable CORS for cross-origin requests
 
+## Built-in GUI
+
+Access the Agent Console GUI by navigating to the root URL (`/`). The GUI provides:
+
+- **Agent Selection**: Browse and select from available agents
+- **Real-time Chat**: Interactive conversation with streaming responses
+- **Session Management**: Automatic session creation and management
+- **API Documentation**: View available endpoints
+- **Statistics**: Agent count and message metrics
+
+### Design Standards
+
+The GUI follows modern web interface best practices:
+- **Dark Theme**: Professional dark color scheme with purple accents
+- **Responsive Design**: Works on desktop, tablet, and mobile
+- **Accessibility**: Semantic HTML, keyboard navigation, WCAG-compliant contrast
+- **Real-time Updates**: Live status indicators and streaming responses
+
 ## API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
+| `/` | GET | **Agent Console GUI** (HTML) |
+| `/api` | GET | API information (JSON) |
 | `/list-apps` | GET | List available agent applications |
 | `/apps/{app}/users/{user}/sessions` | POST | Create a new session |
 | `/apps/{app}/users/{user}/sessions` | GET | List user sessions |
@@ -87,11 +115,16 @@ export AGENT_GOOGLE_TRENDS_URL=http://localhost:8083
 python server.py
 ```
 
+Then open http://localhost:8080 in your browser to access the Agent Console GUI.
+
 ### Testing
 
 ```bash
 # Health check
 curl http://localhost:8080/health
+
+# API info (JSON)
+curl http://localhost:8080/api
 
 # List available apps
 curl http://localhost:8080/list-apps
@@ -126,16 +159,51 @@ docker run -p 8080:8080 \
 
 The ADK API Server is deployed to Cloud Run via the `deploy-adk-agents.yml` workflow. Terraform configuration is in `infrastructure/terraform/adk-agents.tf`.
 
-## Using with adk-web
+## Frontend Integration Options
+
+### Option 1: Built-in GUI (Default)
+
+The server includes a built-in Agent Console GUI. Just navigate to the root URL.
+
+### Option 2: google/adk-web
 
 1. Clone [google/adk-web](https://github.com/google/adk-web)
 2. Configure the API URL to point to your deployed ADK API Server
 3. Run `npm start`
 4. Access the UI at http://localhost:4200
 
+### Option 3: CopilotKit with AG-UI Protocol
+
+For advanced agentic UIs with features like generative UI, shared state, and human-in-the-loop workflows:
+
+1. Install CopilotKit packages:
+```bash
+npm install @copilotkit/react-core @copilotkit/react-ui
+```
+
+2. Configure the CopilotKit runtime to use the ADK API Server:
+```typescript
+import { CopilotKit } from "@copilotkit/react-core";
+import { CopilotChat } from "@copilotkit/react-ui";
+
+export default function App() {
+  return (
+    <CopilotKit runtimeUrl="/api/copilotkit">
+      <CopilotChat />
+    </CopilotKit>
+  );
+}
+```
+
+For full AG-UI protocol integration, see:
+- [AG-UI Protocol Documentation](https://docs.ag-ui.com/)
+- [CopilotKit ADK Integration](https://docs.copilotkit.ai/adk)
+- [AG-UI ADK Middleware](https://pypi.org/project/ag-ui-adk/)
+
 ## Files
 
-- `server.py` - Main FastAPI server implementing ADK API
+- `server.py` - Main FastAPI server implementing ADK API with GUI
+- `templates/index.html` - Agent Console GUI template
 - `session_store.py` - Session management (in-memory and Firestore)
 - `a2a_adapter.py` - A2A protocol adapter for agent communication
 - `requirements.txt` - Python dependencies
@@ -147,3 +215,5 @@ The ADK API Server is deployed to Cloud Run via the `deploy-adk-agents.yml` work
 - [ADK Agents README](../adk-agents/README.md)
 - [google/adk-web](https://github.com/google/adk-web)
 - [A2A Protocol](https://a2a-protocol.org/)
+- [AG-UI Protocol](https://docs.ag-ui.com/)
+- [CopilotKit](https://docs.copilotkit.ai/)
