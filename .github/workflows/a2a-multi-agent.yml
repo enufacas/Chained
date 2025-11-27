@@ -639,6 +639,7 @@ jobs:
           AGENTS: ${{ steps.agents.outputs.agents }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
+          AUTO_EXECUTE: ${{ inputs.auto_execute }}
           # A2A Protocol: Message with role="user" and TextPart content (§4.1.4)
           ADDITIONAL_CONTEXT: |
             # A2A Protocol Implementation
@@ -668,6 +669,18 @@ jobs:
             3. Any tests or validations needed
             
             This implementation plan will be the Artifact passed to the execution step.
+            
+            ## IMPORTANT: Auto-Execute Mode
+            Auto-execute mode is: ${{ inputs.auto_execute }}
+            
+            If auto_execute is true:
+            - DO NOT ask for approval or present /approve and /deny options
+            - DO NOT wait for user confirmation
+            - Simply provide the analysis and implementation plan as an A2A Artifact
+            - The implementation will proceed automatically after this analysis step
+            
+            If auto_execute is false:
+            - Present the plan and wait for user approval
         with:
           # Use same auth pattern as gemini-invoke.yml, gemini-fix.yml, etc.
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
@@ -714,126 +727,44 @@ jobs:
             }
           prompt: '/gemini-invoke'
       
-      # Create proper A2A Task objects with Artifacts per spec §4.1.1 and §4.1.9
-      # This follows the "Life of a Task" pattern from https://a2a-protocol.org/latest/topics/life-of-a-task/
-      - name: 'A2A Task: Create Analysis Tasks with Artifacts'
+      # A2A LIFECYCLE: Complete analysis task management in ONE step
+      # This consolidates what was previously 4-5 separate steps:
+      # 1. Creates tasks in 'submitted' state
+      # 2. Captures Gemini output from gemini-artifacts/ (filesystem, same job)
+      # 3. Transitions tasks: submitted → working → completed
+      # 4. Packages as GitHub Artifact for potential cross-job use
+      #
+      # Per A2A "Life of a Task": https://a2a-protocol.org/latest/topics/life-of-a-task/
+      # - Tasks are the unit of work with lifecycle states
+      # - contextId groups related tasks together
+      # - Artifacts are versioned outputs ready for GitHub Actions upload
+      - name: 'A2A: Complete Analysis Lifecycle'
         id: a2a_tasks
         if: success()
         env:
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           AGENTS: ${{ steps.agents.outputs.agents }}
           RUN_ID: ${{ github.run_id }}
-          ANALYSIS_RESPONSE: ${{ steps.analysis.outputs.gemini_response }}
         run: |
-          cat << 'PYTHON' > /tmp/create_a2a_tasks.py
-          import os
-          import json
-          import sys
-          sys.path.insert(0, os.getcwd())
-          
-          from tools.a2a.task import (
-              Task, TaskState, Artifact, Part, TaskStore,
-              create_analysis_task, create_implementation_task, aggregate_artifacts
-          )
-          
-          issue_number = int(os.environ.get('ISSUE_NUMBER', 0))
-          run_id = os.environ.get('RUN_ID', 'unknown')
-          agents_str = os.environ.get('AGENTS', '')
-          analysis_response = os.environ.get('ANALYSIS_RESPONSE', '')
-          
-          agents = [a.strip() for a in agents_str.split(',') if a.strip()]
-          
-          print("=" * 60)
-          print("A2A TASK CREATION (Spec §4.1.1)")
-          print("=" * 60)
-          print(f"Issue: #{issue_number}")
-          print(f"Run ID: {run_id}")
-          print(f"Agents: {', '.join(agents)}")
-          print()
-          
-          # Shared context ID for all tasks in this interaction
-          # Per "Life of a Task": contextId groups related tasks together
-          context_id = f"issue-{issue_number}"
-          
-          # Create a task for each agent's analysis
-          analysis_tasks = []
-          for agent_name in agents:
-              task = create_analysis_task(
-                  issue_number=issue_number,
-                  agent_name=agent_name,
-                  run_id=run_id,
-                  context_id=context_id,
-              )
-              
-              # Transition to working then completed
-              task.set_working(f"Analyzing issue #{issue_number}...")
-              
-              # Add artifact with analysis content
-              # In a real implementation, we'd parse the response per agent
-              # For now, we add the combined analysis as the artifact
-              artifact = task.add_text_artifact(
-                  name=f"{agent_name}-analysis",
-                  text=f"Analysis from @{agent_name} for issue #{issue_number}. See full analysis in Gemini response.",
-                  description=f"Analysis artifact from {agent_name}"
-              )
-              
-              task.complete(f"Analysis complete from @{agent_name}")
-              analysis_tasks.append(task)
-              
-              print(f"✅ Created Task for @{agent_name}:")
-              print(f"   taskId: {task.id}")
-              print(f"   contextId: {task.context_id}")
-              print(f"   state: {task.status.state.value}")
-              print(f"   artifactId: {artifact.artifact_id}")
-              print()
-          
-          # Aggregate artifacts from all analysis tasks
-          # Per "Life of a Task": referenceTaskIds links follow-up tasks to previous tasks
-          aggregated = aggregate_artifacts(analysis_tasks)
-          
-          # Add the full analysis response as combined artifact
-          aggregated['fullAnalysis'] = analysis_response
-          
-          # Save tasks and aggregated data for the implementation step
-          task_data = {
-              'contextId': context_id,
-              'analysisTasks': [t.to_dict() for t in analysis_tasks],
-              'aggregatedArtifacts': aggregated,
-              'referenceTaskIds': [t.id for t in analysis_tasks],
-          }
-          
-          output_path = '.a2a/tasks'
-          os.makedirs(output_path, exist_ok=True)
-          
-          with open(f'{output_path}/analysis-tasks.json', 'w') as f:
-              json.dump(task_data, f, indent=2)
-          
-          print("=" * 60)
-          print("A2A TASK AGGREGATION (Life of a Task)")
-          print("=" * 60)
-          print(f"Context ID: {context_id}")
-          print(f"Analysis Tasks: {len(analysis_tasks)}")
-          print(f"Reference Task IDs: {', '.join([t.id for t in analysis_tasks])}")
-          print()
-          print("Per A2A spec 'Life of a Task':")
-          print("- contextId groups these tasks together")
-          print("- referenceTaskIds will link implementation task to analysis tasks")
-          print("- Artifacts are versioned and can be refined in follow-up tasks")
-          print()
-          print(f"Saved to: {output_path}/analysis-tasks.json")
-          
-          # Output for GitHub Actions
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-              f.write(f"context_id={context_id}\n")
-              f.write(f"reference_task_ids={','.join([t.id for t in analysis_tasks])}\n")
-              f.write(f"task_count={len(analysis_tasks)}\n")
-              f.write(f"tasks_path={output_path}/analysis-tasks.json\n")
-          
-          print()
-          print("✅ A2A Tasks created and saved")
-          PYTHON
-          
-          python /tmp/create_a2a_tasks.py
+          # Use the consolidated lifecycle handler
+          # This reads from gemini-artifacts/ and outputs to .a2a/artifacts/
+          python -m tools.a2a.workflow_orchestrator \
+            --lifecycle analysis \
+            --issue-number "$ISSUE_NUMBER" \
+            --run-id "$RUN_ID" \
+            --agents "$AGENTS" \
+            --gemini-output-dir gemini-artifacts/ \
+            --output-artifact .a2a/artifacts/analysis.json
+      
+      # Upload analysis artifact for potential cross-job access
+      # This follows GitHub Actions best practices for artifact sharing
+      - name: 'Upload A2A Analysis Artifact'
+        if: success()
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: a2a-analysis-${{ inputs.issue_number }}
+          path: .a2a/artifacts/analysis.json
+          retention-days: 7
 
       - name: Post analysis complete notification
         if: success()
@@ -961,6 +892,23 @@ jobs:
           [Full Workflow Logs]($RUN_URL)
           EOF
 
+      # A2A: Prepare implementation context from analysis artifact
+      # Uses the consolidated orchestrator to create context file for Gemini CLI
+      - name: 'A2A: Prepare Execution Context'
+        id: execution_context
+        if: success() && inputs.auto_execute == true
+        env:
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+        run: |
+          # Use the orchestrator to prepare context from analysis artifact
+          python -m tools.a2a.workflow_orchestrator \
+            --lifecycle prepare-context \
+            --issue-number "$ISSUE_NUMBER" \
+            --analysis-artifact .a2a/artifacts/analysis.json \
+            --context-output .a2a/context/implementation.md
+          
+          echo "context_file=.a2a/context/implementation.md" >> "$GITHUB_OUTPUT"
+
       # AUTOMATIC EXECUTION: Implement the plan and create PR
       # Per A2A "Life of a Task": This is a follow-up task that references previous analysis tasks
       - name: 'Auto-Execute: Implement changes via Gemini CLI'
@@ -978,46 +926,30 @@ jobs:
           ISSUE_BODY: ${{ steps.issue.outputs.body }}
           TRIGGERING_ACTOR: ${{ github.triggering_actor }}
           BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
-          # A2A Task linking per "Life of a Task" spec
-          A2A_CONTEXT_ID: ${{ steps.a2a_tasks.outputs.context_id }}
-          A2A_REFERENCE_TASK_IDS: ${{ steps.a2a_tasks.outputs.reference_task_ids }}
-          A2A_TASKS_PATH: ${{ steps.a2a_tasks.outputs.tasks_path }}
-          # CRITICAL: Pass the multi-agent analysis results to the implementation step
-          MULTI_AGENT_ANALYSIS: ${{ steps.analysis.outputs.gemini_response }}
-          # Context for the implementation - includes both agent info AND their recommendations
-          # Per A2A spec: This is a follow-up task that references previous analysis task artifacts
+          # Implementation context file (from prepare step)
+          CONTEXT_FILE: ${{ steps.execution_context.outputs.context_file }}
+          # Context for the implementation - tells Gemini to read the full context from the file
           ADDITIONAL_CONTEXT: |
-            # A2A Implementation Task (Follow-up per "Life of a Task")
+            # A2A Implementation Task
             
-            This is an A2A (Agent-to-Agent) implementation task that references previous analysis tasks.
+            CRITICAL: Before implementing, you MUST read the implementation context file that contains
+            the multi-agent analysis artifacts. Use get_file_contents to read:
             
-            ## A2A Task Linking (per https://a2a-protocol.org/latest/topics/life-of-a-task/)
+            **File to read**: .a2a/context/implementation.md
             
-            - **contextId**: ${{ steps.a2a_tasks.outputs.context_id }}
-            - **referenceTaskIds**: ${{ steps.a2a_tasks.outputs.reference_task_ids }}
+            This file contains:
+            - A2A Task Linking information (contextId, referenceTaskIds per "Life of a Task")
+            - Multi-agent analysis and recommendations from: ${{ steps.agents.outputs.agents }}
+            - Specific implementation instructions
             
-            Per the A2A spec "Life of a Task":
-            - This task uses the same contextId to group with previous analysis tasks
-            - The referenceTaskIds link this implementation to the analysis artifacts
-            - Artifacts from referenced tasks inform this implementation
-            
-            ## Agents who analyzed issue #${{ inputs.issue_number }}:
-            ${{ steps.agents.outputs.agents }}
-            
-            ============ MULTI-AGENT ANALYSIS ARTIFACTS ============
-            The agents provided the following analysis and recommendations (Artifacts per §4.1.9):
-            
-            ${{ steps.analysis.outputs.gemini_response }}
-            
-            ============ END OF ANALYSIS RESULTS ============
-            
-            IMPORTANT: Implement the changes recommended by the agents above and create a PR.
-            Follow the original issue request: "${{ steps.issue.outputs.title }}"
+            After reading the context file, implement the changes recommended by the agents
+            and create a PR that fixes issue #${{ inputs.issue_number }}.
             
             Use the github MCP tools to:
-            1. Create a feature branch (a2a/fix-issue-${{ inputs.issue_number }})
-            2. Make the necessary file changes based on the agent recommendations above
-            3. Create a pull request linking to issue #${{ inputs.issue_number }} using "Fixes #${{ inputs.issue_number }}" in the PR body
+            1. Read the implementation context file (.a2a/context/implementation.md)
+            2. Create a feature branch (a2a/fix-issue-${{ inputs.issue_number }})
+            3. Make the necessary file changes based on the agent recommendations
+            4. Create a pull request linking to issue #${{ inputs.issue_number }} using "Fixes #${{ inputs.issue_number }}" in the PR body
         with:
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
           google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
