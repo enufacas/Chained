@@ -1,13 +1,72 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-26T04:21:30.503494+00:00",
+  "last_updated": "2025-11-27T06:39:03.737851+00:00",
   "message_patterns": {},
   "size_patterns": {},
   "organization_patterns": {},
   "timing_patterns": {},
   "success_metrics": {
-    "total_commits": 2,
-    "successful_commits": 0,
+    "total_commits": 500,
+    "successful_commits": 500,
     "failed_commits": 0
+  },
+  "size": {
+    "optimal_commit_size": {
+      "pattern_name": "optimal_commit_size",
+      "pattern_type": "size",
+      "description": "Commits with focused changes (few files, moderate lines)",
+      "success_rate": 0.438,
+      "occurrence_count": 219,
+      "average_merge_time_hours": 0.0,
+      "common_attributes": {
+        "avg_files": 1.7716894977168949,
+        "avg_lines": 26.12785388127854
+      },
+      "examples": [
+        "3b79f027",
+        "bdd682df",
+        "25e83d69"
+      ],
+      "confidence_score": 0.3942
+    }
+  },
+  "message": {
+    "detailed_messages": {
+      "pattern_name": "detailed_messages",
+      "pattern_type": "message",
+      "description": "Commits with detailed message body",
+      "success_rate": 0.948,
+      "occurrence_count": 474,
+      "average_merge_time_hours": 0.0,
+      "common_attributes": {
+        "has_explanation": true,
+        "avg_message_length": 59.96413502109704
+      },
+      "examples": [
+        "73000552",
+        "3b79f027",
+        "2beeef8a"
+      ],
+      "confidence_score": 0.8058
+    }
+  },
+  "organization": {
+    "focused_changes": {
+      "pattern_name": "focused_changes",
+      "pattern_type": "organization",
+      "description": "Commits focused on single file type or related files",
+      "success_rate": 0.834,
+      "occurrence_count": 417,
+      "average_merge_time_hours": 0.0,
+      "common_attributes": {
+        "avg_file_types": 1.1175059952038369
+      },
+      "examples": [
+        "73000552",
+        "3b79f027",
+        "2beeef8a"
+      ],
+      "confidence_score": 0.6672
+    }
   }
 }
