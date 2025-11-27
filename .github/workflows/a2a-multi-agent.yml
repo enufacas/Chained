@@ -760,7 +760,7 @@ jobs:
       # This follows GitHub Actions best practices for artifact sharing
       - name: 'Upload A2A Analysis Artifact'
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: a2a-analysis-${{ inputs.issue_number }}
           path: .a2a/artifacts/analysis.json

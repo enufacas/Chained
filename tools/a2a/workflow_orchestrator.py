@@ -78,17 +78,26 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-# Add tools directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Add repo root to path when run as `python -m tools.a2a.workflow_orchestrator`
+# This is needed because we import from tools.a2a.task which is a sibling module
+_repo_root = Path(__file__).parent.parent.parent
+if str(_repo_root) not in sys.path:
+    sys.path.insert(0, str(_repo_root))
 
-from tools.a2a.task import (
-    Artifact,
-    Task,
-    TaskStore,
-    create_analysis_task,
-    create_implementation_task,
-    aggregate_artifacts,
-)
+try:
+    from tools.a2a.task import (
+        Artifact,
+        Task,
+        TaskStore,
+        create_analysis_task,
+        create_implementation_task,
+        aggregate_artifacts,
+    )
+except ImportError as e:
+    # Provide helpful error if imports fail
+    print(f"Error importing A2A task module: {e}", file=sys.stderr)
+    print(f"Ensure you're running from the repo root: python -m tools.a2a.workflow_orchestrator", file=sys.stderr)
+    sys.exit(1)
 
 
 # =============================================================================
@@ -219,9 +228,13 @@ def handle_analysis_lifecycle(
     )
     
     # Write artifact file for GitHub Artifact upload
-    output_artifact_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_artifact_path, "w") as f:
-        json.dump(artifact_data, f, indent=2)
+    try:
+        output_artifact_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_artifact_path, "w", encoding="utf-8") as f:
+            json.dump(artifact_data, f, indent=2)
+    except (OSError, IOError) as e:
+        print(f"[Artifact] Error writing to {output_artifact_path}: {e}")
+        raise
     
     print()
     print(f"[Artifact] Written to {output_artifact_path}")
@@ -352,9 +365,13 @@ def handle_implementation_lifecycle(
         },
     )
     
-    output_artifact_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_artifact_path, "w") as f:
-        json.dump(artifact_data, f, indent=2)
+    try:
+        output_artifact_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_artifact_path, "w", encoding="utf-8") as f:
+            json.dump(artifact_data, f, indent=2)
+    except (OSError, IOError) as e:
+        print(f"[Artifact] Error writing to {output_artifact_path}: {e}")
+        raise
     
     print()
     print(f"[Artifact] Written to {output_artifact_path}")
@@ -422,10 +439,14 @@ Implement the changes recommended above and create a PR.
 Use "Fixes #{issue_number}" in the PR body.
 """
     
-    context_output_path.parent.mkdir(parents=True, exist_ok=True)
-    context_output_path.write_text(context)
+    try:
+        context_output_path.parent.mkdir(parents=True, exist_ok=True)
+        context_output_path.write_text(context, encoding="utf-8")
+        print(f"[Context] Written to {context_output_path}")
+    except (OSError, IOError) as e:
+        print(f"[Context] Error writing to {context_output_path}: {e}")
+        raise
     
-    print(f"[Context] Written to {context_output_path}")
     _set_github_output("context_path", str(context_output_path))
     
     return str(context_output_path)
@@ -447,16 +468,27 @@ def _read_gemini_output(gemini_output_dir: Path) -> str:
     for candidate in ["response.md", "stdout.log"]:
         output_file = gemini_output_dir / candidate
         if output_file.exists():
-            content = output_file.read_text()
-            print(f"[Output] Read {len(content)} chars from {output_file}")
-            return content
+            try:
+                content = output_file.read_text(encoding="utf-8")
+                print(f"[Output] Read {len(content)} chars from {output_file}")
+                return content
+            except (OSError, IOError, UnicodeDecodeError) as e:
+                print(f"[Output] Error reading {output_file}: {e}")
+                continue
     
     # Try any file with content
-    for f in gemini_output_dir.iterdir():
-        if f.is_file() and f.stat().st_size > 0:
-            content = f.read_text()
-            print(f"[Output] Read {len(content)} chars from {f}")
-            return content
+    try:
+        for f in gemini_output_dir.iterdir():
+            if f.is_file() and f.stat().st_size > 0:
+                try:
+                    content = f.read_text(encoding="utf-8")
+                    print(f"[Output] Read {len(content)} chars from {f}")
+                    return content
+                except (UnicodeDecodeError, OSError) as e:
+                    print(f"[Output] Skipping {f}: {e}")
+                    continue
+    except OSError as e:
+        print(f"[Output] Error iterating directory: {e}")
     
     print("[Output] Warning: No Gemini output found")
     return ""
@@ -465,8 +497,11 @@ def _read_gemini_output(gemini_output_dir: Path) -> str:
 def _set_github_output(name: str, value: str) -> None:
     """Set a GitHub Actions output variable."""
     if os.environ.get("GITHUB_OUTPUT"):
-        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-            f.write(f"{name}={value}\n")
+        try:
+            with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+                f.write(f"{name}={value}\n")
+        except (OSError, IOError) as e:
+            print(f"[Output] Warning: Failed to set {name}: {e}")
 
 
 # =============================================================================
