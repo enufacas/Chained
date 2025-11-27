@@ -356,6 +356,138 @@ resource "google_cloud_run_v2_service_iam_member" "google_trends_public" {
 }
 
 # =============================================================================
+# Cloud Run: ADK API Server (Bridge for google/adk-web)
+# =============================================================================
+
+resource "google_cloud_run_v2_service" "adk_api_server" {
+  name     = "chained-adk-api-server"
+  location = var.region
+
+  template {
+    containers {
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/adk-api-server:latest"
+
+      resources {
+        limits = {
+          cpu    = "1"
+          memory = "512Mi"
+        }
+        cpu_idle          = true
+        startup_cpu_boost = true
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = var.environment
+      }
+
+      # Configure agent URLs dynamically from other Cloud Run services
+      env {
+        name  = "AGENT_ACADEMIC_RESEARCH_URL"
+        value = google_cloud_run_v2_service.academic_research.uri
+      }
+
+      env {
+        name  = "AGENT_ACADEMIC_RESEARCH_DESCRIPTION"
+        value = "Discovers and analyzes academic research topics for blog content"
+      }
+
+      env {
+        name  = "AGENT_BLOG_WRITER_URL"
+        value = google_cloud_run_v2_service.blog_writer.uri
+      }
+
+      env {
+        name  = "AGENT_BLOG_WRITER_DESCRIPTION"
+        value = "Writes engaging blog posts from research and trend data"
+      }
+
+      env {
+        name  = "AGENT_GOOGLE_TRENDS_URL"
+        value = google_cloud_run_v2_service.google_trends.uri
+      }
+
+      env {
+        name  = "AGENT_GOOGLE_TRENDS_DESCRIPTION"
+        value = "Analyzes Google Trends data to identify trending topics for SEO"
+      }
+
+      # CORS configuration for adk-web
+      # In production, restrict to specific origins. For development, allow localhost.
+      # Configure CORS_ORIGINS environment variable to comma-separated allowed origins.
+      env {
+        name  = "CORS_ORIGINS"
+        value = var.environment == "prod" ? "https://enufacas.github.io" : "http://localhost:4200,http://localhost:4201,http://127.0.0.1:4200"
+      }
+
+      # Use Firestore for session persistence in production
+      env {
+        name  = "USE_FIRESTORE"
+        value = var.environment == "prod" ? "true" : "false"
+      }
+
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+
+      ports {
+        container_port = 8080
+      }
+
+      startup_probe {
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+        initial_delay_seconds = 5
+        timeout_seconds       = 3
+        period_seconds        = 5
+        failure_threshold     = 3
+      }
+
+      liveness_probe {
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+        period_seconds    = 30
+        timeout_seconds   = 3
+        failure_threshold = 3
+      }
+    }
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    service_account = google_service_account.adk_agents.email
+    timeout         = "300s"
+  }
+
+  traffic {
+    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+  }
+
+  depends_on = [
+    google_project_service.required_apis,
+    google_cloud_run_v2_service.academic_research,
+    google_cloud_run_v2_service.blog_writer,
+    google_cloud_run_v2_service.google_trends,
+  ]
+}
+
+resource "google_cloud_run_v2_service_iam_member" "adk_api_server_public" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.adk_api_server.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+# =============================================================================
 # Outputs
 # =============================================================================
 
@@ -374,10 +506,23 @@ output "google_trends_url" {
   value       = google_cloud_run_v2_service.google_trends.uri
 }
 
+output "adk_api_server_url" {
+  description = "URL of the ADK API Server (for google/adk-web)"
+  value       = google_cloud_run_v2_service.adk_api_server.uri
+}
+
 output "adk_dev_ui_info" {
   description = "ADK Dev UI access information"
   value       = <<-EOT
-    ADK Dev UI is accessible at each agent's root endpoint:
+    ADK API Server (for google/adk-web):
+    - API Server: ${google_cloud_run_v2_service.adk_api_server.uri}
+
+    To use with google/adk-web:
+    1. Clone: git clone https://github.com/google/adk-web
+    2. Configure API URL: ${google_cloud_run_v2_service.adk_api_server.uri}
+    3. Run: npm start
+
+    Available A2A Agents:
     - Academic Research: ${google_cloud_run_v2_service.academic_research.uri}
     - Blog Writer: ${google_cloud_run_v2_service.blog_writer.uri}
     - Google Trends: ${google_cloud_run_v2_service.google_trends.uri}

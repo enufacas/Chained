@@ -1,0 +1,18 @@
+# ADK API Server Dependencies
+# ===========================
+
+# FastAPI and ASGI server
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+
+# HTTP client for A2A communication
+httpx>=0.24.0
+
+# Data validation
+pydantic>=2.0.0
+
+# Server-Sent Events
+sse-starlette>=1.6.0
+
+# Google Cloud clients (optional - for Firestore session storage)
+google-cloud-firestore>=2.11.0
