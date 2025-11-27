@@ -60,3 +60,6 @@ infrastructure/terraform/crash.log
 # GCP credentials
 *-sa-key.json
 gcp-*.json
+
+# ADK Agent Pipeline Output
+infrastructure/docker/adk-agents/pipeline_result.json
