@@ -184,6 +184,9 @@ jobs:
           import_if_exists "google_service_account" "agent_worker" \
             "projects/$PROJECT_ID/serviceAccounts/chained-agent-worker@$PROJECT_ID.iam.gserviceaccount.com"
           
+          import_if_exists "google_service_account" "adk_agents" \
+            "projects/$PROJECT_ID/serviceAccounts/chained-adk-agents@$PROJECT_ID.iam.gserviceaccount.com"
+          
           # Import Pub/Sub resources
           import_if_exists "google_pubsub_topic" "agent_tasks" \
             "projects/$PROJECT_ID/topics/chained-agent-tasks"
