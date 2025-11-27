@@ -280,16 +280,39 @@ resource "google_cloud_run_v2_service" "agent_worker" {
 # Service Accounts
 # =============================================================================
 
+# Import existing service accounts if they already exist
+# Use `terraform import google_service_account.agent_gateway projects/${var.project_id}/serviceAccounts/chained-agent-gateway@${var.project_id}.iam.gserviceaccount.com`
 resource "google_service_account" "agent_gateway" {
   account_id   = "chained-agent-gateway"
   display_name = "Chained Agent Gateway Service Account"
   description  = "Service account for the agent gateway Cloud Run service"
+
+  lifecycle {
+    # Allow Terraform to adopt existing service accounts without forcing updates
+    # Note: Intentional changes to display_name/description should be made directly in GCP console
+    # or by temporarily removing these from ignore_changes
+    ignore_changes = [
+      display_name,
+      description,
+    ]
+  }
 }
 
+# Use `terraform import google_service_account.agent_worker projects/${var.project_id}/serviceAccounts/chained-agent-worker@${var.project_id}.iam.gserviceaccount.com`
 resource "google_service_account" "agent_worker" {
   account_id   = "chained-agent-worker"
   display_name = "Chained Agent Worker Service Account"
   description  = "Service account for agent worker Cloud Run services"
+
+  lifecycle {
+    # Allow Terraform to adopt existing service accounts without forcing updates
+    # Note: Intentional changes to display_name/description should be made directly in GCP console
+    # or by temporarily removing these from ignore_changes
+    ignore_changes = [
+      display_name,
+      description,
+    ]
+  }
 }
 
 # IAM bindings for agent gateway
@@ -330,6 +353,8 @@ resource "google_pubsub_topic" "agent_tasks" {
   depends_on = [google_project_service.required_apis]
 }
 
+# Import existing subscriptions if they already exist
+# Use `terraform import google_pubsub_subscription.agent_tasks projects/${var.project_id}/subscriptions/chained-agent-tasks-sub`
 resource "google_pubsub_subscription" "agent_tasks" {
   name  = "chained-agent-tasks-sub"
   topic = google_pubsub_topic.agent_tasks.name
@@ -346,6 +371,13 @@ resource "google_pubsub_subscription" "agent_tasks" {
     ttl = ""  # Never expire
   }
 
+  lifecycle {
+    # Allow Terraform to manage existing subscriptions
+    ignore_changes = [
+      ack_deadline_seconds,
+    ]
+  }
+
   depends_on = [google_pubsub_topic.agent_tasks]
 }
 
@@ -360,11 +392,24 @@ resource "google_pubsub_topic" "agent_tasks_dlq" {
 # Firestore Database for Agent Memory
 # =============================================================================
 
+# Import existing Firestore database if it already exists
+# Use `terraform import google_firestore_database.default projects/${var.project_id}/databases/(default)`
 resource "google_firestore_database" "default" {
-  project     = var.project_id
-  name        = "(default)"
-  location_id = var.firestore_location
-  type        = "FIRESTORE_NATIVE"
+  project         = var.project_id
+  name            = "(default)"
+  location_id     = var.firestore_location
+  type            = "FIRESTORE_NATIVE"
+  deletion_policy = "ABANDON"  # Don't delete the database on terraform destroy
+
+  lifecycle {
+    # Prevent accidental deletion of the database
+    prevent_destroy = true
+    # Ignore changes that can't be updated on existing databases
+    ignore_changes = [
+      location_id,
+      type,
+    ]
+  }
 
   depends_on = [google_project_service.required_apis]
 }
