@@ -229,6 +229,43 @@ jobs:
             echo "ℹ️ Service account does not exist in GCP, will be created"
           fi
 
+          # Import existing Cloud Run services if they exist
+          # Service name to Terraform resource mapping
+          declare -A SERVICES=(
+            ["chained-academic-research"]="google_cloud_run_v2_service.academic_research"
+            ["chained-blog-writer"]="google_cloud_run_v2_service.blog_writer"
+            ["chained-google-trends"]="google_cloud_run_v2_service.google_trends"
+          )
+
+          for SERVICE_NAME in "${!SERVICES[@]}"; do
+            TF_RESOURCE="${SERVICES[$SERVICE_NAME]}"
+
+            echo "Checking for existing Cloud Run service: $SERVICE_NAME"
+            if gcloud run services describe "$SERVICE_NAME" --region="${{ env.GCP_REGION }}" 2>/dev/null; then
+              echo "✅ Found existing Cloud Run service: $SERVICE_NAME"
+
+              # Check if already in Terraform state using exit code
+              echo "Checking Terraform state for $TF_RESOURCE..."
+              if terraform state show "$TF_RESOURCE" >/dev/null 2>&1; then
+                echo "✅ $SERVICE_NAME already in Terraform state"
+              else
+                echo "📥 Importing $SERVICE_NAME into Terraform state..."
+                if terraform import \
+                  -var="project_id=${{ env.GCP_PROJECT_ID }}" \
+                  -var="region=${{ env.GCP_REGION }}" \
+                  -var="environment=${{ needs.validate.outputs.environment }}" \
+                  "$TF_RESOURCE" \
+                  "projects/${{ env.GCP_PROJECT_ID }}/locations/${{ env.GCP_REGION }}/services/$SERVICE_NAME"; then
+                  echo "✅ Successfully imported $SERVICE_NAME"
+                else
+                  echo "⚠️ Import failed for $SERVICE_NAME - this may be okay if the resource doesn't need importing"
+                fi
+              fi
+            else
+              echo "ℹ️ Cloud Run service $SERVICE_NAME does not exist in GCP, will be created"
+            fi
+          done
+
       - name: Terraform Plan
         run: |
           terraform plan \
