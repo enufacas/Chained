@@ -736,27 +736,38 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
+          RUN_ID: ${{ github.run_id }}
         run: |
           echo "📥 Capturing analysis artifacts from issue comments..."
           
           # Fetch all comments on the issue
           COMMENTS=$(gh issue view "$ISSUE_NUMBER" --comments --json comments -q '.comments')
           
-          # Get the most recent comment that looks like an analysis (contains "Agent" or "Plan" or "Implementation")
-          # The analysis comment should contain the multi-agent recommendations
+          # Look for the specific A2A analysis comment format
+          # The analysis step should have posted a comment with specific A2A markers
+          # We look for comments that match our A2A protocol format:
+          # 1. Contains "A2A" or "Agent" (indicates A2A protocol format)
+          # 2. Contains "Analysis" or "Implementation Plan" or "Artifact" or "Recommendations"
+          # 3. Is from github-actions[bot]
+          # This is more specific than generic string matching
           ANALYSIS_COMMENT=$(echo "$COMMENTS" | jq -r '
             [.[] | select(
-              (.body | contains("Agent")) and 
-              (.body | contains("Plan") or contains("Implementation") or contains("Artifact") or contains("Analysis"))
+              (.author.login == "github-actions[bot]" or .author.login | test("bot$")) and
+              (
+                (.body | test("(?i)multi-?agent|a2a|agent.*analysis|implementation.*plan")) or
+                (.body | test("(?i)## .*plan|## .*implementation|## .*artifact"))
+              )
             )] | last | .body // ""
           ')
           
+          # If no A2A-specific comment found, try broader match for any analysis content
           if [[ -z "$ANALYSIS_COMMENT" || "$ANALYSIS_COMMENT" == "null" ]]; then
-            echo "⚠️ No analysis comment found, checking for any recent bot comment..."
-            # Fallback: get the most recent bot comment
+            echo "⚠️ No A2A-specific analysis comment found, trying broader match..."
             ANALYSIS_COMMENT=$(echo "$COMMENTS" | jq -r '
-              [.[] | select(.author.login == "github-actions[bot]")] | 
-              last | .body // ""
+              [.[] | select(
+                (.author.login == "github-actions[bot]") and
+                (.body | test("(?i)plan|implementation|recommend|artifact"))
+              )] | last | .body // ""
             ')
           fi
           
@@ -776,7 +787,7 @@ jobs:
             echo "📋 Analysis preview:"
             echo "$ANALYSIS_COMMENT" | head -20
           else
-            echo "⚠️ No analysis comment found"
+            echo "⚠️ No analysis comment found - execution step will need to re-analyze"
             echo "analysis_captured=false" >> "$GITHUB_OUTPUT"
           fi
       
@@ -1054,35 +1065,39 @@ jobs:
           CONTEXT_ID: ${{ steps.a2a_tasks.outputs.context_id }}
           REFERENCE_TASK_IDS: ${{ steps.a2a_tasks.outputs.reference_task_ids }}
         run: |
+          set -euo pipefail
           echo "📦 Preparing execution context with analysis artifacts..."
           
-          # Read analysis from file or fetch from issue
+          # Read analysis from the captured file (preferred) or provide fallback
           if [[ "$ANALYSIS_CAPTURED" == "true" && -f "$ANALYSIS_FILE" ]]; then
             ANALYSIS_CONTENT=$(cat "$ANALYSIS_FILE")
             echo "✅ Loaded analysis from file: ${#ANALYSIS_CONTENT} chars"
           else
-            echo "⚠️ Analysis file not found, fetching from issue comments..."
-            # Fetch the analysis from issue comments as fallback
-            ANALYSIS_CONTENT=$(gh issue view "$ISSUE_NUMBER" --comments --json comments -q '
-              [.comments[] | select(
-                (.body | contains("Agent")) and 
-                (.body | contains("Plan") or contains("Implementation") or contains("Analysis"))
-              )] | last | .body // "No analysis found"
-            ')
+            echo "⚠️ Analysis file not found, using fallback message"
+            # Instead of re-implementing the same filtering, we provide a clear fallback
+            # that instructs Gemini to read the issue comments directly
+            ANALYSIS_CONTENT="[Analysis not captured - please read the issue comments on issue #${ISSUE_NUMBER} for the multi-agent analysis]"
           fi
           
-          # Save the prepared context to a file that will be used by the execution step
-          # The file path is committed to the repo so Gemini can read it via MCP
-          mkdir -p .a2a/context
+          # Create directory for context files (with error checking)
+          if ! mkdir -p .a2a/context; then
+            echo "::error::Failed to create .a2a/context directory"
+            exit 1
+          fi
           
-          # Create the full implementation context
-          cat > .a2a/context/implementation-task.md << CONTEXT_EOF
+          # Write the implementation context using quoted heredoc to prevent variable expansion issues
+          # The 'CONTEXT_EOF' delimiter is quoted to prevent accidental expansion of $(...) or backticks
+          cat > .a2a/context/implementation-task.md << 'CONTEXT_HEADER'
           # A2A Implementation Task (Follow-up per "Life of a Task")
           
           This is an A2A (Agent-to-Agent) implementation task that references previous analysis tasks.
           
           ## A2A Task Linking (per https://a2a-protocol.org/latest/topics/life-of-a-task/)
           
+          CONTEXT_HEADER
+          
+          # Append the variable content separately to allow expansion
+          cat >> .a2a/context/implementation-task.md << CONTEXT_VARS
           - **contextId**: ${CONTEXT_ID}
           - **referenceTaskIds**: ${REFERENCE_TASK_IDS}
           
@@ -1107,7 +1122,7 @@ jobs:
           1. Create a feature branch (a2a/fix-issue-${ISSUE_NUMBER})
           2. Make the necessary file changes based on the agent recommendations above
           3. Create a pull request linking to issue #${ISSUE_NUMBER} using "Fixes #${ISSUE_NUMBER}" in the PR body
-          CONTEXT_EOF
+          CONTEXT_VARS
           
           echo "✅ Implementation context saved to .a2a/context/implementation-task.md"
           echo "context_file=.a2a/context/implementation-task.md" >> "$GITHUB_OUTPUT"
