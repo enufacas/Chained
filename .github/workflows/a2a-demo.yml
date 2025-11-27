@@ -626,7 +626,7 @@ jobs:
               exit 0
             fi
             
-            # Wait before retry (exponential backoff: 2s, 4s, 8s)
+            # Wait before retry (exponential backoff: attempt 1=2s, 2=4s, 3=8s)
             if [[ $attempt -lt 3 ]]; then
               delay=$((2 ** attempt))
               echo "No PR found yet, waiting ${delay}s before retry..."
