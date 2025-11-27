@@ -423,7 +423,12 @@ async function buildGraphData() {
         if (lastUpdate) {
             const date = new Date(lastUpdate);
             document.getElementById('last-update').textContent = date.toLocaleString();
-            document.getElementById('footer-last-updated').textContent = date.toLocaleString();
+            
+            // Safe check for footer element
+            const footerLastUpdated = document.getElementById('footer-last-updated');
+            if (footerLastUpdated) {
+                footerLastUpdated.textContent = date.toLocaleString();
+            }
         }
         
         // Update insights
