@@ -32,6 +32,12 @@ SYSTEM_LABELS: List[Tuple[str, str, str]] = [
     ("investment-tracker", "8B5CF6", "Agent investment/expertise tracking"),
     ("collaboration", "EC4899", "Multi-agent collaboration"),
     
+    # A2A (Agent-to-Agent) labels
+    ("a2a-task", "6366F1", "A2A multi-agent task"),
+    ("a2a-subtask", "818CF8", "A2A sub-task from decomposition"),
+    ("a2a-plan-pending", "FBCA04", "Waiting for /approve to implement"),
+    ("a2a-plan-implemented", "0E8A16", "A2A plan has been implemented"),
+    
     # World model labels
     ("world-model", "5319E7", "World model updates"),
     ("world-state", "7C3AED", "World state changes"),
