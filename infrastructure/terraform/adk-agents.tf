@@ -33,10 +33,22 @@ variable "google_api_key_secret" {
 # Service Account for ADK Agents
 # =============================================================================
 
+# Import existing service account if it already exists
+# Use `terraform import google_service_account.adk_agents projects/${var.project_id}/serviceAccounts/chained-adk-agents@${var.project_id}.iam.gserviceaccount.com`
 resource "google_service_account" "adk_agents" {
   account_id   = "chained-adk-agents"
   display_name = "Chained ADK Agents Service Account"
   description  = "Service account for ADK A2A agents on Cloud Run"
+
+  lifecycle {
+    # Allow Terraform to adopt existing service accounts without forcing updates
+    # Note: Intentional changes to display_name/description should be made directly in GCP console
+    # or by temporarily removing these from ignore_changes
+    ignore_changes = [
+      display_name,
+      description,
+    ]
+  }
 }
 
 # Grant access to Secret Manager

@@ -198,6 +198,37 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Import existing resources
+        run: |
+          # Import existing service account if it exists
+          SA_EMAIL="chained-adk-agents@${{ env.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
+          
+          # Check if service account exists in GCP
+          echo "Checking for existing service account: $SA_EMAIL"
+          if gcloud iam service-accounts describe "$SA_EMAIL" 2>&1; then
+            echo "✅ Found existing service account: $SA_EMAIL"
+            
+            # Check if already in Terraform state
+            echo "Checking Terraform state for service account..."
+            if terraform state show google_service_account.adk_agents 2>&1 | grep -q "account_id"; then
+              echo "✅ Service account already in Terraform state"
+            else
+              echo "📥 Importing service account into Terraform state..."
+              if terraform import \
+                -var="project_id=${{ env.GCP_PROJECT_ID }}" \
+                -var="region=${{ env.GCP_REGION }}" \
+                -var="environment=${{ needs.validate.outputs.environment }}" \
+                google_service_account.adk_agents \
+                "projects/${{ env.GCP_PROJECT_ID }}/serviceAccounts/$SA_EMAIL"; then
+                echo "✅ Successfully imported service account"
+              else
+                echo "⚠️ Import failed - this may be okay if the resource doesn't need importing"
+              fi
+            fi
+          else
+            echo "ℹ️ Service account does not exist in GCP, will be created"
+          fi
+
       - name: Terraform Plan
         run: |
           terraform plan \
