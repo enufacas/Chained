@@ -328,7 +328,7 @@ jobs:
           gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
           gemini_debug: '${{ vars.DEBUG || ''false'' }}'
-          upload_artifacts: 'true'
+          upload_artifacts: 'false'  # Disabled: Use custom upload with unique name per A2A taskId
           workflow_name: 'a2a-agent-${{ matrix.agent }}'
           settings: |-
             {
@@ -385,9 +385,17 @@ jobs:
       - name: Upload agent artifact
         uses: actions/upload-artifact@v4.4.3
         with:
-          name: agent-analysis-${{ matrix.agent }}
+          name: agent-analysis-${{ steps.artifact.outputs.task_id }}
           path: .a2a/artifacts/${{ matrix.agent }}-analysis.json
           retention-days: 7
+      
+      - name: Upload Gemini output with A2A taskId
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: gemini-output-${{ steps.artifact.outputs.task_id }}
+          path: gemini-artifacts/
+          retention-days: 7
+          if-no-files-found: ignore
 
   # ==========================================================================
   # JOB 3: AGGREGATE
@@ -621,7 +629,7 @@ jobs:
           gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
           gemini_debug: '${{ vars.DEBUG || ''false'' }}'
-          upload_artifacts: 'true'
+          upload_artifacts: 'false'  # Disabled: Use custom upload with unique A2A taskId name
           workflow_name: 'a2a-implement'
           settings: |-
             {
@@ -643,6 +651,14 @@ jobs:
               }
             }
           prompt: '/gemini-issue-fixer'
+      
+      - name: Upload implement Gemini output with A2A taskId
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: gemini-output-task-${{ github.run_id }}-implement
+          path: gemini-artifacts/
+          retention-days: 7
+          if-no-files-found: ignore
       
       - name: Verify PR creation
         id: verify
