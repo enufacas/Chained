@@ -730,29 +730,23 @@ jobs:
       # CRITICAL: Capture the analysis from the issue comment
       # The run-gemini-cli action posts analysis to the issue but does NOT return it as an output
       # We need to fetch the most recent comment which contains the multi-agent analysis
-      - name: 'A2A: Capture Analysis Artifacts from Issue'
-        id: capture_analysis
+      # Create proper A2A Task objects with Artifacts per spec §4.1.1 and §4.1.9
+      # This follows the "Life of a Task" pattern from https://a2a-protocol.org/latest/topics/life-of-a-task/
+      - name: 'A2A Task: Create Analysis Tasks with Artifacts'
+        id: a2a_tasks
         if: success()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
+          AGENTS: ${{ steps.agents.outputs.agents }}
           RUN_ID: ${{ github.run_id }}
         run: |
-          echo "📥 Capturing analysis artifacts from issue comments..."
+          # First, capture the analysis from issue comments (Gemini posts there via MCP)
+          echo "📥 Fetching analysis from issue #$ISSUE_NUMBER comments..."
           
-          # Fetch all comments on the issue
-          COMMENTS=$(gh issue view "$ISSUE_NUMBER" --comments --json comments -q '.comments')
-          
-          # Look for the specific A2A analysis comment format
-          # The analysis step should have posted a comment with specific A2A markers
-          # We look for comments that match our A2A protocol format:
-          # 1. Contains "A2A" or "Agent" (indicates A2A protocol format)
-          # 2. Contains "Analysis" or "Implementation Plan" or "Artifact" or "Recommendations"
-          # 3. Is from github-actions[bot]
-          # This is more specific than generic string matching
-          ANALYSIS_COMMENT=$(echo "$COMMENTS" | jq -r '
+          ANALYSIS_RESPONSE=$(gh issue view "$ISSUE_NUMBER" --comments --json comments -q '
             [.[] | select(
-              (.author.login == "github-actions[bot]" or .author.login | test("bot$")) and
+              (.author.login == "github-actions[bot]" or (.author.login | test("bot$"))) and
               (
                 (.body | test("(?i)multi-?agent|a2a|agent.*analysis|implementation.*plan")) or
                 (.body | test("(?i)## .*plan|## .*implementation|## .*artifact"))
@@ -760,10 +754,9 @@ jobs:
             )] | last | .body // ""
           ')
           
-          # If no A2A-specific comment found, try broader match for any analysis content
-          if [[ -z "$ANALYSIS_COMMENT" || "$ANALYSIS_COMMENT" == "null" ]]; then
-            echo "⚠️ No A2A-specific analysis comment found, trying broader match..."
-            ANALYSIS_COMMENT=$(echo "$COMMENTS" | jq -r '
+          if [[ -z "$ANALYSIS_RESPONSE" || "$ANALYSIS_RESPONSE" == "null" ]]; then
+            echo "⚠️ No A2A-specific comment found, trying broader match..."
+            ANALYSIS_RESPONSE=$(gh issue view "$ISSUE_NUMBER" --comments --json comments -q '
               [.[] | select(
                 (.author.login == "github-actions[bot]") and
                 (.body | test("(?i)plan|implementation|recommend|artifact"))
@@ -771,38 +764,18 @@ jobs:
             ')
           fi
           
-          if [[ -n "$ANALYSIS_COMMENT" && "$ANALYSIS_COMMENT" != "null" ]]; then
-            echo "✅ Captured analysis artifact (${#ANALYSIS_COMMENT} chars)"
-            
-            # Save to file for multiline output handling
-            echo "$ANALYSIS_COMMENT" > /tmp/analysis_artifact.md
-            
-            # Create output (use file-based approach for large content)
-            {
-              echo "analysis_captured=true"
-              echo "analysis_file=/tmp/analysis_artifact.md"
-            } >> "$GITHUB_OUTPUT"
-            
-            # Preview first few lines
-            echo "📋 Analysis preview:"
-            echo "$ANALYSIS_COMMENT" | head -20
+          if [[ -n "$ANALYSIS_RESPONSE" && "$ANALYSIS_RESPONSE" != "null" ]]; then
+            echo "✅ Captured analysis (${#ANALYSIS_RESPONSE} chars)"
+            # Save to file for Python to read
+            echo "$ANALYSIS_RESPONSE" > /tmp/analysis_from_issue.md
+            ANALYSIS_FILE="/tmp/analysis_from_issue.md"
           else
-            echo "⚠️ No analysis comment found - execution step will need to re-analyze"
-            echo "analysis_captured=false" >> "$GITHUB_OUTPUT"
+            echo "⚠️ No analysis found in issue comments"
+            ANALYSIS_FILE=""
           fi
-      
-      # Create proper A2A Task objects with Artifacts per spec §4.1.1 and §4.1.9
-      # This follows the "Life of a Task" pattern from https://a2a-protocol.org/latest/topics/life-of-a-task/
-      - name: 'A2A Task: Create Analysis Tasks with Artifacts'
-        id: a2a_tasks
-        if: success()
-        env:
-          ISSUE_NUMBER: ${{ inputs.issue_number }}
-          AGENTS: ${{ steps.agents.outputs.agents }}
-          RUN_ID: ${{ github.run_id }}
-          ANALYSIS_CAPTURED: ${{ steps.capture_analysis.outputs.analysis_captured }}
-          ANALYSIS_FILE: ${{ steps.capture_analysis.outputs.analysis_file }}
-        run: |
+          
+          export ANALYSIS_FILE
+          
           cat << 'PYTHON' > /tmp/create_a2a_tasks.py
           import os
           import json
@@ -818,15 +791,14 @@ jobs:
           run_id = os.environ.get('RUN_ID', 'unknown')
           agents_str = os.environ.get('AGENTS', '')
           
-          # Read analysis from captured file instead of env var (more reliable for large content)
-          analysis_captured = os.environ.get('ANALYSIS_CAPTURED', 'false') == 'true'
+          # Read analysis from the file captured from issue comments
           analysis_file = os.environ.get('ANALYSIS_FILE', '')
           analysis_response = ''
           
-          if analysis_captured and analysis_file and os.path.exists(analysis_file):
+          if analysis_file and os.path.exists(analysis_file):
               with open(analysis_file, 'r') as f:
                   analysis_response = f.read()
-              print(f"✅ Loaded analysis from file: {len(analysis_response)} chars")
+              print(f"✅ Loaded analysis from issue comments: {len(analysis_response)} chars")
           else:
               print("⚠️ No analysis file found, proceeding with empty analysis")
           
@@ -1051,8 +1023,8 @@ jobs:
           [Full Workflow Logs]($RUN_URL)
           EOF
 
-      # Prepare execution context by reading the captured analysis
-      # This step outputs the analysis content so it can be used in the ADDITIONAL_CONTEXT
+      # Prepare execution context by reading from the A2A tasks file
+      # The analysis was already captured in the A2A tasks step and saved to .a2a/tasks/analysis-tasks.json
       - name: 'A2A: Prepare Execution Context'
         id: execution_context
         if: success() && inputs.auto_execute == true
@@ -1060,23 +1032,32 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           AGENTS: ${{ steps.agents.outputs.agents }}
-          ANALYSIS_FILE: ${{ steps.capture_analysis.outputs.analysis_file }}
-          ANALYSIS_CAPTURED: ${{ steps.capture_analysis.outputs.analysis_captured }}
+          A2A_TASKS_PATH: ${{ steps.a2a_tasks.outputs.tasks_path }}
           CONTEXT_ID: ${{ steps.a2a_tasks.outputs.context_id }}
           REFERENCE_TASK_IDS: ${{ steps.a2a_tasks.outputs.reference_task_ids }}
         run: |
           set -euo pipefail
-          echo "📦 Preparing execution context with analysis artifacts..."
+          echo "📦 Preparing execution context from A2A tasks file..."
           
-          # Read analysis from the captured file (preferred) or provide fallback
-          if [[ "$ANALYSIS_CAPTURED" == "true" && -f "$ANALYSIS_FILE" ]]; then
-            ANALYSIS_CONTENT=$(cat "$ANALYSIS_FILE")
-            echo "✅ Loaded analysis from file: ${#ANALYSIS_CONTENT} chars"
+          # Read analysis from the A2A tasks file that was already created
+          if [[ -f "$A2A_TASKS_PATH" ]]; then
+            # Extract the fullAnalysis field from the JSON
+            ANALYSIS_CONTENT=$(cat "$A2A_TASKS_PATH" | jq -r '.aggregatedArtifacts.fullAnalysis // ""')
+            if [[ -n "$ANALYSIS_CONTENT" && "$ANALYSIS_CONTENT" != "null" ]]; then
+              echo "✅ Loaded analysis from $A2A_TASKS_PATH: ${#ANALYSIS_CONTENT} chars"
+            else
+              echo "⚠️ fullAnalysis field empty in $A2A_TASKS_PATH"
+              ANALYSIS_CONTENT=""
+            fi
           else
-            echo "⚠️ Analysis file not found, using fallback message"
-            # Instead of re-implementing the same filtering, we provide a clear fallback
-            # that instructs Gemini to read the issue comments directly
-            ANALYSIS_CONTENT="[Analysis not captured - please read the issue comments on issue #${ISSUE_NUMBER} for the multi-agent analysis]"
+            echo "⚠️ A2A tasks file not found at $A2A_TASKS_PATH"
+            ANALYSIS_CONTENT=""
+          fi
+          
+          # If still empty, provide fallback instructions
+          if [[ -z "$ANALYSIS_CONTENT" ]]; then
+            echo "⚠️ Using fallback message"
+            ANALYSIS_CONTENT="[Analysis not captured in A2A tasks file - please read the issue comments on issue #${ISSUE_NUMBER} for the multi-agent analysis]"
           fi
           
           # Create directory for context files (with error checking)
