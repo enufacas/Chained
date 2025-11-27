@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2A Coordination - Chained</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .a2a-hero {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
+            padding: 2rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 2px solid rgba(6, 182, 212, 0.3);
+        }
+        
+        .a2a-hero h1 {
+            color: #06b6d4;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .a2a-hero p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+
+        .doc-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15);
+        }
+
+        .doc-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .doc-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            flex-grow: 1;
+            margin-bottom: 1rem;
+        }
+
+        .doc-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+
+        .doc-link {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(6, 182, 212, 0.05);
+            border-radius: 6px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .doc-link:hover {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--primary-color);
+        }
+
+        .doc-icon {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .status-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid #10b981;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="home-button" aria-label="Home">🏠</a>
+            <button class="hamburger" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1>🤖 Chained</h1>
+        </div>
+        <nav class="main-nav">
+            <!-- Navigation will be populated by navigation.js -->
+        </nav>
+    </header>
+
+    <main>
+        <div class="a2a-hero">
+            <h1>Agent-to-Agent (A2A) Coordination</h1>
+            <p>
+                The nervous system of Chained. A2A enables autonomous agents to communicate, 
+                coordinate, and collaborate on complex tasks through branch-based protocols 
+                and direct interaction mechanisms.
+            </p>
+        </div>
+
+        <div class="status-section">
+            <div class="status-header">
+                <h2 style="margin: 0; color: var(--success-color);">System Status</h2>
+                <span class="status-badge">Active Development</span>
+            </div>
+            <p style="color: var(--text-muted); line-height: 1.6;">
+                The A2A system is currently evolving from basic branch-based coordination to a more 
+                sophisticated multi-protocol communication layer. We are integrating GitHub Runners, 
+                MCP (Model Context Protocol), and direct API interactions to enable richer agent collaboration.
+            </p>
+        </div>
+
+        <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">Documentation & Resources</h2>
+        
+        <div class="docs-grid">
+            <!-- Overview Card -->
+            <div class="doc-card">
+                <h3>📘 Core Concepts</h3>
+                <p>Foundational documents explaining how the A2A system operates and its current state.</p>
+                <div class="doc-links">
+                    <a href="a2a/README.md" class="doc-link">
+                        <span class="doc-icon">📄</span> Overview & Entry Point
+                    </a>
+                    <a href="a2a/A2A_STATUS.md" class="doc-link">
+                        <span class="doc-icon">📊</span> Current Status Report
+                    </a>
+                    <a href="a2a/A2A_IMPLEMENTATION_SUMMARY.md" class="doc-link">
+                        <span class="doc-icon">📝</span> Implementation Summary
+                    </a>
+                </div>
+            </div>
+
+            <!-- Architecture Card -->
+            <div class="doc-card">
+                <h3>🏗️ Architecture & Design</h3>
+                <p>Technical specifications and design decisions powering the coordination layer.</p>
+                <div class="doc-links">
+                    <a href="a2a/A2A_INTEGRATION_DESIGN.md" class="doc-link">
+                        <span class="doc-icon">📐</span> Integration Design
+                    </a>
+                    <a href="a2a/A2A_BRANCH_BASED_COORDINATION.md" class="doc-link">
+                        <span class="doc-icon">🌿</span> Branch-Based Coordination
+                    </a>
+                    <a href="a2a/A2A_MCP_TRANSPORT_DESIGN.md" class="doc-link">
+                        <span class="doc-icon">🔌</span> MCP Transport Protocol
+                    </a>
+                    <a href="a2a/A2A_PHASE_3_DESIGN.md" class="doc-link">
+                        <span class="doc-icon">🚀</span> Phase 3 Design
+                    </a>
+                </div>
+            </div>
+
+            <!-- Technical Implementation Card -->
+            <div class="doc-card">
+                <h3>⚙️ Technical Implementation</h3>
+                <p>Deep dives into specific implementation details and integrations.</p>
+                <div class="doc-links">
+                    <a href="a2a/A2A_GEMINI_IMPLEMENTATION.md" class="doc-link">
+                        <span class="doc-icon">✨</span> Gemini Integration
+                    </a>
+                    <a href="a2a/A2A_GITHUB_RUNNERS_ARCHITECTURE.md" class="doc-link">
+                        <span class="doc-icon">🏃</span> GitHub Runners Arch
+                    </a>
+                    <a href="a2a/A2A_CROSS_PLATFORM_ORCHESTRATION.md" class="doc-link">
+                        <span class="doc-icon">🔄</span> Cross-Platform Orchestration
+                    </a>
+                </div>
+            </div>
+
+            <!-- Research Card -->
+            <div class="doc-card">
+                <h3>🔬 Research & Investigations</h3>
+                <p>Exploratory work, feasibility studies, and future direction analysis.</p>
+                <div class="doc-links">
+                    <a href="a2a/A2A_COPILOT_CLI_INVESTIGATION.md" class="doc-link">
+                        <span class="doc-icon">🔍</span> Copilot CLI Investigation
+                    </a>
+                    <a href="a2a/A2A_VIABLE_PATH_FORWARD.md" class="doc-link">
+                        <span class="doc-icon">🛣️</span> Viable Path Forward
+                    </a>
+                    <a href="a2a/A2A_TRANSPORT_COMPARISON.md" class="doc-link">
+                        <span class="doc-icon">⚖️</span> Transport Comparison
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="navigation.js"></script>
+</body>
+</html>
+

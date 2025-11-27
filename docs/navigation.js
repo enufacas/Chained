@@ -89,3 +89,111 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Dynamically generate navigation
+const navConfig = [
+    {
+        title: "Core",
+        items: [
+            { text: "Dashboard", url: "index.html", icon: "📊" },
+            { text: "Agents", url: "agents.html", icon: "🤖" },
+            { text: "Organism", url: "organism.html", icon: "🧬" },
+            { text: "World Map", url: "world-map.html", icon: "🌍" },
+            { text: "Episodes", url: "episodes.html", icon: "🎬" },
+            { text: "TV Mode", url: "tv.html", icon: "📺" }
+        ]
+    },
+    {
+        title: "Intelligence",
+        items: [
+            { text: "Knowledge Graph", url: "ai-knowledge-graph.html", icon: "🧠" },
+            { text: "AI Friends", url: "ai-friends.html", icon: "👥" },
+            { text: "Architecture", url: "architecture-evolution.html", icon: "🏗️" },
+            { text: "AgentOps", url: "agentops.html", icon: "⚙️" },
+            { text: "A2A System", url: "a2a.html", icon: "🤝" },
+            { text: "A/B Testing", url: "ab-testing-dashboard.html", icon: "🧪" }
+        ]
+    },
+    {
+        title: "Reviews",
+        items: [
+            { text: "Reviewer", url: "reviewer-dashboard.html", icon: "📝" },
+            { text: "Workflows", url: "workflow-schedule.html", icon: "📅" },
+            { text: "Lifecycle", url: "lifecycle.html", icon: "🔄" }
+        ]
+    }
+];
+
+
+function generateNavigation() {
+    const nav = document.querySelector('.main-nav');
+    if (!nav) return;
+    
+    // Clear existing content except the header
+    const header = nav.querySelector('.nav-header');
+    nav.innerHTML = '';
+    if (header) nav.appendChild(header);
+
+    navConfig.forEach(section => {
+        const sectionEl = document.createElement('div');
+        sectionEl.className = 'nav-section';
+        
+        const titleId = section.title.toLowerCase().replace(/\s+/g, '-') + '-nav';
+        const contentId = section.title.toLowerCase().replace(/\s+/g, '-') + '-content';
+        
+        // Create header
+        const headerEl = document.createElement('button');
+        headerEl.className = 'nav-section-toggle';
+        headerEl.setAttribute('aria-expanded', 'true');
+        headerEl.setAttribute('aria-controls', contentId);
+        headerEl.innerHTML = `
+            <span class="nav-section-title">${section.title}</span>
+            <span class="nav-section-icon">▼</span>
+        `;
+        
+        // Create links container
+        const contentEl = document.createElement('div');
+        contentEl.id = contentId;
+        contentEl.className = 'nav-section-content expanded';
+        
+        section.items.forEach(item => {
+            const link = document.createElement('a');
+            link.href = item.url;
+            link.className = 'nav-link';
+            if (window.location.pathname.endsWith(item.url)) {
+                link.classList.add('active');
+            }
+            link.innerHTML = `<span class="nav-icon">${item.icon}</span> ${item.text}`;
+            contentEl.appendChild(link);
+        });
+        
+        sectionEl.appendChild(headerEl);
+        sectionEl.appendChild(contentEl);
+        nav.appendChild(sectionEl);
+    });
+    
+    // Re-initialize listeners for the new elements
+    const toggleButtons = nav.querySelectorAll('.nav-section-toggle');
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            const contentId = this.getAttribute('aria-controls');
+            const content = document.getElementById(contentId);
+            
+            if (content) {
+                if (isExpanded) {
+                    this.setAttribute('aria-expanded', 'false');
+                    content.classList.remove('expanded');
+                } else {
+                    this.setAttribute('aria-expanded', 'true');
+                    content.classList.add('expanded');
+                }
+            }
+        });
+    });
+}
+
+// Call on load
+document.addEventListener('DOMContentLoaded', generateNavigation);
