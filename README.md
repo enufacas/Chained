@@ -216,6 +216,82 @@ This is orchestration automation, not multi-agent collaboration. Each agent work
 
 ---
 
+## A2A (Agent-to-Agent) Protocol
+
+The repository is implementing the **A2A Protocol** for agent-to-agent communication and coordination. This enables agents to discover each other, communicate, and collaborate on complex tasks through parallel execution and artifact passing.
+
+**[📖 A2A Documentation](./docs/a2a/README.md)** | **[🌐 A2A Dashboard](https://enufacas.github.io/Chained/a2a.html)**
+
+### Architecture Overview
+
+The A2A implementation uses a **three-tier architecture** to accommodate GitHub Actions runner constraints:
+
+| Tier | Communication | Use Case | Status |
+|------|---------------|----------|--------|
+| **Tier 1** | HTTP (localhost) | Same-runner agents | ✅ Implemented |
+| **Tier 2** | GitHub Artifacts | Cross-runner parallel execution | ✅ Implemented |
+| **Tier 3** | MCP Transport | Copilot agent-to-agent | 🔄 Design phase |
+
+### ADK Agents on GCP
+
+The project deploys Google ADK-compatible agents to Google Cloud Run:
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Academic      │────▶│    Google       │────▶│     Blog        │
+│   Research      │     │    Trends       │     │    Writer       │
+│   Agent         │     │    Agent        │     │    Agent        │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+```
+
+| Agent | Purpose | A2A Endpoints |
+|-------|---------|---------------|
+| `academic-research` | Discovers research topics | `/.well-known/agent.json`, `POST /a2a/tasks` |
+| `google-trends` | Analyzes SEO trends | `/.well-known/agent.json`, `POST /a2a/tasks` |
+| `blog-writer` | Writes blog posts | `/.well-known/agent.json`, `POST /a2a/tasks` |
+
+**ADK API Server** bridges Google's [adk-web](https://github.com/google/adk-web) frontend to the deployed A2A agents.
+
+### Parallel Agent Workflow
+
+The `a2a-parallel-agents.yml` workflow demonstrates A2A protocol compliance:
+
+1. **Setup** - Selects agents, generates AgentCards
+2. **Agent Jobs** (parallel) - Each agent runs in its own GitHub runner
+3. **Aggregate** - Downloads all agent artifacts, combines analysis
+4. **Implement** - Uses aggregated analysis to create PR
+
+Key A2A concepts mapped to GitHub Actions:
+- **A2A Task** → GitHub Job (bounded execution context)
+- **A2A Artifact** → GitHub Artifact (persistent output)
+- **contextId** → `run_id + issue_number`
+- **referenceTaskIds** → Artifact names from previous jobs
+
+### Core A2A Components
+
+The `tools/a2a/` directory contains:
+
+| File | Purpose |
+|------|---------|
+| `agent_card.py` | Agent Card generation for 100+ agents |
+| `agent_executor.py` | Agent execution wrapper |
+| `task.py` | Task lifecycle (submitted → working → completed) |
+| `gemini_executor.py` | GeminiAgentExecutor following a2a-samples pattern |
+| `workflow_orchestrator.py` | GitHub Actions orchestration |
+
+### A2A Workflows
+
+| Workflow | Purpose |
+|----------|---------|
+| `a2a-parallel-agents.yml` | Parallel agent execution with GitHub Artifacts |
+| `a2a-multi-agent.yml` | A2A protocol with GeminiAgentExecutor |
+| `deploy-adk-agents.yml` | Build and deploy ADK agents to Cloud Run |
+| `adk-a2a-blog-pipeline.yml` | Blog content pipeline (every 6 hours) |
+
+**[📖 ADK Dev UI Guide](./docs/ADK_DEV_UI_GUIDE.md)** | **[📖 ADK Pipeline Implementation](./docs/ADK_A2A_PIPELINE_IMPLEMENTATION.md)**
+
+---
+
 ## What This Project Demonstrates
 
 1. **Convention-based agent definitions** - Using standard file formats and locations
@@ -224,8 +300,10 @@ This is orchestration automation, not multi-agent collaboration. Each agent work
 4. **Assignment algorithms** - Matching work to appropriate agents
 5. **Orchestration automation** - Managing agent assignment, PR lifecycle, and auto-merge
 6. **Alternative AI systems** - Integrating Gemini alongside Copilot
+7. **A2A Protocol implementation** - Agent-to-agent communication via parallel execution and artifact passing
+8. **ADK integration** - Google ADK agents deployed to Cloud Run
 
-**Note:** Multi-agent collaboration (agents working together on shared tasks) is a future goal. Currently, each agent works independently on individually assigned issues.
+**A2A Status:** Tier 1 (same-runner HTTP) and Tier 2 (cross-runner GitHub Artifacts) are implemented. Interactive agent-to-agent dialogue (real-time back-and-forth) is under development.
 
 ---
 
@@ -241,6 +319,12 @@ This is orchestration automation, not multi-agent collaboration. Each agent work
 - **[Agent Definitions](./.github/agents/README.md)** - How agents are defined
 - **[Agent Quickstart](./AGENT_QUICKSTART.md)** - Getting started with agents
 - **[Copilot Instructions](./.copilot-instructions.md)** - Repository organization
+
+### A2A Protocol
+- **[A2A Documentation](./docs/a2a/README.md)** - Complete A2A protocol guide
+- **[A2A Status](./docs/a2a/A2A_STATUS.md)** - Current implementation status
+- **[ADK Dev UI Guide](./docs/ADK_DEV_UI_GUIDE.md)** - ADK agent web interface
+- **[ADK Pipeline Implementation](./docs/ADK_A2A_PIPELINE_IMPLEMENTATION.md)** - GCP deployment guide
 
 ### Autonomous System (Reference)
 - **[Autonomous System Architecture](./docs/AUTONOMOUS_SYSTEM_ARCHITECTURE.md)** - Pipeline design
@@ -277,7 +361,8 @@ All external PRs require manual review. See [Security Implementation](./docs/SEC
 
 - **Learning system quality**: Generated work items often lack relevance or novelty. All outputs require human review before acting on them.
 - **Agent matching accuracy**: The keyword-based matching sometimes assigns inappropriate agents. Manual reassignment is possible by editing issue labels.
-- **No multi-agent collaboration**: Agents work independently on assigned issues. The meta-coordinator handles assignment and lifecycle automation, but agents do not yet work together on shared tasks or hand off work to each other.
+- **A2A interactive dialogue**: Tier 1 and Tier 2 A2A are implemented (parallel execution, artifact passing). Tier 3 (real-time agent-to-agent dialogue via MCP) is in design phase.
+- **ADK agents**: Require GCP infrastructure (Cloud Run, Secret Manager) and API keys. See [ADK Pipeline docs](./docs/ADK_A2A_PIPELINE_IMPLEMENTATION.md).
 - **Gemini integration**: Requires a separate API key configuration (`GEMINI_API_KEY` secret).
 
 This is an experiment in agent orchestration patterns, not a production-ready system.
@@ -296,6 +381,8 @@ Open source. See [LICENSE](./LICENSE).
 - **GitHub Copilot** - Custom agent runtime
 - **Gemini CLI** - Alternative agent invocation
 - **Model Context Protocol (MCP)** - Tool integration
+- **A2A Protocol** - Agent-to-agent communication standard
+- **Google ADK** - Agent Development Kit for cloud deployment
 
 ---
 
