@@ -136,13 +136,13 @@ jobs:
             # Prioritize agents from different specialization categories
             CATEGORIES=(
               "engineer|build|create|develop|construct"  # Engineering
-              "secure|guard|monitor|validate"            # Security
+              "secure|guard|monitor"                     # Security
               "organize|refactor|restructure|simplify"   # Code Organization
-              "test|assert|prove|verify|validate"        # Testing
+              "test|assert|prove|verify"                 # Testing
               "document|clarify|communicate|support"     # Documentation
               "optimize|accelerate|enhance|improve"      # Performance
               "pioneer|innovate|breakthrough"            # Innovation
-              "integrate|connect|bridge"                 # Integration
+              "integrate|connect|bridge|validate"        # Integration & Validation
             )
             
             SELECTED=()
@@ -180,8 +180,12 @@ jobs:
           echo "Selected agents: $SELECTED_AGENTS"
           echo "agents=$SELECTED_AGENTS" >> $GITHUB_OUTPUT
           
-          # Also output count for summary
-          ACTUAL_COUNT=$(echo "$SELECTED_AGENTS" | tr ',' '\n' | wc -l)
+          # Count agents properly (handle empty case)
+          if [[ -z "$SELECTED_AGENTS" ]]; then
+            ACTUAL_COUNT=0
+          else
+            ACTUAL_COUNT=$(echo "$SELECTED_AGENTS" | tr ',' '\n' | grep -c . || echo 0)
+          fi
           echo "count=$ACTUAL_COUNT" >> $GITHUB_OUTPUT
       
       - name: Post demo start notification
@@ -193,6 +197,19 @@ jobs:
           SHOW_REASONING: ${{ inputs.show_reasoning }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          # Build agent list for display
+          AGENT_LIST=""
+          if [[ -n "$AGENTS" ]]; then
+            AGENT_LIST=$(echo "$AGENTS" | tr ',' '\n' | while read agent; do
+              agent=$(echo "$agent" | xargs)
+              if [[ -n "$agent" ]]; then
+                echo "- **@$agent**"
+              fi
+            done)
+          else
+            AGENT_LIST="- *(No agents selected)*"
+          fi
+          
           cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
           ## 🚀 A2A Demo Starting - LIVE
           
@@ -202,10 +219,7 @@ jobs:
           
           ### 🤖 Selected Agents
           
-          $(echo $AGENTS | tr ',' '\n' | while read agent; do
-            agent=\$(echo "\$agent" | xargs)
-            echo "- **@\$agent**"
-          done)
+          $AGENT_LIST
           
           ### ⚙️ Configuration
           
@@ -367,17 +381,16 @@ jobs:
           ISSUE_BODY: ${{ steps.issue.outputs.body }}
           TRIGGERING_ACTOR: ${{ github.triggering_actor }}
           BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
-          # Context for the implementation
+          # Context for the implementation - agents are dynamically selected
           ADDITIONAL_CONTEXT: |
             This is an A2A (Agent-to-Agent) autonomous implementation.
             
             The following specialized agents have analyzed issue #${{ inputs.issue_number }}:
             ${{ steps.agents.outputs.agents }}
             
-            Each agent provided recommendations from their perspective:
-            - engineer-master: Rigorous engineering and reliability focus
-            - secure-specialist: Security vulnerabilities and best practices
-            - organize-guru: Code organization and maintainability
+            Each agent has provided recommendations from their specialized perspective.
+            The agents were dynamically selected to provide diverse viewpoints including
+            engineering, security, testing, documentation, and organizational insights.
             
             IMPORTANT: Implement the changes recommended by the agents and create a PR.
             Follow the original issue request: "${{ steps.issue.outputs.title }}"
