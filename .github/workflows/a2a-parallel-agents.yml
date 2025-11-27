@@ -294,6 +294,14 @@ jobs:
             
             You are the agent "@${{ matrix.agent }}" analyzing issue #${{ inputs.issue_number }}.
             
+            ## IMPORTANT: Autonomous Mode - No Approval Required
+            
+            This is an AUTONOMOUS workflow. You MUST:
+            - DO NOT post any "Plan of Action" comments or ask for approval
+            - DO NOT use add_issue_comment to post any comments
+            - DO NOT wait for user confirmation with /approve or /deny
+            - Simply analyze and provide your response directly as output
+            
             ## Your AgentCard
             Read your specialization from: .github/agents/${{ matrix.agent }}.md
             
@@ -337,7 +345,7 @@ jobs:
                 "github": {
                   "command": "docker",
                   "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server:v0.18.0"],
-                  "includeTools": ["get_issue", "get_file_contents", "add_issue_comment"],
+                  "includeTools": ["get_issue", "get_file_contents"],
                   "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" }
                 }
               }
