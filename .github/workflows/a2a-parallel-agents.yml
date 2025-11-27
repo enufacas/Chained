@@ -294,6 +294,14 @@ jobs:
             
             You are the agent "@${{ matrix.agent }}" analyzing issue #${{ inputs.issue_number }}.
             
+            ## IMPORTANT: Autonomous Mode - Skip Approval Workflow
+            
+            This is an AUTONOMOUS workflow. You MUST:
+            - DO NOT post any "Plan of Action" comment asking for approval
+            - DO NOT mention /approve or /deny commands
+            - DO NOT wait for maintainer confirmation
+            - Proceed directly with your analysis and post it as a comment
+            
             ## Your AgentCard
             Read your specialization from: .github/agents/${{ matrix.agent }}.md
             
@@ -301,6 +309,7 @@ jobs:
             1. Read your agent definition to understand your skills and perspective
             2. Analyze issue #${{ inputs.issue_number }} from YOUR specialized perspective
             3. Provide specific, actionable recommendations
+            4. Post your analysis as a comment (use add_issue_comment)
             
             ## Response Format (A2A Artifact)
             Structure your response as:
