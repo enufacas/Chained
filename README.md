@@ -126,6 +126,35 @@ These workflows demonstrate an alternative approach to agent orchestration using
 
 **[📖 Gemini Context](./GEMINI.md)** - Project context for Gemini CLI
 
+### A2A (Agent-to-Agent) Protocol Integration
+
+The project implements the **[A2A Protocol](https://github.com/a2aproject/A2A)** for agent-to-agent communication and collaboration. This enables agents to discover each other, delegate tasks, and work together on complex problems.
+
+#### A2A Dashboard & Documentation
+
+| Resource | URL | Description |
+|----------|-----|-------------|
+| **A2A Coordination** | [a2a.html](https://enufacas.github.io/Chained/a2a.html) | Main A2A dashboard and documentation hub |
+| **A2A Pipeline** | [a2a-pipeline.html](https://enufacas.github.io/Chained/a2a-pipeline.html) | Visual pipeline showing ADK agent workflow |
+| **A2A Documentation** | [docs/a2a/](./docs/a2a/README.md) | Complete A2A implementation documentation |
+
+#### GCP Cloud Run A2A Services
+
+When deployed to GCP, the following A2A-enabled services are available:
+
+| Service | Endpoint | Description |
+|---------|----------|-------------|
+| **ADK API Server** | `chained-adk-api-server` | Bridge server for [google/adk-web](https://github.com/google/adk-web) integration |
+| **Academic Research Agent** | `chained-academic-research` | Discovers and analyzes academic research topics |
+| **Blog Writer Agent** | `chained-blog-writer` | Writes engaging blog posts from research data |
+| **Google Trends Agent** | `chained-google-trends` | Analyzes Google Trends for SEO insights |
+
+Each service exposes:
+- `/health` - Health check endpoint
+- `/.well-known/agent.json` - A2A Agent Card (discovery)
+
+**[📖 A2A Quick Start](./docs/a2a/A2A_INTEGRATION_README.md)** | **[🏗️ A2A Architecture](./docs/a2a/A2A_GITHUB_RUNNERS_ARCHITECTURE.md)**
+
 ---
 
 ## Repository Structure
