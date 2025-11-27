@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-26T12:56:38.371527",
-  "commit": "f02a3d473e40ef964251a0a12be11f11f3dcb1ef",
+  "timestamp": "2025-11-27T01:59:02.984601",
+  "commit": "cc622a82059024210d49e2741d8a85660d37e065",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 382,
-        "line_count": 155696,
+        "file_count": 400,
+        "line_count": 159850,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,10 +60,17 @@
         ]
       },
       "docs": {
-        "file_count": 901,
-        "line_count": 257918,
+        "file_count": 921,
+        "line_count": 268301,
         "files": [
           ".nojekyll",
+          "A2A_BRANCH_BASED_COORDINATION.md",
+          "A2A_COPILOT_CLI_INVESTIGATION.md",
+          "A2A_COPILOT_REALITY_CHECK.md",
+          "A2A_COPILOT_SESSIONS_EXPLAINED.md",
+          "A2A_CROSS_PLATFORM_ORCHESTRATION.md",
+          "A2A_DEMO_APPROVAL_WORKFLOW.md",
+          "A2A_GEMINI_IMPLEMENTATION.md",
           "A2A_GITHUB_RUNNERS_ARCHITECTURE.md",
           "A2A_GITHUB_RUNNERS_COMPLIANCE.md",
           "A2A_IMPLEMENTATION_SUMMARY.md",
@@ -71,7 +78,10 @@
           "A2A_INTEGRATION_README.md",
           "A2A_MCP_TRANSPORT_DESIGN.md",
           "A2A_PHASE_2B_TESTING_SUMMARY.md",
+          "A2A_PHASE_3_DESIGN.md",
+          "A2A_STATUS.md",
           "A2A_TRANSPORT_COMPARISON.md",
+          "A2A_VIABLE_PATH_FORWARD.md",
           "AB_TESTING_API.md",
           "AB_TESTING_API_SUMMARY.md",
           "AB_TESTING_BUG_REPORT.md",
@@ -90,6 +100,7 @@
           "AGENT_ASSIGNMENT_DIVERSITY_FIX.md",
           "AGENT_ASSIGNMENT_FIX_SUMMARY.md",
           "AGENT_ATTRIBUTION_IMPLEMENTATION_SUMMARY.md",
+          "AGENT_COMMIT_QUALITY_INTEGRATION.md",
           "AGENT_DELETION_FIX_DIAGRAM.md",
           "AGENT_DELETION_FIX_SUMMARY.md",
           "AGENT_EVALUATION_COACHING_2025-11-13.md",
@@ -101,18 +112,7 @@
           "AGENT_EVALUATOR_REVIEW.md",
           "AGENT_EVOLUTION_SUMMARY.md",
           "AGENT_LEARNING_FROM_FAILURES.md",
-          "AGENT_LOCATION_MAPPING.md",
-          "AGENT_METRICS_OPTIMIZATION.md",
-          "AGENT_METRICS_SYSTEM.md",
-          "AGENT_MISSION_PATTERN_MATCHING_FIX.md",
-          "AGENT_NAME_UNIQUENESS_FIX.md",
-          "AGENT_NAME_UNIQUENESS_FIX_SUMMARY.md",
-          "AGENT_QUICKSTART.md",
-          "AGENT_SCORING_ANALYSIS_REPORT.md",
-          "AGENT_WORKFLOW_SCENARIO.md",
-          "AGENT_WORK_ATTRIBUTION.md",
-          "AI_AGENT_GUIDE.md",
-          "AI_DIVERSITY_SYSTEM_FIX.md"
+          "AGENT_LOCATION_MAPPING.md"
         ]
       },
       ".github/workflows": {
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 104,
-        "line_count": 4710805,
+        "file_count": 108,
+        "line_count": 4712568,
         "files": [
           "2025-11-14-04-00-27.json",
           "2025-11-14-04-00-36.json",
@@ -136,6 +136,9 @@
           "2025-11-25-12-28-25.json",
           "2025-11-25-18-20-47.json",
           "2025-11-26-01-01-59.json",
+          "2025-11-26-12-28-20.json",
+          "2025-11-26-18-17-26.json",
+          "2025-11-27-01-00-58.json",
           "README.md",
           "README.md",
           "actions-patterns.json",
@@ -175,15 +178,12 @@
           "diversity-suggestions.md",
           "diversity-trends.json",
           "evolution.json",
-          "hypothesis_results.json",
-          "integrated-archaeology-report.md",
-          "issue-closing-comment.md",
-          "issue-closure-recommendation.md"
+          "hypothesis_results.json"
         ]
       },
       "learnings": {
-        "file_count": 357,
-        "line_count": 220207,
+        "file_count": 377,
+        "line_count": 228786,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -211,6 +211,10 @@
           "Web.md",
           "agent_evolution_system_implementation.json",
           "agent_pattern_matching_fix.py",
+          "agents_cloud_integration_proposal_idea86.md",
+          "agents_cloud_integration_research_report_idea86.md",
+          "ai_agents_ecosystem_integration_proposal_20251124.md",
+          "ai_agents_emerging_theme_research_report_20251124.md",
           "ai_agents_innovation_deep_dive_nov16_2025.md",
           "ai_ml_agents_investigation_20251116.md",
           "ai_ml_innovation_research_report_coach_master.md",
@@ -230,17 +234,13 @@
           "analysis_20251115_082901.json",
           "analysis_20251115_131750.json",
           "analysis_20251115_190732.json",
-          "analysis_20251119_001931.json",
-          "analysis_20251119_092426.json",
-          "analysis_20251119_211631.json",
-          "analysis_20251120_092249.json",
-          "analysis_20251120_211920.json"
+          "analysis_20251119_001931.json"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 1744,
-    "total_lines": 5344626
+    "total_files": 1806,
+    "total_lines": 5369505
   },
   "dependencies": {
     "internal_imports": {
@@ -253,6 +253,7 @@
       "demo_autonomous_ab_testing.py": [],
       "prompt_learning_integration.py": [],
       "parse_agent_config.py": [],
+      "validate-commit-quality.py": [],
       "design-decision-documenter.py": [],
       "extract-agent-knowledge.py": [],
       "example_cross_repo_pattern_matcher.py": [],
@@ -334,6 +335,7 @@
       "lazy_workflow_loader.py": [],
       "semantic_similarity_engine.py": [],
       "cloud_devops_analyzer.py": [],
+      "self_evolving_neural_architecture.py": [],
       "visualize-mentorship.py": [],
       "api_contract_validator_chained.py": [],
       "rl_resource_optimizer.py": [],
@@ -399,6 +401,7 @@
       "hn-code-generator.py": [],
       "example_comprehensive_analysis.py": [],
       "collaborative_agent_orchestrator.py": [],
+      "query-commit-strategies.py": [],
       "fix_pr_attribution.py": [],
       "create_mission_issues.py": [],
       "validate_agent_capacity.py": [],
@@ -436,22 +439,22 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 109,
-      "sys": 145,
-      "json": 165,
-      "re": 73,
+      "os": 112,
+      "sys": 148,
+      "json": 168,
+      "re": 74,
       "ast": 18,
-      "datetime": 130,
-      "pathlib": 154,
-      "typing": 140,
-      "collections": 74,
+      "datetime": 132,
+      "pathlib": 157,
+      "typing": 143,
+      "collections": 75,
       "functools": 9,
-      "argparse": 127,
-      "math": 11,
-      "random": 26,
+      "argparse": 130,
+      "math": 12,
+      "random": 27,
       "time": 31,
-      "statistics": 15,
-      "dataclasses": 78,
+      "statistics": 16,
+      "dataclasses": 79,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
       "workload_subagent_spawner": 2,
@@ -460,7 +463,7 @@
       "ab_testing_engine": 6,
       "ab_testing_advanced": 2,
       "yaml": 20,
-      "subprocess": 25,
+      "subprocess": 26,
       "hashlib": 17,
       "traceback": 13,
       "importlib": 24,
@@ -534,17 +537,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1744,
-    "total_lines": 5344626,
+    "total_files": 1806,
+    "total_lines": 5369505,
     "total_dependencies": 2,
     "external_libraries": 82,
-    "coupling_score": 5.812263876780006e-05,
+    "coupling_score": 5.628729032984352e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 220207,
+      "line_count": 228786,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -570,7 +573,7 @@
     },
     "agent_system": {
       "file_count": 2,
-      "line_count": 90592,
+      "line_count": 87268,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json"
@@ -578,7 +581,7 @@
     },
     "analysis_tools": {
       "file_count": 49,
-      "line_count": 4710805,
+      "line_count": 4712568,
       "files": [
         "2025-11-14-04-00-27.json",
         "2025-11-14-04-00-36.json",
@@ -587,6 +590,9 @@
         "2025-11-25-12-28-25.json",
         "2025-11-25-18-20-47.json",
         "2025-11-26-01-01-59.json",
+        "2025-11-26-12-28-20.json",
+        "2025-11-26-18-17-26.json",
+        "2025-11-27-01-00-58.json",
         "README.md",
         "actions-patterns.json",
         "agent-ecosystem-investigation.md",
@@ -596,17 +602,21 @@
         "archaeology.json",
         "archaeology_20251112_014409.json",
         "archaeology_20251112_015207.json",
-        "archaeology_20251114_040659.json",
-        "archaeology_learning_20251112_014409.md",
-        "archaeology_learning_20251112_015207.md",
-        "archaeology_learning_20251114_040659.md"
+        "archaeology_20251114_040659.json"
       ]
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 257918,
+      "line_count": 268301,
       "files": [
         ".nojekyll",
+        "A2A_BRANCH_BASED_COORDINATION.md",
+        "A2A_COPILOT_CLI_INVESTIGATION.md",
+        "A2A_COPILOT_REALITY_CHECK.md",
+        "A2A_COPILOT_SESSIONS_EXPLAINED.md",
+        "A2A_CROSS_PLATFORM_ORCHESTRATION.md",
+        "A2A_DEMO_APPROVAL_WORKFLOW.md",
+        "A2A_GEMINI_IMPLEMENTATION.md",
         "A2A_GITHUB_RUNNERS_ARCHITECTURE.md",
         "A2A_GITHUB_RUNNERS_COMPLIANCE.md",
         "A2A_IMPLEMENTATION_SUMMARY.md",
@@ -614,23 +624,16 @@
         "A2A_INTEGRATION_README.md",
         "A2A_MCP_TRANSPORT_DESIGN.md",
         "A2A_PHASE_2B_TESTING_SUMMARY.md",
+        "A2A_PHASE_3_DESIGN.md",
+        "A2A_STATUS.md",
         "A2A_TRANSPORT_COMPARISON.md",
-        "AB_TESTING_API.md",
-        "AB_TESTING_API_SUMMARY.md",
-        "AB_TESTING_BUG_REPORT.md",
-        "AB_TESTING_GUIDE.md",
-        "AB_TESTING_IMPLEMENTATION_SUMMARY.md",
-        "AB_TESTING_SUMMARY.md",
-        "ACCELERATION_COMPLETE.md",
-        "ACTIONS_INVESTIGATION_REPORT.md",
-        "ACTIONS_MIGRATION_EXAMPLE.md",
-        "ACTIONS_RECOMMENDATIONS_SUMMARY.md",
-        "ACTOR_ID_SYSTEM.md"
+        "A2A_VIABLE_PATH_FORWARD.md",
+        "AB_TESTING_API.md"
       ]
     },
     "tools": {
       "file_count": 50,
-      "line_count": 155696,
+      "line_count": 159850,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
