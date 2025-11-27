@@ -1,0 +1,712 @@
+name: "A2A Parallel Agent Orchestration"
+
+# ==============================================================================
+# A2A PROTOCOL IMPLEMENTATION - PARALLEL AGENTS
+# ==============================================================================
+# This workflow implements the Agent2Agent (A2A) Protocol with TRUE parallel
+# agent execution. Each agent runs as a separate job with its own bounded
+# AI API call, properly modeling the A2A protocol.
+#
+# Architecture:
+#   setup      →  [agent-1]  →  aggregate  →  implement
+#                 [agent-2]
+#                 [agent-3]
+#
+# This maps A2A concepts to GitHub Actions:
+#   - A2A Task → GitHub Job (bounded execution context)
+#   - A2A Artifact → GitHub Artifact (actions/upload-artifact)
+#   - contextId → run_id + issue_number
+#   - referenceTaskIds → Artifact names from agent jobs
+#
+# Spec Reference: https://a2a-protocol.org/latest/specification/
+# ==============================================================================
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to analyze and fix'
+        required: true
+        type: number
+      agent_count:
+        description: 'Number of parallel agent jobs (1-5)'
+        required: false
+        default: 3
+        type: number
+      agents:
+        description: 'Optional: Specific agents (comma-separated)'
+        required: false
+        default: ''
+        type: string
+      auto_execute:
+        description: 'Automatically implement and create PR'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  id-token: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  # ==========================================================================
+  # JOB 1: SETUP
+  # ==========================================================================
+  # Prepares the agent selection, generates AgentCards, and posts initial 
+  # notification. Outputs the agent list for the parallel matrix.
+  # ==========================================================================
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      agents: ${{ steps.select.outputs.agents }}
+      agent_count: ${{ steps.select.outputs.count }}
+      agent_matrix: ${{ steps.matrix.outputs.matrix }}
+      issue_title: ${{ steps.issue.outputs.title }}
+      issue_body: ${{ steps.issue.outputs.body }}
+      context_id: ${{ steps.context.outputs.context_id }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install A2A dependencies
+        run: |
+          pip install -q pyyaml httpx 'a2a-sdk[http-server]>=0.2.0'
+      
+      - name: Validate authentication
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          USE_VERTEX_AI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI || 'false' }}
+        run: |
+          if [[ "$USE_VERTEX_AI" == "true" ]]; then
+            [[ -n "$GOOGLE_API_KEY" ]] || { echo "::error::GOOGLE_API_KEY required for Vertex AI"; exit 1; }
+          else
+            [[ -n "$GEMINI_API_KEY" ]] || { echo "::error::GEMINI_API_KEY required"; exit 1; }
+          fi
+          echo "✅ Authentication validated"
+      
+      - name: Fetch issue details
+        id: issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+        run: |
+          ISSUE_DATA=$(gh issue view "$ISSUE_NUMBER" --json title,body --jq '.')
+          
+          echo "title<<EOF" >> $GITHUB_OUTPUT
+          echo "$ISSUE_DATA" | jq -r '.title' >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$ISSUE_DATA" | jq -r '.body // "No description"' >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Select agents
+        id: select
+        env:
+          AGENT_COUNT: ${{ inputs.agent_count }}
+          MANUAL_AGENTS: ${{ inputs.agents }}
+        run: |
+          if [[ -n "$MANUAL_AGENTS" ]]; then
+            SELECTED_AGENTS="$MANUAL_AGENTS"
+          else
+            # Get diverse agents from different categories
+            AVAILABLE=$(ls .github/agents/*.md 2>/dev/null | xargs -I {} basename {} .md | grep -v -E '^(README|META_|a2a-)' | sort -u)
+            
+            CATEGORIES=(
+              "engineer|build|create|develop"
+              "secure|guard|monitor"
+              "organize|refactor|restructure"
+              "test|assert|verify"
+              "document|clarify|support"
+            )
+            
+            SELECTED=()
+            REMAINING=$AGENT_COUNT
+            
+            for cat in "${CATEGORIES[@]}"; do
+              [[ $REMAINING -le 0 ]] && break
+              AGENT=$(echo "$AVAILABLE" | grep -E "$cat" | shuf -n 1 || true)
+              if [[ -n "$AGENT" ]]; then
+                SELECTED+=("$AGENT")
+                AVAILABLE=$(echo "$AVAILABLE" | grep -v "^$AGENT$")
+                ((REMAINING--))
+              fi
+            done
+            
+            while [[ $REMAINING -gt 0 && -n "$AVAILABLE" ]]; do
+              AGENT=$(echo "$AVAILABLE" | shuf -n 1)
+              [[ -z "$AGENT" ]] && break
+              SELECTED+=("$AGENT")
+              AVAILABLE=$(echo "$AVAILABLE" | grep -v "^$AGENT$")
+              ((REMAINING--))
+            done
+            
+            SELECTED_AGENTS=$(IFS=','; echo "${SELECTED[*]}")
+          fi
+          
+          echo "Selected agents: $SELECTED_AGENTS"
+          echo "agents=$SELECTED_AGENTS" >> $GITHUB_OUTPUT
+          
+          COUNT=$(echo "$SELECTED_AGENTS" | tr ',' '\n' | grep -c . || echo 0)
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+      
+      - name: Create agent matrix for parallel jobs
+        id: matrix
+        env:
+          AGENTS: ${{ steps.select.outputs.agents }}
+        run: |
+          # Convert comma-separated agents to JSON array for matrix strategy
+          MATRIX=$(echo "$AGENTS" | tr ',' '\n' | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "Agent matrix: $MATRIX"
+      
+      - name: Generate A2A context ID
+        id: context
+        env:
+          RUN_ID: ${{ github.run_id }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+        run: |
+          CONTEXT_ID="run-${RUN_ID}-issue-${ISSUE_NUMBER}"
+          echo "context_id=$CONTEXT_ID" >> $GITHUB_OUTPUT
+          echo "Context ID: $CONTEXT_ID"
+      
+      - name: Generate AgentCards
+        env:
+          AGENTS: ${{ steps.select.outputs.agents }}
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          mkdir -p .a2a/agent-cards
+          
+          python << 'PYTHON'
+          import os, sys, json
+          sys.path.insert(0, os.environ.get('PYTHONPATH', '.'))
+          from tools.a2a.agent_card import generate_agent_card
+          
+          agents = [a.strip() for a in os.environ.get('AGENTS', '').split(',') if a.strip()]
+          cards = {}
+          
+          for name in agents:
+              try:
+                  card = generate_agent_card(name)
+                  cards[name] = card.model_dump(exclude_none=True)
+                  with open(f".a2a/agent-cards/{name}.json", 'w') as f:
+                      json.dump(cards[name], f, indent=2)
+                  print(f"✅ @{name}")
+              except Exception as e:
+                  print(f"⚠️ @{name}: {e}")
+          
+          with open('.a2a/agent-cards/registry.json', 'w') as f:
+              json.dump({'agents': cards, 'count': len(cards)}, f, indent=2)
+          PYTHON
+      
+      - name: Upload AgentCards
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: agent-cards
+          path: .a2a/agent-cards/
+          retention-days: 7
+      
+      - name: Post initial notification
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          AGENTS: ${{ steps.select.outputs.agents }}
+          CONTEXT_ID: ${{ steps.context.outputs.context_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          AGENT_LIST=""
+          while IFS= read -r agent; do
+            agent=$(echo "$agent" | xargs)
+            [[ -n "$agent" ]] && AGENT_LIST="${AGENT_LIST}\n- \`@${agent}\` → 🔄 Running in parallel job"
+          done <<< "$(echo "$AGENTS" | tr ',' '\n')"
+          
+          cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
+          ## 🚀 A2A Parallel Agent Orchestration Starting
+          
+          **Protocol**: [A2A v0.3.0](https://a2a-protocol.org/latest/specification/)
+          **contextId**: \`$CONTEXT_ID\`
+          
+          ### 🔀 Parallel Agent Execution
+          
+          Each agent runs as an **independent job** with its own bounded AI API call:
+          $(echo -e "$AGENT_LIST")
+          
+          ### 📊 Architecture
+          
+          \`\`\`
+          setup ─┬─► [agent-job: agent-1] ─┬─► aggregate ─► implement
+                 ├─► [agent-job: agent-2] ─┤
+                 └─► [agent-job: agent-3] ─┘
+          \`\`\`
+          
+          [View Parallel Jobs]($RUN_URL)
+          EOF
+
+  # ==========================================================================
+  # JOB 2: AGENT ANALYSIS (PARALLEL MATRIX)
+  # ==========================================================================
+  # Each agent runs in its own job with a dedicated Gemini API call.
+  # This properly models the A2A protocol where each agent is a bounded context.
+  # ==========================================================================
+  agent:
+    needs: setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        agent: ${{ fromJson(needs.setup.outputs.agent_matrix) }}
+      fail-fast: false  # Let all agents complete even if one fails
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: 'A2A Task: @${{ matrix.agent }} Analysis'
+        id: analysis
+        uses: 'google-github-actions/run-gemini-cli@v0'
+        env:
+          AGENT_NAME: ${{ matrix.agent }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          ISSUE_TITLE: ${{ needs.setup.outputs.issue_title }}
+          ISSUE_BODY: ${{ needs.setup.outputs.issue_body }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          ADDITIONAL_CONTEXT: |
+            # A2A Agent Task: @${{ matrix.agent }}
+            
+            You are the agent "@${{ matrix.agent }}" analyzing issue #${{ inputs.issue_number }}.
+            
+            ## Your AgentCard
+            Read your specialization from: .github/agents/${{ matrix.agent }}.md
+            
+            ## Your Task
+            1. Read your agent definition to understand your skills and perspective
+            2. Analyze issue #${{ inputs.issue_number }} from YOUR specialized perspective
+            3. Provide specific, actionable recommendations
+            
+            ## Response Format (A2A Artifact)
+            Structure your response as:
+            
+            ### 🤖 Agent: @${{ matrix.agent }}
+            
+            #### 📋 Analysis
+            [Your detailed analysis from your specialized perspective]
+            
+            #### ✅ Recommendations
+            - [Specific recommendation 1 with file paths if applicable]
+            - [Specific recommendation 2]
+            
+            #### 📁 Files to Modify
+            - `path/to/file1`: [what to change]
+            - `path/to/file2`: [what to change]
+            
+            Focus on YOUR area of expertise. Other agents are analyzing from other perspectives.
+            
+            A2A contextId: ${{ needs.setup.outputs.context_id }}
+        with:
+          gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
+          google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
+          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+          gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
+          gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
+          gemini_debug: '${{ vars.DEBUG || false }}'
+          upload_artifacts: 'true'
+          workflow_name: 'a2a-agent-${{ matrix.agent }}'
+          settings: |-
+            {
+              "model": { "maxSessionTurns": 15 },
+              "mcpServers": {
+                "github": {
+                  "command": "docker",
+                  "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server:v0.18.0"],
+                  "includeTools": ["get_issue", "get_file_contents", "add_issue_comment"],
+                  "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" }
+                }
+              }
+            }
+          prompt: '/gemini-invoke'
+      
+      - name: Package agent artifact
+        id: artifact
+        env:
+          AGENT_NAME: ${{ matrix.agent }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          mkdir -p .a2a/artifacts
+          
+          # Read Gemini output from artifacts directory
+          ANALYSIS=""
+          if [[ -f "gemini-artifacts/stdout.log" ]]; then
+            ANALYSIS=$(cat gemini-artifacts/stdout.log)
+          elif [[ -f "gemini-artifacts/response.md" ]]; then
+            ANALYSIS=$(cat gemini-artifacts/response.md)
+          fi
+          
+          # Create A2A artifact JSON
+          TASK_ID="task-${RUN_ID}-${AGENT_NAME}"
+          
+          cat > .a2a/artifacts/${AGENT_NAME}-analysis.json << ARTIFACT_EOF
+          {
+            "a2a_version": "0.3.0",
+            "artifact_type": "agent_analysis",
+            "task_id": "${TASK_ID}",
+            "context_id": "${CONTEXT_ID}",
+            "agent_name": "${AGENT_NAME}",
+            "status": "completed",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "content": {
+              "analysis": $(echo "$ANALYSIS" | jq -R -s .)
+            }
+          }
+          ARTIFACT_EOF
+          
+          echo "task_id=$TASK_ID" >> $GITHUB_OUTPUT
+          echo "✅ Artifact created for @${AGENT_NAME}"
+      
+      - name: Upload agent artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: agent-analysis-${{ matrix.agent }}
+          path: .a2a/artifacts/${{ matrix.agent }}-analysis.json
+          retention-days: 7
+
+  # ==========================================================================
+  # JOB 3: AGGREGATE
+  # ==========================================================================
+  # Downloads all agent artifacts and aggregates them into a single context
+  # for the implementation step. This is the A2A "collect artifacts" phase.
+  # ==========================================================================
+  aggregate:
+    needs: [setup, agent]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      aggregated_artifact: ${{ steps.aggregate.outputs.artifact_path }}
+      reference_task_ids: ${{ steps.aggregate.outputs.reference_task_ids }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download all agent artifacts
+        uses: actions/download-artifact@v4.1.8
+        with:
+          pattern: agent-analysis-*
+          path: .a2a/agent-artifacts/
+          merge-multiple: false
+      
+      - name: List downloaded artifacts
+        run: |
+          echo "📦 Downloaded agent artifacts:"
+          find .a2a/agent-artifacts/ -type f -name "*.json" | while read f; do
+            echo "  - $f"
+          done
+      
+      - name: Aggregate agent analyses
+        id: aggregate
+        env:
+          AGENTS: ${{ needs.setup.outputs.agents }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          mkdir -p .a2a/artifacts
+          
+          TASK_IDS=()
+          COMBINED_ANALYSIS=""
+          
+          # Process each agent's artifact
+          for agent in $(echo "$AGENTS" | tr ',' '\n'); do
+            agent=$(echo "$agent" | xargs)
+            [[ -z "$agent" ]] && continue
+            
+            # Find the agent's artifact
+            ARTIFACT_FILE=$(find .a2a/agent-artifacts/ -name "${agent}-analysis.json" -type f 2>/dev/null | head -1)
+            
+            if [[ -f "$ARTIFACT_FILE" ]]; then
+              TASK_ID=$(jq -r '.task_id' "$ARTIFACT_FILE")
+              ANALYSIS=$(jq -r '.content.analysis' "$ARTIFACT_FILE")
+              
+              TASK_IDS+=("$TASK_ID")
+              COMBINED_ANALYSIS="${COMBINED_ANALYSIS}\n\n---\n\n${ANALYSIS}"
+              
+              echo "✅ Aggregated @${agent} (task: $TASK_ID)"
+            else
+              echo "⚠️ No artifact found for @${agent}"
+            fi
+          done
+          
+          # Create aggregated artifact
+          TASK_IDS_JSON=$(printf '%s\n' "${TASK_IDS[@]}" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          
+          cat > .a2a/artifacts/aggregated-analysis.json << AGG_EOF
+          {
+            "a2a_version": "0.3.0",
+            "artifact_type": "aggregated_analysis",
+            "context_id": "${CONTEXT_ID}",
+            "reference_task_ids": ${TASK_IDS_JSON},
+            "agent_count": $(echo "$AGENTS" | tr ',' '\n' | grep -c . || echo 0),
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "content": {
+              "combined_analysis": $(echo -e "$COMBINED_ANALYSIS" | jq -R -s .)
+            }
+          }
+          AGG_EOF
+          
+          echo "artifact_path=.a2a/artifacts/aggregated-analysis.json" >> $GITHUB_OUTPUT
+          echo "reference_task_ids=$TASK_IDS_JSON" >> $GITHUB_OUTPUT
+          echo "✅ Aggregated ${#TASK_IDS[@]} agent analyses"
+      
+      - name: Upload aggregated artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: aggregated-analysis
+          path: .a2a/artifacts/aggregated-analysis.json
+          retention-days: 7
+      
+      - name: Post aggregation notification
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          AGENTS: ${{ needs.setup.outputs.agents }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          REFERENCE_TASK_IDS: ${{ steps.aggregate.outputs.reference_task_ids }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          AGENT_STATUS=""
+          while IFS= read -r agent; do
+            agent=$(echo "$agent" | xargs)
+            [[ -n "$agent" ]] && AGENT_STATUS="${AGENT_STATUS}\n| \`@${agent}\` | ✅ completed |"
+          done <<< "$(echo "$AGENTS" | tr ',' '\n')"
+          
+          cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
+          ## 🎯 A2A Parallel Analysis Complete
+          
+          All agent jobs have completed. Artifacts aggregated per [§4.1.9](https://a2a-protocol.org/latest/specification/#419-artifact).
+          
+          ### 📋 A2A Task Linking (Life of a Task)
+          
+          | Property | Value |
+          |----------|-------|
+          | \`contextId\` | \`$CONTEXT_ID\` |
+          | \`referenceTaskIds\` | $REFERENCE_TASK_IDS |
+          
+          ### 🤖 Agent Status
+          
+          | Agent | Status |
+          |-------|--------|$(echo -e "$AGENT_STATUS")
+          
+          ---
+          
+          🚀 **Next**: Implementation task starting (with references to analysis task IDs)...
+          
+          [View Jobs]($RUN_URL)
+          EOF
+
+  # ==========================================================================
+  # JOB 4: IMPLEMENT
+  # ==========================================================================
+  # Uses the aggregated analysis to implement the changes and create a PR.
+  # Per A2A "Life of a Task": This task references all previous analysis tasks.
+  # ==========================================================================
+  implement:
+    needs: [setup, aggregate]
+    if: inputs.auto_execute == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download aggregated analysis
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: aggregated-analysis
+          path: .a2a/artifacts/
+      
+      - name: Prepare implementation context
+        id: context
+        env:
+          AGENTS: ${{ needs.setup.outputs.agents }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          REFERENCE_TASK_IDS: ${{ needs.aggregate.outputs.reference_task_ids }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+        run: |
+          mkdir -p .a2a/context
+          
+          # Read the aggregated analysis
+          ANALYSIS=$(jq -r '.content.combined_analysis' .a2a/artifacts/aggregated-analysis.json)
+          
+          cat > .a2a/context/implementation.md << CONTEXT_EOF
+          # A2A Implementation Task
+          
+          ## Task Linking (per "Life of a Task")
+          
+          - **contextId**: ${CONTEXT_ID}
+          - **referenceTaskIds**: ${REFERENCE_TASK_IDS}
+          - **Issue**: #${ISSUE_NUMBER}
+          
+          ## Agent Analysis (from parallel jobs)
+          
+          The following agents analyzed this issue in parallel:
+          $(echo "$AGENTS" | tr ',' '\n' | while read agent; do echo "- @$agent"; done)
+          
+          ---
+          
+          ## Combined Analysis Artifacts
+          
+          ${ANALYSIS}
+          
+          ---
+          
+          ## Implementation Instructions
+          
+          Based on the above agent analyses, implement the recommended changes.
+          Use "Fixes #${ISSUE_NUMBER}" in the PR body.
+          CONTEXT_EOF
+          
+          echo "context_file=.a2a/context/implementation.md" >> $GITHUB_OUTPUT
+          echo "✅ Implementation context prepared"
+      
+      - name: 'A2A: Implement changes'
+        id: implement
+        uses: 'google-github-actions/run-gemini-cli@v0'
+        env:
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          ISSUE_TITLE: ${{ needs.setup.outputs.issue_title }}
+          ISSUE_BODY: ${{ needs.setup.outputs.issue_body }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          REFERENCE_TASK_IDS: ${{ needs.aggregate.outputs.reference_task_ids }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          TRIGGERING_ACTOR: ${{ github.triggering_actor }}
+          BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
+          ADDITIONAL_CONTEXT: |
+            # A2A Implementation Task
+            
+            CRITICAL: First read the implementation context file that contains the aggregated
+            multi-agent analysis: .a2a/context/implementation.md
+            
+            This implementation references previous analysis tasks:
+            - contextId: ${{ needs.setup.outputs.context_id }}
+            - referenceTaskIds: ${{ needs.aggregate.outputs.reference_task_ids }}
+            
+            After reading the context file:
+            1. Create branch: a2a/fix-issue-${{ inputs.issue_number }}
+            2. Implement the recommended changes
+            3. Create a PR with "Fixes #${{ inputs.issue_number }}" in the body
+        with:
+          gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
+          google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
+          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+          gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
+          gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
+          gemini_debug: '${{ vars.DEBUG || false }}'
+          upload_artifacts: 'true'
+          workflow_name: 'a2a-implement'
+          settings: |-
+            {
+              "model": { "maxSessionTurns": 50 },
+              "mcpServers": {
+                "github": {
+                  "command": "docker",
+                  "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server:v0.18.0"],
+                  "includeTools": [
+                    "add_issue_comment", "get_issue", "get_issue_comments",
+                    "create_pull_request", "create_branch", "create_or_update_file",
+                    "get_file_contents", "push_files", "search_code", "update_issue"
+                  ],
+                  "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" }
+                }
+              },
+              "tools": {
+                "core": ["run_shell_command(cat)", "run_shell_command(git)", "run_shell_command(gh)"]
+              }
+            }
+          prompt: '/gemini-issue-fixer'
+      
+      - name: Verify PR creation
+        id: verify
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
+        run: |
+          for attempt in 1 2 3; do
+            PR_JSON=$(gh pr list --head "$BRANCH_NAME" --state open --json number,url,title --jq '.[0]' 2>/dev/null || echo "")
+            
+            if [[ -n "$PR_JSON" && "$PR_JSON" != "null" ]]; then
+              PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number')
+              PR_URL=$(echo "$PR_JSON" | jq -r '.url')
+              echo "✅ Found PR #$PR_NUMBER"
+              echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+              echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+              echo "pr_found=true" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            
+            [[ $attempt -lt 3 ]] && sleep $((2 ** attempt))
+          done
+          
+          echo "pr_found=false" >> $GITHUB_OUTPUT
+      
+      - name: Post completion notification
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          AGENTS: ${{ needs.setup.outputs.agents }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          REFERENCE_TASK_IDS: ${{ needs.aggregate.outputs.reference_task_ids }}
+          PR_FOUND: ${{ steps.verify.outputs.pr_found }}
+          PR_NUMBER: ${{ steps.verify.outputs.pr_number }}
+          PR_URL: ${{ steps.verify.outputs.pr_url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [[ "$PR_FOUND" == "true" ]]; then
+            STATUS="✅ **completed** - PR #${PR_NUMBER} created"
+            PR_LINK="**Pull Request**: [#${PR_NUMBER}](${PR_URL})"
+          else
+            STATUS="⚠️ **partial** - Implementation complete, PR may need manual creation"
+            PR_LINK=""
+          fi
+          
+          cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
+          ## ✅ A2A Parallel Orchestration Complete
+          
+          ### 📋 A2A Protocol Summary
+          
+          | Property | Value |
+          |----------|-------|
+          | \`contextId\` | \`$CONTEXT_ID\` |
+          | \`referenceTaskIds\` | $REFERENCE_TASK_IDS |
+          | **Status** | $STATUS |
+          
+          ${PR_LINK}
+          
+          ### 📊 Architecture Used
+          
+          \`\`\`
+          setup ─┬─► [agent: analysis] ─┬─► aggregate ─► implement ─► PR
+                 ├─► [agent: analysis] ─┤
+                 └─► [agent: analysis] ─┘
+                      (parallel jobs)
+          \`\`\`
+          
+          Each agent ran as an **independent job** with its own bounded AI API call,
+          properly modeling the A2A protocol where each agent is a separate Task.
+          
+          [View All Jobs]($RUN_URL)
+          EOF
