@@ -8,7 +8,7 @@ This directory contains all documentation related to the Agent2Agent (A2A) Proto
 
 ### Quick Start
 - **[A2A_INTEGRATION_README.md](./A2A_INTEGRATION_README.md)** - Quick start guide, examples, and basic usage
-- **[A2A_DEMO_APPROVAL_WORKFLOW.md](./A2A_DEMO_APPROVAL_WORKFLOW.md)** - 🆕 **A2A Demo with /approve workflow for automatic implementation**
+- **[A2A_DEMO_APPROVAL_WORKFLOW.md](./A2A_DEMO_APPROVAL_WORKFLOW.md)** - 🆕 **Fully autonomous A2A pipeline - auto-implements and creates PR**
 - **[A2A_GEMINI_IMPLEMENTATION.md](./A2A_GEMINI_IMPLEMENTATION.md)** - 🚀 **NEW: Gemini AI implementation design for A2A orchestration**
 - **[A2A_CROSS_PLATFORM_ORCHESTRATION.md](./A2A_CROSS_PLATFORM_ORCHESTRATION.md)** - 🌐 **NEW: Cross-platform Gemini ↔ Copilot orchestration**
 - **[A2A_COPILOT_SESSIONS_EXPLAINED.md](./A2A_COPILOT_SESSIONS_EXPLAINED.md)** - 📘 **How Copilot sessions interact with A2A framework**
@@ -71,8 +71,7 @@ Chained/
 │   └── utils.py                        # Utilities
 ├── .github/workflows/
 │   ├── a2a-agent-worker.yml            # Tier 2 worker
-│   ├── a2a-demo.yml                    # A2A multi-agent demo (analysis)
-│   ├── a2a-execute.yml                 # A2A plan execution (after /approve)
+│   ├── a2a-demo.yml                    # Fully autonomous A2A pipeline (analysis + implementation + PR)
 │   ├── a2a-local-orchestration.yml     # Tier 1 example
 │   ├── a2a-test-quick-validation.yml   # Quick tests
 │   ├── a2a-test-tier1-integration.yml  # Tier 1 tests

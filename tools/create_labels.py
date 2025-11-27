@@ -35,8 +35,8 @@ SYSTEM_LABELS: List[Tuple[str, str, str]] = [
     # A2A (Agent-to-Agent) labels
     ("a2a-task", "6366F1", "A2A multi-agent task"),
     ("a2a-subtask", "818CF8", "A2A sub-task from decomposition"),
-    ("a2a-plan-pending", "FBCA04", "Waiting for /approve to implement"),
-    ("a2a-plan-implemented", "0E8A16", "A2A plan has been implemented"),
+    ("a2a-in-progress", "FBCA04", "A2A autonomous pipeline in progress"),
+    ("a2a-completed", "0E8A16", "A2A pipeline completed - PR created"),
     
     # World model labels
     ("world-model", "5319E7", "World model updates"),
