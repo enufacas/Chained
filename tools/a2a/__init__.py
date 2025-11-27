@@ -65,15 +65,8 @@ Usage:
 
 __version__ = "0.5.0"
 
+# Core imports that don't require uvicorn
 from .agent_card import generate_agent_card, parse_agent_definition, generate_all_agent_cards
-from .agent_executor import ChainedAgentExecutor
-from .gemini_executor import GeminiAgent, GeminiAgentExecutor, create_gemini_agent_server
-from .agent_server import create_agent_server, run_agent_server
-from .client import ChainedA2AClient, discover_agents_by_skill, send_to_agent
-from .discovery import get_discovery_service, DiscoveryService, AgentRegistry
-from .github_transport import GitHubA2ATransport, send_task_via_github, wait_for_task_completion
-from .github_branch_transport import GitHubBranchTransport, send_task_via_branch, wait_for_task_completion_branch
-from .mcp_transport import MCPTransport, MCPTransportTask
 from .task import (
     Task,
     TaskState,
@@ -86,6 +79,55 @@ from .task import (
     aggregate_artifacts,
 )
 from .utils import get_agent_port, get_discovery_url, check_port_available, get_available_port
+
+
+# Lazy imports for modules with optional dependencies.
+# - agent_server, agent_executor: require uvicorn (via a2a-sdk[http-server])
+# - gemini_executor: requires a2a-sdk server components
+# - client, discovery: require httpx
+# - github_transport, github_branch_transport, mcp_transport: require httpx
+# This allows `from tools.a2a import generate_agent_card` to work without these dependencies.
+
+# Mapping of lazy-loaded names to (module, attribute) pairs
+_LAZY_IMPORTS = {
+    # Execution - requires uvicorn via a2a-sdk
+    "ChainedAgentExecutor": (".agent_executor", "ChainedAgentExecutor"),
+    "GeminiAgent": (".gemini_executor", "GeminiAgent"),
+    "GeminiAgentExecutor": (".gemini_executor", "GeminiAgentExecutor"),
+    "create_gemini_agent_server": (".gemini_executor", "create_gemini_agent_server"),
+    # Server - requires uvicorn
+    "create_agent_server": (".agent_server", "create_agent_server"),
+    "run_agent_server": (".agent_server", "run_agent_server"),
+    # Client - requires httpx
+    "ChainedA2AClient": (".client", "ChainedA2AClient"),
+    "discover_agents_by_skill": (".client", "discover_agents_by_skill"),
+    "send_to_agent": (".client", "send_to_agent"),
+    # Discovery - requires httpx
+    "get_discovery_service": (".discovery", "get_discovery_service"),
+    "DiscoveryService": (".discovery", "DiscoveryService"),
+    "AgentRegistry": (".discovery", "AgentRegistry"),
+    # GitHub transport - requires httpx
+    "GitHubA2ATransport": (".github_transport", "GitHubA2ATransport"),
+    "send_task_via_github": (".github_transport", "send_task_via_github"),
+    "wait_for_task_completion": (".github_transport", "wait_for_task_completion"),
+    # GitHub branch transport - requires httpx
+    "GitHubBranchTransport": (".github_branch_transport", "GitHubBranchTransport"),
+    "send_task_via_branch": (".github_branch_transport", "send_task_via_branch"),
+    "wait_for_task_completion_branch": (".github_branch_transport", "wait_for_task_completion_branch"),
+    # MCP transport - requires httpx
+    "MCPTransport": (".mcp_transport", "MCPTransport"),
+    "MCPTransportTask": (".mcp_transport", "MCPTransportTask"),
+}
+
+
+def __getattr__(name: str):
+    """Lazy-load modules with optional dependencies."""
+    if name in _LAZY_IMPORTS:
+        module_path, attr_name = _LAZY_IMPORTS[name]
+        import importlib
+        module = importlib.import_module(module_path, __name__)
+        return getattr(module, attr_name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     # Agent cards (§4.4.1)
