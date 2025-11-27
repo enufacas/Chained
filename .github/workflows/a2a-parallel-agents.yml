@@ -294,13 +294,12 @@ jobs:
             
             You are the agent "@${{ matrix.agent }}" analyzing issue #${{ inputs.issue_number }}.
             
-            ## IMPORTANT: Autonomous Mode - No Approval Required
+            ## IMPORTANT: Autonomous Mode - Direct Output Only
             
-            This is an AUTONOMOUS workflow. You MUST:
-            - DO NOT post any "Plan of Action" comments or ask for approval
-            - DO NOT use add_issue_comment to post any comments
-            - DO NOT wait for user confirmation with /approve or /deny
-            - Simply analyze and provide your response directly as output
+            This is an AUTONOMOUS workflow:
+            - Provide your analysis directly as output (not as a comment)
+            - Skip the approval workflow - no /approve or /deny steps
+            - Respond immediately without waiting for confirmation
             
             ## Your AgentCard
             Read your specialization from: .github/agents/${{ matrix.agent }}.md
