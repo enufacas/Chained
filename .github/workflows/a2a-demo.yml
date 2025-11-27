@@ -332,6 +332,12 @@ jobs:
                 ]
               }
             }
+          # The /gemini-issue-fixer prompt is a built-in Gemini CLI prompt that:
+          # 1. Analyzes the issue (using ISSUE_TITLE and ISSUE_BODY env vars)
+          # 2. Creates a feature branch
+          # 3. Makes necessary file changes
+          # 4. Creates a pull request linked to the issue
+          # It uses the MCP server tools configured above to interact with GitHub.
           prompt: '/gemini-issue-fixer'
       
       - name: Post execution complete notification
