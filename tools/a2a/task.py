@@ -502,14 +502,22 @@ class TaskStore:
         if not self.storage_path or not self.storage_path.exists():
             return
         
-        with open(self.storage_path) as f:
-            data = json.load(f)
-        
-        self._tasks = {
-            tid: Task.from_dict(t_data)
-            for tid, t_data in data.get("tasks", {}).items()
-        }
-        self._contexts = data.get("contexts", {})
+        try:
+            with open(self.storage_path) as f:
+                data = json.load(f)
+            
+            self._tasks = {
+                tid: Task.from_dict(t_data)
+                for tid, t_data in data.get("tasks", {}).items()
+            }
+            self._contexts = data.get("contexts", {})
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            # Handle corrupted or invalid storage files
+            # Reset to empty state rather than failing
+            import sys
+            print(f"Warning: Failed to load task store from {self.storage_path}: {e}", file=sys.stderr)
+            self._tasks = {}
+            self._contexts = {}
 
 
 def create_analysis_task(
