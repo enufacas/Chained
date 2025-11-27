@@ -66,3 +66,18 @@ variable "monthly_budget" {
   type        = number
   default     = 50  # Conservative default, leaving room for Gemini API
 }
+
+# =============================================================================
+# Identity-Aware Proxy (IAP) Configuration
+# =============================================================================
+# Enable IAP for browser-based authentication to the ADK API Server.
+# Requires:
+# - A custom domain pointed to the load balancer IP
+# - OAuth consent screen configured in GCP Console
+# - OAuth client credentials from GCP Console
+#
+# See: https://cloud.google.com/iap/docs/enabling-cloud-run
+# See: docs/IAP_SETUP_GUIDE.md for detailed setup instructions
+#
+# Variables for IAP are defined in iap.tf to keep them co-located
+# with the IAP resources.

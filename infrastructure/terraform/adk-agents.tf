@@ -479,12 +479,27 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
   ]
 }
 
+# Public access binding - only when IAP is NOT enabled
+# When IAP is enabled, access is controlled via the load balancer and IAP policies
 resource "google_cloud_run_v2_service_iam_member" "adk_api_server_public" {
+  count = var.enable_iap ? 0 : 1
+
   project  = var.project_id
   location = var.region
   name     = google_cloud_run_v2_service.adk_api_server.name
   role     = "roles/run.invoker"
   member   = "allUsers"
+}
+
+# When IAP is enabled, allow the load balancer to invoke Cloud Run
+resource "google_cloud_run_v2_service_iam_member" "adk_api_server_iap" {
+  count = var.enable_iap ? 1 : 0
+
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.adk_api_server.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"  # Load balancer needs to invoke; IAP handles auth at LB level
 }
 
 # =============================================================================
