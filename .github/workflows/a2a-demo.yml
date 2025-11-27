@@ -5,10 +5,11 @@ name: "A2A Demo - Live Multi-Agent Communication"
 # then automatically implements the plan and creates a PR.
 # 
 # FULLY AUTONOMOUS: No human intervention required. The workflow:
-# 1. Analyzes the issue with multiple specialized agents
-# 2. Generates a collaborative plan
-# 3. Automatically implements the changes
-# 4. Opens a PR with the implementation
+# 1. Dynamically selects agents from the registry based on agent_count
+# 2. Analyzes the issue with multiple specialized agents (with visible reasoning)
+# 3. Generates a collaborative plan
+# 4. Automatically implements the changes
+# 5. Opens a PR with the implementation
 #
 # Uses the same google-github-actions/run-gemini-cli action as other Gemini
 # workflows (gemini-invoke.yml, gemini-fix.yml, etc.) to ensure proper
@@ -21,13 +22,23 @@ on:
         description: 'Issue number to use as the basis for A2A demo'
         required: true
         type: number
-      agents:
-        description: 'Comma-separated agents to involve in demo'
+      agent_count:
+        description: 'Number of agents to involve in the A2A process (auto-selected from registry)'
         required: false
-        default: 'engineer-master,secure-specialist,organize-guru'
+        default: 3
+        type: number
+      agents:
+        description: 'Optional: Specific agents (comma-separated). If empty, agents are auto-selected.'
+        required: false
+        default: ''
         type: string
       auto_execute:
         description: 'Automatically implement and create PR (no human approval needed)'
+        required: false
+        default: true
+        type: boolean
+      show_reasoning:
+        description: 'Show Gemini reasoning in output (enables debug mode)'
         required: false
         default: true
         type: boolean
@@ -88,36 +99,138 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
           
           echo "Issue loaded: $ISSUE_TITLE"
+
+      - name: Select agents for A2A process
+        id: agents
+        env:
+          AGENT_COUNT: ${{ inputs.agent_count }}
+          MANUAL_AGENTS: ${{ inputs.agents }}
+        run: |
+          echo "🤖 Selecting agents for A2A process..."
+          
+          # If manual agents specified, use those
+          if [[ -n "$MANUAL_AGENTS" && "$MANUAL_AGENTS" != "" ]]; then
+            echo "Using manually specified agents: $MANUAL_AGENTS"
+            SELECTED_AGENTS="$MANUAL_AGENTS"
+          else
+            echo "Auto-selecting $AGENT_COUNT agents from registry..."
+            
+            # Get list of all agent specializations from .github/agents/*.md files
+            # Exclude README, templates, and meta files
+            AVAILABLE_AGENTS=$(ls .github/agents/*.md 2>/dev/null | \
+              xargs -I {} basename {} .md | \
+              grep -v -E '^(README|META_|a2a-coordinator)' | \
+              sort -u)
+            
+            # Count available agents
+            TOTAL_AGENTS=$(echo "$AVAILABLE_AGENTS" | wc -l)
+            echo "Found $TOTAL_AGENTS available agents"
+            
+            # Ensure we don't request more agents than available
+            if [[ $AGENT_COUNT -gt $TOTAL_AGENTS ]]; then
+              echo "Requested $AGENT_COUNT agents but only $TOTAL_AGENTS available. Using all."
+              AGENT_COUNT=$TOTAL_AGENTS
+            fi
+            
+            # Randomly select agents for diverse perspectives
+            # Prioritize agents from different specialization categories
+            CATEGORIES=(
+              "engineer|build|create|develop|construct"  # Engineering
+              "secure|guard|monitor|validate"            # Security
+              "organize|refactor|restructure|simplify"   # Code Organization
+              "test|assert|prove|verify|validate"        # Testing
+              "document|clarify|communicate|support"     # Documentation
+              "optimize|accelerate|enhance|improve"      # Performance
+              "pioneer|innovate|breakthrough"            # Innovation
+              "integrate|connect|bridge"                 # Integration
+            )
+            
+            SELECTED=()
+            REMAINING_COUNT=$AGENT_COUNT
+            
+            # Try to get one agent from each category first (for diversity)
+            for category in "${CATEGORIES[@]}"; do
+              if [[ $REMAINING_COUNT -le 0 ]]; then
+                break
+              fi
+              CATEGORY_AGENT=$(echo "$AVAILABLE_AGENTS" | grep -E "$category" | shuf -n 1 || true)
+              if [[ -n "$CATEGORY_AGENT" ]]; then
+                SELECTED+=("$CATEGORY_AGENT")
+                AVAILABLE_AGENTS=$(echo "$AVAILABLE_AGENTS" | grep -v "^$CATEGORY_AGENT$")
+                ((REMAINING_COUNT--))
+              fi
+            done
+            
+            # Fill remaining slots with random agents
+            while [[ $REMAINING_COUNT -gt 0 && -n "$AVAILABLE_AGENTS" ]]; do
+              RANDOM_AGENT=$(echo "$AVAILABLE_AGENTS" | shuf -n 1)
+              if [[ -n "$RANDOM_AGENT" ]]; then
+                SELECTED+=("$RANDOM_AGENT")
+                AVAILABLE_AGENTS=$(echo "$AVAILABLE_AGENTS" | grep -v "^$RANDOM_AGENT$")
+                ((REMAINING_COUNT--))
+              else
+                break
+              fi
+            done
+            
+            # Join with commas
+            SELECTED_AGENTS=$(IFS=','; echo "${SELECTED[*]}")
+          fi
+          
+          echo "Selected agents: $SELECTED_AGENTS"
+          echo "agents=$SELECTED_AGENTS" >> $GITHUB_OUTPUT
+          
+          # Also output count for summary
+          ACTUAL_COUNT=$(echo "$SELECTED_AGENTS" | tr ',' '\n' | wc -l)
+          echo "count=$ACTUAL_COUNT" >> $GITHUB_OUTPUT
       
       - name: Post demo start notification
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
-          AGENTS: ${{ inputs.agents }}
+          AGENTS: ${{ steps.agents.outputs.agents }}
+          AGENT_COUNT: ${{ steps.agents.outputs.count }}
+          SHOW_REASONING: ${{ inputs.show_reasoning }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
-          ## A2A Demo Starting - LIVE
+          ## 🚀 A2A Demo Starting - LIVE
           
-          Multi-Agent Communication Demo using Real Gemini AI
+          **Multi-Agent Communication Demo** using Real Gemini AI
           
-          I'm demonstrating A2A (Agent-to-Agent) protocol by coordinating multiple agents to analyze this issue. Each agent uses Gemini AI (via the official Gemini CLI) to process the task from their specialized perspective.
+          I'm demonstrating A2A (Agent-to-Agent) protocol by coordinating **$AGENT_COUNT agents** to analyze this issue. Each agent uses Gemini AI to process the task from their specialized perspective.
           
-          Configuration:
-          - Mode: LIVE (Real Gemini API calls via run-gemini-cli action)
-          - Agents: $(echo $AGENTS | tr ',' ', ')
-          - Workflow: [View Logs]($RUN_URL)
+          ### 🤖 Selected Agents
           
-          What's happening:
-          1. Each agent analyzes the issue using Gemini CLI
-          2. Agents provide specialized recommendations
-          3. Results are aggregated and summarized
+          $(echo $AGENTS | tr ',' '\n' | while read agent; do
+            agent=\$(echo "\$agent" | xargs)
+            echo "- **@\$agent**"
+          done)
           
-          Please wait while agents collaborate...
+          ### ⚙️ Configuration
+          
+          | Setting | Value |
+          |---------|-------|
+          | Mode | LIVE (Real Gemini API) |
+          | Agent Count | $AGENT_COUNT (auto-selected) |
+          | Show Reasoning | $SHOW_REASONING |
+          | Auto-Execute | ${{ inputs.auto_execute }} |
+          
+          ### 📋 Pipeline Steps
+          
+          1. ⏳ Multi-agent analysis (each agent provides perspective)
+          2. ⏳ Aggregate recommendations
+          3. ⏳ Auto-implement changes
+          4. ⏳ Create PR
+          
+          [View Live Logs]($RUN_URL)
+          
+          *Please wait while agents collaborate...*
           EOF
 
       # Run Gemini CLI for agent analysis using the same action as other workflows
       # Using /gemini-invoke prompt which is the general-purpose assistant
+      # Debug mode enabled when show_reasoning is true to make Gemini's thinking visible
       - name: 'Multi-Agent Analysis via Gemini CLI'
         id: analysis
         uses: 'google-github-actions/run-gemini-cli@v0'
@@ -125,19 +238,25 @@ jobs:
           TITLE: ${{ steps.issue.outputs.title }}
           DESCRIPTION: ${{ steps.issue.outputs.body }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
-          AGENTS: ${{ inputs.agents }}
+          AGENTS: ${{ steps.agents.outputs.agents }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
-          # Additional context for the agent personas
+          # Additional context for the agent personas with explicit reasoning request
           ADDITIONAL_CONTEXT: |
-            This is an A2A (Agent-to-Agent) demonstration. Please analyze issue #${{ inputs.issue_number }} from the perspective of these specialized agents: ${{ inputs.agents }}.
+            This is an A2A (Agent-to-Agent) demonstration. Please analyze issue #${{ inputs.issue_number }} from the perspective of these specialized agents: ${{ steps.agents.outputs.agents }}.
+            
+            IMPORTANT: Show your reasoning process step by step. Think out loud as you analyze.
             
             For each agent:
-            1. Identify their specialization from .github/agents/{agent-name}.md
-            2. Provide analysis from that agent's perspective
-            3. Give specific, actionable recommendations
+            1. First, read their specialization from .github/agents/{agent-name}.md
+            2. REASONING: Explain what aspects of the issue this agent would focus on and why
+            3. ANALYSIS: Provide the agent's detailed analysis from their perspective
+            4. RECOMMENDATIONS: Give specific, actionable recommendations
             
-            Format your response with a section for each agent, including their analysis and recommendations.
+            Format your response with clear sections for each agent, showing:
+            - 🤔 **Reasoning**: Why this agent's perspective matters for this issue
+            - 📋 **Analysis**: The agent's detailed findings
+            - ✅ **Recommendations**: Specific actions to take
         with:
           # Use same auth pattern as gemini-invoke.yml, gemini-fix.yml, etc.
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
@@ -145,8 +264,9 @@ jobs:
           use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
           gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
-          gemini_debug: '${{ fromJSON(vars.DEBUG || vars.ACTIONS_STEP_DEBUG || false) }}'
-          upload_artifacts: '${{ vars.UPLOAD_ARTIFACTS || false }}'
+          # Enable debug mode when show_reasoning is true to capture Gemini's thinking
+          gemini_debug: '${{ inputs.show_reasoning || fromJSON(vars.DEBUG || vars.ACTIONS_STEP_DEBUG || false) }}'
+          upload_artifacts: '${{ inputs.show_reasoning || vars.UPLOAD_ARTIFACTS || false }}'
           workflow_name: 'a2a-demo'
           settings: |-
             {
@@ -188,7 +308,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
-          AGENTS: ${{ inputs.agents }}
+          AGENTS: ${{ steps.agents.outputs.agents }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           AUTO_EXECUTE: ${{ inputs.auto_execute }}
         run: |
@@ -240,7 +360,7 @@ jobs:
           TITLE: ${{ steps.issue.outputs.title }}
           DESCRIPTION: ${{ steps.issue.outputs.body }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
-          AGENTS: ${{ inputs.agents }}
+          AGENTS: ${{ steps.agents.outputs.agents }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           ISSUE_TITLE: ${{ steps.issue.outputs.title }}
@@ -252,7 +372,7 @@ jobs:
             This is an A2A (Agent-to-Agent) autonomous implementation.
             
             The following specialized agents have analyzed issue #${{ inputs.issue_number }}:
-            ${{ inputs.agents }}
+            ${{ steps.agents.outputs.agents }}
             
             Each agent provided recommendations from their perspective:
             - engineer-master: Rigorous engineering and reliability focus
@@ -402,7 +522,7 @@ jobs:
         env:
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           ISSUE_TITLE: ${{ steps.issue.outputs.title }}
-          AGENTS: ${{ inputs.agents }}
+          AGENTS: ${{ steps.agents.outputs.agents }}
           AUTO_EXECUTE: ${{ inputs.auto_execute }}
         run: |
           echo "## A2A Demo Summary" >> $GITHUB_STEP_SUMMARY
