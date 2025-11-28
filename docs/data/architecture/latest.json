@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-28T01:58:55.377653",
-  "commit": "9c9ffa854c02cf9e27152f4d6612550cf8052c2e",
+  "timestamp": "2025-11-28T12:53:54.297824",
+  "commit": "363f403a8efec9891bc2f78ee50c6149779bba6c",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 403,
-        "line_count": 161612,
+        "file_count": 408,
+        "line_count": 163030,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 926,
-        "line_count": 270291,
+        "file_count": 927,
+        "line_count": 267102,
         "files": [
           ".nojekyll",
           "A2A_BRANCH_BASED_COORDINATION.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 109,
-        "line_count": 4713248,
+        "file_count": 111,
+        "line_count": 4714298,
         "files": [
           "2025-11-14-04-00-27.json",
           "2025-11-14-04-00-36.json",
@@ -139,6 +139,7 @@
           "2025-11-26-12-28-20.json",
           "2025-11-26-18-17-26.json",
           "2025-11-27-01-00-58.json",
+          "2025-11-28-01-00-08.json",
           "README.md",
           "README.md",
           "actions-patterns.json",
@@ -177,13 +178,12 @@
           "diversity-false-positive-investigation.md",
           "diversity-suggestions.md",
           "diversity-trends.json",
-          "evolution.json",
-          "hypothesis_results.json"
+          "evolution.json"
         ]
       },
       "learnings": {
-        "file_count": 377,
-        "line_count": 228786,
+        "file_count": 381,
+        "line_count": 229769,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -239,8 +239,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 1815,
-    "total_lines": 5373937
+    "total_files": 1827,
+    "total_lines": 5374199
   },
   "dependencies": {
     "internal_imports": {
@@ -280,6 +280,7 @@
       "pr-content-analyzer.py": [],
       "dynamic-agent-spawner.py": [],
       "meta_learning_scheduler.py": [],
+      "workflow_anomaly_detector.py": [],
       "subagent_performance_learner.py": [],
       "autonomous-code-reviewer.py": [],
       "registry_manager.py": [],
@@ -439,22 +440,22 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 112,
-      "sys": 148,
-      "json": 168,
+      "os": 113,
+      "sys": 149,
+      "json": 169,
       "re": 74,
       "ast": 18,
-      "datetime": 132,
-      "pathlib": 157,
-      "typing": 143,
+      "datetime": 133,
+      "pathlib": 158,
+      "typing": 144,
       "collections": 75,
       "functools": 9,
-      "argparse": 130,
+      "argparse": 131,
       "math": 12,
       "random": 27,
       "time": 31,
-      "statistics": 16,
-      "dataclasses": 79,
+      "statistics": 17,
+      "dataclasses": 80,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
       "workload_subagent_spawner": 2,
@@ -469,7 +470,7 @@
       "importlib": 24,
       "csv": 1,
       "meta_agent_coordinator": 3,
-      "ai_workflow_predictor": 4,
+      "ai_workflow_predictor": 5,
       "tempfile": 6,
       "shutil": 8,
       "workflow_execution_tracker": 2,
@@ -537,17 +538,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1815,
-    "total_lines": 5373937,
+    "total_files": 1827,
+    "total_lines": 5374199,
     "total_dependencies": 2,
     "external_libraries": 82,
-    "coupling_score": 5.628729032984352e-05,
+    "coupling_score": 5.56947925368978e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 228786,
+      "line_count": 229769,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -573,7 +574,7 @@
     },
     "agent_system": {
       "file_count": 2,
-      "line_count": 86480,
+      "line_count": 84942,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json"
@@ -581,7 +582,7 @@
     },
     "analysis_tools": {
       "file_count": 49,
-      "line_count": 4713248,
+      "line_count": 4714298,
       "files": [
         "2025-11-14-04-00-27.json",
         "2025-11-14-04-00-36.json",
@@ -593,6 +594,7 @@
         "2025-11-26-12-28-20.json",
         "2025-11-26-18-17-26.json",
         "2025-11-27-01-00-58.json",
+        "2025-11-28-01-00-08.json",
         "README.md",
         "actions-patterns.json",
         "agent-ecosystem-investigation.md",
@@ -601,13 +603,12 @@
         "archaeology-patterns.json",
         "archaeology.json",
         "archaeology_20251112_014409.json",
-        "archaeology_20251112_015207.json",
-        "archaeology_20251114_040659.json"
+        "archaeology_20251112_015207.json"
       ]
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 270291,
+      "line_count": 267102,
       "files": [
         ".nojekyll",
         "A2A_BRANCH_BASED_COORDINATION.md",
@@ -633,7 +634,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 161612,
+      "line_count": 163030,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
