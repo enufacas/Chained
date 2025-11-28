@@ -1,12 +1,12 @@
 # AI-Powered Workflow Orchestrator - Complete System
 
-**Created by @workflows-tech-lead** 🔧
+**Created by @workflows-tech-lead** 🔧 | **Enhanced by @create-guru** 🏭
 
-A comprehensive AI-powered system for predicting workflow execution times, optimizing scheduling, and continuously learning from actual performance data.
+A comprehensive AI-powered system for predicting workflow execution times, optimizing scheduling, detecting anomalies, and continuously learning from actual performance data.
 
 ## 🎯 System Overview
 
-The AI-Powered Workflow Orchestrator is a complete ecosystem consisting of three main components:
+The AI-Powered Workflow Orchestrator is a complete ecosystem consisting of four main components:
 
 ### 1. AI Workflow Predictor (`ai_workflow_predictor.py`)
 **Machine learning-based prediction engine**
@@ -31,6 +31,14 @@ The AI-Powered Workflow Orchestrator is a complete ecosystem consisting of three
 - Provides per-workflow analysis
 - Exports metrics for visualization
 - Feeds data back to predictor for continuous learning
+
+### 4. Workflow Anomaly Detector (`workflow_anomaly_detector.py`) ⭐ NEW
+**Proactive health monitoring system** - Created by @create-guru
+- Detects unusual execution time patterns (duration anomalies)
+- Monitors failure rate increases
+- Tracks performance degradation trends
+- Calculates comprehensive health scores
+- Provides early warning alerts with severity levels
 
 ## 🏗️ System Architecture
 
@@ -59,28 +67,31 @@ The AI-Powered Workflow Orchestrator is a complete ecosystem consisting of three
 │  - Historical execution analysis                             │
 │  - Pattern recognition                                       │
 │  - Confidence scoring                                        │
-└──────────────────┬──────────────────────────────────────────┘
-                   │
-                   │ predictions
-                   │
-┌──────────────────▼──────────────────────────────────────────┐
-│              Workflow Execution Tracker                      │
-│  - Records actual execution times                            │
-│  - Compares with predictions                                 │
-│  - Calculates accuracy metrics                               │
-│  - Feeds data back to predictor                              │
-└──────────────────────────────────────────────────────────────┘
-                   │
-                   │ feedback loop
-                   │
-                   └────────────┐
-                                │
-                     ┌──────────▼──────────┐
-                     │   Continuous        │
-                     │   Improvement       │
-                     │   - Learning        │
-                     │   - Adaptation      │
-                     └─────────────────────┘
+└──────────────────┬────────────────┬─────────────────────────┘
+                   │                │
+                   │ predictions    │ historical data
+                   │                │
+┌──────────────────▼───────┐   ┌────▼─────────────────────────┐
+│  Workflow Execution      │   │  Workflow Anomaly Detector   │
+│  Tracker                 │   │  (NEW - @create-guru)        │
+│  - Records actual times  │   │  - Duration anomalies        │
+│  - Compares predictions  │   │  - Failure rate monitoring   │
+│  - Accuracy metrics      │   │  - Trend analysis            │
+│  - Feedback to predictor │   │  - Health scoring            │
+└──────────────────────────┘   └──────────────────────────────┘
+                   │                │
+                   │                │ alerts
+                   │ feedback loop  │
+                   │                │
+                   └────────────────┼───────────────┐
+                                    │               │
+                         ┌──────────▼──────────┐    │
+                         │   Continuous        │◄───┘
+                         │   Improvement       │
+                         │   - Learning        │
+                         │   - Adaptation      │
+                         │   - Alerting        │
+                         └─────────────────────┘
 ```
 
 ## 🚀 Getting Started
@@ -257,14 +268,18 @@ tools/
 ├── workflow_execution_tracker.py       # Accuracy tracking
 ├── test_workflow_execution_tracker.py  # Comprehensive tests
 ├── WORKFLOW_EXECUTION_TRACKER_README.md # Tracker documentation
+├── WORKFLOW_ANOMALY_DETECTOR_README.md  # Anomaly detector docs
 └── AI_WORKFLOW_ORCHESTRATOR_README.md   # This file
 
 .github/
 ├── workflows/
-│   └── ai-workflow-orchestrator-demo.yml # Demo workflow
+│   ├── ai-workflow-orchestrator-demo.yml # Demo workflow
+│   └── workflow-execution-tracker.yml    # Auto data collection
 └── workflow-history/
     ├── workflow_predictions.json        # Prediction history
-    └── execution_comparisons.json       # Accuracy data
+    ├── execution_comparisons.json       # Accuracy data
+    ├── executions.json                  # Execution history
+    └── anomaly_alerts.json              # Alert history
 ```
 
 ## 🎯 Key Features
@@ -287,11 +302,19 @@ tools/
 - **Per-workflow analysis** for targeted improvements
 - **Distribution analysis** (excellent/good/fair/poor categories)
 
+### Anomaly Detection ⭐ NEW
+- **Duration anomaly detection** using Z-score analysis
+- **Failure rate monitoring** with baseline comparison
+- **Performance trend analysis** with linear regression
+- **Health scoring system** with multi-dimensional metrics
+- **Alert management** with severity levels (critical/high/medium/low)
+
 ### Continuous Improvement
 - **Feedback loop** from tracker to predictor
 - **Automatic learning** from new execution data
 - **Adaptive predictions** that improve over time
 - **Error analysis** to identify problem areas
+- **Proactive alerting** on unusual patterns
 
 ## 🧪 Testing
 
@@ -300,8 +323,14 @@ tools/
 # Test execution tracker
 python3 tools/test_workflow_execution_tracker.py
 
+# Test anomaly detector
+python3 tools/test_workflow_anomaly_detector.py
+
+# Test AI predictor
+python3 tools/test_ai_workflow_predictor.py
+
 # Output:
-# 8/8 tests passed (100%)
+# Combined: 27/27 tests passed (100%)
 ```
 
 ### Integration Test
@@ -311,6 +340,7 @@ python3 << 'EOF'
 from ai_workflow_predictor import AIWorkflowPredictor
 from integrated_workflow_orchestrator import IntegratedWorkflowOrchestrator
 from workflow_execution_tracker import WorkflowExecutionTracker
+from workflow_anomaly_detector import WorkflowAnomalyDetector
 
 # Simulate data
 predictor = AIWorkflowPredictor()
@@ -411,7 +441,7 @@ print(f"Accuracy: {comparison.prediction_error:.1f}% error")
 2. **Advanced ML Models**: LSTM/GRU for better time-series predictions
 3. **Cost Optimization**: Factor in GitHub Actions billing
 4. **Auto-Scheduling**: Automatically apply recommendations
-5. **Anomaly Detection**: Alert on unusual patterns
+5. ~~**Anomaly Detection**: Alert on unusual patterns~~ ✅ **Implemented by @create-guru**
 6. **Multi-Repository**: Support for organization-wide optimization
 
 ### Research Directions
@@ -426,6 +456,7 @@ print(f"Accuracy: {comparison.prediction_error:.1f}% error")
 - **AI Workflow Predictor**: See docstrings in `ai_workflow_predictor.py`
 - **Integrated Orchestrator**: See docstrings in `integrated_workflow_orchestrator.py`
 - **Execution Tracker**: See `WORKFLOW_EXECUTION_TRACKER_README.md`
+- **Anomaly Detector**: See `WORKFLOW_ANOMALY_DETECTOR_README.md`
 
 ### Demo Workflow
 - **Location**: `.github/workflows/ai-workflow-orchestrator-demo.yml`
