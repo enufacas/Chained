@@ -158,13 +158,12 @@ The following A2A-enabled services are deployed and live on GCP Cloud Run:
 
 | Service | Live URL | Description |
 |---------|----------|-------------|
-| **🖥️ Agent Console GUI** | [chained-adk-api-server-sguacxy5gq-uc.a.run.app](https://chained-adk-api-server-sguacxy5gq-uc.a.run.app) | **Interactive web interface** for chatting with agents |
-| **ADK API Server** | [chained-adk-api-server-sguacxy5gq-uc.a.run.app](https://chained-adk-api-server-sguacxy5gq-uc.a.run.app) | Bridge server for [google/adk-web](https://github.com/google/adk-web) integration |
+| **🖥️ ADK API Server (with Agent Console GUI)** | [chained-adk-api-server-sguacxy5gq-uc.a.run.app](https://chained-adk-api-server-sguacxy5gq-uc.a.run.app) | **Interactive web interface** at root URL (`/`), API endpoints at `/run`, `/list-apps`, etc. |
 | **Academic Research Agent** | [chained-academic-research-sguacxy5gq-uc.a.run.app](https://chained-academic-research-sguacxy5gq-uc.a.run.app) | Discovers and analyzes academic research topics |
 | **Blog Writer Agent** | [chained-blog-writer-sguacxy5gq-uc.a.run.app](https://chained-blog-writer-sguacxy5gq-uc.a.run.app) | Writes engaging blog posts from research data |
 | **Google Trends Agent** | [chained-google-trends-sguacxy5gq-uc.a.run.app](https://chained-google-trends-sguacxy5gq-uc.a.run.app) | Analyzes Google Trends for SEO insights |
 
-> **Note**: The Agent Console GUI is accessible directly at the root URL of the ADK API Server. Cloud Run URLs follow the pattern: `https://{service-name}-{hash}-{region}.a.run.app`.
+> **Note**: The Agent Console GUI is accessible directly at the root URL (`/`) of the ADK API Server. API endpoints are at `/run`, `/run_sse`, `/list-apps`, etc.
 
 Each service exposes:
 - `/health` - Health check endpoint
