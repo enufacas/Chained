@@ -17,7 +17,7 @@
 # - Metrics collected in Cloud Monitoring
 # =============================================================================
 
-name: "ADK A2A Blog Pipeline"
+name: "A2A: ADK Blog Pipeline"
 
 on:
   schedule:

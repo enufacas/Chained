@@ -1,4 +1,4 @@
-name: a2a Local Orchestration Example
+name: "A2A: Local Orchestration Example"
 
 # This workflow demonstrates Tier 1 A2A: multiple agents communicating
 # via HTTP within the same GitHub Actions runner.

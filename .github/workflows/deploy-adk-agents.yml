@@ -15,7 +15,7 @@
 # - google/adk-web: https://github.com/google/adk-web
 # =============================================================================
 
-name: "Deploy ADK Agents"
+name: "Deploy: ADK Agents"
 
 on:
   push:
