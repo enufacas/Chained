@@ -577,6 +577,203 @@ class MetaLearningScheduler:
         }
         
         return report
+    
+    def optimize_all_workflows(self, workflow_names: List[str] = None) -> Dict[str, Any]:
+        """
+        Optimize schedules for multiple workflows at once.
+        
+        This method analyzes all workflows and generates optimized schedules
+        that minimize conflicts and maximize resource utilization.
+        
+        Args:
+            workflow_names: Optional list of workflow names to optimize.
+                          If None, optimizes all known workflows.
+        
+        Returns:
+            Dictionary with optimized schedules and conflict analysis
+        """
+        # Get all unique workflow names from history if not specified
+        if workflow_names is None:
+            workflow_names = list(set(c.workflow_name for c in self.tracker.comparisons))
+            if not workflow_names:
+                # Use predictor's execution history as fallback
+                workflow_names = list(set(e.workflow_name for e in self.predictor.execution_history))
+        
+        if not workflow_names:
+            return {
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'message': 'No workflows found to optimize',
+                'schedules': []
+            }
+        
+        print(f"\n🎯 Optimizing schedules for {len(workflow_names)} workflows...")
+        
+        # Generate optimized schedules
+        schedules = []
+        hour_assignments = defaultdict(list)  # hour -> list of workflows
+        
+        for workflow_name in workflow_names:
+            result = self.generate_optimized_schedule(workflow_name)
+            hour = int(result.recommended_time.split()[1])
+            
+            # Track hour assignment
+            hour_assignments[hour].append(workflow_name)
+            
+            schedules.append({
+                'workflow': workflow_name,
+                'recommended_schedule': result.recommended_time,
+                'confidence': result.confidence,
+                'expected_duration': result.expected_duration,
+                'predicted_success_rate': result.predicted_success_rate,
+                'reasoning': result.reasoning
+            })
+        
+        # Detect and resolve conflicts (workflows scheduled at same hour)
+        conflicts = []
+        for hour, workflows in hour_assignments.items():
+            if len(workflows) > 1:
+                conflicts.append({
+                    'hour': hour,
+                    'workflows': workflows,
+                    'conflict_level': 'high' if len(workflows) > 3 else 'medium'
+                })
+        
+        # Suggest conflict resolution by spreading workflows
+        if conflicts:
+            print(f"\n⚠️  Detected {len(conflicts)} scheduling conflicts")
+            self._resolve_schedule_conflicts(schedules, hour_assignments)
+        
+        # Log the optimization event
+        self.log_learning_event('batch_optimization', {
+            'workflow_count': len(workflow_names),
+            'conflicts_found': len(conflicts),
+            'conflicts_resolved': len(conflicts) > 0
+        })
+        
+        return {
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'workflow_count': len(workflow_names),
+            'schedules': schedules,
+            'conflicts': conflicts,
+            'hour_distribution': {str(h): len(wfs) for h, wfs in hour_assignments.items()}
+        }
+    
+    def _resolve_schedule_conflicts(self, schedules: List[Dict], 
+                                   hour_assignments: Dict[int, List[str]]) -> None:
+        """
+        Resolve scheduling conflicts by spreading workflows across hours.
+        
+        Args:
+            schedules: List of schedule dictionaries to modify
+            hour_assignments: Dictionary mapping hours to workflow lists
+        """
+        # Find hours with conflicts
+        conflict_hours = [h for h, wfs in hour_assignments.items() if len(wfs) > 1]
+        
+        # Find available hours (not used or lightly used)
+        available_hours = [h for h in range(24) if len(hour_assignments.get(h, [])) == 0]
+        
+        for conflict_hour in conflict_hours:
+            workflows = hour_assignments[conflict_hour][1:]  # Keep first workflow, move others
+            
+            for workflow in workflows:
+                if available_hours:
+                    new_hour = available_hours.pop(0)
+                else:
+                    # Find least busy hour
+                    new_hour = min(range(24), key=lambda h: len(hour_assignments.get(h, [])))
+                
+                # Update schedule
+                for schedule in schedules:
+                    if schedule['workflow'] == workflow:
+                        old_schedule = schedule['recommended_schedule']
+                        schedule['recommended_schedule'] = f"0 {new_hour} * * *"
+                        schedule['reasoning'].append(
+                            f"Moved from hour {conflict_hour} to {new_hour} to avoid conflict"
+                        )
+                        print(f"  📋 {workflow}: hour {conflict_hour} → {new_hour}")
+                        break
+                
+                # Update hour assignments
+                hour_assignments[conflict_hour].remove(workflow)
+                hour_assignments[new_hour].append(workflow)
+    
+    def get_optimization_insights(self) -> Dict[str, Any]:
+        """
+        Get insights about the meta-learning system's optimization performance.
+        
+        Returns:
+            Dictionary with optimization insights and recommendations
+        """
+        insights = {
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'system_health': 'unknown',
+            'recommendations': [],
+            'metrics': {}
+        }
+        
+        # Evaluate overall accuracy
+        accuracy = self.evaluate_prediction_accuracy()
+        insights['metrics']['accuracy'] = accuracy
+        
+        # Determine system health
+        if accuracy['total_predictions'] == 0:
+            insights['system_health'] = 'needs_data'
+            insights['recommendations'].append(
+                'Run more workflows to collect execution data for learning'
+            )
+        elif accuracy['accuracy_score'] >= 75:
+            insights['system_health'] = 'excellent'
+            insights['recommendations'].append(
+                'System is performing well. Consider reducing exploration rate.'
+            )
+        elif accuracy['accuracy_score'] >= 50:
+            insights['system_health'] = 'good'
+            insights['recommendations'].append(
+                'System is learning. Continue collecting data.'
+            )
+        else:
+            insights['system_health'] = 'needs_improvement'
+            insights['recommendations'].append(
+                'Consider evolving strategies to find better parameters.'
+            )
+        
+        # Strategy analysis
+        strategy_count = len(self.strategies)
+        if strategy_count < 3:
+            insights['recommendations'].append(
+                'Consider evolving strategies to increase diversity'
+            )
+        elif strategy_count > 8:
+            insights['recommendations'].append(
+                'Consider pruning poor-performing strategies'
+            )
+        
+        # Learning progress
+        log_size = len(self.learning_log)
+        insights['metrics']['learning_log_size'] = log_size
+        
+        if log_size < 10:
+            insights['recommendations'].append(
+                'System is in early learning phase. Give it more time.'
+            )
+        
+        # Best strategy analysis
+        if self.strategies:
+            best_strategy_name = max(
+                self.strategies.keys(),
+                key=lambda n: self.calculate_strategy_performance(self.strategies[n])
+            )
+            best_strategy = self.strategies[best_strategy_name]
+            
+            insights['best_strategy'] = {
+                'name': best_strategy_name,
+                'performance': self.calculate_strategy_performance(best_strategy),
+                'trend': best_strategy.performance_trend,
+                'parameters': asdict(best_strategy.parameters)
+            }
+        
+        return insights
 
 
 def main():
@@ -584,13 +781,15 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(
-        description='Meta-Learning Workflow Scheduler - @workflows-tech-lead'
+        description='Meta-Learning Workflow Scheduler - @APIs-architect'
     )
     parser.add_argument('--repo-root', help='Repository root directory')
     parser.add_argument('--report', action='store_true', help='Generate meta-learning report')
     parser.add_argument('--adapt', metavar='STRATEGY', help='Adapt a strategy')
     parser.add_argument('--evolve', action='store_true', help='Evolve strategies')
     parser.add_argument('--optimize', metavar='WORKFLOW', help='Generate optimized schedule for workflow')
+    parser.add_argument('--optimize-all', action='store_true', help='Optimize all known workflows')
+    parser.add_argument('--insights', action='store_true', help='Get optimization insights')
     parser.add_argument('--strategy', default='default', help='Strategy to use for optimization')
     parser.add_argument('--export', metavar='FILE', help='Export report to JSON file')
     
@@ -625,6 +824,50 @@ def main():
         print(f"  Reasoning:")
         for reason in result.reasoning:
             print(f"    - {reason}")
+    
+    elif args.optimize_all:
+        print(f"🎯 Optimizing all known workflows...")
+        result = scheduler.optimize_all_workflows()
+        print(f"\n📅 Batch Optimization Results:")
+        
+        if 'message' in result:
+            print(f"  {result['message']}")
+        else:
+            print(f"  Workflows Optimized: {result['workflow_count']}")
+            print(f"  Conflicts Found: {len(result.get('conflicts', []))}")
+            
+            if result.get('schedules'):
+                print(f"\n  Schedules:")
+                for sched in result['schedules'][:10]:  # Show first 10
+                    print(f"    {sched['workflow']}: {sched['recommended_schedule']}")
+                if len(result['schedules']) > 10:
+                    print(f"    ... and {len(result['schedules']) - 10} more")
+        
+        if args.export:
+            with open(args.export, 'w') as f:
+                json.dump(result, f, indent=2)
+            print(f"\n💾 Results exported to {args.export}")
+    
+    elif args.insights:
+        print(f"🔍 Getting optimization insights...")
+        insights = scheduler.get_optimization_insights()
+        print(f"\n💡 Meta-Learning Insights:")
+        print(f"  System Health: {insights['system_health']}")
+        
+        if insights.get('best_strategy'):
+            bs = insights['best_strategy']
+            print(f"  Best Strategy: {bs['name']} ({bs['performance']:.1f}%)")
+            print(f"  Trend: {bs['trend']}")
+        
+        if insights['recommendations']:
+            print(f"\n  Recommendations:")
+            for rec in insights['recommendations']:
+                print(f"    • {rec}")
+        
+        if args.export:
+            with open(args.export, 'w') as f:
+                json.dump(insights, f, indent=2)
+            print(f"\n💾 Insights exported to {args.export}")
     
     else:
         parser.print_help()

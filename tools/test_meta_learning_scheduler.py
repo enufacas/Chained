@@ -320,10 +320,49 @@ class TestMetaLearningScheduler:
         print(f"  ✓ Total strategies: {len(report['strategies'])}")
         self.test_results.append(("meta_report", True))
     
+    def test_batch_optimization(self):
+        """Test batch workflow optimization."""
+        print("\n🧪 Testing batch optimization...")
+        
+        # Provide workflow names since there's no data
+        workflow_names = ['workflow-a', 'workflow-b', 'workflow-c']
+        result = self.scheduler.optimize_all_workflows(workflow_names)
+        
+        assert 'timestamp' in result
+        assert 'workflow_count' in result
+        assert 'schedules' in result
+        assert result['workflow_count'] == 3
+        assert len(result['schedules']) == 3
+        
+        print(f"  ✓ Batch optimization complete")
+        print(f"  ✓ Workflows optimized: {result['workflow_count']}")
+        print(f"  ✓ Schedules generated: {len(result['schedules'])}")
+        self.test_results.append(("batch_optimization", True))
+    
+    def test_optimization_insights(self):
+        """Test optimization insights generation."""
+        print("\n🧪 Testing optimization insights...")
+        
+        insights = self.scheduler.get_optimization_insights()
+        
+        assert 'timestamp' in insights
+        assert 'system_health' in insights
+        assert 'recommendations' in insights
+        assert 'metrics' in insights
+        
+        # System should need data since we have no execution history
+        assert insights['system_health'] == 'needs_data'
+        assert len(insights['recommendations']) > 0
+        
+        print(f"  ✓ Insights generated successfully")
+        print(f"  ✓ System health: {insights['system_health']}")
+        print(f"  ✓ Recommendations count: {len(insights['recommendations'])}")
+        self.test_results.append(("optimization_insights", True))
+    
     def run_all_tests(self):
         """Run all tests in sequence."""
         print("\n" + "="*70)
-        print("🧪 Meta-Learning Scheduler Test Suite - @workflows-tech-lead")
+        print("🧪 Meta-Learning Scheduler Test Suite - @APIs-architect")
         print("="*70)
         
         self.setup()
@@ -342,6 +381,8 @@ class TestMetaLearningScheduler:
             self.test_optimized_schedule_generation()
             self.test_strategy_evolution()
             self.test_meta_learning_report()
+            self.test_batch_optimization()
+            self.test_optimization_insights()
             
         finally:
             self.teardown()
