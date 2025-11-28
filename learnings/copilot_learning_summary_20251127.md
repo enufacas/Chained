@@ -211,7 +211,7 @@ The community request for "Copilot as model provider" (211 comments on Aider-AI/
 |------|----------|---------|
 | Elon Musk | 110 | AI commentary, xAI Grok |
 | Mark Zuckerberg | 26 | Meta AI investments |
-| Yann LeCun | 26 | AI research, "world models" startup |
+| Yann LeCun | 26 | AI research, "World Models" startup |
 | Tim Cook | 10 | Apple leadership transition |
 | Jeff Bezos | 9 | AI startup venture |
 
