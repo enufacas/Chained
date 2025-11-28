@@ -276,6 +276,7 @@ jobs:
                 -var="project_id=${{ env.GCP_PROJECT_ID }}" \
                 -var="region=${{ env.GCP_REGION }}" \
                 -var="environment=${{ needs.validate.outputs.environment }}" \
+                -var="image_tag=${{ github.sha }}" \
                 google_service_account.adk_agents \
                 "projects/${{ env.GCP_PROJECT_ID }}/serviceAccounts/$SA_EMAIL"; then
                 echo "✅ Successfully imported service account"
@@ -313,6 +314,7 @@ jobs:
                   -var="project_id=${{ env.GCP_PROJECT_ID }}" \
                   -var="region=${{ env.GCP_REGION }}" \
                   -var="environment=${{ needs.validate.outputs.environment }}" \
+                  -var="image_tag=${{ github.sha }}" \
                   "$TF_RESOURCE" \
                   "projects/${{ env.GCP_PROJECT_ID }}/locations/${{ env.GCP_REGION }}/services/$SERVICE_NAME"; then
                   echo "✅ Successfully imported $SERVICE_NAME"
@@ -331,6 +333,7 @@ jobs:
             -var="project_id=${{ env.GCP_PROJECT_ID }}" \
             -var="region=${{ env.GCP_REGION }}" \
             -var="environment=${{ needs.validate.outputs.environment }}" \
+            -var="image_tag=${{ github.sha }}" \
             -target=google_cloud_run_v2_service.academic_research \
             -target=google_cloud_run_v2_service.blog_writer \
             -target=google_cloud_run_v2_service.google_trends \
