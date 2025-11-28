@@ -40,11 +40,10 @@ resource "google_storage_bucket" "blog" {
     enabled = true
   }
 
-  # Lifecycle rule to clean up old versions
+  # Lifecycle rule to clean up old versions after keeping 5 most recent
   lifecycle_rule {
     condition {
       num_newer_versions = 5
-      with_state         = "ARCHIVED"
     }
     action {
       type = "Delete"

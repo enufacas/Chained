@@ -360,43 +360,73 @@ def generate_blog_html(title: str, content: str, metadata: Dict[str, Any]) -> st
 
 
 async def update_posts_index(bucket, slug: str, title: str, metadata: Dict[str, Any]) -> None:
-    """Update the posts.json index in Cloud Storage."""
+    """
+    Update the posts.json index in Cloud Storage.
+    
+    Uses generation-based conditional updates to handle concurrent writes safely.
+    If a conflict occurs, retries with the latest version.
+    """
     import json
     
-    try:
-        # Download existing posts.json
-        blob = bucket.blob("posts.json")
-        if blob.exists():
-            posts = json.loads(blob.download_as_text())
-        else:
-            posts = []
-        
-        # Create new post entry
-        new_post = {
-            "slug": slug,
-            "title": title,
-            "date": datetime.utcnow().isoformat(),
-            "readTime": metadata.get("read_time_minutes", 5),
-            "domain": metadata.get("domain", "Technology"),
-        }
-        
-        # Remove existing post with same slug
-        posts = [p for p in posts if p.get("slug") != slug]
-        
-        # Add new post at the beginning
-        posts.insert(0, new_post)
-        
-        # Keep only last 50 posts
-        posts = posts[:50]
-        
-        # Upload updated index
-        blob.upload_from_string(
-            json.dumps(posts, indent=2),
-            content_type="application/json"
-        )
-        
-    except Exception as e:
-        print(f"⚠️ Failed to update posts index: {e}")
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            # Download existing posts.json with generation info
+            blob = bucket.blob("posts.json")
+            generation = None
+            
+            if blob.exists():
+                blob.reload()  # Get current generation
+                generation = blob.generation
+                posts = json.loads(blob.download_as_text())
+            else:
+                posts = []
+            
+            # Create new post entry
+            new_post = {
+                "slug": slug,
+                "title": title,
+                "date": datetime.utcnow().isoformat(),
+                "readTime": metadata.get("read_time_minutes", 5),
+                "domain": metadata.get("domain", "Technology"),
+            }
+            
+            # Remove existing post with same slug
+            posts = [p for p in posts if p.get("slug") != slug]
+            
+            # Add new post at the beginning
+            posts.insert(0, new_post)
+            
+            # Keep only last 50 posts
+            posts = posts[:50]
+            
+            # Upload with conditional update (if_generation_match)
+            # This will fail if the file was modified since we read it
+            if generation is not None:
+                blob.upload_from_string(
+                    json.dumps(posts, indent=2),
+                    content_type="application/json",
+                    if_generation_match=generation
+                )
+            else:
+                # New file - use if_generation_match=0 to ensure we're creating
+                blob.upload_from_string(
+                    json.dumps(posts, indent=2),
+                    content_type="application/json",
+                    if_generation_match=0
+                )
+            
+            return  # Success
+            
+        except Exception as e:
+            error_str = str(e).lower()
+            if "precondition" in error_str or "generation" in error_str:
+                # Conflict - another write happened, retry
+                if attempt < max_retries - 1:
+                    print(f"⚠️ Concurrent write detected, retrying ({attempt + 1}/{max_retries})")
+                    continue
+            print(f"⚠️ Failed to update posts index: {e}")
+            break
 
 
 async def process_write_request(

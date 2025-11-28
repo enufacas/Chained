@@ -359,7 +359,7 @@ jobs:
               exit 1
             }
             # Extract issue number from URL (format: https://github.com/owner/repo/issues/123)
-            ISSUE_NUMBER=$(echo "$ISSUE_URL" | grep -oP '/issues/\K[0-9]+')
+            ISSUE_NUMBER=$(echo "$ISSUE_URL" | sed 's|.*/issues/||' | grep -o '[0-9]*')
             if [[ -z "$ISSUE_NUMBER" ]]; then
               echo "❌ Failed to extract issue number from URL: $ISSUE_URL"
               exit 1
