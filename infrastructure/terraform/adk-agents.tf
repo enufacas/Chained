@@ -17,6 +17,12 @@
 # Additional Variables for ADK Agents
 # =============================================================================
 
+variable "image_tag" {
+  description = "Container image tag (use commit SHA to force updates)"
+  type        = string
+  default     = "latest"
+}
+
 variable "gemini_api_key_secret" {
   description = "Secret Manager resource name for Gemini API key"
   type        = string
@@ -75,7 +81,7 @@ resource "google_cloud_run_v2_service" "academic_research" {
 
   template {
     containers {
-      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/academic-research:latest"
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/academic-research:${var.image_tag}"
 
       resources {
         limits = {
@@ -170,7 +176,7 @@ resource "google_cloud_run_v2_service" "blog_writer" {
 
   template {
     containers {
-      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/blog-writer:latest"
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/blog-writer:${var.image_tag}"
 
       resources {
         limits = {
@@ -270,7 +276,7 @@ resource "google_cloud_run_v2_service" "google_trends" {
 
   template {
     containers {
-      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/google-trends:latest"
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/google-trends:${var.image_tag}"
 
       resources {
         limits = {
@@ -365,7 +371,7 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
 
   template {
     containers {
-      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/adk-api-server:latest"
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/adk-api-server:${var.image_tag}"
 
       resources {
         limits = {

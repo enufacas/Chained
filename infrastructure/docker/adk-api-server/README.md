@@ -2,6 +2,12 @@
 
 API server that bridges [google/adk-web](https://github.com/google/adk-web) to A2A protocol-based agents deployed on GCP Cloud Run. Now includes a built-in **Agent Console GUI** for easy interaction with your agents.
 
+## 🖥️ Live Instance
+
+**Try it now**: [https://chained-adk-api-server-sguacxy5gq-uc.a.run.app](https://chained-adk-api-server-sguacxy5gq-uc.a.run.app)
+
+The live Agent Console GUI is deployed on GCP Cloud Run and ready to use.
+
 ## Overview
 
 The ADK API Server implements the ADK API interface expected by google/adk-web, allowing you to use the full ADK developer UI with your A2A agents. It also provides a standalone web GUI following modern dashboard design best practices.
