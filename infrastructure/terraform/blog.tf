@@ -143,7 +143,7 @@ resource "google_storage_bucket_object" "blog_index" {
             function renderPosts(posts) {
                 document.getElementById('blog-list').innerHTML = posts.map(p => `
                     <article class="blog-card">
-                        <h2><a href="posts/$${p.slug}.html">${"${p.title}"}</a></h2>
+                        <h2><a href="posts/$${p.slug}.html">$${p.title}</a></h2>
                         <p class="meta">📅 $${new Date(p.date).toLocaleDateString()} · ⏱️ $${p.readTime} min read</p>
                     </article>
                 `).join('');
