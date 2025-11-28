@@ -199,7 +199,13 @@ resource "google_cloud_run_v2_service" "blog_writer" {
 
       env {
         name  = "WEBSITE_DEPLOY_URL"
-        value = "https://enufacas.github.io/Chained"
+        value = "https://storage.googleapis.com/${google_storage_bucket.blog.name}"
+      }
+
+      # Blog bucket for publishing posts
+      env {
+        name  = "BLOG_BUCKET_NAME"
+        value = google_storage_bucket.blog.name
       }
 
       dynamic "env" {
@@ -255,7 +261,10 @@ resource "google_cloud_run_v2_service" "blog_writer" {
     percent = 100
   }
 
-  depends_on = [google_project_service.required_apis]
+  depends_on = [
+    google_project_service.required_apis,
+    google_storage_bucket.blog,
+  ]
 }
 
 resource "google_cloud_run_v2_service_iam_member" "blog_writer_public" {

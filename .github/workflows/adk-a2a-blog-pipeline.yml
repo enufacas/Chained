@@ -335,9 +335,13 @@ jobs:
     if: always()
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Create pipeline report issue comment
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           RUN_MODE: ${{ needs.preflight.outputs.run_mode }}
           AGENTS_READY: ${{ needs.preflight.outputs.agents_ready }}
@@ -346,12 +350,20 @@ jobs:
           ISSUE_NUMBER=$(gh issue list --label "adk-pipeline" --state open --limit 1 --json number --jq '.[0].number' || echo "")
 
           if [[ -z "$ISSUE_NUMBER" ]]; then
-            # Create new issue
-            ISSUE_NUMBER=$(gh issue create \
+            # Create new issue and extract issue number from URL
+            ISSUE_URL=$(gh issue create \
               --title "🤖 ADK A2A Blog Pipeline Status" \
               --label "adk-pipeline,automated" \
-              --body "Tracking issue for ADK A2A blog pipeline runs. See comments for run history." \
-              --json number --jq '.number')
+              --body "Tracking issue for ADK A2A blog pipeline runs. See comments for run history.") || {
+              echo "❌ Failed to create tracking issue"
+              exit 1
+            }
+            # Extract issue number from URL (format: https://github.com/owner/repo/issues/123)
+            ISSUE_NUMBER=$(echo "$ISSUE_URL" | sed 's|.*/issues/||' | grep -o '[0-9]*')
+            if [[ -z "$ISSUE_NUMBER" ]]; then
+              echo "❌ Failed to extract issue number from URL: $ISSUE_URL"
+              exit 1
+            fi
             echo "📋 Created tracking issue #$ISSUE_NUMBER"
           fi
 

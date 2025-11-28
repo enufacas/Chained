@@ -219,23 +219,222 @@ ahead in an increasingly competitive landscape.
 
 async def deploy_blog_post(blog_post: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Deploy the blog post to the website.
+    Deploy the blog post to Cloud Storage.
 
-    In production, this would:
-    1. Create a new markdown file in the docs directory
-    2. Trigger a GitHub Pages deployment
-    3. Return the live URL
+    This function:
+    1. Creates an HTML file from the blog content
+    2. Uploads it to the Cloud Storage blog bucket
+    3. Updates the posts.json index
+    4. Returns the live URL
     """
-    # Simulate deployment
     slug = blog_post.get("slug", "new-post")
-    deploy_url = WEBSITE_DEPLOY_URL or "https://enufacas.github.io/Chained"
+    title = blog_post.get("title", "Untitled")
+    content = blog_post.get("full_content", "")
+    metadata = blog_post.get("metadata", {})
+    
+    # Get bucket name from environment
+    bucket_name = os.getenv("BLOG_BUCKET_NAME", "")
+    
+    if not bucket_name:
+        # Fallback to simulation mode if no bucket configured
+        deploy_url = WEBSITE_DEPLOY_URL or "https://enufacas.github.io/Chained"
+        return {
+            "deployed": False,
+            "simulated": True,
+            "url": f"{deploy_url}/blog/{slug}",
+            "file_path": f"posts/{slug}.html",
+            "deployed_at": datetime.utcnow().isoformat(),
+            "message": "No BLOG_BUCKET_NAME configured - simulating deployment"
+        }
+    
+    try:
+        from google.cloud import storage
+        
+        client = storage.Client()
+        bucket = client.bucket(bucket_name)
+        
+        # Create HTML content
+        html_content = generate_blog_html(title, content, metadata)
+        
+        # Upload the blog post
+        blob = bucket.blob(f"posts/{slug}.html")
+        blob.upload_from_string(html_content, content_type="text/html")
+        
+        # Update posts.json index
+        await update_posts_index(bucket, slug, title, metadata)
+        
+        # Construct URL
+        blog_url = f"https://storage.googleapis.com/{bucket_name}/posts/{slug}.html"
+        
+        return {
+            "deployed": True,
+            "url": blog_url,
+            "file_path": f"posts/{slug}.html",
+            "bucket": bucket_name,
+            "deployed_at": datetime.utcnow().isoformat(),
+        }
+        
+    except ImportError:
+        # google-cloud-storage not installed - simulate
+        deploy_url = WEBSITE_DEPLOY_URL or "https://enufacas.github.io/Chained"
+        return {
+            "deployed": False,
+            "simulated": True,
+            "url": f"{deploy_url}/blog/{slug}",
+            "file_path": f"posts/{slug}.html",
+            "deployed_at": datetime.utcnow().isoformat(),
+            "message": "google-cloud-storage not installed - simulating deployment"
+        }
+    except Exception as e:
+        # Log error but don't fail - return simulation response
+        print(f"⚠️ Cloud Storage deployment failed: {e}")
+        deploy_url = WEBSITE_DEPLOY_URL or "https://enufacas.github.io/Chained"
+        return {
+            "deployed": False,
+            "simulated": True,
+            "url": f"{deploy_url}/blog/{slug}",
+            "file_path": f"posts/{slug}.html",
+            "deployed_at": datetime.utcnow().isoformat(),
+            "error": str(e)
+        }
 
-    return {
-        "deployed": True,
-        "url": f"{deploy_url}/blog/{slug}",
-        "file_path": f"docs/blog/{slug}.md",
-        "deployed_at": datetime.utcnow().isoformat(),
-    }
+
+def generate_blog_html(title: str, content: str, metadata: Dict[str, Any]) -> str:
+    """Generate HTML for a blog post with proper XSS protection."""
+    import html
+    
+    # HTML-escape user-controlled values to prevent XSS
+    title_escaped = html.escape(title)
+    domain_escaped = html.escape(str(metadata.get('domain', 'Technology')))
+    read_time = int(metadata.get('read_time_minutes', 5))
+    
+    # Escape content for JavaScript template literal
+    # This goes through marked.js which sanitizes HTML by default
+    content_escaped = content.replace('\\', '\\\\').replace('`', '\\`').replace('${', '\\${')
+    
+    return f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title_escaped} - Chained AI Blog</title>
+    <meta name="description" content="{domain_escaped} insights from Chained AI">
+    <style>
+        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+        body {{ 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            line-height: 1.7;
+        }}
+        .container {{ max-width: 800px; margin: 0 auto; padding: 2rem; }}
+        header {{ margin-bottom: 2rem; }}
+        .back {{ color: #00d4ff; text-decoration: none; display: inline-block; margin-bottom: 1rem; }}
+        .back:hover {{ text-decoration: underline; }}
+        h1 {{ font-size: 2.2rem; color: #fff; margin-bottom: 0.5rem; }}
+        .meta {{ color: #888; margin-bottom: 2rem; }}
+        .content {{ }}
+        .content h2 {{ color: #00d4ff; margin: 2rem 0 1rem; font-size: 1.5rem; }}
+        .content p {{ margin: 1rem 0; }}
+        .content code {{ background: rgba(0,212,255,0.1); padding: 0.2em 0.4em; border-radius: 4px; }}
+        footer {{ margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #333; color: #666; text-align: center; }}
+        footer a {{ color: #00d4ff; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="../index.html" class="back">← Back to Blog</a>
+            <h1>{title_escaped}</h1>
+            <p class="meta">
+                🤖 Generated by Chained AI · 
+                📅 {datetime.utcnow().strftime("%B %d, %Y")} · 
+                ⏱️ {read_time} min read
+            </p>
+        </header>
+        <main class="content" id="content"></main>
+        <footer>
+            <p>Powered by <a href="https://github.com/enufacas/Chained">Chained</a> autonomous AI ecosystem</p>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        const markdown = `{content_escaped}`;
+        document.getElementById('content').innerHTML = marked.parse(markdown);
+    </script>
+</body>
+</html>'''
+
+
+async def update_posts_index(bucket, slug: str, title: str, metadata: Dict[str, Any]) -> None:
+    """
+    Update the posts.json index in Cloud Storage.
+    
+    Uses generation-based conditional updates to handle concurrent writes safely.
+    If a conflict occurs, retries with the latest version.
+    """
+    import json
+    
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            # Download existing posts.json with generation info
+            blob = bucket.blob("posts.json")
+            generation = None
+            
+            if blob.exists():
+                blob.reload()  # Get current generation
+                generation = blob.generation
+                posts = json.loads(blob.download_as_text())
+            else:
+                posts = []
+            
+            # Create new post entry
+            new_post = {
+                "slug": slug,
+                "title": title,
+                "date": datetime.utcnow().isoformat(),
+                "readTime": metadata.get("read_time_minutes", 5),
+                "domain": metadata.get("domain", "Technology"),
+            }
+            
+            # Remove existing post with same slug
+            posts = [p for p in posts if p.get("slug") != slug]
+            
+            # Add new post at the beginning
+            posts.insert(0, new_post)
+            
+            # Keep only last 50 posts
+            posts = posts[:50]
+            
+            # Upload with conditional update (if_generation_match)
+            # This will fail if the file was modified since we read it
+            if generation is not None:
+                blob.upload_from_string(
+                    json.dumps(posts, indent=2),
+                    content_type="application/json",
+                    if_generation_match=generation
+                )
+            else:
+                # New file - use if_generation_match=0 to ensure we're creating
+                blob.upload_from_string(
+                    json.dumps(posts, indent=2),
+                    content_type="application/json",
+                    if_generation_match=0
+                )
+            
+            return  # Success
+            
+        except Exception as e:
+            error_str = str(e).lower()
+            if "precondition" in error_str or "generation" in error_str:
+                # Conflict - another write happened, retry
+                if attempt < max_retries - 1:
+                    print(f"⚠️ Concurrent write detected, retrying ({attempt + 1}/{max_retries})")
+                    continue
+            print(f"⚠️ Failed to update posts index: {e}")
+            break
 
 
 async def process_write_request(
