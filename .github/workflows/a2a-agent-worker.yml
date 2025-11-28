@@ -1,4 +1,4 @@
-name: a2a Agent Worker
+name: "A2A: Agent Worker"
 
 # This workflow implements Tier 2 A2A: cross-runner agent communication
 # using GitHub Issues as a message bus.

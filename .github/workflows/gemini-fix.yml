@@ -1,4 +1,4 @@
-name: '🔧 Gemini Fix'
+name: "Gemini: 🔧 Fix"
 
 # Issue Fixer workflow - automatically analyzes issues, implements fixes, and creates PRs
 # Called by gemini-dispatch.yml when @gemini-cli /fix is mentioned in issue comments

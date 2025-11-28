@@ -13,7 +13,7 @@
 # - GCP_REGION: Deployment region (default: us-central1)
 # =============================================================================
 
-name: Deploy GCP Infrastructure
+name: "Deploy: GCP Infrastructure"
 
 on:
   push:

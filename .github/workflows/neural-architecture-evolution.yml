@@ -10,7 +10,7 @@
 # - Triggers architecture evolution when performance drops
 # - Generates recommendations for workflow optimization
 
-name: Neural Architecture Evolution
+name: "Evolution: Neural Architecture"
 
 on:
   # Run on schedule to process recent workflow data

@@ -1,4 +1,4 @@
-name: Collect Resolved Issues
+name: "Data: Collect Resolved Issues"
 
 on:
   pull_request:
