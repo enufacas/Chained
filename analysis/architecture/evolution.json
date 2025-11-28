@@ -591,6 +591,22 @@
       },
       "component_count": 5,
       "file_count": 1806
+    },
+    {
+      "timestamp": "2025-11-28T01:58:55.377653",
+      "commit": "9c9ffa854c02cf9e27152f4d6612550cf8052c2e",
+      "commit_message": "docs: Document live Agent Console GUI URL and fix Cloud Run deployment (#3282)\n\n* Initial plan\n\n* docs: Add live Agent Console GUI URL to README documentation\n\n- Add live URL badge at top of main README\n- Add prominent \"Live Agent Console\" section with URL and features\n- Update A2A section with live URLs for all deployed services\n- Add live instance section to ADK API Server README\n\nLive Agent Console: https://chained-adk-api-server-sguacxy5gq-uc.a.run.app\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n* docs: Fix duplicate ADK API Server entry per code review\n\nCombine Agent Console GUI and ADK API Server entries to eliminate\nconfusion, clarifying that the GUI is at root URL and API endpoints\nare at /run, /list-apps, etc.\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n* fix: Use commit SHA as image tag to force Cloud Run updates\n\nWhen deploying with Terraform, using :latest tag doesn't trigger updates\nwhen container content changes. This fix:\n\n- Adds image_tag variable to Terraform (defaults to \"latest\")\n- Updates all Cloud Run service images to use ${var.image_tag}\n- Passes github.sha as image_tag from the workflow\n\nThis ensures Cloud Run services are updated on every deployment.\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n---------\n\nCo-authored-by: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>",
+      "metrics": {
+        "total_components": 6,
+        "total_files": 1815,
+        "total_lines": 5373937,
+        "total_dependencies": 2,
+        "external_libraries": 82,
+        "coupling_score": 5.628729032984352e-05,
+        "complexity_score": 1.0
+      },
+      "component_count": 5,
+      "file_count": 1815
     }
   ]
 }
