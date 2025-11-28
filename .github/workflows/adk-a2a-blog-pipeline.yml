@@ -354,9 +354,16 @@ jobs:
             ISSUE_URL=$(gh issue create \
               --title "🤖 ADK A2A Blog Pipeline Status" \
               --label "adk-pipeline,automated" \
-              --body "Tracking issue for ADK A2A blog pipeline runs. See comments for run history.")
+              --body "Tracking issue for ADK A2A blog pipeline runs. See comments for run history.") || {
+              echo "❌ Failed to create tracking issue"
+              exit 1
+            }
             # Extract issue number from URL (format: https://github.com/owner/repo/issues/123)
-            ISSUE_NUMBER=$(echo "$ISSUE_URL" | grep -oE '[0-9]+$')
+            ISSUE_NUMBER=$(echo "$ISSUE_URL" | grep -oP '/issues/\K[0-9]+')
+            if [[ -z "$ISSUE_NUMBER" ]]; then
+              echo "❌ Failed to extract issue number from URL: $ISSUE_URL"
+              exit 1
+            fi
             echo "📋 Created tracking issue #$ISSUE_NUMBER"
           fi
 
