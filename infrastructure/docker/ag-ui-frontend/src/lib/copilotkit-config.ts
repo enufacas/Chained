@@ -10,15 +10,17 @@ import {
 import OpenAI from "openai";
 
 // Check for API keys
-export const geminiApiKey = process.env.GEMINI_API_KEY;
+// GOOGLE_API_KEY is the standard env var used by the Google adapter
+// GEMINI_API_KEY is an alias for backward compatibility
+export const googleApiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
 export const openaiApiKey = process.env.OPENAI_API_KEY;
-export const useGemini = !!geminiApiKey;
+export const useGemini = !!googleApiKey;
 export const useOpenAI = !useGemini && !!openaiApiKey;
 
 // Log warning if no API keys configured
-if (!geminiApiKey && !openaiApiKey) {
+if (!googleApiKey && !openaiApiKey) {
   console.warn(
-    "Warning: Neither GEMINI_API_KEY nor OPENAI_API_KEY environment variable is set. CopilotKit chat will not work."
+    "Warning: No LLM API key configured (GOOGLE_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY). CopilotKit chat will not work."
   );
 } else if (useGemini) {
   console.log("CopilotKit: Using Google Gemini API");
@@ -32,11 +34,10 @@ if (!geminiApiKey && !openaiApiKey) {
  * Falls back to ExperimentalEmptyAdapter if no API keys are configured.
  */
 export const createServiceAdapter = () => {
-  if (useGemini && geminiApiKey) {
+  if (useGemini && googleApiKey) {
     // GoogleGenerativeAIAdapter uses GOOGLE_API_KEY env var internally via @langchain/google-gauth
-    // We set it here from our GEMINI_API_KEY for compatibility
-    // Note: This is a documented pattern for the Google adapter
-    process.env.GOOGLE_API_KEY = geminiApiKey;
+    // Ensure GOOGLE_API_KEY is set from whichever source provided the key
+    process.env.GOOGLE_API_KEY = googleApiKey;
     return new GoogleGenerativeAIAdapter({
       model: "gemini-1.5-flash", // Use faster, cheaper model for chat
     });

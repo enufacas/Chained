@@ -37,8 +37,11 @@ Warning: Neither GEMINI_API_KEY nor OPENAI_API_KEY environment variable is set. 
 
 **Resolution:**
 Set one of the following environment variables in Cloud Run deployment:
-- `GEMINI_API_KEY` (preferred) - Uses Google Gemini 1.5 Flash
+- `GOOGLE_API_KEY` (preferred) - The standard Google API key already set up via Secret Manager (per PR #3370)
+- `GEMINI_API_KEY` (alternative) - Alias that gets copied to GOOGLE_API_KEY internally
 - `OPENAI_API_KEY` (fallback) - Uses OpenAI GPT-4
+
+**Important:** Per PR #3370, `GOOGLE_API_KEY` should already be configured in Secret Manager. The code currently only checks for `GEMINI_API_KEY`, but needs to also accept `GOOGLE_API_KEY` directly.
 
 ### Issue 2: A2A Backend Agents Unavailable
 

@@ -6,7 +6,7 @@ import { NextRequest } from "next/server";
 import { 
   createServiceAdapter, 
   getLLMProviderInfo,
-  geminiApiKey,
+  googleApiKey,
   openaiApiKey,
 } from "@/lib/copilotkit-config";
 
@@ -14,11 +14,11 @@ import {
 const copilotKit = new CopilotRuntime();
 
 export const POST = async (req: NextRequest) => {
-  if (!geminiApiKey && !openaiApiKey) {
+  if (!googleApiKey && !openaiApiKey) {
     return new Response(
       JSON.stringify({ 
         error: "No LLM API key configured",
-        message: "Neither GEMINI_API_KEY nor OPENAI_API_KEY is set"
+        message: "Set GOOGLE_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY"
       }),
       { status: 503, headers: { "Content-Type": "application/json" } }
     );

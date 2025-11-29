@@ -26,7 +26,7 @@ This frontend provides an interactive visualization of the A2A (Agent-to-Agent) 
 
 The chat feature supports two LLM providers (in order of preference):
 
-1. **Google Gemini** (preferred) - Set `GEMINI_API_KEY` environment variable
+1. **Google Gemini** (preferred) - Set `GOOGLE_API_KEY` environment variable (or `GEMINI_API_KEY` for backward compatibility)
 2. **OpenAI** (fallback) - Set `OPENAI_API_KEY` environment variable
 
 If both are set, Gemini will be used. If neither is set, the chat feature will be disabled but the UI will still work.
@@ -51,8 +51,10 @@ npm start
 
 ```env
 # LLM API Keys (at least one required for chat feature)
-# Gemini is preferred if both are set
-GEMINI_API_KEY=your_gemini_api_key_here
+# GOOGLE_API_KEY is preferred for Google Gemini
+GOOGLE_API_KEY=your_google_api_key_here
+# GEMINI_API_KEY is also accepted as an alias
+# GEMINI_API_KEY=your_gemini_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
 
 # ADK API Server URL
@@ -97,24 +99,24 @@ The following secrets must be configured in GitHub:
 
 > **Note**: An LLM API key is **optional**. Without it, the AG-UI Frontend will work fine for visualizing the A2A pipeline. Only the CopilotKit chat feature will be disabled.
 
-#### Option 1: Using Google Gemini (Recommended)
+#### Option 1: Using Google API Key (Recommended)
 
-If you already have a Gemini API key configured in GCP Secret Manager (e.g., for other agents), it will be automatically used:
+If you already have a Google API key configured in GCP Secret Manager (e.g., for other agents), it will be automatically used:
 
 ```bash
 # If not already created, create the secret
-gcloud secrets create gemini-api-key --replication-policy="automatic"
+gcloud secrets create google-api-key --replication-policy="automatic"
 
 # Add the API key value
-echo -n "your-gemini-api-key" | gcloud secrets versions add gemini-api-key --data-file=-
+echo -n "your-google-api-key" | gcloud secrets versions add google-api-key --data-file=-
 
 # Grant the service account access
-gcloud secrets add-iam-policy-binding gemini-api-key \
+gcloud secrets add-iam-policy-binding google-api-key \
   --member="serviceAccount:chained-adk-agents@PROJECT_ID.iam.gserviceaccount.com" \
   --role="roles/secretmanager.secretAccessor"
 ```
 
-Then set `gemini_api_key_secret = "gemini-api-key"` in your Terraform variables.
+Then set `google_api_key_secret = "google-api-key"` in your Terraform variables.
 
 #### Option 2: Using OpenAI
 
@@ -154,10 +156,10 @@ gcloud run deploy ag-ui-frontend \
   --region us-central1 \
   --allow-unauthenticated
 
-# OR deploy with Gemini key for chat feature (recommended)
+# OR deploy with Google API key for chat feature (recommended)
 gcloud run deploy ag-ui-frontend \
   --image gcr.io/PROJECT_ID/ag-ui-frontend \
-  --set-env-vars GEMINI_API_KEY=your_key \
+  --set-env-vars GOOGLE_API_KEY=your_key \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated
