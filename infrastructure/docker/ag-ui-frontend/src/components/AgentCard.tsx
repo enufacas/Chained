@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Agent } from "@/app/page";
+import { Agent } from "@/types";
 
 interface AgentCardProps {
   agent: Agent;

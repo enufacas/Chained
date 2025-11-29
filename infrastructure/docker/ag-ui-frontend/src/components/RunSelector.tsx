@@ -1,4 +1,4 @@
-import { PipelineRun } from "@/app/page";
+import { PipelineRun } from "@/types";
 
 interface RunSelectorProps {
   runs: PipelineRun[];

@@ -1,36 +1,43 @@
+/**
+ * Simplified AG-UI Frontend - Unified Single Page
+ *
+ * This is a streamlined version that combines all features into a single page
+ * with improved logging, error handling, and robust fallback behavior.
+ *
+ * Based on CopilotKit examples: https://github.com/CopilotKit/CopilotKit/tree/main/examples/coagents-starter
+ */
+
 "use client";
 
-import { CopilotPopup } from "@copilotkit/react-ui";
-import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { useState } from "react";
-import Link from "next/link";
-import { AgentCard } from "@/components/AgentCard";
-import { PipelineResult } from "@/components/PipelineResult";
-import { DataPreview } from "@/components/DataPreview";
-import { RunSelector } from "@/components/RunSelector";
-import { CopilotKitStatus } from "@/components/CopilotKitStatus";
+import { CopilotChat, CopilotPopup } from "@copilotkit/react-ui";
+import { useCopilotAction, useCopilotReadable, CopilotKit } from "@copilotkit/react-core";
+import { useState, useEffect, useCallback } from "react";
 
+// =============================================================================
 // Types
-export interface Agent {
+// =============================================================================
+
+type AgentStatus = "idle" | "working" | "completed" | "failed";
+
+interface AgentState {
   name: string;
-  id: string;
+  displayName: string;
   icon: string;
   description: string;
-  skills: string[];
-  status: "pending" | "working" | "completed" | "failed";
-  taskId?: string;
-  artifacts: { name: string; type: string }[];
+  status: AgentStatus;
+  framework: string;
 }
 
-export interface PipelineRun {
-  id: number;
-  runNumber: number;
-  createdAt: string;
-  conclusion: "success" | "failure";
-  htmlUrl: string;
+interface ApiStatus {
+  checking: boolean;
+  available: boolean;
+  provider: "gemini" | "openai" | "none";
+  model: string;
+  error?: string;
+  timestamp: string;
 }
 
-export interface PipelineData {
+interface PipelineData {
   contextId: string;
   success: boolean;
   tasksCompleted: number;
@@ -74,38 +81,44 @@ export interface PipelineData {
   };
 }
 
-// Sample data - will be replaced with real API calls
-const SAMPLE_RUNS: PipelineRun[] = [
+// =============================================================================
+// Initial Data
+// =============================================================================
+
+const INITIAL_AGENTS: AgentState[] = [
   {
-    id: 19776783774,
-    runNumber: 9,
-    createdAt: "2025-11-29T01:04:33Z",
-    conclusion: "success",
-    htmlUrl: "https://github.com/enufacas/Chained/actions/runs/19776783774",
+    name: "academic-research",
+    displayName: "Academic Research",
+    icon: "🔬",
+    description: "Discovers and analyzes research topics",
+    status: "idle",
+    framework: "ADK",
   },
   {
-    id: 19776000000,
-    runNumber: 8,
-    createdAt: "2025-11-28T18:04:33Z",
-    conclusion: "success",
-    htmlUrl: "https://github.com/enufacas/Chained/actions/runs/19776000000",
+    name: "google-trends",
+    displayName: "Google Trends",
+    icon: "📈",
+    description: "Analyzes trends for SEO optimization",
+    status: "idle",
+    framework: "ADK",
   },
   {
-    id: 19775000000,
-    runNumber: 7,
-    createdAt: "2025-11-28T12:04:33Z",
-    conclusion: "failure",
-    htmlUrl: "https://github.com/enufacas/Chained/actions/runs/19775000000",
+    name: "blog-writer",
+    displayName: "Blog Writer",
+    icon: "✍️",
+    description: "Writes and publishes blog posts",
+    status: "idle",
+    framework: "ADK",
   },
 ];
 
-const SAMPLE_RESULT: PipelineData = {
-  contextId: "blog-pipeline-20251129-010433",
+const SAMPLE_DATA: PipelineData = {
+  contextId: "blog-pipeline-demo",
   success: true,
   tasksCompleted: 3,
-  completedAt: "2025-11-29T01:05:54Z",
+  completedAt: new Date().toISOString(),
   research: {
-    taskId: "task-abc123def456",
+    taskId: "task-research-demo",
     status: "completed",
     findings: {
       topicsFound: 3,
@@ -114,7 +127,7 @@ const SAMPLE_RESULT: PipelineData = {
         domain: "Artificial Intelligence",
         blogAngle: "How LLM Reasoning is changing the industry",
         keyPoints: [
-          "Introduction to LLM",
+          "Introduction to LLM reasoning",
           "Current state of research",
           "Practical implications",
           "Future directions",
@@ -124,7 +137,7 @@ const SAMPLE_RESULT: PipelineData = {
     },
   },
   trends: {
-    taskId: "task-def456ghi789",
+    taskId: "task-trends-demo",
     status: "completed",
     trendsData: {
       topicsAnalyzed: 5,
@@ -133,7 +146,7 @@ const SAMPLE_RESULT: PipelineData = {
     },
   },
   blog: {
-    taskId: "task-ghi789jkl012",
+    taskId: "task-blog-demo",
     status: "completed",
     deploymentInfo: {
       url: "https://enufacas.github.io/Chained/blog/llm-reasoning.html",
@@ -148,48 +161,451 @@ const SAMPLE_RESULT: PipelineData = {
   },
 };
 
-const AGENTS: Agent[] = [
-  {
-    name: "Academic Research",
-    id: "academic-research-agent",
-    icon: "🔬",
-    description: "Discovers and analyzes academic research topics for blog content.",
-    skills: ["discover-topics", "analyze-topic"],
-    status: "completed",
-    taskId: "task-abc123def456",
-    artifacts: [{ name: "research-findings", type: "JSON" }],
-  },
-  {
-    name: "Google Trends",
-    id: "google-trends-agent",
-    icon: "📈",
-    description: "Analyzes Google Trends data for SEO optimization.",
-    skills: ["analyze-trends", "get-keywords"],
-    status: "completed",
-    taskId: "task-def456ghi789",
-    artifacts: [{ name: "trends-analysis", type: "JSON" }],
-  },
-  {
-    name: "Blog Writer",
-    id: "blog-writer-agent",
-    icon: "✍️",
-    description: "Writes and publishes engaging blog posts based on research.",
-    skills: ["write-blog", "deploy-blog"],
-    status: "completed",
-    taskId: "task-ghi789jkl012",
-    artifacts: [
-      { name: "blog-metadata", type: "JSON" },
-      { name: "deployment-info", type: "JSON" },
-    ],
-  },
-];
+// =============================================================================
+// API Status Checker Component
+// =============================================================================
 
-export default function Home() {
-  const [selectedRun, setSelectedRun] = useState<number>(SAMPLE_RUNS[0].id);
-  // TODO: Replace sample data with API calls to fetch actual pipeline data
-  const [pipelineData] = useState<PipelineData>(SAMPLE_RESULT);
-  const [agents] = useState<Agent[]>(AGENTS);
+function ApiStatusPanel({ onStatusChange }: { onStatusChange: (status: ApiStatus) => void }) {
+  const [status, setStatus] = useState<ApiStatus>({
+    checking: true,
+    available: false,
+    provider: "none",
+    model: "",
+    timestamp: new Date().toISOString(),
+  });
+  const [logs, setLogs] = useState<string[]>([]);
+  const [showLogs, setShowLogs] = useState(false);
 
+  const addLog = useCallback((message: string) => {
+    const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
+    setLogs((prev) => [...prev.slice(-19), `[${timestamp}] ${message}`]);
+  }, []);
+
+  useEffect(() => {
+    const checkApi = async () => {
+      addLog("Starting API status check...");
+
+      try {
+        // First, try the GET endpoint for provider info
+        addLog("Checking /api/copilotkit (GET)...");
+        const infoRes = await fetch("/api/copilotkit", {
+          method: "GET",
+          headers: { "Accept": "application/json" },
+        });
+
+        addLog(`GET response: HTTP ${infoRes.status}`);
+
+        if (infoRes.ok) {
+          const info = await infoRes.json();
+          addLog(`Provider info: ${JSON.stringify(info)}`);
+
+          const newStatus: ApiStatus = {
+            checking: false,
+            available: info.available === true,
+            provider: info.provider || "none",
+            model: info.model || "",
+            timestamp: new Date().toISOString(),
+          };
+
+          if (!info.available) {
+            newStatus.error = "No LLM API key configured";
+            addLog("⚠️ No LLM API key - chat will be limited");
+          } else {
+            addLog(`✅ Using ${info.provider} (${info.model})`);
+          }
+
+          setStatus(newStatus);
+          onStatusChange(newStatus);
+          return;
+        }
+
+        // Fallback: try a minimal POST to check if API is responsive
+        addLog("GET failed, trying POST health check...");
+        const postRes = await fetch("/api/copilotkit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: [] }),
+        });
+
+        addLog(`POST response: HTTP ${postRes.status}`);
+
+        const newStatus: ApiStatus = {
+          checking: false,
+          available: postRes.status !== 503,
+          provider: postRes.status === 503 ? "none" : "openai", // Assume OpenAI if we can't determine
+          model: "",
+          error: postRes.status === 503 ? "API returned 503 - No LLM key" : undefined,
+          timestamp: new Date().toISOString(),
+        };
+
+        setStatus(newStatus);
+        onStatusChange(newStatus);
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        addLog(`❌ Error: ${errorMsg}`);
+
+        const newStatus: ApiStatus = {
+          checking: false,
+          available: false,
+          provider: "none",
+          model: "",
+          error: errorMsg,
+          timestamp: new Date().toISOString(),
+        };
+
+        setStatus(newStatus);
+        onStatusChange(newStatus);
+      }
+    };
+
+    checkApi();
+    // Re-check every 60 seconds
+    const interval = setInterval(checkApi, 60000);
+    return () => clearInterval(interval);
+  }, [addLog, onStatusChange]);
+
+  const getStatusBadge = () => {
+    if (status.checking) {
+      return (
+        <span className="px-3 py-1 rounded-full text-sm bg-slate-700 text-slate-300 animate-pulse">
+          ⏳ Checking...
+        </span>
+      );
+    }
+    if (status.available) {
+      const providerEmoji = status.provider === "gemini" ? "🔷" : "🟢";
+      return (
+        <span className="px-3 py-1 rounded-full text-sm bg-green-500/20 text-green-400 border border-green-500/30">
+          {providerEmoji} {status.provider === "gemini" ? "Gemini" : "OpenAI"} Ready
+        </span>
+      );
+    }
+    return (
+      <span className="px-3 py-1 rounded-full text-sm bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+        ⚠️ No LLM Key
+      </span>
+    );
+  };
+
+  return (
+    <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden mb-6">
+      {/* Header */}
+      <div className="p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">🪁</span>
+          <div>
+            <h3 className="font-semibold text-white">CopilotKit Status</h3>
+            <p className="text-xs text-slate-500">v1.8.14 • /api/copilotkit</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          {getStatusBadge()}
+          <button
+            onClick={() => setShowLogs(!showLogs)}
+            className="px-3 py-1 text-xs rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 transition"
+          >
+            {showLogs ? "Hide Logs" : "Show Logs"}
+          </button>
+        </div>
+      </div>
+
+      {/* Debug Logs */}
+      {showLogs && (
+        <div className="border-t border-slate-700 p-4 bg-black/30">
+          <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-2">Debug Logs</h4>
+          <div className="font-mono text-xs text-slate-400 space-y-1 max-h-48 overflow-y-auto">
+            {logs.length === 0 ? (
+              <p className="text-slate-600 italic">No logs yet...</p>
+            ) : (
+              logs.map((log, i) => (
+                <div key={i} className={log.includes("❌") ? "text-red-400" : log.includes("✅") ? "text-green-400" : ""}>
+                  {log}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Error Display */}
+      {status.error && !status.checking && (
+        <div className="border-t border-yellow-500/30 p-4 bg-yellow-500/5">
+          <div className="flex items-start gap-2">
+            <span className="text-yellow-400">⚠️</span>
+            <div>
+              <p className="text-yellow-400 text-sm font-medium">Configuration Issue</p>
+              <p className="text-slate-400 text-xs mt-1">{status.error}</p>
+              <p className="text-slate-500 text-xs mt-2">
+                Set <code className="bg-black/30 px-1 rounded">GOOGLE_API_KEY</code> or{" "}
+                <code className="bg-black/30 px-1 rounded">OPENAI_API_KEY</code> for AI chat features.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Info */}
+      {status.available && status.model && (
+        <div className="border-t border-green-500/30 p-4 bg-green-500/5">
+          <div className="flex items-center gap-4 text-sm">
+            <div>
+              <span className="text-slate-500">Provider:</span>{" "}
+              <span className="text-green-400 font-medium">
+                {status.provider === "gemini" ? "Google Gemini" : "OpenAI"}
+              </span>
+            </div>
+            <div>
+              <span className="text-slate-500">Model:</span>{" "}
+              <code className="bg-black/30 px-2 py-0.5 rounded text-green-400">{status.model}</code>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// =============================================================================
+// Agent Pipeline Visualization
+// =============================================================================
+
+function AgentPipeline({ agents }: { agents: AgentState[] }) {
+  const getStatusColor = (status: AgentStatus) => {
+    switch (status) {
+      case "working":
+        return "border-yellow-500/50 bg-yellow-500/10";
+      case "completed":
+        return "border-green-500/50 bg-green-500/10";
+      case "failed":
+        return "border-red-500/50 bg-red-500/10";
+      default:
+        return "border-slate-700 bg-slate-800";
+    }
+  };
+
+  const getStatusBadge = (status: AgentStatus) => {
+    switch (status) {
+      case "working":
+        return (
+          <span className="px-2 py-0.5 text-xs rounded-full bg-yellow-500/20 text-yellow-400 animate-pulse">
+            Working...
+          </span>
+        );
+      case "completed":
+        return (
+          <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400">✓ Complete</span>
+        );
+      case "failed":
+        return (
+          <span className="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-400">✗ Failed</span>
+        );
+      default:
+        return (
+          <span className="px-2 py-0.5 text-xs rounded-full bg-slate-700 text-slate-400">Idle</span>
+        );
+    }
+  };
+
+  return (
+    <div className="bg-slate-800 rounded-xl border border-slate-700 p-6 mb-6">
+      <h3 className="text-lg font-semibold text-accent-400 mb-4">🤖 Agent Pipeline</h3>
+      <div className="flex items-center justify-between gap-4">
+        {agents.map((agent, index) => (
+          <div key={agent.name} className="flex items-center flex-1">
+            <div className={`flex-1 p-4 rounded-xl border transition-all ${getStatusColor(agent.status)}`}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-2xl">{agent.icon}</span>
+                {getStatusBadge(agent.status)}
+              </div>
+              <h4 className="font-semibold text-white">{agent.displayName}</h4>
+              <p className="text-xs text-slate-400 mt-1">{agent.description}</p>
+              <span className="text-[10px] text-slate-500 mt-2 block">{agent.framework}</span>
+            </div>
+            {index < agents.length - 1 && <div className="text-2xl text-slate-600 px-4">→</div>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// Sample Data Display
+// =============================================================================
+
+function SampleDataDisplay({ data }: { data: PipelineData }) {
+  const [activeTab, setActiveTab] = useState<"research" | "trends" | "blog">("research");
+
+  return (
+    <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden mb-6">
+      {/* Tabs */}
+      <div className="flex border-b border-slate-700">
+        {(["research", "trends", "blog"] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 py-3 px-4 text-sm font-medium transition ${
+              activeTab === tab
+                ? "bg-accent-500/10 text-accent-400 border-b-2 border-accent-500"
+                : "text-slate-400 hover:text-slate-300 hover:bg-slate-700/50"
+            }`}
+          >
+            {tab === "research" && "🔬 Research"}
+            {tab === "trends" && "📈 Trends"}
+            {tab === "blog" && "✍️ Blog"}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      <div className="p-6">
+        {activeTab === "research" && (
+          <div className="space-y-4">
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wider">Recommended Topic</p>
+              <p className="text-white font-medium mt-1">{data.research.findings.recommendedTopic.topic}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wider">Domain</p>
+              <p className="text-slate-300 mt-1">{data.research.findings.recommendedTopic.domain}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wider">Key Points</p>
+              <ul className="text-sm text-slate-400 list-disc list-inside mt-1 space-y-1">
+                {data.research.findings.recommendedTopic.keyPoints.map((point, i) => (
+                  <li key={i}>{point}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "trends" && (
+          <div className="space-y-4">
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wider">Topics Analyzed</p>
+              <p className="text-white font-medium mt-1">{data.trends.trendsData.topicsAnalyzed}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wider">Trending Keywords</p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {data.trends.trendsData.trendingKeywords.map((kw, i) => (
+                  <span key={i} className="px-2 py-1 text-xs rounded-full bg-blue-500/20 text-blue-400">
+                    {kw}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wider">Recommended Focus</p>
+              <p className="text-slate-300 mt-1">{data.trends.trendsData.recommendedFocus}</p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "blog" && (
+          <div className="space-y-4">
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wider">Title</p>
+              <p className="text-white font-medium mt-1">{data.blog.blogMetadata.title}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs text-slate-500 uppercase tracking-wider">Word Count</p>
+                <p className="text-slate-300 mt-1">{data.blog.blogMetadata.wordCount}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500 uppercase tracking-wider">Read Time</p>
+                <p className="text-slate-300 mt-1">{data.blog.blogMetadata.readTimeMinutes} min</p>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wider">Tags</p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {data.blog.blogMetadata.tags.map((tag, i) => (
+                  <span key={i} className="px-2 py-1 text-xs rounded-full bg-violet-500/20 text-violet-400">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+            {data.blog.deploymentInfo.url && (
+              <div>
+                <p className="text-xs text-slate-500 uppercase tracking-wider">Deployment URL</p>
+                <a
+                  href={data.blog.deploymentInfo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accent-400 hover:underline text-sm mt-1 inline-block"
+                >
+                  {data.blog.deploymentInfo.url} ↗
+                </a>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// Chat Panel (works with or without LLM key)
+// =============================================================================
+
+function ChatPanel({ apiAvailable }: { apiAvailable: boolean }) {
+  if (!apiAvailable) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center p-6 text-center">
+        <div className="text-6xl mb-4">🔑</div>
+        <h3 className="text-lg font-semibold text-white mb-2">Chat Unavailable</h3>
+        <p className="text-slate-400 text-sm max-w-xs">
+          Configure an LLM API key to enable the AI chat assistant.
+        </p>
+        <div className="mt-4 p-4 bg-black/30 rounded-lg text-left w-full max-w-xs">
+          <p className="text-xs text-slate-500 mb-2">Required environment variables:</p>
+          <code className="text-xs text-accent-400 block">GOOGLE_API_KEY=...</code>
+          <span className="text-xs text-slate-600 block my-1">or</span>
+          <code className="text-xs text-accent-400 block">OPENAI_API_KEY=...</code>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <CopilotChat
+      labels={{
+        title: "A2A Pipeline Assistant",
+        initial: `👋 Hi! I'm your A2A pipeline assistant.
+
+**Try these commands:**
+• "Analyze this pipeline"
+• "What are the trending keywords?"
+• "Tell me about the research findings"
+• "Summarize the blog output"
+
+I can help you understand the A2A agent coordination flow.`,
+      }}
+      className="h-full"
+    />
+  );
+}
+
+// =============================================================================
+// Main Content (with CopilotKit hooks)
+// =============================================================================
+
+function MainContent({
+  agents,
+  pipelineData,
+  apiStatus,
+  onApiStatusChange,
+}: {
+  agents: AgentState[];
+  pipelineData: PipelineData;
+  apiStatus: ApiStatus;
+  onApiStatusChange: (status: ApiStatus) => void;
+}) {
   // Make pipeline data available to CopilotKit
   useCopilotReadable({
     description: "Current A2A pipeline run data including research findings, trends analysis, and blog output",
@@ -197,11 +613,11 @@ export default function Home() {
   });
 
   useCopilotReadable({
-    description: "List of agents in the A2A pipeline with their status and artifacts",
+    description: "List of agents in the A2A pipeline with their status",
     value: JSON.stringify(agents, null, 2),
   });
 
-  // CopilotKit action to analyze pipeline
+  // CopilotKit actions
   useCopilotAction({
     name: "analyzePipeline",
     description: "Analyze the current A2A pipeline run and provide insights",
@@ -225,31 +641,6 @@ export default function Home() {
     },
   });
 
-  // CopilotKit action to get agent details
-  useCopilotAction({
-    name: "getAgentDetails",
-    description: "Get detailed information about a specific agent in the pipeline",
-    parameters: [
-      {
-        name: "agentName",
-        type: "string",
-        description: "Name of the agent (research, trends, or blog)",
-        required: true,
-      },
-    ],
-    handler: async ({ agentName }) => {
-      const agentMap: Record<string, Agent> = {
-        research: agents[0],
-        trends: agents[1],
-        blog: agents[2],
-      };
-      const agent = agentMap[agentName.toLowerCase()];
-      if (!agent) return "Agent not found. Available: research, trends, blog";
-      return JSON.stringify(agent, null, 2);
-    },
-  });
-
-  // CopilotKit action to get trending keywords
   useCopilotAction({
     name: "getTrendingKeywords",
     description: "Get the trending keywords from the Google Trends analysis",
@@ -262,188 +653,197 @@ ${pipelineData.trends.trendsData.trendingKeywords.map((k) => `- ${k}`).join("\n"
     },
   });
 
+  useCopilotAction({
+    name: "getResearchSummary",
+    description: "Get a summary of the research findings",
+    parameters: [],
+    handler: async () => {
+      const research = pipelineData.research.findings.recommendedTopic;
+      return `## Research Summary
+
+**Topic:** ${research.topic}
+**Domain:** ${research.domain}
+**Blog Angle:** ${research.blogAngle}
+
+**Key Points:**
+${research.keyPoints.map((p) => `- ${p}`).join("\n")}`;
+    },
+  });
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Header */}
-      <header className="bg-gradient-to-r from-primary-600 to-primary-500 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-4">
-          <a 
-            href="https://enufacas.github.io/Chained/" 
-            className="text-2xl hover:scale-110 transition"
-            title="Back to Chained"
-          >
-            🏠
-          </a>
-          <h1 className="text-xl font-bold text-white">🤖 Chained AG-UI</h1>
-          <span className="text-primary-100 text-sm bg-primary-700/50 px-2 py-1 rounded">
-            Powered by CopilotKit v1.8.14
-          </span>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <div className="bg-gradient-to-r from-primary-500/15 to-accent-500/10 rounded-2xl p-8 mb-8 border-2 border-primary-500/30 text-center">
-          <h1 className="text-3xl font-bold text-primary-400 mb-2">
-            🔄 A2A Pipeline Visualization
-          </h1>
-          <p className="text-slate-400 max-w-2xl mx-auto mb-4">
-            Visualize agent-to-agent coordination flows using CopilotKit Agentic Generative UI. 
-            Click on cards to expand/collapse, switch data tabs, and use the AI chat assistant.
-          </p>
-          <div className="flex justify-center gap-4 text-sm">
-            <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full border border-green-500/30">
-              ✅ Interactive UI
-            </span>
-            <span className="bg-accent-500/20 text-accent-400 px-3 py-1 rounded-full border border-accent-500/30">
-              🪁 CopilotKit Hooks
-            </span>
-            <span className="bg-primary-500/20 text-primary-400 px-3 py-1 rounded-full border border-primary-500/30">
-              💬 AI Chat
-            </span>
-          </div>
-        </div>
-
-        {/* CopilotKit Status Panel */}
-        <CopilotKitStatus />
-
-        {/* Run Selector */}
-        <RunSelector 
-          runs={SAMPLE_RUNS} 
-          selectedRun={selectedRun} 
-          onSelectRun={setSelectedRun} 
-        />
-
-        {/* Pipeline Flow - Agent Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {agents.map((agent, index) => (
-            <div key={agent.id} className="relative">
-              <AgentCard agent={agent} />
-              {index < agents.length - 1 && (
-                <div className="hidden md:flex absolute top-1/2 -right-4 text-primary-400 text-2xl z-10 transform -translate-y-1/2">
-                  →
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Pipeline Result */}
-        <PipelineResult data={pipelineData} />
-
-        {/* Data Preview */}
-        <DataPreview data={pipelineData} />
-
-        {/* External Links */}
-        <div className="flex flex-wrap gap-4 mb-8">
-          <Link
-            href="/interactive"
-            className="flex items-center gap-2 px-4 py-2 bg-accent-500/20 border border-accent-500/50 rounded-lg text-accent-300 hover:bg-accent-500/30 transition font-medium"
-          >
-            🚀 Interactive Pipeline (NEW)
-          </Link>
-          <a
-            href="https://github.com/enufacas/Chained/actions/workflows/adk-a2a-blog-pipeline.yml"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 bg-primary-500/10 border border-primary-500/30 rounded-lg text-slate-300 hover:bg-primary-500/20 transition"
-          >
-            ⚙️ View Workflow Runs
-          </a>
-          <a
-            href="https://enufacas.github.io/Chained/a2a-pipeline.html"
-            className="flex items-center gap-2 px-4 py-2 bg-primary-500/10 border border-primary-500/30 rounded-lg text-slate-300 hover:bg-primary-500/20 transition"
-          >
-            📐 Pipeline Architecture
-          </a>
-          <a
-            href="https://enufacas.github.io/Chained/a2a.html"
-            className="flex items-center gap-2 px-4 py-2 bg-primary-500/10 border border-primary-500/30 rounded-lg text-slate-300 hover:bg-primary-500/20 transition"
-          >
-            📘 A2A Documentation
-          </a>
-        </div>
-
-        {/* CopilotKit Reference */}
-        <div className="bg-gradient-to-r from-accent-500/10 to-primary-500/10 rounded-xl p-6 border border-accent-500/30">
-          <h4 className="text-accent-400 font-semibold mb-2 flex items-center gap-2">
-            🪁 CopilotKit Integration Details
-          </h4>
-          <p className="text-slate-400 text-sm mb-4">
-            This application uses <strong className="text-accent-300">CopilotKit v1.8.14</strong> with the following integration:
-          </p>
-          <div className="grid md:grid-cols-2 gap-4 text-sm mb-4">
-            <div className="bg-black/30 p-3 rounded-lg">
-              <p className="text-slate-300 font-medium mb-1">Frontend Components</p>
-              <ul className="text-slate-400 space-y-1">
-                <li>• <code className="text-accent-400">CopilotKit</code> - Provider wrapper</li>
-                <li>• <code className="text-accent-400">CopilotPopup</code> - Chat interface</li>
-                <li>• <code className="text-accent-400">useCopilotReadable</code> - Data sharing</li>
-                <li>• <code className="text-accent-400">useCopilotAction</code> - Custom actions</li>
-              </ul>
-            </div>
-            <div className="bg-black/30 p-3 rounded-lg">
-              <p className="text-slate-300 font-medium mb-1">Backend Runtime</p>
-              <ul className="text-slate-400 space-y-1">
-                <li>• <code className="text-accent-400">CopilotRuntime</code> - Server runtime</li>
-                <li>• <code className="text-accent-400">GoogleGenerativeAIAdapter</code> / <code className="text-accent-400">OpenAIAdapter</code></li>
-                <li>• API endpoint: <code className="text-accent-400">/api/copilotkit</code></li>
-              </ul>
+      <header className="bg-slate-900/80 backdrop-blur border-b border-slate-700 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <a
+              href="https://enufacas.github.io/Chained/"
+              className="text-2xl hover:scale-110 transition"
+              title="Back to Chained"
+            >
+              🏠
+            </a>
+            <div>
+              <h1 className="text-xl font-bold text-accent-400">🤖 Chained AG-UI</h1>
+              <p className="text-xs text-slate-500">A2A Pipeline Visualization • CopilotKit v1.8.14</p>
             </div>
           </div>
-          <div className="bg-black/30 p-3 rounded-lg mb-4">
-            <p className="text-slate-300 font-medium mb-1">Supported LLM Providers</p>
-            <ul className="text-slate-400 space-y-1 text-sm">
-              <li>• <strong className="text-blue-400">Google Gemini</strong> - Set <code className="text-accent-400">GOOGLE_API_KEY</code> (preferred)</li>
-              <li>• <strong className="text-green-400">OpenAI</strong> - Set <code className="text-accent-400">OPENAI_API_KEY</code> (fallback)</li>
-            </ul>
-          </div>
-          <div className="flex flex-wrap gap-4 text-sm">
+          <div className="flex items-center gap-4">
             <a
               href="https://github.com/CopilotKit/CopilotKit"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent-400 hover:underline"
+              className="text-xs text-slate-400 hover:text-accent-400 transition"
             >
-              CopilotKit GitHub
+              CopilotKit Docs ↗
             </a>
-            <span className="text-slate-600">|</span>
-            <a
-              href="https://docs.copilotkit.ai/adk/generative-ui/agentic"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent-400 hover:underline"
-            >
-              Agentic UI Docs
-            </a>
-            <span className="text-slate-600">|</span>
             <a
               href="https://a2a-protocol.org/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent-400 hover:underline"
+              className="text-xs text-slate-400 hover:text-accent-400 transition"
             >
-              A2A Protocol
+              A2A Protocol ↗
             </a>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 py-6">
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Left Column - Chat */}
+          <div className="lg:col-span-1">
+            <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden h-[700px] sticky top-24">
+              <div className="p-4 border-b border-slate-700 bg-slate-900/50">
+                <h2 className="font-semibold text-accent-400">💬 AI Assistant</h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  {apiStatus.available
+                    ? `Powered by ${apiStatus.provider === "gemini" ? "Gemini" : "OpenAI"}`
+                    : "Configure API key to enable"}
+                </p>
+              </div>
+              <div className="h-[calc(100%-65px)]">
+                <ChatPanel apiAvailable={apiStatus.available} />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Dashboard */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* API Status */}
+            <ApiStatusPanel onStatusChange={onApiStatusChange} />
+
+            {/* Agent Pipeline */}
+            <AgentPipeline agents={agents} />
+
+            {/* Sample Data */}
+            <SampleDataDisplay data={pipelineData} />
+
+            {/* Quick Links */}
+            <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
+              <h3 className="text-lg font-semibold text-accent-400 mb-4">🔗 Quick Links</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <a
+                  href="https://github.com/enufacas/Chained/actions/workflows/adk-a2a-blog-pipeline.yml"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition text-sm"
+                >
+                  ⚙️ <span>View Workflow Runs</span>
+                </a>
+                <a
+                  href="https://enufacas.github.io/Chained/a2a-pipeline.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition text-sm"
+                >
+                  📐 <span>Pipeline Architecture</span>
+                </a>
+                <a
+                  href="https://enufacas.github.io/Chained/a2a.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition text-sm"
+                >
+                  📘 <span>A2A Documentation</span>
+                </a>
+                <a
+                  href="https://github.com/CopilotKit/CopilotKit/tree/main/examples/coagents-starter"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition text-sm"
+                >
+                  🪁 <span>CopilotKit Examples</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Footer Info */}
+            <div className="text-center text-slate-500 text-sm py-4">
+              <p>
+                Powered by{" "}
+                <a href="https://github.com/CopilotKit/CopilotKit" className="text-accent-400 hover:underline">
+                  CopilotKit
+                </a>
+                {" • "}
+                <a href="https://a2a-protocol.org/" className="text-accent-400 hover:underline">
+                  A2A Protocol
+                </a>
+                {" • "}
+                <a href="https://google.github.io/adk-docs/" className="text-accent-400 hover:underline">
+                  Google ADK
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </main>
 
-      {/* CopilotKit Chat Popup */}
-      <CopilotPopup
-        instructions={`You are an AI assistant helping users understand the A2A (Agent-to-Agent) pipeline visualization. 
-        
+      {/* CopilotKit Popup (alternative chat UI) */}
+      {apiStatus.available && (
+        <CopilotPopup
+          instructions={`You are an AI assistant helping users understand the A2A (Agent-to-Agent) pipeline visualization.
+
 You have access to:
 - Pipeline data including research findings, trends analysis, and blog output
-- Agent information including their status, tasks, and artifacts
+- Agent information including their status and tasks
 - Actions to analyze the pipeline and get specific details
 
 Be helpful, concise, and informative. Use markdown formatting for clear responses.`}
-        labels={{
-          title: "A2A Pipeline Assistant",
-          initial: "👋 Hi! I can help you understand the A2A pipeline. Try asking:\n\n• Analyze this pipeline run\n• What are the trending keywords?\n• Tell me about the blog agent",
-        }}
-      />
+          labels={{
+            title: "A2A Pipeline Assistant",
+            initial:
+              "👋 Hi! I can help you understand the A2A pipeline. Try asking:\n\n• Analyze this pipeline\n• What are the trending keywords?\n• Summarize the research findings",
+          }}
+        />
+      )}
     </div>
+  );
+}
+
+// =============================================================================
+// Home Page (wraps content with CopilotKit if API available)
+// =============================================================================
+
+export default function Home() {
+  const [agents] = useState<AgentState[]>(INITIAL_AGENTS);
+  const [pipelineData] = useState<PipelineData>(SAMPLE_DATA);
+  const [apiStatus, setApiStatus] = useState<ApiStatus>({
+    checking: true,
+    available: false,
+    provider: "none",
+    model: "",
+    timestamp: new Date().toISOString(),
+  });
+
+  return (
+    <CopilotKit runtimeUrl="/api/copilotkit">
+      <MainContent
+        agents={agents}
+        pipelineData={pipelineData}
+        apiStatus={apiStatus}
+        onApiStatusChange={setApiStatus}
+      />
+    </CopilotKit>
   );
 }

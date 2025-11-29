@@ -1,4 +1,4 @@
-import { PipelineData } from "@/app/page";
+import { PipelineData } from "@/types";
 
 interface PipelineResultProps {
   data: PipelineData;
