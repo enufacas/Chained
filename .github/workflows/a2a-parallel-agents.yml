@@ -523,9 +523,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COPILOT_PAT: ${{ secrets.COPILOT_PAT }}
           REPOSITORY: ${{ github.repository }}
-          # Default to meta/meta-llama-3.1-8b-instruct - works within free tier budget
-          # Other working models: mistral-ai/mistral-small-2503, cohere/cohere-command-a, openai/gpt-4.1-nano
-          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'meta/meta-llama-3.1-8b-instruct' }}
+          # Default to mistral-ai/mistral-small-2503 - produces coherent, quality output
+          # Note: meta/meta-llama-3.1-8b-instruct sometimes produces gibberish/nonsense
+          # Fallback models (in order): openai/gpt-4.1-nano, cohere/cohere-command-a
+          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'mistral-ai/mistral-small-2503' }}
+          GITHUB_MODELS_FALLBACK: 'openai/gpt-4.1-nano'
           PYTHONPATH: ${{ github.workspace }}
         run: |
           mkdir -p github-models-artifacts
@@ -658,6 +660,83 @@ jobs:
                   return f"Tool error: {str(e)}"
           
           # =============================================================================
+          # RESPONSE QUALITY VALIDATION
+          # =============================================================================
+          def validate_response_quality(text, min_coherence_score=0.5):
+              """
+              Validate that a response is coherent and not gibberish.
+              Returns (is_valid, quality_score, issues).
+              
+              Checks for:
+              1. Proper sentence structure (capital letters, periods)
+              2. Not too many special characters
+              3. Reasonable word patterns (no random character sequences)
+              4. Expected markdown structure
+              """
+              if not text or len(text.strip()) < 50:
+                  return False, 0.0, ["Response too short"]
+              
+              issues = []
+              score = 1.0
+              
+              # Check for excessive special characters (sign of garbled output)
+              special_chars = sum(1 for c in text if c in '`$|;&><{}[]()=+*^%#@!~')
+              special_ratio = special_chars / len(text)
+              if special_ratio > 0.15:
+                  score -= 0.3
+                  issues.append(f"Too many special characters ({special_ratio:.1%})")
+              
+              # Check for random character sequences (gibberish indicator)
+              words = text.split()
+              gibberish_words = 0
+              for word in words[:200]:  # Check first 200 words
+                  clean_word = ''.join(c for c in word if c.isalnum())
+                  if len(clean_word) > 3:
+                      # Check for too many consecutive consonants or random patterns
+                      consonants = sum(1 for c in clean_word.lower() if c in 'bcdfghjklmnpqrstvwxyz')
+                      if len(clean_word) > 0 and consonants / len(clean_word) > 0.85:
+                          gibberish_words += 1
+              
+              gibberish_ratio = gibberish_words / max(len(words[:200]), 1)
+              if gibberish_ratio > 0.1:
+                  score -= 0.3
+                  issues.append(f"Too many gibberish-like words ({gibberish_ratio:.1%})")
+              
+              # Check for expected markdown structure
+              has_header = '##' in text or '###' in text
+              has_bullets = '- ' in text or '* ' in text
+              if not has_header and not has_bullets:
+                  score -= 0.1
+                  issues.append("Missing expected markdown structure")
+              
+              # Check for agent format markers (expected in valid responses)
+              if '@' not in text and 'Analysis' not in text:
+                  score -= 0.2
+                  issues.append("Missing expected response format markers")
+              
+              # Check for repeated nonsense patterns (common in degraded outputs)
+              text_lower = text.lower()
+              nonsense_patterns = [
+                  'brokerage', 'unicorn', 'kidneys', 'cigarettes', 
+                  'prejud', 'spon', 'texturf', 'vrients', 'psiover',
+                  'cameroon permanent', 'spaceruereven', 'norththemes'
+              ]
+              nonsense_count = sum(1 for p in nonsense_patterns if p in text_lower)
+              if nonsense_count >= 2:
+                  # Strong indicator of gibberish - higher penalty
+                  score -= min(0.6, 0.2 * nonsense_count)
+                  issues.append(f"Contains nonsense patterns ({nonsense_count} matches)")
+              
+              # Check for broken/random punctuation sequences
+              broken_patterns = ['~~', '$$', '>returned', 'opER', '.h imb', '=+*']
+              broken_count = sum(1 for p in broken_patterns if p in text)
+              if broken_count >= 2:
+                  score -= 0.3
+                  issues.append(f"Contains broken text patterns ({broken_count})")
+              
+              return score >= min_coherence_score, score, issues
+          
+          # =============================================================================
           # MAIN EXECUTION
           # =============================================================================
           agent_name = os.environ.get('AGENT_NAME', '')
@@ -665,7 +744,8 @@ jobs:
           issue_title = os.environ.get('ISSUE_TITLE', '')
           issue_body = os.environ.get('ISSUE_BODY', '')
           context_id = os.environ.get('CONTEXT_ID', '')
-          model = os.environ.get('GITHUB_MODELS_MODEL', 'openai/gpt-4o-mini')
+          model = os.environ.get('GITHUB_MODELS_MODEL', 'mistral-ai/mistral-small-2503')
+          fallback_model = os.environ.get('GITHUB_MODELS_FALLBACK', 'openai/gpt-4.1-nano')
           token = os.environ.get('COPILOT_PAT', '')
           repository = os.environ.get('REPOSITORY', '')
           
@@ -734,81 +814,165 @@ jobs:
               {"role": "user", "content": prompt}
           ]
           
-          print(f"🐙 Calling GitHub Models API ({model}) with tool support...")
+          def call_model_api(current_model, msgs):
+              """Call the GitHub Models API and return (success, data, analysis, error)."""
+              print(f"🐙 Calling GitHub Models API ({current_model}) with tool support...")
+              
+              # Tool-calling loop (max 5 rounds)
+              data = None
+              for round_num in range(5):
+                  payload = {
+                      "model": current_model,
+                      "messages": msgs,
+                      "max_tokens": 4096,
+                      "tools": TOOLS,
+                      "tool_choice": "auto"
+                  }
+                  
+                  response = httpx.post(
+                      "https://models.github.ai/inference/chat/completions",
+                      headers=headers,
+                      json=payload,
+                      timeout=120.0
+                  )
+                  
+                  if response.status_code != 200:
+                      error_body = response.text
+                      return False, None, None, f"HTTP {response.status_code}: {error_body[:500]}"
+                  
+                  data = response.json()
+                  choice = data["choices"][0]
+                  message = choice.get("message", {})
+                  finish_reason = choice.get("finish_reason", "")
+                  
+                  tool_calls = message.get("tool_calls", [])
+                  
+                  if tool_calls and finish_reason == "tool_calls":
+                      print(f"   🔧 Round {round_num + 1}: Processing {len(tool_calls)} tool call(s)...")
+                      msgs.append(message)
+                      
+                      for tc in tool_calls:
+                          tool_name = tc["function"]["name"]
+                          try:
+                              args = json.loads(tc["function"]["arguments"])
+                          except:
+                              args = {}
+                          
+                          result = execute_tool(tool_name, args)
+                          print(f"      - {tool_name}: {str(args)[:50]}...")
+                          
+                          msgs.append({
+                              "role": "tool",
+                              "tool_call_id": tc["id"],
+                              "name": tool_name,
+                              "content": result
+                          })
+                      continue
+                  
+                  # Final response
+                  analysis = message.get("content", "")
+                  return True, data, analysis, None
+              
+              return False, data, None, "Max tool rounds exceeded"
           
-          # Tool-calling loop (max 5 rounds)
-          for round_num in range(5):
-              payload = {
-                  "model": model,
-                  "messages": messages,
-                  "max_tokens": 4096,
-                  "tools": TOOLS,
-                  "tool_choice": "auto"
+          # Try primary model first
+          success, data, analysis, error = call_model_api(model, messages.copy())
+          used_model = model
+          quality_info = {}
+          
+          if success and analysis:
+              # Validate response quality
+              is_valid, quality_score, issues = validate_response_quality(analysis)
+              quality_info = {
+                  "primary_model": model,
+                  "quality_score": quality_score,
+                  "issues": issues,
+                  "validation_passed": is_valid
               }
               
-              response = httpx.post(
-                  "https://models.github.ai/inference/chat/completions",
-                  headers=headers,
-                  json=payload,
-                  timeout=120.0
-              )
-              
-              if response.status_code != 200:
-                  print(f"❌ Error: {response.status_code}")
-                  print(f"   Model: {model}")
-                  print(f"   Token present: {'yes' if token else 'no'}")
-                  error_body = response.text
-                  print(error_body)
-                  print()
-                  # Parse error for actionable guidance based on actual API error messages
-                  if '"code":"no_access"' in error_body or "No access to model" in error_body:
-                      print("💡 SOLUTION: The COPILOT_PAT secret is missing 'models:read' scope.")
-                      print("   To fix: Create a new fine-grained PAT with 'Models: Read' permission")
-                      print("   Settings → Developer settings → Fine-grained tokens → Add 'Models' permission")
-                  elif "budget limit" in error_body.lower() or "usage quota" in error_body.lower():
-                      print("💡 Account has reached GitHub Models usage quota")
-                  elif response.status_code == 401:
-                      print("💡 Token is invalid or expired")
-                  exit(1)
-              
-              data = response.json()
-              choice = data["choices"][0]
-              message = choice.get("message", {})
-              finish_reason = choice.get("finish_reason", "")
-              
-              tool_calls = message.get("tool_calls", [])
-              
-              if tool_calls and finish_reason == "tool_calls":
-                  print(f"   🔧 Round {round_num + 1}: Processing {len(tool_calls)} tool call(s)...")
-                  messages.append(message)
+              if not is_valid:
+                  print(f"⚠️ Quality check FAILED for {model}")
+                  print(f"   Score: {quality_score:.2f}")
+                  print(f"   Issues: {', '.join(issues)}")
                   
-                  for tc in tool_calls:
-                      tool_name = tc["function"]["name"]
-                      try:
-                          args = json.loads(tc["function"]["arguments"])
-                      except:
-                          args = {}
+                  # Try fallback model
+                  if fallback_model and fallback_model != model:
+                      print(f"🔄 Retrying with fallback model: {fallback_model}")
+                      fallback_messages = [
+                          {"role": "system", "content": system_prompt},
+                          {"role": "user", "content": prompt}
+                      ]
+                      fb_success, fb_data, fb_analysis, fb_error = call_model_api(fallback_model, fallback_messages)
                       
-                      result = execute_tool(tool_name, args)
-                      print(f"      - {tool_name}: {str(args)[:50]}...")
-                      
-                      messages.append({
-                          "role": "tool",
-                          "tool_call_id": tc["id"],
-                          "name": tool_name,
-                          "content": result
-                      })
-                  continue
+                      if fb_success and fb_analysis:
+                          fb_valid, fb_score, fb_issues = validate_response_quality(fb_analysis)
+                          print(f"   Fallback quality score: {fb_score:.2f}")
+                          
+                          # Use fallback if it's better
+                          if fb_score > quality_score:
+                              print(f"✅ Using fallback model (better quality: {fb_score:.2f} > {quality_score:.2f})")
+                              analysis = fb_analysis
+                              data = fb_data
+                              used_model = fallback_model
+                              quality_info["fallback_model"] = fallback_model
+                              quality_info["fallback_score"] = fb_score
+                              quality_info["fallback_issues"] = fb_issues
+                              quality_info["used_fallback"] = True
+                          else:
+                              print(f"⚠️ Keeping primary model output (fallback not better)")
+                              quality_info["used_fallback"] = False
+                      else:
+                          print(f"⚠️ Fallback model failed: {fb_error}")
+                          quality_info["fallback_error"] = fb_error
+                          quality_info["used_fallback"] = False
+              else:
+                  print(f"✅ Quality check passed (score: {quality_score:.2f})")
+                  quality_info["used_fallback"] = False
+          elif error:
+              print(f"❌ Error: {error}")
+              print(f"   Model: {model}")
+              print(f"   Token present: {'yes' if token else 'no'}")
               
-              # Final response
-              analysis = message.get("content", "")
-              break
-          else:
-              analysis = "Max tool rounds exceeded"
+              # Parse error for actionable guidance
+              if '"code":"no_access"' in str(error) or "No access to model" in str(error):
+                  print("💡 SOLUTION: The COPILOT_PAT secret is missing 'models:read' scope.")
+                  print("   To fix: Create a new fine-grained PAT with 'Models: Read' permission")
+              elif "budget limit" in str(error).lower() or "usage quota" in str(error).lower():
+                  print("💡 Account has reached GitHub Models usage quota")
+              elif "401" in str(error):
+                  print("💡 Token is invalid or expired")
+              
+              # Try fallback on error
+              if fallback_model and fallback_model != model:
+                  print(f"🔄 Primary model failed, trying fallback: {fallback_model}")
+                  fallback_messages = [
+                      {"role": "system", "content": system_prompt},
+                      {"role": "user", "content": prompt}
+                  ]
+                  fb_success, fb_data, fb_analysis, fb_error = call_model_api(fallback_model, fallback_messages)
+                  
+                  if fb_success and fb_analysis:
+                      analysis = fb_analysis
+                      data = fb_data
+                      used_model = fallback_model
+                      quality_info["primary_error"] = error
+                      quality_info["used_fallback"] = True
+                      fb_valid, fb_score, fb_issues = validate_response_quality(fb_analysis)
+                      quality_info["fallback_score"] = fb_score
+                  else:
+                      print(f"❌ Both primary and fallback models failed")
+                      analysis = f"Error: Primary model ({model}) failed: {error}. Fallback model ({fallback_model}) also failed: {fb_error}"
+                      quality_info["fallback_error"] = fb_error
+              else:
+                  analysis = f"Error: {error}"
+          
+          if not analysis:
+              analysis = "No analysis generated"
           
           print(f"✅ Analysis complete")
-          print(f"   Model: {data.get('model')}")
-          print(f"   Tokens: {data.get('usage', {})}")
+          print(f"   Model used: {used_model}")
+          if data:
+              print(f"   Tokens: {data.get('usage', {})}")
           
           # Save output
           with open("github-models-artifacts/response.md", "w") as f:
@@ -818,15 +982,27 @@ jobs:
               f.write(analysis)
           
           metadata = {
-              "model": data.get("model"),
-              "usage": data.get("usage", {}),
+              "model": used_model,
+              "primary_model": model,
+              "fallback_model": fallback_model,
+              "usage": data.get("usage", {}) if data else {},
               "agent": agent_name,
               "provider": "github-models",
               "tools_enabled": True,
+              "quality_validation": quality_info,
           }
           with open("github-models-artifacts/metadata.json", "w") as f:
               json.dump(metadata, f, indent=2)
           
+          # Log quality summary
+          print()
+          if quality_info:
+              print(f"📊 Quality Summary:")
+              print(f"   Used fallback: {quality_info.get('used_fallback', False)}")
+              if 'quality_score' in quality_info:
+                  print(f"   Primary score: {quality_info.get('quality_score', 'N/A'):.2f}")
+              if 'fallback_score' in quality_info:
+                  print(f"   Fallback score: {quality_info.get('fallback_score', 'N/A'):.2f}")
           print()
           print(analysis[:500] + "..." if len(analysis) > 500 else analysis)
           PYTHON_EOF
