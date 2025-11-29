@@ -14,14 +14,21 @@ Based on investigation findings from:
 docs/a2a/A2A_COPILOT_CLI_INVESTIGATION.md
 
 Models available:
-  - openai/gpt-4o-mini (high volume, cost-effective)
+  - openai/gpt-4.1 (default, latest GPT-4 with tool-calling)
   - openai/gpt-4o (higher token capacity)
-  - openai/gpt-4.1 (latest, more restricted)
+  - openai/gpt-4o-mini (cost-effective, high volume)
+
+Tool Support:
+  - Tools are defined in agent definitions (.github/agents/*.md)
+  - GitHub Models API supports tool-calling via OpenAI-compatible format
+  - Tools are executed locally and results returned to the model
 """
 
 import asyncio
+import json
 import os
-from typing import Optional
+import subprocess
+from typing import Any, Dict, List, Optional
 
 import httpx
 
@@ -35,8 +42,269 @@ from .agent_card import parse_agent_definition
 # GitHub Models API endpoint
 GITHUB_MODELS_ENDPOINT = "https://models.github.ai/inference/chat/completions"
 
-# Default model - gpt-4o-mini has best rate limits (20,000 req, 2M tokens)
-DEFAULT_MODEL = "openai/gpt-4o-mini"
+# Default model - gpt-4.1 is the latest with full tool-calling support
+DEFAULT_MODEL = "openai/gpt-4.1"
+
+
+# =============================================================================
+# TOOL DEFINITIONS
+# =============================================================================
+# These tools map to the tools defined in agent definitions and provide
+# actual functionality when called by the model.
+# =============================================================================
+
+AVAILABLE_TOOLS = {
+    "get_file_contents": {
+        "type": "function",
+        "function": {
+            "name": "get_file_contents",
+            "description": "Read the contents of a file from the repository",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "Path to the file relative to repository root"
+                    }
+                },
+                "required": ["path"]
+            }
+        }
+    },
+    "search_code": {
+        "type": "function",
+        "function": {
+            "name": "search_code",
+            "description": "Search for code patterns in the repository",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "Search query (grep pattern)"
+                    },
+                    "file_pattern": {
+                        "type": "string",
+                        "description": "File pattern to search (e.g., '*.py', '*.yml')",
+                        "default": "*"
+                    }
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    "list_directory": {
+        "type": "function",
+        "function": {
+            "name": "list_directory",
+            "description": "List files and directories in a path",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "Directory path relative to repository root",
+                        "default": "."
+                    }
+                },
+                "required": []
+            }
+        }
+    },
+    "get_issue": {
+        "type": "function",
+        "function": {
+            "name": "get_issue",
+            "description": "Get details of a GitHub issue",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "issue_number": {
+                        "type": "integer",
+                        "description": "Issue number"
+                    }
+                },
+                "required": ["issue_number"]
+            }
+        }
+    },
+    "add_issue_comment": {
+        "type": "function",
+        "function": {
+            "name": "add_issue_comment",
+            "description": "Add a comment to a GitHub issue",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "issue_number": {
+                        "type": "integer",
+                        "description": "Issue number"
+                    },
+                    "body": {
+                        "type": "string",
+                        "description": "Comment body (markdown supported)"
+                    }
+                },
+                "required": ["issue_number", "body"]
+            }
+        }
+    },
+}
+
+# Map agent tool names to our tool definitions
+TOOL_NAME_MAPPING = {
+    "view": "get_file_contents",
+    "github-mcp-server-get_file_contents": "get_file_contents",
+    "github-mcp-server-search_code": "search_code",
+    "github-mcp-server-get_issue": "get_issue",
+    "github-mcp-server-add_issue_comment": "add_issue_comment",
+    "bash": "search_code",  # Limited bash via search
+}
+
+
+# Content truncation limits
+MAX_FILE_CONTENT_SIZE = 10000
+MAX_SEARCH_RESULT_SIZE = 5000
+
+
+def sanitize_search_query(query: str) -> str:
+    """
+    Sanitize a search query to prevent command injection.
+    
+    Args:
+        query: Raw search query
+        
+    Returns:
+        Sanitized query safe for subprocess
+    """
+    # Remove shell metacharacters
+    dangerous_chars = ['`', '$', '|', ';', '&', '>', '<', '\\', '\n', '\r']
+    sanitized = query
+    for char in dangerous_chars:
+        sanitized = sanitized.replace(char, '')
+    # Limit length
+    return sanitized[:200]
+
+
+def execute_tool(tool_name: str, arguments: Dict[str, Any]) -> str:
+    """
+    Execute a tool and return the result.
+    
+    Args:
+        tool_name: Name of the tool to execute
+        arguments: Tool arguments
+        
+    Returns:
+        Tool execution result as string
+    """
+    try:
+        if tool_name == "get_file_contents":
+            path = arguments.get("path", "")
+            # Basic path traversal protection
+            if ".." in path or path.startswith("/"):
+                return f"Error: Invalid path: {path}"
+            if os.path.exists(path):
+                with open(path, "r") as f:
+                    content = f.read()
+                # Limit content size for API
+                if len(content) > MAX_FILE_CONTENT_SIZE:
+                    content = content[:MAX_FILE_CONTENT_SIZE] + "\n... [truncated]"
+                return content
+            else:
+                return f"Error: File not found: {path}"
+                
+        elif tool_name == "search_code":
+            query = sanitize_search_query(arguments.get("query", ""))
+            file_pattern = arguments.get("file_pattern", "*")
+            # Sanitize file pattern too
+            file_pattern = sanitize_search_query(file_pattern)
+            if not query:
+                return "Error: Empty search query"
+            try:
+                result = subprocess.run(
+                    ["grep", "-r", "-n", "-l", "-F", query, "--include", file_pattern, "."],
+                    capture_output=True, text=True, timeout=10
+                )
+                if result.stdout:
+                    return f"Files matching '{query}':\n{result.stdout[:MAX_SEARCH_RESULT_SIZE]}"
+                return f"No matches found for '{query}'"
+            except subprocess.TimeoutExpired:
+                return "Search timed out"
+            except Exception as e:
+                return f"Search error: {str(e)}"
+                
+        elif tool_name == "list_directory":
+            path = arguments.get("path", ".")
+            if os.path.isdir(path):
+                entries = os.listdir(path)
+                return "\n".join(sorted(entries)[:100])
+            return f"Error: Directory not found: {path}"
+            
+        elif tool_name == "get_issue":
+            issue_number = arguments.get("issue_number")
+            try:
+                result = subprocess.run(
+                    ["gh", "issue", "view", str(issue_number), "--json", "title,body,state,labels"],
+                    capture_output=True, text=True, timeout=30
+                )
+                if result.returncode == 0:
+                    return result.stdout
+                return f"Error getting issue: {result.stderr}"
+            except Exception as e:
+                return f"Error: {str(e)}"
+                
+        elif tool_name == "add_issue_comment":
+            issue_number = arguments.get("issue_number")
+            body = arguments.get("body", "")
+            try:
+                result = subprocess.run(
+                    ["gh", "issue", "comment", str(issue_number), "--body", body],
+                    capture_output=True, text=True, timeout=30
+                )
+                if result.returncode == 0:
+                    return "Comment added successfully"
+                return f"Error adding comment: {result.stderr}"
+            except Exception as e:
+                return f"Error: {str(e)}"
+                
+        else:
+            return f"Unknown tool: {tool_name}"
+            
+    except Exception as e:
+        return f"Tool execution error: {str(e)}"
+
+
+def get_tools_for_agent(agent_name: str) -> List[Dict]:
+    """
+    Get tool definitions for an agent based on its definition.
+    
+    Args:
+        agent_name: Name of the agent
+        
+    Returns:
+        List of tool definitions in OpenAI format
+    """
+    metadata = parse_agent_definition(agent_name)
+    agent_tools = metadata.get("tools", [])
+    
+    # Track added tool names to avoid duplicates
+    added_tool_names = set()
+    tools = []
+    
+    for tool in agent_tools:
+        # Map agent tool name to our tool definition
+        mapped_name = TOOL_NAME_MAPPING.get(tool, tool)
+        if mapped_name in AVAILABLE_TOOLS and mapped_name not in added_tool_names:
+            tools.append(AVAILABLE_TOOLS[mapped_name])
+            added_tool_names.add(mapped_name)
+    
+    # Always include core tools (if not already added)
+    for core_tool in ["get_file_contents", "list_directory", "get_issue"]:
+        if core_tool not in added_tool_names:
+            tools.append(AVAILABLE_TOOLS[core_tool])
+            added_tool_names.add(core_tool)
+    
+    return tools
 
 
 class GitHubModelsAgent:
@@ -60,7 +328,7 @@ class GitHubModelsAgent:
 
         Args:
             agent_name: Name of the Chained agent (for persona/context)
-            model: GitHub Models model to use (e.g., "openai/gpt-4o-mini")
+            model: GitHub Models model to use (e.g., "openai/gpt-4.1")
             api_token: GitHub PAT with models:read scope
                        (defaults to COPILOT_PAT or GITHUB_TOKEN env var)
         """
@@ -78,14 +346,16 @@ class GitHubModelsAgent:
         message: str,
         context: Optional[str] = None,
         system_prompt: Optional[str] = None,
+        enable_tools: bool = True,
     ) -> str:
         """
-        Invoke GitHub Models API to process the message.
+        Invoke GitHub Models API to process the message with tool support.
 
         Args:
             message: User message to process
             context: Optional additional context
             system_prompt: Optional system prompt override
+            enable_tools: Whether to enable tool calling (default: True)
 
         Returns:
             Model's response as a string
@@ -101,6 +371,7 @@ Specialization: {specialization}
 Description: {description}
 
 You provide helpful, detailed responses from your specialized perspective.
+You have access to tools to help you understand and analyze the codebase.
 {f"Additional Context: {context}" if context else ""}"""
 
         # Build messages array
@@ -109,19 +380,38 @@ You provide helpful, detailed responses from your specialized perspective.
             {"role": "user", "content": message},
         ]
 
-        # Execute via GitHub Models API
+        # Get tools for this agent
+        tools = get_tools_for_agent(self.agent_name) if enable_tools else []
+
+        # Execute via GitHub Models API with tool loop
         try:
-            result = await self._call_github_models_api(messages)
+            result = await self._call_github_models_api_with_tools(messages, tools)
             return result
         except Exception as e:
             return f"[{self.agent_name}] Error invoking GitHub Models API: {str(e)}"
 
-    async def _call_github_models_api(self, messages: list) -> str:
+    async def _call_github_models_api_with_tools(
+        self, 
+        messages: List[Dict], 
+        tools: List[Dict],
+        max_tool_rounds: int = 5
+    ) -> str:
         """
-        Call the GitHub Models API with the given messages.
-
-        CRITICAL: Uses `Authorization: token` format, NOT Bearer!
-        This was discovered through testing (see A2A_COPILOT_CLI_INVESTIGATION.md).
+        Call the GitHub Models API with tool support.
+        
+        Implements a tool-calling loop that:
+        1. Sends request with tool definitions
+        2. If model requests tool calls, executes them
+        3. Returns tool results to model
+        4. Repeats until model gives final response
+        
+        Args:
+            messages: Conversation messages
+            tools: Tool definitions in OpenAI format
+            max_tool_rounds: Maximum tool-calling iterations
+            
+        Returns:
+            Final model response
         """
         if not self.api_token:
             return (
@@ -137,48 +427,102 @@ You provide helpful, detailed responses from your specialized perspective.
             "Content-Type": "application/json",
         }
 
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "max_tokens": 4096,
-        }
+        # Tool-calling loop
+        for round_num in range(max_tool_rounds):
+            payload = {
+                "model": self.model,
+                "messages": messages,
+                "max_tokens": 4096,
+            }
+            
+            # Add tools if available
+            if tools:
+                payload["tools"] = tools
+                payload["tool_choice"] = "auto"
 
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.post(
-                GITHUB_MODELS_ENDPOINT,
-                headers=headers,
-                json=payload,
-            )
-
-            if response.status_code == 401:
-                return (
-                    f"[{self.agent_name}] Authentication failed (401). "
-                    "Ensure your PAT has `models:read` scope and is valid."
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                response = await client.post(
+                    GITHUB_MODELS_ENDPOINT,
+                    headers=headers,
+                    json=payload,
                 )
 
-            if response.status_code == 403:
-                return (
-                    f"[{self.agent_name}] Access forbidden (403). "
-                    "Check if your account has access to GitHub Models."
-                )
+                if response.status_code == 401:
+                    return (
+                        f"[{self.agent_name}] Authentication failed (401). "
+                        "Ensure your PAT has `models:read` scope and is valid."
+                    )
 
-            if response.status_code == 429:
-                # Extract rate limit info from headers
-                remaining = response.headers.get("X-Ratelimit-Remaining-Requests", "?")
-                limit = response.headers.get("X-Ratelimit-Limit-Requests", "?")
-                return (
-                    f"[{self.agent_name}] Rate limited (429). "
-                    f"Remaining: {remaining}/{limit} requests."
-                )
+                if response.status_code == 403:
+                    return (
+                        f"[{self.agent_name}] Access forbidden (403). "
+                        "Check if your account has access to GitHub Models."
+                    )
 
-            response.raise_for_status()
-            data = response.json()
+                if response.status_code == 429:
+                    remaining = response.headers.get("X-Ratelimit-Remaining-Requests", "?")
+                    limit = response.headers.get("X-Ratelimit-Limit-Requests", "?")
+                    return (
+                        f"[{self.agent_name}] Rate limited (429). "
+                        f"Remaining: {remaining}/{limit} requests."
+                    )
 
-            # Extract the assistant message
-            if "choices" in data and len(data["choices"]) > 0:
-                return data["choices"][0]["message"]["content"]
+                response.raise_for_status()
+                data = response.json()
 
-            return f"[{self.agent_name}] Unexpected response format: {data}"
+                if "choices" not in data or len(data["choices"]) == 0:
+                    return f"[{self.agent_name}] Unexpected response format: {data}"
+
+                choice = data["choices"][0]
+                message = choice.get("message", {})
+                finish_reason = choice.get("finish_reason", "")
+
+                # Check if model wants to call tools
+                tool_calls = message.get("tool_calls", [])
+                
+                if tool_calls and finish_reason == "tool_calls":
+                    # Add assistant message with tool calls to history
+                    messages.append(message)
+                    
+                    # Execute each tool and add results
+                    for tool_call in tool_calls:
+                        tool_name = tool_call["function"]["name"]
+                        try:
+                            arguments = json.loads(tool_call["function"]["arguments"])
+                        except json.JSONDecodeError:
+                            arguments = {}
+                        
+                        # Execute the tool
+                        tool_result = execute_tool(tool_name, arguments)
+                        
+                        # Add tool result to messages
+                        messages.append({
+                            "role": "tool",
+                            "tool_call_id": tool_call["id"],
+                            "name": tool_name,
+                            "content": tool_result
+                        })
+                    
+                    # Continue loop for next round
+                    continue
+                
+                # No more tool calls, return final response
+                content = message.get("content", "")
+                if content:
+                    return content
+                
+                return f"[{self.agent_name}] No content in response"
+
+        return f"[{self.agent_name}] Max tool rounds ({max_tool_rounds}) exceeded"
+
+    async def _call_github_models_api(self, messages: list) -> str:
+        """
+        Simple API call without tools (backward compatibility).
+
+        CRITICAL: Uses `Authorization: token` format, NOT Bearer!
+        This was discovered through testing (see A2A_COPILOT_CLI_INVESTIGATION.md).
+        """
+        return await self._call_github_models_api_with_tools(messages, tools=[])
 
 
 class GitHubModelsAgentExecutor(AgentExecutor):
@@ -493,10 +837,10 @@ if __name__ == "__main__":
         print("  Test API: python -m tools.a2a.github_models_executor test")
         print("  Run server: python -m tools.a2a.github_models_executor <agent-name> [port] [model]")
         print()
-        print("Models available:")
-        print("  - openai/gpt-4o-mini (default, high volume)")
-        print("  - openai/gpt-4o (higher token capacity)")
-        print("  - openai/gpt-4.1 (latest, more restricted)")
+        print("Models available (with tool-calling support):")
+        print("  - openai/gpt-4.1 (default, latest GPT-4, full tool support)")
+        print("  - openai/gpt-4o (multimodal, large context)")
+        print("  - openai/gpt-4o-mini (cost-effective, high volume)")
         print()
         print("Example:")
-        print("  python -m tools.a2a.github_models_executor engineer-master 8080 openai/gpt-4o-mini")
+        print("  python -m tools.a2a.github_models_executor engineer-master 8080 openai/gpt-4.1")

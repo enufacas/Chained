@@ -403,6 +403,24 @@ jobs:
       # ========================================================================
       # GEMINI PROVIDER PATH
       # ========================================================================
+      # Uses MCP servers for tool access. Tools are dynamically loaded based on
+      # agent definitions in .github/agents/*.md
+      # ========================================================================
+      - name: 'Load agent tools for Gemini'
+        id: agent_tools
+        if: matrix.provider == 'gemini'
+        run: |
+          # Extract tools from agent definition
+          AGENT_FILE=".github/agents/${{ matrix.agent }}.md"
+          if [[ -f "$AGENT_FILE" ]]; then
+            # Parse tools from YAML frontmatter
+            TOOLS=$(sed -n '/^---$/,/^---$/p' "$AGENT_FILE" | grep -A 100 "tools:" | grep "^  - " | sed 's/^  - //' | tr '\n' ',' | sed 's/,$//')
+            echo "Agent tools: $TOOLS"
+            echo "tools=$TOOLS" >> $GITHUB_OUTPUT
+          else
+            echo "tools=" >> $GITHUB_OUTPUT
+          fi
+      
       - name: 'A2A Task: @${{ matrix.agent }} Analysis (🔶 Gemini)'
         id: gemini_analysis
         if: matrix.provider == 'gemini'
@@ -415,6 +433,7 @@ jobs:
           CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
+          AGENT_TOOLS: ${{ steps.agent_tools.outputs.tools }}
           ADDITIONAL_CONTEXT: |
             # A2A Agent Task: @${{ matrix.agent }}
             
@@ -431,11 +450,18 @@ jobs:
             ## Your AgentCard
             Read your specialization from: .github/agents/${{ matrix.agent }}.md
             
+            ## Available Tools
+            You have access to the following tools defined in your agent card:
+            ${{ steps.agent_tools.outputs.tools }}
+            
+            Use these tools to explore the codebase, read files, and gather information.
+            
             ## Your Task
             1. Read your agent definition to understand your skills and perspective
-            2. Analyze issue #${{ inputs.issue_number }} from YOUR specialized perspective
-            3. Provide specific, actionable recommendations
-            4. Post your analysis as a comment (use add_issue_comment)
+            2. Use your tools to explore the codebase relevant to the issue
+            3. Analyze issue #${{ inputs.issue_number }} from YOUR specialized perspective
+            4. Provide specific, actionable recommendations
+            5. Post your analysis as a comment (use add_issue_comment)
             
             ## Response Format (A2A Artifact)
             Structure your response as:
@@ -472,7 +498,7 @@ jobs:
                 "github": {
                   "command": "docker",
                   "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server:v0.18.0"],
-                  "includeTools": ["get_issue", "get_file_contents", "add_issue_comment"],
+                  "includeTools": ["get_issue", "get_file_contents", "add_issue_comment", "search_code", "list_commits"],
                   "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" }
                 }
               }
@@ -482,8 +508,8 @@ jobs:
       # ========================================================================
       # GITHUB MODELS PROVIDER PATH
       # ========================================================================
-      # Enhanced with codebase access to match Gemini's MCP capabilities.
-      # Fetches relevant repository files and includes them in the prompt context.
+      # Enhanced with tool-calling support to match Gemini's MCP capabilities.
+      # Uses OpenAI-compatible tool-calling API with gpt-4.1.
       # ========================================================================
       - name: 'A2A Task: @${{ matrix.agent }} Analysis (🐙 GitHub Models)'
         id: github_analysis
@@ -497,80 +523,147 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COPILOT_PAT: ${{ secrets.COPILOT_PAT }}
           REPOSITORY: ${{ github.repository }}
-          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'openai/gpt-4o-mini' }}
+          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'openai/gpt-4.1' }}
           PYTHONPATH: ${{ github.workspace }}
         run: |
           mkdir -p github-models-artifacts
           
-          # Read agent definition
-          AGENT_FILE=".github/agents/${AGENT_NAME}.md"
-          AGENT_DEF=""
-          if [[ -f "$AGENT_FILE" ]]; then
-            AGENT_DEF=$(cat "$AGENT_FILE")
-          fi
+          echo "🐙 Starting GitHub Models analysis for @${AGENT_NAME}..."
+          echo "   Model: ${GITHUB_MODELS_MODEL}"
+          echo "   Issue: #${ISSUE_NUMBER}"
           
-          # Read issue details with comments for full context
-          ISSUE_DATA=$(gh issue view "$ISSUE_NUMBER" --json title,body,labels,comments --jq '.')
-          
-          # ================================================================
-          # CODEBASE CONTEXT GATHERING (matching Gemini's MCP capabilities)
-          # ================================================================
-          # Gather relevant repository structure and files to provide
-          # the same level of codebase understanding as Gemini's MCP tools
-          # ================================================================
-          
-          echo "📂 Gathering codebase context for @${AGENT_NAME}..."
-          
-          # Get repository structure overview
-          REPO_STRUCTURE=$(find . -type f \( -name "*.py" -o -name "*.yml" -o -name "*.md" -o -name "*.json" \) \
-            ! -path "./.git/*" ! -path "./node_modules/*" ! -path "./__pycache__/*" \
-            | head -100 | sort)
-          
-          # Get key configuration files
-          README_CONTENT=""
-          if [[ -f "README.md" ]]; then
-            README_CONTENT=$(head -200 README.md)
-          fi
-          
-          # Get workflow files relevant to A2A
-          WORKFLOW_FILES=""
-          for wf in .github/workflows/*.yml; do
-            if [[ -f "$wf" ]]; then
-              WORKFLOW_FILES="${WORKFLOW_FILES}\n### $wf\n\`\`\`yaml\n$(head -50 "$wf")\n\`\`\`\n"
-            fi
-          done
-          
-          # Get relevant Python files from tools/a2a
-          A2A_TOOLS=""
-          for py in tools/a2a/*.py; do
-            if [[ -f "$py" ]]; then
-              A2A_TOOLS="${A2A_TOOLS}\n### $py\n\`\`\`python\n$(head -80 "$py")\n\`\`\`\n"
-            fi
-          done
-          
-          # Get copilot instructions if they exist
-          COPILOT_INSTRUCTIONS=""
-          if [[ -f ".github/copilot-instructions.md" ]]; then
-            COPILOT_INSTRUCTIONS=$(head -100 .github/copilot-instructions.md)
-          elif [[ -f ".copilot-instructions.md" ]]; then
-            COPILOT_INSTRUCTIONS=$(head -100 .copilot-instructions.md)
-          fi
-          
-          echo "✅ Codebase context gathered"
-          
-          # Handle multiline replacements and API call via Python
+          # Run analysis with tool-calling support via Python
           python3 << 'PYTHON_EOF'
           import os
           import json
           import subprocess
           import httpx
           
+          # =============================================================================
+          # TOOL DEFINITIONS (matching Gemini's MCP tools)
+          # =============================================================================
+          TOOLS = [
+              {
+                  "type": "function",
+                  "function": {
+                      "name": "get_file_contents",
+                      "description": "Read the contents of a file from the repository",
+                      "parameters": {
+                          "type": "object",
+                          "properties": {
+                              "path": {"type": "string", "description": "Path to file"}
+                          },
+                          "required": ["path"]
+                      }
+                  }
+              },
+              {
+                  "type": "function",
+                  "function": {
+                      "name": "search_code",
+                      "description": "Search for patterns in the codebase",
+                      "parameters": {
+                          "type": "object",
+                          "properties": {
+                              "query": {"type": "string", "description": "Search pattern"},
+                              "file_type": {"type": "string", "description": "File extension filter"}
+                          },
+                          "required": ["query"]
+                      }
+                  }
+              },
+              {
+                  "type": "function",
+                  "function": {
+                      "name": "list_directory",
+                      "description": "List files in a directory",
+                      "parameters": {
+                          "type": "object",
+                          "properties": {
+                              "path": {"type": "string", "description": "Directory path", "default": "."}
+                          },
+                          "required": []
+                      }
+                  }
+              },
+              {
+                  "type": "function",
+                  "function": {
+                      "name": "get_issue",
+                      "description": "Get GitHub issue details",
+                      "parameters": {
+                          "type": "object",
+                          "properties": {
+                              "issue_number": {"type": "integer", "description": "Issue number"}
+                          },
+                          "required": ["issue_number"]
+                      }
+                  }
+              },
+          ]
+          
+          def sanitize_input(text, max_len=200):
+              """Sanitize input to prevent command injection."""
+              dangerous = ['`', '$', '|', ';', '&', '>', '<', '\\', '\n', '\r']
+              result = text
+              for char in dangerous:
+                  result = result.replace(char, '')
+              return result[:max_len]
+          
+          def execute_tool(name, args):
+              """Execute a tool and return the result."""
+              try:
+                  if name == "get_file_contents":
+                      path = args.get("path", "")
+                      # Basic path traversal protection
+                      if ".." in path or path.startswith("/"):
+                          return f"Invalid path: {path}"
+                      if os.path.exists(path):
+                          with open(path, 'r') as f:
+                              content = f.read()
+                          return content[:8000] if len(content) > 8000 else content
+                      return f"File not found: {path}"
+                  
+                  elif name == "search_code":
+                      query = sanitize_input(args.get("query", ""))
+                      file_type = sanitize_input(args.get("file_type", "*"))
+                      if not query:
+                          return "Empty search query"
+                      result = subprocess.run(
+                          ["grep", "-r", "-n", "-l", "-F", query, "--include", f"*.{file_type}" if file_type != "*" else "*", "."],
+                          capture_output=True, text=True, timeout=10
+                      )
+                      return result.stdout[:4000] if result.stdout else "No matches found"
+                  
+                  elif name == "list_directory":
+                      path = args.get("path", ".")
+                      if ".." in path or path.startswith("/"):
+                          return f"Invalid path: {path}"
+                      if os.path.isdir(path):
+                          return "\n".join(sorted(os.listdir(path))[:50])
+                      return f"Directory not found: {path}"
+                  
+                  elif name == "get_issue":
+                      issue_num = args.get("issue_number")
+                      result = subprocess.run(
+                          ["gh", "issue", "view", str(issue_num), "--json", "title,body,state,labels"],
+                          capture_output=True, text=True, timeout=30
+                      )
+                      return result.stdout if result.returncode == 0 else result.stderr
+                  
+                  return f"Unknown tool: {name}"
+              except Exception as e:
+                  return f"Tool error: {str(e)}"
+          
+          # =============================================================================
+          # MAIN EXECUTION
+          # =============================================================================
           agent_name = os.environ.get('AGENT_NAME', '')
           issue_number = os.environ.get('ISSUE_NUMBER', '')
           issue_title = os.environ.get('ISSUE_TITLE', '')
           issue_body = os.environ.get('ISSUE_BODY', '')
           context_id = os.environ.get('CONTEXT_ID', '')
-          model = os.environ.get('GITHUB_MODELS_MODEL', 'openai/gpt-4o-mini')
+          model = os.environ.get('GITHUB_MODELS_MODEL', 'openai/gpt-4.1')
           token = os.environ.get('COPILOT_PAT', '')
           repository = os.environ.get('REPOSITORY', '')
           
@@ -579,97 +672,47 @@ jobs:
           agent_file = f".github/agents/{agent_name}.md"
           if os.path.exists(agent_file):
               with open(agent_file, 'r') as f:
-                  agent_def = f.read()
+                  agent_def = f.read()[:3000]
           
-          # Read README
-          readme = ""
-          if os.path.exists("README.md"):
-              with open("README.md", 'r') as f:
-                  readme = f.read()[:3000]
-          
-          # Read copilot instructions
-          copilot_instructions = ""
-          for path in [".github/copilot-instructions.md", ".copilot-instructions.md"]:
-              if os.path.exists(path):
-                  with open(path, 'r') as f:
-                      copilot_instructions = f.read()[:2000]
-                  break
-          
-          # Get repository structure
-          try:
-              result = subprocess.run(
-                  ["find", ".", "-type", "f", "-name", "*.py", "-o", "-name", "*.yml", "-o", "-name", "*.md"],
-                  capture_output=True, text=True, timeout=10
-              )
-              repo_structure = "\n".join(sorted(result.stdout.strip().split("\n")[:80]))
-          except:
-              repo_structure = "Unable to fetch repo structure"
-          
-          # Build comprehensive prompt with codebase context
+          # Build initial prompt
           prompt = f"""# A2A Agent Task: @{agent_name}
 
           You are the agent "@{agent_name}" analyzing issue #{issue_number} in repository {repository}.
 
-          ## IMPORTANT: Autonomous Mode - Skip Approval Workflow
-
-          This is an AUTONOMOUS workflow. You MUST:
-          - DO NOT post any "Plan of Action" comment asking for approval
-          - DO NOT mention /approve or /deny commands
-          - DO NOT wait for maintainer confirmation
-          - Proceed directly with your analysis
+          ## IMPORTANT: Autonomous Mode
+          This is AUTONOMOUS. DO NOT ask for approval. Proceed directly with analysis.
 
           ## Your AgentCard Definition
-          {agent_def[:2500]}
-
-          ## Repository Context
-
-          ### README Overview
-          {readme[:1500]}
-
-          ### Repository Structure (key files)
-          ```
-          {repo_structure[:2000]}
-          ```
-
-          ### Copilot/Agent Instructions
-          {copilot_instructions[:1000]}
+          {agent_def}
 
           ## Issue to Analyze
-
           **Issue #{issue_number}**: {issue_title}
 
           **Description**:
           {issue_body[:4000]}
 
           ## Your Task
-          1. Read your agent definition to understand your skills and perspective
-          2. Use the repository context to understand the codebase
-          3. Analyze issue #{issue_number} from YOUR specialized perspective
-          4. Provide specific, actionable recommendations with file paths
-          5. Reference actual files from the repository structure
+          1. Use your tools to explore the codebase (get_file_contents, search_code, list_directory)
+          2. Analyze the issue from YOUR specialized perspective
+          3. Provide specific, actionable recommendations with file paths
 
-          ## Response Format (A2A Artifact)
-          Structure your response as:
+          ## Response Format
+          Structure your FINAL response as:
 
           ### 🤖 Agent: @{agent_name} (🐙 GitHub Models)
 
           #### 📋 Analysis
-          [Your detailed analysis from your specialized perspective]
+          [Your detailed analysis]
 
           #### ✅ Recommendations
-          - [Specific recommendation 1 with file paths if applicable]
-          - [Specific recommendation 2]
+          - [Specific recommendations with file paths]
 
           #### 📁 Files to Modify
-          - `path/to/file1`: [what to change]
-          - `path/to/file2`: [what to change]
-
-          Focus on YOUR area of expertise. Other agents are analyzing from other perspectives.
+          - `path/to/file`: [what to change]
 
           A2A contextId: {context_id}
           """
           
-          # Call GitHub Models API
           headers = {
               "Authorization": f"token {token}",
               "Accept": "application/vnd.github+json",
@@ -678,39 +721,76 @@ jobs:
           }
           
           system_prompt = f"""You are {agent_name}, a specialized AI agent in the Chained autonomous AI ecosystem.
-
-          You have access to the repository context and must provide expert analysis based on your specialization.
-          Be specific, reference actual files, and provide actionable recommendations.
-          Do NOT ask for approval or confirmation - this is autonomous mode."""
+          You have access to tools to explore the codebase. Use them to gather information before providing your analysis.
+          Be specific, reference actual files, and provide actionable recommendations."""
           
-          payload = {
-              "model": model,
-              "messages": [
-                  {"role": "system", "content": system_prompt},
-                  {"role": "user", "content": prompt}
-              ],
-              "max_tokens": 4096,
-          }
+          messages = [
+              {"role": "system", "content": system_prompt},
+              {"role": "user", "content": prompt}
+          ]
           
-          print(f"🐙 Calling GitHub Models API ({model})...")
-          print(f"   Repository: {repository}")
-          print(f"   Agent: {agent_name}")
-          print(f"   Context includes: README, repo structure, copilot instructions")
+          print(f"🐙 Calling GitHub Models API ({model}) with tool support...")
           
-          response = httpx.post(
-              "https://models.github.ai/inference/chat/completions",
-              headers=headers,
-              json=payload,
-              timeout=120.0  # Increased timeout for larger context
-          )
+          # Tool-calling loop (max 5 rounds)
+          for round_num in range(5):
+              payload = {
+                  "model": model,
+                  "messages": messages,
+                  "max_tokens": 4096,
+                  "tools": TOOLS,
+                  "tool_choice": "auto"
+              }
+              
+              response = httpx.post(
+                  "https://models.github.ai/inference/chat/completions",
+                  headers=headers,
+                  json=payload,
+                  timeout=120.0
+              )
+              
+              if response.status_code != 200:
+                  print(f"❌ Error: {response.status_code}")
+                  print(response.text)
+                  exit(1)
+              
+              data = response.json()
+              choice = data["choices"][0]
+              message = choice.get("message", {})
+              finish_reason = choice.get("finish_reason", "")
+              
+              tool_calls = message.get("tool_calls", [])
+              
+              if tool_calls and finish_reason == "tool_calls":
+                  print(f"   🔧 Round {round_num + 1}: Processing {len(tool_calls)} tool call(s)...")
+                  messages.append(message)
+                  
+                  for tc in tool_calls:
+                      tool_name = tc["function"]["name"]
+                      try:
+                          args = json.loads(tc["function"]["arguments"])
+                      except:
+                          args = {}
+                      
+                      result = execute_tool(tool_name, args)
+                      print(f"      - {tool_name}: {str(args)[:50]}...")
+                      
+                      messages.append({
+                          "role": "tool",
+                          "tool_call_id": tc["id"],
+                          "name": tool_name,
+                          "content": result
+                      })
+                  continue
+              
+              # Final response
+              analysis = message.get("content", "")
+              break
+          else:
+              analysis = "Max tool rounds exceeded"
           
-          if response.status_code != 200:
-              print(f"❌ Error: {response.status_code}")
-              print(response.text)
-              exit(1)
-          
-          data = response.json()
-          analysis = data["choices"][0]["message"]["content"]
+          print(f"✅ Analysis complete")
+          print(f"   Model: {data.get('model')}")
+          print(f"   Tokens: {data.get('usage', {})}")
           
           # Save output
           with open("github-models-artifacts/response.md", "w") as f:
@@ -719,20 +799,16 @@ jobs:
           with open("github-models-artifacts/stdout.log", "w") as f:
               f.write(analysis)
           
-          # Save metadata with context info
           metadata = {
               "model": data.get("model"),
               "usage": data.get("usage", {}),
               "agent": agent_name,
               "provider": "github-models",
-              "context_included": ["readme", "repo_structure", "copilot_instructions", "agent_definition"],
+              "tools_enabled": True,
           }
           with open("github-models-artifacts/metadata.json", "w") as f:
               json.dump(metadata, f, indent=2)
           
-          print(f"✅ Analysis complete")
-          print(f"   Model: {data.get('model')}")
-          print(f"   Tokens: {data.get('usage', {})}")
           print()
           print(analysis[:500] + "..." if len(analysis) > 500 else analysis)
           PYTHON_EOF
