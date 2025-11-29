@@ -504,3 +504,4 @@ Command-line interface for Copilot assistance in terminal.
 
 *Last updated: November 2024*
 *Based on live testing in GitHub Actions environment and official GitHub documentation*
+*Note: Some features (e.g., Coding Agent 1-request-per-session) reference planned July 2025 changes per GitHub changelog*
