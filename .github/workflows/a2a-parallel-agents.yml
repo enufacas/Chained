@@ -493,7 +493,7 @@ jobs:
           workflow_name: 'a2a-agent-${{ matrix.agent }}'
           settings: |-
             {
-              "model": { "maxSessionTurns": 15 },
+              "model": { "maxSessionTurns": 30 },
               "mcpServers": {
                 "github": {
                   "command": "docker",
@@ -509,7 +509,7 @@ jobs:
       # GITHUB MODELS PROVIDER PATH
       # ========================================================================
       # Enhanced with tool-calling support to match Gemini's MCP capabilities.
-      # Uses OpenAI-compatible tool-calling API with gpt-4.1.
+      # Uses OpenAI-compatible tool-calling API with gpt-4o-mini (better accessibility).
       # ========================================================================
       - name: 'A2A Task: @${{ matrix.agent }} Analysis (🐙 GitHub Models)'
         id: github_analysis
@@ -523,7 +523,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COPILOT_PAT: ${{ secrets.COPILOT_PAT }}
           REPOSITORY: ${{ github.repository }}
-          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'openai/gpt-4.1' }}
+          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'openai/gpt-4o-mini' }}
           PYTHONPATH: ${{ github.workspace }}
         run: |
           mkdir -p github-models-artifacts
@@ -663,7 +663,7 @@ jobs:
           issue_title = os.environ.get('ISSUE_TITLE', '')
           issue_body = os.environ.get('ISSUE_BODY', '')
           context_id = os.environ.get('CONTEXT_ID', '')
-          model = os.environ.get('GITHUB_MODELS_MODEL', 'openai/gpt-4.1')
+          model = os.environ.get('GITHUB_MODELS_MODEL', 'openai/gpt-4o-mini')
           token = os.environ.get('COPILOT_PAT', '')
           repository = os.environ.get('REPOSITORY', '')
           

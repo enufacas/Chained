@@ -14,9 +14,9 @@ Based on investigation findings from:
 docs/a2a/A2A_COPILOT_CLI_INVESTIGATION.md
 
 Models available:
-  - openai/gpt-4.1 (default, latest GPT-4 with tool-calling)
+  - openai/gpt-4o-mini (default, high volume, best accessibility)
   - openai/gpt-4o (higher token capacity)
-  - openai/gpt-4o-mini (cost-effective, high volume)
+  - openai/gpt-4.1 (latest GPT-4, may require premium access)
 
 Tool Support:
   - Tools are defined in agent definitions (.github/agents/*.md)
@@ -42,8 +42,9 @@ from .agent_card import parse_agent_definition
 # GitHub Models API endpoint
 GITHUB_MODELS_ENDPOINT = "https://models.github.ai/inference/chat/completions"
 
-# Default model - gpt-4.1 is the latest with full tool-calling support
-DEFAULT_MODEL = "openai/gpt-4.1"
+# Default model - gpt-4o-mini has higher rate limits (20k req, 2M tokens) and better accessibility
+# Note: gpt-4.1 often returns "No access to model" errors for users without premium access
+DEFAULT_MODEL = "openai/gpt-4o-mini"
 
 
 # =============================================================================
@@ -838,9 +839,9 @@ if __name__ == "__main__":
         print("  Run server: python -m tools.a2a.github_models_executor <agent-name> [port] [model]")
         print()
         print("Models available (with tool-calling support):")
-        print("  - openai/gpt-4.1 (default, latest GPT-4, full tool support)")
+        print("  - openai/gpt-4o-mini (default, high volume, best accessibility)")
         print("  - openai/gpt-4o (multimodal, large context)")
-        print("  - openai/gpt-4o-mini (cost-effective, high volume)")
+        print("  - openai/gpt-4.1 (latest GPT-4, may require premium access)")
         print()
         print("Example:")
-        print("  python -m tools.a2a.github_models_executor engineer-master 8080 openai/gpt-4.1")
+        print("  python -m tools.a2a.github_models_executor engineer-master 8080 openai/gpt-4o-mini")
