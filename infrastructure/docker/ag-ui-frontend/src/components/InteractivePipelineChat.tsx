@@ -3,11 +3,13 @@
  * 
  * Uses CopilotKit with A2A middleware to enable interactive agent execution.
  * Users can request work like "write a new blog post" and see agents coordinate in real-time.
+ * 
+ * Based on: https://github.com/CopilotKit/a2a-travel
  */
 
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { CopilotKit, useCopilotChat, useCopilotAction } from "@copilotkit/react-core";
 import { CopilotChat } from "@copilotkit/react-ui";
 import "@copilotkit/react-ui/styles.css";
@@ -178,66 +180,9 @@ export function InteractivePipelineChat({
   onAgentActivity,
   className = "",
 }: InteractivePipelineChatProps) {
-  const [status, setStatus] = useState<{
-    llmAvailable: boolean;
-    a2aAvailable: boolean;
-    checked: boolean;
-  }>({ llmAvailable: false, a2aAvailable: false, checked: false });
-
-  // Check if LLM and A2A endpoints are available
-  // This runs in background - we show chat immediately if LLM is likely available
-  useEffect(() => {
-    const checkStatus = async () => {
-      try {
-        const res = await fetch("/api/copilotkit-a2a");
-        const data = await res.json();
-        setStatus({
-          // LLM is available if Gemini or OpenAI is configured
-          llmAvailable: data.llmAvailable || data.llmProvider !== "none",
-          // A2A agents are available if the ADK API server responds
-          a2aAvailable: data.adkApiServer?.available || false,
-          checked: true,
-        });
-      } catch {
-        setStatus({ llmAvailable: false, a2aAvailable: false, checked: true });
-      }
-    };
-    checkStatus();
-  }, []);
-
-  // Determine the status banner message
-  const getStatusBanner = () => {
-    if (!status.checked) {
-      return null; // Still checking, don't show banner yet
-    }
-    
-    if (!status.llmAvailable) {
-      return (
-        <div className="bg-red-500/10 border-b border-red-500/30 px-4 py-2 text-sm text-red-400">
-          ❌ No LLM configured. Set GOOGLE_API_KEY or OPENAI_API_KEY to enable chat.
-        </div>
-      );
-    }
-    
-    if (!status.a2aAvailable) {
-      return (
-        <div className="bg-yellow-500/10 border-b border-yellow-500/30 px-4 py-2 text-sm text-yellow-400">
-          ⚠️ A2A agents not available. Chat works but agent coordination is limited.
-        </div>
-      );
-    }
-    
-    return null; // All systems go
-  };
-
-  // Show chat immediately - don't block on status check
-  // The chat will work as long as the LLM is configured (checked at build time)
   return (
     <div className={`flex flex-col h-full ${className}`}>
-      {/* Status banner (shows after check completes) */}
-      {getStatusBanner()}
-      
-      {/* CopilotKit with A2A middleware - always render */}
+      {/* CopilotKit with A2A middleware */}
       <div className="flex-1 overflow-hidden">
         <CopilotKit
           runtimeUrl="/api/copilotkit-a2a"
