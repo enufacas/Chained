@@ -212,5 +212,67 @@ function generateNavigation() {
     });
 }
 
+function generateBreadcrumbs() {
+    const main = document.querySelector('main');
+    if (!main) return;
+    
+    // Avoid duplicate breadcrumbs if already present
+    if (document.querySelector('.breadcrumbs')) return;
+
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    
+    // Don't show breadcrumbs on home page
+    if (currentPath === 'index.html' || currentPath === '') return;
+
+    let sectionTitle = '';
+    let pageTitle = '';
+    
+    // Find page in navConfig
+    if (typeof navConfig !== 'undefined') {
+        for (const section of navConfig) {
+            const item = section.items.find(i => i.url === currentPath);
+            if (item) {
+                sectionTitle = section.title;
+                pageTitle = item.text;
+                break;
+            }
+        }
+    }
+
+    if (!pageTitle) {
+        // Fallback: Use document title or filename
+        const titleParts = document.title.split(' - ');
+        pageTitle = titleParts[0] || currentPath;
+        
+        // Clean up filename if using that
+        if (pageTitle === currentPath) {
+             pageTitle = pageTitle.replace('.html', '').replace(/-/g, ' ');
+             // Capitalize first letters
+             pageTitle = pageTitle.replace(/\\w\\S*/g, (w) => (w.replace(/^\\w/, (c) => c.toUpperCase())));
+        }
+    }
+
+    const breadcrumbs = document.createElement('div');
+    breadcrumbs.className = 'breadcrumbs';
+    
+    let html = `<a href="index.html">Home</a>`;
+    
+    if (sectionTitle) {
+        html += `<span class="separator">/</span> <span class="section">\${sectionTitle}</span>`;
+    }
+    
+    html += `<span class="separator">/</span> <span class="current">\${pageTitle}</span>`;
+    
+    breadcrumbs.innerHTML = html;
+    
+    // Insert at the top of main
+    main.insertBefore(breadcrumbs, main.firstChild);
+}
+
 // Call on load
 document.addEventListener('DOMContentLoaded', generateNavigation);
+document.addEventListener('DOMContentLoaded', generateBreadcrumbs);
+
+// Also call immediately just in case
+generateNavigation();
+generateBreadcrumbs();
