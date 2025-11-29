@@ -212,5 +212,63 @@ function generateNavigation() {
     });
 }
 
+function generateBreadcrumbs() {
+    const main = document.querySelector('main');
+    // Don't add breadcrumbs if no main element or if on home page
+    if (!main || window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/')) return;
+
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    let breadcrumbTrail = [{ text: '🏠 Home', url: 'index.html' }];
+    let found = false;
+
+    // Find current page in navConfig
+    navConfig.forEach(section => {
+        if (found) return;
+        section.items.forEach(item => {
+            if (item.url === currentPath) {
+                breadcrumbTrail.push({ text: section.title, url: null }); // Section is a category, not a link
+                breadcrumbTrail.push({ text: item.text, url: item.url });
+                found = true;
+            }
+        });
+    });
+
+    // Fallback for pages not in navConfig
+    if (!found) {
+        const title = document.title.split('-')[0].trim();
+        breadcrumbTrail.push({ text: title, url: currentPath });
+    }
+
+    // Construct HTML
+    const nav = document.createElement('nav');
+    nav.className = 'breadcrumb-nav';
+    nav.setAttribute('aria-label', 'Breadcrumb');
+
+    const ol = document.createElement('ol');
+    ol.className = 'breadcrumb-list';
+
+    breadcrumbTrail.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'breadcrumb-item';
+        
+        if (index === breadcrumbTrail.length - 1 || !item.url) {
+            li.textContent = item.text;
+            li.setAttribute('aria-current', 'page');
+        } else {
+            const a = document.createElement('a');
+            a.href = item.url;
+            a.textContent = item.text;
+            li.appendChild(a);
+        }
+        ol.appendChild(li);
+    });
+
+    nav.appendChild(ol);
+    main.insertBefore(nav, main.firstChild);
+}
+
 // Call on load
-document.addEventListener('DOMContentLoaded', generateNavigation);
+document.addEventListener('DOMContentLoaded', () => {
+    generateNavigation();
+    generateBreadcrumbs();
+});
