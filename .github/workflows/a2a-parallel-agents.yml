@@ -81,6 +81,7 @@ jobs:
     outputs:
       agents: ${{ steps.select.outputs.agents }}
       agent_count: ${{ steps.select.outputs.count }}
+      implement_agent: ${{ steps.select.outputs.implement_agent }}
       agent_matrix: ${{ steps.matrix.outputs.matrix }}
       issue_title: ${{ steps.issue.outputs.title }}
       issue_body: ${{ steps.issue.outputs.body }}
@@ -224,6 +225,11 @@ jobs:
           
           echo "Selected agents: $SELECTED_AGENTS"
           echo "agents=$SELECTED_AGENTS" >> $GITHUB_OUTPUT
+          
+          # The first agent (typically from engineer category) is the implementing agent
+          IMPLEMENT_AGENT=$(echo "$SELECTED_AGENTS" | cut -d',' -f1 | xargs)
+          echo "Implementing agent: $IMPLEMENT_AGENT"
+          echo "implement_agent=$IMPLEMENT_AGENT" >> $GITHUB_OUTPUT
           
           COUNT=$(echo "$SELECTED_AGENTS" | tr ',' '\n' | grep -c . || echo 0)
           echo "count=$COUNT" >> $GITHUB_OUTPUT
@@ -493,7 +499,7 @@ jobs:
           workflow_name: 'a2a-agent-${{ matrix.agent }}'
           settings: |-
             {
-              "model": { "maxSessionTurns": 30 },
+              "model": { "maxSessionTurns": 75 },
               "mcpServers": {
                 "github": {
                   "command": "docker",
@@ -1426,6 +1432,7 @@ jobs:
           ARTIFACT_VERSION: ${{ steps.context.outputs.artifact_version }}
           ARTIFACT_TIMESTAMP: ${{ steps.context.outputs.artifact_timestamp }}
           AGENT_COUNT: ${{ steps.context.outputs.agent_count }}
+          IMPLEMENT_AGENT: ${{ needs.setup.outputs.implement_agent }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           TRIGGERING_ACTOR: ${{ github.triggering_actor }}
@@ -1442,7 +1449,7 @@ jobs:
           workflow_name: 'a2a-implement'
           settings: |-
             {
-              "model": { "maxSessionTurns": 50 },
+              "model": { "maxSessionTurns": 75 },
               "mcpServers": {
                 "github": {
                   "command": "docker",
@@ -1568,6 +1575,16 @@ jobs:
             3. Create necessary files/changes
             4. Create PR with body containing "Fixes #${{ inputs.issue_number }}"
             
+            ## ⚠️ MANDATORY PR ATTRIBUTION
+            
+            When creating the PR, you MUST start the PR body with this exact attribution header:
+            
+            ```markdown
+            ### 🤖 Agent: @${{ needs.setup.outputs.implement_agent }} (🔶 Gemini)
+            ```
+            
+            This attributes the implementation work to the designated implementing agent: **@${{ needs.setup.outputs.implement_agent }}**
+            
             ## Available Tools
             
             ### MCP Tools (GitHub Server)
@@ -1638,24 +1655,24 @@ jobs:
           BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
           ISSUE_TITLE: ${{ needs.setup.outputs.issue_title }}
           AGENTS: ${{ needs.setup.outputs.agents }}
+          IMPLEMENT_AGENT: ${{ needs.setup.outputs.implement_agent }}
           CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           echo "⚠️ Gemini didn't create PR, attempting fallback PR creation..."
           
-          # Create PR body using heredoc for proper formatting
-          PR_BODY=$(cat << 'BODY_EOF'
+          # Create PR body with agent attribution header
+          PR_BODY="### 🤖 Agent: @${IMPLEMENT_AGENT} (🔶 Gemini)
+
           ## A2A Parallel Agent Implementation
 
           This PR was created by the A2A parallel orchestration workflow.
 
           ### Context
-          BODY_EOF
-          )
-          PR_BODY="$PR_BODY
           - **Issue**: #$ISSUE_NUMBER
           - **contextId**: \`$CONTEXT_ID\`
-          - **Agents Used**: $AGENTS
+          - **Implementing Agent**: @$IMPLEMENT_AGENT
+          - **All Agents Used**: $AGENTS
 
           Fixes #$ISSUE_NUMBER
 
