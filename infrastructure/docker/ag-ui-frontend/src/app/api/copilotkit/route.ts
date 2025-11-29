@@ -115,16 +115,18 @@ export const GET = async () => {
   logWithTimestamp("GET request received (status check)");
   
   const info = getLLMProviderInfo();
+  const isProduction = process.env.NODE_ENV === "production";
   
-  // Add additional debug info
+  // Add additional debug info (redact sensitive data in production)
   const debugInfo = {
     ...info,
     debug: {
       timestamp: new Date().toISOString(),
       hasGoogleApiKey: !!googleApiKey,
       hasOpenAIApiKey: !!openaiApiKey,
-      googleKeyPrefix: googleApiKey ? googleApiKey.substring(0, 4) + "..." : null,
-      openaiKeyPrefix: openaiApiKey ? openaiApiKey.substring(0, 4) + "..." : null,
+      // Only show key prefixes in development mode for security
+      googleKeyPrefix: !isProduction && googleApiKey ? googleApiKey.substring(0, 4) + "..." : (googleApiKey ? "[redacted]" : null),
+      openaiKeyPrefix: !isProduction && openaiApiKey ? openaiApiKey.substring(0, 4) + "..." : (openaiApiKey ? "[redacted]" : null),
       nodeEnv: process.env.NODE_ENV,
     }
   };

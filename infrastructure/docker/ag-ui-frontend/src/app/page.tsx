@@ -12,9 +12,10 @@
 import { CopilotChat, CopilotPopup } from "@copilotkit/react-ui";
 import { useCopilotAction, useCopilotReadable, CopilotKit } from "@copilotkit/react-core";
 import { useState, useEffect, useCallback } from "react";
+import { PipelineData, ApiStatus } from "@/types";
 
 // =============================================================================
-// Types
+// Types (Local types not shared across components)
 // =============================================================================
 
 type AgentStatus = "idle" | "working" | "completed" | "failed";
@@ -28,58 +29,18 @@ interface AgentState {
   framework: string;
 }
 
-interface ApiStatus {
-  checking: boolean;
-  available: boolean;
-  provider: "gemini" | "openai" | "none";
-  model: string;
-  error?: string;
-  timestamp: string;
-}
+// =============================================================================
+// Constants
+// =============================================================================
 
-interface PipelineData {
-  contextId: string;
-  success: boolean;
-  tasksCompleted: number;
-  completedAt: string;
-  research: {
-    taskId: string;
-    status: string;
-    findings: {
-      topicsFound: number;
-      recommendedTopic: {
-        topic: string;
-        domain: string;
-        blogAngle: string;
-        keyPoints: string[];
-        seoKeywords: string[];
-      };
-    };
-  };
-  trends: {
-    taskId: string;
-    status: string;
-    trendsData: {
-      topicsAnalyzed: number;
-      trendingKeywords: string[];
-      recommendedFocus: string;
-    };
-  };
-  blog: {
-    taskId: string;
-    status: string;
-    deploymentInfo: {
-      url: string;
-      status: string;
-    };
-    blogMetadata: {
-      title: string;
-      wordCount: number;
-      readTimeMinutes: number;
-      tags: string[];
-    };
-  };
-}
+const CHAT_INSTRUCTIONS = `You are an AI assistant helping users understand the A2A (Agent-to-Agent) pipeline visualization.
+
+You have access to:
+- Pipeline data including research findings, trends analysis, and blog output
+- Agent information including their status and tasks
+- Actions to analyze the pipeline and get specific details
+
+Be helpful, concise, and informative. Use markdown formatting for clear responses.`;
 
 // =============================================================================
 // Initial Data
@@ -802,14 +763,7 @@ ${research.keyPoints.map((p) => `- ${p}`).join("\n")}`;
       {/* CopilotKit Popup (alternative chat UI) */}
       {apiStatus.available && (
         <CopilotPopup
-          instructions={`You are an AI assistant helping users understand the A2A (Agent-to-Agent) pipeline visualization.
-
-You have access to:
-- Pipeline data including research findings, trends analysis, and blog output
-- Agent information including their status and tasks
-- Actions to analyze the pipeline and get specific details
-
-Be helpful, concise, and informative. Use markdown formatting for clear responses.`}
+          instructions={CHAT_INSTRUCTIONS}
           labels={{
             title: "A2A Pipeline Assistant",
             initial:
