@@ -179,26 +179,64 @@ jobs:
           AGENT_COUNT: ${{ inputs.agent_count }}
           MANUAL_AGENTS: ${{ inputs.agents }}
         run: |
+          # Get all available agents
+          ALL_AVAILABLE=$(ls .github/agents/*.md 2>/dev/null | xargs -I {} basename {} .md | grep -v -E '^(README|META_|a2a-)' | sort -u)
+          
+          # Validate that agents are available
+          if [[ -z "$ALL_AVAILABLE" ]]; then
+            echo "::error::No agents found in .github/agents/"
+            exit 1
+          fi
+          
+          # Define categories for diverse selection
+          CATEGORIES=(
+            "engineer|build|create|develop"
+            "secure|guard|monitor"
+            "organize|refactor|restructure"
+            "test|assert|verify"
+            "document|clarify|support"
+          )
+          
+          # =================================================================
+          # STEP 1: Select the IMPLEMENTING agent FIRST
+          # This agent must be UNIQUE - not used in the analysis phase
+          # =================================================================
+          
+          # Prefer engineer/build/create agents for implementation (first category)
+          IMPLEMENT_AGENT=$(echo "$ALL_AVAILABLE" | grep -E "${CATEGORIES[0]}" | shuf -n 1 || true)
+          
+          # Fallback: pick any agent if no engineer-type found
+          if [[ -z "$IMPLEMENT_AGENT" ]]; then
+            IMPLEMENT_AGENT=$(echo "$ALL_AVAILABLE" | shuf -n 1)
+          fi
+          
+          if [[ -z "$IMPLEMENT_AGENT" ]]; then
+            echo "::error::Could not select implementing agent"
+            exit 1
+          fi
+          
+          echo "Selected implementing agent: $IMPLEMENT_AGENT (unique - will NOT participate in analysis)"
+          echo "implement_agent=$IMPLEMENT_AGENT" >> $GITHUB_OUTPUT
+          
+          # Remove implementing agent from available pool for analysis
+          AVAILABLE=$(echo "$ALL_AVAILABLE" | grep -v "^${IMPLEMENT_AGENT}$")
+          
+          # =================================================================
+          # STEP 2: Select ANALYSIS agents from remaining pool
+          # These agents will only do analysis, not implementation
+          # =================================================================
+          
           if [[ -n "$MANUAL_AGENTS" ]]; then
-            SELECTED_AGENTS="$MANUAL_AGENTS"
-          else
-            # Get diverse agents from different categories
-            AVAILABLE=$(ls .github/agents/*.md 2>/dev/null | xargs -I {} basename {} .md | grep -v -E '^(README|META_|a2a-)' | sort -u)
-            
-            # Validate that agents are available
-            if [[ -z "$AVAILABLE" ]]; then
-              echo "::error::No agents found in .github/agents/"
-              exit 1
+            # Manual override: use specified agents for analysis
+            # Filter out implementing agent if accidentally included
+            SELECTED_AGENTS=$(echo "$MANUAL_AGENTS" | tr ',' '\n' | grep -v "^${IMPLEMENT_AGENT}$" | tr '\n' ',' | sed 's/,$//')
+            if [[ -z "$SELECTED_AGENTS" ]]; then
+              echo "::warning::Manual agents list only contained implementing agent, selecting from pool"
+              SELECTED_AGENTS=""
             fi
-            
-            CATEGORIES=(
-              "engineer|build|create|develop"
-              "secure|guard|monitor"
-              "organize|refactor|restructure"
-              "test|assert|verify"
-              "document|clarify|support"
-            )
-            
+          fi
+          
+          if [[ -z "$MANUAL_AGENTS" ]] || [[ -z "$SELECTED_AGENTS" ]]; then
             SELECTED=()
             REMAINING=$AGENT_COUNT
             
@@ -223,21 +261,25 @@ jobs:
             SELECTED_AGENTS=$(IFS=','; echo "${SELECTED[*]}")
           fi
           
-          echo "Selected agents: $SELECTED_AGENTS"
+          echo "Selected analysis agents: $SELECTED_AGENTS"
           echo "agents=$SELECTED_AGENTS" >> $GITHUB_OUTPUT
-          
-          # The first agent (typically from engineer category) is the implementing agent
-          if [[ -n "$SELECTED_AGENTS" ]]; then
-            IMPLEMENT_AGENT=$(echo "$SELECTED_AGENTS" | cut -d',' -f1 | xargs)
-          else
-            echo "::error::No agents selected - cannot determine implementing agent"
-            exit 1
-          fi
-          echo "Implementing agent: $IMPLEMENT_AGENT"
-          echo "implement_agent=$IMPLEMENT_AGENT" >> $GITHUB_OUTPUT
           
           COUNT=$(echo "$SELECTED_AGENTS" | tr ',' '\n' | grep -c . || echo 0)
           echo "count=$COUNT" >> $GITHUB_OUTPUT
+          
+          # Verify implementing agent is NOT in analysis agents
+          if echo "$SELECTED_AGENTS" | tr ',' '\n' | grep -q "^${IMPLEMENT_AGENT}$"; then
+            echo "::error::FATAL: Implementing agent $IMPLEMENT_AGENT was found in analysis agents list!"
+            exit 1
+          fi
+          
+          echo ""
+          echo "==================================================================="
+          echo "SUMMARY: Agent Selection (Unique Implementing Agent)"
+          echo "==================================================================="
+          echo "Implementing Agent: @${IMPLEMENT_AGENT} (UNIQUE - not in analysis)"
+          echo "Analysis Agents:    ${SELECTED_AGENTS}"
+          echo "==================================================================="
       
       - name: Create agent matrix for parallel jobs (with provider assignment)
         id: matrix
