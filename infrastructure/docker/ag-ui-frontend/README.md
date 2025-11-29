@@ -40,7 +40,8 @@ npm start
 ## Environment Variables
 
 ```env
-# OpenAI API Key (required for CopilotKit)
+# OpenAI API Key (optional - only needed for the CopilotKit chat feature)
+# The UI will work without this, but the chat feature will be disabled
 OPENAI_API_KEY=your_openai_api_key_here
 
 # ADK API Server URL
@@ -81,9 +82,11 @@ The following secrets must be configured in GitHub:
 - `GCP_SA_KEY`: Service account key JSON
 - `GCP_REGION`: Deployment region (default: us-central1)
 
-### OpenAI API Key Setup
+### OpenAI API Key Setup (Optional)
 
-The OpenAI API key is stored in GCP Secret Manager. To set it up:
+> **Note**: The OpenAI API key is **optional**. Without it, the AG-UI Frontend will work fine for visualizing the A2A pipeline. Only the CopilotKit chat feature will be disabled.
+
+If you want to enable the chat feature, store the OpenAI API key in GCP Secret Manager:
 
 ```bash
 # Create the secret
@@ -114,7 +117,14 @@ docker tag ag-ui-frontend gcr.io/PROJECT_ID/ag-ui-frontend
 # Push to GCR
 docker push gcr.io/PROJECT_ID/ag-ui-frontend
 
-# Deploy to Cloud Run
+# Deploy to Cloud Run (without OpenAI key - chat feature disabled)
+gcloud run deploy ag-ui-frontend \
+  --image gcr.io/PROJECT_ID/ag-ui-frontend \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated
+
+# OR deploy with OpenAI key for chat feature
 gcloud run deploy ag-ui-frontend \
   --image gcr.io/PROJECT_ID/ag-ui-frontend \
   --set-env-vars OPENAI_API_KEY=your_key \

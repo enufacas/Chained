@@ -38,7 +38,7 @@ variable "google_api_key_secret" {
 }
 
 variable "openai_api_key_secret" {
-  description = "Secret Manager resource name for OpenAI API key (for CopilotKit)"
+  description = "Secret Manager resource name for OpenAI API key (optional - only needed for CopilotKit chat feature)"
   type        = string
   default     = ""
 }
@@ -542,7 +542,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
         value = google_cloud_run_v2_service.adk_api_server.uri
       }
 
-      # OpenAI API Key from Secret Manager (required for CopilotKit)
+      # OpenAI API Key from Secret Manager (optional - only needed for CopilotKit chat feature)
       dynamic "env" {
         for_each = var.openai_api_key_secret != "" ? [1] : []
         content {
