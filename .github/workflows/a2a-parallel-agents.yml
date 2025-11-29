@@ -1396,8 +1396,21 @@ jobs:
           # Commands are stored in .github/gemini-commands/ and copied to .gemini/commands/ at runtime
           mkdir -p .gemini/commands
           if [[ -d ".github/gemini-commands" ]]; then
-            cp -v .github/gemini-commands/*.toml .gemini/commands/ 2>/dev/null || true
-            echo "✅ Installed custom A2A commands from .github/gemini-commands/"
+            # Copy custom commands and validate the operation
+            COPIED=0
+            for toml_file in .github/gemini-commands/*.toml; do
+              if [[ -f "$toml_file" ]]; then
+                cp -v "$toml_file" .gemini/commands/
+                ((COPIED++))
+              fi
+            done
+            if [[ $COPIED -gt 0 ]]; then
+              echo "✅ Installed $COPIED custom A2A command(s) from .github/gemini-commands/"
+            else
+              echo "⚠️ No .toml files found in .github/gemini-commands/"
+            fi
+          else
+            echo "ℹ️ No custom commands directory found, using inline prompt only"
           fi
           ls -la .gemini/commands/ || true
       
@@ -1424,6 +1437,7 @@ jobs:
           gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
           gemini_debug: '${{ vars.DEBUG || ''true'' }}'
+          # Disable default artifact upload - we use custom upload with A2A taskId naming
           upload_artifacts: 'false'
           workflow_name: 'a2a-implement'
           settings: |-
