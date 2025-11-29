@@ -133,13 +133,18 @@ jobs:
       
       - name: Setup Gemini API Key in Secret Manager
         id: setup_secret
-        if: ${{ secrets.GOOGLE_API_KEY != '' }}
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
           # Create or update the Gemini API key secret in GCP Secret Manager
           # This keeps the actual API key secure - only the reference is passed to Cloud Run
           # Note: The secret is passed via environment variable, not command line args
+          
+          # Skip if GOOGLE_API_KEY is not set
+          if [ -z "$GOOGLE_API_KEY" ]; then
+            echo "ℹ️ GOOGLE_API_KEY secret not set, skipping Secret Manager setup"
+            exit 0
+          fi
           
           SECRET_NAME="chained-gemini-api-key"
           PROJECT_ID="${{ env.GCP_PROJECT_ID }}"
