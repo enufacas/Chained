@@ -207,7 +207,7 @@ jobs:
               if [[ -n "$AGENT" ]]; then
                 SELECTED+=("$AGENT")
                 AVAILABLE=$(echo "$AVAILABLE" | grep -v "^$AGENT$")
-                ((REMAINING--))
+                REMAINING=$((REMAINING - 1))
               fi
             done
             
@@ -216,7 +216,7 @@ jobs:
               [[ -z "$AGENT" ]] && break
               SELECTED+=("$AGENT")
               AVAILABLE=$(echo "$AVAILABLE" | grep -v "^$AGENT$")
-              ((REMAINING--))
+              REMAINING=$((REMAINING - 1))
             done
             
             SELECTED_AGENTS=$(IFS=','; echo "${SELECTED[*]}")
@@ -275,7 +275,7 @@ jobs:
             # Add to matrix
             [[ $INDEX -gt 0 ]] && MATRIX_JSON+=","
             MATRIX_JSON+="{\"agent\":\"$agent\",\"provider\":\"$PROVIDER\"}"
-            ((INDEX++))
+            INDEX=$((INDEX + 1))
           done
           
           MATRIX_JSON+="]"
