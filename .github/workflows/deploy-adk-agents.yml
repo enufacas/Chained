@@ -428,6 +428,11 @@ jobs:
             -target=google_cloud_run_v2_service.adk_api_server \
             -target=google_cloud_run_v2_service.ag_ui_frontend \
             -target=google_service_account.adk_agents \
+            -target=google_cloud_run_v2_service_iam_member.academic_research_public \
+            -target=google_cloud_run_v2_service_iam_member.blog_writer_public \
+            -target=google_cloud_run_v2_service_iam_member.google_trends_public \
+            -target=google_cloud_run_v2_service_iam_member.adk_api_server_public \
+            -target=google_cloud_run_v2_service_iam_member.ag_ui_frontend_public \
             -out=tfplan
 
       - name: Terraform Apply
