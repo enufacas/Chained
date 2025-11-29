@@ -104,6 +104,9 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.body.appendChild(footer);
     }
+
+    // Initialize Theme
+    initTheme();
 });
 
 // Dynamically generate navigation
@@ -210,6 +213,43 @@ function generateNavigation() {
             }
         });
     });
+}
+
+// Theme Management
+function initTheme() {
+    // Check for saved theme preference or system preference
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    
+    // Apply light mode if saved or system preferred (and not overridden)
+    if (savedTheme === 'light' || (!savedTheme && systemPrefersLight)) {
+        document.body.classList.add('light-mode');
+    }
+    
+    // Create and inject toggle button
+    const headerContent = document.querySelector('.header-content');
+    if (headerContent) {
+        // Check if button already exists
+        if (!headerContent.querySelector('.theme-toggle')) {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'theme-toggle';
+            toggleBtn.setAttribute('aria-label', 'Toggle dark/light mode');
+            toggleBtn.innerHTML = document.body.classList.contains('light-mode') ? '🌙' : '☀️';
+            
+            toggleBtn.addEventListener('click', function() {
+                document.body.classList.toggle('light-mode');
+                const isLight = document.body.classList.contains('light-mode');
+                
+                // Update button icon
+                this.innerHTML = isLight ? '🌙' : '☀️';
+                
+                // Save preference
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            });
+            
+            headerContent.appendChild(toggleBtn);
+        }
+    }
 }
 
 // Call on load

@@ -1758,6 +1758,62 @@ footer p {
     border: 2px solid var(--primary-color);
 }
 
+/* Light Mode Support */
+body.light-mode {
+    /* Light theme colors */
+    --bg-color: #f0f9ff;
+    --bg-gradient-end: #e0f2fe;
+    --card-bg: #ffffff;
+    --card-bg-hover: #f1f5f9;
+    
+    /* Text colors for light mode */
+    --text-color: #0f172a;
+    --text-secondary: #1e293b;
+    --text-muted: #475569;
+    --text-dim: #94a3b8;
+    
+    /* Border and shadow for light mode */
+    --border-color: rgba(148, 163, 184, 0.4);
+    --shadow-color: rgba(0, 0, 0, 0.05);
+    
+    /* Background override for light mode */
+    background: linear-gradient(135deg, var(--bg-color) 0%, var(--bg-gradient-end) 50%, #ffffff 100%);
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
+    backdrop-filter: blur(4px);
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+body.light-mode .theme-toggle {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: var(--text-color);
+}
+
+body.light-mode .theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
 .lifecycle-intro h2 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
