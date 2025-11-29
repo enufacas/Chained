@@ -1,22 +1,31 @@
 name: "A2A: Parallel Agent Orchestration"
 
 # ==============================================================================
-# A2A PROTOCOL IMPLEMENTATION - PARALLEL AGENTS
+# A2A PROTOCOL IMPLEMENTATION - PARALLEL AGENTS (MULTI-PROVIDER)
 # ==============================================================================
 # This workflow implements the Agent2Agent (A2A) Protocol with TRUE parallel
 # agent execution. Each agent runs as a separate job with its own bounded
 # AI API call, properly modeling the A2A protocol.
 #
+# MULTI-PROVIDER SUPPORT (Nov 2024):
+#   - Gemini: Uses google-github-actions/run-gemini-cli
+#   - GitHub Models: Uses GitHub Models API (models.github.ai)
+#
 # Architecture:
-#   setup      →  [agent-1]  →  aggregate  →  implement
-#                 [agent-2]
-#                 [agent-3]
+#   setup      →  [agent-1/gemini]     →  aggregate  →  implement
+#                 [agent-2/github]
+#                 [agent-3/gemini]
 #
 # This maps A2A concepts to GitHub Actions:
 #   - A2A Task → GitHub Job (bounded execution context)
 #   - A2A Artifact → GitHub Artifact (actions/upload-artifact)
 #   - contextId → run_id + issue_number
 #   - referenceTaskIds → Artifact names from agent jobs
+#
+# Provider Distribution:
+#   - 'balanced': Alternates between providers (default)
+#   - 'gemini_only': All agents use Gemini
+#   - 'github_only': All agents use GitHub Models API
 #
 # Spec Reference: https://a2a-protocol.org/latest/specification/
 # ==============================================================================
@@ -38,6 +47,15 @@ on:
         required: false
         default: ''
         type: string
+      provider:
+        description: 'AI provider distribution strategy'
+        required: false
+        default: 'balanced'
+        type: choice
+        options:
+          - balanced
+          - gemini_only
+          - github_only
       auto_execute:
         description: 'Automatically implement and create PR'
         required: false
@@ -54,8 +72,8 @@ jobs:
   # ==========================================================================
   # JOB 1: SETUP
   # ==========================================================================
-  # Prepares the agent selection, generates AgentCards, and posts initial 
-  # notification. Outputs the agent list for the parallel matrix.
+  # Prepares the agent selection, generates AgentCards, assigns providers,
+  # and posts initial notification. Outputs the agent-provider matrix.
   # ==========================================================================
   setup:
     runs-on: ubuntu-latest
@@ -67,6 +85,8 @@ jobs:
       issue_title: ${{ steps.issue.outputs.title }}
       issue_body: ${{ steps.issue.outputs.body }}
       context_id: ${{ steps.context.outputs.context_id }}
+      has_gemini: ${{ steps.validate.outputs.has_gemini }}
+      has_github_models: ${{ steps.validate.outputs.has_github_models }}
     
     steps:
       - name: Checkout repository
@@ -82,18 +102,59 @@ jobs:
         run: |
           pip install -q pyyaml httpx 'a2a-sdk[http-server]>=0.2.0'
       
-      - name: Validate authentication
+      - name: Validate authentication (multi-provider)
+        id: validate
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GITHUB_MODELS_PAT: ${{ secrets.GITHUB_MODELS_PAT }}
           USE_VERTEX_AI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI || 'false' }}
+          PROVIDER_STRATEGY: ${{ inputs.provider }}
         run: |
+          HAS_GEMINI="false"
+          HAS_GITHUB_MODELS="false"
+          
+          # Check Gemini credentials
           if [[ "$USE_VERTEX_AI" == "true" ]]; then
-            [[ -n "$GOOGLE_API_KEY" ]] || { echo "::error::GOOGLE_API_KEY required for Vertex AI"; exit 1; }
+            [[ -n "$GOOGLE_API_KEY" ]] && HAS_GEMINI="true"
           else
-            [[ -n "$GEMINI_API_KEY" ]] || { echo "::error::GEMINI_API_KEY required"; exit 1; }
+            [[ -n "$GEMINI_API_KEY" ]] && HAS_GEMINI="true"
           fi
-          echo "✅ Authentication validated"
+          
+          # Check GitHub Models credentials
+          [[ -n "$GITHUB_MODELS_PAT" ]] && HAS_GITHUB_MODELS="true"
+          
+          echo "has_gemini=$HAS_GEMINI" >> $GITHUB_OUTPUT
+          echo "has_github_models=$HAS_GITHUB_MODELS" >> $GITHUB_OUTPUT
+          
+          echo "Provider availability:"
+          echo "  Gemini: $HAS_GEMINI"
+          echo "  GitHub Models: $HAS_GITHUB_MODELS"
+          
+          # Validate based on strategy
+          case "$PROVIDER_STRATEGY" in
+            gemini_only)
+              if [[ "$HAS_GEMINI" != "true" ]]; then
+                echo "::error::Gemini credentials required for gemini_only strategy"
+                exit 1
+              fi
+              ;;
+            github_only)
+              if [[ "$HAS_GITHUB_MODELS" != "true" ]]; then
+                echo "::error::GITHUB_MODELS_PAT required for github_only strategy"
+                echo "::error::Create a fine-grained PAT with 'models:read' scope"
+                exit 1
+              fi
+              ;;
+            balanced)
+              if [[ "$HAS_GEMINI" != "true" && "$HAS_GITHUB_MODELS" != "true" ]]; then
+                echo "::error::At least one provider required (GEMINI_API_KEY or GITHUB_MODELS_PAT)"
+                exit 1
+              fi
+              ;;
+          esac
+          
+          echo "✅ Authentication validated for strategy: $PROVIDER_STRATEGY"
       
       - name: Fetch issue details
         id: issue
@@ -167,15 +228,61 @@ jobs:
           COUNT=$(echo "$SELECTED_AGENTS" | tr ',' '\n' | grep -c . || echo 0)
           echo "count=$COUNT" >> $GITHUB_OUTPUT
       
-      - name: Create agent matrix for parallel jobs
+      - name: Create agent matrix for parallel jobs (with provider assignment)
         id: matrix
         env:
           AGENTS: ${{ steps.select.outputs.agents }}
+          PROVIDER_STRATEGY: ${{ inputs.provider }}
+          HAS_GEMINI: ${{ steps.validate.outputs.has_gemini }}
+          HAS_GITHUB_MODELS: ${{ steps.validate.outputs.has_github_models }}
         run: |
-          # Convert comma-separated agents to JSON array for matrix strategy
-          MATRIX=$(echo "$AGENTS" | tr ',' '\n' | jq -R -s -c 'split("\n") | map(select(length > 0))')
-          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
-          echo "Agent matrix: $MATRIX"
+          # Convert comma-separated agents to array
+          IFS=',' read -ra AGENT_ARRAY <<< "$AGENTS"
+          
+          # Build matrix with provider assignments
+          MATRIX_JSON="["
+          INDEX=0
+          
+          for agent in "${AGENT_ARRAY[@]}"; do
+            agent=$(echo "$agent" | xargs)  # Trim whitespace
+            [[ -z "$agent" ]] && continue
+            
+            # Determine provider based on strategy
+            case "$PROVIDER_STRATEGY" in
+              gemini_only)
+                PROVIDER="gemini"
+                ;;
+              github_only)
+                PROVIDER="github"
+                ;;
+              balanced)
+                # Alternate between providers, preferring available ones
+                if [[ "$HAS_GEMINI" == "true" && "$HAS_GITHUB_MODELS" == "true" ]]; then
+                  # Both available: alternate (even=gemini, odd=github)
+                  if (( INDEX % 2 == 0 )); then
+                    PROVIDER="gemini"
+                  else
+                    PROVIDER="github"
+                  fi
+                elif [[ "$HAS_GEMINI" == "true" ]]; then
+                  PROVIDER="gemini"
+                else
+                  PROVIDER="github"
+                fi
+                ;;
+            esac
+            
+            # Add to matrix
+            [[ $INDEX -gt 0 ]] && MATRIX_JSON+=","
+            MATRIX_JSON+="{\"agent\":\"$agent\",\"provider\":\"$PROVIDER\"}"
+            ((INDEX++))
+          done
+          
+          MATRIX_JSON+="]"
+          
+          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
+          echo "Agent-Provider matrix:"
+          echo "$MATRIX_JSON" | jq '.'
       
       - name: Generate A2A context ID
         id: context
@@ -227,42 +334,45 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
-          AGENTS: ${{ steps.select.outputs.agents }}
+          AGENT_MATRIX: ${{ steps.matrix.outputs.matrix }}
           CONTEXT_ID: ${{ steps.context.outputs.context_id }}
+          PROVIDER_STRATEGY: ${{ inputs.provider }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          AGENT_LIST=""
-          while IFS= read -r agent; do
-            agent=$(echo "$agent" | xargs)
-            [[ -n "$agent" ]] && AGENT_LIST="${AGENT_LIST}\n- \`@${agent}\` → 🔄 Running in parallel job"
-          done <<< "$(echo "$AGENTS" | tr ',' '\n')"
+          # Parse matrix to show agent-provider pairs
+          AGENT_LIST=$(echo "$AGENT_MATRIX" | jq -r '.[] | "- `@\(.agent)` → \(if .provider == "gemini" then "🔶 Gemini" else "🐙 GitHub Models" end)"')
           
           cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
           ## 🚀 A2A Parallel Agent Orchestration Starting
           
           **Protocol**: [A2A v0.3.0](https://a2a-protocol.org/latest/specification/)
           **contextId**: \`$CONTEXT_ID\`
+          **Provider Strategy**: \`$PROVIDER_STRATEGY\`
           
-          ### 🔀 Parallel Agent Execution
+          ### 🔀 Parallel Agent Execution (Multi-Provider)
           
           Each agent runs as an **independent job** with its own bounded AI API call:
-          $(echo -e "$AGENT_LIST")
+          $AGENT_LIST
           
           ### 📊 Architecture
           
           \`\`\`
-          setup ─┬─► [agent-job: agent-1] ─┬─► aggregate ─► implement
-                 ├─► [agent-job: agent-2] ─┤
-                 └─► [agent-job: agent-3] ─┘
+          setup ─┬─► [agent-1/provider] ─┬─► aggregate ─► implement
+                 ├─► [agent-2/provider] ─┤
+                 └─► [agent-3/provider] ─┘
+                      (parallel jobs)
           \`\`\`
+          
+          **Legend**: 🔶 Gemini | 🐙 GitHub Models
           
           [View Parallel Jobs]($RUN_URL)
           EOF
 
   # ==========================================================================
-  # JOB 2: AGENT ANALYSIS (PARALLEL MATRIX)
+  # JOB 2: AGENT ANALYSIS (PARALLEL MATRIX - MULTI-PROVIDER)
   # ==========================================================================
-  # Each agent runs in its own job with a dedicated Gemini API call.
+  # Each agent runs in its own job with a dedicated AI API call.
+  # Provider is determined by the matrix: either Gemini or GitHub Models.
   # This properly models the A2A protocol where each agent is a bounded context.
   # ==========================================================================
   agent:
@@ -271,15 +381,31 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        agent: ${{ fromJson(needs.setup.outputs.agent_matrix) }}
+        include: ${{ fromJson(needs.setup.outputs.agent_matrix) }}
       fail-fast: false  # Let all agents complete even if one fails
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: 'A2A Task: @${{ matrix.agent }} Analysis'
-        id: analysis
+      - name: Set up Python (for GitHub Models provider)
+        if: matrix.provider == 'github'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies (for GitHub Models provider)
+        if: matrix.provider == 'github'
+        run: |
+          pip install -q httpx pyyaml
+      
+      # ========================================================================
+      # GEMINI PROVIDER PATH
+      # ========================================================================
+      - name: 'A2A Task: @${{ matrix.agent }} Analysis (🔶 Gemini)'
+        id: gemini_analysis
+        if: matrix.provider == 'gemini'
         uses: 'google-github-actions/run-gemini-cli@v0'
         env:
           AGENT_NAME: ${{ matrix.agent }}
@@ -314,7 +440,7 @@ jobs:
             ## Response Format (A2A Artifact)
             Structure your response as:
             
-            ### 🤖 Agent: @${{ matrix.agent }}
+            ### 🤖 Agent: @${{ matrix.agent }} (🔶 Gemini)
             
             #### 📋 Analysis
             [Your detailed analysis from your specialized perspective]
@@ -337,7 +463,7 @@ jobs:
           gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
           gemini_debug: '${{ vars.DEBUG || ''true'' }}'
-          upload_artifacts: 'false'  # Disabled: Use custom upload with unique name per A2A taskId
+          upload_artifacts: 'false'
           workflow_name: 'a2a-agent-${{ matrix.agent }}'
           settings: |-
             {
@@ -353,25 +479,198 @@ jobs:
             }
           prompt: '/gemini-invoke'
       
+      # ========================================================================
+      # GITHUB MODELS PROVIDER PATH
+      # ========================================================================
+      - name: 'A2A Task: @${{ matrix.agent }} Analysis (🐙 GitHub Models)'
+        id: github_analysis
+        if: matrix.provider == 'github'
+        env:
+          AGENT_NAME: ${{ matrix.agent }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          ISSUE_TITLE: ${{ needs.setup.outputs.issue_title }}
+          ISSUE_BODY: ${{ needs.setup.outputs.issue_body }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_MODELS_PAT: ${{ secrets.GITHUB_MODELS_PAT }}
+          REPOSITORY: ${{ github.repository }}
+          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'openai/gpt-4o-mini' }}
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          mkdir -p github-models-artifacts
+          
+          # Read agent definition
+          AGENT_FILE=".github/agents/${AGENT_NAME}.md"
+          AGENT_DEF=""
+          if [[ -f "$AGENT_FILE" ]]; then
+            AGENT_DEF=$(cat "$AGENT_FILE")
+          fi
+          
+          # Read issue details
+          ISSUE_DATA=$(gh issue view "$ISSUE_NUMBER" --json title,body,labels --jq '.')
+          
+          # Build the analysis prompt
+          PROMPT=$(cat << 'PROMPT_EOF'
+          # A2A Agent Task: @AGENT_NAME_PLACEHOLDER
+          
+          You are the agent "@AGENT_NAME_PLACEHOLDER" analyzing issue #ISSUE_NUMBER_PLACEHOLDER.
+          
+          ## Your AgentCard Definition
+          AGENT_DEF_PLACEHOLDER
+          
+          ## Issue to Analyze
+          **Title**: ISSUE_TITLE_PLACEHOLDER
+          
+          **Description**:
+          ISSUE_BODY_PLACEHOLDER
+          
+          ## Your Task
+          1. Use your agent definition to understand your specialized skills and perspective
+          2. Analyze the issue from YOUR specialized perspective
+          3. Provide specific, actionable recommendations
+          
+          ## Response Format (A2A Artifact)
+          Structure your response as:
+          
+          ### 🤖 Agent: @AGENT_NAME_PLACEHOLDER (🐙 GitHub Models)
+          
+          #### 📋 Analysis
+          [Your detailed analysis from your specialized perspective]
+          
+          #### ✅ Recommendations
+          - [Specific recommendation 1 with file paths if applicable]
+          - [Specific recommendation 2]
+          
+          #### 📁 Files to Modify
+          - `path/to/file1`: [what to change]
+          - `path/to/file2`: [what to change]
+          
+          Focus on YOUR area of expertise. Be specific and actionable.
+          
+          A2A contextId: CONTEXT_ID_PLACEHOLDER
+          PROMPT_EOF
+          )
+          
+          # Replace placeholders
+          PROMPT="${PROMPT//AGENT_NAME_PLACEHOLDER/$AGENT_NAME}"
+          PROMPT="${PROMPT//ISSUE_NUMBER_PLACEHOLDER/$ISSUE_NUMBER}"
+          PROMPT="${PROMPT//ISSUE_TITLE_PLACEHOLDER/$ISSUE_TITLE}"
+          PROMPT="${PROMPT//CONTEXT_ID_PLACEHOLDER/$CONTEXT_ID}"
+          
+          # Handle multiline replacements via Python
+          python3 << PYTHON_EOF
+          import os
+          import json
+          import httpx
+          
+          agent_name = os.environ.get('AGENT_NAME', '')
+          agent_def = """${AGENT_DEF}"""
+          issue_body = """${ISSUE_BODY}"""
+          context_id = os.environ.get('CONTEXT_ID', '')
+          model = os.environ.get('GITHUB_MODELS_MODEL', 'openai/gpt-4o-mini')
+          token = os.environ.get('GITHUB_MODELS_PAT', '')
+          
+          prompt = """${PROMPT}"""
+          prompt = prompt.replace('AGENT_DEF_PLACEHOLDER', agent_def[:3000])  # Limit size
+          prompt = prompt.replace('ISSUE_BODY_PLACEHOLDER', issue_body[:4000])
+          
+          # Call GitHub Models API
+          headers = {
+              "Authorization": f"token {token}",
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+              "Content-Type": "application/json",
+          }
+          
+          payload = {
+              "model": model,
+              "messages": [
+                  {"role": "system", "content": f"You are {agent_name}, a specialized AI agent. Provide expert analysis."},
+                  {"role": "user", "content": prompt}
+              ],
+              "max_tokens": 4096,
+          }
+          
+          print(f"🐙 Calling GitHub Models API ({model})...")
+          
+          response = httpx.post(
+              "https://models.github.ai/inference/chat/completions",
+              headers=headers,
+              json=payload,
+              timeout=60.0
+          )
+          
+          if response.status_code != 200:
+              print(f"❌ Error: {response.status_code}")
+              print(response.text)
+              exit(1)
+          
+          data = response.json()
+          analysis = data["choices"][0]["message"]["content"]
+          
+          # Save output
+          with open("github-models-artifacts/response.md", "w") as f:
+              f.write(analysis)
+          
+          with open("github-models-artifacts/stdout.log", "w") as f:
+              f.write(analysis)
+          
+          # Save metadata
+          metadata = {
+              "model": data.get("model"),
+              "usage": data.get("usage", {}),
+              "agent": agent_name,
+              "provider": "github-models",
+          }
+          with open("github-models-artifacts/metadata.json", "w") as f:
+              json.dump(metadata, f, indent=2)
+          
+          print(f"✅ Analysis complete")
+          print(f"   Model: {data.get('model')}")
+          print(f"   Tokens: {data.get('usage', {})}")
+          print()
+          print(analysis[:500] + "..." if len(analysis) > 500 else analysis)
+          PYTHON_EOF
+          
+          # Post the analysis as an issue comment
+          if [[ -f "github-models-artifacts/response.md" ]]; then
+            ANALYSIS=$(cat github-models-artifacts/response.md)
+            echo "$ANALYSIS" | gh issue comment "$ISSUE_NUMBER" --body-file -
+            echo "✅ Posted analysis comment for @${AGENT_NAME}"
+          fi
+      
+      # ========================================================================
+      # PACKAGE ARTIFACT (Both Providers)
+      # ========================================================================
       - name: Package agent artifact
         id: artifact
         env:
           AGENT_NAME: ${{ matrix.agent }}
+          PROVIDER: ${{ matrix.provider }}
           CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
           RUN_ID: ${{ github.run_id }}
         run: |
           mkdir -p .a2a/artifacts
           
-          # Read Gemini output from artifacts directory
+          # Read output based on provider
           ANALYSIS=""
-          if [[ -f "gemini-artifacts/stdout.log" ]]; then
-            ANALYSIS=$(cat gemini-artifacts/stdout.log)
-          elif [[ -f "gemini-artifacts/response.md" ]]; then
-            ANALYSIS=$(cat gemini-artifacts/response.md)
+          if [[ "$PROVIDER" == "gemini" ]]; then
+            if [[ -f "gemini-artifacts/stdout.log" ]]; then
+              ANALYSIS=$(cat gemini-artifacts/stdout.log)
+            elif [[ -f "gemini-artifacts/response.md" ]]; then
+              ANALYSIS=$(cat gemini-artifacts/response.md)
+            fi
+          else
+            if [[ -f "github-models-artifacts/stdout.log" ]]; then
+              ANALYSIS=$(cat github-models-artifacts/stdout.log)
+            elif [[ -f "github-models-artifacts/response.md" ]]; then
+              ANALYSIS=$(cat github-models-artifacts/response.md)
+            fi
           fi
           
-          # Create A2A artifact JSON
+          # Create A2A artifact JSON with provider info
           TASK_ID="task-${RUN_ID}-${AGENT_NAME}"
+          PROVIDER_EMOJI=$([[ "$PROVIDER" == "gemini" ]] && echo "🔶" || echo "🐙")
           
           cat > .a2a/artifacts/${AGENT_NAME}-analysis.json << ARTIFACT_EOF
           {
@@ -380,6 +679,7 @@ jobs:
             "task_id": "${TASK_ID}",
             "context_id": "${CONTEXT_ID}",
             "agent_name": "${AGENT_NAME}",
+            "provider": "${PROVIDER}",
             "status": "completed",
             "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
             "content": {
@@ -389,15 +689,16 @@ jobs:
           ARTIFACT_EOF
           
           echo "task_id=$TASK_ID" >> $GITHUB_OUTPUT
-          echo "✅ Artifact created for @${AGENT_NAME}"
+          echo "${PROVIDER_EMOJI} Artifact created for @${AGENT_NAME} (${PROVIDER})"
       
-      - name: Upload agent artifact (includes analysis JSON and Gemini output)
+      - name: Upload agent artifact (includes analysis JSON and provider output)
         uses: actions/upload-artifact@v4.4.3
         with:
           name: a2a-task-${{ steps.artifact.outputs.task_id }}
           path: |
             .a2a/artifacts/${{ matrix.agent }}-analysis.json
             gemini-artifacts/
+            github-models-artifacts/
           retention-days: 7
           if-no-files-found: warn
 
@@ -456,6 +757,7 @@ jobs:
         id: aggregate
         env:
           AGENTS: ${{ needs.setup.outputs.agents }}
+          AGENT_MATRIX: ${{ needs.setup.outputs.agent_matrix }}
           CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
           RUN_ID: ${{ github.run_id }}
         run: |
@@ -463,6 +765,7 @@ jobs:
           
           TASK_IDS=()
           COMBINED_ANALYSIS=""
+          PROVIDER_SUMMARY=""
           
           # Process each agent's artifact
           for agent in $(echo "$AGENTS" | tr ',' '\n'); do
@@ -475,11 +778,15 @@ jobs:
             if [[ -f "$ARTIFACT_FILE" ]]; then
               TASK_ID=$(jq -r '.task_id' "$ARTIFACT_FILE")
               ANALYSIS=$(jq -r '.content.analysis' "$ARTIFACT_FILE")
+              PROVIDER=$(jq -r '.provider // "gemini"' "$ARTIFACT_FILE")
               
               TASK_IDS+=("$TASK_ID")
               COMBINED_ANALYSIS="${COMBINED_ANALYSIS}\n\n---\n\n${ANALYSIS}"
               
-              echo "✅ Aggregated @${agent} (task: $TASK_ID)"
+              PROVIDER_EMOJI=$([[ "$PROVIDER" == "gemini" ]] && echo "🔶" || echo "🐙")
+              PROVIDER_SUMMARY="${PROVIDER_SUMMARY}${agent}:${PROVIDER},"
+              
+              echo "${PROVIDER_EMOJI} Aggregated @${agent} (${PROVIDER}, task: $TASK_ID)"
             else
               echo "⚠️ No artifact found for @${agent}"
             fi
@@ -495,6 +802,7 @@ jobs:
             "context_id": "${CONTEXT_ID}",
             "reference_task_ids": ${TASK_IDS_JSON},
             "agent_count": $(echo "$AGENTS" | tr ',' '\n' | grep -c . || echo 0),
+            "provider_summary": "${PROVIDER_SUMMARY}",
             "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
             "content": {
               "combined_analysis": $(echo -e "$COMBINED_ANALYSIS" | jq -R -s .)
@@ -504,6 +812,7 @@ jobs:
           
           echo "artifact_path=.a2a/artifacts/aggregated-analysis.json" >> $GITHUB_OUTPUT
           echo "reference_task_ids=$TASK_IDS_JSON" >> $GITHUB_OUTPUT
+          echo "provider_summary=$PROVIDER_SUMMARY" >> $GITHUB_OUTPUT
           echo "✅ Aggregated ${#TASK_IDS[@]} agent analyses"
       
       - name: Upload aggregated artifact
@@ -517,19 +826,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
-          AGENTS: ${{ needs.setup.outputs.agents }}
+          AGENT_MATRIX: ${{ needs.setup.outputs.agent_matrix }}
           CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
           REFERENCE_TASK_IDS: ${{ steps.aggregate.outputs.reference_task_ids }}
+          PROVIDER_SUMMARY: ${{ steps.aggregate.outputs.provider_summary }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          AGENT_STATUS=""
-          while IFS= read -r agent; do
-            agent=$(echo "$agent" | xargs)
-            [[ -n "$agent" ]] && AGENT_STATUS="${AGENT_STATUS}\n| \`@${agent}\` | ✅ completed |"
-          done <<< "$(echo "$AGENTS" | tr ',' '\n')"
+          # Build agent status table with provider info
+          AGENT_STATUS=$(echo "$AGENT_MATRIX" | jq -r '.[] | "| `@\(.agent)` | \(if .provider == "gemini" then "🔶 Gemini" else "🐙 GitHub Models" end) | ✅ completed |"')
           
           cat << EOF | gh issue comment "$ISSUE_NUMBER" --body-file -
-          ## 🎯 A2A Parallel Analysis Complete
+          ## 🎯 A2A Parallel Analysis Complete (Multi-Provider)
           
           All agent jobs have completed. Artifacts aggregated per [§4.1.9](https://a2a-protocol.org/latest/specification/#419-artifact).
           
@@ -540,10 +847,13 @@ jobs:
           | \`contextId\` | \`$CONTEXT_ID\` |
           | \`referenceTaskIds\` | $REFERENCE_TASK_IDS |
           
-          ### 🤖 Agent Status
+          ### 🤖 Agent Status (Multi-Provider)
           
-          | Agent | Status |
-          |-------|--------|$(echo -e "$AGENT_STATUS")
+          | Agent | Provider | Status |
+          |-------|----------|--------|
+          $AGENT_STATUS
+          
+          **Legend**: 🔶 Gemini | 🐙 GitHub Models
           
           ---
           
