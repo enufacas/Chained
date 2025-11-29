@@ -218,6 +218,8 @@ curl -s https://chained-academic-research-sguacxy5gq-uc.a.run.app/health
 
 ### Issue 5: "Unable to detect a Project Id" Error (NEW - 2025-11-29)
 
+**Status:** ✅ **FIXED in Terraform** - `GOOGLE_CLOUD_PROJECT` now set automatically from `var.project_id`
+
 **Symptoms:**
 - API status shows healthy (`available: true`, `authMode: adc`)
 - User sends message, gets error popup:
@@ -236,7 +238,16 @@ When using Vertex AI with ADC, the `@langchain/google-gauth` library requires a 
 2. `GOOGLE_CLOUD_PROJECT` environment variable is not set
 3. The Cloud Run instance metadata service is not accessible
 
-**Solution:**
+**Fix Applied:**
+The Terraform configuration (`infrastructure/terraform/adk-agents.tf`) now includes:
+```hcl
+env {
+  name  = "GOOGLE_CLOUD_PROJECT"
+  value = var.project_id
+}
+```
+
+**Manual Solution (if needed):**
 1. **Set GOOGLE_CLOUD_PROJECT explicitly:**
    ```bash
    gcloud run services update chained-ag-ui-frontend \
