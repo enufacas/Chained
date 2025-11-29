@@ -1,41 +1,42 @@
 import {
   CopilotRuntime,
-  OpenAIAdapter,
   copilotRuntimeNextJSAppRouterEndpoint,
 } from "@copilotkit/runtime";
-import OpenAI from "openai";
 import { NextRequest } from "next/server";
-
-// Check for OpenAI API key
-const apiKey = process.env.OPENAI_API_KEY;
-if (!apiKey) {
-  console.warn(
-    "Warning: OPENAI_API_KEY environment variable is not set. CopilotKit chat will not work."
-  );
-}
-
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: apiKey || "missing-api-key",
-});
+import { 
+  createServiceAdapter, 
+  getLLMProviderInfo,
+  geminiApiKey,
+  openaiApiKey,
+} from "@/lib/copilotkit-config";
 
 // Create the CopilotKit runtime
 const copilotKit = new CopilotRuntime();
 
 export const POST = async (req: NextRequest) => {
-  if (!apiKey) {
+  if (!geminiApiKey && !openaiApiKey) {
     return new Response(
-      JSON.stringify({ error: "OpenAI API key not configured" }),
+      JSON.stringify({ 
+        error: "No LLM API key configured",
+        message: "Neither GEMINI_API_KEY nor OPENAI_API_KEY is set"
+      }),
       { status: 503, headers: { "Content-Type": "application/json" } }
     );
   }
 
   const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
     runtime: copilotKit,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    serviceAdapter: new OpenAIAdapter({ openai: openai as any }),
+    serviceAdapter: createServiceAdapter(),
     endpoint: "/api/copilotkit",
   });
 
   return handleRequest(req);
+};
+
+// Export which LLM provider is being used (for status display)
+export const GET = async () => {
+  return new Response(
+    JSON.stringify(getLLMProviderInfo()),
+    { status: 200, headers: { "Content-Type": "application/json" } }
+  );
 };

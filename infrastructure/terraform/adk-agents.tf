@@ -542,7 +542,21 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
         value = google_cloud_run_v2_service.adk_api_server.uri
       }
 
-      # OpenAI API Key from Secret Manager (optional - only needed for CopilotKit chat feature)
+      # Gemini API Key from Secret Manager (preferred for CopilotKit chat feature)
+      dynamic "env" {
+        for_each = var.gemini_api_key_secret != "" ? [1] : []
+        content {
+          name = "GEMINI_API_KEY"
+          value_source {
+            secret_key_ref {
+              secret  = var.gemini_api_key_secret
+              version = "latest"
+            }
+          }
+        }
+      }
+
+      # OpenAI API Key from Secret Manager (fallback for CopilotKit chat feature)
       dynamic "env" {
         for_each = var.openai_api_key_secret != "" ? [1] : []
         content {

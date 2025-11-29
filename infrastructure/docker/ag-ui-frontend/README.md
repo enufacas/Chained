@@ -10,9 +10,10 @@ This frontend provides an interactive visualization of the A2A (Agent-to-Agent) 
 
 - **Agent Cards**: Visual representation of each agent in the pipeline
 - **Pipeline Flow**: Shows the flow from Research → Trends → Blog Writer
-- **Real-time Chat**: Interactive chat with agents via CopilotKit
+- **Real-time Chat**: Interactive chat with agents via CopilotKit (supports Gemini and OpenAI)
 - **Data Preview**: View artifacts and task data from each agent
 - **Run History**: Browse historical pipeline runs
+- **LLM Provider Status**: Visual indicator showing which LLM provider is active
 
 ## Technology Stack
 
@@ -20,6 +21,15 @@ This frontend provides an interactive visualization of the A2A (Agent-to-Agent) 
 - **CopilotKit**: Agentic Generative UI framework
 - **Tailwind CSS**: Styling
 - **TypeScript**: Type safety
+
+## Supported LLM Providers
+
+The chat feature supports two LLM providers (in order of preference):
+
+1. **Google Gemini** (preferred) - Set `GEMINI_API_KEY` environment variable
+2. **OpenAI** (fallback) - Set `OPENAI_API_KEY` environment variable
+
+If both are set, Gemini will be used. If neither is set, the chat feature will be disabled but the UI will still work.
 
 ## Development
 
@@ -40,8 +50,9 @@ npm start
 ## Environment Variables
 
 ```env
-# OpenAI API Key (optional - only needed for the CopilotKit chat feature)
-# The UI will work without this, but the chat feature will be disabled
+# LLM API Keys (at least one required for chat feature)
+# Gemini is preferred if both are set
+GEMINI_API_KEY=your_gemini_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
 
 # ADK API Server URL
@@ -71,7 +82,7 @@ Deployment is triggered automatically when:
 1. **Builds** the Docker image using multi-stage build
 2. **Pushes** to Google Artifact Registry
 3. **Deploys** to Cloud Run via Terraform
-4. **Configures** environment variables (including OPENAI_API_KEY from Secret Manager)
+4. **Configures** environment variables (GEMINI_API_KEY or OPENAI_API_KEY from Secret Manager)
 5. **Verifies** the deployment is healthy
 
 ### Required Secrets
@@ -82,11 +93,30 @@ The following secrets must be configured in GitHub:
 - `GCP_SA_KEY`: Service account key JSON
 - `GCP_REGION`: Deployment region (default: us-central1)
 
-### OpenAI API Key Setup (Optional)
+### LLM API Key Setup
 
-> **Note**: The OpenAI API key is **optional**. Without it, the AG-UI Frontend will work fine for visualizing the A2A pipeline. Only the CopilotKit chat feature will be disabled.
+> **Note**: An LLM API key is **optional**. Without it, the AG-UI Frontend will work fine for visualizing the A2A pipeline. Only the CopilotKit chat feature will be disabled.
 
-If you want to enable the chat feature, store the OpenAI API key in GCP Secret Manager:
+#### Option 1: Using Google Gemini (Recommended)
+
+If you already have a Gemini API key configured in GCP Secret Manager (e.g., for other agents), it will be automatically used:
+
+```bash
+# If not already created, create the secret
+gcloud secrets create gemini-api-key --replication-policy="automatic"
+
+# Add the API key value
+echo -n "your-gemini-api-key" | gcloud secrets versions add gemini-api-key --data-file=-
+
+# Grant the service account access
+gcloud secrets add-iam-policy-binding gemini-api-key \
+  --member="serviceAccount:chained-adk-agents@PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/secretmanager.secretAccessor"
+```
+
+Then set `gemini_api_key_secret = "gemini-api-key"` in your Terraform variables.
+
+#### Option 2: Using OpenAI
 
 ```bash
 # Create the secret
@@ -117,9 +147,17 @@ docker tag ag-ui-frontend gcr.io/PROJECT_ID/ag-ui-frontend
 # Push to GCR
 docker push gcr.io/PROJECT_ID/ag-ui-frontend
 
-# Deploy to Cloud Run (without OpenAI key - chat feature disabled)
+# Deploy to Cloud Run (without LLM key - chat feature disabled)
 gcloud run deploy ag-ui-frontend \
   --image gcr.io/PROJECT_ID/ag-ui-frontend \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated
+
+# OR deploy with Gemini key for chat feature (recommended)
+gcloud run deploy ag-ui-frontend \
+  --image gcr.io/PROJECT_ID/ag-ui-frontend \
+  --set-env-vars GEMINI_API_KEY=your_key \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated
