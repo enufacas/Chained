@@ -5,10 +5,12 @@
 # - academic-research: Discovers research topics
 # - blog-writer: Writes blog posts
 # - google-trends: Analyzes Google Trends
+# - ag-ui-frontend: CopilotKit-powered A2A Pipeline Visualization UI
 #
 # Reference:
 # - ADK Cloud Run Deployment: https://google.github.io/adk-docs/deploy/cloud-run/
 # - A2A Protocol: https://a2a-protocol.org/
+# - AG-UI Protocol: https://docs.ag-ui.com/
 #
 # NOTE: This file uses variables and providers defined in main.tf and variables.tf
 # =============================================================================
@@ -31,6 +33,12 @@ variable "gemini_api_key_secret" {
 
 variable "google_api_key_secret" {
   description = "Secret Manager resource name for Google API key"
+  type        = string
+  default     = ""
+}
+
+variable "openai_api_key_secret" {
+  description = "Secret Manager resource name for OpenAI API key (optional - only needed for CopilotKit chat feature)"
   type        = string
   default     = ""
 }
@@ -503,6 +511,106 @@ resource "google_cloud_run_v2_service_iam_member" "adk_api_server_public" {
 }
 
 # =============================================================================
+# Cloud Run: AG-UI Frontend (CopilotKit Visualization)
+# =============================================================================
+
+resource "google_cloud_run_v2_service" "ag_ui_frontend" {
+  name     = "chained-ag-ui-frontend"
+  location = var.region
+
+  template {
+    containers {
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/ag-ui-frontend:${var.image_tag}"
+
+      resources {
+        limits = {
+          cpu    = "1"
+          memory = "512Mi"
+        }
+        cpu_idle          = true
+        startup_cpu_boost = true
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = var.environment
+      }
+
+      # Configure ADK API Server URL for agent communication
+      env {
+        name  = "NEXT_PUBLIC_ADK_API_URL"
+        value = google_cloud_run_v2_service.adk_api_server.uri
+      }
+
+      # OpenAI API Key from Secret Manager (optional - only needed for CopilotKit chat feature)
+      dynamic "env" {
+        for_each = var.openai_api_key_secret != "" ? [1] : []
+        content {
+          name = "OPENAI_API_KEY"
+          value_source {
+            secret_key_ref {
+              secret  = var.openai_api_key_secret
+              version = "latest"
+            }
+          }
+        }
+      }
+
+      ports {
+        container_port = 3000
+      }
+
+      startup_probe {
+        http_get {
+          path = "/"
+          port = 3000
+        }
+        initial_delay_seconds = 10
+        timeout_seconds       = 5
+        period_seconds        = 10
+        failure_threshold     = 3
+      }
+
+      liveness_probe {
+        http_get {
+          path = "/"
+          port = 3000
+        }
+        period_seconds    = 30
+        timeout_seconds   = 5
+        failure_threshold = 3
+      }
+    }
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    service_account = google_service_account.adk_agents.email
+    timeout         = "300s"
+  }
+
+  traffic {
+    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+  }
+
+  depends_on = [
+    google_project_service.required_apis,
+    google_cloud_run_v2_service.adk_api_server,
+  ]
+}
+
+resource "google_cloud_run_v2_service_iam_member" "ag_ui_frontend_public" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.ag_ui_frontend.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+# =============================================================================
 # Outputs
 # =============================================================================
 
@@ -526,13 +634,22 @@ output "adk_api_server_url" {
   value       = google_cloud_run_v2_service.adk_api_server.uri
 }
 
+output "ag_ui_frontend_url" {
+  description = "URL of the AG-UI Frontend (CopilotKit Visualization)"
+  value       = google_cloud_run_v2_service.ag_ui_frontend.uri
+}
+
 output "adk_dev_ui_info" {
   description = "ADK Dev UI access information"
   value       = <<-EOT
+    AG-UI Frontend (CopilotKit Visualization):
+    - URL: ${google_cloud_run_v2_service.ag_ui_frontend.uri}
+    - CopilotKit API: ${google_cloud_run_v2_service.ag_ui_frontend.uri}/api/copilotkit
+
     ADK API Server (for google/adk-web):
     - API Server: ${google_cloud_run_v2_service.adk_api_server.uri}
 
-    To use with google/adk-web:
+    To use with google/adk-web (alternative):
     1. Clone: git clone https://github.com/google/adk-web
     2. Configure API URL: ${google_cloud_run_v2_service.adk_api_server.uri}
     3. Run: npm start
