@@ -1,13 +1,18 @@
 /**
  * Shared utilities for CopilotKit configuration
  * Enhanced with better logging and error handling
+ * 
+ * NOTE: We use LangChainAdapter with @langchain/google-genai instead of GoogleGenerativeAIAdapter
+ * because GoogleGenerativeAIAdapter uses @langchain/google-gauth which requires OAuth2/Vertex AI,
+ * while @langchain/google-genai supports simple API key authentication (Google AI Studio).
  */
 
 import {
-  GoogleGenerativeAIAdapter,
+  LangChainAdapter,
   OpenAIAdapter,
   ExperimentalEmptyAdapter,
 } from "@copilotkit/runtime";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import OpenAI from "openai";
 
 // Logging helper
@@ -56,20 +61,26 @@ export const createServiceAdapter = () => {
   logConfig("Creating service adapter...");
   
   if (useGemini && googleApiKey) {
-    logConfig("Creating GoogleGenerativeAIAdapter");
-    
-    // GoogleGenerativeAIAdapter uses GOOGLE_API_KEY env var internally via @langchain/google-gauth
-    // Ensure GOOGLE_API_KEY is set from whichever source provided the key
-    process.env.GOOGLE_API_KEY = googleApiKey;
+    logConfig("Creating LangChainAdapter with ChatGoogleGenerativeAI");
     
     try {
-      const adapter = new GoogleGenerativeAIAdapter({
-        model: "gemini-1.5-flash", // Use faster, cheaper model for chat
+      // Use LangChainAdapter with ChatGoogleGenerativeAI from @langchain/google-genai
+      // This supports simple API key authentication (Google AI Studio), unlike
+      // GoogleGenerativeAIAdapter which uses @langchain/google-gauth (requires OAuth2/Vertex AI)
+      const adapter = new LangChainAdapter({
+        chainFn: async ({ messages, tools }) => {
+          const model = new ChatGoogleGenerativeAI({
+            model: "gemini-1.5-flash", // Use faster, cheaper model for chat
+            apiKey: googleApiKey, // Explicitly pass API key
+          }).bindTools(tools);
+          
+          return model.stream(messages);
+        },
       });
-      logConfig("GoogleGenerativeAIAdapter created successfully");
+      logConfig("LangChainAdapter with ChatGoogleGenerativeAI created successfully");
       return adapter;
     } catch (error) {
-      logConfig("ERROR creating GoogleGenerativeAIAdapter", {
+      logConfig("ERROR creating LangChainAdapter with ChatGoogleGenerativeAI", {
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;
