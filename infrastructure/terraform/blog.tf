@@ -213,7 +213,8 @@ resource "google_storage_bucket_object" "blog_posts_dir" {
   name         = "posts/"
   bucket       = google_storage_bucket.blog.name
   content_type = "application/x-directory"
-  content      = ""
+  # Use a single space as content - empty string causes "content or source must be specified" error
+  content      = " "
 
   depends_on = [google_storage_bucket.blog]
 }
