@@ -623,6 +623,22 @@
       },
       "component_count": 5,
       "file_count": 1827
+    },
+    {
+      "timestamp": "2025-11-29T12:50:13.306615",
+      "commit": "dad8710bc2f7a09b7591bbbc6f15159f0b4c8fa8",
+      "commit_message": "Fix A2A workflow PR creation: explicit tool guidance and fallback mechanism (#3369)\n\n* Initial plan\n\n* Fix PR creation in A2A workflow: expanded shell commands, tool guidance, and fallback mechanism\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n---------\n\nCo-authored-by: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>",
+      "metrics": {
+        "total_components": 6,
+        "total_files": 1834,
+        "total_lines": 5378521,
+        "total_dependencies": 2,
+        "external_libraries": 82,
+        "coupling_score": 5.56947925368978e-05,
+        "complexity_score": 1.0
+      },
+      "component_count": 5,
+      "file_count": 1834
     }
   ]
 }
