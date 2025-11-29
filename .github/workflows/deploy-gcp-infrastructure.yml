@@ -133,16 +133,19 @@ jobs:
       
       - name: Setup Gemini API Key in Secret Manager
         id: setup_secret
+        continue-on-error: true
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
           # Create or update the Gemini API key secret in GCP Secret Manager
           # This keeps the actual API key secure - only the reference is passed to Cloud Run
           # Note: The secret is passed via environment variable, not command line args
+          # Note: This step uses continue-on-error to avoid blocking deployment if permissions are missing
           
           # Skip if GOOGLE_API_KEY is not set
           if [ -z "$GOOGLE_API_KEY" ]; then
             echo "ℹ️ GOOGLE_API_KEY secret not set, skipping Secret Manager setup"
+            echo "secret_ref=" >> $GITHUB_OUTPUT
             exit 0
           fi
           
@@ -154,15 +157,25 @@ jobs:
           # Check if secret exists
           if gcloud secrets describe "$SECRET_NAME" --project="$PROJECT_ID" &>/dev/null; then
             echo "📝 Secret exists, adding new version..."
-            printf '%s' "$GOOGLE_API_KEY" | gcloud secrets versions add "$SECRET_NAME" \
+            if ! printf '%s' "$GOOGLE_API_KEY" | gcloud secrets versions add "$SECRET_NAME" \
               --project="$PROJECT_ID" \
-              --data-file=-
+              --data-file=-; then
+              echo "⚠️ Warning: Failed to add secret version. The service account may lack secretmanager.versions.add permission."
+              echo "⚠️ Continuing without Secret Manager setup - Gemini features may not work."
+              echo "secret_ref=" >> $GITHUB_OUTPUT
+              exit 1
+            fi
           else
             echo "🆕 Creating new secret..."
-            printf '%s' "$GOOGLE_API_KEY" | gcloud secrets create "$SECRET_NAME" \
+            if ! printf '%s' "$GOOGLE_API_KEY" | gcloud secrets create "$SECRET_NAME" \
               --project="$PROJECT_ID" \
               --data-file=- \
-              --replication-policy="automatic"
+              --replication-policy="automatic"; then
+              echo "⚠️ Warning: Failed to create secret. The service account may lack secretmanager.secrets.create permission."
+              echo "⚠️ Continuing without Secret Manager setup - Gemini features may not work."
+              echo "secret_ref=" >> $GITHUB_OUTPUT
+              exit 1
+            fi
           fi
           
           # Grant the ADK agents service account access to the secret
@@ -181,6 +194,12 @@ jobs:
           # Output the secret reference for Terraform
           echo "secret_ref=projects/$PROJECT_ID/secrets/$SECRET_NAME" >> $GITHUB_OUTPUT
           echo "✅ Gemini API key configured in Secret Manager"
+      
+      - name: Check Secret Manager Setup Result
+        if: steps.setup_secret.outcome == 'failure'
+        run: |
+          echo "::warning::Secret Manager setup failed (likely due to missing permissions). Deployment will continue without Gemini API key secret."
+          echo "To fix this, grant the service account the 'Secret Manager Admin' role or 'secretmanager.secrets.create' permission."
       
       - name: Terraform Init
         run: terraform init
