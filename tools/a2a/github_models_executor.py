@@ -7,14 +7,16 @@ parity with the Gemini executor, enabling mixed-provider agent orchestration.
 
 The GitHub Models API is accessed via:
   - Endpoint: https://models.github.ai/inference/chat/completions
-  - Authentication: `Authorization: Bearer YOUR_PAT` (per official GitHub docs)
+  - Authentication: `Authorization: token YOUR_PAT` (NOT Bearer - Bearer returns 401)
   - Required Scope: Fine-grained PAT with `models:read` permission
-  - Docs: https://docs.github.com/en/rest/models/inference?apiVersion=2022-11-28
+  - Note: Official docs show Bearer but testing confirms only 'token' format works
 
-Models available:
-  - openai/gpt-4o-mini (default, high volume, best accessibility)
-  - openai/gpt-4o (higher token capacity)
-  - openai/gpt-4.1 (latest GPT-4, may require premium access)
+Models available (tested within free tier):
+  - meta/meta-llama-3.1-8b-instruct (default, works within budget)
+  - mistral-ai/mistral-small-2503 (works within budget)
+  - cohere/cohere-command-a (works within budget)
+  - openai/gpt-4.1-nano (works within budget)
+  - openai/gpt-4o-mini (may hit budget limits)
 
 Tool Support:
   - Tools are defined in agent definitions (.github/agents/*.md)
@@ -24,7 +26,7 @@ Tool Support:
 Common Errors (from API responses):
   - {"code":"no_access","message":"No access to model: ..."} - PAT is missing `models:read` scope
   - {"message":"Unable to proceed with model usage. This account has reached its budget limit."} - Usage quota exceeded
-  - 401 Unauthorized - Invalid or expired token
+  - 401 Unauthorized - Token invalid OR using Bearer instead of token format
 """
 
 import asyncio
@@ -45,9 +47,10 @@ from .agent_card import parse_agent_definition
 # GitHub Models API endpoint
 GITHUB_MODELS_ENDPOINT = "https://models.github.ai/inference/chat/completions"
 
-# Default model - gpt-4o-mini has higher rate limits (20k req, 2M tokens) and better accessibility
-# Note: gpt-4.1 often returns "No access to model" errors for users without premium access
-DEFAULT_MODEL = "openai/gpt-4o-mini"
+# Default model - llama-3.1-8b-instruct works within free tier budget
+# Other working models: mistral-ai/mistral-small-2503, cohere/cohere-command-a, openai/gpt-4.1-nano
+# Note: openai/gpt-4o-mini may hit budget limits
+DEFAULT_MODEL = "meta/meta-llama-3.1-8b-instruct"
 
 
 # =============================================================================
@@ -318,9 +321,8 @@ class GitHubModelsAgent:
     This follows the same pattern as GeminiAgent, but uses GitHub's
     Models API for actual AI-powered responses.
 
-    Authentication: Uses `Authorization: Bearer` format per official GitHub docs.
+    Authentication: Uses `Authorization: token` format (NOT Bearer - Bearer returns 401)
     Required: Fine-grained PAT with `models:read` scope.
-    Docs: https://docs.github.com/en/rest/models/inference
     """
 
     def __init__(
@@ -426,9 +428,10 @@ You have access to tools to help you understand and analyze the codebase.
                 "with a PAT that has `models:read` scope."
             )
 
-        # Per official GitHub docs: https://docs.github.com/en/rest/models/inference
+        # Note: Despite official docs showing Bearer, testing confirms 'token' format works
+        # Bearer returns 401 Unauthorized with fine-grained PATs
         headers = {
-            "Authorization": f"Bearer {self.api_token}",
+            "Authorization": f"token {self.api_token}",
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
             "Content-Type": "application/json",
@@ -526,7 +529,7 @@ You have access to tools to help you understand and analyze the codebase.
         """
         Simple API call without tools (backward compatibility).
 
-        Uses Bearer authentication per official GitHub docs.
+        Uses token authentication (NOT Bearer - Bearer returns 401).
         """
         return await self._call_github_models_api_with_tools(messages, tools=[])
 
@@ -760,9 +763,9 @@ async def test_github_models_api(
             "error": "No API token. Set COPILOT_PAT or GITHUB_TOKEN.",
         }
 
-    # Per official GitHub docs: https://docs.github.com/en/rest/models/inference
+    # Note: Despite official docs showing Bearer, testing confirms 'token' format works
     headers = {
-        "Authorization": f"Bearer {token}",
+        "Authorization": f"token {token}",
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
         "Content-Type": "application/json",
