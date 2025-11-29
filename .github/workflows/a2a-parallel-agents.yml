@@ -523,11 +523,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COPILOT_PAT: ${{ secrets.COPILOT_PAT }}
           REPOSITORY: ${{ github.repository }}
-          # Default to mistral-ai/mistral-small-2503 - produces coherent, quality output
-          # Note: meta/meta-llama-3.1-8b-instruct sometimes produces gibberish/nonsense
-          # Fallback models (in order): openai/gpt-4.1-nano, cohere/cohere-command-a
-          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'mistral-ai/mistral-small-2503' }}
-          GITHUB_MODELS_FALLBACK: 'openai/gpt-4.1-nano'
+          # Default to openai/gpt-4.1-nano - most reliable and trusted
+          # Note: meta/meta-llama-3.1-8b-instruct produces gibberish/nonsense
+          # Fallback models: mistral-ai/mistral-small-2503, cohere/cohere-command-a
+          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'openai/gpt-4.1-nano' }}
+          GITHUB_MODELS_FALLBACK: 'mistral-ai/mistral-small-2503'
           PYTHONPATH: ${{ github.workspace }}
         run: |
           mkdir -p github-models-artifacts
@@ -749,8 +749,8 @@ jobs:
           issue_title = os.environ.get('ISSUE_TITLE', '')
           issue_body = os.environ.get('ISSUE_BODY', '')
           context_id = os.environ.get('CONTEXT_ID', '')
-          model = os.environ.get('GITHUB_MODELS_MODEL', 'mistral-ai/mistral-small-2503')
-          fallback_model = os.environ.get('GITHUB_MODELS_FALLBACK', 'openai/gpt-4.1-nano')
+          model = os.environ.get('GITHUB_MODELS_MODEL', 'openai/gpt-4.1-nano')
+          fallback_model = os.environ.get('GITHUB_MODELS_FALLBACK', 'mistral-ai/mistral-small-2503')
           token = os.environ.get('COPILOT_PAT', '')
           repository = os.environ.get('REPOSITORY', '')
           

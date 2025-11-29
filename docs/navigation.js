@@ -1,43 +1,3 @@
-// ===========================================================================
-// NAVIGATION CONFIGURATION
-// ===========================================================================
-// This configuration is used for both dynamic navigation generation and
-// breadcrumb navigation. Update this to change navigation structure.
-// ===========================================================================
-const navConfig = [
-    {
-        title: "Core",
-        items: [
-            { text: "Dashboard", url: "index.html", icon: "📊" },
-            { text: "Agents", url: "agents.html", icon: "🤖" },
-            { text: "Organism", url: "organism.html", icon: "🧬" },
-            { text: "World Map", url: "world-map.html", icon: "🌍" },
-            { text: "Episodes", url: "episodes.html", icon: "🎬" },
-            { text: "TV Mode", url: "tv.html", icon: "📺" }
-        ]
-    },
-    {
-        title: "Intelligence",
-        items: [
-            { text: "Knowledge Graph", url: "ai-knowledge-graph.html", icon: "🧠" },
-            { text: "AI Friends", url: "ai-friends.html", icon: "👥" },
-            { text: "Architecture", url: "architecture-evolution.html", icon: "🏗️" },
-            { text: "AgentOps", url: "agentops.html", icon: "⚙️" },
-            { text: "A2A System", url: "a2a.html", icon: "🤝" },
-            { text: "A2A Visualization", url: "a2a-visualization.html", icon: "🔄" },
-            { text: "A/B Testing", url: "ab-testing-dashboard.html", icon: "🧪" }
-        ]
-    },
-    {
-        title: "Reviews",
-        items: [
-            { text: "Reviewer", url: "reviewer-dashboard.html", icon: "📝" },
-            { text: "Workflows", url: "workflow-schedule.html", icon: "📅" },
-            { text: "Lifecycle", url: "lifecycle.html", icon: "🔄" }
-        ]
-    }
-];
-
 // Navigation Toggle for Mobile/Tablet
 document.addEventListener('DOMContentLoaded', function() {
     const hamburger = document.querySelector('.hamburger');
@@ -47,112 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const backdrop = document.createElement('div');
     backdrop.className = 'nav-backdrop';
     document.body.appendChild(backdrop);
-    
-    // ===========================================================================
-    // BREADCRUMBS NAVIGATION
-    // ===========================================================================
-    // Generates breadcrumb navigation based on the current page location
-    // and the navConfig structure. Shows: Home > Section > Current Page
-    // ===========================================================================
-    function generateBreadcrumbs() {
-        // Don't show breadcrumbs on the homepage
-        const currentPath = window.location.pathname;
-        const currentPage = currentPath.split('/').pop() || 'index.html';
-        
-        if (currentPage === 'index.html' || currentPage === '') {
-            return; // No breadcrumbs on homepage
-        }
-        
-        // Find the current page in navConfig
-        let currentItem = null;
-        let currentSection = null;
-        
-        for (const section of navConfig) {
-            for (const item of section.items) {
-                if (currentPage === item.url || currentPath.endsWith(item.url)) {
-                    currentItem = item;
-                    currentSection = section;
-                    break;
-                }
-            }
-            if (currentItem) break;
-        }
-        
-        // Create breadcrumb container
-        const breadcrumbNav = document.createElement('nav');
-        breadcrumbNav.className = 'breadcrumbs';
-        breadcrumbNav.setAttribute('aria-label', 'Breadcrumb navigation');
-        
-        const breadcrumbList = document.createElement('ol');
-        breadcrumbList.className = 'breadcrumb-list';
-        
-        // Home link (always present)
-        const homeLi = document.createElement('li');
-        homeLi.className = 'breadcrumb-item';
-        const homeLink = document.createElement('a');
-        homeLink.href = 'index.html';
-        homeLink.className = 'breadcrumb-link';
-        homeLink.innerHTML = '<span class="breadcrumb-icon">🏠</span> Home';
-        homeLi.appendChild(homeLink);
-        breadcrumbList.appendChild(homeLi);
-        
-        // Section (if found in navConfig)
-        if (currentSection) {
-            const sectionLi = document.createElement('li');
-            sectionLi.className = 'breadcrumb-item';
-            const separator1 = document.createElement('span');
-            separator1.className = 'breadcrumb-separator';
-            separator1.setAttribute('aria-hidden', 'true');
-            separator1.textContent = '›';
-            sectionLi.appendChild(separator1);
-            
-            const sectionSpan = document.createElement('span');
-            sectionSpan.className = 'breadcrumb-section';
-            sectionSpan.textContent = currentSection.title;
-            sectionLi.appendChild(sectionSpan);
-            breadcrumbList.appendChild(sectionLi);
-        }
-        
-        // Current page
-        const currentLi = document.createElement('li');
-        currentLi.className = 'breadcrumb-item breadcrumb-current';
-        currentLi.setAttribute('aria-current', 'page');
-        
-        const separator2 = document.createElement('span');
-        separator2.className = 'breadcrumb-separator';
-        separator2.setAttribute('aria-hidden', 'true');
-        separator2.textContent = '›';
-        currentLi.appendChild(separator2);
-        
-        const currentSpan = document.createElement('span');
-        currentSpan.className = 'breadcrumb-text';
-        
-        if (currentItem) {
-            currentSpan.innerHTML = `<span class="breadcrumb-icon">${currentItem.icon}</span> ${currentItem.text}`;
-        } else {
-            // Fallback: generate from page title or filename
-            const pageTitle = document.title || currentPage.replace('.html', '').replace(/-/g, ' ');
-            currentSpan.textContent = pageTitle.split(' | ')[0] || pageTitle;
-        }
-        currentLi.appendChild(currentSpan);
-        breadcrumbList.appendChild(currentLi);
-        
-        breadcrumbNav.appendChild(breadcrumbList);
-        
-        // Insert breadcrumbs after the header
-        const header = document.querySelector('header');
-        if (header && header.nextSibling) {
-            header.parentNode.insertBefore(breadcrumbNav, header.nextSibling);
-        } else if (header) {
-            header.parentNode.appendChild(breadcrumbNav);
-        } else {
-            // Fallback: insert at beginning of body
-            document.body.insertBefore(breadcrumbNav, document.body.firstChild);
-        }
-    }
-    
-    // Generate breadcrumbs on page load
-    generateBreadcrumbs();
     
     if (hamburger && nav) {
         // Toggle menu
@@ -252,9 +106,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ===========================================================================
-// DYNAMIC NAVIGATION GENERATION
-// ===========================================================================
+// Dynamically generate navigation
+const navConfig = [
+    {
+        title: "Core",
+        items: [
+            { text: "Dashboard", url: "index.html", icon: "📊" },
+            { text: "Agents", url: "agents.html", icon: "🤖" },
+            { text: "Organism", url: "organism.html", icon: "🧬" },
+            { text: "World Map", url: "world-map.html", icon: "🌍" },
+            { text: "Episodes", url: "episodes.html", icon: "🎬" },
+            { text: "TV Mode", url: "tv.html", icon: "📺" }
+        ]
+    },
+    {
+        title: "Intelligence",
+        items: [
+            { text: "Knowledge Graph", url: "ai-knowledge-graph.html", icon: "🧠" },
+            { text: "AI Friends", url: "ai-friends.html", icon: "👥" },
+            { text: "Architecture", url: "architecture-evolution.html", icon: "🏗️" },
+            { text: "AgentOps", url: "agentops.html", icon: "⚙️" },
+            { text: "A2A System", url: "a2a.html", icon: "🤝" },
+            { text: "A2A Visualization", url: "a2a-visualization.html", icon: "🔄" },
+            { text: "A/B Testing", url: "ab-testing-dashboard.html", icon: "🧪" }
+        ]
+    },
+    {
+        title: "Reviews",
+        items: [
+            { text: "Reviewer", url: "reviewer-dashboard.html", icon: "📝" },
+            { text: "Workflows", url: "workflow-schedule.html", icon: "📅" },
+            { text: "Lifecycle", url: "lifecycle.html", icon: "🔄" }
+        ]
+    }
+];
+
+
 function generateNavigation() {
     const nav = document.querySelector('.main-nav');
     if (!nav) return;
