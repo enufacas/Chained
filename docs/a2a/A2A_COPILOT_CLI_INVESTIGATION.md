@@ -755,7 +755,7 @@ Response: Unauthorized (401)
 **Verdict (Follow-up)**: 
 - ✅ Network access to `models.github.ai` now works
 - ❌ Classic PAT (`ghp_...`) appears expired/revoked
-- ❌ Fine-grained PAT (`github_pat_...`) is valid but lacks `models:read` permission
+- ✅ Fine-grained PAT with `models:read` scope **WORKS!**
 
 **Requirements for GitHub Models API** (from [GitHub Docs](https://docs.github.com/en/rest/models/inference)):
 
@@ -767,20 +767,60 @@ Response: Unauthorized (401)
 3. Under "Permissions", find and enable **"Models" → "Read-only"** (`models:read`)
 4. Generate and save the token
 
-**Supported Models**: OpenAI (GPT-4, GPT-4o), DeepSeek, Microsoft, Llama, and more
+**Supported Models**: OpenAI (GPT-4, GPT-4o, GPT-4o-mini, GPT-4.1), DeepSeek, Microsoft, Llama, and more
 
-**Example Request**:
+**⚠️ CRITICAL: Use `token` auth format, NOT `Bearer`**:
 ```bash
-curl -L -X POST \
+# ✅ CORRECT - Works!
+curl -X POST \
   -H "Accept: application/vnd.github+json" \
-  -H "Authorization: Bearer YOUR_FINE_GRAINED_PAT_WITH_MODELS_READ" \
+  -H "Authorization: token YOUR_PAT_WITH_MODELS_READ" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   -H "Content-Type: application/json" \
   https://models.github.ai/inference/chat/completions \
-  -d '{
-    "model": "openai/gpt-4o-mini",
-    "messages": [{"role": "user", "content": "Hello!"}]
-  }'
+  -d '{"model": "openai/gpt-4o-mini", "messages": [{"role": "user", "content": "Hello!"}]}'
+
+# ❌ WRONG - Returns 401 Unauthorized
+curl -X POST \
+  -H "Authorization: ******" \
+  ...
+```
+
+### ✅ CONFIRMED WORKING (Nov 29, 2024)
+
+**Test Result**:
+```json
+{
+  "model": "gpt-4o-mini-2024-07-18",
+  "choices": [{"message": {"content": "Hello! How can I assist you today?", "role": "assistant"}}],
+  "usage": {"prompt_tokens": 8, "completion_tokens": 10, "total_tokens": 18}
+}
+```
+
+### Rate Limits by Model
+
+| Model | Requests/period | Tokens/period | Best For |
+|-------|-----------------|---------------|----------|
+| `openai/gpt-4o-mini` | 20,000 | 2,000,000 | High-volume, cost-effective |
+| `openai/gpt-4o` | 10,000 | 10,000,000 | Higher token capacity |
+| `openai/gpt-4.1` | 1,000 | 1,000,000 | Latest model, more restricted |
+
+**Rate Limit Headers Returned**:
+- `X-Ratelimit-Limit-Requests`: Total requests allowed
+- `X-Ratelimit-Remaining-Requests`: Requests remaining
+- `X-Ratelimit-Limit-Tokens`: Total tokens allowed
+- `X-Ratelimit-Remaining-Tokens`: Tokens remaining
+
+**Usage Tracking**:
+Each response includes usage info:
+```json
+{
+  "usage": {
+    "prompt_tokens": 14,
+    "completion_tokens": 50,
+    "total_tokens": 62
+  }
+}
 ```
 
 ### Extended Summary Table
@@ -795,7 +835,8 @@ curl -L -X POST \
 | copilot-proxy.githubusercontent.com | Classic PAT | ❌ "invalid token format" |
 | GitHub Models API | Classic PAT | ❌ Expired/Invalid |
 | GitHub Models API | Fine-grained PAT (no scope) | ❌ Missing `models:read` scope |
-| **GitHub Models API** | **Fine-grained PAT + `models:read`** | ✅ **VIABLE** (not yet tested with proper PAT) |
+| GitHub Models API | Fine-grained PAT + `Bearer` auth | ❌ 401 Unauthorized |
+| **GitHub Models API** | **Fine-grained PAT + `token` auth** | ✅ **WORKING!** |
 
 ## Conclusion
 
@@ -808,7 +849,7 @@ curl -L -X POST \
 ❌ **Custom agent delegation NOT supported** by CLI  
 ❌ **Language Server SDK also requires device flow** - no headless token method  
 ❌ **Copilot API explicitly rejects PATs** - requires special Copilot tokens  
-✅ **GitHub Models API IS VIABLE** with fine-grained PAT + `models:read` scope!  
+✅ **GitHub Models API IS WORKING!** with fine-grained PAT + `models:read` scope + `token` auth format  
 ✅ **GraphQL assignment proven and reliable** (ONLY viable method for A2A Copilot assignment)
 
 **⚠️ CRITICAL FINDING**: After comprehensive testing (Nov 29, 2024), **ALL Copilot-specific interfaces require device flow authentication**:
@@ -819,11 +860,16 @@ curl -L -X POST \
 4. **api.githubcopilot.com** - Rejects all PATs
 5. **copilot-proxy.githubusercontent.com** - Requires special token format
 
-**✅ VIABLE ALTERNATIVE - GitHub Models API**:
+**✅ CONFIRMED WORKING - GitHub Models API**:
 - **Endpoint**: `https://models.github.ai/inference/chat/completions`
-- **Authentication**: Fine-grained PAT with `models:read` permission
-- **Models**: GPT-4, GPT-4o, GPT-4o-mini, DeepSeek, Llama, Microsoft models
+- **Authentication**: `Authorization: token YOUR_PAT` (NOT Bearer!)
+- **Required Scope**: Fine-grained PAT with `models:read` permission
+- **Models Available**: GPT-4, GPT-4o, GPT-4o-mini, GPT-4.1, DeepSeek, Llama, Microsoft models
 - **Use Case**: Headless LLM access for code generation, chat, analysis
+- **Rate Limits**: 
+  - GPT-4o-mini: 20,000 requests, 2M tokens
+  - GPT-4o: 10,000 requests, 10M tokens
+  - GPT-4.1: 1,000 requests, 1M tokens
 - **Docs**: [REST API endpoints for models inference](https://docs.github.com/en/rest/models/inference)
 
 **Note**: GitHub Models API provides **general LLM access**, not Copilot-specific features. It's an alternative for headless AI capabilities but doesn't provide Copilot's code-aware features or custom agent delegation.
@@ -835,7 +881,8 @@ curl -L -X POST \
 3. ✅ **Use GraphQL assignment exclusively** for A2A Copilot orchestration
 4. ✅ **Implement branch-based A2A** for inter-agent communication
 5. ✅ **Proceed with Phase 3A** using GraphQL method only
-6. ✅ **GitHub Models API confirmed viable** for headless LLM access
+6. ✅ **GitHub Models API CONFIRMED WORKING** for headless LLM access
+   - Use `Authorization: token` format (not Bearer)
    - Requires: Fine-grained PAT with `models:read` scope
    - Create at: Settings → Developer settings → Fine-grained tokens → Models permission
 
