@@ -127,31 +127,40 @@ export async function GET() {
       },
     },
     llmProvider: useGemini ? "gemini" : useOpenAI ? "openai" : "none",
+    // Add LLM availability flag so chat can show even if A2A agents are down
+    llmAvailable: useGemini || useOpenAI,
   };
 
-  // Check agent availability (quick health checks)
-  try {
-    const adkResponse = await fetch(`${ADK_API_URL}/health`, { 
+  // Run all health checks in parallel with short timeout (2 seconds each)
+  // This prevents slow external services from blocking the response
+  const healthCheckTimeout = 2000;
+  
+  const healthChecks = [
+    // ADK API Server check
+    fetch(`${ADK_API_URL}/health`, { 
       method: "GET",
-      signal: AbortSignal.timeout(5000),
-    });
-    agentStatus.adkApiServer.available = adkResponse.ok;
-  } catch {
-    // Agent not available
-  }
-
-  // Check individual agents
-  for (const [key, agent] of Object.entries(agentStatus.agents)) {
-    try {
-      const response = await fetch(`${agent.url}/health`, {
-        method: "GET",
-        signal: AbortSignal.timeout(5000),
-      });
-      (agentStatus.agents as Record<string, { url: string; available: boolean }>)[key].available = response.ok;
-    } catch {
+      signal: AbortSignal.timeout(healthCheckTimeout),
+    }).then(res => {
+      agentStatus.adkApiServer.available = res.ok;
+    }).catch(() => {
       // Agent not available
-    }
-  }
+    }),
+    
+    // Individual agent checks
+    ...Object.entries(agentStatus.agents).map(([key, agent]) =>
+      fetch(`${agent.url}/health`, {
+        method: "GET",
+        signal: AbortSignal.timeout(healthCheckTimeout),
+      }).then(res => {
+        (agentStatus.agents as Record<string, { url: string; available: boolean }>)[key].available = res.ok;
+      }).catch(() => {
+        // Agent not available
+      })
+    ),
+  ];
+
+  // Wait for all checks to complete (or timeout)
+  await Promise.allSettled(healthChecks);
 
   return new Response(JSON.stringify(agentStatus), {
     status: 200,
