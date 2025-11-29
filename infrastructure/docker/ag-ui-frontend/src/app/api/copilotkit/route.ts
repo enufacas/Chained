@@ -13,8 +13,9 @@ import { NextRequest } from "next/server";
 import { 
   createServiceAdapter, 
   getLLMProviderInfo,
-  googleApiKey,
+  geminiApiKey,
   openaiApiKey,
+  useGemini,
 } from "@/lib/copilotkit-config";
 
 // Create the CopilotKit runtime
@@ -33,33 +34,33 @@ function logWithTimestamp(message: string, data?: object) {
 export const POST = async (req: NextRequest) => {
   logWithTimestamp("POST request received");
   
-  // Check API key availability
-  const hasGoogleKey = !!googleApiKey;
+  // Check if any authentication method is available
+  const hasGeminiAuth = useGemini; // This includes Vertex AI ADC or GEMINI_API_KEY
   const hasOpenAIKey = !!openaiApiKey;
   
-  logWithTimestamp("API key check", {
-    hasGoogleKey,
+  logWithTimestamp("Authentication check", {
+    hasGeminiAuth,
     hasOpenAIKey,
-    googleKeyLength: googleApiKey ? googleApiKey.length : 0,
+    geminiKeyLength: geminiApiKey ? geminiApiKey.length : 0,
     openaiKeyLength: openaiApiKey ? openaiApiKey.length : 0,
   });
 
-  if (!hasGoogleKey && !hasOpenAIKey) {
-    logWithTimestamp("ERROR: No LLM API key configured");
+  if (!hasGeminiAuth && !hasOpenAIKey) {
+    logWithTimestamp("ERROR: No LLM authentication configured");
     return new Response(
       JSON.stringify({ 
-        error: "No LLM API key configured",
-        message: "Set GOOGLE_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY environment variable",
+        error: "No LLM authentication configured",
+        message: "Set USE_VERTEX_AI=true (for Cloud Run), GEMINI_API_KEY, or OPENAI_API_KEY environment variable",
         debug: {
           timestamp: new Date().toISOString(),
-          envVarsChecked: ["GOOGLE_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"],
+          envVarsChecked: ["USE_VERTEX_AI", "GOOGLE_GENAI_USE_VERTEXAI", "GEMINI_API_KEY", "OPENAI_API_KEY"],
         }
       }),
       { 
         status: 503, 
         headers: { 
           "Content-Type": "application/json",
-          "X-CopilotKit-Error": "missing-api-key",
+          "X-CopilotKit-Error": "missing-authentication",
         } 
       }
     );
@@ -96,7 +97,7 @@ export const POST = async (req: NextRequest) => {
         message: errorMessage,
         debug: {
           timestamp: new Date().toISOString(),
-          provider: hasGoogleKey ? "gemini" : "openai",
+          provider: hasGeminiAuth ? "gemini" : "openai",
         }
       }),
       {
@@ -122,16 +123,17 @@ export const GET = async () => {
     ...info,
     debug: {
       timestamp: new Date().toISOString(),
-      hasGoogleApiKey: !!googleApiKey,
+      hasGeminiApiKey: !!geminiApiKey,
       hasOpenAIApiKey: !!openaiApiKey,
+      useVertexAI: info.authMode === "adc",
       // Only show key prefixes in development mode for security
-      googleKeyPrefix: !isProduction && googleApiKey ? googleApiKey.substring(0, 4) + "..." : (googleApiKey ? "[redacted]" : null),
+      geminiKeyPrefix: !isProduction && geminiApiKey ? geminiApiKey.substring(0, 4) + "..." : (geminiApiKey ? "[redacted]" : null),
       openaiKeyPrefix: !isProduction && openaiApiKey ? openaiApiKey.substring(0, 4) + "..." : (openaiApiKey ? "[redacted]" : null),
       nodeEnv: process.env.NODE_ENV,
     }
   };
 
-  logWithTimestamp("Returning status info", { provider: info.provider, available: info.available });
+  logWithTimestamp("Returning status info", { provider: info.provider, available: info.available, authMode: info.authMode });
   
   return new Response(
     JSON.stringify(debugInfo),
@@ -141,6 +143,7 @@ export const GET = async () => {
         "Content-Type": "application/json",
         "X-CopilotKit-Provider": info.provider,
         "X-CopilotKit-Available": String(info.available),
+        "X-CopilotKit-AuthMode": info.authMode,
       } 
     }
   );

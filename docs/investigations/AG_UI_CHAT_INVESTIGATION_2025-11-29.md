@@ -6,48 +6,51 @@
 
 ## Executive Summary
 
-Investigation into why the chat feature is not working on the interactive page of the AG-UI Frontend. The analysis reveals **two root causes** and confirms that the **main page uses static/sample data**.
+Investigation into why the chat feature is not working on the interactive page of the AG-UI Frontend. The analysis reveals **three root causes** and confirms that the **main page uses static/sample data**.
 
 ## Issues Identified
 
-### Issue 1: Missing LLM API Key (Primary Cause)
+### Issue 1: Wrong Google API Adapter (ROOT CAUSE - FIXED)
+
+**Status:** ✅ FIXED  
+**Severity:** Critical  
+**Impact:** Chat feature completely non-functional even with valid API key
+
+The CopilotKit `GoogleGenerativeAIAdapter` uses `@langchain/google-gauth` which requires **OAuth2/Vertex AI authentication**, NOT simple API key authentication (Google AI Studio).
+
+**Error Message:**
+```
+[GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse: [401 Unauthorized] API keys are not supported by this API. Expected OAuth2 access token or other authentication credentials that assert a principal.
+```
+
+**Root Cause Analysis:**
+- `@copilotkit/runtime` v1.8.14 includes `GoogleGenerativeAIAdapter`
+- This adapter uses `ChatGoogle` from `@langchain/google-gauth`
+- `@langchain/google-gauth` is designed for Google Cloud Vertex AI (OAuth2)
+- Google AI Studio API keys (starting with `AIza`) are NOT supported
+
+**Fix Applied:**
+- Added `@langchain/google-genai` package which supports API key authentication
+- Replaced `GoogleGenerativeAIAdapter` with custom `LangChainAdapter` using `ChatGoogleGenerativeAI`
+- The `ChatGoogleGenerativeAI` class from `@langchain/google-genai` properly authenticates with API keys
+
+**Files Changed:**
+- `infrastructure/docker/ag-ui-frontend/package.json` - Added `@langchain/google-genai` dependency
+- `infrastructure/docker/ag-ui-frontend/src/lib/copilotkit-config.ts` - Updated to use custom adapter
+
+### Issue 2: Missing LLM API Key (Configuration Required)
 
 **Status:** ⚠️ Configuration Required  
 **Severity:** High  
-**Impact:** Chat feature completely non-functional
+**Impact:** Chat feature won't work without valid API key
 
-The CopilotKit chat requires either a `GEMINI_API_KEY` or `OPENAI_API_KEY` environment variable to be set. Without this, the backend returns a 503 Service Unavailable error.
-
-**Evidence:**
-```json
-{
-  "llmProvider": "none"
-}
-```
-
-**Console Error:**
-```
-Failed to load resource: the server responded with a status of 503 (Service Unavailable)
-```
-
-**Build Warning:**
-```
-Warning: Neither GEMINI_API_KEY nor OPENAI_API_KEY environment variable is set. CopilotKit chat will not work.
-```
-
-**Resolution:**
-Set one of the following environment variables in Cloud Run deployment:
-- `GOOGLE_API_KEY` (preferred) - The standard Google API key already set up via Secret Manager (per PR #3370)
-- `GEMINI_API_KEY` (alternative) - Alias that gets copied to GOOGLE_API_KEY internally
-- `OPENAI_API_KEY` (fallback) - Uses OpenAI GPT-4
-
-**Important:** Per PR #3370, `GOOGLE_API_KEY` should already be configured in Secret Manager. The code currently only checks for `GEMINI_API_KEY`, but needs to also accept `GOOGLE_API_KEY` directly.
+After fixing Issue 1, the system requires a valid `GOOGLE_API_KEY` (Google AI Studio format, starting with `AIza`) to be set in Cloud Run deployment.
 
 ### Issue 2: A2A Backend Agents Unavailable
 
 **Status:** ⚠️ Backend Services Down or Unreachable  
 **Severity:** Medium  
-**Impact:** Even with an LLM key, the A2A agent orchestration won't work
+**Impact:** A2A agent orchestration won't work (chat may still work for basic queries)
 
 The A2A middleware requires connection to deployed backend agents:
 - `https://chained-adk-api-server-sguacxy5gq-uc.a.run.app`
