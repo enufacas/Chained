@@ -8,8 +8,8 @@ name: "System: Goal and Idea"
 
 on:
   schedule:
-    # AI Ideas: every 4 hours
-    - cron: '0 */4 * * *'
+    # AI Ideas: once daily at 10 AM UTC (reduced from every 4 hours)
+    - cron: '0 10 * * *'
     # Daily Goals: 6 AM UTC
     - cron: '0 6 * * *'
     # Progress Check: 8 PM UTC
@@ -67,7 +67,7 @@ jobs:
     name: "AI Idea Spawner"
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'schedule' && github.event.schedule == '0 */4 * * *') ||
+      (github.event_name == 'schedule' && github.event.schedule == '0 10 * * *') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.stage == 'ai-idea-spawner')
     
     steps:
