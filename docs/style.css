@@ -2698,3 +2698,47 @@ footer p {
         max-width: 200px;
     }
 }
+
+/* Light Theme Overrides */
+[data-theme="light"] {
+    /* Background colors - Light theme */
+    --bg-color: #f8fafc;
+    --bg-gradient-end: #e2e8f0;
+    --card-bg: #ffffff;
+    --card-bg-hover: #f1f5f9;
+
+    /* Text colors - High contrast for light mode */
+    --text-color: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #475569;
+    --text-dim: #94a3b8;
+
+    /* Border and shadow colors */
+    --border-color: rgba(148, 163, 184, 0.3);
+    --border-color-bright: rgba(6, 182, 212, 0.4);
+    --shadow-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Theme Toggle Button Styles */
+.theme-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: white;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+    padding: 0;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}

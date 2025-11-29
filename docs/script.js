@@ -1091,3 +1091,48 @@ fetchFeaturedAgents();
 // Load workflow status
 loadWorkflowStatus();
 
+
+
+// Theme Management
+function initTheme() {
+    const themeToggle = document.getElementById(theme-toggle);
+    if (!themeToggle) return;
+
+    const html = document.documentElement;
+    const icon = themeToggle;
+
+    // Check saved theme or preference
+    const savedTheme = localStorage.getItem(theme);
+    
+    // Validate saved theme (security best practice)
+    const validThemes = ["light", "dark"];
+    let currentTheme = validThemes.includes(savedTheme) ? savedTheme : null;
+
+    if (!currentTheme) {
+        // Default to dark if no preference
+        currentTheme = "dark"; 
+    }
+
+    // Apply theme
+    applyTheme(currentTheme);
+
+    // Toggle event
+    themeToggle.addEventListener("click", () => {
+        const newTheme = html.getAttribute("data-theme") === "light" ? "dark" : "light";
+        applyTheme(newTheme);
+        localStorage.setItem("theme", newTheme);
+    });
+
+    function applyTheme(theme) {
+        if (theme === "light") {
+            html.setAttribute("data-theme", "light");
+            icon.textContent = "☀️";
+        } else {
+            html.removeAttribute("data-theme"); // Default is dark
+            icon.textContent = "🌙";
+        }
+    }
+}
+
+// Initialize theme when DOM is ready
+document.addEventListener("DOMContentLoaded", initTheme);

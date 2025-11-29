@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chained - AI Motion Machine Timeline</title>
     <link rel="stylesheet" href="style.css">
+
+    <script>
+        (function() {
+            try {
+                const localTheme = localStorage.getItem('theme');
+                const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (localTheme === 'light') {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+            } catch (e) {}
+        })();
+    </script>
 </head>
 <body>
     <header>
@@ -15,7 +27,11 @@
                 <span></span>
                 <span></span>
             </button>
-            <h1>🤖 Chained</h1>
+            
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                🌙
+            </button>
+<h1>🤖 Chained</h1>
         </div>
         <nav class="main-nav">
             <a href="index.html" class="nav-link">🏠 Home</a>
