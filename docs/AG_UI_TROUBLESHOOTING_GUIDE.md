@@ -239,8 +239,9 @@ When using Vertex AI with ADC, the `@langchain/google-gauth` library requires a 
 3. The Cloud Run instance metadata service is not accessible
 
 **Fix Applied:**
-The Terraform configuration (`infrastructure/terraform/adk-agents.tf`) now includes:
+The Terraform configuration (`infrastructure/terraform/adk-agents.tf`) now includes this in the `ag_ui_frontend` service:
 ```hcl
+# In resource "google_cloud_run_v2_service" "ag_ui_frontend"
 env {
   name  = "GOOGLE_CLOUD_PROJECT"
   value = var.project_id
