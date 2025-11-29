@@ -1016,78 +1016,92 @@ jobs:
                 ]
               }
             }
-          # Custom A2A implementation prompt that REQUIRES acknowledgment of upstream agent analyses
-          # This replaces the generic /gemini-issue-fixer that ignored the ADDITIONAL_CONTEXT
+          # A2A Protocol-Compliant Implementation Prompt (v0.3.0)
+          # Per A2A "Life of a Task": https://a2a-protocol.org/latest/topics/life-of-a-task/
+          # This replaces the generic /gemini-issue-fixer that ignored upstream agent artifacts
           prompt: |-
-            # A2A Multi-Agent Implementation Task
+            # A2A Multi-Agent Implementation Task (Protocol v0.3.0)
 
             You are the IMPLEMENTATION AGENT in a multi-agent A2A (Agent-to-Agent) workflow.
-            Multiple specialized agents have already analyzed this issue and provided recommendations.
+            This follows the A2A "Life of a Task" protocol pattern where:
+            - Multiple upstream agents analyzed this issue (separate Tasks)
+            - Each agent produced Artifacts with their recommendations
+            - These artifacts are now aggregated in `.a2a/context/implementation.md`
+            - Your Task references all upstream analysis Tasks
             
-            ## ⚠️ CRITICAL REQUIREMENT: You MUST acknowledge and use the upstream agent analyses
+            ## A2A Protocol Task Linking (REQUIRED)
             
-            Before doing ANY implementation work, you MUST:
-            1. Read the file `.a2a/context/implementation.md` which contains ALL agent recommendations
-            2. Post a comment to issue #${{ inputs.issue_number }} that EXPLICITLY summarizes each agent's recommendations
-            3. State how your implementation plan incorporates their suggestions
+            Per A2A Spec §4.1.1 (Task) and §4.1.9 (Artifact):
+            - **Upstream Agents**: ${{ steps.agents.outputs.agents }}
+            - **Artifact Version**: 0.3.0
             
             ## Issue to Fix
             **Issue #${{ inputs.issue_number }}**: ${{ steps.issue.outputs.title }}
             
-            ## YOUR FIRST ACTION (MANDATORY)
+            ## ⚠️ MANDATORY FIRST ACTIONS (per A2A Protocol)
             
-            Use `get_file_contents` to read `.a2a/context/implementation.md`, then post a comment like:
+            The A2A protocol requires explicit acknowledgment of referenced task artifacts.
+            You MUST:
+            
+            1. **Read the aggregated artifacts**: Use `get_file_contents` to read `.a2a/context/implementation.md`
+            2. **Post acknowledgment comment** to issue #${{ inputs.issue_number }} that:
+               - Lists EACH upstream agent by @name with their specific recommendations
+               - Explains your implementation plan based on their artifacts
+            3. **Only then** proceed with implementation
+            
+            ## Required Acknowledgment Format
+            
+            Post this comment FIRST using `add_issue_comment`:
             
             ```markdown
-            ## 🔗 A2A Implementation - Synthesizing Agent Recommendations
+            ## 🔗 A2A Implementation - Synthesizing Upstream Artifacts
             
-            I am the implementation agent, building on the analysis from my colleague agents:
+            I am the implementation agent. Per A2A protocol, I acknowledge and build upon
+            the artifacts from my colleague agents' analysis tasks:
             
-            ### @agent-1 recommended:
-            - [specific recommendation 1]
-            - [specific recommendation 2]
+            ### @agent-1 (from referenced task) recommended:
+            - [specific recommendation from their artifact]
+            - [specific recommendation from their artifact]
             
-            ### @agent-2 recommended:
-            - [specific recommendation 1]
-            - [specific recommendation 2]
+            ### @agent-2 (from referenced task) recommended:
+            - [specific recommendation from their artifact]
+            - [specific recommendation from their artifact]
             
-            ### My Implementation Plan (incorporating all recommendations):
-            1. [How I'll address agent-1's suggestions]
-            2. [How I'll address agent-2's suggestions]
+            ### My Implementation Plan (synthesizing all agent artifacts):
+            1. [How I'll implement agent-1's recommendations]
+            2. [How I'll implement agent-2's recommendations]
             
-            Starting implementation now...
+            Starting implementation per A2A protocol...
             ```
             
-            ## Implementation Steps (AFTER acknowledging agents)
+            ## Implementation Steps (AFTER acknowledgment)
             
             1. Create branch: `a2a/fix-issue-${{ inputs.issue_number }}`
-            2. Implement the solution incorporating agent recommendations
-            3. Create files/changes as needed
-            4. Create a PR with body containing "Fixes #${{ inputs.issue_number }}"
-            5. Link the PR to the issue
+            2. Implement the solution based on synthesized agent recommendations
+            3. Create necessary files/changes
+            4. Create PR with body containing "Fixes #${{ inputs.issue_number }}"
             
             ## Available Tools
             
             ### MCP Tools (GitHub Server)
-            - `get_file_contents` - Read files (USE THIS FIRST to read implementation.md)
+            - `get_file_contents` - Read files (USE FIRST for implementation.md)
             - `create_branch` - Create feature branch
             - `create_or_update_file` - Write/update files
             - `push_files` - Push multiple files
             - `create_pull_request` - Create PR
-            - `add_issue_comment` - Post comments (USE THIS to acknowledge agents)
+            - `add_issue_comment` - Post acknowledgment comment
             - `search_code` - Search codebase
-            - `get_issue` - Get issue details
             
             ### Shell Commands
             cat, echo, grep, head, tail, git, gh
             
-            ## IMPORTANT NOTES
+            ## CRITICAL NOTES
+            - DO NOT skip the acknowledgment step - it's required by A2A protocol
             - DO NOT use `default_api:replace` or `edit_file` - they don't exist
-            - Use `create_or_update_file` for file modifications
-            - Always read the implementation context file FIRST
-            - The agents have already done excellent analysis - USE IT
+            - The upstream agents have done excellent analysis - SYNTHESIZE AND USE IT
+            - This is NOT a new analysis - build on the existing agent artifacts
             
-            BEGIN by reading `.a2a/context/implementation.md` with get_file_contents, then post your acknowledgment comment.
+            BEGIN by reading `.a2a/context/implementation.md`, then post acknowledgment comment.
       
       - name: Verify PR was created and link to issue
         if: success() && inputs.auto_execute == true
