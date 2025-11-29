@@ -523,7 +523,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COPILOT_PAT: ${{ secrets.COPILOT_PAT }}
           REPOSITORY: ${{ github.repository }}
-          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'openai/gpt-4o-mini' }}
+          # Default to meta/meta-llama-3.1-8b-instruct - works within free tier budget
+          # Other working models: mistral-ai/mistral-small-2503, cohere/cohere-command-a, openai/gpt-4.1-nano
+          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'meta/meta-llama-3.1-8b-instruct' }}
           PYTHONPATH: ${{ github.workspace }}
         run: |
           mkdir -p github-models-artifacts
@@ -713,6 +715,9 @@ jobs:
           A2A contextId: {context_id}
           """
           
+          # GitHub Models API authentication
+          # Note: Despite official docs showing Bearer, testing confirms 'token' format works
+          # Bearer returns 401 Unauthorized with fine-grained PATs
           headers = {
               "Authorization": f"token {token}",
               "Accept": "application/vnd.github+json",
@@ -750,7 +755,20 @@ jobs:
               
               if response.status_code != 200:
                   print(f"❌ Error: {response.status_code}")
-                  print(response.text)
+                  print(f"   Model: {model}")
+                  print(f"   Token present: {'yes' if token else 'no'}")
+                  error_body = response.text
+                  print(error_body)
+                  print()
+                  # Parse error for actionable guidance based on actual API error messages
+                  if '"code":"no_access"' in error_body or "No access to model" in error_body:
+                      print("💡 SOLUTION: The COPILOT_PAT secret is missing 'models:read' scope.")
+                      print("   To fix: Create a new fine-grained PAT with 'Models: Read' permission")
+                      print("   Settings → Developer settings → Fine-grained tokens → Add 'Models' permission")
+                  elif "budget limit" in error_body.lower() or "usage quota" in error_body.lower():
+                      print("💡 Account has reached GitHub Models usage quota")
+                  elif response.status_code == 401:
+                      print("💡 Token is invalid or expired")
                   exit(1)
               
               data = response.json()

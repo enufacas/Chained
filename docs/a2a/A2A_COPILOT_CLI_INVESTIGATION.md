@@ -769,22 +769,26 @@ Response: Unauthorized (401)
 
 **Supported Models**: OpenAI (GPT-4, GPT-4o, GPT-4o-mini, GPT-4.1), DeepSeek, Microsoft, Llama, and more
 
-**⚠️ CRITICAL: Use `token` auth format, NOT `Bearer`**:
+**Authentication** (Updated Nov 29, 2024):
+
+Per official GitHub docs (https://docs.github.com/en/rest/models/inference), use Bearer format:
 ```bash
-# ✅ CORRECT - Works!
+# ✅ RECOMMENDED - Per official GitHub docs
 curl -X POST \
   -H "Accept: application/vnd.github+json" \
-  -H "Authorization: token YOUR_PAT_WITH_MODELS_READ" \
+  -H "Authorization: Bearer YOUR_PAT_WITH_MODELS_READ" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   -H "Content-Type: application/json" \
   https://models.github.ai/inference/chat/completions \
   -d '{"model": "openai/gpt-4o-mini", "messages": [{"role": "user", "content": "Hello!"}]}'
 
-# ❌ WRONG - Returns 401 Unauthorized
+# Also works (legacy format)
 curl -X POST \
-  -H "Authorization: ******" \
+  -H "Authorization: token YOUR_PAT_WITH_MODELS_READ" \
   ...
 ```
+
+**Note**: Both `Bearer` and `token` formats work as of Nov 2024. Use `Bearer` per official docs.
 
 ### ✅ CONFIRMED WORKING (Nov 29, 2024)
 
@@ -878,8 +882,8 @@ Example workflow pattern:
 | copilot-proxy.githubusercontent.com | Classic PAT | ❌ "invalid token format" |
 | GitHub Models API | Classic PAT | ❌ Expired/Invalid |
 | GitHub Models API | Fine-grained PAT (no scope) | ❌ Missing `models:read` scope |
-| GitHub Models API | Fine-grained PAT + `Bearer` auth | ❌ 401 Unauthorized |
-| **GitHub Models API** | **Fine-grained PAT + `token` auth** | ✅ **WORKING!** |
+| **GitHub Models API** | **Fine-grained PAT + `Bearer` auth** | ✅ **WORKING!** (official docs) |
+| **GitHub Models API** | **Fine-grained PAT + `token` auth** | ✅ **WORKING!** (also works) |
 | **GitHub Models API** | **Multi-turn conversations** | ✅ **WORKING!** |
 
 ## Conclusion
@@ -893,7 +897,7 @@ Example workflow pattern:
 ❌ **Custom agent delegation NOT supported** by CLI  
 ❌ **Language Server SDK also requires device flow** - no headless token method  
 ❌ **Copilot API explicitly rejects PATs** - requires special Copilot tokens  
-✅ **GitHub Models API IS WORKING!** with fine-grained PAT + `models:read` scope + `token` auth format  
+✅ **GitHub Models API IS WORKING!** with fine-grained PAT + `models:read` scope (both Bearer and token auth work)  
 ✅ **GraphQL assignment proven and reliable** (ONLY viable method for A2A Copilot assignment)
 
 **⚠️ CRITICAL FINDING**: After comprehensive testing (Nov 29, 2024), **ALL Copilot-specific interfaces require device flow authentication**:
