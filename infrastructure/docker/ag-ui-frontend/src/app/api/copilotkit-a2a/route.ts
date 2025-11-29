@@ -1,22 +1,23 @@
 /**
  * CopilotKit API Route with A2A Middleware
  *
- * This connects the frontend to our deployed A2A agents using two protocols:
- * - AG-UI Protocol: Frontend ↔ Orchestrator (via CopilotKit)
- * - A2A Protocol: Orchestrator ↔ Specialized Agents (Research, Trends, Blog)
+ * Sets up the connection between:
+ * - Frontend (CopilotKit) → A2A Middleware → Orchestrator → A2A Agents
  *
- * The A2A middleware injects send_message_to_a2a_agent tool into the orchestrator,
- * enabling seamless agent-to-agent communication.
+ * KEY CONCEPTS:
+ * - AG-UI Protocol: Agent-UI communication (CopilotKit ↔ Orchestrator)
+ * - A2A Protocol: Agent-to-agent communication (Orchestrator ↔ Specialized Agents)
+ * - A2A Middleware: Injects send_message_to_a2a_agent tool to bridge AG-UI and A2A
  */
 
 import {
   CopilotRuntime,
+  ExperimentalEmptyAdapter,
   copilotRuntimeNextJSAppRouterEndpoint,
 } from "@copilotkit/runtime";
 import { HttpAgent } from "@ag-ui/client";
 import { A2AMiddlewareAgent } from "@ag-ui/a2a-middleware";
 import { NextRequest } from "next/server";
-import { createServiceAdapter, useGemini, useOpenAI } from "@/lib/copilotkit-config";
 
 // Get the ADK API Server URL (which proxies to our A2A agents)
 const ADK_API_URL = process.env.NEXT_PUBLIC_ADK_API_URL || "https://chained-adk-api-server-sguacxy5gq-uc.a.run.app";
@@ -27,14 +28,18 @@ const GOOGLE_TRENDS_URL = process.env.GOOGLE_TRENDS_URL || "https://chained-goog
 const BLOG_WRITER_URL = process.env.BLOG_WRITER_URL || "https://chained-blog-writer-sguacxy5gq-uc.a.run.app";
 
 export async function POST(request: NextRequest) {
-  // Create an HTTP agent that connects to our ADK API Server
+  // STEP 1: Create an HTTP agent that connects to our ADK API Server
   // This acts as the orchestrator for our A2A pipeline
   const orchestrationAgent = new HttpAgent({
     url: ADK_API_URL,
   });
 
-  // A2A Middleware: Wraps orchestrator and injects send_message_to_a2a_agent tool
-  // This allows the AI to communicate with our deployed A2A agents
+  // STEP 2: Create A2A Middleware Agent
+  // This bridges AG-UI and A2A protocols by:
+  // 1. Wrapping the orchestrator
+  // 2. Registering all A2A agents
+  // 3. Injecting send_message_to_a2a_agent tool
+  // 4. Routing messages between orchestrator and A2A agents
   const a2aMiddlewareAgent = new A2AMiddlewareAgent({
     description:
       "Blog writing assistant with 3 specialized A2A agents: Academic Research, Google Trends, and Blog Writer",
@@ -87,73 +92,36 @@ export async function POST(request: NextRequest) {
     `,
   });
 
-  // CopilotKit runtime connects frontend to agent system
-  // Note: Using type assertion for A2A middleware compatibility
+  // STEP 3: Create CopilotKit Runtime
   const runtime = new CopilotRuntime({
     agents: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      blog_pipeline: a2aMiddlewareAgent as any, // Agent name matches <CopilotKit agent="blog_pipeline">
+      blog_pipeline: a2aMiddlewareAgent as any, // Must match frontend: <CopilotKit agent="blog_pipeline">
     },
   });
 
+  // STEP 4: Set up Next.js endpoint handler
+  // When using A2A middleware, use ExperimentalEmptyAdapter
+  // The orchestrator (ADK API Server) handles all LLM communication
   const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
     runtime,
-    serviceAdapter: createServiceAdapter(),
+    serviceAdapter: new ExperimentalEmptyAdapter(),
     endpoint: "/api/copilotkit-a2a",
   });
 
   return handleRequest(request);
 }
 
-// GET endpoint to check A2A integration status
+// GET endpoint to check A2A integration status (for debugging)
 export async function GET() {
-  const agentStatus = {
-    adkApiServer: {
-      url: ADK_API_URL,
-      available: false,
-    },
+  return new Response(JSON.stringify({
+    adkApiServer: ADK_API_URL,
     agents: {
-      academicResearch: {
-        url: ACADEMIC_RESEARCH_URL,
-        available: false,
-      },
-      googleTrends: {
-        url: GOOGLE_TRENDS_URL,
-        available: false,
-      },
-      blogWriter: {
-        url: BLOG_WRITER_URL,
-        available: false,
-      },
+      academicResearch: ACADEMIC_RESEARCH_URL,
+      googleTrends: GOOGLE_TRENDS_URL,
+      blogWriter: BLOG_WRITER_URL,
     },
-    llmProvider: useGemini ? "gemini" : useOpenAI ? "openai" : "none",
-  };
-
-  // Check agent availability (quick health checks)
-  try {
-    const adkResponse = await fetch(`${ADK_API_URL}/health`, { 
-      method: "GET",
-      signal: AbortSignal.timeout(5000),
-    });
-    agentStatus.adkApiServer.available = adkResponse.ok;
-  } catch {
-    // Agent not available
-  }
-
-  // Check individual agents
-  for (const [key, agent] of Object.entries(agentStatus.agents)) {
-    try {
-      const response = await fetch(`${agent.url}/health`, {
-        method: "GET",
-        signal: AbortSignal.timeout(5000),
-      });
-      (agentStatus.agents as Record<string, { url: string; available: boolean }>)[key].available = response.ok;
-    } catch {
-      // Agent not available
-    }
-  }
-
-  return new Response(JSON.stringify(agentStatus), {
+  }), {
     status: 200,
     headers: { "Content-Type": "application/json" },
   });

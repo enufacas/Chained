@@ -3,11 +3,13 @@
  * 
  * Uses CopilotKit with A2A middleware to enable interactive agent execution.
  * Users can request work like "write a new blog post" and see agents coordinate in real-time.
+ * 
+ * Based on: https://github.com/CopilotKit/a2a-travel
  */
 
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { CopilotKit, useCopilotChat, useCopilotAction } from "@copilotkit/react-core";
 import { CopilotChat } from "@copilotkit/react-ui";
 import "@copilotkit/react-ui/styles.css";
@@ -178,47 +180,8 @@ export function InteractivePipelineChat({
   onAgentActivity,
   className = "",
 }: InteractivePipelineChatProps) {
-  const [a2aStatus, setA2aStatus] = useState<{
-    available: boolean;
-    checked: boolean;
-  }>({ available: false, checked: false });
-
-  // Check if A2A endpoint is available
-  useEffect(() => {
-    const checkA2A = async () => {
-      try {
-        const res = await fetch("/api/copilotkit-a2a");
-        const data = await res.json();
-        setA2aStatus({
-          available: data.adkApiServer?.available || false,
-          checked: true,
-        });
-      } catch {
-        setA2aStatus({ available: false, checked: true });
-      }
-    };
-    checkA2A();
-  }, []);
-
-  if (!a2aStatus.checked) {
-    return (
-      <div className={`flex items-center justify-center h-full ${className}`}>
-        <div className="text-slate-400 animate-pulse">
-          Checking A2A agents...
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={`flex flex-col h-full ${className}`}>
-      {/* Status banner */}
-      {!a2aStatus.available && (
-        <div className="bg-yellow-500/10 border-b border-yellow-500/30 px-4 py-2 text-sm text-yellow-400">
-          ⚠️ A2A agents not available. Some features may be limited.
-        </div>
-      )}
-      
       {/* CopilotKit with A2A middleware */}
       <div className="flex-1 overflow-hidden">
         <CopilotKit
