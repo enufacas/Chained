@@ -623,6 +623,22 @@
       },
       "component_count": 5,
       "file_count": 1827
+    },
+    {
+      "timestamp": "2025-11-29T01:58:32.858416",
+      "commit": "e6cc29ba5a31a1a25e880fbf20842d471f7d0a10",
+      "commit_message": "docs: add chained knowledge architecture guide (#3346)",
+      "metrics": {
+        "total_components": 6,
+        "total_files": 1830,
+        "total_lines": 5375678,
+        "total_dependencies": 2,
+        "external_libraries": 82,
+        "coupling_score": 5.56947925368978e-05,
+        "complexity_score": 1.0
+      },
+      "component_count": 5,
+      "file_count": 1830
     }
   ]
 }
