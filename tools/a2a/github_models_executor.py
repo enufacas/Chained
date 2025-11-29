@@ -7,9 +7,11 @@ parity with the Gemini executor, enabling mixed-provider agent orchestration.
 
 The GitHub Models API is accessed via:
   - Endpoint: https://models.github.ai/inference/chat/completions
-  - Authentication: `Authorization: Bearer YOUR_PAT` (standard Bearer auth)
+  - Authentication: `Authorization: token YOUR_PAT` (NOT Bearer!)
   - Required Scope: Fine-grained PAT with `models:read` permission
-  - Docs: https://docs.github.com/en/rest/models/inference
+
+Based on investigation findings from:
+docs/a2a/A2A_COPILOT_CLI_INVESTIGATION.md
 
 Models available:
   - openai/gpt-4o-mini (default, high volume, best accessibility)
@@ -20,11 +22,6 @@ Tool Support:
   - Tools are defined in agent definitions (.github/agents/*.md)
   - GitHub Models API supports tool-calling via OpenAI-compatible format
   - Tools are executed locally and results returned to the model
-
-Common Errors:
-  - "No access to model": COPILOT_PAT is missing `models:read` scope
-  - "Budget limit": Account has reached usage quota
-  - 401 Unauthorized: Invalid or expired token
 """
 
 import asyncio
@@ -318,8 +315,7 @@ class GitHubModelsAgent:
     This follows the same pattern as GeminiAgent, but uses GitHub's
     Models API for actual AI-powered responses.
 
-    Authentication: Uses `Authorization: Bearer` format (standard OAuth2).
-    Required: Fine-grained PAT with `models:read` scope.
+    CRITICAL: Uses `Authorization: token` format, NOT Bearer!
     """
 
     def __init__(
@@ -425,10 +421,8 @@ You have access to tools to help you understand and analyze the codebase.
                 "with a PAT that has `models:read` scope."
             )
 
-        # Note: GitHub Models API now prefers Bearer authentication (updated Dec 2024)
-        # See: https://docs.github.com/en/rest/models/inference
         headers = {
-            "Authorization": f"Bearer {self.api_token}",
+            "Authorization": f"token {self.api_token}",
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
             "Content-Type": "application/json",
@@ -526,8 +520,8 @@ You have access to tools to help you understand and analyze the codebase.
         """
         Simple API call without tools (backward compatibility).
 
-        Uses standard Bearer authentication with a fine-grained PAT
-        that has `models:read` scope.
+        CRITICAL: Uses `Authorization: token` format, NOT Bearer!
+        This was discovered through testing (see A2A_COPILOT_CLI_INVESTIGATION.md).
         """
         return await self._call_github_models_api_with_tools(messages, tools=[])
 
@@ -762,7 +756,7 @@ async def test_github_models_api(
         }
 
     headers = {
-        "Authorization": f"Bearer {token}",
+        "Authorization": f"token {token}",
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
         "Content-Type": "application/json",
