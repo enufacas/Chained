@@ -163,7 +163,7 @@ jobs:
               echo "⚠️ Warning: Failed to add secret version. The service account may lack secretmanager.versions.add permission."
               echo "⚠️ Continuing without Secret Manager setup - Gemini features may not work."
               echo "secret_ref=" >> $GITHUB_OUTPUT
-              exit 1
+              exit 0
             fi
           else
             echo "🆕 Creating new secret..."
@@ -174,7 +174,7 @@ jobs:
               echo "⚠️ Warning: Failed to create secret. The service account may lack secretmanager.secrets.create permission."
               echo "⚠️ Continuing without Secret Manager setup - Gemini features may not work."
               echo "secret_ref=" >> $GITHUB_OUTPUT
-              exit 1
+              exit 0
             fi
           fi
           
@@ -196,10 +196,10 @@ jobs:
           echo "✅ Gemini API key configured in Secret Manager"
       
       - name: Check Secret Manager Setup Result
-        if: steps.setup_secret.outcome == 'failure'
+        if: steps.setup_secret.outputs.secret_ref == ''
         run: |
-          echo "::warning::Secret Manager setup failed (likely due to missing permissions). Deployment will continue without Gemini API key secret."
-          echo "To fix this, grant the service account the 'Secret Manager Admin' role or 'secretmanager.secrets.create' permission."
+          echo "::warning::Secret Manager setup was skipped or failed (likely due to missing permissions or unset GOOGLE_API_KEY). Deployment will continue without Gemini API key secret."
+          echo "To enable Gemini features, grant the service account the 'Secret Manager Admin' role or 'secretmanager.secrets.create' permission."
       
       - name: Terraform Init
         run: terraform init
