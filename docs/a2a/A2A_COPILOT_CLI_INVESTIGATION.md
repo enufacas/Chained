@@ -658,19 +658,113 @@ $ github-copilot-cli diagnostic
 - ❌ **github-copilot-cli ignores all PAT environment variables**: Always requires device flow
 - ✅ **gh CLI works with PAT**: Standard GitHub API operations work fine
 
+### Test 5: Copilot Language Server SDK (@github/copilot-language-server)
+
+```bash
+$ npm install @github/copilot-language-server
+$ npx @github/copilot-language-server --version
+1.398.0
+
+# Programmatically initialize the language server
+$ node test-lsp.js
+📤 SENT: initialize
+📥 RECV: {"capabilities":{"textDocumentSync":...}}
+📥 RECV: "[lsp] GitHub Copilot Language Server 1.398.0 initialized"
+
+# Check auth status
+📤 SENT: checkStatus
+📥 RECV: {"status":"NotSignedIn"}
+📥 RECV: "statusNotification" - "You are not signed into GitHub."
+
+# Attempt sign-in
+📤 SENT: signInInitiate
+📥 RECV: {"status":"PromptUserDeviceFlow","userCode":"XXXX-XXXX","verificationUri":"https://github.com/login/device"}
+```
+
+**Verdict**: ❌ Language Server SDK also requires device flow - does NOT accept PAT from environment
+
+**Tested Methods to Pass Token**:
+- `signInConfirm` with token → "No pending sign in"
+- `setAuthorizationToken` → "Method not found"
+- `setGitHubToken` → "Method not found"
+- Environment variable `GITHUB_TOKEN` → Ignored
+
+### Test 6: Direct Copilot API Endpoints
+
+```bash
+# Try api.githubcopilot.com/chat/completions
+$ curl -X POST "https://api.githubcopilot.com/chat/completions" \
+       -H "Authorization: Bearer $COPILOT_CLASSIC_PAT" \
+       -H "Content-Type: application/json" \
+       -d '{"messages": [{"role": "user", "content": "Hello"}]}'
+Response: "bad request: Personal Access Tokens are not supported for this endpoint"
+
+# Try /agents endpoint
+$ curl "https://api.githubcopilot.com/agents" \
+       -H "Authorization: Bearer $COPILOT_CLASSIC_PAT"
+Response: "bad request: Personal Access Tokens are not supported for this endpoint"
+
+# Try VSCode Copilot proxy
+$ curl "https://copilot-proxy.githubusercontent.com/v1/engines/copilot-codex/completions" \
+       -H "Authorization: Bearer $COPILOT_CLASSIC_PAT"
+Response: "bad request: invalid token: unknown format"
+```
+
+**Verdict**: ❌ Copilot API explicitly rejects PATs - requires special Copilot-specific tokens
+
+### Test 7: GitHub Models API (Alternative)
+
+```bash
+# Try GitHub Models API
+$ curl -X POST "https://models.github.ai/inference/chat/completions" \
+       -H "Authorization: Bearer $COPILOT_CLASSIC_PAT" \
+       -H "Content-Type: application/json" \
+       -d '{"model": "openai/gpt-4o-mini", "messages": [...]}'
+Response: Could not resolve host: models.github.ai
+```
+
+**Verdict**: ⚠️ GitHub Models API exists but `models.github.ai` not accessible from this environment (likely network restrictions in GitHub Actions runner)
+
+### Extended Summary Table
+
+| Method | Token Type | Result |
+|--------|------------|--------|
+| gh-copilot CLI | Classic PAT | ❌ Extension deprecated, non-functional |
+| @githubnext/github-copilot-cli | Classic PAT | ❌ Requires device flow |
+| @github/copilot-language-server | Classic PAT | ❌ Requires device flow |
+| api.githubcopilot.com | Classic PAT | ❌ "PATs not supported" |
+| api.githubcopilot.com | Fine-grained PAT | ❌ "PATs not supported" |
+| copilot-proxy.githubusercontent.com | Classic PAT | ❌ "invalid token format" |
+| GitHub Models API | Classic PAT | ⚠️ Not accessible (network) |
+
 ## Conclusion
 
 **Key Takeaways**:
 
 ❌ **Headless authentication NOT supported** by Copilot CLI (requires device flow)  
-✅ **Classic PAT works for GitHub API** but not sufficient for Copilot CLI  
+✅ **Classic PAT works for GitHub API** but not sufficient for Copilot CLI/API  
 ❌ **Fine-grained PATs not supported** (must use classic)  
 ❌ **Device flow NOT suitable** for scale, CI/CD, or shared environments ([ref](https://github.com/github/gh-copilot/issues/116))  
 ❌ **Custom agent delegation NOT supported** by CLI  
-✅ **GraphQL assignment proven and reliable** (ONLY viable method)  
-❌ **Both CLI versions tested and failed** (deprecated gh-copilot and newer @githubnext)
+❌ **Language Server SDK also requires device flow** - no headless token method  
+❌ **Copilot API explicitly rejects PATs** - requires special Copilot tokens  
+⚠️ **GitHub Models API** potentially viable but requires network access to `models.github.ai`  
+✅ **GraphQL assignment proven and reliable** (ONLY viable method for A2A)
 
-**⚠️ CRITICAL FINDING**: After comprehensive testing, **Copilot CLI is NOT viable for A2A orchestration**. Both available CLI implementations require interactive device flow authentication and cannot operate in headless CI/CD environments.
+**⚠️ CRITICAL FINDING**: After comprehensive testing (Nov 29, 2024), **ALL Copilot-specific interfaces require device flow authentication**:
+
+1. **gh-copilot** (deprecated) - No commands execute
+2. **@githubnext/github-copilot-cli** - Requires device flow
+3. **@github/copilot-language-server** - Requires device flow
+4. **api.githubcopilot.com** - Rejects all PATs
+5. **copilot-proxy.githubusercontent.com** - Requires special token format
+
+**Alternative Explored - GitHub Models API**:
+- Endpoint: `https://models.github.ai/inference/chat/completions`
+- Accepts fine-grained PATs with "Models" permission
+- Can access GPT-4, GPT-4o, and other models
+- ⚠️ **Blocked in this environment** - DNS could not resolve `models.github.ai`
+- **Potential workaround** for headless LLM access if network allows
 
 **Action Items**:
 
@@ -679,6 +773,7 @@ $ github-copilot-cli diagnostic
 3. ✅ **Use GraphQL assignment exclusively** (proven, reliable, production-ready)
 4. ✅ **Implement branch-based A2A** for inter-agent communication
 5. ✅ **Proceed with Phase 3A** using GraphQL method only
+6. 🔍 **Investigate GitHub Models API** as alternative for headless LLM access (requires fine-grained PAT with Models scope)
 
 **Bottom Line**: A2A orchestration is **ONLY feasible** using proven GraphQL direct agent assignment method. Copilot CLI is not suitable for automated orchestration at any scale.
 
