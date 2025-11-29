@@ -202,8 +202,9 @@ jobs:
           # This agent must be UNIQUE - not used in the analysis phase
           # =================================================================
           
-          # Prefer engineer/build/create agents for implementation (first category)
-          IMPLEMENT_AGENT=$(echo "$ALL_AVAILABLE" | grep -E "${CATEGORIES[0]}" | shuf -n 1 || true)
+          # Prefer engineer/build/create agents for implementation
+          ENGINEER_PATTERN="engineer|build|create|develop"
+          IMPLEMENT_AGENT=$(echo "$ALL_AVAILABLE" | grep -E "$ENGINEER_PATTERN" | shuf -n 1 || true)
           
           # Fallback: pick any agent if no engineer-type found
           if [[ -z "$IMPLEMENT_AGENT" ]]; then
@@ -229,7 +230,7 @@ jobs:
           if [[ -n "$MANUAL_AGENTS" ]]; then
             # Manual override: use specified agents for analysis
             # Filter out implementing agent if accidentally included
-            SELECTED_AGENTS=$(echo "$MANUAL_AGENTS" | tr ',' '\n' | grep -v "^${IMPLEMENT_AGENT}$" | tr '\n' ',' | sed 's/,$//')
+            SELECTED_AGENTS=$(echo "$MANUAL_AGENTS" | tr ',' '\n' | grep -v "^${IMPLEMENT_AGENT}$" | tr '\n' ',' | sed 's/,$//' || true)
             if [[ -z "$SELECTED_AGENTS" ]]; then
               echo "::warning::Manual agents list only contained implementing agent, selecting from pool"
               SELECTED_AGENTS=""
@@ -264,7 +265,12 @@ jobs:
           echo "Selected analysis agents: $SELECTED_AGENTS"
           echo "agents=$SELECTED_AGENTS" >> $GITHUB_OUTPUT
           
-          COUNT=$(echo "$SELECTED_AGENTS" | tr ',' '\n' | grep -c . || echo 0)
+          # Count agents robustly (handle empty string)
+          if [[ -z "$SELECTED_AGENTS" ]]; then
+            COUNT=0
+          else
+            COUNT=$(echo "$SELECTED_AGENTS" | tr ',' '\n' | grep -v '^$' | wc -l)
+          fi
           echo "count=$COUNT" >> $GITHUB_OUTPUT
           
           # Verify implementing agent is NOT in analysis agents
@@ -498,7 +504,9 @@ jobs:
             - DO NOT post any "Plan of Action" comment asking for approval
             - DO NOT mention /approve or /deny commands
             - DO NOT wait for maintainer confirmation
-            - Proceed directly with your analysis and post it as a comment
+            - DO NOT post a "Task Complete" or "My work is done" message (the workflow handles status)
+            - Proceed directly with your analysis and post it as a SINGLE comment
+            - Post ONLY ONE comment containing your analysis (no follow-up messages)
             
             ## Your AgentCard
             Read your specialization from: .github/agents/${{ matrix.agent }}.md
@@ -820,7 +828,11 @@ jobs:
           You are the agent "@{agent_name}" analyzing issue #{issue_number} in repository {repository}.
 
           ## IMPORTANT: Autonomous Mode
-          This is AUTONOMOUS. DO NOT ask for approval. Proceed directly with analysis.
+          This is AUTONOMOUS. You MUST:
+          - DO NOT ask for approval
+          - DO NOT post a "Task Complete" or summary message (the workflow handles status)
+          - Post ONLY your analysis as a SINGLE response
+          - Proceed directly with analysis
 
           ## Your AgentCard Definition
           {agent_def}
