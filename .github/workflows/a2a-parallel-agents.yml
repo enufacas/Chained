@@ -227,7 +227,12 @@ jobs:
           echo "agents=$SELECTED_AGENTS" >> $GITHUB_OUTPUT
           
           # The first agent (typically from engineer category) is the implementing agent
-          IMPLEMENT_AGENT=$(echo "$SELECTED_AGENTS" | cut -d',' -f1 | xargs)
+          if [[ -n "$SELECTED_AGENTS" ]]; then
+            IMPLEMENT_AGENT=$(echo "$SELECTED_AGENTS" | cut -d',' -f1 | xargs)
+          else
+            echo "::error::No agents selected - cannot determine implementing agent"
+            exit 1
+          fi
           echo "Implementing agent: $IMPLEMENT_AGENT"
           echo "implement_agent=$IMPLEMENT_AGENT" >> $GITHUB_OUTPUT
           
@@ -1672,23 +1677,26 @@ jobs:
         run: |
           echo "⚠️ Gemini didn't create PR, attempting fallback PR creation..."
           
-          # Create PR body with agent attribution header
-          PR_BODY="### 🤖 Agent: @${IMPLEMENT_AGENT} (🔶 Gemini)
+          # Create PR body with agent attribution header using heredoc for proper escaping
+          PR_BODY=$(cat << BODY_EOF
+          ### 🤖 Agent: @${IMPLEMENT_AGENT} (🔶 Gemini)
 
           ## A2A Parallel Agent Implementation
 
           This PR was created by the A2A parallel orchestration workflow.
 
           ### Context
-          - **Issue**: #$ISSUE_NUMBER
-          - **contextId**: \`$CONTEXT_ID\`
-          - **Implementing Agent**: @$IMPLEMENT_AGENT
-          - **All Agents Used**: $AGENTS
+          - **Issue**: #${ISSUE_NUMBER}
+          - **contextId**: \`${CONTEXT_ID}\`
+          - **Implementing Agent**: @${IMPLEMENT_AGENT}
+          - **All Agents Used**: ${AGENTS}
 
-          Fixes #$ISSUE_NUMBER
+          Fixes #${ISSUE_NUMBER}
 
           ---
-          *🤖 Created by workflow: [A2A: Parallel Agent Orchestration]($RUN_URL)*"
+          *🤖 Created by workflow: [A2A: Parallel Agent Orchestration](${RUN_URL})*
+          BODY_EOF
+          )
           
           # Create PR using gh cli
           PR_URL=$(gh pr create \
