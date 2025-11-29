@@ -7,6 +7,7 @@ import { AgentCard } from "@/components/AgentCard";
 import { PipelineResult } from "@/components/PipelineResult";
 import { DataPreview } from "@/components/DataPreview";
 import { RunSelector } from "@/components/RunSelector";
+import { CopilotKitStatus } from "@/components/CopilotKitStatus";
 
 // Types
 export interface Agent {
@@ -273,7 +274,9 @@ ${pipelineData.trends.trendsData.trendingKeywords.map((k) => `- ${k}`).join("\n"
             🏠
           </a>
           <h1 className="text-xl font-bold text-white">🤖 Chained AG-UI</h1>
-          <span className="text-primary-100 text-sm">Powered by CopilotKit</span>
+          <span className="text-primary-100 text-sm bg-primary-700/50 px-2 py-1 rounded">
+            Powered by CopilotKit v1.8.14
+          </span>
         </div>
       </header>
 
@@ -283,11 +286,25 @@ ${pipelineData.trends.trendsData.trendingKeywords.map((k) => `- ${k}`).join("\n"
           <h1 className="text-3xl font-bold text-primary-400 mb-2">
             🔄 A2A Pipeline Visualization
           </h1>
-          <p className="text-slate-400 max-w-2xl mx-auto">
+          <p className="text-slate-400 max-w-2xl mx-auto mb-4">
             Visualize agent-to-agent coordination flows using CopilotKit Agentic Generative UI. 
-            Ask the AI assistant about pipeline data using the chat in the bottom right corner.
+            Click on cards to expand/collapse, switch data tabs, and use the AI chat assistant.
           </p>
+          <div className="flex justify-center gap-4 text-sm">
+            <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full border border-green-500/30">
+              ✅ Interactive UI
+            </span>
+            <span className="bg-accent-500/20 text-accent-400 px-3 py-1 rounded-full border border-accent-500/30">
+              🪁 CopilotKit Hooks
+            </span>
+            <span className="bg-primary-500/20 text-primary-400 px-3 py-1 rounded-full border border-primary-500/30">
+              💬 AI Chat
+            </span>
+          </div>
         </div>
+
+        {/* CopilotKit Status Panel */}
+        <CopilotKitStatus />
 
         {/* Run Selector */}
         <RunSelector 
@@ -343,12 +360,30 @@ ${pipelineData.trends.trendsData.trendingKeywords.map((k) => `- ${k}`).join("\n"
         {/* CopilotKit Reference */}
         <div className="bg-gradient-to-r from-accent-500/10 to-primary-500/10 rounded-xl p-6 border border-accent-500/30">
           <h4 className="text-accent-400 font-semibold mb-2 flex items-center gap-2">
-            🪁 Powered by CopilotKit Agentic Generative UI
+            🪁 CopilotKit Integration Details
           </h4>
           <p className="text-slate-400 text-sm mb-4">
-            This visualization uses CopilotKit&apos;s React components and AG-UI protocol for rich, 
-            interactive agent interfaces. Use the chat popup to ask questions about the pipeline!
+            This application uses <strong className="text-accent-300">CopilotKit v1.8.14</strong> with the following integration:
           </p>
+          <div className="grid md:grid-cols-2 gap-4 text-sm mb-4">
+            <div className="bg-black/30 p-3 rounded-lg">
+              <p className="text-slate-300 font-medium mb-1">Frontend Components</p>
+              <ul className="text-slate-400 space-y-1">
+                <li>• <code className="text-accent-400">CopilotKit</code> - Provider wrapper</li>
+                <li>• <code className="text-accent-400">CopilotPopup</code> - Chat interface</li>
+                <li>• <code className="text-accent-400">useCopilotReadable</code> - Data sharing</li>
+                <li>• <code className="text-accent-400">useCopilotAction</code> - Custom actions</li>
+              </ul>
+            </div>
+            <div className="bg-black/30 p-3 rounded-lg">
+              <p className="text-slate-300 font-medium mb-1">Backend Runtime</p>
+              <ul className="text-slate-400 space-y-1">
+                <li>• <code className="text-accent-400">CopilotRuntime</code> - Server runtime</li>
+                <li>• <code className="text-accent-400">OpenAIAdapter</code> - LLM adapter</li>
+                <li>• API endpoint: <code className="text-accent-400">/api/copilotkit</code></li>
+              </ul>
+            </div>
+          </div>
           <div className="flex flex-wrap gap-4 text-sm">
             <a
               href="https://github.com/CopilotKit/CopilotKit"
