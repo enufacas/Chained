@@ -4,27 +4,77 @@ import { useState, useEffect } from "react";
 
 const COPILOTKIT_VERSION = "1.8.14";
 
+interface ApiStatusInfo {
+  status: "checking" | "available" | "unavailable";
+  provider: "gemini" | "openai" | "none";
+  model: string;
+}
+
 export function CopilotKitStatus() {
   const [expanded, setExpanded] = useState(false);
-  const [apiStatus, setApiStatus] = useState<"checking" | "available" | "unavailable">("checking");
+  const [apiInfo, setApiInfo] = useState<ApiStatusInfo>({
+    status: "checking",
+    provider: "none",
+    model: "",
+  });
 
   useEffect(() => {
-    // Check if the CopilotKit API is available
+    // Check if the CopilotKit API is available and which provider is used
     const checkApi = async () => {
       try {
-        const res = await fetch("/api/copilotkit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: [] }),
-        });
-        // Even if it returns an error about API key, the endpoint exists
-        setApiStatus(res.status === 503 ? "unavailable" : "available");
+        // First check the GET endpoint for provider info
+        const infoRes = await fetch("/api/copilotkit");
+        if (infoRes.ok) {
+          const info = await infoRes.json();
+          setApiInfo({
+            status: info.available ? "available" : "unavailable",
+            provider: info.provider || "none",
+            model: info.model || "",
+          });
+        } else {
+          // Fallback to checking POST endpoint
+          const res = await fetch("/api/copilotkit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: [] }),
+          });
+          setApiInfo({
+            status: res.status === 503 ? "unavailable" : "available",
+            provider: res.status === 503 ? "none" : "openai",
+            model: res.status === 503 ? "" : "gpt-4",
+          });
+        }
       } catch {
-        setApiStatus("unavailable");
+        setApiInfo({
+          status: "unavailable",
+          provider: "none",
+          model: "",
+        });
       }
     };
     checkApi();
   }, []);
+
+  const getProviderLabel = () => {
+    switch (apiInfo.provider) {
+      case "gemini":
+        return "🔷 Google Gemini";
+      case "openai":
+        return "🟢 OpenAI";
+      default:
+        return "No LLM";
+    }
+  };
+
+  const getRuntimeMessage = () => {
+    if (apiInfo.status === "available") {
+      if (apiInfo.provider === "gemini") {
+        return `Gemini adapter connected (${apiInfo.model})`;
+      }
+      return `OpenAI adapter connected (${apiInfo.model})`;
+    }
+    return "No API key configured (set GEMINI_API_KEY or OPENAI_API_KEY)";
+  };
 
   return (
     <div className="bg-slate-800 rounded-xl border border-accent-500/30 overflow-hidden mb-8">
@@ -43,17 +93,17 @@ export function CopilotKitStatus() {
         <div className="flex items-center gap-3">
           <span
             className={`px-2 py-1 rounded-full text-xs ${
-              apiStatus === "available"
+              apiInfo.status === "available"
                 ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                : apiStatus === "unavailable"
+                : apiInfo.status === "unavailable"
                 ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
                 : "bg-slate-500/20 text-slate-400 border border-slate-500/30"
             }`}
           >
-            {apiStatus === "checking"
+            {apiInfo.status === "checking"
               ? "Checking..."
-              : apiStatus === "available"
-              ? "✅ Chat Active"
+              : apiInfo.status === "available"
+              ? `✅ ${getProviderLabel()}`
               : "⚠️ Chat Limited"}
           </span>
           <span className="text-slate-400 text-xl">{expanded ? "▼" : "▶"}</span>
@@ -85,18 +135,33 @@ export function CopilotKitStatus() {
             </div>
             <div className="bg-black/30 p-3 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
-                <span className={apiStatus === "available" ? "text-green-400" : "text-yellow-400"}>
-                  {apiStatus === "available" ? "✅" : "⚠️"}
+                <span className={apiInfo.status === "available" ? "text-green-400" : "text-yellow-400"}>
+                  {apiInfo.status === "available" ? "✅" : "⚠️"}
                 </span>
                 <span className="text-slate-300 font-medium">Runtime</span>
               </div>
               <p className="text-slate-500 text-xs">
-                {apiStatus === "available"
-                  ? "OpenAI adapter connected"
-                  : "OpenAI API key not configured"}
+                {getRuntimeMessage()}
               </p>
             </div>
           </div>
+
+          {/* LLM Provider Info */}
+          {apiInfo.status === "available" && (
+            <div className="bg-gradient-to-r from-accent-500/10 to-primary-500/10 border border-accent-500/30 rounded-lg p-4">
+              <h4 className="text-accent-400 font-medium mb-2">🤖 Active LLM Provider</h4>
+              <div className="flex items-center gap-4 text-sm">
+                <div>
+                  <span className="text-slate-500">Provider:</span>{" "}
+                  <span className="text-slate-300 font-medium">{getProviderLabel()}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500">Model:</span>{" "}
+                  <code className="text-accent-400 bg-black/30 px-2 py-0.5 rounded">{apiInfo.model}</code>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Features List */}
           <div className="bg-black/30 p-4 rounded-lg">
@@ -119,14 +184,14 @@ export function CopilotKitStatus() {
                 <span className="text-slate-400">Collapsible agent cards</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className={apiStatus === "available" ? "text-green-400" : "text-yellow-400"}>
-                  {apiStatus === "available" ? "✅" : "⚠️"}
+                <span className={apiInfo.status === "available" ? "text-green-400" : "text-yellow-400"}>
+                  {apiInfo.status === "available" ? "✅" : "⚠️"}
                 </span>
                 <span className="text-slate-400">AI chat assistant</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className={apiStatus === "available" ? "text-green-400" : "text-yellow-400"}>
-                  {apiStatus === "available" ? "✅" : "⚠️"}
+                <span className={apiInfo.status === "available" ? "text-green-400" : "text-yellow-400"}>
+                  {apiInfo.status === "available" ? "✅" : "⚠️"}
                 </span>
                 <span className="text-slate-400">AI-powered pipeline analysis</span>
               </div>
@@ -167,6 +232,25 @@ export function CopilotKitStatus() {
               <br />
               @copilotkit/runtime: {COPILOTKIT_VERSION}
             </code>
+          </div>
+
+          {/* Supported LLM Providers */}
+          <div className="bg-black/30 p-4 rounded-lg">
+            <h4 className="text-slate-300 font-medium mb-3">Supported LLM Providers</h4>
+            <div className="grid md:grid-cols-2 gap-3 text-sm">
+              <div className="flex items-center gap-2">
+                <span className={apiInfo.provider === "gemini" ? "text-green-400" : "text-slate-500"}>
+                  {apiInfo.provider === "gemini" ? "✅" : "○"}
+                </span>
+                <span className="text-slate-400">Google Gemini (GEMINI_API_KEY)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={apiInfo.provider === "openai" ? "text-green-400" : "text-slate-500"}>
+                  {apiInfo.provider === "openai" ? "✅" : "○"}
+                </span>
+                <span className="text-slate-400">OpenAI (OPENAI_API_KEY)</span>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -379,10 +379,17 @@ ${pipelineData.trends.trendsData.trendingKeywords.map((k) => `- ${k}`).join("\n"
               <p className="text-slate-300 font-medium mb-1">Backend Runtime</p>
               <ul className="text-slate-400 space-y-1">
                 <li>• <code className="text-accent-400">CopilotRuntime</code> - Server runtime</li>
-                <li>• <code className="text-accent-400">OpenAIAdapter</code> - LLM adapter</li>
+                <li>• <code className="text-accent-400">GoogleGenerativeAIAdapter</code> / <code className="text-accent-400">OpenAIAdapter</code></li>
                 <li>• API endpoint: <code className="text-accent-400">/api/copilotkit</code></li>
               </ul>
             </div>
+          </div>
+          <div className="bg-black/30 p-3 rounded-lg mb-4">
+            <p className="text-slate-300 font-medium mb-1">Supported LLM Providers</p>
+            <ul className="text-slate-400 space-y-1 text-sm">
+              <li>• <strong className="text-blue-400">Google Gemini</strong> - Set <code className="text-accent-400">GEMINI_API_KEY</code> (preferred)</li>
+              <li>• <strong className="text-green-400">OpenAI</strong> - Set <code className="text-accent-400">OPENAI_API_KEY</code> (fallback)</li>
+            </ul>
           </div>
           <div className="flex flex-wrap gap-4 text-sm">
             <a
