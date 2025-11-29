@@ -93,6 +93,10 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 
 gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/secretmanager.admin"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
   --role="roles/iam.serviceAccountAdmin"
 
 gcloud projects add-iam-policy-binding $PROJECT_ID \
@@ -119,6 +123,7 @@ Add the following secrets to your GitHub repository:
 | `GCP_PROJECT_ID` | Your project ID (e.g., `chained-ai-demo`) | GCP project identifier |
 | `GCP_SA_KEY` | Contents of `~/gcp-sa-key.json` | Service account key JSON |
 | `GCP_REGION` | `us-central1` (recommended) | Deployment region |
+| `GOOGLE_API_KEY` | Your Gemini API key (optional) | Required for Gemini AI features |
 
 **To get the SA key contents:**
 ```bash
@@ -256,6 +261,22 @@ gcloud config get-value project
 gcloud projects get-iam-policy $PROJECT_ID \
   --flatten="bindings[].members" \
   --filter="bindings.members:github-actions@"
+```
+
+#### Secret Manager "secretmanager.secrets.create" permission denied
+
+If you see this error in the "Setup Gemini API Key in Secret Manager" step:
+```
+ERROR: (gcloud.secrets.create) does not have permission to access projects instance: 
+Permission 'secretmanager.secrets.create' denied for resource
+```
+
+Run this command to grant the required permission:
+```bash
+# Replace YOUR_PROJECT_ID with your actual project ID
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+  --member="serviceAccount:github-actions@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/secretmanager.admin"
 ```
 
 #### "API not enabled" errors
