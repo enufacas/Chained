@@ -714,7 +714,7 @@ jobs:
           """
           
           headers = {
-              "Authorization": f"token {token}",
+              "Authorization": f"Bearer {token}",
               "Accept": "application/vnd.github+json",
               "X-GitHub-Api-Version": "2022-11-28",
               "Content-Type": "application/json",
@@ -750,7 +750,15 @@ jobs:
               
               if response.status_code != 200:
                   print(f"❌ Error: {response.status_code}")
+                  print(f"   Model: {model}")
+                  print(f"   Token length: {len(token)}")
+                  print(f"   Token present: {'yes' if token else 'no'}")
                   print(response.text)
+                  print()
+                  print("💡 Troubleshooting:")
+                  print("   - Ensure COPILOT_PAT has 'models:read' scope")
+                  print("   - Check if model name format is correct (e.g., openai/gpt-4o-mini)")
+                  print("   - Verify the model is available in GitHub Models catalog")
                   exit(1)
               
               data = response.json()
