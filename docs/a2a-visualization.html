@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2A Pipeline Visualization - Chained</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* CopilotKit-inspired Agentic UI Styles */
+        .a2a-viz-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .a2a-hero {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%);
+            padding: 2rem 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 2px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .a2a-hero h1 {
+            color: #06b6d4;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .a2a-hero p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Run Selector */
+        .run-selector {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .run-selector h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .run-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .run-item {
+            padding: 0.75rem 1.25rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .run-item:hover {
+            background: rgba(6, 182, 212, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .run-item.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .run-item .run-status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .run-item .run-status.success {
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        .run-item .run-status.failure {
+            background: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
+        }
+
+        /* Pipeline Flow - Agentic Generative UI inspired */
+        .pipeline-flow {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .pipeline-flow-arrow {
+            display: flex;
+            align-items: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            padding: 0 0.5rem;
+        }
+
+        /* Agent Card - CopilotKit inspired */
+        .agent-card-wrapper {
+            flex: 1;
+            min-width: 280px;
+            max-width: 380px;
+        }
+
+        .agent-card {
+            background: linear-gradient(145deg, var(--card-bg) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 16px;
+            padding: 0;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(6, 182, 212, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .agent-card-header {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%);
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .agent-card-header .agent-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .agent-card-header .agent-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .agent-card-header .agent-id {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .agent-card-body {
+            padding: 1.25rem;
+            flex: 1;
+        }
+
+        .agent-card-body .description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Skills Tags */
+        .skills-container {
+            margin-bottom: 1rem;
+        }
+
+        .skills-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        /* Task Status Card */
+        .task-status-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .task-status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .task-status-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .task-status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .task-status-badge.completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .task-status-badge.working {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .task-status-badge.failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .task-status-badge.pending {
+            background: rgba(148, 163, 184, 0.2);
+            color: #94a3b8;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .task-id {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            word-break: break-all;
+        }
+
+        /* Artifacts Section */
+        .artifacts-section {
+            margin-top: 1rem;
+        }
+
+        .artifacts-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .artifact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(6, 182, 212, 0.1);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .artifact-item .artifact-icon {
+            color: var(--primary-color);
+        }
+
+        .artifact-item .artifact-name {
+            flex: 1;
+            color: var(--text-color);
+        }
+
+        .artifact-item .artifact-type {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        /* Pipeline Result Section */
+        .pipeline-result {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .pipeline-result h3 {
+            color: var(--success-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .result-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .result-item .label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-item .value {
+            font-size: 1rem;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .result-item .value.success {
+            color: var(--success-color);
+        }
+
+        /* Data Preview Section */
+        .data-preview {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .data-preview h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .data-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .data-tab {
+            padding: 0.5rem 1rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+
+        .data-tab:hover {
+            background: rgba(6, 182, 212, 0.2);
+        }
+
+        .data-tab.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .data-content {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .data-content pre {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 0;
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(6, 182, 212, 0.3);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* External Links Section */
+        .external-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .external-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .external-link:hover {
+            background: rgba(6, 182, 212, 0.2);
+            transform: translateY(-2px);
+            color: var(--primary-color);
+        }
+
+        /* CopilotKit Reference */
+        .copilotkit-ref {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .copilotkit-ref h4 {
+            color: #a78bfa;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .copilotkit-ref p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .copilotkit-ref a {
+            color: #a78bfa;
+            text-decoration: none;
+        }
+
+        .copilotkit-ref a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .pipeline-flow {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pipeline-flow-arrow {
+                transform: rotate(90deg);
+                padding: 0.5rem 0;
+            }
+
+            .agent-card-wrapper {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="home-button" aria-label="Home">🏠</a>
+            <button class="hamburger" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1>🤖 Chained</h1>
+        </div>
+        <nav class="main-nav">
+            <!-- Navigation will be populated by navigation.js -->
+        </nav>
+    </header>
+
+    <!-- CopilotKit Banner -->
+    <div style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); padding: 1rem; text-align: center;">
+        <p style="color: white; margin: 0; display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+            <span>🪁</span>
+            <strong>New!</strong> Try the interactive CopilotKit-powered AG-UI app with AI chat
+            <a href="https://chained-adk-api-server-sguacxy5gq-uc.a.run.app/ag-ui" 
+               target="_blank"
+               style="background: white; color: #7c3aed; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; margin-left: 0.5rem;">
+                Launch AG-UI →
+            </a>
+        </p>
+    </div>
+
+    <main>
+        <div class="a2a-viz-container">
+            <div class="a2a-hero">
+                <h1>🔄 A2A Pipeline Visualization</h1>
+                <p>
+                    Visualize agent-to-agent coordination flows using CopilotKit-inspired Agentic Generative UI.
+                    Each card represents an agent in the pipeline, showing its tasks, artifacts, and status.
+                </p>
+            </div>
+
+            <!-- Run Selector -->
+            <div class="run-selector">
+                <h3>📋 Select Pipeline Run</h3>
+                <div class="run-list" id="run-list">
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <p>Loading runs...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline Flow Visualization -->
+            <div class="pipeline-flow" id="pipeline-flow">
+                <!-- Agent 1: Academic Research -->
+                <div class="agent-card-wrapper">
+                    <div class="agent-card">
+                        <div class="agent-card-header">
+                            <div class="agent-icon">🔬</div>
+                            <div class="agent-name">Academic Research</div>
+                            <div class="agent-id">academic-research-agent</div>
+                        </div>
+                        <div class="agent-card-body">
+                            <div class="description">
+                                Discovers and analyzes academic research topics for blog content.
+                                Uses AI to identify trending papers and generate writing angles.
+                            </div>
+                            <div class="skills-container">
+                                <div class="skills-label">Skills</div>
+                                <span class="skill-tag">discover-topics</span>
+                                <span class="skill-tag">analyze-topic</span>
+                            </div>
+                            <div class="task-status-section" id="research-task">
+                                <div class="task-status-header">
+                                    <span class="task-status-label">Task Status</span>
+                                    <span class="task-status-badge pending" id="research-status">Pending</span>
+                                </div>
+                                <div class="task-id" id="research-task-id">-</div>
+                            </div>
+                            <div class="artifacts-section" id="research-artifacts">
+                                <div class="artifacts-label">Artifacts</div>
+                                <div class="artifact-item">
+                                    <span class="artifact-icon">📄</span>
+                                    <span class="artifact-name">research-findings</span>
+                                    <span class="artifact-type">JSON</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pipeline-flow-arrow">→</div>
+
+                <!-- Agent 2: Google Trends -->
+                <div class="agent-card-wrapper">
+                    <div class="agent-card">
+                        <div class="agent-card-header">
+                            <div class="agent-icon">📈</div>
+                            <div class="agent-name">Google Trends</div>
+                            <div class="agent-id">google-trends-agent</div>
+                        </div>
+                        <div class="agent-card-body">
+                            <div class="description">
+                                Analyzes Google Trends data for SEO optimization.
+                                Provides keyword suggestions and trend insights for content.
+                            </div>
+                            <div class="skills-container">
+                                <div class="skills-label">Skills</div>
+                                <span class="skill-tag">analyze-trends</span>
+                                <span class="skill-tag">get-keywords</span>
+                            </div>
+                            <div class="task-status-section" id="trends-task">
+                                <div class="task-status-header">
+                                    <span class="task-status-label">Task Status</span>
+                                    <span class="task-status-badge pending" id="trends-status">Pending</span>
+                                </div>
+                                <div class="task-id" id="trends-task-id">-</div>
+                            </div>
+                            <div class="artifacts-section" id="trends-artifacts">
+                                <div class="artifacts-label">Artifacts</div>
+                                <div class="artifact-item">
+                                    <span class="artifact-icon">📊</span>
+                                    <span class="artifact-name">trends-analysis</span>
+                                    <span class="artifact-type">JSON</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pipeline-flow-arrow">→</div>
+
+                <!-- Agent 3: Blog Writer -->
+                <div class="agent-card-wrapper">
+                    <div class="agent-card">
+                        <div class="agent-card-header">
+                            <div class="agent-icon">✍️</div>
+                            <div class="agent-name">Blog Writer</div>
+                            <div class="agent-id">blog-writer-agent</div>
+                        </div>
+                        <div class="agent-card-body">
+                            <div class="description">
+                                Writes and publishes engaging blog posts based on research and trends.
+                                Generates SEO-optimized content for the website.
+                            </div>
+                            <div class="skills-container">
+                                <div class="skills-label">Skills</div>
+                                <span class="skill-tag">write-blog</span>
+                                <span class="skill-tag">deploy-blog</span>
+                            </div>
+                            <div class="task-status-section" id="writer-task">
+                                <div class="task-status-header">
+                                    <span class="task-status-label">Task Status</span>
+                                    <span class="task-status-badge pending" id="writer-status">Pending</span>
+                                </div>
+                                <div class="task-id" id="writer-task-id">-</div>
+                            </div>
+                            <div class="artifacts-section" id="writer-artifacts">
+                                <div class="artifacts-label">Artifacts</div>
+                                <div class="artifact-item">
+                                    <span class="artifact-icon">📝</span>
+                                    <span class="artifact-name">blog-metadata</span>
+                                    <span class="artifact-type">JSON</span>
+                                </div>
+                                <div class="artifact-item">
+                                    <span class="artifact-icon">🚀</span>
+                                    <span class="artifact-name">deployment-info</span>
+                                    <span class="artifact-type">JSON</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline Result -->
+            <div class="pipeline-result" id="pipeline-result">
+                <h3><span>📊</span> Pipeline Result</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="label">Context ID</div>
+                        <div class="value" id="context-id">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Status</div>
+                        <div class="value" id="pipeline-status">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Tasks Completed</div>
+                        <div class="value" id="tasks-completed">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Completed At</div>
+                        <div class="value" id="completed-at">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Preview -->
+            <div class="data-preview" id="data-preview">
+                <h3><span>📦</span> Data Preview</h3>
+                <div class="data-tabs" id="data-tabs">
+                    <button class="data-tab active" data-tab="research">Research</button>
+                    <button class="data-tab" data-tab="trends">Trends</button>
+                    <button class="data-tab" data-tab="blog">Blog</button>
+                    <button class="data-tab" data-tab="full">Full Result</button>
+                </div>
+                <div class="data-content" id="data-content">
+                    <pre id="data-json">Select a run to view data...</pre>
+                </div>
+            </div>
+
+            <!-- External Links -->
+            <div class="external-links">
+                <a href="https://github.com/enufacas/Chained/actions/workflows/adk-a2a-blog-pipeline.yml" 
+                   target="_blank" class="external-link">
+                    <span>⚙️</span>
+                    <span>View Workflow Runs</span>
+                </a>
+                <a href="a2a-pipeline.html" class="external-link">
+                    <span>📐</span>
+                    <span>Pipeline Architecture</span>
+                </a>
+                <a href="a2a.html" class="external-link">
+                    <span>📘</span>
+                    <span>A2A Documentation</span>
+                </a>
+            </div>
+
+            <!-- CopilotKit Reference -->
+            <div class="copilotkit-ref">
+                <h4>🪁 Inspired by CopilotKit Agentic Generative UI</h4>
+                <p>
+                    This visualization is inspired by CopilotKit's Agentic Generative UI paradigm, 
+                    which enables rich, interactive cards and components driven by AI agent state and events.
+                    The AG-UI protocol allows agents to communicate structured data that renders as interactive UI elements.
+                </p>
+                <p>
+                    <a href="https://github.com/CopilotKit/CopilotKit" target="_blank">CopilotKit GitHub</a> |
+                    <a href="https://docs.copilotkit.ai/adk/generative-ui/agentic" target="_blank">Agentic UI Docs</a> |
+                    <a href="https://a2a-protocol.org/" target="_blank">A2A Protocol</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script src="navigation.js"></script>
+    <script>
+        // A2A Pipeline Visualization JavaScript
+        // Inspired by CopilotKit's Agentic Generative UI patterns
+
+        // Configuration
+        const REPO_OWNER = 'enufacas';
+        const REPO_NAME = 'Chained';
+        const WORKFLOW_FILE = 'adk-a2a-blog-pipeline.yml';
+
+        // Sample data for demonstration (when GitHub API is not available)
+        const SAMPLE_RUNS = [
+            {
+                id: 19776783774,
+                run_number: 9,
+                created_at: '2025-11-29T01:04:33Z',
+                conclusion: 'success',
+                html_url: 'https://github.com/enufacas/Chained/actions/runs/19776783774'
+            },
+            {
+                id: 19776000000,
+                run_number: 8,
+                created_at: '2025-11-28T18:04:33Z',
+                conclusion: 'success',
+                html_url: 'https://github.com/enufacas/Chained/actions/runs/19776000000'
+            },
+            {
+                id: 19775000000,
+                run_number: 7,
+                created_at: '2025-11-28T12:04:33Z',
+                conclusion: 'failure',
+                html_url: 'https://github.com/enufacas/Chained/actions/runs/19775000000'
+            }
+        ];
+
+        // Sample pipeline result (simulated A2A data)
+        const SAMPLE_PIPELINE_RESULT = {
+            success: true,
+            context_id: 'blog-pipeline-20251129-010433',
+            tasks_completed: 3,
+            completed_at: '2025-11-29T01:05:54Z',
+            research: {
+                task_id: 'task-abc123def456',
+                status: 'completed',
+                findings: {
+                    topics_found: 3,
+                    recommended_topic: {
+                        topic: 'Large Language Model Reasoning Capabilities',
+                        domain: 'Artificial Intelligence',
+                        blog_angle: 'How Large Language Model Reasoning Capabilities are changing the industry',
+                        key_points: [
+                            'Introduction to LLM',
+                            'Current state of research',
+                            'Practical implications for practitioners',
+                            'Future directions and predictions'
+                        ],
+                        target_audience: 'Tech professionals and enthusiasts',
+                        suggested_length: '1500-2000 words',
+                        seo_keywords: ['LLM', 'reasoning', 'AI', 'chain-of-thought']
+                    }
+                }
+            },
+            trends: {
+                task_id: 'task-def456ghi789',
+                status: 'completed',
+                trends_data: {
+                    topics_analyzed: 5,
+                    trending_keywords: ['AI', 'LLM', 'machine learning', 'GPT', 'reasoning'],
+                    search_volume: {
+                        'AI': 850000,
+                        'LLM': 420000,
+                        'machine learning': 320000
+                    },
+                    recommended_focus: 'LLM reasoning capabilities'
+                }
+            },
+            blog: {
+                task_id: 'task-ghi789jkl012',
+                status: 'completed',
+                deployment_info: {
+                    url: 'https://enufacas.github.io/Chained/blog/llm-reasoning.html',
+                    deployed_at: '2025-11-29T01:05:50Z',
+                    status: 'published'
+                },
+                blog_metadata: {
+                    title: 'The Rise of LLM Reasoning: How AI is Learning to Think',
+                    word_count: 1847,
+                    read_time_minutes: 8,
+                    tags: ['AI', 'LLM', 'Reasoning', 'Machine Learning']
+                }
+            }
+        };
+
+        // State
+        let currentTab = 'research';
+        let currentRunId = null;
+        let pipelineData = SAMPLE_PIPELINE_RESULT;
+
+        // DOM Elements
+        const runListEl = document.getElementById('run-list');
+        const dataTabs = document.querySelectorAll('.data-tab');
+        const dataJson = document.getElementById('data-json');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRuns();
+            setupTabs();
+        });
+
+        // Load workflow runs
+        async function loadRuns() {
+            // For GitHub Pages, we use sample data since we can't make authenticated API calls
+            // In a real implementation, this would fetch from GitHub API
+            displayRuns(SAMPLE_RUNS);
+            
+            // Auto-select first run
+            if (SAMPLE_RUNS.length > 0) {
+                selectRun(SAMPLE_RUNS[0].id);
+            }
+        }
+
+        // Display runs in selector
+        function displayRuns(runs) {
+            runListEl.innerHTML = runs.map(run => `
+                <div class="run-item" data-run-id="${run.id}" onclick="selectRun(${run.id})">
+                    <span class="run-status ${run.conclusion}"></span>
+                    <span>Run #${run.run_number}</span>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">
+                        ${formatDate(run.created_at)}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        // Select a run
+        function selectRun(runId) {
+            currentRunId = runId;
+            
+            // Update UI selection
+            document.querySelectorAll('.run-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.runId == runId);
+            });
+
+            // Load pipeline data for this run
+            loadPipelineData(runId);
+        }
+
+        // Load pipeline data for a run
+        async function loadPipelineData(runId) {
+            // In a real implementation, this would fetch artifacts from the workflow run
+            // For now, we use sample data
+            pipelineData = SAMPLE_PIPELINE_RESULT;
+            
+            updateVisualization(pipelineData);
+            updateDataPreview(currentTab);
+        }
+
+        // Update the visualization with pipeline data
+        function updateVisualization(data) {
+            // Update Research Agent
+            updateAgentCard('research', data.research);
+            
+            // Update Trends Agent
+            updateAgentCard('trends', data.trends);
+            
+            // Update Writer Agent  
+            updateAgentCard('writer', data.blog);
+            
+            // Update Pipeline Result
+            document.getElementById('context-id').textContent = data.context_id || '-';
+            document.getElementById('pipeline-status').textContent = data.success ? '✅ Success' : '❌ Failed';
+            document.getElementById('pipeline-status').className = `value ${data.success ? 'success' : ''}`;
+            document.getElementById('tasks-completed').textContent = data.tasks_completed || '-';
+            document.getElementById('completed-at').textContent = data.completed_at 
+                ? formatDate(data.completed_at) 
+                : '-';
+        }
+
+        // Update an agent card
+        function updateAgentCard(agentId, taskData) {
+            const statusEl = document.getElementById(`${agentId}-status`);
+            const taskIdEl = document.getElementById(`${agentId}-task-id`);
+            
+            if (taskData) {
+                const status = taskData.status || 'completed';
+                statusEl.textContent = capitalizeFirst(status);
+                statusEl.className = `task-status-badge ${status}`;
+                taskIdEl.textContent = taskData.task_id || '-';
+            } else {
+                statusEl.textContent = 'Pending';
+                statusEl.className = 'task-status-badge pending';
+                taskIdEl.textContent = '-';
+            }
+        }
+
+        // Setup data tabs
+        function setupTabs() {
+            dataTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    currentTab = tabName;
+                    
+                    // Update active tab
+                    dataTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Update content
+                    updateDataPreview(tabName);
+                });
+            });
+        }
+
+        // Update data preview
+        function updateDataPreview(tab) {
+            let data;
+            switch (tab) {
+                case 'research':
+                    data = pipelineData.research;
+                    break;
+                case 'trends':
+                    data = pipelineData.trends;
+                    break;
+                case 'blog':
+                    data = pipelineData.blog;
+                    break;
+                case 'full':
+                default:
+                    data = pipelineData;
+                    break;
+            }
+            
+            dataJson.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Helper: Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Helper: Capitalize first letter
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+    </script>
+</body>
+</html>

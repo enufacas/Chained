@@ -127,6 +127,7 @@ const navConfig = [
             { text: "Architecture", url: "architecture-evolution.html", icon: "🏗️" },
             { text: "AgentOps", url: "agentops.html", icon: "⚙️" },
             { text: "A2A System", url: "a2a.html", icon: "🤝" },
+            { text: "A2A Visualization", url: "a2a-visualization.html", icon: "🔄" },
             { text: "A/B Testing", url: "ab-testing-dashboard.html", icon: "🧪" }
         ]
     },
