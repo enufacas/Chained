@@ -3,6 +3,7 @@
 import { CopilotPopup } from "@copilotkit/react-ui";
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import { useState } from "react";
+import Link from "next/link";
 import { AgentCard } from "@/components/AgentCard";
 import { PipelineResult } from "@/components/PipelineResult";
 import { DataPreview } from "@/components/DataPreview";
@@ -335,6 +336,12 @@ ${pipelineData.trends.trendsData.trendingKeywords.map((k) => `- ${k}`).join("\n"
 
         {/* External Links */}
         <div className="flex flex-wrap gap-4 mb-8">
+          <Link
+            href="/interactive"
+            className="flex items-center gap-2 px-4 py-2 bg-accent-500/20 border border-accent-500/50 rounded-lg text-accent-300 hover:bg-accent-500/30 transition font-medium"
+          >
+            🚀 Interactive Pipeline (NEW)
+          </Link>
           <a
             href="https://github.com/enufacas/Chained/actions/workflows/adk-a2a-blog-pipeline.yml"
             target="_blank"
