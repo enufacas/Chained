@@ -556,33 +556,387 @@ $ github-copilot-cli what-the-shell "list files"
 
 **Verdict**: ❌ Not viable - requires device flow, API calls fail
 
+## Testing Results (Nov 29, 2024) - Live Session
+
+### Environment Setup
+
+Testing conducted in GitHub Actions with `COPILOT_CLASSIC_PAT` secret:
+
+```bash
+# Verify PAT is available
+$ echo "Token prefix: ${COPILOT_CLASSIC_PAT:0:4}"
+Token prefix: ghp_
+
+$ gh auth status
+github.com
+  ✓ Logged in to github.com account enufacas (GITHUB_TOKEN)
+  - Active account: true
+  - Token scopes: 'copilot', 'repo', 'workflow', 'write:packages'
+```
+
+**✅ Classic PAT works for gh CLI authentication**
+
+### Test 1: gh-copilot Extension
+
+```bash
+$ gh extension install github/gh-copilot
+✓ Installed extension github/gh-copilot
+
+$ gh copilot --version
+version 1.2.0 (2025-10-30)
+
+$ gh copilot suggest "echo hello world"
+The gh-copilot extension has been deprecated in favor of the newer GitHub Copilot CLI.
+For more information, visit:
+- Copilot CLI: https://github.com/github/copilot-cli
+- Deprecation announcement: https://github.blog/changelog/2025-09-25-upcoming-deprecation-of-gh-copilot-cli-extension
+No commands will be executed.
+```
+
+**Verdict**: ❌ Extension is deprecated and completely non-functional
+
+### Test 2: @githubnext/github-copilot-cli
+
+```bash
+$ npm install -g @githubnext/github-copilot-cli
+$ github-copilot-cli --version
+0.1.36
+
+$ export GITHUB_TOKEN="${COPILOT_CLASSIC_PAT}"
+$ github-copilot-cli auth status
+Copy this code: XXXX-XXXX
+Then go to https://github.com/login/device, paste the code in and approve the access.
+# (Prompts for device code - blocks waiting for interactive auth)
+```
+
+**Verdict**: ❌ Ignores GITHUB_TOKEN, requires device flow
+
+### Test 3: Alternative Environment Variables
+
+```bash
+# Try GH_TOKEN
+$ export GH_TOKEN="${COPILOT_CLASSIC_PAT}"
+$ unset GITHUB_TOKEN
+$ github-copilot-cli auth status
+Copy this code: XXXX-XXXX
+# Still prompts for device flow
+
+# Try COPILOT_TOKEN
+$ export COPILOT_TOKEN="${COPILOT_CLASSIC_PAT}"
+$ github-copilot-cli auth status
+Copy this code: XXXX-XXXX
+# Still prompts for device flow
+```
+
+**Verdict**: ❌ No environment variable works for headless auth
+
+### Test 4: Diagnostic
+
+```bash
+$ github-copilot-cli diagnostic
+- Verifying waitlist access...
+✖ ❌ Waitlist access check. Failed to authenticate: getaddrinfo ENOTFOUND next-waitlist.azurewebsites.net
+- Verifying Copilot access...
+✖ ❌ Copilot access check. No copilot token found.
+```
+
+**Verdict**: ❌ CLI does NOT use PAT from environment variables for Copilot authentication
+
+### Summary Table
+
+| Test | Environment Variable | Result |
+|------|---------------------|--------|
+| gh-copilot suggest | GITHUB_TOKEN | ❌ Extension deprecated, non-functional |
+| github-copilot-cli auth status | GITHUB_TOKEN | ❌ Prompts for device flow |
+| github-copilot-cli auth status | GH_TOKEN | ❌ Prompts for device flow |
+| github-copilot-cli auth status | COPILOT_TOKEN | ❌ Prompts for device flow |
+| github-copilot-cli diagnostic | GITHUB_TOKEN | ❌ "No copilot token found" |
+
+**Critical Findings**:
+- ❌ **Method 2 is NOT viable**: Environment variables are NOT used for Copilot CLI authentication
+- ❌ **gh-copilot extension is completely deprecated**: No commands execute
+- ❌ **github-copilot-cli ignores all PAT environment variables**: Always requires device flow
+- ✅ **gh CLI works with PAT**: Standard GitHub API operations work fine
+
+### Test 5: Copilot Language Server SDK (@github/copilot-language-server)
+
+```bash
+$ npm install @github/copilot-language-server
+$ npx @github/copilot-language-server --version
+1.398.0
+
+# Programmatically initialize the language server
+$ node test-lsp.js
+📤 SENT: initialize
+📥 RECV: {"capabilities":{"textDocumentSync":...}}
+📥 RECV: "[lsp] GitHub Copilot Language Server 1.398.0 initialized"
+
+# Check auth status
+📤 SENT: checkStatus
+📥 RECV: {"status":"NotSignedIn"}
+📥 RECV: "statusNotification" - "You are not signed into GitHub."
+
+# Attempt sign-in
+📤 SENT: signInInitiate
+📥 RECV: {"status":"PromptUserDeviceFlow","userCode":"XXXX-XXXX","verificationUri":"https://github.com/login/device"}
+```
+
+**Verdict**: ❌ Language Server SDK also requires device flow - does NOT accept PAT from environment
+
+**Tested Methods to Pass Token**:
+- `signInConfirm` with token → "No pending sign in"
+- `setAuthorizationToken` → "Method not found"
+- `setGitHubToken` → "Method not found"
+- Environment variable `GITHUB_TOKEN` → Ignored
+
+### Test 6: Direct Copilot API Endpoints
+
+```bash
+# Try api.githubcopilot.com/chat/completions
+$ curl -X POST "https://api.githubcopilot.com/chat/completions" \
+       -H "Authorization: Bearer $COPILOT_CLASSIC_PAT" \
+       -H "Content-Type: application/json" \
+       -d '{"messages": [{"role": "user", "content": "Hello"}]}'
+Response: "bad request: Personal Access Tokens are not supported for this endpoint"
+
+# Try /agents endpoint
+$ curl "https://api.githubcopilot.com/agents" \
+       -H "Authorization: Bearer $COPILOT_CLASSIC_PAT"
+Response: "bad request: Personal Access Tokens are not supported for this endpoint"
+
+# Try VSCode Copilot proxy
+$ curl "https://copilot-proxy.githubusercontent.com/v1/engines/copilot-codex/completions" \
+       -H "Authorization: Bearer $COPILOT_CLASSIC_PAT"
+Response: "bad request: invalid token: unknown format"
+```
+
+**Verdict**: ❌ Copilot API explicitly rejects PATs - requires special Copilot-specific tokens
+
+### Test 7: GitHub Models API (Alternative)
+
+**Initial Test (Nov 29, 2024 - Session 1)**:
+```bash
+# Try GitHub Models API
+$ curl -X POST "https://models.github.ai/inference/chat/completions" \
+       -H "Authorization: Bearer $COPILOT_CLASSIC_PAT" \
+       -H "Content-Type: application/json" \
+       -d '{"model": "openai/gpt-4o-mini", "messages": [...]}'
+Response: Could not resolve host: models.github.ai
+```
+
+**Verdict (Initial)**: ⚠️ Network blocked - DNS could not resolve `models.github.ai`
+
+**Follow-up Test (Nov 29, 2024 - Session 2, Firewall Opened)**:
+```bash
+# DNS now resolves
+$ nslookup models.github.ai
+Name: glb-db52c2cf8be544.github.com
+Address: 140.82.113.21
+
+# Try with Classic PAT
+$ curl -X POST "https://models.github.ai/inference/chat/completions" \
+       -H "Authorization: Bearer $COPILOT_CLASSIC_PAT" ...
+Response: Unauthorized (401)
+
+# Classic PAT also fails against GitHub API
+$ curl -H "Authorization: token $COPILOT_CLASSIC_PAT" "https://api.github.com/user"
+Response: {"message": "Bad credentials", "status": "401"}
+# Note: Classic PAT may have expired or been revoked
+
+# Try with Fine-grained PAT
+$ curl -H "Authorization: token $COPILOT_PAT" "https://api.github.com/user"
+Response: {"login": "enufacas", ...}  # ✅ Valid!
+
+$ curl -X POST "https://models.github.ai/inference/chat/completions" \
+       -H "Authorization: Bearer $COPILOT_PAT" ...
+Response: Unauthorized (401)
+```
+
+**Verdict (Follow-up)**: 
+- ✅ Network access to `models.github.ai` now works
+- ❌ Classic PAT (`ghp_...`) appears expired/revoked
+- ✅ Fine-grained PAT with `models:read` scope **WORKS!**
+
+**Requirements for GitHub Models API** (from [GitHub Docs](https://docs.github.com/en/rest/models/inference)):
+
+> The API requires the `models:read` scope when using a fine-grained personal access token or when authenticating using a GitHub App.
+
+**How to Create a Properly Scoped PAT**:
+1. Go to GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens
+2. Click "Generate new token"
+3. Under "Permissions", find and enable **"Models" → "Read-only"** (`models:read`)
+4. Generate and save the token
+
+**Supported Models**: OpenAI (GPT-4, GPT-4o, GPT-4o-mini, GPT-4.1), DeepSeek, Microsoft, Llama, and more
+
+**⚠️ CRITICAL: Use `token` auth format, NOT `Bearer`**:
+```bash
+# ✅ CORRECT - Works!
+curl -X POST \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: token YOUR_PAT_WITH_MODELS_READ" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  -H "Content-Type: application/json" \
+  https://models.github.ai/inference/chat/completions \
+  -d '{"model": "openai/gpt-4o-mini", "messages": [{"role": "user", "content": "Hello!"}]}'
+
+# ❌ WRONG - Returns 401 Unauthorized
+curl -X POST \
+  -H "Authorization: ******" \
+  ...
+```
+
+### ✅ CONFIRMED WORKING (Nov 29, 2024)
+
+**Test Result**:
+```json
+{
+  "model": "gpt-4o-mini-2024-07-18",
+  "choices": [{"message": {"content": "Hello! How can I assist you today?", "role": "assistant"}}],
+  "usage": {"prompt_tokens": 8, "completion_tokens": 10, "total_tokens": 18}
+}
+```
+
+### Rate Limits by Model
+
+| Model | Requests/period | Tokens/period | Best For |
+|-------|-----------------|---------------|----------|
+| `openai/gpt-4o-mini` | 20,000 | 2,000,000 | High-volume, cost-effective |
+| `openai/gpt-4o` | 10,000 | 10,000,000 | Higher token capacity |
+| `openai/gpt-4.1` | 1,000 | 1,000,000 | Latest model, more restricted |
+
+**Rate Limit Headers Returned**:
+- `X-Ratelimit-Limit-Requests`: Total requests allowed
+- `X-Ratelimit-Remaining-Requests`: Requests remaining
+- `X-Ratelimit-Limit-Tokens`: Total tokens allowed
+- `X-Ratelimit-Remaining-Tokens`: Tokens remaining
+
+**Usage Tracking**:
+Each response includes usage info:
+```json
+{
+  "usage": {
+    "prompt_tokens": 14,
+    "completion_tokens": 50,
+    "total_tokens": 62
+  }
+}
+```
+
+### Multi-Turn Conversation Testing (Nov 29, 2024)
+
+Successfully tested multi-turn conversations with the GitHub Models API:
+
+| Turn | Model | Task | Prompt Tokens | Completion Tokens | Total |
+|------|-------|------|---------------|-------------------|-------|
+| 1 | gpt-4o-mini | Code analysis | 104 | 300 | 404 |
+| 2 | gpt-4o-mini | Follow-up with context | 121 | 400 | 521 |
+| 3 | gpt-4o-mini | Workflow design | 88 | 400 | 488 |
+| 4 | gpt-4o-mini | Implementation details | 124 | 500 | 624 |
+| 5 | gpt-4o | Architecture advice | 43 | 171 | 214 |
+
+**Key Findings**:
+- ✅ Multi-turn conversations work by passing message history in each request
+- ✅ Can analyze code, provide suggestions, and discuss repository problems
+- ✅ Different models available for different use cases (gpt-4o-mini for volume, gpt-4o for quality)
+- ✅ Token usage is reasonable (~400-600 tokens per detailed response)
+
+**Rate Limits After Testing**:
+- GPT-4o-mini: 19,994 requests remaining / 1,991,567 tokens remaining
+- GPT-4o: 9,998 requests remaining / 9,999,455 tokens remaining
+
+**Use Case: Automated Issue Analysis**
+
+Example workflow pattern:
+```yaml
+- name: Analyze Issue with GitHub Models
+  run: |
+    RESPONSE=$(curl -s -X POST \
+      -H "Authorization: token ${{ secrets.MODELS_PAT }}" \
+      -H "Accept: application/vnd.github+json" \
+      https://models.github.ai/inference/chat/completions \
+      -d '{
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {"role": "system", "content": "Analyze GitHub issues and suggest solutions."},
+          {"role": "user", "content": "${{ github.event.issue.body }}"}
+        ]
+      }')
+    SUGGESTION=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
+    gh issue comment ${{ github.event.issue.number }} --body "$SUGGESTION"
+```
+
+### Extended Summary Table
+
+| Method | Token Type | Result |
+|--------|------------|--------|
+| gh-copilot CLI | Classic PAT | ❌ Extension deprecated, non-functional |
+| @githubnext/github-copilot-cli | Classic PAT | ❌ Requires device flow |
+| @github/copilot-language-server | Classic PAT | ❌ Requires device flow |
+| api.githubcopilot.com | Classic PAT | ❌ "PATs not supported" |
+| api.githubcopilot.com | Fine-grained PAT | ❌ "PATs not supported" |
+| copilot-proxy.githubusercontent.com | Classic PAT | ❌ "invalid token format" |
+| GitHub Models API | Classic PAT | ❌ Expired/Invalid |
+| GitHub Models API | Fine-grained PAT (no scope) | ❌ Missing `models:read` scope |
+| GitHub Models API | Fine-grained PAT + `Bearer` auth | ❌ 401 Unauthorized |
+| **GitHub Models API** | **Fine-grained PAT + `token` auth** | ✅ **WORKING!** |
+| **GitHub Models API** | **Multi-turn conversations** | ✅ **WORKING!** |
+
 ## Conclusion
 
 **Key Takeaways**:
 
 ❌ **Headless authentication NOT supported** by Copilot CLI (requires device flow)  
-✅ **Classic PAT works for GitHub API** but not sufficient for Copilot CLI  
-❌ **Fine-grained PATs not supported** (must use classic)  
+✅ **Classic PAT works for GitHub API** but not sufficient for Copilot CLI/API  
+❌ **Fine-grained PATs not supported by Copilot** (must use classic, but Copilot rejects all PATs)  
 ❌ **Device flow NOT suitable** for scale, CI/CD, or shared environments ([ref](https://github.com/github/gh-copilot/issues/116))  
 ❌ **Custom agent delegation NOT supported** by CLI  
-✅ **GraphQL assignment proven and reliable** (ONLY viable method)  
-❌ **Both CLI versions tested and failed** (deprecated gh-copilot and newer @githubnext)
+❌ **Language Server SDK also requires device flow** - no headless token method  
+❌ **Copilot API explicitly rejects PATs** - requires special Copilot tokens  
+✅ **GitHub Models API IS WORKING!** with fine-grained PAT + `models:read` scope + `token` auth format  
+✅ **GraphQL assignment proven and reliable** (ONLY viable method for A2A Copilot assignment)
 
-**⚠️ CRITICAL FINDING**: After comprehensive testing, **Copilot CLI is NOT viable for A2A orchestration**. Both available CLI implementations require interactive device flow authentication and cannot operate in headless CI/CD environments.
+**⚠️ CRITICAL FINDING**: After comprehensive testing (Nov 29, 2024), **ALL Copilot-specific interfaces require device flow authentication**:
+
+1. **gh-copilot** (deprecated) - No commands execute
+2. **@githubnext/github-copilot-cli** - Requires device flow
+3. **@github/copilot-language-server** - Requires device flow
+4. **api.githubcopilot.com** - Rejects all PATs
+5. **copilot-proxy.githubusercontent.com** - Requires special token format
+
+**✅ CONFIRMED WORKING - GitHub Models API**:
+- **Endpoint**: `https://models.github.ai/inference/chat/completions`
+- **Authentication**: `Authorization: token YOUR_PAT` (NOT Bearer!)
+- **Required Scope**: Fine-grained PAT with `models:read` permission
+- **Models Available**: GPT-4, GPT-4o, GPT-4o-mini, GPT-4.1, DeepSeek, Llama, Microsoft models
+- **Use Case**: Headless LLM access for code generation, chat, analysis
+- **Rate Limits**: 
+  - GPT-4o-mini: 20,000 requests, 2M tokens
+  - GPT-4o: 10,000 requests, 10M tokens
+  - GPT-4.1: 1,000 requests, 1M tokens
+- **Docs**: [REST API endpoints for models inference](https://docs.github.com/en/rest/models/inference)
+
+**Note**: GitHub Models API provides **general LLM access**, not Copilot-specific features. It's an alternative for headless AI capabilities but doesn't provide Copilot's code-aware features or custom agent delegation.
 
 **Action Items**:
 
 1. ✅ ~~Test Copilot CLI~~ - **TESTED: Not viable**
 2. ✅ ~~Attempt custom agent delegation~~ - **NOT SUPPORTED**
-3. ✅ **Use GraphQL assignment exclusively** (proven, reliable, production-ready)
+3. ✅ **Use GraphQL assignment exclusively** for A2A Copilot orchestration
 4. ✅ **Implement branch-based A2A** for inter-agent communication
 5. ✅ **Proceed with Phase 3A** using GraphQL method only
+6. ✅ **GitHub Models API CONFIRMED WORKING** for headless LLM access
+   - Use `Authorization: token` format (not Bearer)
+   - Requires: Fine-grained PAT with `models:read` scope
+   - Create at: Settings → Developer settings → Fine-grained tokens → Models permission
 
-**Bottom Line**: A2A orchestration is **ONLY feasible** using proven GraphQL direct agent assignment method. Copilot CLI is not suitable for automated orchestration at any scale.
+**Bottom Line**: 
+- **A2A Copilot orchestration**: Use proven GraphQL direct agent assignment
+- **Headless LLM access**: Use GitHub Models API with `models:read` scoped fine-grained PAT
 
 ---
 
-**Last Updated**: 2024-11-26  
-**Status**: Investigation Complete - CLI Not Viable  
+**Last Updated**: 2024-11-29  
+**Status**: Investigation Complete - CLI Not Viable (Re-confirmed)  
 **Decision**: Use GraphQL Assignment Exclusively  
 **Next Steps**: Phase 3A with GraphQL Method

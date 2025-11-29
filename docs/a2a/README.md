@@ -201,6 +201,11 @@ If you're new to the A2A implementation, read in this order:
 - **GitHub Actions Documentation**: https://docs.github.com/en/actions
 - **MCP Documentation**: https://modelcontextprotocol.io/
 
+## 📚 Related Documentation
+
+- **[GitHub Platform Docs](../github-platform/README.md)** - GitHub AI services guide (Models API, Copilot, rate limits, plans)
+- **[AI Services Guide](../github-platform/AI_SERVICES_GUIDE.md)** - Comprehensive guide to all GitHub AI services
+
 ## 🤝 Contributing
 
 When working on A2A features:
