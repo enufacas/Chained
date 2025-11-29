@@ -556,6 +556,108 @@ $ github-copilot-cli what-the-shell "list files"
 
 **Verdict**: ❌ Not viable - requires device flow, API calls fail
 
+## Testing Results (Nov 29, 2024) - Live Session
+
+### Environment Setup
+
+Testing conducted in GitHub Actions with `COPILOT_CLASSIC_PAT` secret:
+
+```bash
+# Verify PAT is available
+$ echo "Token prefix: ${COPILOT_CLASSIC_PAT:0:4}"
+Token prefix: ghp_
+
+$ gh auth status
+github.com
+  ✓ Logged in to github.com account enufacas (GITHUB_TOKEN)
+  - Active account: true
+  - Token scopes: 'copilot', 'repo', 'workflow', 'write:packages'
+```
+
+**✅ Classic PAT works for gh CLI authentication**
+
+### Test 1: gh-copilot Extension
+
+```bash
+$ gh extension install github/gh-copilot
+✓ Installed extension github/gh-copilot
+
+$ gh copilot --version
+version 1.2.0 (2025-10-30)
+
+$ gh copilot suggest "echo hello world"
+The gh-copilot extension has been deprecated in favor of the newer GitHub Copilot CLI.
+For more information, visit:
+- Copilot CLI: https://github.com/github/copilot-cli
+- Deprecation announcement: https://github.blog/changelog/2025-09-25-upcoming-deprecation-of-gh-copilot-cli-extension
+No commands will be executed.
+```
+
+**Verdict**: ❌ Extension is deprecated and completely non-functional
+
+### Test 2: @githubnext/github-copilot-cli
+
+```bash
+$ npm install -g @githubnext/github-copilot-cli
+$ github-copilot-cli --version
+0.1.36
+
+$ export GITHUB_TOKEN="${COPILOT_CLASSIC_PAT}"
+$ github-copilot-cli auth status
+Copy this code: XXXX-XXXX
+Then go to https://github.com/login/device, paste the code in and approve the access.
+# (Prompts for device code - blocks waiting for interactive auth)
+```
+
+**Verdict**: ❌ Ignores GITHUB_TOKEN, requires device flow
+
+### Test 3: Alternative Environment Variables
+
+```bash
+# Try GH_TOKEN
+$ export GH_TOKEN="${COPILOT_CLASSIC_PAT}"
+$ unset GITHUB_TOKEN
+$ github-copilot-cli auth status
+Copy this code: XXXX-XXXX
+# Still prompts for device flow
+
+# Try COPILOT_TOKEN
+$ export COPILOT_TOKEN="${COPILOT_CLASSIC_PAT}"
+$ github-copilot-cli auth status
+Copy this code: XXXX-XXXX
+# Still prompts for device flow
+```
+
+**Verdict**: ❌ No environment variable works for headless auth
+
+### Test 4: Diagnostic
+
+```bash
+$ github-copilot-cli diagnostic
+- Verifying waitlist access...
+✖ ❌ Waitlist access check. Failed to authenticate: getaddrinfo ENOTFOUND next-waitlist.azurewebsites.net
+- Verifying Copilot access...
+✖ ❌ Copilot access check. No copilot token found.
+```
+
+**Verdict**: ❌ CLI does NOT use PAT from environment variables for Copilot authentication
+
+### Summary Table
+
+| Test | Environment Variable | Result |
+|------|---------------------|--------|
+| gh-copilot suggest | GITHUB_TOKEN | ❌ Extension deprecated, non-functional |
+| github-copilot-cli auth status | GITHUB_TOKEN | ❌ Prompts for device flow |
+| github-copilot-cli auth status | GH_TOKEN | ❌ Prompts for device flow |
+| github-copilot-cli auth status | COPILOT_TOKEN | ❌ Prompts for device flow |
+| github-copilot-cli diagnostic | GITHUB_TOKEN | ❌ "No copilot token found" |
+
+**Critical Findings**:
+- ❌ **Method 2 is NOT viable**: Environment variables are NOT used for Copilot CLI authentication
+- ❌ **gh-copilot extension is completely deprecated**: No commands execute
+- ❌ **github-copilot-cli ignores all PAT environment variables**: Always requires device flow
+- ✅ **gh CLI works with PAT**: Standard GitHub API operations work fine
+
 ## Conclusion
 
 **Key Takeaways**:
@@ -582,7 +684,7 @@ $ github-copilot-cli what-the-shell "list files"
 
 ---
 
-**Last Updated**: 2024-11-26  
-**Status**: Investigation Complete - CLI Not Viable  
+**Last Updated**: 2024-11-29  
+**Status**: Investigation Complete - CLI Not Viable (Re-confirmed)  
 **Decision**: Use GraphQL Assignment Exclusively  
 **Next Steps**: Phase 3A with GraphQL Method
