@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card: #1e293b;
+  --card-hover: #334155;
+  --border: rgba(148, 163, 184, 0.2);
+  --primary: #06b6d4;
+  --primary-dark: #0e7490;
+  --accent: #a855f7;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+}
+
+body {
+  background: linear-gradient(135deg, var(--background) 0%, #1e293b 50%, #1a2332 100%);
+  color: var(--foreground);
+  min-height: 100vh;
+}
+
+/* CopilotKit UI Customizations */
+.copilotKitPopup {
+  --copilot-kit-primary-color: #06b6d4;
+  --copilot-kit-background-color: #1e293b;
+  --copilot-kit-text-color: #f1f5f9;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--card);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
