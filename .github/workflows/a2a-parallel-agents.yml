@@ -1401,7 +1401,7 @@ jobs:
             for toml_file in .github/gemini-commands/*.toml; do
               if [[ -f "$toml_file" ]]; then
                 cp -v "$toml_file" .gemini/commands/
-                ((COPIED++))
+                COPIED=$((COPIED + 1))
               fi
             done
             if [[ $COPIED -gt 0 ]]; then
