@@ -2,17 +2,19 @@
  * Shared utilities for CopilotKit configuration
  * Enhanced with better logging and error handling
  * 
- * NOTE: We use LangChainAdapter with @langchain/google-genai instead of GoogleGenerativeAIAdapter
- * because GoogleGenerativeAIAdapter uses @langchain/google-gauth which requires OAuth2/Vertex AI,
- * while @langchain/google-genai supports simple API key authentication (Google AI Studio).
+ * Authentication modes:
+ * 1. Vertex AI (Cloud Run) - Uses Application Default Credentials (ADC) from service account
+ *    - Set USE_VERTEX_AI=true or GOOGLE_GENAI_USE_VERTEXAI=true
+ *    - No API key needed - uses service account OAuth2 tokens automatically
+ * 2. Google AI Studio - Uses GEMINI_API_KEY (starts with AIza...)
+ * 3. OpenAI - Uses OPENAI_API_KEY as fallback
  */
 
 import {
-  LangChainAdapter,
+  GoogleGenerativeAIAdapter,
   OpenAIAdapter,
   ExperimentalEmptyAdapter,
 } from "@copilotkit/runtime";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import OpenAI from "openai";
 
 // Logging helper
@@ -25,69 +27,84 @@ function logConfig(message: string, data?: object) {
   }
 }
 
+// Check for Vertex AI mode (uses Application Default Credentials on Cloud Run)
+// This is the preferred mode when running on GCP with a service account
+const useVertexAI = process.env.USE_VERTEX_AI === 'true' || 
+                    process.env.GOOGLE_GENAI_USE_VERTEXAI === 'true';
+
 // Check for API keys
-// GOOGLE_API_KEY is the standard env var used by the Google adapter
-// GEMINI_API_KEY is an alias for backward compatibility
-export const googleApiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
+// GEMINI_API_KEY is for Google AI Studio (starts with AIza...)
+// GOOGLE_API_KEY is read from env but managed dynamically based on auth mode
+export const geminiApiKey = process.env.GEMINI_API_KEY;
 export const openaiApiKey = process.env.OPENAI_API_KEY;
-export const useGemini = !!googleApiKey;
+
+// Track if GOOGLE_API_KEY was originally set (for logging)
+const originalGoogleApiKey = process.env.GOOGLE_API_KEY;
+
+// Determine which provider to use
+// Priority: Vertex AI (ADC) > Google AI Studio (GEMINI_API_KEY) > OpenAI
+export const useGemini = useVertexAI || !!geminiApiKey;
 export const useOpenAI = !useGemini && !!openaiApiKey;
 
 // Log configuration on module load
 logConfig("Initializing CopilotKit configuration", {
-  hasGoogleApiKey: !!googleApiKey,
-  hasGeminiApiKey: !!process.env.GEMINI_API_KEY,
+  useVertexAI,
+  hasGeminiApiKey: !!geminiApiKey,
+  hasOriginalGoogleApiKey: !!originalGoogleApiKey,
   hasOpenAIApiKey: !!openaiApiKey,
   useGemini,
   useOpenAI,
   nodeEnv: process.env.NODE_ENV,
 });
 
-// Log warning if no API keys configured
-if (!googleApiKey && !openaiApiKey) {
-  logConfig("WARNING: No LLM API key configured (GOOGLE_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY). CopilotKit chat will not work.");
-} else if (useGemini) {
-  logConfig("Using Google Gemini API");
+// Log warning if no authentication configured
+if (!useVertexAI && !geminiApiKey && !openaiApiKey) {
+  logConfig("WARNING: No LLM authentication configured. Set USE_VERTEX_AI=true (for Cloud Run), GEMINI_API_KEY, or OPENAI_API_KEY.");
+} else if (useVertexAI) {
+  logConfig("Using Vertex AI with Application Default Credentials (ADC)");
+} else if (geminiApiKey) {
+  logConfig("Using Google AI Studio API key");
 } else {
   logConfig("Using OpenAI API");
 }
 
 /**
- * Creates the appropriate service adapter based on available API keys.
- * Prefers Gemini over OpenAI when both are available.
- * Falls back to ExperimentalEmptyAdapter if no API keys are configured.
+ * Creates the appropriate service adapter based on available authentication.
+ * Priority: Vertex AI (ADC) > Google AI Studio (GEMINI_API_KEY) > OpenAI
+ * Falls back to ExperimentalEmptyAdapter if no authentication is configured.
+ * 
+ * Note: We must modify process.env because GoogleGenerativeAIAdapter internally
+ * uses @langchain/google-gauth which reads GOOGLE_API_KEY from the environment.
+ * There's no way to pass auth config directly to the adapter constructor.
  */
 export const createServiceAdapter = () => {
   logConfig("Creating service adapter...");
   
-  if (useGemini && googleApiKey) {
-    logConfig("Creating LangChainAdapter with ChatGoogleGenerativeAI");
+  if (useGemini) {
+    logConfig("Creating GoogleGenerativeAIAdapter", { useVertexAI, hasGeminiApiKey: !!geminiApiKey });
+    
+    // Configure authentication based on mode
+    // GoogleGenerativeAIAdapter uses @langchain/google-gauth which reads GOOGLE_API_KEY
+    // from process.env - we must set/clear it to control auth behavior
+    if (useVertexAI) {
+      // For Vertex AI: Clear GOOGLE_API_KEY so ADC uses service account credentials
+      // ADC will automatically get OAuth2 tokens from the Cloud Run service account
+      delete process.env.GOOGLE_API_KEY;
+      logConfig("Cleared GOOGLE_API_KEY to enable ADC for Vertex AI");
+    } else if (geminiApiKey) {
+      // For Google AI Studio: Set GOOGLE_API_KEY from GEMINI_API_KEY
+      process.env.GOOGLE_API_KEY = geminiApiKey;
+      logConfig("Set GOOGLE_API_KEY from GEMINI_API_KEY for Google AI Studio");
+    }
     
     try {
-      // Use LangChainAdapter with ChatGoogleGenerativeAI from @langchain/google-genai
-      // This supports simple API key authentication (Google AI Studio), unlike
-      // GoogleGenerativeAIAdapter which uses @langchain/google-gauth (requires OAuth2/Vertex AI)
-      const adapter = new LangChainAdapter({
-        chainFn: async ({ messages, tools }) => {
-          try {
-            const model = new ChatGoogleGenerativeAI({
-              model: "gemini-1.5-flash", // Use faster, cheaper model for chat
-              apiKey: googleApiKey, // Explicitly pass API key
-            }).bindTools(tools);
-            
-            return model.stream(messages);
-          } catch (streamError) {
-            logConfig("ERROR in chainFn execution", {
-              error: streamError instanceof Error ? streamError.message : String(streamError),
-            });
-            throw streamError;
-          }
-        },
+      const adapter = new GoogleGenerativeAIAdapter({
+        model: "gemini-1.5-flash", // Use faster, cheaper model for chat
       });
-      logConfig("LangChainAdapter with ChatGoogleGenerativeAI created successfully");
+      logConfig("GoogleGenerativeAIAdapter created successfully");
       return adapter;
     } catch (error) {
-      logConfig("ERROR creating LangChainAdapter with ChatGoogleGenerativeAI", {
+      logConfig("ERROR creating GoogleGenerativeAIAdapter", {
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;
@@ -124,9 +141,10 @@ export const createServiceAdapter = () => {
  */
 export const getLLMProviderInfo = () => {
   const info = {
-    provider: useGemini ? "gemini" : useOpenAI ? "openai" : "none",
+    provider: useVertexAI ? "vertex-ai" : useGemini ? "gemini" : useOpenAI ? "openai" : "none",
     model: useGemini ? "gemini-1.5-flash" : useOpenAI ? "gpt-4" : null,
     available: useGemini || useOpenAI,
+    authMode: useVertexAI ? "adc" : geminiApiKey ? "api-key" : openaiApiKey ? "api-key" : "none",
   };
   
   logConfig("getLLMProviderInfo called", info);

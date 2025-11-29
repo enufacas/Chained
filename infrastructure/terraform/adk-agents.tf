@@ -536,14 +536,22 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
         value = var.environment
       }
 
+      # Enable Vertex AI mode - uses Application Default Credentials (ADC) from service account
+      # This is the preferred mode on Cloud Run as it doesn't require API keys
+      env {
+        name  = "USE_VERTEX_AI"
+        value = "true"
+      }
+
       # Configure ADK API Server URL for agent communication
       env {
         name  = "NEXT_PUBLIC_ADK_API_URL"
         value = google_cloud_run_v2_service.adk_api_server.uri
       }
 
-      # Google API Key from Secret Manager (preferred for CopilotKit chat feature)
-      # The AG-UI frontend code checks GOOGLE_API_KEY first, then GEMINI_API_KEY as fallback
+      # Note: GOOGLE_API_KEY is NOT used when USE_VERTEX_AI=true
+      # The GoogleGenerativeAIAdapter will use ADC from the service account instead
+      # Keeping these for backward compatibility if USE_VERTEX_AI is disabled
       dynamic "env" {
         for_each = var.google_api_key_secret != "" ? [1] : []
         content {
