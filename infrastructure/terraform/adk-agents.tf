@@ -542,7 +542,22 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
         value = google_cloud_run_v2_service.adk_api_server.uri
       }
 
-      # Gemini API Key from Secret Manager (preferred for CopilotKit chat feature)
+      # Google API Key from Secret Manager (preferred for CopilotKit chat feature)
+      # The AG-UI frontend code checks GOOGLE_API_KEY first, then GEMINI_API_KEY as fallback
+      dynamic "env" {
+        for_each = var.google_api_key_secret != "" ? [1] : []
+        content {
+          name = "GOOGLE_API_KEY"
+          value_source {
+            secret_key_ref {
+              secret  = var.google_api_key_secret
+              version = "latest"
+            }
+          }
+        }
+      }
+
+      # Gemini API Key from Secret Manager (fallback if GOOGLE_API_KEY not set)
       dynamic "env" {
         for_each = var.gemini_api_key_secret != "" ? [1] : []
         content {

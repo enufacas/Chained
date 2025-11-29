@@ -30,3 +30,20 @@ monthly_budget = 50
 # website_image = "us-central1-docker.pkg.dev/your-project/chained/website:latest"
 # agent_gateway_image = "us-central1-docker.pkg.dev/your-project/chained/agent-gateway:latest"
 # agent_worker_image = "us-central1-docker.pkg.dev/your-project/chained/agent-worker:latest"
+
+# =============================================================================
+# API Keys for ADK Agents and AG-UI Frontend (CopilotKit Chat)
+# =============================================================================
+# These should reference secrets stored in GCP Secret Manager.
+# Create secrets using: gcloud secrets create SECRET_NAME --data-file=-
+# =============================================================================
+
+# Google API Key (preferred for AG-UI Frontend CopilotKit chat feature)
+# This is the standard env var used by Google APIs and CopilotKit's Gemini adapter
+# google_api_key_secret = "google-api-key"
+
+# Gemini API Key (alternative for ADK agents - used as fallback if GOOGLE_API_KEY not set)
+# gemini_api_key_secret = "gemini-api-key"
+
+# OpenAI API Key (alternative for CopilotKit chat if using OpenAI instead of Gemini)
+# openai_api_key_secret = "openai-api-key"
