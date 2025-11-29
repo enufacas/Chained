@@ -502,6 +502,15 @@ Command-line interface for Copilot assistance in terminal.
 
 ---
 
+## Related Documentation
+
+### This Repository
+- [A2A Orchestration Guide](../a2a/README.md) - Agent-to-Agent orchestration implementation
+- [Copilot API Access Limitations](../COPILOT_API_ACCESS_LIMITATIONS.md) - Detailed limitations analysis
+- [Copilot Environment Setup](../COPILOT_ENVIRONMENT_SETUP.md) - Environment configuration
+
+---
+
 *Last updated: November 2024*
 *Based on live testing in GitHub Actions environment and official GitHub documentation*
 *Note: Some features (e.g., Coding Agent 1-request-per-session) reference planned July 2025 changes per GitHub changelog*
