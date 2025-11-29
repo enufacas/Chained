@@ -223,9 +223,10 @@ jobs:
               -var="firestore_location=nam5"
             )
             
-            # Add secret ref if available
+            # Add secret ref if available (pass to both variables)
             if [ -n "$SECRET_REF" ]; then
               IMPORT_VARS+=(-var="gemini_api_key_secret=$SECRET_REF")
+              IMPORT_VARS+=(-var="google_api_key_secret=$SECRET_REF")
             fi
             
             # Try to import
@@ -306,9 +307,11 @@ jobs:
             -var="environment=${{ needs.validate.outputs.environment }}"
           )
           
-          # Add Gemini API key secret reference if available
+          # Add API key secret reference if available
+          # Pass to both gemini_api_key_secret (for ADK agents) and google_api_key_secret (for AG-UI Frontend)
           if [ -n "${{ steps.setup_secret.outputs.secret_ref }}" ]; then
             PLAN_VARS+=(-var="gemini_api_key_secret=${{ steps.setup_secret.outputs.secret_ref }}")
+            PLAN_VARS+=(-var="google_api_key_secret=${{ steps.setup_secret.outputs.secret_ref }}")
           fi
           
           terraform plan "${PLAN_VARS[@]}" -out=tfplan
