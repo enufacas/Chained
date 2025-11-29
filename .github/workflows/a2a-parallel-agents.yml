@@ -1405,72 +1405,6 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           TRIGGERING_ACTOR: ${{ github.triggering_actor }}
           BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
-          ADDITIONAL_CONTEXT: |
-            # A2A Implementation Task
-            
-            ⚠️ IMPORTANT: You are implementing based on DOWNLOADED A2A ARTIFACTS from previous agent analysis jobs.
-            
-            ## Artifact Source Information
-            - **Source Artifact**: `.a2a/artifacts/aggregated-analysis.json` (DOWNLOADED from GitHub Actions artifacts)
-            - **Artifact A2A Version**: ${{ steps.context.outputs.artifact_version }}
-            - **Artifact Timestamp**: ${{ steps.context.outputs.artifact_timestamp }}
-            - **Number of Agents**: ${{ steps.context.outputs.agent_count }}
-            
-            ## A2A Protocol Task Linking
-            - **contextId**: ${{ needs.setup.outputs.context_id }}
-            - **referenceTaskIds**: ${{ needs.aggregate.outputs.reference_task_ids }}
-            
-            ## ⚠️ CRITICAL: Tool Usage Instructions
-            
-            ### Available MCP Tools (GitHub Server)
-            Use these for Git/GitHub operations:
-            - `get_file_contents` - Read file content
-            - `create_branch` - Create a new branch for changes
-            - `create_or_update_file` - Write/update individual files
-            - `push_files` - Push multiple files at once
-            - `create_pull_request` - Create a PR after pushing files
-            - `add_issue_comment` - Post updates to the issue
-            - `search_code` - Search repository code
-            - `get_issue` - Get issue details
-            
-            ### Available Shell Commands
-            You can also use `run_shell_command` with: cat, git, gh, ls, grep, head, tail, find, mkdir, cp, mv, rm, echo, wc, sort, uniq, sed, awk, jq, tree, touch, chmod, pwd, diff, patch, curl, python3, node, npm, pip
-            
-            **⚠️ NOTE**: If a shell command fails with "Command rejected because it could not be parsed safely", use the MCP tools instead as a fallback.
-            
-            ### Tools That DO NOT EXIST - Never use these:
-            - `default_api:replace` - This tool does NOT exist
-            - `default_api:*` - No default_api tools exist
-            - `edit_file` - Use `create_or_update_file` instead
-            - `write_file` - Use `create_or_update_file` instead
-            
-            ## Implementation Steps
-            
-            1. **Read context**: Use `get_file_contents` to read `.a2a/context/implementation.md`
-            2. **Create branch**: Use `create_branch` to create `a2a/fix-issue-${{ inputs.issue_number }}`
-            3. **Implement changes**: Use shell commands OR `create_or_update_file`/`push_files` to modify code
-            4. **Create PR**: Use `create_pull_request` with body containing "Fixes #${{ inputs.issue_number }}"
-            5. **Update issue**: Use `add_issue_comment` to post progress
-            
-            ## Your First Actions
-            1. Read the implementation context file: `.a2a/context/implementation.md`
-               - This file was generated FROM the downloaded artifact `.a2a/artifacts/aggregated-analysis.json`
-            2. Acknowledge in your first response that you have received the previous agent analyses
-            3. Summarize the key recommendations from each agent before proceeding
-            
-            ## Response Format
-            Your FIRST message should start with:
-            "## 📦 Acknowledging Downloaded A2A Artifacts
-            
-            I have received and processed the analysis artifacts from the previous parallel agent jobs:
-            - Source: aggregated-analysis.json (A2A v${{ steps.context.outputs.artifact_version }}, timestamp: ${{ steps.context.outputs.artifact_timestamp }})
-            - Reference Tasks: ${{ needs.aggregate.outputs.reference_task_ids }}
-            
-            ### Summary of Agent Recommendations:
-            [Brief summary of each agent's key points]
-            
-            ### My Implementation Plan:
-            [Your plan based on the agent analyses]"
         with:
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
           google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
@@ -1478,7 +1412,7 @@ jobs:
           gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
           gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
           gemini_debug: '${{ vars.DEBUG || ''true'' }}'
-          upload_artifacts: 'false'  # Disabled: Use custom upload with unique A2A taskId name
+          upload_artifacts: 'false'
           workflow_name: 'a2a-implement'
           settings: |-
             {
@@ -1531,7 +1465,88 @@ jobs:
                 ]
               }
             }
-          prompt: '/gemini-issue-fixer'
+          # Custom A2A implementation prompt that REQUIRES acknowledgment of upstream agent analyses
+          # This replaces the generic /gemini-issue-fixer that ignored the ADDITIONAL_CONTEXT
+          prompt: |-
+            # A2A Multi-Agent Implementation Task
+
+            You are the IMPLEMENTATION AGENT in a multi-agent A2A (Agent-to-Agent) workflow.
+            Multiple specialized agents have already analyzed this issue and provided recommendations.
+            
+            ## ⚠️ CRITICAL REQUIREMENT: You MUST acknowledge and use the upstream agent analyses
+            
+            Before doing ANY implementation work, you MUST:
+            1. Read the file `.a2a/context/implementation.md` which contains ALL agent recommendations
+            2. Post a comment to issue #${{ inputs.issue_number }} that EXPLICITLY summarizes each agent's recommendations
+            3. State how your implementation plan incorporates their suggestions
+            
+            ## A2A Protocol Context
+            - **contextId**: ${{ needs.setup.outputs.context_id }}
+            - **referenceTaskIds**: ${{ needs.aggregate.outputs.reference_task_ids }}
+            - **Upstream Agents**: ${{ needs.setup.outputs.agents }}
+            
+            ## Issue to Fix
+            **Issue #${{ inputs.issue_number }}**: ${{ needs.setup.outputs.issue_title }}
+            
+            ## YOUR FIRST ACTION (MANDATORY)
+            
+            Use `get_file_contents` to read `.a2a/context/implementation.md`, then post a comment like:
+            
+            ```markdown
+            ## 🔗 A2A Implementation - Synthesizing Agent Recommendations
+            
+            I am the implementation agent, building on the analysis from my colleague agents:
+            
+            ### @agent-1 recommended:
+            - [specific recommendation 1]
+            - [specific recommendation 2]
+            
+            ### @agent-2 recommended:
+            - [specific recommendation 1]
+            - [specific recommendation 2]
+            
+            ### @agent-3 recommended:
+            - [specific recommendation 1]
+            - [specific recommendation 2]
+            
+            ### My Implementation Plan (incorporating all recommendations):
+            1. [How I'll address agent-1's suggestions]
+            2. [How I'll address agent-2's suggestions]  
+            3. [How I'll address agent-3's suggestions]
+            
+            Starting implementation now...
+            ```
+            
+            ## Implementation Steps (AFTER acknowledging agents)
+            
+            1. Create branch: `a2a/fix-issue-${{ inputs.issue_number }}`
+            2. Implement the solution incorporating agent recommendations
+            3. Create files/changes as needed
+            4. Create a PR with body containing "Fixes #${{ inputs.issue_number }}"
+            5. Link the PR to the issue
+            
+            ## Available Tools
+            
+            ### MCP Tools (GitHub Server)
+            - `get_file_contents` - Read files (USE THIS FIRST to read implementation.md)
+            - `create_branch` - Create feature branch
+            - `create_or_update_file` - Write/update files
+            - `push_files` - Push multiple files
+            - `create_pull_request` - Create PR
+            - `add_issue_comment` - Post comments (USE THIS to acknowledge agents)
+            - `search_code` - Search codebase
+            - `get_issue` - Get issue details
+            
+            ### Shell Commands
+            cat, git, gh, ls, grep, head, tail, find, mkdir, cp, mv, rm, echo, wc, sort, uniq, sed, awk, jq, tree, touch, chmod, pwd, diff, patch, curl, python3, node, npm, pip
+            
+            ## IMPORTANT NOTES
+            - DO NOT use `default_api:replace` or `edit_file` - they don't exist
+            - Use `create_or_update_file` for file modifications
+            - Always read the implementation context file FIRST
+            - The agents have already done excellent analysis - USE IT
+            
+            BEGIN by reading `.a2a/context/implementation.md` with get_file_contents, then post your acknowledgment comment.
       
       - name: Upload implement Gemini output with A2A taskId
         uses: actions/upload-artifact@v4.4.3
