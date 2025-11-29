@@ -823,6 +823,49 @@ Each response includes usage info:
 }
 ```
 
+### Multi-Turn Conversation Testing (Nov 29, 2024)
+
+Successfully tested multi-turn conversations with the GitHub Models API:
+
+| Turn | Model | Task | Prompt Tokens | Completion Tokens | Total |
+|------|-------|------|---------------|-------------------|-------|
+| 1 | gpt-4o-mini | Code analysis | 104 | 300 | 404 |
+| 2 | gpt-4o-mini | Follow-up with context | 121 | 400 | 521 |
+| 3 | gpt-4o-mini | Workflow design | 88 | 400 | 488 |
+| 4 | gpt-4o-mini | Implementation details | 124 | 500 | 624 |
+| 5 | gpt-4o | Architecture advice | 43 | 171 | 214 |
+
+**Key Findings**:
+- ✅ Multi-turn conversations work by passing message history in each request
+- ✅ Can analyze code, provide suggestions, and discuss repository problems
+- ✅ Different models available for different use cases (gpt-4o-mini for volume, gpt-4o for quality)
+- ✅ Token usage is reasonable (~400-600 tokens per detailed response)
+
+**Rate Limits After Testing**:
+- GPT-4o-mini: 19,994 requests remaining / 1,991,567 tokens remaining
+- GPT-4o: 9,998 requests remaining / 9,999,455 tokens remaining
+
+**Use Case: Automated Issue Analysis**
+
+Example workflow pattern:
+```yaml
+- name: Analyze Issue with GitHub Models
+  run: |
+    RESPONSE=$(curl -s -X POST \
+      -H "Authorization: token ${{ secrets.MODELS_PAT }}" \
+      -H "Accept: application/vnd.github+json" \
+      https://models.github.ai/inference/chat/completions \
+      -d '{
+        "model": "openai/gpt-4o-mini",
+        "messages": [
+          {"role": "system", "content": "Analyze GitHub issues and suggest solutions."},
+          {"role": "user", "content": "${{ github.event.issue.body }}"}
+        ]
+      }')
+    SUGGESTION=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
+    gh issue comment ${{ github.event.issue.number }} --body "$SUGGESTION"
+```
+
 ### Extended Summary Table
 
 | Method | Token Type | Result |
@@ -837,6 +880,7 @@ Each response includes usage info:
 | GitHub Models API | Fine-grained PAT (no scope) | ❌ Missing `models:read` scope |
 | GitHub Models API | Fine-grained PAT + `Bearer` auth | ❌ 401 Unauthorized |
 | **GitHub Models API** | **Fine-grained PAT + `token` auth** | ✅ **WORKING!** |
+| **GitHub Models API** | **Multi-turn conversations** | ✅ **WORKING!** |
 
 ## Conclusion
 
