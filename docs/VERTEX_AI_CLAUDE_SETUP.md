@@ -10,6 +10,106 @@ Google Vertex AI provides access to Claude models via OIDC authentication, which
 - Leverage GCP's security and access controls
 - Use workload identity federation with GitHub Actions
 
+## Quick Start (Copy-Paste Commands)
+
+Run these commands in Google Cloud Shell or with `gcloud` CLI configured. This sets up everything for the `enufacas/Chained` repository.
+
+```bash
+# ============================================================
+# QUICK START: Full setup for cogent-tine-479302-j0
+# Run these commands in order in Google Cloud Shell
+# ============================================================
+
+# Set variables
+export PROJECT_ID="cogent-tine-479302-j0"
+export REPO="enufacas/Chained"
+export SA_NAME="claude-a2a-coordinator"
+export SA_EMAIL="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
+
+# 1. Enable required APIs
+gcloud services enable aiplatform.googleapis.com --project=$PROJECT_ID
+gcloud services enable iam.googleapis.com --project=$PROJECT_ID
+gcloud services enable iamcredentials.googleapis.com --project=$PROJECT_ID
+
+# 2. Create service account
+gcloud iam service-accounts create $SA_NAME \
+  --description="Service account for Claude A2A coordinator in GitHub Actions" \
+  --display-name="Claude A2A Coordinator" \
+  --project=$PROJECT_ID
+
+# 3. Grant Vertex AI permissions
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/aiplatform.user"
+
+gcloud iam service-accounts add-iam-policy-binding $SA_EMAIL \
+  --project=$PROJECT_ID \
+  --role="roles/iam.serviceAccountTokenCreator" \
+  --member="serviceAccount:${SA_EMAIL}"
+
+# 4. Create workload identity pool
+gcloud iam workload-identity-pools create "github-actions-pool" \
+  --project=$PROJECT_ID \
+  --location="global" \
+  --description="Pool for GitHub Actions OIDC" \
+  --display-name="GitHub Actions Pool"
+
+# 5. Create workload identity provider
+gcloud iam workload-identity-pools providers create-oidc "github-provider" \
+  --project=$PROJECT_ID \
+  --location="global" \
+  --workload-identity-pool="github-actions-pool" \
+  --display-name="GitHub Provider" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository" \
+  --issuer-uri="https://token.actions.githubusercontent.com" \
+  --attribute-condition="assertion.repository=='${REPO}'"
+
+# 6. Grant workload identity user access
+export POOL_NAME="projects/${PROJECT_ID}/locations/global/workloadIdentityPools/github-actions-pool"
+
+gcloud iam service-accounts add-iam-policy-binding $SA_EMAIL \
+  --project=$PROJECT_ID \
+  --role="roles/iam.workloadIdentityUser" \
+  --member="principalSet://iam.googleapis.com/${POOL_NAME}/attribute.repository/${REPO}"
+
+# 7. Get the values you need for GitHub
+echo ""
+echo "============================================================"
+echo "ADD THESE TO YOUR GITHUB REPOSITORY SETTINGS"
+echo "============================================================"
+echo ""
+echo "SECRETS (Settings > Secrets and variables > Actions > Secrets):"
+echo ""
+echo "GCP_WORKLOAD_IDENTITY_PROVIDER:"
+gcloud iam workload-identity-pools providers describe "github-provider" \
+  --project=$PROJECT_ID \
+  --location="global" \
+  --workload-identity-pool="github-actions-pool" \
+  --format="value(name)"
+echo ""
+echo "GCP_SERVICE_ACCOUNT:"
+echo "$SA_EMAIL"
+echo ""
+echo "VARIABLES (Settings > Secrets and variables > Actions > Variables):"
+echo ""
+echo "ANTHROPIC_VERTEX_PROJECT_ID:"
+echo "$PROJECT_ID"
+echo ""
+echo "CLOUD_ML_REGION:"
+echo "us-east5"
+echo ""
+echo "CLAUDE_USE_VERTEX:"
+echo "true"
+echo ""
+echo "============================================================"
+echo "Setup complete! Add the above values to GitHub."
+echo "============================================================"
+```
+
+After running the commands above, copy the output values and add them to your GitHub repository settings.
+
+---
+
 ## Prerequisites
 
 1. A Google Cloud Platform (GCP) project with billing enabled
