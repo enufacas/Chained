@@ -185,6 +185,27 @@ curl -H "Authorization: Bearer $PAT" ...
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
+### Available Models (as of Nov 2024)
+
+The GitHub Models catalog includes **43 models** from multiple providers:
+
+| Provider | Models Available | Rate Limit Tiers |
+|----------|------------------|------------------|
+| **OpenAI** | gpt-4o, gpt-4o-mini, gpt-4.1, gpt-4.1-mini, gpt-4.1-nano, gpt-5, gpt-5-chat, gpt-5-mini, gpt-5-nano, o1, o1-mini, o1-preview, o3, o3-mini, o4-mini, embeddings | low/high/custom |
+| **Meta** | llama-4-maverick-17b, llama-4-scout-17b, llama-3.3-70b, llama-3.1-405b, llama-3.1-8b, llama-3.2-vision (11b, 90b) | low/high |
+| **DeepSeek** | deepseek-r1, deepseek-r1-0528, deepseek-v3-0324 | high/custom |
+| **Microsoft** | mai-ds-r1, phi-4, phi-4-mini-instruct, phi-4-mini-reasoning, phi-4-multimodal, phi-4-reasoning | low/custom |
+| **Mistral AI** | codestral-2501, ministral-3b, mistral-medium-2505, mistral-small-2503 | low |
+| **xAI** | grok-3, grok-3-mini | custom |
+| **Cohere** | command-a, command-r, command-r-plus | low/high |
+| **AI21 Labs** | jamba-1.5-large | high |
+
+**Query models programmatically:**
+```bash
+curl -s -H "Authorization: token $PAT" \
+  "https://models.github.ai/catalog/models" | jq '.[].id'
+```
+
 ### Usage Tracking
 Each response includes:
 ```json
