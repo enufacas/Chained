@@ -107,7 +107,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          GITHUB_MODELS_PAT: ${{ secrets.GITHUB_MODELS_PAT }}
+          COPILOT_PAT: ${{ secrets.COPILOT_PAT }}
           USE_VERTEX_AI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI || 'false' }}
           PROVIDER_STRATEGY: ${{ inputs.provider }}
         run: |
@@ -122,7 +122,7 @@ jobs:
           fi
           
           # Check GitHub Models credentials
-          [[ -n "$GITHUB_MODELS_PAT" ]] && HAS_GITHUB_MODELS="true"
+          [[ -n "$COPILOT_PAT" ]] && HAS_GITHUB_MODELS="true"
           
           echo "has_gemini=$HAS_GEMINI" >> $GITHUB_OUTPUT
           echo "has_github_models=$HAS_GITHUB_MODELS" >> $GITHUB_OUTPUT
@@ -141,14 +141,14 @@ jobs:
               ;;
             github_only)
               if [[ "$HAS_GITHUB_MODELS" != "true" ]]; then
-                echo "::error::GITHUB_MODELS_PAT required for github_only strategy"
+                echo "::error::COPILOT_PAT required for github_only strategy"
                 echo "::error::Create a fine-grained PAT with 'models:read' scope"
                 exit 1
               fi
               ;;
             balanced)
               if [[ "$HAS_GEMINI" != "true" && "$HAS_GITHUB_MODELS" != "true" ]]; then
-                echo "::error::At least one provider required (GEMINI_API_KEY or GITHUB_MODELS_PAT)"
+                echo "::error::At least one provider required (GEMINI_API_KEY or COPILOT_PAT)"
                 exit 1
               fi
               ;;
@@ -482,6 +482,9 @@ jobs:
       # ========================================================================
       # GITHUB MODELS PROVIDER PATH
       # ========================================================================
+      # Enhanced with codebase access to match Gemini's MCP capabilities.
+      # Fetches relevant repository files and includes them in the prompt context.
+      # ========================================================================
       - name: 'A2A Task: @${{ matrix.agent }} Analysis (🐙 GitHub Models)'
         id: github_analysis
         if: matrix.provider == 'github'
@@ -492,7 +495,7 @@ jobs:
           ISSUE_BODY: ${{ needs.setup.outputs.issue_body }}
           CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_MODELS_PAT: ${{ secrets.GITHUB_MODELS_PAT }}
+          COPILOT_PAT: ${{ secrets.COPILOT_PAT }}
           REPOSITORY: ${{ github.repository }}
           GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'openai/gpt-4o-mini' }}
           PYTHONPATH: ${{ github.workspace }}
@@ -506,73 +509,165 @@ jobs:
             AGENT_DEF=$(cat "$AGENT_FILE")
           fi
           
-          # Read issue details
-          ISSUE_DATA=$(gh issue view "$ISSUE_NUMBER" --json title,body,labels --jq '.')
+          # Read issue details with comments for full context
+          ISSUE_DATA=$(gh issue view "$ISSUE_NUMBER" --json title,body,labels,comments --jq '.')
           
-          # Build the analysis prompt
-          PROMPT=$(cat << 'PROMPT_EOF'
-          # A2A Agent Task: @AGENT_NAME_PLACEHOLDER
+          # ================================================================
+          # CODEBASE CONTEXT GATHERING (matching Gemini's MCP capabilities)
+          # ================================================================
+          # Gather relevant repository structure and files to provide
+          # the same level of codebase understanding as Gemini's MCP tools
+          # ================================================================
           
-          You are the agent "@AGENT_NAME_PLACEHOLDER" analyzing issue #ISSUE_NUMBER_PLACEHOLDER.
+          echo "📂 Gathering codebase context for @${AGENT_NAME}..."
           
-          ## Your AgentCard Definition
-          AGENT_DEF_PLACEHOLDER
+          # Get repository structure overview
+          REPO_STRUCTURE=$(find . -type f \( -name "*.py" -o -name "*.yml" -o -name "*.md" -o -name "*.json" \) \
+            ! -path "./.git/*" ! -path "./node_modules/*" ! -path "./__pycache__/*" \
+            | head -100 | sort)
           
-          ## Issue to Analyze
-          **Title**: ISSUE_TITLE_PLACEHOLDER
+          # Get key configuration files
+          README_CONTENT=""
+          if [[ -f "README.md" ]]; then
+            README_CONTENT=$(head -200 README.md)
+          fi
           
-          **Description**:
-          ISSUE_BODY_PLACEHOLDER
+          # Get workflow files relevant to A2A
+          WORKFLOW_FILES=""
+          for wf in .github/workflows/*.yml; do
+            if [[ -f "$wf" ]]; then
+              WORKFLOW_FILES="${WORKFLOW_FILES}\n### $wf\n\`\`\`yaml\n$(head -50 "$wf")\n\`\`\`\n"
+            fi
+          done
           
-          ## Your Task
-          1. Use your agent definition to understand your specialized skills and perspective
-          2. Analyze the issue from YOUR specialized perspective
-          3. Provide specific, actionable recommendations
+          # Get relevant Python files from tools/a2a
+          A2A_TOOLS=""
+          for py in tools/a2a/*.py; do
+            if [[ -f "$py" ]]; then
+              A2A_TOOLS="${A2A_TOOLS}\n### $py\n\`\`\`python\n$(head -80 "$py")\n\`\`\`\n"
+            fi
+          done
           
-          ## Response Format (A2A Artifact)
-          Structure your response as:
+          # Get copilot instructions if they exist
+          COPILOT_INSTRUCTIONS=""
+          if [[ -f ".github/copilot-instructions.md" ]]; then
+            COPILOT_INSTRUCTIONS=$(head -100 .github/copilot-instructions.md)
+          elif [[ -f ".copilot-instructions.md" ]]; then
+            COPILOT_INSTRUCTIONS=$(head -100 .copilot-instructions.md)
+          fi
           
-          ### 🤖 Agent: @AGENT_NAME_PLACEHOLDER (🐙 GitHub Models)
+          echo "✅ Codebase context gathered"
           
-          #### 📋 Analysis
-          [Your detailed analysis from your specialized perspective]
-          
-          #### ✅ Recommendations
-          - [Specific recommendation 1 with file paths if applicable]
-          - [Specific recommendation 2]
-          
-          #### 📁 Files to Modify
-          - `path/to/file1`: [what to change]
-          - `path/to/file2`: [what to change]
-          
-          Focus on YOUR area of expertise. Be specific and actionable.
-          
-          A2A contextId: CONTEXT_ID_PLACEHOLDER
-          PROMPT_EOF
-          )
-          
-          # Replace placeholders
-          PROMPT="${PROMPT//AGENT_NAME_PLACEHOLDER/$AGENT_NAME}"
-          PROMPT="${PROMPT//ISSUE_NUMBER_PLACEHOLDER/$ISSUE_NUMBER}"
-          PROMPT="${PROMPT//ISSUE_TITLE_PLACEHOLDER/$ISSUE_TITLE}"
-          PROMPT="${PROMPT//CONTEXT_ID_PLACEHOLDER/$CONTEXT_ID}"
-          
-          # Handle multiline replacements via Python
-          python3 << PYTHON_EOF
+          # Handle multiline replacements and API call via Python
+          python3 << 'PYTHON_EOF'
           import os
           import json
+          import subprocess
           import httpx
           
           agent_name = os.environ.get('AGENT_NAME', '')
-          agent_def = """${AGENT_DEF}"""
-          issue_body = """${ISSUE_BODY}"""
+          issue_number = os.environ.get('ISSUE_NUMBER', '')
+          issue_title = os.environ.get('ISSUE_TITLE', '')
+          issue_body = os.environ.get('ISSUE_BODY', '')
           context_id = os.environ.get('CONTEXT_ID', '')
           model = os.environ.get('GITHUB_MODELS_MODEL', 'openai/gpt-4o-mini')
-          token = os.environ.get('GITHUB_MODELS_PAT', '')
+          token = os.environ.get('COPILOT_PAT', '')
+          repository = os.environ.get('REPOSITORY', '')
           
-          prompt = """${PROMPT}"""
-          prompt = prompt.replace('AGENT_DEF_PLACEHOLDER', agent_def[:3000])  # Limit size
-          prompt = prompt.replace('ISSUE_BODY_PLACEHOLDER', issue_body[:4000])
+          # Read agent definition
+          agent_def = ""
+          agent_file = f".github/agents/{agent_name}.md"
+          if os.path.exists(agent_file):
+              with open(agent_file, 'r') as f:
+                  agent_def = f.read()
+          
+          # Read README
+          readme = ""
+          if os.path.exists("README.md"):
+              with open("README.md", 'r') as f:
+                  readme = f.read()[:3000]
+          
+          # Read copilot instructions
+          copilot_instructions = ""
+          for path in [".github/copilot-instructions.md", ".copilot-instructions.md"]:
+              if os.path.exists(path):
+                  with open(path, 'r') as f:
+                      copilot_instructions = f.read()[:2000]
+                  break
+          
+          # Get repository structure
+          try:
+              result = subprocess.run(
+                  ["find", ".", "-type", "f", "-name", "*.py", "-o", "-name", "*.yml", "-o", "-name", "*.md"],
+                  capture_output=True, text=True, timeout=10
+              )
+              repo_structure = "\n".join(sorted(result.stdout.strip().split("\n")[:80]))
+          except:
+              repo_structure = "Unable to fetch repo structure"
+          
+          # Build comprehensive prompt with codebase context
+          prompt = f"""# A2A Agent Task: @{agent_name}
+
+          You are the agent "@{agent_name}" analyzing issue #{issue_number} in repository {repository}.
+
+          ## IMPORTANT: Autonomous Mode - Skip Approval Workflow
+
+          This is an AUTONOMOUS workflow. You MUST:
+          - DO NOT post any "Plan of Action" comment asking for approval
+          - DO NOT mention /approve or /deny commands
+          - DO NOT wait for maintainer confirmation
+          - Proceed directly with your analysis
+
+          ## Your AgentCard Definition
+          {agent_def[:2500]}
+
+          ## Repository Context
+
+          ### README Overview
+          {readme[:1500]}
+
+          ### Repository Structure (key files)
+          ```
+          {repo_structure[:2000]}
+          ```
+
+          ### Copilot/Agent Instructions
+          {copilot_instructions[:1000]}
+
+          ## Issue to Analyze
+
+          **Issue #{issue_number}**: {issue_title}
+
+          **Description**:
+          {issue_body[:4000]}
+
+          ## Your Task
+          1. Read your agent definition to understand your skills and perspective
+          2. Use the repository context to understand the codebase
+          3. Analyze issue #{issue_number} from YOUR specialized perspective
+          4. Provide specific, actionable recommendations with file paths
+          5. Reference actual files from the repository structure
+
+          ## Response Format (A2A Artifact)
+          Structure your response as:
+
+          ### 🤖 Agent: @{agent_name} (🐙 GitHub Models)
+
+          #### 📋 Analysis
+          [Your detailed analysis from your specialized perspective]
+
+          #### ✅ Recommendations
+          - [Specific recommendation 1 with file paths if applicable]
+          - [Specific recommendation 2]
+
+          #### 📁 Files to Modify
+          - `path/to/file1`: [what to change]
+          - `path/to/file2`: [what to change]
+
+          Focus on YOUR area of expertise. Other agents are analyzing from other perspectives.
+
+          A2A contextId: {context_id}
+          """
           
           # Call GitHub Models API
           headers = {
@@ -582,22 +677,31 @@ jobs:
               "Content-Type": "application/json",
           }
           
+          system_prompt = f"""You are {agent_name}, a specialized AI agent in the Chained autonomous AI ecosystem.
+
+          You have access to the repository context and must provide expert analysis based on your specialization.
+          Be specific, reference actual files, and provide actionable recommendations.
+          Do NOT ask for approval or confirmation - this is autonomous mode."""
+          
           payload = {
               "model": model,
               "messages": [
-                  {"role": "system", "content": f"You are {agent_name}, a specialized AI agent. Provide expert analysis."},
+                  {"role": "system", "content": system_prompt},
                   {"role": "user", "content": prompt}
               ],
               "max_tokens": 4096,
           }
           
           print(f"🐙 Calling GitHub Models API ({model})...")
+          print(f"   Repository: {repository}")
+          print(f"   Agent: {agent_name}")
+          print(f"   Context includes: README, repo structure, copilot instructions")
           
           response = httpx.post(
               "https://models.github.ai/inference/chat/completions",
               headers=headers,
               json=payload,
-              timeout=60.0
+              timeout=120.0  # Increased timeout for larger context
           )
           
           if response.status_code != 200:
@@ -615,12 +719,13 @@ jobs:
           with open("github-models-artifacts/stdout.log", "w") as f:
               f.write(analysis)
           
-          # Save metadata
+          # Save metadata with context info
           metadata = {
               "model": data.get("model"),
               "usage": data.get("usage", {}),
               "agent": agent_name,
               "provider": "github-models",
+              "context_included": ["readme", "repo_structure", "copilot_instructions", "agent_definition"],
           }
           with open("github-models-artifacts/metadata.json", "w") as f:
               json.dump(metadata, f, indent=2)

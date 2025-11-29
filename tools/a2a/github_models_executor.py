@@ -62,13 +62,13 @@ class GitHubModelsAgent:
             agent_name: Name of the Chained agent (for persona/context)
             model: GitHub Models model to use (e.g., "openai/gpt-4o-mini")
             api_token: GitHub PAT with models:read scope
-                       (defaults to GITHUB_MODELS_PAT or GITHUB_TOKEN env var)
+                       (defaults to COPILOT_PAT or GITHUB_TOKEN env var)
         """
         self.agent_name = agent_name
         self.model = model
         self.api_token = (
             api_token
-            or os.environ.get("GITHUB_MODELS_PAT")
+            or os.environ.get("COPILOT_PAT")
             or os.environ.get("GITHUB_TOKEN")
         )
         self.metadata = parse_agent_definition(agent_name)
@@ -126,7 +126,7 @@ You provide helpful, detailed responses from your specialized perspective.
         if not self.api_token:
             return (
                 f"[{self.agent_name}] Error: No API token configured. "
-                "Set GITHUB_MODELS_PAT or GITHUB_TOKEN environment variable "
+                "Set COPILOT_PAT or GITHUB_TOKEN environment variable "
                 "with a PAT that has `models:read` scope."
             )
 
@@ -400,14 +400,14 @@ async def test_github_models_api(
     """
     token = (
         api_token
-        or os.environ.get("GITHUB_MODELS_PAT")
+        or os.environ.get("COPILOT_PAT")
         or os.environ.get("GITHUB_TOKEN")
     )
 
     if not token:
         return {
             "success": False,
-            "error": "No API token. Set GITHUB_MODELS_PAT or GITHUB_TOKEN.",
+            "error": "No API token. Set COPILOT_PAT or GITHUB_TOKEN.",
         }
 
     headers = {
