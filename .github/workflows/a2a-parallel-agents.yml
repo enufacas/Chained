@@ -1420,16 +1420,43 @@ jobs:
             - **contextId**: ${{ needs.setup.outputs.context_id }}
             - **referenceTaskIds**: ${{ needs.aggregate.outputs.reference_task_ids }}
             
+            ## ⚠️ CRITICAL: Tool Usage Instructions
+            
+            ### Available MCP Tools (GitHub Server)
+            Use these for Git/GitHub operations:
+            - `get_file_contents` - Read file content
+            - `create_branch` - Create a new branch for changes
+            - `create_or_update_file` - Write/update individual files
+            - `push_files` - Push multiple files at once
+            - `create_pull_request` - Create a PR after pushing files
+            - `add_issue_comment` - Post updates to the issue
+            - `search_code` - Search repository code
+            - `get_issue` - Get issue details
+            
+            ### Available Shell Commands
+            You can also use `run_shell_command` with: cat, git, gh, ls, grep, head, tail, find, mkdir, cp, mv, rm, echo, wc, sort, uniq, sed, awk, jq, tree, touch, chmod, pwd, diff, patch, curl, python3, node, npm, pip
+            
+            **⚠️ NOTE**: If a shell command fails with "Command rejected because it could not be parsed safely", use the MCP tools instead as a fallback.
+            
+            ### Tools That DO NOT EXIST - Never use these:
+            - `default_api:replace` - This tool does NOT exist
+            - `default_api:*` - No default_api tools exist
+            - `edit_file` - Use `create_or_update_file` instead
+            - `write_file` - Use `create_or_update_file` instead
+            
+            ## Implementation Steps
+            
+            1. **Read context**: Use `get_file_contents` to read `.a2a/context/implementation.md`
+            2. **Create branch**: Use `create_branch` to create `a2a/fix-issue-${{ inputs.issue_number }}`
+            3. **Implement changes**: Use shell commands OR `create_or_update_file`/`push_files` to modify code
+            4. **Create PR**: Use `create_pull_request` with body containing "Fixes #${{ inputs.issue_number }}"
+            5. **Update issue**: Use `add_issue_comment` to post progress
+            
             ## Your First Actions
             1. Read the implementation context file: `.a2a/context/implementation.md`
                - This file was generated FROM the downloaded artifact `.a2a/artifacts/aggregated-analysis.json`
             2. Acknowledge in your first response that you have received the previous agent analyses
             3. Summarize the key recommendations from each agent before proceeding
-            
-            ## Implementation Steps
-            1. Create branch: a2a/fix-issue-${{ inputs.issue_number }}
-            2. Implement the recommended changes based on the multi-agent analysis
-            3. Create a PR with "Fixes #${{ inputs.issue_number }}" in the body
             
             ## Response Format
             Your FIRST message should start with:
@@ -1489,7 +1516,18 @@ jobs:
                   "run_shell_command(sed)",
                   "run_shell_command(awk)",
                   "run_shell_command(jq)",
-                  "run_shell_command(tree)"
+                  "run_shell_command(tree)",
+                  "run_shell_command(touch)",
+                  "run_shell_command(chmod)",
+                  "run_shell_command(pwd)",
+                  "run_shell_command(cd)",
+                  "run_shell_command(diff)",
+                  "run_shell_command(patch)",
+                  "run_shell_command(curl)",
+                  "run_shell_command(python3)",
+                  "run_shell_command(node)",
+                  "run_shell_command(npm)",
+                  "run_shell_command(pip)"
                 ]
               }
             }
@@ -1526,7 +1564,66 @@ jobs:
             [[ $attempt -lt 3 ]] && sleep $((2 ** attempt))
           done
           
+          # Check if branch exists even if PR doesn't
+          if git ls-remote --exit-code --heads origin "$BRANCH_NAME" >/dev/null 2>&1; then
+            echo "branch_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "branch_exists=false" >> $GITHUB_OUTPUT
+          fi
           echo "pr_found=false" >> $GITHUB_OUTPUT
+      
+      - name: Fallback PR creation
+        if: steps.verify.outputs.pr_found != 'true' && steps.verify.outputs.branch_exists == 'true'
+        id: fallback_pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
+          ISSUE_TITLE: ${{ needs.setup.outputs.issue_title }}
+          AGENTS: ${{ needs.setup.outputs.agents }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          echo "⚠️ Gemini didn't create PR, attempting fallback PR creation..."
+          
+          # Create PR body using heredoc for proper formatting
+          PR_BODY=$(cat << 'BODY_EOF'
+          ## A2A Parallel Agent Implementation
+
+          This PR was created by the A2A parallel orchestration workflow.
+
+          ### Context
+          BODY_EOF
+          )
+          PR_BODY="$PR_BODY
+          - **Issue**: #$ISSUE_NUMBER
+          - **contextId**: \`$CONTEXT_ID\`
+          - **Agents Used**: $AGENTS
+
+          Fixes #$ISSUE_NUMBER
+
+          ---
+          *🤖 Created by workflow: [A2A: Parallel Agent Orchestration]($RUN_URL)*"
+          
+          # Create PR using gh cli
+          PR_URL=$(gh pr create \
+            --title "[A2A] Fix: $ISSUE_TITLE" \
+            --body "$PR_BODY" \
+            --head "$BRANCH_NAME" \
+            --base main \
+            --label "automated,a2a" 2>&1) || true
+          
+          # Use more specific regex pattern for GitHub PR URLs
+          if [[ "$PR_URL" =~ https://github\.com/.*/pull/[0-9]+ ]]; then
+            PR_NUMBER=$(echo "$PR_URL" | grep -oE '/pull/[0-9]+' | grep -oE '[0-9]+')
+            echo "✅ Fallback PR created: #$PR_NUMBER"
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Fallback PR creation failed: $PR_URL"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
+          fi
       
       - name: Post completion notification
         env:
@@ -1536,15 +1633,19 @@ jobs:
           CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
           REFERENCE_TASK_IDS: ${{ needs.aggregate.outputs.reference_task_ids }}
           PR_FOUND: ${{ steps.verify.outputs.pr_found }}
-          PR_NUMBER: ${{ steps.verify.outputs.pr_number }}
-          PR_URL: ${{ steps.verify.outputs.pr_url }}
+          PR_NUMBER: ${{ steps.verify.outputs.pr_number || steps.fallback_pr.outputs.pr_number }}
+          PR_URL: ${{ steps.verify.outputs.pr_url || steps.fallback_pr.outputs.pr_url }}
+          FALLBACK_PR_CREATED: ${{ steps.fallback_pr.outputs.pr_created }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           if [[ "$PR_FOUND" == "true" ]]; then
-            STATUS="✅ **completed** - PR #${PR_NUMBER} created"
+            STATUS="✅ **completed** - PR #${PR_NUMBER} created by Gemini"
+            PR_LINK="**Pull Request**: [#${PR_NUMBER}](${PR_URL})"
+          elif [[ "$FALLBACK_PR_CREATED" == "true" ]]; then
+            STATUS="✅ **completed** - PR #${PR_NUMBER} created (fallback)"
             PR_LINK="**Pull Request**: [#${PR_NUMBER}](${PR_URL})"
           else
-            STATUS="⚠️ **partial** - Implementation complete, PR may need manual creation"
+            STATUS="⚠️ **partial** - Implementation attempted, PR may need manual creation"
             PR_LINK=""
           fi
           
