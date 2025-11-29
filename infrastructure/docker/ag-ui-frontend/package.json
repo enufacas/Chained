@@ -10,24 +10,24 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@copilotkit/react-core": "^1.8.14",
-    "@copilotkit/react-ui": "^1.8.14",
-    "@copilotkit/runtime": "^1.8.14",
-    "next": "14.2.21",
-    "openai": "^4.77.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@copilotkit/react-core": "1.8.14",
+    "@copilotkit/react-ui": "1.8.14",
+    "@copilotkit/runtime": "1.8.14",
+    "next": "14.2.33",
+    "openai": "4.77.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "@types/node": "^20.17.10",
-    "@types/react": "^18.3.16",
-    "@types/react-dom": "^18.3.5",
-    "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.21",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.16",
-    "typescript": "^5.7.2"
+    "@types/node": "20.17.10",
+    "@types/react": "18.3.16",
+    "@types/react-dom": "18.3.5",
+    "autoprefixer": "10.4.20",
+    "eslint": "8.57.1",
+    "eslint-config-next": "14.2.33",
+    "postcss": "8.4.49",
+    "tailwindcss": "3.4.16",
+    "typescript": "5.7.2"
   },
   "engines": {
     "node": ">=18.17.0"

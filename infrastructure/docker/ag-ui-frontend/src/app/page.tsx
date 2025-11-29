@@ -2,7 +2,7 @@
 
 import { CopilotPopup } from "@copilotkit/react-ui";
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AgentCard } from "@/components/AgentCard";
 import { PipelineResult } from "@/components/PipelineResult";
 import { DataPreview } from "@/components/DataPreview";
@@ -184,8 +184,9 @@ const AGENTS: Agent[] = [
 
 export default function Home() {
   const [selectedRun, setSelectedRun] = useState<number>(SAMPLE_RUNS[0].id);
-  const [pipelineData, setPipelineData] = useState<PipelineData>(SAMPLE_RESULT);
-  const [agents, setAgents] = useState<Agent[]>(AGENTS);
+  // TODO: Replace sample data with API calls to fetch actual pipeline data
+  const [pipelineData] = useState<PipelineData>(SAMPLE_RESULT);
+  const [agents] = useState<Agent[]>(AGENTS);
 
   // Make pipeline data available to CopilotKit
   useCopilotReadable({
