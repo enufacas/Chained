@@ -5,6 +5,7 @@
 #
 # Services Deployed:
 # - adk-api-server: API server for google/adk-web (bridges ADK API to A2A)
+# - ag-ui-frontend: CopilotKit-powered A2A Pipeline Visualization UI
 # - academic-research: Discovers research topics for blog content
 # - blog-writer: Writes and publishes blog posts
 # - google-trends: Analyzes Google Trends for SEO optimization
@@ -13,6 +14,7 @@
 # - ADK Cloud Run: https://google.github.io/adk-docs/deploy/cloud-run/
 # - A2A Protocol: https://a2a-protocol.org/
 # - google/adk-web: https://github.com/google/adk-web
+# - AG-UI Protocol: https://docs.ag-ui.com/
 # =============================================================================
 
 name: "Deploy: ADK Agents"
@@ -24,6 +26,7 @@ on:
     paths:
       - 'infrastructure/docker/adk-agents/**'
       - 'infrastructure/docker/adk-api-server/**'
+      - 'infrastructure/docker/ag-ui-frontend/**'
       - 'infrastructure/terraform/adk-agents.tf'
       - '.github/workflows/deploy-adk-agents.yml'
 
@@ -222,13 +225,68 @@ jobs:
           echo "The ADK API Server provides the backend for google/adk-web." >> $GITHUB_STEP_SUMMARY
 
   # ===========================================================================
+  # Build AG-UI Frontend
+  # ===========================================================================
+  build-ag-ui-frontend:
+    name: "Build AG-UI Frontend"
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.deploy_agents == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push AG-UI Frontend
+        run: |
+          IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-ui-frontend:${{ github.sha }}"
+          IMAGE_LATEST="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-ui-frontend:latest"
+
+          echo "🔨 Building AG-UI Frontend..."
+
+          cd infrastructure/docker/ag-ui-frontend
+
+          docker build \
+            -t $IMAGE \
+            -t $IMAGE_LATEST \
+            .
+
+          echo "📤 Pushing to Artifact Registry..."
+          docker push $IMAGE
+          docker push $IMAGE_LATEST
+
+          echo "✅ AG-UI Frontend built and pushed"
+
+      - name: Summary
+        run: |
+          echo "## 🐳 Container Built: AG-UI Frontend" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: \`${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-ui-frontend:${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The AG-UI Frontend provides CopilotKit-powered A2A Pipeline Visualization." >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
   # Deploy with Terraform
   # ===========================================================================
   terraform:
     name: "Deploy Terraform"
     runs-on: ubuntu-latest
-    needs: [validate, build, build-api-server]
-    if: always() && needs.validate.outputs.deploy_terraform == 'true' && (needs.build.result == 'success' || needs.build.result == 'skipped') && (needs.build-api-server.result == 'success' || needs.build-api-server.result == 'skipped')
+    needs: [validate, build, build-api-server, build-ag-ui-frontend]
+    if: always() && needs.validate.outputs.deploy_terraform == 'true' && (needs.build.result == 'success' || needs.build.result == 'skipped') && (needs.build-api-server.result == 'success' || needs.build-api-server.result == 'skipped') && (needs.build-ag-ui-frontend.result == 'success' || needs.build-ag-ui-frontend.result == 'skipped')
 
     defaults:
       run:
@@ -324,6 +382,7 @@ jobs:
             ["chained-blog-writer"]="google_cloud_run_v2_service.blog_writer"
             ["chained-google-trends"]="google_cloud_run_v2_service.google_trends"
             ["chained-adk-api-server"]="google_cloud_run_v2_service.adk_api_server"
+            ["chained-ag-ui-frontend"]="google_cloud_run_v2_service.ag_ui_frontend"
           )
 
           for SERVICE_NAME in "${!SERVICES[@]}"; do
@@ -367,6 +426,7 @@ jobs:
             -target=google_cloud_run_v2_service.blog_writer \
             -target=google_cloud_run_v2_service.google_trends \
             -target=google_cloud_run_v2_service.adk_api_server \
+            -target=google_cloud_run_v2_service.ag_ui_frontend \
             -target=google_service_account.adk_agents \
             -out=tfplan
 
@@ -380,10 +440,17 @@ jobs:
           echo "blog_writer_url=$(terraform output -raw blog_writer_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "google_trends_url=$(terraform output -raw google_trends_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "adk_api_server_url=$(terraform output -raw adk_api_server_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "ag_ui_frontend_url=$(terraform output -raw ag_ui_frontend_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
 
       - name: Summary
         run: |
           echo "## 🚀 ADK Agents Deployed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### AG-UI Frontend (CopilotKit Visualization)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | URL |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| **AG-UI Frontend** | ${{ steps.urls.outputs.ag_ui_frontend_url }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### ADK API Server (for google/adk-web)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -400,6 +467,10 @@ jobs:
           echo "| Google Trends | ${{ steps.urls.outputs.google_trends_url }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📋 Endpoints" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**AG-UI Frontend:**" >> $GITHUB_STEP_SUMMARY
+          echo "- UI: \`GET /\`" >> $GITHUB_STEP_SUMMARY
+          echo "- CopilotKit API: \`POST /api/copilotkit\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**ADK API Server (for adk-web):**" >> $GITHUB_STEP_SUMMARY
           echo "- List Apps: \`GET /list-apps\`" >> $GITHUB_STEP_SUMMARY
@@ -480,6 +551,25 @@ jobs:
             echo "❌ ADK API Server: not deployed"
           fi
 
+          # Verify AG-UI Frontend
+          echo ""
+          echo "🔍 Verifying AG-UI Frontend..."
+          AG_UI_URL=$(gcloud run services describe chained-ag-ui-frontend \
+            --region ${{ env.GCP_REGION }} \
+            --format 'value(status.url)' 2>/dev/null || echo "")
+
+          if [[ -n "$AG_UI_URL" ]]; then
+            # Check the main page (Next.js serves at root)
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$AG_UI_URL" || echo "000")
+            if [[ "$STATUS" == "200" ]]; then
+              echo "✅ AG-UI Frontend: healthy ($AG_UI_URL)"
+            else
+              echo "⚠️ AG-UI Frontend: HTTP $STATUS"
+            fi
+          else
+            echo "❌ AG-UI Frontend: not deployed"
+          fi
+
       - name: Summary
         run: |
           echo "## ✅ Deployment Verified" >> $GITHUB_STEP_SUMMARY
@@ -488,11 +578,15 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🔗 Next Steps" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "1. **Use adk-web UI**:" >> $GITHUB_STEP_SUMMARY
+          echo "1. **Use AG-UI Frontend** (CopilotKit visualization):" >> $GITHUB_STEP_SUMMARY
+          echo "   - Visit the deployed AG-UI Frontend URL" >> $GITHUB_STEP_SUMMARY
+          echo "   - Interact with agents through the CopilotKit chat interface" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "2. **Use adk-web UI** (alternative):" >> $GITHUB_STEP_SUMMARY
           echo "   - Clone: \`git clone https://github.com/google/adk-web\`" >> $GITHUB_STEP_SUMMARY
           echo "   - Configure API URL in adk-web settings" >> $GITHUB_STEP_SUMMARY
           echo "   - Run: \`npm start\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "2. Test the pipeline: Run the \`adk-a2a-blog-pipeline\` workflow" >> $GITHUB_STEP_SUMMARY
-          echo "3. View agent cards at \`/.well-known/agent.json\`" >> $GITHUB_STEP_SUMMARY
-          echo "4. Monitor in Cloud Console" >> $GITHUB_STEP_SUMMARY
+          echo "3. Test the pipeline: Run the \`adk-a2a-blog-pipeline\` workflow" >> $GITHUB_STEP_SUMMARY
+          echo "4. View agent cards at \`/.well-known/agent.json\`" >> $GITHUB_STEP_SUMMARY
+          echo "5. Monitor in Cloud Console" >> $GITHUB_STEP_SUMMARY
