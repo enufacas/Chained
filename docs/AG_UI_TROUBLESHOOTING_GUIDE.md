@@ -216,6 +216,52 @@ curl -s https://chained-academic-research-sguacxy5gq-uc.a.run.app/health
 
 3. Check IAM permissions for service-to-service calls
 
+### Issue 5: "Unable to detect a Project Id" Error (NEW - 2025-11-29)
+
+**Symptoms:**
+- API status shows healthy (`available: true`, `authMode: adc`)
+- User sends message, gets error popup:
+  ```
+  Copilot Cloud Error: INTERNAL_SERVER_ERROR
+  Unable to detect a Project Id in the current environment.
+  ```
+- No response appears in chat
+
+**Screenshot:**
+![Project ID Error](https://github.com/user-attachments/assets/c2d74d62-d631-4de5-94d2-c0ff283075fb)
+
+**Root Cause:**
+When using Vertex AI with ADC, the `@langchain/google-gauth` library requires a Google Cloud Project ID to be set. On Cloud Run, this is usually auto-detected from the environment, but may fail if:
+1. The service account doesn't have proper metadata access
+2. `GOOGLE_CLOUD_PROJECT` environment variable is not set
+3. The Cloud Run instance metadata service is not accessible
+
+**Solution:**
+1. **Set GOOGLE_CLOUD_PROJECT explicitly:**
+   ```bash
+   gcloud run services update chained-ag-ui-frontend \
+     --update-env-vars GOOGLE_CLOUD_PROJECT=your-project-id \
+     --region us-central1
+   ```
+
+2. **Verify the project ID is set:**
+   ```bash
+   gcloud run services describe chained-ag-ui-frontend \
+     --region us-central1 \
+     --format='yaml(spec.template.spec.containers[0].env)' | grep GOOGLE_CLOUD_PROJECT
+   ```
+
+3. **Alternative: Use GEMINI_API_KEY instead of Vertex AI:**
+   If you have a Google AI Studio API key, you can use that instead:
+   ```bash
+   gcloud run services update chained-ag-ui-frontend \
+     --update-env-vars GEMINI_API_KEY=AIza... \
+     --remove-env-vars USE_VERTEX_AI \
+     --region us-central1
+   ```
+
+**Note:** This error only displays during local development but the same underlying issue can cause silent failures in production.
+
 ---
 
 ## Diagnostic Commands
