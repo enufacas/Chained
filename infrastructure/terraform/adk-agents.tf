@@ -543,6 +543,14 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
         value = "true"
       }
 
+      # Set Google Cloud Project ID - required by @langchain/google-gauth library when using
+      # Vertex AI with Application Default Credentials (ADC). Without this environment variable,
+      # you get the error: "Unable to detect a Project Id in the current environment"
+      env {
+        name  = "GOOGLE_CLOUD_PROJECT"
+        value = var.project_id
+      }
+
       # Configure ADK API Server URL for agent communication
       env {
         name  = "NEXT_PUBLIC_ADK_API_URL"
