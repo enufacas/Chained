@@ -73,7 +73,7 @@ export function CopilotKitStatus() {
       }
       return `OpenAI adapter connected (${apiInfo.model})`;
     }
-    return "No API key configured (set GEMINI_API_KEY or OPENAI_API_KEY)";
+    return "No API key configured (set GOOGLE_API_KEY or OPENAI_API_KEY)";
   };
 
   return (
@@ -242,7 +242,7 @@ export function CopilotKitStatus() {
                 <span className={apiInfo.provider === "gemini" ? "text-green-400" : "text-slate-500"}>
                   {apiInfo.provider === "gemini" ? "✅" : "○"}
                 </span>
-                <span className="text-slate-400">Google Gemini (GEMINI_API_KEY)</span>
+                <span className="text-slate-400">Google Gemini (GOOGLE_API_KEY)</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className={apiInfo.provider === "openai" ? "text-green-400" : "text-slate-500"}>
