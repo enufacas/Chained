@@ -713,8 +713,10 @@ jobs:
           A2A contextId: {context_id}
           """
           
+          # GitHub Models API authentication per official docs:
+          # https://docs.github.com/en/rest/models/inference?apiVersion=2022-11-28
           headers = {
-              "Authorization": f"token {token}",
+              "Authorization": f"Bearer {token}",
               "Accept": "application/vnd.github+json",
               "X-GitHub-Api-Version": "2022-11-28",
               "Content-Type": "application/json",
