@@ -715,6 +715,10 @@ jobs:
                   issues.append("Missing expected response format markers")
               
               # Check for repeated nonsense patterns (common in degraded outputs)
+              # These patterns were extracted from actual gibberish output produced by
+              # meta/meta-llama-3.1-8b-instruct model in workflow run #19779887283
+              # (issue #3361). They represent random words/fragments that appear when
+              # the model fails to produce coherent responses.
               text_lower = text.lower()
               nonsense_patterns = [
                   'brokerage', 'unicorn', 'kidneys', 'cigarettes', 
@@ -728,6 +732,7 @@ jobs:
                   issues.append(f"Contains nonsense patterns ({nonsense_count} matches)")
               
               # Check for broken/random punctuation sequences
+              # These patterns also come from the same degraded model output
               broken_patterns = ['~~', '$$', '>returned', 'opER', '.h imb', '=+*']
               broken_count = sum(1 for p in broken_patterns if p in text)
               if broken_count >= 2:
