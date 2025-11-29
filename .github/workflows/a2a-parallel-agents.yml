@@ -81,6 +81,7 @@ jobs:
     outputs:
       agents: ${{ steps.select.outputs.agents }}
       agent_count: ${{ steps.select.outputs.count }}
+      implement_agent: ${{ steps.select.outputs.implement_agent }}
       agent_matrix: ${{ steps.matrix.outputs.matrix }}
       issue_title: ${{ steps.issue.outputs.title }}
       issue_body: ${{ steps.issue.outputs.body }}
@@ -224,6 +225,16 @@ jobs:
           
           echo "Selected agents: $SELECTED_AGENTS"
           echo "agents=$SELECTED_AGENTS" >> $GITHUB_OUTPUT
+          
+          # The first agent (typically from engineer category) is the implementing agent
+          if [[ -n "$SELECTED_AGENTS" ]]; then
+            IMPLEMENT_AGENT=$(echo "$SELECTED_AGENTS" | cut -d',' -f1 | xargs)
+          else
+            echo "::error::No agents selected - cannot determine implementing agent"
+            exit 1
+          fi
+          echo "Implementing agent: $IMPLEMENT_AGENT"
+          echo "implement_agent=$IMPLEMENT_AGENT" >> $GITHUB_OUTPUT
           
           COUNT=$(echo "$SELECTED_AGENTS" | tr ',' '\n' | grep -c . || echo 0)
           echo "count=$COUNT" >> $GITHUB_OUTPUT
@@ -493,7 +504,7 @@ jobs:
           workflow_name: 'a2a-agent-${{ matrix.agent }}'
           settings: |-
             {
-              "model": { "maxSessionTurns": 30 },
+              "model": { "maxSessionTurns": 75 },
               "mcpServers": {
                 "github": {
                   "command": "docker",
@@ -1414,7 +1425,7 @@ jobs:
           fi
           ls -la .gemini/commands/ || true
       
-      - name: 'A2A: Implement changes'
+      - name: 'A2A Task: @${{ needs.setup.outputs.implement_agent }} Implementation (🔶 Gemini)'
         id: implement
         uses: 'google-github-actions/run-gemini-cli@v0'
         env:
@@ -1426,10 +1437,11 @@ jobs:
           ARTIFACT_VERSION: ${{ steps.context.outputs.artifact_version }}
           ARTIFACT_TIMESTAMP: ${{ steps.context.outputs.artifact_timestamp }}
           AGENT_COUNT: ${{ steps.context.outputs.agent_count }}
+          IMPLEMENT_AGENT: ${{ needs.setup.outputs.implement_agent }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           TRIGGERING_ACTOR: ${{ github.triggering_actor }}
-          BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
+          BRANCH_NAME: 'feat/issue-${{ inputs.issue_number }}-${{ needs.setup.outputs.implement_agent }}'
         with:
           gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
           google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
@@ -1439,10 +1451,10 @@ jobs:
           gemini_debug: '${{ vars.DEBUG || ''true'' }}'
           # Disable default artifact upload - we use custom upload with A2A taskId naming
           upload_artifacts: 'false'
-          workflow_name: 'a2a-implement'
+          workflow_name: 'a2a-agent-${{ needs.setup.outputs.implement_agent }}'
           settings: |-
             {
-              "model": { "maxSessionTurns": 50 },
+              "model": { "maxSessionTurns": 75 },
               "mcpServers": {
                 "github": {
                   "command": "docker",
@@ -1497,12 +1509,18 @@ jobs:
           prompt: |-
             # A2A Multi-Agent Implementation Task (Protocol v0.3.0)
 
-            You are the IMPLEMENTATION AGENT in a multi-agent A2A (Agent-to-Agent) workflow.
+            You are **@${{ needs.setup.outputs.implement_agent }}**, the designated IMPLEMENTING AGENT in this multi-agent A2A workflow.
             This follows the A2A "Life of a Task" protocol pattern where:
             - Multiple upstream agents analyzed this issue in parallel (separate Tasks)
             - Each agent produced Artifacts with their recommendations
             - These artifacts are now aggregated in `.a2a/context/implementation.md`
             - Your Task has `referenceTaskIds` linking to all upstream analysis Tasks
+            - **YOU (@${{ needs.setup.outputs.implement_agent }}) are responsible for synthesizing their work and implementing the solution**
+            
+            ## Your Agent Identity
+            
+            You are **@${{ needs.setup.outputs.implement_agent }}** - the implementing agent for this task.
+            All your comments, commits, and the PR you create should be attributed to **@${{ needs.setup.outputs.implement_agent }}**.
             
             ## A2A Protocol Task Linking (REQUIRED)
             
@@ -1510,6 +1528,7 @@ jobs:
             - **contextId**: ${{ needs.setup.outputs.context_id }}
             - **referenceTaskIds**: ${{ needs.aggregate.outputs.reference_task_ids }}
             - **Upstream Agents**: ${{ needs.setup.outputs.agents }}
+            - **Implementing Agent**: @${{ needs.setup.outputs.implement_agent }}
             - **Artifact Version**: 0.3.0
             
             ## Issue to Fix
@@ -1523,6 +1542,7 @@ jobs:
             1. **Read the aggregated artifacts**: Use `get_file_contents` to read `.a2a/context/implementation.md`
             2. **Post acknowledgment comment** to issue #${{ inputs.issue_number }} that:
                - States the A2A contextId and referenceTaskIds
+               - Identifies yourself as **@${{ needs.setup.outputs.implement_agent }}**
                - Lists EACH upstream agent by @name with their specific recommendations
                - Explains your implementation plan based on their artifacts
             3. **Only then** proceed with implementation
@@ -1532,13 +1552,15 @@ jobs:
             Post this comment FIRST using `add_issue_comment`:
             
             ```markdown
+            ### 🤖 Agent: @${{ needs.setup.outputs.implement_agent }} (🔶 Gemini)
+            
             ## 🔗 A2A Implementation - Synthesizing Upstream Artifacts
             
             **A2A Task Linking (per "Life of a Task"):**
             - contextId: `${{ needs.setup.outputs.context_id }}`
             - referenceTaskIds: ${{ needs.aggregate.outputs.reference_task_ids }}
             
-            I am the implementation agent. Per A2A protocol, I acknowledge and build upon
+            I am **@${{ needs.setup.outputs.implement_agent }}**, the implementing agent. Per A2A protocol, I acknowledge and build upon
             the artifacts from my colleague agents' analysis tasks:
             
             ### @agent-1 (from referenced task) recommended:
@@ -1553,7 +1575,7 @@ jobs:
             - [specific recommendation from their artifact]
             - [specific recommendation from their artifact]
             
-            ### My Implementation Plan (synthesizing all agent artifacts):
+            ### @${{ needs.setup.outputs.implement_agent }}'s Implementation Plan (synthesizing all agent artifacts):
             1. [How I'll implement agent-1's recommendations]
             2. [How I'll implement agent-2's recommendations]
             3. [How I'll implement agent-3's recommendations]
@@ -1563,10 +1585,20 @@ jobs:
             
             ## Implementation Steps (AFTER acknowledgment)
             
-            1. Create branch: `a2a/fix-issue-${{ inputs.issue_number }}`
+            1. Create branch: `feat/issue-${{ inputs.issue_number }}-${{ needs.setup.outputs.implement_agent }}`
             2. Implement the solution based on synthesized agent recommendations
             3. Create necessary files/changes
             4. Create PR with body containing "Fixes #${{ inputs.issue_number }}"
+            
+            ## ⚠️ MANDATORY PR ATTRIBUTION
+            
+            When creating the PR, you MUST start the PR body with this exact attribution header:
+            
+            ```markdown
+            ### 🤖 Agent: @${{ needs.setup.outputs.implement_agent }} (🔶 Gemini)
+            ```
+            
+            This attributes the implementation work to YOU: **@${{ needs.setup.outputs.implement_agent }}**
             
             ## Available Tools
             
@@ -1583,17 +1615,18 @@ jobs:
             cat, git, gh, ls, grep, head, tail, find, mkdir, cp, mv, rm, echo, jq, python3, node
             
             ## CRITICAL NOTES
+            - You are **@${{ needs.setup.outputs.implement_agent }}** - always identify yourself with this name
             - DO NOT skip the acknowledgment step - it's required by A2A protocol
             - DO NOT use `default_api:replace` or `edit_file` - they don't exist
             - The upstream agents have done excellent analysis - SYNTHESIZE AND USE IT
             - This is NOT a new analysis - build on the existing agent artifacts
             
-            BEGIN by reading `.a2a/context/implementation.md`, then post acknowledgment comment.
+            BEGIN by reading `.a2a/context/implementation.md`, then post acknowledgment comment as @${{ needs.setup.outputs.implement_agent }}.
       
-      - name: Upload implement Gemini output with A2A taskId
+      - name: Upload @${{ needs.setup.outputs.implement_agent }} Gemini output with A2A taskId
         uses: actions/upload-artifact@v4.4.3
         with:
-          name: gemini-output-task-${{ github.run_id }}-implement
+          name: gemini-output-task-${{ github.run_id }}-${{ needs.setup.outputs.implement_agent }}
           path: gemini-artifacts/
           retention-days: 7
           if-no-files-found: ignore
@@ -1603,7 +1636,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
-          BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
+          BRANCH_NAME: 'feat/issue-${{ inputs.issue_number }}-${{ needs.setup.outputs.implement_agent }}'
         run: |
           for attempt in 1 2 3; do
             PR_JSON=$(gh pr list --head "$BRANCH_NAME" --state open --json number,url,title --jq '.[0]' 2>/dev/null || echo "")
@@ -1635,32 +1668,35 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
-          BRANCH_NAME: 'a2a/fix-issue-${{ inputs.issue_number }}'
+          BRANCH_NAME: 'feat/issue-${{ inputs.issue_number }}-${{ needs.setup.outputs.implement_agent }}'
           ISSUE_TITLE: ${{ needs.setup.outputs.issue_title }}
           AGENTS: ${{ needs.setup.outputs.agents }}
+          IMPLEMENT_AGENT: ${{ needs.setup.outputs.implement_agent }}
           CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           echo "⚠️ Gemini didn't create PR, attempting fallback PR creation..."
           
-          # Create PR body using heredoc for proper formatting
-          PR_BODY=$(cat << 'BODY_EOF'
+          # Create PR body with agent attribution header using heredoc for proper escaping
+          PR_BODY=$(cat << BODY_EOF
+          ### 🤖 Agent: @${IMPLEMENT_AGENT} (🔶 Gemini)
+
           ## A2A Parallel Agent Implementation
 
           This PR was created by the A2A parallel orchestration workflow.
 
           ### Context
-          BODY_EOF
-          )
-          PR_BODY="$PR_BODY
-          - **Issue**: #$ISSUE_NUMBER
-          - **contextId**: \`$CONTEXT_ID\`
-          - **Agents Used**: $AGENTS
+          - **Issue**: #${ISSUE_NUMBER}
+          - **contextId**: \`${CONTEXT_ID}\`
+          - **Implementing Agent**: @${IMPLEMENT_AGENT}
+          - **All Agents Used**: ${AGENTS}
 
-          Fixes #$ISSUE_NUMBER
+          Fixes #${ISSUE_NUMBER}
 
           ---
-          *🤖 Created by workflow: [A2A: Parallel Agent Orchestration]($RUN_URL)*"
+          *🤖 Created by workflow: [A2A: Parallel Agent Orchestration](${RUN_URL})*
+          BODY_EOF
+          )
           
           # Create PR using gh cli
           PR_URL=$(gh pr create \
