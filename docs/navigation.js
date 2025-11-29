@@ -104,7 +104,89 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.body.appendChild(footer);
     }
+    
+    initTheme();
 });
+
+// Theme Toggle Functionality
+function initTheme() {
+    // 1. Check for saved theme or system preference
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    
+    // Default to dark if nothing saved
+    let currentTheme = savedTheme || (systemPrefersLight ? 'light' : 'dark');
+    
+    // Apply initial theme
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    
+    // 2. Create and inject toggle button
+    const headerContent = document.querySelector('.header-content');
+    if (headerContent) {
+        // check if button already exists to avoid duplicates
+        if (document.getElementById('theme-toggle')) return;
+        
+        const toggleBtn = document.createElement('button');
+        toggleBtn.id = 'theme-toggle';
+        toggleBtn.className = 'theme-toggle';
+        toggleBtn.setAttribute('aria-label', 'Toggle theme');
+        toggleBtn.title = 'Toggle light/dark mode';
+        
+        // Style to match other header buttons but positioned left of hamburger
+        toggleBtn.style.cssText = `
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            right: 5rem; 
+            top: 1rem;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-size: 1.5rem;
+            padding: 0;
+        `;
+        
+        // Responsive adjustment for mobile
+        if (window.innerWidth <= 768) {
+            toggleBtn.style.right = '4rem';
+            toggleBtn.style.width = '40px';
+            toggleBtn.style.height = '40px';
+            toggleBtn.style.fontSize = '1.2rem';
+        }
+
+        updateButtonIcon(toggleBtn, currentTheme);
+        
+        toggleBtn.addEventListener('click', () => {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            updateButtonIcon(toggleBtn, currentTheme);
+        });
+        
+        toggleBtn.addEventListener('mouseover', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.25)';
+            toggleBtn.style.transform = 'translateY(-2px)';
+        });
+        
+        toggleBtn.addEventListener('mouseout', () => {
+            toggleBtn.style.background = 'rgba(255, 255, 255, 0.15)';
+            toggleBtn.style.transform = 'translateY(0)';
+        });
+        
+        headerContent.appendChild(toggleBtn);
+    }
+}
+
+function updateButtonIcon(btn, theme) {
+    btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+}
 
 // Dynamically generate navigation
 const navConfig = [

@@ -552,7 +552,7 @@ async function createGraph() {
         .attr("dy", d => d.type === 'topic' ? 4 : 35)
         .style("font-size", d => d.type === 'topic' ? "14px" : "10px")
         .style("font-weight", d => d.type === 'topic' ? "bold" : "normal")
-        .style("fill", d => d.type === 'topic' ? colorScheme[d.category] : "#e0e0e0");
+        .style("fill", d => d.type === 'topic' ? colorScheme[d.category] : "var(--text-color)");
     
     // Add hover effects
     node.on("mouseover", function(event, d) {
@@ -765,7 +765,7 @@ async function createCodebaseGraph() {
             .attr("dy", 25)
             .style("font-size", d => d.type === 'agent' ? "12px" : "9px")
             .style("font-weight", d => d.type === 'agent' ? "bold" : "normal")
-            .style("fill", "#e0e0e0");
+            .style("fill", "var(--text-color)");
         
         // Add hover effects
         node.on("mouseover", function(event, d) {
