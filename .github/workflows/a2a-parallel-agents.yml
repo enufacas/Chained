@@ -757,12 +757,12 @@ jobs:
                   error_body = response.text
                   print(error_body)
                   print()
-                  # Parse error for actionable guidance
-                  if "no_access" in error_body.lower():
+                  # Parse error for actionable guidance based on actual API error messages
+                  if '"code":"no_access"' in error_body or "No access to model" in error_body:
                       print("💡 SOLUTION: The COPILOT_PAT secret is missing 'models:read' scope.")
                       print("   To fix: Create a new fine-grained PAT with 'Models: Read' permission")
                       print("   Settings → Developer settings → Fine-grained tokens → Add 'Models' permission")
-                  elif "budget" in error_body.lower():
+                  elif "budget limit" in error_body.lower() or "usage quota" in error_body.lower():
                       print("💡 Account has reached GitHub Models usage quota")
                   elif response.status_code == 401:
                       print("💡 Token is invalid or expired")

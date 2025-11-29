@@ -21,10 +21,10 @@ Tool Support:
   - GitHub Models API supports tool-calling via OpenAI-compatible format
   - Tools are executed locally and results returned to the model
 
-Common Errors:
-  - "No access to model": PAT is missing `models:read` scope
-  - "Budget limit": Account has reached usage quota
-  - 401 Unauthorized: Invalid or expired token
+Common Errors (from API responses):
+  - {"code":"no_access","message":"No access to model: ..."} - PAT is missing `models:read` scope
+  - {"message":"Unable to proceed with model usage. This account has reached its budget limit."} - Usage quota exceeded
+  - 401 Unauthorized - Invalid or expired token
 """
 
 import asyncio
