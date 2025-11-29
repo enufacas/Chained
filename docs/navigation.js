@@ -214,3 +214,96 @@ function generateNavigation() {
 
 // Call on load
 document.addEventListener('DOMContentLoaded', generateNavigation);
+
+
+// Breadcrumb generation
+function generateBreadcrumbs() {
+    const main = document.querySelector("main");
+    if (!main) return;
+
+    // Get current filename
+    const path = window.location.pathname;
+    const filename = path.split("/").pop() || "index.html";
+    
+    // Basic breadcrumb structure
+    let breadcrumbs = [{ text: "Home", url: "index.html" }];
+    
+    // If we are on home page, we can choose to show just "Home" or nothing
+    if (filename === "index.html" || filename === "") {
+        breadcrumbs[0].active = true;
+    } else {
+        // Find current page in navConfig
+        let found = false;
+        
+        // We need to iterate sections
+        if (typeof navConfig !== "undefined") {
+            for (const section of navConfig) {
+                if (section.items) {
+                    const item = section.items.find(i => i.url === filename);
+                    if (item) {
+                        // Found it
+                        // Add Section
+                        breadcrumbs.push({ text: section.title, url: null });
+                        // Add Page
+                        breadcrumbs.push({ text: item.text, url: filename, active: true });
+                        found = true;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Fallback if not in navConfig
+        if (!found) {
+            let title = filename.replace(".html", "").replace(/-/g, " ");
+            // Capitalize words
+            title = title.replace(/\b\w/g, l => l.toUpperCase());
+            breadcrumbs.push({ text: title, url: filename, active: true });
+        }
+    }
+
+    // Construct HTML
+    const nav = document.createElement("nav");
+    nav.className = "breadcrumb";
+    nav.setAttribute("aria-label", "Breadcrumb");
+    
+    const list = document.createElement("ol");
+    list.className = "breadcrumb-list";
+    
+    breadcrumbs.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.className = "breadcrumb-item";
+        if (item.active) li.classList.add("active");
+        
+        if (item.active) {
+            li.setAttribute("aria-current", "page");
+            li.textContent = item.text;
+        } else if (item.url) {
+            const a = document.createElement("a");
+            a.href = item.url;
+            a.textContent = item.text;
+            li.appendChild(a);
+        } else {
+            // Text only (like section title)
+            li.textContent = item.text;
+        }
+        
+        list.appendChild(li);
+        
+        // Separator
+        if (index < breadcrumbs.length - 1) {
+            const sep = document.createElement("li");
+            sep.className = "breadcrumb-separator";
+            sep.setAttribute("aria-hidden", "true");
+            sep.textContent = "/";
+            list.appendChild(sep);
+        }
+    });
+    
+    nav.appendChild(list);
+    
+    // Insert at top of main
+    main.insertBefore(nav, main.firstChild);
+}
+
+document.addEventListener("DOMContentLoaded", generateBreadcrumbs);
