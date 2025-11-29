@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { CopilotKit } from "@copilotkit/react-core";
 import "@copilotkit/react-ui/styles.css";
 import "./globals.css";
 
@@ -15,11 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">
-        <CopilotKit runtimeUrl="/api/copilotkit">
-          {children}
-        </CopilotKit>
-      </body>
+      <body className="font-sans antialiased">{children}</body>
     </html>
   );
 }
