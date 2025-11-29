@@ -1479,8 +1479,9 @@ jobs:
           fi
           ls -la .gemini/commands/ || true
       
-      - name: 'A2A Task: @${{ needs.setup.outputs.implement_agent }} Implementation (🔶 Gemini)'
+      - name: 'A2A Task: @${{ needs.setup.outputs.implement_agent }} Implementation (🔶 Gemini) - Attempt 1'
         id: implement
+        continue-on-error: true
         uses: 'google-github-actions/run-gemini-cli@v0'
         env:
           ISSUE_NUMBER: ${{ inputs.issue_number }}
@@ -1676,6 +1677,393 @@ jobs:
             - This is NOT a new analysis - build on the existing agent artifacts
             
             BEGIN by reading `.a2a/context/implementation.md`, then post acknowledgment comment as @${{ needs.setup.outputs.implement_agent }}.
+      
+      # ========================================================================
+      # RETRY LOGIC FOR TRANSIENT GEMINI API ERRORS (e.g., 499 CANCELLED)
+      # ========================================================================
+      # The Gemini API can return transient errors like 499 CANCELLED when the
+      # streaming connection times out. We implement exponential backoff retries.
+      # ========================================================================
+      
+      - name: 'Check for transient Gemini API error (Attempt 1)'
+        id: check_retry_1
+        if: steps.implement.outcome == 'failure'
+        run: |
+          echo "🔍 Checking if Gemini API failure is retryable..."
+          
+          # Check gemini-artifacts for error logs
+          ERROR_LOG=""
+          if [[ -d "gemini-artifacts" ]]; then
+            ERROR_LOG=$(find gemini-artifacts -name "*.json" -o -name "*.log" 2>/dev/null | head -5 | xargs cat 2>/dev/null | head -500 || true)
+          fi
+          
+          # Check for known transient errors
+          RETRYABLE="false"
+          
+          # 499 CANCELLED - Client closed request / streaming timeout
+          if echo "$ERROR_LOG" | grep -qi "CANCELLED\|499\|cancelled"; then
+            echo "⚠️ Detected 499 CANCELLED error - this is retryable"
+            RETRYABLE="true"
+          fi
+          
+          # 503 Service Unavailable
+          if echo "$ERROR_LOG" | grep -qi "503\|service unavailable\|temporarily unavailable"; then
+            echo "⚠️ Detected 503 Service Unavailable - this is retryable"
+            RETRYABLE="true"
+          fi
+          
+          # 429 Rate Limit
+          if echo "$ERROR_LOG" | grep -qi "429\|rate limit\|quota exceeded\|too many requests"; then
+            echo "⚠️ Detected rate limit error - this is retryable"
+            RETRYABLE="true"
+          fi
+          
+          # Connection/timeout errors
+          if echo "$ERROR_LOG" | grep -qi "timeout\|connection reset\|ETIMEDOUT\|ECONNRESET"; then
+            echo "⚠️ Detected connection/timeout error - this is retryable"
+            RETRYABLE="true"
+          fi
+          
+          # Check for non-retryable errors (authentication, configuration, etc.)
+          NON_RETRYABLE="false"
+          if echo "$ERROR_LOG" | grep -qi "401\|403\|authentication\|unauthorized\|forbidden\|invalid.api.key\|permission denied"; then
+            echo "❌ Detected authentication/authorization error - NOT retryable"
+            NON_RETRYABLE="true"
+          fi
+          if echo "$ERROR_LOG" | grep -qi "400\|invalid.request\|bad.request\|validation\|missing.required"; then
+            echo "❌ Detected invalid request error - NOT retryable"
+            NON_RETRYABLE="true"
+          fi
+          
+          # Only retry unclassified failures if no non-retryable error was detected
+          if [[ "$RETRYABLE" == "false" ]] && [[ "$NON_RETRYABLE" == "false" ]] && [[ "${{ steps.implement.outcome }}" == "failure" ]]; then
+            # Default to retry for unclassified transient failures
+            echo "⚠️ Step failed without specific error pattern - will retry (may be transient)"
+            RETRYABLE="true"
+          fi
+          
+          echo "should_retry=$RETRYABLE" >> $GITHUB_OUTPUT
+          echo "Should retry: $RETRYABLE"
+      
+      - name: 'Wait before retry (30s exponential backoff)'
+        if: steps.implement.outcome == 'failure' && steps.check_retry_1.outputs.should_retry == 'true'
+        run: |
+          echo "⏳ Waiting 30 seconds before retry attempt 2..."
+          sleep 30
+          echo "✅ Wait complete, proceeding with retry"
+      
+      - name: 'A2A Task: @${{ needs.setup.outputs.implement_agent }} Implementation (🔶 Gemini) - Attempt 2'
+        id: implement_retry_2
+        if: steps.implement.outcome == 'failure' && steps.check_retry_1.outputs.should_retry == 'true'
+        continue-on-error: true
+        uses: 'google-github-actions/run-gemini-cli@v0'
+        env:
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          ISSUE_TITLE: ${{ needs.setup.outputs.issue_title }}
+          ISSUE_BODY: ${{ needs.setup.outputs.issue_body }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          REFERENCE_TASK_IDS: ${{ needs.aggregate.outputs.reference_task_ids }}
+          ARTIFACT_VERSION: ${{ steps.context.outputs.artifact_version }}
+          ARTIFACT_TIMESTAMP: ${{ steps.context.outputs.artifact_timestamp }}
+          AGENT_COUNT: ${{ steps.context.outputs.agent_count }}
+          IMPLEMENT_AGENT: ${{ needs.setup.outputs.implement_agent }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          TRIGGERING_ACTOR: ${{ github.triggering_actor }}
+          BRANCH_NAME: 'feat/issue-${{ inputs.issue_number }}-${{ needs.setup.outputs.implement_agent }}'
+          RETRY_ATTEMPT: '2'
+        with:
+          gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
+          google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
+          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || ''false'' }}'
+          gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
+          gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
+          gemini_debug: '${{ vars.DEBUG || ''true'' }}'
+          upload_artifacts: 'false'
+          workflow_name: 'a2a-agent-${{ needs.setup.outputs.implement_agent }}-retry-2'
+          settings: |-
+            {
+              "model": { "maxSessionTurns": 75 },
+              "mcpServers": {
+                "github": {
+                  "command": "docker",
+                  "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server:v0.18.0"],
+                  "includeTools": [
+                    "add_issue_comment", "get_issue", "get_issue_comments",
+                    "create_pull_request", "create_branch", "create_or_update_file",
+                    "get_file_contents", "push_files", "search_code", "update_issue"
+                  ],
+                  "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" }
+                }
+              },
+              "tools": {
+                "core": [
+                  "run_shell_command(cat)",
+                  "run_shell_command(git)",
+                  "run_shell_command(gh)",
+                  "run_shell_command(ls)",
+                  "run_shell_command(grep)",
+                  "run_shell_command(head)",
+                  "run_shell_command(tail)",
+                  "run_shell_command(find)",
+                  "run_shell_command(mkdir)",
+                  "run_shell_command(cp)",
+                  "run_shell_command(mv)",
+                  "run_shell_command(rm)",
+                  "run_shell_command(echo)",
+                  "run_shell_command(wc)",
+                  "run_shell_command(sort)",
+                  "run_shell_command(uniq)",
+                  "run_shell_command(sed)",
+                  "run_shell_command(awk)",
+                  "run_shell_command(jq)",
+                  "run_shell_command(tree)",
+                  "run_shell_command(touch)",
+                  "run_shell_command(chmod)",
+                  "run_shell_command(pwd)",
+                  "run_shell_command(cd)",
+                  "run_shell_command(diff)",
+                  "run_shell_command(patch)",
+                  "run_shell_command(curl)",
+                  "run_shell_command(python3)",
+                  "run_shell_command(node)",
+                  "run_shell_command(npm)",
+                  "run_shell_command(pip)"
+                ]
+              }
+            }
+          prompt: |-
+            # A2A Multi-Agent Implementation Task (Protocol v0.3.0) - RETRY ATTEMPT 2
+
+            ⚠️ **NOTE**: This is retry attempt 2 after a transient Gemini API error. Continue with implementation.
+
+            You are **@${{ needs.setup.outputs.implement_agent }}**, the designated IMPLEMENTING AGENT in this multi-agent A2A workflow.
+            This follows the A2A "Life of a Task" protocol pattern where:
+            - Multiple upstream agents analyzed this issue in parallel (separate Tasks)
+            - Each agent produced Artifacts with their recommendations
+            - These artifacts are now aggregated in `.a2a/context/implementation.md`
+            - Your Task has `referenceTaskIds` linking to all upstream analysis Tasks
+            - **YOU (@${{ needs.setup.outputs.implement_agent }}) are responsible for synthesizing their work and implementing the solution**
+            
+            ## Your Agent Identity
+            
+            You are **@${{ needs.setup.outputs.implement_agent }}** - the implementing agent for this task.
+            All your comments, commits, and the PR you create should be attributed to **@${{ needs.setup.outputs.implement_agent }}**.
+            
+            ## A2A Protocol Task Linking (REQUIRED)
+            
+            Per A2A Spec §4.1.1 (Task) and §4.1.9 (Artifact):
+            - **contextId**: ${{ needs.setup.outputs.context_id }}
+            - **referenceTaskIds**: ${{ needs.aggregate.outputs.reference_task_ids }}
+            - **Upstream Agents**: ${{ needs.setup.outputs.agents }}
+            - **Implementing Agent**: @${{ needs.setup.outputs.implement_agent }}
+            - **Artifact Version**: 0.3.0
+            
+            ## Issue to Fix
+            **Issue #${{ inputs.issue_number }}**: ${{ needs.setup.outputs.issue_title }}
+            
+            ## Implementation Steps
+            
+            1. **Read the aggregated artifacts**: Use `get_file_contents` to read `.a2a/context/implementation.md`
+            2. Create branch: `feat/issue-${{ inputs.issue_number }}-${{ needs.setup.outputs.implement_agent }}`
+            3. Implement the solution based on synthesized agent recommendations
+            4. Create PR with body containing "Fixes #${{ inputs.issue_number }}"
+            
+            ## ⚠️ MANDATORY PR ATTRIBUTION
+            
+            When creating the PR, you MUST start the PR body with this exact attribution header:
+            
+            ```markdown
+            ### 🤖 Agent: @${{ needs.setup.outputs.implement_agent }} (🔶 Gemini)
+            ```
+            
+            BEGIN by reading `.a2a/context/implementation.md`, then implement the solution.
+      
+      - name: 'Check for transient Gemini API error (Attempt 2)'
+        id: check_retry_2
+        if: steps.implement_retry_2.outcome == 'failure'
+        run: |
+          echo "🔍 Checking if Gemini API failure (attempt 2) is retryable..."
+          
+          # Check for transient errors (same logic as check_retry_1)
+          ERROR_LOG=""
+          if [[ -d "gemini-artifacts" ]]; then
+            ERROR_LOG=$(find gemini-artifacts -name "*.json" -o -name "*.log" 2>/dev/null | head -5 | xargs cat 2>/dev/null | head -500 || true)
+          fi
+          
+          RETRYABLE="false"
+          if echo "$ERROR_LOG" | grep -qiE "CANCELLED|499|503|429|timeout|connection reset|ETIMEDOUT|ECONNRESET|service unavailable|rate limit"; then
+            echo "⚠️ Detected retryable error pattern"
+            RETRYABLE="true"
+          fi
+          
+          # Check for non-retryable errors (authentication, configuration, etc.)
+          NON_RETRYABLE="false"
+          if echo "$ERROR_LOG" | grep -qi "401\|403\|authentication\|unauthorized\|forbidden\|invalid.api.key\|permission denied"; then
+            echo "❌ Detected authentication/authorization error - NOT retryable"
+            NON_RETRYABLE="true"
+          fi
+          if echo "$ERROR_LOG" | grep -qi "400\|invalid.request\|bad.request\|validation\|missing.required"; then
+            echo "❌ Detected invalid request error - NOT retryable"
+            NON_RETRYABLE="true"
+          fi
+          
+          # Only retry unclassified failures if no non-retryable error was detected
+          if [[ "$RETRYABLE" == "false" ]] && [[ "$NON_RETRYABLE" == "false" ]] && [[ "${{ steps.implement_retry_2.outcome }}" == "failure" ]]; then
+            echo "⚠️ Step failed without specific error pattern - will retry (may be transient)"
+            RETRYABLE="true"
+          fi
+          
+          echo "should_retry=$RETRYABLE" >> $GITHUB_OUTPUT
+          echo "Should retry: $RETRYABLE"
+      
+      - name: 'Wait before retry (60s exponential backoff)'
+        if: steps.implement_retry_2.outcome == 'failure' && steps.check_retry_2.outputs.should_retry == 'true'
+        run: |
+          echo "⏳ Waiting 60 seconds before retry attempt 3..."
+          sleep 60
+          echo "✅ Wait complete, proceeding with final retry"
+      
+      - name: 'A2A Task: @${{ needs.setup.outputs.implement_agent }} Implementation (🔶 Gemini) - Attempt 3 (Final)'
+        id: implement_retry_3
+        if: steps.implement_retry_2.outcome == 'failure' && steps.check_retry_2.outputs.should_retry == 'true'
+        uses: 'google-github-actions/run-gemini-cli@v0'
+        env:
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          ISSUE_TITLE: ${{ needs.setup.outputs.issue_title }}
+          ISSUE_BODY: ${{ needs.setup.outputs.issue_body }}
+          CONTEXT_ID: ${{ needs.setup.outputs.context_id }}
+          REFERENCE_TASK_IDS: ${{ needs.aggregate.outputs.reference_task_ids }}
+          ARTIFACT_VERSION: ${{ steps.context.outputs.artifact_version }}
+          ARTIFACT_TIMESTAMP: ${{ steps.context.outputs.artifact_timestamp }}
+          AGENT_COUNT: ${{ steps.context.outputs.agent_count }}
+          IMPLEMENT_AGENT: ${{ needs.setup.outputs.implement_agent }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          TRIGGERING_ACTOR: ${{ github.triggering_actor }}
+          BRANCH_NAME: 'feat/issue-${{ inputs.issue_number }}-${{ needs.setup.outputs.implement_agent }}'
+          RETRY_ATTEMPT: '3'
+        with:
+          gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
+          google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
+          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || ''false'' }}'
+          gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
+          gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
+          gemini_debug: '${{ vars.DEBUG || ''true'' }}'
+          upload_artifacts: 'false'
+          workflow_name: 'a2a-agent-${{ needs.setup.outputs.implement_agent }}-retry-3'
+          settings: |-
+            {
+              "model": { "maxSessionTurns": 75 },
+              "mcpServers": {
+                "github": {
+                  "command": "docker",
+                  "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server:v0.18.0"],
+                  "includeTools": [
+                    "add_issue_comment", "get_issue", "get_issue_comments",
+                    "create_pull_request", "create_branch", "create_or_update_file",
+                    "get_file_contents", "push_files", "search_code", "update_issue"
+                  ],
+                  "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" }
+                }
+              },
+              "tools": {
+                "core": [
+                  "run_shell_command(cat)",
+                  "run_shell_command(git)",
+                  "run_shell_command(gh)",
+                  "run_shell_command(ls)",
+                  "run_shell_command(grep)",
+                  "run_shell_command(head)",
+                  "run_shell_command(tail)",
+                  "run_shell_command(find)",
+                  "run_shell_command(mkdir)",
+                  "run_shell_command(cp)",
+                  "run_shell_command(mv)",
+                  "run_shell_command(rm)",
+                  "run_shell_command(echo)",
+                  "run_shell_command(wc)",
+                  "run_shell_command(sort)",
+                  "run_shell_command(uniq)",
+                  "run_shell_command(sed)",
+                  "run_shell_command(awk)",
+                  "run_shell_command(jq)",
+                  "run_shell_command(tree)",
+                  "run_shell_command(touch)",
+                  "run_shell_command(chmod)",
+                  "run_shell_command(pwd)",
+                  "run_shell_command(cd)",
+                  "run_shell_command(diff)",
+                  "run_shell_command(patch)",
+                  "run_shell_command(curl)",
+                  "run_shell_command(python3)",
+                  "run_shell_command(node)",
+                  "run_shell_command(npm)",
+                  "run_shell_command(pip)"
+                ]
+              }
+            }
+          prompt: |-
+            # A2A Multi-Agent Implementation Task (Protocol v0.3.0) - FINAL RETRY (Attempt 3)
+
+            ⚠️ **NOTE**: This is the FINAL retry attempt (3/3) after transient Gemini API errors. Please complete the implementation.
+
+            You are **@${{ needs.setup.outputs.implement_agent }}**, the designated IMPLEMENTING AGENT in this multi-agent A2A workflow.
+            
+            ## Your Agent Identity
+            
+            You are **@${{ needs.setup.outputs.implement_agent }}** - the implementing agent for this task.
+            
+            ## A2A Protocol Task Linking
+            
+            - **contextId**: ${{ needs.setup.outputs.context_id }}
+            - **referenceTaskIds**: ${{ needs.aggregate.outputs.reference_task_ids }}
+            - **Implementing Agent**: @${{ needs.setup.outputs.implement_agent }}
+            
+            ## Issue to Fix
+            **Issue #${{ inputs.issue_number }}**: ${{ needs.setup.outputs.issue_title }}
+            
+            ## Implementation Steps
+            
+            1. **Read the aggregated artifacts**: Use `get_file_contents` to read `.a2a/context/implementation.md`
+            2. Create branch: `feat/issue-${{ inputs.issue_number }}-${{ needs.setup.outputs.implement_agent }}`
+            3. Implement the solution based on synthesized agent recommendations
+            4. Create PR with body starting with `### 🤖 Agent: @${{ needs.setup.outputs.implement_agent }} (🔶 Gemini)` and containing "Fixes #${{ inputs.issue_number }}"
+            
+            BEGIN by reading `.a2a/context/implementation.md`, then implement the solution.
+      
+      - name: 'Log retry summary'
+        id: retry_summary
+        if: always()
+        run: |
+          echo "=================================================="
+          echo "📊 GEMINI IMPLEMENTATION RETRY SUMMARY"
+          echo "=================================================="
+          echo ""
+          echo "Attempt 1: ${{ steps.implement.outcome }}"
+          echo "Attempt 2: ${{ steps.implement_retry_2.outcome || 'skipped' }}"
+          echo "Attempt 3: ${{ steps.implement_retry_3.outcome || 'skipped' }}"
+          echo ""
+          
+          # Determine final outcome
+          if [[ "${{ steps.implement.outcome }}" == "success" ]]; then
+            echo "✅ SUCCESS on attempt 1"
+            echo "final_outcome=success" >> $GITHUB_OUTPUT
+            echo "successful_attempt=1" >> $GITHUB_OUTPUT
+          elif [[ "${{ steps.implement_retry_2.outcome }}" == "success" ]]; then
+            echo "✅ SUCCESS on attempt 2 (after 30s retry)"
+            echo "final_outcome=success" >> $GITHUB_OUTPUT
+            echo "successful_attempt=2" >> $GITHUB_OUTPUT
+          elif [[ "${{ steps.implement_retry_3.outcome }}" == "success" ]]; then
+            echo "✅ SUCCESS on attempt 3 (after 90s total retry wait)"
+            echo "final_outcome=success" >> $GITHUB_OUTPUT
+            echo "successful_attempt=3" >> $GITHUB_OUTPUT
+          else
+            echo "❌ FAILED after all retry attempts"
+            echo "final_outcome=failure" >> $GITHUB_OUTPUT
+            echo "successful_attempt=none" >> $GITHUB_OUTPUT
+          fi
+          echo "=================================================="
       
       - name: Upload @${{ needs.setup.outputs.implement_agent }} Gemini output with A2A taskId
         uses: actions/upload-artifact@v4.4.3
