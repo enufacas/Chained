@@ -69,12 +69,19 @@ export const createServiceAdapter = () => {
       // GoogleGenerativeAIAdapter which uses @langchain/google-gauth (requires OAuth2/Vertex AI)
       const adapter = new LangChainAdapter({
         chainFn: async ({ messages, tools }) => {
-          const model = new ChatGoogleGenerativeAI({
-            model: "gemini-1.5-flash", // Use faster, cheaper model for chat
-            apiKey: googleApiKey, // Explicitly pass API key
-          }).bindTools(tools);
-          
-          return model.stream(messages);
+          try {
+            const model = new ChatGoogleGenerativeAI({
+              model: "gemini-1.5-flash", // Use faster, cheaper model for chat
+              apiKey: googleApiKey, // Explicitly pass API key
+            }).bindTools(tools);
+            
+            return model.stream(messages);
+          } catch (streamError) {
+            logConfig("ERROR in chainFn execution", {
+              error: streamError instanceof Error ? streamError.message : String(streamError),
+            });
+            throw streamError;
+          }
         },
       });
       logConfig("LangChainAdapter with ChatGoogleGenerativeAI created successfully");
