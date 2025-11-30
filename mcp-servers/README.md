@@ -24,7 +24,27 @@ cd chained-repository
 npm install && npm run build
 ```
 
-### 2. chained-world-model
+### 2. gcloud-mcp (External)
+**Status:** ✅ Ready  
+**Maintained by:** [Google Cloud](https://github.com/googleapis/gcloud-mcp)  
+**Purpose:** Google Cloud Platform CLI integration
+
+Provides access to:
+- Execute gcloud CLI commands via natural language
+- Google Cloud resource management
+- Cloud infrastructure automation
+- GCP project and service operations
+
+**Package:** `@google-cloud/gcloud-mcp`  
+**[External Documentation →](https://github.com/googleapis/gcloud-mcp)**
+
+**Quick Start:**
+```bash
+# No local installation needed - uses npx
+npx @google-cloud/gcloud-mcp
+```
+
+### 3. chained-world-model
 **Status:** 🚧 Planned  
 **Purpose:** External world knowledge and trends
 
@@ -38,19 +58,21 @@ Will provide access to:
 
 ## 🎯 Purpose
 
-These MCP servers extend Claude Desktop and other MCP clients with specialized knowledge about the Chained project and the wider tech ecosystem.
+These MCP servers extend Claude Desktop and other MCP clients with specialized knowledge about the Chained project, Google Cloud Platform, and the wider tech ecosystem.
 
 ### Separation of Concerns
 
 - **chained-repository**: Internal repository data (what agents need to work)
+- **gcloud-mcp**: Google Cloud Platform access (what agents need to interact with GCP)
 - **chained-world-model**: External world knowledge (what agents need to understand context)
 
 ## 🚀 Quick Setup
 
 ### Prerequisites
-- Node.js >= 18.0.0
+- Node.js >= 18.0.0 (or Node.js >= 20 for gcloud-mcp)
 - Claude Desktop (or another MCP client)
 - Chained repository cloned locally
+- gcloud CLI installed (for gcloud-mcp) - [Install Guide](https://cloud.google.com/sdk/docs/install)
 
 ### Configure Claude Desktop
 
@@ -64,6 +86,10 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o
       "args": [
         "/absolute/path/to/Chained/mcp-servers/chained-repository/dist/server.js"
       ]
+    },
+    "gcloud": {
+      "command": "npx",
+      "args": ["-y", "@google-cloud/gcloud-mcp"]
     }
   }
 }
@@ -79,6 +105,7 @@ Close and reopen Claude Desktop for changes to take effect.
 
 - [Chained Repository MCP](./chained-repository/README.md) - Full documentation
 - [Quick Start Guide](./chained-repository/QUICKSTART.md) - 5-minute setup
+- [gcloud-mcp](https://github.com/googleapis/gcloud-mcp) - Google Cloud MCP server docs
 - [Model Context Protocol](https://modelcontextprotocol.io/) - Official MCP docs
 
 ## 🛠️ Development
@@ -135,6 +162,24 @@ Claude will use:
 Claude will use:
 - `search_agent_patterns({ keywords: ["api", "testing"] })`
 - `get_agent_metrics()` - to compare performance
+
+### Example 4: GCP Cloud Operations (gcloud-mcp)
+
+```typescript
+"List all the compute instances in my project"
+```
+
+Claude will use:
+- `run_gcloud_command({ command: "gcloud compute instances list" })`
+
+### Example 5: GCP Resource Management (gcloud-mcp)
+
+```typescript
+"Create a new Cloud Storage bucket named my-new-bucket in us-central1"
+```
+
+Claude will use:
+- `run_gcloud_command({ command: "gcloud storage buckets create gs://my-new-bucket --location=us-central1" })`
 
 ## 🏗️ Architecture
 
@@ -213,6 +258,7 @@ Check that:
 ## 📈 Roadmap
 
 - [x] **chained-repository** - Repository data server (v1.0.0)
+- [x] **gcloud-mcp** - Google Cloud Platform integration (external)
 - [ ] **chained-world-model** - World knowledge server (planned)
 - [ ] **Testing Suite** - Comprehensive tests for all tools
 - [ ] **Performance Monitoring** - Track server usage and performance
@@ -221,6 +267,7 @@ Check that:
 ## 🙏 Acknowledgments
 
 - **@investigate-champion** (Ada Lovelace) - Created chained-repository MCP server
+- **Google Cloud Team** - gcloud-mcp server ([googleapis/gcloud-mcp](https://github.com/googleapis/gcloud-mcp))
 - **Model Context Protocol Team** - Excellent SDK and documentation
 - **Anthropic** - Claude Desktop and MCP support
 
