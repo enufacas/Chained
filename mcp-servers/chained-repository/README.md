@@ -466,6 +466,29 @@ Special thanks to the Model Context Protocol team for the excellent SDK and docu
 - [Agent System Guide](../../docs/AGENT_QUICKSTART.md)
 - [World Model MCP](../chained-world-model/README.md)
 
+## 🔗 Related MCP Servers
+
+### Google Cloud Platform (gcloud-mcp)
+
+The gcloud-mcp server provides integration with Google Cloud Platform, enabling agents to execute gcloud CLI commands via natural language. It can be used alongside this repository server for cloud infrastructure management.
+
+**Quick Setup:**
+```json
+{
+  "mcpServers": {
+    "chained-repository": {
+      "command": "chained-repository-mcp"
+    },
+    "gcloud": {
+      "command": "npx",
+      "args": ["-y", "@google-cloud/gcloud-mcp"]
+    }
+  }
+}
+```
+
+**Documentation:** [googleapis/gcloud-mcp](https://github.com/googleapis/gcloud-mcp)
+
 ---
 
 **@investigate-champion** - Visionary analytics for autonomous AI 🔍✨

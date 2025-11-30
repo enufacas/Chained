@@ -46,6 +46,11 @@ jobs:
                 "chained-repository": {
                   "command": "chained-repository-mcp",
                   "description": "Chained repository data access"
+                },
+                "gcloud": {
+                  "command": "npx",
+                  "args": ["-y", "@google-cloud/gcloud-mcp"],
+                  "description": "Google Cloud Platform CLI integration"
                 }
               }
             }
@@ -69,7 +74,7 @@ Create a reusable action at `.github/actions/setup-copilot-mcp/action.yml`:
 
 ```yaml
 name: 'Setup Copilot with MCP'
-description: 'Configure GitHub Copilot with Chained Repository MCP server'
+description: 'Configure GitHub Copilot with Chained Repository and gcloud MCP servers'
 outputs:
   mcp-config-path:
     description: 'Path to MCP configuration file'
@@ -104,6 +109,11 @@ runs:
             "chained-repository": {
               "command": "chained-repository-mcp",
               "description": "Chained Repository MCP - Agent system, learnings, automation tools"
+            },
+            "gcloud": {
+              "command": "npx",
+              "args": ["-y", "@google-cloud/gcloud-mcp"],
+              "description": "Google Cloud Platform MCP - Execute gcloud CLI commands"
             }
           }
         }
@@ -154,12 +164,18 @@ Create a custom Docker image with MCP pre-installed:
 ```dockerfile
 FROM ubuntu:22.04
 
-# Install Node.js
+# Install Node.js 20, gcloud CLI, and required dependencies for MCP servers
 RUN apt-get update && apt-get install -y \
     curl \
     git \
+    apt-transport-https \
+    ca-certificates \
+    gnupg \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
+    && echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
+    && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - \
+    && apt-get update && apt-get install -y google-cloud-cli \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Chained MCP Server globally
@@ -168,7 +184,8 @@ RUN npm install -g @chained/repository-mcp
 # Verify installation
 RUN which chained-repository-mcp && \
     node --version && \
-    npm --version
+    npm --version && \
+    gcloud --version
 
 # Create MCP config directory
 RUN mkdir -p /etc/copilot-mcp
@@ -190,6 +207,11 @@ WORKDIR /workspace
     "chained-repository": {
       "command": "chained-repository-mcp",
       "description": "Chained Repository MCP Server"
+    },
+    "gcloud": {
+      "command": "npx",
+      "args": ["-y", "@google-cloud/gcloud-mcp"],
+      "description": "Google Cloud Platform MCP Server"
     }
   }
 }
@@ -266,6 +288,11 @@ jobs:
                   "CHAINED_REPO_PATH": "${{ github.workspace }}",
                   "CHAINED_MCP_DEBUG": "false"
                 }
+              },
+              "gcloud": {
+                "command": "npx",
+                "args": ["-y", "@google-cloud/gcloud-mcp"],
+                "description": "Google Cloud Platform CLI"
               }
             }
           }
@@ -413,6 +440,38 @@ Copilot will call:
   "tool": "get_agent_metrics",
   "arguments": {
     "agent_id": "secure-specialist"
+  }
+}
+```
+
+### Example 4: GCP Resource Management (gcloud-mcp)
+
+```
+List all the Cloud Run services in my GCP project.
+```
+
+Copilot will call:
+```json
+{
+  "tool": "run_gcloud_command",
+  "arguments": {
+    "command": "gcloud run services list"
+  }
+}
+```
+
+### Example 5: GCP Cloud Storage (gcloud-mcp)
+
+```
+Show me all buckets in my project and their locations.
+```
+
+Copilot will call:
+```json
+{
+  "tool": "run_gcloud_command",
+  "arguments": {
+    "command": "gcloud storage buckets list --format=json"
   }
 }
 ```

@@ -97,3 +97,118 @@ jobs:
           
           # Note: The actual COPILOT_PAT value is not exported here for security
           # Copilot will access it directly from the environment when needed
+      
+      # =========================================================================
+      # GCP / gcloud-mcp Setup
+      # =========================================================================
+      # This enables Copilot to use the gcloud-mcp server for GCP operations
+      # Required secrets in 'copilot' environment:
+      #   - GCP_PROJECT_ID: Your GCP project ID
+      #   - GCP_SA_KEY: Service account key JSON
+      # Optional:
+      #   - GCP_REGION: Deployment region (default: us-central1)
+      # =========================================================================
+      
+      - name: Check GCP secrets availability
+        id: check-gcp
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          if [ -n "$GCP_SA_KEY" ] && [ -n "$GCP_PROJECT_ID" ]; then
+            echo "gcp_configured=true" >> $GITHUB_OUTPUT
+            echo "✅ GCP secrets are configured"
+          else
+            echo "gcp_configured=false" >> $GITHUB_OUTPUT
+            echo "⚠️ GCP secrets not configured - gcloud-mcp will not be available"
+          fi
+      
+      - name: Authenticate to Google Cloud
+        id: gcp-auth
+        if: steps.check-gcp.outputs.gcp_configured == 'true'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+        continue-on-error: true
+      
+      - name: Setup gcloud CLI
+        if: steps.gcp-auth.outcome == 'success'
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Configure GCP environment for Copilot
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_REGION: ${{ secrets.GCP_REGION }}
+        run: |
+          # Check if GCP is configured
+          if [ -n "$GCP_PROJECT_ID" ]; then
+            echo "✅ GCP_PROJECT_ID is configured"
+            echo "GCP_PROJECT_ID=$GCP_PROJECT_ID" >> $GITHUB_ENV
+            echo "CLOUDSDK_CORE_PROJECT=$GCP_PROJECT_ID" >> $GITHUB_ENV
+            
+            # Set region (default to us-central1)
+            REGION="${GCP_REGION:-us-central1}"
+            echo "GCP_REGION=$REGION" >> $GITHUB_ENV
+            echo "CLOUDSDK_COMPUTE_REGION=$REGION" >> $GITHUB_ENV
+            
+            # Verify gcloud is working
+            if command -v gcloud &> /dev/null; then
+              echo "✅ gcloud CLI is available"
+              gcloud config list --format="value(core.project)" 2>/dev/null && echo "✅ GCP authentication successful"
+              echo "GCP_AVAILABLE=true" >> $GITHUB_ENV
+            else
+              echo "⚠️  gcloud CLI not available"
+              echo "GCP_AVAILABLE=false" >> $GITHUB_ENV
+            fi
+          else
+            echo "⚠️  GCP_PROJECT_ID not configured in copilot environment"
+            echo "⚠️  gcloud-mcp will not be available"
+            echo "GCP_AVAILABLE=false" >> $GITHUB_ENV
+          fi
+      
+      - name: Setup MCP servers configuration
+        run: |
+          # Create MCP configuration directory
+          mkdir -p ~/.config/copilot-mcp
+          
+          # Build MCP servers configuration
+          cat > ~/.config/copilot-mcp/servers.json << 'EOF'
+          {
+            "mcpServers": {
+              "chained-repository": {
+                "command": "node",
+                "args": ["${{ github.workspace }}/mcp-servers/chained-repository/dist/server.js"],
+                "description": "Chained Repository MCP - Agent system, learnings, automation tools"
+              },
+              "gcloud": {
+                "command": "npx",
+                "args": ["-y", "@google-cloud/gcloud-mcp"],
+                "description": "Google Cloud Platform MCP - Execute gcloud CLI commands"
+              }
+            }
+          }
+          EOF
+          
+          echo "MCP_SERVERS_CONFIG=$HOME/.config/copilot-mcp/servers.json" >> $GITHUB_ENV
+          echo "✅ MCP servers configuration created"
+          
+          # Show configuration for debugging
+          cat ~/.config/copilot-mcp/servers.json
+      
+      - name: Summary
+        run: |
+          echo "## 🤖 Copilot Environment Setup Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Available Tools" >> $GITHUB_STEP_SUMMARY
+          echo "| Tool | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Node.js | ✅ v18 |" >> $GITHUB_STEP_SUMMARY
+          echo "| Python | ✅ v3.11 |" >> $GITHUB_STEP_SUMMARY
+          echo "| COPILOT_PAT | ${{ env.COPILOT_PAT_AVAILABLE == 'true' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| GCP/gcloud | ${{ env.GCP_AVAILABLE == 'true' && '✅' || '⚠️ Not configured' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### MCP Servers" >> $GITHUB_STEP_SUMMARY
+          echo "- chained-repository: Chained repo data access" >> $GITHUB_STEP_SUMMARY
+          echo "- gcloud: Google Cloud Platform CLI (requires GCP secrets)" >> $GITHUB_STEP_SUMMARY

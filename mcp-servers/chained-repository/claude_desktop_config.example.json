@@ -6,6 +6,11 @@
         "/ABSOLUTE/PATH/TO/Chained/mcp-servers/chained-repository/dist/server.js"
       ],
       "description": "Chained Repository MCP Server - Access to agent system, learnings, and repository insights"
+    },
+    "gcloud": {
+      "command": "npx",
+      "args": ["-y", "@google-cloud/gcloud-mcp"],
+      "description": "Google Cloud Platform MCP Server - Execute gcloud CLI commands via natural language"
     }
   }
 }
