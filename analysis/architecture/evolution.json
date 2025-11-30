@@ -623,6 +623,22 @@
       },
       "component_count": 5,
       "file_count": 1827
+    },
+    {
+      "timestamp": "2025-11-30T12:49:54.373640",
+      "commit": "2bd6b5eb81a40d529ce9959601a422da3366d9b1",
+      "commit_message": "[WIP] Troubleshoot workflow failure in CI/CD pipeline (#3433)\n\n* Initial plan\n\n* fix: Regenerate package-lock.json for ag-ui-frontend to fix npm ci sync error\n\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>\n\n---------\n\nCo-authored-by: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>\nCo-authored-by: enufacas <1485431+enufacas@users.noreply.github.com>",
+      "metrics": {
+        "total_components": 6,
+        "total_files": 1843,
+        "total_lines": 5382315,
+        "total_dependencies": 2,
+        "external_libraries": 82,
+        "coupling_score": 5.56947925368978e-05,
+        "complexity_score": 1.0
+      },
+      "component_count": 5,
+      "file_count": 1843
     }
   ]
 }
