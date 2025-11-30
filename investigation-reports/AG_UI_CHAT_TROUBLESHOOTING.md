@@ -9,9 +9,15 @@ This document tracks the troubleshooting history for the AG-UI Frontend chat fun
 
 ## Current Status (2025-11-30)
 
-**Status**: 🟡 **FIX IN PROGRESS** - API version changed from `v1beta` to `v1`
+**Status**: ✅ **RESOLVED** - Chat is now fully working!
 
-### Root Cause (Identified)
+### 🎉 Success Confirmed
+The A2A Pipeline Assistant is now operational at:
+- **URL**: https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/
+
+See [A2A_SUCCESS_HISTORY.md](../docs/a2a/A2A_SUCCESS_HISTORY.md) for the first successful conversation.
+
+### Root Cause (Identified & Fixed)
 The **Vertex AI API v1beta returns 404** for `gemini-2.0-flash` models, while the **v1 (stable) API works correctly**.
 
 Testing confirmed:
