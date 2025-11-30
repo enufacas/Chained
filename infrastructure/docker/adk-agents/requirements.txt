@@ -19,5 +19,11 @@ google-cloud-firestore>=2.11.0
 google-cloud-pubsub>=2.17.0
 google-cloud-storage>=2.10.0
 
-# Gemini AI (for production blog content generation)
+# Gemini AI - supports two authentication modes:
+# 1. Google AI Studio: Uses GEMINI_API_KEY with generativelanguage.googleapis.com
+# 2. Vertex AI: Uses ADC (Application Default Credentials) with aiplatform.googleapis.com
+#
+# google-generativeai: For Google AI Studio API key authentication
+# google-cloud-aiplatform: For Vertex AI with ADC (OAuth2) authentication
 google-generativeai>=0.3.0
+google-cloud-aiplatform>=1.38.0

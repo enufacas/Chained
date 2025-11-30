@@ -15,7 +15,11 @@ A2A Protocol Implementation:
 - Accepts referenceTaskIds from other agents
 - Returns Tasks with blog content artifacts
 
-**IMPORTANT**: This agent uses Gemini/Vertex AI to generate REAL content.
+**IMPORTANT**: This agent uses Gemini AI to generate REAL content.
+It supports two authentication modes:
+1. Google AI Studio: Set GEMINI_API_KEY (for development)
+2. Vertex AI: Set USE_VERTEX_AI=true and GOOGLE_CLOUD_PROJECT (for GCP deployment)
+
 All model interactions are logged and captured as artifacts for debugging.
 """
 
@@ -32,15 +36,15 @@ from pydantic import BaseModel
 
 # Add shared utilities to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from shared.a2a_utils import AIUnavailableError, build_ai_unavailable_error_message
-
-# Try to import Gemini AI - may not be available in all environments
-try:
-    import google.generativeai as genai
-    GENAI_AVAILABLE = True
-except ImportError:
-    GENAI_AVAILABLE = False
-    genai = None
+from shared.gemini_client import (
+    generate_content,
+    is_available as gemini_is_available,
+    get_mode as gemini_get_mode,
+    get_unavailable_error_message,
+    get_config_info as gemini_get_config_info,
+    GeminiError,
+    GeminiUnavailableError,
+)
 
 # =============================================================================
 # Configuration
@@ -48,14 +52,12 @@ except ImportError:
 
 AGENT_NAME = "blog-writer"
 AGENT_DESCRIPTION = "Writes engaging blog posts from research topics and trend data using Vertex AI"
-AGENT_VERSION = "1.3.0"  # Updated: No fallback - requires Gemini AI
+AGENT_VERSION = "1.4.0"  # Updated: Unified Gemini client with Vertex AI support
 PORT = int(os.getenv("PORT", "8082"))
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 WEBSITE_DEPLOY_URL = os.getenv("WEBSITE_DEPLOY_URL", "")
 
-# Use Gemini API if available and genai library is installed
-USE_AI = GENAI_AVAILABLE and bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+# Use unified Gemini client - supports both Google AI Studio and Vertex AI
+USE_AI = gemini_is_available()
 
 # Request-scoped model interaction log using contextvars for thread safety
 from contextvars import ContextVar
@@ -87,17 +89,15 @@ def get_interactions() -> List[Dict[str, Any]]:
     """Get all model interactions for this request."""
     return _model_interactions.get().copy()
 
-# Configure Gemini if available
-if USE_AI and genai:
-    api_key = GEMINI_API_KEY or GOOGLE_API_KEY
-    genai.configure(api_key=api_key)
-    print(f"✅ Gemini AI configured")
+# Log startup configuration
+if USE_AI:
+    config_info = gemini_get_config_info()
+    print(f"✅ Gemini AI configured for blog-writer (mode={config_info['active_mode']})")
 else:
-    print(f"⚠️ Gemini AI NOT configured - USE_AI={USE_AI}, GENAI_AVAILABLE={GENAI_AVAILABLE}")
-    if not GENAI_AVAILABLE:
-        print("   google-generativeai package not installed")
-    if not (GEMINI_API_KEY or GOOGLE_API_KEY):
-        print("   No API key found in GEMINI_API_KEY or GOOGLE_API_KEY")
+    print(f"⚠️ Gemini AI NOT configured - USE_AI={USE_AI}")
+    config_info = gemini_get_config_info()
+    for key, value in config_info.items():
+        print(f"   {key}: {value}")
 
 
 # =============================================================================
@@ -209,6 +209,7 @@ async def write_blog_post(
     4. Logs all model interactions for debugging
     
     IMPORTANT: This function requires Gemini AI to be configured.
+    Supports both Google AI Studio (API key) and Vertex AI (ADC) modes.
     If AI is not available, it raises an error instead of falling back to templates.
     """
     topic = topic_data.get("topic", "Technology Trends")
@@ -217,28 +218,25 @@ async def write_blog_post(
     seo_keywords = topic_data.get("seo_keywords", [])
     
     # Log the write request
+    gemini_mode = gemini_get_mode()
     log_interaction("write_request", {
         "topic": topic,
         "domain": domain,
         "key_points_count": len(key_points),
         "seo_keywords": seo_keywords[:5],
-        "ai_enabled": USE_AI and genai is not None
+        "ai_enabled": USE_AI,
+        "gemini_mode": gemini_mode
     })
     
     # REQUIRE Gemini AI - no fallback allowed
-    if not USE_AI or genai is None:
-        error_msg = build_ai_unavailable_error_message(
-            genai_available=GENAI_AVAILABLE,
-            has_api_key=bool(GEMINI_API_KEY or GOOGLE_API_KEY),
-            agent_name=AGENT_NAME
-        )
+    if not USE_AI:
+        error_msg = get_unavailable_error_message(agent_name=AGENT_NAME)
         
         log_interaction("ai_unavailable_error", {
             "error": error_msg,
-            "genai_available": GENAI_AVAILABLE,
-            "has_api_key": bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+            "gemini_config": gemini_get_config_info()
         })
-        raise AIUnavailableError(error_msg)
+        raise GeminiUnavailableError(error_msg)
     
     # Extract trend keywords if available
     trend_keywords = []
@@ -284,6 +282,7 @@ async def write_blog_post(
             "read_time_minutes": max(1, len(full_content.split()) // 200),
             "generated_at": datetime.utcnow().isoformat(),
             "ai_generated": True,
+            "gemini_mode": gemini_mode,
         },
         "model_interactions": get_interactions(),
     }
@@ -299,6 +298,7 @@ async def generate_content_with_gemini(
 ) -> Dict[str, Any]:
     """
     Generate blog content using Gemini AI.
+    Supports both Google AI Studio and Vertex AI modes via unified client.
     
     This creates comprehensive, well-researched blog content that:
     - Is 1500-2500 words
@@ -379,8 +379,10 @@ Format the output as Markdown with proper headers (##, ###), bullet points, and 
 Start with `# [Your Title Here]` as the first line."""
 
     # Log the prompt being sent
+    gemini_mode = gemini_get_mode()
     log_interaction("llm_request", {
         "model": "gemini-1.5-flash",
+        "mode": gemini_mode,
         "prompt_length": len(prompt),
         "prompt_preview": prompt[:500] + "..." if len(prompt) > 500 else prompt,
         "topic": topic,
@@ -392,57 +394,49 @@ Start with `# [Your Title Here]` as the first line."""
     })
 
     try:
-        # Use Gemini 1.5 Flash for fast, quality content
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        
         start_time = datetime.utcnow()
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.GenerationConfig(
-                temperature=0.7,  # Creative but focused
-                top_p=0.9,
-                max_output_tokens=4096,  # Allow long content
-            )
+        result = await generate_content(
+            prompt=prompt,
+            temperature=0.7,
+            top_p=0.9,
+            max_output_tokens=4096,
         )
         end_time = datetime.utcnow()
         duration_ms = (end_time - start_time).total_seconds() * 1000
         
-        if response.text:
-            word_count = len(response.text.split())
-            print(f"✅ Gemini generated {word_count} words for: {topic} in {duration_ms:.0f}ms")
+        if result["text"]:
+            word_count = len(result["text"].split())
+            print(f"✅ Gemini ({result['mode']}) generated {word_count} words for: {topic} in {duration_ms:.0f}ms")
             
             # Log the successful response
-            # Safely access finish_reason - check both candidates existence and length
-            finish_reason = 'unknown'
-            if response.candidates and len(response.candidates) > 0:
-                finish_reason = getattr(response.candidates[0], 'finish_reason', 'unknown')
-            
             log_interaction("llm_response", {
-                "model": "gemini-1.5-flash",
+                "model": result["model"],
+                "mode": result["mode"],
                 "status": "success",
                 "word_count": word_count,
-                "response_length": len(response.text),
-                "response_preview": response.text[:500] + "..." if len(response.text) > 500 else response.text,
+                "response_length": len(result["text"]),
+                "response_preview": result["text"][:500] + "..." if len(result["text"]) > 500 else result["text"],
                 "duration_ms": duration_ms,
-                "finish_reason": finish_reason
             })
             
             return {
-                "content": response.text,
+                "content": result["text"],
                 "word_count": word_count,
-                "ai_generated": True
+                "ai_generated": True,
+                "gemini_mode": result["mode"],
             }
         else:
             print(f"⚠️ Gemini returned empty response for: {topic}")
             log_interaction("llm_response", {
-                "model": "gemini-1.5-flash",
+                "model": result.get("model", "unknown"),
+                "mode": result.get("mode", "unknown"),
                 "status": "empty_response",
                 "duration_ms": duration_ms
             })
             # NO FALLBACK - raise exception
-            raise AIUnavailableError("Gemini returned empty response for blog content generation")
+            raise GeminiError("Gemini returned empty response for blog content generation")
             
-    except AIUnavailableError:
+    except (GeminiError, GeminiUnavailableError):
         raise  # Re-raise our custom errors
     except Exception as e:
         error_msg = str(e)
@@ -451,12 +445,13 @@ Start with `# [Your Title Here]` as the first line."""
         # Log the error
         log_interaction("llm_error", {
             "model": "gemini-1.5-flash",
+            "mode": gemini_mode,
             "error": error_msg,
             "error_type": type(e).__name__
         })
         
         # NO FALLBACK - raise exception
-        raise AIUnavailableError(f"Gemini API error: {error_msg}")
+        raise GeminiError(f"Gemini API error: {error_msg}")
 
 
 def generate_template_content(

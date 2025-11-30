@@ -14,7 +14,11 @@ A2A Protocol Implementation:
 - Handles SendMessage at POST /a2a/tasks
 - Returns Tasks with trend analysis artifacts
 
-**IMPORTANT**: This agent uses Gemini/Vertex AI for intelligent trend analysis.
+**IMPORTANT**: This agent uses Gemini AI for intelligent trend analysis.
+It supports two authentication modes:
+1. Google AI Studio: Set GEMINI_API_KEY (for development)
+2. Vertex AI: Set USE_VERTEX_AI=true and GOOGLE_CLOUD_PROJECT (for GCP deployment)
+
 All model interactions are logged and captured as artifacts for debugging.
 """
 
@@ -32,15 +36,16 @@ from pydantic import BaseModel
 
 # Add shared utilities to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from shared.a2a_utils import parse_llm_json_response, AIUnavailableError, build_ai_unavailable_error_message
-
-# Try to import Gemini AI
-try:
-    import google.generativeai as genai
-    GENAI_AVAILABLE = True
-except ImportError:
-    GENAI_AVAILABLE = False
-    genai = None
+from shared.a2a_utils import parse_llm_json_response
+from shared.gemini_client import (
+    generate_content,
+    is_available as gemini_is_available,
+    get_mode as gemini_get_mode,
+    get_unavailable_error_message,
+    get_config_info as gemini_get_config_info,
+    GeminiError,
+    GeminiUnavailableError,
+)
 
 # =============================================================================
 # Configuration
@@ -48,13 +53,11 @@ except ImportError:
 
 AGENT_NAME = "google-trends"
 AGENT_DESCRIPTION = "Analyzes trends and generates SEO insights using Vertex AI"
-AGENT_VERSION = "1.3.0"  # Updated: No fallback - requires Gemini AI
+AGENT_VERSION = "1.4.0"  # Updated: Unified Gemini client with Vertex AI support
 PORT = int(os.getenv("PORT", "8083"))
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 
-# Use Gemini API if available
-USE_AI = GENAI_AVAILABLE and bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+# Use unified Gemini client - supports both Google AI Studio and Vertex AI
+USE_AI = gemini_is_available()
 
 # Request-scoped model interaction log using contextvars for thread safety
 from contextvars import ContextVar
@@ -84,11 +87,10 @@ def get_interactions() -> List[Dict[str, Any]]:
     """Get all model interactions for this request."""
     return _model_interactions.get().copy()
 
-# Configure Gemini if available
-if USE_AI and genai:
-    api_key = GEMINI_API_KEY or GOOGLE_API_KEY
-    genai.configure(api_key=api_key)
-    print(f"✅ Gemini AI configured for trends agent with key: {api_key[:8]}...")
+# Log startup configuration
+if USE_AI:
+    config_info = gemini_get_config_info()
+    print(f"✅ Gemini AI configured for trends agent (mode={config_info['active_mode']})")
 else:
     print(f"⚠️ Trends Agent: Gemini AI NOT configured - using simulated data")
 
@@ -286,6 +288,7 @@ async def get_trends_for_topic(topic: str) -> Dict[str, Any]:
     Get trends data for a topic using AI analysis.
 
     REQUIRED: Gemini AI must be configured for this agent to function.
+    Supports both Google AI Studio (API key) and Vertex AI (ADC) modes.
     
     When AI is enabled, uses Gemini to:
     1. Analyze the topic's potential trending keywords
@@ -294,19 +297,14 @@ async def get_trends_for_topic(topic: str) -> Dict[str, Any]:
     
     NO FALLBACK: If AI is not available, raises an error.
     """
-    if not USE_AI or genai is None:
-        error_msg = build_ai_unavailable_error_message(
-            genai_available=GENAI_AVAILABLE,
-            has_api_key=bool(GEMINI_API_KEY or GOOGLE_API_KEY),
-            agent_name=AGENT_NAME
-        )
+    if not USE_AI:
+        error_msg = get_unavailable_error_message(agent_name=AGENT_NAME)
         
         log_interaction("ai_unavailable_error", {
             "error": error_msg,
-            "genai_available": GENAI_AVAILABLE,
-            "has_api_key": bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+            "gemini_config": gemini_get_config_info()
         })
-        raise AIUnavailableError(error_msg)
+        raise GeminiUnavailableError(error_msg)
     
     return await get_trends_with_ai(topic)
 
@@ -314,6 +312,7 @@ async def get_trends_for_topic(topic: str) -> Dict[str, Any]:
 async def get_trends_with_ai(topic: str) -> Dict[str, Any]:
     """
     Use Gemini AI to generate trend analysis for a topic.
+    Supports both Google AI Studio and Vertex AI modes via unified client.
     NO FALLBACK: Raises error if AI call fails.
     """
     prompt = f"""Analyze the search trend potential for the topic: "{topic}"
@@ -352,60 +351,59 @@ Make the data realistic based on current 2024-2025 trends.
 
 Return ONLY the JSON, no other text."""
 
+    gemini_mode = gemini_get_mode()
     log_interaction("llm_request", {
         "model": "gemini-1.5-flash",
+        "mode": gemini_mode,
         "purpose": "trend_analysis",
         "topic": topic,
         "prompt_length": len(prompt)
     })
     
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
         start_time = datetime.utcnow()
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.GenerationConfig(
-                temperature=0.7,
-                max_output_tokens=1024,
-            )
+        result = await generate_content(
+            prompt=prompt,
+            temperature=0.7,
+            max_output_tokens=1024,
         )
         end_time = datetime.utcnow()
         duration_ms = (end_time - start_time).total_seconds() * 1000
         
-        if response.text:
+        if result["text"]:
             log_interaction("llm_response", {
-                "model": "gemini-1.5-flash",
+                "model": result["model"],
+                "mode": result["mode"],
                 "status": "success",
                 "duration_ms": duration_ms,
-                "response_preview": response.text[:400]
+                "response_preview": result["text"][:400]
             })
             
             # Parse JSON using shared utility
-            trends = parse_llm_json_response(response.text)
+            trends = parse_llm_json_response(result["text"])
             if trends:
-                print(f"✅ Gemini generated trend data for: {topic}")
+                print(f"✅ Gemini ({result['mode']}) generated trend data for: {topic}")
                 return trends
             else:
-                error_msg = f"Failed to parse JSON response from Gemini: {response.text[:200]}"
+                error_msg = f"Failed to parse JSON response from Gemini: {result['text'][:200]}"
                 log_interaction("parse_error", {
                     "error": "Failed to parse JSON",
                     "topic": topic
                 })
-                # NO FALLBACK - raise error
-                raise AIUnavailableError(error_msg)
+                raise GeminiError(error_msg)
         
         # NO FALLBACK - raise error on empty response
-        raise AIUnavailableError("Gemini returned empty response for trend analysis")
+        raise GeminiError("Gemini returned empty response for trend analysis")
         
-    except AIUnavailableError:
+    except (GeminiError, GeminiUnavailableError):
         raise  # Re-raise our custom errors
     except Exception as e:
         log_interaction("llm_error", {
             "error": str(e),
-            "topic": topic
+            "topic": topic,
+            "mode": gemini_mode
         })
-        # NO FALLBACK - raise error
-        raise AIUnavailableError(f"Gemini API error during trend analysis: {e}")
+        raise GeminiError(f"Gemini API error during trend analysis: {e}")
 
 
 def get_simulated_trend(topic: str) -> Dict[str, Any]:
