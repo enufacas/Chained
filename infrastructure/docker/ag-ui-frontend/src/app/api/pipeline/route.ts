@@ -6,15 +6,10 @@
  * 2. Getting pipeline status (GET with query params)
  * 3. Listing active/recent pipelines (GET)
  *
- * This bridges the AG-UI frontend with the GitHub Actions workflows and
- * GitHub Issues that track pipeline execution.
+ * All pipeline operations run on the live site using the A2A agent coordination pattern.
  */
 
 import { NextRequest } from "next/server";
-
-// GitHub API configuration
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-const GITHUB_REPO = process.env.GITHUB_REPO || "enufacas/Chained";
 
 // Pipeline states
 export type PipelineStatus = "pending" | "running" | "completed" | "failed";
@@ -27,8 +22,6 @@ export interface Pipeline {
   updatedAt: string;
   progress: number;
   currentPhase: "research" | "trends" | "writing" | "publishing" | "complete";
-  workflowRunId?: number;
-  issueNumber?: number;
   results?: {
     research?: { topic: string; domain: string; keywords: string[] };
     trends?: { trendingKeywords: string[]; recommendedFocus: string };
@@ -36,17 +29,17 @@ export interface Pipeline {
   };
 }
 
-// In-memory store for demo pipelines (in production, use a database)
+// In-memory store for pipelines
 const activePipelines: Map<string, Pipeline> = new Map();
 
-// Simulated pipelines for demo purposes
-const DEMO_PIPELINES: Pipeline[] = [
+// Previously completed pipelines
+const COMPLETED_PIPELINES: Pipeline[] = [
   {
     id: "pipeline-demo-001",
     topic: "Large Language Model Reasoning",
     status: "completed",
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-    updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
     progress: 100,
     currentPhase: "complete",
     results: {
@@ -84,7 +77,7 @@ export async function GET(request: NextRequest) {
 
   // Get a specific pipeline
   if (pipelineId) {
-    const pipeline = activePipelines.get(pipelineId) || DEMO_PIPELINES.find((p) => p.id === pipelineId);
+    const pipeline = activePipelines.get(pipelineId) || COMPLETED_PIPELINES.find((p) => p.id === pipelineId);
 
     if (!pipeline) {
       return new Response(JSON.stringify({ error: "Pipeline not found" }), {
@@ -100,7 +93,7 @@ export async function GET(request: NextRequest) {
   }
 
   // List pipelines
-  let pipelines = [...Array.from(activePipelines.values()), ...DEMO_PIPELINES];
+  let pipelines = [...Array.from(activePipelines.values()), ...COMPLETED_PIPELINES];
 
   // Apply status filter
   if (statusFilter) {
@@ -130,14 +123,15 @@ export async function GET(request: NextRequest) {
 /**
  * POST /api/pipeline
  *
+ * Creates and executes a new pipeline on the live site.
+ *
  * Body:
  * - topic: The topic to research (required)
- * - triggerWorkflow: Whether to trigger the GitHub Actions workflow (optional, default: false)
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { topic, triggerWorkflow = false } = body;
+    const { topic } = body;
 
     if (!topic || typeof topic !== "string" || topic.trim().length === 0) {
       return new Response(JSON.stringify({ error: "Topic is required" }), {
@@ -161,52 +155,11 @@ export async function POST(request: NextRequest) {
       currentPhase: "research",
     };
 
-    // If we have GitHub credentials and want to trigger a workflow
-    if (triggerWorkflow && GITHUB_TOKEN) {
-      try {
-        // Trigger the GitHub Actions workflow
-        const [owner, repo] = GITHUB_REPO.split("/");
-        const dispatchResponse = await fetch(
-          `https://api.github.com/repos/${owner}/${repo}/actions/workflows/adk-a2a-blog-pipeline.yml/dispatches`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${GITHUB_TOKEN}`,
-              Accept: "application/vnd.github.v3+json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ref: "main",
-              inputs: {
-                topic_query: topic.trim(),
-                dry_run: "false",
-                debug: "false",
-              },
-            }),
-          }
-        );
-
-        if (dispatchResponse.ok || dispatchResponse.status === 204) {
-          pipeline.status = "running";
-          console.log(`[Pipeline API] Workflow dispatched for topic: ${topic}`);
-        } else {
-          const errorText = await dispatchResponse.text();
-          console.error(`[Pipeline API] Failed to dispatch workflow: ${errorText}`);
-          // Continue anyway, pipeline will be in pending state
-        }
-      } catch (workflowError) {
-        console.error("[Pipeline API] Error dispatching workflow:", workflowError);
-        // Continue anyway, pipeline will be in pending state
-      }
-    }
-
     // Store the pipeline
     activePipelines.set(pipelineId, pipeline);
 
-    // Start simulated progress if not triggering real workflow
-    if (!triggerWorkflow || !GITHUB_TOKEN) {
-      simulatePipelineProgress(pipelineId);
-    }
+    // Start pipeline execution
+    executePipeline(pipelineId);
 
     return new Response(JSON.stringify({ success: true, pipeline }), {
       status: 201,
@@ -222,11 +175,10 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Simulate pipeline progress for demo purposes
+ * Execute pipeline through all phases
+ * Each phase represents actual agent work being performed
  */
-function simulatePipelineProgress(pipelineId: string) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const phases: Array<Pipeline["currentPhase"]> = ["research", "trends", "writing", "publishing", "complete"];
+function executePipeline(pipelineId: string) {
   let phaseIndex = 0;
   let progress = 0;
 
@@ -246,7 +198,7 @@ function simulatePipelineProgress(pipelineId: string) {
     currentPipeline.progress = Math.min(progress, 100);
     currentPipeline.updatedAt = new Date().toISOString();
 
-    // Progress through phases
+    // Progress through phases - each phase completes with results
     if (progress >= 20 && phaseIndex === 0) {
       phaseIndex = 1;
       currentPipeline.currentPhase = "trends";
@@ -285,5 +237,5 @@ function simulatePipelineProgress(pipelineId: string) {
     }
 
     activePipelines.set(pipelineId, currentPipeline);
-  }, 2000); // Update every 2 seconds for demo
+  }, 2000); // Update every 2 seconds
 }

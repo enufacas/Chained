@@ -619,6 +619,9 @@ function MainContent({
   apiStatus: ApiStatus;
   onApiStatusChange: (status: ApiStatus) => void;
 }) {
+  // State for collapsible chat panel
+  const [isChatOpen, setIsChatOpen] = useState(true);
+  
   // Make pipeline data available to CopilotKit
   useCopilotReadable({
     description: "Current A2A pipeline run data including research findings, trends analysis, and blog output",
@@ -921,23 +924,55 @@ Just type a message like: "@research-agent What's trending in AI?"`;
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Left Column - Chat */}
-          <div className="lg:col-span-1">
-            <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden h-[700px] sticky top-24">
-              <div className="p-4 border-b border-slate-700 bg-slate-900/50">
-                <h2 className="font-semibold text-accent-400">💬 AI Assistant</h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  {apiStatus.available
-                    ? `Powered by ${
-                        apiStatus.provider === "vertex-ai"
-                          ? "Vertex AI"
-                          : apiStatus.provider === "gemini"
-                          ? "Gemini"
-                          : "OpenAI"
-                      }`
-                    : "Configure API key to enable"}
-                </p>
+        {/* Mobile Chat Toggle Button */}
+        <button
+          onClick={() => setIsChatOpen(!isChatOpen)}
+          className="lg:hidden w-full mb-4 flex items-center justify-center gap-2 p-3 bg-accent-500/20 border border-accent-500/50 rounded-xl text-accent-300 hover:bg-accent-500/30 transition"
+        >
+          {isChatOpen ? (
+            <>
+              <span>📊</span>
+              <span>Show Dashboard</span>
+              <span className="text-xs bg-accent-500/30 px-2 py-0.5 rounded-full">Hide Chat</span>
+            </>
+          ) : (
+            <>
+              <span>💬</span>
+              <span>Open AI Chat</span>
+              <span className="text-xs bg-green-500/30 px-2 py-0.5 rounded-full text-green-300">
+                {apiStatus.available ? "Ready" : "Offline"}
+              </span>
+            </>
+          )}
+        </button>
+
+        <div className={`grid gap-6 ${isChatOpen ? 'lg:grid-cols-3' : ''}`}>
+          {/* Left Column - Chat (Collapsible on mobile) */}
+          <div className={`${isChatOpen ? 'lg:col-span-1' : 'hidden lg:block lg:col-span-1'} ${!isChatOpen ? 'hidden' : ''}`}>
+            <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden h-[500px] lg:h-[700px] sticky top-24">
+              <div className="p-4 border-b border-slate-700 bg-slate-900/50 flex items-center justify-between">
+                <div>
+                  <h2 className="font-semibold text-accent-400">💬 AI Assistant</h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    {apiStatus.available
+                      ? `Powered by ${
+                          apiStatus.provider === "vertex-ai"
+                            ? "Vertex AI"
+                            : apiStatus.provider === "gemini"
+                            ? "Gemini"
+                            : "OpenAI"
+                        }`
+                      : "Configure API key to enable"}
+                  </p>
+                </div>
+                {/* Desktop collapse button */}
+                <button
+                  onClick={() => setIsChatOpen(false)}
+                  className="hidden lg:flex items-center gap-1 px-2 py-1 text-xs rounded bg-slate-700 hover:bg-slate-600 text-slate-400 transition"
+                  title="Collapse chat"
+                >
+                  ◀ Hide
+                </button>
               </div>
               <div className="h-[calc(100%-65px)]">
                 <ChatPanel apiAvailable={apiStatus.available} />
@@ -946,7 +981,22 @@ Just type a message like: "@research-agent What's trending in AI?"`;
           </div>
 
           {/* Right Column - Dashboard */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className={`${isChatOpen ? 'lg:col-span-2' : 'lg:col-span-3'} space-y-6 ${isChatOpen ? 'hidden lg:block' : ''}`}>
+            {/* Collapsed Chat Toggle (Desktop) */}
+            {!isChatOpen && (
+              <button
+                onClick={() => setIsChatOpen(true)}
+                className="hidden lg:flex items-center gap-2 w-full p-3 bg-accent-500/10 border border-accent-500/30 rounded-xl text-accent-400 hover:bg-accent-500/20 transition"
+              >
+                <span className="text-xl">💬</span>
+                <span className="font-medium">Open AI Chat</span>
+                <span className="text-xs bg-accent-500/20 px-2 py-0.5 rounded-full ml-auto">
+                  {apiStatus.available ? "✓ Ready" : "Configure API key"}
+                </span>
+                <span className="text-slate-400">▶</span>
+              </button>
+            )}
+
             {/* API Status */}
             <ApiStatusPanel onStatusChange={onApiStatusChange} />
 

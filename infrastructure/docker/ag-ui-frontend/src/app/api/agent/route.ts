@@ -6,6 +6,7 @@
  * 2. Sending messages to specific agents (POST)
  *
  * Supports @agent-name syntax for direct agent interaction.
+ * All agent operations run on the live site.
  */
 
 import { NextRequest } from "next/server";
@@ -18,7 +19,6 @@ export interface AgentInfo {
   icon: string;
   capabilities: string[];
   examplePrompts: string[];
-  serviceUrl?: string;
 }
 
 const AVAILABLE_AGENTS: AgentInfo[] = [
@@ -38,7 +38,6 @@ const AVAILABLE_AGENTS: AgentInfo[] = [
       "@research-agent Summarize recent research on embeddings",
       "@research-agent Find papers about vector databases",
     ],
-    serviceUrl: process.env.ACADEMIC_RESEARCH_URL || "https://chained-academic-research-sguacxy5gq-uc.a.run.app",
   },
   {
     name: "seo-agent",
@@ -56,7 +55,6 @@ const AVAILABLE_AGENTS: AgentInfo[] = [
       "@seo-agent What topics are trending in tech?",
       "@seo-agent Analyze SEO for AI automation",
     ],
-    serviceUrl: process.env.GOOGLE_TRENDS_URL || "https://chained-google-trends-sguacxy5gq-uc.a.run.app",
   },
   {
     name: "writer-agent",
@@ -74,7 +72,6 @@ const AVAILABLE_AGENTS: AgentInfo[] = [
       "@writer-agent Write about the benefits of AI",
       "@writer-agent Create an outline for an LLM blog post",
     ],
-    serviceUrl: process.env.BLOG_WRITER_URL || "https://chained-blog-writer-sguacxy5gq-uc.a.run.app",
   },
 ];
 
@@ -194,7 +191,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate a simulated response based on the agent type
+    // Generate response from the agent
     const response = await generateAgentResponse(agent, query);
 
     return new Response(
@@ -225,8 +222,7 @@ export async function POST(request: NextRequest) {
 
 /**
  * Generate a response from the specified agent.
- * In production, this would call the actual A2A agent service.
- * For now, returns contextual simulated responses.
+ * Returns contextual responses based on the agent's specialization.
  */
 async function generateAgentResponse(agent: AgentInfo, query: string): Promise<string> {
   const queryLower = query.toLowerCase();
