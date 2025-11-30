@@ -1,5 +1,7 @@
 /**
  * Shared types for AG-UI Frontend
+ * 
+ * @see docs/a2a-ui/README.md for documentation
  */
 
 // Agent types
@@ -76,4 +78,63 @@ export interface ApiStatus {
   model: string;
   error?: string;
   timestamp: string;
+}
+
+// =============================================================================
+// A2A Step Detail Types (shared between API and components)
+// =============================================================================
+
+/**
+ * Artifact captured from an A2A agent task
+ */
+export interface A2AStepArtifact {
+  name: string;
+  type: string;
+  data: string;
+  preview?: string;  // First 200 chars for UI preview
+}
+
+/**
+ * Detailed information about a single A2A step in a pipeline
+ * Captures task ID, timing, artifacts, and response for deep dive capability
+ */
+export interface A2AStepDetail {
+  taskId: string;
+  agentName: string;
+  phase: string;
+  status: "pending" | "running" | "completed" | "failed";
+  startTime: string;
+  endTime?: string;
+  durationMs?: number;
+  message?: string;
+  artifacts: A2AStepArtifact[];
+  rawResponse?: object;  // Full A2A task response for debugging
+}
+
+// =============================================================================
+// Pipeline Types
+// =============================================================================
+
+export type PipelineStatus = "pending" | "running" | "completed" | "failed";
+
+/**
+ * Pipeline result interface - used by both API route and UI components
+ */
+export interface Pipeline {
+  id: string;
+  topic: string;
+  status: PipelineStatus;
+  createdAt: string;
+  updatedAt: string;
+  progress: number;
+  currentPhase: "research" | "trends" | "writing" | "publishing" | "complete";
+  results?: {
+    research?: { topic: string; domain: string; keywords: string[] };
+    trends?: { trendingKeywords: string[]; recommendedFocus: string };
+    blog?: { title: string; url: string; wordCount: number };
+  };
+  // Detailed A2A step history for deep dive into runs
+  a2aSteps?: A2AStepDetail[];
+  // Total execution time
+  totalDurationMs?: number;
 }

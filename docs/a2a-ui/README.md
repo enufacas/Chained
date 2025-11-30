@@ -83,11 +83,11 @@ The unified single-page application with:
 4. **Pipeline Analysis** - Query any pipeline by topic/ID
 5. **Agent Health Monitoring** - Live Cloud Run status
 6. **Pipeline Detail View** - Click-to-expand with lifecycle visualization
-7. **A2A Steps Deep Dive** - Task IDs, artifacts, execution times (NEW)
+7. **A2A Steps Deep Dive** - Task IDs, artifacts, execution times
+8. **Enhanced Agent Prompts** - Detailed prompts for quality content (NEW)
 
 ### 🚧 In Progress
 
-- Enhanced blog content quality (addressing generic placeholders)
 - Run history persistence
 - Artifact expansion and inspection
 
@@ -97,6 +97,38 @@ The unified single-page application with:
 - Content review and editing
 - Historical pipeline browser with search
 - Voice/multi-modal interface
+
+## Content Quality
+
+### Improved Agent Prompts
+
+The pipeline now uses **detailed, structured prompts** to get better content from agents:
+
+#### Research Agent Prompt
+Requests 10 specific categories:
+- Comprehensive overview, key concepts, current state
+- Domain classification, target audience
+- Key statistics/facts, notable examples
+- Important keywords, expert perspectives, future directions
+
+#### Trends Agent Prompt  
+Requests detailed SEO analysis:
+- Top 10-15 trending keywords, related queries
+- Rising trends, geographic interest, seasonal patterns
+- Competitor keywords, long-tail opportunities
+- Content gaps, title suggestions
+
+#### Blog Writer Agent Prompt
+Structured 7-section template (2000-2500 words):
+1. Compelling Introduction (150-200 words)
+2. Background & Context (300-400 words)
+3. Deep Dive: Core Concepts (500-600 words)
+4. Practical Applications (400-500 words)
+5. Challenges & Considerations (200-300 words)
+6. Future Outlook (200-300 words)
+7. Conclusion & Call to Action (100-150 words)
+
+Plus quality checklist: no generic content, require examples, specific data points.
 
 ## Data Model
 

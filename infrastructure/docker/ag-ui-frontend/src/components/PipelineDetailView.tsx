@@ -15,45 +15,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Pipeline, A2AStepDetail } from "@/types";
 
-// A2A Step detail interface matching the API
-interface A2AStepArtifact {
-  name: string;
-  type: string;
-  data: string;
-  preview?: string;
-}
-
-interface A2AStepDetail {
-  taskId: string;
-  agentName: string;
-  phase: string;
-  status: "pending" | "running" | "completed" | "failed";
-  startTime: string;
-  endTime?: string;
-  durationMs?: number;
-  message?: string;
-  artifacts: A2AStepArtifact[];
-  rawResponse?: object;
-}
-
-interface PipelineResult {
-  id: string;
-  topic: string;
-  status: "pending" | "running" | "completed" | "failed";
-  createdAt: string;
-  updatedAt: string;
-  progress: number;
-  currentPhase: string;
-  results?: {
-    research?: { topic: string; domain: string; keywords: string[] };
-    trends?: { trendingKeywords: string[]; recommendedFocus: string };
-    blog?: { title: string; url: string; wordCount: number };
-  };
-  // Enhanced A2A step details
-  a2aSteps?: A2AStepDetail[];
-  totalDurationMs?: number;
-}
+// Re-export for backwards compatibility with any direct imports
+export type { A2AStepDetail };
 
 interface PipelineDetailViewProps {
   pipelineId: string;
@@ -125,7 +90,7 @@ function getPhaseIndex(phase: string): number {
 }
 
 export default function PipelineDetailView({ pipelineId, onClose }: PipelineDetailViewProps) {
-  const [pipeline, setPipeline] = useState<PipelineResult | null>(null);
+  const [pipeline, setPipeline] = useState<Pipeline | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
@@ -490,8 +455,11 @@ export default function PipelineDetailView({ pipelineId, onClose }: PipelineDeta
                                   </span>
                                 </div>
                                 <pre className="text-xs text-slate-300 overflow-x-auto max-h-48 overflow-y-auto">
-                                  {artifact.preview || artifact.data.substring(0, 500)}
-                                  {artifact.data.length > 500 && "..."}
+                                  {artifact.preview && artifact.preview.length > 0 
+                                    ? artifact.preview 
+                                    : artifact.data.length > 500 
+                                      ? artifact.data.substring(0, 500) + "..."
+                                      : artifact.data}
                                 </pre>
                               </div>
                             ))}

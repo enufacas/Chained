@@ -381,7 +381,7 @@ function createA2AStepDetail(
     startTime,
     endTime,
     durationMs,
-    message: task.status.message?.parts?.map(p => p.text).join("\n") || undefined,
+    message: task.status.message?.parts?.map(p => p.text).join("\n"),
     artifacts: (task.artifacts || []).map(a => ({
       name: a.name,
       type: a.type,
@@ -441,8 +441,27 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     const researchStartTime = new Date().toISOString();
     const researchTask = await callA2AAgent(
       AGENT_URLS.research,
-      `Research the topic: ${pipeline.topic}. Provide key findings, domain classification, and important keywords.`,
-      { topic: pipeline.topic }
+      `Conduct in-depth research on the topic: "${pipeline.topic}".
+
+Please provide:
+1. **Comprehensive Overview**: What is this topic about? Why is it important?
+2. **Key Concepts**: List and explain 5-7 fundamental concepts or terms
+3. **Current State**: What are the latest developments and trends?
+4. **Domain Classification**: What field(s) does this belong to?
+5. **Target Audience**: Who would benefit from learning about this?
+6. **Key Statistics or Facts**: Include specific numbers, dates, or data points
+7. **Notable Examples**: Real-world applications or case studies
+8. **Important Keywords**: SEO-relevant terms for content optimization
+9. **Expert Perspectives**: What do industry leaders say about this topic?
+10. **Future Directions**: Where is this field heading?
+
+Be specific and detailed - avoid generic placeholders. Include real data where possible.`,
+      { 
+        topic: pipeline.topic,
+        depth: "comprehensive",
+        include_statistics: true,
+        include_examples: true,
+      }
     );
     
     if (researchTask) {
@@ -520,10 +539,25 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     const trendsStartTime = new Date().toISOString();
     const trendsTask = await callA2AAgent(
       AGENT_URLS.trends,
-      `Analyze trends for: ${pipeline.topic}. Provide trending keywords and SEO recommendations.`,
+      `Analyze search trends and SEO opportunities for: "${pipeline.topic}".
+
+Please provide:
+1. **Trending Keywords**: Top 10-15 high-volume search terms related to this topic
+2. **Related Queries**: What questions are people asking about this topic?
+3. **Rising Trends**: Keywords growing in popularity
+4. **Geographic Interest**: Where is this topic most popular?
+5. **Seasonal Patterns**: Any time-based trends?
+6. **Competitor Keywords**: What terms are competitors ranking for?
+7. **Long-tail Opportunities**: Specific phrases with lower competition
+8. **Content Gaps**: Topics not well-covered that could be opportunities
+9. **Recommended Focus**: The single best angle to target for maximum reach
+10. **Title Suggestions**: 3-5 SEO-optimized title options
+
+Base keywords from research: ${pipeline.results?.research?.keywords?.join(", ") || pipeline.topic}`,
       { 
         topic: pipeline.topic,
         keywords: pipeline.results?.research?.keywords,
+        research_domain: pipeline.results?.research?.domain,
       },
       taskIds
     );
@@ -598,27 +632,94 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     
     logWithTimestamp("INFO", `Pipeline ${pipelineId}: Starting writing phase`);
     
+    // Build detailed key points from research and trends data
+    const researchKeywords = pipeline.results?.research?.keywords || [];
+    const trendingKeywords = pipeline.results?.trends?.trendingKeywords || [];
+    const recommendedFocus = pipeline.results?.trends?.recommendedFocus || pipeline.topic;
+    const domain = pipeline.results?.research?.domain || "Technology";
+    
     const writerStartTime = new Date().toISOString();
     const writerTask = await callA2AAgent(
       AGENT_URLS.writer,
-      `Write and publish a blog post about: ${pipeline.topic}`,
+      `Write a comprehensive, engaging, and well-researched blog post about: "${pipeline.topic}"
+
+## Content Requirements
+
+**Tone & Style:**
+- Professional yet accessible - explain complex concepts clearly
+- Use concrete examples and real-world applications
+- Include specific data points, statistics, or facts where relevant
+- Avoid generic filler content - every paragraph should add value
+
+**Structure (2000-2500 words):**
+
+1. **Compelling Introduction** (150-200 words)
+   - Hook the reader with a surprising fact, question, or scenario
+   - Clearly state what they'll learn
+   - Why this topic matters RIGHT NOW
+
+2. **Background & Context** (300-400 words)
+   - Historical context or evolution of the topic
+   - Key terminology explained
+   - Current landscape overview
+
+3. **Deep Dive: Core Concepts** (500-600 words)
+   - 3-4 main concepts explained in detail
+   - Use subheadings for each concept
+   - Include examples for each
+
+4. **Practical Applications** (400-500 words)
+   - Real-world use cases
+   - Industry examples
+   - How readers can apply this knowledge
+
+5. **Challenges & Considerations** (200-300 words)
+   - Honest assessment of limitations
+   - Common pitfalls to avoid
+   - Ethical considerations if relevant
+
+6. **Future Outlook** (200-300 words)
+   - Where is this heading?
+   - Expert predictions
+   - What to watch for
+
+7. **Conclusion & Call to Action** (100-150 words)
+   - Key takeaways (3-5 bullet points)
+   - Actionable next steps for readers
+
+## SEO Optimization
+- Primary keyword: "${recommendedFocus}"
+- Secondary keywords: ${[...researchKeywords, ...trendingKeywords].slice(0, 8).join(", ")}
+- Use keywords naturally in headings and throughout
+- Include meta description suggestion
+
+## Quality Checklist
+- [ ] No generic placeholder content
+- [ ] Specific examples and data points included
+- [ ] All claims supported with context
+- [ ] Clear, scannable formatting with headers
+- [ ] Engaging, non-robotic writing style
+
+Domain: ${domain}`,
       {
         topic_data: {
           topic: pipeline.results?.research?.topic || pipeline.topic,
-          domain: pipeline.results?.research?.domain || "Technology",
-          key_points: [
-            "Introduction and Overview",
-            "Key Concepts and Background",
-            "Practical Applications",
-            "Future Outlook",
-          ],
-          seo_keywords: pipeline.results?.trends?.trendingKeywords || pipeline.results?.research?.keywords || [],
-          suggested_length: "1500-2500 words",
+          domain: domain,
+          research_keywords: researchKeywords,
+          trending_keywords: trendingKeywords,
+          recommended_focus: recommendedFocus,
         },
         trends_data: pipeline.results?.trends ? {
           trending_keywords: pipeline.results.trends.trendingKeywords,
           recommended_focus: pipeline.results.trends.recommendedFocus,
         } : null,
+        quality_requirements: {
+          min_words: 2000,
+          max_words: 2500,
+          require_examples: true,
+          require_data_points: true,
+          avoid_generic_content: true,
+        },
       },
       taskIds
     );

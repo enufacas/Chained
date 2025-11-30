@@ -6,7 +6,7 @@ Format: `## [Date] PR #XXX - Title`
 
 ---
 
-## [2025-11-30] PR #3446 - Enhanced A2A Steps & Deep Dive
+## [2025-11-30] PR #3446 - Enhanced A2A Steps, Deep Dive, and Content Quality
 
 ### Added
 - **A2A Step Details**: Pipeline now captures full A2A task information:
@@ -27,16 +27,37 @@ Format: `## [Date] PR #XXX - Title`
   - Added CHANGELOG.md for tracking improvements
   - Added path-specific copilot instructions
 
+- **Shared Types**:
+  - Moved `Pipeline`, `A2AStepDetail`, `A2AStepArtifact` to `@/types`
+  - Single source of truth for API and UI components
+
 ### Changed
+- **CRITICAL: Improved Agent Prompts** for better content quality:
+  - **Research Agent**: Now requests 10 specific categories of information including statistics, examples, expert perspectives, and future directions
+  - **Trends Agent**: Now requests trending keywords, related queries, rising trends, geographic interest, long-tail opportunities, and title suggestions  
+  - **Blog Writer Agent**: Complete structured prompt with:
+    - 7-section blog structure (2000-2500 words)
+    - Specific word counts per section
+    - Quality checklist (no generic content, require examples)
+    - SEO optimization with primary/secondary keywords
+    - Writing style guidance (professional, concrete examples, data points)
+
 - `Pipeline` interface extended with:
   - `a2aSteps?: A2AStepDetail[]`
   - `totalDurationMs?: number`
-- `executePipelineWithAgents()` now records step details
 
 ### Technical Details
 - Files modified:
-  - `/api/pipeline/route.ts` - Enhanced data model
+  - `/api/pipeline/route.ts` - Enhanced data model + improved prompts
   - `/components/PipelineDetailView.tsx` - New deep dive UI
+  - `/types/index.ts` - Shared type definitions
+
+### Why This Matters
+The previous prompts were very basic (e.g., "Write a blog post about X") which resulted in generic, placeholder-like content. The new prompts provide detailed instructions that should produce:
+- Specific, researched content with real data points
+- Proper blog structure with introduction, body, conclusion
+- SEO-optimized titles and keywords
+- Higher word counts (2000-2500 vs generic)
 
 ---
 
