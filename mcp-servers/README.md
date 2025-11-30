@@ -106,6 +106,7 @@ Close and reopen Claude Desktop for changes to take effect.
 - [Chained Repository MCP](./chained-repository/README.md) - Full documentation
 - [Quick Start Guide](./chained-repository/QUICKSTART.md) - 5-minute setup
 - [gcloud-mcp](https://github.com/googleapis/gcloud-mcp) - Google Cloud MCP server docs
+- [gcloud-mcp Copilot Setup](../docs/guides/GCLOUD_MCP_COPILOT_SETUP.md) - Environment secrets configuration
 - [Model Context Protocol](https://modelcontextprotocol.io/) - Official MCP docs
 
 ## 🛠️ Development
