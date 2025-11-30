@@ -72,7 +72,7 @@ export interface PipelineData {
 export interface ApiStatus {
   checking: boolean;
   available: boolean;
-  provider: "gemini" | "openai" | "none";
+  provider: "vertex-ai" | "gemini" | "openai" | "none";
   model: string;
   error?: string;
   timestamp: string;

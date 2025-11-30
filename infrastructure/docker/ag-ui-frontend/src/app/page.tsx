@@ -234,10 +234,23 @@ function ApiStatusPanel({ onStatusChange }: { onStatusChange: (status: ApiStatus
       );
     }
     if (status.available) {
-      const providerEmoji = status.provider === "gemini" ? "🔷" : "🟢";
+      // Handle different provider types
+      const getProviderInfo = (provider: string) => {
+        switch (provider) {
+          case "vertex-ai":
+            return { emoji: "☁️", name: "Vertex AI" };
+          case "gemini":
+            return { emoji: "🔷", name: "Gemini" };
+          case "openai":
+            return { emoji: "🟢", name: "OpenAI" };
+          default:
+            return { emoji: "✅", name: provider };
+        }
+      };
+      const { emoji, name } = getProviderInfo(status.provider);
       return (
         <span className="px-3 py-1 rounded-full text-sm bg-green-500/20 text-green-400 border border-green-500/30">
-          {providerEmoji} {status.provider === "gemini" ? "Gemini" : "OpenAI"} Ready
+          {emoji} {name} Ready
         </span>
       );
     }
@@ -297,7 +310,8 @@ function ApiStatusPanel({ onStatusChange }: { onStatusChange: (status: ApiStatus
               <p className="text-yellow-400 text-sm font-medium">Configuration Issue</p>
               <p className="text-slate-400 text-xs mt-1">{status.error}</p>
               <p className="text-slate-500 text-xs mt-2">
-                Set <code className="bg-black/30 px-1 rounded">GOOGLE_API_KEY</code> or{" "}
+                Set <code className="bg-black/30 px-1 rounded">USE_VERTEX_AI=true</code> (for Cloud Run),{" "}
+                <code className="bg-black/30 px-1 rounded">GEMINI_API_KEY</code>, or{" "}
                 <code className="bg-black/30 px-1 rounded">OPENAI_API_KEY</code> for AI chat features.
               </p>
             </div>
@@ -312,7 +326,11 @@ function ApiStatusPanel({ onStatusChange }: { onStatusChange: (status: ApiStatus
             <div>
               <span className="text-slate-500">Provider:</span>{" "}
               <span className="text-green-400 font-medium">
-                {status.provider === "gemini" ? "Google Gemini" : "OpenAI"}
+                {status.provider === "vertex-ai"
+                  ? "Vertex AI"
+                  : status.provider === "gemini"
+                  ? "Google Gemini"
+                  : "OpenAI"}
               </span>
             </div>
             <div>
@@ -525,7 +543,9 @@ function ChatPanel({ apiAvailable }: { apiAvailable: boolean }) {
         </p>
         <div className="mt-4 p-4 bg-black/30 rounded-lg text-left w-full max-w-xs">
           <p className="text-xs text-slate-500 mb-2">Required environment variables:</p>
-          <code className="text-xs text-accent-400 block">GOOGLE_API_KEY=...</code>
+          <code className="text-xs text-accent-400 block">USE_VERTEX_AI=true</code>
+          <span className="text-xs text-slate-600 block my-1">or</span>
+          <code className="text-xs text-accent-400 block">GEMINI_API_KEY=...</code>
           <span className="text-xs text-slate-600 block my-1">or</span>
           <code className="text-xs text-accent-400 block">OPENAI_API_KEY=...</code>
         </div>
@@ -679,7 +699,13 @@ ${research.keyPoints.map((p) => `- ${p}`).join("\n")}`;
                 <h2 className="font-semibold text-accent-400">💬 AI Assistant</h2>
                 <p className="text-xs text-slate-500 mt-1">
                   {apiStatus.available
-                    ? `Powered by ${apiStatus.provider === "gemini" ? "Gemini" : "OpenAI"}`
+                    ? `Powered by ${
+                        apiStatus.provider === "vertex-ai"
+                          ? "Vertex AI"
+                          : apiStatus.provider === "gemini"
+                          ? "Gemini"
+                          : "OpenAI"
+                      }`
                     : "Configure API key to enable"}
                 </p>
               </div>
