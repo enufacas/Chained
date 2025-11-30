@@ -110,15 +110,14 @@ export default function PipelineDetailView({ pipelineId, onClose }: PipelineDeta
   useEffect(() => {
     fetchPipeline();
 
-    // Poll every 3 seconds for active pipelines
+    // Poll every 5 seconds for active pipelines (consistent with other components)
+    // Only poll when pipeline is in active state to reduce server load
     const interval = setInterval(() => {
-      if (pipeline?.status === "running" || pipeline?.status === "pending") {
-        fetchPipeline();
-      }
-    }, 3000);
+      fetchPipeline();
+    }, 5000);
 
     return () => clearInterval(interval);
-  }, [fetchPipeline, pipeline?.status]);
+  }, [fetchPipeline]);
 
   if (loading) {
     return (

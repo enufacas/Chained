@@ -280,12 +280,14 @@ export default function PipelineOutcomes() {
                 {/* Results */}
                 {pipeline.results && (
                   <div className="mt-3 space-y-2">
-                    {/* Blog Post */}
+                    {/* Blog Post - External link opens in new tab */}
                     {pipeline.results.blog && (
                       <a
                         href={pipeline.results.blog.url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        // Stop propagation to prevent opening the detail modal when clicking the blog link
+                        // This allows users to directly open the blog post in a new tab
                         onClick={(e) => e.stopPropagation()}
                         className="flex items-center gap-3 p-2 rounded bg-accent-500/10 border border-accent-500/20 hover:bg-accent-500/20 transition group"
                       >

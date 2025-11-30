@@ -485,10 +485,18 @@ function MainContent({
         
         if (pipelineIdentifier && pipelineIdentifier.trim()) {
           const searchTerm = pipelineIdentifier.toLowerCase().trim();
-          targetPipeline = data.pipelines.find((p: { id: string; topic: string }) => 
-            p.id.toLowerCase().includes(searchTerm) ||
-            p.topic.toLowerCase().includes(searchTerm)
-          );
+          // Use word boundary matching for more precise search results
+          // First try exact ID match, then word-boundary topic match
+          targetPipeline = data.pipelines.find((p: { id: string; topic: string }) => {
+            // Exact match on ID
+            if (p.id.toLowerCase() === searchTerm) return true;
+            // Word-boundary match on topic (matches whole words only)
+            const topicWords = p.topic.toLowerCase().split(/\s+/);
+            const searchWords = searchTerm.split(/\s+/);
+            return searchWords.every(sw => 
+              topicWords.some(tw => tw === sw || tw.startsWith(sw))
+            );
+          });
           
           if (!targetPipeline) {
             const availablePipelines = data.pipelines
@@ -605,10 +613,15 @@ ${availablePipelines}`;
         let pipeline = null;
         if (pipelineIdentifier) {
           const searchTerm = pipelineIdentifier.toLowerCase().trim();
-          pipeline = data.pipelines.find((p: { id: string; topic: string }) => 
-            p.id.toLowerCase().includes(searchTerm) ||
-            p.topic.toLowerCase().includes(searchTerm)
-          );
+          // Use word boundary matching for more precise results
+          pipeline = data.pipelines.find((p: { id: string; topic: string }) => {
+            if (p.id.toLowerCase() === searchTerm) return true;
+            const topicWords = p.topic.toLowerCase().split(/\s+/);
+            const searchWords = searchTerm.split(/\s+/);
+            return searchWords.every(sw => 
+              topicWords.some(tw => tw === sw || tw.startsWith(sw))
+            );
+          });
         } else {
           pipeline = data.pipelines.find((p: { status: string; results?: { trends?: object } }) => 
             p.status === "completed" && p.results?.trends
@@ -658,10 +671,15 @@ ${pipeline.results.trends.trendingKeywords?.map((k: string) => `- ${k}`).join("\
         let pipeline = null;
         if (pipelineIdentifier) {
           const searchTerm = pipelineIdentifier.toLowerCase().trim();
-          pipeline = data.pipelines.find((p: { id: string; topic: string }) => 
-            p.id.toLowerCase().includes(searchTerm) ||
-            p.topic.toLowerCase().includes(searchTerm)
-          );
+          // Use word boundary matching for more precise results
+          pipeline = data.pipelines.find((p: { id: string; topic: string }) => {
+            if (p.id.toLowerCase() === searchTerm) return true;
+            const topicWords = p.topic.toLowerCase().split(/\s+/);
+            const searchWords = searchTerm.split(/\s+/);
+            return searchWords.every(sw => 
+              topicWords.some(tw => tw === sw || tw.startsWith(sw))
+            );
+          });
         } else {
           pipeline = data.pipelines.find((p: { status: string; results?: { research?: object } }) => 
             p.status === "completed" && p.results?.research
