@@ -829,6 +829,8 @@
         <button class="control-btn active" id="btn-toggle-bloom">Bloom: ON</button>
         <button class="control-btn" id="btn-toggle-helpers">Helpers: OFF</button>
         <button class="control-btn" id="btn-toggle-connections">Connections: ON</button>
+        <button class="control-btn active" id="btn-toggle-gcp">☁️ GCP: ON</button>
+        <button class="control-btn active" id="btn-toggle-a2a">🔄 A2A: ON</button>
         <div class="control-slider">
             <label>Speed</label>
             <input type="range" id="speed-slider" min="0.1" max="3" step="0.1" value="1">
@@ -939,6 +941,13 @@
             workflow: '',
             type: ''
         };
+        let gcpObjects = []; // Store GCP infrastructure objects
+        let a2aObjects = []; // Store A2A communication objects
+        let showGCPInfra = true; // Toggle for GCP infrastructure layer
+        let showA2ACommunications = true; // Toggle for A2A communications layer
+        
+        // Constants for GCP/A2A visualization
+        const CONNECTION_PROBABILITY = 0.6; // Probability of showing connection lines between services (for visual variety)
 
         // Colors for specializations
         const specializationColors = {
@@ -1750,6 +1759,516 @@
                     });
                 }
             }
+        }
+
+        // GCP Cloud Run services configuration
+        const gcpServices = {
+            cloudRun: [
+                { name: 'academic-research', type: 'agent', icon: '🎓' },
+                { name: 'blog-writer', type: 'agent', icon: '✍️' },
+                { name: 'google-trends', type: 'agent', icon: '📈' },
+                { name: 'adk-api-server', type: 'service', icon: '🔌' },
+                { name: 'ag-ui-frontend', type: 'service', icon: '🖥️' },
+                { name: 'chained-website', type: 'service', icon: '🌐' },
+                { name: 'chained-agent-gateway', type: 'service', icon: '🚪' },
+                { name: 'chained-agent-worker', type: 'service', icon: '⚙️' }
+            ],
+            supporting: [
+                { name: 'Firestore', type: 'database', icon: '🗄️', color: 0xff9900 },
+                { name: 'Pub/Sub', type: 'messaging', icon: '📨', color: 0x00ff99 },
+                { name: 'Artifact Registry', type: 'container', icon: '📦', color: 0x9966ff }
+            ]
+        };
+
+        // A2A Communication flows configuration
+        const a2aFlows = [
+            { from: 'academic-research', to: 'blog-writer', type: 'research', color: 0x9900ff, label: 'Research Data' },
+            { from: 'google-trends', to: 'blog-writer', type: 'trends', color: 0x00ff99, label: 'SEO Data' },
+            { from: 'academic-research', to: 'adk-api-server', type: 'coordination', color: 0x00ffff, label: 'Coordination' },
+            { from: 'blog-writer', to: 'adk-api-server', type: 'coordination', color: 0x00ffff, label: 'Coordination' },
+            { from: 'google-trends', to: 'adk-api-server', type: 'coordination', color: 0x00ffff, label: 'Coordination' }
+        ];
+
+        // Create GCP Infrastructure visualization
+        function createGCPInfrastructure() {
+            // Clear existing GCP objects
+            gcpObjects.forEach(obj => {
+                scene.remove(obj);
+                if (obj.element) labelScene.remove(obj);
+            });
+            gcpObjects = [];
+
+            const platformGroup = new THREE.Group();
+            
+            // Platform base position (elevated and to the side)
+            const baseX = 55;
+            const baseY = 25;
+            const baseZ = 0;
+
+            // Create cloud platform base (floating platform)
+            const platformGeometry = new THREE.BoxGeometry(35, 2, 25);
+            const platformMaterial = new THREE.MeshStandardMaterial({
+                color: 0x1a1a3a,
+                emissive: 0x0066ff,
+                emissiveIntensity: 0.2,
+                metalness: 0.8,
+                roughness: 0.3,
+                transparent: true,
+                opacity: 0.85
+            });
+            const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+            platform.position.set(baseX, baseY - 2, baseZ);
+            platform.userData = { type: 'gcp-platform' };
+            scene.add(platform);
+            gcpObjects.push(platform);
+
+            // Add glowing edge ring around platform
+            const ringGeometry = new THREE.TorusGeometry(22, 0.3, 8, 48);
+            const ringMaterial = new THREE.MeshBasicMaterial({
+                color: 0x00aaff,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending
+            });
+            const platformRing = new THREE.Mesh(ringGeometry, ringMaterial);
+            platformRing.rotation.x = Math.PI / 2;
+            platformRing.position.set(baseX, baseY - 1, baseZ);
+            platformRing.userData = { type: 'gcp-ring', rotationSpeed: 0.005 };
+            scene.add(platformRing);
+            gcpObjects.push(platformRing);
+
+            // Add secondary animated ring
+            const ring2 = new THREE.Mesh(
+                new THREE.TorusGeometry(20, 0.15, 8, 48),
+                new THREE.MeshBasicMaterial({
+                    color: 0xff00ff,
+                    transparent: true,
+                    opacity: 0.4,
+                    blending: THREE.AdditiveBlending
+                })
+            );
+            ring2.rotation.x = Math.PI / 2;
+            ring2.position.set(baseX, baseY, baseZ);
+            ring2.userData = { type: 'gcp-ring', rotationSpeed: -0.008 };
+            scene.add(ring2);
+            gcpObjects.push(ring2);
+
+            // Create platform label
+            const platformLabelDiv = document.createElement('div');
+            platformLabelDiv.style.cssText = `
+                color: #00aaff;
+                font-size: 16px;
+                font-family: 'Courier New', monospace;
+                font-weight: bold;
+                background: rgba(0, 0, 0, 0.95);
+                padding: 8px 16px;
+                border-radius: 6px;
+                border: 2px solid #00aaff;
+                text-shadow: 0 0 10px #00aaff;
+                box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
+            `;
+            platformLabelDiv.textContent = '☁️ GCP us-central1';
+            const platformLabel = new CSS3DObject(platformLabelDiv);
+            platformLabel.position.set(baseX, baseY + 12, baseZ);
+            platformLabel.scale.set(0.06, 0.06, 0.06);
+            labelScene.add(platformLabel);
+            gcpObjects.push(platformLabel);
+
+            // Create Cloud Run services in a grid layout
+            const servicesPerRow = 4;
+            const serviceSpacingX = 7;
+            const serviceSpacingZ = 6;
+
+            gcpServices.cloudRun.forEach((service, idx) => {
+                const row = Math.floor(idx / servicesPerRow);
+                const col = idx % servicesPerRow;
+                
+                const serviceX = baseX - 12 + col * serviceSpacingX;
+                const serviceY = baseY + 2;
+                const serviceZ = baseZ - 5 + row * serviceSpacingZ;
+
+                // Create glowing cube for service
+                const isAgent = service.type === 'agent';
+                const serviceColor = isAgent ? 0xff00ff : 0x00ffff;
+                
+                const cubeGeometry = isAgent 
+                    ? new THREE.CylinderGeometry(1.2, 1.2, 2.5, 8)  // Cylinder for agents
+                    : new THREE.BoxGeometry(2, 2.5, 2); // Box for services
+                    
+                const cubeMaterial = new THREE.MeshStandardMaterial({
+                    color: serviceColor,
+                    emissive: serviceColor,
+                    emissiveIntensity: 0.5,
+                    metalness: 0.7,
+                    roughness: 0.2,
+                    transparent: true,
+                    opacity: 0.85
+                });
+                const serviceMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
+                serviceMesh.position.set(serviceX, serviceY, serviceZ);
+                serviceMesh.userData = { 
+                    type: 'gcp-service', 
+                    service: service,
+                    floatOffset: Math.random() * Math.PI * 2,
+                    originalY: serviceY
+                };
+                scene.add(serviceMesh);
+                gcpObjects.push(serviceMesh);
+
+                // Add glow effect
+                const glowGeometry = isAgent 
+                    ? new THREE.CylinderGeometry(1.6, 1.6, 3, 8)
+                    : new THREE.BoxGeometry(2.5, 3, 2.5);
+                const glowMaterial = new THREE.MeshBasicMaterial({
+                    color: serviceColor,
+                    transparent: true,
+                    opacity: 0.2,
+                    side: THREE.BackSide,
+                    blending: THREE.AdditiveBlending
+                });
+                const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+                glow.position.set(serviceX, serviceY, serviceZ);
+                scene.add(glow);
+                gcpObjects.push(glow);
+
+                // Create service label
+                const serviceLabelDiv = document.createElement('div');
+                serviceLabelDiv.style.cssText = `
+                    color: ${isAgent ? '#ff00ff' : '#00ffff'};
+                    font-size: 10px;
+                    font-family: 'Courier New', monospace;
+                    background: rgba(0, 0, 0, 0.9);
+                    padding: 3px 6px;
+                    border-radius: 3px;
+                    border: 1px solid ${isAgent ? '#ff00ff' : '#00ffff'};
+                    text-shadow: 0 0 5px ${isAgent ? '#ff00ff' : '#00ffff'};
+                    white-space: nowrap;
+                `;
+                serviceLabelDiv.textContent = `${service.icon} ${service.name}`;
+                const serviceLabel = new CSS3DObject(serviceLabelDiv);
+                serviceLabel.position.set(serviceX, serviceY + 2.5, serviceZ);
+                serviceLabel.scale.set(0.03, 0.03, 0.03);
+                labelScene.add(serviceLabel);
+                gcpObjects.push(serviceLabel);
+            });
+
+            // Create supporting services (Firestore, Pub/Sub, Artifact Registry)
+            const supportingStartX = baseX - 10;
+            const supportingY = baseY - 5;
+
+            gcpServices.supporting.forEach((service, idx) => {
+                const serviceX = supportingStartX + idx * 10;
+                const serviceZ = baseZ + 8;
+
+                // Create unique shapes for each supporting service
+                let serviceGeometry;
+                switch(service.type) {
+                    case 'database':
+                        serviceGeometry = new THREE.CylinderGeometry(1.5, 1.5, 1, 16); // Disk for database
+                        break;
+                    case 'messaging':
+                        serviceGeometry = new THREE.TorusGeometry(1, 0.4, 8, 16); // Ring for pub/sub
+                        break;
+                    case 'container':
+                        serviceGeometry = new THREE.BoxGeometry(2, 2, 2); // Box for containers
+                        break;
+                    default:
+                        serviceGeometry = new THREE.SphereGeometry(1, 16, 16);
+                }
+
+                const serviceMaterial = new THREE.MeshStandardMaterial({
+                    color: service.color,
+                    emissive: service.color,
+                    emissiveIntensity: 0.6,
+                    metalness: 0.6,
+                    roughness: 0.3
+                });
+                const serviceMesh = new THREE.Mesh(serviceGeometry, serviceMaterial);
+                serviceMesh.position.set(serviceX, supportingY, serviceZ);
+                serviceMesh.userData = { 
+                    type: 'gcp-supporting', 
+                    service: service,
+                    rotationSpeed: 0.01 + Math.random() * 0.01
+                };
+                scene.add(serviceMesh);
+                gcpObjects.push(serviceMesh);
+
+                // Create label for supporting service
+                const supportLabelDiv = document.createElement('div');
+                supportLabelDiv.style.cssText = `
+                    color: #${service.color.toString(16).padStart(6, '0')};
+                    font-size: 11px;
+                    font-family: 'Courier New', monospace;
+                    font-weight: bold;
+                    background: rgba(0, 0, 0, 0.9);
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    border: 1px solid #${service.color.toString(16).padStart(6, '0')};
+                    text-shadow: 0 0 8px #${service.color.toString(16).padStart(6, '0')};
+                `;
+                supportLabelDiv.textContent = `${service.icon} ${service.name}`;
+                const supportLabel = new CSS3DObject(supportLabelDiv);
+                supportLabel.position.set(serviceX, supportingY + 3, serviceZ);
+                supportLabel.scale.set(0.035, 0.035, 0.035);
+                labelScene.add(supportLabel);
+                gcpObjects.push(supportLabel);
+
+                // Add connection lines from Cloud Run to supporting services
+                const midY = (baseY + supportingY) / 2;
+                gcpServices.cloudRun.forEach((cloudRunService, crIdx) => {
+                    // Connect each Cloud Run service to relevant supporting services
+                    // Uses CONNECTION_PROBABILITY for visual variety - not all services show connections
+                    if (Math.random() > CONNECTION_PROBABILITY) {
+                        const crRow = Math.floor(crIdx / 4);
+                        const crCol = crIdx % 4;
+                        const crX = baseX - 12 + crCol * serviceSpacingX;
+                        const crZ = baseZ - 5 + crRow * serviceSpacingZ;
+                        
+                        const curve = new THREE.QuadraticBezierCurve3(
+                            new THREE.Vector3(crX, baseY, crZ),
+                            new THREE.Vector3((crX + serviceX) / 2, midY + 5, (crZ + serviceZ) / 2),
+                            new THREE.Vector3(serviceX, supportingY + 1.5, serviceZ)
+                        );
+                        
+                        const points = curve.getPoints(20);
+                        const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+                        const lineMaterial = new THREE.LineDashedMaterial({
+                            color: service.color,
+                            dashSize: 0.5,
+                            gapSize: 0.3,
+                            transparent: true,
+                            opacity: 0.4
+                        });
+                        const line = new THREE.Line(lineGeometry, lineMaterial);
+                        line.computeLineDistances();
+                        line.userData = { type: 'gcp-connection' };
+                        scene.add(line);
+                        gcpObjects.push(line);
+                    }
+                });
+            });
+
+            console.log('GCP Infrastructure created with', gcpObjects.length, 'objects');
+        }
+
+        // Create A2A Communications visualization
+        function createA2ACommunications() {
+            // Clear existing A2A objects
+            a2aObjects.forEach(obj => {
+                scene.remove(obj);
+                if (obj.element) labelScene.remove(obj);
+            });
+            a2aObjects = [];
+
+            const baseX = 55;
+            const baseY = 25;
+            const baseZ = 0;
+
+            // Service position mapping
+            const servicePositions = {};
+            const servicesPerRow = 4;
+            const serviceSpacingX = 7;
+            const serviceSpacingZ = 6;
+            
+            gcpServices.cloudRun.forEach((service, idx) => {
+                const row = Math.floor(idx / servicesPerRow);
+                const col = idx % servicesPerRow;
+                servicePositions[service.name] = {
+                    x: baseX - 12 + col * serviceSpacingX,
+                    y: baseY + 2,
+                    z: baseZ - 5 + row * serviceSpacingZ
+                };
+            });
+
+            // Create A2A communication flows
+            a2aFlows.forEach((flow, flowIdx) => {
+                const fromPos = servicePositions[flow.from];
+                const toPos = servicePositions[flow.to];
+                
+                if (!fromPos || !toPos) return;
+
+                // Create curved path for the flow
+                const midPoint = {
+                    x: (fromPos.x + toPos.x) / 2,
+                    y: Math.max(fromPos.y, toPos.y) + 5 + flowIdx * 1.5, // Arc above
+                    z: (fromPos.z + toPos.z) / 2
+                };
+
+                const curve = new THREE.QuadraticBezierCurve3(
+                    new THREE.Vector3(fromPos.x, fromPos.y + 1, fromPos.z),
+                    new THREE.Vector3(midPoint.x, midPoint.y, midPoint.z),
+                    new THREE.Vector3(toPos.x, toPos.y + 1, toPos.z)
+                );
+
+                // Create dashed line for the communication path
+                const points = curve.getPoints(30);
+                const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+                const lineMaterial = new THREE.LineDashedMaterial({
+                    color: flow.color,
+                    dashSize: 0.8,
+                    gapSize: 0.4,
+                    transparent: true,
+                    opacity: 0.7,
+                    linewidth: 2
+                });
+                const line = new THREE.Line(lineGeometry, lineMaterial);
+                line.computeLineDistances();
+                line.userData = { type: 'a2a-path', flow: flow };
+                scene.add(line);
+                a2aObjects.push(line);
+
+                // Create animated data packets along the path
+                const packetCount = 3;
+                for (let i = 0; i < packetCount; i++) {
+                    const packetGeometry = new THREE.OctahedronGeometry(0.3);
+                    const packetMaterial = new THREE.MeshBasicMaterial({
+                        color: flow.color,
+                        transparent: true,
+                        opacity: 0.9,
+                        blending: THREE.AdditiveBlending
+                    });
+                    const packet = new THREE.Mesh(packetGeometry, packetMaterial);
+                    
+                    // Initial position along curve
+                    const t = i / packetCount;
+                    const point = curve.getPoint(t);
+                    packet.position.copy(point);
+                    
+                    packet.userData = {
+                        type: 'a2a-packet',
+                        flow: flow,
+                        curve: curve,
+                        progress: t,
+                        speed: 0.008 + Math.random() * 0.004,
+                        packetIndex: i
+                    };
+                    
+                    scene.add(packet);
+                    a2aObjects.push(packet);
+
+                    // Add glow trail for packet
+                    const trailGeometry = new THREE.SphereGeometry(0.5);
+                    const trailMaterial = new THREE.MeshBasicMaterial({
+                        color: flow.color,
+                        transparent: true,
+                        opacity: 0.3,
+                        blending: THREE.AdditiveBlending
+                    });
+                    const trail = new THREE.Mesh(trailGeometry, trailMaterial);
+                    trail.position.copy(point);
+                    trail.userData = { type: 'a2a-trail', linkedPacket: packet };
+                    scene.add(trail);
+                    a2aObjects.push(trail);
+                }
+
+                // Add flow label at midpoint
+                const flowLabelDiv = document.createElement('div');
+                flowLabelDiv.style.cssText = `
+                    color: #${flow.color.toString(16).padStart(6, '0')};
+                    font-size: 9px;
+                    font-family: 'Courier New', monospace;
+                    background: rgba(0, 0, 0, 0.85);
+                    padding: 2px 5px;
+                    border-radius: 3px;
+                    border: 1px solid #${flow.color.toString(16).padStart(6, '0')};
+                    text-shadow: 0 0 5px #${flow.color.toString(16).padStart(6, '0')};
+                    opacity: 0.8;
+                `;
+                flowLabelDiv.textContent = `↔ ${flow.label}`;
+                const flowLabel = new CSS3DObject(flowLabelDiv);
+                flowLabel.position.set(midPoint.x, midPoint.y + 1, midPoint.z);
+                flowLabel.scale.set(0.025, 0.025, 0.025);
+                labelScene.add(flowLabel);
+                a2aObjects.push(flowLabel);
+            });
+
+            // Create A2A section label
+            const a2aLabelDiv = document.createElement('div');
+            a2aLabelDiv.style.cssText = `
+                color: #ff00ff;
+                font-size: 12px;
+                font-family: 'Courier New', monospace;
+                font-weight: bold;
+                background: rgba(0, 0, 0, 0.9);
+                padding: 5px 10px;
+                border-radius: 4px;
+                border: 2px solid #ff00ff;
+                text-shadow: 0 0 8px #ff00ff;
+            `;
+            a2aLabelDiv.textContent = '🔄 A2A Protocol';
+            const a2aLabel = new CSS3DObject(a2aLabelDiv);
+            a2aLabel.position.set(baseX, baseY + 18, baseZ);
+            a2aLabel.scale.set(0.04, 0.04, 0.04);
+            labelScene.add(a2aLabel);
+            a2aObjects.push(a2aLabel);
+
+            console.log('A2A Communications created with', a2aObjects.length, 'objects');
+        }
+
+        // Update GCP and A2A animations
+        function updateGCPAndA2AAnimations() {
+            // Animate GCP objects
+            gcpObjects.forEach(obj => {
+                const userData = obj.userData;
+                
+                // Rotate platform rings
+                if (userData.type === 'gcp-ring' && userData.rotationSpeed) {
+                    obj.rotation.z += userData.rotationSpeed * animationSpeed;
+                }
+                
+                // Float Cloud Run services
+                if (userData.type === 'gcp-service' && userData.originalY !== undefined) {
+                    userData.floatOffset = (userData.floatOffset || 0) + 0.02 * animationSpeed;
+                    obj.position.y = userData.originalY + Math.sin(userData.floatOffset) * 0.3;
+                    
+                    // Pulse emissive
+                    if (obj.material && obj.material.emissive) {
+                        const pulse = (Math.sin(Date.now() * 0.003 + userData.floatOffset) + 1) / 2;
+                        obj.material.emissiveIntensity = 0.4 + pulse * 0.3;
+                    }
+                }
+                
+                // Rotate supporting services
+                if (userData.type === 'gcp-supporting' && userData.rotationSpeed) {
+                    obj.rotation.y += userData.rotationSpeed * animationSpeed;
+                }
+            });
+
+            // Animate A2A objects
+            a2aObjects.forEach(obj => {
+                const userData = obj.userData;
+                
+                // Animate data packets along curves
+                if (userData.type === 'a2a-packet' && userData.curve) {
+                    userData.progress += userData.speed * animationSpeed;
+                    if (userData.progress > 1) {
+                        userData.progress = 0;
+                    }
+                    
+                    const point = userData.curve.getPoint(userData.progress);
+                    obj.position.copy(point);
+                    
+                    // Rotate packet
+                    obj.rotation.x += 0.05 * animationSpeed;
+                    obj.rotation.y += 0.03 * animationSpeed;
+                    
+                    // Pulse size based on progress
+                    const scale = 0.8 + Math.sin(userData.progress * Math.PI) * 0.4;
+                    obj.scale.setScalar(scale);
+                }
+                
+                // Update trail positions
+                if (userData.type === 'a2a-trail' && userData.linkedPacket) {
+                    obj.position.copy(userData.linkedPacket.position);
+                    obj.position.x -= 0.5 * (userData.linkedPacket.userData.progress > 0.5 ? 1 : -1);
+                }
+                
+                // Animate dashed line (visual pulse effect via opacity)
+                if (userData.type === 'a2a-path' && obj.material) {
+                    const pulse = (Math.sin(Date.now() * 0.002) + 1) / 2;
+                    obj.material.opacity = 0.5 + pulse * 0.3;
+                }
+            });
         }
 
         // Create 3D Pipeline Grid Visualization with Agent Animations
@@ -2742,6 +3261,11 @@
             // Update agent-mission animations
             updateAgentMissionAnimations();
             
+            // Update GCP and A2A animations
+            if (showGCPInfra || showA2ACommunications) {
+                updateGCPAndA2AAnimations();
+            }
+            
             // Randomly trigger new agent-mission interactions (every ~5 seconds)
             if (Math.random() < 0.01 * animationSpeed) {
                 triggerRandomAgentMission();
@@ -3188,6 +3712,34 @@
                 e.target.classList.toggle('active');
             });
 
+            // GCP Infrastructure toggle
+            document.getElementById('btn-toggle-gcp').addEventListener('click', (e) => {
+                showGCPInfra = !showGCPInfra;
+                gcpObjects.forEach(obj => {
+                    if (obj.element) {
+                        obj.element.style.display = showGCPInfra ? 'block' : 'none';
+                    } else {
+                        obj.visible = showGCPInfra;
+                    }
+                });
+                e.target.textContent = `☁️ GCP: ${showGCPInfra ? 'ON' : 'OFF'}`;
+                e.target.classList.toggle('active');
+            });
+
+            // A2A Communications toggle
+            document.getElementById('btn-toggle-a2a').addEventListener('click', (e) => {
+                showA2ACommunications = !showA2ACommunications;
+                a2aObjects.forEach(obj => {
+                    if (obj.element) {
+                        obj.element.style.display = showA2ACommunications ? 'block' : 'none';
+                    } else {
+                        obj.visible = showA2ACommunications;
+                    }
+                });
+                e.target.textContent = `🔄 A2A: ${showA2ACommunications ? 'ON' : 'OFF'}`;
+                e.target.classList.toggle('active');
+            });
+
             document.getElementById('speed-slider').addEventListener('input', (e) => {
                 animationSpeed = parseFloat(e.target.value);
             });
@@ -3298,6 +3850,10 @@
                 controls.target.set(0, 0, 0);
                 controls.update();
             }
+            
+            // Create GCP Infrastructure and A2A Communications visualizations
+            createGCPInfrastructure();
+            createA2ACommunications();
             
             animate();
 

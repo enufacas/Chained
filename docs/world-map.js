@@ -13,6 +13,8 @@ let agentMarkers = null;
 let pathLayerGroup = null; // Layer group for agent paths
 let regionsLayerGroup = null; // Layer group for regions
 let learningsLayerGroup = null; // Layer group for learnings/work
+let gcpLayerGroup = null; // Layer group for GCP infrastructure (@integrate-specialist)
+let a2aLayerGroup = null; // Layer group for A2A communications (@integrate-specialist)
 let layerControl = null; // Leaflet layer control
 let agentLocations = {}; // Map agent names to locations
 let allMarkers = []; // Store all marker references for filtering
@@ -177,6 +179,8 @@ function initMap() {
     pathLayerGroup = L.layerGroup();
     regionsLayerGroup = L.layerGroup();
     learningsLayerGroup = L.layerGroup();
+    gcpLayerGroup = L.layerGroup(); // GCP infrastructure layer (@integrate-specialist)
+    a2aLayerGroup = L.layerGroup(); // A2A communications layer (@integrate-specialist)
     
     // Add base layers (always visible)
     map.addLayer(agentMarkers);
@@ -186,7 +190,9 @@ function initMap() {
         "🤖 Agents": agentMarkers,
         "🗺️ Agent Paths": pathLayerGroup,
         "📍 Regions": regionsLayerGroup,
-        "💡 Learnings & Work": learningsLayerGroup
+        "💡 Learnings & Work": learningsLayerGroup,
+        "☁️ GCP Infrastructure": gcpLayerGroup,
+        "🔄 A2A Communications": a2aLayerGroup
     };
     
     // Add layer control to map
@@ -199,6 +205,8 @@ function initMap() {
     pathLayerGroup.addTo(map);
     regionsLayerGroup.addTo(map);
     learningsLayerGroup.addTo(map);
+    gcpLayerGroup.addTo(map); // Enable GCP layer by default (@integrate-specialist)
+    a2aLayerGroup.addTo(map); // Enable A2A layer by default (@integrate-specialist)
     
     return true;
 }
@@ -593,6 +601,8 @@ function renderAgents() {
     pathLayerGroup.clearLayers();
     regionsLayerGroup.clearLayers();
     learningsLayerGroup.clearLayers();
+    gcpLayerGroup.clearLayers(); // Clear GCP layer (@integrate-specialist)
+    a2aLayerGroup.clearLayers(); // Clear A2A layer (@integrate-specialist)
     
     // Get all agent definitions
     const allAgentKeys = Object.keys(DEFAULT_AGENT_LOCATIONS);
@@ -750,6 +760,10 @@ function renderAgents() {
     
     // Render region markers
     renderRegions();
+    
+    // Render GCP infrastructure and A2A communications (@integrate-specialist)
+    renderGCPInfrastructure();
+    renderA2ACommunications();
 }
 
 // Draw agent movement path on map with improved visualization
@@ -1108,6 +1122,314 @@ function renderLearnings() {
     });
 }
 
+// GCP Infrastructure configuration (@integrate-specialist)
+const GCP_INFRASTRUCTURE = {
+    location: {
+        lat: 41.2619,
+        lng: -95.8608,
+        city: 'Council Bluffs, Iowa',
+        region: 'us-central1'
+    },
+    cloudRunServices: [
+        'academic-research',
+        'blog-writer',
+        'google-trends',
+        'adk-api-server',
+        'ag-ui-frontend',
+        'chained-website',
+        'chained-agent-gateway',
+        'chained-agent-worker'
+    ],
+    supportingServices: [
+        'Firestore',
+        'Pub/Sub',
+        'Artifact Registry'
+    ]
+};
+
+// Home base location for A2A visualization (@integrate-specialist)
+const HOME_BASE = {
+    lat: 35.2271,
+    lng: -80.8431,
+    city: 'Charlotte, NC'
+};
+
+// A2A Communication flows configuration (@integrate-specialist)
+const A2A_FLOWS = [
+    { source: 'academic-research', target: 'blog-writer', data: 'Research Data' },
+    { source: 'google-trends', target: 'blog-writer', data: 'SEO Data' },
+    { source: 'All agents', target: 'adk-api-server', data: 'Coordination' }
+];
+
+// Render GCP Infrastructure on the map (@integrate-specialist)
+function renderGCPInfrastructure() {
+    if (!map) return;
+    
+    gcpLayerGroup.clearLayers();
+    
+    const gcp = GCP_INFRASTRUCTURE;
+    
+    // Create special GCP infrastructure marker with gradient styling
+    const gcpIcon = L.divIcon({
+        html: `<div style="
+            background: linear-gradient(135deg, #4285f4 0%, #8b5cf6 50%, #0891b2 100%);
+            border: 3px solid white;
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.5), 0 0 20px rgba(139, 92, 246, 0.3);
+            animation: pulse-gcp 2s ease-in-out infinite;
+        ">☁️</div>
+        <style>
+            @keyframes pulse-gcp {
+                0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(66, 133, 244, 0.5); }
+                50% { transform: scale(1.05); box-shadow: 0 4px 20px rgba(66, 133, 244, 0.7), 0 0 30px rgba(139, 92, 246, 0.5); }
+            }
+        </style>`,
+        className: 'gcp-infrastructure-marker',
+        iconSize: [48, 48],
+        iconAnchor: [24, 24],
+        popupAnchor: [0, -24]
+    });
+    
+    const gcpMarker = L.marker([gcp.location.lat, gcp.location.lng], { icon: gcpIcon });
+    
+    // Build rich popup content for GCP infrastructure
+    const cloudRunHtml = gcp.cloudRunServices.map(service => 
+        `<div style="padding: 4px 8px; background: rgba(66, 133, 244, 0.1); border-radius: 4px; margin: 3px 0; font-size: 12px;">
+            🚀 ${service}
+        </div>`
+    ).join('');
+    
+    const supportingHtml = gcp.supportingServices.map(service => 
+        `<div style="padding: 4px 8px; background: rgba(139, 92, 246, 0.1); border-radius: 4px; margin: 3px 0; font-size: 12px;">
+            ⚙️ ${service}
+        </div>`
+    ).join('');
+    
+    const popupContent = `
+        <div style="min-width: 280px; max-width: 350px;">
+            <h3 style="margin: 0 0 12px 0; color: #4285f4; font-size: 16px; border-bottom: 2px solid #4285f4; padding-bottom: 8px;">
+                ☁️ GCP Infrastructure - ${gcp.location.region}
+            </h3>
+            <p style="margin: 4px 0; font-size: 13px; color: #6b7280;">
+                📍 ${gcp.location.city}
+            </p>
+            
+            <div style="margin-top: 12px;">
+                <h4 style="margin: 0 0 8px 0; color: #4285f4; font-size: 13px;">
+                    🚀 Cloud Run Services (${gcp.cloudRunServices.length})
+                </h4>
+                <div style="max-height: 150px; overflow-y: auto;">
+                    ${cloudRunHtml}
+                </div>
+            </div>
+            
+            <div style="margin-top: 12px;">
+                <h4 style="margin: 0 0 8px 0; color: #8b5cf6; font-size: 13px;">
+                    ⚙️ Supporting Services
+                </h4>
+                ${supportingHtml}
+            </div>
+            
+            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; font-size: 11px; color: #9ca3af;">
+                <strong>Status:</strong> <span style="color: #10b981;">● Active</span>
+            </div>
+        </div>
+    `;
+    
+    gcpMarker.bindPopup(popupContent);
+    gcpLayerGroup.addLayer(gcpMarker);
+    
+    // Add a subtle pulsing circle around GCP location
+    const gcpCircle = L.circle([gcp.location.lat, gcp.location.lng], {
+        radius: 50000, // 50km radius
+        color: '#4285f4',
+        fillColor: '#4285f4',
+        fillOpacity: 0.1,
+        weight: 2,
+        opacity: 0.5,
+        dashArray: '5, 10'
+    });
+    gcpLayerGroup.addLayer(gcpCircle);
+}
+
+// Render A2A Communication flows on the map (@integrate-specialist)
+function renderA2ACommunications() {
+    if (!map) return;
+    
+    a2aLayerGroup.clearLayers();
+    
+    const gcp = GCP_INFRASTRUCTURE;
+    const homeBase = HOME_BASE;
+    
+    // Create animated polyline from GCP to Charlotte (coordination flow)
+    const connectionCoords = [
+        [gcp.location.lat, gcp.location.lng],
+        [homeBase.lat, homeBase.lng]
+    ];
+    
+    // Main A2A communication line with gradient effect
+    const a2aLine = L.polyline(connectionCoords, {
+        color: '#8b5cf6',
+        weight: 4,
+        opacity: 0.7,
+        dashArray: '15, 10',
+        lineCap: 'round',
+        lineJoin: 'round'
+    });
+    
+    // Build A2A popup content
+    const flowsHtml = A2A_FLOWS.map(flow => 
+        `<div style="padding: 6px 8px; background: rgba(139, 92, 246, 0.1); border-radius: 4px; margin: 4px 0; font-size: 12px; border-left: 3px solid #8b5cf6;">
+            <strong>${flow.source}</strong> → <strong>${flow.target}</strong>
+            <br><span style="color: #9ca3af; font-size: 11px;">${flow.data}</span>
+        </div>`
+    ).join('');
+    
+    const a2aPopupContent = `
+        <div style="min-width: 260px; max-width: 320px;">
+            <h3 style="margin: 0 0 12px 0; color: #8b5cf6; font-size: 16px; border-bottom: 2px solid #8b5cf6; padding-bottom: 8px;">
+                🔄 A2A Protocol Communication
+            </h3>
+            <p style="margin: 4px 0; font-size: 12px; color: #6b7280;">
+                Agent-to-Agent communication pipeline
+            </p>
+            
+            <div style="margin-top: 12px;">
+                <h4 style="margin: 0 0 8px 0; color: #8b5cf6; font-size: 13px;">
+                    📡 Active Data Flows
+                </h4>
+                ${flowsHtml}
+            </div>
+            
+            <div style="margin-top: 12px; padding: 8px; background: rgba(16, 185, 129, 0.1); border-radius: 4px;">
+                <p style="margin: 0; font-size: 11px; color: #10b981;">
+                    <strong>📍 Route:</strong> Council Bluffs, IA ↔ Charlotte, NC
+                </p>
+            </div>
+            
+            <div style="margin-top: 8px; font-size: 11px; color: #9ca3af;">
+                <strong>Protocol:</strong> A2A (Agent-to-Agent)
+            </div>
+        </div>
+    `;
+    
+    a2aLine.bindPopup(a2aPopupContent);
+    a2aLayerGroup.addLayer(a2aLine);
+    
+    // Add animated data flow markers along the line
+    const numFlowMarkers = 3;
+    for (let i = 0; i < numFlowMarkers; i++) {
+        const progress = (i + 1) / (numFlowMarkers + 1);
+        const lat = gcp.location.lat + (homeBase.lat - gcp.location.lat) * progress;
+        const lng = gcp.location.lng + (homeBase.lng - gcp.location.lng) * progress;
+        
+        const flowIcon = L.divIcon({
+            html: `<div style="
+                background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+                border: 2px solid white;
+                border-radius: 50%;
+                width: 16px;
+                height: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 10px;
+                box-shadow: 0 2px 6px rgba(139, 92, 246, 0.5);
+                animation: flow-pulse ${1 + i * 0.3}s ease-in-out infinite;
+            ">⚡</div>
+            <style>
+                @keyframes flow-pulse {
+                    0%, 100% { opacity: 0.6; transform: scale(0.9); }
+                    50% { opacity: 1; transform: scale(1.1); }
+                }
+            </style>`,
+            className: 'a2a-flow-marker',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+        });
+        
+        const flowMarker = L.marker([lat, lng], { icon: flowIcon });
+        flowMarker.bindPopup(`
+            <div style="text-align: center; padding: 4px;">
+                <strong style="color: #8b5cf6;">⚡ Data in Transit</strong>
+                <p style="margin: 4px 0 0 0; font-size: 11px; color: #9ca3af;">A2A Protocol</p>
+            </div>
+        `);
+        a2aLayerGroup.addLayer(flowMarker);
+    }
+    
+    // Add endpoint markers for better visibility
+    // GCP endpoint indicator
+    const gcpEndpoint = L.circleMarker([gcp.location.lat, gcp.location.lng], {
+        radius: 8,
+        color: '#4285f4',
+        fillColor: '#4285f4',
+        fillOpacity: 0.3,
+        weight: 2
+    });
+    a2aLayerGroup.addLayer(gcpEndpoint);
+    
+    // Charlotte endpoint indicator
+    const charlotteEndpoint = L.circleMarker([homeBase.lat, homeBase.lng], {
+        radius: 8,
+        color: '#10b981',
+        fillColor: '#10b981',
+        fillOpacity: 0.3,
+        weight: 2
+    });
+    a2aLayerGroup.addLayer(charlotteEndpoint);
+}
+
+// Update infrastructure sidebar section (@integrate-specialist)
+function updateInfrastructureSidebar() {
+    const infrastructureInfo = document.getElementById('infrastructure-info');
+    if (!infrastructureInfo) return;
+    
+    const gcp = GCP_INFRASTRUCTURE;
+    
+    infrastructureInfo.innerHTML = `
+        <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="color: #4285f4; font-weight: bold;">☁️ GCP Region</span>
+                <span style="color: #10b981; font-size: 0.85rem;">● Active</span>
+            </div>
+            <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted, #b0b0b0);">
+                ${gcp.location.region} (${gcp.location.city})
+            </p>
+        </div>
+        
+        <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-muted, #b0b0b0);">🚀 Deployed Services</span>
+                <span style="color: var(--primary-color, #0891b2); font-weight: bold;">${gcp.cloudRunServices.length}</span>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-muted, #b0b0b0);">⚙️ Supporting Services</span>
+                <span style="color: var(--primary-color, #0891b2); font-weight: bold;">${gcp.supportingServices.length}</span>
+            </div>
+        </div>
+        
+        <div style="padding: 8px; background: rgba(139, 92, 246, 0.1); border-radius: 6px; border-left: 3px solid #8b5cf6;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #8b5cf6; font-weight: bold;">🔄 A2A Pipeline</span>
+                <span style="color: #10b981; font-size: 0.85rem;">● Active</span>
+            </div>
+            <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: var(--text-muted, #b0b0b0);">
+                ${A2A_FLOWS.length} active data flows
+            </p>
+        </div>
+    `;
+}
+
 // Update sidebar
 function updateSidebar() {
     if (!worldState) return;
@@ -1207,6 +1529,9 @@ function updateSidebar() {
     } else {
         regionsList.innerHTML = '<p style="color: var(--text-muted);">No regions yet</p>';
     }
+    
+    // Update infrastructure sidebar section (@integrate-specialist)
+    updateInfrastructureSidebar();
 }
 
 // Helper functions

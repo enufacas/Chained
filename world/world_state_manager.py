@@ -335,6 +335,192 @@ def add_agent_discovery(
     return True
 
 
+# =============================================================================
+# GCP Infrastructure Region Management
+# =============================================================================
+
+def get_infrastructure_regions(state: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Get all regions that are cloud infrastructure regions.
+    
+    Returns:
+        List of regions with region_type == 'cloud_infrastructure'
+    """
+    return [
+        region for region in state.get('regions', [])
+        if region.get('region_type') == 'cloud_infrastructure'
+    ]
+
+
+def get_infrastructure_services(state: Dict[str, Any], region_id: str) -> List[Dict[str, Any]]:
+    """
+    Get all infrastructure services deployed in a specific region.
+    
+    Args:
+        state: World state dict
+        region_id: Region ID (e.g., 'GCP:us-central1')
+    
+    Returns:
+        List of service dictionaries, or empty list if not found
+    """
+    region = get_region_by_id(state, region_id)
+    if not region:
+        return []
+    
+    infrastructure = region.get('infrastructure', {})
+    return infrastructure.get('services', [])
+
+
+def update_infrastructure_service_status(
+    state: Dict[str, Any],
+    region_id: str,
+    service_name: str,
+    status: str
+) -> bool:
+    """
+    Update the status of an infrastructure service.
+    
+    Args:
+        state: World state dict
+        region_id: Region ID (e.g., 'GCP:us-central1')
+        service_name: Name of the service to update
+        status: New status (e.g., 'deployed', 'stopped', 'error')
+    
+    Returns:
+        True if service was updated, False if not found
+    """
+    region = get_region_by_id(state, region_id)
+    if not region:
+        return False
+    
+    infrastructure = region.get('infrastructure', {})
+    services = infrastructure.get('services', [])
+    
+    for service in services:
+        if service.get('name') == service_name:
+            service['status'] = status
+            return True
+    
+    return False
+
+
+def add_infrastructure_service(
+    state: Dict[str, Any],
+    region_id: str,
+    service: Dict[str, Any]
+) -> bool:
+    """
+    Add a new infrastructure service to a region.
+    
+    Args:
+        state: World state dict
+        region_id: Region ID (e.g., 'GCP:us-central1')
+        service: Service dict with name, type, description, status
+    
+    Returns:
+        True if service was added, False if region not found
+    """
+    region = get_region_by_id(state, region_id)
+    if not region:
+        return False
+    
+    # Initialize infrastructure structure if not present
+    if 'infrastructure' not in region:
+        region['infrastructure'] = {
+            'provider': 'gcp',
+            'services': [],
+            'supporting_services': []
+        }
+    
+    if 'services' not in region['infrastructure']:
+        region['infrastructure']['services'] = []
+    
+    # Check if service already exists
+    existing_services = region['infrastructure']['services']
+    for existing in existing_services:
+        if existing.get('name') == service.get('name'):
+            # Update only specific fields to avoid overwriting important metadata unexpectedly
+            # Fields that can be updated: status, description, type
+            if 'status' in service:
+                existing['status'] = service['status']
+            if 'description' in service:
+                existing['description'] = service['description']
+            if 'type' in service:
+                existing['type'] = service['type']
+            return True
+    
+    # Add new service
+    existing_services.append(service)
+    return True
+
+
+def remove_infrastructure_service(
+    state: Dict[str, Any],
+    region_id: str,
+    service_name: str
+) -> bool:
+    """
+    Remove an infrastructure service from a region.
+    
+    Args:
+        state: World state dict
+        region_id: Region ID (e.g., 'GCP:us-central1')
+        service_name: Name of the service to remove
+    
+    Returns:
+        True if service was removed, False if not found
+    """
+    region = get_region_by_id(state, region_id)
+    if not region:
+        return False
+    
+    infrastructure = region.get('infrastructure', {})
+    services = infrastructure.get('services', [])
+    
+    original_length = len(services)
+    infrastructure['services'] = [
+        s for s in services if s.get('name') != service_name
+    ]
+    
+    return len(infrastructure['services']) < original_length
+
+
+def get_infrastructure_region_summary(state: Dict[str, Any], region_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Get a summary of infrastructure in a specific region.
+    
+    Args:
+        state: World state dict
+        region_id: Region ID (e.g., 'GCP:us-central1')
+    
+    Returns:
+        Summary dict with service counts and status breakdown, or None if not found
+    """
+    region = get_region_by_id(state, region_id)
+    if not region or region.get('region_type') != 'cloud_infrastructure':
+        return None
+    
+    infrastructure = region.get('infrastructure', {})
+    services = infrastructure.get('services', [])
+    supporting_services = infrastructure.get('supporting_services', [])
+    
+    # Count services by status
+    status_counts = {}
+    for service in services:
+        status = service.get('status', 'unknown')
+        status_counts[status] = status_counts.get(status, 0) + 1
+    
+    return {
+        'region_id': region_id,
+        'provider': infrastructure.get('provider', 'unknown'),
+        'total_services': len(services),
+        'total_supporting_services': len(supporting_services),
+        'services_by_status': status_counts,
+        'services': [s.get('name') for s in services],
+        'supporting_services': [s.get('name') for s in supporting_services]
+    }
+
+
 if __name__ == '__main__':
     # Test the module
     state = load_world_state()
@@ -343,3 +529,11 @@ if __name__ == '__main__':
     print(f"  Agents: {len(state.get('agents', []))}")
     print(f"  Regions: {len(state.get('regions', []))}")
     print(f"  Total Ideas: {state['metrics']['total_ideas']}")
+    
+    # Test infrastructure functions
+    infra_regions = get_infrastructure_regions(state)
+    print(f"\n  Infrastructure Regions: {len(infra_regions)}")
+    for region in infra_regions:
+        summary = get_infrastructure_region_summary(state, region['id'])
+        if summary:
+            print(f"    - {region['id']}: {summary['total_services']} services")

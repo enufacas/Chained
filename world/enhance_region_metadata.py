@@ -171,6 +171,95 @@ REGION_METADATA = {
             "coach-master": 1.4,
             "organize-guru": 1.2
         }
+    },
+    "GCP:us-central1": {
+        "timezone": "America/Chicago",
+        "utc_offset": -6,
+        "region_type": "cloud_infrastructure",
+        "description": "Google Cloud Platform us-central1 region (Council Bluffs, Iowa)",
+        "tech_ecosystem": {
+            "company_count": 1,
+            "startup_count": 0,
+            "specializations": ["cloud_run", "ai_ml", "serverless", "a2a_agents"]
+        },
+        "cost_multiplier": 1.0,
+        "agent_capacity": 50,
+        "specialization_bonuses": {
+            "cloud-architect": 2.0,
+            "infrastructure-specialist": 1.8,
+            "engineer-master": 1.5
+        },
+        "infrastructure": {
+            "provider": "gcp",
+            "services": [
+                {
+                    "name": "academic-research",
+                    "type": "cloud_run",
+                    "description": "Academic research agent",
+                    "status": "deployed"
+                },
+                {
+                    "name": "blog-writer",
+                    "type": "cloud_run",
+                    "description": "Blog writer agent",
+                    "status": "deployed"
+                },
+                {
+                    "name": "google-trends",
+                    "type": "cloud_run",
+                    "description": "Google trends agent",
+                    "status": "deployed"
+                },
+                {
+                    "name": "adk-api-server",
+                    "type": "cloud_run",
+                    "description": "ADK API server",
+                    "status": "deployed"
+                },
+                {
+                    "name": "ag-ui-frontend",
+                    "type": "cloud_run",
+                    "description": "AG-UI Frontend",
+                    "status": "deployed"
+                },
+                {
+                    "name": "chained-website",
+                    "type": "cloud_run",
+                    "description": "Website service",
+                    "status": "deployed"
+                },
+                {
+                    "name": "chained-agent-gateway",
+                    "type": "cloud_run",
+                    "description": "Agent gateway",
+                    "status": "deployed"
+                },
+                {
+                    "name": "chained-agent-worker",
+                    "type": "cloud_run",
+                    "description": "Agent worker",
+                    "status": "deployed"
+                }
+            ],
+            "supporting_services": [
+                {
+                    "name": "firestore",
+                    "type": "database",
+                    "location": "nam5",
+                    "description": "Firestore database (nam5 multi-region)"
+                },
+                {
+                    "name": "chained-agent-tasks",
+                    "type": "pubsub_topic",
+                    "description": "Pub/Sub topic for agent tasks"
+                },
+                {
+                    "name": "chained",
+                    "type": "artifact_registry",
+                    "description": "Container images for Chained ecosystem"
+                }
+            ]
+        }
     }
 }
 
