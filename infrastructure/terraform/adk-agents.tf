@@ -79,6 +79,14 @@ resource "google_project_iam_member" "adk_agents_trace" {
   member  = "serviceAccount:${google_service_account.adk_agents.email}"
 }
 
+# Grant access to Vertex AI (for Gemini model access via ADC)
+# Required for the AG-UI Frontend CopilotKit chat feature when USE_VERTEX_AI=true
+resource "google_project_iam_member" "adk_agents_vertex_ai" {
+  project = var.project_id
+  role    = "roles/aiplatform.user"
+  member  = "serviceAccount:${google_service_account.adk_agents.email}"
+}
+
 # =============================================================================
 # Cloud Run: Academic Research Agent
 # =============================================================================
