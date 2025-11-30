@@ -15,29 +15,53 @@
 import { NextRequest } from "next/server";
 
 // =============================================================================
+// Logging Utilities
+// =============================================================================
+
+function logWithTimestamp(level: "INFO" | "WARN" | "ERROR" | "DEBUG", message: string, data?: object) {
+  const timestamp = new Date().toISOString();
+  const prefix = `[${timestamp}] [Activity API] [${level}]`;
+  
+  if (data) {
+    console.log(`${prefix} ${message}`, JSON.stringify(data, null, 2));
+  } else {
+    console.log(`${prefix} ${message}`);
+  }
+}
+
+// =============================================================================
 // GCP Cloud Run Agent Configuration
 // =============================================================================
 
+// Determine if we're in development mode
+const isDevelopment = process.env.NODE_ENV === "development";
+
 // Agent endpoints - these are the ACTUAL deployed agents on GCP Cloud Run
-// The ADK API Server URL is set via environment variable
-const ADK_API_URL = process.env.NEXT_PUBLIC_ADK_API_URL || "https://chained-adk-api-server-sguacxy5gq-uc.a.run.app";
+// In development, require explicit configuration via environment variables
+// In production, fall back to known Cloud Run URLs
+const ADK_API_URL = process.env.NEXT_PUBLIC_ADK_API_URL || 
+  (isDevelopment ? "" : "https://chained-adk-api-server-sguacxy5gq-uc.a.run.app");
 
 // Individual agent URLs (can be overridden via env vars or discovered from ADK API)
+// In development without env vars, agents will show as "unknown" status
 const AGENT_ENDPOINTS = {
   "academic-research": {
-    url: process.env.AGENT_ACADEMIC_RESEARCH_URL || "https://chained-academic-research-sguacxy5gq-uc.a.run.app",
+    url: process.env.AGENT_ACADEMIC_RESEARCH_URL || 
+      (isDevelopment ? "" : "https://chained-academic-research-sguacxy5gq-uc.a.run.app"),
     displayName: "Academic Research",
     icon: "🔬",
     description: "Discovers and analyzes research topics",
   },
   "google-trends": {
-    url: process.env.AGENT_GOOGLE_TRENDS_URL || "https://chained-google-trends-sguacxy5gq-uc.a.run.app",
+    url: process.env.AGENT_GOOGLE_TRENDS_URL || 
+      (isDevelopment ? "" : "https://chained-google-trends-sguacxy5gq-uc.a.run.app"),
     displayName: "Google Trends",
     icon: "📈",
     description: "Analyzes trends for SEO optimization",
   },
   "blog-writer": {
-    url: process.env.AGENT_BLOG_WRITER_URL || "https://chained-blog-writer-sguacxy5gq-uc.a.run.app",
+    url: process.env.AGENT_BLOG_WRITER_URL || 
+      (isDevelopment ? "" : "https://chained-blog-writer-sguacxy5gq-uc.a.run.app"),
     displayName: "Blog Writer",
     icon: "✍️",
     description: "Writes and publishes blog posts",
@@ -101,25 +125,48 @@ export interface ActivityResponse {
  * Fetches real-time status from GCP-deployed A2A agents.
  */
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
   const { searchParams } = new URL(request.url);
   const includeAgentCards = searchParams.get("includeCards") === "true";
 
+  logWithTimestamp("INFO", "Activity check started", {
+    includeAgentCards,
+    isDevelopment,
+    configuredAgents: Object.keys(AGENT_ENDPOINTS),
+  });
+
   const agents: AgentInfo[] = [];
   
-  // Check health of each agent
-  for (const [agentId, config] of Object.entries(AGENT_ENDPOINTS)) {
-    const agentInfo = await checkAgentStatus(agentId, config, includeAgentCards);
-    agents.push(agentInfo);
-  }
+  // Check health of each agent in parallel for faster response
+  const agentChecks = Object.entries(AGENT_ENDPOINTS).map(
+    async ([agentId, config]) => {
+      const agentInfo = await checkAgentStatus(agentId, config, includeAgentCards);
+      return agentInfo;
+    }
+  );
+  
+  const agentResults = await Promise.all(agentChecks);
+  agents.push(...agentResults);
 
   // Calculate system status
   const healthyCount = agents.filter((a) => a.health.status === "healthy").length;
   const unhealthyCount = agents.filter((a) => a.health.status === "unhealthy").length;
+  const unknownCount = agents.filter((a) => a.health.status === "unknown").length;
   const total = agents.length;
 
   const overallHealth: "healthy" | "degraded" | "unhealthy" = 
     healthyCount === total ? "healthy" :
     healthyCount > 0 ? "degraded" : "unhealthy";
+
+  const totalTime = Date.now() - startTime;
+
+  logWithTimestamp("INFO", "Activity check completed", {
+    totalTimeMs: totalTime,
+    healthyCount,
+    unhealthyCount,
+    unknownCount,
+    overallHealth,
+  });
 
   const response: ActivityResponse = {
     agents,
@@ -171,7 +218,19 @@ async function checkAgentStatus(
     },
   };
 
+  // If no URL configured, return unknown status immediately
+  if (!config.url) {
+    logWithTimestamp("DEBUG", `Agent ${agentId}: No URL configured, skipping health check`);
+    agentInfo.health = {
+      status: "unknown",
+      agent: agentId,
+    };
+    return agentInfo;
+  }
+
   try {
+    logWithTimestamp("DEBUG", `Agent ${agentId}: Checking health at ${config.url}/health`);
+    
     // Check health endpoint
     const healthResponse = await fetch(`${config.url}/health`, {
       method: "GET",
@@ -191,12 +250,23 @@ async function checkAgentStatus(
         timestamp: healthData.timestamp,
         responseTimeMs,
       };
+      
+      logWithTimestamp("DEBUG", `Agent ${agentId}: Health check successful`, {
+        status: agentInfo.health.status,
+        responseTimeMs,
+        version: healthData.version,
+      });
     } else {
       agentInfo.health = {
         status: "unhealthy",
         agent: agentId,
         responseTimeMs,
       };
+      
+      logWithTimestamp("WARN", `Agent ${agentId}: Health check returned non-OK status`, {
+        httpStatus: healthResponse.status,
+        responseTimeMs,
+      });
     }
 
     // Optionally fetch agent card
@@ -215,10 +285,13 @@ async function checkAgentStatus(
             version: cardData.version,
             skills: cardData.skills || [],
           };
+          logWithTimestamp("DEBUG", `Agent ${agentId}: Agent card fetched successfully`);
         }
-      } catch {
+      } catch (cardError) {
         // Agent card fetch failed, but health is still valid
-        console.log(`[Activity API] Could not fetch agent card for ${agentId}`);
+        logWithTimestamp("WARN", `Agent ${agentId}: Could not fetch agent card`, {
+          error: cardError instanceof Error ? cardError.message : String(cardError),
+        });
       }
     }
 
@@ -229,7 +302,16 @@ async function checkAgentStatus(
       agent: agentId,
       responseTimeMs,
     };
-    console.error(`[Activity API] Health check failed for ${agentId}:`, error);
+    
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const isTimeout = error instanceof Error && error.name === "AbortError";
+    
+    logWithTimestamp("ERROR", `Agent ${agentId}: Health check failed`, {
+      error: errorMessage,
+      isTimeout,
+      responseTimeMs,
+      url: config.url,
+    });
   }
 
   return agentInfo;

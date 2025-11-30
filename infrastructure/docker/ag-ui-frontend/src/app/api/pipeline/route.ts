@@ -12,6 +12,25 @@
 
 import { NextRequest } from "next/server";
 
+// =============================================================================
+// Logging Utilities
+// =============================================================================
+
+function logWithTimestamp(level: "INFO" | "WARN" | "ERROR" | "DEBUG", message: string, data?: object) {
+  const timestamp = new Date().toISOString();
+  const prefix = `[${timestamp}] [Pipeline API] [${level}]`;
+  
+  if (data) {
+    console.log(`${prefix} ${message}`, JSON.stringify(data, null, 2));
+  } else {
+    console.log(`${prefix} ${message}`);
+  }
+}
+
+// =============================================================================
+// GCP Configuration
+// =============================================================================
+
 // GCP Blog URL construction
 // Blog bucket follows pattern: ${PROJECT_ID}-chained-blog
 // Blog URL format: https://storage.googleapis.com/${PROJECT_ID}-chained-blog/posts/${slug}.html
@@ -86,6 +105,12 @@ export async function GET(request: NextRequest) {
   const statusFilter = searchParams.get("status");
   const limit = parseInt(searchParams.get("limit") || "10", 10);
   
+  logWithTimestamp("DEBUG", "GET request received", {
+    pipelineId,
+    statusFilter,
+    limit,
+  });
+  
   const completedPipelines = getCompletedPipelines();
 
   // Get a specific pipeline
@@ -93,12 +118,18 @@ export async function GET(request: NextRequest) {
     const pipeline = activePipelines.get(pipelineId) || completedPipelines.find((p) => p.id === pipelineId);
 
     if (!pipeline) {
+      logWithTimestamp("WARN", `Pipeline not found: ${pipelineId}`);
       return new Response(JSON.stringify({ error: "Pipeline not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },
       });
     }
 
+    logWithTimestamp("INFO", `Pipeline retrieved: ${pipelineId}`, {
+      status: pipeline.status,
+      progress: pipeline.progress,
+    });
+    
     return new Response(JSON.stringify(pipeline), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -117,6 +148,13 @@ export async function GET(request: NextRequest) {
   pipelines = pipelines
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, limit);
+
+  logWithTimestamp("INFO", "Pipelines listed", {
+    total: pipelines.length,
+    activePipelinesCount: Array.from(activePipelines.values()).filter(
+      (p) => p.status === "pending" || p.status === "running"
+    ).length,
+  });
 
   return new Response(
     JSON.stringify({
@@ -147,6 +185,7 @@ export async function POST(request: NextRequest) {
     const { topic } = body;
 
     if (!topic || typeof topic !== "string" || topic.trim().length === 0) {
+      logWithTimestamp("WARN", "Pipeline creation failed: Topic is required");
       return new Response(JSON.stringify({ error: "Topic is required" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -173,6 +212,11 @@ export async function POST(request: NextRequest) {
 
     // Store the pipeline
     activePipelines.set(pipelineId, pipeline);
+    
+    logWithTimestamp("INFO", "Pipeline created", {
+      pipelineId,
+      topic: topic.trim(),
+    });
 
     // Start pipeline execution
     executePipeline(pipelineId);
@@ -182,7 +226,8 @@ export async function POST(request: NextRequest) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("[Pipeline API] Error creating pipeline:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logWithTimestamp("ERROR", "Pipeline creation failed", { error: errorMessage });
     return new Response(JSON.stringify({ error: "Failed to create pipeline" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -199,13 +244,20 @@ function executePipeline(pipelineId: string) {
   let progress = 0;
 
   const pipeline = activePipelines.get(pipelineId);
-  if (!pipeline) return;
+  if (!pipeline) {
+    logWithTimestamp("WARN", `Pipeline execution failed: Pipeline not found: ${pipelineId}`);
+    return;
+  }
 
   pipeline.status = "running";
+  logWithTimestamp("INFO", `Pipeline execution started: ${pipelineId}`, {
+    topic: pipeline.topic,
+  });
 
   const interval = setInterval(() => {
     const currentPipeline = activePipelines.get(pipelineId);
     if (!currentPipeline) {
+      logWithTimestamp("WARN", `Pipeline execution interrupted: Pipeline removed: ${pipelineId}`);
       clearInterval(interval);
       return;
     }
@@ -225,6 +277,7 @@ function executePipeline(pipelineId: string) {
           keywords: ["AI", "tech", currentPipeline.topic.split(" ")[0].toLowerCase()],
         },
       };
+      logWithTimestamp("INFO", `Pipeline ${pipelineId}: Research phase complete`, { progress });
     } else if (progress >= 50 && phaseIndex === 1) {
       phaseIndex = 2;
       currentPipeline.currentPhase = "writing";
@@ -235,9 +288,11 @@ function executePipeline(pipelineId: string) {
           recommendedFocus: currentPipeline.topic,
         },
       };
+      logWithTimestamp("INFO", `Pipeline ${pipelineId}: Trends phase complete`, { progress });
     } else if (progress >= 80 && phaseIndex === 2) {
       phaseIndex = 3;
       currentPipeline.currentPhase = "publishing";
+      logWithTimestamp("INFO", `Pipeline ${pipelineId}: Writing phase complete, starting publish`, { progress });
     } else if (progress >= 100) {
       currentPipeline.status = "completed";
       currentPipeline.currentPhase = "complete";
@@ -250,6 +305,12 @@ function executePipeline(pipelineId: string) {
           wordCount: Math.floor(1500 + Math.random() * 1000),
         },
       };
+      
+      logWithTimestamp("INFO", `Pipeline ${pipelineId}: Completed successfully`, {
+        topic: currentPipeline.topic,
+        blogUrl: currentPipeline.results?.blog?.url,
+      });
+      
       clearInterval(interval);
     }
 

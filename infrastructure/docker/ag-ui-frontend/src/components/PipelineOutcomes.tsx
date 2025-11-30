@@ -69,12 +69,12 @@ export default function PipelineOutcomes() {
   useEffect(() => {
     fetchPipelines();
     
-    // Refresh every 10 seconds to catch pipeline completions
+    // Refresh every 30 seconds to catch pipeline completions
     let interval: NodeJS.Timeout | null = null;
     
     const startPolling = () => {
       if (!interval) {
-        interval = setInterval(fetchPipelines, 10000);
+        interval = setInterval(fetchPipelines, 30000);
       }
     };
     
