@@ -154,6 +154,25 @@ async function callA2AAgent(
 // Pipeline states
 export type PipelineStatus = "pending" | "running" | "completed" | "failed";
 
+// Enhanced A2A Step details for deep dive capability
+export interface A2AStepDetail {
+  taskId: string;
+  agentName: string;
+  phase: string;
+  status: "pending" | "running" | "completed" | "failed";
+  startTime: string;
+  endTime?: string;
+  durationMs?: number;
+  message?: string;
+  artifacts: Array<{
+    name: string;
+    type: string;
+    data: string;
+    preview?: string;  // First 200 chars for UI preview
+  }>;
+  rawResponse?: object;  // Full A2A task response for debugging
+}
+
 export interface Pipeline {
   id: string;
   topic: string;
@@ -167,6 +186,10 @@ export interface Pipeline {
     trends?: { trendingKeywords: string[]; recommendedFocus: string };
     blog?: { title: string; url: string; wordCount: number };
   };
+  // NEW: Detailed A2A step history for deep dive into runs
+  a2aSteps?: A2AStepDetail[];
+  // NEW: Total execution time
+  totalDurationMs?: number;
 }
 
 // In-memory store for pipelines
@@ -323,12 +346,61 @@ export async function POST(request: NextRequest) {
 }
 
 /**
+ * Helper to create an A2A step detail from a task result
+ */
+function createA2AStepDetail(
+  agentName: string,
+  phase: string,
+  startTime: string,
+  task: A2ATask | null,
+  fallbackMessage?: string
+): A2AStepDetail {
+  const endTime = new Date().toISOString();
+  const durationMs = new Date(endTime).getTime() - new Date(startTime).getTime();
+  
+  if (!task) {
+    return {
+      taskId: `fallback-${Date.now()}`,
+      agentName,
+      phase,
+      status: "completed",
+      startTime,
+      endTime,
+      durationMs,
+      message: fallbackMessage || `${agentName} unavailable, using defaults`,
+      artifacts: [],
+    };
+  }
+  
+  return {
+    taskId: task.id,
+    agentName,
+    phase,
+    status: task.status.state === "completed" ? "completed" : 
+            task.status.state === "failed" ? "failed" : "running",
+    startTime,
+    endTime,
+    durationMs,
+    message: task.status.message?.parts?.map(p => p.text).join("\n") || undefined,
+    artifacts: (task.artifacts || []).map(a => ({
+      name: a.name,
+      type: a.type,
+      data: a.data,
+      preview: a.data.substring(0, 200) + (a.data.length > 200 ? "..." : ""),
+    })),
+    rawResponse: task,
+  };
+}
+
+/**
  * Execute pipeline through all phases using REAL A2A agents.
  * This calls the actual deployed agents to produce real data:
  * 1. Research Phase: Calls Academic Research Agent
  * 2. Trends Phase: Calls Google Trends Agent  
  * 3. Writing Phase: Calls Blog Writer Agent
  * 4. Publishing Phase: Blog Writer Agent uploads to GCP Cloud Storage
+ * 
+ * Now captures detailed A2A step information for deep dive into runs.
  */
 async function executePipelineWithAgents(pipelineId: string): Promise<void> {
   const pipeline = activePipelines.get(pipelineId);
@@ -337,8 +409,11 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     return;
   }
 
+  const pipelineStartTime = new Date().toISOString();
+  
   pipeline.status = "running";
   pipeline.updatedAt = new Date().toISOString();
+  pipeline.a2aSteps = [];  // Initialize A2A steps array
   activePipelines.set(pipelineId, pipeline);
   
   logWithTimestamp("INFO", `Pipeline execution started with REAL agents: ${pipelineId}`, {
@@ -363,6 +438,7 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     
     logWithTimestamp("INFO", `Pipeline ${pipelineId}: Starting research phase`);
     
+    const researchStartTime = new Date().toISOString();
     const researchTask = await callA2AAgent(
       AGENT_URLS.research,
       `Research the topic: ${pipeline.topic}. Provide key findings, domain classification, and important keywords.`,
@@ -395,6 +471,15 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
       
       pipeline.results = { research: researchData };
       pipeline.progress = 25;
+      
+      // Record A2A step with full details
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Academic Research Agent",
+        "research",
+        researchStartTime,
+        researchTask
+      ));
+      
       logWithTimestamp("INFO", `Pipeline ${pipelineId}: Research complete`, { researchData });
     } else {
       // Agent not available - use intelligent defaults
@@ -406,6 +491,16 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
         },
       };
       pipeline.progress = 25;
+      
+      // Record fallback step
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Academic Research Agent",
+        "research",
+        researchStartTime,
+        null,
+        "Research agent unavailable, using intelligent defaults based on topic analysis"
+      ));
+      
       logWithTimestamp("WARN", `Pipeline ${pipelineId}: Research agent unavailable, using defaults`);
     }
     
@@ -422,6 +517,7 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     
     logWithTimestamp("INFO", `Pipeline ${pipelineId}: Starting trends phase`);
     
+    const trendsStartTime = new Date().toISOString();
     const trendsTask = await callA2AAgent(
       AGENT_URLS.trends,
       `Analyze trends for: ${pipeline.topic}. Provide trending keywords and SEO recommendations.`,
@@ -456,6 +552,15 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
       
       pipeline.results = { ...pipeline.results, trends: trendsData };
       pipeline.progress = 50;
+      
+      // Record A2A step with full details
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Google Trends Agent",
+        "trends",
+        trendsStartTime,
+        trendsTask
+      ));
+      
       logWithTimestamp("INFO", `Pipeline ${pipelineId}: Trends analysis complete`, { trendsData });
     } else {
       // Agent not available - use intelligent defaults
@@ -467,6 +572,16 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
         },
       };
       pipeline.progress = 50;
+      
+      // Record fallback step
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Google Trends Agent",
+        "trends",
+        trendsStartTime,
+        null,
+        "Trends agent unavailable, using intelligent defaults based on research keywords"
+      ));
+      
       logWithTimestamp("WARN", `Pipeline ${pipelineId}: Trends agent unavailable, using defaults`);
     }
     
@@ -483,6 +598,7 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     
     logWithTimestamp("INFO", `Pipeline ${pipelineId}: Starting writing phase`);
     
+    const writerStartTime = new Date().toISOString();
     const writerTask = await callA2AAgent(
       AGENT_URLS.writer,
       `Write and publish a blog post about: ${pipeline.topic}`,
@@ -565,6 +681,14 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
         },
       };
       
+      // Record A2A step with full details
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Blog Writer Agent",
+        "writing",
+        writerStartTime,
+        writerTask
+      ));
+      
       logWithTimestamp("INFO", `Pipeline ${pipelineId}: Blog writing complete`, {
         title: blogTitle,
         url: blogUrl,
@@ -582,6 +706,16 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
           wordCount: 0, // No fake word count - agent unavailable
         },
       };
+      
+      // Record fallback step
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Blog Writer Agent",
+        "writing",
+        writerStartTime,
+        null,
+        "Writer agent unavailable, blog not created - URL is placeholder"
+      ));
+      
       logWithTimestamp("WARN", `Pipeline ${pipelineId}: Writer agent unavailable, blog not created`);
     }
     
@@ -595,17 +729,24 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     pipeline.currentPhase = "complete";
     pipeline.progress = 100;
     pipeline.updatedAt = new Date().toISOString();
+    
+    // Calculate total pipeline duration
+    pipeline.totalDurationMs = new Date().getTime() - new Date(pipelineStartTime).getTime();
+    
     activePipelines.set(pipelineId, pipeline);
     
     logWithTimestamp("INFO", `Pipeline ${pipelineId}: Completed successfully`, {
       topic: pipeline.topic,
       blogUrl: pipeline.results?.blog?.url,
       taskIds,
+      totalDurationMs: pipeline.totalDurationMs,
+      a2aStepsCount: pipeline.a2aSteps?.length || 0,
     });
     
   } catch (error) {
     pipeline.status = "failed";
     pipeline.updatedAt = new Date().toISOString();
+    pipeline.totalDurationMs = new Date().getTime() - new Date(pipelineStartTime).getTime();
     activePipelines.set(pipelineId, pipeline);
     
     logWithTimestamp("ERROR", `Pipeline ${pipelineId}: Execution failed`, {
