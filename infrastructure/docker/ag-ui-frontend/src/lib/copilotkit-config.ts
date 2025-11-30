@@ -16,6 +16,7 @@ import {
   ExperimentalEmptyAdapter,
 } from "@copilotkit/runtime";
 import OpenAI from "openai";
+import { VertexAIAdapter } from "./adapters/vertex-ai-adapter";
 
 // Logging helper
 function logConfig(message: string, data?: object) {
@@ -76,23 +77,44 @@ if (!useVertexAI && !geminiApiKey && !openaiApiKey) {
  * Note: We must modify process.env because GoogleGenerativeAIAdapter internally
  * uses @langchain/google-gauth which reads GOOGLE_API_KEY from the environment.
  * There's no way to pass auth config directly to the adapter constructor.
+ * 
+ * UPDATE: For Vertex AI, we now use our custom VertexAIAdapter which properly
+ * configures platformType and location for ADC authentication.
  */
 export const createServiceAdapter = () => {
   logConfig("Creating service adapter...");
   
   if (useGemini) {
-    logConfig("Creating GoogleGenerativeAIAdapter", { useVertexAI, hasGeminiApiKey: !!geminiApiKey });
-    
-    // Configure authentication based on mode
-    // GoogleGenerativeAIAdapter uses @langchain/google-gauth which reads GOOGLE_API_KEY
-    // from process.env - we must set/clear it to control auth behavior
+    // For Vertex AI: Use our custom adapter that properly configures platformType and location
     if (useVertexAI) {
-      // For Vertex AI: Clear GOOGLE_API_KEY so ADC uses service account credentials
-      // ADC will automatically get OAuth2 tokens from the Cloud Run service account
+      logConfig("Creating VertexAIAdapter for Cloud Run/GCP", { 
+        location: process.env.GOOGLE_CLOUD_REGION || "us-central1" 
+      });
+      
+      // Clear GOOGLE_API_KEY so ADC uses service account credentials
       delete process.env.GOOGLE_API_KEY;
       logConfig("Cleared GOOGLE_API_KEY to enable ADC for Vertex AI");
-    } else if (geminiApiKey) {
-      // For Google AI Studio: Set GOOGLE_API_KEY from GEMINI_API_KEY
+      
+      try {
+        const adapter = new VertexAIAdapter({
+          model: "gemini-1.5-flash", // Use faster, cheaper model for chat
+          location: process.env.GOOGLE_CLOUD_REGION || "us-central1",
+        });
+        logConfig("VertexAIAdapter created successfully");
+        return adapter;
+      } catch (error) {
+        logConfig("ERROR creating VertexAIAdapter", {
+          error: error instanceof Error ? error.message : String(error),
+        });
+        throw error;
+      }
+    }
+    
+    // For Google AI Studio: Use the standard GoogleGenerativeAIAdapter
+    logConfig("Creating GoogleGenerativeAIAdapter for Google AI Studio", { hasGeminiApiKey: !!geminiApiKey });
+    
+    // Set GOOGLE_API_KEY from GEMINI_API_KEY for Google AI Studio
+    if (geminiApiKey) {
       process.env.GOOGLE_API_KEY = geminiApiKey;
       logConfig("Set GOOGLE_API_KEY from GEMINI_API_KEY for Google AI Studio");
     }

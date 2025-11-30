@@ -132,13 +132,40 @@ export const POST = async (req: NextRequest) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     const errorStack = error instanceof Error ? error.stack : undefined;
     
-    logWithTimestamp("Vertex AI test FAILED", { error: errorMessage, stack: errorStack });
+    // Try to extract more details from the error
+    const errorDetails: Record<string, unknown> = {};
+    if (error && typeof error === 'object') {
+      // Check for common error properties
+      const errorObj = error as Record<string, unknown>;
+      if ('cause' in errorObj) errorDetails.cause = String(errorObj.cause);
+      if ('code' in errorObj) errorDetails.code = errorObj.code;
+      if ('status' in errorObj) errorDetails.status = errorObj.status;
+      if ('statusCode' in errorObj) errorDetails.statusCode = errorObj.statusCode;
+      if ('response' in errorObj) {
+        const resp = errorObj.response as Record<string, unknown>;
+        if (resp && typeof resp === 'object') {
+          errorDetails.responseStatus = resp.status;
+          errorDetails.responseStatusText = resp.statusText;
+          if ('data' in resp) errorDetails.responseData = String(resp.data).substring(0, 500);
+        }
+      }
+    }
+    
+    logWithTimestamp("Vertex AI test FAILED", { 
+      error: errorMessage, 
+      stack: errorStack,
+      details: errorDetails,
+    });
     
     return new Response(
       JSON.stringify({
         success: false,
         provider: "vertex-ai",
-        error: errorMessage,
+        projectId: projectId,
+        location: location,
+        model: modelName,
+        error: errorMessage || "Unknown error (empty message)",
+        errorDetails,
         stack: errorStack,
       }),
       { status: 500, headers: { "Content-Type": "application/json" } }
