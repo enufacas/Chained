@@ -151,30 +151,48 @@ jobs:
           pip install -r requirements.txt
 
       - name: 'Authenticate to Google Cloud (if Vertex AI)'
+        id: 'gcp_auth'
         if: needs.check_trigger.outputs.use_vertex == 'true'
         uses: 'google-github-actions/auth@v2'
         with:
           workload_identity_provider: '${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${{ secrets.GCP_SERVICE_ACCOUNT }}'
+        continue-on-error: true
+
+      - name: 'Determine provider based on auth result'
+        id: 'provider'
+        env:
+          USE_VERTEX: '${{ needs.check_trigger.outputs.use_vertex }}'
+          GCP_AUTH_OUTCOME: '${{ steps.gcp_auth.outcome }}'
+        run: |
+          # Determine actual provider to use
+          if [ "$USE_VERTEX" = "true" ] && [ "$GCP_AUTH_OUTCOME" = "success" ]; then
+            echo "use_vertex=true" >> $GITHUB_OUTPUT
+            echo "provider_name=Google Vertex AI" >> $GITHUB_OUTPUT
+            echo "✅ Using Vertex AI (GCP auth successful)"
+          else
+            echo "use_vertex=false" >> $GITHUB_OUTPUT
+            echo "provider_name=Direct Anthropic API" >> $GITHUB_OUTPUT
+            if [ "$USE_VERTEX" = "true" ]; then
+              echo "⚠️ Vertex AI requested but GCP auth failed - falling back to direct Anthropic API"
+            else
+              echo "✅ Using direct Anthropic API"
+            fi
+          fi
 
       - name: 'Acknowledge coordination request'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
-          USE_VERTEX: '${{ needs.check_trigger.outputs.use_vertex }}'
+          PROVIDER_NAME: '${{ steps.provider.outputs.provider_name }}'
           TIER: '${{ needs.check_trigger.outputs.orchestration_tier }}'
           RUN_URL: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
         run: |
-          provider_msg="Direct Anthropic API"
-          if [ "$USE_VERTEX" = "true" ]; then
-            provider_msg="Google Vertex AI"
-          fi
-          
           gh issue comment "$ISSUE_NUMBER" --body "🎯 **Claude A2A Coordinator Activated**
 
           I'm analyzing this task and will decompose it into specialized sub-tasks for collaborative agent execution.
 
-          **Provider**: ${provider_msg}
+          **Provider**: ${PROVIDER_NAME}
           **Orchestration Tier**: ${TIER}
           **Progress**: [Track in workflow logs](${RUN_URL})
 
@@ -184,7 +202,7 @@ jobs:
         id: 'analyze'
         env:
           ANTHROPIC_API_KEY: '${{ secrets.ANTHROPIC_API_KEY }}'
-          CLAUDE_CODE_USE_VERTEX: '${{ needs.check_trigger.outputs.use_vertex }}'
+          CLAUDE_CODE_USE_VERTEX: '${{ steps.provider.outputs.use_vertex }}'
           ANTHROPIC_VERTEX_PROJECT_ID: '${{ vars.ANTHROPIC_VERTEX_PROJECT_ID }}'
           CLOUD_ML_REGION: '${{ vars.CLOUD_ML_REGION || ''us-east5'' }}'
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -197,7 +215,7 @@ jobs:
         if: needs.check_trigger.outputs.orchestration_tier == 'tier1'
         env:
           ANTHROPIC_API_KEY: '${{ secrets.ANTHROPIC_API_KEY }}'
-          CLAUDE_CODE_USE_VERTEX: '${{ needs.check_trigger.outputs.use_vertex }}'
+          CLAUDE_CODE_USE_VERTEX: '${{ steps.provider.outputs.use_vertex }}'
           ANTHROPIC_VERTEX_PROJECT_ID: '${{ vars.ANTHROPIC_VERTEX_PROJECT_ID }}'
           CLOUD_ML_REGION: '${{ vars.CLOUD_ML_REGION || ''us-east5'' }}'
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -210,7 +228,7 @@ jobs:
         if: needs.check_trigger.outputs.orchestration_tier == 'tier2'
         env:
           ANTHROPIC_API_KEY: '${{ secrets.ANTHROPIC_API_KEY }}'
-          CLAUDE_CODE_USE_VERTEX: '${{ needs.check_trigger.outputs.use_vertex }}'
+          CLAUDE_CODE_USE_VERTEX: '${{ steps.provider.outputs.use_vertex }}'
           ANTHROPIC_VERTEX_PROJECT_ID: '${{ vars.ANTHROPIC_VERTEX_PROJECT_ID }}'
           CLOUD_ML_REGION: '${{ vars.CLOUD_ML_REGION || ''us-east5'' }}'
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -222,7 +240,7 @@ jobs:
       - name: 'Aggregate and report results'
         env:
           ANTHROPIC_API_KEY: '${{ secrets.ANTHROPIC_API_KEY }}'
-          CLAUDE_CODE_USE_VERTEX: '${{ needs.check_trigger.outputs.use_vertex }}'
+          CLAUDE_CODE_USE_VERTEX: '${{ steps.provider.outputs.use_vertex }}'
           ANTHROPIC_VERTEX_PROJECT_ID: '${{ vars.ANTHROPIC_VERTEX_PROJECT_ID }}'
           CLOUD_ML_REGION: '${{ vars.CLOUD_ML_REGION || ''us-east5'' }}'
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -235,16 +253,28 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
-          USE_VERTEX: '${{ needs.check_trigger.outputs.use_vertex }}'
+          USE_VERTEX: '${{ steps.provider.outputs.use_vertex }}'
+          REQUESTED_VERTEX: '${{ needs.check_trigger.outputs.use_vertex }}'
+          GCP_AUTH_OUTCOME: '${{ steps.gcp_auth.outcome }}'
           RUN_URL: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
         run: |
-          if [ "$USE_VERTEX" = "true" ]; then
-            troubleshoot_msg="- Verify GCP workload identity federation is configured
-          - Check ANTHROPIC_VERTEX_PROJECT_ID variable is set
-          - Ensure service account has Vertex AI permissions
+          troubleshoot_msg=""
+          
+          # Check if Vertex AI was requested but auth failed
+          if [ "$REQUESTED_VERTEX" = "true" ] && [ "$GCP_AUTH_OUTCOME" != "success" ]; then
+            troubleshoot_msg="- ⚠️ **Vertex AI authentication failed** - workflow attempted fallback to direct API
+          - Verify GCP_WORKLOAD_IDENTITY_PROVIDER secret format (should be: projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/providers/PROVIDER_ID)
+          - Check GCP_SERVICE_ACCOUNT secret is correct
           - See docs/VERTEX_AI_CLAUDE_SETUP.md for setup guide"
+          fi
+          
+          if [ "$USE_VERTEX" = "true" ]; then
+            troubleshoot_msg="${troubleshoot_msg}
+          - Verify ANTHROPIC_VERTEX_PROJECT_ID variable is set
+          - Ensure service account has Vertex AI permissions"
           else
-            troubleshoot_msg="- Verify ANTHROPIC_API_KEY secret is configured
+            troubleshoot_msg="${troubleshoot_msg}
+          - Verify ANTHROPIC_API_KEY secret is configured
           - Check if API key has valid credits"
           fi
           
