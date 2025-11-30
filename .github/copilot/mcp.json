@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/github-copilot-mcp.json",
+  "mcpServers": {
+    "gcloud": {
+      "command": "npx",
+      "args": ["-y", "@google-cloud/gcloud-mcp"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${GOOGLE_APPLICATION_CREDENTIALS}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "id": "gcp-project",
+      "type": "promptString",
+      "description": "GCP Project ID for gcloud operations",
+      "default": "${GCP_PROJECT_ID}"
+    }
+  ]
+}

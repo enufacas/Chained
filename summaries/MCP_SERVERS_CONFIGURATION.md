@@ -283,13 +283,52 @@ The gcloud MCP Server provides access to Google Cloud Platform services through 
 
 ## Configuration Location
 
-MCP server tools are configured in the YAML frontmatter of each agent definition:
+### GitHub MCP Server (Built-in)
 
-```
-.github/agents/*.md
+The GitHub MCP server is **automatically available** to GitHub Copilot Coding Agent - no configuration required. All 37+ tools listed above are enabled by default when Copilot runs.
+
+### Custom MCP Servers
+
+Custom MCP servers (gcloud, chained-repository, etc.) are configured in:
+
+1. **Repository Settings UI**: `Settings > Code & automation > Copilot > Coding agent`
+2. **Configuration File**: `.github/copilot/mcp.json`
+
+Example `.github/copilot/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "gcloud": {
+      "command": "npx",
+      "args": ["-y", "@google-cloud/gcloud-mcp"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${GOOGLE_APPLICATION_CREDENTIALS}"
+      }
+    }
+  }
+}
 ```
 
-Each agent's tools list specifies which MCP server capabilities it has access to.
+### Environment Setup
+
+The `.github/workflows/copilot-setup-steps.yml` workflow prepares the environment:
+- Installs Node.js, Python, and dependencies
+- Configures GCP authentication (if secrets are available)
+- Pre-installs custom MCP server packages
+- Sets up environment variables for Copilot
+
+### Agent Tool Access
+
+Agent definitions in `.github/agents/*.md` can specify which MCP tools they use in their YAML frontmatter:
+
+```yaml
+tools:
+  - github-mcp-server-search_code
+  - github-mcp-server-web_search
+  - playwright-browser_navigate
+```
+
+**Note:** This is for documentation and agent guidance - all GitHub MCP server tools are available to agents regardless of what's listed.
 
 ## Additional Resources
 
