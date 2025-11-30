@@ -164,7 +164,7 @@ Create a custom Docker image with MCP pre-installed:
 ```dockerfile
 FROM ubuntu:22.04
 
-# Install Node.js and gcloud CLI
+# Install Node.js 20, gcloud CLI, and required dependencies for MCP servers
 RUN apt-get update && apt-get install -y \
     curl \
     git \
