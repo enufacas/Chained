@@ -110,59 +110,70 @@ Based on the successful conversation and identified limitations, here are expans
 
 ### Short-Term Enhancements (High Priority)
 
-#### 1. Pipeline Creation Capability
-**Current State**: Chat cannot create new pipelines  
-**Enhancement**: Allow users to initiate new research pipelines through chat
+#### 1. Pipeline Creation Capability ✅ IMPLEMENTED
+**Status**: ✅ Implemented in PR #TBD (2025-11-30)
 
 ```
 USER: Create a new pipeline on "vector embeddings"
-ASSISTANT: Starting a new research pipeline...
-- Research Agent: Analyzing "vector embeddings"
-- SEO Agent: Generating keywords
-- Writer Agent: Preparing blog draft
-Pipeline ID: pipeline-2025-1130-001
-Status: 🔄 In Progress
+ASSISTANT: 🚀 Pipeline Created!
+Pipeline ID: pipeline-1732973XXX-xxxxx
+Topic: vector embeddings
+Status: 🔄 Running
+Phase: research
+
+What's happening:
+1. 🔬 Research Agent - Analyzing "vector embeddings"
+2. 📈 SEO Agent - Generating keywords
+3. ✍️ Writer Agent - Preparing blog draft
 ```
 
-**Implementation Notes**:
-- Add `/api/pipeline/create` endpoint
-- Integrate with existing agent dispatch system
-- Use GitHub Issues as pipeline tracking mechanism
+**Implementation:**
+- Added `/api/pipeline` endpoint (POST to create, GET to list)
+- CopilotKit action `createPipeline` integrates with chat
+- Simulated progress for demo (real workflow dispatch available)
 
-#### 2. Direct Agent Interaction
-**Current State**: Cannot interact with individual agents  
-**Enhancement**: Allow users to query specific agents
+#### 2. Direct Agent Interaction ✅ IMPLEMENTED
+**Status**: ✅ Implemented in PR #TBD (2025-11-30)
 
 ```
 USER: @research-agent What's trending in AI today?
-USER: @seo-agent Suggest keywords for "machine learning"
-USER: @writer-agent Draft an introduction on "transformers"
+ASSISTANT: 🔬 Academic Research Response
+
+## Research Findings
+Based on my analysis, here are the current trending topics:
+1. Large Language Models (LLMs) - Reasoning capabilities
+2. AI Agents - Autonomous task execution
+3. Vector Databases - Embedding storage
+4. RAG Systems - Retrieval-augmented generation
 ```
 
-**Implementation Notes**:
-- Expose agent-specific endpoints
-- Add agent routing in chat handler
-- Use A2A Task protocol for agent communication
+**Implementation:**
+- Added `/api/agent` endpoint with @agent-name parsing
+- CopilotKit action `talkToAgent` routes messages to agents
+- Available agents: @research-agent, @seo-agent, @writer-agent
 
-#### 3. Real-Time Pipeline Status
-**Current State**: Shows static demo data  
-**Enhancement**: Connect to live pipeline execution
+#### 3. Real-Time Pipeline Status ✅ IMPLEMENTED
+**Status**: ✅ Implemented in PR #TBD (2025-11-30)
 
 ```
-USER: What's happening right now?
-ASSISTANT: 
-Active Pipelines: 2
-• pipeline-001: Research phase (45% complete)
-• pipeline-002: Writing phase (80% complete)
+USER: What's the pipeline status?
+ASSISTANT: 📊 Pipeline Status
 
-Recent Completions:
-• pipeline-xyz: "LLM Reasoning" - Completed 2 hours ago
+Active Pipelines: 1
+
+🔄 In Progress
+- vector embeddings [████████░░] 80%
+  Phase: writing
+
+✅ Recent Completions
+- LLM Reasoning - Completed 2 hours ago
+  📄 View Blog
 ```
 
-**Implementation Notes**:
-- Poll GitHub Issues for active `a2a-task` labels
-- WebSocket for real-time updates
-- Store pipeline state in Firestore
+**Implementation:**
+- `/api/pipeline?limit=5` returns active and recent pipelines
+- CopilotKit action `getPipelineStatus` provides status report
+- Progress bars and phase indicators in UI
 
 ### Medium-Term Enhancements
 
@@ -285,6 +296,7 @@ USER C: Review and approve the draft
 |------|-------|-------------|
 | 2025-11-30 | 🎉 First Success | Chat working with pipeline analysis capability |
 | 2025-11-30 | 📝 Document Created | Recording success and expansion ideas |
+| 2025-11-30 | ✅ Features 1-3 Implemented | Pipeline creation, agent interaction (@agent-name), real-time status |
 
 ---
 

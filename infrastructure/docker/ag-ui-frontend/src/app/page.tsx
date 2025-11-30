@@ -33,14 +33,36 @@ interface AgentState {
 // Constants
 // =============================================================================
 
-const CHAT_INSTRUCTIONS = `You are an AI assistant helping users understand the A2A (Agent-to-Agent) pipeline visualization.
+const CHAT_INSTRUCTIONS = `You are an AI assistant helping users with the A2A (Agent-to-Agent) pipeline.
 
-You have access to:
-- Pipeline data including research findings, trends analysis, and blog output
-- Agent information including their status and tasks
-- Actions to analyze the pipeline and get specific details
+## Your Capabilities
 
-Be helpful, concise, and informative. Use markdown formatting for clear responses.`;
+### 1. Pipeline Creation (NEW!)
+When users want to create/start a new pipeline, use the createPipeline action.
+- "Create a pipeline on embeddings" → Call createPipeline with topic="embeddings"
+- "Research AI agents" → Call createPipeline with topic="AI agents"
+
+### 2. Direct Agent Interaction (NEW!)
+When users mention @agent-name, use the talkToAgent action.
+- "@research-agent what's trending?" → Call talkToAgent
+- "@seo-agent suggest keywords" → Call talkToAgent
+- "@writer-agent draft intro" → Call talkToAgent
+
+### 3. Pipeline Status (NEW!)
+When users ask about status, use getPipelineStatus.
+- "What's happening?" / "Pipeline status?" → Call getPipelineStatus
+
+### 4. List Agents
+When users ask about available agents, use listAgents.
+- "What agents are available?" → Call listAgents
+
+### 5. Existing Pipeline Data
+For questions about the current demo pipeline:
+- "Analyze this pipeline" → Call analyzePipeline
+- "Trending keywords?" → Call getTrendingKeywords
+- "Research summary?" → Call getResearchSummary
+
+Be helpful, concise, and proactive. Suggest relevant actions based on context.`;
 
 // =============================================================================
 // Initial Data
@@ -559,13 +581,23 @@ function ChatPanel({ apiAvailable }: { apiAvailable: boolean }) {
         title: "A2A Pipeline Assistant",
         initial: `👋 Hi! I'm your A2A pipeline assistant.
 
-**Try these commands:**
-• "Analyze this pipeline"
-• "What are the trending keywords?"
-• "Tell me about the research findings"
-• "Summarize the blog output"
+**🚀 New! Pipeline Creation:**
+• "Create a pipeline on vector embeddings"
+• "Start researching AI agents"
 
-I can help you understand the A2A agent coordination flow.`,
+**💬 Talk to Agents:**
+• "@research-agent What's trending in AI?"
+• "@seo-agent Suggest keywords for ML"
+• "@writer-agent Draft an intro on LLMs"
+
+**📊 Pipeline Status:**
+• "What's the pipeline status?"
+• "Show active pipelines"
+• "List available agents"
+
+**📈 Existing Data:**
+• "Analyze this pipeline"
+• "What are the trending keywords?"`,
       }}
       className="h-full"
     />
@@ -648,6 +680,204 @@ ${pipelineData.trends.trendsData.trendingKeywords.map((k) => `- ${k}`).join("\n"
 
 **Key Points:**
 ${research.keyPoints.map((p) => `- ${p}`).join("\n")}`;
+    },
+  });
+
+  // ============================================================================
+  // NEW FEATURE 1: Create Pipeline Action
+  // ============================================================================
+  useCopilotAction({
+    name: "createPipeline",
+    description: "Create a new research pipeline on a specific topic. Use this when the user wants to start a new research or blog creation process.",
+    parameters: [
+      {
+        name: "topic",
+        type: "string",
+        description: "The topic to research and create content about",
+        required: true,
+      },
+    ],
+    handler: async ({ topic }) => {
+      try {
+        const response = await fetch("/api/pipeline", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ topic, triggerWorkflow: false }),
+        });
+
+        if (!response.ok) {
+          return `❌ Failed to create pipeline: ${response.statusText}`;
+        }
+
+        const data = await response.json();
+        return `## 🚀 Pipeline Created!
+
+**Pipeline ID:** ${data.pipeline.id}
+**Topic:** ${data.pipeline.topic}
+**Status:** ${data.pipeline.status === "running" ? "🔄 Running" : "⏳ Pending"}
+**Phase:** ${data.pipeline.currentPhase}
+
+### What's happening:
+1. 🔬 **Research Agent** - Analyzing "${topic}"
+2. 📈 **SEO Agent** - Generating keywords
+3. ✍️ **Writer Agent** - Preparing blog draft
+
+Use "What's the pipeline status?" to check progress.`;
+      } catch (error) {
+        return `❌ Error creating pipeline: ${error instanceof Error ? error.message : "Unknown error"}`;
+      }
+    },
+  });
+
+  // ============================================================================
+  // NEW FEATURE 2: Direct Agent Interaction
+  // ============================================================================
+  useCopilotAction({
+    name: "talkToAgent",
+    description: "Send a message directly to a specific agent. Use @agent-name syntax. Available agents: @research-agent, @seo-agent, @writer-agent",
+    parameters: [
+      {
+        name: "message",
+        type: "string",
+        description: "The message to send, optionally with @agent-name prefix",
+        required: true,
+      },
+    ],
+    handler: async ({ message }) => {
+      try {
+        const response = await fetch("/api/agent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        });
+
+        if (!response.ok) {
+          return `❌ Failed to contact agent: ${response.statusText}`;
+        }
+
+        const data = await response.json();
+        
+        if (data.type === "help") {
+          return `## 💡 Agent Interaction Help
+
+Use **@agent-name** syntax to talk directly to an agent:
+
+${data.availableAgents.map((a: { mention: string; displayName: string; description: string }) => 
+  `- **${a.mention}** - ${a.displayName}: ${a.description}`
+).join("\n")}
+
+### Examples:
+${data.examples.map((e: string) => `- "${e}"`).join("\n")}`;
+        }
+
+        if (data.type === "error") {
+          return `❌ ${data.message}\n\nAvailable agents: ${data.availableAgents.join(", ")}`;
+        }
+
+        return `## ${data.agent.icon} ${data.agent.displayName} Response
+
+${data.response}`;
+      } catch (error) {
+        return `❌ Error contacting agent: ${error instanceof Error ? error.message : "Unknown error"}`;
+      }
+    },
+  });
+
+  // ============================================================================
+  // NEW FEATURE 3: Real-Time Pipeline Status
+  // ============================================================================
+  useCopilotAction({
+    name: "getPipelineStatus",
+    description: "Get the current status of all active pipelines and recent completions",
+    parameters: [],
+    handler: async () => {
+      try {
+        const response = await fetch("/api/pipeline?limit=5");
+        
+        if (!response.ok) {
+          return `❌ Failed to get pipeline status: ${response.statusText}`;
+        }
+
+        const data = await response.json();
+        
+        if (data.pipelines.length === 0) {
+          return `## 📊 Pipeline Status
+
+No pipelines found. Create one with "Create a pipeline on [topic]"!`;
+        }
+
+        const activeCount = data.activePipelinesCount || 0;
+        const completedPipelines = data.pipelines.filter((p: { status: string }) => p.status === "completed");
+        const runningPipelines = data.pipelines.filter((p: { status: string }) => p.status === "running" || p.status === "pending");
+
+        let statusReport = `## 📊 Pipeline Status
+
+**Active Pipelines:** ${activeCount}
+
+`;
+
+        if (runningPipelines.length > 0) {
+          statusReport += `### 🔄 In Progress\n`;
+          for (const p of runningPipelines) {
+            const progressBar = "█".repeat(Math.floor(p.progress / 10)) + "░".repeat(10 - Math.floor(p.progress / 10));
+            statusReport += `- **${p.topic}** [${progressBar}] ${p.progress}%\n  Phase: ${p.currentPhase}\n`;
+          }
+          statusReport += "\n";
+        }
+
+        if (completedPipelines.length > 0) {
+          statusReport += `### ✅ Recent Completions\n`;
+          for (const p of completedPipelines.slice(0, 3)) {
+            const completedTime = new Date(p.updatedAt).toLocaleString();
+            statusReport += `- **${p.topic}** - Completed ${completedTime}\n`;
+            if (p.results?.blog?.url) {
+              statusReport += `  📄 [View Blog](${p.results.blog.url})\n`;
+            }
+          }
+        }
+
+        return statusReport;
+      } catch (error) {
+        return `❌ Error getting pipeline status: ${error instanceof Error ? error.message : "Unknown error"}`;
+      }
+    },
+  });
+
+  // ============================================================================
+  // List Available Agents Action
+  // ============================================================================
+  useCopilotAction({
+    name: "listAgents",
+    description: "List all available agents that can be interacted with directly",
+    parameters: [],
+    handler: async () => {
+      try {
+        const response = await fetch("/api/agent");
+        
+        if (!response.ok) {
+          return `❌ Failed to get agents list`;
+        }
+
+        const data = await response.json();
+        
+        return `## 🤖 Available Agents
+
+You can talk directly to these agents using **@agent-name** syntax:
+
+${data.agents.map((agent: { name: string; displayName: string; icon: string; description: string; capabilities: string[] }) => 
+  `### ${agent.icon} ${agent.displayName}
+**Mention:** @${agent.name}
+${agent.description}
+
+**Capabilities:**
+${agent.capabilities.map((c: string) => `- ${c}`).join("\n")}`
+).join("\n\n")}
+
+### How to Use
+Just type a message like: "@research-agent What's trending in AI?"`;
+      } catch (error) {
+        return `❌ Error listing agents: ${error instanceof Error ? error.message : "Unknown error"}`;
+      }
     },
   });
 
@@ -793,7 +1023,7 @@ ${research.keyPoints.map((p) => `- ${p}`).join("\n")}`;
           labels={{
             title: "A2A Pipeline Assistant",
             initial:
-              "👋 Hi! I can help you understand the A2A pipeline. Try asking:\n\n• Analyze this pipeline\n• What are the trending keywords?\n• Summarize the research findings",
+              "👋 Hi! I can help you with the A2A pipeline!\n\n🚀 **New Commands:**\n• Create a pipeline on [topic]\n• @research-agent [query]\n• What's the pipeline status?\n\n📊 **Existing:**\n• Analyze this pipeline\n• What are the trending keywords?",
           }}
         />
       )}
