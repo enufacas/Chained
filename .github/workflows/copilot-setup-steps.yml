@@ -52,7 +52,7 @@ jobs:
       - name: Setup minimal toolchain
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'  # Node.js 20+ required for @google-cloud/gcloud-mcp
       
       - name: Setup Python for tools
         uses: actions/setup-python@v5
@@ -123,19 +123,53 @@ jobs:
             echo "⚠️ GCP secrets not configured - gcloud-mcp will not be available"
           fi
       
+      - name: Clean and prepare GCP service account key
+        id: clean-gcp-key
+        if: steps.check-gcp.outputs.gcp_configured == 'true'
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          # Clean the JSON by removing trailing whitespace and control characters
+          # This handles cases where the secret was pasted with extra formatting
+          # The key often has trailing spaces or carriage returns from copy/paste
+          
+          # Remove trailing whitespace from each line, then remove all newlines, then compact with jq
+          echo "$GCP_SA_KEY" | sed 's/[[:space:]]*$//' | tr -d '\r\n' | jq -c '.' > /tmp/gcp-sa-key-cleaned.json 2>/dev/null
+          
+          if [ -s /tmp/gcp-sa-key-cleaned.json ] && jq -e '.' /tmp/gcp-sa-key-cleaned.json > /dev/null 2>&1; then
+            echo "key_valid=true" >> $GITHUB_OUTPUT
+            # Set env var for gcloud auth and SDKs
+            echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-sa-key-cleaned.json" >> $GITHUB_ENV
+            echo "✅ GCP service account key validated and saved"
+          else
+            echo "key_valid=false" >> $GITHUB_OUTPUT
+            echo "❌ Failed to parse GCP service account key JSON"
+            echo "❌ Please ensure the GCP_SA_KEY secret contains valid JSON"
+            echo "❌ Tip: Copy the entire contents of your service account key file without modification"
+          fi
+      
       - name: Authenticate to Google Cloud
         id: gcp-auth
-        if: steps.check-gcp.outputs.gcp_configured == 'true'
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+        if: steps.clean-gcp-key.outputs.key_valid == 'true'
+        run: |
+          # Use gcloud auth with the cleaned credentials file
+          gcloud auth activate-service-account --key-file=/tmp/gcp-sa-key-cleaned.json
+          if [ $? -eq 0 ]; then
+            echo "✅ GCP authentication successful"
+            echo "auth_success=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ GCP authentication failed"
+            echo "auth_success=false" >> $GITHUB_OUTPUT
+          fi
         continue-on-error: true
       
-      - name: Setup gcloud CLI
-        if: steps.gcp-auth.outcome == 'success'
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - name: Configure gcloud CLI project
+        if: steps.gcp-auth.outputs.auth_success == 'true'
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          gcloud config set project "$GCP_PROJECT_ID"
+          echo "✅ gcloud CLI configured for project: $GCP_PROJECT_ID"
       
       - name: Configure GCP environment for Copilot
         env:
@@ -204,7 +238,7 @@ jobs:
           echo "### Available Tools" >> $GITHUB_STEP_SUMMARY
           echo "| Tool | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Node.js | ✅ v18 |" >> $GITHUB_STEP_SUMMARY
+          echo "| Node.js | ✅ v20 |" >> $GITHUB_STEP_SUMMARY
           echo "| Python | ✅ v3.11 |" >> $GITHUB_STEP_SUMMARY
           echo "| COPILOT_PAT | ${{ env.COPILOT_PAT_AVAILABLE == 'true' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| GCP/gcloud | ${{ env.GCP_AVAILABLE == 'true' && '✅' || '⚠️ Not configured' }} |" >> $GITHUB_STEP_SUMMARY

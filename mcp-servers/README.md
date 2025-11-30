@@ -69,7 +69,8 @@ These MCP servers extend Claude Desktop and other MCP clients with specialized k
 ## 🚀 Quick Setup
 
 ### Prerequisites
-- Node.js >= 18.0.0 for chained-repository (Node.js >= 20 recommended for gcloud-mcp)
+- Node.js >= 18.0.0 for chained-repository
+- Node.js >= 20.0.0 for gcloud-mcp (**required** - package uses features only available in Node.js 20+)
 - Claude Desktop (or another MCP client)
 - Chained repository cloned locally
 - gcloud CLI installed (for gcloud-mcp) - [Install Guide](https://cloud.google.com/sdk/docs/install)
