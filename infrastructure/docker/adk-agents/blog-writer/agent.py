@@ -14,6 +14,9 @@ A2A Protocol Implementation:
 - Handles SendMessage at POST /a2a/tasks
 - Accepts referenceTaskIds from other agents
 - Returns Tasks with blog content artifacts
+
+**IMPORTANT**: This agent uses Gemini/Vertex AI to generate REAL content.
+All model interactions are logged and captured as artifacts for debugging.
 """
 
 import json
@@ -26,20 +29,69 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
+# Try to import Gemini AI - may not be available in all environments
+try:
+    import google.generativeai as genai
+    GENAI_AVAILABLE = True
+except ImportError:
+    GENAI_AVAILABLE = False
+    genai = None
+
 # =============================================================================
 # Configuration
 # =============================================================================
 
 AGENT_NAME = "blog-writer"
-AGENT_DESCRIPTION = "Writes engaging blog posts from research topics and trend data"
-AGENT_VERSION = "1.0.0"
+AGENT_DESCRIPTION = "Writes engaging blog posts from research topics and trend data using Vertex AI"
+AGENT_VERSION = "1.2.0"  # Updated version with model interaction logging
 PORT = int(os.getenv("PORT", "8082"))
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 WEBSITE_DEPLOY_URL = os.getenv("WEBSITE_DEPLOY_URL", "")
 
-# Use Gemini API if available
-USE_AI = bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+# Use Gemini API if available and genai library is installed
+USE_AI = GENAI_AVAILABLE and bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+
+# Global model interaction log - captures all LLM calls for this request
+MODEL_INTERACTIONS: List[Dict[str, Any]] = []
+
+def log_interaction(interaction_type: str, data: Dict[str, Any]) -> None:
+    """Log a model interaction for later retrieval."""
+    interaction = {
+        "type": interaction_type,
+        "timestamp": datetime.utcnow().isoformat(),
+        "agent": AGENT_NAME,
+        **data
+    }
+    MODEL_INTERACTIONS.append(interaction)
+    # Also print to stdout for Cloud Run logs
+    print(f"🤖 [MODEL INTERACTION] {interaction_type}: {json.dumps(data, default=str)[:500]}")
+
+def clear_interactions() -> None:
+    """Clear the model interactions log for a new request."""
+    global MODEL_INTERACTIONS
+    MODEL_INTERACTIONS = []
+
+def get_interactions() -> List[Dict[str, Any]]:
+    """Get all model interactions for this request."""
+    return MODEL_INTERACTIONS.copy()
+
+# Configure Gemini if available
+if USE_AI and genai:
+    api_key = GEMINI_API_KEY or GOOGLE_API_KEY
+    genai.configure(api_key=api_key)
+    print(f"✅ Gemini AI configured with key starting: {api_key[:8]}...")
+    log_interaction("configuration", {
+        "status": "configured",
+        "model": "gemini-1.5-flash",
+        "api_key_prefix": api_key[:8] + "..."
+    })
+else:
+    print(f"⚠️ Gemini AI NOT configured - USE_AI={USE_AI}, GENAI_AVAILABLE={GENAI_AVAILABLE}")
+    if not GENAI_AVAILABLE:
+        print("   google-generativeai package not installed")
+    if not (GEMINI_API_KEY or GOOGLE_API_KEY):
+        print("   No API key found in GEMINI_API_KEY or GOOGLE_API_KEY")
 
 
 # =============================================================================
@@ -144,22 +196,278 @@ async def write_blog_post(
     """
     Write a blog post based on research topic and trends.
 
-    In production, this would:
-    1. Use Gemini to generate engaging content
-    2. Incorporate trend data for SEO optimization
-    3. Format for the target blog platform
+    This function:
+    1. Uses Gemini to generate engaging content (when USE_AI=True)
+    2. Incorporates trend data for SEO optimization
+    3. Formats for the target blog platform
+    4. Logs all model interactions for debugging
+    
+    Fallback: Template-based content if Gemini is unavailable.
     """
     topic = topic_data.get("topic", "Technology Trends")
     domain = topic_data.get("domain", "Technology")
     key_points = topic_data.get("key_points", [])
-    suggested_length = topic_data.get("suggested_length", "1500-2000 words")
     seo_keywords = topic_data.get("seo_keywords", [])
+    
+    # Log the write request
+    log_interaction("write_request", {
+        "topic": topic,
+        "domain": domain,
+        "key_points_count": len(key_points),
+        "seo_keywords": seo_keywords[:5],
+        "ai_enabled": USE_AI and genai is not None
+    })
+    
+    # Extract trend keywords if available
+    trend_keywords = []
+    recommended_focus = topic
+    if trends_data:
+        trend_keywords = trends_data.get("trending_keywords", [])
+        recommended_focus = trends_data.get("recommended_focus", topic)
 
-    # Generate blog structure
+    # Generate blog title
     title = f"{topic}: A Deep Dive into Modern {domain}"
     slug = generate_blog_slug(title)
     
-    # Simulate blog content generation
+    # Use Gemini for content generation if available
+    content_result = None
+    if USE_AI and genai:
+        content_result = await generate_content_with_gemini(
+            topic=topic,
+            domain=domain,
+            key_points=key_points,
+            seo_keywords=seo_keywords,
+            trend_keywords=trend_keywords,
+            recommended_focus=recommended_focus
+        )
+        full_content = content_result["content"]
+        
+        # Update title from generated content if it has a better one
+        if full_content.startswith("# "):
+            first_line = full_content.split("\n")[0]
+            generated_title = first_line.replace("# ", "").strip()
+            if generated_title:
+                title = generated_title
+                slug = generate_blog_slug(title)
+    else:
+        # Fallback to template-based content
+        log_interaction("fallback_mode", {
+            "reason": "Gemini AI not available",
+            "use_ai": USE_AI,
+            "genai_available": genai is not None
+        })
+        full_content = generate_template_content(
+            topic=topic,
+            domain=domain,
+            key_points=key_points,
+            trends_data=trends_data
+        )
+        content_result = None
+
+    return {
+        "title": title,
+        "slug": slug,
+        "full_content": full_content,
+        "metadata": {
+            "author": "Chained AI Blog Writer",
+            "domain": domain,
+            "seo_keywords": seo_keywords + trend_keywords[:5],
+            "word_count": len(full_content.split()),
+            "read_time_minutes": max(1, len(full_content.split()) // 200),
+            "generated_at": datetime.utcnow().isoformat(),
+            "ai_generated": content_result is not None,
+        },
+        "model_interactions": get_interactions() if content_result else [],
+    }
+
+
+async def generate_content_with_gemini(
+    topic: str,
+    domain: str,
+    key_points: List[str],
+    seo_keywords: List[str],
+    trend_keywords: List[str],
+    recommended_focus: str
+) -> Dict[str, Any]:
+    """
+    Generate blog content using Gemini AI.
+    
+    This creates comprehensive, well-researched blog content that:
+    - Is 1500-2500 words
+    - Has proper structure with headers
+    - Includes specific examples and data points
+    - Is SEO-optimized with relevant keywords
+    
+    Returns a dict with:
+    - content: The generated markdown content
+    - model_interactions: List of all LLM calls made
+    """
+    # Build the comprehensive prompt
+    key_points_str = "\n".join(f"- {p}" for p in key_points) if key_points else "- Overview\n- Key Concepts\n- Applications"
+    seo_str = ", ".join(seo_keywords[:8]) if seo_keywords else topic
+    trends_str = ", ".join(trend_keywords[:8]) if trend_keywords else ""
+    
+    prompt = f"""Write a comprehensive, engaging, and well-researched blog post about: "{topic}"
+
+## Content Requirements
+
+**Domain/Field:** {domain}
+**Primary Focus:** {recommended_focus}
+
+**Key Points to Cover:**
+{key_points_str}
+
+**Tone & Style:**
+- Professional yet accessible - explain complex concepts clearly
+- Use concrete examples and real-world applications
+- Include specific data points, statistics, or facts where relevant
+- Avoid generic filler content - every paragraph should add value
+- Write in an engaging narrative style
+
+**Structure (Target: 1500-2500 words):**
+
+1. **Title** - Create an engaging, SEO-friendly title
+2. **Introduction** (200-250 words)
+   - Hook the reader with a surprising fact, question, or scenario
+   - Clearly state what they'll learn
+   - Why this topic matters right now
+
+3. **Background & Context** (300-400 words)
+   - Historical context or evolution of the topic
+   - Key terminology explained
+   - Current landscape overview
+
+4. **Deep Dive: Core Concepts** (500-700 words)
+   - 3-4 main concepts explained in detail
+   - Use subheadings for each concept
+   - Include specific examples for each
+
+5. **Practical Applications** (300-400 words)
+   - Real-world use cases
+   - Industry examples
+   - How readers can apply this knowledge
+
+6. **Future Outlook** (200-300 words)
+   - Where is this heading?
+   - Expert predictions or emerging trends
+   - What to watch for
+
+7. **Conclusion** (150-200 words)
+   - Key takeaways (3-5 bullet points)
+   - Actionable next steps for readers
+
+**SEO Optimization:**
+- Primary keywords: {seo_str}
+{f"- Trending keywords to include naturally: {trends_str}" if trends_str else ""}
+- Use keywords in headings and throughout the content naturally
+
+**Quality Requirements:**
+- NO generic placeholder content like "This is a significant development"
+- Include SPECIFIC examples, numbers, and data points
+- Make claims concrete and supported
+- Write engaging, non-robotic prose
+
+Format the output as Markdown with proper headers (##, ###), bullet points, and formatting.
+Start with `# [Your Title Here]` as the first line."""
+
+    # Log the prompt being sent
+    log_interaction("llm_request", {
+        "model": "gemini-1.5-flash",
+        "prompt_length": len(prompt),
+        "prompt_preview": prompt[:500] + "..." if len(prompt) > 500 else prompt,
+        "topic": topic,
+        "generation_config": {
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "max_output_tokens": 4096
+        }
+    })
+
+    try:
+        # Use Gemini 1.5 Flash for fast, quality content
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        start_time = datetime.utcnow()
+        response = model.generate_content(
+            prompt,
+            generation_config=genai.GenerationConfig(
+                temperature=0.7,  # Creative but focused
+                top_p=0.9,
+                max_output_tokens=4096,  # Allow long content
+            )
+        )
+        end_time = datetime.utcnow()
+        duration_ms = (end_time - start_time).total_seconds() * 1000
+        
+        if response.text:
+            word_count = len(response.text.split())
+            print(f"✅ Gemini generated {word_count} words for: {topic} in {duration_ms:.0f}ms")
+            
+            # Log the successful response
+            log_interaction("llm_response", {
+                "model": "gemini-1.5-flash",
+                "status": "success",
+                "word_count": word_count,
+                "response_length": len(response.text),
+                "response_preview": response.text[:500] + "..." if len(response.text) > 500 else response.text,
+                "duration_ms": duration_ms,
+                "finish_reason": getattr(response.candidates[0], 'finish_reason', 'unknown') if response.candidates else 'unknown'
+            })
+            
+            return {
+                "content": response.text,
+                "word_count": word_count,
+                "ai_generated": True
+            }
+        else:
+            print(f"⚠️ Gemini returned empty response for: {topic}")
+            log_interaction("llm_response", {
+                "model": "gemini-1.5-flash",
+                "status": "empty_response",
+                "duration_ms": duration_ms
+            })
+            # Fall back to template
+            fallback_content = generate_template_content(topic, domain, key_points, {"trending_keywords": trend_keywords})
+            return {
+                "content": fallback_content,
+                "word_count": len(fallback_content.split()),
+                "ai_generated": False,
+                "fallback_reason": "empty_response"
+            }
+            
+    except Exception as e:
+        error_msg = str(e)
+        print(f"⚠️ Gemini content generation failed: {error_msg}")
+        
+        # Log the error
+        log_interaction("llm_error", {
+            "model": "gemini-1.5-flash",
+            "error": error_msg,
+            "error_type": type(e).__name__
+        })
+        
+        # Fall back to template content
+        fallback_content = generate_template_content(topic, domain, key_points, {"trending_keywords": trend_keywords})
+        return {
+            "content": fallback_content,
+            "word_count": len(fallback_content.split()),
+            "ai_generated": False,
+            "fallback_reason": f"error: {error_msg}"
+        }
+
+
+def generate_template_content(
+    topic: str,
+    domain: str,
+    key_points: List[str],
+    trends_data: Optional[Dict[str, Any]] = None
+) -> str:
+    """
+    Generate template-based content when AI is not available.
+    This is the fallback mode that produces shorter, template content.
+    """
+    title = f"{topic}: A Deep Dive into Modern {domain}"
+    
     introduction = f"""
 In the rapidly evolving landscape of {domain.lower()}, few topics have garnered as much 
 attention as {topic}. This exploration delves into the current state of research, 
@@ -199,22 +507,7 @@ ahead in an increasingly competitive landscape.
         full_content += f"## {section['heading']}\n\n{section['content']}\n\n"
     full_content += f"## Conclusion\n\n{conclusion}\n"
 
-    return {
-        "title": title,
-        "slug": slug,
-        "introduction": introduction,
-        "sections": sections,
-        "conclusion": conclusion,
-        "full_content": full_content,
-        "metadata": {
-            "author": "Chained AI Blog Writer",
-            "domain": domain,
-            "seo_keywords": seo_keywords,
-            "word_count": len(full_content.split()),
-            "read_time_minutes": max(1, len(full_content.split()) // 200),
-            "generated_at": datetime.utcnow().isoformat(),
-        },
-    }
+    return full_content
 
 
 async def deploy_blog_post(blog_post: Dict[str, Any]) -> Dict[str, Any]:
@@ -546,8 +839,23 @@ async def send_message(request: SendMessageRequest) -> Task:
 
     This agent accepts referenceTaskIds from the Academic Research Agent
     and Google Trends Agent to incorporate their findings.
+    
+    All model interactions (LLM calls) are logged and returned as artifacts
+    for debugging and transparency.
     """
     task_id = generate_task_id()
+    
+    # Clear previous interactions for this new request
+    clear_interactions()
+    
+    # Log the incoming request
+    log_interaction("task_start", {
+        "task_id": task_id,
+        "context_id": request.contextId,
+        "message_length": sum(len(p.text) for p in request.message.parts),
+        "has_metadata": request.metadata is not None,
+        "reference_tasks": request.referenceTaskIds or []
+    })
 
     try:
         # Extract message text
@@ -555,8 +863,11 @@ async def send_message(request: SendMessageRequest) -> Task:
 
         # Process the write request
         result = await process_write_request(message_text, request.metadata)
+        
+        # Get all model interactions for this request
+        model_interactions = get_interactions()
 
-        # Create artifacts
+        # Create artifacts including model interactions
         artifacts = [
             Artifact(
                 name="blog-post",
@@ -573,7 +884,21 @@ async def send_message(request: SendMessageRequest) -> Task:
                 type="application/json",
                 data=json.dumps(result["deployment"]),
             ),
+            # NEW: Include model interactions as an artifact for deep dive
+            Artifact(
+                name="model-interactions",
+                type="application/json",
+                data=json.dumps(model_interactions, default=str),
+            ),
         ]
+        
+        # Log task completion
+        log_interaction("task_complete", {
+            "task_id": task_id,
+            "word_count": result["blog_post"]["metadata"].get("word_count", 0),
+            "ai_generated": result["blog_post"]["metadata"].get("ai_generated", False),
+            "interactions_count": len(model_interactions)
+        })
 
         # Return completed task
         return Task(
@@ -586,7 +911,9 @@ async def send_message(request: SendMessageRequest) -> Task:
                     role="agent",
                     parts=[MessagePart(
                         text=f"Blog post '{result['blog_post']['title']}' written and "
-                             f"deployed to {result['deployment']['url']}"
+                             f"deployed to {result['deployment']['url']} "
+                             f"({result['blog_post']['metadata'].get('word_count', 0)} words, "
+                             f"AI: {result['blog_post']['metadata'].get('ai_generated', False)})"
                     )],
                 ),
             ),
@@ -595,6 +922,13 @@ async def send_message(request: SendMessageRequest) -> Task:
         )
 
     except Exception as e:
+        # Log the error
+        log_interaction("task_error", {
+            "task_id": task_id,
+            "error": str(e),
+            "error_type": type(e).__name__
+        })
+        
         return Task(
             id=task_id,
             contextId=request.contextId,

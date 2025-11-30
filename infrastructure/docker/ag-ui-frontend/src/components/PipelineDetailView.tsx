@@ -20,6 +20,21 @@ import { Pipeline, A2AStepDetail } from "@/types";
 // Re-export for backwards compatibility with any direct imports
 export type { A2AStepDetail };
 
+// Model interaction type for rendering LLM call logs
+interface ModelInteraction {
+  type: string;
+  timestamp?: string;
+  agent?: string;
+  model?: string;
+  duration_ms?: number;
+  word_count?: number;
+  status?: string;
+  prompt_preview?: string;
+  response_preview?: string;
+  error?: string;
+  [key: string]: unknown;
+}
+
 interface PipelineDetailViewProps {
   pipelineId: string;
   onClose: () => void;
@@ -441,28 +456,131 @@ export default function PipelineDetailView({ pipelineId, onClose }: PipelineDeta
                             Artifacts ({step.artifacts.length}):
                           </div>
                           <div className="space-y-2">
-                            {step.artifacts.map((artifact, artifactIndex) => (
-                              <div
-                                key={artifactIndex}
-                                className="bg-black/30 rounded-lg p-3"
-                              >
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className="text-xs font-medium text-accent-400">
-                                    📦 {artifact.name}
-                                  </span>
-                                  <span className="text-xs text-slate-500">
-                                    {artifact.type}
-                                  </span>
+                            {step.artifacts.map((artifact, artifactIndex) => {
+                              // Special rendering for model-interactions artifact
+                              if (artifact.name === "model-interactions") {
+                                try {
+                                  const interactions = JSON.parse(artifact.data);
+                                  return (
+                                    <div
+                                      key={artifactIndex}
+                                      className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-lg p-4 border border-purple-500/30"
+                                    >
+                                      <div className="flex items-center gap-2 mb-3">
+                                        <span className="text-lg">🧠</span>
+                                        <span className="text-sm font-semibold text-purple-400">
+                                          Model Interactions ({interactions.length})
+                                        </span>
+                                        <span className="text-xs text-slate-500">
+                                          - LLM calls and responses
+                                        </span>
+                                      </div>
+                                      <div className="space-y-3">
+                                        {(interactions as ModelInteraction[]).map((interaction: ModelInteraction, idx: number) => (
+                                          <div
+                                            key={idx}
+                                            className={`rounded-lg p-3 ${
+                                              interaction.type === "llm_request"
+                                                ? "bg-blue-500/10 border-l-2 border-blue-500"
+                                                : interaction.type === "llm_response"
+                                                ? "bg-green-500/10 border-l-2 border-green-500"
+                                                : interaction.type === "llm_error"
+                                                ? "bg-red-500/10 border-l-2 border-red-500"
+                                                : "bg-slate-700/30 border-l-2 border-slate-500"
+                                            }`}
+                                          >
+                                            <div className="flex items-center justify-between mb-2">
+                                              <span className={`text-xs font-medium ${
+                                                interaction.type === "llm_request"
+                                                  ? "text-blue-400"
+                                                  : interaction.type === "llm_response"
+                                                  ? "text-green-400"
+                                                  : interaction.type === "llm_error"
+                                                  ? "text-red-400"
+                                                  : "text-slate-400"
+                                              }`}>
+                                                {interaction.type === "llm_request" && "📤 LLM Request"}
+                                                {interaction.type === "llm_response" && "📥 LLM Response"}
+                                                {interaction.type === "llm_error" && "⚠️ LLM Error"}
+                                                {interaction.type === "task_start" && "🚀 Task Start"}
+                                                {interaction.type === "task_complete" && "✅ Task Complete"}
+                                                {interaction.type === "write_request" && "📝 Write Request"}
+                                                {interaction.type === "configuration" && "⚙️ Configuration"}
+                                                {!["llm_request", "llm_response", "llm_error", "task_start", "task_complete", "write_request", "configuration"].includes(String(interaction.type)) && `📋 ${interaction.type}`}
+                                              </span>
+                                              <span className="text-xs text-slate-500">
+                                                {String(interaction.timestamp || "").split("T")[1]?.split(".")[0]}
+                                              </span>
+                                            </div>
+                                            <div className="text-xs text-slate-300 space-y-1">
+                                              {interaction.model && (
+                                                <div><span className="text-slate-500">Model:</span> {String(interaction.model)}</div>
+                                              )}
+                                              {interaction.duration_ms && (
+                                                <div><span className="text-slate-500">Duration:</span> {String(interaction.duration_ms)}ms</div>
+                                              )}
+                                              {interaction.word_count && (
+                                                <div><span className="text-slate-500">Words:</span> {String(interaction.word_count)}</div>
+                                              )}
+                                              {interaction.status && (
+                                                <div><span className="text-slate-500">Status:</span> {String(interaction.status)}</div>
+                                              )}
+                                              {interaction.prompt_preview && (
+                                                <div className="mt-2">
+                                                  <span className="text-slate-500">Prompt Preview:</span>
+                                                  <pre className="mt-1 p-2 bg-black/30 rounded text-xs overflow-x-auto max-h-24 overflow-y-auto whitespace-pre-wrap">
+                                                    {String(interaction.prompt_preview)}
+                                                  </pre>
+                                                </div>
+                                              )}
+                                              {interaction.response_preview && (
+                                                <div className="mt-2">
+                                                  <span className="text-slate-500">Response Preview:</span>
+                                                  <pre className="mt-1 p-2 bg-black/30 rounded text-xs overflow-x-auto max-h-24 overflow-y-auto whitespace-pre-wrap">
+                                                    {String(interaction.response_preview)}
+                                                  </pre>
+                                                </div>
+                                              )}
+                                              {interaction.error && (
+                                                <div className="mt-2 text-red-400">
+                                                  <span className="text-red-500">Error:</span> {String(interaction.error)}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  );
+                                } catch {
+                                  // Fall through to normal artifact rendering
+                                }
+                              }
+                              
+                              // Normal artifact rendering
+                              return (
+                                <div
+                                  key={artifactIndex}
+                                  className="bg-black/30 rounded-lg p-3"
+                                >
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-xs font-medium text-accent-400">
+                                      📦 {artifact.name}
+                                    </span>
+                                    <span className="text-xs text-slate-500">
+                                      {artifact.type}
+                                    </span>
+                                  </div>
+                                  <pre className="text-xs text-slate-300 overflow-x-auto max-h-48 overflow-y-auto">
+                                    {artifact.preview && artifact.preview.length > 0 
+                                      ? artifact.preview 
+                                      : artifact.data.length > 500 
+                                        ? artifact.data.substring(0, 500) + "..."
+                                        : artifact.data}
+                                  </pre>
                                 </div>
-                                <pre className="text-xs text-slate-300 overflow-x-auto max-h-48 overflow-y-auto">
-                                  {artifact.preview && artifact.preview.length > 0 
-                                    ? artifact.preview 
-                                    : artifact.data.length > 500 
-                                      ? artifact.data.substring(0, 500) + "..."
-                                      : artifact.data}
-                                </pre>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         </div>
                       )}

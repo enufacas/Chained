@@ -13,6 +13,9 @@ A2A Protocol Implementation:
 - Exposes AgentCard at /.well-known/agent.json
 - Handles SendMessage at POST /a2a/tasks
 - Returns Tasks with trend analysis artifacts
+
+**IMPORTANT**: This agent uses Gemini/Vertex AI for intelligent trend analysis.
+All model interactions are logged and captured as artifacts for debugging.
 """
 
 import json
@@ -26,19 +29,58 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
+# Try to import Gemini AI
+try:
+    import google.generativeai as genai
+    GENAI_AVAILABLE = True
+except ImportError:
+    GENAI_AVAILABLE = False
+    genai = None
+
 # =============================================================================
 # Configuration
 # =============================================================================
 
 AGENT_NAME = "google-trends"
-AGENT_DESCRIPTION = "Analyzes Google Trends data to identify trending topics for SEO"
-AGENT_VERSION = "1.0.0"
+AGENT_DESCRIPTION = "Analyzes trends and generates SEO insights using Vertex AI"
+AGENT_VERSION = "1.2.0"  # Updated with AI-powered trend analysis
 PORT = int(os.getenv("PORT", "8083"))
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 
 # Use Gemini API if available
-USE_AI = bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+USE_AI = GENAI_AVAILABLE and bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+
+# Global model interaction log
+MODEL_INTERACTIONS: List[Dict[str, Any]] = []
+
+def log_interaction(interaction_type: str, data: Dict[str, Any]) -> None:
+    """Log a model interaction for later retrieval."""
+    interaction = {
+        "type": interaction_type,
+        "timestamp": datetime.utcnow().isoformat(),
+        "agent": AGENT_NAME,
+        **data
+    }
+    MODEL_INTERACTIONS.append(interaction)
+    print(f"🤖 [MODEL INTERACTION] {interaction_type}: {json.dumps(data, default=str)[:500]}")
+
+def clear_interactions() -> None:
+    """Clear the model interactions log for a new request."""
+    global MODEL_INTERACTIONS
+    MODEL_INTERACTIONS = []
+
+def get_interactions() -> List[Dict[str, Any]]:
+    """Get all model interactions for this request."""
+    return MODEL_INTERACTIONS.copy()
+
+# Configure Gemini if available
+if USE_AI and genai:
+    api_key = GEMINI_API_KEY or GOOGLE_API_KEY
+    genai.configure(api_key=api_key)
+    print(f"✅ Gemini AI configured for trends agent with key: {api_key[:8]}...")
+else:
+    print(f"⚠️ Trends Agent: Gemini AI NOT configured - using simulated data")
 
 
 # =============================================================================
@@ -231,13 +273,24 @@ def generate_task_id() -> str:
 
 async def get_trends_for_topic(topic: str) -> Dict[str, Any]:
     """
-    Get Google Trends data for a topic.
+    Get trends data for a topic using AI analysis.
 
-    In production, this would:
-    1. Query the Google Trends API
-    2. Use Gemini to analyze and interpret the data
-    3. Generate SEO recommendations
+    When AI is enabled, uses Gemini to:
+    1. Analyze the topic's potential trending keywords
+    2. Generate realistic trend data and insights
+    3. Provide SEO recommendations
+    
+    Fallback: Use simulated data if AI is not available.
     """
+    if USE_AI and genai:
+        return await get_trends_with_ai(topic)
+    
+    # Fallback to simulated data
+    log_interaction("fallback_trends", {
+        "reason": "AI not available",
+        "topic": topic
+    })
+    
     topic_lower = topic.lower()
 
     # Find matching simulated data
@@ -267,6 +320,127 @@ async def get_trends_for_topic(topic: str) -> Dict[str, Any]:
     return {
         "topic": topic,
         **trends_data,
+    }
+
+
+async def get_trends_with_ai(topic: str) -> Dict[str, Any]:
+    """
+    Use Gemini AI to generate trend analysis for a topic.
+    """
+    prompt = f"""Analyze the search trend potential for the topic: "{topic}"
+
+Generate realistic trend data and SEO insights. Return as JSON:
+{{
+    "topic": "{topic}",
+    "interest_over_time": [
+        {{"date": "2024-01", "value": 65}},
+        {{"date": "2024-02", "value": 70}},
+        {{"date": "2024-03", "value": 75}},
+        {{"date": "2024-04", "value": 80}},
+        {{"date": "2024-05", "value": 85}},
+        {{"date": "2024-06", "value": 90}}
+    ],
+    "related_queries": [
+        {{"query": "specific related query 1", "value": 100}},
+        {{"query": "specific related query 2", "value": 85}},
+        {{"query": "specific related query 3", "value": 70}},
+        {{"query": "specific related query 4", "value": 55}},
+        {{"query": "specific related query 5", "value": 40}}
+    ],
+    "regional_interest": [
+        {{"region": "United States", "value": 100}},
+        {{"region": "United Kingdom", "value": 75}},
+        {{"region": "India", "value": 70}},
+        {{"region": "Germany", "value": 60}},
+        {{"region": "Canada", "value": 55}}
+    ]
+}}
+
+Make the data realistic based on current 2024-2025 trends.
+- Interest values should show a believable trend (rising, falling, or stable)
+- Related queries should be REAL, specific search terms people use
+- Regional interest should reflect realistic geographic patterns
+
+Return ONLY the JSON, no other text."""
+
+    log_interaction("llm_request", {
+        "model": "gemini-1.5-flash",
+        "purpose": "trend_analysis",
+        "topic": topic,
+        "prompt_length": len(prompt)
+    })
+    
+    try:
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        start_time = datetime.utcnow()
+        response = model.generate_content(
+            prompt,
+            generation_config=genai.GenerationConfig(
+                temperature=0.7,
+                max_output_tokens=1024,
+            )
+        )
+        end_time = datetime.utcnow()
+        duration_ms = (end_time - start_time).total_seconds() * 1000
+        
+        if response.text:
+            log_interaction("llm_response", {
+                "model": "gemini-1.5-flash",
+                "status": "success",
+                "duration_ms": duration_ms,
+                "response_preview": response.text[:400]
+            })
+            
+            try:
+                text = response.text.strip()
+                if text.startswith("```"):
+                    text = text.split("```")[1]
+                    if text.startswith("json"):
+                        text = text[4:]
+                    text = text.strip()
+                
+                trends = json.loads(text)
+                print(f"✅ Gemini generated trend data for: {topic}")
+                return trends
+            except json.JSONDecodeError as e:
+                log_interaction("parse_error", {
+                    "error": str(e),
+                    "topic": topic
+                })
+        
+        # Fallback to simulated
+        return get_simulated_trend(topic)
+        
+    except Exception as e:
+        log_interaction("llm_error", {
+            "error": str(e),
+            "topic": topic
+        })
+        return get_simulated_trend(topic)
+
+
+def get_simulated_trend(topic: str) -> Dict[str, Any]:
+    """Return simulated trend data as fallback."""
+    topic_lower = topic.lower()
+    for key, data in SIMULATED_TRENDS.items():
+        if key in topic_lower or topic_lower in key:
+            return {"topic": topic, **data}
+    
+    return {
+        "topic": topic,
+        "interest_over_time": [
+            {"date": f"2024-0{i}", "value": random.randint(50, 90)}
+            for i in range(1, 7)
+        ],
+        "related_queries": [
+            {"query": f"{topic} guide", "value": 80},
+            {"query": f"{topic} tutorial", "value": 65},
+            {"query": f"best {topic}", "value": 55},
+        ],
+        "regional_interest": [
+            {"region": "United States", "value": 100},
+            {"region": "India", "value": 75},
+        ],
     }
 
 
@@ -444,8 +618,19 @@ async def send_message(request: SendMessageRequest) -> Task:
     Handle A2A SendMessage operation per specification §3.1.1.
 
     Analyzes trends and returns SEO insights for the Blog Writer Agent.
+    All model interactions are logged and returned as artifacts.
     """
     task_id = generate_task_id()
+    
+    # Clear previous interactions
+    clear_interactions()
+    
+    # Log task start
+    log_interaction("task_start", {
+        "task_id": task_id,
+        "context_id": request.contextId,
+        "message_preview": " ".join(p.text for p in request.message.parts)[:100]
+    })
 
     try:
         # Extract message text
@@ -453,8 +638,11 @@ async def send_message(request: SendMessageRequest) -> Task:
 
         # Process the trends request
         result = await process_trends_request(message_text)
+        
+        # Get model interactions
+        model_interactions = get_interactions()
 
-        # Create artifacts
+        # Create artifacts including model interactions
         artifacts = [
             Artifact(
                 name="trends-analysis",
@@ -471,7 +659,21 @@ async def send_message(request: SendMessageRequest) -> Task:
                 type="application/json",
                 data=json.dumps(result["trending_keywords"]),
             ),
+            # NEW: Include model interactions
+            Artifact(
+                name="model-interactions",
+                type="application/json",
+                data=json.dumps(model_interactions, default=str),
+            ),
         ]
+        
+        # Log task completion
+        log_interaction("task_complete", {
+            "task_id": task_id,
+            "topics_analyzed": result.get("topics_analyzed", 0),
+            "keywords_found": len(result.get("trending_keywords", [])),
+            "interactions_count": len(model_interactions)
+        })
 
         # Return completed task
         return Task(
@@ -484,7 +686,8 @@ async def send_message(request: SendMessageRequest) -> Task:
                     role="agent",
                     parts=[MessagePart(
                         text=f"Analyzed {result['topics_analyzed']} topics. "
-                             f"Top trending keywords: {', '.join(result['trending_keywords'][:3])}"
+                             f"Top trending keywords: {', '.join(result['trending_keywords'][:3])} "
+                             f"(AI: {USE_AI})"
                     )],
                 ),
             ),
@@ -493,6 +696,12 @@ async def send_message(request: SendMessageRequest) -> Task:
         )
 
     except Exception as e:
+        # Log error
+        log_interaction("task_error", {
+            "task_id": task_id,
+            "error": str(e)
+        })
+        
         return Task(
             id=task_id,
             contextId=request.contextId,
