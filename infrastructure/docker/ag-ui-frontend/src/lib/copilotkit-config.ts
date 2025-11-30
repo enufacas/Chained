@@ -92,8 +92,12 @@ export const createServiceAdapter = () => {
       });
       
       // Clear GOOGLE_API_KEY so ADC uses service account credentials
-      delete process.env.GOOGLE_API_KEY;
-      logConfig("Cleared GOOGLE_API_KEY to enable ADC for Vertex AI");
+      // Note: This has global effect but is intentional - we want ADC to be the only auth source
+      // when running in Vertex AI mode. The original value was saved for logging purposes.
+      if (process.env.GOOGLE_API_KEY) {
+        delete process.env.GOOGLE_API_KEY;
+        logConfig("Cleared GOOGLE_API_KEY to enable ADC for Vertex AI (was set, now removed)");
+      }
       
       try {
         const adapter = new VertexAIAdapter({
