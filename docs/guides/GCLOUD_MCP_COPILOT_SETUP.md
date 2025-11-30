@@ -26,6 +26,7 @@ This guide explains how to configure the environment secrets and variables neede
       "type": "stdio",
       "command": "npx",
       "args": ["-y", "@google-cloud/gcloud-mcp"],
+      "tools": ["run_gcloud_command"],
       "env": {
         "CLOUDSDK_CORE_PROJECT": "${GCP_PROJECT_ID}",
         "GOOGLE_APPLICATION_CREDENTIALS": "${GOOGLE_APPLICATION_CREDENTIALS}"
@@ -35,8 +36,9 @@ This guide explains how to configure the environment secrets and variables neede
 }
 ```
 
-> 📝 **Note**: The environment variables `${GCP_PROJECT_ID}` and `${GOOGLE_APPLICATION_CREDENTIALS}` 
-> will be populated by the `copilot-setup-steps.yml` workflow during Copilot's execution.
+> 📝 **Note**: 
+> - The `tools` property specifies which tools from the MCP server should be enabled. The `run_gcloud_command` tool allows executing gcloud CLI commands.
+> - The environment variables `${GCP_PROJECT_ID}` and `${GOOGLE_APPLICATION_CREDENTIALS}` are populated by the `copilot-setup-steps.yml` workflow during Copilot's execution.
 
 ---
 
