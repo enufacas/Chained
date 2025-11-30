@@ -566,6 +566,34 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
         value = google_cloud_run_v2_service.adk_api_server.uri
       }
 
+      # Configure A2A Agent URLs for real pipeline execution
+      # These are required for the AG-UI Frontend to call actual agents
+      env {
+        name  = "AGENT_ACADEMIC_RESEARCH_URL"
+        value = google_cloud_run_v2_service.academic_research.uri
+      }
+
+      env {
+        name  = "AGENT_GOOGLE_TRENDS_URL"
+        value = google_cloud_run_v2_service.google_trends.uri
+      }
+
+      env {
+        name  = "AGENT_BLOG_WRITER_URL"
+        value = google_cloud_run_v2_service.blog_writer.uri
+      }
+
+      # GCP Project ID for blog URL construction in pipeline route
+      # Blog URLs: https://storage.googleapis.com/${GCP_PROJECT_ID}-chained-blog/posts/${slug}.html
+      # NOTE: This is different from GOOGLE_CLOUD_PROJECT which is used by the Google Auth library.
+      # Both are needed:
+      #   - GOOGLE_CLOUD_PROJECT: Used by @langchain/google-gauth for Vertex AI authentication
+      #   - GCP_PROJECT_ID: Used by pipeline route for blog bucket URL construction
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+
       # Note: GOOGLE_API_KEY is NOT used when USE_VERTEX_AI=true
       # The GoogleGenerativeAIAdapter will use ADC from the service account instead
       # Keeping these for backward compatibility if USE_VERTEX_AI is disabled
@@ -653,6 +681,9 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
   depends_on = [
     google_project_service.required_apis,
     google_cloud_run_v2_service.adk_api_server,
+    google_cloud_run_v2_service.academic_research,
+    google_cloud_run_v2_service.blog_writer,
+    google_cloud_run_v2_service.google_trends,
   ]
 }
 
