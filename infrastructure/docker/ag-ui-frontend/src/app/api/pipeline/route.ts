@@ -154,6 +154,25 @@ async function callA2AAgent(
 // Pipeline states
 export type PipelineStatus = "pending" | "running" | "completed" | "failed";
 
+// Enhanced A2A Step details for deep dive capability
+export interface A2AStepDetail {
+  taskId: string;
+  agentName: string;
+  phase: string;
+  status: "pending" | "running" | "completed" | "failed";
+  startTime: string;
+  endTime?: string;
+  durationMs?: number;
+  message?: string;
+  artifacts: Array<{
+    name: string;
+    type: string;
+    data: string;
+    preview?: string;  // First 200 chars for UI preview
+  }>;
+  rawResponse?: object;  // Full A2A task response for debugging
+}
+
 export interface Pipeline {
   id: string;
   topic: string;
@@ -167,6 +186,10 @@ export interface Pipeline {
     trends?: { trendingKeywords: string[]; recommendedFocus: string };
     blog?: { title: string; url: string; wordCount: number };
   };
+  // NEW: Detailed A2A step history for deep dive into runs
+  a2aSteps?: A2AStepDetail[];
+  // NEW: Total execution time
+  totalDurationMs?: number;
 }
 
 // In-memory store for pipelines
@@ -323,12 +346,61 @@ export async function POST(request: NextRequest) {
 }
 
 /**
+ * Helper to create an A2A step detail from a task result
+ */
+function createA2AStepDetail(
+  agentName: string,
+  phase: string,
+  startTime: string,
+  task: A2ATask | null,
+  fallbackMessage?: string
+): A2AStepDetail {
+  const endTime = new Date().toISOString();
+  const durationMs = new Date(endTime).getTime() - new Date(startTime).getTime();
+  
+  if (!task) {
+    return {
+      taskId: `fallback-${Date.now()}`,
+      agentName,
+      phase,
+      status: "completed",
+      startTime,
+      endTime,
+      durationMs,
+      message: fallbackMessage || `${agentName} unavailable, using defaults`,
+      artifacts: [],
+    };
+  }
+  
+  return {
+    taskId: task.id,
+    agentName,
+    phase,
+    status: task.status.state === "completed" ? "completed" : 
+            task.status.state === "failed" ? "failed" : "running",
+    startTime,
+    endTime,
+    durationMs,
+    message: task.status.message?.parts?.map(p => p.text).join("\n"),
+    artifacts: (task.artifacts || []).map(a => ({
+      name: a.name,
+      type: a.type,
+      data: a.data,
+      preview: a.data.substring(0, 200) + (a.data.length > 200 ? "..." : ""),
+    })),
+    rawResponse: task,
+  };
+}
+
+/**
  * Execute pipeline through all phases using REAL A2A agents.
  * This calls the actual deployed agents to produce real data:
  * 1. Research Phase: Calls Academic Research Agent
  * 2. Trends Phase: Calls Google Trends Agent  
  * 3. Writing Phase: Calls Blog Writer Agent
  * 4. Publishing Phase: Blog Writer Agent uploads to GCP Cloud Storage
+ * 
+ * Now captures detailed A2A step information for deep dive into runs.
  */
 async function executePipelineWithAgents(pipelineId: string): Promise<void> {
   const pipeline = activePipelines.get(pipelineId);
@@ -337,8 +409,11 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     return;
   }
 
+  const pipelineStartTime = new Date().toISOString();
+  
   pipeline.status = "running";
   pipeline.updatedAt = new Date().toISOString();
+  pipeline.a2aSteps = [];  // Initialize A2A steps array
   activePipelines.set(pipelineId, pipeline);
   
   logWithTimestamp("INFO", `Pipeline execution started with REAL agents: ${pipelineId}`, {
@@ -363,10 +438,30 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     
     logWithTimestamp("INFO", `Pipeline ${pipelineId}: Starting research phase`);
     
+    const researchStartTime = new Date().toISOString();
     const researchTask = await callA2AAgent(
       AGENT_URLS.research,
-      `Research the topic: ${pipeline.topic}. Provide key findings, domain classification, and important keywords.`,
-      { topic: pipeline.topic }
+      `Conduct in-depth research on the topic: "${pipeline.topic}".
+
+Please provide:
+1. **Comprehensive Overview**: What is this topic about? Why is it important?
+2. **Key Concepts**: List and explain 5-7 fundamental concepts or terms
+3. **Current State**: What are the latest developments and trends?
+4. **Domain Classification**: What field(s) does this belong to?
+5. **Target Audience**: Who would benefit from learning about this?
+6. **Key Statistics or Facts**: Include specific numbers, dates, or data points
+7. **Notable Examples**: Real-world applications or case studies
+8. **Important Keywords**: SEO-relevant terms for content optimization
+9. **Expert Perspectives**: What do industry leaders say about this topic?
+10. **Future Directions**: Where is this field heading?
+
+Be specific and detailed - avoid generic placeholders. Include real data where possible.`,
+      { 
+        topic: pipeline.topic,
+        depth: "comprehensive",
+        include_statistics: true,
+        include_examples: true,
+      }
     );
     
     if (researchTask) {
@@ -395,6 +490,15 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
       
       pipeline.results = { research: researchData };
       pipeline.progress = 25;
+      
+      // Record A2A step with full details
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Academic Research Agent",
+        "research",
+        researchStartTime,
+        researchTask
+      ));
+      
       logWithTimestamp("INFO", `Pipeline ${pipelineId}: Research complete`, { researchData });
     } else {
       // Agent not available - use intelligent defaults
@@ -406,6 +510,16 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
         },
       };
       pipeline.progress = 25;
+      
+      // Record fallback step
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Academic Research Agent",
+        "research",
+        researchStartTime,
+        null,
+        "Research agent unavailable, using intelligent defaults based on topic analysis"
+      ));
+      
       logWithTimestamp("WARN", `Pipeline ${pipelineId}: Research agent unavailable, using defaults`);
     }
     
@@ -422,12 +536,28 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     
     logWithTimestamp("INFO", `Pipeline ${pipelineId}: Starting trends phase`);
     
+    const trendsStartTime = new Date().toISOString();
     const trendsTask = await callA2AAgent(
       AGENT_URLS.trends,
-      `Analyze trends for: ${pipeline.topic}. Provide trending keywords and SEO recommendations.`,
+      `Analyze search trends and SEO opportunities for: "${pipeline.topic}".
+
+Please provide:
+1. **Trending Keywords**: Top 10-15 high-volume search terms related to this topic
+2. **Related Queries**: What questions are people asking about this topic?
+3. **Rising Trends**: Keywords growing in popularity
+4. **Geographic Interest**: Where is this topic most popular?
+5. **Seasonal Patterns**: Any time-based trends?
+6. **Competitor Keywords**: What terms are competitors ranking for?
+7. **Long-tail Opportunities**: Specific phrases with lower competition
+8. **Content Gaps**: Topics not well-covered that could be opportunities
+9. **Recommended Focus**: The single best angle to target for maximum reach
+10. **Title Suggestions**: 3-5 SEO-optimized title options
+
+Base keywords from research: ${pipeline.results?.research?.keywords?.join(", ") || pipeline.topic}`,
       { 
         topic: pipeline.topic,
         keywords: pipeline.results?.research?.keywords,
+        research_domain: pipeline.results?.research?.domain,
       },
       taskIds
     );
@@ -456,6 +586,15 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
       
       pipeline.results = { ...pipeline.results, trends: trendsData };
       pipeline.progress = 50;
+      
+      // Record A2A step with full details
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Google Trends Agent",
+        "trends",
+        trendsStartTime,
+        trendsTask
+      ));
+      
       logWithTimestamp("INFO", `Pipeline ${pipelineId}: Trends analysis complete`, { trendsData });
     } else {
       // Agent not available - use intelligent defaults
@@ -467,6 +606,16 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
         },
       };
       pipeline.progress = 50;
+      
+      // Record fallback step
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Google Trends Agent",
+        "trends",
+        trendsStartTime,
+        null,
+        "Trends agent unavailable, using intelligent defaults based on research keywords"
+      ));
+      
       logWithTimestamp("WARN", `Pipeline ${pipelineId}: Trends agent unavailable, using defaults`);
     }
     
@@ -483,26 +632,94 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     
     logWithTimestamp("INFO", `Pipeline ${pipelineId}: Starting writing phase`);
     
+    // Build detailed key points from research and trends data
+    const researchKeywords = pipeline.results?.research?.keywords || [];
+    const trendingKeywords = pipeline.results?.trends?.trendingKeywords || [];
+    const recommendedFocus = pipeline.results?.trends?.recommendedFocus || pipeline.topic;
+    const domain = pipeline.results?.research?.domain || "Technology";
+    
+    const writerStartTime = new Date().toISOString();
     const writerTask = await callA2AAgent(
       AGENT_URLS.writer,
-      `Write and publish a blog post about: ${pipeline.topic}`,
+      `Write a comprehensive, engaging, and well-researched blog post about: "${pipeline.topic}"
+
+## Content Requirements
+
+**Tone & Style:**
+- Professional yet accessible - explain complex concepts clearly
+- Use concrete examples and real-world applications
+- Include specific data points, statistics, or facts where relevant
+- Avoid generic filler content - every paragraph should add value
+
+**Structure (2000-2500 words):**
+
+1. **Compelling Introduction** (150-200 words)
+   - Hook the reader with a surprising fact, question, or scenario
+   - Clearly state what they'll learn
+   - Why this topic matters RIGHT NOW
+
+2. **Background & Context** (300-400 words)
+   - Historical context or evolution of the topic
+   - Key terminology explained
+   - Current landscape overview
+
+3. **Deep Dive: Core Concepts** (500-600 words)
+   - 3-4 main concepts explained in detail
+   - Use subheadings for each concept
+   - Include examples for each
+
+4. **Practical Applications** (400-500 words)
+   - Real-world use cases
+   - Industry examples
+   - How readers can apply this knowledge
+
+5. **Challenges & Considerations** (200-300 words)
+   - Honest assessment of limitations
+   - Common pitfalls to avoid
+   - Ethical considerations if relevant
+
+6. **Future Outlook** (200-300 words)
+   - Where is this heading?
+   - Expert predictions
+   - What to watch for
+
+7. **Conclusion & Call to Action** (100-150 words)
+   - Key takeaways (3-5 bullet points)
+   - Actionable next steps for readers
+
+## SEO Optimization
+- Primary keyword: "${recommendedFocus}"
+- Secondary keywords: ${[...researchKeywords, ...trendingKeywords].slice(0, 8).join(", ")}
+- Use keywords naturally in headings and throughout
+- Include meta description suggestion
+
+## Quality Checklist
+- [ ] No generic placeholder content
+- [ ] Specific examples and data points included
+- [ ] All claims supported with context
+- [ ] Clear, scannable formatting with headers
+- [ ] Engaging, non-robotic writing style
+
+Domain: ${domain}`,
       {
         topic_data: {
           topic: pipeline.results?.research?.topic || pipeline.topic,
-          domain: pipeline.results?.research?.domain || "Technology",
-          key_points: [
-            "Introduction and Overview",
-            "Key Concepts and Background",
-            "Practical Applications",
-            "Future Outlook",
-          ],
-          seo_keywords: pipeline.results?.trends?.trendingKeywords || pipeline.results?.research?.keywords || [],
-          suggested_length: "1500-2500 words",
+          domain: domain,
+          research_keywords: researchKeywords,
+          trending_keywords: trendingKeywords,
+          recommended_focus: recommendedFocus,
         },
         trends_data: pipeline.results?.trends ? {
           trending_keywords: pipeline.results.trends.trendingKeywords,
           recommended_focus: pipeline.results.trends.recommendedFocus,
         } : null,
+        quality_requirements: {
+          min_words: 2000,
+          max_words: 2500,
+          require_examples: true,
+          require_data_points: true,
+          avoid_generic_content: true,
+        },
       },
       taskIds
     );
@@ -565,6 +782,14 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
         },
       };
       
+      // Record A2A step with full details
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Blog Writer Agent",
+        "writing",
+        writerStartTime,
+        writerTask
+      ));
+      
       logWithTimestamp("INFO", `Pipeline ${pipelineId}: Blog writing complete`, {
         title: blogTitle,
         url: blogUrl,
@@ -582,6 +807,16 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
           wordCount: 0, // No fake word count - agent unavailable
         },
       };
+      
+      // Record fallback step
+      pipeline.a2aSteps?.push(createA2AStepDetail(
+        "Blog Writer Agent",
+        "writing",
+        writerStartTime,
+        null,
+        "Writer agent unavailable, blog not created - URL is placeholder"
+      ));
+      
       logWithTimestamp("WARN", `Pipeline ${pipelineId}: Writer agent unavailable, blog not created`);
     }
     
@@ -595,17 +830,24 @@ async function executePipelineWithAgents(pipelineId: string): Promise<void> {
     pipeline.currentPhase = "complete";
     pipeline.progress = 100;
     pipeline.updatedAt = new Date().toISOString();
+    
+    // Calculate total pipeline duration
+    pipeline.totalDurationMs = new Date().getTime() - new Date(pipelineStartTime).getTime();
+    
     activePipelines.set(pipelineId, pipeline);
     
     logWithTimestamp("INFO", `Pipeline ${pipelineId}: Completed successfully`, {
       topic: pipeline.topic,
       blogUrl: pipeline.results?.blog?.url,
       taskIds,
+      totalDurationMs: pipeline.totalDurationMs,
+      a2aStepsCount: pipeline.a2aSteps?.length || 0,
     });
     
   } catch (error) {
     pipeline.status = "failed";
     pipeline.updatedAt = new Date().toISOString();
+    pipeline.totalDurationMs = new Date().getTime() - new Date(pipelineStartTime).getTime();
     activePipelines.set(pipelineId, pipeline);
     
     logWithTimestamp("ERROR", `Pipeline ${pipelineId}: Execution failed`, {

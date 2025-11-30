@@ -175,9 +175,41 @@ Active Pipelines: 1
 - CopilotKit action `getPipelineStatus` provides status report
 - Progress bars and phase indicators in UI
 
+#### 4. A2A Steps Deep Dive ✅ IMPLEMENTED
+**Status**: ✅ Implemented (2025-11-30)
+
+```
+USER: Click on any pipeline in the Outcomes section
+UI: Opens detailed modal showing:
+
+## 🔍 A2A Steps Deep Dive (3 steps)
+┌──────────────────────────────────────────────────────┐
+│ 🔬 Academic Research Agent                           │
+│ Task ID: task-abc123   Duration: 2.3s               │
+│ ▶ Click to expand artifacts                          │
+├──────────────────────────────────────────────────────┤
+│ 📈 Google Trends Agent                               │
+│ Task ID: task-def456   Duration: 1.8s               │
+│ ▶ Click to expand artifacts                          │
+├──────────────────────────────────────────────────────┤
+│ ✍️ Blog Writer Agent                                 │
+│ Task ID: task-ghi789   Duration: 5.2s               │
+│ ▶ Click to expand artifacts                          │
+└──────────────────────────────────────────────────────┘
+
+[▶ Show Raw Pipeline Data]
+```
+
+**Implementation:**
+- `Pipeline` interface extended with `a2aSteps` array
+- Each step captures: taskId, agentName, status, timing, artifacts
+- `PipelineDetailView` component with expandable step cards
+- Artifact previews with full data toggle
+- Raw JSON data viewer for debugging
+
 ### Medium-Term Enhancements
 
-#### 4. Multi-Topic Pipeline Orchestration
+#### 5. Multi-Topic Pipeline Orchestration
 Allow orchestrating complex multi-topic research:
 
 ```
@@ -188,7 +220,7 @@ ASSISTANT: Starting comparative research pipeline...
 - Analysis Agent: Will compare findings when ready
 ```
 
-#### 5. Content Review and Editing
+#### 6. Content Review and Editing
 Allow iterating on generated content:
 
 ```
@@ -200,7 +232,7 @@ ASSISTANT: Sending feedback to Writer Agent...
 New draft ready in ~2 minutes
 ```
 
-#### 6. Historical Pipeline Browser
+#### 7. Historical Pipeline Browser
 Let users explore past pipeline executions:
 
 ```
@@ -216,18 +248,18 @@ Would you like details on any specific pipeline?
 
 ### Long-Term Vision
 
-#### 7. Voice/Multi-Modal Interface
+#### 8. Voice/Multi-Modal Interface
 - Voice commands for pipeline control
 - Image analysis for research (e.g., "Research this diagram")
 - Audio output of blog summaries
 
-#### 8. Scheduled Pipelines
+#### 9. Scheduled Pipelines
 ```
 USER: Research trending AI topics every Monday at 9 AM
 ASSISTANT: Scheduled! I'll run a trending-topics pipeline weekly.
 ```
 
-#### 9. Cross-Platform Publishing
+#### 10. Cross-Platform Publishing
 ```
 USER: Publish the blog to Medium and LinkedIn
 ASSISTANT: Publishing to:
@@ -236,7 +268,7 @@ ASSISTANT: Publishing to:
 - 🔄 LinkedIn (drafting...)
 ```
 
-#### 10. Collaborative Editing
+#### 11. Collaborative Editing
 Multiple users working on the same pipeline:
 
 ```
@@ -287,6 +319,8 @@ USER C: Review and approve the draft
 - [A2A Status](./A2A_STATUS.md) - Overall A2A implementation status
 - [A2A Integration Design](./A2A_INTEGRATION_DESIGN.md) - Architecture details
 - [AG-UI Chat Troubleshooting](../../investigation-reports/AG_UI_CHAT_TROUBLESHOOTING.md) - Technical troubleshooting guide
+- **[A2A UI Documentation](../a2a-ui/README.md)** - Comprehensive feature docs (NEW)
+- **[A2A UI Changelog](../a2a-ui/CHANGELOG.md)** - Detailed change tracking (NEW)
 
 ---
 
@@ -297,6 +331,8 @@ USER C: Review and approve the draft
 | 2025-11-30 | 🎉 First Success | Chat working with pipeline analysis capability |
 | 2025-11-30 | 📝 Document Created | Recording success and expansion ideas |
 | 2025-11-30 | ✅ Features 1-3 Implemented | Pipeline creation, agent interaction (@agent-name), real-time status |
+| 2025-11-30 | ✅ Feature 4 Implemented | A2A Steps Deep Dive - task IDs, artifacts, timing |
+| 2025-11-30 | 📚 Docs Created | `docs/a2a-ui/` with README, CHANGELOG, and copilot instructions |
 
 ---
 

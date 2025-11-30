@@ -3,26 +3,22 @@
  *
  * Displays a detailed view of a pipeline run with A2A cards and lifecycle visualization.
  * Shows the full journey of how agents collaborated to complete the pipeline.
+ * 
+ * Enhanced with:
+ * - Detailed A2A step history with task IDs and execution times
+ * - Artifact viewer for deep diving into agent outputs
+ * - Expandable sections for raw data inspection
+ * 
+ * @see docs/a2a-ui/README.md for feature documentation
  */
 
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Pipeline, A2AStepDetail } from "@/types";
 
-interface PipelineResult {
-  id: string;
-  topic: string;
-  status: "pending" | "running" | "completed" | "failed";
-  createdAt: string;
-  updatedAt: string;
-  progress: number;
-  currentPhase: string;
-  results?: {
-    research?: { topic: string; domain: string; keywords: string[] };
-    trends?: { trendingKeywords: string[]; recommendedFocus: string };
-    blog?: { title: string; url: string; wordCount: number };
-  };
-}
+// Re-export for backwards compatibility with any direct imports
+export type { A2AStepDetail };
 
 interface PipelineDetailViewProps {
   pipelineId: string;
@@ -81,14 +77,34 @@ function formatTimeAgo(dateString: string): string {
   return date.toLocaleDateString();
 }
 
+function formatDuration(ms: number): string {
+  if (ms < 1000) return `${ms}ms`;
+  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
+  const mins = Math.floor(ms / 60000);
+  const secs = Math.floor((ms % 60000) / 1000);
+  return `${mins}m ${secs}s`;
+}
+
 function getPhaseIndex(phase: string): number {
   return PHASES.findIndex((p) => p.id === phase);
 }
 
 export default function PipelineDetailView({ pipelineId, onClose }: PipelineDetailViewProps) {
-  const [pipeline, setPipeline] = useState<PipelineResult | null>(null);
+  const [pipeline, setPipeline] = useState<Pipeline | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
+  const [showRawData, setShowRawData] = useState(false);
+
+  const toggleStepExpanded = (taskId: string) => {
+    const newExpanded = new Set(expandedSteps);
+    if (newExpanded.has(taskId)) {
+      newExpanded.delete(taskId);
+    } else {
+      newExpanded.add(taskId);
+    }
+    setExpandedSteps(newExpanded);
+  };
 
   const fetchPipeline = useCallback(async () => {
     try {
@@ -323,6 +339,155 @@ export default function PipelineDetailView({ pipelineId, onClose }: PipelineDeta
             })}
           </div>
         </div>
+
+        {/* A2A Steps Deep Dive - NEW SECTION */}
+        {pipeline.a2aSteps && pipeline.a2aSteps.length > 0 && (
+          <div className="p-6 border-b border-slate-700">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <span>🔍</span>
+                A2A Steps Deep Dive
+                <span className="text-xs bg-accent-500/20 text-accent-400 px-2 py-0.5 rounded-full">
+                  {pipeline.a2aSteps.length} steps
+                </span>
+              </h3>
+              {pipeline.totalDurationMs && (
+                <span className="text-xs text-slate-400">
+                  Total: {formatDuration(pipeline.totalDurationMs)}
+                </span>
+              )}
+            </div>
+            
+            <div className="space-y-3">
+              {pipeline.a2aSteps.map((step, index) => (
+                <div
+                  key={step.taskId}
+                  className={`rounded-lg border transition-all ${
+                    step.status === "completed"
+                      ? "bg-slate-700/30 border-slate-600/50"
+                      : step.status === "failed"
+                      ? "bg-red-500/10 border-red-500/30"
+                      : "bg-yellow-500/10 border-yellow-500/30"
+                  }`}
+                >
+                  {/* Step Header - Always visible */}
+                  <button
+                    onClick={() => toggleStepExpanded(step.taskId)}
+                    className="w-full p-4 flex items-center justify-between text-left hover:bg-white/5 transition rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl">
+                        {index === 0 ? "🔬" : index === 1 ? "📈" : "✍️"}
+                      </span>
+                      <div>
+                        <div className="font-medium text-white">{step.agentName}</div>
+                        <div className="text-xs text-slate-400 flex items-center gap-2">
+                          <code className="bg-black/30 px-1.5 py-0.5 rounded text-xs">
+                            {step.taskId}
+                          </code>
+                          {step.durationMs && (
+                            <span>• {formatDuration(step.durationMs)}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        step.status === "completed"
+                          ? "bg-green-500/20 text-green-400"
+                          : step.status === "failed"
+                          ? "bg-red-500/20 text-red-400"
+                          : "bg-yellow-500/20 text-yellow-400"
+                      }`}>
+                        {step.status}
+                      </span>
+                      <span className="text-slate-400 text-xs">
+                        {expandedSteps.has(step.taskId) ? "▼" : "▶"}
+                      </span>
+                    </div>
+                  </button>
+                  
+                  {/* Expanded Step Details */}
+                  {expandedSteps.has(step.taskId) && (
+                    <div className="px-4 pb-4 space-y-3 border-t border-slate-600/30 pt-3">
+                      {/* Message */}
+                      {step.message && (
+                        <div>
+                          <div className="text-xs text-slate-500 mb-1">Response Message:</div>
+                          <div className="text-sm text-slate-300 bg-black/20 p-3 rounded-lg">
+                            {step.message}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Timing */}
+                      <div className="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                          <span className="text-slate-500">Started:</span>{" "}
+                          <span className="text-slate-300">{new Date(step.startTime).toLocaleString()}</span>
+                        </div>
+                        {step.endTime && (
+                          <div>
+                            <span className="text-slate-500">Ended:</span>{" "}
+                            <span className="text-slate-300">{new Date(step.endTime).toLocaleString()}</span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Artifacts */}
+                      {step.artifacts.length > 0 && (
+                        <div>
+                          <div className="text-xs text-slate-500 mb-2">
+                            Artifacts ({step.artifacts.length}):
+                          </div>
+                          <div className="space-y-2">
+                            {step.artifacts.map((artifact, artifactIndex) => (
+                              <div
+                                key={artifactIndex}
+                                className="bg-black/30 rounded-lg p-3"
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-xs font-medium text-accent-400">
+                                    📦 {artifact.name}
+                                  </span>
+                                  <span className="text-xs text-slate-500">
+                                    {artifact.type}
+                                  </span>
+                                </div>
+                                <pre className="text-xs text-slate-300 overflow-x-auto max-h-48 overflow-y-auto">
+                                  {artifact.preview && artifact.preview.length > 0 
+                                    ? artifact.preview 
+                                    : artifact.data.length > 500 
+                                      ? artifact.data.substring(0, 500) + "..."
+                                      : artifact.data}
+                                </pre>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            {/* Raw Data Toggle */}
+            <div className="mt-4 pt-4 border-t border-slate-700/50">
+              <button
+                onClick={() => setShowRawData(!showRawData)}
+                className="text-xs text-slate-400 hover:text-accent-400 transition flex items-center gap-1"
+              >
+                {showRawData ? "▼" : "▶"} {showRawData ? "Hide" : "Show"} Raw Pipeline Data
+              </button>
+              {showRawData && (
+                <pre className="mt-2 p-3 bg-black/30 rounded-lg text-xs text-slate-400 overflow-x-auto max-h-64 overflow-y-auto">
+                  {JSON.stringify(pipeline.a2aSteps, null, 2)}
+                </pre>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Results Section */}
         {pipeline.results && (
