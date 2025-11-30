@@ -116,11 +116,20 @@ async function testGoogleAuth(): Promise<{ success: boolean; projectId?: string;
 
 // Test Vertex AI endpoint directly
 async function testVertexAI(location: string, projectId: string): Promise<{ success: boolean; response?: string; error?: string; details?: Record<string, unknown> }> {
+  const modelName = "gemini-1.5-flash";
+  const apiVersion = "v1beta";
+  
+  // Construct the expected Vertex AI endpoint URL for logging
+  const expectedUrl = `https://${location}-aiplatform.googleapis.com/${apiVersion}/projects/${projectId}/locations/${location}/publishers/google/models/${modelName}:streamGenerateContent`;
+  
   try {
-    log("Testing Vertex AI directly...", { location, projectId });
-    
-    const modelName = "gemini-2.0-flash-001";
-    const apiVersion = "v1beta";
+    log("Testing Vertex AI directly...", { 
+      location, 
+      projectId, 
+      modelName,
+      apiVersion,
+      expectedUrl,
+    });
     
     // Create ChatGoogle with explicit Vertex AI config
     const model = new ChatGoogle({
@@ -130,7 +139,14 @@ async function testVertexAI(location: string, projectId: string): Promise<{ succ
       location,
     });
     
-    log("ChatGoogle created, invoking with test message...");
+    log("ChatGoogle created, invoking with test message...", {
+      modelConfig: {
+        modelName,
+        apiVersion,
+        platformType: "gcp",
+        location,
+      }
+    });
     
     const result = await model.invoke([
       new HumanMessage("Say exactly: 'Vertex AI is working!'")
@@ -140,15 +156,29 @@ async function testVertexAI(location: string, projectId: string): Promise<{ succ
       ? result.content 
       : JSON.stringify(result.content);
     
-    log("Vertex AI test successful", { responsePreview: responseText.substring(0, 200) });
+    log("Vertex AI test successful", { 
+      responsePreview: responseText.substring(0, 200),
+      modelUsed: modelName,
+    });
     
     return { success: true, response: responseText };
   } catch (error) {
-    log("Vertex AI test FAILED", extractErrorDetails(error));
+    const errorDetails = extractErrorDetails(error);
+    log("Vertex AI test FAILED", {
+      ...errorDetails,
+      modelName,
+      apiVersion,
+      expectedUrl,
+      troubleshooting: errorDetails.httpStatus === 404 
+        ? "404 error usually means the model name is invalid. Valid models include: gemini-1.5-flash, gemini-1.5-pro, gemini-1.5-flash-002"
+        : errorDetails.httpStatus === 403
+        ? "403 error usually means permission denied. Check that the service account has 'Vertex AI User' role."
+        : "Check model name, region, and permissions.",
+    });
     return { 
       success: false, 
       error: error instanceof Error ? error.message : String(error),
-      details: extractErrorDetails(error),
+      details: errorDetails,
     };
   }
 }
@@ -227,7 +257,7 @@ export const POST = async (req: NextRequest) => {
                       process.env.GOOGLE_GENAI_USE_VERTEXAI === 'true';
   const projectId = process.env.GOOGLE_CLOUD_PROJECT || '';
   const location = process.env.GOOGLE_CLOUD_REGION || "us-central1";
-  const modelName = process.env.GEMINI_MODEL || "gemini-2.0-flash-001";
+  const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
   
   log("Test requested", { testType, useVertexAI, projectId, location, modelName });
   
@@ -264,8 +294,17 @@ export const POST = async (req: NextRequest) => {
         error: "Vertex AI not enabled. Set USE_VERTEX_AI=true" 
       };
     } else {
+      const testProjectId = projectId || (results.authTest as { projectId?: string })?.projectId || '';
+      const expectedUrl = `https://${location}-aiplatform.googleapis.com/v1beta/projects/${testProjectId}/locations/${location}/publishers/google/models/${modelName}:streamGenerateContent`;
+      
       try {
-        log("Running chat test...", { message });
+        log("Running chat test...", { 
+          message, 
+          modelName, 
+          location,
+          projectId: testProjectId,
+          expectedUrl,
+        });
         
         const model = new ChatGoogle({
           modelName,
@@ -274,18 +313,38 @@ export const POST = async (req: NextRequest) => {
           location,
         });
         
+        log("ChatGoogle model created for chat test", {
+          modelConfig: { modelName, apiVersion: "v1beta", platformType: "gcp", location }
+        });
+        
         const result = await model.invoke([new HumanMessage(message)]);
         
         const responseText = typeof result.content === 'string' 
           ? result.content 
           : JSON.stringify(result.content);
         
+        log("Chat test successful", { 
+          responsePreview: responseText.substring(0, 100),
+          modelUsed: modelName,
+        });
+        
         results.chatTest = {
           success: true,
           input: message,
           response: responseText,
+          modelUsed: modelName,
         };
       } catch (error) {
+        const errorDetails = extractErrorDetails(error);
+        log("Chat test FAILED", {
+          ...errorDetails,
+          modelName,
+          expectedUrl,
+          troubleshooting: errorDetails.httpStatus === 404 
+            ? `Model '${modelName}' not found. Try: gemini-1.5-flash, gemini-1.5-pro, or gemini-1.5-flash-002`
+            : "Check logs for details",
+        });
+        
         results.chatTest = {
           success: false,
           input: message,
