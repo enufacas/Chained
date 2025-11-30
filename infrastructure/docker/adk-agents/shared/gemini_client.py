@@ -28,6 +28,7 @@ a Vertex AI/GCP API key is used with the Google AI Studio endpoint. When using G
 credentials, you MUST use Vertex AI mode.
 """
 
+import asyncio
 import os
 from typing import Any, Dict, Optional
 
@@ -203,7 +204,6 @@ async def _generate_vertex(
         )
         
         # Vertex AI's generate_content is synchronous, run in executor
-        import asyncio
         loop = asyncio.get_event_loop()
         response = await loop.run_in_executor(
             None,
@@ -250,7 +250,6 @@ async def _generate_genai(
         )
         
         # google-generativeai's generate_content is synchronous
-        import asyncio
         loop = asyncio.get_event_loop()
         response = await loop.run_in_executor(
             None,
@@ -328,7 +327,7 @@ def get_unavailable_error_message(agent_name: str = "Agent") -> str:
     parts.append("  1. Set USE_VERTEX_AI=true and ensure GOOGLE_CLOUD_PROJECT is set (for GCP deployment)")
     parts.append("  2. Set GEMINI_API_KEY with a Google AI Studio API key (for local development)")
     
-    return " ".join(parts)
+    return "\n".join(parts)
 
 
 def get_config_info() -> Dict[str, Any]:
