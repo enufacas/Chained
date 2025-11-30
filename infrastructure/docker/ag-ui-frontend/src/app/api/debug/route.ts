@@ -336,13 +336,15 @@ export const POST = async (req: NextRequest) => {
         };
       } catch (error) {
         const errorDetails = extractErrorDetails(error);
+        const troubleshooting = errorDetails.httpStatus === 404 
+          ? `Model '${modelName}' not found. Try: gemini-2.0-flash-001, gemini-2.5-flash, or gemini-2.5-pro`
+          : "Check logs for details";
+        
         log("Chat test FAILED", {
           ...errorDetails,
           modelName,
           expectedUrl,
-          troubleshooting: errorDetails.httpStatus === 404 
-            ? `Model '${modelName}' not found. Try: gemini-2.0-flash-001, gemini-2.5-flash, or gemini-2.5-pro`
-            : "Check logs for details",
+          troubleshooting,
         });
         
         results.chatTest = {
@@ -350,9 +352,7 @@ export const POST = async (req: NextRequest) => {
           input: message,
           error: error instanceof Error ? error.message : String(error),
           details: extractErrorDetails(error),
-          troubleshooting: errorDetails.httpStatus === 404 
-            ? `Model '${modelName}' not found. Try: gemini-2.0-flash-001, gemini-2.5-flash, or gemini-2.5-pro`
-            : "Check logs for details",
+          troubleshooting,
         };
       }
     }
