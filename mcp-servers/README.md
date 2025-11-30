@@ -44,6 +44,13 @@ Provides access to:
 npx @google-cloud/gcloud-mcp
 ```
 
+> ⚠️ **For GitHub Copilot Coding Agent:**  
+> The gcloud-mcp server must be configured in **TWO places**:
+> 1. **Repository Settings → Copilot → Coding agent → MCP section** - Add the MCP server JSON
+> 2. **copilot-setup-steps.yml** - Provides GCP authentication (already configured)
+>
+> See [gcloud-mcp Copilot Setup Guide](../docs/guides/GCLOUD_MCP_COPILOT_SETUP.md) for full instructions.
+
 ### 3. chained-world-model
 **Status:** 🚧 Planned  
 **Purpose:** External world knowledge and trends
