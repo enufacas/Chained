@@ -140,8 +140,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Generate a unique pipeline ID
-    const pipelineId = `pipeline-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    // Generate a unique pipeline ID using crypto for better uniqueness
+    const randomPart = typeof crypto !== 'undefined' && crypto.randomUUID 
+      ? crypto.randomUUID().substring(0, 8)
+      : Math.random().toString(36).substring(2, 10);
+    const pipelineId = `pipeline-${Date.now()}-${randomPart}`;
     const now = new Date().toISOString();
 
     // Create the pipeline record
