@@ -117,7 +117,7 @@ async function testGoogleAuth(): Promise<{ success: boolean; projectId?: string;
 // Test Vertex AI endpoint directly
 async function testVertexAI(location: string, projectId: string): Promise<{ success: boolean; response?: string; error?: string; details?: Record<string, unknown> }> {
   const modelName = "gemini-2.0-flash";
-  const apiVersion = "v1beta";
+  const apiVersion = "v1"; // Changed from v1beta - v1beta returns 404 for newer models
   
   // Construct the expected Vertex AI endpoint URL for logging
   const expectedUrl = `https://${location}-aiplatform.googleapis.com/${apiVersion}/projects/${projectId}/locations/${location}/publishers/google/models/${modelName}:streamGenerateContent`;
@@ -170,7 +170,7 @@ async function testVertexAI(location: string, projectId: string): Promise<{ succ
       apiVersion,
       expectedUrl,
       troubleshooting: errorDetails.httpStatus === 404 
-        ? "404 error usually means the model name is invalid. Valid models include: gemini-1.5-flash, gemini-1.5-pro, gemini-1.5-flash-002"
+        ? "404 error usually means the model name is invalid or API version issue. Valid models include: gemini-2.0-flash, gemini-2.0-flash-001, gemini-2.5-flash. Ensure apiVersion is 'v1' not 'v1beta'."
         : errorDetails.httpStatus === 403
         ? "403 error usually means permission denied. Check that the service account has 'Vertex AI User' role."
         : "Check model name, region, and permissions.",
@@ -258,8 +258,9 @@ export const POST = async (req: NextRequest) => {
   const projectId = process.env.GOOGLE_CLOUD_PROJECT || '';
   const location = process.env.GOOGLE_CLOUD_REGION || "us-central1";
   const modelName = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+  const apiVersion = "v1"; // Changed from v1beta - v1beta returns 404 for newer models
   
-  log("Test requested", { testType, useVertexAI, projectId, location, modelName });
+  log("Test requested", { testType, useVertexAI, projectId, location, modelName, apiVersion });
   
   // Run tests based on type
   const results: Record<string, unknown> = {
@@ -295,26 +296,27 @@ export const POST = async (req: NextRequest) => {
       };
     } else {
       const testProjectId = projectId || (results.authTest as { projectId?: string })?.projectId || '';
-      const expectedUrl = `https://${location}-aiplatform.googleapis.com/v1beta/projects/${testProjectId}/locations/${location}/publishers/google/models/${modelName}:streamGenerateContent`;
+      const expectedUrl = `https://${location}-aiplatform.googleapis.com/${apiVersion}/projects/${testProjectId}/locations/${location}/publishers/google/models/${modelName}:streamGenerateContent`;
       
       try {
         log("Running chat test...", { 
           message, 
           modelName, 
           location,
+          apiVersion,
           projectId: testProjectId,
           expectedUrl,
         });
         
         const model = new ChatGoogle({
           modelName,
-          apiVersion: "v1beta",
+          apiVersion,
           platformType: "gcp",
           location,
         });
         
         log("ChatGoogle model created for chat test", {
-          modelConfig: { modelName, apiVersion: "v1beta", platformType: "gcp", location }
+          modelConfig: { modelName, apiVersion, platformType: "gcp", location }
         });
         
         const result = await model.invoke([new HumanMessage(message)]);
@@ -336,13 +338,15 @@ export const POST = async (req: NextRequest) => {
         };
       } catch (error) {
         const errorDetails = extractErrorDetails(error);
+        const troubleshooting = errorDetails.httpStatus === 404 
+          ? `Model '${modelName}' not found. Valid models: gemini-2.0-flash, gemini-2.0-flash-001, gemini-2.5-flash. Ensure apiVersion is 'v1' not 'v1beta'.`
+          : "Check logs for details";
+        
         log("Chat test FAILED", {
           ...errorDetails,
           modelName,
           expectedUrl,
-          troubleshooting: errorDetails.httpStatus === 404 
-            ? `Model '${modelName}' not found. Try: gemini-1.5-flash, gemini-1.5-pro, or gemini-1.5-flash-002`
-            : "Check logs for details",
+          troubleshooting,
         });
         
         results.chatTest = {
@@ -350,6 +354,7 @@ export const POST = async (req: NextRequest) => {
           input: message,
           error: error instanceof Error ? error.message : String(error),
           details: extractErrorDetails(error),
+          troubleshooting,
         };
       }
     }

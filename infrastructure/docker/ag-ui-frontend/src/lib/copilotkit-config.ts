@@ -101,7 +101,7 @@ export const createServiceAdapter = () => {
       
       try {
         const adapter = new VertexAIAdapter({
-          model: "gemini-2.0-flash", // Current Vertex AI model (1.5 deprecated Nov 2025)
+          model: "gemini-2.0-flash", // Vertex AI model (both alias and versioned work with v1 API)
           location: process.env.GOOGLE_CLOUD_REGION || "us-central1",
         });
         logConfig("VertexAIAdapter created successfully");
@@ -125,7 +125,7 @@ export const createServiceAdapter = () => {
     
     try {
       const adapter = new GoogleGenerativeAIAdapter({
-        model: "gemini-2.0-flash", // Current Vertex AI model (1.5 deprecated Nov 2025)
+        model: "gemini-2.0-flash", // Vertex AI model (both alias and versioned work with v1 API)
       });
       logConfig("GoogleGenerativeAIAdapter created successfully");
       return adapter;
