@@ -443,12 +443,12 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
         value = "Analyzes Google Trends data to identify trending topics for SEO"
       }
 
-      # CORS configuration for adk-web
-      # In production, restrict to specific origins. For development, allow localhost.
+      # CORS configuration for adk-web and AG-UI Frontend
+      # In production, restrict to specific origins. For development, allow localhost and Cloud Run frontend.
       # Configure CORS_ORIGINS environment variable to comma-separated allowed origins.
       env {
         name  = "CORS_ORIGINS"
-        value = var.environment == "prod" ? "https://enufacas.github.io" : "http://localhost:4200,http://localhost:4201,http://127.0.0.1:4200"
+        value = var.environment == "prod" ? "https://enufacas.github.io,https://chained-ag-ui-frontend-${var.project_id}.${var.region}.run.app" : "http://localhost:4200,http://localhost:4201,http://127.0.0.1:4200,https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app"
       }
 
       # Use Firestore for session persistence in production
