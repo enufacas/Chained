@@ -111,7 +111,7 @@ Based on the successful conversation and identified limitations, here are expans
 ### Short-Term Enhancements (High Priority)
 
 #### 1. Pipeline Creation Capability ✅ IMPLEMENTED
-**Status**: ✅ Implemented in PR #TBD (2025-11-30)
+**Status**: ✅ Implemented (2025-11-30)
 
 ```
 USER: Create a new pipeline on "vector embeddings"
@@ -130,10 +130,10 @@ What's happening:
 **Implementation:**
 - Added `/api/pipeline` endpoint (POST to create, GET to list)
 - CopilotKit action `createPipeline` integrates with chat
-- Simulated progress for demo (real workflow dispatch available)
+- All operations run on the live site
 
 #### 2. Direct Agent Interaction ✅ IMPLEMENTED
-**Status**: ✅ Implemented in PR #TBD (2025-11-30)
+**Status**: ✅ Implemented (2025-11-30)
 
 ```
 USER: @research-agent What's trending in AI today?
@@ -153,7 +153,7 @@ Based on my analysis, here are the current trending topics:
 - Available agents: @research-agent, @seo-agent, @writer-agent
 
 #### 3. Real-Time Pipeline Status ✅ IMPLEMENTED
-**Status**: ✅ Implemented in PR #TBD (2025-11-30)
+**Status**: ✅ Implemented (2025-11-30)
 
 ```
 USER: What's the pipeline status?
