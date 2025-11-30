@@ -116,7 +116,7 @@ async function testGoogleAuth(): Promise<{ success: boolean; projectId?: string;
 
 // Test Vertex AI endpoint directly
 async function testVertexAI(location: string, projectId: string): Promise<{ success: boolean; response?: string; error?: string; details?: Record<string, unknown> }> {
-  const modelName = "gemini-2.0-flash";
+  const modelName = "gemini-2.0-flash-001";
   const apiVersion = "v1beta";
   
   // Construct the expected Vertex AI endpoint URL for logging
@@ -170,7 +170,7 @@ async function testVertexAI(location: string, projectId: string): Promise<{ succ
       apiVersion,
       expectedUrl,
       troubleshooting: errorDetails.httpStatus === 404 
-        ? "404 error usually means the model name is invalid. Valid models include: gemini-1.5-flash, gemini-1.5-pro, gemini-1.5-flash-002"
+        ? "404 error usually means the model name is invalid. Valid models include: gemini-2.0-flash-001, gemini-2.5-flash, gemini-2.5-pro"
         : errorDetails.httpStatus === 403
         ? "403 error usually means permission denied. Check that the service account has 'Vertex AI User' role."
         : "Check model name, region, and permissions.",
@@ -257,7 +257,7 @@ export const POST = async (req: NextRequest) => {
                       process.env.GOOGLE_GENAI_USE_VERTEXAI === 'true';
   const projectId = process.env.GOOGLE_CLOUD_PROJECT || '';
   const location = process.env.GOOGLE_CLOUD_REGION || "us-central1";
-  const modelName = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+  const modelName = process.env.GEMINI_MODEL || "gemini-2.0-flash-001";
   
   log("Test requested", { testType, useVertexAI, projectId, location, modelName });
   
@@ -341,7 +341,7 @@ export const POST = async (req: NextRequest) => {
           modelName,
           expectedUrl,
           troubleshooting: errorDetails.httpStatus === 404 
-            ? `Model '${modelName}' not found. Try: gemini-1.5-flash, gemini-1.5-pro, or gemini-1.5-flash-002`
+            ? `Model '${modelName}' not found. Try: gemini-2.0-flash-001, gemini-2.5-flash, or gemini-2.5-pro`
             : "Check logs for details",
         });
         
@@ -350,6 +350,9 @@ export const POST = async (req: NextRequest) => {
           input: message,
           error: error instanceof Error ? error.message : String(error),
           details: extractErrorDetails(error),
+          troubleshooting: errorDetails.httpStatus === 404 
+            ? `Model '${modelName}' not found. Try: gemini-2.0-flash-001, gemini-2.5-flash, or gemini-2.5-pro`
+            : "Check logs for details",
         };
       }
     }
