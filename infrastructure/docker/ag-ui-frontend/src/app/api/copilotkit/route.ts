@@ -34,6 +34,20 @@ function logWithTimestamp(message: string, data?: object) {
 export const POST = async (req: NextRequest) => {
   logWithTimestamp("POST request received");
   
+  // Log request details for debugging (sanitized - only log metadata, not content)
+  try {
+    const body = await req.clone().text();
+    // Only log body length and structure type, not actual content which may contain user messages
+    const isJson = body.startsWith('{') || body.startsWith('[');
+    logWithTimestamp("Request body metadata", { 
+      bodyLength: body.length, 
+      isJson,
+      contentType: req.headers.get('content-type'),
+    });
+  } catch (e) {
+    logWithTimestamp("Could not read request body for logging");
+  }
+  
   // Check if any authentication method is available
   const hasGeminiAuth = useGemini; // This includes Vertex AI ADC or GEMINI_API_KEY
   const hasOpenAIKey = !!openaiApiKey;
@@ -79,7 +93,28 @@ export const POST = async (req: NextRequest) => {
 
     logWithTimestamp("Handling request...");
     const response = await handleRequest(req);
-    logWithTimestamp("Request handled successfully", { status: response.status });
+    logWithTimestamp("Request handled successfully", { 
+      status: response.status,
+      contentType: response.headers.get('content-type'),
+    });
+    
+    // Log response metadata for debugging (don't log actual content to protect privacy)
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('text/event-stream')) {
+      try {
+        const clonedResponse = response.clone();
+        const responseText = await clonedResponse.text();
+        // Only log metadata, not actual content which may contain AI responses
+        logWithTimestamp("Response body metadata", { 
+          length: responseText.length,
+          isJson: responseText.startsWith('{') || responseText.startsWith('['),
+        });
+      } catch (e) {
+        logWithTimestamp("Could not read response body for logging");
+      }
+    } else {
+      logWithTimestamp("Response is streaming (text/event-stream)");
+    }
     
     return response;
   } catch (error) {

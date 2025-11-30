@@ -2,6 +2,46 @@
 
 This guide explains how to configure the environment secrets and variables needed for GitHub Copilot to use the gcloud-mcp server for Google Cloud Platform operations.
 
+> ⚠️ **IMPORTANT**: There are TWO separate configurations required:
+> 1. **Repository Settings → Copilot → Coding agent → MCP section** - Declares the MCP server
+> 2. **Environment secrets & copilot-setup-steps.yml** - Provides authentication credentials
+>
+> Both are required! The `copilot-setup-steps.yml` workflow sets up authentication, but the MCP server must also be declared in repository settings.
+
+---
+
+## 🔧 Step 0: Configure MCP Server in Repository Settings (REQUIRED)
+
+**This is the most important step!** Without this, Copilot will not have access to the gcloud-mcp server.
+
+1. Go to your repository on GitHub
+2. Navigate to **Settings** → **Copilot** → **Coding agent**
+3. Find the **MCP servers** section
+4. Add the following JSON configuration:
+
+```json
+{
+  "mcpServers": {
+    "gcloud": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@google-cloud/gcloud-mcp"],
+      "tools": ["run_gcloud_command"],
+      "env": {
+        "CLOUDSDK_CORE_PROJECT": "${GCP_PROJECT_ID}",
+        "GOOGLE_APPLICATION_CREDENTIALS": "${GOOGLE_APPLICATION_CREDENTIALS}"
+      }
+    }
+  }
+}
+```
+
+> 📝 **Note**: 
+> - The `tools` property specifies which tools from the MCP server should be enabled. The `run_gcloud_command` tool allows executing gcloud CLI commands.
+> - The environment variables `${GCP_PROJECT_ID}` and `${GOOGLE_APPLICATION_CREDENTIALS}` are populated by the `copilot-setup-steps.yml` workflow during Copilot's execution.
+
+---
+
 ## 📋 Prerequisites
 
 Before configuring secrets, ensure you have:
@@ -342,6 +382,22 @@ npx @google-cloud/gcloud-mcp
 ---
 
 ## 🛠️ Troubleshooting
+
+### gcloud-mcp Server Not Available to Copilot (Most Common Issue)
+
+**Symptom:** Copilot cannot use gcloud commands even though `copilot-setup-steps.yml` runs successfully.
+
+**Root Cause:** The MCP server is not declared in repository settings.
+
+**Solution:**
+1. Go to **Settings** → **Copilot** → **Coding agent** → **MCP section**
+2. Add the gcloud MCP server configuration (see [Step 0: Configure MCP Server in Repository Settings](#-step-0-configure-mcp-server-in-repository-settings-required) above)
+3. The `copilot-setup-steps.yml` only provides authentication - it does NOT register the MCP server
+
+**How to Verify:**
+- In the Copilot agent's response, check if it can list tools containing "gcloud" - if not configured, only `github-mcp-server` and `playwright` tools will be available
+- Check the Copilot setup workflow run at **Actions** → **System: Copilot Setup Steps** - look for the Summary step which shows `gcloud-mcp | ✅ Ready` if authentication is working
+- The MCP config file at `/home/runner/work/_temp/mcp-server/mcp-config.json` in the Copilot environment should contain gcloud tools if properly configured
 
 ### "Permission denied" Errors
 
