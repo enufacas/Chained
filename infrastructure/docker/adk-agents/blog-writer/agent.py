@@ -21,6 +21,7 @@ All model interactions are logged and captured as artifacts for debugging.
 
 import json
 import os
+import sys
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 from contextlib import asynccontextmanager
@@ -28,6 +29,10 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
+
+# Add shared utilities to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from shared.a2a_utils import AIUnavailableError, build_ai_unavailable_error_message
 
 # Try to import Gemini AI - may not be available in all environments
 try:
@@ -43,7 +48,7 @@ except ImportError:
 
 AGENT_NAME = "blog-writer"
 AGENT_DESCRIPTION = "Writes engaging blog posts from research topics and trend data using Vertex AI"
-AGENT_VERSION = "1.2.0"  # Updated version with model interaction logging
+AGENT_VERSION = "1.3.0"  # Updated: No fallback - requires Gemini AI
 PORT = int(os.getenv("PORT", "8082"))
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
@@ -198,12 +203,13 @@ async def write_blog_post(
     Write a blog post based on research topic and trends.
 
     This function:
-    1. Uses Gemini to generate engaging content (when USE_AI=True)
+    1. Uses Gemini to generate engaging content (REQUIRED)
     2. Incorporates trend data for SEO optimization
     3. Formats for the target blog platform
     4. Logs all model interactions for debugging
     
-    Fallback: Template-based content if Gemini is unavailable.
+    IMPORTANT: This function requires Gemini AI to be configured.
+    If AI is not available, it raises an error instead of falling back to templates.
     """
     topic = topic_data.get("topic", "Technology Trends")
     domain = topic_data.get("domain", "Technology")
@@ -219,6 +225,21 @@ async def write_blog_post(
         "ai_enabled": USE_AI and genai is not None
     })
     
+    # REQUIRE Gemini AI - no fallback allowed
+    if not USE_AI or genai is None:
+        error_msg = build_ai_unavailable_error_message(
+            genai_available=GENAI_AVAILABLE,
+            has_api_key=bool(GEMINI_API_KEY or GOOGLE_API_KEY),
+            agent_name=AGENT_NAME
+        )
+        
+        log_interaction("ai_unavailable_error", {
+            "error": error_msg,
+            "genai_available": GENAI_AVAILABLE,
+            "has_api_key": bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+        })
+        raise AIUnavailableError(error_msg)
+    
     # Extract trend keywords if available
     trend_keywords = []
     recommended_focus = topic
@@ -230,40 +251,26 @@ async def write_blog_post(
     title = f"{topic}: A Deep Dive into Modern {domain}"
     slug = generate_blog_slug(title)
     
-    # Use Gemini for content generation if available
-    content_result = None
-    if USE_AI and genai:
-        content_result = await generate_content_with_gemini(
-            topic=topic,
-            domain=domain,
-            key_points=key_points,
-            seo_keywords=seo_keywords,
-            trend_keywords=trend_keywords,
-            recommended_focus=recommended_focus
-        )
-        full_content = content_result["content"]
-        
-        # Update title from generated content if it has a better one
-        if full_content.startswith("# "):
-            first_line = full_content.split("\n")[0]
-            generated_title = first_line.replace("# ", "").strip()
-            if generated_title:
-                title = generated_title
-                slug = generate_blog_slug(title)
-    else:
-        # Fallback to template-based content
-        log_interaction("fallback_mode", {
-            "reason": "Gemini AI not available",
-            "use_ai": USE_AI,
-            "genai_available": genai is not None
-        })
-        full_content = generate_template_content(
-            topic=topic,
-            domain=domain,
-            key_points=key_points,
-            trends_data=trends_data
-        )
-        content_result = None
+    # Use Gemini for content generation (required - will raise exception on failure)
+    content_result = await generate_content_with_gemini(
+        topic=topic,
+        domain=domain,
+        key_points=key_points,
+        seo_keywords=seo_keywords,
+        trend_keywords=trend_keywords,
+        recommended_focus=recommended_focus
+    )
+    
+    # If we get here, content generation succeeded
+    full_content = content_result["content"]
+    
+    # Update title from generated content if it has a better one
+    if full_content.startswith("# "):
+        first_line = full_content.split("\n")[0]
+        generated_title = first_line.replace("# ", "").strip()
+        if generated_title:
+            title = generated_title
+            slug = generate_blog_slug(title)
 
     return {
         "title": title,
@@ -276,9 +283,9 @@ async def write_blog_post(
             "word_count": len(full_content.split()),
             "read_time_minutes": max(1, len(full_content.split()) // 200),
             "generated_at": datetime.utcnow().isoformat(),
-            "ai_generated": content_result is not None,
+            "ai_generated": True,
         },
-        "model_interactions": get_interactions() if content_result else [],
+        "model_interactions": get_interactions(),
     }
 
 
@@ -432,15 +439,11 @@ Start with `# [Your Title Here]` as the first line."""
                 "status": "empty_response",
                 "duration_ms": duration_ms
             })
-            # Fall back to template
-            fallback_content = generate_template_content(topic, domain, key_points, {"trending_keywords": trend_keywords})
-            return {
-                "content": fallback_content,
-                "word_count": len(fallback_content.split()),
-                "ai_generated": False,
-                "fallback_reason": "empty_response"
-            }
+            # NO FALLBACK - raise exception
+            raise AIUnavailableError("Gemini returned empty response for blog content generation")
             
+    except AIUnavailableError:
+        raise  # Re-raise our custom errors
     except Exception as e:
         error_msg = str(e)
         print(f"⚠️ Gemini content generation failed: {error_msg}")
@@ -452,14 +455,8 @@ Start with `# [Your Title Here]` as the first line."""
             "error_type": type(e).__name__
         })
         
-        # Fall back to template content
-        fallback_content = generate_template_content(topic, domain, key_points, {"trending_keywords": trend_keywords})
-        return {
-            "content": fallback_content,
-            "word_count": len(fallback_content.split()),
-            "ai_generated": False,
-            "fallback_reason": f"error: {error_msg}"
-        }
+        # NO FALLBACK - raise exception
+        raise AIUnavailableError(f"Gemini API error: {error_msg}")
 
 
 def generate_template_content(

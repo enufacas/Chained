@@ -25,6 +25,23 @@ variable "image_tag" {
   default     = "latest"
 }
 
+# Direct API key values (passed from GitHub secrets)
+# These take precedence over Secret Manager references if both are set
+variable "google_api_key" {
+  description = "Google API key value (direct, from GitHub secrets)"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "gemini_api_key" {
+  description = "Gemini API key value (direct, from GitHub secrets)"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+# Secret Manager references (alternative to direct values)
 variable "gemini_api_key_secret" {
   description = "Secret Manager resource name for Gemini API key"
   type        = string
@@ -118,8 +135,27 @@ resource "google_cloud_run_v2_service" "academic_research" {
         value = var.environment
       }
 
+      # Direct API key value (from GitHub secrets) - takes precedence
       dynamic "env" {
-        for_each = var.gemini_api_key_secret != "" ? [1] : []
+        for_each = var.google_api_key != "" ? [1] : []
+        content {
+          name  = "GOOGLE_API_KEY"
+          value = var.google_api_key
+        }
+      }
+
+      # Direct Gemini API key value (from GitHub secrets)
+      dynamic "env" {
+        for_each = var.gemini_api_key != "" && var.google_api_key == "" ? [1] : []
+        content {
+          name  = "GEMINI_API_KEY"
+          value = var.gemini_api_key
+        }
+      }
+
+      # Secret Manager reference (fallback if no direct value)
+      dynamic "env" {
+        for_each = var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? [1] : []
         content {
           name = "GEMINI_API_KEY"
           value_source {
@@ -224,8 +260,27 @@ resource "google_cloud_run_v2_service" "blog_writer" {
         value = google_storage_bucket.blog.name
       }
 
+      # Direct API key value (from GitHub secrets) - takes precedence
       dynamic "env" {
-        for_each = var.gemini_api_key_secret != "" ? [1] : []
+        for_each = var.google_api_key != "" ? [1] : []
+        content {
+          name  = "GOOGLE_API_KEY"
+          value = var.google_api_key
+        }
+      }
+
+      # Direct Gemini API key value (from GitHub secrets)
+      dynamic "env" {
+        for_each = var.gemini_api_key != "" && var.google_api_key == "" ? [1] : []
+        content {
+          name  = "GEMINI_API_KEY"
+          value = var.gemini_api_key
+        }
+      }
+
+      # Secret Manager reference (fallback if no direct value)
+      dynamic "env" {
+        for_each = var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? [1] : []
         content {
           name = "GEMINI_API_KEY"
           value_source {
@@ -322,8 +377,27 @@ resource "google_cloud_run_v2_service" "google_trends" {
         value = var.environment
       }
 
+      # Direct API key value (from GitHub secrets) - takes precedence
       dynamic "env" {
-        for_each = var.google_api_key_secret != "" ? [1] : []
+        for_each = var.google_api_key != "" ? [1] : []
+        content {
+          name  = "GOOGLE_API_KEY"
+          value = var.google_api_key
+        }
+      }
+
+      # Direct Gemini API key value (from GitHub secrets)
+      dynamic "env" {
+        for_each = var.gemini_api_key != "" && var.google_api_key == "" ? [1] : []
+        content {
+          name  = "GEMINI_API_KEY"
+          value = var.gemini_api_key
+        }
+      }
+
+      # Secret Manager reference (fallback if no direct value)
+      dynamic "env" {
+        for_each = var.google_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? [1] : []
         content {
           name = "GOOGLE_API_KEY"
           value_source {
@@ -597,8 +671,28 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
       # Note: GOOGLE_API_KEY is NOT used when USE_VERTEX_AI=true
       # The GoogleGenerativeAIAdapter will use ADC from the service account instead
       # Keeping these for backward compatibility if USE_VERTEX_AI is disabled
+
+      # Direct API key value (from GitHub secrets) - takes precedence
       dynamic "env" {
-        for_each = var.google_api_key_secret != "" ? [1] : []
+        for_each = var.google_api_key != "" ? [1] : []
+        content {
+          name  = "GOOGLE_API_KEY"
+          value = var.google_api_key
+        }
+      }
+
+      # Direct Gemini API key value (from GitHub secrets)
+      dynamic "env" {
+        for_each = var.gemini_api_key != "" && var.google_api_key == "" ? [1] : []
+        content {
+          name  = "GEMINI_API_KEY"
+          value = var.gemini_api_key
+        }
+      }
+
+      # Secret Manager reference for Google API Key (fallback if no direct value)
+      dynamic "env" {
+        for_each = var.google_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? [1] : []
         content {
           name = "GOOGLE_API_KEY"
           value_source {
@@ -610,9 +704,9 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
         }
       }
 
-      # Gemini API Key from Secret Manager (fallback if GOOGLE_API_KEY not set)
+      # Secret Manager reference for Gemini API Key (fallback if no direct value)
       dynamic "env" {
-        for_each = var.gemini_api_key_secret != "" ? [1] : []
+        for_each = var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" && var.google_api_key_secret == "" ? [1] : []
         content {
           name = "GEMINI_API_KEY"
           value_source {

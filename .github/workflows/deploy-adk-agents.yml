@@ -92,6 +92,10 @@ jobs:
         env:
           GCP_PROJECT_ID_SECRET: ${{ secrets.GCP_PROJECT_ID }}
           GCP_SA_KEY_SECRET: ${{ secrets.GCP_SA_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_SECRET_NAME: ${{ secrets.GEMINI_API_KEY_SECRET_NAME }}
+          GOOGLE_API_KEY_SECRET_NAME: ${{ secrets.GOOGLE_API_KEY_SECRET_NAME }}
         run: |
           if [[ -z "$GCP_PROJECT_ID_SECRET" ]]; then
             echo "❌ GCP_PROJECT_ID secret not configured"
@@ -105,6 +109,27 @@ jobs:
           fi
 
           echo "✅ Required secrets configured"
+          
+          # Check for API keys - both direct values and Secret Manager references
+          if [[ -n "$GOOGLE_API_KEY" ]]; then
+            echo "✅ GOOGLE_API_KEY configured (direct value)"
+          elif [[ -n "$GEMINI_API_KEY" ]]; then
+            echo "✅ GEMINI_API_KEY configured (direct value)"
+          elif [[ -n "$GEMINI_API_KEY_SECRET_NAME" ]]; then
+            echo "✅ GEMINI_API_KEY_SECRET_NAME configured (Secret Manager)"
+          elif [[ -n "$GOOGLE_API_KEY_SECRET_NAME" ]]; then
+            echo "✅ GOOGLE_API_KEY_SECRET_NAME configured (Secret Manager)"
+          else
+            echo ""
+            echo "⚠️ WARNING: No API key configured!"
+            echo "   Agents will NOT be able to generate AI content."
+            echo ""
+            echo "   To enable Gemini AI, configure ONE of:"
+            echo "   1. GOOGLE_API_KEY - Direct API key value (recommended)"
+            echo "   2. GEMINI_API_KEY - Direct Gemini API key value"
+            echo "   3. GEMINI_API_KEY_SECRET_NAME - Secret Manager reference"
+            echo ""
+          fi
 
   # ===========================================================================
   # Build Agent Containers
@@ -335,6 +360,10 @@ jobs:
                 -var="region=${{ env.GCP_REGION }}" \
                 -var="environment=${{ needs.validate.outputs.environment }}" \
                 -var="image_tag=${{ github.sha }}" \
+                -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+                -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
+                -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
+                -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
                 google_service_account.adk_agents \
                 "projects/${{ env.GCP_PROJECT_ID }}/serviceAccounts/$SA_EMAIL"; then
                 echo "✅ Successfully imported service account"
@@ -364,6 +393,10 @@ jobs:
                 -var="region=${{ env.GCP_REGION }}" \
                 -var="environment=${{ needs.validate.outputs.environment }}" \
                 -var="image_tag=${{ github.sha }}" \
+                -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+                -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
+                -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
+                -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
                 google_storage_bucket.blog \
                 "$BLOG_BUCKET"; then
                 echo "✅ Successfully imported blog storage bucket"
@@ -403,6 +436,10 @@ jobs:
                   -var="region=${{ env.GCP_REGION }}" \
                   -var="environment=${{ needs.validate.outputs.environment }}" \
                   -var="image_tag=${{ github.sha }}" \
+                  -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+                  -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
+                  -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
+                  -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
                   "$TF_RESOURCE" \
                   "projects/${{ env.GCP_PROJECT_ID }}/locations/${{ env.GCP_REGION }}/services/$SERVICE_NAME"; then
                   echo "✅ Successfully imported $SERVICE_NAME"
@@ -422,6 +459,10 @@ jobs:
             -var="region=${{ env.GCP_REGION }}" \
             -var="environment=${{ needs.validate.outputs.environment }}" \
             -var="image_tag=${{ github.sha }}" \
+            -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+            -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
+            -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
+            -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
             -target=google_cloud_run_v2_service.academic_research \
             -target=google_cloud_run_v2_service.blog_writer \
             -target=google_cloud_run_v2_service.google_trends \

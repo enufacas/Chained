@@ -32,7 +32,7 @@ from pydantic import BaseModel
 
 # Add shared utilities to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from shared.a2a_utils import parse_llm_json_response
+from shared.a2a_utils import parse_llm_json_response, AIUnavailableError, build_ai_unavailable_error_message
 
 # Try to import Gemini AI
 try:
@@ -48,7 +48,7 @@ except ImportError:
 
 AGENT_NAME = "google-trends"
 AGENT_DESCRIPTION = "Analyzes trends and generates SEO insights using Vertex AI"
-AGENT_VERSION = "1.2.0"  # Updated with AI-powered trend analysis
+AGENT_VERSION = "1.3.0"  # Updated: No fallback - requires Gemini AI
 PORT = int(os.getenv("PORT", "8083"))
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
@@ -285,57 +285,36 @@ async def get_trends_for_topic(topic: str) -> Dict[str, Any]:
     """
     Get trends data for a topic using AI analysis.
 
+    REQUIRED: Gemini AI must be configured for this agent to function.
+    
     When AI is enabled, uses Gemini to:
     1. Analyze the topic's potential trending keywords
     2. Generate realistic trend data and insights
     3. Provide SEO recommendations
     
-    Fallback: Use simulated data if AI is not available.
+    NO FALLBACK: If AI is not available, raises an error.
     """
-    if USE_AI and genai:
-        return await get_trends_with_ai(topic)
+    if not USE_AI or genai is None:
+        error_msg = build_ai_unavailable_error_message(
+            genai_available=GENAI_AVAILABLE,
+            has_api_key=bool(GEMINI_API_KEY or GOOGLE_API_KEY),
+            agent_name=AGENT_NAME
+        )
+        
+        log_interaction("ai_unavailable_error", {
+            "error": error_msg,
+            "genai_available": GENAI_AVAILABLE,
+            "has_api_key": bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+        })
+        raise AIUnavailableError(error_msg)
     
-    # Fallback to simulated data
-    log_interaction("fallback_trends", {
-        "reason": "AI not available",
-        "topic": topic
-    })
-    
-    topic_lower = topic.lower()
-
-    # Find matching simulated data
-    trends_data = None
-    for key, data in SIMULATED_TRENDS.items():
-        if key in topic_lower or topic_lower in key:
-            trends_data = data
-            break
-
-    # If no match, generate random data
-    if not trends_data:
-        trends_data = {
-            "interest_over_time": [
-                {"date": f"2024-0{i}", "value": random.randint(40, 100)}
-                for i in range(1, 7)
-            ],
-            "related_queries": [
-                {"query": f"{topic} example {i}", "value": random.randint(20, 100)}
-                for i in range(1, 6)
-            ],
-            "regional_interest": [
-                {"region": region, "value": random.randint(30, 100)}
-                for region in ["United States", "India", "United Kingdom", "Germany", "Canada"]
-            ],
-        }
-
-    return {
-        "topic": topic,
-        **trends_data,
-    }
+    return await get_trends_with_ai(topic)
 
 
 async def get_trends_with_ai(topic: str) -> Dict[str, Any]:
     """
     Use Gemini AI to generate trend analysis for a topic.
+    NO FALLBACK: Raises error if AI call fails.
     """
     prompt = f"""Analyze the search trend potential for the topic: "{topic}"
 
@@ -407,20 +386,26 @@ Return ONLY the JSON, no other text."""
                 print(f"✅ Gemini generated trend data for: {topic}")
                 return trends
             else:
+                error_msg = f"Failed to parse JSON response from Gemini: {response.text[:200]}"
                 log_interaction("parse_error", {
                     "error": "Failed to parse JSON",
                     "topic": topic
                 })
+                # NO FALLBACK - raise error
+                raise AIUnavailableError(error_msg)
         
-        # Fallback to simulated
-        return get_simulated_trend(topic)
+        # NO FALLBACK - raise error on empty response
+        raise AIUnavailableError("Gemini returned empty response for trend analysis")
         
+    except AIUnavailableError:
+        raise  # Re-raise our custom errors
     except Exception as e:
         log_interaction("llm_error", {
             "error": str(e),
             "topic": topic
         })
-        return get_simulated_trend(topic)
+        # NO FALLBACK - raise error
+        raise AIUnavailableError(f"Gemini API error during trend analysis: {e}")
 
 
 def get_simulated_trend(topic: str) -> Dict[str, Any]:

@@ -33,7 +33,7 @@ from pydantic import BaseModel
 
 # Add shared utilities to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from shared.a2a_utils import parse_llm_json_response
+from shared.a2a_utils import parse_llm_json_response, AIUnavailableError, build_ai_unavailable_error_message
 
 # Try to import Gemini AI
 try:
@@ -49,7 +49,7 @@ except ImportError:
 
 AGENT_NAME = "academic-research"
 AGENT_DESCRIPTION = "Discovers and analyzes academic research topics using Vertex AI"
-AGENT_VERSION = "1.2.0"  # Updated with AI-powered research
+AGENT_VERSION = "1.3.0"  # Updated: No fallback - requires Gemini AI
 PORT = int(os.getenv("PORT", "8081"))
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
@@ -267,45 +267,30 @@ async def discover_research_topics(
     """
     Discover research topics based on query using Gemini AI.
 
+    REQUIRED: Gemini AI must be configured for this agent to function.
+    
     When AI is enabled:
     1. Use Gemini to generate relevant research topics
     2. Get detailed analysis and key points
     3. Score topics for blog relevance
     
-    Fallback: Use simulated data if AI is not available.
+    NO FALLBACK: If AI is not available, raises an error.
     """
-    if USE_AI and genai:
-        return await discover_topics_with_ai(query, max_topics)
+    if not USE_AI or genai is None:
+        error_msg = build_ai_unavailable_error_message(
+            genai_available=GENAI_AVAILABLE,
+            has_api_key=bool(GEMINI_API_KEY or GOOGLE_API_KEY),
+            agent_name=AGENT_NAME
+        )
+        
+        log_interaction("ai_unavailable_error", {
+            "error": error_msg,
+            "genai_available": GENAI_AVAILABLE,
+            "has_api_key": bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+        })
+        raise AIUnavailableError(error_msg)
     
-    # Fallback to simulated data
-    log_interaction("fallback_discovery", {
-        "reason": "AI not available",
-        "query": query
-    })
-    
-    all_topics = []
-    for domain in RESEARCH_DOMAINS:
-        for topic in domain["topics"]:
-            all_topics.append({
-                **topic,
-                "domain": domain["domain"],
-            })
-
-    # Filter by query if provided
-    if query:
-        query_lower = query.lower()
-        filtered = [
-            t for t in all_topics
-            if query_lower in t["title"].lower()
-            or query_lower in t["abstract"].lower()
-            or any(query_lower in k.lower() for k in t["keywords"])
-        ]
-        if filtered:
-            all_topics = filtered
-
-    # Sort by relevance and return top N
-    all_topics.sort(key=lambda x: x["relevance_score"], reverse=True)
-    return all_topics[:max_topics]
+    return await discover_topics_with_ai(query, max_topics)
 
 
 async def discover_topics_with_ai(
@@ -385,20 +370,24 @@ Return ONLY the JSON array, no other text."""
                 print(f"✅ Gemini discovered {len(topics)} research topics")
                 return topics[:max_topics]
             else:
+                error_msg = f"Failed to parse JSON response from Gemini: {response.text[:200]}"
                 log_interaction("parse_error", {
                     "error": "Failed to parse JSON",
                     "raw_response": response.text[:200]
                 })
-                # Fall back to simulated data
-                return get_simulated_topics(query, max_topics)
+                # NO FALLBACK - raise error
+                raise AIUnavailableError(error_msg)
         else:
             log_interaction("llm_response", {
                 "model": "gemini-1.5-flash",
                 "status": "empty_response",
                 "duration_ms": duration_ms
             })
-            return get_simulated_topics(query, max_topics)
+            # NO FALLBACK - raise error
+            raise AIUnavailableError("Gemini returned empty response for topic discovery")
             
+    except AIUnavailableError:
+        raise  # Re-raise our custom errors
     except Exception as e:
         log_interaction("llm_error", {
             "model": "gemini-1.5-flash",
@@ -406,7 +395,8 @@ Return ONLY the JSON array, no other text."""
             "error_type": type(e).__name__
         })
         print(f"⚠️ Gemini topic discovery failed: {e}")
-        return get_simulated_topics(query, max_topics)
+        # NO FALLBACK - raise error
+        raise AIUnavailableError(f"Gemini API error: {e}")
 
 
 def get_simulated_topics(query: Optional[str], max_topics: int) -> List[Dict[str, Any]]:
@@ -434,29 +424,28 @@ async def analyze_topic_for_blog(topic: Dict[str, Any]) -> Dict[str, Any]:
     """
     Analyze a research topic and generate blog writing suggestions using AI.
 
+    REQUIRED: Gemini AI must be configured for this function.
+    
     Uses Gemini to:
     1. Summarize the research in accessible language
     2. Identify key insights for general audience
     3. Suggest blog angles and structure
-    """
-    if USE_AI and genai:
-        return await analyze_topic_with_ai(topic)
     
-    # Fallback to template-based analysis
-    return {
-        "topic": topic["title"],
-        "domain": topic.get("domain", "Technology"),
-        "blog_angle": f"How {topic['title']} is changing the industry",
-        "key_points": [
-            f"Introduction to {topic.get('keywords', ['the topic'])[0]}",
-            "Current state of research",
-            "Practical implications for practitioners",
-            "Future directions and predictions",
-        ],
-        "target_audience": "Tech professionals and enthusiasts",
-        "suggested_length": "1500-2000 words",
-        "seo_keywords": topic.get("keywords", []),
-    }
+    NO FALLBACK: If AI is not available, raises an error.
+    """
+    if not USE_AI or genai is None:
+        error_msg = build_ai_unavailable_error_message(
+            genai_available=GENAI_AVAILABLE,
+            has_api_key=bool(GEMINI_API_KEY or GOOGLE_API_KEY),
+            agent_name=AGENT_NAME
+        )
+        log_interaction("ai_unavailable_error", {
+            "error": error_msg,
+            "topic": topic.get("title", "Unknown")
+        })
+        raise AIUnavailableError(error_msg)
+    
+    return await analyze_topic_with_ai(topic)
 
 
 async def analyze_topic_with_ai(topic: Dict[str, Any]) -> Dict[str, Any]:
@@ -519,32 +508,27 @@ Return ONLY the JSON, no other text."""
             analysis = parse_llm_json_response(response.text)
             if analysis:
                 return analysis
+            
+            # NO FALLBACK - raise error on parse failure
+            error_msg = f"Failed to parse JSON response from Gemini: {response.text[:200]}"
+            log_interaction("parse_error", {
+                "error": error_msg,
+                "topic": topic.get("title")
+            })
+            raise AIUnavailableError(error_msg)
         
-        # Fallback
-        return {
-            "topic": topic["title"],
-            "domain": topic.get("domain", "Technology"),
-            "blog_angle": f"How {topic['title']} is changing the industry",
-            "key_points": topic.get("keywords", ["Overview"]),
-            "target_audience": "Tech professionals",
-            "suggested_length": "1500-2000 words",
-            "seo_keywords": topic.get("keywords", []),
-        }
+        # NO FALLBACK - raise error on empty response
+        raise AIUnavailableError("Gemini returned empty response for topic analysis")
         
+    except AIUnavailableError:
+        raise  # Re-raise our custom errors
     except Exception as e:
         log_interaction("llm_error", {
             "error": str(e),
             "topic": topic.get("title")
         })
-        return {
-            "topic": topic["title"],
-            "domain": topic.get("domain", "Technology"),
-            "blog_angle": f"Understanding {topic['title']}",
-            "key_points": ["Overview", "Key concepts", "Applications", "Future outlook"],
-            "target_audience": "Tech professionals",
-            "suggested_length": "1500-2000 words",
-            "seo_keywords": topic.get("keywords", []),
-        }
+        # NO FALLBACK - raise error
+        raise AIUnavailableError(f"Gemini API error during topic analysis: {e}")
 
 
 async def process_research_request(message_text: str) -> Dict[str, Any]:
