@@ -23,6 +23,7 @@ This guide explains how to configure the environment secrets and variables neede
 {
   "mcpServers": {
     "gcloud": {
+      "type": "stdio",
       "command": "npx",
       "args": ["-y", "@google-cloud/gcloud-mcp"],
       "env": {
