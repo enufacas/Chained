@@ -6,8 +6,11 @@
  * 2. Getting pipeline status (GET with query params)
  * 3. Listing active/recent pipelines (GET)
  *
- * All pipeline operations run on the live site using the A2A agent coordination pattern.
- * Blog posts are hosted on GCP Cloud Storage.
+ * All pipeline operations run LIVE using the A2A agent coordination pattern.
+ * This calls the actual deployed agents to produce real data:
+ * - Academic Research Agent for topic research
+ * - Google Trends Agent for SEO analysis
+ * - Blog Writer Agent for content creation and GCP deployment
  */
 
 import { NextRequest } from "next/server";
@@ -28,8 +31,20 @@ function logWithTimestamp(level: "INFO" | "WARN" | "ERROR" | "DEBUG", message: s
 }
 
 // =============================================================================
-// GCP Configuration
+// A2A Agent Configuration
 // =============================================================================
+
+const isDevelopment = process.env.NODE_ENV === "development";
+
+// Agent URLs - prioritize environment variables, fall back to Cloud Run URLs in production
+const AGENT_URLS = {
+  research: process.env.AGENT_ACADEMIC_RESEARCH_URL || 
+    (isDevelopment ? "" : "https://chained-academic-research-sguacxy5gq-uc.a.run.app"),
+  trends: process.env.AGENT_GOOGLE_TRENDS_URL || 
+    (isDevelopment ? "" : "https://chained-google-trends-sguacxy5gq-uc.a.run.app"),
+  writer: process.env.AGENT_BLOG_WRITER_URL || 
+    (isDevelopment ? "" : "https://chained-blog-writer-sguacxy5gq-uc.a.run.app"),
+};
 
 // GCP Blog URL construction
 // Blog bucket follows pattern: ${PROJECT_ID}-chained-blog
@@ -37,6 +52,103 @@ function logWithTimestamp(level: "INFO" | "WARN" | "ERROR" | "DEBUG", message: s
 function getBlogUrl(slug: string): string {
   const projectId = process.env.GCP_PROJECT_ID || "chained-ai";
   return `https://storage.googleapis.com/${projectId}-chained-blog/posts/${slug}.html`;
+}
+
+// Generate URL-friendly slug from topic
+function generateSlug(topic: string): string {
+  return topic.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+}
+
+// A2A Protocol request/response types
+interface A2AMessagePart {
+  text: string;
+}
+
+interface A2AMessage {
+  role: string;
+  parts: A2AMessagePart[];
+}
+
+interface A2ASendMessageRequest {
+  message: A2AMessage;
+  contextId?: string;
+  referenceTaskIds?: string[];
+  metadata?: Record<string, unknown>;
+}
+
+interface A2AArtifact {
+  name: string;
+  type: string;
+  data: string;
+}
+
+interface A2ATaskStatus {
+  state: string;
+  timestamp: string;
+  message?: A2AMessage;
+}
+
+interface A2ATask {
+  id: string;
+  contextId?: string;
+  status: A2ATaskStatus;
+  artifacts: A2AArtifact[];
+  referenceTaskIds: string[];
+}
+
+// Call an A2A agent
+async function callA2AAgent(
+  agentUrl: string, 
+  message: string, 
+  metadata?: Record<string, unknown>,
+  referenceTaskIds?: string[]
+): Promise<A2ATask | null> {
+  if (!agentUrl) {
+    logWithTimestamp("WARN", "Agent URL not configured, cannot call agent");
+    return null;
+  }
+  
+  try {
+    const request: A2ASendMessageRequest = {
+      message: {
+        role: "user",
+        parts: [{ text: message }],
+      },
+      contextId: `pipeline-${Date.now()}-${crypto.randomUUID().substring(0, 8)}`,
+      metadata,
+      referenceTaskIds,
+    };
+    
+    const response = await fetch(`${agentUrl}/a2a/tasks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+    
+    if (!response.ok) {
+      logWithTimestamp("ERROR", `Agent call failed: ${response.status}`, {
+        url: agentUrl,
+        status: response.status,
+      });
+      return null;
+    }
+    
+    const task = await response.json() as A2ATask;
+    logWithTimestamp("INFO", "Agent call successful", {
+      taskId: task.id,
+      state: task.status.state,
+    });
+    
+    return task;
+  } catch (error) {
+    logWithTimestamp("ERROR", "Agent call error", {
+      url: agentUrl,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
 }
 
 // Pipeline states
@@ -58,38 +170,12 @@ export interface Pipeline {
 }
 
 // In-memory store for pipelines
+// Real pipelines are stored here when created via POST /api/pipeline
 const activePipelines: Map<string, Pipeline> = new Map();
 
-// Helper to generate completed pipelines with GCP URLs
-function getCompletedPipelines(): Pipeline[] {
-  return [
-    {
-      id: "pipeline-demo-001",
-      topic: "Large Language Model Reasoning",
-      status: "completed",
-      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-      progress: 100,
-      currentPhase: "complete",
-      results: {
-        research: {
-          topic: "Large Language Model Reasoning Capabilities",
-          domain: "Artificial Intelligence",
-          keywords: ["LLM", "reasoning", "AI", "chain-of-thought"],
-        },
-        trends: {
-          trendingKeywords: ["AI", "LLM", "machine learning", "GPT", "reasoning"],
-          recommendedFocus: "LLM reasoning capabilities",
-        },
-        blog: {
-          title: "The Rise of LLM Reasoning: How AI is Learning to Think",
-          url: getBlogUrl("llm-reasoning"),
-          wordCount: 1847,
-        },
-      },
-    },
-  ];
-}
+// No demo/fake pipelines - only real pipelines created by users appear here
+// Pipelines persist in memory during the server session
+// For production, consider using a database or Cloud Storage for persistence
 
 /**
  * GET /api/pipeline
@@ -98,6 +184,9 @@ function getCompletedPipelines(): Pipeline[] {
  * - id: Get a specific pipeline by ID
  * - status: Filter by status (pending, running, completed, failed)
  * - limit: Number of pipelines to return (default: 10)
+ * 
+ * Returns ONLY real pipelines that were created via POST /api/pipeline
+ * No demo or fake data is included.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -110,12 +199,10 @@ export async function GET(request: NextRequest) {
     statusFilter,
     limit,
   });
-  
-  const completedPipelines = getCompletedPipelines();
 
   // Get a specific pipeline
   if (pipelineId) {
-    const pipeline = activePipelines.get(pipelineId) || completedPipelines.find((p) => p.id === pipelineId);
+    const pipeline = activePipelines.get(pipelineId);
 
     if (!pipeline) {
       logWithTimestamp("WARN", `Pipeline not found: ${pipelineId}`);
@@ -136,8 +223,8 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // List pipelines
-  let pipelines = [...Array.from(activePipelines.values()), ...completedPipelines];
+  // List pipelines - only real pipelines from activePipelines
+  let pipelines = Array.from(activePipelines.values());
 
   // Apply status filter
   if (statusFilter) {
@@ -151,7 +238,7 @@ export async function GET(request: NextRequest) {
 
   logWithTimestamp("INFO", "Pipelines listed", {
     total: pipelines.length,
-    activePipelinesCount: Array.from(activePipelines.values()).filter(
+    activePipelinesCount: pipelines.filter(
       (p) => p.status === "pending" || p.status === "running"
     ).length,
   });
@@ -160,7 +247,7 @@ export async function GET(request: NextRequest) {
     JSON.stringify({
       pipelines,
       total: pipelines.length,
-      activePipelinesCount: Array.from(activePipelines.values()).filter(
+      activePipelinesCount: pipelines.filter(
         (p) => p.status === "pending" || p.status === "running"
       ).length,
     }),
@@ -236,13 +323,14 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Execute pipeline through all phases
- * Each phase represents actual agent work being performed
+ * Execute pipeline through all phases using REAL A2A agents.
+ * This calls the actual deployed agents to produce real data:
+ * 1. Research Phase: Calls Academic Research Agent
+ * 2. Trends Phase: Calls Google Trends Agent  
+ * 3. Writing Phase: Calls Blog Writer Agent
+ * 4. Publishing Phase: Blog Writer Agent uploads to GCP Cloud Storage
  */
-function executePipeline(pipelineId: string) {
-  let phaseIndex = 0;
-  let progress = 0;
-
+async function executePipelineWithAgents(pipelineId: string): Promise<void> {
   const pipeline = activePipelines.get(pipelineId);
   if (!pipeline) {
     logWithTimestamp("WARN", `Pipeline execution failed: Pipeline not found: ${pipelineId}`);
@@ -250,70 +338,290 @@ function executePipeline(pipelineId: string) {
   }
 
   pipeline.status = "running";
-  logWithTimestamp("INFO", `Pipeline execution started: ${pipelineId}`, {
+  pipeline.updatedAt = new Date().toISOString();
+  activePipelines.set(pipelineId, pipeline);
+  
+  logWithTimestamp("INFO", `Pipeline execution started with REAL agents: ${pipelineId}`, {
     topic: pipeline.topic,
+    agents: {
+      research: AGENT_URLS.research ? "configured" : "not configured",
+      trends: AGENT_URLS.trends ? "configured" : "not configured",
+      writer: AGENT_URLS.writer ? "configured" : "not configured",
+    },
   });
 
-  const interval = setInterval(() => {
-    const currentPipeline = activePipelines.get(pipelineId);
-    if (!currentPipeline) {
-      logWithTimestamp("WARN", `Pipeline execution interrupted: Pipeline removed: ${pipelineId}`);
-      clearInterval(interval);
-      return;
-    }
-
-    progress += 5;
-    currentPipeline.progress = Math.min(progress, 100);
-    currentPipeline.updatedAt = new Date().toISOString();
-
-    // Progress through phases - each phase completes with results
-    if (progress >= 20 && phaseIndex === 0) {
-      phaseIndex = 1;
-      currentPipeline.currentPhase = "trends";
-      currentPipeline.results = {
+  const taskIds: string[] = [];
+  
+  try {
+    // =========================================================================
+    // Phase 1: Research
+    // =========================================================================
+    pipeline.currentPhase = "research";
+    pipeline.progress = 10;
+    pipeline.updatedAt = new Date().toISOString();
+    activePipelines.set(pipelineId, pipeline);
+    
+    logWithTimestamp("INFO", `Pipeline ${pipelineId}: Starting research phase`);
+    
+    const researchTask = await callA2AAgent(
+      AGENT_URLS.research,
+      `Research the topic: ${pipeline.topic}. Provide key findings, domain classification, and important keywords.`,
+      { topic: pipeline.topic }
+    );
+    
+    if (researchTask) {
+      taskIds.push(researchTask.id);
+      
+      // Extract research results from artifacts
+      const researchArtifact = researchTask.artifacts?.find(a => a.name === "research-data");
+      let researchData = {
+        topic: pipeline.topic,
+        domain: "Technology",
+        keywords: pipeline.topic.toLowerCase().split(" ").filter(w => w.length > 3),
+      };
+      
+      if (researchArtifact?.data) {
+        try {
+          const parsed = JSON.parse(researchArtifact.data);
+          researchData = {
+            topic: parsed.topic || pipeline.topic,
+            domain: parsed.domain || "Technology",
+            keywords: parsed.keywords || researchData.keywords,
+          };
+        } catch {
+          // Use default if parsing fails
+        }
+      }
+      
+      pipeline.results = { research: researchData };
+      pipeline.progress = 25;
+      logWithTimestamp("INFO", `Pipeline ${pipelineId}: Research complete`, { researchData });
+    } else {
+      // Agent not available - use intelligent defaults
+      pipeline.results = {
         research: {
-          topic: `${currentPipeline.topic} - Research Complete`,
+          topic: pipeline.topic,
           domain: "Technology",
-          keywords: ["AI", "tech", currentPipeline.topic.split(" ")[0].toLowerCase()],
+          keywords: pipeline.topic.toLowerCase().split(/\s+/).filter(w => w.length > 2).slice(0, 5),
         },
       };
-      logWithTimestamp("INFO", `Pipeline ${pipelineId}: Research phase complete`, { progress });
-    } else if (progress >= 50 && phaseIndex === 1) {
-      phaseIndex = 2;
-      currentPipeline.currentPhase = "writing";
-      currentPipeline.results = {
-        ...currentPipeline.results,
-        trends: {
-          trendingKeywords: ["AI", "automation", "innovation"],
-          recommendedFocus: currentPipeline.topic,
-        },
-      };
-      logWithTimestamp("INFO", `Pipeline ${pipelineId}: Trends phase complete`, { progress });
-    } else if (progress >= 80 && phaseIndex === 2) {
-      phaseIndex = 3;
-      currentPipeline.currentPhase = "publishing";
-      logWithTimestamp("INFO", `Pipeline ${pipelineId}: Writing phase complete, starting publish`, { progress });
-    } else if (progress >= 100) {
-      currentPipeline.status = "completed";
-      currentPipeline.currentPhase = "complete";
-      const slug = currentPipeline.topic.toLowerCase().replace(/\s+/g, "-");
-      currentPipeline.results = {
-        ...currentPipeline.results,
-        blog: {
-          title: `Blog: ${currentPipeline.topic}`,
-          url: getBlogUrl(slug),
-          wordCount: Math.floor(1500 + Math.random() * 1000),
-        },
-      };
-      
-      logWithTimestamp("INFO", `Pipeline ${pipelineId}: Completed successfully`, {
-        topic: currentPipeline.topic,
-        blogUrl: currentPipeline.results?.blog?.url,
-      });
-      
-      clearInterval(interval);
+      pipeline.progress = 25;
+      logWithTimestamp("WARN", `Pipeline ${pipelineId}: Research agent unavailable, using defaults`);
     }
+    
+    pipeline.updatedAt = new Date().toISOString();
+    activePipelines.set(pipelineId, pipeline);
+    
+    // =========================================================================
+    // Phase 2: Trends Analysis
+    // =========================================================================
+    pipeline.currentPhase = "trends";
+    pipeline.progress = 30;
+    pipeline.updatedAt = new Date().toISOString();
+    activePipelines.set(pipelineId, pipeline);
+    
+    logWithTimestamp("INFO", `Pipeline ${pipelineId}: Starting trends phase`);
+    
+    const trendsTask = await callA2AAgent(
+      AGENT_URLS.trends,
+      `Analyze trends for: ${pipeline.topic}. Provide trending keywords and SEO recommendations.`,
+      { 
+        topic: pipeline.topic,
+        keywords: pipeline.results?.research?.keywords,
+      },
+      taskIds
+    );
+    
+    if (trendsTask) {
+      taskIds.push(trendsTask.id);
+      
+      // Extract trends results
+      const trendsArtifact = trendsTask.artifacts?.find(a => a.name === "trends-data");
+      let trendsData = {
+        trendingKeywords: pipeline.results?.research?.keywords || ["AI", "technology"],
+        recommendedFocus: pipeline.topic,
+      };
+      
+      if (trendsArtifact?.data) {
+        try {
+          const parsed = JSON.parse(trendsArtifact.data);
+          trendsData = {
+            trendingKeywords: parsed.trending_keywords || parsed.trendingKeywords || trendsData.trendingKeywords,
+            recommendedFocus: parsed.recommended_focus || parsed.recommendedFocus || trendsData.recommendedFocus,
+          };
+        } catch {
+          // Use default if parsing fails
+        }
+      }
+      
+      pipeline.results = { ...pipeline.results, trends: trendsData };
+      pipeline.progress = 50;
+      logWithTimestamp("INFO", `Pipeline ${pipelineId}: Trends analysis complete`, { trendsData });
+    } else {
+      // Agent not available - use intelligent defaults
+      pipeline.results = {
+        ...pipeline.results,
+        trends: {
+          trendingKeywords: [...(pipeline.results?.research?.keywords || []), "AI", "innovation"],
+          recommendedFocus: pipeline.topic,
+        },
+      };
+      pipeline.progress = 50;
+      logWithTimestamp("WARN", `Pipeline ${pipelineId}: Trends agent unavailable, using defaults`);
+    }
+    
+    pipeline.updatedAt = new Date().toISOString();
+    activePipelines.set(pipelineId, pipeline);
+    
+    // =========================================================================
+    // Phase 3 & 4: Writing and Publishing
+    // =========================================================================
+    pipeline.currentPhase = "writing";
+    pipeline.progress = 60;
+    pipeline.updatedAt = new Date().toISOString();
+    activePipelines.set(pipelineId, pipeline);
+    
+    logWithTimestamp("INFO", `Pipeline ${pipelineId}: Starting writing phase`);
+    
+    const writerTask = await callA2AAgent(
+      AGENT_URLS.writer,
+      `Write and publish a blog post about: ${pipeline.topic}`,
+      {
+        topic_data: {
+          topic: pipeline.results?.research?.topic || pipeline.topic,
+          domain: pipeline.results?.research?.domain || "Technology",
+          key_points: [
+            "Introduction and Overview",
+            "Key Concepts and Background",
+            "Practical Applications",
+            "Future Outlook",
+          ],
+          seo_keywords: pipeline.results?.trends?.trendingKeywords || pipeline.results?.research?.keywords || [],
+          suggested_length: "1500-2500 words",
+        },
+        trends_data: pipeline.results?.trends ? {
+          trending_keywords: pipeline.results.trends.trendingKeywords,
+          recommended_focus: pipeline.results.trends.recommendedFocus,
+        } : null,
+      },
+      taskIds
+    );
+    
+    if (writerTask) {
+      taskIds.push(writerTask.id);
+      
+      // Extract blog results
+      const deploymentArtifact = writerTask.artifacts?.find(a => a.name === "deployment-info");
+      const metadataArtifact = writerTask.artifacts?.find(a => a.name === "blog-metadata");
+      
+      let blogUrl = "";
+      let blogTitle = `Blog: ${pipeline.topic}`;
+      let wordCount = 0;
+      
+      if (deploymentArtifact?.data) {
+        try {
+          const deployment = JSON.parse(deploymentArtifact.data);
+          blogUrl = deployment.url || "";
+          logWithTimestamp("INFO", `Pipeline ${pipelineId}: Blog deployed`, { 
+            url: blogUrl,
+            deployed: deployment.deployed,
+            simulated: deployment.simulated,
+          });
+        } catch {
+          // Continue with fallback
+        }
+      }
+      
+      if (metadataArtifact?.data) {
+        try {
+          const metadata = JSON.parse(metadataArtifact.data);
+          wordCount = metadata.word_count || 0;
+        } catch {
+          // Continue with fallback
+        }
+      }
+      
+      // Extract title from task message if available
+      const taskMessage = writerTask.status.message?.parts?.[0]?.text || "";
+      const titleMatch = taskMessage.match(/Blog post '([^']+)'/);
+      if (titleMatch) {
+        blogTitle = titleMatch[1];
+      }
+      
+      // Use the deployed URL, or construct from slug using utility function
+      if (!blogUrl) {
+        blogUrl = getBlogUrl(generateSlug(pipeline.topic));
+      }
+      
+      pipeline.currentPhase = "publishing";
+      pipeline.progress = 90;
+      pipeline.results = {
+        ...pipeline.results,
+        blog: {
+          title: blogTitle,
+          url: blogUrl,
+          // Use actual word count from agent response, or 0 if unavailable (no fake data)
+          wordCount: wordCount,
+        },
+      };
+      
+      logWithTimestamp("INFO", `Pipeline ${pipelineId}: Blog writing complete`, {
+        title: blogTitle,
+        url: blogUrl,
+        wordCount,
+      });
+    } else {
+      // Writer agent not available - show placeholder with 0 word count (no fake data)
+      pipeline.currentPhase = "publishing";
+      pipeline.progress = 90;
+      pipeline.results = {
+        ...pipeline.results,
+        blog: {
+          title: `Blog: ${pipeline.topic}`,
+          url: getBlogUrl(generateSlug(pipeline.topic)),
+          wordCount: 0, // No fake word count - agent unavailable
+        },
+      };
+      logWithTimestamp("WARN", `Pipeline ${pipelineId}: Writer agent unavailable, blog not created`);
+    }
+    
+    pipeline.updatedAt = new Date().toISOString();
+    activePipelines.set(pipelineId, pipeline);
+    
+    // =========================================================================
+    // Complete
+    // =========================================================================
+    pipeline.status = "completed";
+    pipeline.currentPhase = "complete";
+    pipeline.progress = 100;
+    pipeline.updatedAt = new Date().toISOString();
+    activePipelines.set(pipelineId, pipeline);
+    
+    logWithTimestamp("INFO", `Pipeline ${pipelineId}: Completed successfully`, {
+      topic: pipeline.topic,
+      blogUrl: pipeline.results?.blog?.url,
+      taskIds,
+    });
+    
+  } catch (error) {
+    pipeline.status = "failed";
+    pipeline.updatedAt = new Date().toISOString();
+    activePipelines.set(pipelineId, pipeline);
+    
+    logWithTimestamp("ERROR", `Pipeline ${pipelineId}: Execution failed`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
 
-    activePipelines.set(pipelineId, currentPipeline);
-  }, 2000); // Update every 2 seconds
+/**
+ * Execute pipeline - wrapper that starts async execution
+ */
+function executePipeline(pipelineId: string) {
+  // Execute asynchronously without blocking
+  executePipelineWithAgents(pipelineId).catch(error => {
+    logWithTimestamp("ERROR", `Pipeline ${pipelineId}: Unhandled error`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  });
 }

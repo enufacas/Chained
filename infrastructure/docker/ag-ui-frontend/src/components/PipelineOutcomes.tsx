@@ -4,11 +4,17 @@
  * Displays completed pipeline outcomes from the A2A system.
  * Shows blog posts, artifacts, and other results from agent work.
  * Sources data from the /api/pipeline endpoint.
+ * 
+ * Enhanced with:
+ * - 5-second polling for real-time updates
+ * - Creative state representations with animations
+ * - Click-to-expand detailed pipeline view
  */
 
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import PipelineDetailView from "./PipelineDetailView";
 
 interface PipelineResult {
   id: string;
@@ -44,10 +50,20 @@ function formatTimeAgo(dateString: string): string {
   return date.toLocaleDateString();
 }
 
+// Phase icons for visual representation
+const PHASE_ICONS: { [key: string]: { icon: string; color: string } } = {
+  research: { icon: "🔬", color: "blue" },
+  trends: { icon: "📈", color: "green" },
+  writing: { icon: "✍️", color: "purple" },
+  publishing: { icon: "🚀", color: "orange" },
+  complete: { icon: "🎉", color: "emerald" },
+};
+
 export default function PipelineOutcomes() {
   const [data, setData] = useState<PipelineListResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedPipelineId, setSelectedPipelineId] = useState<string | null>(null);
 
   const fetchPipelines = useCallback(async () => {
     try {
@@ -69,12 +85,12 @@ export default function PipelineOutcomes() {
   useEffect(() => {
     fetchPipelines();
     
-    // Refresh every 30 seconds to catch pipeline completions
+    // Refresh every 5 seconds for more real-time updates
     let interval: NodeJS.Timeout | null = null;
     
     const startPolling = () => {
       if (!interval) {
-        interval = setInterval(fetchPipelines, 30000);
+        interval = setInterval(fetchPipelines, 5000);
       }
     };
     
@@ -133,65 +149,109 @@ export default function PipelineOutcomes() {
   const activePipelines = data?.pipelines.filter(p => p.status === "running" || p.status === "pending") || [];
 
   return (
-    <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-      {/* Header */}
-      <div className="p-4 border-b border-slate-700 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">📦</span>
-          <div>
-            <h3 className="font-semibold text-white">Pipeline Outcomes</h3>
-            <p className="text-xs text-slate-500">
-              Completed work and artifacts
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {activePipelines.length > 0 && (
-            <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full border border-yellow-500/30">
-              {activePipelines.length} in progress
-            </span>
-          )}
-          <span className="text-xs text-slate-500">
-            {completedPipelines.length} completed
-          </span>
-        </div>
-      </div>
-
-      {/* Active Pipelines */}
-      {activePipelines.length > 0 && (
-        <div className="p-4 border-b border-slate-700 bg-yellow-500/5">
-          <h4 className="text-xs text-yellow-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-            In Progress
-          </h4>
-          <div className="space-y-2">
-            {activePipelines.map((pipeline) => (
-              <div
-                key={pipeline.id}
-                className="flex items-center gap-3 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20"
-              >
-                <span className="text-xl">⚡</span>
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-white truncate">{pipeline.topic}</div>
-                  <div className="text-xs text-slate-400">
-                    Phase: {pipeline.currentPhase} • {pipeline.progress}%
-                  </div>
-                </div>
-                <div className="w-24 h-2 bg-slate-700 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-yellow-400 transition-all duration-500"
-                    style={{ width: `${pipeline.progress}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+    <>
+      {/* Pipeline Detail Modal */}
+      {selectedPipelineId && (
+        <PipelineDetailView
+          pipelineId={selectedPipelineId}
+          onClose={() => setSelectedPipelineId(null)}
+        />
       )}
 
-      {/* Completed Pipelines with Blog Posts */}
-      {completedPipelines.length > 0 ? (
-        <div className="p-4">
+      <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+        {/* Header */}
+        <div className="p-4 border-b border-slate-700 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">📦</span>
+            <div>
+              <h3 className="font-semibold text-white">Pipeline Outcomes</h3>
+              <p className="text-xs text-slate-500">
+                Completed work and artifacts • Click to view details
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {activePipelines.length > 0 && (
+              <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full border border-yellow-500/30 animate-pulse">
+                {activePipelines.length} in progress
+              </span>
+            )}
+            <span className="text-xs text-slate-500">
+              {completedPipelines.length} completed
+            </span>
+          </div>
+        </div>
+
+        {/* Active Pipelines with Enhanced Visual */}
+        {activePipelines.length > 0 && (
+          <div className="p-4 border-b border-slate-700 bg-gradient-to-r from-yellow-500/5 to-orange-500/5">
+            <h4 className="text-xs text-yellow-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <span className="relative">
+                <span className="w-2 h-2 bg-yellow-400 rounded-full animate-ping absolute"></span>
+                <span className="w-2 h-2 bg-yellow-400 rounded-full relative"></span>
+              </span>
+              In Progress
+            </h4>
+            <div className="space-y-3">
+              {activePipelines.map((pipeline) => {
+                const phaseInfo = PHASE_ICONS[pipeline.currentPhase] || { icon: "⏳", color: "slate" };
+                return (
+                  <div
+                    key={pipeline.id}
+                    onClick={() => setSelectedPipelineId(pipeline.id)}
+                    className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20 hover:border-yellow-500/40 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-lg hover:shadow-yellow-500/10"
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-2xl animate-bounce">{phaseInfo.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-white truncate">{pipeline.topic}</div>
+                        <div className="text-xs text-slate-400 flex items-center gap-2">
+                          <span className="flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse"></span>
+                            {pipeline.currentPhase.charAt(0).toUpperCase() + pipeline.currentPhase.slice(1)}
+                          </span>
+                          <span>•</span>
+                          <span>{pipeline.progress}%</span>
+                        </div>
+                      </div>
+                      <span className="text-xs text-slate-500">Click for details →</span>
+                    </div>
+                    
+                    {/* Creative progress visualization */}
+                    <div className="relative">
+                      <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 transition-all duration-500 bg-[length:200%_100%] animate-[gradient_2s_ease_infinite]"
+                          style={{ width: `${pipeline.progress}%` }}
+                        />
+                      </div>
+                      {/* Phase markers */}
+                      <div className="flex justify-between mt-1">
+                        {["research", "trends", "writing", "publishing", "complete"].map((phase, idx) => {
+                          const phases = ["research", "trends", "writing", "publishing", "complete"];
+                          const currentIdx = phases.indexOf(pipeline.currentPhase);
+                          const isDone = idx < currentIdx;
+                          const isCurrent = idx === currentIdx;
+                          return (
+                            <div key={phase} className="flex flex-col items-center">
+                              <span className={`text-xs ${isDone ? "text-green-400" : isCurrent ? "text-yellow-400" : "text-slate-600"}`}>
+                                {isDone ? "✓" : PHASE_ICONS[phase]?.icon || "○"}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Completed Pipelines with Blog Posts */}
+        {completedPipelines.length > 0 ? (
+          <div className="p-4">
           <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-3">
             Completed Outcomes
           </h4>
@@ -199,16 +259,20 @@ export default function PipelineOutcomes() {
             {completedPipelines.map((pipeline) => (
               <div
                 key={pipeline.id}
-                className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50 hover:border-accent-500/30 transition"
+                onClick={() => setSelectedPipelineId(pipeline.id)}
+                className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50 hover:border-green-500/30 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-lg hover:shadow-green-500/5"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <h5 className="font-medium text-white">{pipeline.topic}</h5>
+                    <h5 className="font-medium text-white flex items-center gap-2">
+                      {pipeline.topic}
+                      <span className="text-xs text-slate-500">Click for details →</span>
+                    </h5>
                     <p className="text-xs text-slate-500">
                       Completed {formatTimeAgo(pipeline.updatedAt)}
                     </p>
                   </div>
-                  <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
+                  <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full border border-green-500/30">
                     ✓ Complete
                   </span>
                 </div>
@@ -216,12 +280,15 @@ export default function PipelineOutcomes() {
                 {/* Results */}
                 {pipeline.results && (
                   <div className="mt-3 space-y-2">
-                    {/* Blog Post */}
+                    {/* Blog Post - External link opens in new tab */}
                     {pipeline.results.blog && (
                       <a
                         href={pipeline.results.blog.url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        // Stop propagation to prevent opening the detail modal when clicking the blog link
+                        // This allows users to directly open the blog post in a new tab
+                        onClick={(e) => e.stopPropagation()}
                         className="flex items-center gap-3 p-2 rounded bg-accent-500/10 border border-accent-500/20 hover:bg-accent-500/20 transition group"
                       >
                         <span className="text-lg">📝</span>
@@ -270,6 +337,7 @@ export default function PipelineOutcomes() {
           <p className="text-xs">Create a pipeline via the chat to see outcomes here</p>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
