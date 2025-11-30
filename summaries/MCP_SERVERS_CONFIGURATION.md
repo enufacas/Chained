@@ -20,51 +20,218 @@ MCP (Model Context Protocol) is an open standard that allows AI assistants to se
 **Vendor:** GitHub/Microsoft  
 **Status:** ⭐⭐⭐⭐⭐ Trusted & Official
 
-**Available Tools:**
-- `github-mcp-server-get_file_contents` - Read repository files
-- `github-mcp-server-search_code` - Search code across repositories
-- `github-mcp-server-search_issues` - Search GitHub issues
-- `github-mcp-server-list_issues` - List repository issues
-- `github-mcp-server-list_secret_scanning_alerts` - Security vulnerability scanning
-- `github-mcp-server-list_code_scanning_alerts` - Code security analysis
-- `github-mcp-server-web_search` - AI-powered web search with citations
+The GitHub MCP Server provides comprehensive access to GitHub's API through a rich set of tools organized by functionality.
 
-**Use Cases:**
-- Repository management and navigation
-- Code search and analysis
-- Issue tracking and management
-- Security scanning and vulnerability detection
-- Real-time web research with verified sources
+#### Complete Tool Reference
+
+##### Repository & Files
+| Tool | Description |
+|------|-------------|
+| `github-mcp-server-get_file_contents` | Get the contents of a file or directory from a GitHub repository |
+| `github-mcp-server-list_branches` | List branches in a GitHub repository |
+| `github-mcp-server-list_tags` | List git tags in a GitHub repository |
+| `github-mcp-server-get_tag` | Get details about a specific git tag |
+| `github-mcp-server-list_commits` | Get list of commits of a branch (supports pagination) |
+| `github-mcp-server-get_commit` | Get details for a commit including file diffs and stats |
+
+##### Search Tools
+| Tool | Description |
+|------|-------------|
+| `github-mcp-server-search_code` | Fast and precise code search using GitHub's native search engine |
+| `github-mcp-server-search_issues` | Search for issues using GitHub issues search syntax |
+| `github-mcp-server-search_pull_requests` | Search for pull requests using search syntax |
+| `github-mcp-server-search_repositories` | Find repositories by name, description, topics, or metadata |
+| `github-mcp-server-search_users` | Find GitHub users by username, name, or profile info |
+| `github-mcp-server-web_search` | AI-powered web search with intelligent answers and citations |
+
+##### Issues
+| Tool | Description |
+|------|-------------|
+| `github-mcp-server-list_issues` | List issues in a repository with filtering and pagination |
+| `github-mcp-server-issue_read` | Read issue details (methods: get, get_comments, get_sub_issues, get_labels) |
+| `github-mcp-server-list_issue_types` | List supported issue types for repository owner (organization) |
+| `github-mcp-server-get_label` | Get a specific label from a repository |
+
+##### Pull Requests
+| Tool | Description |
+|------|-------------|
+| `github-mcp-server-list_pull_requests` | List pull requests with filtering and sorting |
+| `github-mcp-server-pull_request_read` | Read PR details (methods: get, get_diff, get_status, get_files, get_review_comments, get_reviews, get_comments) |
+
+##### Releases
+| Tool | Description |
+|------|-------------|
+| `github-mcp-server-list_releases` | List releases in a GitHub repository |
+| `github-mcp-server-get_latest_release` | Get the latest release in a repository |
+| `github-mcp-server-get_release_by_tag` | Get a specific release by its tag name |
+
+##### Workflows & GitHub Actions
+| Tool | Description |
+|------|-------------|
+| `github-mcp-server-list_workflows` | List workflows in a repository |
+| `github-mcp-server-list_workflow_runs` | List workflow runs for a specific workflow |
+| `github-mcp-server-get_workflow_run` | Get details of a specific workflow run |
+| `github-mcp-server-list_workflow_jobs` | List jobs for a specific workflow run |
+| `github-mcp-server-get_job_logs` | Download logs for a workflow job (supports failed_only mode) |
+| `github-mcp-server-get_workflow_run_logs` | Download all logs for a workflow run as ZIP |
+| `github-mcp-server-get_workflow_run_usage` | Get usage metrics for a workflow run |
+| `github-mcp-server-list_workflow_run_artifacts` | List artifacts for a workflow run |
+| `github-mcp-server-download_workflow_run_artifact` | Get download URL for a workflow run artifact |
+| `github-mcp-server-summarize_job_log_failures` | AI-powered analysis of failed job logs |
+| `github-mcp-server-summarize_run_log_failures` | AI-powered analysis of workflow run failures |
+
+##### Security Scanning
+| Tool | Description |
+|------|-------------|
+| `github-mcp-server-list_code_scanning_alerts` | List code scanning alerts in a repository |
+| `github-mcp-server-get_code_scanning_alert` | Get details of a specific code scanning alert |
+| `github-mcp-server-list_secret_scanning_alerts` | List secret scanning alerts in a repository |
+| `github-mcp-server-get_secret_scanning_alert` | Get details of a specific secret scanning alert |
+
+#### Tool Categories by Use Case
+
+**For Code Analysis & Navigation:**
+- `search_code`, `get_file_contents`, `list_commits`, `get_commit`, `list_branches`
+
+**For Issue Management:**
+- `list_issues`, `issue_read`, `search_issues`, `get_label`
+
+**For PR Review & Analysis:**
+- `list_pull_requests`, `pull_request_read`, `search_pull_requests`
+
+**For CI/CD & Workflow Debugging:**
+- `list_workflows`, `list_workflow_runs`, `get_workflow_run`, `list_workflow_jobs`
+- `get_job_logs`, `summarize_job_log_failures`, `summarize_run_log_failures`
+
+**For Security:**
+- `list_code_scanning_alerts`, `get_code_scanning_alert`
+- `list_secret_scanning_alerts`, `get_secret_scanning_alert`
+
+**For Research & Discovery:**
+- `web_search`, `search_repositories`, `search_users`
+
+**For Release Management:**
+- `list_releases`, `get_latest_release`, `get_release_by_tag`
+
+#### Use Cases
+
+- **Repository management and navigation** - Browse files, branches, tags, commits
+- **Code search and analysis** - Find code patterns, functions, usage examples
+- **Issue tracking and management** - List, search, read issues and comments
+- **Pull request review** - Analyze diffs, reviews, comments, status
+- **CI/CD debugging** - Analyze workflow failures with AI-powered summaries
+- **Security scanning** - Detect code vulnerabilities and leaked secrets
+- **Release management** - Track releases and versions
+- **Real-time web research** - Search the web with AI-powered intelligent answers
 
 **Agents Using GitHub MCP Server:**
-All 14 custom agents have access to GitHub MCP server tools based on their specialization needs.
+All custom agents have access to GitHub MCP server tools based on their specialization needs.
 
 ### 2. Playwright MCP Server (Official - Microsoft/Community)
 
 **Vendor:** Microsoft Playwright Project  
 **Status:** ⭐⭐⭐⭐⭐ Trusted & Official
 
-**Available Tools:**
-- `playwright-browser_navigate` - Navigate to URLs
-- `playwright-browser_snapshot` - Capture page accessibility snapshots
-- `playwright-browser_take_screenshot` - Take page screenshots
-- `playwright-browser_click` - Click elements
-- `playwright-browser_fill_form` - Fill form fields
-- `playwright-browser_hover` - Hover over elements
-- `playwright-browser_evaluate` - Execute JavaScript in browser context
+The Playwright MCP Server provides comprehensive browser automation capabilities for testing and web interaction.
 
-**Use Cases:**
-- Browser automation and web testing
-- End-to-end (E2E) testing
-- UI/UX validation and testing
-- Web scraping and data extraction
-- Integration testing with web services
+#### Complete Tool Reference
+
+##### Browser Management
+| Tool | Description |
+|------|-------------|
+| `playwright-browser_close` | Close the page |
+| `playwright-browser_resize` | Resize the browser window |
+| `playwright-browser_tabs` | List, create, close, or select browser tabs |
+| `playwright-browser_install` | Install the browser specified in the config |
+
+##### Navigation
+| Tool | Description |
+|------|-------------|
+| `playwright-browser_navigate` | Navigate to a URL |
+| `playwright-browser_navigate_back` | Go back to the previous page |
+| `playwright-browser_wait_for` | Wait for text to appear/disappear or specified time |
+
+##### Page Interaction
+| Tool | Description |
+|------|-------------|
+| `playwright-browser_click` | Perform click on a web page |
+| `playwright-browser_hover` | Hover over element on page |
+| `playwright-browser_drag` | Perform drag and drop between two elements |
+| `playwright-browser_type` | Type text into editable element |
+| `playwright-browser_press_key` | Press a key on the keyboard |
+| `playwright-browser_select_option` | Select an option in a dropdown |
+| `playwright-browser_fill_form` | Fill multiple form fields |
+| `playwright-browser_file_upload` | Upload one or multiple files |
+
+##### Capturing & Analysis
+| Tool | Description |
+|------|-------------|
+| `playwright-browser_snapshot` | Capture accessibility snapshot of the current page |
+| `playwright-browser_take_screenshot` | Take a screenshot of the current page |
+| `playwright-browser_console_messages` | Returns all console messages |
+| `playwright-browser_network_requests` | Returns all network requests since loading the page |
+
+##### Advanced
+| Tool | Description |
+|------|-------------|
+| `playwright-browser_evaluate` | Evaluate JavaScript expression on page or element |
+| `playwright-browser_handle_dialog` | Handle a dialog (accept/dismiss) |
+
+#### Use Cases
+
+- **Browser automation and web testing** - Navigate, click, fill forms
+- **End-to-end (E2E) testing** - Complete user flow testing
+- **UI/UX validation and testing** - Visual testing, accessibility snapshots
+- **Web scraping and data extraction** - Read content, analyze pages
+- **Integration testing with web services** - Test web APIs and interfaces
+- **Debugging web apps** - Console messages, network requests
 
 **Agents Using Playwright:**
 - **test-champion** - Full browser automation for E2E testing
 - **ux-enhancer** - Enhanced UI/UX interaction and validation
 - **integration-specialist** - Web service integration testing
 - **coordinate-wizard** - API and web service coordination
+
+### 3. Google Cloud (gcloud) MCP Server
+
+**Vendor:** Google Cloud  
+**Status:** ⭐⭐⭐⭐⭐ Trusted & Official
+
+The gcloud MCP Server provides access to Google Cloud Platform services through the gcloud CLI.
+
+#### Complete Tool Reference
+
+| Tool | Description |
+|------|-------------|
+| `gcloud-run_gcloud_command` | Execute a gcloud command for Google Cloud operations |
+
+**Capabilities:**
+- Compute Engine management (VMs, networking)
+- Cloud Storage operations
+- Kubernetes Engine (GKE) management
+- Cloud Functions deployment
+- BigQuery operations
+- Cloud Run services
+- IAM and security management
+- Any gcloud CLI command
+
+**Restrictions:**
+- No command substitution (no subshells or `$(...)`)
+- No pipes (`|`) or shell operators
+- No redirection operators (`>`, `>>`, `<`)
+- All required parameters must be included
+
+#### Use Cases
+
+- **Infrastructure management** - Create and manage cloud resources
+- **Deployment** - Deploy applications to GCP services
+- **DevOps automation** - Automate cloud infrastructure tasks
+- **Cost management** - Monitor and optimize cloud spending
+- **Security** - Manage IAM and security policies
+
+**Agents Using gcloud:**
+- **cloud-architect** - Cloud infrastructure design and management
+- **infrastructure-specialist** - DevOps and infrastructure automation
 
 ## Agent-Specific MCP Server Configurations
 
@@ -119,7 +286,7 @@ All 14 custom agents have access to GitHub MCP server tools based on their speci
 MCP server tools are configured in the YAML frontmatter of each agent definition:
 
 ```
-/home/runner/work/Chained/Chained/.github/agents/*.md
+.github/agents/*.md
 ```
 
 Each agent's tools list specifies which MCP server capabilities it has access to.
@@ -144,12 +311,22 @@ These would be added based on specific needs and use cases that emerge from the 
 
 ## Security Considerations
 
-- All MCP servers used are from official, trusted vendors (Microsoft/GitHub)
+- All MCP servers used are from official, trusted vendors (Microsoft/GitHub/Google)
 - Security scanning tools are integrated into relevant agents
 - Tools require appropriate GitHub authentication (handled by GitHub Actions)
 - No external API keys or credentials are stored in the repository
+- gcloud commands are restricted to prevent shell injection
+
+## Tool Discovery
+
+MCP server tools are automatically discovered and available to agents at runtime. The complete list of available tools can be found in:
+- This documentation (authoritative reference)
+- The GitHub Copilot Coding Agent system prompt
+- The MCP server implementations themselves
+
+When new tools are added to MCP servers, update this documentation to reflect the changes.
 
 ---
 
-*Last Updated: November 11, 2025*  
+*Last Updated: November 30, 2025*  
 *Part of the Chained autonomous AI ecosystem* 🚀
