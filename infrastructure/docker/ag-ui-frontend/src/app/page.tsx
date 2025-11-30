@@ -5,6 +5,9 @@
  * with improved logging, error handling, and robust fallback behavior.
  *
  * Based on CopilotKit examples: https://github.com/CopilotKit/CopilotKit/tree/main/examples/coagents-starter
+ * 
+ * IMPORTANT: This UI uses REAL data only - no simulations or fake data.
+ * All pipeline data comes from actual A2A agent execution.
  */
 
 "use client";
@@ -12,7 +15,7 @@
 import { CopilotChat, CopilotPopup } from "@copilotkit/react-ui";
 import { useCopilotAction, useCopilotReadable, CopilotKit } from "@copilotkit/react-core";
 import { useState, useEffect, useCallback } from "react";
-import { PipelineData, ApiStatus } from "@/types";
+import { ApiStatus } from "@/types";
 import RealTimeAgentActivity from "@/components/RealTimeAgentActivity";
 import PipelineOutcomes from "@/components/PipelineOutcomes";
 
@@ -59,7 +62,8 @@ When users ask about available agents, use listAgents.
 - "What agents are available?" → Call listAgents
 
 ### 5. Analyze ANY Pipeline (IMPORTANT!)
-You can analyze ANY pipeline by topic or ID, not just the demo. Use analyzePipeline with the topic name.
+You can analyze ANY pipeline by topic or ID. Use analyzePipeline with the topic name.
+All pipelines are REAL - created by actual A2A agents with real data.
 - "Analyze the fractal art pipeline" → Call analyzePipeline with pipelineIdentifier="fractal art"
 - "What steps did the embeddings pipeline take?" → Call analyzePipeline with pipelineIdentifier="embeddings"
 - "Break down the previous pipeline" → Call analyzePipeline (without identifier to get most recent)
@@ -68,6 +72,10 @@ You can analyze ANY pipeline by topic or ID, not just the demo. Use analyzePipel
 Query specific data from any pipeline:
 - "Trending keywords for fractal art" → Call getTrendingKeywords with pipelineIdentifier="fractal art"
 - "Research summary for embeddings" → Call getResearchSummary with pipelineIdentifier="embeddings"
+
+### 7. Create Real Pipelines
+When users want to create content, they should use createPipeline which calls REAL A2A agents.
+All data is real - no simulations or fake responses.
 
 Be helpful, concise, and proactive. When users ask about a specific pipeline, always use the pipelineIdentifier parameter.`;
 
@@ -103,54 +111,7 @@ const INITIAL_AGENTS: AgentState[] = [
   },
 ];
 
-const SAMPLE_DATA: PipelineData = {
-  contextId: "blog-pipeline-demo",
-  success: true,
-  tasksCompleted: 3,
-  completedAt: new Date().toISOString(),
-  research: {
-    taskId: "task-research-demo",
-    status: "completed",
-    findings: {
-      topicsFound: 3,
-      recommendedTopic: {
-        topic: "Large Language Model Reasoning Capabilities",
-        domain: "Artificial Intelligence",
-        blogAngle: "How LLM Reasoning is changing the industry",
-        keyPoints: [
-          "Introduction to LLM reasoning",
-          "Current state of research",
-          "Practical implications",
-          "Future directions",
-        ],
-        seoKeywords: ["LLM", "reasoning", "AI", "chain-of-thought"],
-      },
-    },
-  },
-  trends: {
-    taskId: "task-trends-demo",
-    status: "completed",
-    trendsData: {
-      topicsAnalyzed: 5,
-      trendingKeywords: ["AI", "LLM", "machine learning", "GPT", "reasoning"],
-      recommendedFocus: "LLM reasoning capabilities",
-    },
-  },
-  blog: {
-    taskId: "task-blog-demo",
-    status: "completed",
-    deploymentInfo: {
-      url: "https://enufacas.github.io/Chained/blog/llm-reasoning.html",
-      status: "published",
-    },
-    blogMetadata: {
-      title: "The Rise of LLM Reasoning: How AI is Learning to Think",
-      wordCount: 1847,
-      readTimeMinutes: 8,
-      tags: ["AI", "LLM", "Reasoning", "Machine Learning"],
-    },
-  },
-};
+// Note: No SAMPLE_DATA or demo pipelines - all data comes from real A2A agent execution
 
 // =============================================================================
 // API Status Checker Component
@@ -434,23 +395,30 @@ function ChatPanel({ apiAvailable }: { apiAvailable: boolean }) {
 
 function MainContent({
   agents,
-  pipelineData,
   apiStatus,
   onApiStatusChange,
 }: {
   agents: AgentState[];
-  pipelineData: PipelineData;
   apiStatus: ApiStatus;
   onApiStatusChange: (status: ApiStatus) => void;
 }) {
-  // Make pipeline data available to CopilotKit
+  // Note: Pipeline data is fetched from the real API - no static data used
+  // Use useCopilotReadable to provide context about how to interact with agents
   useCopilotReadable({
-    description: "Current A2A pipeline run data including research findings, trends analysis, and blog output",
-    value: JSON.stringify(pipelineData, null, 2),
+    description: "Instructions for interacting with the A2A pipeline system. All data is real - no simulations.",
+    value: JSON.stringify({
+      note: "All pipeline data comes from real A2A agent execution. Use the API to fetch current pipelines.",
+      agents: agents.map(a => ({ name: a.name, displayName: a.displayName, description: a.description })),
+      actions: [
+        "Use getPipelineStatus to see current pipelines",
+        "Use analyzePipeline with pipelineIdentifier to analyze any pipeline",
+        "Use createPipeline to start new pipeline runs with real A2A agents",
+      ],
+    }, null, 2),
   });
 
   useCopilotReadable({
-    description: "List of agents in the A2A pipeline with their status",
+    description: "List of A2A agents available in the pipeline",
     value: JSON.stringify(agents, null, 2),
   });
 
@@ -1063,7 +1031,6 @@ Just type a message like: "@research-agent What's trending in AI?"`;
 
 export default function Home() {
   const [agents] = useState<AgentState[]>(INITIAL_AGENTS);
-  const [pipelineData] = useState<PipelineData>(SAMPLE_DATA);
   const [apiStatus, setApiStatus] = useState<ApiStatus>({
     checking: true,
     available: false,
@@ -1076,7 +1043,6 @@ export default function Home() {
     <CopilotKit runtimeUrl="/api/copilotkit">
       <MainContent
         agents={agents}
-        pipelineData={pipelineData}
         apiStatus={apiStatus}
         onApiStatusChange={setApiStatus}
       />

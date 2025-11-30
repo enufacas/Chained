@@ -6,10 +6,46 @@
  * 2. Sending messages to specific agents (POST)
  *
  * Supports @agent-name syntax for direct agent interaction.
- * All agent operations run on the live site.
+ * ALL agent operations call REAL A2A agents deployed on Cloud Run.
+ * No simulated responses - all data comes from actual agent execution.
  */
 
 import { NextRequest } from "next/server";
+
+// =============================================================================
+// Configuration
+// =============================================================================
+
+const isDevelopment = process.env.NODE_ENV === "development";
+
+// Agent URLs - prioritize environment variables, fall back to Cloud Run URLs in production
+const AGENT_ENDPOINTS = {
+  "research-agent": {
+    url: process.env.AGENT_ACADEMIC_RESEARCH_URL || 
+      (isDevelopment ? "" : "https://chained-academic-research-sguacxy5gq-uc.a.run.app"),
+    displayName: "Academic Research",
+    description: "Discovers and analyzes research topics for tech blog content",
+    icon: "🔬",
+  },
+  "seo-agent": {
+    url: process.env.AGENT_GOOGLE_TRENDS_URL || 
+      (isDevelopment ? "" : "https://chained-google-trends-sguacxy5gq-uc.a.run.app"),
+    displayName: "Google Trends",
+    description: "Analyzes trends and provides SEO keyword recommendations",
+    icon: "📈",
+  },
+  "writer-agent": {
+    url: process.env.AGENT_BLOG_WRITER_URL || 
+      (isDevelopment ? "" : "https://chained-blog-writer-sguacxy5gq-uc.a.run.app"),
+    displayName: "Blog Writer",
+    description: "Writes and publishes engaging blog posts",
+    icon: "✍️",
+  },
+};
+
+// =============================================================================
+// Types
+// =============================================================================
 
 // Available agents that users can interact with
 export interface AgentInfo {
@@ -19,7 +55,47 @@ export interface AgentInfo {
   icon: string;
   capabilities: string[];
   examplePrompts: string[];
+  url?: string;
 }
+
+// A2A Protocol types
+interface A2AMessagePart {
+  text: string;
+}
+
+interface A2AMessage {
+  role: string;
+  parts: A2AMessagePart[];
+}
+
+interface A2ASendMessageRequest {
+  message: A2AMessage;
+  contextId?: string;
+  metadata?: Record<string, unknown>;
+}
+
+interface A2AArtifact {
+  name: string;
+  type: string;
+  data: string;
+}
+
+interface A2ATaskStatus {
+  state: string;
+  timestamp: string;
+  message?: A2AMessage;
+}
+
+interface A2ATask {
+  id: string;
+  contextId?: string;
+  status: A2ATaskStatus;
+  artifacts: A2AArtifact[];
+}
+
+// =============================================================================
+// Agent Registry
+// =============================================================================
 
 const AVAILABLE_AGENTS: AgentInfo[] = [
   {
@@ -38,6 +114,7 @@ const AVAILABLE_AGENTS: AgentInfo[] = [
       "@research-agent Summarize recent research on embeddings",
       "@research-agent Find papers about vector databases",
     ],
+    url: AGENT_ENDPOINTS["research-agent"].url,
   },
   {
     name: "seo-agent",
@@ -55,6 +132,7 @@ const AVAILABLE_AGENTS: AgentInfo[] = [
       "@seo-agent What topics are trending in tech?",
       "@seo-agent Analyze SEO for AI automation",
     ],
+    url: AGENT_ENDPOINTS["seo-agent"].url,
   },
   {
     name: "writer-agent",
@@ -72,6 +150,7 @@ const AVAILABLE_AGENTS: AgentInfo[] = [
       "@writer-agent Write about the benefits of AI",
       "@writer-agent Create an outline for an LLM blog post",
     ],
+    url: AGENT_ENDPOINTS["writer-agent"].url,
   },
 ];
 
@@ -191,8 +270,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate response from the agent
-    const response = await generateAgentResponse(agent, query);
+    // Call the REAL A2A agent - no simulated responses
+    const response = await callRealAgent(agent, query);
 
     return new Response(
       JSON.stringify({
@@ -221,126 +300,103 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Generate a response from the specified agent.
- * Returns contextual responses based on the agent's specialization.
+ * Call a real A2A agent via the Cloud Run endpoint.
+ * No simulated responses - all data comes from actual agent execution.
  */
-async function generateAgentResponse(agent: AgentInfo, query: string): Promise<string> {
-  const queryLower = query.toLowerCase();
+async function callRealAgent(agent: AgentInfo, query: string): Promise<string> {
+  const agentConfig = AGENT_ENDPOINTS[agent.name as keyof typeof AGENT_ENDPOINTS];
+  
+  if (!agentConfig?.url) {
+    return `⚠️ Agent ${agent.displayName} is not configured. Set the appropriate environment variable to enable this agent.
 
-  switch (agent.name) {
-    case "research-agent": {
-      if (queryLower.includes("trend") || queryLower.includes("latest")) {
-        return `## Research Findings
+**Required configuration:**
+- research-agent: AGENT_ACADEMIC_RESEARCH_URL
+- seo-agent: AGENT_GOOGLE_TRENDS_URL
+- writer-agent: AGENT_BLOG_WRITER_URL
 
-Based on my analysis, here are the current trending topics:
-
-1. **Large Language Models (LLMs)** - Reasoning capabilities and chain-of-thought prompting
-2. **AI Agents** - Autonomous task execution and multi-agent coordination
-3. **Vector Databases** - Embedding storage and semantic search
-4. **RAG Systems** - Retrieval-augmented generation architectures
-
-### Recommended Deep Dive
-The intersection of LLMs and agent systems is particularly active, with research focusing on:
-- Tool use and function calling
-- Multi-step reasoning
-- Self-reflection and error correction`;
+This agent requires a deployed Cloud Run service to function.`;
+  }
+  
+  try {
+    const request: A2ASendMessageRequest = {
+      message: {
+        role: "user",
+        parts: [{ text: query }],
+      },
+      contextId: `agent-${Date.now()}-${crypto.randomUUID().substring(0, 8)}`,
+      metadata: { query },
+    };
+    
+    console.log(`[Agent API] Calling ${agent.name} at ${agentConfig.url}/a2a/tasks`);
+    
+    const response = await fetch(`${agentConfig.url}/a2a/tasks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+    
+    if (!response.ok) {
+      console.error(`[Agent API] ${agent.name} returned ${response.status}`);
+      return `⚠️ Agent ${agent.displayName} returned an error (${response.status}). The agent may be temporarily unavailable.`;
+    }
+    
+    const task: A2ATask = await response.json();
+    
+    console.log(`[Agent API] ${agent.name} task completed:`, {
+      taskId: task.id,
+      state: task.status.state,
+      artifactsCount: task.artifacts?.length || 0,
+    });
+    
+    // Extract response from task
+    if (task.status.message?.parts?.length) {
+      const responseText = task.status.message.parts.map(p => p.text).join("\n");
+      
+      // Include artifact data if available
+      if (task.artifacts?.length) {
+        let response = responseText;
+        for (const artifact of task.artifacts) {
+          if (artifact.type === "text/markdown" || artifact.type === "text/plain") {
+            response += `\n\n---\n\n${artifact.data}`;
+          }
+        }
+        return response;
       }
       
-      return `## Research Summary: ${query}
-
-I've analyzed recent academic papers and industry reports on this topic.
-
-### Key Findings
-- This is an active area of research with significant developments
-- Multiple approaches exist, each with trade-offs
-- Industry adoption is accelerating
-
-### Recommended Reading
-1. Recent survey papers on the topic
-2. Foundational research from leading institutions
-3. Industry case studies and benchmarks
-
-Would you like me to dive deeper into any specific aspect?`;
+      return responseText;
     }
-
-    case "seo-agent": {
-      if (queryLower.includes("keyword")) {
-        return `## SEO Keyword Analysis
-
-### Primary Keywords
-- ${query.split(" ").slice(-2).join(" ")}
-- AI ${query.split(" ").pop()}
-- ${query.split(" ").pop()} technology
-
-### Secondary Keywords
-- machine learning
-- artificial intelligence
-- automation
-- tech innovation
-
-### Content Strategy
-Target a word count of 1,500-2,500 words with H2 headings every 300-400 words for optimal SEO.`;
+    
+    // Fallback to artifact data
+    if (task.artifacts?.length) {
+      const textArtifact = task.artifacts.find(a => 
+        a.type === "text/markdown" || a.type === "text/plain"
+      );
+      if (textArtifact) {
+        return textArtifact.data;
       }
-
-      return `## Trending Analysis: ${query}
-
-### Current Trends
-📈 **Rising Topics**
-- AI and automation
-- Cloud infrastructure
-- Developer tools
-
-### SEO Recommendations
-1. Focus on long-tail keywords
-2. Include relevant technical terms
-3. Create comprehensive guides
-4. Update content regularly
-
-### Engagement Metrics
-Average engagement for similar topics: High
-Competition level: Medium`;
-    }
-
-    case "writer-agent": {
-      if (queryLower.includes("draft") || queryLower.includes("intro") || queryLower.includes("write")) {
-        return `## Draft: ${query}
-
-### Introduction
-
-In the rapidly evolving landscape of technology, ${query.includes("about") ? query.split("about")[1].trim() : query} represents a fascinating convergence of innovation and practical application.
-
-This topic has garnered significant attention from both researchers and practitioners, as its implications extend far beyond theoretical considerations into real-world implementations that are reshaping industries.
-
-### Key Points to Cover
-
-1. **Background and Context** - Setting the stage for understanding
-2. **Current State of the Art** - Latest developments and capabilities
-3. **Practical Applications** - Real-world use cases
-4. **Future Directions** - What's next in this space
-
-*This draft provides a starting point. Let me know if you'd like me to expand on any section.*`;
+      
+      // Try JSON artifact
+      const jsonArtifact = task.artifacts.find(a => a.type === "application/json");
+      if (jsonArtifact) {
+        try {
+          const data = JSON.parse(jsonArtifact.data);
+          return `## ${agent.displayName} Response\n\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``;
+        } catch {
+          return jsonArtifact.data;
+        }
       }
-
-      return `## Content Plan: ${query}
-
-I can help you create compelling content on this topic.
-
-### Suggested Structure
-1. **Hook** - Attention-grabbing opening
-2. **Problem** - Why this matters
-3. **Solution** - Key insights and approaches
-4. **Examples** - Real-world applications
-5. **Call to Action** - Next steps for readers
-
-### Writing Style
-- Clear and engaging
-- Technical but accessible
-- Well-researched with citations
-
-Would you like me to draft a specific section?`;
     }
+    
+    return `${agent.displayName} completed the task but returned no response content.`;
+    
+  } catch (error) {
+    console.error(`[Agent API] Error calling ${agent.name}:`, error);
+    return `⚠️ Failed to reach ${agent.displayName}. The agent service may be offline or unreachable.
 
-    default:
-      return `I received your query: "${query}". How can I help you further?`;
+**Error:** ${error instanceof Error ? error.message : String(error)}
+
+Please ensure the agent is deployed and the environment is configured correctly.`;
   }
 }
