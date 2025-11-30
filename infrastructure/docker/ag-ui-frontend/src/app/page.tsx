@@ -39,18 +39,18 @@ const CHAT_INSTRUCTIONS = `You are an AI assistant helping users with the A2A (A
 
 ## Your Capabilities
 
-### 1. Pipeline Creation (NEW!)
+### 1. Pipeline Creation
 When users want to create/start a new pipeline, use the createPipeline action.
 - "Create a pipeline on embeddings" → Call createPipeline with topic="embeddings"
 - "Research AI agents" → Call createPipeline with topic="AI agents"
 
-### 2. Direct Agent Interaction (NEW!)
+### 2. Direct Agent Interaction
 When users mention @agent-name, use the talkToAgent action.
 - "@research-agent what's trending?" → Call talkToAgent
 - "@seo-agent suggest keywords" → Call talkToAgent
 - "@writer-agent draft intro" → Call talkToAgent
 
-### 3. Pipeline Status (NEW!)
+### 3. Pipeline Status
 When users ask about status, use getPipelineStatus.
 - "What's happening?" / "Pipeline status?" → Call getPipelineStatus
 
@@ -58,13 +58,19 @@ When users ask about status, use getPipelineStatus.
 When users ask about available agents, use listAgents.
 - "What agents are available?" → Call listAgents
 
-### 5. Existing Pipeline Data
-For questions about the current demo pipeline:
-- "Analyze this pipeline" → Call analyzePipeline
-- "Trending keywords?" → Call getTrendingKeywords
-- "Research summary?" → Call getResearchSummary
+### 5. Analyze ANY Pipeline (IMPORTANT!)
+You can analyze ANY pipeline by topic or ID, not just the demo. Use analyzePipeline with the topic name.
+- "Analyze the fractal art pipeline" → Call analyzePipeline with pipelineIdentifier="fractal art"
+- "What steps did the embeddings pipeline take?" → Call analyzePipeline with pipelineIdentifier="embeddings"
+- "Break down the previous pipeline" → Call analyzePipeline (without identifier to get most recent)
 
-Be helpful, concise, and proactive. Suggest relevant actions based on context.`;
+### 6. Pipeline Data Queries
+Query specific data from any pipeline:
+- "Trending keywords for fractal art" → Call getTrendingKeywords with pipelineIdentifier="fractal art"
+- "Research summary for embeddings" → Call getResearchSummary with pipelineIdentifier="embeddings"
+
+Be helpful, concise, and proactive. When users ask about a specific pipeline, always use the pipelineIdentifier parameter.`;
+
 
 // =============================================================================
 // Initial Data
@@ -451,53 +457,236 @@ function MainContent({
   // CopilotKit actions
   useCopilotAction({
     name: "analyzePipeline",
-    description: "Analyze the current A2A pipeline run and provide insights",
-    parameters: [],
-    handler: async () => {
-      return `## Pipeline Analysis
+    description: "Analyze a specific pipeline run by topic name or ID, or the most recent pipeline if none specified. Use this when users want to understand what happened in a pipeline.",
+    parameters: [
+      {
+        name: "pipelineIdentifier",
+        type: "string",
+        description: "Optional: The pipeline topic or ID to analyze. Leave empty to analyze the most recent pipeline.",
+        required: false,
+      },
+    ],
+    handler: async ({ pipelineIdentifier }) => {
+      try {
+        // Fetch all pipelines
+        const response = await fetch("/api/pipeline?limit=20");
+        if (!response.ok) {
+          return `❌ Failed to fetch pipelines: ${response.statusText}`;
+        }
+        
+        const data = await response.json();
+        
+        if (data.pipelines.length === 0) {
+          return `📭 No pipelines found. Create one with "Create a pipeline on [topic]"!`;
+        }
+        
+        // Find the target pipeline
+        let targetPipeline = null;
+        
+        if (pipelineIdentifier && pipelineIdentifier.trim()) {
+          const searchTerm = pipelineIdentifier.toLowerCase().trim();
+          targetPipeline = data.pipelines.find((p: { id: string; topic: string }) => 
+            p.id.toLowerCase().includes(searchTerm) ||
+            p.topic.toLowerCase().includes(searchTerm)
+          );
+          
+          if (!targetPipeline) {
+            const availablePipelines = data.pipelines
+              .slice(0, 5)
+              .map((p: { topic: string; status: string }) => `- "${p.topic}" (${p.status})`)
+              .join("\n");
+            return `❌ No pipeline found matching "${pipelineIdentifier}"
 
-**Context ID:** ${pipelineData.contextId}
-**Status:** ${pipelineData.success ? "✅ Success" : "❌ Failed"}
-**Tasks Completed:** ${pipelineData.tasksCompleted}
+**Available pipelines:**
+${availablePipelines}`;
+          }
+        } else {
+          // Get the most recent completed pipeline, or most recent overall
+          targetPipeline = data.pipelines.find((p: { status: string }) => p.status === "completed") || data.pipelines[0];
+        }
+        
+        // Format the pipeline analysis
+        const p = targetPipeline;
+        const statusEmoji = p.status === "completed" ? "✅" : p.status === "running" ? "🔄" : p.status === "failed" ? "❌" : "⏳";
+        const createdAt = new Date(p.createdAt).toLocaleString();
+        const updatedAt = new Date(p.updatedAt).toLocaleString();
+        
+        let analysis = `## 🔍 Pipeline Analysis: "${p.topic}"
 
-### Research Findings
-- **Topic:** ${pipelineData.research.findings.recommendedTopic.topic}
-- **Domain:** ${pipelineData.research.findings.recommendedTopic.domain}
-- **SEO Keywords:** ${pipelineData.research.findings.recommendedTopic.seoKeywords.join(", ")}
+**Pipeline ID:** \`${p.id}\`
+**Status:** ${statusEmoji} ${p.status.charAt(0).toUpperCase() + p.status.slice(1)}
+**Progress:** ${p.progress}%
+**Current Phase:** ${p.currentPhase}
+**Created:** ${createdAt}
+**Last Updated:** ${updatedAt}
 
-### Blog Output
-- **Title:** ${pipelineData.blog.blogMetadata.title}
-- **Word Count:** ${pipelineData.blog.blogMetadata.wordCount}
-- **URL:** ${pipelineData.blog.deploymentInfo.url}`;
+### 🔄 Pipeline Lifecycle
+
+`;
+
+        // Show A2A lifecycle stages
+        const phases = ["research", "trends", "writing", "publishing", "complete"];
+        const currentPhaseIndex = phases.indexOf(p.currentPhase);
+        
+        const phaseInfo = [
+          { phase: "research", icon: "🔬", name: "Research", agent: "Academic Research Agent" },
+          { phase: "trends", icon: "📈", name: "SEO Analysis", agent: "Google Trends Agent" },
+          { phase: "writing", icon: "✍️", name: "Blog Writing", agent: "Blog Writer Agent" },
+          { phase: "publishing", icon: "🚀", name: "Publishing", agent: "Blog Publisher" },
+          { phase: "complete", icon: "🎉", name: "Complete", agent: "Pipeline Complete" },
+        ];
+        
+        for (let i = 0; i < phaseInfo.length; i++) {
+          const pi = phaseInfo[i];
+          const isComplete = i < currentPhaseIndex || p.status === "completed";
+          const isCurrent = i === currentPhaseIndex && p.status !== "completed";
+          const statusIcon = isComplete ? "✅" : isCurrent ? "⏳" : "⬜";
+          analysis += `${statusIcon} **${pi.icon} ${pi.name}** - ${pi.agent}\n`;
+        }
+
+        // Show results if available
+        if (p.results) {
+          analysis += `\n### 📊 Results\n\n`;
+          
+          if (p.results.research) {
+            analysis += `#### 🔬 Research Findings
+- **Topic:** ${p.results.research.topic}
+- **Domain:** ${p.results.research.domain}
+- **Keywords:** ${p.results.research.keywords?.join(", ") || "N/A"}
+
+`;
+          }
+          
+          if (p.results.trends) {
+            analysis += `#### 📈 Trends Analysis
+- **Trending Keywords:** ${p.results.trends.trendingKeywords?.join(", ") || "N/A"}
+- **Recommended Focus:** ${p.results.trends.recommendedFocus || "N/A"}
+
+`;
+          }
+          
+          if (p.results.blog) {
+            analysis += `#### ✍️ Blog Output
+- **Title:** ${p.results.blog.title}
+- **Word Count:** ${p.results.blog.wordCount} words
+- **📄 [View Blog Post](${p.results.blog.url})
+
+`;
+          }
+        }
+
+        return analysis;
+      } catch (error) {
+        return `❌ Error analyzing pipeline: ${error instanceof Error ? error.message : "Unknown error"}`;
+      }
     },
   });
 
   useCopilotAction({
     name: "getTrendingKeywords",
-    description: "Get the trending keywords from the Google Trends analysis",
-    parameters: [],
-    handler: async () => {
-      return `**Trending Keywords:**
-${pipelineData.trends.trendsData.trendingKeywords.map((k) => `- ${k}`).join("\n")}
+    description: "Get the trending keywords from a specific pipeline's Google Trends analysis",
+    parameters: [
+      {
+        name: "pipelineIdentifier",
+        type: "string",
+        description: "Optional: The pipeline topic or ID. Leave empty for most recent completed pipeline.",
+        required: false,
+      },
+    ],
+    handler: async ({ pipelineIdentifier }) => {
+      try {
+        const response = await fetch("/api/pipeline?limit=20");
+        if (!response.ok) {
+          return `❌ Failed to fetch pipelines`;
+        }
+        
+        const data = await response.json();
+        
+        let pipeline = null;
+        if (pipelineIdentifier) {
+          const searchTerm = pipelineIdentifier.toLowerCase().trim();
+          pipeline = data.pipelines.find((p: { id: string; topic: string }) => 
+            p.id.toLowerCase().includes(searchTerm) ||
+            p.topic.toLowerCase().includes(searchTerm)
+          );
+        } else {
+          pipeline = data.pipelines.find((p: { status: string; results?: { trends?: object } }) => 
+            p.status === "completed" && p.results?.trends
+          );
+        }
+        
+        if (!pipeline) {
+          return `❌ No pipeline with trends data found.`;
+        }
+        
+        if (!pipeline.results?.trends) {
+          return `⏳ Pipeline "${pipeline.topic}" hasn't completed trends analysis yet (${pipeline.progress}% complete)`;
+        }
+        
+        return `## 📈 Trending Keywords: "${pipeline.topic}"
 
-**Recommended Focus:** ${pipelineData.trends.trendsData.recommendedFocus}`;
+**Trending Keywords:**
+${pipeline.results.trends.trendingKeywords?.map((k: string) => `- ${k}`).join("\n") || "No keywords available"}
+
+**Recommended Focus:** ${pipeline.results.trends.recommendedFocus || "N/A"}`;
+      } catch (error) {
+        return `❌ Error: ${error instanceof Error ? error.message : "Unknown error"}`;
+      }
     },
   });
 
   useCopilotAction({
     name: "getResearchSummary",
-    description: "Get a summary of the research findings",
-    parameters: [],
-    handler: async () => {
-      const research = pipelineData.research.findings.recommendedTopic;
-      return `## Research Summary
+    description: "Get a summary of the research findings from a specific pipeline",
+    parameters: [
+      {
+        name: "pipelineIdentifier",
+        type: "string",
+        description: "Optional: The pipeline topic or ID. Leave empty for most recent completed pipeline.",
+        required: false,
+      },
+    ],
+    handler: async ({ pipelineIdentifier }) => {
+      try {
+        const response = await fetch("/api/pipeline?limit=20");
+        if (!response.ok) {
+          return `❌ Failed to fetch pipelines`;
+        }
+        
+        const data = await response.json();
+        
+        let pipeline = null;
+        if (pipelineIdentifier) {
+          const searchTerm = pipelineIdentifier.toLowerCase().trim();
+          pipeline = data.pipelines.find((p: { id: string; topic: string }) => 
+            p.id.toLowerCase().includes(searchTerm) ||
+            p.topic.toLowerCase().includes(searchTerm)
+          );
+        } else {
+          pipeline = data.pipelines.find((p: { status: string; results?: { research?: object } }) => 
+            p.status === "completed" && p.results?.research
+          );
+        }
+        
+        if (!pipeline) {
+          return `❌ No pipeline with research data found.`;
+        }
+        
+        if (!pipeline.results?.research) {
+          return `⏳ Pipeline "${pipeline.topic}" hasn't completed research phase yet (${pipeline.progress}% complete)`;
+        }
+        
+        const research = pipeline.results.research;
+        return `## 🔬 Research Summary: "${pipeline.topic}"
 
-**Topic:** ${research.topic}
-**Domain:** ${research.domain}
-**Blog Angle:** ${research.blogAngle}
+**Topic:** ${research.topic || pipeline.topic}
+**Domain:** ${research.domain || "N/A"}
 
-**Key Points:**
-${research.keyPoints.map((p) => `- ${p}`).join("\n")}`;
+**Keywords:**
+${research.keywords?.map((k: string) => `- ${k}`).join("\n") || "No keywords available"}`;
+      } catch (error) {
+        return `❌ Error: ${error instanceof Error ? error.message : "Unknown error"}`;
+      }
     },
   });
 

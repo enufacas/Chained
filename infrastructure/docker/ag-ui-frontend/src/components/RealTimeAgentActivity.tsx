@@ -87,12 +87,12 @@ export default function RealTimeAgentActivity() {
   useEffect(() => {
     fetchActivity();
     
-    // Refresh every 30 seconds, but only when page is visible
+    // Refresh every 5 seconds for more real-time updates
     let interval: NodeJS.Timeout | null = null;
     
     const startPolling = () => {
       if (!interval) {
-        interval = setInterval(fetchActivity, 30000);
+        interval = setInterval(fetchActivity, 5000);
       }
     };
     
