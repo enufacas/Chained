@@ -945,6 +945,9 @@
         let a2aObjects = []; // Store A2A communication objects
         let showGCPInfra = true; // Toggle for GCP infrastructure layer
         let showA2ACommunications = true; // Toggle for A2A communications layer
+        
+        // Constants for GCP/A2A visualization
+        const CONNECTION_PROBABILITY = 0.6; // Probability of showing connection lines between services (for visual variety)
 
         // Colors for specializations
         const specializationColors = {
@@ -2014,7 +2017,8 @@
                 const midY = (baseY + supportingY) / 2;
                 gcpServices.cloudRun.forEach((cloudRunService, crIdx) => {
                     // Connect each Cloud Run service to relevant supporting services
-                    if (Math.random() > 0.6) { // Random connections for visual effect
+                    // Uses CONNECTION_PROBABILITY for visual variety - not all services show connections
+                    if (Math.random() > CONNECTION_PROBABILITY) {
                         const crRow = Math.floor(crIdx / 4);
                         const crCol = crIdx % 4;
                         const crX = baseX - 12 + crCol * serviceSpacingX;

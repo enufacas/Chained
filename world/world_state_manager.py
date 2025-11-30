@@ -439,8 +439,14 @@ def add_infrastructure_service(
     existing_services = region['infrastructure']['services']
     for existing in existing_services:
         if existing.get('name') == service.get('name'):
-            # Update existing service
-            existing.update(service)
+            # Update only specific fields to avoid overwriting important metadata unexpectedly
+            # Fields that can be updated: status, description, type
+            if 'status' in service:
+                existing['status'] = service['status']
+            if 'description' in service:
+                existing['description'] = service['description']
+            if 'type' in service:
+                existing['type'] = service['type']
             return True
     
     # Add new service
