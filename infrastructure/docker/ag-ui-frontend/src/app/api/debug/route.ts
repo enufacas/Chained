@@ -116,7 +116,7 @@ async function testGoogleAuth(): Promise<{ success: boolean; projectId?: string;
 
 // Test Vertex AI endpoint directly
 async function testVertexAI(location: string, projectId: string): Promise<{ success: boolean; response?: string; error?: string; details?: Record<string, unknown> }> {
-  const modelName = "gemini-1.5-flash";
+  const modelName = "gemini-2.0-flash";
   const apiVersion = "v1beta";
   
   // Construct the expected Vertex AI endpoint URL for logging
@@ -257,7 +257,7 @@ export const POST = async (req: NextRequest) => {
                       process.env.GOOGLE_GENAI_USE_VERTEXAI === 'true';
   const projectId = process.env.GOOGLE_CLOUD_PROJECT || '';
   const location = process.env.GOOGLE_CLOUD_REGION || "us-central1";
-  const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+  const modelName = process.env.GEMINI_MODEL || "gemini-2.0-flash";
   
   log("Test requested", { testType, useVertexAI, projectId, location, modelName });
   
