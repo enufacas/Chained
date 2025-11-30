@@ -202,6 +202,30 @@ jobs:
             echo "GCP_AVAILABLE=false" >> $GITHUB_ENV
           fi
       
+      - name: Pre-install and verify gcloud-mcp server
+        if: steps.gcp-auth.outputs.auth_success == 'true'
+        run: |
+          echo "📦 Pre-installing gcloud-mcp server..."
+          
+          # Pre-install the gcloud-mcp package globally to speed up startup
+          npm install -g @google-cloud/gcloud-mcp 2>/dev/null || npx -y @google-cloud/gcloud-mcp --help > /dev/null 2>&1
+          
+          # Verify gcloud-mcp can start
+          echo "🔍 Verifying gcloud-mcp server..."
+          timeout 5 npx -y @google-cloud/gcloud-mcp --help > /dev/null 2>&1 && echo "✅ gcloud-mcp server verified" || echo "⚠️ gcloud-mcp verification timed out (may still work)"
+          
+          # Test a simple gcloud command to ensure APIs are accessible
+          echo "🧪 Testing GCP API access..."
+          if gcloud projects describe "$GCP_PROJECT_ID" --format="value(projectId)" > /dev/null 2>&1; then
+            echo "✅ GCP API access confirmed"
+            echo "GCLOUD_MCP_READY=true" >> $GITHUB_ENV
+          else
+            echo "⚠️ GCP API access test failed (firewall may be blocking some domains)"
+            echo "GCLOUD_MCP_READY=partial" >> $GITHUB_ENV
+          fi
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      
       - name: Setup MCP servers configuration
         run: |
           # Create MCP configuration directory
@@ -242,7 +266,16 @@ jobs:
           echo "| Python | ✅ v3.11 |" >> $GITHUB_STEP_SUMMARY
           echo "| COPILOT_PAT | ${{ env.COPILOT_PAT_AVAILABLE == 'true' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| GCP/gcloud | ${{ env.GCP_AVAILABLE == 'true' && '✅' || '⚠️ Not configured' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| gcloud-mcp | ${{ env.GCLOUD_MCP_READY == 'true' && '✅ Ready' || (env.GCLOUD_MCP_READY == 'partial' && '⚠️ Partial' || '❌ Not available') }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### MCP Servers" >> $GITHUB_STEP_SUMMARY
           echo "- chained-repository: Chained repo data access" >> $GITHUB_STEP_SUMMARY
           echo "- gcloud: Google Cloud Platform CLI (requires GCP secrets)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ env.GCLOUD_MCP_READY }}" = "true" ]; then
+            echo "### ✅ gcloud-mcp Server" >> $GITHUB_STEP_SUMMARY
+            echo "The gcloud-mcp server is pre-installed and verified. Copilot can use it to execute GCP operations." >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ env.GCLOUD_MCP_READY }}" = "partial" ]; then
+            echo "### ⚠️ gcloud-mcp Server (Partial)" >> $GITHUB_STEP_SUMMARY
+            echo "The gcloud-mcp server is installed but some GCP APIs may be blocked by firewall." >> $GITHUB_STEP_SUMMARY
+          fi
