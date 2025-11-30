@@ -44,7 +44,7 @@ export const POST = async (req: NextRequest) => {
       isJson,
       contentType: req.headers.get('content-type'),
     });
-  } catch (e) {
+  } catch {
     logWithTimestamp("Could not read request body for logging");
   }
   
@@ -109,7 +109,7 @@ export const POST = async (req: NextRequest) => {
           length: responseText.length,
           isJson: responseText.startsWith('{') || responseText.startsWith('['),
         });
-      } catch (e) {
+      } catch {
         logWithTimestamp("Could not read response body for logging");
       }
     } else {

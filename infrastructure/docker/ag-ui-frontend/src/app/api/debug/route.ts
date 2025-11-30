@@ -19,7 +19,8 @@ function logWithTimestamp(message: string, data?: object) {
   }
 }
 
-export const GET = async (req: NextRequest) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = async (_req: NextRequest) => {
   logWithTimestamp("GET request received - Debug endpoint");
   
   const useVertexAI = process.env.USE_VERTEX_AI === 'true' || 
@@ -57,7 +58,7 @@ export const POST = async (req: NextRequest) => {
   let body;
   try {
     body = await req.json();
-  } catch (e) {
+  } catch {
     return new Response(
       JSON.stringify({ error: "Invalid JSON body" }),
       { status: 400, headers: { "Content-Type": "application/json" } }
