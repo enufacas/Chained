@@ -45,7 +45,7 @@ USE_VERTEX_AI = os.getenv("USE_VERTEX_AI", "false").lower() in ("true", "1", "ye
 # Default model names for each mode
 # Note: Model names differ between Google AI Studio and Vertex AI
 DEFAULT_GENAI_MODEL = "gemini-1.5-flash"  # Google AI Studio model name
-DEFAULT_VERTEX_MODEL = "gemini-1.5-flash-002"  # Vertex AI model name
+DEFAULT_VERTEX_MODEL = "gemini-3-pro-preview"  # Vertex AI model name (matches working a2a-parallel-agents.yml)
 
 # =============================================================================
 # Availability Flags
