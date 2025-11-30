@@ -92,6 +92,8 @@ jobs:
         env:
           GCP_PROJECT_ID_SECRET: ${{ secrets.GCP_PROJECT_ID }}
           GCP_SA_KEY_SECRET: ${{ secrets.GCP_SA_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_API_KEY_SECRET_NAME: ${{ secrets.GEMINI_API_KEY_SECRET_NAME }}
           GOOGLE_API_KEY_SECRET_NAME: ${{ secrets.GOOGLE_API_KEY_SECRET_NAME }}
         run: |
@@ -108,19 +110,25 @@ jobs:
 
           echo "✅ Required secrets configured"
           
-          # Warn if Gemini API key is not configured (agents will fail without it)
-          if [[ -z "$GEMINI_API_KEY_SECRET_NAME" ]] && [[ -z "$GOOGLE_API_KEY_SECRET_NAME" ]]; then
+          # Check for API keys - both direct values and Secret Manager references
+          if [[ -n "$GOOGLE_API_KEY" ]]; then
+            echo "✅ GOOGLE_API_KEY configured (direct value)"
+          elif [[ -n "$GEMINI_API_KEY" ]]; then
+            echo "✅ GEMINI_API_KEY configured (direct value)"
+          elif [[ -n "$GEMINI_API_KEY_SECRET_NAME" ]]; then
+            echo "✅ GEMINI_API_KEY_SECRET_NAME configured (Secret Manager)"
+          elif [[ -n "$GOOGLE_API_KEY_SECRET_NAME" ]]; then
+            echo "✅ GOOGLE_API_KEY_SECRET_NAME configured (Secret Manager)"
+          else
             echo ""
-            echo "⚠️ WARNING: Neither GEMINI_API_KEY_SECRET_NAME nor GOOGLE_API_KEY_SECRET_NAME is configured!"
+            echo "⚠️ WARNING: No API key configured!"
             echo "   Agents will NOT be able to generate AI content."
             echo ""
-            echo "   To enable Gemini AI:"
-            echo "   1. Create a secret in GCP Secret Manager with your Gemini API key"
-            echo "   2. Add a GitHub secret GEMINI_API_KEY_SECRET_NAME with value:"
-            echo "      projects/<PROJECT_ID>/secrets/<SECRET_NAME>"
+            echo "   To enable Gemini AI, configure ONE of:"
+            echo "   1. GOOGLE_API_KEY - Direct API key value (recommended)"
+            echo "   2. GEMINI_API_KEY - Direct Gemini API key value"
+            echo "   3. GEMINI_API_KEY_SECRET_NAME - Secret Manager reference"
             echo ""
-          else
-            echo "✅ AI API key secret configured"
           fi
 
   # ===========================================================================
@@ -352,6 +360,8 @@ jobs:
                 -var="region=${{ env.GCP_REGION }}" \
                 -var="environment=${{ needs.validate.outputs.environment }}" \
                 -var="image_tag=${{ github.sha }}" \
+                -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+                -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
                 -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
                 -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
                 google_service_account.adk_agents \
@@ -383,6 +393,8 @@ jobs:
                 -var="region=${{ env.GCP_REGION }}" \
                 -var="environment=${{ needs.validate.outputs.environment }}" \
                 -var="image_tag=${{ github.sha }}" \
+                -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+                -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
                 -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
                 -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
                 google_storage_bucket.blog \
@@ -424,6 +436,8 @@ jobs:
                   -var="region=${{ env.GCP_REGION }}" \
                   -var="environment=${{ needs.validate.outputs.environment }}" \
                   -var="image_tag=${{ github.sha }}" \
+                  -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+                  -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
                   -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
                   -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
                   "$TF_RESOURCE" \
@@ -445,6 +459,8 @@ jobs:
             -var="region=${{ env.GCP_REGION }}" \
             -var="environment=${{ needs.validate.outputs.environment }}" \
             -var="image_tag=${{ github.sha }}" \
+            -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+            -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
             -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
             -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
             -target=google_cloud_run_v2_service.academic_research \
