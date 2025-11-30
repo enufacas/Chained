@@ -24,7 +24,7 @@ function log(message: string, data?: object) {
 }
 
 export interface VertexAIAdapterOptions {
-  /** Model name (default: gemini-1.5-flash) */
+  /** Model name (default: gemini-2.0-flash) */
   model?: string;
   /** GCP region (default: us-central1) */
   location?: string;
@@ -46,7 +46,7 @@ export class VertexAIAdapter extends LangChainAdapter {
   };
 
   constructor(options?: VertexAIAdapterOptions) {
-    const modelName = options?.model ?? "gemini-1.5-flash";
+    const modelName = options?.model ?? "gemini-2.0-flash";
     const location = options?.location ?? process.env.GOOGLE_CLOUD_REGION ?? "us-central1";
     const apiVersion = options?.apiVersion ?? "v1beta";
 

@@ -101,7 +101,7 @@ export const createServiceAdapter = () => {
       
       try {
         const adapter = new VertexAIAdapter({
-          model: "gemini-1.5-flash", // Stable Vertex AI model (see: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
+          model: "gemini-2.0-flash", // Current Vertex AI model (1.5 deprecated Nov 2025)
           location: process.env.GOOGLE_CLOUD_REGION || "us-central1",
         });
         logConfig("VertexAIAdapter created successfully");
@@ -125,7 +125,7 @@ export const createServiceAdapter = () => {
     
     try {
       const adapter = new GoogleGenerativeAIAdapter({
-        model: "gemini-1.5-flash", // Stable Vertex AI model (see: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
+        model: "gemini-2.0-flash", // Current Vertex AI model (1.5 deprecated Nov 2025)
       });
       logConfig("GoogleGenerativeAIAdapter created successfully");
       return adapter;
@@ -168,7 +168,7 @@ export const createServiceAdapter = () => {
 export const getLLMProviderInfo = () => {
   const info = {
     provider: useVertexAI ? "vertex-ai" : useGemini ? "gemini" : useOpenAI ? "openai" : "none",
-    model: useGemini ? "gemini-1.5-flash" : useOpenAI ? "gpt-4" : null,
+    model: useGemini ? "gemini-2.0-flash" : useOpenAI ? "gpt-4" : null,
     available: useGemini || useOpenAI,
     authMode: useVertexAI ? "adc" : geminiApiKey ? "api-key" : openaiApiKey ? "api-key" : "none",
   };
