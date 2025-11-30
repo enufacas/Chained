@@ -434,7 +434,11 @@ async def analyze_topic_for_blog(topic: Dict[str, Any]) -> Dict[str, Any]:
     NO FALLBACK: If AI is not available, raises an error.
     """
     if not USE_AI or genai is None:
-        error_msg = "Gemini AI is required but not available for topic analysis."
+        error_msg = build_ai_unavailable_error_message(
+            genai_available=GENAI_AVAILABLE,
+            has_api_key=bool(GEMINI_API_KEY or GOOGLE_API_KEY),
+            agent_name=AGENT_NAME
+        )
         log_interaction("ai_unavailable_error", {
             "error": error_msg,
             "topic": topic.get("title", "Unknown")
