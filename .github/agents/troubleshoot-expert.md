@@ -5,17 +5,6 @@ tools:
   - view
   - edit
   - bash
-  - github-mcp-server-list_workflows
-  - github-mcp-server-list_workflow_runs
-  - github-mcp-server-get_workflow_run
-  - github-mcp-server-list_workflow_jobs
-  - github-mcp-server-get_job_logs
-  - github-mcp-server-summarize_job_log_failures
-  - github-mcp-server-summarize_run_log_failures
-  - github-mcp-server-get_workflow_run_usage
-  - github-mcp-server-search_code
-  - github-mcp-server-get_file_contents
-  - github-mcp-server-web_search
 ---
 
 # 🔧 Troubleshoot Expert Agent

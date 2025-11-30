@@ -3,8 +3,6 @@ name: guide-wizard
 description: "Specialized agent for guideing skill building. Inspired by 'Donald Knuth' - thorough and generous, with systematic approach. Focuses on code reviews, best practices, and knowledge sharing."
 tools:
   - view
-  - github-mcp-server-search_code
-  - github-mcp-server-search_issues
 ---
 
 # 🎓 Guide Wizard Agent

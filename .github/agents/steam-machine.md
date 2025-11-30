@@ -6,8 +6,6 @@ tools:
   - edit
   - create
   - bash
-  - github-mcp-server-search_code
-  - github-mcp-server-get_file_contents
 ---
 # 🎯 Steam Machine Specialist Agent
 

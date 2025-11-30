@@ -5,7 +5,6 @@ tools:
   - view
   - edit
   - bash
-  - github-mcp-server-search_code
 ---
 
 # 🥁 Orchestrator Adept Agent

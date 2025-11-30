@@ -4,8 +4,6 @@ description: "Specialized agent for investigateing code patterns. Inspired by 'A
 tools:
   - view
   - bash
-  - github-mcp-server-search_code
-  - github-mcp-server-search_issues
 ---
 
 # 📈 Investigate Specialist Agent

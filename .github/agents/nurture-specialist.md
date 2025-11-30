@@ -3,8 +3,6 @@ name: nurture-specialist
 description: "Specialized agent for nurtureing knowledge sharing. Inspired by 'Grady Booch' - experienced and supportive, with occasional wit. Focuses on code reviews, best practices, and knowledge sharing."
 tools:
   - view
-  - github-mcp-server-search_code
-  - github-mcp-server-search_issues
 ---
 
 # 📖 Nurture Specialist Agent

@@ -5,8 +5,6 @@ tools:
   - bash
   - view
   - edit
-  - github-mcp-server-search_code
-  - github-mcp-server-search_issues
 ---
 
 # 🎯 Meta-Coordinator Agent

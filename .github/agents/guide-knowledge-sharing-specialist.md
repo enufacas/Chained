@@ -3,8 +3,6 @@ name: guide-knowledge-sharing-specialist
 description: "Specialized agent for guideing knowledge sharing. Inspired by 'Guy Steele' - collaborative and wise, with creative flair. Focuses on code reviews, best practices, and knowledge sharing."
 tools:
   - view
-  - github-mcp-server-search_code
-  - github-mcp-server-search_issues
 ---
 
 # 👨‍🏫 Guide Knowledge Sharing Specialist Agent

@@ -5,7 +5,6 @@ tools:
   - view
   - edit
   - create
-  - github-mcp-server-search_code
 ---
 
 # 📖 Communicator Maestro Agent

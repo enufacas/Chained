@@ -44,8 +44,21 @@ All agents have access to trusted, widely-adopted MCP (Model Context Protocol) s
 
 - **GitHub MCP Server** (Microsoft/GitHub) - Repository management, code search, security scanning, web search
 - **Playwright MCP Server** (Microsoft) - Browser automation, E2E testing, UI interaction
+- **gcloud MCP Server** (Google) - Google Cloud Platform operations
 
-For detailed information about configured MCP servers, see **[MCP_SERVERS_CONFIGURATION.md](../../MCP_SERVERS_CONFIGURATION.md)** in the repository root.
+### Important: GitHub MCP Server Tools Are Automatically Available
+
+**All 37+ GitHub MCP server tools are automatically available to all agents** - they do not need to be listed in the `tools:` section of agent definitions. The GitHub MCP server is built into the Copilot Coding Agent environment.
+
+This includes tools for:
+- Repository & Files: `get_file_contents`, `list_branches`, `list_commits`, etc.
+- Search: `search_code`, `search_issues`, `search_pull_requests`, `web_search`, etc.
+- Issues: `list_issues`, `issue_read`, etc.
+- Pull Requests: `list_pull_requests`, `pull_request_read`, etc.
+- Workflows: `list_workflows`, `get_workflow_run`, `summarize_job_log_failures`, etc.
+- Security: `list_code_scanning_alerts`, `list_secret_scanning_alerts`, etc.
+
+For the complete list of available tools, see **[MCP_SERVERS_CONFIGURATION.md](../../summaries/MCP_SERVERS_CONFIGURATION.md)**.
 
 ## Available Agents
 

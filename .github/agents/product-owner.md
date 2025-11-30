@@ -7,14 +7,6 @@ tools:
   - create
   - bash
   - reply_to_comment
-  - github-mcp-server-search_issues
-  - github-mcp-server-search_code
-  - github-mcp-server-issue_read
-  - github-mcp-server-list_issues
-  - github-mcp-server-create_issue
-  - github-mcp-server-update_issue
-  - github-mcp-server-create_or_update_file
-  - github-mcp-server-push_files
 ---
 
 # 📋 Product Owner Agent
