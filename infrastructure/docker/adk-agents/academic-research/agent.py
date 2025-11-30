@@ -33,7 +33,7 @@ from pydantic import BaseModel
 
 # Add shared utilities to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from shared.a2a_utils import parse_llm_json_response
+from shared.a2a_utils import parse_llm_json_response, AIUnavailableError, build_ai_unavailable_error_message
 
 # Try to import Gemini AI
 try:
@@ -49,7 +49,7 @@ except ImportError:
 
 AGENT_NAME = "academic-research"
 AGENT_DESCRIPTION = "Discovers and analyzes academic research topics using Vertex AI"
-AGENT_VERSION = "1.2.0"  # Updated with AI-powered research
+AGENT_VERSION = "1.3.0"  # Updated: No fallback - requires Gemini AI
 PORT = int(os.getenv("PORT", "8081"))
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
@@ -254,11 +254,6 @@ RESEARCH_DOMAINS = [
 # =============================================================================
 
 
-class AIUnavailableError(Exception):
-    """Raised when Gemini AI is not available but is required."""
-    pass
-
-
 def generate_task_id() -> str:
     """Generate a unique task ID."""
     import uuid
@@ -282,11 +277,11 @@ async def discover_research_topics(
     NO FALLBACK: If AI is not available, raises an error.
     """
     if not USE_AI or genai is None:
-        error_msg = "Gemini AI is required but not available. "
-        if not GENAI_AVAILABLE:
-            error_msg += "The google-generativeai package is not installed. "
-        if not (GEMINI_API_KEY or GOOGLE_API_KEY):
-            error_msg += "No API key found in GEMINI_API_KEY or GOOGLE_API_KEY environment variables."
+        error_msg = build_ai_unavailable_error_message(
+            genai_available=GENAI_AVAILABLE,
+            has_api_key=bool(GEMINI_API_KEY or GOOGLE_API_KEY),
+            agent_name=AGENT_NAME
+        )
         
         log_interaction("ai_unavailable_error", {
             "error": error_msg,

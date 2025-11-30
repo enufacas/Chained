@@ -14,6 +14,35 @@ import httpx
 from pydantic import BaseModel
 
 
+class AIUnavailableError(Exception):
+    """Raised when Gemini AI is not available but is required."""
+    pass
+
+
+def build_ai_unavailable_error_message(
+    genai_available: bool,
+    has_api_key: bool,
+    agent_name: str = "Agent"
+) -> str:
+    """
+    Build a consistent error message for AI unavailability.
+    
+    Args:
+        genai_available: Whether google-generativeai package is installed
+        has_api_key: Whether GEMINI_API_KEY or GOOGLE_API_KEY is set
+        agent_name: Name of the agent for the error message
+        
+    Returns:
+        A descriptive error message explaining what's missing
+    """
+    error_msg = f"{agent_name}: Gemini AI is required but not available. "
+    if not genai_available:
+        error_msg += "The google-generativeai package is not installed. "
+    if not has_api_key:
+        error_msg += "No API key found in GEMINI_API_KEY or GOOGLE_API_KEY environment variables."
+    return error_msg
+
+
 class AgentCard(BaseModel):
     """A2A Agent Card per specification §4.4.1."""
 
