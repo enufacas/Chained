@@ -21,6 +21,7 @@ All model interactions are logged and captured as artifacts for debugging.
 import json
 import os
 import random
+import sys
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 from contextlib import asynccontextmanager
@@ -28,6 +29,10 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
+
+# Add shared utilities to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from shared.a2a_utils import parse_llm_json_response
 
 # Try to import Gemini AI
 try:
@@ -396,20 +401,14 @@ Return ONLY the JSON, no other text."""
                 "response_preview": response.text[:400]
             })
             
-            try:
-                text = response.text.strip()
-                if text.startswith("```"):
-                    text = text.split("```")[1]
-                    if text.startswith("json"):
-                        text = text[4:]
-                    text = text.strip()
-                
-                trends = json.loads(text)
+            # Parse JSON using shared utility
+            trends = parse_llm_json_response(response.text)
+            if trends:
                 print(f"✅ Gemini generated trend data for: {topic}")
                 return trends
-            except json.JSONDecodeError as e:
+            else:
                 log_interaction("parse_error", {
-                    "error": str(e),
+                    "error": "Failed to parse JSON",
                     "topic": topic
                 })
         

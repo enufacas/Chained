@@ -21,6 +21,7 @@ All model interactions are logged and captured as artifacts for debugging.
 import json
 import os
 import random
+import sys
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 from contextlib import asynccontextmanager
@@ -29,6 +30,10 @@ import httpx
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
+
+# Add shared utilities to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from shared.a2a_utils import parse_llm_json_response
 
 # Try to import Gemini AI
 try:
@@ -374,23 +379,14 @@ Return ONLY the JSON array, no other text."""
                 "response_preview": response.text[:500] + "..." if len(response.text) > 500 else response.text
             })
             
-            # Parse the JSON response
-            try:
-                # Extract JSON from response (handle markdown code blocks)
-                text = response.text.strip()
-                if text.startswith("```"):
-                    # Remove markdown code block
-                    text = text.split("```")[1]
-                    if text.startswith("json"):
-                        text = text[4:]
-                    text = text.strip()
-                
-                topics = json.loads(text)
+            # Parse the JSON response using shared utility
+            topics = parse_llm_json_response(response.text)
+            if topics:
                 print(f"✅ Gemini discovered {len(topics)} research topics")
                 return topics[:max_topics]
-            except json.JSONDecodeError as e:
+            else:
                 log_interaction("parse_error", {
-                    "error": str(e),
+                    "error": "Failed to parse JSON",
                     "raw_response": response.text[:200]
                 })
                 # Fall back to simulated data
@@ -519,18 +515,10 @@ Return ONLY the JSON, no other text."""
                 "response_preview": response.text[:300]
             })
             
-            try:
-                text = response.text.strip()
-                if text.startswith("```"):
-                    text = text.split("```")[1]
-                    if text.startswith("json"):
-                        text = text[4:]
-                    text = text.strip()
-                
-                analysis = json.loads(text)
+            # Parse JSON using shared utility
+            analysis = parse_llm_json_response(response.text)
+            if analysis:
                 return analysis
-            except json.JSONDecodeError:
-                pass
         
         # Fallback
         return {

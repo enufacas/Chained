@@ -405,6 +405,11 @@ Start with `# [Your Title Here]` as the first line."""
             print(f"✅ Gemini generated {word_count} words for: {topic} in {duration_ms:.0f}ms")
             
             # Log the successful response
+            # Safely access finish_reason - check both candidates existence and length
+            finish_reason = 'unknown'
+            if response.candidates and len(response.candidates) > 0:
+                finish_reason = getattr(response.candidates[0], 'finish_reason', 'unknown')
+            
             log_interaction("llm_response", {
                 "model": "gemini-1.5-flash",
                 "status": "success",
@@ -412,7 +417,7 @@ Start with `# [Your Title Here]` as the first line."""
                 "response_length": len(response.text),
                 "response_preview": response.text[:500] + "..." if len(response.text) > 500 else response.text,
                 "duration_ms": duration_ms,
-                "finish_reason": getattr(response.candidates[0], 'finish_reason', 'unknown') if response.candidates else 'unknown'
+                "finish_reason": finish_reason
             })
             
             return {
