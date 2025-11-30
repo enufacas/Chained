@@ -26,12 +26,14 @@ export const GET = async (_req: NextRequest) => {
   const useVertexAI = process.env.USE_VERTEX_AI === 'true' || 
                       process.env.GOOGLE_GENAI_USE_VERTEXAI === 'true';
   const projectId = process.env.GOOGLE_CLOUD_PROJECT;
+  const location = process.env.GOOGLE_CLOUD_REGION || 'us-central1';
   const geminiApiKey = process.env.GEMINI_API_KEY;
   
   // Environment info
   const envInfo = {
     USE_VERTEX_AI: useVertexAI,
     GOOGLE_CLOUD_PROJECT: projectId || 'not set',
+    GOOGLE_CLOUD_REGION: location,
     hasGeminiApiKey: !!geminiApiKey,
     nodeEnv: process.env.NODE_ENV,
     timestamp: new Date().toISOString(),
@@ -84,15 +86,22 @@ export const POST = async (req: NextRequest) => {
   // Use same model configuration as the main CopilotKit adapter
   const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
   const apiVersion = process.env.GEMINI_API_VERSION || "v1beta";
+  const location = process.env.GOOGLE_CLOUD_REGION || "us-central1";
   
   // Test using ChatGoogle (same as CopilotKit's GoogleGenerativeAIAdapter)
   try {
-    logWithTimestamp("Testing Vertex AI chat...", { message, projectId, modelName, apiVersion });
+    logWithTimestamp("Testing Vertex AI chat...", { message, projectId, modelName, apiVersion, location });
     
-    // Create the ChatGoogle model (same way CopilotKit does internally)
+    // Create the ChatGoogle model configured for Vertex AI (GCP platform)
+    // Key settings:
+    // - platformType: "gcp" tells LangChain to use Vertex AI instead of Google AI Studio
+    // - location: GCP region where Vertex AI is available
+    // These settings are required for Application Default Credentials (ADC) to work
     const model = new ChatGoogle({
       modelName,
       apiVersion,
+      platformType: "gcp",  // Required: Use Vertex AI instead of Google AI Studio
+      location,              // Required: GCP region for Vertex AI
     });
     
     logWithTimestamp("ChatGoogle model created, invoking...");
@@ -111,6 +120,7 @@ export const POST = async (req: NextRequest) => {
         success: true,
         provider: "vertex-ai",
         projectId: projectId,
+        location: location,
         model: modelName,
         apiVersion: apiVersion,
         input: message,
