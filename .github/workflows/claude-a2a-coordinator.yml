@@ -258,25 +258,30 @@ jobs:
           GCP_AUTH_OUTCOME: '${{ steps.gcp_auth.outcome }}'
           RUN_URL: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
         run: |
-          troubleshoot_msg=""
+          # Build troubleshooting message based on context
+          troubleshoot_items=()
           
           # Check if Vertex AI was requested but auth failed
           if [ "$REQUESTED_VERTEX" = "true" ] && [ "$GCP_AUTH_OUTCOME" != "success" ]; then
-            troubleshoot_msg="- ⚠️ **Vertex AI authentication failed** - workflow attempted fallback to direct API
-          - Verify GCP_WORKLOAD_IDENTITY_PROVIDER secret format (should be: projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/providers/PROVIDER_ID)
-          - Check GCP_SERVICE_ACCOUNT secret is correct
-          - See docs/VERTEX_AI_CLAUDE_SETUP.md for setup guide"
+            troubleshoot_items+=("- ⚠️ **Vertex AI authentication failed** - workflow attempted fallback to direct API")
+            troubleshoot_items+=("- Verify GCP_WORKLOAD_IDENTITY_PROVIDER secret format (should be: projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/providers/PROVIDER_ID)")
+            troubleshoot_items+=("- Check GCP_SERVICE_ACCOUNT secret is correct")
+            troubleshoot_items+=("- See docs/VERTEX_AI_CLAUDE_SETUP.md for setup guide")
           fi
           
           if [ "$USE_VERTEX" = "true" ]; then
-            troubleshoot_msg="${troubleshoot_msg}
-          - Verify ANTHROPIC_VERTEX_PROJECT_ID variable is set
-          - Ensure service account has Vertex AI permissions"
+            troubleshoot_items+=("- Verify ANTHROPIC_VERTEX_PROJECT_ID variable is set")
+            troubleshoot_items+=("- Ensure service account has Vertex AI permissions")
           else
-            troubleshoot_msg="${troubleshoot_msg}
-          - Verify ANTHROPIC_API_KEY secret is configured
-          - Check if API key has valid credits"
+            troubleshoot_items+=("- Verify ANTHROPIC_API_KEY secret is configured")
+            troubleshoot_items+=("- Check if API key has valid credits")
           fi
+          
+          troubleshoot_items+=("- Check if issue description provides enough context")
+          troubleshoot_items+=("- Try re-running with simpler scope")
+          
+          # Join array elements with newlines
+          troubleshoot_msg=$(printf '%s\n' "${troubleshoot_items[@]}")
           
           gh issue comment "$ISSUE_NUMBER" --body "❌ **Claude A2A Coordination Failed**
 
@@ -284,7 +289,5 @@ jobs:
 
           **Troubleshooting**:
           ${troubleshoot_msg}
-          - Check if issue description provides enough context
-          - Try re-running with simpler scope
 
           You can retry by commenting \\\`@claude-a2a-coordinator\\\` or use workflow_dispatch."
