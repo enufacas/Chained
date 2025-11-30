@@ -13,6 +13,7 @@ import { CopilotChat, CopilotPopup } from "@copilotkit/react-ui";
 import { useCopilotAction, useCopilotReadable, CopilotKit } from "@copilotkit/react-core";
 import { useState, useEffect, useCallback } from "react";
 import { PipelineData, ApiStatus } from "@/types";
+import RealTimeAgentActivity from "@/components/RealTimeAgentActivity";
 
 // =============================================================================
 // Types (Local types not shared across components)
@@ -1001,6 +1002,9 @@ Just type a message like: "@research-agent What's trending in AI?"`;
 
             {/* API Status */}
             <ApiStatusPanel onStatusChange={onApiStatusChange} />
+
+            {/* Real-Time Agent Activity */}
+            <RealTimeAgentActivity />
 
             {/* Agent Pipeline */}
             <AgentPipeline agents={agents} />

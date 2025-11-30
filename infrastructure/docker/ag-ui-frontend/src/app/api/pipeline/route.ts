@@ -7,9 +7,18 @@
  * 3. Listing active/recent pipelines (GET)
  *
  * All pipeline operations run on the live site using the A2A agent coordination pattern.
+ * Blog posts are hosted on GCP Cloud Storage.
  */
 
 import { NextRequest } from "next/server";
+
+// GCP Blog URL construction
+// Blog bucket follows pattern: ${PROJECT_ID}-chained-blog
+// Blog URL format: https://storage.googleapis.com/${PROJECT_ID}-chained-blog/posts/${slug}.html
+function getBlogUrl(slug: string): string {
+  const projectId = process.env.GCP_PROJECT_ID || "chained-ai";
+  return `https://storage.googleapis.com/${projectId}-chained-blog/posts/${slug}.html`;
+}
 
 // Pipeline states
 export type PipelineStatus = "pending" | "running" | "completed" | "failed";
@@ -32,34 +41,36 @@ export interface Pipeline {
 // In-memory store for pipelines
 const activePipelines: Map<string, Pipeline> = new Map();
 
-// Previously completed pipelines
-const COMPLETED_PIPELINES: Pipeline[] = [
-  {
-    id: "pipeline-demo-001",
-    topic: "Large Language Model Reasoning",
-    status: "completed",
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-    progress: 100,
-    currentPhase: "complete",
-    results: {
-      research: {
-        topic: "Large Language Model Reasoning Capabilities",
-        domain: "Artificial Intelligence",
-        keywords: ["LLM", "reasoning", "AI", "chain-of-thought"],
-      },
-      trends: {
-        trendingKeywords: ["AI", "LLM", "machine learning", "GPT", "reasoning"],
-        recommendedFocus: "LLM reasoning capabilities",
-      },
-      blog: {
-        title: "The Rise of LLM Reasoning: How AI is Learning to Think",
-        url: "https://enufacas.github.io/Chained/blog/llm-reasoning.html",
-        wordCount: 1847,
+// Helper to generate completed pipelines with GCP URLs
+function getCompletedPipelines(): Pipeline[] {
+  return [
+    {
+      id: "pipeline-demo-001",
+      topic: "Large Language Model Reasoning",
+      status: "completed",
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+      progress: 100,
+      currentPhase: "complete",
+      results: {
+        research: {
+          topic: "Large Language Model Reasoning Capabilities",
+          domain: "Artificial Intelligence",
+          keywords: ["LLM", "reasoning", "AI", "chain-of-thought"],
+        },
+        trends: {
+          trendingKeywords: ["AI", "LLM", "machine learning", "GPT", "reasoning"],
+          recommendedFocus: "LLM reasoning capabilities",
+        },
+        blog: {
+          title: "The Rise of LLM Reasoning: How AI is Learning to Think",
+          url: getBlogUrl("llm-reasoning"),
+          wordCount: 1847,
+        },
       },
     },
-  },
-];
+  ];
+}
 
 /**
  * GET /api/pipeline
@@ -74,10 +85,12 @@ export async function GET(request: NextRequest) {
   const pipelineId = searchParams.get("id");
   const statusFilter = searchParams.get("status");
   const limit = parseInt(searchParams.get("limit") || "10", 10);
+  
+  const completedPipelines = getCompletedPipelines();
 
   // Get a specific pipeline
   if (pipelineId) {
-    const pipeline = activePipelines.get(pipelineId) || COMPLETED_PIPELINES.find((p) => p.id === pipelineId);
+    const pipeline = activePipelines.get(pipelineId) || completedPipelines.find((p) => p.id === pipelineId);
 
     if (!pipeline) {
       return new Response(JSON.stringify({ error: "Pipeline not found" }), {
@@ -93,7 +106,7 @@ export async function GET(request: NextRequest) {
   }
 
   // List pipelines
-  let pipelines = [...Array.from(activePipelines.values()), ...COMPLETED_PIPELINES];
+  let pipelines = [...Array.from(activePipelines.values()), ...completedPipelines];
 
   // Apply status filter
   if (statusFilter) {
@@ -228,11 +241,12 @@ function executePipeline(pipelineId: string) {
     } else if (progress >= 100) {
       currentPipeline.status = "completed";
       currentPipeline.currentPhase = "complete";
+      const slug = currentPipeline.topic.toLowerCase().replace(/\s+/g, "-");
       currentPipeline.results = {
         ...currentPipeline.results,
         blog: {
           title: `Blog: ${currentPipeline.topic}`,
-          url: `https://enufacas.github.io/Chained/blog/${currentPipeline.topic.toLowerCase().replace(/\s+/g, "-")}.html`,
+          url: getBlogUrl(slug),
           wordCount: Math.floor(1500 + Math.random() * 1000),
         },
       };
