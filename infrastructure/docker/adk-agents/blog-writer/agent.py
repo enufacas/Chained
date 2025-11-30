@@ -52,40 +52,41 @@ WEBSITE_DEPLOY_URL = os.getenv("WEBSITE_DEPLOY_URL", "")
 # Use Gemini API if available and genai library is installed
 USE_AI = GENAI_AVAILABLE and bool(GEMINI_API_KEY or GOOGLE_API_KEY)
 
-# Global model interaction log - captures all LLM calls for this request
-MODEL_INTERACTIONS: List[Dict[str, Any]] = []
+# Request-scoped model interaction log using contextvars for thread safety
+from contextvars import ContextVar
+_model_interactions: ContextVar[List[Dict[str, Any]]] = ContextVar('model_interactions', default=[])
 
 def log_interaction(interaction_type: str, data: Dict[str, Any]) -> None:
-    """Log a model interaction for later retrieval."""
+    """Log a model interaction for later retrieval (request-scoped)."""
+    # Filter out sensitive data from logs
+    safe_data = {k: v for k, v in data.items() if k not in ("api_key", "api_key_prefix")}
     interaction = {
         "type": interaction_type,
         "timestamp": datetime.utcnow().isoformat(),
         "agent": AGENT_NAME,
-        **data
+        **safe_data
     }
-    MODEL_INTERACTIONS.append(interaction)
-    # Also print to stdout for Cloud Run logs
-    print(f"🤖 [MODEL INTERACTION] {interaction_type}: {json.dumps(data, default=str)[:500]}")
+    interactions = _model_interactions.get()
+    interactions.append(interaction)
+    _model_interactions.set(interactions)
+    # Log to stdout for Cloud Run (without full prompt content for security)
+    log_preview = {k: (v[:100] + "..." if isinstance(v, str) and len(v) > 100 else v) 
+                   for k, v in safe_data.items() if k not in ("prompt_preview", "response_preview")}
+    print(f"🤖 [MODEL] {interaction_type}: {json.dumps(log_preview, default=str)[:300]}")
 
 def clear_interactions() -> None:
     """Clear the model interactions log for a new request."""
-    global MODEL_INTERACTIONS
-    MODEL_INTERACTIONS = []
+    _model_interactions.set([])
 
 def get_interactions() -> List[Dict[str, Any]]:
     """Get all model interactions for this request."""
-    return MODEL_INTERACTIONS.copy()
+    return _model_interactions.get().copy()
 
 # Configure Gemini if available
 if USE_AI and genai:
     api_key = GEMINI_API_KEY or GOOGLE_API_KEY
     genai.configure(api_key=api_key)
-    print(f"✅ Gemini AI configured with key starting: {api_key[:8]}...")
-    log_interaction("configuration", {
-        "status": "configured",
-        "model": "gemini-1.5-flash",
-        "api_key_prefix": api_key[:8] + "..."
-    })
+    print(f"✅ Gemini AI configured")
 else:
     print(f"⚠️ Gemini AI NOT configured - USE_AI={USE_AI}, GENAI_AVAILABLE={GENAI_AVAILABLE}")
     if not GENAI_AVAILABLE:

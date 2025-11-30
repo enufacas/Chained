@@ -51,28 +51,33 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 # Use Gemini API if available
 USE_AI = GENAI_AVAILABLE and bool(GEMINI_API_KEY or GOOGLE_API_KEY)
 
-# Global model interaction log
-MODEL_INTERACTIONS: List[Dict[str, Any]] = []
+# Request-scoped model interaction log using contextvars for thread safety
+from contextvars import ContextVar
+_model_interactions: ContextVar[List[Dict[str, Any]]] = ContextVar('model_interactions', default=[])
 
 def log_interaction(interaction_type: str, data: Dict[str, Any]) -> None:
-    """Log a model interaction for later retrieval."""
+    """Log a model interaction for later retrieval (request-scoped)."""
+    safe_data = {k: v for k, v in data.items() if k not in ("api_key", "api_key_prefix")}
     interaction = {
         "type": interaction_type,
         "timestamp": datetime.utcnow().isoformat(),
         "agent": AGENT_NAME,
-        **data
+        **safe_data
     }
-    MODEL_INTERACTIONS.append(interaction)
-    print(f"🤖 [MODEL INTERACTION] {interaction_type}: {json.dumps(data, default=str)[:500]}")
+    interactions = _model_interactions.get()
+    interactions.append(interaction)
+    _model_interactions.set(interactions)
+    log_preview = {k: (v[:100] + "..." if isinstance(v, str) and len(v) > 100 else v) 
+                   for k, v in safe_data.items() if k not in ("prompt_preview", "response_preview")}
+    print(f"🤖 [MODEL] {interaction_type}: {json.dumps(log_preview, default=str)[:300]}")
 
 def clear_interactions() -> None:
     """Clear the model interactions log for a new request."""
-    global MODEL_INTERACTIONS
-    MODEL_INTERACTIONS = []
+    _model_interactions.set([])
 
 def get_interactions() -> List[Dict[str, Any]]:
     """Get all model interactions for this request."""
-    return MODEL_INTERACTIONS.copy()
+    return _model_interactions.get().copy()
 
 # Configure Gemini if available
 if USE_AI and genai:

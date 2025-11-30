@@ -35,6 +35,21 @@ interface ModelInteraction {
   [key: string]: unknown;
 }
 
+// Known model interaction types for rendering
+const INTERACTION_TYPES: Record<string, { icon: string; label: string }> = {
+  llm_request: { icon: "📤", label: "LLM Request" },
+  llm_response: { icon: "📥", label: "LLM Response" },
+  llm_error: { icon: "⚠️", label: "LLM Error" },
+  task_start: { icon: "🚀", label: "Task Start" },
+  task_complete: { icon: "✅", label: "Task Complete" },
+  write_request: { icon: "📝", label: "Write Request" },
+  configuration: { icon: "⚙️", label: "Configuration" },
+  fallback_mode: { icon: "🔄", label: "Fallback Mode" },
+  fallback_discovery: { icon: "🔄", label: "Fallback Discovery" },
+  fallback_trends: { icon: "🔄", label: "Fallback Trends" },
+  parse_error: { icon: "⚠️", label: "Parse Error" },
+};
+
 interface PipelineDetailViewProps {
   pipelineId: string;
   onClose: () => void;
@@ -495,18 +510,13 @@ export default function PipelineDetailView({ pipelineId, onClose }: PipelineDeta
                                                   ? "text-blue-400"
                                                   : interaction.type === "llm_response"
                                                   ? "text-green-400"
-                                                  : interaction.type === "llm_error"
+                                                  : interaction.type === "llm_error" || interaction.type === "parse_error"
                                                   ? "text-red-400"
                                                   : "text-slate-400"
                                               }`}>
-                                                {interaction.type === "llm_request" && "📤 LLM Request"}
-                                                {interaction.type === "llm_response" && "📥 LLM Response"}
-                                                {interaction.type === "llm_error" && "⚠️ LLM Error"}
-                                                {interaction.type === "task_start" && "🚀 Task Start"}
-                                                {interaction.type === "task_complete" && "✅ Task Complete"}
-                                                {interaction.type === "write_request" && "📝 Write Request"}
-                                                {interaction.type === "configuration" && "⚙️ Configuration"}
-                                                {!["llm_request", "llm_response", "llm_error", "task_start", "task_complete", "write_request", "configuration"].includes(String(interaction.type)) && `📋 ${interaction.type}`}
+                                                {INTERACTION_TYPES[interaction.type] 
+                                                  ? `${INTERACTION_TYPES[interaction.type].icon} ${INTERACTION_TYPES[interaction.type].label}`
+                                                  : `📋 ${interaction.type}`}
                                               </span>
                                               <span className="text-xs text-slate-500">
                                                 {String(interaction.timestamp || "").split("T")[1]?.split(".")[0]}
