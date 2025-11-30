@@ -119,7 +119,7 @@ async function testVertexAI(location: string, projectId: string): Promise<{ succ
   try {
     log("Testing Vertex AI directly...", { location, projectId });
     
-    const modelName = "gemini-1.5-flash";
+    const modelName = "gemini-2.0-flash-001";
     const apiVersion = "v1beta";
     
     // Create ChatGoogle with explicit Vertex AI config
@@ -227,7 +227,7 @@ export const POST = async (req: NextRequest) => {
                       process.env.GOOGLE_GENAI_USE_VERTEXAI === 'true';
   const projectId = process.env.GOOGLE_CLOUD_PROJECT || '';
   const location = process.env.GOOGLE_CLOUD_REGION || "us-central1";
-  const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+  const modelName = process.env.GEMINI_MODEL || "gemini-2.0-flash-001";
   
   log("Test requested", { testType, useVertexAI, projectId, location, modelName });
   
