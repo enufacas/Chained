@@ -5,13 +5,16 @@
  * This script tests the chat configuration and simulates API calls
  * to help diagnose issues without making actual GCP API calls.
  * 
- * Run: node scripts/test-chat-mock.js
+ * Run: node scripts/test-chat-mock.js [url]
+ * 
+ * Environment variables:
+ *   AG_UI_URL - Override the default deployment URL
  */
 
 const https = require('https');
 
-// Configuration
-const DEPLOYED_URL = 'https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app';
+// Configuration - allow override via env var or command line arg
+const DEPLOYED_URL = process.argv[2] || process.env.AG_UI_URL || 'https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app';
 
 // Colors for console output
 const colors = {

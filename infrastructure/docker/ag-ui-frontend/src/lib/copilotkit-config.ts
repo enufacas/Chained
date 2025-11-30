@@ -101,7 +101,7 @@ export const createServiceAdapter = () => {
       
       try {
         const adapter = new VertexAIAdapter({
-          model: "gemini-1.5-flash", // Use gemini-1.5-flash alias (auto-points to latest stable)
+          model: "gemini-1.5-flash", // Stable Vertex AI model (see: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
           location: process.env.GOOGLE_CLOUD_REGION || "us-central1",
         });
         logConfig("VertexAIAdapter created successfully");
@@ -125,7 +125,7 @@ export const createServiceAdapter = () => {
     
     try {
       const adapter = new GoogleGenerativeAIAdapter({
-        model: "gemini-1.5-flash", // Use gemini-1.5-flash alias (auto-points to latest stable)
+        model: "gemini-1.5-flash", // Stable Vertex AI model (see: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
       });
       logConfig("GoogleGenerativeAIAdapter created successfully");
       return adapter;
