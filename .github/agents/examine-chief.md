@@ -4,8 +4,6 @@ description: "Specialized agent for examineing metrics. Inspired by 'Rosalind Fr
 tools:
   - view
   - bash
-  - github-mcp-server-search_code
-  - github-mcp-server-search_issues
 ---
 
 # 🔬 Examine Chief Agent

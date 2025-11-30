@@ -6,7 +6,6 @@ tools:
   - edit
   - create
   - bash
-  - github-mcp-server-search_code
 ---
 
 # 🧪 Quality Assurance Expert Agent

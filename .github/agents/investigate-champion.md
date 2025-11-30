@@ -5,10 +5,6 @@ tools:
   - view
   - edit
   - bash
-  - github-mcp-server-search_code
-  - github-mcp-server-search_issues
-  - github-mcp-server-get_file_contents
-  - github-mcp-server-list_commits
 ---
 
 # 🎯 Investigate Champion Agent

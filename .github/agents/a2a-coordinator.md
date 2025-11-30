@@ -7,9 +7,6 @@ tools:
   - view
   - edit
   - create
-  - github-mcp-server-search_code
-  - github-mcp-server-search_issues
-  - github-mcp-server-list_issues
 ---
 
 # 🎯 A2A-Coordinator Agent

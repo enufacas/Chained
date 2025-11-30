@@ -6,7 +6,6 @@ tools:
   - edit
   - bash
   - view
-  - github-mcp-server-search_code
 ---
 
 # ⚙️ Infrastructure Specialist Agent

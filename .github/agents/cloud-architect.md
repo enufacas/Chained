@@ -6,8 +6,6 @@ tools:
   - edit
   - create
   - bash
-  - github-mcp-server-list_workflows
-  - github-mcp-server-get_workflow_run
 ---
 # ☁️ Cloud Architect Specialist Agent
 

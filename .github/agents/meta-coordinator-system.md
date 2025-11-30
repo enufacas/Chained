@@ -11,7 +11,6 @@ tools:
   - create
   - gh-cli
   - github-api
-  - github-mcp-server-*
   - match-issue-to-agent
   - assign-copilot
   - meta-coordinator-memory

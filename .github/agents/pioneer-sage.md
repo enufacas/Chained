@@ -6,8 +6,6 @@ tools:
   - edit
   - create
   - bash
-  - github-mcp-server-search_code
-  - github-mcp-server-web_search
 ---
 
 # 🚀 Pioneer Sage Agent

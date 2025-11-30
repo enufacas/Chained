@@ -6,11 +6,6 @@ tools:
   - view
   - edit
   - create
-  - github-mcp-server-get_file_contents
-  - github-mcp-server-search_code
-  - github-mcp-server-pull_request_read
-  - github-mcp-server-issue_read
-  - github-mcp-server-web_search
 ---
 
 # 💭 Coach Master Agent

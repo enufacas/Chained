@@ -57,6 +57,8 @@ Repository Data
 
 ### Available Operations
 
+**For a complete list of all 37+ available GitHub MCP server tools, see [MCP_SERVERS_CONFIGURATION.md](../summaries/MCP_SERVERS_CONFIGURATION.md).**
+
 **Read Operations (Fully Supported):**
 - `github-mcp-server-issue_read` - Get issue details, comments, labels, assignees
 - `github-mcp-server-search_issues` - Search issues with filters
@@ -64,7 +66,22 @@ Repository Data
 - `github-mcp-server-search_code` - Search repository code
 - `github-mcp-server-get_file_contents` - Read file contents
 - `github-mcp-server-list_commits` - Get commit history
+- `github-mcp-server-get_commit` - Get commit details with diffs
 - `github-mcp-server-pull_request_read` - Read PR details
+- `github-mcp-server-list_pull_requests` - List PRs
+- `github-mcp-server-list_branches` - List branches
+- `github-mcp-server-list_tags` - List tags
+- `github-mcp-server-list_releases` - List releases
+- `github-mcp-server-list_workflows` - List GitHub Actions workflows
+- `github-mcp-server-list_workflow_runs` - List workflow runs
+- `github-mcp-server-get_workflow_run` - Get workflow run details
+- `github-mcp-server-list_workflow_jobs` - List workflow jobs
+- `github-mcp-server-get_job_logs` - Get job logs
+- `github-mcp-server-summarize_job_log_failures` - AI-powered failure analysis
+- `github-mcp-server-summarize_run_log_failures` - AI-powered run failure analysis
+- `github-mcp-server-list_code_scanning_alerts` - Security scanning
+- `github-mcp-server-list_secret_scanning_alerts` - Secret scanning
+- `github-mcp-server-web_search` - AI-powered web search with citations
 
 **Write Operations (Fully Supported!):**
 - ✅ `github-mcp-server-update_issue` - Update issue labels, assignees, body, title, state

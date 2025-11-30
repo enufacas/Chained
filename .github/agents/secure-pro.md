@@ -6,7 +6,6 @@ tools:
   - edit
   - codeql_checker
   - gh-advisory-database
-  - github-mcp-server-search_code
 ---
 
 # 🔒 Secure Pro Agent
