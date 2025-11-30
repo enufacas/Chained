@@ -13,11 +13,15 @@ A2A Protocol Implementation:
 - Exposes AgentCard at /.well-known/agent.json
 - Handles SendMessage at POST /a2a/tasks
 - Returns Tasks with artifacts containing research findings
+
+**IMPORTANT**: This agent uses Gemini/Vertex AI for intelligent topic discovery.
+All model interactions are logged and captured as artifacts for debugging.
 """
 
 import json
 import os
 import random
+import sys
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 from contextlib import asynccontextmanager
@@ -27,19 +31,67 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
+# Add shared utilities to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from shared.a2a_utils import parse_llm_json_response
+
+# Try to import Gemini AI
+try:
+    import google.generativeai as genai
+    GENAI_AVAILABLE = True
+except ImportError:
+    GENAI_AVAILABLE = False
+    genai = None
+
 # =============================================================================
 # Configuration
 # =============================================================================
 
 AGENT_NAME = "academic-research"
-AGENT_DESCRIPTION = "Discovers and analyzes academic research topics for blog content"
-AGENT_VERSION = "1.0.0"
+AGENT_DESCRIPTION = "Discovers and analyzes academic research topics using Vertex AI"
+AGENT_VERSION = "1.2.0"  # Updated with AI-powered research
 PORT = int(os.getenv("PORT", "8081"))
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 
 # Use Gemini API if available
-USE_AI = bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+USE_AI = GENAI_AVAILABLE and bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+
+# Request-scoped model interaction log using contextvars for thread safety
+from contextvars import ContextVar
+_model_interactions: ContextVar[List[Dict[str, Any]]] = ContextVar('model_interactions', default=[])
+
+def log_interaction(interaction_type: str, data: Dict[str, Any]) -> None:
+    """Log a model interaction for later retrieval (request-scoped)."""
+    safe_data = {k: v for k, v in data.items() if k not in ("api_key", "api_key_prefix")}
+    interaction = {
+        "type": interaction_type,
+        "timestamp": datetime.utcnow().isoformat(),
+        "agent": AGENT_NAME,
+        **safe_data
+    }
+    interactions = _model_interactions.get()
+    interactions.append(interaction)
+    _model_interactions.set(interactions)
+    log_preview = {k: (v[:100] + "..." if isinstance(v, str) and len(v) > 100 else v) 
+                   for k, v in safe_data.items() if k not in ("prompt_preview", "response_preview")}
+    print(f"🤖 [MODEL] {interaction_type}: {json.dumps(log_preview, default=str)[:300]}")
+
+def clear_interactions() -> None:
+    """Clear the model interactions log for a new request."""
+    _model_interactions.set([])
+
+def get_interactions() -> List[Dict[str, Any]]:
+    """Get all model interactions for this request."""
+    return _model_interactions.get().copy()
+
+# Configure Gemini if available
+if USE_AI and genai:
+    api_key = GEMINI_API_KEY or GOOGLE_API_KEY
+    genai.configure(api_key=api_key)
+    print(f"✅ Gemini AI configured for research agent with key: {api_key[:8]}...")
+else:
+    print(f"⚠️ Research Agent: Gemini AI NOT configured - using simulated data")
 
 
 # =============================================================================
@@ -213,13 +265,24 @@ async def discover_research_topics(
     max_topics: int = 3
 ) -> List[Dict[str, Any]]:
     """
-    Discover research topics based on query or randomly.
+    Discover research topics based on query using Gemini AI.
 
-    In production, this would:
-    1. Query academic APIs (arXiv, Google Scholar, Semantic Scholar)
-    2. Use Gemini to analyze and summarize papers
+    When AI is enabled:
+    1. Use Gemini to generate relevant research topics
+    2. Get detailed analysis and key points
     3. Score topics for blog relevance
+    
+    Fallback: Use simulated data if AI is not available.
     """
+    if USE_AI and genai:
+        return await discover_topics_with_ai(query, max_topics)
+    
+    # Fallback to simulated data
+    log_interaction("fallback_discovery", {
+        "reason": "AI not available",
+        "query": query
+    })
+    
     all_topics = []
     for domain in RESEARCH_DOMAINS:
         for topic in domain["topics"]:
@@ -245,29 +308,243 @@ async def discover_research_topics(
     return all_topics[:max_topics]
 
 
+async def discover_topics_with_ai(
+    query: Optional[str] = None,
+    max_topics: int = 3
+) -> List[Dict[str, Any]]:
+    """
+    Use Gemini AI to discover and analyze research topics.
+    """
+    topic_query = query or "latest trends in technology and AI"
+    
+    prompt = f"""You are a research analyst specializing in technology trends.
+Identify {max_topics} compelling research topics related to: "{topic_query}"
+
+For each topic, provide:
+1. A specific, focused title (not generic)
+2. A brief abstract (2-3 sentences)
+3. 4-5 relevant keywords
+4. The domain/field it belongs to
+5. A relevance score (0.0-1.0) for blog writing potential
+
+Return the response as a JSON array with this exact structure:
+[
+  {{
+    "title": "Specific Topic Title",
+    "abstract": "Brief description of the topic and its significance.",
+    "keywords": ["keyword1", "keyword2", "keyword3"],
+    "domain": "Domain Name",
+    "relevance_score": 0.95
+  }}
+]
+
+Focus on:
+- Current, trending topics (2024-2025)
+- Topics with practical applications
+- Areas with recent breakthroughs or developments
+- Topics that would interest tech professionals
+
+Return ONLY the JSON array, no other text."""
+
+    # Log the LLM request
+    log_interaction("llm_request", {
+        "model": "gemini-1.5-flash",
+        "purpose": "topic_discovery",
+        "query": topic_query,
+        "prompt_length": len(prompt),
+        "prompt_preview": prompt[:400] + "..."
+    })
+    
+    try:
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        start_time = datetime.utcnow()
+        response = model.generate_content(
+            prompt,
+            generation_config=genai.GenerationConfig(
+                temperature=0.7,
+                max_output_tokens=2048,
+            )
+        )
+        end_time = datetime.utcnow()
+        duration_ms = (end_time - start_time).total_seconds() * 1000
+        
+        if response.text:
+            # Log successful response
+            log_interaction("llm_response", {
+                "model": "gemini-1.5-flash",
+                "status": "success",
+                "response_length": len(response.text),
+                "duration_ms": duration_ms,
+                "response_preview": response.text[:500] + "..." if len(response.text) > 500 else response.text
+            })
+            
+            # Parse the JSON response using shared utility
+            topics = parse_llm_json_response(response.text)
+            if topics:
+                print(f"✅ Gemini discovered {len(topics)} research topics")
+                return topics[:max_topics]
+            else:
+                log_interaction("parse_error", {
+                    "error": "Failed to parse JSON",
+                    "raw_response": response.text[:200]
+                })
+                # Fall back to simulated data
+                return get_simulated_topics(query, max_topics)
+        else:
+            log_interaction("llm_response", {
+                "model": "gemini-1.5-flash",
+                "status": "empty_response",
+                "duration_ms": duration_ms
+            })
+            return get_simulated_topics(query, max_topics)
+            
+    except Exception as e:
+        log_interaction("llm_error", {
+            "model": "gemini-1.5-flash",
+            "error": str(e),
+            "error_type": type(e).__name__
+        })
+        print(f"⚠️ Gemini topic discovery failed: {e}")
+        return get_simulated_topics(query, max_topics)
+
+
+def get_simulated_topics(query: Optional[str], max_topics: int) -> List[Dict[str, Any]]:
+    """Return simulated topics as fallback."""
+    all_topics = []
+    for domain in RESEARCH_DOMAINS:
+        for topic in domain["topics"]:
+            all_topics.append({**topic, "domain": domain["domain"]})
+    
+    if query:
+        query_lower = query.lower()
+        filtered = [
+            t for t in all_topics
+            if query_lower in t["title"].lower()
+            or query_lower in t["abstract"].lower()
+        ]
+        if filtered:
+            all_topics = filtered
+    
+    all_topics.sort(key=lambda x: x["relevance_score"], reverse=True)
+    return all_topics[:max_topics]
+
+
 async def analyze_topic_for_blog(topic: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Analyze a research topic and generate blog writing suggestions.
+    Analyze a research topic and generate blog writing suggestions using AI.
 
-    In production, this would use Gemini to:
+    Uses Gemini to:
     1. Summarize the research in accessible language
     2. Identify key insights for general audience
     3. Suggest blog angles and structure
     """
+    if USE_AI and genai:
+        return await analyze_topic_with_ai(topic)
+    
+    # Fallback to template-based analysis
     return {
         "topic": topic["title"],
-        "domain": topic["domain"],
+        "domain": topic.get("domain", "Technology"),
         "blog_angle": f"How {topic['title']} is changing the industry",
         "key_points": [
-            f"Introduction to {topic['keywords'][0] if topic['keywords'] else 'the topic'}",
+            f"Introduction to {topic.get('keywords', ['the topic'])[0]}",
             "Current state of research",
             "Practical implications for practitioners",
             "Future directions and predictions",
         ],
         "target_audience": "Tech professionals and enthusiasts",
         "suggested_length": "1500-2000 words",
-        "seo_keywords": topic["keywords"],
+        "seo_keywords": topic.get("keywords", []),
     }
+
+
+async def analyze_topic_with_ai(topic: Dict[str, Any]) -> Dict[str, Any]:
+    """Use Gemini to analyze a topic for blog writing."""
+    prompt = f"""Analyze this research topic for a tech blog post:
+
+Topic: {topic.get('title', 'Unknown')}
+Domain: {topic.get('domain', 'Technology')}
+Abstract: {topic.get('abstract', 'No abstract available')}
+
+Generate a comprehensive blog writing plan. Return as JSON:
+{{
+    "topic": "The exact topic title",
+    "domain": "The field/domain",
+    "blog_angle": "A unique, engaging angle for the blog post",
+    "key_points": [
+        "Specific point 1 to cover",
+        "Specific point 2 to cover",
+        "Specific point 3 to cover",
+        "Specific point 4 to cover"
+    ],
+    "target_audience": "Who this is for",
+    "suggested_length": "Word count recommendation",
+    "seo_keywords": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5"]
+}}
+
+Make the blog_angle creative and specific, not generic.
+Key points should be actionable and detailed.
+Return ONLY the JSON, no other text."""
+
+    log_interaction("llm_request", {
+        "model": "gemini-1.5-flash",
+        "purpose": "topic_analysis",
+        "topic": topic.get("title"),
+        "prompt_length": len(prompt)
+    })
+    
+    try:
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        start_time = datetime.utcnow()
+        response = model.generate_content(
+            prompt,
+            generation_config=genai.GenerationConfig(
+                temperature=0.6,
+                max_output_tokens=1024,
+            )
+        )
+        end_time = datetime.utcnow()
+        duration_ms = (end_time - start_time).total_seconds() * 1000
+        
+        if response.text:
+            log_interaction("llm_response", {
+                "model": "gemini-1.5-flash",
+                "status": "success",
+                "duration_ms": duration_ms,
+                "response_preview": response.text[:300]
+            })
+            
+            # Parse JSON using shared utility
+            analysis = parse_llm_json_response(response.text)
+            if analysis:
+                return analysis
+        
+        # Fallback
+        return {
+            "topic": topic["title"],
+            "domain": topic.get("domain", "Technology"),
+            "blog_angle": f"How {topic['title']} is changing the industry",
+            "key_points": topic.get("keywords", ["Overview"]),
+            "target_audience": "Tech professionals",
+            "suggested_length": "1500-2000 words",
+            "seo_keywords": topic.get("keywords", []),
+        }
+        
+    except Exception as e:
+        log_interaction("llm_error", {
+            "error": str(e),
+            "topic": topic.get("title")
+        })
+        return {
+            "topic": topic["title"],
+            "domain": topic.get("domain", "Technology"),
+            "blog_angle": f"Understanding {topic['title']}",
+            "key_points": ["Overview", "Key concepts", "Applications", "Future outlook"],
+            "target_audience": "Tech professionals",
+            "suggested_length": "1500-2000 words",
+            "seo_keywords": topic.get("keywords", []),
+        }
 
 
 async def process_research_request(message_text: str) -> Dict[str, Any]:
@@ -363,8 +640,19 @@ async def send_message(request: SendMessageRequest) -> Task:
     Handle A2A SendMessage operation per specification §3.1.1.
 
     This is the main entry point for agent communication.
+    All model interactions are logged and returned as artifacts.
     """
     task_id = generate_task_id()
+    
+    # Clear previous interactions
+    clear_interactions()
+    
+    # Log task start
+    log_interaction("task_start", {
+        "task_id": task_id,
+        "context_id": request.contextId,
+        "message_preview": " ".join(p.text for p in request.message.parts)[:100]
+    })
 
     try:
         # Extract message text
@@ -372,8 +660,11 @@ async def send_message(request: SendMessageRequest) -> Task:
 
         # Process the research request
         result = await process_research_request(message_text)
+        
+        # Get model interactions
+        model_interactions = get_interactions()
 
-        # Create artifacts
+        # Create artifacts including model interactions
         artifacts = [
             Artifact(
                 name="research-findings",
@@ -382,10 +673,23 @@ async def send_message(request: SendMessageRequest) -> Task:
             ),
             Artifact(
                 name="recommended-topic",
-                type="text/plain",
+                type="application/json",
                 data=json.dumps(result.get("recommended_topic", {})),
             ),
+            # NEW: Include model interactions
+            Artifact(
+                name="model-interactions",
+                type="application/json",
+                data=json.dumps(model_interactions, default=str),
+            ),
         ]
+        
+        # Log task completion
+        log_interaction("task_complete", {
+            "task_id": task_id,
+            "topics_found": result.get("topics_found", 0),
+            "interactions_count": len(model_interactions)
+        })
 
         # Return completed task
         return Task(

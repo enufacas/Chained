@@ -259,22 +259,29 @@ export default function PipelineOutcomes() {
             {completedPipelines.map((pipeline) => (
               <div
                 key={pipeline.id}
-                onClick={() => setSelectedPipelineId(pipeline.id)}
-                className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50 hover:border-green-500/30 cursor-pointer transition-all hover:scale-[1.01] hover:shadow-lg hover:shadow-green-500/5"
+                className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50 hover:border-green-500/30 transition-all hover:shadow-lg hover:shadow-green-500/5"
               >
                 <div className="flex items-start justify-between mb-2">
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <h5 className="font-medium text-white flex items-center gap-2">
                       {pipeline.topic}
-                      <span className="text-xs text-slate-500">Click for details →</span>
                     </h5>
                     <p className="text-xs text-slate-500">
                       Completed {formatTimeAgo(pipeline.updatedAt)}
                     </p>
                   </div>
-                  <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full border border-green-500/30">
-                    ✓ Complete
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full border border-green-500/30">
+                      ✓ Complete
+                    </span>
+                    {/* Prominent View Details Button */}
+                    <button
+                      onClick={() => setSelectedPipelineId(pipeline.id)}
+                      className="text-xs bg-accent-500/20 text-accent-400 px-3 py-1.5 rounded-lg border border-accent-500/30 hover:bg-accent-500/30 hover:border-accent-500/50 transition flex items-center gap-1"
+                    >
+                      🔍 View Details
+                    </button>
+                  </div>
                 </div>
 
                 {/* Results */}
@@ -286,9 +293,6 @@ export default function PipelineOutcomes() {
                         href={pipeline.results.blog.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        // Stop propagation to prevent opening the detail modal when clicking the blog link
-                        // This allows users to directly open the blog post in a new tab
-                        onClick={(e) => e.stopPropagation()}
                         className="flex items-center gap-3 p-2 rounded bg-accent-500/10 border border-accent-500/20 hover:bg-accent-500/20 transition group"
                       >
                         <span className="text-lg">📝</span>

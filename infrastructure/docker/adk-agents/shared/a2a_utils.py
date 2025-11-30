@@ -166,3 +166,48 @@ def get_agent_urls() -> Dict[str, str]:
             "http://localhost:8083"
         ),
     }
+
+
+def parse_llm_json_response(text: str) -> Optional[Any]:
+    """
+    Parse JSON from an LLM response, handling markdown code blocks.
+    
+    LLMs often wrap JSON responses in markdown code blocks like:
+    ```json
+    {"key": "value"}
+    ```
+    
+    This utility safely extracts and parses the JSON.
+    
+    Args:
+        text: The raw LLM response text
+        
+    Returns:
+        Parsed JSON data, or None if parsing fails
+    """
+    if not text:
+        return None
+    
+    text = text.strip()
+    
+    # Handle markdown code blocks
+    if text.startswith("```"):
+        try:
+            # Split by ``` and take the content
+            parts = text.split("```")
+            if len(parts) >= 2:
+                code_content = parts[1]
+                # Remove language identifier if present (e.g., "json")
+                if code_content.startswith("json"):
+                    code_content = code_content[4:]
+                elif code_content.startswith("JSON"):
+                    code_content = code_content[4:]
+                text = code_content.strip()
+        except Exception:
+            pass
+    
+    # Try to parse as JSON
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return None
