@@ -137,7 +137,7 @@ resource "google_cloud_run_v2_service" "academic_research" {
 
       # Direct API key value (from GitHub secrets) - takes precedence
       dynamic "env" {
-        for_each = var.google_api_key != "" ? ["enabled"] : []
+        for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
         content {
           name  = "GOOGLE_API_KEY"
           value = var.google_api_key
@@ -146,7 +146,7 @@ resource "google_cloud_run_v2_service" "academic_research" {
 
       # Direct Gemini API key value (from GitHub secrets)
       dynamic "env" {
-        for_each = var.gemini_api_key != "" && var.google_api_key == "" ? ["enabled"] : []
+        for_each = toset(var.gemini_api_key != "" && var.google_api_key == "" ? ["enabled"] : [])
         content {
           name  = "GEMINI_API_KEY"
           value = var.gemini_api_key
@@ -155,7 +155,7 @@ resource "google_cloud_run_v2_service" "academic_research" {
 
       # Secret Manager reference (fallback if no direct value)
       dynamic "env" {
-        for_each = var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? ["enabled"] : []
+        for_each = toset(var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? ["enabled"] : [])
         content {
           name = "GEMINI_API_KEY"
           value_source {
@@ -262,7 +262,7 @@ resource "google_cloud_run_v2_service" "blog_writer" {
 
       # Direct API key value (from GitHub secrets) - takes precedence
       dynamic "env" {
-        for_each = var.google_api_key != "" ? ["enabled"] : []
+        for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
         content {
           name  = "GOOGLE_API_KEY"
           value = var.google_api_key
@@ -271,7 +271,7 @@ resource "google_cloud_run_v2_service" "blog_writer" {
 
       # Direct Gemini API key value (from GitHub secrets)
       dynamic "env" {
-        for_each = var.gemini_api_key != "" && var.google_api_key == "" ? ["enabled"] : []
+        for_each = toset(var.gemini_api_key != "" && var.google_api_key == "" ? ["enabled"] : [])
         content {
           name  = "GEMINI_API_KEY"
           value = var.gemini_api_key
@@ -280,7 +280,7 @@ resource "google_cloud_run_v2_service" "blog_writer" {
 
       # Secret Manager reference (fallback if no direct value)
       dynamic "env" {
-        for_each = var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? ["enabled"] : []
+        for_each = toset(var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? ["enabled"] : [])
         content {
           name = "GEMINI_API_KEY"
           value_source {
@@ -379,7 +379,7 @@ resource "google_cloud_run_v2_service" "google_trends" {
 
       # Direct API key value (from GitHub secrets) - takes precedence
       dynamic "env" {
-        for_each = var.google_api_key != "" ? ["enabled"] : []
+        for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
         content {
           name  = "GOOGLE_API_KEY"
           value = var.google_api_key
@@ -388,7 +388,7 @@ resource "google_cloud_run_v2_service" "google_trends" {
 
       # Direct Gemini API key value (from GitHub secrets)
       dynamic "env" {
-        for_each = var.gemini_api_key != "" && var.google_api_key == "" ? ["enabled"] : []
+        for_each = toset(var.gemini_api_key != "" && var.google_api_key == "" ? ["enabled"] : [])
         content {
           name  = "GEMINI_API_KEY"
           value = var.gemini_api_key
@@ -397,7 +397,7 @@ resource "google_cloud_run_v2_service" "google_trends" {
 
       # Secret Manager reference (fallback if no direct value)
       dynamic "env" {
-        for_each = var.google_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? ["enabled"] : []
+        for_each = toset(var.google_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? ["enabled"] : [])
         content {
           name = "GOOGLE_API_KEY"
           value_source {
@@ -674,7 +674,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
 
       # Direct API key value (from GitHub secrets) - takes precedence
       dynamic "env" {
-        for_each = var.google_api_key != "" ? ["enabled"] : []
+        for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
         content {
           name  = "GOOGLE_API_KEY"
           value = var.google_api_key
@@ -683,7 +683,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
 
       # Direct Gemini API key value (from GitHub secrets)
       dynamic "env" {
-        for_each = var.gemini_api_key != "" && var.google_api_key == "" ? ["enabled"] : []
+        for_each = toset(var.gemini_api_key != "" && var.google_api_key == "" ? ["enabled"] : [])
         content {
           name  = "GEMINI_API_KEY"
           value = var.gemini_api_key
@@ -692,7 +692,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
 
       # Secret Manager reference for Google API Key (fallback if no direct value)
       dynamic "env" {
-        for_each = var.google_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? ["enabled"] : []
+        for_each = toset(var.google_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? ["enabled"] : [])
         content {
           name = "GOOGLE_API_KEY"
           value_source {
@@ -706,7 +706,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
 
       # Secret Manager reference for Gemini API Key (fallback if no direct value)
       dynamic "env" {
-        for_each = var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" && var.google_api_key_secret == "" ? ["enabled"] : []
+        for_each = toset(var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" && var.google_api_key_secret == "" ? ["enabled"] : [])
         content {
           name = "GEMINI_API_KEY"
           value_source {
@@ -720,7 +720,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
 
       # OpenAI API Key from Secret Manager (fallback for CopilotKit chat feature)
       dynamic "env" {
-        for_each = var.openai_api_key_secret != "" ? ["enabled"] : []
+        for_each = toset(var.openai_api_key_secret != "" ? ["enabled"] : [])
         content {
           name = "OPENAI_API_KEY"
           value_source {
