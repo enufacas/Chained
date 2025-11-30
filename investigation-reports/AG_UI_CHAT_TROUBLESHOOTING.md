@@ -9,58 +9,38 @@ This document tracks the troubleshooting history for the AG-UI Frontend chat fun
 
 ## Current Status (2025-11-30)
 
-**Status**: 🟡 **FIX IN PROGRESS** - Model updated to `gemini-2.0-flash-001`
+**Status**: 🟡 **FIX IN PROGRESS** - API version changed from `v1beta` to `v1`
 
 ### Root Cause (Identified)
-Two issues combined:
-1. The Gemini model `gemini-1.5-flash` has been **deprecated on Vertex AI** as of late November 2025.
-2. The alias model name `gemini-2.0-flash` (without version suffix) returns 404 on Vertex AI.
+The **Vertex AI API v1beta returns 404** for `gemini-2.0-flash` models, while the **v1 (stable) API works correctly**.
 
-The correct model name for Vertex AI is `gemini-2.0-flash-001` (with version suffix).
+Testing confirmed:
+- `v1beta` API: Returns 404 (empty response) for all gemini-2.0-flash models
+- `v1` API: Works correctly with proper request format
 
-### Fix Applied (PR #3430 + Additional Fix)
-Updated model from `gemini-2.0-flash` to `gemini-2.0-flash-001` in all relevant files:
-- `src/lib/copilotkit-config.ts`
-- `src/lib/adapters/vertex-ai-adapter.ts`
-- `src/app/api/debug/route.ts`
+Both `gemini-2.0-flash` and `gemini-2.0-flash-001` work with the v1 API.
 
-### Evidence (After PR #3430, Before Additional Fix)
-```json
-// Debug endpoint output (POST /api/debug with {"test": "full"})
-{
-  "vertexTest": {
-    "success": false,
-    "details": {
-      "code": "404",
-      "httpStatus": 404,
-      "httpStatusText": "Not Found"
-    }
-  },
-  "config": {
-    "modelName": "gemini-2.0-flash"  // ← ALIAS NOT WORKING
-  }
-}
+### Fix Applied
+Changed API version from `v1beta` to `v1` in all relevant files:
+- `src/lib/adapters/vertex-ai-adapter.ts` - apiVersion default changed
+- `src/app/api/debug/route.ts` - apiVersion changed
+
+### Evidence - Direct API Testing
+
+```bash
+# v1beta API - FAILS with 404
+curl -i -X POST \
+  "https://us-central1-aiplatform.googleapis.com/v1beta/.../gemini-2.0-flash:generateContent"
+# Response: HTTP/2 404, content-length: 0
+
+# v1 API - WORKS
+curl -X POST \
+  "https://us-central1-aiplatform.googleapis.com/v1/.../gemini-2.0-flash:generateContent"
+# Response: {"candidates":[{"content":{"role":"model","parts":[{"text":"Hello!..."}]}}]}
 ```
 
-### Live Log Evidence (Cloud Run Logs)
-
-**Timestamp**: 2025-11-30T08:32:50Z  
-**Request URL**:
-```
-https://us-central1-aiplatform.googleapis.com/v1beta/projects/cogent-tine-479302-j0/locations/us-central1/publishers/google/models/gemini-2.0-flash:streamGenerateContent
-```
-**Response**: `404 Not Found`  
-**Error**: Model `gemini-2.0-flash` (alias) not found - need `gemini-2.0-flash-001`
-
-**Full Error Log**:
-```
-[08:32:50.057] ERROR:
-  troubleshooting: "Model 'gemini-2.0-flash' not found. Try: gemini-2.0-flash-001, gemini-2.5-flash"
-  modelName: "gemini-2.0-flash",
-  expectedUrl: "https://us-central1-aiplatform.googleapis.com/v1beta/projects/.../publishers/google/models/gemini-2.0-flash:streamGenerateContent",
-  code: '404',
-  httpStatus: 404
-```
+### Key Learning
+The v1beta API endpoint returns 404 with empty body for `gemini-2.0-flash` models in this GCP project/region, while the stable v1 API works correctly.
 
 ---
 
@@ -131,36 +111,43 @@ The AG-UI Frontend chat functionality has evolved through multiple PRs. Here's t
 
 | Platform | Correct Model Name | Notes |
 |----------|-------------------|-------|
-| **Vertex AI (ADC)** | `gemini-2.0-flash-001` | Version suffix REQUIRED for stable models |
+| **Vertex AI (v1 API)** | `gemini-2.0-flash` or `gemini-2.0-flash-001` | Both work with v1 API |
 | **Google AI Studio** | `gemini-2.0-flash-001`, `gemini-2.5-flash` | Same naming convention |
 
 ### Currently Available Models on Vertex AI (November 2025)
-- ✅ `gemini-2.0-flash-001` - Recommended for high-volume tasks (stable version)
+- ✅ `gemini-2.0-flash` - Works with v1 API (alias)
+- ✅ `gemini-2.0-flash-001` - Stable versioned name
 - ✅ `gemini-2.0-flash-lite-001` - Ultra-fast, cost-effective
 - ✅ `gemini-2.5-pro` - Advanced reasoning
 - ✅ `gemini-2.5-flash` - Best price-performance
-- ❌ `gemini-2.0-flash` - **INVALID** (alias form doesn't always work)
 - ❌ `gemini-1.5-flash` - **DEPRECATED** (late November 2025)
 - ❌ `gemini-1.5-pro` - **DEPRECATED** (late November 2025)
+
+### API Version Compatibility
+
+| API Version | `gemini-2.0-flash` | `gemini-1.5-flash` |
+|-------------|-------------------|-------------------|
+| **v1** (stable) | ✅ Works | ❌ Not found |
+| **v1beta** | ❌ 404 (empty) | ❌ Not found |
 
 ---
 
 ## Files That Control Model Configuration
 
-| File | Purpose | Model Variable |
-|------|---------|----------------|
-| `src/lib/copilotkit-config.ts` | Creates service adapter for CopilotKit | `model: "gemini-2.0-flash-001"` |
-| `src/lib/adapters/vertex-ai-adapter.ts` | Custom Vertex AI adapter | Default in constructor |
-| `src/app/api/debug/route.ts` | Debug/test endpoint | `modelName` variable |
+| File | Purpose | Key Settings |
+|------|---------|--------------|
+| `src/lib/copilotkit-config.ts` | Creates service adapter for CopilotKit | `model: "gemini-2.0-flash"` |
+| `src/lib/adapters/vertex-ai-adapter.ts` | Custom Vertex AI adapter | `apiVersion: "v1"`, `model: "gemini-2.0-flash"` |
+| `src/app/api/debug/route.ts` | Debug/test endpoint | `apiVersion: "v1"` |
 
-### Required Change
+### Required Change (API Version)
 Update all files from:
 ```typescript
-model: "gemini-2.0-flash"
+apiVersion: "v1beta"
 ```
 To:
 ```typescript
-model: "gemini-2.0-flash-001"
+apiVersion: "v1"
 ```
 
 ---

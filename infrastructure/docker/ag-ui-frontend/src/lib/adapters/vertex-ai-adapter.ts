@@ -24,11 +24,11 @@ function log(message: string, data?: object) {
 }
 
 export interface VertexAIAdapterOptions {
-  /** Model name (default: gemini-2.0-flash-001) */
+  /** Model name (default: gemini-2.0-flash) */
   model?: string;
   /** GCP region (default: us-central1) */
   location?: string;
-  /** API version (default: v1beta) */
+  /** API version (default: v1) - v1beta returns 404 for newer models */
   apiVersion?: string;
 }
 
@@ -46,9 +46,9 @@ export class VertexAIAdapter extends LangChainAdapter {
   };
 
   constructor(options?: VertexAIAdapterOptions) {
-    const modelName = options?.model ?? "gemini-2.0-flash-001";
+    const modelName = options?.model ?? "gemini-2.0-flash";
     const location = options?.location ?? process.env.GOOGLE_CLOUD_REGION ?? "us-central1";
-    const apiVersion = options?.apiVersion ?? "v1beta";
+    const apiVersion = options?.apiVersion ?? "v1"; // Changed from v1beta - v1beta returns 404 for newer models
 
     log("Initializing VertexAIAdapter", {
       modelName,
