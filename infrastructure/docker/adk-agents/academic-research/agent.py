@@ -14,7 +14,11 @@ A2A Protocol Implementation:
 - Handles SendMessage at POST /a2a/tasks
 - Returns Tasks with artifacts containing research findings
 
-**IMPORTANT**: This agent uses Gemini/Vertex AI for intelligent topic discovery.
+**IMPORTANT**: This agent uses Gemini AI for intelligent topic discovery.
+It supports two authentication modes:
+1. Google AI Studio: Set GEMINI_API_KEY (for development)
+2. Vertex AI: Set USE_VERTEX_AI=true and GOOGLE_CLOUD_PROJECT (for GCP deployment)
+
 All model interactions are logged and captured as artifacts for debugging.
 """
 
@@ -33,15 +37,16 @@ from pydantic import BaseModel
 
 # Add shared utilities to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from shared.a2a_utils import parse_llm_json_response, AIUnavailableError, build_ai_unavailable_error_message
-
-# Try to import Gemini AI
-try:
-    import google.generativeai as genai
-    GENAI_AVAILABLE = True
-except ImportError:
-    GENAI_AVAILABLE = False
-    genai = None
+from shared.a2a_utils import parse_llm_json_response
+from shared.gemini_client import (
+    generate_content,
+    is_available as gemini_is_available,
+    get_mode as gemini_get_mode,
+    get_unavailable_error_message,
+    get_config_info as gemini_get_config_info,
+    GeminiError,
+    GeminiUnavailableError,
+)
 
 # =============================================================================
 # Configuration
@@ -49,13 +54,11 @@ except ImportError:
 
 AGENT_NAME = "academic-research"
 AGENT_DESCRIPTION = "Discovers and analyzes academic research topics using Vertex AI"
-AGENT_VERSION = "1.3.0"  # Updated: No fallback - requires Gemini AI
+AGENT_VERSION = "1.4.0"  # Updated: Unified Gemini client with Vertex AI support
 PORT = int(os.getenv("PORT", "8081"))
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 
-# Use Gemini API if available
-USE_AI = GENAI_AVAILABLE and bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+# Use unified Gemini client - supports both Google AI Studio and Vertex AI
+USE_AI = gemini_is_available()
 
 # Request-scoped model interaction log using contextvars for thread safety
 from contextvars import ContextVar
@@ -85,11 +88,10 @@ def get_interactions() -> List[Dict[str, Any]]:
     """Get all model interactions for this request."""
     return _model_interactions.get().copy()
 
-# Configure Gemini if available
-if USE_AI and genai:
-    api_key = GEMINI_API_KEY or GOOGLE_API_KEY
-    genai.configure(api_key=api_key)
-    print(f"✅ Gemini AI configured for research agent with key: {api_key[:8]}...")
+# Log startup configuration
+if USE_AI:
+    config_info = gemini_get_config_info()
+    print(f"✅ Gemini AI configured for research agent (mode={config_info['active_mode']})")
 else:
     print(f"⚠️ Research Agent: Gemini AI NOT configured - using simulated data")
 
@@ -268,6 +270,7 @@ async def discover_research_topics(
     Discover research topics based on query using Gemini AI.
 
     REQUIRED: Gemini AI must be configured for this agent to function.
+    Supports both Google AI Studio (API key) and Vertex AI (ADC) modes.
     
     When AI is enabled:
     1. Use Gemini to generate relevant research topics
@@ -276,19 +279,14 @@ async def discover_research_topics(
     
     NO FALLBACK: If AI is not available, raises an error.
     """
-    if not USE_AI or genai is None:
-        error_msg = build_ai_unavailable_error_message(
-            genai_available=GENAI_AVAILABLE,
-            has_api_key=bool(GEMINI_API_KEY or GOOGLE_API_KEY),
-            agent_name=AGENT_NAME
-        )
+    if not USE_AI:
+        error_msg = get_unavailable_error_message(agent_name=AGENT_NAME)
         
         log_interaction("ai_unavailable_error", {
             "error": error_msg,
-            "genai_available": GENAI_AVAILABLE,
-            "has_api_key": bool(GEMINI_API_KEY or GOOGLE_API_KEY)
+            "gemini_config": gemini_get_config_info()
         })
-        raise AIUnavailableError(error_msg)
+        raise GeminiUnavailableError(error_msg)
     
     return await discover_topics_with_ai(query, max_topics)
 
@@ -299,6 +297,7 @@ async def discover_topics_with_ai(
 ) -> List[Dict[str, Any]]:
     """
     Use Gemini AI to discover and analyze research topics.
+    Supports both Google AI Studio and Vertex AI modes via unified client.
     """
     topic_query = query or "latest trends in technology and AI"
     
@@ -332,8 +331,10 @@ Focus on:
 Return ONLY the JSON array, no other text."""
 
     # Log the LLM request
+    gemini_mode = gemini_get_mode()
     log_interaction("llm_request", {
         "model": "gemini-1.5-flash",
+        "mode": gemini_mode,
         "purpose": "topic_discovery",
         "query": topic_query,
         "prompt_length": len(prompt),
@@ -341,62 +342,58 @@ Return ONLY the JSON array, no other text."""
     })
     
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        
         start_time = datetime.utcnow()
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.GenerationConfig(
-                temperature=0.7,
-                max_output_tokens=2048,
-            )
+        result = await generate_content(
+            prompt=prompt,
+            temperature=0.7,
+            max_output_tokens=2048,
         )
         end_time = datetime.utcnow()
         duration_ms = (end_time - start_time).total_seconds() * 1000
         
-        if response.text:
+        if result["text"]:
             # Log successful response
             log_interaction("llm_response", {
-                "model": "gemini-1.5-flash",
+                "model": result["model"],
+                "mode": result["mode"],
                 "status": "success",
-                "response_length": len(response.text),
+                "response_length": len(result["text"]),
                 "duration_ms": duration_ms,
-                "response_preview": response.text[:500] + "..." if len(response.text) > 500 else response.text
+                "response_preview": result["text"][:500] + "..." if len(result["text"]) > 500 else result["text"]
             })
             
             # Parse the JSON response using shared utility
-            topics = parse_llm_json_response(response.text)
+            topics = parse_llm_json_response(result["text"])
             if topics:
-                print(f"✅ Gemini discovered {len(topics)} research topics")
+                print(f"✅ Gemini ({result['mode']}) discovered {len(topics)} research topics")
                 return topics[:max_topics]
             else:
-                error_msg = f"Failed to parse JSON response from Gemini: {response.text[:200]}"
+                error_msg = f"Failed to parse JSON response from Gemini: {result['text'][:200]}"
                 log_interaction("parse_error", {
                     "error": "Failed to parse JSON",
-                    "raw_response": response.text[:200]
+                    "raw_response": result["text"][:200]
                 })
-                # NO FALLBACK - raise error
-                raise AIUnavailableError(error_msg)
+                raise GeminiError(error_msg)
         else:
             log_interaction("llm_response", {
-                "model": "gemini-1.5-flash",
+                "model": result.get("model", "unknown"),
+                "mode": result.get("mode", "unknown"),
                 "status": "empty_response",
                 "duration_ms": duration_ms
             })
-            # NO FALLBACK - raise error
-            raise AIUnavailableError("Gemini returned empty response for topic discovery")
+            raise GeminiError("Gemini returned empty response for topic discovery")
             
-    except AIUnavailableError:
+    except (GeminiError, GeminiUnavailableError):
         raise  # Re-raise our custom errors
     except Exception as e:
         log_interaction("llm_error", {
             "model": "gemini-1.5-flash",
+            "mode": gemini_mode,
             "error": str(e),
             "error_type": type(e).__name__
         })
         print(f"⚠️ Gemini topic discovery failed: {e}")
-        # NO FALLBACK - raise error
-        raise AIUnavailableError(f"Gemini API error: {e}")
+        raise GeminiError(f"Gemini API error: {e}")
 
 
 def get_simulated_topics(query: Optional[str], max_topics: int) -> List[Dict[str, Any]]:
@@ -425,6 +422,7 @@ async def analyze_topic_for_blog(topic: Dict[str, Any]) -> Dict[str, Any]:
     Analyze a research topic and generate blog writing suggestions using AI.
 
     REQUIRED: Gemini AI must be configured for this function.
+    Supports both Google AI Studio (API key) and Vertex AI (ADC) modes.
     
     Uses Gemini to:
     1. Summarize the research in accessible language
@@ -433,23 +431,21 @@ async def analyze_topic_for_blog(topic: Dict[str, Any]) -> Dict[str, Any]:
     
     NO FALLBACK: If AI is not available, raises an error.
     """
-    if not USE_AI or genai is None:
-        error_msg = build_ai_unavailable_error_message(
-            genai_available=GENAI_AVAILABLE,
-            has_api_key=bool(GEMINI_API_KEY or GOOGLE_API_KEY),
-            agent_name=AGENT_NAME
-        )
+    if not USE_AI:
+        error_msg = get_unavailable_error_message(agent_name=AGENT_NAME)
         log_interaction("ai_unavailable_error", {
             "error": error_msg,
             "topic": topic.get("title", "Unknown")
         })
-        raise AIUnavailableError(error_msg)
+        raise GeminiUnavailableError(error_msg)
     
     return await analyze_topic_with_ai(topic)
 
 
 async def analyze_topic_with_ai(topic: Dict[str, Any]) -> Dict[str, Any]:
-    """Use Gemini to analyze a topic for blog writing."""
+    """Use Gemini to analyze a topic for blog writing.
+    Supports both Google AI Studio and Vertex AI modes via unified client.
+    """
     prompt = f"""Analyze this research topic for a tech blog post:
 
 Topic: {topic.get('title', 'Unknown')}
@@ -476,59 +472,58 @@ Make the blog_angle creative and specific, not generic.
 Key points should be actionable and detailed.
 Return ONLY the JSON, no other text."""
 
+    gemini_mode = gemini_get_mode()
     log_interaction("llm_request", {
         "model": "gemini-1.5-flash",
+        "mode": gemini_mode,
         "purpose": "topic_analysis",
         "topic": topic.get("title"),
         "prompt_length": len(prompt)
     })
     
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
         start_time = datetime.utcnow()
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.GenerationConfig(
-                temperature=0.6,
-                max_output_tokens=1024,
-            )
+        result = await generate_content(
+            prompt=prompt,
+            temperature=0.6,
+            max_output_tokens=1024,
         )
         end_time = datetime.utcnow()
         duration_ms = (end_time - start_time).total_seconds() * 1000
         
-        if response.text:
+        if result["text"]:
             log_interaction("llm_response", {
-                "model": "gemini-1.5-flash",
+                "model": result["model"],
+                "mode": result["mode"],
                 "status": "success",
                 "duration_ms": duration_ms,
-                "response_preview": response.text[:300]
+                "response_preview": result["text"][:300]
             })
             
             # Parse JSON using shared utility
-            analysis = parse_llm_json_response(response.text)
+            analysis = parse_llm_json_response(result["text"])
             if analysis:
                 return analysis
             
             # NO FALLBACK - raise error on parse failure
-            error_msg = f"Failed to parse JSON response from Gemini: {response.text[:200]}"
+            error_msg = f"Failed to parse JSON response from Gemini: {result['text'][:200]}"
             log_interaction("parse_error", {
                 "error": error_msg,
                 "topic": topic.get("title")
             })
-            raise AIUnavailableError(error_msg)
+            raise GeminiError(error_msg)
         
         # NO FALLBACK - raise error on empty response
-        raise AIUnavailableError("Gemini returned empty response for topic analysis")
+        raise GeminiError("Gemini returned empty response for topic analysis")
         
-    except AIUnavailableError:
+    except (GeminiError, GeminiUnavailableError):
         raise  # Re-raise our custom errors
     except Exception as e:
         log_interaction("llm_error", {
             "error": str(e),
             "topic": topic.get("title")
         })
-        # NO FALLBACK - raise error
-        raise AIUnavailableError(f"Gemini API error during topic analysis: {e}")
+        raise GeminiError(f"Gemini API error during topic analysis: {e}")
 
 
 async def process_research_request(message_text: str) -> Dict[str, Any]:

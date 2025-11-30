@@ -135,7 +135,20 @@ resource "google_cloud_run_v2_service" "academic_research" {
         value = var.environment
       }
 
-      # Direct API key value (from GitHub secrets) - takes precedence
+      # Enable Vertex AI mode - uses Application Default Credentials (ADC) from service account
+      # This is the preferred mode on Cloud Run as it uses OAuth2 instead of API keys
+      env {
+        name  = "USE_VERTEX_AI"
+        value = "true"
+      }
+
+      # Set Google Cloud Project ID - required for Vertex AI with ADC
+      env {
+        name  = "GOOGLE_CLOUD_PROJECT"
+        value = var.project_id
+      }
+
+      # Direct API key value (from GitHub secrets) - fallback if Vertex AI is not used
       dynamic "env" {
         for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
         content {
@@ -260,7 +273,20 @@ resource "google_cloud_run_v2_service" "blog_writer" {
         value = google_storage_bucket.blog.name
       }
 
-      # Direct API key value (from GitHub secrets) - takes precedence
+      # Enable Vertex AI mode - uses Application Default Credentials (ADC) from service account
+      # This is the preferred mode on Cloud Run as it uses OAuth2 instead of API keys
+      env {
+        name  = "USE_VERTEX_AI"
+        value = "true"
+      }
+
+      # Set Google Cloud Project ID - required for Vertex AI with ADC
+      env {
+        name  = "GOOGLE_CLOUD_PROJECT"
+        value = var.project_id
+      }
+
+      # Direct API key value (from GitHub secrets) - fallback if Vertex AI is not used
       dynamic "env" {
         for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
         content {
@@ -377,7 +403,20 @@ resource "google_cloud_run_v2_service" "google_trends" {
         value = var.environment
       }
 
-      # Direct API key value (from GitHub secrets) - takes precedence
+      # Enable Vertex AI mode - uses Application Default Credentials (ADC) from service account
+      # This is the preferred mode on Cloud Run as it uses OAuth2 instead of API keys
+      env {
+        name  = "USE_VERTEX_AI"
+        value = "true"
+      }
+
+      # Set Google Cloud Project ID - required for Vertex AI with ADC
+      env {
+        name  = "GOOGLE_CLOUD_PROJECT"
+        value = var.project_id
+      }
+
+      # Direct API key value (from GitHub secrets) - fallback if Vertex AI is not used
       dynamic "env" {
         for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
         content {
