@@ -87,9 +87,42 @@ export default function RealTimeAgentActivity() {
   useEffect(() => {
     fetchActivity();
     
-    // Refresh every 30 seconds
-    const interval = setInterval(fetchActivity, 30000);
-    return () => clearInterval(interval);
+    // Refresh every 30 seconds, but only when page is visible
+    let interval: NodeJS.Timeout | null = null;
+    
+    const startPolling = () => {
+      if (!interval) {
+        interval = setInterval(fetchActivity, 30000);
+      }
+    };
+    
+    const stopPolling = () => {
+      if (interval) {
+        clearInterval(interval);
+        interval = null;
+      }
+    };
+    
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchActivity(); // Refresh immediately when becoming visible
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    };
+    
+    // Start polling if visible
+    if (document.visibilityState === "visible") {
+      startPolling();
+    }
+    
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    
+    return () => {
+      stopPolling();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [fetchActivity]);
 
   if (loading) {

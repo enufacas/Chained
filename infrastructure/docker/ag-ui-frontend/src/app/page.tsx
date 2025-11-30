@@ -14,6 +14,7 @@ import { useCopilotAction, useCopilotReadable, CopilotKit } from "@copilotkit/re
 import { useState, useEffect, useCallback } from "react";
 import { PipelineData, ApiStatus } from "@/types";
 import RealTimeAgentActivity from "@/components/RealTimeAgentActivity";
+import PipelineOutcomes from "@/components/PipelineOutcomes";
 
 // =============================================================================
 // Types (Local types not shared across components)
@@ -368,190 +369,6 @@ function ApiStatusPanel({ onStatusChange }: { onStatusChange: (status: ApiStatus
 }
 
 // =============================================================================
-// Agent Pipeline Visualization
-// =============================================================================
-
-function AgentPipeline({ agents }: { agents: AgentState[] }) {
-  const getStatusColor = (status: AgentStatus) => {
-    switch (status) {
-      case "working":
-        return "border-yellow-500/50 bg-yellow-500/10";
-      case "completed":
-        return "border-green-500/50 bg-green-500/10";
-      case "failed":
-        return "border-red-500/50 bg-red-500/10";
-      default:
-        return "border-slate-700 bg-slate-800";
-    }
-  };
-
-  const getStatusBadge = (status: AgentStatus) => {
-    switch (status) {
-      case "working":
-        return (
-          <span className="px-2 py-0.5 text-xs rounded-full bg-yellow-500/20 text-yellow-400 animate-pulse">
-            Working...
-          </span>
-        );
-      case "completed":
-        return (
-          <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400">✓ Complete</span>
-        );
-      case "failed":
-        return (
-          <span className="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-400">✗ Failed</span>
-        );
-      default:
-        return (
-          <span className="px-2 py-0.5 text-xs rounded-full bg-slate-700 text-slate-400">Idle</span>
-        );
-    }
-  };
-
-  return (
-    <div className="bg-slate-800 rounded-xl border border-slate-700 p-6 mb-6">
-      <h3 className="text-lg font-semibold text-accent-400 mb-4">🤖 Agent Pipeline</h3>
-      <div className="flex items-center justify-between gap-4">
-        {agents.map((agent, index) => (
-          <div key={agent.name} className="flex items-center flex-1">
-            <div className={`flex-1 p-4 rounded-xl border transition-all ${getStatusColor(agent.status)}`}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xl">{agent.icon}</span>
-                {getStatusBadge(agent.status)}
-              </div>
-              <h4 className="font-semibold text-white">{agent.displayName}</h4>
-              <p className="text-xs text-slate-400 mt-1">{agent.description}</p>
-              <span className="text-[10px] text-slate-500 mt-2 block">{agent.framework}</span>
-            </div>
-            {index < agents.length - 1 && <div className="text-2xl text-slate-600 px-4">→</div>}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// =============================================================================
-// Sample Data Display
-// =============================================================================
-
-function SampleDataDisplay({ data }: { data: PipelineData }) {
-  const [activeTab, setActiveTab] = useState<"research" | "trends" | "blog">("research");
-
-  return (
-    <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden mb-6">
-      {/* Tabs */}
-      <div className="flex border-b border-slate-700">
-        {(["research", "trends", "blog"] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-3 px-4 text-sm font-medium transition ${
-              activeTab === tab
-                ? "bg-accent-500/10 text-accent-400 border-b-2 border-accent-500"
-                : "text-slate-400 hover:text-slate-300 hover:bg-slate-700/50"
-            }`}
-          >
-            {tab === "research" && "🔬 Research"}
-            {tab === "trends" && "📈 Trends"}
-            {tab === "blog" && "✍️ Blog"}
-          </button>
-        ))}
-      </div>
-
-      {/* Content */}
-      <div className="p-6">
-        {activeTab === "research" && (
-          <div className="space-y-4">
-            <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Recommended Topic</p>
-              <p className="text-white font-medium mt-1">{data.research.findings.recommendedTopic.topic}</p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Domain</p>
-              <p className="text-slate-300 mt-1">{data.research.findings.recommendedTopic.domain}</p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Key Points</p>
-              <ul className="text-sm text-slate-400 list-disc list-inside mt-1 space-y-1">
-                {data.research.findings.recommendedTopic.keyPoints.map((point, i) => (
-                  <li key={i}>{point}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "trends" && (
-          <div className="space-y-4">
-            <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Topics Analyzed</p>
-              <p className="text-white font-medium mt-1">{data.trends.trendsData.topicsAnalyzed}</p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Trending Keywords</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {data.trends.trendsData.trendingKeywords.map((kw, i) => (
-                  <span key={i} className="px-2 py-1 text-xs rounded-full bg-blue-500/20 text-blue-400">
-                    {kw}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Recommended Focus</p>
-              <p className="text-slate-300 mt-1">{data.trends.trendsData.recommendedFocus}</p>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "blog" && (
-          <div className="space-y-4">
-            <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Title</p>
-              <p className="text-white font-medium mt-1">{data.blog.blogMetadata.title}</p>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider">Word Count</p>
-                <p className="text-slate-300 mt-1">{data.blog.blogMetadata.wordCount}</p>
-              </div>
-              <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider">Read Time</p>
-                <p className="text-slate-300 mt-1">{data.blog.blogMetadata.readTimeMinutes} min</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Tags</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {data.blog.blogMetadata.tags.map((tag, i) => (
-                  <span key={i} className="px-2 py-1 text-xs rounded-full bg-violet-500/20 text-violet-400">
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-            {data.blog.deploymentInfo.url && (
-              <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider">Deployment URL</p>
-                <a
-                  href={data.blog.deploymentInfo.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent-400 hover:underline text-sm mt-1 inline-block"
-                >
-                  {data.blog.deploymentInfo.url} ↗
-                </a>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// =============================================================================
 // Chat Panel (works with or without LLM key)
 // =============================================================================
 
@@ -620,9 +437,6 @@ function MainContent({
   apiStatus: ApiStatus;
   onApiStatusChange: (status: ApiStatus) => void;
 }) {
-  // State for collapsible chat panel
-  const [isChatOpen, setIsChatOpen] = useState(true);
-  
   // Make pipeline data available to CopilotKit
   useCopilotReadable({
     description: "Current A2A pipeline run data including research findings, trends analysis, and blog output",
@@ -925,150 +739,99 @@ Just type a message like: "@research-agent What's trending in AI?"`;
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6">
-        {/* Mobile Chat Toggle Button */}
-        <button
-          onClick={() => setIsChatOpen(!isChatOpen)}
-          className="lg:hidden w-full mb-4 flex items-center justify-center gap-2 p-3 bg-accent-500/20 border border-accent-500/50 rounded-xl text-accent-300 hover:bg-accent-500/30 transition"
-        >
-          {isChatOpen ? (
-            <>
-              <span>📊</span>
-              <span>Show Dashboard</span>
-              <span className="text-xs bg-accent-500/30 px-2 py-0.5 rounded-full">Hide Chat</span>
-            </>
-          ) : (
-            <>
-              <span>💬</span>
-              <span>Open AI Chat</span>
-              <span className="text-xs bg-green-500/30 px-2 py-0.5 rounded-full text-green-300">
-                {apiStatus.available ? "Ready" : "Offline"}
-              </span>
-            </>
-          )}
-        </button>
-
-        <div className={`grid gap-6 ${isChatOpen ? 'lg:grid-cols-3' : ''}`}>
-          {/* Left Column - Chat (Collapsible on mobile) */}
-          {isChatOpen && (
-            <div className="lg:col-span-1">
-              <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden h-[500px] lg:h-[700px] sticky top-24">
-                <div className="p-4 border-b border-slate-700 bg-slate-900/50 flex items-center justify-between">
-                  <div>
-                    <h2 className="font-semibold text-accent-400">💬 AI Assistant</h2>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {apiStatus.available
-                        ? `Powered by ${
-                            apiStatus.provider === "vertex-ai"
-                              ? "Vertex AI"
-                              : apiStatus.provider === "gemini"
-                              ? "Gemini"
-                              : "OpenAI"
-                          }`
-                        : "Configure API key to enable"}
-                    </p>
-                  </div>
-                  {/* Desktop collapse button */}
-                  <button
-                    onClick={() => setIsChatOpen(false)}
-                    className="hidden lg:flex items-center gap-1 px-2 py-1 text-xs rounded bg-slate-700 hover:bg-slate-600 text-slate-400 transition"
-                    title="Collapse chat"
-                  >
-                    ◀ Hide
-                  </button>
-                </div>
-                <div className="h-[calc(100%-65px)]">
-                  <ChatPanel apiAvailable={apiStatus.available} />
+        {/* Main Layout: Chat + Activity panels side by side */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* Left Column - Chat (Always Visible) */}
+          <div className="order-2 lg:order-1">
+            <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden h-[600px] lg:h-[800px] sticky top-24">
+              <div className="p-4 border-b border-slate-700 bg-slate-900/50 flex items-center justify-between">
+                <div>
+                  <h2 className="font-semibold text-accent-400">💬 AI Assistant</h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    {apiStatus.available
+                      ? `Powered by ${
+                          apiStatus.provider === "vertex-ai"
+                            ? "Vertex AI"
+                            : apiStatus.provider === "gemini"
+                            ? "Gemini"
+                            : "OpenAI"
+                        } • Commands update panels in real-time`
+                      : "Configure API key to enable"}
+                  </p>
                 </div>
               </div>
+              <div className="h-[calc(100%-65px)]">
+                <ChatPanel apiAvailable={apiStatus.available} />
+              </div>
             </div>
-          )}
+          </div>
 
-          {/* Right Column - Dashboard */}
-          <div className={`${isChatOpen ? 'lg:col-span-2 hidden lg:block' : 'col-span-full'} space-y-6`}>
-            {/* Collapsed Chat Toggle (Desktop) */}
-            {!isChatOpen && (
-              <button
-                onClick={() => setIsChatOpen(true)}
-                className="hidden lg:flex items-center gap-2 w-full p-3 bg-accent-500/10 border border-accent-500/30 rounded-xl text-accent-400 hover:bg-accent-500/20 transition"
-              >
-                <span className="text-xl">💬</span>
-                <span className="font-medium">Open AI Chat</span>
-                <span className="text-xs bg-accent-500/20 px-2 py-0.5 rounded-full ml-auto">
-                  {apiStatus.available ? "✓ Ready" : "Configure API key"}
-                </span>
-                <span className="text-slate-400">▶</span>
-              </button>
-            )}
-
-            {/* API Status */}
+          {/* Right Column - Work & Coordination + Outcomes */}
+          <div className="order-1 lg:order-2 space-y-6">
+            {/* API Status (compact) */}
             <ApiStatusPanel onStatusChange={onApiStatusChange} />
 
-            {/* Real-Time Agent Activity */}
-            <RealTimeAgentActivity />
+            {/* Work & Coordination Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">⚡</span>
+                <h2 className="text-lg font-semibold text-white">Work & Coordination</h2>
+                <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">Live</span>
+              </div>
+              <RealTimeAgentActivity />
+            </div>
 
-            {/* Agent Pipeline */}
-            <AgentPipeline agents={agents} />
+            {/* Outcomes Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🎯</span>
+                <h2 className="text-lg font-semibold text-white">Outcomes</h2>
+                <span className="text-xs text-slate-500">Pipeline results & artifacts</span>
+              </div>
+              <PipelineOutcomes />
+            </div>
 
-            {/* Sample Data */}
-            <SampleDataDisplay data={pipelineData} />
-
-            {/* Quick Links */}
-            <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-              <h3 className="text-lg font-semibold text-accent-400 mb-4">🔗 Quick Links</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <a
-                  href="https://github.com/enufacas/Chained/actions/workflows/adk-a2a-blog-pipeline.yml"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition text-sm"
-                >
-                  ⚙️ <span>View Workflow Runs</span>
-                </a>
+            {/* Quick Links (compact) */}
+            <div className="bg-slate-800 rounded-xl border border-slate-700 p-4">
+              <h3 className="text-sm font-semibold text-slate-400 mb-3">🔗 Quick Links</h3>
+              <div className="grid grid-cols-2 gap-2 text-xs">
                 <a
                   href="https://enufacas.github.io/Chained/a2a-pipeline.html"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition text-sm"
+                  className="flex items-center gap-2 p-2 rounded bg-slate-700/50 hover:bg-slate-700 transition"
                 >
-                  📐 <span>Pipeline Architecture</span>
+                  📐 Pipeline Docs
                 </a>
                 <a
                   href="https://enufacas.github.io/Chained/a2a.html"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition text-sm"
+                  className="flex items-center gap-2 p-2 rounded bg-slate-700/50 hover:bg-slate-700 transition"
                 >
-                  📘 <span>A2A Documentation</span>
-                </a>
-                <a
-                  href="https://github.com/CopilotKit/CopilotKit/tree/main/examples/coagents-starter"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition text-sm"
-                >
-                  🪁 <span>CopilotKit Examples</span>
+                  📘 A2A Docs
                 </a>
               </div>
             </div>
-
-            {/* Footer Info */}
-            <div className="text-center text-slate-500 text-sm py-4">
-              <p>
-                Powered by{" "}
-                <a href="https://github.com/CopilotKit/CopilotKit" className="text-accent-400 hover:underline">
-                  CopilotKit
-                </a>
-                {" • "}
-                <a href="https://a2a-protocol.org/" className="text-accent-400 hover:underline">
-                  A2A Protocol
-                </a>
-                {" • "}
-                <a href="https://google.github.io/adk-docs/" className="text-accent-400 hover:underline">
-                  Google ADK
-                </a>
-              </p>
-            </div>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center text-slate-500 text-sm py-6 mt-6">
+          <p>
+            Powered by{" "}
+            <a href="https://github.com/CopilotKit/CopilotKit" className="text-accent-400 hover:underline">
+              CopilotKit
+            </a>
+            {" • "}
+            <a href="https://a2a-protocol.org/" className="text-accent-400 hover:underline">
+              A2A Protocol
+            </a>
+            {" • "}
+            <a href="https://google.github.io/adk-docs/" className="text-accent-400 hover:underline">
+              Google ADK
+            </a>
+          </p>
         </div>
       </main>
 
