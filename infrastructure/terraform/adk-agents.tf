@@ -444,8 +444,9 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
       }
 
       # CORS configuration for adk-web and AG-UI Frontend
-      # In production, restrict to specific origins. For development, allow localhost and Cloud Run frontend.
-      # Configure CORS_ORIGINS environment variable to comma-separated allowed origins.
+      # Production: Uses predictable pattern with project ID for AG-UI frontend
+      # Development: Uses actual Cloud Run service URL (hash 'sguacxy5gq' is auto-generated on service creation)
+      # The dev URL is stable once the service is created; it only changes if the service is deleted and recreated
       env {
         name  = "CORS_ORIGINS"
         value = var.environment == "prod" ? "https://enufacas.github.io,https://chained-ag-ui-frontend-${var.project_id}.${var.region}.run.app" : "http://localhost:4200,http://localhost:4201,http://127.0.0.1:4200,https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app"

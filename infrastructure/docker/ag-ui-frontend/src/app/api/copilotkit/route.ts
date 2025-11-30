@@ -34,11 +34,16 @@ function logWithTimestamp(message: string, data?: object) {
 export const POST = async (req: NextRequest) => {
   logWithTimestamp("POST request received");
   
-  // Log request details for debugging
+  // Log request details for debugging (sanitized - only log metadata, not content)
   try {
     const body = await req.clone().text();
-    const bodyPreview = body.length > 500 ? body.substring(0, 500) + '...' : body;
-    logWithTimestamp("Request body preview", { bodyLength: body.length, preview: bodyPreview });
+    // Only log body length and structure type, not actual content which may contain user messages
+    const isJson = body.startsWith('{') || body.startsWith('[');
+    logWithTimestamp("Request body metadata", { 
+      bodyLength: body.length, 
+      isJson,
+      contentType: req.headers.get('content-type'),
+    });
   } catch (e) {
     logWithTimestamp("Could not read request body for logging");
   }
@@ -93,14 +98,17 @@ export const POST = async (req: NextRequest) => {
       contentType: response.headers.get('content-type'),
     });
     
-    // Clone and log response for debugging (only for non-streaming responses)
+    // Log response metadata for debugging (don't log actual content to protect privacy)
     const contentType = response.headers.get('content-type') || '';
     if (!contentType.includes('text/event-stream')) {
       try {
         const clonedResponse = response.clone();
         const responseText = await clonedResponse.text();
-        const responsePreview = responseText.length > 1000 ? responseText.substring(0, 1000) + '...' : responseText;
-        logWithTimestamp("Response body preview", { length: responseText.length, preview: responsePreview });
+        // Only log metadata, not actual content which may contain AI responses
+        logWithTimestamp("Response body metadata", { 
+          length: responseText.length,
+          isJson: responseText.startsWith('{') || responseText.startsWith('['),
+        });
       } catch (e) {
         logWithTimestamp("Could not read response body for logging");
       }

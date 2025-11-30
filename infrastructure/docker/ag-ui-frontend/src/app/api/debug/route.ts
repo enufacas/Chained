@@ -80,14 +80,18 @@ export const POST = async (req: NextRequest) => {
     );
   }
   
+  // Use same model configuration as the main CopilotKit adapter
+  const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+  const apiVersion = process.env.GEMINI_API_VERSION || "v1beta";
+  
   // Test using ChatGoogle (same as CopilotKit's GoogleGenerativeAIAdapter)
   try {
-    logWithTimestamp("Testing Vertex AI chat...", { message, projectId });
+    logWithTimestamp("Testing Vertex AI chat...", { message, projectId, modelName, apiVersion });
     
     // Create the ChatGoogle model (same way CopilotKit does internally)
     const model = new ChatGoogle({
-      modelName: "gemini-1.5-flash",
-      apiVersion: "v1beta",
+      modelName,
+      apiVersion,
     });
     
     logWithTimestamp("ChatGoogle model created, invoking...");
@@ -106,6 +110,8 @@ export const POST = async (req: NextRequest) => {
         success: true,
         provider: "vertex-ai",
         projectId: projectId,
+        model: modelName,
+        apiVersion: apiVersion,
         input: message,
         response: responseText,
       }),
