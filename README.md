@@ -22,7 +22,6 @@
 | Demo | URL | Description |
 |------|-----|-------------|
 | **A2A Pipeline Chat** | [ag-ui-frontend](https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/) | Chat interface to create and monitor A2A pipelines |
-| **Agent Console** | [adk-api-server](https://chained-adk-api-server-sguacxy5gq-uc.a.run.app) | Direct chat with Academic Research, Blog Writer, and Google Trends agents |
 | **GitHub Pages** | [enufacas.github.io/Chained](https://enufacas.github.io/Chained/) | Dashboard and documentation |
 
 ---
@@ -194,20 +193,32 @@ The repository deploys real A2A-compatible agents to **Google Cloud Run**, enabl
 **Live URL**: [chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app](https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/)
 
 The AG-UI Frontend is a Next.js application using CopilotKit and Vertex AI (Gemini 2.0 Flash) that provides:
+
+#### Core Features
 - **Pipeline Creation** - Create research and blog pipelines via chat
 - **Agent Interaction** - Direct conversation with @research-agent, @seo-agent, @writer-agent
 - **Real-time Status** - Monitor pipeline progress with phase indicators
 - **A2A Step Deep Dive** - View task IDs, artifacts, and timing for each agent step
 
+#### Agent Canvas (Multi-Agent Orchestration)
+- **Visual Team Building** - Click agents to add/remove from custom teams, with drag-and-drop support
+- **6 Configured Agents** - Academic Research, Google Trends, Blog Writer, Code Reviewer, Data Analyst, Image Generator
+- **Turn-Based Execution** - Configure 1-5 turns per agent for iterative refinement
+- **Execution Modes** - Sequential (agents run one at a time) or Parallel (all agents run simultaneously)
+- **Rich Artifact Preview** - View artifacts as rendered markdown, SVG, HTML, JSON, or images
+- **Progressive Disclosure** - Team Mode integrated as expandable section on main page
+
 ### Cloud Run A2A Services
 
 | Service | Live URL | Description |
 |---------|----------|-------------|
-| **AG-UI Frontend** | [ag-ui-frontend](https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/) | Chat interface for A2A pipelines |
-| **ADK API Server** | [adk-api-server](https://chained-adk-api-server-sguacxy5gq-uc.a.run.app) | Agent Console GUI + API endpoints |
+| **AG-UI Frontend** | [ag-ui-frontend](https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/) | Chat interface with Agent Canvas for multi-agent orchestration |
 | **Academic Research Agent** | [chained-academic-research](https://chained-academic-research-sguacxy5gq-uc.a.run.app) | Discovers research topics |
 | **Blog Writer Agent** | [chained-blog-writer](https://chained-blog-writer-sguacxy5gq-uc.a.run.app) | Writes blog posts from research |
 | **Google Trends Agent** | [chained-google-trends](https://chained-google-trends-sguacxy5gq-uc.a.run.app) | Analyzes SEO trends |
+| **Code Reviewer Agent** | [chained-code-reviewer](https://chained-code-reviewer-sguacxy5gq-uc.a.run.app) | Reviews code and provides feedback |
+| **Data Analyst Agent** | [chained-data-analyst](https://chained-data-analyst-sguacxy5gq-uc.a.run.app) | Analyzes data and generates insights |
+| **Image Generator Agent** | [chained-image-generator](https://chained-image-generator-sguacxy5gq-uc.a.run.app) | Creates visual assets |
 
 Each A2A agent exposes standard endpoints:
 - `/health` - Health check
