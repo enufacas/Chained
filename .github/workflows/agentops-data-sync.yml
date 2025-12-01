@@ -347,7 +347,7 @@ jobs:
               --head "$BRANCH_NAME")
             
             # Extract PR number from URL
-            PR_NUMBER=$(echo "$PR_URL" | grep -oP '(?<=pull/)\d+')
+            PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
             echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
             echo "pr_created=true" >> $GITHUB_OUTPUT
             echo "✅ Created PR #$PR_NUMBER"
