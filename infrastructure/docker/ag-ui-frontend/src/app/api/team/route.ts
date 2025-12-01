@@ -8,9 +8,14 @@
  * 4. Create/execute team session (POST)
  *
  * All operations coordinate REAL A2A agents in turn-based execution.
+ * Persists artifacts and sessions to localStorage for cross-page persistence.
  */
 
 import { NextRequest } from "next/server";
+import {
+  saveArtifact,
+  saveSession,
+} from "@/lib/storage";
 
 // =============================================================================
 // Configuration
@@ -455,9 +460,75 @@ ${JSON.stringify(session.context, null, 2)}`;
         }
       }
     }
+    
+    // Persist artifacts to localStorage
+    persistTurnArtifacts(turnResult, session);
   }
   
   return turnResult;
+}
+
+/**
+ * Persist turn artifacts to localStorage for cross-page access
+ */
+function persistTurnArtifacts(turnResult: TurnResult, session: TeamSession): void {
+  try {
+    const sourceType = session.recipeId.startsWith("custom-") ? "team" : "recipe";
+    const storedArtifactIds: string[] = [];
+    
+    // Save all artifacts from this turn
+    for (const artifact of turnResult.artifacts) {
+      const stored = saveArtifact({
+        name: artifact.name,
+        type: artifact.type,
+        data: artifact.data,
+        preview: artifact.data.substring(0, 200),
+        source: sourceType,
+        sourceId: session.id,
+        sourceName: session.recipeName,
+        agentName: turnResult.agentName,
+        phase: `Turn ${turnResult.turnNumber || 1}`,
+        // A2A Protocol metadata
+        a2aType: artifact.type.includes("vnd.a2a.agent-card") ? "agent-card" :
+                 artifact.type.includes("vnd.a2a.task") ? "task" :
+                 artifact.type.includes("vnd.a2a.message") ? "message" : undefined,
+        taskId: turnResult.taskId,
+        contextId: turnResult.contextId,
+      });
+      storedArtifactIds.push(stored.id);
+    }
+    
+    // Update or create session record with artifact IDs
+    const existingSession = typeof window !== 'undefined' ? 
+      (() => {
+        try {
+          const data = localStorage.getItem("ag-ui-sessions");
+          const sessions = data ? JSON.parse(data) : [];
+          return sessions.find((s: { id: string }) => s.id === session.id);
+        } catch {
+          return null;
+        }
+      })() : null;
+    
+    const artifactIds = existingSession?.artifacts || [];
+    saveSession({
+      id: session.id,
+      type: sourceType,
+      name: session.recipeName,
+      topic: session.goal,
+      status: session.status,
+      completedAt: session.status === "completed" ? session.updatedAt : undefined,
+      artifacts: [...artifactIds, ...storedArtifactIds],
+      metadata: {
+        currentTurn: session.currentTurn,
+        totalTurns: session.totalTurns,
+        recipeId: session.recipeId,
+      },
+      a2aContextId: session.context.contextId as string,
+    });
+  } catch (error) {
+    console.warn("[Team API] Failed to persist artifacts:", error);
+  }
 }
 
 // =============================================================================
@@ -642,6 +713,8 @@ async function executeSessionAsync(
   // Mark complete
   if (session.status !== "failed") {
     session.status = "completed";
+    // Ensure currentTurn equals totalTurns when completed
+    session.currentTurn = session.totalTurns;
   }
   
   session.updatedAt = new Date().toISOString();
@@ -659,6 +732,29 @@ async function executeSessionAsync(
   };
   
   activeSessions.set(sessionId, session);
+  
+  // Final persistence update with completion status
+  try {
+    const sourceType = recipe.id.startsWith("custom-") ? "team" : "recipe";
+    saveSession({
+      id: session.id,
+      type: sourceType,
+      name: session.recipeName,
+      topic: session.goal,
+      status: session.status,
+      completedAt: session.status === "completed" ? session.updatedAt : undefined,
+      artifacts: [], // Artifacts already saved during turns
+      metadata: {
+        currentTurn: session.currentTurn,
+        totalTurns: session.totalTurns,
+        recipeId: session.recipeId,
+        finalResult: session.finalResult,
+      },
+      a2aContextId: session.context.contextId as string,
+    });
+  } catch (error) {
+    console.warn("[Team API] Failed to persist final session state:", error);
+  }
 }
 
 /**
