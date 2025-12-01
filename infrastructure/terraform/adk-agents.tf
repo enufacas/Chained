@@ -500,6 +500,369 @@ resource "google_cloud_run_v2_service_iam_member" "google_trends_public" {
 }
 
 # =============================================================================
+# Cloud Run: Code Reviewer Agent
+# =============================================================================
+
+resource "google_cloud_run_v2_service" "code_reviewer" {
+  name     = "chained-code-reviewer"
+  location = var.region
+
+  template {
+    containers {
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/code-reviewer:${var.image_tag}"
+
+      resources {
+        limits = {
+          cpu    = "1"
+          memory = "512Mi"
+        }
+        cpu_idle          = true
+        startup_cpu_boost = true
+      }
+
+      env {
+        name  = "AGENT_NAME"
+        value = "code-reviewer"
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = var.environment
+      }
+
+      env {
+        name  = "USE_VERTEX_AI"
+        value = "true"
+      }
+
+      env {
+        name  = "GOOGLE_CLOUD_PROJECT"
+        value = var.project_id
+      }
+
+      dynamic "env" {
+        for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
+        content {
+          name  = "GOOGLE_API_KEY"
+          value = var.google_api_key
+        }
+      }
+
+      dynamic "env" {
+        for_each = toset(var.gemini_api_key != "" && var.google_api_key == "" ? ["enabled"] : [])
+        content {
+          name  = "GEMINI_API_KEY"
+          value = var.gemini_api_key
+        }
+      }
+
+      dynamic "env" {
+        for_each = toset(var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? ["enabled"] : [])
+        content {
+          name = "GEMINI_API_KEY"
+          value_source {
+            secret_key_ref {
+              secret  = var.gemini_api_key_secret
+              version = "latest"
+            }
+          }
+        }
+      }
+
+      ports {
+        container_port = 8080
+      }
+
+      startup_probe {
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+        initial_delay_seconds = 5
+        timeout_seconds       = 3
+        period_seconds        = 5
+        failure_threshold     = 3
+      }
+
+      liveness_probe {
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+        period_seconds    = 30
+        timeout_seconds   = 3
+        failure_threshold = 3
+      }
+    }
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    service_account = google_service_account.adk_agents.email
+    timeout         = "300s"
+  }
+
+  traffic {
+    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+  }
+
+  depends_on = [google_project_service.required_apis]
+}
+
+resource "google_cloud_run_v2_service_iam_member" "code_reviewer_public" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.code_reviewer.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+# =============================================================================
+# Cloud Run: Data Analyst Agent
+# =============================================================================
+
+resource "google_cloud_run_v2_service" "data_analyst" {
+  name     = "chained-data-analyst"
+  location = var.region
+
+  template {
+    containers {
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/data-analyst:${var.image_tag}"
+
+      resources {
+        limits = {
+          cpu    = "1"
+          memory = "512Mi"
+        }
+        cpu_idle          = true
+        startup_cpu_boost = true
+      }
+
+      env {
+        name  = "AGENT_NAME"
+        value = "data-analyst"
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = var.environment
+      }
+
+      env {
+        name  = "USE_VERTEX_AI"
+        value = "true"
+      }
+
+      env {
+        name  = "GOOGLE_CLOUD_PROJECT"
+        value = var.project_id
+      }
+
+      dynamic "env" {
+        for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
+        content {
+          name  = "GOOGLE_API_KEY"
+          value = var.google_api_key
+        }
+      }
+
+      dynamic "env" {
+        for_each = toset(var.gemini_api_key != "" && var.google_api_key == "" ? ["enabled"] : [])
+        content {
+          name  = "GEMINI_API_KEY"
+          value = var.gemini_api_key
+        }
+      }
+
+      dynamic "env" {
+        for_each = toset(var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? ["enabled"] : [])
+        content {
+          name = "GEMINI_API_KEY"
+          value_source {
+            secret_key_ref {
+              secret  = var.gemini_api_key_secret
+              version = "latest"
+            }
+          }
+        }
+      }
+
+      ports {
+        container_port = 8080
+      }
+
+      startup_probe {
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+        initial_delay_seconds = 5
+        timeout_seconds       = 3
+        period_seconds        = 5
+        failure_threshold     = 3
+      }
+
+      liveness_probe {
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+        period_seconds    = 30
+        timeout_seconds   = 3
+        failure_threshold = 3
+      }
+    }
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    service_account = google_service_account.adk_agents.email
+    timeout         = "300s"
+  }
+
+  traffic {
+    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+  }
+
+  depends_on = [google_project_service.required_apis]
+}
+
+resource "google_cloud_run_v2_service_iam_member" "data_analyst_public" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.data_analyst.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+# =============================================================================
+# Cloud Run: Image Generator Agent
+# =============================================================================
+
+resource "google_cloud_run_v2_service" "image_generator" {
+  name     = "chained-image-generator"
+  location = var.region
+
+  template {
+    containers {
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/image-generator:${var.image_tag}"
+
+      resources {
+        limits = {
+          cpu    = "1"
+          memory = "512Mi"
+        }
+        cpu_idle          = true
+        startup_cpu_boost = true
+      }
+
+      env {
+        name  = "AGENT_NAME"
+        value = "image-generator"
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = var.environment
+      }
+
+      env {
+        name  = "USE_VERTEX_AI"
+        value = "true"
+      }
+
+      env {
+        name  = "GOOGLE_CLOUD_PROJECT"
+        value = var.project_id
+      }
+
+      dynamic "env" {
+        for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
+        content {
+          name  = "GOOGLE_API_KEY"
+          value = var.google_api_key
+        }
+      }
+
+      dynamic "env" {
+        for_each = toset(var.gemini_api_key != "" && var.google_api_key == "" ? ["enabled"] : [])
+        content {
+          name  = "GEMINI_API_KEY"
+          value = var.gemini_api_key
+        }
+      }
+
+      dynamic "env" {
+        for_each = toset(var.gemini_api_key_secret != "" && var.google_api_key == "" && var.gemini_api_key == "" ? ["enabled"] : [])
+        content {
+          name = "GEMINI_API_KEY"
+          value_source {
+            secret_key_ref {
+              secret  = var.gemini_api_key_secret
+              version = "latest"
+            }
+          }
+        }
+      }
+
+      ports {
+        container_port = 8080
+      }
+
+      startup_probe {
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+        initial_delay_seconds = 5
+        timeout_seconds       = 3
+        period_seconds        = 5
+        failure_threshold     = 3
+      }
+
+      liveness_probe {
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+        period_seconds    = 30
+        timeout_seconds   = 3
+        failure_threshold = 3
+      }
+    }
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    service_account = google_service_account.adk_agents.email
+    timeout         = "300s"
+  }
+
+  traffic {
+    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+  }
+
+  depends_on = [google_project_service.required_apis]
+}
+
+resource "google_cloud_run_v2_service_iam_member" "image_generator_public" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.image_generator.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+# =============================================================================
 # Cloud Run: ADK API Server (Bridge for google/adk-web)
 # =============================================================================
 
@@ -554,6 +917,37 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
       env {
         name  = "AGENT_GOOGLE_TRENDS_DESCRIPTION"
         value = "Analyzes Google Trends data to identify trending topics for SEO"
+      }
+
+      # New agents: Code Reviewer, Data Analyst, Image Generator
+      env {
+        name  = "AGENT_CODE_REVIEWER_URL"
+        value = google_cloud_run_v2_service.code_reviewer.uri
+      }
+
+      env {
+        name  = "AGENT_CODE_REVIEWER_DESCRIPTION"
+        value = "Reviews code snippets, suggests improvements, and identifies best practices"
+      }
+
+      env {
+        name  = "AGENT_DATA_ANALYST_URL"
+        value = google_cloud_run_v2_service.data_analyst.uri
+      }
+
+      env {
+        name  = "AGENT_DATA_ANALYST_DESCRIPTION"
+        value = "Analyzes data and generates insights, statistics, and visualizations"
+      }
+
+      env {
+        name  = "AGENT_IMAGE_GENERATOR_URL"
+        value = google_cloud_run_v2_service.image_generator.uri
+      }
+
+      env {
+        name  = "AGENT_IMAGE_GENERATOR_DESCRIPTION"
+        value = "Generates visual content descriptions, diagrams, and image specifications"
       }
 
       # CORS configuration for adk-web and AG-UI Frontend
@@ -621,6 +1015,9 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
     google_cloud_run_v2_service.academic_research,
     google_cloud_run_v2_service.blog_writer,
     google_cloud_run_v2_service.google_trends,
+    google_cloud_run_v2_service.code_reviewer,
+    google_cloud_run_v2_service.data_analyst,
+    google_cloud_run_v2_service.image_generator,
   ]
 }
 
@@ -694,6 +1091,22 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
       env {
         name  = "AGENT_BLOG_WRITER_URL"
         value = google_cloud_run_v2_service.blog_writer.uri
+      }
+
+      # New agents: Code Reviewer, Data Analyst, Image Generator
+      env {
+        name  = "AGENT_CODE_REVIEWER_URL"
+        value = google_cloud_run_v2_service.code_reviewer.uri
+      }
+
+      env {
+        name  = "AGENT_DATA_ANALYST_URL"
+        value = google_cloud_run_v2_service.data_analyst.uri
+      }
+
+      env {
+        name  = "AGENT_IMAGE_GENERATOR_URL"
+        value = google_cloud_run_v2_service.image_generator.uri
       }
 
       # GCP Project ID for blog URL construction in pipeline route
@@ -817,6 +1230,9 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
     google_cloud_run_v2_service.academic_research,
     google_cloud_run_v2_service.blog_writer,
     google_cloud_run_v2_service.google_trends,
+    google_cloud_run_v2_service.code_reviewer,
+    google_cloud_run_v2_service.data_analyst,
+    google_cloud_run_v2_service.image_generator,
   ]
 }
 
@@ -845,6 +1261,21 @@ output "blog_writer_url" {
 output "google_trends_url" {
   description = "URL of the Google Trends Agent"
   value       = google_cloud_run_v2_service.google_trends.uri
+}
+
+output "code_reviewer_url" {
+  description = "URL of the Code Reviewer Agent"
+  value       = google_cloud_run_v2_service.code_reviewer.uri
+}
+
+output "data_analyst_url" {
+  description = "URL of the Data Analyst Agent"
+  value       = google_cloud_run_v2_service.data_analyst.uri
+}
+
+output "image_generator_url" {
+  description = "URL of the Image Generator Agent"
+  value       = google_cloud_run_v2_service.image_generator.uri
 }
 
 output "adk_api_server_url" {
@@ -876,6 +1307,9 @@ output "adk_dev_ui_info" {
     - Academic Research: ${google_cloud_run_v2_service.academic_research.uri}
     - Blog Writer: ${google_cloud_run_v2_service.blog_writer.uri}
     - Google Trends: ${google_cloud_run_v2_service.google_trends.uri}
+    - Code Reviewer: ${google_cloud_run_v2_service.code_reviewer.uri}
+    - Data Analyst: ${google_cloud_run_v2_service.data_analyst.uri}
+    - Image Generator: ${google_cloud_run_v2_service.image_generator.uri}
 
     Health checks available at /health endpoint for each service.
     A2A Agent Cards available at /.well-known/agent.json

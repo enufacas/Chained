@@ -134,6 +134,47 @@ export default function TeamPage() {
     }
   }, [pollSession]);
   
+  // Execute custom team from AgentCanvas
+  const handleCanvasExecute = useCallback(async (
+    goal: string,
+    config: { maxTurnsPerAgent: number; executionMode: "sequential" | "parallel" }
+  ) => {
+    if (selectedTeam.length === 0) {
+      setError("Please select at least one agent");
+      return;
+    }
+    
+    setError(null);
+    setActiveTab("session");
+    
+    try {
+      const response = await fetch("/api/team", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          agentIds: selectedTeam,
+          goal,
+          config,
+        }),
+      });
+      
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to execute team");
+      }
+      
+      const data = await response.json();
+      setActiveSession(data.session);
+      
+      // Poll for updates while running
+      if (data.session.status === "running") {
+        pollSession(data.session.id);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error");
+    }
+  }, [selectedTeam, pollSession]);
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Header */}
@@ -215,6 +256,7 @@ export default function TeamPage() {
             <div className="lg:col-span-2">
               <AgentCanvas
                 onTeamChange={handleTeamChange}
+                onExecute={handleCanvasExecute}
                 initialTeam={selectedTeam}
               />
             </div>

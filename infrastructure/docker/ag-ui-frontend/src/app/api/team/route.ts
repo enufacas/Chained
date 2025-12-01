@@ -26,10 +26,21 @@ const AGENT_URLS: Record<string, string | undefined> = {
     (isDevelopment ? "" : "https://chained-google-trends-sguacxy5gq-uc.a.run.app"),
   "blog-writer": process.env.AGENT_BLOG_WRITER_URL || 
     (isDevelopment ? "" : "https://chained-blog-writer-sguacxy5gq-uc.a.run.app"),
-  "code-reviewer": process.env.AGENT_CODE_REVIEWER_URL,
-  "data-analyst": process.env.AGENT_DATA_ANALYST_URL,
-  "image-generator": process.env.AGENT_IMAGE_GENERATOR_URL,
+  "code-reviewer": process.env.AGENT_CODE_REVIEWER_URL ||
+    (isDevelopment ? "" : "https://chained-code-reviewer-sguacxy5gq-uc.a.run.app"),
+  "data-analyst": process.env.AGENT_DATA_ANALYST_URL ||
+    (isDevelopment ? "" : "https://chained-data-analyst-sguacxy5gq-uc.a.run.app"),
+  "image-generator": process.env.AGENT_IMAGE_GENERATOR_URL ||
+    (isDevelopment ? "" : "https://chained-image-generator-sguacxy5gq-uc.a.run.app"),
 };
+
+// =============================================================================
+// Constants
+// =============================================================================
+
+const DEFAULT_TURNS_PER_AGENT = 2;
+const MAX_TURNS_PER_AGENT = 5;
+const MIN_TURNS_PER_AGENT = 1;
 
 // =============================================================================
 // Types
@@ -52,6 +63,11 @@ interface Recipe {
   tags: string[];
 }
 
+interface ExecutionConfig {
+  maxTurnsPerAgent: number;
+  executionMode: "sequential" | "parallel";
+}
+
 type TurnStatus = "pending" | "running" | "completed" | "failed" | "skipped";
 
 interface TurnResult {
@@ -66,6 +82,7 @@ interface TurnResult {
   message?: string;
   artifacts: Array<{ name: string; type: string; data: string }>;
   error?: string;
+  turnNumber?: number;
 }
 
 interface TeamSession {
@@ -81,6 +98,7 @@ interface TeamSession {
   context: Record<string, unknown>;
   turnResults: TurnResult[];
   finalResult?: Record<string, unknown>;
+  config?: ExecutionConfig;
 }
 
 // =============================================================================
@@ -341,7 +359,7 @@ ${JSON.stringify(session.context, null, 2)}`;
   return turnResult;
 }
 
-async function executeSession(recipeId: string, goal: string, initialContext: Record<string, unknown> = {}): Promise<TeamSession> {
+async function executeSession(recipeId: string, goal: string, initialContext: Record<string, unknown> = {}, config?: ExecutionConfig): Promise<TeamSession> {
   const recipe = BUILTIN_RECIPES.find((r) => r.id === recipeId);
   if (!recipe) {
     throw new Error(`Recipe ${recipeId} not found`);
@@ -349,6 +367,10 @@ async function executeSession(recipeId: string, goal: string, initialContext: Re
   
   const sessionId = generateSessionId();
   const now = new Date().toISOString();
+  const executionConfig = config || { maxTurnsPerAgent: 1, executionMode: "sequential" };
+  
+  // Calculate total turns based on config
+  const totalTurns = recipe.steps.length * executionConfig.maxTurnsPerAgent;
   
   const session: TeamSession = {
     id: sessionId,
@@ -357,11 +379,12 @@ async function executeSession(recipeId: string, goal: string, initialContext: Re
     goal,
     status: "pending",
     currentTurn: 0,
-    totalTurns: recipe.steps.length,
+    totalTurns,
     createdAt: now,
     updatedAt: now,
     context: { ...initialContext, goal, contextId: sessionId },
     turnResults: [],
+    config: executionConfig,
   };
   
   activeSessions.set(sessionId, session);
@@ -369,19 +392,53 @@ async function executeSession(recipeId: string, goal: string, initialContext: Re
   // Execute turns
   session.status = "running";
   
-  for (let i = 0; i < recipe.steps.length; i++) {
-    const step = recipe.steps[i];
-    session.currentTurn = i + 1;
-    session.updatedAt = new Date().toISOString();
-    activeSessions.set(sessionId, session);
-    
-    const turnResult = await executeTurn(session, step, i);
-    session.turnResults.push(turnResult);
-    
-    // Stop on required failure
-    if (turnResult.status === "failed" && step.required) {
-      session.status = "failed";
-      break;
+  if (executionConfig.executionMode === "parallel") {
+    // Parallel execution - run all agents in parallel for each turn
+    for (let turn = 0; turn < executionConfig.maxTurnsPerAgent; turn++) {
+      const turnPromises = recipe.steps.map(async (step, i) => {
+        const turnResult = await executeTurn(session, step, i + turn * recipe.steps.length);
+        turnResult.turnNumber = turn + 1;
+        return turnResult;
+      });
+      
+      const turnResults = await Promise.all(turnPromises);
+      session.turnResults.push(...turnResults);
+      session.currentTurn = (turn + 1) * recipe.steps.length;
+      session.updatedAt = new Date().toISOString();
+      activeSessions.set(sessionId, session);
+      
+      // Check for required failures
+      const hasRequiredFailure = turnResults.some((result, i) => 
+        result.status === "failed" && recipe.steps[i].required
+      );
+      if (hasRequiredFailure) {
+        session.status = "failed";
+        break;
+      }
+    }
+  } else {
+    // Sequential execution - run agents one at a time
+    let stepIndex = 0;
+    for (let turn = 0; turn < executionConfig.maxTurnsPerAgent; turn++) {
+      for (let i = 0; i < recipe.steps.length; i++) {
+        const step = recipe.steps[i];
+        session.currentTurn = stepIndex + 1;
+        session.updatedAt = new Date().toISOString();
+        activeSessions.set(sessionId, session);
+        
+        const turnResult = await executeTurn(session, step, stepIndex);
+        turnResult.turnNumber = turn + 1;
+        session.turnResults.push(turnResult);
+        stepIndex++;
+        
+        // Stop on required failure
+        if (turnResult.status === "failed" && step.required) {
+          session.status = "failed";
+          break;
+        }
+      }
+      
+      if (session.status === "failed") break;
     }
   }
   
@@ -399,8 +456,111 @@ async function executeSession(recipeId: string, goal: string, initialContext: Re
     goal,
     status: session.status,
     turnsCompleted: session.turnResults.filter((t) => t.status === "completed").length,
-    turnsTotal: recipe.steps.length,
+    turnsTotal: totalTurns,
     context: session.context,
+    config: executionConfig,
+  };
+  
+  activeSessions.set(sessionId, session);
+  return session;
+}
+
+// Execute a custom team workflow (from AgentCanvas)
+async function executeCustomTeam(
+  agentIds: string[],
+  goal: string,
+  config: ExecutionConfig,
+  initialContext: Record<string, unknown> = {}
+): Promise<TeamSession> {
+  const sessionId = generateSessionId();
+  const now = new Date().toISOString();
+  
+  // Create custom recipe from agent IDs
+  const customRecipe: Recipe = {
+    id: `custom-${sessionId}`,
+    name: "Custom Team",
+    description: "Custom team execution from Agent Canvas",
+    goal,
+    steps: agentIds.map((agentId) => ({
+      agentId,
+      instruction: `Execute your specialized task for: ${goal}`,
+      required: false,
+      timeoutSeconds: 120,
+      dependsOn: [],
+    })),
+    tags: ["custom"],
+  };
+  
+  // Calculate total turns based on config
+  const totalTurns = customRecipe.steps.length * config.maxTurnsPerAgent;
+  
+  const session: TeamSession = {
+    id: sessionId,
+    recipeId: customRecipe.id,
+    recipeName: customRecipe.name,
+    goal,
+    status: "pending",
+    currentTurn: 0,
+    totalTurns,
+    createdAt: now,
+    updatedAt: now,
+    context: { ...initialContext, goal, contextId: sessionId },
+    turnResults: [],
+    config,
+  };
+  
+  activeSessions.set(sessionId, session);
+  
+  // Execute turns
+  session.status = "running";
+  
+  if (config.executionMode === "parallel") {
+    // Parallel execution - run all agents simultaneously for each turn
+    for (let turn = 0; turn < config.maxTurnsPerAgent; turn++) {
+      const turnPromises = customRecipe.steps.map(async (step, i) => {
+        const turnResult = await executeTurn(session, step, i + turn * customRecipe.steps.length);
+        turnResult.turnNumber = turn + 1;
+        return turnResult;
+      });
+      
+      const turnResults = await Promise.all(turnPromises);
+      session.turnResults.push(...turnResults);
+      session.currentTurn = (turn + 1) * customRecipe.steps.length;
+      session.updatedAt = new Date().toISOString();
+      activeSessions.set(sessionId, session);
+    }
+  } else {
+    // Sequential execution - run agents one at a time
+    let stepIndex = 0;
+    for (let turn = 0; turn < config.maxTurnsPerAgent; turn++) {
+      for (let i = 0; i < customRecipe.steps.length; i++) {
+        const step = customRecipe.steps[i];
+        session.currentTurn = stepIndex + 1;
+        session.updatedAt = new Date().toISOString();
+        activeSessions.set(sessionId, session);
+        
+        const turnResult = await executeTurn(session, step, stepIndex);
+        turnResult.turnNumber = turn + 1;
+        session.turnResults.push(turnResult);
+        stepIndex++;
+      }
+    }
+  }
+  
+  // Mark complete
+  session.status = "completed";
+  session.updatedAt = new Date().toISOString();
+  
+  // Build final result
+  session.finalResult = {
+    sessionId,
+    recipe: customRecipe.name,
+    goal,
+    status: session.status,
+    turnsCompleted: session.turnResults.filter((t) => t.status === "completed").length,
+    turnsTotal: totalTurns,
+    context: session.context,
+    config,
   };
   
   activeSessions.set(sessionId, session);
@@ -492,22 +652,20 @@ export async function GET(request: NextRequest) {
  * Execute a team session
  *
  * Body:
- * - recipeId: Recipe to execute
+ * - recipeId: Recipe to execute (optional if agentIds provided)
+ * - agentIds: Custom agent IDs (optional if recipeId provided)
  * - goal: Specific goal for this session
  * - context: Optional initial context
+ * - config: Optional execution configuration
+ *   - maxTurnsPerAgent: Number of turns per agent (1-5, default 2)
+ *   - executionMode: "sequential" or "parallel" (default "sequential")
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { recipeId, goal, context } = body;
+    const { recipeId, agentIds, goal, context, config } = body;
     
-    if (!recipeId) {
-      return new Response(JSON.stringify({ error: "recipeId is required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    
+    // Validate goal
     if (!goal) {
       return new Response(JSON.stringify({ error: "goal is required" }), {
         status: 400,
@@ -515,7 +673,32 @@ export async function POST(request: NextRequest) {
       });
     }
     
-    const session = await executeSession(recipeId, goal, context || {});
+    // Validate execution config
+    const executionConfig: ExecutionConfig = {
+      maxTurnsPerAgent: Math.min(
+        Math.max(config?.maxTurnsPerAgent || DEFAULT_TURNS_PER_AGENT, MIN_TURNS_PER_AGENT),
+        MAX_TURNS_PER_AGENT
+      ),
+      executionMode: config?.executionMode === "parallel" ? "parallel" : "sequential",
+    };
+    
+    let session: TeamSession;
+    
+    // Check for custom team execution
+    if (agentIds && Array.isArray(agentIds) && agentIds.length > 0) {
+      session = await executeCustomTeam(agentIds, goal, executionConfig, context || {});
+    } else if (recipeId) {
+      // Recipe-based execution
+      session = await executeSession(recipeId, goal, context || {}, executionConfig);
+    } else {
+      return new Response(
+        JSON.stringify({ error: "Either recipeId or agentIds is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
     
     return new Response(JSON.stringify({ success: true, session }), {
       status: 201,
