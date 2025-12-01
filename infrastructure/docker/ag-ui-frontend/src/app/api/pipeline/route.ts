@@ -894,6 +894,16 @@ Domain: ${domain}`,
           createdAt: pipeline.createdAt,
           completedAt: pipeline.updatedAt,
           totalDurationMs: pipeline.totalDurationMs,
+          a2aChaining: {
+            description: "Each agent receives previous task IDs via A2A protocol referenceTaskIds field",
+            taskIdChain: taskIds,
+            agentSequence: [
+              "Academic Research Agent → Research data and keywords",
+              "Google Trends Agent (refs research) → SEO analysis and trending topics", 
+              "Blog Writer Agent (refs research + trends) → Content creation and publishing"
+            ],
+            ultimateArtifactCombines: "All outputs from the agent chain into a single comprehensive summary"
+          },
           phases: {
             research: pipeline.results?.research || null,
             trends: pipeline.results?.trends || null,
@@ -908,9 +918,9 @@ Domain: ${domain}`,
             message: step.message,
             artifactCount: step.artifacts.length,
           })) || [],
-          summary: `Pipeline "${pipeline.topic}" completed successfully with ${pipeline.a2aSteps?.length || 0} agent steps. Research domain: ${pipeline.results?.research?.domain || "Unknown"}. Blog published at: ${pipeline.results?.blog?.url || "N/A"}`,
+          summary: `Pipeline "${pipeline.topic}" completed successfully with ${pipeline.a2aSteps?.length || 0} agent steps. Each agent received outputs from previous agents via A2A protocol referenceTaskIds. Research domain: ${pipeline.results?.research?.domain || "Unknown"}. Blog published at: ${pipeline.results?.blog?.url || "N/A"}`,
         }, null, 2),
-        preview: `Ultimate artifact for pipeline: ${pipeline.topic}`,
+        preview: `Ultimate artifact for pipeline: ${pipeline.topic} - Combines work from ${pipeline.a2aSteps?.length || 0} agents via A2A chaining`,
       };
       
       const ultimateSaved = saveArtifact({
