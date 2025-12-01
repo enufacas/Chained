@@ -452,7 +452,7 @@ jobs:
               echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
               echo "🎉 GitHub Copilot learning PR merged"
             else
-              echo "❌ Failed to auto-merge PR #$PR_NUMBER"
+              echo "❌ Failed to merge PR #$PR_NUMBER"
               echo "This may indicate:"
               echo "  - Merge conflicts"
               echo "  - Required checks not passing"
