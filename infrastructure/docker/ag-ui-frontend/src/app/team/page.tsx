@@ -10,7 +10,7 @@
 
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import AgentCanvas from "@/components/AgentCanvas";
 import RecipeBuilder from "@/components/RecipeBuilder";
@@ -356,7 +356,7 @@ function RecentSessions({
   const [loading, setLoading] = useState(true);
   
   // Fetch recent sessions
-  useState(() => {
+  useEffect(() => {
     const fetchSessions = async () => {
       try {
         const response = await fetch("/api/team?sessions=true");
@@ -372,7 +372,7 @@ function RecentSessions({
     };
     
     fetchSessions();
-  });
+  }, []);
   
   if (loading) {
     return (
