@@ -73,10 +73,23 @@ The A2A UI (Agent-to-Agent User Interface) is a Next.js application that provide
 | `PipelineOutcomes` | Lists pipeline results and blog posts |
 | `PipelineDetailView` | Deep dive into individual pipeline runs |
 | `InteractivePipelineChat` | A2A middleware chat component |
+| `AssetPreview` | Rich rendering for markdown, SVG, HTML, JSON, images |
 
-### 3. Team Page (`/src/app/team/page.tsx`)
+### 3. Main Page (`/src/app/page.tsx`)
 
-Multi-agent orchestration with:
+**Unified single-page design with progressive disclosure:**
+- AI Chat panel (left side, always visible)
+- Work & Coordination section (real-time agent activity)
+- Outcomes section (pipeline results and artifacts)
+- **Team Mode section (expandable/collapsible)**:
+  - Click to expand for Agent Canvas or Recipe Builder
+  - Tab navigation between Canvas and Recipe modes
+  - Session progress shown inline when executing
+  - Collapse to focus on other sections
+
+### 4. Team Page (`/src/app/team/page.tsx`) - Standalone Option
+
+Still available at `/team` for full-screen team orchestration with:
 - Agent Canvas for team selection
 - Turn configuration (1-5 turns per agent)
 - Execution mode (sequential/parallel)
@@ -94,10 +107,12 @@ Multi-agent orchestration with:
 6. **Pipeline Detail View** - Click-to-expand with lifecycle visualization
 7. **A2A Steps Deep Dive** - Task IDs, artifacts, execution times
 8. **Enhanced Agent Prompts** - Detailed prompts for quality content
-9. **Agent Canvas** - Visual team builder with text input (NEW)
-10. **Turn-Based Execution** - 2-5 turns per agent configuration (NEW)
-11. **Execution Modes** - Sequential and parallel execution (NEW)
-12. **All 6 Agents Configured** - Including data-analyst & image-generator (NEW)
+9. **Agent Canvas** - Visual team builder with text input
+10. **Turn-Based Execution** - 2-5 turns per agent configuration
+11. **Execution Modes** - Sequential and parallel execution
+12. **All 6 Agents Configured** - Including data-analyst & image-generator
+13. **Unified Single Page** - Team Mode integrated via progressive disclosure (NEW)
+14. **Rich Asset Preview** - Rendered markdown, SVG, HTML, JSON, images (NEW)
 
 ### 🚧 In Progress
 
