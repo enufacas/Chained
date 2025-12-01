@@ -6,6 +6,37 @@ Format: `## [Date] PR #XXX - Title`
 
 ---
 
+## [2025-12-01] PR #TBD - AG-UI Security Guide
+
+### Added
+- **Security Guide Documentation**:
+  - Comprehensive security guide for AG-UI Frontend at `docs/a2a-ui/SECURITY_GUIDE.md`
+  - Documents 5 security options:
+    1. Identity-Aware Proxy (IAP) - Recommended for user authentication
+    2. API Gateway with Authentication - For API-level protection
+    3. Application-Level Authentication (Next.js Middleware) - Quick implementation
+    4. Cloud Run Service-to-Service Authentication - For backend protection
+    5. Rate Limiting + Monitoring - Defense in depth
+  - Step-by-step implementation instructions for each option
+  - Terraform configuration examples
+  - Security considerations and best practices
+  - Recommended layered approach combining multiple options
+
+### Changed
+- **README Updates**:
+  - Added Security section to `docs/a2a-ui/README.md` with link to Security Guide
+  - Added Security section to `infrastructure/docker/ag-ui-frontend/README.md`
+  - Added Security Guide to References section
+
+### Why This Matters
+The AG-UI Frontend is currently deployed with public access (`allUsers` IAM binding), meaning:
+- Anyone can access the frontend and API endpoints
+- Chat requests call Vertex AI, generating costs
+- Risk of unauthorized API usage and cost overruns
+- Need authentication/authorization to prevent abuse
+
+---
+
 ## [2025-12-01] PR #TBD - AG-UI Refinements: Artifacts, Persistence, Preview Overlay
 
 ### Added

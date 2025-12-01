@@ -173,9 +173,22 @@ gcloud run deploy ag-ui-frontend \
   --allow-unauthenticated
 ```
 
+## Security
+
+⚠️ **Important**: By default, Cloud Run services are deployed with `--allow-unauthenticated`, making them publicly accessible. This means anyone can call the API endpoints and generate Vertex AI costs.
+
+**To secure your deployment**, see the [Security Guide](../../../docs/a2a-ui/SECURITY_GUIDE.md) for:
+- Identity-Aware Proxy (IAP) setup
+- API Gateway authentication
+- Application-level API key protection
+- Rate limiting and cost monitoring
+
+For production deployments, we strongly recommend implementing at least one authentication mechanism.
+
 ## References
 
 - [CopilotKit Documentation](https://docs.copilotkit.ai/)
 - [CopilotKit GitHub](https://github.com/CopilotKit/CopilotKit)
 - [AG-UI Protocol](https://docs.ag-ui.com/)
 - [A2A Protocol](https://a2a-protocol.org/)
+- [Security Guide](../../../docs/a2a-ui/SECURITY_GUIDE.md)

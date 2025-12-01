@@ -382,8 +382,19 @@ npm run build
 2. Check execution mode (sequential may take longer)
 3. Monitor session status via `/api/team?session=xxx`
 
+## Security
+
+⚠️ **Important**: The AG-UI Frontend exposes API endpoints that call Vertex AI and other GCP services. Without proper authentication, unauthorized users can generate significant costs.
+
+See [**Security Guide**](./SECURITY_GUIDE.md) for:
+- Authentication options (IAP, API Gateway, API Keys)
+- Step-by-step implementation instructions
+- Rate limiting and cost monitoring
+- Recommended security architecture
+
 ## Documentation
 
+- [Security Guide](./SECURITY_GUIDE.md) - **Secure your deployment**
 - [A2A Success History](../a2a/A2A_SUCCESS_HISTORY.md) - Milestone tracking
 - [A2A Status](../a2a/A2A_STATUS.md) - Overall implementation status
 - [A2A Integration Design](../a2a/A2A_INTEGRATION_DESIGN.md) - Architecture details
