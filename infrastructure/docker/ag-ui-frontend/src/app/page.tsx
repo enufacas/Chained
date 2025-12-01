@@ -87,6 +87,16 @@ interface TeamSession {
   }>;
 }
 
+// Helper function to check if a session is still active (running or pending)
+function isSessionActive(session: TeamSession | null): boolean {
+  return session?.status === "running" || session?.status === "pending";
+}
+
+// Helper function to check if a session has finished (completed or failed)
+function isSessionFinished(session: TeamSession | null): boolean {
+  return session?.status === "completed" || session?.status === "failed";
+}
+
 const AGENT_ICONS: Record<string, string> = {
   "academic-research": "🔬",
   "google-trends": "📈",
@@ -938,12 +948,12 @@ function MainContent({
             }
           }
           
-          if (session.status === "running" || session.status === "pending") {
+          if (isSessionActive(session)) {
             setTimeout(poll, 2000);
           } else {
             // Session completed or failed - add to completed sessions list
             setIsTeamExecuting(false);
-            if (session.status === "completed" || session.status === "failed") {
+            if (isSessionFinished(session)) {
               setCompletedSessions(prev => {
                 // Avoid duplicates
                 if (prev.some(s => s.id === session.id)) return prev;

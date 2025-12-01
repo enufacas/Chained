@@ -655,7 +655,14 @@ export async function POST(request: NextRequest) {
     // Start execution asynchronously (don't await)
     // The execution updates activeSessions in place, allowing polling to work
     executeSessionAsync(session.id, recipe, executionConfig).catch((error) => {
-      console.error("[Team API] Async execution error:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      console.error(`[Team API] Async execution error for session ${session.id}:`, {
+        sessionId: session.id,
+        recipeId: recipe.id,
+        error: errorMessage,
+        stack: errorStack,
+      });
       const s = activeSessions.get(session.id);
       if (s) {
         s.status = "failed";
