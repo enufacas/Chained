@@ -53,6 +53,13 @@ export default function RecipeBuilder({ onRecipeSelect, onGoalSubmit, isExecutin
   // Combine local and prop executing state
   const executing = isExecuting || localExecuting;
   
+  // Reset local executing state when parent's isExecuting changes to false
+  useEffect(() => {
+    if (!isExecuting && localExecuting) {
+      setLocalExecuting(false);
+    }
+  }, [isExecuting, localExecuting]);
+  
   // Fetch agents and recipes
   const fetchData = useCallback(async () => {
     try {
@@ -100,14 +107,10 @@ export default function RecipeBuilder({ onRecipeSelect, onGoalSubmit, isExecutin
     } catch (error) {
       // Restore goal if execution failed to start
       setGoal(currentGoal);
+      setLocalExecuting(false);
       console.error("Failed to start execution:", error);
     }
-    // Reset after a short timeout if parent doesn't manage it
-    setTimeout(() => {
-      if (!isExecuting) {
-        setLocalExecuting(false);
-      }
-    }, 1000);
+    // Note: localExecuting will be reset via useEffect when isExecuting prop changes to false
   };
   
   const getAgentInfo = (agentId: string): AgentInfo | undefined => {

@@ -74,6 +74,13 @@ export default function AgentCanvas({ onTeamChange, onExecute, initialTeam = [],
   // Combine local and prop executing state
   const executing = isExecuting || localExecuting;
   
+  // Reset local executing state when parent's isExecuting changes to false
+  useEffect(() => {
+    if (!isExecuting && localExecuting) {
+      setLocalExecuting(false);
+    }
+  }, [isExecuting, localExecuting]);
+  
   // Fetch agents from registry
   const fetchAgents = useCallback(async () => {
     try {
@@ -160,15 +167,10 @@ export default function AgentCanvas({ onTeamChange, onExecute, initialTeam = [],
     } catch (error) {
       // Restore goal if execution failed to start
       setGoal(currentGoal);
+      setLocalExecuting(false);
       console.error("Failed to start execution:", error);
     }
-    // Note: localExecuting will be reset when isExecuting prop changes to false
-    // or after a short timeout if the parent doesn't manage it
-    setTimeout(() => {
-      if (!isExecuting) {
-        setLocalExecuting(false);
-      }
-    }, 1000);
+    // Note: localExecuting will be reset via useEffect when isExecuting prop changes to false
   };
   
   // Get filtered agents

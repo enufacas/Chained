@@ -11,7 +11,6 @@
 const STORAGE_KEYS = {
   ARTIFACTS: "ag-ui-artifacts",
   SESSIONS: "ag-ui-sessions",
-  PIPELINES: "ag-ui-pipelines",
   PREFERENCES: "ag-ui-preferences",
 } as const;
 
@@ -87,12 +86,22 @@ export function getStoredArtifacts(): StoredArtifact[] {
 }
 
 /**
+ * Generate a unique ID using crypto.randomUUID when available
+ */
+function generateId(prefix: string): string {
+  const randomPart = typeof crypto !== 'undefined' && crypto.randomUUID 
+    ? crypto.randomUUID().substring(0, 12)
+    : `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+  return `${prefix}-${randomPart}`;
+}
+
+/**
  * Save an artifact to storage
  */
 export function saveArtifact(artifact: Omit<StoredArtifact, "id" | "createdAt">): StoredArtifact {
   const stored: StoredArtifact = {
     ...artifact,
-    id: `artifact-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+    id: generateId("artifact"),
     createdAt: new Date().toISOString(),
   };
 
@@ -354,7 +363,6 @@ export function clearAllStorage(): void {
   try {
     localStorage.removeItem(STORAGE_KEYS.ARTIFACTS);
     localStorage.removeItem(STORAGE_KEYS.SESSIONS);
-    localStorage.removeItem(STORAGE_KEYS.PIPELINES);
   } catch (error) {
     console.warn("Failed to clear storage:", error);
   }
