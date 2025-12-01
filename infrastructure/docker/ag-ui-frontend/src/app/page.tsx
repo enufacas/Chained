@@ -38,7 +38,7 @@ interface AgentState {
 // Constants
 // =============================================================================
 
-const CHAT_INSTRUCTIONS = `You are an AI assistant helping users with the A2A (Agent-to-Agent) pipeline.
+const CHAT_INSTRUCTIONS = `You are an AI assistant helping users with the A2A (Agent-to-Agent) pipeline and multi-agent team orchestration.
 
 ## Your Capabilities
 
@@ -76,6 +76,21 @@ Query specific data from any pipeline:
 ### 7. Create Real Pipelines
 When users want to create content, they should use createPipeline which calls REAL A2A agents.
 All data is real - no simulations or fake responses.
+
+### 8. Multi-Agent Team Orchestration (NEW!)
+Execute team recipes with multiple agents working together:
+- "What recipes are available?" → Call listRecipes
+- "Execute blog-pipeline recipe for AI safety" → Call executeTeamRecipe
+- "Run technical-review recipe to analyze Kubernetes" → Call executeTeamRecipe
+- "Check agent registry" → Call getAgentRegistry
+
+Available recipes:
+- **blog-pipeline**: Research → Trends → Blog Writing
+- **technical-review**: Research → Data Analysis → Writing → Code Review
+- **visual-content**: Research → Image Generation → Content Writing
+- **data-analysis**: Data Analysis → Visualization → Report Writing
+
+For complex workflows with multiple agents, suggest using Team Mode at /team.
 
 Be helpful, concise, and proactive. When users ask about a specific pipeline, always use the pipelineIdentifier parameter.`;
 
@@ -874,6 +889,143 @@ Just type a message like: "@research-agent What's trending in AI?"`;
     },
   });
 
+  // ============================================================================
+  // Team Features
+  // ============================================================================
+  useCopilotAction({
+    name: "listRecipes",
+    description: "List available team recipes (workflows) for multi-agent orchestration",
+    parameters: [],
+    handler: async () => {
+      try {
+        const response = await fetch("/api/team");
+        
+        if (!response.ok) {
+          return `❌ Failed to get recipes list`;
+        }
+
+        const data = await response.json();
+        
+        return `## 📋 Available Team Recipes
+
+${data.recipes.map((recipe: { id: string; name: string; description: string; goal: string; steps: Array<{ agentId: string }>; tags: string[] }) => 
+  `### ${recipe.name}
+**ID:** \`${recipe.id}\`
+**Goal:** ${recipe.goal}
+**Agents:** ${recipe.steps.map(s => s.agentId).join(" → ")}
+**Tags:** ${recipe.tags.join(", ")}
+`
+).join("\n")}
+
+### How to Use
+Try: "Execute blog-pipeline recipe to write about AI safety"
+Or visit the [Team Mode](/team) for interactive recipe building.`;
+      } catch (error) {
+        return `❌ Error listing recipes: ${error instanceof Error ? error.message : "Unknown error"}`;
+      }
+    },
+  });
+
+  useCopilotAction({
+    name: "executeTeamRecipe",
+    description: "Execute a team recipe with multiple agents working together in turn-based orchestration",
+    parameters: [
+      {
+        name: "recipeId",
+        type: "string",
+        description: "The recipe ID to execute (e.g., blog-pipeline, technical-review, visual-content)",
+        required: true,
+      },
+      {
+        name: "goal",
+        type: "string",
+        description: "The specific goal for this team execution",
+        required: true,
+      },
+    ],
+    handler: async ({ recipeId, goal }) => {
+      try {
+        const response = await fetch("/api/team", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ recipeId, goal }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          return `❌ Failed to execute recipe: ${data.error || response.statusText}`;
+        }
+
+        const data = await response.json();
+        const session = data.session;
+        
+        const statusEmoji = session.status === "completed" ? "✅" : 
+                           session.status === "running" ? "🔄" : 
+                           session.status === "failed" ? "❌" : "⏳";
+        
+        return `## 🎭 Team Execution ${statusEmoji}
+
+**Recipe:** ${session.recipeName}
+**Goal:** ${session.goal}
+**Session ID:** \`${session.id}\`
+**Status:** ${session.status}
+**Progress:** Turn ${session.currentTurn}/${session.totalTurns}
+
+### Turn Results
+${session.turnResults.map((turn: { agentName: string; status: string; message?: string; durationMs?: number }, i: number) => 
+  `${i + 1}. **${turn.agentName}** - ${turn.status === "completed" ? "✅" : turn.status === "failed" ? "❌" : "⏳"} ${turn.status}
+   ${turn.message ? `   _${turn.message.substring(0, 100)}..._` : ""}
+   ${turn.durationMs ? `   ⏱️ ${(turn.durationMs / 1000).toFixed(1)}s` : ""}`
+).join("\n")}
+
+View detailed results in [Team Mode](/team)`;
+      } catch (error) {
+        return `❌ Error executing recipe: ${error instanceof Error ? error.message : "Unknown error"}`;
+      }
+    },
+  });
+
+  useCopilotAction({
+    name: "getAgentRegistry",
+    description: "Get detailed information about all registered agents including health status",
+    parameters: [
+      {
+        name: "includeHealth",
+        type: "boolean",
+        description: "Whether to include real-time health checks (slower but more accurate)",
+        required: false,
+      },
+    ],
+    handler: async ({ includeHealth }) => {
+      try {
+        const response = await fetch(`/api/registry?health=${includeHealth || false}`);
+        
+        if (!response.ok) {
+          return `❌ Failed to get agent registry`;
+        }
+
+        const data = await response.json();
+        
+        return `## 🤖 Agent Registry
+
+**Total Agents:** ${data.stats.total}
+**Configured:** ${data.stats.configured}
+${includeHealth ? `**Healthy:** ${data.stats.healthy}` : ""}
+
+### Agents by Category
+${data.agents.map((agent: { id: string; displayName: string; icon: string; category: string; configured: boolean; health?: { status: string; responseTimeMs?: number } }) => 
+  `- ${agent.icon} **${agent.displayName}** (${agent.category})
+  ${agent.configured ? "✅ Configured" : "⚠️ Not configured"}${agent.health ? ` | ${agent.health.status === "healthy" ? "🟢" : "🔴"} ${agent.health.status}${agent.health.responseTimeMs ? ` (${agent.health.responseTimeMs}ms)` : ""}` : ""}`
+).join("\n")}
+
+### Categories
+${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
+      } catch (error) {
+        return `❌ Error getting registry: ${error instanceof Error ? error.message : "Unknown error"}`;
+      }
+    },
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Header */}
@@ -893,6 +1045,12 @@ Just type a message like: "@research-agent What's trending in AI?"`;
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <a
+              href="/team"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition border border-purple-500/30"
+            >
+              🎭 Team Mode
+            </a>
             <a
               href="https://github.com/CopilotKit/CopilotKit"
               target="_blank"
@@ -971,6 +1129,12 @@ Just type a message like: "@research-agent What's trending in AI?"`;
               <h3 className="text-sm font-semibold text-slate-400 mb-3">🔗 Quick Links</h3>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <a
+                  href="/team"
+                  className="flex items-center gap-2 p-2 rounded bg-purple-500/20 hover:bg-purple-500/30 transition border border-purple-500/30"
+                >
+                  🎭 Team Mode
+                </a>
+                <a
                   href="https://enufacas.github.io/Chained/a2a-pipeline.html"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -985,6 +1149,14 @@ Just type a message like: "@research-agent What's trending in AI?"`;
                   className="flex items-center gap-2 p-2 rounded bg-slate-700/50 hover:bg-slate-700 transition"
                 >
                   📘 A2A Docs
+                </a>
+                <a
+                  href="/api/registry?health=true"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 p-2 rounded bg-slate-700/50 hover:bg-slate-700 transition"
+                >
+                  🤖 Agent Registry
                 </a>
               </div>
             </div>
