@@ -6,6 +6,84 @@ Format: `## [Date] PR #XXX - Title`
 
 ---
 
+## [2025-12-01] PR #TBD - Fix Low Fidelity Team Session Persistence
+
+### Problem
+Recent Team Sessions displayed low fidelity data after page reload:
+- **During runtime**: Full `turnResults` with all A2A protocol data (agent cards, tasks, messages, artifacts)
+- **After reload**: Only basic metadata (status, timing) - missing the rich protocol data
+- Old runs were not properly persisted for viewing between app restarts
+
+### Fixed
+- **Complete turnResults Persistence**:
+  - Backend now saves full `turnResults` array to localStorage in metadata
+  - Includes all A2A protocol objects: agentCard, task, userMessage, agentMessage
+  - Progressive saving during execution (not just at completion)
+  - Ensures high-fidelity data available after page reload
+
+- **Enhanced Session Metadata**:
+  - Added `config` (execution configuration: maxTurnsPerAgent, executionMode)
+  - Added `finalResult` (session outcome summary)
+  - Added `turnNumber` to individual turn results
+  - All fields properly typed in TeamSession interface
+
+- **Improved Data Restoration**:
+  - Frontend restoration logic handles all new fields
+  - Backward compatible (gracefully handles missing data)
+  - Proper type casting ensures IDE support and type safety
+
+- **Comprehensive Testing**:
+  - Added 6 tests for localStorage persistence
+  - Verified turnResults with A2A objects persist correctly
+  - Tested config and finalResult persistence
+  - Validated session updates work properly
+
+### Technical Details
+**Files Modified:**
+- `src/app/api/team/route.ts` - Added turnResults, config to session metadata (lines 528, 757)
+- `src/app/page.tsx` - Enhanced TeamSession interface, updated save/restore logic
+- `__tests__/lib/storage.test.ts` - NEW: Comprehensive storage tests
+
+**Key Changes:**
+1. Backend persistence: `metadata: { turnResults, config, finalResult, ... }`
+2. Frontend save: Includes all new fields when saving sessions
+3. Frontend restore: Properly casts and restores all fields with backward compatibility
+4. TypeScript interface: Added optional fields to TeamSession
+
+**What Gets Persisted Now:**
+```typescript
+metadata: {
+  currentTurn: number,
+  totalTurns: number,
+  recipeId: string,
+  turnResults: TurnResult[],  // ✅ Full array with A2A objects
+  config: ExecutionConfig,     // ✅ Execution configuration
+  finalResult: object,         // ✅ Final session result
+}
+```
+
+**TurnResult includes:**
+- Basic: stepIndex, agentId, agentName, status, timing, turnNumber
+- A2A Protocol: agentCard, task, userMessage, agentMessage
+- Content: artifacts array, message, error
+
+### Why This Matters
+- **High fidelity history**: Recent sessions show complete details after page reload
+- **A2A compliance**: Full protocol objects preserved for inspection and debugging
+- **Better UX**: Users can explore past execution details, artifacts, and agent interactions
+- **Persistence guarantee**: Data survives page reloads and server restarts (localStorage is client-side)
+
+### Test Results
+✅ All 6 storage tests pass:
+- ✓ Basic session save/retrieve
+- ✓ turnResults persistence with A2A protocol objects
+- ✓ Config and finalResult persistence
+- ✓ Session updates
+- ✓ Artifact persistence
+- ✓ Storage cleanup
+
+---
+
 ## [2025-12-01] PR #3492 - Fix Session State Tracking and Progress Display Issues
 
 ### Problem
