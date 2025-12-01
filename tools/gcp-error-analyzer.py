@@ -23,6 +23,22 @@ from typing import Dict, List, Optional
 class GCPErrorAnalyzer:
     """Analyzes GCP errors and creates GitHub issues."""
     
+    # Configuration constants
+    GROUPING_KEY_MAX_LENGTH = 100  # Max characters for error message grouping key
+    MESSAGE_MAX_LENGTH = 500       # Max characters for error message in issue body
+    ISSUE_TITLE_MAX_LENGTH = 100   # Max characters for GitHub issue title
+    
+    # GCP error message field locations (checked in order)
+    ERROR_MESSAGE_FIELDS = [
+        ('jsonPayload', 'message'),
+        ('jsonPayload', 'error'),
+        ('jsonPayload', 'errorMessage'),
+        ('jsonPayload', 'msg'),
+        ('protoPayload', 'status', 'message'),
+        ('httpRequest', 'status'),
+        ('textPayload', None),  # Special case: direct string
+    ]
+    
     def __init__(self, errors_file: str, project_id: str, dry_run: bool = False):
         self.errors_file = errors_file
         self.project_id = project_id
@@ -41,6 +57,27 @@ class GCPErrorAnalyzer:
             print(f"Error loading errors file: {e}")
             return False
     
+    def extract_error_message(self, error: Dict) -> str:
+        """Extract error message from GCP log entry, checking multiple possible fields."""
+        for field_path in self.ERROR_MESSAGE_FIELDS:
+            if field_path[1] is None:
+                # Direct field (textPayload)
+                message = error.get(field_path[0], '')
+                if message:
+                    return str(message)
+            else:
+                # Nested field
+                value = error
+                try:
+                    for key in field_path:
+                        if key is not None and isinstance(value, dict):
+                            value = value.get(key, {})
+                    if value and isinstance(value, str):
+                        return value
+                except (TypeError, AttributeError):
+                    continue
+        return ''
+    
     def group_errors(self) -> Dict[str, List[Dict]]:
         """Group errors by unique signature (resource type + error message pattern)."""
         error_groups = defaultdict(list)
@@ -50,13 +87,11 @@ class GCPErrorAnalyzer:
             resource_type = error.get('resource', {}).get('type', 'unknown')
             severity = error.get('severity', 'UNKNOWN')
             
-            # Extract error message from various possible locations
-            text_payload = error.get('textPayload', '')
-            json_payload = error.get('jsonPayload', {})
-            message = json_payload.get('message', '') or json_payload.get('error', '') or text_payload
+            # Extract error message using comprehensive field search
+            message = self.extract_error_message(error)
             
             # Truncate message for grouping key
-            message_key = message[:100] if message else 'no-message'
+            message_key = message[:self.GROUPING_KEY_MAX_LENGTH] if message else 'no-message'
             
             signature = f"{resource_type}:{severity}:{message_key}"
             error_groups[signature].append(error)
@@ -141,11 +176,26 @@ Created by workflow: [GCP Error Monitor](https://github.com/{repo}/actions/runs/
                 capture_output=True,
                 text=True
             )
-            existing = json.loads(result.stdout) if result.returncode == 0 else []
+            
+            # Handle JSON parsing errors gracefully
+            if result.returncode != 0:
+                return None
+            
+            try:
+                existing = json.loads(result.stdout)
+            except json.JSONDecodeError:
+                print(f"  Warning: Invalid JSON in gh issue list output")
+                return None
+            
+            if not isinstance(existing, list):
+                return None
             
             for issue in existing:
-                if resource_type.lower() in issue['title'].lower() and service_name.lower() in issue['title'].lower():
-                    return issue['number']
+                if not isinstance(issue, dict):
+                    continue
+                title = issue.get('title', '')
+                if resource_type.lower() in title.lower() and service_name.lower() in title.lower():
+                    return issue.get('number')
             
             return None
         except Exception as e:
@@ -194,14 +244,12 @@ Created by workflow: [GCP Error Monitor](https://github.com/{repo}/actions/runs/
             latest = group[0]
             timestamp = latest.get('timestamp', datetime.now(timezone.utc).isoformat())
             
-            # Extract error details
-            text_payload = latest.get('textPayload', '')
-            json_payload = latest.get('jsonPayload', {})
-            message = json_payload.get('message', '') or json_payload.get('error', '') or text_payload or 'No error message available'
+            # Extract error details using comprehensive search
+            message = self.extract_error_message(latest) or 'No error message available'
             
             # Truncate message if too long
-            if len(message) > 500:
-                message = message[:500] + '...'
+            if len(message) > self.MESSAGE_MAX_LENGTH:
+                message = message[:self.MESSAGE_MAX_LENGTH] + '...'
             
             # Get resource labels
             labels = latest.get('resource', {}).get('labels', {})
@@ -213,8 +261,8 @@ Created by workflow: [GCP Error Monitor](https://github.com/{repo}/actions/runs/
             
             # Create issue title
             issue_title = f"🚨 GCP {severity}: {resource_type} - {service_name}"
-            if len(issue_title) > 100:
-                issue_title = issue_title[:97] + "..."
+            if len(issue_title) > self.ISSUE_TITLE_MAX_LENGTH:
+                issue_title = issue_title[:self.ISSUE_TITLE_MAX_LENGTH - 3] + "..."
             
             print(f"{'[DRY RUN] ' if self.dry_run else ''}Processing: {issue_title}")
             print(f"  Severity: {severity_label}")

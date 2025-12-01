@@ -30,6 +30,11 @@ on:
         required: false
         default: '6h'
         type: string
+      max_entries:
+        description: 'Maximum log entries to fetch (1-500)'
+        required: false
+        default: '100'
+        type: string
       dry_run:
         description: 'Dry run (analyze but do not create issues)'
         required: false
@@ -133,6 +138,7 @@ jobs:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           SEVERITY: ${{ inputs.severity_threshold || 'ERROR' }}
           TIME_WINDOW: ${{ inputs.time_window || '6h' }}
+          MAX_ENTRIES: ${{ inputs.max_entries || '100' }}
           SERVICES_FILTER: ${{ inputs.services_filter || '' }}
         run: |
           echo "🔍 Querying GCP Cloud Logging for errors..."
@@ -141,6 +147,7 @@ jobs:
           echo "  Project: $GCP_PROJECT_ID"
           echo "  Severity: >= $SEVERITY"
           echo "  Time Window: $TIME_WINDOW"
+          echo "  Max Entries: $MAX_ENTRIES"
           echo "  Services Filter: ${SERVICES_FILTER:-'all'}"
           echo ""
           
@@ -159,7 +166,7 @@ jobs:
           gcloud logging read "$QUERY" \
             --project="$GCP_PROJECT_ID" \
             --freshness="$TIME_WINDOW" \
-            --limit=100 \
+            --limit="$MAX_ENTRIES" \
             --format=json > /tmp/gcp_errors.json 2>/tmp/gcp_query_error.txt || {
               echo "⚠️  Query failed or returned no results"
               cat /tmp/gcp_query_error.txt || true
@@ -198,10 +205,14 @@ jobs:
           echo ""
           
           # Use the external GCP error analyzer tool
-          python3 tools/gcp-error-analyzer.py \
-            --errors-file /tmp/gcp_errors.json \
-            --project-id "$GCP_PROJECT_ID" \
-            ${{ inputs.dry_run == true && '--dry-run' || '' }}
+          if [ -f "tools/gcp-error-analyzer.py" ]; then
+            python3 tools/gcp-error-analyzer.py \
+              --errors-file /tmp/gcp_errors.json \
+              --project-id "$GCP_PROJECT_ID"
+          else
+            echo "❌ Error: tools/gcp-error-analyzer.py not found"
+            exit 1
+          fi
       
       - name: Assign Copilot to created issues
         if: steps.create_issues.outputs.issues_created != '0' && steps.create_issues.outputs.issues_created != ''
