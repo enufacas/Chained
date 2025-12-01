@@ -31,7 +31,7 @@ import AgentCanvas from "@/components/AgentCanvas";
 import RecipeBuilder from "@/components/RecipeBuilder";
 import ArtifactPreviewOverlay from "@/components/ArtifactPreviewOverlay";
 import ArtifactStream from "@/components/ArtifactStream";
-import { saveArtifact, StoredArtifact } from "@/lib/storage";
+import { saveArtifact, saveSession, getStoredSessions, StoredArtifact } from "@/lib/storage";
 
 // =============================================================================
 // Types (Local types not shared across components)
@@ -924,6 +924,137 @@ function MainContent({
   
   // Track saved artifact IDs to avoid duplicates during incremental saving
   const savedArtifactIdsRef = useRef<Set<string>>(new Set());
+
+  // ============================================================================
+  // Session State Persistence
+  // ============================================================================
+  
+  // Restore sessions from localStorage on mount
+  useEffect(() => {
+    const storedSessions = getStoredSessions();
+    if (storedSessions.length > 0) {
+      // Find any active/running session and restore it
+      const activeStoredSession = storedSessions.find(
+        s => s.status === "running" || s.status === "pending"
+      );
+      
+      // Get completed sessions (excluding any active one)
+      const completedStoredSessions = storedSessions
+        .filter(s => s.status === "completed" || s.status === "failed")
+        .slice(0, 10)
+        .map(s => ({
+          id: s.id,
+          recipeId: s.metadata?.recipeId as string || "",
+          recipeName: s.name,
+          goal: s.topic,
+          status: s.status as "pending" | "running" | "completed" | "failed",
+          currentTurn: s.metadata?.currentTurn as number || 0,
+          totalTurns: s.metadata?.totalTurns as number || 0,
+          createdAt: s.createdAt,
+          updatedAt: s.completedAt || s.createdAt,
+          turnResults: (s.metadata?.turnResults as Array<{
+            stepIndex: number;
+            agentId: string;
+            agentName: string;
+            status: "pending" | "running" | "completed" | "failed" | "skipped";
+            startedAt: string;
+            completedAt?: string;
+            durationMs?: number;
+            taskId?: string;
+            contextId?: string;
+            message?: string;
+            error?: string;
+            artifacts: Array<{ name: string; type: string; data: string }>;
+            agentCard?: object;
+            task?: object;
+            userMessage?: object;
+            agentMessage?: object;
+          }>) || [],
+        }));
+      
+      setCompletedSessions(completedStoredSessions);
+      
+      // If there's an active session, restore it and resume polling
+      if (activeStoredSession && activeStoredSession.metadata) {
+        const restoredSession: TeamSession = {
+          id: activeStoredSession.id,
+          recipeId: activeStoredSession.metadata.recipeId as string || "",
+          recipeName: activeStoredSession.name,
+          goal: activeStoredSession.topic,
+          status: activeStoredSession.status as "pending" | "running" | "completed" | "failed",
+          currentTurn: activeStoredSession.metadata.currentTurn as number || 0,
+          totalTurns: activeStoredSession.metadata.totalTurns as number || 0,
+          createdAt: activeStoredSession.createdAt,
+          updatedAt: activeStoredSession.completedAt || activeStoredSession.createdAt,
+          turnResults: (activeStoredSession.metadata.turnResults as Array<{
+            stepIndex: number;
+            agentId: string;
+            agentName: string;
+            status: "pending" | "running" | "completed" | "failed" | "skipped";
+            startedAt: string;
+            completedAt?: string;
+            durationMs?: number;
+            taskId?: string;
+            contextId?: string;
+            message?: string;
+            error?: string;
+            artifacts: Array<{ name: string; type: string; data: string }>;
+            agentCard?: object;
+            task?: object;
+            userMessage?: object;
+            agentMessage?: object;
+          }>) || [],
+        };
+        setActiveSession(restoredSession);
+        // Note: We don't resume polling on page load to avoid unnecessary API calls
+        // The session will be marked as completed if it was running when the page was closed
+      }
+    }
+  }, []); // Empty dependency array - only run on mount
+  
+  // Save active session to localStorage whenever it changes
+  useEffect(() => {
+    if (activeSession) {
+      saveSession({
+        id: activeSession.id,
+        type: "team",
+        name: activeSession.recipeName,
+        topic: activeSession.goal,
+        status: activeSession.status,
+        completedAt: activeSession.status === "completed" || activeSession.status === "failed" 
+          ? activeSession.updatedAt 
+          : undefined,
+        artifacts: [], // Artifacts are saved separately
+        metadata: {
+          recipeId: activeSession.recipeId,
+          currentTurn: activeSession.currentTurn,
+          totalTurns: activeSession.totalTurns,
+          turnResults: activeSession.turnResults,
+        },
+      });
+    }
+  }, [activeSession]);
+  
+  // Save completed sessions to localStorage whenever they change
+  useEffect(() => {
+    completedSessions.forEach(session => {
+      saveSession({
+        id: session.id,
+        type: "team",
+        name: session.recipeName,
+        topic: session.goal,
+        status: session.status,
+        completedAt: session.updatedAt,
+        artifacts: [], // Artifacts are saved separately
+        metadata: {
+          recipeId: session.recipeId,
+          currentTurn: session.currentTurn,
+          totalTurns: session.totalTurns,
+          turnResults: session.turnResults,
+        },
+      });
+    });
+  }, [completedSessions]);
 
   // Handle artifact selection for preview
   const handleSelectArtifact = useCallback((artifact: { name: string; type: string; data: string }) => {
