@@ -25,13 +25,13 @@
 
 import { CopilotChat, CopilotPopup } from "@copilotkit/react-ui";
 import { useCopilotAction, useCopilotReadable, CopilotKit } from "@copilotkit/react-core";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { ApiStatus } from "@/types";
 import AgentCanvas from "@/components/AgentCanvas";
 import RecipeBuilder from "@/components/RecipeBuilder";
 import ArtifactPreviewOverlay from "@/components/ArtifactPreviewOverlay";
 import ArtifactStream from "@/components/ArtifactStream";
-import { saveArtifacts, StoredArtifact } from "@/lib/storage";
+import { saveArtifact, StoredArtifact } from "@/lib/storage";
 
 // =============================================================================
 // Types (Local types not shared across components)
@@ -85,6 +85,16 @@ interface TeamSession {
     error?: string;
     artifacts: Array<{ name: string; type: string; data: string }>;
   }>;
+}
+
+// Helper function to check if a session is still active (running or pending)
+function isSessionActive(session: TeamSession | null): boolean {
+  return session?.status === "running" || session?.status === "pending";
+}
+
+// Helper function to check if a session has finished (completed or failed)
+function isSessionFinished(session: TeamSession | null): boolean {
+  return session?.status === "completed" || session?.status === "failed";
 }
 
 const AGENT_ICONS: Record<string, string> = {
@@ -406,10 +416,12 @@ const PHASE_ICONS: { [key: string]: { icon: string; color: string } } = {
 
 function UnifiedOutcomes({ 
   activeSession, 
+  completedSessions,
   agentIcons,
   onSelectArtifact,
 }: { 
   activeSession: TeamSession | null;
+  completedSessions: TeamSession[];
   agentIcons: Record<string, string>;
   onSelectArtifact?: (artifact: { name: string; type: string; data: string }) => void;
 }) {
@@ -639,6 +651,59 @@ function UnifiedOutcomes({
         </div>
       )}
 
+      {/* Completed Team Sessions (history) */}
+      {completedSessions.length > 0 && (
+        <div className="border-b border-slate-700">
+          <div className="px-3 py-2 bg-slate-900/30">
+            <h4 className="text-[10px] text-slate-500 uppercase tracking-wider">Recent Team Sessions</h4>
+          </div>
+          <div className="max-h-48 overflow-y-auto">
+            {completedSessions.filter(s => !activeSession || s.id !== activeSession.id).slice(0, 5).map((session) => {
+              const isExpanded = expandedItem === `completed-session-${session.id}`;
+              return (
+                <div key={session.id} className="border-b border-slate-700/30 last:border-b-0">
+                  <button
+                    onClick={() => setExpandedItem(isExpanded ? null : `completed-session-${session.id}`)}
+                    className="w-full px-3 py-2 flex items-center gap-2 hover:bg-slate-700/30 transition text-xs"
+                  >
+                    <span className={session.status === "completed" ? "text-green-400" : "text-red-400"}>
+                      {session.status === "completed" ? "✓" : "✗"}
+                    </span>
+                    <span className="flex-1 truncate text-slate-300 text-left">{session.recipeName} - {session.goal?.substring(0, 30) || "No goal"}</span>
+                    <span className="text-slate-500">{formatTimeAgo(session.updatedAt)}</span>
+                    <span className={`text-slate-500 transition-transform ${isExpanded ? "rotate-180" : ""}`}>▼</span>
+                  </button>
+                  
+                  {isExpanded && (
+                    <div className="px-3 pb-2 space-y-1 text-xs">
+                      <div className="text-slate-400">
+                        {session.turnResults.filter(t => t.status === "completed").length}/{session.turnResults.length} steps completed
+                      </div>
+                      {session.turnResults.some(t => t.artifacts && t.artifacts.length > 0) && (
+                        <div className="flex flex-wrap gap-1">
+                          {session.turnResults.flatMap(t => t.artifacts || []).slice(0, 4).map((artifact, i) => (
+                            <button
+                              key={i}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onSelectArtifact?.(artifact);
+                              }}
+                              className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition"
+                            >
+                              📦 {artifact.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Active Pipelines */}
       {activePipelines.map((pipeline) => {
         const phaseInfo = PHASE_ICONS[pipeline.currentPhase] || { icon: "⏳", color: "slate" };
@@ -815,11 +880,15 @@ function MainContent({
   const [teamModeTab, setTeamModeTab] = useState<"canvas" | "recipe">("canvas");
   const [selectedTeam, setSelectedTeam] = useState<string[]>([]);
   const [activeSession, setActiveSession] = useState<TeamSession | null>(null);
+  const [completedSessions, setCompletedSessions] = useState<TeamSession[]>([]);
   const [teamError, setTeamError] = useState<string | null>(null);
   const [chatExpanded, setChatExpanded] = useState(true);
   const [isTeamExecuting, setIsTeamExecuting] = useState(false);
   const [selectedArtifact, setSelectedArtifact] = useState<{ name: string; type: string; data: string } | null>(null);
   const [allSessionArtifacts, setAllSessionArtifacts] = useState<Array<{ name: string; type: string; data: string }>>([]);
+  
+  // Track saved artifact IDs to avoid duplicates during incremental saving
+  const savedArtifactIdsRef = useRef<Set<string>>(new Set());
 
   // Handle artifact selection for preview
   const handleSelectArtifact = useCallback((artifact: { name: string; type: string; data: string }) => {
@@ -842,6 +911,9 @@ function MainContent({
 
   // Poll for session updates
   const pollSession = useCallback(async (sessionId: string) => {
+    // Reset saved artifacts tracking for new session
+    savedArtifactIdsRef.current = new Set();
+    
     const poll = async () => {
       try {
         const response = await fetch(`/api/team?session=${sessionId}`);
@@ -849,25 +921,45 @@ function MainContent({
           const session = await response.json();
           setActiveSession(session);
           
-          if (session.status === "running") {
+          // Save new artifacts incrementally during execution (not just at end)
+          if (session.turnResults) {
+            for (const turn of session.turnResults) {
+              if (turn.artifacts && turn.artifacts.length > 0) {
+                for (const artifact of turn.artifacts) {
+                  // Create unique ID based on session, step, and artifact name
+                  const artifactKey = `${sessionId}-${turn.stepIndex}-${artifact.name}`;
+                  
+                  if (!savedArtifactIdsRef.current.has(artifactKey)) {
+                    savedArtifactIdsRef.current.add(artifactKey);
+                    // Save artifact incrementally
+                    saveArtifact({
+                      name: artifact.name,
+                      type: artifact.type,
+                      data: artifact.data,
+                      source: "team",
+                      sourceId: session.id,
+                      sourceName: session.recipeName || "Custom Team",
+                      agentName: turn.agentName || turn.agentId,
+                      phase: turn.status,
+                    });
+                  }
+                }
+              }
+            }
+          }
+          
+          if (isSessionActive(session)) {
             setTimeout(poll, 2000);
           } else {
-            // Session completed or failed - save artifacts to storage
+            // Session completed or failed - add to completed sessions list
             setIsTeamExecuting(false);
-            if (session.status === "completed" && session.turnResults) {
-              const allArtifacts = session.turnResults.flatMap((t: { artifacts?: Array<{ name: string; type: string; data: string }>; agentName?: string; stepIndex?: number }) => 
-                (t.artifacts || []).map(a => ({ ...a, agentName: t.agentName }))
-              );
-              if (allArtifacts.length > 0) {
-                saveArtifacts(
-                  allArtifacts,
-                  "team",
-                  session.id,
-                  session.recipeName || "Custom Team",
-                  undefined,
-                  "completed"
-                );
-              }
+            if (isSessionFinished(session)) {
+              setCompletedSessions(prev => {
+                // Avoid duplicates
+                if (prev.some(s => s.id === session.id)) return prev;
+                // Add new session at the beginning, keep max 10
+                return [session, ...prev].slice(0, 10);
+              });
             }
           }
         }
@@ -877,7 +969,7 @@ function MainContent({
       }
     };
     
-    setTimeout(poll, 2000);
+    setTimeout(poll, 1000); // Start polling after 1 second
   }, []);
 
   // Handle team changes from canvas
@@ -1682,7 +1774,8 @@ ${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
             {/* Combined Outcomes & Session Progress - Slide-in when active */}
             <div className={`transition-all duration-300 ${activeSession?.status === "running" ? "ring-2 ring-blue-500/50 shadow-lg shadow-blue-500/10" : ""}`}>
               <UnifiedOutcomes 
-                activeSession={activeSession} 
+                activeSession={activeSession}
+                completedSessions={completedSessions}
                 agentIcons={AGENT_ICONS}
                 onSelectArtifact={handleSelectArtifact}
               />
