@@ -16,12 +16,13 @@ const STORAGE_KEYS = {
 } as const;
 
 // A2A Protocol artifact types
+// See: https://a2a-protocol.org/ for protocol specification
 export type A2AArtifactType = 
-  | "agent-card"   // A2A Agent Card (agent.json)
-  | "task"         // A2A Task object
-  | "message"      // A2A Message
-  | "artifact"     // Standard artifact (data/content)
-  | "workflow-context"; // Workflow context/state
+  | "agent-card"       // A2A Agent Card - metadata about agent capabilities (agent.json)
+  | "task"             // A2A Task - represents a unit of work with status and artifacts
+  | "message"          // A2A Message - communication between user and agent
+  | "artifact"         // Standard artifact - data/content produced by agents
+  | "workflow-context"; // Workflow context - state shared across agents in a workflow
 
 // Types
 export interface StoredArtifact {

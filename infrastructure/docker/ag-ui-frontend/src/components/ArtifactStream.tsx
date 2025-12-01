@@ -17,15 +17,15 @@ interface ArtifactStreamProps {
   compact?: boolean;
 }
 
-// Get icon for artifact type - includes A2A protocol types
+// Get icon for artifact type - includes A2A protocol types (vendor MIME types)
 function getArtifactIcon(type: string, name: string): string {
   const lowerType = type.toLowerCase();
   const lowerName = name.toLowerCase();
 
-  // A2A Protocol artifact types
-  if (lowerType.includes("a2a-agent-card") || lowerName.includes("agent-card")) return "🪪";
-  if (lowerType.includes("a2a-task") || lowerName.includes("-task")) return "📋";
-  if (lowerType.includes("a2a-message") || lowerName.includes("-message")) return "💬";
+  // A2A Protocol artifact types (using vendor MIME type format)
+  if (lowerType.includes("a2a.agent-card") || lowerName.includes("agent-card")) return "🪪";
+  if (lowerType.includes("a2a.task") || lowerName.includes("-task")) return "📋";
+  if (lowerType.includes("a2a.message") || lowerName.includes("-message")) return "💬";
   
   // Standard artifact types
   if (lowerType.includes("svg") || lowerName.endsWith(".svg")) return "🖼️";

@@ -263,8 +263,9 @@ async function fetchAgentCard(agentUrl: string): Promise<object | null> {
     if (response.ok) {
       return await response.json();
     }
-  } catch {
-    // Agent card fetch failed silently
+    console.warn(`[Team API] Agent card fetch returned status ${response.status} for ${agentUrl}`);
+  } catch (error) {
+    console.warn(`[Team API] Failed to fetch agent card from ${agentUrl}:`, error instanceof Error ? error.message : error);
   }
   return null;
 }
@@ -400,11 +401,11 @@ ${JSON.stringify(session.context, null, 2)}`;
   turnResult.userMessage = result.userMessage;
   turnResult.agentMessage = result.agentMessage;
   
-  // Add A2A protocol objects as artifacts
+  // Add A2A protocol objects as artifacts using vendor MIME types (RFC 6838)
   if (result.agentCard) {
     turnResult.artifacts.push({
       name: `${step.agentId}-agent-card`,
-      type: "application/json+a2a-agent-card",
+      type: "application/vnd.a2a.agent-card+json",
       data: JSON.stringify(result.agentCard, null, 2),
     });
   }
@@ -412,7 +413,7 @@ ${JSON.stringify(session.context, null, 2)}`;
   if (result.task) {
     turnResult.artifacts.push({
       name: `${step.agentId}-task`,
-      type: "application/json+a2a-task",
+      type: "application/vnd.a2a.task+json",
       data: JSON.stringify(result.task, null, 2),
     });
   }
@@ -420,7 +421,7 @@ ${JSON.stringify(session.context, null, 2)}`;
   if (result.userMessage) {
     turnResult.artifacts.push({
       name: `${step.agentId}-user-message`,
-      type: "application/json+a2a-message",
+      type: "application/vnd.a2a.message+json",
       data: JSON.stringify(result.userMessage, null, 2),
     });
   }
@@ -428,7 +429,7 @@ ${JSON.stringify(session.context, null, 2)}`;
   if (result.agentMessage) {
     turnResult.artifacts.push({
       name: `${step.agentId}-agent-message`,
-      type: "application/json+a2a-message",
+      type: "application/vnd.a2a.message+json",
       data: JSON.stringify(result.agentMessage, null, 2),
     });
   }

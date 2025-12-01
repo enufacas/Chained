@@ -608,19 +608,19 @@ function UnifiedOutcomes({
                             <span className="text-[10px] text-slate-500 block mb-1.5">Artifacts:</span>
                             <div className="grid grid-cols-2 gap-1">
                               {turn.artifacts.map((artifact, artifactIdx) => {
-                                // Determine icon based on A2A protocol type
-                                const icon = artifact.type.includes("a2a-agent-card") ? "🪪" :
-                                             artifact.type.includes("a2a-task") ? "📋" :
-                                             artifact.type.includes("a2a-message") ? "💬" :
+                                // Determine icon based on A2A protocol type (vendor MIME types)
+                                const icon = artifact.type.includes("a2a.agent-card") ? "🪪" :
+                                             artifact.type.includes("a2a.task") ? "📋" :
+                                             artifact.type.includes("a2a.message") ? "💬" :
                                              artifact.type.includes("json") ? "📋" :
                                              artifact.type.includes("svg") ? "🖼️" :
                                              artifact.type.includes("markdown") ? "📝" :
                                              artifact.type.includes("html") ? "🌐" : "📄";
                                 
                                 // Determine type label for A2A artifacts
-                                const typeLabel = artifact.type.includes("a2a-agent-card") ? "agent card" :
-                                                  artifact.type.includes("a2a-task") ? "task" :
-                                                  artifact.type.includes("a2a-message") ? "message" :
+                                const typeLabel = artifact.type.includes("a2a.agent-card") ? "agent card" :
+                                                  artifact.type.includes("a2a.task") ? "task" :
+                                                  artifact.type.includes("a2a.message") ? "message" :
                                                   artifact.type.split("/").pop();
                                 
                                 return (
@@ -967,13 +967,13 @@ function MainContent({
                   if (!savedArtifactIdsRef.current.has(artifactKey)) {
                     savedArtifactIdsRef.current.add(artifactKey);
                     
-                    // Determine A2A artifact type from the type field
+                    // Determine A2A artifact type from the vendor MIME type (RFC 6838)
                     let a2aType: "agent-card" | "task" | "message" | "artifact" | undefined;
-                    if (artifact.type.includes("a2a-agent-card")) {
+                    if (artifact.type.includes("a2a.agent-card")) {
                       a2aType = "agent-card";
-                    } else if (artifact.type.includes("a2a-task")) {
+                    } else if (artifact.type.includes("a2a.task")) {
                       a2aType = "task";
-                    } else if (artifact.type.includes("a2a-message")) {
+                    } else if (artifact.type.includes("a2a.message")) {
                       a2aType = "message";
                     }
                     
