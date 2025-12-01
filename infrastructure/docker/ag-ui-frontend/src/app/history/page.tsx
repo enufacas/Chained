@@ -70,6 +70,7 @@ function formatDate(dateString: string): string {
 
 type ViewMode = "all" | "artifacts" | "sessions";
 type FilterSource = "all" | "pipeline" | "team" | "recipe" | "chat";
+type A2AFilter = "all" | "agent-card" | "task" | "message" | "standard";
 
 export default function HistoryPage() {
   const [artifacts, setArtifacts] = useState<StoredArtifact[]>([]);
@@ -77,6 +78,7 @@ export default function HistoryPage() {
   const [stats, setStats] = useState({ artifactsCount: 0, sessionsCount: 0, estimatedSize: "0 B" });
   const [viewMode, setViewMode] = useState<ViewMode>("all");
   const [filterSource, setFilterSource] = useState<FilterSource>("all");
+  const [filterA2AType, setFilterA2AType] = useState<A2AFilter>("all");
   const [selectedArtifact, setSelectedArtifact] = useState<StoredArtifact | null>(null);
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
 
@@ -91,11 +93,21 @@ export default function HistoryPage() {
     loadData();
   }, [loadData]);
 
-  // Filter artifacts
-  const filteredArtifacts =
+  // Filter artifacts by source
+  let filteredArtifacts =
     filterSource === "all"
       ? artifacts
       : artifacts.filter((a) => a.source === filterSource);
+  
+  // Filter artifacts by A2A type
+  if (filterA2AType !== "all") {
+    filteredArtifacts = filteredArtifacts.filter((a) => {
+      if (filterA2AType === "standard") {
+        return !a.a2aType; // Standard artifacts have no a2aType
+      }
+      return a.a2aType === filterA2AType;
+    });
+  }
 
   // Filter sessions
   const filteredSessions =
@@ -201,6 +213,36 @@ export default function HistoryPage() {
                 </button>
               ))}
             </div>
+            
+            {/* A2A Artifact Type Filter */}
+            {viewMode !== "sessions" && (
+              <div className="flex rounded overflow-hidden border border-slate-700">
+                {(
+                  ["all", "agent-card", "task", "message", "standard"] as A2AFilter[]
+                ).map((a2aType) => (
+                  <button
+                    key={a2aType}
+                    onClick={() => setFilterA2AType(a2aType)}
+                    className={`px-3 py-1.5 text-xs transition ${
+                      filterA2AType === a2aType
+                        ? "bg-cyan-500 text-white"
+                        : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                    }`}
+                    title={
+                      a2aType === "agent-card" ? "🪪 A2A Agent Cards" :
+                      a2aType === "task" ? "📋 A2A Tasks" :
+                      a2aType === "message" ? "💬 A2A Messages" :
+                      a2aType === "standard" ? "📄 Standard Artifacts" : "All Types"
+                    }
+                  >
+                    {a2aType === "agent-card" ? "🪪 Cards" :
+                     a2aType === "task" ? "📋 Tasks" :
+                     a2aType === "message" ? "💬 Messages" :
+                     a2aType === "standard" ? "📄 Standard" : "All Types"}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -336,7 +378,7 @@ export default function HistoryPage() {
                         <div className="text-xs text-slate-500 mt-0.5">
                           {artifact.type}
                         </div>
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center gap-2 mt-2 flex-wrap">
                           <span
                             className={`px-1.5 py-0.5 text-[10px] rounded ${getSourceColor(
                               artifact.source
@@ -344,6 +386,19 @@ export default function HistoryPage() {
                           >
                             {artifact.source}
                           </span>
+                          {artifact.a2aType && (
+                            <span className={`px-1.5 py-0.5 text-[10px] rounded ${
+                              artifact.a2aType === "agent-card" ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" :
+                              artifact.a2aType === "task" ? "bg-amber-500/20 text-amber-400 border-amber-500/30" :
+                              artifact.a2aType === "message" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" :
+                              "bg-purple-500/20 text-purple-400 border-purple-500/30"
+                            }`}>
+                              {artifact.a2aType === "agent-card" ? "🪪 A2A Card" :
+                               artifact.a2aType === "task" ? "📋 A2A Task" :
+                               artifact.a2aType === "message" ? "💬 A2A Message" :
+                               `A2A ${artifact.a2aType}`}
+                            </span>
+                          )}
                           {artifact.agentName && (
                             <span className="text-[10px] text-slate-500">
                               {artifact.agentName}

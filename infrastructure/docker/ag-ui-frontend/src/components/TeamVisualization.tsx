@@ -275,26 +275,40 @@ export default function TeamVisualization({
                           Artifacts ({turn.artifacts.length})
                         </h5>
                         <div className="flex flex-wrap gap-2">
-                          {turn.artifacts.map((artifact, ai) => (
-                            <button
-                              key={ai}
-                              onClick={() =>
-                                setSelectedArtifact(
+                          {turn.artifacts.map((artifact, ai) => {
+                            // Detect A2A artifact types
+                            const isA2ACard = artifact.type.includes("vnd.a2a.agent-card");
+                            const isA2ATask = artifact.type.includes("vnd.a2a.task");
+                            const isA2AMessage = artifact.type.includes("vnd.a2a.message");
+                            const isA2A = isA2ACard || isA2ATask || isA2AMessage;
+                            
+                            const icon = isA2ACard ? "🪪" : isA2ATask ? "📋" : isA2AMessage ? "💬" : "📄";
+                            const a2aBadge = isA2ACard ? "A2A Card" : isA2ATask ? "A2A Task" : isA2AMessage ? "A2A Msg" : null;
+                            
+                            return (
+                              <button
+                                key={ai}
+                                onClick={() =>
+                                  setSelectedArtifact(
+                                    selectedArtifact?.turnIndex === index && selectedArtifact?.artifactIndex === ai
+                                      ? null
+                                      : { turnIndex: index, artifactIndex: ai }
+                                  )
+                                }
+                                className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
                                   selectedArtifact?.turnIndex === index && selectedArtifact?.artifactIndex === ai
-                                    ? null
-                                    : { turnIndex: index, artifactIndex: ai }
-                                )
-                              }
-                              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
-                                selectedArtifact?.turnIndex === index && selectedArtifact?.artifactIndex === ai
-                                  ? "bg-purple-500/30 border border-purple-500/50 text-purple-300"
-                                  : "bg-slate-700/50 border border-slate-600 text-slate-300 hover:bg-slate-700"
-                              }`}
-                            >
-                              📄 {artifact.name}
-                              <span className="ml-2 text-slate-500">({artifact.type.split("/")[1] || artifact.type})</span>
-                            </button>
-                          ))}
+                                    ? "bg-purple-500/30 border border-purple-500/50 text-purple-300"
+                                    : isA2A
+                                    ? "bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20"
+                                    : "bg-slate-700/50 border border-slate-600 text-slate-300 hover:bg-slate-700"
+                                }`}
+                              >
+                                {icon} {artifact.name}
+                                {a2aBadge && <span className="ml-2 text-cyan-400">({a2aBadge})</span>}
+                                {!a2aBadge && <span className="ml-2 text-slate-500">({artifact.type.split("/")[1] || artifact.type})</span>}
+                              </button>
+                            );
+                          })}
                         </div>
                         
                         {/* Rich Artifact Preview with AssetPreview component */}
