@@ -6,6 +6,62 @@ Format: `## [Date] PR #XXX - Title`
 
 ---
 
+## [2025-12-01] PR #TBD - Unified Single Page with Progressive Disclosure
+
+### Added
+- **Progressive Disclosure Team Mode**:
+  - Team Mode is now an expandable/collapsible section on the main page
+  - Click to expand and access Agent Canvas or Recipe Builder
+  - Collapse to focus on chat and outcomes
+  - No more navigation to separate `/team` page needed
+
+- **Rich Asset Preview Component**:
+  - New `AssetPreview` component for viewing artifacts
+  - Supports Markdown rendering with basic styling
+  - SVG images displayed with proper rendering
+  - HTML content in sandboxed iframes
+  - JSON formatted with syntax highlighting
+  - Images (base64 or URL) displayed inline
+  - Toggle between "Rendered" and "Raw" view modes
+  - Character count and size info in footer
+
+- **Enhanced Artifact Viewing**:
+  - `TeamVisualization` now uses AssetPreview for rich artifact display
+  - `PipelineDetailView` artifacts are expandable with rich preview
+  - Click artifact to expand, click again to collapse
+  - Proper rendering of markdown, SVG, HTML, JSON, images
+
+### Changed
+- **Unified Page Layout**:
+  - Removed Team Mode link from header
+  - Team Mode integrated as collapsible section in right sidebar
+  - Updated Quick Links (removed /team, added Google ADK)
+  - Chat instructions updated to reference "Team Mode section" instead of /team
+
+- **Team Mode Section**:
+  - Tab navigation between Agent Canvas and Recipe Builder
+  - Active session progress shown inline when executing
+  - Team count badge shows selected agents
+  - Running indicator shows when session is active
+
+### Removed
+- Team Mode link from header navigation
+- Team Mode from Quick Links section
+
+### Files Modified
+- `src/app/page.tsx` - Integrated Team Mode with progressive disclosure
+- `src/components/AssetPreview.tsx` - NEW: Rich asset rendering component
+- `src/components/TeamVisualization.tsx` - Uses AssetPreview for artifacts
+- `src/components/PipelineDetailView.tsx` - Expandable artifacts with AssetPreview
+- `docs/a2a-ui/CHANGELOG.md` - This file
+
+### Screenshots
+| Initial View | Team Mode Expanded |
+|--------------|-------------------|
+| Team Mode collapsed as clickable section | Agent Canvas/Recipe Builder visible |
+
+---
+
 ## [2025-12-01] PR #3460 - Configure All Agents, Agent Canvas Input, Turn-Based Execution
 
 ### Added

@@ -6,7 +6,7 @@
  * 
  * Enhanced with:
  * - Detailed A2A step history with task IDs and execution times
- * - Artifact viewer for deep diving into agent outputs
+ * - Rich artifact viewer with markdown/SVG/HTML rendering
  * - Expandable sections for raw data inspection
  * 
  * @see docs/a2a-ui/README.md for feature documentation
@@ -16,6 +16,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Pipeline, A2AStepDetail } from "@/types";
+import AssetPreview from "./AssetPreview";
 
 // Re-export for backwards compatibility with any direct imports
 export type { A2AStepDetail };
@@ -125,6 +126,7 @@ export default function PipelineDetailView({ pipelineId, onClose }: PipelineDeta
   const [error, setError] = useState<string | null>(null);
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
   const [showRawData, setShowRawData] = useState(false);
+  const [expandedArtifact, setExpandedArtifact] = useState<{ stepIndex: number; artifactIndex: number } | null>(null);
 
   const toggleStepExpanded = (taskId: string) => {
     const newExpanded = new Set(expandedSteps);
@@ -567,27 +569,52 @@ export default function PipelineDetailView({ pipelineId, onClose }: PipelineDeta
                                 }
                               }
                               
-                              // Normal artifact rendering
+                              // Normal artifact rendering with expandable rich preview
+                              const isExpanded = expandedArtifact?.stepIndex === index && expandedArtifact?.artifactIndex === artifactIndex;
                               return (
-                                <div
-                                  key={artifactIndex}
-                                  className="bg-black/30 rounded-lg p-3"
-                                >
-                                  <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-medium text-accent-400">
-                                      📦 {artifact.name}
-                                    </span>
-                                    <span className="text-xs text-slate-500">
-                                      {artifact.type}
-                                    </span>
-                                  </div>
-                                  <pre className="text-xs text-slate-300 overflow-x-auto max-h-48 overflow-y-auto">
-                                    {artifact.preview && artifact.preview.length > 0 
-                                      ? artifact.preview 
-                                      : artifact.data.length > 500 
-                                        ? artifact.data.substring(0, 500) + "..."
-                                        : artifact.data}
-                                  </pre>
+                                <div key={artifactIndex}>
+                                  <button
+                                    onClick={() => setExpandedArtifact(isExpanded ? null : { stepIndex: index, artifactIndex })}
+                                    className={`w-full text-left bg-black/30 rounded-lg p-3 transition-all hover:bg-black/40 ${
+                                      isExpanded ? "ring-2 ring-purple-500/50" : ""
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between mb-2">
+                                      <span className="text-xs font-medium text-accent-400">
+                                        📦 {artifact.name}
+                                      </span>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs text-slate-500">
+                                          {artifact.type}
+                                        </span>
+                                        <span className="text-xs text-purple-400">
+                                          {isExpanded ? "▼ Collapse" : "▶ Expand"}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    {!isExpanded && (
+                                      <pre className="text-xs text-slate-300 overflow-x-auto max-h-24 overflow-y-hidden">
+                                        {artifact.preview && artifact.preview.length > 0 
+                                          ? artifact.preview 
+                                          : artifact.data.length > 300 
+                                            ? artifact.data.substring(0, 300) + "..."
+                                            : artifact.data}
+                                      </pre>
+                                    )}
+                                  </button>
+                                  
+                                  {/* Rich Asset Preview when expanded */}
+                                  {isExpanded && (
+                                    <div className="mt-2">
+                                      <AssetPreview
+                                        name={artifact.name}
+                                        type={artifact.type}
+                                        data={artifact.data}
+                                        onClose={() => setExpandedArtifact(null)}
+                                        maxHeight="400px"
+                                      />
+                                    </div>
+                                  )}
                                 </div>
                               );
                             })}

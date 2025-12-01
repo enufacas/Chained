@@ -4,13 +4,14 @@
  * Real-time visualization of team execution showing:
  * - Agent status and activity
  * - Message flow between agents
- * - Artifact creation timeline
+ * - Artifact creation timeline with rich preview
  * - Turn progression
  */
 
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import AssetPreview from "./AssetPreview";
 
 interface TurnResult {
   stepIndex: number;
@@ -291,35 +292,21 @@ export default function TeamVisualization({
                               }`}
                             >
                               📄 {artifact.name}
-                              <span className="ml-2 text-slate-500">({artifact.type.split("/")[1]})</span>
+                              <span className="ml-2 text-slate-500">({artifact.type.split("/")[1] || artifact.type})</span>
                             </button>
                           ))}
                         </div>
                         
-                        {/* Artifact Preview */}
+                        {/* Rich Artifact Preview with AssetPreview component */}
                         {selectedArtifact?.turnIndex === index && (
-                          <div className="mt-3 p-3 bg-slate-900 rounded-lg border border-slate-700 max-h-[300px] overflow-auto">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs text-slate-500">
-                                {turn.artifacts[selectedArtifact.artifactIndex].name}
-                              </span>
-                              <button
-                                onClick={() => setSelectedArtifact(null)}
-                                className="text-slate-500 hover:text-white"
-                              >
-                                ×
-                              </button>
-                            </div>
-                            <pre className="text-xs text-slate-300 font-mono whitespace-pre-wrap overflow-auto">
-                              {turn.artifacts[selectedArtifact.artifactIndex].type.includes("json")
-                                ? JSON.stringify(
-                                    JSON.parse(turn.artifacts[selectedArtifact.artifactIndex].data),
-                                    null,
-                                    2
-                                  )
-                                : turn.artifacts[selectedArtifact.artifactIndex].data.substring(0, 2000)}
-                              {turn.artifacts[selectedArtifact.artifactIndex].data.length > 2000 && "..."}
-                            </pre>
+                          <div className="mt-3">
+                            <AssetPreview
+                              name={turn.artifacts[selectedArtifact.artifactIndex].name}
+                              type={turn.artifacts[selectedArtifact.artifactIndex].type}
+                              data={turn.artifacts[selectedArtifact.artifactIndex].data}
+                              onClose={() => setSelectedArtifact(null)}
+                              maxHeight="400px"
+                            />
                           </div>
                         )}
                       </div>

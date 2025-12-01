@@ -1,8 +1,15 @@
 /**
- * Simplified AG-UI Frontend - Unified Single Page
+ * Unified AG-UI Frontend - Single Page with Progressive Disclosure
  *
  * This is a streamlined version that combines all features into a single page
- * with improved logging, error handling, and robust fallback behavior.
+ * with progressive disclosure through expandable sections.
+ *
+ * Features:
+ * - AI Chat Panel (always visible)
+ * - Work & Coordination with real-time agent activity
+ * - Pipeline Outcomes 
+ * - Team Mode with Agent Canvas (expandable section)
+ * - Session Visualization (expandable section)
  *
  * Based on CopilotKit examples: https://github.com/CopilotKit/CopilotKit/tree/main/examples/coagents-starter
  * 
@@ -18,6 +25,9 @@ import { useState, useEffect, useCallback } from "react";
 import { ApiStatus } from "@/types";
 import RealTimeAgentActivity from "@/components/RealTimeAgentActivity";
 import PipelineOutcomes from "@/components/PipelineOutcomes";
+import AgentCanvas from "@/components/AgentCanvas";
+import RecipeBuilder from "@/components/RecipeBuilder";
+import TurnIndicator from "@/components/TurnIndicator";
 
 // =============================================================================
 // Types (Local types not shared across components)
@@ -33,6 +43,54 @@ interface AgentState {
   status: AgentStatus;
   framework: string;
 }
+
+// Team-related types for integrated view
+interface Recipe {
+  id: string;
+  name: string;
+  description: string;
+  goal: string;
+  steps: Array<{
+    agentId: string;
+    instruction: string;
+    required: boolean;
+    dependsOn: string[];
+  }>;
+  tags: string[];
+}
+
+interface TeamSession {
+  id: string;
+  recipeId: string;
+  recipeName: string;
+  goal: string;
+  status: "pending" | "running" | "completed" | "failed";
+  currentTurn: number;
+  totalTurns: number;
+  createdAt: string;
+  updatedAt: string;
+  turnResults: Array<{
+    stepIndex: number;
+    agentId: string;
+    agentName: string;
+    status: "pending" | "running" | "completed" | "failed" | "skipped";
+    startedAt: string;
+    completedAt?: string;
+    durationMs?: number;
+    message?: string;
+    error?: string;
+    artifacts: Array<{ name: string; type: string; data: string }>;
+  }>;
+}
+
+const AGENT_ICONS: Record<string, string> = {
+  "academic-research": "🔬",
+  "google-trends": "📈",
+  "blog-writer": "✍️",
+  "code-reviewer": "🔍",
+  "data-analyst": "📊",
+  "image-generator": "🎨",
+};
 
 // =============================================================================
 // Constants
@@ -90,7 +148,7 @@ Available recipes:
 - **visual-content**: Research → Image Generation → Content Writing
 - **data-analysis**: Data Analysis → Visualization → Report Writing
 
-For complex workflows with multiple agents, suggest using Team Mode at /team.
+For complex workflows with multiple agents, expand the Team Mode section in the sidebar for visual team building.
 
 Be helpful, concise, and proactive. When users ask about a specific pipeline, always use the pipelineIdentifier parameter.`;
 
@@ -417,6 +475,111 @@ function MainContent({
   apiStatus: ApiStatus;
   onApiStatusChange: (status: ApiStatus) => void;
 }) {
+  // Team Mode state for progressive disclosure
+  const [teamModeExpanded, setTeamModeExpanded] = useState(false);
+  const [teamModeTab, setTeamModeTab] = useState<"canvas" | "recipe">("canvas");
+  const [selectedTeam, setSelectedTeam] = useState<string[]>([]);
+  const [activeSession, setActiveSession] = useState<TeamSession | null>(null);
+  const [teamError, setTeamError] = useState<string | null>(null);
+
+  // Poll for session updates
+  const pollSession = useCallback(async (sessionId: string) => {
+    const poll = async () => {
+      try {
+        const response = await fetch(`/api/team?session=${sessionId}`);
+        if (response.ok) {
+          const session = await response.json();
+          setActiveSession(session);
+          
+          if (session.status === "running") {
+            setTimeout(poll, 2000);
+          }
+        }
+      } catch (err) {
+        console.error("Poll error:", err);
+      }
+    };
+    
+    setTimeout(poll, 2000);
+  }, []);
+
+  // Handle team changes from canvas
+  const handleTeamChange = useCallback((team: string[]) => {
+    setSelectedTeam(team);
+  }, []);
+
+  // Handle recipe selection
+  const handleRecipeSelect = useCallback((recipe: Recipe) => {
+    const agentIds = recipe.steps.map((s) => s.agentId);
+    setSelectedTeam(agentIds);
+  }, []);
+
+  // Execute a team session
+  const handleRecipeExecute = useCallback(async (recipeId: string, goal: string) => {
+    setTeamError(null);
+    
+    try {
+      const response = await fetch("/api/team", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipeId, goal }),
+      });
+      
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to execute recipe");
+      }
+      
+      const data = await response.json();
+      setActiveSession(data.session);
+      
+      if (data.session.status === "running") {
+        pollSession(data.session.id);
+      }
+    } catch (err) {
+      setTeamError(err instanceof Error ? err.message : "Unknown error");
+    }
+  }, [pollSession]);
+
+  // Execute custom team from AgentCanvas
+  const handleCanvasExecute = useCallback(async (
+    goal: string,
+    config: { maxTurnsPerAgent: number; executionMode: "sequential" | "parallel" }
+  ) => {
+    if (selectedTeam.length === 0) {
+      setTeamError("Please select at least one agent");
+      return;
+    }
+    
+    setTeamError(null);
+    
+    try {
+      const response = await fetch("/api/team", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          agentIds: selectedTeam,
+          goal,
+          config,
+        }),
+      });
+      
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to execute team");
+      }
+      
+      const data = await response.json();
+      setActiveSession(data.session);
+      
+      if (data.session.status === "running") {
+        pollSession(data.session.id);
+      }
+    } catch (err) {
+      setTeamError(err instanceof Error ? err.message : "Unknown error");
+    }
+  }, [selectedTeam, pollSession]);
+
   // Note: Pipeline data is fetched from the real API - no static data used
   // Use useCopilotReadable to provide context about how to interact with agents
   useCopilotReadable({
@@ -1046,12 +1209,6 @@ ${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
           </div>
           <div className="flex items-center gap-4">
             <a
-              href="/team"
-              className="px-3 py-1.5 text-xs font-medium rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition border border-purple-500/30"
-            >
-              🎭 Team Mode
-            </a>
-            <a
               href="https://github.com/CopilotKit/CopilotKit"
               target="_blank"
               rel="noopener noreferrer"
@@ -1099,7 +1256,7 @@ ${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
             </div>
           </div>
 
-          {/* Right Column - Work & Coordination + Outcomes */}
+          {/* Right Column - Work & Coordination + Outcomes + Team Mode */}
           <div className="order-1 lg:order-2 space-y-6">
             {/* API Status (compact) */}
             <ApiStatusPanel onStatusChange={onApiStatusChange} />
@@ -1124,16 +1281,131 @@ ${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
               <PipelineOutcomes />
             </div>
 
+            {/* Team Mode Section - Expandable/Collapsible */}
+            <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+              {/* Team Mode Header - Click to expand */}
+              <button
+                onClick={() => setTeamModeExpanded(!teamModeExpanded)}
+                className="w-full p-4 flex items-center justify-between hover:bg-slate-700/30 transition"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🎭</span>
+                  <div className="text-left">
+                    <h2 className="text-lg font-semibold text-white">Team Mode</h2>
+                    <p className="text-xs text-slate-400">
+                      {activeSession ? `Active: ${activeSession.recipeName}` : "Multi-agent orchestration"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  {selectedTeam.length > 0 && (
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                      {selectedTeam.length} agents
+                    </span>
+                  )}
+                  {activeSession?.status === "running" && (
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/20 text-blue-400 animate-pulse">
+                      Running
+                    </span>
+                  )}
+                  <span className={`text-slate-400 transition-transform ${teamModeExpanded ? "rotate-180" : ""}`}>
+                    ▼
+                  </span>
+                </div>
+              </button>
+
+              {/* Team Mode Content - Expanded */}
+              {teamModeExpanded && (
+                <div className="border-t border-slate-700">
+                  {/* Tab Navigation */}
+                  <div className="p-3 border-b border-slate-700 bg-slate-900/30">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setTeamModeTab("canvas")}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                          teamModeTab === "canvas"
+                            ? "bg-purple-500 text-white"
+                            : "bg-slate-700 text-slate-400 hover:bg-slate-600"
+                        }`}
+                      >
+                        🎨 Agent Canvas
+                      </button>
+                      <button
+                        onClick={() => setTeamModeTab("recipe")}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                          teamModeTab === "recipe"
+                            ? "bg-purple-500 text-white"
+                            : "bg-slate-700 text-slate-400 hover:bg-slate-600"
+                        }`}
+                      >
+                        📋 Recipe Builder
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Error Display */}
+                  {teamError && (
+                    <div className="mx-4 mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                      <p className="text-sm text-red-400">⚠️ {teamError}</p>
+                    </div>
+                  )}
+
+                  {/* Tab Content */}
+                  <div className="p-4">
+                    {teamModeTab === "canvas" && (
+                      <div className="space-y-4">
+                        <AgentCanvas
+                          onTeamChange={handleTeamChange}
+                          onExecute={handleCanvasExecute}
+                          initialTeam={selectedTeam}
+                        />
+                      </div>
+                    )}
+
+                    {teamModeTab === "recipe" && (
+                      <div className="space-y-4">
+                        <RecipeBuilder
+                          onRecipeSelect={handleRecipeSelect}
+                          onGoalSubmit={handleRecipeExecute}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Active Session Visualization */}
+                  {activeSession && (
+                    <div className="p-4 border-t border-slate-700">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-lg">🎬</span>
+                        <h3 className="font-medium text-white">Session Progress</h3>
+                        <span className={`px-2 py-0.5 text-xs rounded-full ${
+                          activeSession.status === "completed" ? "bg-green-500/20 text-green-400" :
+                          activeSession.status === "running" ? "bg-blue-500/20 text-blue-400 animate-pulse" :
+                          activeSession.status === "failed" ? "bg-red-500/20 text-red-400" :
+                          "bg-slate-500/20 text-slate-400"
+                        }`}>
+                          {activeSession.status}
+                        </span>
+                      </div>
+                      
+                      {/* Compact Turn Indicator */}
+                      <TurnIndicator
+                        currentTurn={activeSession.currentTurn}
+                        totalTurns={activeSession.totalTurns}
+                        turnResults={activeSession.turnResults}
+                        agentIcons={AGENT_ICONS}
+                        sessionStatus={activeSession.status}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Quick Links (compact) */}
             <div className="bg-slate-800 rounded-xl border border-slate-700 p-4">
               <h3 className="text-sm font-semibold text-slate-400 mb-3">🔗 Quick Links</h3>
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <a
-                  href="/team"
-                  className="flex items-center gap-2 p-2 rounded bg-purple-500/20 hover:bg-purple-500/30 transition border border-purple-500/30"
-                >
-                  🎭 Team Mode
-                </a>
                 <a
                   href="https://enufacas.github.io/Chained/a2a-pipeline.html"
                   target="_blank"
@@ -1157,6 +1429,14 @@ ${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
                   className="flex items-center gap-2 p-2 rounded bg-slate-700/50 hover:bg-slate-700 transition"
                 >
                   🤖 Agent Registry
+                </a>
+                <a
+                  href="https://google.github.io/adk-docs/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 p-2 rounded bg-slate-700/50 hover:bg-slate-700 transition"
+                >
+                  📚 Google ADK
                 </a>
               </div>
             </div>
