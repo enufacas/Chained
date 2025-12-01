@@ -523,6 +523,10 @@ function persistTurnArtifacts(turnResult: TurnResult, session: TeamSession): voi
         currentTurn: session.currentTurn,
         totalTurns: session.totalTurns,
         recipeId: session.recipeId,
+        // Include turnResults progressively as they complete
+        // This ensures data is available even if session is interrupted
+        turnResults: session.turnResults,
+        config: session.config,
       },
       a2aContextId: session.context.contextId as string,
     });
@@ -753,6 +757,10 @@ async function executeSessionAsync(
         totalTurns: session.totalTurns,
         recipeId: session.recipeId,
         finalResult: session.finalResult,
+        // CRITICAL: Include complete turnResults with all A2A protocol objects
+        // This preserves high-fidelity data for session history after page reloads
+        turnResults: session.turnResults,
+        config: session.config,
       },
       a2aContextId: session.context.contextId as string,
     });
