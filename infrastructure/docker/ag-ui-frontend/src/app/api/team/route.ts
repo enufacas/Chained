@@ -79,10 +79,16 @@ interface TurnResult {
   completedAt?: string;
   durationMs?: number;
   taskId?: string;
+  contextId?: string;
   message?: string;
   artifacts: Array<{ name: string; type: string; data: string }>;
   error?: string;
   turnNumber?: number;
+  // A2A Protocol objects
+  agentCard?: object;
+  task?: object;
+  userMessage?: object;
+  agentMessage?: object;
 }
 
 interface TeamSession {
@@ -246,12 +252,46 @@ function generateSessionId(): string {
   return `session-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
 }
 
+/**
+ * Fetch agent card from an agent's well-known endpoint
+ */
+async function fetchAgentCard(agentUrl: string): Promise<object | null> {
+  try {
+    const response = await fetch(`${agentUrl}/.well-known/agent.json`, {
+      signal: AbortSignal.timeout(5000),
+    });
+    if (response.ok) {
+      return await response.json();
+    }
+    console.warn(`[Team API] Agent card fetch returned status ${response.status} for ${agentUrl}`);
+  } catch (error) {
+    console.warn(`[Team API] Failed to fetch agent card from ${agentUrl}:`, error instanceof Error ? error.message : error);
+  }
+  return null;
+}
+
+/**
+ * Agent call result with full A2A protocol data
+ */
+interface AgentCallResult {
+  taskId?: string;
+  contextId?: string;
+  message?: string;
+  artifacts: Array<{ name: string; type: string; data: string }>;
+  error?: string;
+  // A2A Protocol objects
+  agentCard?: object;
+  task?: object;
+  userMessage?: object;
+  agentMessage?: object;
+}
+
 async function callAgent(
   agentId: string,
   message: string,
   context: Record<string, unknown>,
   referenceTaskIds: string[] = []
-): Promise<{ taskId?: string; message?: string; artifacts: Array<{ name: string; type: string; data: string }>; error?: string }> {
+): Promise<AgentCallResult> {
   const agentUrl = AGENT_URLS[agentId];
   
   if (!agentUrl) {
@@ -259,29 +299,50 @@ async function callAgent(
   }
   
   try {
+    // Fetch agent card for A2A protocol compliance
+    const agentCard = await fetchAgentCard(agentUrl);
+    
+    const contextId = (context.contextId as string) || `team-${Date.now()}`;
+    const userMessage = {
+      role: "user",
+      parts: [{ text: message }],
+      timestamp: new Date().toISOString(),
+    };
+    
     const response = await fetch(`${agentUrl}/a2a/tasks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: {
-          role: "user",
-          parts: [{ text: message }],
-        },
-        contextId: context.contextId || `team-${Date.now()}`,
+        message: userMessage,
+        contextId,
         metadata: context,
         referenceTaskIds,
       }),
     });
     
     if (!response.ok) {
-      return { error: `Agent returned ${response.status}`, artifacts: [] };
+      return { error: `Agent returned ${response.status}`, artifacts: [], agentCard: agentCard || undefined };
     }
     
     const task = await response.json();
+    
+    // Extract agent message from task response
+    const agentMessage = task.status?.message ? {
+      ...task.status.message,
+      timestamp: new Date().toISOString(),
+      taskId: task.id,
+    } : undefined;
+    
     return {
       taskId: task.id,
+      contextId,
       message: task.status?.message?.parts?.[0]?.text,
       artifacts: task.artifacts || [],
+      // A2A Protocol objects
+      agentCard: agentCard || undefined,
+      task,
+      userMessage,
+      agentMessage,
     };
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Unknown error", artifacts: [] };
@@ -330,8 +391,48 @@ ${JSON.stringify(session.context, null, 2)}`;
   turnResult.completedAt = completedAt;
   turnResult.durationMs = durationMs;
   turnResult.taskId = result.taskId;
+  turnResult.contextId = result.contextId;
   turnResult.message = result.message;
   turnResult.artifacts = result.artifacts;
+  
+  // Store A2A protocol objects
+  turnResult.agentCard = result.agentCard;
+  turnResult.task = result.task;
+  turnResult.userMessage = result.userMessage;
+  turnResult.agentMessage = result.agentMessage;
+  
+  // Add A2A protocol objects as artifacts using vendor MIME types (RFC 6838)
+  if (result.agentCard) {
+    turnResult.artifacts.push({
+      name: `${step.agentId}-agent-card`,
+      type: "application/vnd.a2a.agent-card+json",
+      data: JSON.stringify(result.agentCard, null, 2),
+    });
+  }
+  
+  if (result.task) {
+    turnResult.artifacts.push({
+      name: `${step.agentId}-task`,
+      type: "application/vnd.a2a.task+json",
+      data: JSON.stringify(result.task, null, 2),
+    });
+  }
+  
+  if (result.userMessage) {
+    turnResult.artifacts.push({
+      name: `${step.agentId}-user-message`,
+      type: "application/vnd.a2a.message+json",
+      data: JSON.stringify(result.userMessage, null, 2),
+    });
+  }
+  
+  if (result.agentMessage) {
+    turnResult.artifacts.push({
+      name: `${step.agentId}-agent-message`,
+      type: "application/vnd.a2a.message+json",
+      data: JSON.stringify(result.agentMessage, null, 2),
+    });
+  }
   
   if (result.error) {
     turnResult.status = step.required ? "failed" : "skipped";

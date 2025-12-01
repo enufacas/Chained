@@ -17,11 +17,17 @@ interface ArtifactStreamProps {
   compact?: boolean;
 }
 
-// Get icon for artifact type
+// Get icon for artifact type - includes A2A protocol types (vendor MIME types)
 function getArtifactIcon(type: string, name: string): string {
   const lowerType = type.toLowerCase();
   const lowerName = name.toLowerCase();
 
+  // A2A Protocol artifact types (using vendor MIME type format)
+  if (lowerType.includes("a2a.agent-card") || lowerName.includes("agent-card")) return "🪪";
+  if (lowerType.includes("a2a.task") || lowerName.includes("-task")) return "📋";
+  if (lowerType.includes("a2a.message") || lowerName.includes("-message")) return "💬";
+  
+  // Standard artifact types
   if (lowerType.includes("svg") || lowerName.endsWith(".svg")) return "🖼️";
   if (lowerType.includes("markdown") || lowerType.includes("md") || lowerName.endsWith(".md"))
     return "📝";
@@ -36,7 +42,7 @@ function getArtifactIcon(type: string, name: string): string {
 // Get color class for source type
 function getSourceColor(source: string): string {
   switch (source) {
-    case "pipeline":
+    case "workflow":
       return "bg-blue-500/20 text-blue-400";
     case "team":
       return "bg-purple-500/20 text-purple-400";
@@ -46,6 +52,20 @@ function getSourceColor(source: string): string {
       return "bg-green-500/20 text-green-400";
     default:
       return "bg-slate-500/20 text-slate-400";
+  }
+}
+
+// Get color class for A2A artifact type
+function getA2ATypeColor(a2aType?: string): string {
+  switch (a2aType) {
+    case "agent-card":
+      return "bg-cyan-500/20 text-cyan-400";
+    case "task":
+      return "bg-amber-500/20 text-amber-400";
+    case "message":
+      return "bg-emerald-500/20 text-emerald-400";
+    default:
+      return "";
   }
 }
 
@@ -193,7 +213,7 @@ export default function ArtifactStream({
                     >
                       {artifact.name}
                     </div>
-                    <div className="flex items-center gap-1 mt-0.5">
+                    <div className="flex items-center gap-1 mt-0.5 flex-wrap">
                       <span
                         className={`px-1 py-0.5 rounded text-[10px] ${getSourceColor(
                           artifact.source
@@ -201,6 +221,18 @@ export default function ArtifactStream({
                       >
                         {artifact.source}
                       </span>
+                      {/* A2A Protocol type badge */}
+                      {artifact.a2aType && (
+                        <span
+                          className={`px-1 py-0.5 rounded text-[10px] ${getA2ATypeColor(
+                            artifact.a2aType
+                          )}`}
+                        >
+                          {artifact.a2aType === "agent-card" ? "🪪 card" : 
+                           artifact.a2aType === "task" ? "📋 task" :
+                           artifact.a2aType === "message" ? "💬 msg" : artifact.a2aType}
+                        </span>
+                      )}
                       {!compact && artifact.agentName && (
                         <span className="text-[10px] text-slate-500 truncate">
                           {artifact.agentName}

@@ -2,9 +2,10 @@
  * Storage utilities for persisting AG-UI data
  *
  * Provides localStorage-based persistence for:
- * - Artifacts from team/recipe/pipeline runs
+ * - Artifacts from team/recipe/workflow runs
  * - Session history
  * - User preferences
+ * - A2A protocol objects (agent cards, tasks, messages)
  */
 
 // Storage keys
@@ -14,6 +15,15 @@ const STORAGE_KEYS = {
   PREFERENCES: "ag-ui-preferences",
 } as const;
 
+// A2A Protocol artifact types
+// See: https://a2a-protocol.org/ for protocol specification
+export type A2AArtifactType = 
+  | "agent-card"       // A2A Agent Card - metadata about agent capabilities (agent.json)
+  | "task"             // A2A Task - represents a unit of work with status and artifacts
+  | "message"          // A2A Message - communication between user and agent
+  | "artifact"         // Standard artifact - data/content produced by agents
+  | "workflow-context"; // Workflow context - state shared across agents in a workflow
+
 // Types
 export interface StoredArtifact {
   id: string;
@@ -21,17 +31,21 @@ export interface StoredArtifact {
   type: string;
   data: string;
   preview?: string;
-  source: "pipeline" | "team" | "recipe" | "chat";
+  source: "workflow" | "team" | "recipe" | "chat";  // Renamed from "pipeline" to "workflow"
   sourceId: string;
   sourceName: string;
   createdAt: string;
   agentName?: string;
   phase?: string;
+  // A2A Protocol metadata
+  a2aType?: A2AArtifactType;
+  taskId?: string;
+  contextId?: string;
 }
 
 export interface StoredSession {
   id: string;
-  type: "pipeline" | "team" | "recipe";
+  type: "workflow" | "team" | "recipe";  // Renamed from "pipeline" to "workflow"
   name: string;
   topic: string;
   status: string;
@@ -39,6 +53,10 @@ export interface StoredSession {
   completedAt?: string;
   artifacts: string[]; // artifact IDs
   metadata?: Record<string, unknown>;
+  // A2A Protocol metadata
+  a2aContextId?: string;
+  agentCards?: string[]; // IDs of stored agent cards
+  taskIds?: string[]; // IDs of A2A tasks
 }
 
 export interface UserPreferences {
@@ -194,6 +212,101 @@ export function clearArtifacts(): void {
   } catch (error) {
     console.warn("Failed to clear artifacts:", error);
   }
+}
+
+// ============================================================================
+// A2A Protocol Artifact Helpers
+// ============================================================================
+
+/**
+ * Save an A2A Agent Card as an artifact
+ */
+export function saveAgentCard(
+  agentCard: object,
+  agentName: string,
+  source: StoredArtifact["source"],
+  sourceId: string,
+  sourceName: string
+): StoredArtifact {
+  return saveArtifact({
+    name: `${agentName} Agent Card`,
+    type: "application/json",
+    data: JSON.stringify(agentCard, null, 2),
+    preview: `A2A Agent Card for ${agentName}`,
+    source,
+    sourceId,
+    sourceName,
+    agentName,
+    a2aType: "agent-card",
+  });
+}
+
+/**
+ * Save an A2A Task as an artifact
+ */
+export function saveA2ATask(
+  task: object & { id?: string; contextId?: string },
+  agentName: string,
+  source: StoredArtifact["source"],
+  sourceId: string,
+  sourceName: string,
+  phase?: string
+): StoredArtifact {
+  const taskId = task.id || `task-${Date.now()}`;
+  return saveArtifact({
+    name: `${agentName} Task`,
+    type: "application/json",
+    data: JSON.stringify(task, null, 2),
+    preview: `A2A Task ${taskId}`,
+    source,
+    sourceId,
+    sourceName,
+    agentName,
+    phase,
+    a2aType: "task",
+    taskId,
+    contextId: task.contextId,
+  });
+}
+
+/**
+ * Save an A2A Message as an artifact
+ */
+export function saveA2AMessage(
+  message: object & { role?: string },
+  agentName: string,
+  source: StoredArtifact["source"],
+  sourceId: string,
+  sourceName: string,
+  taskId?: string
+): StoredArtifact {
+  const role = (message as { role?: string }).role || "agent";
+  return saveArtifact({
+    name: `${agentName} Message (${role})`,
+    type: "application/json",
+    data: JSON.stringify(message, null, 2),
+    preview: `A2A ${role} message from ${agentName}`,
+    source,
+    sourceId,
+    sourceName,
+    agentName,
+    a2aType: "message",
+    taskId,
+  });
+}
+
+/**
+ * Get artifacts by A2A type
+ */
+export function getArtifactsByA2AType(a2aType: A2AArtifactType): StoredArtifact[] {
+  return getStoredArtifacts().filter((a) => a.a2aType === a2aType);
+}
+
+/**
+ * Get A2A artifacts for a specific task
+ */
+export function getArtifactsByTaskId(taskId: string): StoredArtifact[] {
+  return getStoredArtifacts().filter((a) => a.taskId === taskId);
 }
 
 // ============================================================================
