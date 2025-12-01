@@ -1,15 +1,19 @@
 /**
- * Unified AG-UI Frontend - Single Page with Progressive Disclosure
+ * Unified AG-UI Frontend - Mobile-First Redesign
  *
- * This is a streamlined version that combines all features into a single page
- * with progressive disclosure through expandable sections.
+ * This is a streamlined, mobile-friendly version that prioritizes:
+ * 1. Agent Canvas (primary interaction)
+ * 2. Outcomes & Session Progress (combined, with expandable details)
+ * 3. Chat (always accessible)
+ * 4. Status panels (de-emphasized, at bottom)
  *
- * Features:
- * - AI Chat Panel (always visible)
- * - Work & Coordination with real-time agent activity
- * - Pipeline Outcomes 
- * - Team Mode with Agent Canvas (expandable section)
- * - Session Visualization (expandable section)
+ * Key UX Improvements:
+ * - Smaller, mobile-friendly buttons
+ * - Immediate visual feedback on button press
+ * - Slide-in panels for important content
+ * - Non-sticky header (scrolls away)
+ * - CopilotKit Status & GCP agents moved to bottom
+ * - Combined session progress + pipeline outcomes
  *
  * Based on CopilotKit examples: https://github.com/CopilotKit/CopilotKit/tree/main/examples/coagents-starter
  * 
@@ -23,11 +27,8 @@ import { CopilotChat, CopilotPopup } from "@copilotkit/react-ui";
 import { useCopilotAction, useCopilotReadable, CopilotKit } from "@copilotkit/react-core";
 import { useState, useEffect, useCallback } from "react";
 import { ApiStatus } from "@/types";
-import RealTimeAgentActivity from "@/components/RealTimeAgentActivity";
-import PipelineOutcomes from "@/components/PipelineOutcomes";
 import AgentCanvas from "@/components/AgentCanvas";
 import RecipeBuilder from "@/components/RecipeBuilder";
-import TurnIndicator from "@/components/TurnIndicator";
 
 // =============================================================================
 // Types (Local types not shared across components)
@@ -187,10 +188,10 @@ const INITIAL_AGENTS: AgentState[] = [
 // Note: No SAMPLE_DATA or demo pipelines - all data comes from real A2A agent execution
 
 // =============================================================================
-// API Status Checker Component
+// Compact API Status Checker Component (de-emphasized, collapsible)
 // =============================================================================
 
-function ApiStatusPanel({ onStatusChange }: { onStatusChange: (status: ApiStatus) => void }) {
+function CompactApiStatus({ onStatusChange }: { onStatusChange: (status: ApiStatus) => void }) {
   const [status, setStatus] = useState<ApiStatus>({
     checking: true,
     available: false,
@@ -198,210 +199,453 @@ function ApiStatusPanel({ onStatusChange }: { onStatusChange: (status: ApiStatus
     model: "",
     timestamp: new Date().toISOString(),
   });
-  const [logs, setLogs] = useState<string[]>([]);
-  const [showLogs, setShowLogs] = useState(false);
-
-  const addLog = useCallback((message: string) => {
-    const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
-    setLogs((prev) => [...prev.slice(-19), `[${timestamp}] ${message}`]);
-  }, []);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const checkApi = async () => {
-      addLog("Starting API status check...");
-
       try {
-        // First, try the GET endpoint for provider info
-        addLog("Checking /api/copilotkit (GET)...");
         const infoRes = await fetch("/api/copilotkit", {
           method: "GET",
           headers: { "Accept": "application/json" },
         });
 
-        addLog(`GET response: HTTP ${infoRes.status}`);
-
         if (infoRes.ok) {
           const info = await infoRes.json();
-          addLog(`Provider info: ${JSON.stringify(info)}`);
-
           const newStatus: ApiStatus = {
             checking: false,
             available: info.available === true,
             provider: info.provider || "none",
             model: info.model || "",
             timestamp: new Date().toISOString(),
+            error: !info.available ? "No LLM API key configured" : undefined,
           };
-
-          if (!info.available) {
-            newStatus.error = "No LLM API key configured";
-            addLog("⚠️ No LLM API key - chat will be limited");
-          } else {
-            addLog(`✅ Using ${info.provider} (${info.model})`);
-          }
-
           setStatus(newStatus);
           onStatusChange(newStatus);
           return;
         }
-
-        // Fallback: try a minimal POST to check if API is responsive
-        addLog("GET failed, trying POST health check...");
-        const postRes = await fetch("/api/copilotkit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: [] }),
-        });
-
-        addLog(`POST response: HTTP ${postRes.status}`);
-
-        const newStatus: ApiStatus = {
-          checking: false,
-          available: postRes.status !== 503,
-          provider: postRes.status === 503 ? "none" : "openai", // Assume OpenAI if we can't determine
-          model: "",
-          error: postRes.status === 503 ? "API returned 503 - No LLM key" : undefined,
-          timestamp: new Date().toISOString(),
-        };
-
-        setStatus(newStatus);
-        onStatusChange(newStatus);
-      } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : String(error);
-        addLog(`❌ Error: ${errorMsg}`);
 
         const newStatus: ApiStatus = {
           checking: false,
           available: false,
           provider: "none",
           model: "",
-          error: errorMsg,
+          error: "API check failed",
           timestamp: new Date().toISOString(),
         };
-
+        setStatus(newStatus);
+        onStatusChange(newStatus);
+      } catch (error) {
+        const newStatus: ApiStatus = {
+          checking: false,
+          available: false,
+          provider: "none",
+          model: "",
+          error: error instanceof Error ? error.message : String(error),
+          timestamp: new Date().toISOString(),
+        };
         setStatus(newStatus);
         onStatusChange(newStatus);
       }
     };
 
     checkApi();
-    // Re-check every 60 seconds
     const interval = setInterval(checkApi, 60000);
     return () => clearInterval(interval);
-  }, [addLog, onStatusChange]);
+  }, [onStatusChange]);
 
-  const getStatusBadge = () => {
-    if (status.checking) {
-      return (
-        <span className="px-3 py-1 rounded-full text-sm bg-slate-700 text-slate-300 animate-pulse">
-          ⏳ Checking...
-        </span>
-      );
+  const getProviderInfo = (provider: string) => {
+    switch (provider) {
+      case "vertex-ai": return { emoji: "☁️", name: "Vertex" };
+      case "gemini": return { emoji: "🔷", name: "Gemini" };
+      case "openai": return { emoji: "🟢", name: "OpenAI" };
+      default: return { emoji: "⚪", name: provider };
     }
-    if (status.available) {
-      // Handle different provider types
-      const getProviderInfo = (provider: string) => {
-        switch (provider) {
-          case "vertex-ai":
-            return { emoji: "☁️", name: "Vertex AI" };
-          case "gemini":
-            return { emoji: "🔷", name: "Gemini" };
-          case "openai":
-            return { emoji: "🟢", name: "OpenAI" };
-          default:
-            return { emoji: "✅", name: provider };
-        }
-      };
-      const { emoji, name } = getProviderInfo(status.provider);
-      return (
-        <span className="px-3 py-1 rounded-full text-sm bg-green-500/20 text-green-400 border border-green-500/30">
-          {emoji} {name} Ready
-        </span>
-      );
-    }
-    return (
-      <span className="px-3 py-1 rounded-full text-sm bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-        ⚠️ No LLM Key
-      </span>
-    );
   };
 
+  const providerInfo = getProviderInfo(status.provider);
+
   return (
-    <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden mb-6">
-      {/* Header */}
-      <div className="p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">🪁</span>
-          <div>
-            <h3 className="font-semibold text-white">CopilotKit Status</h3>
-            <p className="text-xs text-slate-500">v1.8.14 • /api/copilotkit</p>
-          </div>
+    <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full px-3 py-2 flex items-center justify-between hover:bg-slate-700/30 transition text-xs"
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-sm">🪁</span>
+          <span className="text-slate-400">CopilotKit</span>
         </div>
-        <div className="flex items-center gap-3">
-          {getStatusBadge()}
-          <button
-            onClick={() => setShowLogs(!showLogs)}
-            className="px-3 py-1 text-xs rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 transition"
-          >
-            {showLogs ? "Hide Logs" : "Show Logs"}
-          </button>
+        <div className="flex items-center gap-2">
+          {status.checking ? (
+            <span className="px-2 py-0.5 rounded-full text-xs bg-slate-700 text-slate-400 animate-pulse">...</span>
+          ) : status.available ? (
+            <span className="px-2 py-0.5 rounded-full text-xs bg-green-500/20 text-green-400">{providerInfo.emoji} {providerInfo.name}</span>
+          ) : (
+            <span className="px-2 py-0.5 rounded-full text-xs bg-yellow-500/20 text-yellow-400">⚠️ No Key</span>
+          )}
+          <span className={`text-slate-500 transition-transform text-xs ${expanded ? "rotate-180" : ""}`}>▼</span>
         </div>
-      </div>
-
-      {/* Debug Logs */}
-      {showLogs && (
-        <div className="border-t border-slate-700 p-4 bg-black/30">
-          <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-2">Debug Logs</h4>
-          <div className="font-mono text-xs text-slate-400 space-y-1 max-h-48 overflow-y-auto">
-            {logs.length === 0 ? (
-              <p className="text-slate-600 italic">No logs yet...</p>
-            ) : (
-              logs.map((log, i) => (
-                <div key={i} className={log.includes("❌") ? "text-red-400" : log.includes("✅") ? "text-green-400" : ""}>
-                  {log}
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Error Display */}
-      {status.error && !status.checking && (
-        <div className="border-t border-yellow-500/30 p-4 bg-yellow-500/5">
-          <div className="flex items-start gap-2">
-            <span className="text-yellow-400">⚠️</span>
-            <div>
-              <p className="text-yellow-400 text-sm font-medium">Configuration Issue</p>
-              <p className="text-slate-400 text-xs mt-1">{status.error}</p>
-              <p className="text-slate-500 text-xs mt-2">
-                Set <code className="bg-black/30 px-1 rounded">USE_VERTEX_AI=true</code> (for Cloud Run),{" "}
-                <code className="bg-black/30 px-1 rounded">GEMINI_API_KEY</code>, or{" "}
-                <code className="bg-black/30 px-1 rounded">OPENAI_API_KEY</code> for AI chat features.
-              </p>
+      </button>
+      {expanded && (
+        <div className="px-3 py-2 border-t border-slate-700/50 text-xs text-slate-500">
+          {status.available ? (
+            <div className="flex items-center gap-2">
+              <span>Model:</span>
+              <code className="bg-black/30 px-1.5 py-0.5 rounded text-green-400">{status.model}</code>
             </div>
-          </div>
+          ) : (
+            <p>Set <code className="bg-black/20 px-1 rounded">USE_VERTEX_AI=true</code>, <code className="bg-black/20 px-1 rounded">GEMINI_API_KEY</code>, or <code className="bg-black/20 px-1 rounded">OPENAI_API_KEY</code></p>
+          )}
         </div>
       )}
+    </div>
+  );
+}
 
-      {/* Success Info */}
-      {status.available && status.model && (
-        <div className="border-t border-green-500/30 p-4 bg-green-500/5">
-          <div className="flex items-center gap-4 text-sm">
-            <div>
-              <span className="text-slate-500">Provider:</span>{" "}
-              <span className="text-green-400 font-medium">
-                {status.provider === "vertex-ai"
-                  ? "Vertex AI"
-                  : status.provider === "gemini"
-                  ? "Google Gemini"
-                  : "OpenAI"}
+// =============================================================================
+// Compact GCP Agent Status Component (de-emphasized)
+// =============================================================================
+
+function CompactAgentStatus() {
+  const [expanded, setExpanded] = useState(false);
+  const [data, setData] = useState<{ healthy: number; total: number; agents: Array<{ displayName: string; icon: string; health: { status: string } }> } | null>(null);
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch("/api/activity");
+        if (res.ok) {
+          const result = await res.json();
+          setData({
+            healthy: result.systemStatus?.healthy || 0,
+            total: result.systemStatus?.total || 0,
+            agents: result.agents || [],
+          });
+        }
+      } catch (e) {
+        console.error("Agent status fetch failed:", e);
+      }
+    };
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full px-3 py-2 flex items-center justify-between hover:bg-slate-700/30 transition text-xs"
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-sm">☁️</span>
+          <span className="text-slate-400">GCP Agents</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {data ? (
+            <span className={`px-2 py-0.5 rounded-full text-xs ${
+              data.healthy === data.total && data.total > 0
+                ? "bg-green-500/20 text-green-400"
+                : data.healthy > 0
+                ? "bg-yellow-500/20 text-yellow-400"
+                : "bg-red-500/20 text-red-400"
+            }`}>
+              {data.healthy}/{data.total}
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 rounded-full text-xs bg-slate-700 text-slate-400 animate-pulse">...</span>
+          )}
+          <span className={`text-slate-500 transition-transform text-xs ${expanded ? "rotate-180" : ""}`}>▼</span>
+        </div>
+      </button>
+      {expanded && data && (
+        <div className="px-3 py-2 border-t border-slate-700/50 space-y-1">
+          {data.agents.slice(0, 4).map((agent, i) => (
+            <div key={i} className="flex items-center gap-2 text-xs text-slate-400">
+              <span>{agent.icon}</span>
+              <span className="flex-1 truncate">{agent.displayName}</span>
+              <span className={agent.health.status === "healthy" ? "text-green-400" : "text-red-400"}>
+                {agent.health.status === "healthy" ? "●" : "○"}
               </span>
             </div>
-            <div>
-              <span className="text-slate-500">Model:</span>{" "}
-              <code className="bg-black/30 px-2 py-0.5 rounded text-green-400">{status.model}</code>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// =============================================================================
+// Unified Outcomes Component (Pipeline + Session Progress combined)
+// =============================================================================
+
+interface PipelineResult {
+  id: string;
+  topic: string;
+  status: "pending" | "running" | "completed" | "failed";
+  createdAt: string;
+  updatedAt: string;
+  progress: number;
+  currentPhase: string;
+  results?: {
+    research?: { topic: string; domain: string; keywords: string[] };
+    trends?: { trendingKeywords: string[]; recommendedFocus: string };
+    blog?: { title: string; url: string; wordCount: number };
+  };
+}
+
+const PHASE_ICONS: { [key: string]: { icon: string; color: string } } = {
+  research: { icon: "🔬", color: "blue" },
+  trends: { icon: "📈", color: "green" },
+  writing: { icon: "✍️", color: "purple" },
+  publishing: { icon: "🚀", color: "orange" },
+  complete: { icon: "🎉", color: "emerald" },
+};
+
+function UnifiedOutcomes({ 
+  activeSession, 
+  agentIcons 
+}: { 
+  activeSession: TeamSession | null;
+  agentIcons: Record<string, string>;
+}) {
+  const [pipelines, setPipelines] = useState<PipelineResult[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expandedItem, setExpandedItem] = useState<string | null>(null);
+
+  const fetchPipelines = useCallback(async () => {
+    try {
+      const response = await fetch("/api/pipeline?limit=10");
+      if (response.ok) {
+        const result = await response.json();
+        setPipelines(result.pipelines || []);
+      }
+    } catch (err) {
+      console.error("[UnifiedOutcomes] Fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPipelines();
+    const interval = setInterval(fetchPipelines, 5000);
+    return () => clearInterval(interval);
+  }, [fetchPipelines]);
+
+  const formatTimeAgo = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    if (diffMins < 1) return "just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return date.toLocaleDateString();
+  };
+
+  const activePipelines = pipelines.filter(p => p.status === "running" || p.status === "pending");
+  const completedPipelines = pipelines.filter(p => p.status === "completed");
+  const hasActiveWork = activeSession?.status === "running" || activePipelines.length > 0;
+
+  if (loading) {
+    return (
+      <div className="bg-slate-800 rounded-lg border border-slate-700 p-4 animate-pulse">
+        <div className="h-5 bg-slate-700 rounded w-1/3 mb-3"></div>
+        <div className="space-y-2">
+          <div className="h-12 bg-slate-700 rounded"></div>
+          <div className="h-12 bg-slate-700 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+      {/* Header */}
+      <div className="px-3 py-2 border-b border-slate-700 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">📊</span>
+          <h3 className="text-sm font-semibold text-white">Progress & Outcomes</h3>
+        </div>
+        {hasActiveWork && (
+          <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/20 text-blue-400 animate-pulse">
+            Active
+          </span>
+        )}
+      </div>
+
+      {/* Active Session Progress - Prominent when running */}
+      {activeSession && (
+        <div className={`border-b border-slate-700 ${activeSession.status === "running" ? "bg-gradient-to-r from-blue-500/10 to-purple-500/10" : ""}`}>
+          <button
+            onClick={() => setExpandedItem(expandedItem === `session-${activeSession.id}` ? null : `session-${activeSession.id}`)}
+            className="w-full px-3 py-3 flex items-center gap-3 hover:bg-slate-700/30 transition"
+          >
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
+              activeSession.status === "running" ? "bg-blue-500 animate-pulse" :
+              activeSession.status === "completed" ? "bg-green-500" :
+              activeSession.status === "failed" ? "bg-red-500" : "bg-slate-600"
+            }`}>
+              {activeSession.status === "running" ? "⏳" : activeSession.status === "completed" ? "✅" : activeSession.status === "failed" ? "❌" : "⏸️"}
             </div>
+            <div className="flex-1 min-w-0 text-left">
+              <div className="font-medium text-white text-sm truncate">{activeSession.recipeName}</div>
+              <div className="text-xs text-slate-400 truncate">{activeSession.goal}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs text-slate-400">
+                Turn {activeSession.currentTurn}/{activeSession.totalTurns}
+              </div>
+              <div className="w-16 h-1.5 bg-slate-700 rounded-full mt-1 overflow-hidden">
+                <div 
+                  className={`h-full transition-all duration-500 ${
+                    activeSession.status === "running" ? "bg-blue-500" :
+                    activeSession.status === "completed" ? "bg-green-500" : "bg-slate-500"
+                  }`}
+                  style={{ width: `${(activeSession.currentTurn / activeSession.totalTurns) * 100}%` }}
+                />
+              </div>
+            </div>
+            <span className={`text-slate-500 transition-transform text-xs ${expandedItem === `session-${activeSession.id}` ? "rotate-180" : ""}`}>▼</span>
+          </button>
+          
+          {/* Expanded Session Details */}
+          {expandedItem === `session-${activeSession.id}` && (
+            <div className="px-3 pb-3 space-y-2">
+              {activeSession.turnResults.map((turn, idx) => {
+                const icon = agentIcons[turn.agentId] || "🤖";
+                return (
+                  <div
+                    key={turn.stepIndex}
+                    className={`flex items-center gap-2 p-2 rounded text-xs ${
+                      turn.status === "running" ? "bg-blue-500/10 border border-blue-500/30" :
+                      turn.status === "completed" ? "bg-green-500/5 border border-green-500/20" :
+                      turn.status === "failed" ? "bg-red-500/5 border border-red-500/20" :
+                      "bg-slate-700/30 border border-slate-600/30"
+                    }`}
+                  >
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                      turn.status === "running" ? "bg-blue-500 text-white animate-pulse" :
+                      turn.status === "completed" ? "bg-green-500 text-white" :
+                      turn.status === "failed" ? "bg-red-500 text-white" :
+                      "bg-slate-600 text-slate-300"
+                    }`}>
+                      {idx + 1}
+                    </span>
+                    <span>{icon}</span>
+                    <span className="flex-1 truncate text-slate-300">{turn.agentName}</span>
+                    {turn.status === "running" && <span className="text-blue-400 animate-pulse">Working...</span>}
+                    {turn.status === "completed" && <span className="text-green-400">✓</span>}
+                    {turn.status === "failed" && <span className="text-red-400">✗</span>}
+                    {turn.durationMs && <span className="text-slate-500">{(turn.durationMs / 1000).toFixed(1)}s</span>}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Active Pipelines */}
+      {activePipelines.map((pipeline) => {
+        const phaseInfo = PHASE_ICONS[pipeline.currentPhase] || { icon: "⏳", color: "slate" };
+        const isExpanded = expandedItem === `pipeline-${pipeline.id}`;
+        
+        return (
+          <div key={pipeline.id} className="border-b border-slate-700 bg-yellow-500/5">
+            <button
+              onClick={() => setExpandedItem(isExpanded ? null : `pipeline-${pipeline.id}`)}
+              className="w-full px-3 py-3 flex items-center gap-3 hover:bg-slate-700/30 transition"
+            >
+              <div className="w-8 h-8 rounded-full bg-yellow-500/20 flex items-center justify-center animate-bounce">
+                <span className="text-sm">{phaseInfo.icon}</span>
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <div className="font-medium text-white text-sm truncate">{pipeline.topic}</div>
+                <div className="text-xs text-slate-400">{pipeline.currentPhase} • {pipeline.progress}%</div>
+              </div>
+              <div className="w-16 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 transition-all duration-500 bg-[length:200%_100%] animate-[gradient_2s_ease_infinite]"
+                  style={{ width: `${pipeline.progress}%` }}
+                />
+              </div>
+              <span className={`text-slate-500 transition-transform text-xs ${isExpanded ? "rotate-180" : ""}`}>▼</span>
+            </button>
+            
+            {isExpanded && (
+              <div className="px-3 pb-3">
+                <div className="flex items-center gap-1 text-xs">
+                  {["research", "trends", "writing", "publishing", "complete"].map((phase, idx) => {
+                    const phases = ["research", "trends", "writing", "publishing", "complete"];
+                    const currentIdx = phases.indexOf(pipeline.currentPhase);
+                    const isDone = idx < currentIdx;
+                    const isCurrent = idx === currentIdx;
+                    return (
+                      <div key={phase} className="flex items-center">
+                        {idx > 0 && <span className="text-slate-600 mx-1">→</span>}
+                        <span className={`${isDone ? "text-green-400" : isCurrent ? "text-yellow-400 animate-pulse" : "text-slate-600"}`}>
+                          {PHASE_ICONS[phase]?.icon || "○"}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
+        );
+      })}
+
+      {/* Completed Pipelines */}
+      {completedPipelines.length > 0 ? (
+        <div className="max-h-64 overflow-y-auto">
+          {completedPipelines.slice(0, 5).map((pipeline) => {
+            const isExpanded = expandedItem === `completed-${pipeline.id}`;
+            
+            return (
+              <div key={pipeline.id} className="border-b border-slate-700/50 last:border-b-0">
+                <button
+                  onClick={() => setExpandedItem(isExpanded ? null : `completed-${pipeline.id}`)}
+                  className="w-full px-3 py-2 flex items-center gap-2 hover:bg-slate-700/30 transition text-xs"
+                >
+                  <span className="text-green-400">✓</span>
+                  <span className="flex-1 truncate text-slate-300 text-left">{pipeline.topic}</span>
+                  <span className="text-slate-500">{formatTimeAgo(pipeline.updatedAt)}</span>
+                  <span className={`text-slate-500 transition-transform ${isExpanded ? "rotate-180" : ""}`}>▼</span>
+                </button>
+                
+                {isExpanded && pipeline.results && (
+                  <div className="px-3 pb-2 space-y-1 text-xs">
+                    {pipeline.results.blog && (
+                      <a
+                        href={pipeline.results.blog.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 p-2 rounded bg-accent-500/10 border border-accent-500/20 hover:bg-accent-500/20 transition"
+                      >
+                        <span>📝</span>
+                        <span className="flex-1 truncate text-accent-300">{pipeline.results.blog.title}</span>
+                        <span className="text-slate-500">{pipeline.results.blog.wordCount}w</span>
+                        <span>↗</span>
+                      </a>
+                    )}
+                    {pipeline.results.research && (
+                      <div className="text-slate-400">
+                        🔬 {pipeline.results.research.domain} • {pipeline.results.research.keywords?.slice(0, 3).join(", ")}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : !activeSession && activePipelines.length === 0 && (
+        <div className="px-3 py-6 text-center text-slate-500 text-xs">
+          <span className="text-2xl block mb-2">📭</span>
+          No outcomes yet. Start a task to see progress here.
         </div>
       )}
     </div>
@@ -476,11 +720,11 @@ function MainContent({
   onApiStatusChange: (status: ApiStatus) => void;
 }) {
   // Team Mode state for progressive disclosure
-  const [teamModeExpanded, setTeamModeExpanded] = useState(false);
   const [teamModeTab, setTeamModeTab] = useState<"canvas" | "recipe">("canvas");
   const [selectedTeam, setSelectedTeam] = useState<string[]>([]);
   const [activeSession, setActiveSession] = useState<TeamSession | null>(null);
   const [teamError, setTeamError] = useState<string | null>(null);
+  const [chatExpanded, setChatExpanded] = useState(true);
 
   // Poll for session updates
   const pollSession = useCallback(async (sessionId: string) => {
@@ -1191,273 +1435,172 @@ ${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-      {/* Header */}
-      <header className="bg-slate-900/80 backdrop-blur border-b border-slate-700 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+      {/* Header - NOT sticky, scrolls with content */}
+      <header className="bg-slate-900/80 border-b border-slate-700">
+        <div className="max-w-7xl mx-auto px-3 py-2 sm:px-4 sm:py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
             <a
               href="https://enufacas.github.io/Chained/"
-              className="text-2xl hover:scale-110 transition"
+              className="text-xl sm:text-2xl hover:scale-110 transition"
               title="Back to Chained"
             >
               🏠
             </a>
             <div>
-              <h1 className="text-xl font-bold text-accent-400">🤖 Chained AG-UI</h1>
-              <p className="text-xs text-slate-500">A2A Pipeline Visualization • CopilotKit v1.8.14</p>
+              <h1 className="text-base sm:text-lg font-bold text-accent-400">🤖 Chained AG-UI</h1>
+              <p className="text-[10px] sm:text-xs text-slate-500 hidden sm:block">A2A Pipeline • CopilotKit v1.8.14</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <a
               href="https://github.com/CopilotKit/CopilotKit"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-slate-400 hover:text-accent-400 transition"
+              className="text-[10px] sm:text-xs text-slate-400 hover:text-accent-400 transition hidden sm:inline"
             >
-              CopilotKit Docs ↗
+              Docs ↗
             </a>
             <a
               href="https://a2a-protocol.org/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-slate-400 hover:text-accent-400 transition"
+              className="text-[10px] sm:text-xs text-slate-400 hover:text-accent-400 transition hidden sm:inline"
             >
-              A2A Protocol ↗
+              A2A ↗
             </a>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
-        {/* Main Layout: Chat + Activity panels side by side */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Left Column - Chat (Always Visible) */}
-          <div className="order-2 lg:order-1">
-            <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden h-[600px] lg:h-[800px] sticky top-24">
-              <div className="p-4 border-b border-slate-700 bg-slate-900/50 flex items-center justify-between">
-                <div>
-                  <h2 className="font-semibold text-accent-400">💬 AI Assistant</h2>
-                  <p className="text-xs text-slate-500 mt-1">
-                    {apiStatus.available
-                      ? `Powered by ${
-                          apiStatus.provider === "vertex-ai"
-                            ? "Vertex AI"
-                            : apiStatus.provider === "gemini"
-                            ? "Gemini"
-                            : "OpenAI"
-                        } • Commands update panels in real-time`
-                      : "Configure API key to enable"}
-                  </p>
+      <main className="max-w-7xl mx-auto px-2 sm:px-4 py-3 sm:py-4">
+        {/* Mobile-First Layout: Primary content first */}
+        <div className="space-y-3 sm:space-y-4 lg:grid lg:grid-cols-3 lg:gap-4 lg:space-y-0">
+          
+          {/* Column 1: Agent Canvas (Primary - Takes 2 cols on large screens) */}
+          <div className="lg:col-span-2 space-y-3 sm:space-y-4">
+            {/* Agent Canvas - Main interaction area */}
+            <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+              {/* Tab Navigation for Canvas/Recipe */}
+              <div className="px-3 py-2 border-b border-slate-700 bg-slate-900/30 flex items-center justify-between">
+                <div className="flex gap-1 sm:gap-2">
+                  <button
+                    onClick={() => setTeamModeTab("canvas")}
+                    className={`px-2 py-1 sm:px-3 sm:py-1.5 text-xs font-medium rounded transition-all active:scale-95 ${
+                      teamModeTab === "canvas"
+                        ? "bg-purple-500 text-white shadow-lg shadow-purple-500/20"
+                        : "bg-slate-700 text-slate-400 hover:bg-slate-600"
+                    }`}
+                  >
+                    🎨 Canvas
+                  </button>
+                  <button
+                    onClick={() => setTeamModeTab("recipe")}
+                    className={`px-2 py-1 sm:px-3 sm:py-1.5 text-xs font-medium rounded transition-all active:scale-95 ${
+                      teamModeTab === "recipe"
+                        ? "bg-purple-500 text-white shadow-lg shadow-purple-500/20"
+                        : "bg-slate-700 text-slate-400 hover:bg-slate-600"
+                    }`}
+                  >
+                    📋 Recipe
+                  </button>
                 </div>
+                {selectedTeam.length > 0 && (
+                  <span className="px-2 py-0.5 text-xs rounded-full bg-purple-500/20 text-purple-400">
+                    {selectedTeam.length} agents
+                  </span>
+                )}
               </div>
-              <div className="h-[calc(100%-65px)]">
-                <ChatPanel apiAvailable={apiStatus.available} />
+
+              {/* Error Display */}
+              {teamError && (
+                <div className="mx-2 my-2 p-2 bg-red-500/10 border border-red-500/30 rounded text-xs text-red-400">
+                  ⚠️ {teamError}
+                </div>
+              )}
+
+              {/* Tab Content */}
+              <div className="p-2 sm:p-3">
+                {teamModeTab === "canvas" && (
+                  <AgentCanvas
+                    onTeamChange={handleTeamChange}
+                    onExecute={handleCanvasExecute}
+                    initialTeam={selectedTeam}
+                  />
+                )}
+                {teamModeTab === "recipe" && (
+                  <RecipeBuilder
+                    onRecipeSelect={handleRecipeSelect}
+                    onGoalSubmit={handleRecipeExecute}
+                  />
+                )}
               </div>
+            </div>
+
+            {/* Combined Outcomes & Session Progress - Slide-in when active */}
+            <div className={`transition-all duration-300 ${activeSession?.status === "running" ? "ring-2 ring-blue-500/50 shadow-lg shadow-blue-500/10" : ""}`}>
+              <UnifiedOutcomes activeSession={activeSession} agentIcons={AGENT_ICONS} />
             </div>
           </div>
 
-          {/* Right Column - Work & Coordination + Outcomes + Team Mode */}
-          <div className="order-1 lg:order-2 space-y-6">
-            {/* API Status (compact) */}
-            <ApiStatusPanel onStatusChange={onApiStatusChange} />
-
-            {/* Work & Coordination Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">⚡</span>
-                <h2 className="text-lg font-semibold text-white">Work & Coordination</h2>
-                <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">Live</span>
-              </div>
-              <RealTimeAgentActivity />
-            </div>
-
-            {/* Outcomes Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🎯</span>
-                <h2 className="text-lg font-semibold text-white">Outcomes</h2>
-                <span className="text-xs text-slate-500">Pipeline results & artifacts</span>
-              </div>
-              <PipelineOutcomes />
-            </div>
-
-            {/* Team Mode Section - Expandable/Collapsible */}
-            <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-              {/* Team Mode Header - Click to expand */}
+          {/* Column 2: Chat + Status (Secondary) */}
+          <div className="lg:col-span-1 space-y-3 sm:space-y-4">
+            {/* Chat Panel - Collapsible on mobile */}
+            <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
               <button
-                onClick={() => setTeamModeExpanded(!teamModeExpanded)}
-                className="w-full p-4 flex items-center justify-between hover:bg-slate-700/30 transition"
+                onClick={() => setChatExpanded(!chatExpanded)}
+                className="w-full px-3 py-2 flex items-center justify-between hover:bg-slate-700/30 transition lg:cursor-default"
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">🎭</span>
-                  <div className="text-left">
-                    <h2 className="text-lg font-semibold text-white">Team Mode</h2>
-                    <p className="text-xs text-slate-400">
-                      {activeSession ? `Active: ${activeSession.recipeName}` : "Multi-agent orchestration"}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  {selectedTeam.length > 0 && (
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
-                      {selectedTeam.length} agents
-                    </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">💬</span>
+                  <span className="text-sm font-semibold text-white">AI Chat</span>
+                  {apiStatus.available && (
+                    <span className="px-1.5 py-0.5 text-[10px] rounded bg-green-500/20 text-green-400">Ready</span>
                   )}
-                  {activeSession?.status === "running" && (
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/20 text-blue-400 animate-pulse">
-                      Running
-                    </span>
-                  )}
-                  <span className={`text-slate-400 transition-transform ${teamModeExpanded ? "rotate-180" : ""}`}>
-                    ▼
-                  </span>
                 </div>
+                <span className={`text-slate-500 transition-transform text-xs lg:hidden ${chatExpanded ? "rotate-180" : ""}`}>▼</span>
               </button>
-
-              {/* Team Mode Content - Expanded */}
-              {teamModeExpanded && (
-                <div className="border-t border-slate-700">
-                  {/* Tab Navigation */}
-                  <div className="p-3 border-b border-slate-700 bg-slate-900/30">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setTeamModeTab("canvas")}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
-                          teamModeTab === "canvas"
-                            ? "bg-purple-500 text-white"
-                            : "bg-slate-700 text-slate-400 hover:bg-slate-600"
-                        }`}
-                      >
-                        🎨 Agent Canvas
-                      </button>
-                      <button
-                        onClick={() => setTeamModeTab("recipe")}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
-                          teamModeTab === "recipe"
-                            ? "bg-purple-500 text-white"
-                            : "bg-slate-700 text-slate-400 hover:bg-slate-600"
-                        }`}
-                      >
-                        📋 Recipe Builder
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Error Display */}
-                  {teamError && (
-                    <div className="mx-4 mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-                      <p className="text-sm text-red-400">⚠️ {teamError}</p>
-                    </div>
-                  )}
-
-                  {/* Tab Content */}
-                  <div className="p-4">
-                    {teamModeTab === "canvas" && (
-                      <div className="space-y-4">
-                        <AgentCanvas
-                          onTeamChange={handleTeamChange}
-                          onExecute={handleCanvasExecute}
-                          initialTeam={selectedTeam}
-                        />
-                      </div>
-                    )}
-
-                    {teamModeTab === "recipe" && (
-                      <div className="space-y-4">
-                        <RecipeBuilder
-                          onRecipeSelect={handleRecipeSelect}
-                          onGoalSubmit={handleRecipeExecute}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Active Session Visualization */}
-                  {activeSession && (
-                    <div className="p-4 border-t border-slate-700">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-lg">🎬</span>
-                        <h3 className="font-medium text-white">Session Progress</h3>
-                        <span className={`px-2 py-0.5 text-xs rounded-full ${
-                          activeSession.status === "completed" ? "bg-green-500/20 text-green-400" :
-                          activeSession.status === "running" ? "bg-blue-500/20 text-blue-400 animate-pulse" :
-                          activeSession.status === "failed" ? "bg-red-500/20 text-red-400" :
-                          "bg-slate-500/20 text-slate-400"
-                        }`}>
-                          {activeSession.status}
-                        </span>
-                      </div>
-                      
-                      {/* Compact Turn Indicator */}
-                      <TurnIndicator
-                        currentTurn={activeSession.currentTurn}
-                        totalTurns={activeSession.totalTurns}
-                        turnResults={activeSession.turnResults}
-                        agentIcons={AGENT_ICONS}
-                        sessionStatus={activeSession.status}
-                      />
-                    </div>
-                  )}
+              <div className={`${chatExpanded ? "block" : "hidden"} lg:block`}>
+                <div className="h-[300px] sm:h-[400px] lg:h-[500px] border-t border-slate-700">
+                  <ChatPanel apiAvailable={apiStatus.available} />
                 </div>
-              )}
+              </div>
             </div>
 
-            {/* Quick Links (compact) */}
-            <div className="bg-slate-800 rounded-xl border border-slate-700 p-4">
-              <h3 className="text-sm font-semibold text-slate-400 mb-3">🔗 Quick Links</h3>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <a
-                  href="https://enufacas.github.io/Chained/a2a-pipeline.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-2 rounded bg-slate-700/50 hover:bg-slate-700 transition"
-                >
-                  📐 Pipeline Docs
+            {/* De-emphasized Status Panels at Bottom */}
+            <div className="space-y-2 opacity-75 hover:opacity-100 transition-opacity">
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider px-1">System Status</p>
+              
+              {/* Compact CopilotKit Status */}
+              <CompactApiStatus onStatusChange={onApiStatusChange} />
+              
+              {/* Compact GCP Agents Status */}
+              <CompactAgentStatus />
+            </div>
+
+            {/* Quick Links - Very compact */}
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 p-2">
+              <div className="grid grid-cols-2 gap-1 text-[10px] sm:text-xs">
+                <a href="https://enufacas.github.io/Chained/a2a-pipeline.html" target="_blank" rel="noopener noreferrer"
+                   className="flex items-center gap-1 p-1.5 rounded bg-slate-700/30 hover:bg-slate-700/50 transition text-slate-400 hover:text-white">
+                  📐 Docs
                 </a>
-                <a
-                  href="https://enufacas.github.io/Chained/a2a.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-2 rounded bg-slate-700/50 hover:bg-slate-700 transition"
-                >
-                  📘 A2A Docs
-                </a>
-                <a
-                  href="/api/registry?health=true"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-2 rounded bg-slate-700/50 hover:bg-slate-700 transition"
-                >
-                  🤖 Agent Registry
-                </a>
-                <a
-                  href="https://google.github.io/adk-docs/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-2 rounded bg-slate-700/50 hover:bg-slate-700 transition"
-                >
-                  📚 Google ADK
+                <a href="/api/registry?health=true" target="_blank" rel="noopener noreferrer"
+                   className="flex items-center gap-1 p-1.5 rounded bg-slate-700/30 hover:bg-slate-700/50 transition text-slate-400 hover:text-white">
+                  🤖 API
                 </a>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="text-center text-slate-500 text-sm py-6 mt-6">
+        {/* Footer - Minimal */}
+        <div className="text-center text-slate-600 text-[10px] py-4 mt-4">
           <p>
-            Powered by{" "}
-            <a href="https://github.com/CopilotKit/CopilotKit" className="text-accent-400 hover:underline">
-              CopilotKit
-            </a>
+            <a href="https://github.com/CopilotKit/CopilotKit" className="hover:text-slate-400">CopilotKit</a>
             {" • "}
-            <a href="https://a2a-protocol.org/" className="text-accent-400 hover:underline">
-              A2A Protocol
-            </a>
+            <a href="https://a2a-protocol.org/" className="hover:text-slate-400">A2A</a>
             {" • "}
-            <a href="https://google.github.io/adk-docs/" className="text-accent-400 hover:underline">
-              Google ADK
-            </a>
+            <a href="https://google.github.io/adk-docs/" className="hover:text-slate-400">ADK</a>
           </p>
         </div>
       </main>
@@ -1469,7 +1612,7 @@ ${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
           labels={{
             title: "A2A Pipeline Assistant",
             initial:
-              "👋 Hi! I can help you with the A2A pipeline!\n\n🚀 **New Commands:**\n• Create a pipeline on [topic]\n• @research-agent [query]\n• What's the pipeline status?\n\n📊 **Existing:**\n• Analyze this pipeline\n• What are the trending keywords?",
+              "👋 Hi! I can help with A2A pipelines!\n\n🚀 Try:\n• Create a pipeline on [topic]\n• @research-agent [query]\n• What's the pipeline status?",
           }}
         />
       )}
