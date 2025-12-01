@@ -9,6 +9,9 @@
 # - academic-research: Discovers research topics for blog content
 # - blog-writer: Writes and publishes blog posts
 # - google-trends: Analyzes Google Trends for SEO optimization
+# - code-reviewer: Reviews code and provides feedback
+# - data-analyst: Analyzes data and generates insights
+# - image-generator: Generates images for blog posts
 #
 # Reference:
 # - ADK Cloud Run: https://google.github.io/adk-docs/deploy/cloud-run/
@@ -146,6 +149,9 @@ jobs:
           - academic-research
           - blog-writer
           - google-trends
+          - code-reviewer
+          - data-analyst
+          - image-generator
 
     steps:
       - name: Checkout code
@@ -414,6 +420,9 @@ jobs:
             ["chained-academic-research"]="google_cloud_run_v2_service.academic_research"
             ["chained-blog-writer"]="google_cloud_run_v2_service.blog_writer"
             ["chained-google-trends"]="google_cloud_run_v2_service.google_trends"
+            ["chained-code-reviewer"]="google_cloud_run_v2_service.code_reviewer"
+            ["chained-data-analyst"]="google_cloud_run_v2_service.data_analyst"
+            ["chained-image-generator"]="google_cloud_run_v2_service.image_generator"
             ["chained-adk-api-server"]="google_cloud_run_v2_service.adk_api_server"
             ["chained-ag-ui-frontend"]="google_cloud_run_v2_service.ag_ui_frontend"
           )
@@ -466,12 +475,18 @@ jobs:
             -target=google_cloud_run_v2_service.academic_research \
             -target=google_cloud_run_v2_service.blog_writer \
             -target=google_cloud_run_v2_service.google_trends \
+            -target=google_cloud_run_v2_service.code_reviewer \
+            -target=google_cloud_run_v2_service.data_analyst \
+            -target=google_cloud_run_v2_service.image_generator \
             -target=google_cloud_run_v2_service.adk_api_server \
             -target=google_cloud_run_v2_service.ag_ui_frontend \
             -target=google_service_account.adk_agents \
             -target=google_cloud_run_v2_service_iam_member.academic_research_public \
             -target=google_cloud_run_v2_service_iam_member.blog_writer_public \
             -target=google_cloud_run_v2_service_iam_member.google_trends_public \
+            -target=google_cloud_run_v2_service_iam_member.code_reviewer_public \
+            -target=google_cloud_run_v2_service_iam_member.data_analyst_public \
+            -target=google_cloud_run_v2_service_iam_member.image_generator_public \
             -target=google_cloud_run_v2_service_iam_member.adk_api_server_public \
             -target=google_cloud_run_v2_service_iam_member.ag_ui_frontend_public \
             -out=tfplan
@@ -485,6 +500,9 @@ jobs:
           echo "academic_research_url=$(terraform output -raw academic_research_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "blog_writer_url=$(terraform output -raw blog_writer_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "google_trends_url=$(terraform output -raw google_trends_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "code_reviewer_url=$(terraform output -raw code_reviewer_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "data_analyst_url=$(terraform output -raw data_analyst_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "image_generator_url=$(terraform output -raw image_generator_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "adk_api_server_url=$(terraform output -raw adk_api_server_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "ag_ui_frontend_url=$(terraform output -raw ag_ui_frontend_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
 
@@ -511,6 +529,9 @@ jobs:
           echo "| Academic Research | ${{ steps.urls.outputs.academic_research_url }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Blog Writer | ${{ steps.urls.outputs.blog_writer_url }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Google Trends | ${{ steps.urls.outputs.google_trends_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Code Reviewer | ${{ steps.urls.outputs.code_reviewer_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Data Analyst | ${{ steps.urls.outputs.data_analyst_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Image Generator | ${{ steps.urls.outputs.image_generator_url }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📋 Endpoints" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -552,7 +573,7 @@ jobs:
         run: |
           echo "🔍 Verifying ADK agent deployments..."
 
-          for agent in academic-research blog-writer google-trends; do
+          for agent in academic-research blog-writer google-trends code-reviewer data-analyst image-generator; do
             URL=$(gcloud run services describe chained-$agent \
               --region ${{ env.GCP_REGION }} \
               --format 'value(status.url)' 2>/dev/null || echo "")
