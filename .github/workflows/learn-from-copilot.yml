@@ -6,8 +6,8 @@ name: "Learning: GitHub Copilot"
 # 3. GitHub Discussions (community forum) - requires API token
 on:
   schedule:
-    # Run twice daily - morning and evening UTC
-    - cron: '0 9,21 * * *'
+    # Run once daily - morning UTC
+    - cron: '0 9 * * *'
   workflow_dispatch:
     inputs:
       docs_count:
@@ -317,6 +317,7 @@ jobs:
 
       - name: Create PR for learnings
         if: steps.fetch.outputs.has_learnings == 'true'
+        id: create_pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -352,7 +353,7 @@ jobs:
             git push origin "${BRANCH_NAME}"
             
             # Create PR
-            gh pr create \
+            PR_URL=$(gh pr create \
               --title "🧠 Learning Update: GitHub Copilot - $(date -u +%Y-%m-%d)" \
               --body "## Automated Learning Update from GitHub Copilot Sources (@coordinate-wizard)
             
@@ -389,11 +390,72 @@ jobs:
             
             ---
             *This PR was automatically created by **@coordinate-wizard** via the GitHub Copilot Learning workflow.*" \
-              --label "automated,learning,copilot,github-copilot" \
+              --label "automated,learning,copilot,github-copilot,auto-merge" \
               --base main \
-              --head "${BRANCH_NAME}"
+              --head "${BRANCH_NAME}")
             
-            echo "✅ PR created successfully for GitHub Copilot learnings"
+            # Extract PR number from URL
+            PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+            echo "✅ PR created successfully for GitHub Copilot learnings - PR #$PR_NUMBER"
+          fi
+
+      - name: Auto-merge PR
+        if: steps.create_pr.outputs.pr_created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+          echo "🔄 Auto-merging GitHub Copilot Learning PR #$PR_NUMBER..."
+          
+          # Wait a few seconds for PR to be ready
+          echo "⏳ Waiting 5 seconds for PR to be ready..."
+          sleep 5
+          
+          # Check PR mergeable state
+          PR_DATA=$(gh pr view "$PR_NUMBER" --json mergeable,mergeStateStatus,state)
+          MERGEABLE=$(echo "$PR_DATA" | jq -r '.mergeable')
+          MERGE_STATE=$(echo "$PR_DATA" | jq -r '.mergeStateStatus')
+          PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+          
+          echo "📊 PR Status:"
+          echo "   State: $PR_STATE"
+          echo "   Mergeable: $MERGEABLE"
+          echo "   Merge State: $MERGE_STATE"
+          
+          # Check if already merged
+          if [ "$PR_STATE" = "MERGED" ]; then
+            echo "✅ PR #$PR_NUMBER is already merged!"
+            exit 0
+          fi
+          
+          # Attempt merge with auto strategy (squash for cleaner history)
+          echo "🚀 Attempting to merge PR #$PR_NUMBER..."
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
+            echo "✅ PR #$PR_NUMBER merge initiated successfully!"
+            echo "🎉 GitHub Copilot learning PR merged"
+            
+            # Brief wait to confirm merge completed
+            sleep 2
+            FINAL_STATE=$(gh pr view "$PR_NUMBER" --json state --jq '.state')
+            if [ "$FINAL_STATE" = "MERGED" ]; then
+              echo "✅ Merge confirmed!"
+            else
+              echo "ℹ️  Merge is processing (state: $FINAL_STATE)"
+            fi
+          else
+            echo "⚠️  Merge command failed, checking if PR can be force merged..."
+            
+            # Try regular merge without auto flag
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
+              echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
+              echo "🎉 GitHub Copilot learning PR merged"
+            else
+              echo "❌ Failed to auto-merge PR #$PR_NUMBER"
+              echo "Please check the PR status manually"
+              exit 1
+            fi
           fi
 
       - name: Log learning activity
