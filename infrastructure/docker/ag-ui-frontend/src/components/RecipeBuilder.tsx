@@ -38,16 +38,20 @@ interface Recipe {
 interface RecipeBuilderProps {
   onRecipeSelect?: (recipe: Recipe) => void;
   onGoalSubmit?: (recipeId: string, goal: string) => void;
+  isExecuting?: boolean;
 }
 
-export default function RecipeBuilder({ onRecipeSelect, onGoalSubmit }: RecipeBuilderProps) {
+export default function RecipeBuilder({ onRecipeSelect, onGoalSubmit, isExecuting = false }: RecipeBuilderProps) {
   const [agents, setAgents] = useState<AgentInfo[]>([]);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [goal, setGoal] = useState("");
   const [loading, setLoading] = useState(true);
-  const [executing, setExecuting] = useState(false);
+  const [localExecuting, setLocalExecuting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Combine local and prop executing state
+  const executing = isExecuting || localExecuting;
   
   // Fetch agents and recipes
   const fetchData = useCallback(async () => {
@@ -85,15 +89,25 @@ export default function RecipeBuilder({ onRecipeSelect, onGoalSubmit }: RecipeBu
   };
   
   const handleSubmit = async () => {
-    if (!selectedRecipe || !goal.trim()) return;
+    if (!selectedRecipe || !goal.trim() || executing) return;
     
-    setExecuting(true);
+    const currentGoal = goal.trim();
+    setLocalExecuting(true);
+    setGoal(""); // Clear the goal immediately
     
     try {
-      onGoalSubmit?.(selectedRecipe.id, goal.trim());
-    } finally {
-      setExecuting(false);
+      onGoalSubmit?.(selectedRecipe.id, currentGoal);
+    } catch (error) {
+      // Restore goal if execution failed to start
+      setGoal(currentGoal);
+      console.error("Failed to start execution:", error);
     }
+    // Reset after a short timeout if parent doesn't manage it
+    setTimeout(() => {
+      if (!isExecuting) {
+        setLocalExecuting(false);
+      }
+    }, 1000);
   };
   
   const getAgentInfo = (agentId: string): AgentInfo | undefined => {
