@@ -261,6 +261,21 @@ export default function AgentCanvas({ onTeamChange, onExecute, initialTeam = [],
         ))}
       </div>
       
+      {/* Call to Action - When no agents selected */}
+      {orderedTeamAgents.length === 0 && (
+        <div className="px-2 py-3 sm:px-3 sm:py-4 border-b border-slate-700 bg-gradient-to-r from-purple-500/5 to-pink-500/5">
+          <div className="text-center">
+            <span className="text-2xl sm:text-3xl block mb-2">👇</span>
+            <p className="text-xs sm:text-sm text-slate-300 font-medium mb-1">
+              Select agents to build your team
+            </p>
+            <p className="text-[10px] sm:text-xs text-slate-500">
+              Tap on agents below to add them to your A2A workflow
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Team Preview - Compact */}
       {orderedTeamAgents.length > 0 && (
         <div

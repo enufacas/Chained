@@ -81,9 +81,16 @@ interface TeamSession {
     startedAt: string;
     completedAt?: string;
     durationMs?: number;
+    taskId?: string;
+    contextId?: string;
     message?: string;
     error?: string;
     artifacts: Array<{ name: string; type: string; data: string }>;
+    // A2A Protocol objects
+    agentCard?: object;
+    task?: object;
+    userMessage?: object;
+    agentMessage?: object;
   }>;
 }
 
@@ -110,14 +117,14 @@ const AGENT_ICONS: Record<string, string> = {
 // Constants
 // =============================================================================
 
-const CHAT_INSTRUCTIONS = `You are an AI assistant helping users with the A2A (Agent-to-Agent) pipeline and multi-agent team orchestration.
+const CHAT_INSTRUCTIONS = `You are an AI assistant helping users with A2A (Agent-to-Agent) workflows and multi-agent team orchestration.
 
 ## Your Capabilities
 
-### 1. Pipeline Creation
-When users want to create/start a new pipeline, use the createPipeline action.
-- "Create a pipeline on embeddings" → Call createPipeline with topic="embeddings"
-- "Research AI agents" → Call createPipeline with topic="AI agents"
+### 1. Workflow Creation
+When users want to create/start a new workflow, use the createWorkflow action.
+- "Create a workflow on embeddings" → Call createWorkflow with topic="embeddings"
+- "Research AI agents" → Call createWorkflow with topic="AI agents"
 
 ### 2. Direct Agent Interaction
 When users mention @agent-name, use the talkToAgent action.
@@ -125,31 +132,35 @@ When users mention @agent-name, use the talkToAgent action.
 - "@seo-agent suggest keywords" → Call talkToAgent
 - "@writer-agent draft intro" → Call talkToAgent
 
-### 3. Pipeline Status
-When users ask about status, use getPipelineStatus.
-- "What's happening?" / "Pipeline status?" → Call getPipelineStatus
+### 3. Workflow Status
+When users ask about status, use getWorkflowStatus.
+- "What's happening?" / "Workflow status?" → Call getWorkflowStatus
 
 ### 4. List Agents
 When users ask about available agents, use listAgents.
 - "What agents are available?" → Call listAgents
 
-### 5. Analyze ANY Pipeline (IMPORTANT!)
-You can analyze ANY pipeline by topic or ID. Use analyzePipeline with the topic name.
-All pipelines are REAL - created by actual A2A agents with real data.
-- "Analyze the fractal art pipeline" → Call analyzePipeline with pipelineIdentifier="fractal art"
-- "What steps did the embeddings pipeline take?" → Call analyzePipeline with pipelineIdentifier="embeddings"
-- "Break down the previous pipeline" → Call analyzePipeline (without identifier to get most recent)
+### 5. Analyze ANY Workflow (IMPORTANT!)
+You can analyze ANY workflow by topic or ID. Use analyzeWorkflow with the topic name.
+All workflows are REAL - created by actual A2A agents with real data.
+- "Analyze the fractal art workflow" → Call analyzeWorkflow with workflowIdentifier="fractal art"
+- "What steps did the embeddings workflow take?" → Call analyzeWorkflow with workflowIdentifier="embeddings"
+- "Break down the previous workflow" → Call analyzeWorkflow (without identifier to get most recent)
 
-### 6. Pipeline Data Queries
-Query specific data from any pipeline:
-- "Trending keywords for fractal art" → Call getTrendingKeywords with pipelineIdentifier="fractal art"
-- "Research summary for embeddings" → Call getResearchSummary with pipelineIdentifier="embeddings"
+### 6. Workflow Data Queries
+Query specific data from any workflow:
+- "Trending keywords for fractal art" → Call getTrendingKeywords with workflowIdentifier="fractal art"
+- "Research summary for embeddings" → Call getResearchSummary with workflowIdentifier="embeddings"
 
-### 7. Create Real Pipelines
-When users want to create content, they should use createPipeline which calls REAL A2A agents.
-All data is real - no simulations or fake responses.
+### 7. A2A Artifacts & Protocol Objects
+You can access A2A protocol artifacts generated during workflow execution:
+- **Agent Cards**: Metadata about each agent (capabilities, skills, protocol version)
+- **Tasks**: A2A task objects showing request/response structure
+- **Messages**: User and agent messages exchanged during execution
+- "Show me the agent card for research-agent" → Call getArtifacts with filter="agent-card"
+- "What artifacts were generated?" → Call listWorkflowArtifacts
 
-### 8. Multi-Agent Team Orchestration (NEW!)
+### 8. Multi-Agent Team Orchestration
 Execute team recipes with multiple agents working together:
 - "What recipes are available?" → Call listRecipes
 - "Execute blog-pipeline recipe for AI safety" → Call executeTeamRecipe
@@ -162,9 +173,16 @@ Available recipes:
 - **visual-content**: Research → Image Generation → Content Writing
 - **data-analysis**: Data Analysis → Visualization → Report Writing
 
-For complex workflows with multiple agents, expand the Team Mode section in the sidebar for visual team building.
+### 9. Canvas & Recipe Awareness
+You are aware of the Agent Canvas and Recipe Builder sections. When users build teams or select recipes:
+- Reference the selected agents in your responses
+- Suggest appropriate recipes based on their goals
+- Link to artifacts generated from canvas/recipe runs
 
-Be helpful, concise, and proactive. When users ask about a specific pipeline, always use the pipelineIdentifier parameter.`;
+For complex workflows with multiple agents, use the Agent Canvas section on the left for visual team building.
+
+Be helpful, concise, and proactive. When users ask about a specific workflow, always use the workflowIdentifier parameter.
+Link to generated artifacts when discussing workflow results.`;
 
 
 // =============================================================================
@@ -589,25 +607,37 @@ function UnifiedOutcomes({
                           <div>
                             <span className="text-[10px] text-slate-500 block mb-1.5">Artifacts:</span>
                             <div className="grid grid-cols-2 gap-1">
-                              {turn.artifacts.map((artifact, artifactIdx) => (
-                                <button
-                                  key={artifactIdx}
-                                  onClick={() => onSelectArtifact?.(artifact)}
-                                  className="flex items-center gap-1.5 p-1.5 rounded bg-slate-700/50 hover:bg-slate-600/50 text-left transition"
-                                >
-                                  <span className="text-sm">
-                                    {artifact.type.includes("json") ? "📋" :
-                                     artifact.type.includes("svg") ? "🖼️" :
-                                     artifact.type.includes("markdown") ? "📝" :
-                                     artifact.type.includes("html") ? "🌐" : "📄"}
-                                  </span>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-[10px] text-white truncate">{artifact.name}</div>
-                                    <div className="text-[10px] text-slate-500">{artifact.type.split("/").pop()}</div>
-                                  </div>
-                                  <span className="text-[10px] text-purple-400">View</span>
-                                </button>
-                              ))}
+                              {turn.artifacts.map((artifact, artifactIdx) => {
+                                // Determine icon based on A2A protocol type
+                                const icon = artifact.type.includes("a2a-agent-card") ? "🪪" :
+                                             artifact.type.includes("a2a-task") ? "📋" :
+                                             artifact.type.includes("a2a-message") ? "💬" :
+                                             artifact.type.includes("json") ? "📋" :
+                                             artifact.type.includes("svg") ? "🖼️" :
+                                             artifact.type.includes("markdown") ? "📝" :
+                                             artifact.type.includes("html") ? "🌐" : "📄";
+                                
+                                // Determine type label for A2A artifacts
+                                const typeLabel = artifact.type.includes("a2a-agent-card") ? "agent card" :
+                                                  artifact.type.includes("a2a-task") ? "task" :
+                                                  artifact.type.includes("a2a-message") ? "message" :
+                                                  artifact.type.split("/").pop();
+                                
+                                return (
+                                  <button
+                                    key={artifactIdx}
+                                    onClick={() => onSelectArtifact?.(artifact)}
+                                    className="flex items-center gap-1.5 p-1.5 rounded bg-slate-700/50 hover:bg-slate-600/50 text-left transition"
+                                  >
+                                    <span className="text-sm">{icon}</span>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="text-[10px] text-white truncate">{artifact.name}</div>
+                                      <div className="text-[10px] text-slate-500">{typeLabel}</div>
+                                    </div>
+                                    <span className="text-[10px] text-purple-400">View</span>
+                                  </button>
+                                );
+                              })}
                             </div>
                           </div>
                         )}
@@ -837,11 +867,11 @@ function ChatPanel({ apiAvailable }: { apiAvailable: boolean }) {
   return (
     <CopilotChat
       labels={{
-        title: "A2A Pipeline Assistant",
-        initial: `👋 Hi! I'm your A2A pipeline assistant.
+        title: "A2A Workflow Assistant",
+        initial: `👋 Hi! I'm your A2A workflow assistant.
 
-**🚀 New! Pipeline Creation:**
-• "Create a pipeline on vector embeddings"
+**🚀 Workflow Creation:**
+• "Create a workflow on vector embeddings"
 • "Start researching AI agents"
 
 **💬 Talk to Agents:**
@@ -849,14 +879,19 @@ function ChatPanel({ apiAvailable }: { apiAvailable: boolean }) {
 • "@seo-agent Suggest keywords for ML"
 • "@writer-agent Draft an intro on LLMs"
 
-**📊 Pipeline Status:**
-• "What's the pipeline status?"
-• "Show active pipelines"
+**📊 Workflow Status:**
+• "What's the workflow status?"
+• "Show active workflows"
 • "List available agents"
 
+**📦 A2A Artifacts:**
+• "Show me the agent cards"
+• "What artifacts were generated?"
+
 **📈 Existing Data:**
-• "Analyze this pipeline"
-• "What are the trending keywords?"`,
+• "Analyze this workflow"
+• "What are the trending keywords?"
+• "Show me the artifacts"`,
       }}
       className="h-full"
     />
@@ -931,7 +966,18 @@ function MainContent({
                   
                   if (!savedArtifactIdsRef.current.has(artifactKey)) {
                     savedArtifactIdsRef.current.add(artifactKey);
-                    // Save artifact incrementally
+                    
+                    // Determine A2A artifact type from the type field
+                    let a2aType: "agent-card" | "task" | "message" | "artifact" | undefined;
+                    if (artifact.type.includes("a2a-agent-card")) {
+                      a2aType = "agent-card";
+                    } else if (artifact.type.includes("a2a-task")) {
+                      a2aType = "task";
+                    } else if (artifact.type.includes("a2a-message")) {
+                      a2aType = "message";
+                    }
+                    
+                    // Save artifact incrementally with A2A metadata
                     saveArtifact({
                       name: artifact.name,
                       type: artifact.type,
@@ -941,6 +987,9 @@ function MainContent({
                       sourceName: session.recipeName || "Custom Team",
                       agentName: turn.agentName || turn.agentId,
                       phase: turn.status,
+                      a2aType,
+                      taskId: turn.taskId,
+                      contextId: turn.contextId,
                     });
                   }
                 }
@@ -1059,22 +1108,49 @@ function MainContent({
 
   // Note: Pipeline data is fetched from the real API - no static data used
   // Use useCopilotReadable to provide context about how to interact with agents
+  // Provide context about the current UI state to the chat AI
   useCopilotReadable({
-    description: "Instructions for interacting with the A2A pipeline system. All data is real - no simulations.",
+    description: "Instructions for interacting with the A2A workflow system. All data is real - no simulations.",
     value: JSON.stringify({
-      note: "All pipeline data comes from real A2A agent execution. Use the API to fetch current pipelines.",
+      note: "All workflow data comes from real A2A agent execution. Use the API to fetch current workflows.",
       agents: agents.map(a => ({ name: a.name, displayName: a.displayName, description: a.description })),
       actions: [
-        "Use getPipelineStatus to see current pipelines",
-        "Use analyzePipeline with pipelineIdentifier to analyze any pipeline",
-        "Use createPipeline to start new pipeline runs with real A2A agents",
+        "Use getWorkflowStatus to see current workflows",
+        "Use analyzeWorkflow with workflowIdentifier to analyze any workflow",
+        "Use createWorkflow to start new workflow runs with real A2A agents",
+        "Use listWorkflowArtifacts to see A2A protocol artifacts (agent cards, tasks, messages)",
       ],
     }, null, 2),
   });
 
   useCopilotReadable({
-    description: "List of A2A agents available in the pipeline",
+    description: "List of A2A agents available in the workflow",
     value: JSON.stringify(agents, null, 2),
+  });
+
+  // Provide context about current canvas selection and active session
+  useCopilotReadable({
+    description: "Current Agent Canvas state - selected team and active workflow session",
+    value: JSON.stringify({
+      selectedTeam: selectedTeam.length > 0 ? selectedTeam : null,
+      selectedTeamCount: selectedTeam.length,
+      activeSession: activeSession ? {
+        id: activeSession.id,
+        recipeName: activeSession.recipeName,
+        goal: activeSession.goal,
+        status: activeSession.status,
+        currentTurn: activeSession.currentTurn,
+        totalTurns: activeSession.totalTurns,
+        completedSteps: activeSession.turnResults.filter(t => t.status === "completed").length,
+        totalArtifacts: activeSession.turnResults.reduce((acc, t) => acc + (t.artifacts?.length || 0), 0),
+        a2aArtifactTypes: {
+          agentCards: activeSession.turnResults.filter(t => t.agentCard).length,
+          tasks: activeSession.turnResults.filter(t => t.task).length,
+          messages: activeSession.turnResults.filter(t => t.agentMessage).length,
+        }
+      } : null,
+      completedSessionsCount: completedSessions.length,
+    }, null, 2),
   });
 
   // CopilotKit actions

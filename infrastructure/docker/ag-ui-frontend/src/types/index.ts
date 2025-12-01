@@ -16,6 +16,81 @@ export interface Agent {
   artifacts: { name: string; type: string }[];
 }
 
+// =============================================================================
+// A2A Protocol Types
+// =============================================================================
+
+/**
+ * A2A Agent Card - Standard agent.json structure
+ * @see https://a2a-protocol.org/spec/agent-card
+ */
+export interface A2AAgentCard {
+  name: string;
+  description: string;
+  version: string;
+  protocolVersion: string;
+  provider?: string;
+  skills: Array<{
+    id: string;
+    name: string;
+    description: string;
+    tags: string[];
+    inputModes?: string[];
+    outputModes?: string[];
+  }>;
+  capabilities?: {
+    streaming?: boolean;
+    pushNotifications?: boolean;
+    stateTransitionHistory?: boolean;
+  };
+  defaultInputModes?: string[];
+  defaultOutputModes?: string[];
+  url?: string;
+}
+
+/**
+ * A2A Task - Represents a task in the A2A protocol
+ */
+export interface A2ATask {
+  id: string;
+  contextId: string;
+  status: {
+    state: "submitted" | "working" | "input_required" | "completed" | "failed" | "canceled";
+    message?: {
+      role: "agent" | "user";
+      parts: Array<{ type?: string; text?: string; data?: string; mimeType?: string }>;
+    };
+    timestamp?: string;
+  };
+  artifacts?: Array<{
+    name: string;
+    parts: Array<{ type?: string; text?: string; data?: string; mimeType?: string }>;
+  }>;
+  history?: Array<{
+    state: string;
+    message?: object;
+    timestamp?: string;
+  }>;
+}
+
+/**
+ * A2A Message - Standard message structure in A2A protocol
+ */
+export interface A2AMessage {
+  id?: string;
+  role: "user" | "agent";
+  parts: Array<{
+    type?: string;
+    text?: string;
+    data?: string;
+    mimeType?: string;
+    metadata?: Record<string, unknown>;
+  }>;
+  timestamp?: string;
+  taskId?: string;
+  agentName?: string;
+}
+
 // Pipeline run from GitHub Actions
 export interface PipelineRun {
   id: number;
