@@ -663,28 +663,63 @@ async function executeSessionAsync(
   activeSessions.set(sessionId, session);
   
   if (config.executionMode === "parallel") {
-    // Parallel execution - run all agents in parallel for each turn
+    // Parallel execution with dependency management
+    // Agents with dependencies wait for those dependencies to complete
+    // Agents without dependencies (or whose dependencies are met) run in parallel
     for (let turn = 0; turn < config.maxTurnsPerAgent; turn++) {
-      const turnPromises = recipe.steps.map(async (step, i) => {
-        const turnResult = await executeTurn(session, step, i + turn * recipe.steps.length);
-        turnResult.turnNumber = turn + 1;
-        return turnResult;
-      });
+      // Build dependency graph for this turn
+      const stepsByDependencyLevel: RecipeStep[][] = [];
+      const processedSteps = new Set<string>();
       
-      const turnResults = await Promise.all(turnPromises);
-      session.turnResults.push(...turnResults);
+      // Level 0: Steps with no dependencies
+      const level0 = recipe.steps.filter(step => step.dependsOn.length === 0);
+      stepsByDependencyLevel.push(level0);
+      level0.forEach(step => processedSteps.add(step.agentId));
+      
+      // Subsequent levels: Steps whose dependencies are all in previous levels
+      while (processedSteps.size < recipe.steps.length) {
+        const levelSteps = recipe.steps.filter(step => 
+          !processedSteps.has(step.agentId) &&
+          step.dependsOn.every(dep => processedSteps.has(dep))
+        );
+        
+        if (levelSteps.length === 0) break; // No more steps can be processed (circular dependency)
+        
+        stepsByDependencyLevel.push(levelSteps);
+        levelSteps.forEach(step => processedSteps.add(step.agentId));
+      }
+      
+      // Execute each level in sequence, but steps within a level run in parallel
+      for (const levelSteps of stepsByDependencyLevel) {
+        const levelPromises = levelSteps.map(async (step) => {
+          const stepIndex = recipe.steps.indexOf(step);
+          const turnResult = await executeTurn(session, step, stepIndex + turn * recipe.steps.length);
+          turnResult.turnNumber = turn + 1;
+          return turnResult;
+        });
+        
+        const levelResults = await Promise.all(levelPromises);
+        session.turnResults.push(...levelResults);
+        session.updatedAt = new Date().toISOString();
+        activeSessions.set(sessionId, session);
+        
+        // Check for required failures at each level
+        const hasRequiredFailure = levelResults.some((result) => {
+          const step = recipe.steps.find(s => s.agentId === result.agentId);
+          return result.status === "failed" && step?.required;
+        });
+        
+        if (hasRequiredFailure) {
+          session.status = "failed";
+          break;
+        }
+      }
+      
+      if (session.status === "failed") break;
+      
       session.currentTurn = (turn + 1) * recipe.steps.length;
       session.updatedAt = new Date().toISOString();
       activeSessions.set(sessionId, session);
-      
-      // Check for required failures
-      const hasRequiredFailure = turnResults.some((result, i) => 
-        result.status === "failed" && recipe.steps[i].required
-      );
-      if (hasRequiredFailure) {
-        session.status = "failed";
-        break;
-      }
     }
   } else {
     // Sequential execution - run agents one at a time

@@ -15,6 +15,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import PipelineDetailView from "./PipelineDetailView";
+import { getArtifactsBySourceId } from "@/lib/storage";
+
 
 interface PipelineResult {
   id: string;
@@ -256,7 +258,12 @@ export default function PipelineOutcomes() {
             Completed Outcomes
           </h4>
           <div className="space-y-3">
-            {completedPipelines.map((pipeline) => (
+            {completedPipelines.map((pipeline) => {
+              // Get artifact count from localStorage
+              const artifacts = getArtifactsBySourceId(pipeline.id);
+              const artifactCount = artifacts.length;
+              
+              return (
               <div
                 key={pipeline.id}
                 className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50 hover:border-green-500/30 transition-all hover:shadow-lg hover:shadow-green-500/5"
@@ -268,6 +275,11 @@ export default function PipelineOutcomes() {
                     </h5>
                     <p className="text-xs text-slate-500">
                       Completed {formatTimeAgo(pipeline.updatedAt)}
+                      {artifactCount > 0 && (
+                        <span className="ml-2 px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                          📦 {artifactCount} artifact{artifactCount !== 1 ? 's' : ''}
+                        </span>
+                      )}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -287,6 +299,25 @@ export default function PipelineOutcomes() {
                 {/* Results */}
                 {pipeline.results && (
                   <div className="mt-3 space-y-2">
+                    {/* Artifacts Link */}
+                    {artifactCount > 0 && (
+                      <a
+                        href="/history"
+                        className="flex items-center gap-3 p-2 rounded bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition group"
+                      >
+                        <span className="text-lg">📦</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm text-purple-300 truncate group-hover:text-purple-200">
+                            View Artifacts &amp; Session Details
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            {artifactCount} artifact{artifactCount !== 1 ? 's' : ''} saved • includes ultimate summary
+                          </div>
+                        </div>
+                        <span className="text-slate-400 opacity-0 group-hover:opacity-100 transition">→</span>
+                      </a>
+                    )}
+                    
                     {/* Blog Post - External link opens in new tab */}
                     {pipeline.results.blog && (
                       <a
@@ -331,7 +362,8 @@ export default function PipelineOutcomes() {
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ) : (
