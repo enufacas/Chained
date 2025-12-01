@@ -29,6 +29,9 @@ import { useState, useEffect, useCallback } from "react";
 import { ApiStatus } from "@/types";
 import AgentCanvas from "@/components/AgentCanvas";
 import RecipeBuilder from "@/components/RecipeBuilder";
+import ArtifactPreviewOverlay from "@/components/ArtifactPreviewOverlay";
+import ArtifactStream from "@/components/ArtifactStream";
+import { saveArtifacts, StoredArtifact } from "@/lib/storage";
 
 // =============================================================================
 // Types (Local types not shared across components)
@@ -403,14 +406,17 @@ const PHASE_ICONS: { [key: string]: { icon: string; color: string } } = {
 
 function UnifiedOutcomes({ 
   activeSession, 
-  agentIcons 
+  agentIcons,
+  onSelectArtifact,
 }: { 
   activeSession: TeamSession | null;
   agentIcons: Record<string, string>;
+  onSelectArtifact?: (artifact: { name: string; type: string; data: string }) => void;
 }) {
   const [pipelines, setPipelines] = useState<PipelineResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  const [expandedStepIndex, setExpandedStepIndex] = useState<number | null>(null);
 
   const fetchPipelines = useCallback(async () => {
     try {
@@ -510,38 +516,124 @@ function UnifiedOutcomes({
             <span className={`text-slate-500 transition-transform text-xs ${expandedItem === `session-${activeSession.id}` ? "rotate-180" : ""}`}>▼</span>
           </button>
           
-          {/* Expanded Session Details */}
+          {/* Expanded Session Details with Artifact Selection */}
           {expandedItem === `session-${activeSession.id}` && (
             <div className="px-3 pb-3 space-y-2">
               {activeSession.turnResults.map((turn, idx) => {
                 const icon = agentIcons[turn.agentId] || "🤖";
+                const isStepExpanded = expandedStepIndex === idx;
+                const hasArtifacts = turn.artifacts && turn.artifacts.length > 0;
+                
                 return (
-                  <div
-                    key={turn.stepIndex}
-                    className={`flex items-center gap-2 p-2 rounded text-xs ${
-                      turn.status === "running" ? "bg-blue-500/10 border border-blue-500/30" :
-                      turn.status === "completed" ? "bg-green-500/5 border border-green-500/20" :
-                      turn.status === "failed" ? "bg-red-500/5 border border-red-500/20" :
-                      "bg-slate-700/30 border border-slate-600/30"
-                    }`}
-                  >
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
-                      turn.status === "running" ? "bg-blue-500 text-white animate-pulse" :
-                      turn.status === "completed" ? "bg-green-500 text-white" :
-                      turn.status === "failed" ? "bg-red-500 text-white" :
-                      "bg-slate-600 text-slate-300"
-                    }`}>
-                      {idx + 1}
-                    </span>
-                    <span>{icon}</span>
-                    <span className="flex-1 truncate text-slate-300">{turn.agentName}</span>
-                    {turn.status === "running" && <span className="text-blue-400 animate-pulse">Working...</span>}
-                    {turn.status === "completed" && <span className="text-green-400">✓</span>}
-                    {turn.status === "failed" && <span className="text-red-400">✗</span>}
-                    {turn.durationMs && <span className="text-slate-500">{(turn.durationMs / 1000).toFixed(1)}s</span>}
+                  <div key={turn.stepIndex} className="space-y-1">
+                    {/* Step Header - Click to expand */}
+                    <button
+                      onClick={() => setExpandedStepIndex(isStepExpanded ? null : idx)}
+                      className={`w-full flex items-center gap-2 p-2 rounded text-xs transition ${
+                        turn.status === "running" ? "bg-blue-500/10 border border-blue-500/30" :
+                        turn.status === "completed" ? "bg-green-500/5 border border-green-500/20" :
+                        turn.status === "failed" ? "bg-red-500/5 border border-red-500/20" :
+                        "bg-slate-700/30 border border-slate-600/30"
+                      } ${hasArtifacts ? "cursor-pointer hover:bg-slate-700/50" : ""}`}
+                      disabled={!hasArtifacts && turn.status !== "completed"}
+                    >
+                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                        turn.status === "running" ? "bg-blue-500 text-white animate-pulse" :
+                        turn.status === "completed" ? "bg-green-500 text-white" :
+                        turn.status === "failed" ? "bg-red-500 text-white" :
+                        "bg-slate-600 text-slate-300"
+                      }`}>
+                        {idx + 1}
+                      </span>
+                      <span>{icon}</span>
+                      <span className="flex-1 truncate text-slate-300 text-left">{turn.agentName}</span>
+                      {turn.status === "running" && <span className="text-blue-400 animate-pulse">Working...</span>}
+                      {turn.status === "completed" && <span className="text-green-400">✓</span>}
+                      {turn.status === "failed" && <span className="text-red-400">✗</span>}
+                      {turn.durationMs && <span className="text-slate-500">{(turn.durationMs / 1000).toFixed(1)}s</span>}
+                      {hasArtifacts && (
+                        <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400">
+                          {turn.artifacts.length} 📦
+                        </span>
+                      )}
+                      {hasArtifacts && (
+                        <span className={`text-slate-500 transition-transform ${isStepExpanded ? "rotate-180" : ""}`}>▼</span>
+                      )}
+                    </button>
+                    
+                    {/* Expanded Step Details with Artifacts */}
+                    {isStepExpanded && (
+                      <div className="ml-7 p-2 rounded bg-slate-800/50 border border-slate-700 space-y-2">
+                        {/* Message */}
+                        {turn.message && (
+                          <div className="text-xs text-slate-400">
+                            <span className="text-slate-500 block mb-1">Message:</span>
+                            <p className="line-clamp-3">{turn.message}</p>
+                          </div>
+                        )}
+                        
+                        {/* Artifacts List */}
+                        {hasArtifacts && (
+                          <div>
+                            <span className="text-[10px] text-slate-500 block mb-1.5">Artifacts:</span>
+                            <div className="grid grid-cols-2 gap-1">
+                              {turn.artifacts.map((artifact, artifactIdx) => (
+                                <button
+                                  key={artifactIdx}
+                                  onClick={() => onSelectArtifact?.(artifact)}
+                                  className="flex items-center gap-1.5 p-1.5 rounded bg-slate-700/50 hover:bg-slate-600/50 text-left transition"
+                                >
+                                  <span className="text-sm">
+                                    {artifact.type.includes("json") ? "📋" :
+                                     artifact.type.includes("svg") ? "🖼️" :
+                                     artifact.type.includes("markdown") ? "📝" :
+                                     artifact.type.includes("html") ? "🌐" : "📄"}
+                                  </span>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="text-[10px] text-white truncate">{artifact.name}</div>
+                                    <div className="text-[10px] text-slate-500">{artifact.type.split("/").pop()}</div>
+                                  </div>
+                                  <span className="text-[10px] text-purple-400">View</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Error message if failed */}
+                        {turn.error && (
+                          <div className="text-[10px] text-red-400 bg-red-500/10 p-1.5 rounded">
+                            Error: {turn.error}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}
+              
+              {/* Overall Result Section */}
+              {activeSession.status === "completed" && activeSession.turnResults.some(t => t.artifacts?.length > 0) && (
+                <div className="mt-3 p-2 rounded bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-purple-300">📦 All Session Artifacts</span>
+                    <span className="text-[10px] text-slate-500">
+                      {activeSession.turnResults.reduce((acc, t) => acc + (t.artifacts?.length || 0), 0)} total
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {activeSession.turnResults.flatMap(t => t.artifacts || []).slice(0, 6).map((artifact, i) => (
+                      <button
+                        key={i}
+                        onClick={() => onSelectArtifact?.(artifact)}
+                        className="px-2 py-1 text-[10px] rounded bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition"
+                      >
+                        {artifact.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -725,6 +817,28 @@ function MainContent({
   const [activeSession, setActiveSession] = useState<TeamSession | null>(null);
   const [teamError, setTeamError] = useState<string | null>(null);
   const [chatExpanded, setChatExpanded] = useState(true);
+  const [isTeamExecuting, setIsTeamExecuting] = useState(false);
+  const [selectedArtifact, setSelectedArtifact] = useState<{ name: string; type: string; data: string } | null>(null);
+  const [allSessionArtifacts, setAllSessionArtifacts] = useState<Array<{ name: string; type: string; data: string }>>([]);
+
+  // Handle artifact selection for preview
+  const handleSelectArtifact = useCallback((artifact: { name: string; type: string; data: string }) => {
+    setSelectedArtifact(artifact);
+    // Update all session artifacts for navigation
+    if (activeSession) {
+      const allArtifacts = activeSession.turnResults.flatMap(t => t.artifacts || []);
+      setAllSessionArtifacts(allArtifacts);
+    }
+  }, [activeSession]);
+
+  // Handle artifact selection from storage (ArtifactStream)
+  const handleSelectStoredArtifact = useCallback((artifact: StoredArtifact) => {
+    setSelectedArtifact({
+      name: artifact.name,
+      type: artifact.type,
+      data: artifact.data,
+    });
+  }, []);
 
   // Poll for session updates
   const pollSession = useCallback(async (sessionId: string) => {
@@ -737,10 +851,29 @@ function MainContent({
           
           if (session.status === "running") {
             setTimeout(poll, 2000);
+          } else {
+            // Session completed or failed - save artifacts to storage
+            setIsTeamExecuting(false);
+            if (session.status === "completed" && session.turnResults) {
+              const allArtifacts = session.turnResults.flatMap((t: { artifacts?: Array<{ name: string; type: string; data: string }>; agentName?: string; stepIndex?: number }) => 
+                (t.artifacts || []).map(a => ({ ...a, agentName: t.agentName }))
+              );
+              if (allArtifacts.length > 0) {
+                saveArtifacts(
+                  allArtifacts,
+                  "team",
+                  session.id,
+                  session.recipeName || "Custom Team",
+                  undefined,
+                  "completed"
+                );
+              }
+            }
           }
         }
       } catch (err) {
         console.error("Poll error:", err);
+        setIsTeamExecuting(false);
       }
     };
     
@@ -761,6 +894,7 @@ function MainContent({
   // Execute a team session
   const handleRecipeExecute = useCallback(async (recipeId: string, goal: string) => {
     setTeamError(null);
+    setIsTeamExecuting(true);
     
     try {
       const response = await fetch("/api/team", {
@@ -779,9 +913,12 @@ function MainContent({
       
       if (data.session.status === "running") {
         pollSession(data.session.id);
+      } else {
+        setIsTeamExecuting(false);
       }
     } catch (err) {
       setTeamError(err instanceof Error ? err.message : "Unknown error");
+      setIsTeamExecuting(false);
     }
   }, [pollSession]);
 
@@ -796,6 +933,7 @@ function MainContent({
     }
     
     setTeamError(null);
+    setIsTeamExecuting(true);
     
     try {
       const response = await fetch("/api/team", {
@@ -818,9 +956,12 @@ function MainContent({
       
       if (data.session.status === "running") {
         pollSession(data.session.id);
+      } else {
+        setIsTeamExecuting(false);
       }
     } catch (err) {
       setTeamError(err instanceof Error ? err.message : "Unknown error");
+      setIsTeamExecuting(false);
     }
   }, [selectedTeam, pollSession]);
 
@@ -1525,12 +1666,14 @@ ${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
                     onTeamChange={handleTeamChange}
                     onExecute={handleCanvasExecute}
                     initialTeam={selectedTeam}
+                    isExecuting={isTeamExecuting}
                   />
                 )}
                 {teamModeTab === "recipe" && (
                   <RecipeBuilder
                     onRecipeSelect={handleRecipeSelect}
                     onGoalSubmit={handleRecipeExecute}
+                    isExecuting={isTeamExecuting}
                   />
                 )}
               </div>
@@ -1538,8 +1681,18 @@ ${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
 
             {/* Combined Outcomes & Session Progress - Slide-in when active */}
             <div className={`transition-all duration-300 ${activeSession?.status === "running" ? "ring-2 ring-blue-500/50 shadow-lg shadow-blue-500/10" : ""}`}>
-              <UnifiedOutcomes activeSession={activeSession} agentIcons={AGENT_ICONS} />
+              <UnifiedOutcomes 
+                activeSession={activeSession} 
+                agentIcons={AGENT_ICONS}
+                onSelectArtifact={handleSelectArtifact}
+              />
             </div>
+            
+            {/* Artifact Stream - Shows all persisted artifacts */}
+            <ArtifactStream 
+              onSelectArtifact={handleSelectStoredArtifact}
+              maxItems={15}
+            />
           </div>
 
           {/* Column 2: Chat + Status (Secondary) */}
@@ -1616,6 +1769,14 @@ ${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
           }}
         />
       )}
+      
+      {/* Artifact Preview Overlay */}
+      <ArtifactPreviewOverlay
+        artifact={selectedArtifact}
+        onClose={() => setSelectedArtifact(null)}
+        allArtifacts={allSessionArtifacts}
+        onSelectArtifact={(artifact) => setSelectedArtifact(artifact)}
+      />
     </div>
   );
 }

@@ -6,6 +6,91 @@ Format: `## [Date] PR #XXX - Title`
 
 ---
 
+## [2025-12-01] PR #TBD - AG-UI Refinements: Artifacts, Persistence, Preview Overlay
+
+### Added
+- **Artifact Preview Overlay**:
+  - New `ArtifactPreviewOverlay` component for full-screen artifact viewing
+  - Supports navigation between artifacts with prev/next buttons
+  - Press Escape to close, click outside to dismiss
+  - Shows artifact name, type, size info in header
+  - Uses existing `AssetPreview` component for rich rendering
+
+- **Artifact Stream Component**:
+  - New `ArtifactStream` component at bottom of main page
+  - Shows stream of all artifacts produced during execution
+  - Expandable/collapsible with artifact count and storage size
+  - Click any artifact to open preview overlay
+  - Storage stats display (count, estimated size)
+  - Clear all button with confirmation
+
+- **Persistence Layer (localStorage)**:
+  - New `src/lib/storage.ts` utility module
+  - Saves artifacts between page reloads and browser sessions
+  - Supports up to 100 artifacts and 50 sessions
+  - Automatic pruning of old items
+  - Storage statistics tracking
+  - Clear all functionality
+
+- **History Page (`/history`)**:
+  - New dedicated page for viewing all persisted artifacts and sessions
+  - Filter by source type (pipeline, team, recipe, chat)
+  - Filter by view mode (all, artifacts only, sessions only)
+  - Grid view of artifacts with preview
+  - Delete individual items or clear all
+  - Responsive design with empty states
+
+- **Enhanced Progress & Outcomes**:
+  - Expandable steps with artifact selection
+  - Click a step to see details and artifacts
+  - Click any artifact to open preview overlay
+  - Overall session artifacts section when completed
+  - Artifact count badges on each step
+
+### Changed
+- **AgentCanvas Component**:
+  - Added `isExecuting` prop for external control
+  - Clears goal input immediately on execution start
+  - Disables execute button while running
+  - Better execution state management
+
+- **RecipeBuilder Component**:
+  - Added `isExecuting` prop for external control
+  - Clears goal input immediately on execution start
+  - Disables submit button while running
+
+- **UnifiedOutcomes Component**:
+  - Added `onSelectArtifact` callback prop
+  - Expandable step details with nested artifact grid
+  - Step status, timing, and error display
+  - Overall artifacts section for completed sessions
+
+- **Main Page (`page.tsx`)**:
+  - Added artifact selection state management
+  - Added ArtifactStream component
+  - Added ArtifactPreviewOverlay
+  - Artifacts saved to localStorage on session completion
+  - Passes `isExecuting` to AgentCanvas and RecipeBuilder
+
+### Files Added
+- `src/lib/storage.ts` - localStorage persistence utilities
+- `src/components/ArtifactPreviewOverlay.tsx` - Full-screen preview overlay
+- `src/components/ArtifactStream.tsx` - Artifacts stream display
+- `src/app/history/page.tsx` - Dedicated history page
+
+### Files Modified
+- `src/app/page.tsx` - Main page with new components and state
+- `src/components/AgentCanvas.tsx` - isExecuting prop, clear input
+- `src/components/RecipeBuilder.tsx` - isExecuting prop, clear input
+- `docs/a2a-ui/CHANGELOG.md` - This file
+
+### Screenshots
+| Main Page with Artifact Stream | History Page |
+|-------------------------------|--------------|
+| Artifact Stream at bottom, expandable | Grid view of all artifacts |
+
+---
+
 ## [2025-12-01] PR #TBD - Unified Single Page with Progressive Disclosure
 
 ### Added

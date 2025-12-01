@@ -46,6 +46,7 @@ interface AgentCanvasProps {
   onTeamChange?: (teamAgents: string[]) => void;
   onExecute?: (goal: string, config: ExecutionConfig) => void;
   initialTeam?: string[];
+  isExecuting?: boolean;
 }
 
 const CATEGORIES = [
@@ -59,7 +60,7 @@ const CATEGORIES = [
 
 const DEFAULT_TURNS = 2;
 
-export default function AgentCanvas({ onTeamChange, onExecute, initialTeam = [] }: AgentCanvasProps) {
+export default function AgentCanvas({ onTeamChange, onExecute, initialTeam = [], isExecuting = false }: AgentCanvasProps) {
   const [agents, setAgents] = useState<CanvasAgent[]>([]);
   const [teamAgents, setTeamAgents] = useState<string[]>(initialTeam);
   const [loading, setLoading] = useState(true);
@@ -68,7 +69,17 @@ export default function AgentCanvas({ onTeamChange, onExecute, initialTeam = [] 
   const [goal, setGoal] = useState("");
   const [maxTurnsPerAgent, setMaxTurnsPerAgent] = useState(DEFAULT_TURNS);
   const [executionMode, setExecutionMode] = useState<"sequential" | "parallel">("sequential");
-  const [executing, setExecuting] = useState(false);
+  const [localExecuting, setLocalExecuting] = useState(false);
+  
+  // Combine local and prop executing state
+  const executing = isExecuting || localExecuting;
+  
+  // Reset local executing state when parent's isExecuting changes to false
+  useEffect(() => {
+    if (!isExecuting && localExecuting) {
+      setLocalExecuting(false);
+    }
+  }, [isExecuting, localExecuting]);
   
   // Fetch agents from registry
   const fetchAgents = useCallback(async () => {
@@ -142,17 +153,24 @@ export default function AgentCanvas({ onTeamChange, onExecute, initialTeam = [] 
   
   // Handle workflow execution
   const handleExecute = async () => {
-    if (!goal.trim() || teamAgents.length === 0) return;
+    if (!goal.trim() || teamAgents.length === 0 || executing) return;
     
-    setExecuting(true);
+    const currentGoal = goal.trim();
+    setLocalExecuting(true);
+    setGoal(""); // Clear the goal immediately
+    
     try {
-      onExecute?.(goal.trim(), {
+      onExecute?.(currentGoal, {
         maxTurnsPerAgent,
         executionMode,
       });
-    } finally {
-      setExecuting(false);
+    } catch (error) {
+      // Restore goal if execution failed to start
+      setGoal(currentGoal);
+      setLocalExecuting(false);
+      console.error("Failed to start execution:", error);
     }
+    // Note: localExecuting will be reset via useEffect when isExecuting prop changes to false
   };
   
   // Get filtered agents
