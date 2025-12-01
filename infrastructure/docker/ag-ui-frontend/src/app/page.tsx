@@ -85,6 +85,7 @@ interface TeamSession {
     contextId?: string;
     message?: string;
     error?: string;
+    turnNumber?: number;
     artifacts: Array<{ name: string; type: string; data: string }>;
     // A2A Protocol objects
     agentCard?: object;
@@ -92,6 +93,12 @@ interface TeamSession {
     userMessage?: object;
     agentMessage?: object;
   }>;
+  config?: {
+    maxTurnsPerAgent: number;
+    executionMode: "sequential" | "parallel";
+  };
+  context?: Record<string, unknown>;
+  finalResult?: Record<string, unknown>;
 }
 
 // Helper function to check if a session is still active (running or pending)
@@ -956,6 +963,8 @@ function MainContent({
           totalTurns: s.metadata?.totalTurns as number || 0,
           createdAt: s.createdAt,
           updatedAt: s.completedAt || s.createdAt,
+          // Restore full turnResults with all A2A protocol objects
+          // Backward compatible: defaults to empty array if not present
           turnResults: (s.metadata?.turnResults as Array<{
             stepIndex: number;
             agentId: string;
@@ -968,12 +977,16 @@ function MainContent({
             contextId?: string;
             message?: string;
             error?: string;
+            turnNumber?: number;
             artifacts: Array<{ name: string; type: string; data: string }>;
             agentCard?: object;
             task?: object;
             userMessage?: object;
             agentMessage?: object;
           }>) || [],
+          config: s.metadata?.config as { maxTurnsPerAgent: number; executionMode: "sequential" | "parallel" } | undefined,
+          context: {} as Record<string, unknown>,
+          finalResult: s.metadata?.finalResult as Record<string, unknown> | undefined,
         }));
       
       setCompletedSessions(completedStoredSessions);
@@ -991,6 +1004,8 @@ function MainContent({
           totalTurns: activeStoredSession.metadata.totalTurns as number || 0,
           createdAt: activeStoredSession.createdAt,
           updatedAt: activeStoredSession.completedAt || activeStoredSession.createdAt,
+          // Restore full turnResults with all A2A protocol objects
+          // Backward compatible: defaults to empty array if not present
           turnResults: (activeStoredSession.metadata.turnResults as Array<{
             stepIndex: number;
             agentId: string;
@@ -1003,12 +1018,16 @@ function MainContent({
             contextId?: string;
             message?: string;
             error?: string;
+            turnNumber?: number;
             artifacts: Array<{ name: string; type: string; data: string }>;
             agentCard?: object;
             task?: object;
             userMessage?: object;
             agentMessage?: object;
           }>) || [],
+          config: activeStoredSession.metadata.config as { maxTurnsPerAgent: number; executionMode: "sequential" | "parallel" } | undefined,
+          context: {} as Record<string, unknown>,
+          finalResult: activeStoredSession.metadata.finalResult as Record<string, unknown> | undefined,
         };
         setActiveSession(restoredSession);
       }
@@ -1094,6 +1113,8 @@ function MainContent({
           currentTurn: activeSession.currentTurn,
           totalTurns: activeSession.totalTurns,
           turnResults: activeSession.turnResults,
+          config: activeSession.config,
+          finalResult: activeSession.finalResult,
         },
       });
     }
@@ -1115,6 +1136,8 @@ function MainContent({
           currentTurn: session.currentTurn,
           totalTurns: session.totalTurns,
           turnResults: session.turnResults,
+          config: session.config,
+          finalResult: session.finalResult,
         },
       });
     });
