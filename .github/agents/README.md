@@ -82,6 +82,9 @@ Specialized in engineering APIs. Inspired by Margaret Hamilton - rigorous and in
 ### ⚙️ [engineer-wizard.md](./engineer-wizard.md)
 Specialized in engineering APIs. Inspired by Nikola Tesla - inventive and visionary, with extra enthusiasm. Focuses on features, infrastructure, and tools.
 
+### ☁️ [gcp-error-monitor.md](./gcp-error-monitor.md)
+Specialized in monitoring Google Cloud Platform for errors. Vigilant and proactive with systematic error detection. Uses GCP MCP tools to query Cloud Logging, Cloud Monitoring, and Error Reporting. Creates actionable issues when problems are detected.
+
 ### 🔍 [investigate-champion.md](./investigate-champion.md)
 Specialized in investigating metrics. Inspired by Ada Lovelace - visionary and analytical, with occasional wit. Focuses on code patterns, data flows, and dependencies.
 
@@ -144,6 +147,7 @@ When a new issue is created:
    - Documentation → `document-ninja`, `clarify-champion`
    - API work → `engineer-master`, `APIs-architect`
    - Refactoring → `organize-guru`, `refactor-champion`
+   - GCP errors → `gcp-error-monitor`
 
 ### Tech Lead Review
 Tech leads are assigned to PRs via separate tech lead review workflows based on file paths changed, ensuring they provide oversight without dominating initial issue assignments.

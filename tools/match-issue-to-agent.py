@@ -796,6 +796,26 @@ AGENT_PATTERNS = {
             r'\bbrowser', r'\bvisual', r'\bfrontend', r'\bresponsive',
             r'\baccessibility\b', r'\bperformance\b', r'\bpage\s*load\b'
         ]
+    },
+    'gcp-error-monitor': {
+        'keywords': [
+            'gcp', 'google cloud', 'cloud run', 'cloud function', 'cloud logging',
+            'cloud monitoring', 'error reporting', 'gcloud', 'cloud storage',
+            'pub/sub', 'pubsub', 'cloud build', 'gke', 'kubernetes', 'container',
+            'serverless', 'error', 'exception', 'failure', 'alert', 'monitoring',
+            'observability', 'logs', 'logging', 'metrics', 'sre', 'incident',
+            'outage', 'downtime', 'health check', 'uptime', 'latency',
+            'timeout', 'crash', 'oom', 'memory', 'quota', 'billing'
+        ],
+        'patterns': [
+            r'\bgcp\b', r'\bgoogle\s*cloud\b', r'\bcloud\s*run\b', r'\bcloud\s*function',
+            r'\bcloud\s*logging\b', r'\bcloud\s*monitoring\b', r'\berror\s*reporting\b',
+            r'\bgcloud\b', r'\bcloud\s*storage\b', r'\bpub/?sub\b', r'\bcloud\s*build\b',
+            r'\bgke\b', r'\bkubernetes\b', r'\bserverless\b', r'\berror\b',
+            r'\bexception\b', r'\bfailure\b', r'\balert\b', r'\bmonitoring\b',
+            r'\blogs?\b', r'\bmetrics\b', r'\bincident\b', r'\boutage\b',
+            r'\bhealth\s*check\b', r'\btimeout\b', r'\bcrash\b', r'\boom\b'
+        ]
     }
 }
 

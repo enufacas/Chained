@@ -1,0 +1,289 @@
+name: "GCP Error Monitor"
+
+# This workflow monitors GCP for errors and creates issues when problems are detected.
+# It uses the gcp-error-monitor agent to analyze logs and create actionable issues.
+#
+# The workflow:
+# 1. Queries GCP Cloud Logging for recent errors
+# 2. Analyzes error patterns and severity
+# 3. Creates GitHub issues for new/significant errors
+# 4. Assigns the appropriate agent via Copilot
+
+on:
+  schedule:
+    # Run every 6 hours to monitor GCP for errors
+    - cron: '0 */6 * * *'
+  
+  workflow_dispatch:
+    inputs:
+      severity_threshold:
+        description: 'Minimum severity to report (ERROR, WARNING, CRITICAL)'
+        required: false
+        default: 'ERROR'
+        type: choice
+        options:
+          - CRITICAL
+          - ERROR
+          - WARNING
+      time_window:
+        description: 'Time window to check (e.g., 1h, 6h, 24h)'
+        required: false
+        default: '6h'
+        type: string
+      dry_run:
+        description: 'Dry run (analyze but do not create issues)'
+        required: false
+        default: false
+        type: boolean
+      services_filter:
+        description: 'Filter by GCP service (e.g., cloud_run_revision, cloud_function)'
+        required: false
+        default: ''
+        type: string
+
+concurrency:
+  group: gcp-error-monitor
+  cancel-in-progress: false  # Don't cancel in-progress runs
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write  # For GCP Workload Identity Federation
+
+jobs:
+  monitor-gcp-errors:
+    name: "Monitor GCP for Errors"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      # GCP Authentication - Using Workload Identity Federation (recommended)
+      # or Service Account Key (fallback)
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          # Prefer Workload Identity Federation for keyless auth
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+        continue-on-error: true
+      
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Check GCP Authentication
+        id: check_auth
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          echo "🔐 Checking GCP authentication..."
+          
+          if [ -z "$GCP_PROJECT_ID" ]; then
+            echo "❌ GCP_PROJECT_ID secret is not set"
+            echo "authenticated=false" >> $GITHUB_OUTPUT
+            echo ""
+            echo "To enable GCP monitoring, configure these secrets:"
+            echo "  1. GCP_PROJECT_ID - Your GCP project ID"
+            echo "  2. GCP_WORKLOAD_IDENTITY_PROVIDER - Workload Identity Provider"
+            echo "  3. GCP_SERVICE_ACCOUNT - Service account email"
+            echo ""
+            echo "See: https://github.com/google-github-actions/auth"
+            exit 0
+          fi
+          
+          # Test authentication
+          if gcloud auth list --format="value(account)" 2>/dev/null | head -1; then
+            echo "✅ GCP authentication successful"
+            echo "authenticated=true" >> $GITHUB_OUTPUT
+            echo "project_id=$GCP_PROJECT_ID" >> $GITHUB_OUTPUT
+          else
+            echo "❌ GCP authentication failed"
+            echo "authenticated=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Ensure required labels exist
+        if: steps.check_auth.outputs.authenticated == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🏷️  Ensuring required labels exist..."
+          
+          gh label create "gcp-error" --color "D73A49" --description "GCP error detected by monitoring" --force || true
+          gh label create "gcp-monitoring" --color "0E8A16" --description "GCP monitoring related" --force || true
+          gh label create "automated" --color "FBCA04" --description "Automated action" --force || true
+          gh label create "infrastructure" --color "006B75" --description "Infrastructure related" --force || true
+          
+          echo "✅ Labels ready"
+      
+      - name: Query GCP for errors
+        if: steps.check_auth.outputs.authenticated == 'true'
+        id: query_errors
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          SEVERITY: ${{ inputs.severity_threshold || 'ERROR' }}
+          TIME_WINDOW: ${{ inputs.time_window || '6h' }}
+          SERVICES_FILTER: ${{ inputs.services_filter || '' }}
+        run: |
+          echo "🔍 Querying GCP Cloud Logging for errors..."
+          echo ""
+          echo "Parameters:"
+          echo "  Project: $GCP_PROJECT_ID"
+          echo "  Severity: >= $SEVERITY"
+          echo "  Time Window: $TIME_WINDOW"
+          echo "  Services Filter: ${SERVICES_FILTER:-'all'}"
+          echo ""
+          
+          # Build the logging query
+          QUERY="severity>=$SEVERITY"
+          
+          # Add services filter if specified
+          if [ -n "$SERVICES_FILTER" ]; then
+            QUERY="$QUERY AND resource.type=\"$SERVICES_FILTER\""
+          fi
+          
+          # Query Cloud Logging
+          echo "📋 Running query: $QUERY"
+          echo ""
+          
+          gcloud logging read "$QUERY" \
+            --project="$GCP_PROJECT_ID" \
+            --freshness="$TIME_WINDOW" \
+            --limit=100 \
+            --format=json > /tmp/gcp_errors.json 2>/tmp/gcp_query_error.txt || {
+              echo "⚠️  Query failed or returned no results"
+              cat /tmp/gcp_query_error.txt || true
+              echo "[]" > /tmp/gcp_errors.json
+            }
+          
+          # Count errors
+          ERROR_COUNT=$(jq 'length' /tmp/gcp_errors.json)
+          echo "error_count=$ERROR_COUNT" >> $GITHUB_OUTPUT
+          
+          echo "📊 Found $ERROR_COUNT error entries in the last $TIME_WINDOW"
+          
+          # Extract unique error types
+          if [ "$ERROR_COUNT" -gt 0 ]; then
+            echo ""
+            echo "📈 Error distribution by severity:"
+            jq -r '.[].severity' /tmp/gcp_errors.json | sort | uniq -c | sort -rn || true
+            
+            echo ""
+            echo "📦 Error distribution by resource type:"
+            jq -r '.[].resource.type // "unknown"' /tmp/gcp_errors.json | sort | uniq -c | sort -rn || true
+          fi
+      
+      - name: Analyze errors and create issues
+        if: steps.check_auth.outputs.authenticated == 'true' && steps.query_errors.outputs.error_count != '0'
+        id: create_issues
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          ERROR_COUNT: ${{ steps.query_errors.outputs.error_count }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: |
+          echo "🔬 Analyzing $ERROR_COUNT errors for issue creation..."
+          echo ""
+          
+          # Use the external GCP error analyzer tool
+          python3 tools/gcp-error-analyzer.py \
+            --errors-file /tmp/gcp_errors.json \
+            --project-id "$GCP_PROJECT_ID" \
+            ${{ inputs.dry_run == true && '--dry-run' || '' }}
+      
+      - name: Assign Copilot to created issues
+        if: steps.create_issues.outputs.issues_created != '0' && steps.create_issues.outputs.issues_created != ''
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+        run: |
+          echo "🤖 Assigning Copilot to GCP error issues..."
+          echo ""
+          
+          # Find recent GCP error issues that need assignment
+          ISSUES=$(gh issue list \
+            --label "gcp-error" \
+            --state open \
+            --json number,labels \
+            --jq '.[] | select(.labels | map(.name) | contains(["copilot-assigned"]) | not) | .number')
+          
+          if [ -z "$ISSUES" ]; then
+            echo "ℹ️  No issues need assignment"
+            exit 0
+          fi
+          
+          for issue_num in $ISSUES; do
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Assigning issue #$issue_num to @gcp-error-monitor"
+            
+            # Try to assign using the standard script
+            export INPUT_ISSUE_NUMBER=$issue_num
+            export FORCE_AGENT="gcp-error-monitor"
+            
+            if ./tools/assign-copilot-to-issue.sh; then
+              echo "✅ Assigned issue #$issue_num"
+            else
+              echo "⚠️  Could not assign issue #$issue_num (will be picked up by scheduled assignment)"
+            fi
+            
+            echo ""
+          done
+      
+      - name: No authentication summary
+        if: steps.check_auth.outputs.authenticated != 'true'
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "GCP Error Monitor - Configuration Required"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "This workflow requires GCP authentication to monitor for errors."
+          echo ""
+          echo "To enable GCP monitoring, configure these repository secrets:"
+          echo ""
+          echo "  1. GCP_PROJECT_ID"
+          echo "     Your Google Cloud project ID"
+          echo ""
+          echo "  2. GCP_WORKLOAD_IDENTITY_PROVIDER (recommended)"
+          echo "     Format: projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/providers/PROVIDER_ID"
+          echo ""
+          echo "  3. GCP_SERVICE_ACCOUNT"
+          echo "     Service account email with Cloud Logging access"
+          echo ""
+          echo "Required IAM permissions for the service account:"
+          echo "  - roles/logging.viewer"
+          echo "  - roles/errorreporting.viewer"
+          echo "  - roles/monitoring.viewer"
+          echo ""
+          echo "Documentation: https://github.com/google-github-actions/auth"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "GCP Error Monitor Workflow Complete"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Authenticated: ${{ steps.check_auth.outputs.authenticated || 'false' }}"
+          echo "Errors Found: ${{ steps.query_errors.outputs.error_count || '0' }}"
+          echo "Issues Created: ${{ steps.create_issues.outputs.issues_created || '0' }}"
+          echo "Issues Skipped: ${{ steps.create_issues.outputs.issues_skipped || '0' }}"
+          echo ""
+          echo "Next run: In 6 hours (if scheduled)"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
