@@ -68,6 +68,14 @@ function formatDate(dateString: string): string {
   return date.toLocaleDateString();
 }
 
+// Format duration in milliseconds to human-readable string
+function formatDuration(ms: number): string {
+  if (ms < 1000) return `${ms}ms`;
+  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
+  if (ms < 3600000) return `${(ms / 60000).toFixed(1)}m`;
+  return `${(ms / 3600000).toFixed(1)}h`;
+}
+
 type ViewMode = "all" | "artifacts" | "sessions";
 type FilterSource = "all" | "workflow" | "team" | "recipe" | "chat";
 type A2AFilter = "all" | "agent-card" | "task" | "message" | "standard";
@@ -324,23 +332,123 @@ export default function HistoryPage() {
                           Delete
                         </button>
                       </div>
+
+                      {/* Session Metadata */}
+                      {session.metadata && Object.keys(session.metadata).length > 0 && (
+                        <div className="mt-3 space-y-2">
+                          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                            Session Details
+                          </h3>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            {/* Team/Recipe session metadata */}
+                            {session.type !== "workflow" && session.metadata.currentTurn !== undefined ? (
+                              <div className="bg-slate-900/50 rounded p-2">
+                                <span className="text-slate-500">Progress:</span>
+                                <span className="ml-1 text-white font-medium">
+                                  {session.metadata.currentTurn as number} / {session.metadata.totalTurns as number} turns
+                                </span>
+                              </div>
+                            ) : null}
+                            
+                            {/* Workflow session metadata */}
+                            {session.type === "workflow" && session.metadata.totalDurationMs !== undefined ? (
+                              <div className="bg-slate-900/50 rounded p-2">
+                                <span className="text-slate-500">Duration:</span>
+                                <span className="ml-1 text-white font-medium">
+                                  {formatDuration(session.metadata.totalDurationMs as number)}
+                                </span>
+                              </div>
+                            ) : null}
+                            
+                            {session.metadata.agentStepsCount !== undefined ? (
+                              <div className="bg-slate-900/50 rounded p-2">
+                                <span className="text-slate-500">Agent Steps:</span>
+                                <span className="ml-1 text-white font-medium">
+                                  {session.metadata.agentStepsCount as number}
+                                </span>
+                              </div>
+                            ) : null}
+                            
+                            {session.metadata.recipeId ? (
+                              <div className="bg-slate-900/50 rounded p-2 col-span-2">
+                                <span className="text-slate-500">Recipe ID:</span>
+                                <span className="ml-1 text-slate-300 font-mono text-[10px]">
+                                  {session.metadata.recipeId as string}
+                                </span>
+                              </div>
+                            ) : null}
+                            
+                            {session.metadata.blogUrl ? (
+                              <div className="bg-slate-900/50 rounded p-2 col-span-2">
+                                <span className="text-slate-500">Blog URL:</span>
+                                <a 
+                                  href={session.metadata.blogUrl as string}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="ml-1 text-blue-400 hover:text-blue-300 underline text-[10px]"
+                                >
+                                  {session.metadata.blogUrl as string}
+                                </a>
+                              </div>
+                            ) : null}
+                          </div>
+                          
+                          {/* A2A Protocol metadata */}
+                          {(session.a2aContextId || session.taskIds || session.agentCards) ? (
+                            <div className="mt-2 space-y-1">
+                              {session.a2aContextId ? (
+                                <div className="bg-cyan-500/10 border border-cyan-500/30 rounded p-2">
+                                  <span className="text-[10px] text-cyan-400 uppercase tracking-wider">A2A Context ID:</span>
+                                  <div className="text-xs text-slate-300 font-mono mt-0.5">
+                                    {session.a2aContextId}
+                                  </div>
+                                </div>
+                              ) : null}
+                              
+                              {session.taskIds && session.taskIds.length > 0 ? (
+                                <div className="bg-amber-500/10 border border-amber-500/30 rounded p-2">
+                                  <span className="text-[10px] text-amber-400 uppercase tracking-wider">
+                                    A2A Tasks ({session.taskIds.length}):
+                                  </span>
+                                  <div className="text-[10px] text-slate-400 font-mono mt-0.5 space-y-0.5">
+                                    {session.taskIds.slice(0, 3).map((taskId, idx) => (
+                                      <div key={idx}>{taskId}</div>
+                                    ))}
+                                    {session.taskIds.length > 3 ? (
+                                      <div className="text-slate-500">
+                                        +{session.taskIds.length - 3} more
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                </div>
+                              ) : null}
+                            </div>
+                          ) : null}
+                        </div>
+                      )}
+
                       {session.artifacts.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-1">
-                          {session.artifacts.map((artifactId) => {
-                            const artifact = artifacts.find(
-                              (a) => a.id === artifactId
-                            );
-                            if (!artifact) return null;
-                            return (
-                              <button
-                                key={artifactId}
-                                onClick={() => setSelectedArtifact(artifact)}
-                                className="px-2 py-1 text-xs rounded bg-slate-700 hover:bg-slate-600 text-slate-300"
-                              >
-                                {artifact.name}
-                              </button>
-                            );
-                          })}
+                        <div className="mt-3">
+                          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                            Artifacts
+                          </h3>
+                          <div className="flex flex-wrap gap-1">
+                            {session.artifacts.map((artifactId) => {
+                              const artifact = artifacts.find(
+                                (a) => a.id === artifactId
+                              );
+                              if (!artifact) return null;
+                              return (
+                                <button
+                                  key={artifactId}
+                                  onClick={() => setSelectedArtifact(artifact)}
+                                  className="px-2 py-1 text-xs rounded bg-slate-700 hover:bg-slate-600 text-slate-300"
+                                >
+                                  {artifact.name}
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
                       )}
                     </div>
