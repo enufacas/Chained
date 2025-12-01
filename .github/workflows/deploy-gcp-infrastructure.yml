@@ -285,6 +285,15 @@ jobs:
           import_if_exists "google_cloud_run_v2_service" "blog_writer" \
             "projects/$PROJECT_ID/locations/$REGION/services/chained-blog-writer"
           
+          import_if_exists "google_cloud_run_v2_service" "code_reviewer" \
+            "projects/$PROJECT_ID/locations/$REGION/services/chained-code-reviewer"
+          
+          import_if_exists "google_cloud_run_v2_service" "data_analyst" \
+            "projects/$PROJECT_ID/locations/$REGION/services/chained-data-analyst"
+          
+          import_if_exists "google_cloud_run_v2_service" "image_generator" \
+            "projects/$PROJECT_ID/locations/$REGION/services/chained-image-generator"
+          
           import_if_exists "google_cloud_run_v2_service" "adk_api_server" \
             "projects/$PROJECT_ID/locations/$REGION/services/chained-adk-api-server"
           
