@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-11-30T12:49:54.373640",
-  "commit": "2bd6b5eb81a40d529ce9959601a422da3366d9b1",
+  "timestamp": "2025-12-01T12:57:00.898028",
+  "commit": "976b02ae01fb148937922c9bb0f1e1b4bfd37bc6",
   "structure": {
     "directories": {
       "tools": {
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 936,
-        "line_count": 272365,
+        "file_count": 941,
+        "line_count": 275271,
         "files": [
           ".nojekyll",
           "A2A_BRANCH_BASED_COORDINATION.md",
@@ -80,6 +80,7 @@
           "A2A_PHASE_2B_TESTING_SUMMARY.md",
           "A2A_PHASE_3_DESIGN.md",
           "A2A_STATUS.md",
+          "A2A_SUCCESS_HISTORY.md",
           "A2A_TRANSPORT_COMPARISON.md",
           "A2A_VIABLE_PATH_FORWARD.md",
           "AB_TESTING_API.md",
@@ -101,6 +102,7 @@
           "AGENTS.md",
           "AGENT_ASSIGNMENT_DIVERSITY_FIX.md",
           "AGENT_ASSIGNMENT_FIX_SUMMARY.md",
+          "AGENT_AS_CODE_INFRASTRUCTURE.md",
           "AGENT_ATTRIBUTION_IMPLEMENTATION_SUMMARY.md",
           "AGENT_COMMIT_QUALITY_INTEGRATION.md",
           "AGENT_DELETION_FIX_DIAGRAM.md",
@@ -110,9 +112,7 @@
           "AGENT_EVALUATION_COACHING_2025-11-18.md",
           "AGENT_EVALUATION_COACHING_COMPLETE.md",
           "AGENT_EVALUATION_DATA_FLOW_ANALYSIS.md",
-          "AGENT_EVALUATOR_PIPELINE_IMPLEMENTATION.md",
-          "AGENT_EVALUATOR_REVIEW.md",
-          "AGENT_EVOLUTION_SUMMARY.md"
+          "AGENT_EVALUATOR_PIPELINE_IMPLEMENTATION.md"
         ]
       },
       ".github/workflows": {
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 112,
-        "line_count": 4714977,
+        "file_count": 113,
+        "line_count": 4715655,
         "files": [
           "2025-11-14-04-00-27.json",
           "2025-11-14-04-00-36.json",
@@ -182,8 +182,8 @@
         ]
       },
       "learnings": {
-        "file_count": 381,
-        "line_count": 229769,
+        "file_count": 384,
+        "line_count": 230458,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -239,8 +239,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 1843,
-    "total_lines": 5382315
+    "total_files": 1852,
+    "total_lines": 5386588
   },
   "dependencies": {
     "internal_imports": {
@@ -538,8 +538,8 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1843,
-    "total_lines": 5382315,
+    "total_files": 1852,
+    "total_lines": 5386588,
     "total_dependencies": 2,
     "external_libraries": 82,
     "coupling_score": 5.56947925368978e-05,
@@ -548,7 +548,7 @@
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 229769,
+      "line_count": 230458,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -574,7 +574,7 @@
     },
     "agent_system": {
       "file_count": 2,
-      "line_count": 84196,
+      "line_count": 83462,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json"
@@ -582,7 +582,7 @@
     },
     "analysis_tools": {
       "file_count": 49,
-      "line_count": 4714977,
+      "line_count": 4715655,
       "files": [
         "2025-11-14-04-00-27.json",
         "2025-11-14-04-00-36.json",
@@ -608,7 +608,7 @@
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 272365,
+      "line_count": 275271,
       "files": [
         ".nojekyll",
         "A2A_BRANCH_BASED_COORDINATION.md",
@@ -627,9 +627,9 @@
         "A2A_PHASE_2B_TESTING_SUMMARY.md",
         "A2A_PHASE_3_DESIGN.md",
         "A2A_STATUS.md",
+        "A2A_SUCCESS_HISTORY.md",
         "A2A_TRANSPORT_COMPARISON.md",
-        "A2A_VIABLE_PATH_FORWARD.md",
-        "AB_TESTING_API.md"
+        "A2A_VIABLE_PATH_FORWARD.md"
       ]
     },
     "tools": {
