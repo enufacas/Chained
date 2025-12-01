@@ -56,7 +56,7 @@ const AGENT_REGISTRY: Record<string, AgentConfig> = {
     icon: "🔍",
     category: "development",
     urlEnv: "AGENT_CODE_REVIEWER_URL",
-    defaultUrl: isDevelopment ? "" : "",
+    defaultUrl: isDevelopment ? "" : "https://chained-code-reviewer-sguacxy5gq-uc.a.run.app",
     skills: ["code-review", "best-practices", "security-check"],
   },
   "data-analyst": {
@@ -66,7 +66,7 @@ const AGENT_REGISTRY: Record<string, AgentConfig> = {
     icon: "📊",
     category: "analytics",
     urlEnv: "AGENT_DATA_ANALYST_URL",
-    defaultUrl: isDevelopment ? "" : "",
+    defaultUrl: isDevelopment ? "" : "https://chained-data-analyst-sguacxy5gq-uc.a.run.app",
     skills: ["data-analysis", "pattern-detection", "recommendations"],
   },
   "image-generator": {
@@ -76,7 +76,7 @@ const AGENT_REGISTRY: Record<string, AgentConfig> = {
     icon: "🎨",
     category: "visual",
     urlEnv: "AGENT_IMAGE_GENERATOR_URL",
-    defaultUrl: isDevelopment ? "" : "",
+    defaultUrl: isDevelopment ? "" : "https://chained-image-generator-sguacxy5gq-uc.a.run.app",
     skills: ["diagram-generation", "infographic-design", "visual-content"],
   },
 };

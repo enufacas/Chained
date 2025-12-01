@@ -1,6 +1,6 @@
 # A2A UI Feature Documentation
 
-**Last Updated**: 2025-11-30  
+**Last Updated**: 2025-12-01  
 **Status**: 🚀 **Active Development**  
 **Live URL**: https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/
 
@@ -13,6 +13,8 @@ The A2A UI (Agent-to-Agent User Interface) is a Next.js application that provide
 - **Real-time Pipeline Visualization** showing A2A agent coordination
 - **Deep Dive Capabilities** for inspecting pipeline runs and artifacts
 - **Agent Health Monitoring** for deployed GCP Cloud Run agents
+- **Agent Canvas** for visual team building with turn-based execution
+- **Multi-Agent Team Orchestration** with configurable execution modes
 
 ## Architecture
 
@@ -23,14 +25,14 @@ The A2A UI (Agent-to-Agent User Interface) is a Next.js application that provide
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
-│  │   Chat Panel    │  │  Agent Status   │  │ Pipeline        │ │
-│  │   (CopilotKit)  │  │  (Health Check) │  │ Outcomes        │ │
+│  │   Chat Panel    │  │  Agent Canvas   │  │ Pipeline        │ │
+│  │   (CopilotKit)  │  │  (Team Builder) │  │ Outcomes        │ │
 │  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘ │
 │           │                     │                     │          │
 │           ▼                     ▼                     ▼          │
 │  ┌─────────────────────────────────────────────────────────────┐│
 │  │                    API Routes                                ││
-│  │  /api/copilotkit  /api/pipeline  /api/agent  /api/activity  ││
+│  │  /api/copilotkit  /api/pipeline  /api/team  /api/registry   ││
 │  └─────────────────────────────────────────────────────────────┘│
 │                               │                                  │
 └───────────────────────────────┼──────────────────────────────────┘
@@ -41,7 +43,7 @@ The A2A UI (Agent-to-Agent User Interface) is a Next.js application that provide
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  🔬 Academic Research    📈 Google Trends    ✍️ Blog Writer      │
-│     Agent                   Agent               Agent            │
+│  🔍 Code Reviewer       📊 Data Analyst      🎨 Image Generator  │
 │                                                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -53,6 +55,8 @@ The A2A UI (Agent-to-Agent User Interface) is a Next.js application that provide
 | Route | Purpose | Data Source |
 |-------|---------|-------------|
 | `/api/pipeline` | Pipeline CRUD operations | In-memory store |
+| `/api/team` | Team orchestration & custom workflows | In-memory store |
+| `/api/registry` | Agent registry & health status | Cloud Run agents |
 | `/api/agent` | Direct agent interaction | Cloud Run agents |
 | `/api/activity` | Agent health monitoring | Cloud Run health endpoints |
 | `/api/copilotkit` | AI chat backend | Vertex AI / Gemini |
@@ -61,17 +65,22 @@ The A2A UI (Agent-to-Agent User Interface) is a Next.js application that provide
 
 | Component | Purpose |
 |-----------|---------|
+| `AgentCanvas` | Visual team building with goal input & execution config |
+| `RecipeBuilder` | Recipe-based workflow selection |
+| `TeamVisualization` | Real-time team execution view |
+| `TurnIndicator` | Turn progress and agent status |
 | `RealTimeAgentActivity` | Shows live agent health status |
 | `PipelineOutcomes` | Lists pipeline results and blog posts |
 | `PipelineDetailView` | Deep dive into individual pipeline runs |
 | `InteractivePipelineChat` | A2A middleware chat component |
 
-### 3. Main Page (`/src/app/page.tsx`)
+### 3. Team Page (`/src/app/team/page.tsx`)
 
-The unified single-page application with:
-- CopilotKit actions for pipeline operations
-- Real-time status updates
-- API status monitoring
+Multi-agent orchestration with:
+- Agent Canvas for team selection
+- Turn configuration (1-5 turns per agent)
+- Execution mode (sequential/parallel)
+- Real-time execution visualization
 
 ## Features
 
@@ -84,7 +93,11 @@ The unified single-page application with:
 5. **Agent Health Monitoring** - Live Cloud Run status
 6. **Pipeline Detail View** - Click-to-expand with lifecycle visualization
 7. **A2A Steps Deep Dive** - Task IDs, artifacts, execution times
-8. **Enhanced Agent Prompts** - Detailed prompts for quality content (NEW)
+8. **Enhanced Agent Prompts** - Detailed prompts for quality content
+9. **Agent Canvas** - Visual team builder with text input (NEW)
+10. **Turn-Based Execution** - 2-5 turns per agent configuration (NEW)
+11. **Execution Modes** - Sequential and parallel execution (NEW)
+12. **All 6 Agents Configured** - Including data-analyst & image-generator (NEW)
 
 ### 🚧 In Progress
 
@@ -97,6 +110,50 @@ The unified single-page application with:
 - Content review and editing
 - Historical pipeline browser with search
 - Voice/multi-modal interface
+
+## Agent Canvas (New Feature)
+
+### Team Building
+The Agent Canvas allows visual team composition:
+- Click agents to add/remove from team
+- Drag-and-drop support
+- Category filters (Research, SEO, Content, Development, Analytics, Visual)
+- Real-time health status indicators
+
+### Execution Configuration
+When a team is selected, configure:
+
+1. **Turns Per Agent** (1-5, default 2)
+   - Each agent executes for the specified number of turns
+   - More turns = more refined output
+
+2. **Execution Mode**
+   - **Sequential**: Agents run one at a time in order
+   - **Parallel**: All agents run simultaneously per turn
+
+### Starting Workflows
+Enter a goal in the text input and click "Start" to begin execution.
+
+Example:
+```
+Team: [Academic Research, Data Analyst, Blog Writer]
+Turns: 2
+Mode: Sequential
+Goal: "Analyze trends in quantum computing and write an educational blog post"
+```
+
+## Configured Agents
+
+All 6 agents are now configured with Cloud Run URLs:
+
+| Agent | Icon | Category | URL |
+|-------|------|----------|-----|
+| Academic Research | 🔬 | Research | https://chained-academic-research-sguacxy5gq-uc.a.run.app |
+| Google Trends | 📈 | SEO | https://chained-google-trends-sguacxy5gq-uc.a.run.app |
+| Blog Writer | ✍️ | Content | https://chained-blog-writer-sguacxy5gq-uc.a.run.app |
+| Code Reviewer | 🔍 | Development | https://chained-code-reviewer-sguacxy5gq-uc.a.run.app |
+| Data Analyst | 📊 | Analytics | https://chained-data-analyst-sguacxy5gq-uc.a.run.app |
+| Image Generator | 🎨 | Visual | https://chained-image-generator-sguacxy5gq-uc.a.run.app |
 
 ## Content Quality
 
@@ -172,6 +229,45 @@ interface A2AStepDetail {
 }
 ```
 
+### Team Session Interface (New)
+
+```typescript
+interface TeamSession {
+  id: string;
+  recipeId: string;
+  recipeName: string;
+  goal: string;
+  status: "pending" | "running" | "completed" | "failed";
+  currentTurn: number;
+  totalTurns: number;
+  createdAt: string;
+  updatedAt: string;
+  context: Record<string, unknown>;
+  turnResults: TurnResult[];
+  config?: ExecutionConfig;
+}
+
+interface ExecutionConfig {
+  maxTurnsPerAgent: number;  // 1-5, default 2
+  executionMode: "sequential" | "parallel";
+}
+
+interface TurnResult {
+  stepIndex: number;
+  agentId: string;
+  agentName: string;
+  status: "pending" | "running" | "completed" | "failed" | "skipped";
+  startedAt: string;
+  completedAt?: string;
+  durationMs?: number;
+  taskId?: string;
+  message?: string;
+  artifacts: Array<{ name: string; type: string; data: string }>;
+  error?: string;
+  turnNumber?: number;
+}
+```
+
 ## Environment Variables
 
 Required for full functionality:
@@ -186,6 +282,9 @@ GCP_LOCATION=us-central1
 AGENT_ACADEMIC_RESEARCH_URL=https://chained-academic-research-xxx-uc.a.run.app
 AGENT_GOOGLE_TRENDS_URL=https://chained-google-trends-xxx-uc.a.run.app
 AGENT_BLOG_WRITER_URL=https://chained-blog-writer-xxx-uc.a.run.app
+AGENT_CODE_REVIEWER_URL=https://chained-code-reviewer-xxx-uc.a.run.app
+AGENT_DATA_ANALYST_URL=https://chained-data-analyst-xxx-uc.a.run.app
+AGENT_IMAGE_GENERATOR_URL=https://chained-image-generator-xxx-uc.a.run.app
 
 # Alternative: Direct API keys (for local development)
 GEMINI_API_KEY=your-key
@@ -233,7 +332,8 @@ npm run build
 | #3438 | Fix agent response canned fallbacks | Real data only |
 | #3444 | Add pipeline detail view click-to-expand | Better UX |
 | #3445 | Enhance outcomes with real-time polling | Live updates |
-| #3446 | A2A steps deep dive, artifacts (this PR) | Deep dive capability |
+| #3446 | A2A steps deep dive, artifacts | Deep dive capability |
+| #3459+ | Configure data-analyst & image-generator, Agent Canvas input, turn config | Team orchestration |
 
 ## Troubleshooting
 
@@ -242,6 +342,12 @@ npm run build
 1. Check `/api/copilotkit` GET endpoint returns `available: true`
 2. Verify `USE_VERTEX_AI=true` for Cloud Run
 3. Check GCP service account permissions
+
+### Agents Showing Not Configured
+
+1. Verify Cloud Run service is deployed for that agent
+2. Check agent URL environment variables in `.env.local`
+3. For new agents (data-analyst, image-generator), ensure Terraform deployment is complete
 
 ### Agents Showing Offline
 
@@ -254,6 +360,12 @@ npm run build
 1. Check Cloud Run logs for agent errors
 2. Verify agent can reach external APIs (Google Trends, etc.)
 3. Check `/api/pipeline?id=xxx` for error details
+
+### Team Execution Issues
+
+1. Ensure agents are configured (not showing ⚠️ warning)
+2. Check execution mode (sequential may take longer)
+3. Monitor session status via `/api/team?session=xxx`
 
 ## Documentation
 

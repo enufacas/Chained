@@ -4,6 +4,12 @@
  * Interactive canvas for visualizing and managing agent teams.
  * Shows agents in a grid/canvas layout with drag-and-drop capabilities
  * and real-time status updates.
+ * 
+ * Features:
+ * - Drag-and-drop team building
+ * - Text input for workflow goals
+ * - Turn configuration (default 2, max 5)
+ * - Execution mode (sequential or parallel)
  */
 
 "use client";
@@ -31,8 +37,14 @@ interface CanvasAgent extends AgentInfo {
   order?: number;
 }
 
+interface ExecutionConfig {
+  maxTurnsPerAgent: number;
+  executionMode: "sequential" | "parallel";
+}
+
 interface AgentCanvasProps {
   onTeamChange?: (teamAgents: string[]) => void;
+  onExecute?: (goal: string, config: ExecutionConfig) => void;
   initialTeam?: string[];
 }
 
@@ -45,12 +57,18 @@ const CATEGORIES = [
   { id: "visual", label: "Visual", color: "from-indigo-500 to-violet-500" },
 ];
 
-export default function AgentCanvas({ onTeamChange, initialTeam = [] }: AgentCanvasProps) {
+const DEFAULT_TURNS = 2;
+
+export default function AgentCanvas({ onTeamChange, onExecute, initialTeam = [] }: AgentCanvasProps) {
   const [agents, setAgents] = useState<CanvasAgent[]>([]);
   const [teamAgents, setTeamAgents] = useState<string[]>(initialTeam);
   const [loading, setLoading] = useState(true);
   const [draggedAgent, setDraggedAgent] = useState<string | null>(null);
   const [filter, setFilter] = useState<string | null>(null);
+  const [goal, setGoal] = useState("");
+  const [maxTurnsPerAgent, setMaxTurnsPerAgent] = useState(DEFAULT_TURNS);
+  const [executionMode, setExecutionMode] = useState<"sequential" | "parallel">("sequential");
+  const [executing, setExecuting] = useState(false);
   
   // Fetch agents from registry
   const fetchAgents = useCallback(async () => {
@@ -119,6 +137,21 @@ export default function AgentCanvas({ onTeamChange, initialTeam = [] }: AgentCan
       if (agent?.configured) {
         toggleAgent(draggedAgent);
       }
+    }
+  };
+  
+  // Handle workflow execution
+  const handleExecute = async () => {
+    if (!goal.trim() || teamAgents.length === 0) return;
+    
+    setExecuting(true);
+    try {
+      onExecute?.(goal.trim(), {
+        maxTurnsPerAgent,
+        executionMode,
+      });
+    } finally {
+      setExecuting(false);
     }
   };
   
@@ -239,11 +272,9 @@ export default function AgentCanvas({ onTeamChange, initialTeam = [] }: AgentCan
                 </button>
               </div>
             ))}
-            {orderedTeamAgents.length > 1 && (
-              <div className="text-slate-500 text-xs">
-                → sequential execution
-              </div>
-            )}
+            <div className="text-slate-500 text-xs">
+              → {executionMode} execution
+            </div>
           </div>
         </div>
       )}
@@ -331,6 +362,100 @@ export default function AgentCanvas({ onTeamChange, initialTeam = [] }: AgentCan
           })}
         </div>
       </div>
+      
+      {/* Workflow Configuration & Execution */}
+      {teamAgents.length > 0 && (
+        <div className="p-4 border-t border-slate-700 bg-slate-900/30">
+          {/* Execution Configuration */}
+          <div className="mb-4 flex flex-wrap gap-4">
+            {/* Turns Per Agent */}
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-slate-400">Turns per agent:</label>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((turns) => (
+                  <button
+                    key={turns}
+                    onClick={() => setMaxTurnsPerAgent(turns)}
+                    className={`w-8 h-8 text-xs rounded transition ${
+                      maxTurnsPerAgent === turns
+                        ? "bg-purple-500 text-white"
+                        : "bg-slate-700 text-slate-400 hover:bg-slate-600"
+                    }`}
+                  >
+                    {turns}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Execution Mode */}
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-slate-400">Mode:</label>
+              <div className="flex rounded-lg overflow-hidden border border-slate-600">
+                <button
+                  onClick={() => setExecutionMode("sequential")}
+                  className={`px-3 py-1.5 text-xs transition ${
+                    executionMode === "sequential"
+                      ? "bg-purple-500 text-white"
+                      : "bg-slate-700 text-slate-400 hover:bg-slate-600"
+                  }`}
+                >
+                  Sequential →
+                </button>
+                <button
+                  onClick={() => setExecutionMode("parallel")}
+                  className={`px-3 py-1.5 text-xs transition ${
+                    executionMode === "parallel"
+                      ? "bg-purple-500 text-white"
+                      : "bg-slate-700 text-slate-400 hover:bg-slate-600"
+                  }`}
+                >
+                  Parallel ⇉
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Goal Input */}
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={goal}
+              onChange={(e) => setGoal(e.target.value)}
+              placeholder="Enter your goal (e.g., 'Write a blog post about AI trends')..."
+              className="flex-1 px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+              disabled={executing}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleExecute();
+                }
+              }}
+            />
+            <button
+              onClick={handleExecute}
+              disabled={!goal.trim() || executing}
+              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all"
+            >
+              {executing ? (
+                <span className="flex items-center gap-2">
+                  <span className="animate-spin">⏳</span>
+                  Running...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  🚀 Start
+                </span>
+              )}
+            </button>
+          </div>
+          
+          {/* Configuration Summary */}
+          <div className="mt-2 text-xs text-slate-500">
+            {teamAgents.length} agents • {maxTurnsPerAgent} turn{maxTurnsPerAgent > 1 ? "s" : ""} per agent • {executionMode} mode
+          </div>
+        </div>
+      )}
     </div>
   );
 }

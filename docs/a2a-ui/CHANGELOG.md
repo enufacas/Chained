@@ -6,6 +6,106 @@ Format: `## [Date] PR #XXX - Title`
 
 ---
 
+## [2025-12-01] PR #3460 - Configure All Agents, Agent Canvas Input, Turn-Based Execution
+
+### Added
+- **Data Analyst & Image Generator Configuration**:
+  - Added Cloud Run Terraform resources for code-reviewer, data-analyst, image-generator
+  - Configured default URLs in registry and team API routes
+  - All 6 agents now properly configured (no more "Not configured" warnings)
+
+- **Agent Canvas Workflow Execution**:
+  - Added goal/task text input field directly in Agent Canvas
+  - Users can now start workflows immediately after building a team
+  - Enter key submits, "Start" button executes
+
+- **Turn-Based Execution Configuration**:
+  - `maxTurnsPerAgent` setting: 1-5 turns (default 2)
+  - Visual turn selector buttons in Agent Canvas
+  - Each agent executes for specified number of turns
+
+- **Execution Mode Option**:
+  - **Sequential**: Agents run one at a time in order (default)
+  - **Parallel**: All agents run simultaneously per turn
+  - Toggle buttons in Agent Canvas configuration
+
+- **Custom Team API Support**:
+  - New `POST /api/team` body option: `agentIds` for custom teams
+  - New `config` parameter with `maxTurnsPerAgent` and `executionMode`
+  - `executeCustomTeam()` function for canvas-based workflows
+
+### Changed
+- **Terraform Configuration**:
+  - Added 3 new Cloud Run services (code-reviewer, data-analyst, image-generator)
+  - Updated ADK API Server with new agent URLs and descriptions
+  - Updated AG-UI Frontend with new agent environment variables
+  - Updated depends_on blocks for proper deployment order
+  - Added new outputs for agent URLs
+
+- **Environment Configuration**:
+  - Updated `.env.example` with 3 new agent URLs
+  - Default production URLs for all 6 agents
+
+- **Team API Route**:
+  - Extended `TeamSession` interface with `config?: ExecutionConfig`
+  - Extended `TurnResult` interface with `turnNumber?: number`
+  - Modified `executeSession()` to support parallel execution
+  - Added `executeCustomTeam()` for AgentCanvas workflows
+
+- **AgentCanvas Component**:
+  - Added `onExecute` callback prop
+  - Added `goal`, `maxTurnsPerAgent`, `executionMode` state
+  - Added configuration panel when team is selected
+  - Added "Start" button with loading state
+  - Updated team preview to show execution mode
+
+- **Team Page**:
+  - Added `handleCanvasExecute` callback
+  - Wired AgentCanvas `onExecute` to team execution
+
+### Technical Details
+
+**New Terraform Resources**:
+- `google_cloud_run_v2_service.code_reviewer`
+- `google_cloud_run_v2_service.data_analyst`
+- `google_cloud_run_v2_service.image_generator`
+- Corresponding IAM members for public access
+
+**New Types**:
+```typescript
+interface ExecutionConfig {
+  maxTurnsPerAgent: number;  // 1-5, default 2
+  executionMode: "sequential" | "parallel";
+}
+```
+
+**API Changes**:
+```
+POST /api/team
+Body: {
+  agentIds?: string[],  // NEW: custom team agents
+  recipeId?: string,    // existing recipe-based
+  goal: string,
+  context?: object,
+  config?: {            // NEW: execution configuration
+    maxTurnsPerAgent: number,
+    executionMode: "sequential" | "parallel"
+  }
+}
+```
+
+### Files Modified
+- `infrastructure/terraform/adk-agents.tf` - New Cloud Run services + outputs
+- `infrastructure/docker/ag-ui-frontend/.env.example` - New agent URLs
+- `infrastructure/docker/ag-ui-frontend/src/app/api/registry/route.ts` - Default URLs
+- `infrastructure/docker/ag-ui-frontend/src/app/api/team/route.ts` - Execution config support
+- `infrastructure/docker/ag-ui-frontend/src/components/AgentCanvas.tsx` - UI updates
+- `infrastructure/docker/ag-ui-frontend/src/app/team/page.tsx` - Canvas execution handler
+- `docs/a2a-ui/README.md` - Documentation updates
+- `docs/a2a-ui/CHANGELOG.md` - This file
+
+---
+
 ## [2025-11-30] PR #3446 - Enhanced A2A Steps, Deep Dive, and Content Quality
 
 ### Added
