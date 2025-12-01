@@ -14,6 +14,11 @@
  */
 
 import { NextRequest } from "next/server";
+import {
+  saveArtifact,
+  saveSession,
+  saveA2ATask,
+} from "@/lib/storage";
 
 // =============================================================================
 // Logging Utilities
@@ -836,12 +841,124 @@ Domain: ${domain}`,
     
     activePipelines.set(pipelineId, pipeline);
     
+    // =========================================================================
+    // Persist Artifacts and Session to localStorage
+    // =========================================================================
+    const savedArtifactIds: string[] = [];
+    
+    try {
+      // Save artifacts from each A2A step
+      if (pipeline.a2aSteps && pipeline.a2aSteps.length > 0) {
+        for (const step of pipeline.a2aSteps) {
+          // Save each artifact from the step
+          for (const artifact of step.artifacts) {
+            const saved = saveArtifact({
+              name: artifact.name,
+              type: artifact.type,
+              data: artifact.data,
+              preview: artifact.preview,
+              source: "workflow",
+              sourceId: pipelineId,
+              sourceName: pipeline.topic,
+              agentName: step.agentName,
+              phase: step.phase,
+            });
+            savedArtifactIds.push(saved.id);
+            
+            logWithTimestamp("DEBUG", `Saved artifact ${artifact.name} from ${step.agentName}`);
+          }
+          
+          // Save A2A task as artifact for protocol compliance
+          if (step.rawResponse) {
+            const taskArtifact = saveA2ATask(
+              step.rawResponse,
+              step.agentName,
+              "workflow",
+              pipelineId,
+              pipeline.topic,
+              step.phase
+            );
+            savedArtifactIds.push(taskArtifact.id);
+          }
+        }
+      }
+      
+      // Create ultimate artifact combining all agent outputs
+      const ultimateArtifact = {
+        name: "pipeline-summary",
+        type: "application/json",
+        data: JSON.stringify({
+          pipelineId: pipeline.id,
+          topic: pipeline.topic,
+          status: pipeline.status,
+          createdAt: pipeline.createdAt,
+          completedAt: pipeline.updatedAt,
+          totalDurationMs: pipeline.totalDurationMs,
+          phases: {
+            research: pipeline.results?.research || null,
+            trends: pipeline.results?.trends || null,
+            blog: pipeline.results?.blog || null,
+          },
+          agentSteps: pipeline.a2aSteps?.map(step => ({
+            agentName: step.agentName,
+            phase: step.phase,
+            taskId: step.taskId,
+            status: step.status,
+            durationMs: step.durationMs,
+            message: step.message,
+            artifactCount: step.artifacts.length,
+          })) || [],
+          summary: `Pipeline "${pipeline.topic}" completed successfully with ${pipeline.a2aSteps?.length || 0} agent steps. Research domain: ${pipeline.results?.research?.domain || "Unknown"}. Blog published at: ${pipeline.results?.blog?.url || "N/A"}`,
+        }, null, 2),
+        preview: `Ultimate artifact for pipeline: ${pipeline.topic}`,
+      };
+      
+      const ultimateSaved = saveArtifact({
+        ...ultimateArtifact,
+        source: "workflow",
+        sourceId: pipelineId,
+        sourceName: pipeline.topic,
+        agentName: "Pipeline Coordinator",
+        phase: "complete",
+      });
+      savedArtifactIds.push(ultimateSaved.id);
+      
+      logWithTimestamp("INFO", `Saved ultimate artifact for pipeline ${pipelineId}`);
+      
+      // Save session record
+      saveSession({
+        id: pipelineId,
+        type: "workflow",
+        name: "A2A Pipeline",
+        topic: pipeline.topic,
+        status: pipeline.status,
+        completedAt: pipeline.updatedAt,
+        artifacts: savedArtifactIds,
+        metadata: {
+          totalDurationMs: pipeline.totalDurationMs,
+          agentStepsCount: pipeline.a2aSteps?.length || 0,
+          blogUrl: pipeline.results?.blog?.url,
+        },
+        a2aContextId: pipelineId,
+        taskIds: taskIds,
+      });
+      
+      logWithTimestamp("INFO", `Saved session for pipeline ${pipelineId} with ${savedArtifactIds.length} artifacts`);
+      
+    } catch (storageError) {
+      logWithTimestamp("WARN", `Failed to persist artifacts to localStorage`, {
+        error: storageError instanceof Error ? storageError.message : String(storageError),
+      });
+      // Continue even if storage fails - pipeline still succeeded
+    }
+    
     logWithTimestamp("INFO", `Pipeline ${pipelineId}: Completed successfully`, {
       topic: pipeline.topic,
       blogUrl: pipeline.results?.blog?.url,
       taskIds,
       totalDurationMs: pipeline.totalDurationMs,
       a2aStepsCount: pipeline.a2aSteps?.length || 0,
+      savedArtifactsCount: savedArtifactIds.length,
     });
     
   } catch (error) {
