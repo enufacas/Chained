@@ -18,54 +18,6 @@ const WORKFLOW_SCHEDULES = {
 // Update last updated timestamp
 document.getElementById('last-updated').textContent = new Date().toLocaleString();
 
-// Fetch and display AI Goal of the Day
-async function fetchAIGoal() {
-    try {
-        const response = await fetch('AI_GOALS.md');
-        if (!response.ok) {
-            throw new Error('Could not fetch AI goals');
-        }
-        
-        const markdown = await response.text();
-        
-        // Parse the current goal from markdown
-        const categoryMatch = markdown.match(/\*\*Category\*\*:\s*(.+)/);
-        const goalMatch = markdown.match(/\*\*Goal\*\*:\s*(.+)/);
-        const dateMatch = markdown.match(/\*\*Date\*\*:\s*(.+)/);
-        const statusMatch = markdown.match(/\*\*Status\*\*:\s*(.+)/);
-        
-        if (categoryMatch && goalMatch && dateMatch) {
-            document.getElementById('goal-category').textContent = categoryMatch[1].trim();
-            document.getElementById('goal-description').textContent = goalMatch[1].trim();
-            document.getElementById('goal-date').textContent = dateMatch[1].trim();
-            
-            if (statusMatch) {
-                document.getElementById('goal-status').textContent = statusMatch[1].trim();
-            }
-            
-            // Parse progress from the markdown (look for progress updates)
-            const progressMatches = markdown.match(/\((\d+)%\s*complete\)/);
-            if (progressMatches) {
-                const progress = parseInt(progressMatches[1]);
-                document.getElementById('goal-progress').style.width = progress + '%';
-                document.getElementById('goal-progress-text').textContent = progress + '%';
-            }
-        } else {
-            // No current goal
-            document.getElementById('goal-category').textContent = 'No Active Goal';
-            document.getElementById('goal-description').textContent = 'The next goal will be generated at 6 AM UTC. You can also trigger it manually via GitHub Actions.';
-            document.getElementById('goal-date').textContent = 'Pending';
-            document.getElementById('goal-status').textContent = '⏳ Pending';
-        }
-    } catch (error) {
-        console.error('Error fetching AI goal:', error);
-        document.getElementById('goal-category').textContent = 'Loading Error';
-        document.getElementById('goal-description').textContent = 'Could not load the current goal. Please check back later.';
-        document.getElementById('goal-date').textContent = '-';
-        document.getElementById('goal-status').textContent = '❌ Error';
-    }
-}
-
 // Fetch repository statistics
 async function fetchStats() {
     try {
@@ -785,7 +737,6 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Initialize
-fetchAIGoal();
 fetchStats();
 loadLearnings();
 loadWorkflowSchedules();
@@ -795,7 +746,6 @@ loadLearningsIndex();
 
 // Refresh data every 5 minutes
 setInterval(() => {
-    fetchAIGoal();
     fetchStats();
     loadLearnings();
     loadWorkflowSchedules();

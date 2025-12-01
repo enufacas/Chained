@@ -79,7 +79,6 @@ docs/
 ├── SECURITY_BEST_PRACTICES.md     # Security guide
 ├── SECURITY_IMPLEMENTATION.md     # Security details
 ├── MICRO_PROJECTS.md              # Tools and projects
-├── AI_GOALS.md                    # AI goals system
 ├── INTELLIGENT_AGENT_MATCHING.md  # Agent matching
 ├── ACTOR_ID_SYSTEM.md             # Actor ID docs
 ├── CLI_AGENT_ASSIGNMENT.md        # CLI assignment
