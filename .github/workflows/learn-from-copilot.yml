@@ -453,7 +453,12 @@ jobs:
               echo "🎉 GitHub Copilot learning PR merged"
             else
               echo "❌ Failed to auto-merge PR #$PR_NUMBER"
-              echo "Please check the PR status manually"
+              echo "This may indicate:"
+              echo "  - Merge conflicts"
+              echo "  - Required checks not passing"
+              echo "  - Branch protection rules blocking"
+              echo ""
+              echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
               exit 1
             fi
           fi
