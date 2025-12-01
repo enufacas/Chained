@@ -12,6 +12,12 @@
 # - A2A Protocol: https://a2a-protocol.org/
 # - AG-UI Protocol: https://docs.ag-ui.com/
 #
+# CPU Quota Considerations:
+# - Each service uses 0.5 CPU (total: 4 CPUs for 8 services)
+# - All services have cpu_idle=true (scale to zero when not in use)
+# - GCP default quota: varies by region, typically 8-10 CPUs
+# - To increase quota: https://cloud.google.com/run/quotas
+#
 # NOTE: This file uses variables and providers defined in main.tf and variables.tf
 # =============================================================================
 
@@ -118,7 +124,7 @@ resource "google_cloud_run_v2_service" "academic_research" {
 
       resources {
         limits = {
-          cpu    = "1"
+          cpu    = "0.5"
           memory = "512Mi"
         }
         cpu_idle          = true
@@ -245,7 +251,7 @@ resource "google_cloud_run_v2_service" "blog_writer" {
 
       resources {
         limits = {
-          cpu    = "1"
+          cpu    = "0.5"
           memory = "512Mi"
         }
         cpu_idle          = true
@@ -386,7 +392,7 @@ resource "google_cloud_run_v2_service" "google_trends" {
 
       resources {
         limits = {
-          cpu    = "1"
+          cpu    = "0.5"
           memory = "512Mi"
         }
         cpu_idle          = true
@@ -513,7 +519,7 @@ resource "google_cloud_run_v2_service" "code_reviewer" {
 
       resources {
         limits = {
-          cpu    = "1"
+          cpu    = "0.5"
           memory = "512Mi"
         }
         cpu_idle          = true
@@ -634,7 +640,7 @@ resource "google_cloud_run_v2_service" "data_analyst" {
 
       resources {
         limits = {
-          cpu    = "1"
+          cpu    = "0.5"
           memory = "512Mi"
         }
         cpu_idle          = true
@@ -755,7 +761,7 @@ resource "google_cloud_run_v2_service" "image_generator" {
 
       resources {
         limits = {
-          cpu    = "1"
+          cpu    = "0.5"
           memory = "512Mi"
         }
         cpu_idle          = true
@@ -876,7 +882,7 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
 
       resources {
         limits = {
-          cpu    = "1"
+          cpu    = "0.5"
           memory = "512Mi"
         }
         cpu_idle          = true
@@ -1043,7 +1049,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
 
       resources {
         limits = {
-          cpu    = "1"
+          cpu    = "0.5"
           memory = "512Mi"
         }
         cpu_idle          = true
