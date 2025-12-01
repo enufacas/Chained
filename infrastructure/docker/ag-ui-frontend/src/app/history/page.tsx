@@ -39,7 +39,7 @@ function getArtifactIcon(type: string, name: string): string {
 // Get color class for source type
 function getSourceColor(source: string): string {
   switch (source) {
-    case "pipeline":
+    case "workflow":
       return "bg-blue-500/20 text-blue-400 border-blue-500/30";
     case "team":
       return "bg-purple-500/20 text-purple-400 border-purple-500/30";
@@ -69,7 +69,7 @@ function formatDate(dateString: string): string {
 }
 
 type ViewMode = "all" | "artifacts" | "sessions";
-type FilterSource = "all" | "pipeline" | "team" | "recipe" | "chat";
+type FilterSource = "all" | "workflow" | "team" | "recipe" | "chat";
 type A2AFilter = "all" | "agent-card" | "task" | "message" | "standard";
 
 export default function HistoryPage() {
@@ -198,7 +198,7 @@ export default function HistoryPage() {
             {/* Source Filter */}
             <div className="flex rounded overflow-hidden border border-slate-700">
               {(
-                ["all", "pipeline", "team", "recipe", "chat"] as FilterSource[]
+                ["all", "workflow", "team", "recipe", "chat"] as FilterSource[]
               ).map((source) => (
                 <button
                   key={source}
