@@ -3,11 +3,25 @@
  *
  * Renders various asset types inline:
  * - Markdown: Rendered with basic styling
- * - SVG: Displayed as images
- * - HTML: Rendered in a sandboxed iframe
+ * - SVG: Displayed as images (sanitized)
+ * - HTML: Rendered in a sandboxed iframe (no scripts)
  * - JSON: Formatted with syntax highlighting
- * - Images: Displayed as images (base64 or URL)
+ * - Images: Displayed as images (base64 or URL, validated)
  * - Text: Displayed as preformatted text
+ * 
+ * SECURITY NOTES:
+ * - All content is sanitized via regex-based filtering (iterative application)
+ * - SVG content has script tags, event handlers, and dangerous URLs removed
+ * - HTML is rendered in an iframe with sandbox="" (most restrictive)
+ * - Images are validated against allowed data URL prefixes
+ * 
+ * LIMITATIONS:
+ * - Regex-based sanitization cannot catch all XSS vectors
+ * - For untrusted external content, use a proper library like DOMPurify
+ * - This implementation is suitable for internal artifact viewing from
+ *   trusted sources (our own A2A agents)
+ * 
+ * @see https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html
  */
 
 "use client";
@@ -20,6 +34,107 @@ interface AssetPreviewProps {
   data: string;
   onClose?: () => void;
   maxHeight?: string;
+}
+
+/**
+ * Sanitize SVG content by removing potentially dangerous elements and attributes.
+ * Applies sanitization iteratively to handle nested/obfuscated attacks.
+ * 
+ * Note: For production use with untrusted content, consider using a proper
+ * HTML sanitization library like DOMPurify. This implementation is for
+ * internal artifact viewing where content comes from our own A2A agents.
+ */
+function sanitizeSvg(svg: string): string {
+  let sanitized = svg;
+  let previousLength: number;
+  
+  // Apply sanitization iteratively until no more changes
+  // This handles nested patterns like <scr<script>ipt>
+  do {
+    previousLength = sanitized.length;
+    
+    // Remove script tags (multiple patterns for robustness)
+    sanitized = sanitized.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, '');
+    sanitized = sanitized.replace(/<script\b[^>]*\/>/gi, '');
+    sanitized = sanitized.replace(/<script\b[^>]*>/gi, '');
+    sanitized = sanitized.replace(/<\/script\s*>/gi, '');
+    
+    // Remove event handlers (onclick, onload, onerror, etc.)
+    // Match on-* attributes with various quoting styles
+    sanitized = sanitized.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
+    sanitized = sanitized.replace(/\s+on\w+\s*=\s*[^\s>]+/gi, '');
+    
+    // Remove javascript:, vbscript:, and data: URLs (except safe image types)
+    sanitized = sanitized.replace(/javascript\s*:/gi, '');
+    sanitized = sanitized.replace(/vbscript\s*:/gi, '');
+    sanitized = sanitized.replace(/data\s*:(?!image\/(png|jpg|jpeg|gif|svg\+xml|webp))[^"'\s>]*/gi, '');
+    
+    // Remove xlink:href and href with dangerous URLs
+    sanitized = sanitized.replace(/xlink:href\s*=\s*["']\s*javascript:[^"']*["']/gi, '');
+    sanitized = sanitized.replace(/href\s*=\s*["']\s*javascript:[^"']*["']/gi, '');
+    
+  } while (sanitized.length !== previousLength);
+  
+  return sanitized;
+}
+
+// Validate that a base64 string appears to be a valid image
+function isValidImageData(data: string): boolean {
+  // Check for valid data URL prefixes (strict checking)
+  const validImagePrefixes = [
+    'data:image/png;base64,',
+    'data:image/jpeg;base64,',
+    'data:image/jpg;base64,',
+    'data:image/gif;base64,',
+    'data:image/webp;base64,',
+    'data:image/svg+xml;base64,',
+  ];
+  
+  if (data.startsWith('data:')) {
+    // Must match one of our allowed prefixes exactly
+    return validImagePrefixes.some(prefix => data.toLowerCase().startsWith(prefix));
+  }
+  
+  // Only allow http:// and https:// URLs (not data:, javascript:, vbscript:, etc.)
+  if (data.startsWith('http://') || data.startsWith('https://')) {
+    return true;
+  }
+  
+  // For raw base64, validate it looks like base64
+  const base64Regex = /^[A-Za-z0-9+/=]+$/;
+  return base64Regex.test(data.replace(/\s/g, ''));
+}
+
+/**
+ * Sanitize HTML for iframe display.
+ * Applies sanitization iteratively to handle nested/obfuscated attacks.
+ */
+function sanitizeHtmlForIframe(html: string): string {
+  let sanitized = html;
+  let previousLength: number;
+  
+  // Apply sanitization iteratively
+  do {
+    previousLength = sanitized.length;
+    
+    // Remove script tags (multiple patterns for robustness)
+    sanitized = sanitized.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, '');
+    sanitized = sanitized.replace(/<script\b[^>]*\/>/gi, '');
+    sanitized = sanitized.replace(/<script\b[^>]*>/gi, '');
+    sanitized = sanitized.replace(/<\/script\s*>/gi, '');
+    
+    // Remove event handlers
+    sanitized = sanitized.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
+    sanitized = sanitized.replace(/\s+on\w+\s*=\s*[^\s>]+/gi, '');
+    
+    // Remove dangerous URLs
+    sanitized = sanitized.replace(/javascript\s*:/gi, '');
+    sanitized = sanitized.replace(/vbscript\s*:/gi, '');
+    sanitized = sanitized.replace(/data\s*:(?!image\/(png|jpg|jpeg|gif|svg\+xml|webp))[^"'\s>]*/gi, '');
+    
+  } while (sanitized.length !== previousLength);
+  
+  return sanitized;
 }
 
 // Simple markdown renderer (basic support)
@@ -135,6 +250,14 @@ export default function AssetPreview({
       case "svg":
         // Check if it's base64 encoded
         if (data.startsWith("data:image/svg+xml;base64,")) {
+          // Validate base64 image data before rendering
+          if (!isValidImageData(data)) {
+            return (
+              <div className="p-4 text-red-400">
+                ⚠️ Invalid SVG data format
+              </div>
+            );
+          }
           return (
             <div className="flex items-center justify-center p-4 bg-white rounded-lg">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -142,12 +265,12 @@ export default function AssetPreview({
             </div>
           );
         }
-        // Render SVG directly (sanitize for safety)
+        // Render SVG directly with comprehensive sanitization
         return (
           <div 
             className="flex items-center justify-center p-4 bg-white rounded-lg"
             dangerouslySetInnerHTML={{ 
-              __html: data.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') 
+              __html: sanitizeSvg(data) 
             }} 
           />
         );
@@ -161,12 +284,13 @@ export default function AssetPreview({
         );
 
       case "html":
+        // Render HTML in fully sandboxed iframe without scripts
         return (
           <iframe
-            srcDoc={data}
+            srcDoc={sanitizeHtmlForIframe(data)}
             title={name}
             className="w-full h-[400px] bg-white rounded-lg border border-slate-700"
-            sandbox="allow-scripts"
+            sandbox=""
           />
         );
 
@@ -179,9 +303,24 @@ export default function AssetPreview({
         );
 
       case "image":
-        const imgSrc = data.startsWith("data:") || data.startsWith("http") 
-          ? data 
-          : `data:image/png;base64,${data}`;
+        // Validate image data before constructing URL
+        let imgSrc: string;
+        if (data.startsWith("data:") || data.startsWith("http://") || data.startsWith("https://")) {
+          imgSrc = data;
+        } else {
+          // Assume raw base64, prepend with image/png data URL
+          imgSrc = `data:image/png;base64,${data}`;
+        }
+        
+        // Validate the constructed URL
+        if (!isValidImageData(imgSrc)) {
+          return (
+            <div className="p-4 text-red-400">
+              ⚠️ Invalid image data format
+            </div>
+          );
+        }
+        
         return (
           <div className="flex items-center justify-center p-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
