@@ -1,21 +1,26 @@
 # A2A Parallel Agents: API Key and Model Configuration Analysis
 
-**Investigation Date**: 2025-11-30  
+**Investigation Date**: 2025-12-01 (Corrected)  
 **Investigator**: @investigate-champion  
 **Issue Context**: Understanding how the A2A parallel agents workflow handles GOOGLE_API_KEY, GEMINI_API_KEY, and model selection
 
-## Executive Summary
+## Executive Summary (Corrected)
 
-The A2A parallel agents workflow (`a2a-parallel-agents.yml`) uses two different code paths for AI generation:
+After examining actual workflow logs from [run #19788906972](https://github.com/enufacas/Chained/actions/runs/19788906972), both the GitHub Actions workflow AND Cloud Run ADK agents use **Vertex AI mode**:
 
-1. **GitHub Actions** (run-gemini-cli action) - Uses **Google AI Studio mode** with `GEMINI_API_KEY` by default
-2. **Cloud Run ADK Agents** - Uses **Vertex AI mode** with Application Default Credentials (ADC)
+| Component | USE_VERTEX_AI | API Key | Model |
+|-----------|---------------|---------|-------|
+| GitHub Actions (run-gemini-cli) | **true** | GOOGLE_API_KEY | gemini-3-pro-preview |
+| Cloud Run ADK Agents | **true** | ADC (Service Account) | gemini-2.0-flash |
 
-The original "gemini-3-pro-preview" model name error only occurred in Cloud Run (Vertex AI) because:
-- The workflow uses `GEMINI_API_KEY` in **Google AI Studio mode** where the model name is handled differently
-- Cloud Run sets `USE_VERTEX_AI=true` which uses **Vertex AI mode** where the model name must be a valid Vertex AI model
+**Both use Vertex AI, but with different authentication mechanisms.** The key difference that explains why the workflow worked while Cloud Run failed is:
 
-## Architecture Overview
+1. **GitHub Actions**: Uses `GOOGLE_API_KEY` (API key authentication) with Gemini CLI
+2. **Cloud Run**: Uses ADC (Application Default Credentials from service account)
+
+The Gemini CLI (`run-gemini-cli` action) handles model names differently than the Python `vertexai` SDK used by ADK agents.
+
+## Architecture Overview (Corrected)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -26,184 +31,165 @@ The original "gemini-3-pro-preview" model name error only occurred in Cloud Run 
 │  ┌───────────────────────┐               ┌────────────────────────────────┐ │
 │  │ run-gemini-cli action │               │ ADK Agents (Python)            │ │
 │  │                       │               │                                │ │
-│  │ • GEMINI_API_KEY ✓    │               │ • USE_VERTEX_AI=true           │ │
-│  │ • GOOGLE_API_KEY      │               │ • GOOGLE_CLOUD_PROJECT         │ │
-│  │ • USE_VERTEX_AI=false │               │ • Service Account ADC          │ │
+│  │ • GOOGLE_GENAI_USE_   │               │ • USE_VERTEX_AI=true           │ │
+│  │   VERTEXAI=true       │               │ • GOOGLE_CLOUD_PROJECT         │ │
+│  │ • GOOGLE_API_KEY ✓    │               │ • Service Account ADC          │ │
 │  │                       │               │                                │ │
-│  │ Mode: Google AI Studio│               │ Mode: Vertex AI                │ │
-│  │ Model: Any name works │               │ Model: Must be valid VA name   │ │
-│  │ (gemini-3-pro-preview)│               │ (gemini-2.0-flash)             │ │
+│  │ Tool: Gemini CLI      │               │ Tool: vertexai Python SDK      │ │
+│  │ (Node.js)             │               │ (google-cloud-aiplatform)      │ │
+│  │ Model handling: ✓     │               │ Model handling: Strict         │ │
+│  │ (gemini-3-pro-preview)│               │ (gemini-2.0-flash required)    │ │
 │  └───────────────────────┘               └────────────────────────────────┘ │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Two Authentication Modes
+## Evidence from Workflow Logs
 
-### 1. Google AI Studio Mode (GitHub Actions)
+From the [actual workflow run](https://github.com/enufacas/Chained/actions/runs/19788906972), job `agent (create-guru, gemini)`:
 
-Used by: `google-github-actions/run-gemini-cli` in workflows
+```
+env:
+  GOOGLE_GENAI_USE_VERTEXAI: true   # ✓ Vertex AI mode IS enabled
+  GOOGLE_API_KEY: ***                # ✓ Using GOOGLE_API_KEY (not GEMINI_API_KEY)
+  GEMINI_MODEL: gemini-3-pro-preview # Model name passed to Gemini CLI
+  GEMINI_API_KEY:                    # Empty (not using AI Studio key)
+  GOOGLE_CLOUD_PROJECT:              # Empty (using API key instead of ADC)
+```
 
-**Configuration (from actual workflow):**
+This proves:
+1. **GOOGLE_GENAI_USE_VERTEXAI is set to `true`** in the workflow
+2. **GOOGLE_API_KEY is being used** (not GEMINI_API_KEY)
+3. **gemini-3-pro-preview** is passed as the model name
+
+## Why the Same Model Works in Workflow But Not Cloud Run
+
+### Key Difference: The Tool/SDK Used
+
+| Environment | Tool | Authentication | Model Handling |
+|-------------|------|----------------|----------------|
+| GitHub Actions | Gemini CLI (@google/gemini-cli) | GOOGLE_API_KEY | More lenient |
+| Cloud Run | Python vertexai SDK | Service Account ADC | Strict validation |
+
+### Hypothesis
+
+The **Gemini CLI** (used by `run-gemini-cli` action) appears to handle model name resolution differently than the **Python vertexai SDK**:
+
+1. **Gemini CLI**: May perform model name translation, aliasing, or use a different API path that accepts "gemini-3-pro-preview"
+2. **Python vertexai SDK**: Directly calls Vertex AI endpoints which require exact model names like "gemini-2.0-flash"
+
+### Questions for Further Investigation
+
+1. Does Gemini CLI translate model names internally?
+2. Does `GOOGLE_API_KEY` + `GOOGLE_GENAI_USE_VERTEXAI=true` route to a different endpoint than ADC?
+3. Is there a model name aliasing layer in the Gemini CLI that doesn't exist in the Python SDK?
+
+## Configuration Details
+
+### GitHub Actions Workflow Configuration
+
+From `a2a-parallel-agents.yml`:
 ```yaml
-# Note: The '' is YAML's escape sequence for single quotes within single-quoted strings
 with:
   gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
   google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
-  use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || ''false'' }}'  # Default: false
+  use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || ''false'' }}'
   gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
 ```
 
-**Key Points:**
-- Default mode when `USE_VERTEX_AI` is not set or `false`
-- Uses `GEMINI_API_KEY` (from Google AI Studio at aistudio.google.com)
-- Calls `generativelanguage.googleapis.com` endpoint
-- Model names are more flexible - preview/experimental names work
-- Simpler setup, good for development
+With repository variable `GOOGLE_GENAI_USE_VERTEXAI=true`, this results in:
+- `GOOGLE_GENAI_USE_VERTEXAI: true`
+- `GOOGLE_API_KEY: ***` (from secrets)
+- `GEMINI_MODEL: gemini-3-pro-preview`
 
-### 2. Vertex AI Mode (Cloud Run)
+### Cloud Run Configuration (Terraform)
 
-Used by: ADK Agents deployed to Cloud Run
-
-**Configuration (terraform):**
+From `adk-agents.tf`:
 ```hcl
 env {
   name  = "USE_VERTEX_AI"
-  value = "true"  # Explicitly enabled for production
+  value = "true"
 }
 env {
   name  = "GOOGLE_CLOUD_PROJECT"
   value = var.project_id
 }
 # Uses service account's Application Default Credentials (ADC)
+service_account = google_service_account.adk_agents.email
 ```
 
-**Key Points:**
-- Enabled by setting `USE_VERTEX_AI=true`
-- Uses Application Default Credentials (ADC) from service account
-- Calls `aiplatform.googleapis.com` endpoint
-- Model names MUST be valid Vertex AI model names
-- Recommended for production on GCP
+### ADK Agents Python Code
 
-## Why the Model Name Error Only Affected Cloud Run
-
-### Root Cause Analysis
-
-1. **GitHub Actions workflow** uses `GEMINI_API_KEY` with Google AI Studio mode:
-   - The `run-gemini-cli` action defaults to `use_vertex_ai: false`
-   - Model name "gemini-3-pro-preview" passes through to Google AI Studio
-   - Google AI Studio is more permissive with model name handling
-
-2. **Cloud Run ADK Agents** use Vertex AI mode:
-   - Terraform sets `USE_VERTEX_AI=true` for all Cloud Run services
-   - `gemini_client.py` selects Vertex AI mode based on this environment variable
-   - Vertex AI requires valid model names like "gemini-2.0-flash"
-   - The old default "gemini-3-pro-preview" caused 404 errors
-
-### The Fix
-
-In `infrastructure/docker/adk-agents/shared/gemini_client.py`:
-
+From `gemini_client.py`:
 ```python
-# Before (invalid for Vertex AI)
+USE_VERTEX_AI = os.getenv("USE_VERTEX_AI", "false").lower() in ("true", "1", "yes")
+DEFAULT_VERTEX_MODEL = "gemini-2.0-flash"  # Fixed after investigation
+
+# When USE_VERTEX_AI=true and GOOGLE_CLOUD_PROJECT is set:
+# Uses vertexai.generative_models.GenerativeModel(model_name)
+# This requires exact Vertex AI model names
+```
+
+## GOOGLE_API_KEY vs ADC Authentication
+
+| Method | Used By | How It Works |
+|--------|---------|--------------|
+| GOOGLE_API_KEY | GitHub Actions (Gemini CLI) | API key passed in requests |
+| ADC (Service Account) | Cloud Run | OAuth2 from metadata server |
+
+Both work with Vertex AI, but may have different:
+- Rate limits
+- Model availability
+- Name resolution behavior
+
+## The Fix That Was Applied
+
+Changed `DEFAULT_VERTEX_MODEL` in `gemini_client.py`:
+```python
+# Before
 DEFAULT_VERTEX_MODEL = "gemini-3-pro-preview"
 
-# After (valid Vertex AI model)
+# After
 DEFAULT_VERTEX_MODEL = "gemini-2.0-flash"
 ```
 
-## gemini_client.py Mode Selection Logic
-
-```python
-def get_active_mode() -> str:
-    """Determine which Gemini mode to use."""
-    # If USE_VERTEX_AI is explicitly set, prefer Vertex AI
-    if USE_VERTEX_AI:
-        if VERTEX_AVAILABLE and GOOGLE_CLOUD_PROJECT:
-            return "vertex"
-    
-    # Check if Google AI Studio is available with API key
-    if GENAI_AVAILABLE and (GEMINI_API_KEY or GOOGLE_API_KEY):
-        return "genai"
-    
-    # Check Vertex AI as alternative
-    if VERTEX_AVAILABLE and GOOGLE_CLOUD_PROJECT:
-        return "vertex"
-    
-    return "none"
-```
-
-## Configuration Matrix
-
-| Component | USE_VERTEX_AI | API Key | Mode | Model Default |
-|-----------|---------------|---------|------|---------------|
-| GitHub Actions Workflow | false | GEMINI_API_KEY | Google AI Studio | gemini-3-pro-preview |
-| Cloud Run (Academic Research) | true | ADC | Vertex AI | gemini-2.0-flash |
-| Cloud Run (Blog Writer) | true | ADC | Vertex AI | gemini-2.0-flash |
-| Cloud Run (Google Trends) | true | ADC | Vertex AI | gemini-2.0-flash |
-| AG-UI Frontend | true | ADC | Vertex AI | gemini-2.0-flash |
-
-## GOOGLE_API_KEY vs GEMINI_API_KEY
-
-| Key Type | Source | When to Use | Notes |
-|----------|--------|-------------|-------|
-| `GEMINI_API_KEY` | Google AI Studio | GitHub Actions, Development | Free tier available |
-| `GOOGLE_API_KEY` | Google Cloud Console | Vertex AI with API key | Requires billing |
-| ADC (Service Account) | Cloud Run | Production on GCP | Most secure, recommended |
+This fixed Cloud Run but doesn't explain why the workflow works with "gemini-3-pro-preview".
 
 ## Recommendations
 
-### For GitHub Actions Workflows
+### Immediate Actions
 
-1. **Keep using GEMINI_API_KEY** for Google AI Studio mode - it works well for CI/CD
-2. **Consider setting `GEMINI_MODEL` repository variable** to a stable model name
-3. If you want to use Vertex AI in workflows:
-   - Set `GOOGLE_GENAI_USE_VERTEXAI` variable to `true`
-   - Provide `GOOGLE_API_KEY` with appropriate permissions
-   - Use valid Vertex AI model names
+1. **Align model names** - Consider updating `GEMINI_MODEL` repository variable to `gemini-2.0-flash` for consistency
+2. **Document the difference** - The Gemini CLI appears to have different model handling than the Python SDK
 
-### For Cloud Run (ADK Agents)
+### For Investigation
 
-1. **Continue using Vertex AI mode** - it's the recommended production setup
-2. **Use ADC (service account credentials)** - no API key management needed
-3. **Ensure DEFAULT_VERTEX_MODEL is always a valid Vertex AI model name**
-
-### Model Name Best Practices
-
-- **Google AI Studio**: Preview model names often work (flexible)
-- **Vertex AI**: Use only stable, documented model names:
-  - `gemini-2.0-flash` (current default, stable)
-  - `gemini-2.0-flash-001` (version-pinned)
-  - `gemini-2.5-flash` (newer)
+1. Check Gemini CLI source code for model name handling
+2. Compare API calls made by Gemini CLI vs Python vertexai SDK
+3. Test if model name aliases exist in one but not the other
 
 ## Files Analyzed
 
 1. **Workflows:**
-   - `.github/workflows/a2a-parallel-agents.yml` - Main A2A parallel workflow
+   - `.github/workflows/a2a-parallel-agents.yml`
 
 2. **Infrastructure:**
-   - `infrastructure/terraform/adk-agents.tf` - Cloud Run configuration
-   - `infrastructure/docker/adk-agents/shared/gemini_client.py` - Unified Gemini client
+   - `infrastructure/terraform/adk-agents.tf`
+   - `infrastructure/docker/adk-agents/shared/gemini_client.py`
 
-3. **Frontend:**
-   - `infrastructure/docker/ag-ui-frontend/src/app/api/copilotkit/route.ts`
-   - `infrastructure/docker/ag-ui-frontend/src/app/api/debug/route.ts`
+3. **Workflow Logs:**
+   - [Run #19788906972](https://github.com/enufacas/Chained/actions/runs/19788906972) - Job logs examined
 
-## Related Issues/PRs
+## Conclusion (Corrected)
 
-- Original fix: Changed `DEFAULT_VERTEX_MODEL` from "gemini-3-pro-preview" to "gemini-2.0-flash"
-- Context: The model name error caused 404s only in Cloud Run because Vertex AI validates model names strictly
+**Previous conclusion was incorrect.** Both systems use Vertex AI mode (`GOOGLE_GENAI_USE_VERTEXAI=true`), but:
 
-## Conclusion
+1. **GitHub Actions** uses Gemini CLI with GOOGLE_API_KEY authentication
+2. **Cloud Run** uses Python vertexai SDK with Service Account ADC
 
-The A2A parallel agents system correctly uses two different authentication paths:
+The difference in behavior with model name "gemini-3-pro-preview" appears to be due to:
+- Different tools (Gemini CLI vs Python SDK)
+- Potentially different model name resolution/aliasing
+- Different authentication mechanisms (API key vs ADC)
 
-1. **GitHub Actions** → Google AI Studio (GEMINI_API_KEY) → Flexible model names
-2. **Cloud Run** → Vertex AI (ADC) → Strict model name validation
-
-The model name "gemini-3-pro-preview" worked in GitHub Actions but failed in Cloud Run because:
-- GitHub Actions uses Google AI Studio mode by default
-- Cloud Run explicitly sets `USE_VERTEX_AI=true` for production reliability
-- Vertex AI requires valid model names, which "gemini-3-pro-preview" is not
-
-This is the expected and correct architecture - the issue was simply an invalid default model name in the Vertex AI code path.
+Further investigation is needed to understand exactly why the Gemini CLI accepts "gemini-3-pro-preview" while the Python SDK requires exact model names.
