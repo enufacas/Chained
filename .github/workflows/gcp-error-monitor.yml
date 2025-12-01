@@ -241,14 +241,18 @@ jobs:
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "Assigning issue #$issue_num to @gcp-error-monitor"
             
-            # Try to assign using the standard script
-            export INPUT_ISSUE_NUMBER=$issue_num
-            export FORCE_AGENT="gcp-error-monitor"
-            
-            if ./tools/assign-copilot-to-issue.sh; then
-              echo "✅ Assigned issue #$issue_num"
+            # Try to assign using the standard script if it exists
+            if [ -f "./tools/assign-copilot-to-issue.sh" ]; then
+              export INPUT_ISSUE_NUMBER=$issue_num
+              export FORCE_AGENT="gcp-error-monitor"
+              
+              if ./tools/assign-copilot-to-issue.sh; then
+                echo "✅ Assigned issue #$issue_num"
+              else
+                echo "⚠️  Could not assign issue #$issue_num (will be picked up by scheduled assignment)"
+              fi
             else
-              echo "⚠️  Could not assign issue #$issue_num (will be picked up by scheduled assignment)"
+              echo "⚠️  Assignment script not found (issue will be picked up by scheduled assignment)"
             fi
             
             echo ""

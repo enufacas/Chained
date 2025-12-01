@@ -66,15 +66,22 @@ class GCPErrorAnalyzer:
                 if message:
                     return str(message)
             else:
-                # Nested field
+                # Nested field - traverse path and break early if key not found
                 value = error
+                found = True
                 try:
                     for key in field_path:
                         if key is not None and isinstance(value, dict):
-                            value = value.get(key, {})
-                    if value and isinstance(value, str):
+                            if key not in value:
+                                found = False
+                                break
+                            value = value[key]
+                        else:
+                            found = False
+                            break
+                    if found and value and isinstance(value, str):
                         return value
-                except (TypeError, AttributeError):
+                except (TypeError, AttributeError, KeyError):
                     continue
         return ''
     
