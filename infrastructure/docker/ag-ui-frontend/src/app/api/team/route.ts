@@ -688,16 +688,18 @@ async function executeSessionAsync(
     for (let turn = 0; turn < config.maxTurnsPerAgent; turn++) {
       for (let i = 0; i < recipe.steps.length; i++) {
         const step = recipe.steps[i];
-        session.currentTurn = stepIndex + 1;
-        session.updatedAt = new Date().toISOString();
-        activeSessions.set(sessionId, session);
         
         const turnResult = await executeTurn(session, step, stepIndex);
         turnResult.turnNumber = turn + 1;
         session.turnResults.push(turnResult);
+        
+        // Update currentTurn AFTER turn execution completes (not before)
+        // This ensures consistency with parallel mode and avoids showing
+        // progress that hasn't been achieved yet
+        stepIndex++;
+        session.currentTurn = stepIndex;
         session.updatedAt = new Date().toISOString();
         activeSessions.set(sessionId, session);
-        stepIndex++;
         
         // Stop on required failure
         if (turnResult.status === "failed" && step.required) {
@@ -710,7 +712,8 @@ async function executeSessionAsync(
     }
   }
   
-  // Mark complete
+  // Mark complete - atomically update status, currentTurn, and timestamp
+  // to avoid race conditions where polling sees inconsistent state
   if (session.status !== "failed") {
     session.status = "completed";
     // Ensure currentTurn equals totalTurns when completed
@@ -731,6 +734,7 @@ async function executeSessionAsync(
     config,
   };
   
+  // Atomically persist the completed session state to activeSessions
   activeSessions.set(sessionId, session);
   
   // Final persistence update with completion status

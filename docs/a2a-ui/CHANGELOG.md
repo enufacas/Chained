@@ -6,6 +6,58 @@ Format: `## [Date] PR #XXX - Title`
 
 ---
 
+## [2025-12-01] PR #3492 - Fix Session State Tracking and Progress Display Issues
+
+### Problem
+When testing team execution, the progress indicator first advanced to 6/6, then never ended. After page refresh, it showed turn 2/6. This was caused by race conditions in status updates and lack of backend session verification.
+
+### Fixed
+- **Race Condition in Sequential Execution**:
+  - `currentTurn` now updates AFTER turn execution completes (not before)
+  - Prevents showing progress that hasn't been achieved yet
+  - Ensures consistency with parallel mode timing
+
+- **Atomic Status Updates**:
+  - Status and currentTurn are now updated together atomically
+  - Prevents polling from seeing inconsistent state (e.g., currentTurn=6 but status="running")
+  - Final session state persists only after both values are set
+
+- **Backend Session Verification**:
+  - On page load, restored sessions are verified with backend API
+  - If session not found (server restart), mark as completed to avoid confusion
+  - Prevents showing stale "turn 2/6" when backend has lost the session
+  - Backend state becomes source of truth when session still exists
+
+- **Improved Polling Logic**:
+  - Polling explicitly checks status field instead of relying on currentTurn
+  - Handles 404 response when session doesn't exist on backend
+  - Stops polling on errors to avoid infinite error loops
+  - Better handling of completed/failed state transitions
+
+- **Session Recovery**:
+  - Restored sessions can now resume polling if still active on backend
+  - Uses state-based signaling to avoid circular dependencies
+  - Properly handles both fresh executions and page reloads
+
+### Technical Details
+**Files Modified:**
+- `src/app/api/team/route.ts` - Fixed sequential mode currentTurn update timing, added atomic status transition comments
+- `src/app/page.tsx` - Added backend verification, improved polling logic, added resumePollingSessionId state
+
+**Key Changes:**
+1. Sequential mode: Move `session.currentTurn = stepIndex` to AFTER `executeTurn()` completes
+2. Backend verification: New useEffect to verify restored sessions with `/api/team?session=ID`
+3. Polling termination: Check `isSessionActive(session)` based on status, not currentTurn
+4. Error handling: Handle 404 responses when session doesn't exist
+
+### Why This Matters
+- **No more stuck sessions**: Sessions properly complete when all turns finish
+- **Accurate progress**: UI shows actual execution state, not predicted state
+- **Page refresh works**: Backend verification prevents showing stale localStorage data
+- **Server restart resilience**: Gracefully handles lost sessions from backend restarts
+
+---
+
 ## [2025-12-01] PR #TBD - AG-UI Refinements: Artifacts, Persistence, Preview Overlay
 
 ### Added
