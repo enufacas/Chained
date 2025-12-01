@@ -921,9 +921,13 @@ function MainContent({
   const [isTeamExecuting, setIsTeamExecuting] = useState(false);
   const [selectedArtifact, setSelectedArtifact] = useState<{ name: string; type: string; data: string } | null>(null);
   const [allSessionArtifacts, setAllSessionArtifacts] = useState<Array<{ name: string; type: string; data: string }>>([]);
+  const [resumePollingSessionId, setResumePollingSessionId] = useState<string | null>(null);
   
   // Track saved artifact IDs to avoid duplicates during incremental saving
   const savedArtifactIdsRef = useRef<Set<string>>(new Set());
+  
+  // Track if we've verified the restored session with backend
+  const sessionVerifiedRef = useRef(false);
 
   // ============================================================================
   // Session State Persistence
@@ -974,7 +978,8 @@ function MainContent({
       
       setCompletedSessions(completedStoredSessions);
       
-      // If there's an active session, restore it and resume polling
+      // If there's an active session, restore it
+      // Backend verification happens in a separate effect below
       if (activeStoredSession && activeStoredSession.metadata) {
         const restoredSession: TeamSession = {
           id: activeStoredSession.id,
@@ -1006,11 +1011,70 @@ function MainContent({
           }>) || [],
         };
         setActiveSession(restoredSession);
-        // Note: We don't resume polling on page load to avoid unnecessary API calls
-        // The session will be marked as completed if it was running when the page was closed
       }
     }
   }, []); // Empty dependency array - only run on mount
+  
+  // Verify restored session with backend and resume polling if needed
+  // This runs after pollSession is defined
+  useEffect(() => {
+    // Only run verification once on mount
+    if (sessionVerifiedRef.current) return;
+    if (!activeSession) return;
+    
+    // Only verify sessions that were restored from localStorage (running or pending)
+    // Skip completed/failed sessions as they don't need verification
+    if (!isSessionActive(activeSession)) return;
+    
+    // Mark as verified to prevent re-running
+    sessionVerifiedRef.current = true;
+    
+    // Verify session still exists on backend
+    fetch(`/api/team?session=${activeSession.id}`)
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else if (res.status === 404) {
+          // Session not found on backend (server restart, etc.)
+          // Mark local copy as completed to avoid confusion
+          console.warn(`Session ${activeSession.id} not found on backend, marking as stale`);
+          setActiveSession(prev => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              status: "completed",
+              currentTurn: prev.totalTurns,
+            };
+          });
+          return null;
+        }
+        throw new Error(`Backend returned ${res.status}`);
+      })
+      .then(backendSession => {
+        if (backendSession) {
+          // Use backend state as source of truth
+          setActiveSession(backendSession);
+          
+          // Signal to resume polling if session is still active on backend
+          if (isSessionActive(backendSession)) {
+            setIsTeamExecuting(true);
+            setResumePollingSessionId(backendSession.id);
+          }
+        }
+      })
+      .catch(err => {
+        console.warn("Failed to verify session with backend:", err);
+        // Keep localStorage state on error, but mark as completed to avoid confusion
+        setActiveSession(prev => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            status: "completed",
+            currentTurn: prev.totalTurns,
+          };
+        });
+      });
+  }, [activeSession]); // Only depends on activeSession, not pollSession
   
   // Save active session to localStorage whenever it changes
   useEffect(() => {
@@ -1128,10 +1192,13 @@ function MainContent({
             }
           }
           
+          // Continue polling only if session is still active (running or pending)
+          // Check status explicitly rather than relying on currentTurn vs totalTurns
+          // to avoid race conditions
           if (isSessionActive(session)) {
             setTimeout(poll, 2000);
           } else {
-            // Session completed or failed - add to completed sessions list
+            // Session completed or failed - stop polling and update UI
             setIsTeamExecuting(false);
             if (isSessionFinished(session)) {
               setCompletedSessions(prev => {
@@ -1142,15 +1209,29 @@ function MainContent({
               });
             }
           }
+        } else if (response.status === 404) {
+          // Session not found on backend - likely server restarted
+          // Stop polling and mark execution as finished
+          console.warn(`Session ${sessionId} not found on backend`);
+          setIsTeamExecuting(false);
         }
       } catch (err) {
         console.error("Poll error:", err);
+        // On error, stop polling to avoid infinite error loops
         setIsTeamExecuting(false);
       }
     };
     
     setTimeout(poll, 1000); // Start polling after 1 second
   }, []);
+
+  // Resume polling for restored session (triggered by verification effect above)
+  useEffect(() => {
+    if (resumePollingSessionId) {
+      pollSession(resumePollingSessionId);
+      setResumePollingSessionId(null); // Clear the signal
+    }
+  }, [resumePollingSessionId, pollSession]);
 
   // Handle team changes from canvas
   const handleTeamChange = useCallback((team: string[]) => {
