@@ -567,7 +567,7 @@ function UnifiedOutcomes({
               </div>
               <div className="w-16 h-1.5 bg-slate-700 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 transition-all duration-500 bg-[length:200%_100%] animate-[gradient_2s_ease_infinite]"
+                  className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 transition-all duration-500 animate-pulse"
                   style={{ width: `${pipeline.progress}%` }}
                 />
               </div>

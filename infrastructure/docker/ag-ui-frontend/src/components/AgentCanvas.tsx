@@ -217,7 +217,7 @@ export default function AgentCanvas({ onTeamChange, onExecute, initialTeam = [] 
       </div>
       
       {/* Category Filter - Smaller */}
-      <div className="px-2 py-1.5 sm:p-2 border-b border-slate-700 flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide">
+      <div className="px-2 py-1.5 sm:p-2 border-b border-slate-700 flex gap-1 sm:gap-2 overflow-x-auto">
         <button
           onClick={() => setFilter(null)}
           className={`px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs rounded-full whitespace-nowrap transition active:scale-95 ${
