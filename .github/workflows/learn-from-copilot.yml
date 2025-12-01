@@ -401,6 +401,8 @@ jobs:
             echo "✅ PR created successfully for GitHub Copilot learnings - PR #$PR_NUMBER"
           fi
 
+      # Auto-merge the PR if it was successfully created
+      # This follows the same pattern as agentops-data-sync.yml for consistency
       - name: Auto-merge PR
         if: steps.create_pr.outputs.pr_created == 'true'
         env:
