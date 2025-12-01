@@ -301,6 +301,7 @@ jobs:
           EOF
       
       - name: Create PR with AgentOps data
+        id: create_pr
         if: steps.fetch.outputs.has_changes == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -312,6 +313,7 @@ jobs:
           
           if git diff --staged --quiet; then
             echo "No changes to commit"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
           else
             TIMESTAMP=$(date +%Y%m%d-%H%M%S)
             BRANCH_NAME="agentops-sync/${TIMESTAMP}-${{ github.run_id }}"
@@ -320,7 +322,7 @@ jobs:
             git commit -m "🔄 AgentOps data sync - $(date '+%Y-%m-%d %H:%M')"
             git push origin "$BRANCH_NAME"
             
-            gh pr create \
+            PR_URL=$(gh pr create \
               --title "🔄 AgentOps Dashboard Data Sync - $(date +%Y-%m-%d)" \
               --body "## 🔄 AgentOps Dashboard Data Sync
           
@@ -342,5 +344,73 @@ jobs:
           *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
               --label "automated,documentation,auto-merge,copilot" \
               --base main \
-              --head "$BRANCH_NAME"
+              --head "$BRANCH_NAME")
+            
+            # Extract PR number from URL
+            PR_NUMBER=$(echo "$PR_URL" | grep -oP '(?<=pull/)\d+')
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+            echo "✅ Created PR #$PR_NUMBER"
+          fi
+      
+      - name: Auto-merge PR
+        if: steps.create_pr.outputs.pr_created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+          echo "🔄 Auto-merging AgentOps Data Sync PR #$PR_NUMBER..."
+          
+          # Wait a few seconds for PR to be ready
+          echo "⏳ Waiting 5 seconds for PR to be ready..."
+          sleep 5
+          
+          # Check PR mergeable state
+          PR_DATA=$(gh pr view "$PR_NUMBER" --json mergeable,mergeStateStatus,state)
+          MERGEABLE=$(echo "$PR_DATA" | jq -r '.mergeable')
+          MERGE_STATE=$(echo "$PR_DATA" | jq -r '.mergeStateStatus')
+          PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+          
+          echo "📊 PR Status:"
+          echo "   State: $PR_STATE"
+          echo "   Mergeable: $MERGEABLE"
+          echo "   Merge State: $MERGE_STATE"
+          
+          # Check if already merged
+          if [ "$PR_STATE" = "MERGED" ]; then
+            echo "✅ PR #$PR_NUMBER is already merged!"
+            exit 0
+          fi
+          
+          # Attempt merge with auto strategy (squash for cleaner history)
+          echo "🚀 Attempting to merge PR #$PR_NUMBER..."
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
+            echo "✅ PR #$PR_NUMBER merge initiated successfully!"
+            echo "🎉 AgentOps data sync PR merged"
+            
+            # Brief wait to confirm merge completed
+            sleep 2
+            FINAL_STATE=$(gh pr view "$PR_NUMBER" --json state --jq '.state')
+            if [ "$FINAL_STATE" = "MERGED" ]; then
+              echo "✅ Merge confirmed!"
+            else
+              echo "ℹ️  Merge is processing (state: $FINAL_STATE)"
+            fi
+          else
+            echo "⚠️  Merge command failed, checking if PR can be force merged..."
+            
+            # Try regular merge without auto flag
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
+              echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
+              echo "🎉 AgentOps data sync PR merged"
+            else
+              echo "❌ Failed to merge PR #$PR_NUMBER"
+              echo "This may indicate:"
+              echo "  - Merge conflicts"
+              echo "  - Required checks not passing"
+              echo "  - Branch protection rules blocking"
+              echo ""
+              echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+              exit 1
+            fi
           fi
