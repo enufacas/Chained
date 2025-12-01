@@ -1,0 +1,536 @@
+/**
+ * Team API Route
+ *
+ * Provides endpoints for team orchestration:
+ * 1. List recipes (GET)
+ * 2. Get recipe details (GET ?recipe=id)
+ * 3. List sessions (GET ?sessions=true)
+ * 4. Create/execute team session (POST)
+ *
+ * All operations coordinate REAL A2A agents in turn-based execution.
+ */
+
+import { NextRequest } from "next/server";
+
+// =============================================================================
+// Configuration
+// =============================================================================
+
+const isDevelopment = process.env.NODE_ENV === "development";
+
+// Agent URLs
+const AGENT_URLS: Record<string, string | undefined> = {
+  "academic-research": process.env.AGENT_ACADEMIC_RESEARCH_URL || 
+    (isDevelopment ? "" : "https://chained-academic-research-sguacxy5gq-uc.a.run.app"),
+  "google-trends": process.env.AGENT_GOOGLE_TRENDS_URL || 
+    (isDevelopment ? "" : "https://chained-google-trends-sguacxy5gq-uc.a.run.app"),
+  "blog-writer": process.env.AGENT_BLOG_WRITER_URL || 
+    (isDevelopment ? "" : "https://chained-blog-writer-sguacxy5gq-uc.a.run.app"),
+  "code-reviewer": process.env.AGENT_CODE_REVIEWER_URL,
+  "data-analyst": process.env.AGENT_DATA_ANALYST_URL,
+  "image-generator": process.env.AGENT_IMAGE_GENERATOR_URL,
+};
+
+// =============================================================================
+// Types
+// =============================================================================
+
+interface RecipeStep {
+  agentId: string;
+  instruction: string;
+  required: boolean;
+  timeoutSeconds: number;
+  dependsOn: string[];
+}
+
+interface Recipe {
+  id: string;
+  name: string;
+  description: string;
+  goal: string;
+  steps: RecipeStep[];
+  tags: string[];
+}
+
+type TurnStatus = "pending" | "running" | "completed" | "failed" | "skipped";
+
+interface TurnResult {
+  stepIndex: number;
+  agentId: string;
+  agentName: string;
+  status: TurnStatus;
+  startedAt: string;
+  completedAt?: string;
+  durationMs?: number;
+  taskId?: string;
+  message?: string;
+  artifacts: Array<{ name: string; type: string; data: string }>;
+  error?: string;
+}
+
+interface TeamSession {
+  id: string;
+  recipeId: string;
+  recipeName: string;
+  goal: string;
+  status: TurnStatus;
+  currentTurn: number;
+  totalTurns: number;
+  createdAt: string;
+  updatedAt: string;
+  context: Record<string, unknown>;
+  turnResults: TurnResult[];
+  finalResult?: Record<string, unknown>;
+}
+
+// =============================================================================
+// Built-in Recipes
+// =============================================================================
+
+const BUILTIN_RECIPES: Recipe[] = [
+  {
+    id: "blog-pipeline",
+    name: "Blog Writing Pipeline",
+    description: "Research, analyze trends, and write a blog post",
+    goal: "Create a well-researched, SEO-optimized blog post",
+    steps: [
+      {
+        agentId: "academic-research",
+        instruction: "Research the topic thoroughly and identify key concepts, trends, and insights.",
+        required: true,
+        timeoutSeconds: 120,
+        dependsOn: [],
+      },
+      {
+        agentId: "google-trends",
+        instruction: "Analyze trending keywords and SEO opportunities based on the research.",
+        required: true,
+        timeoutSeconds: 120,
+        dependsOn: ["academic-research"],
+      },
+      {
+        agentId: "blog-writer",
+        instruction: "Write a comprehensive blog post using the research and SEO insights.",
+        required: true,
+        timeoutSeconds: 180,
+        dependsOn: ["academic-research", "google-trends"],
+      },
+    ],
+    tags: ["content", "blog", "seo"],
+  },
+  {
+    id: "technical-review",
+    name: "Technical Content Review",
+    description: "Research, write, and review technical content with code examples",
+    goal: "Create reviewed technical content with code samples",
+    steps: [
+      {
+        agentId: "academic-research",
+        instruction: "Research the technical topic and gather key information.",
+        required: true,
+        timeoutSeconds: 120,
+        dependsOn: [],
+      },
+      {
+        agentId: "data-analyst",
+        instruction: "Analyze the research data and identify key statistics and patterns.",
+        required: false,
+        timeoutSeconds: 120,
+        dependsOn: ["academic-research"],
+      },
+      {
+        agentId: "blog-writer",
+        instruction: "Write technical content including code examples.",
+        required: true,
+        timeoutSeconds: 180,
+        dependsOn: ["academic-research", "data-analyst"],
+      },
+      {
+        agentId: "code-reviewer",
+        instruction: "Review any code examples for best practices and correctness.",
+        required: false,
+        timeoutSeconds: 120,
+        dependsOn: ["blog-writer"],
+      },
+    ],
+    tags: ["technical", "code", "review"],
+  },
+  {
+    id: "visual-content",
+    name: "Visual Content Creation",
+    description: "Research and create visual content with diagrams",
+    goal: "Create informative content with supporting visuals",
+    steps: [
+      {
+        agentId: "academic-research",
+        instruction: "Research the topic and identify key concepts to visualize.",
+        required: true,
+        timeoutSeconds: 120,
+        dependsOn: [],
+      },
+      {
+        agentId: "image-generator",
+        instruction: "Create diagrams and visual content based on the research.",
+        required: false,
+        timeoutSeconds: 120,
+        dependsOn: ["academic-research"],
+      },
+      {
+        agentId: "blog-writer",
+        instruction: "Write content that incorporates and explains the visuals.",
+        required: true,
+        timeoutSeconds: 180,
+        dependsOn: ["academic-research", "image-generator"],
+      },
+    ],
+    tags: ["visual", "diagrams", "content"],
+  },
+  {
+    id: "data-analysis",
+    name: "Data Analysis Pipeline",
+    description: "Analyze data and create visualizations with insights",
+    goal: "Generate comprehensive data analysis with visual reports",
+    steps: [
+      {
+        agentId: "data-analyst",
+        instruction: "Analyze the provided data and generate key insights.",
+        required: true,
+        timeoutSeconds: 120,
+        dependsOn: [],
+      },
+      {
+        agentId: "image-generator",
+        instruction: "Create charts and visualizations based on the analysis.",
+        required: false,
+        timeoutSeconds: 120,
+        dependsOn: ["data-analyst"],
+      },
+      {
+        agentId: "blog-writer",
+        instruction: "Write a report summarizing the analysis and visualizations.",
+        required: true,
+        timeoutSeconds: 180,
+        dependsOn: ["data-analyst", "image-generator"],
+      },
+    ],
+    tags: ["data", "analysis", "visualization"],
+  },
+];
+
+// In-memory session storage
+const activeSessions: Map<string, TeamSession> = new Map();
+
+// =============================================================================
+// Helpers
+// =============================================================================
+
+function generateSessionId(): string {
+  return `session-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+}
+
+async function callAgent(
+  agentId: string,
+  message: string,
+  context: Record<string, unknown>,
+  referenceTaskIds: string[] = []
+): Promise<{ taskId?: string; message?: string; artifacts: Array<{ name: string; type: string; data: string }>; error?: string }> {
+  const agentUrl = AGENT_URLS[agentId];
+  
+  if (!agentUrl) {
+    return { error: `Agent ${agentId} not configured`, artifacts: [] };
+  }
+  
+  try {
+    const response = await fetch(`${agentUrl}/a2a/tasks`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: {
+          role: "user",
+          parts: [{ text: message }],
+        },
+        contextId: context.contextId || `team-${Date.now()}`,
+        metadata: context,
+        referenceTaskIds,
+      }),
+    });
+    
+    if (!response.ok) {
+      return { error: `Agent returned ${response.status}`, artifacts: [] };
+    }
+    
+    const task = await response.json();
+    return {
+      taskId: task.id,
+      message: task.status?.message?.parts?.[0]?.text,
+      artifacts: task.artifacts || [],
+    };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Unknown error", artifacts: [] };
+  }
+}
+
+async function executeTurn(
+  session: TeamSession,
+  step: RecipeStep,
+  stepIndex: number
+): Promise<TurnResult> {
+  const startedAt = new Date().toISOString();
+  
+  const turnResult: TurnResult = {
+    stepIndex,
+    agentId: step.agentId,
+    agentName: step.agentId,
+    status: "running",
+    startedAt,
+    artifacts: [],
+  };
+  
+  // Build instruction with context
+  const fullInstruction = `Goal: ${session.goal}
+
+${step.instruction}
+
+Previous context and findings:
+${JSON.stringify(session.context, null, 2)}`;
+  
+  // Get reference task IDs from dependencies
+  const referenceTaskIds: string[] = [];
+  for (const dep of step.dependsOn) {
+    const prevResult = session.turnResults.find((r) => r.agentId === dep && r.taskId);
+    if (prevResult?.taskId) {
+      referenceTaskIds.push(prevResult.taskId);
+    }
+  }
+  
+  // Call the agent
+  const result = await callAgent(step.agentId, fullInstruction, session.context, referenceTaskIds);
+  
+  const completedAt = new Date().toISOString();
+  const durationMs = new Date(completedAt).getTime() - new Date(startedAt).getTime();
+  
+  turnResult.completedAt = completedAt;
+  turnResult.durationMs = durationMs;
+  turnResult.taskId = result.taskId;
+  turnResult.message = result.message;
+  turnResult.artifacts = result.artifacts;
+  
+  if (result.error) {
+    turnResult.status = step.required ? "failed" : "skipped";
+    turnResult.error = result.error;
+  } else {
+    turnResult.status = "completed";
+    
+    // Update context with artifacts
+    session.context[`${step.agentId}_artifacts`] = result.artifacts;
+    session.context[`${step.agentId}_task_id`] = result.taskId;
+    
+    // Parse JSON artifacts into context
+    for (const artifact of result.artifacts) {
+      if (artifact.type === "application/json") {
+        try {
+          const data = JSON.parse(artifact.data);
+          session.context[`${step.agentId}_${artifact.name.replace(/-/g, "_")}`] = data;
+        } catch {
+          // Skip non-JSON artifacts
+        }
+      }
+    }
+  }
+  
+  return turnResult;
+}
+
+async function executeSession(recipeId: string, goal: string, initialContext: Record<string, unknown> = {}): Promise<TeamSession> {
+  const recipe = BUILTIN_RECIPES.find((r) => r.id === recipeId);
+  if (!recipe) {
+    throw new Error(`Recipe ${recipeId} not found`);
+  }
+  
+  const sessionId = generateSessionId();
+  const now = new Date().toISOString();
+  
+  const session: TeamSession = {
+    id: sessionId,
+    recipeId,
+    recipeName: recipe.name,
+    goal,
+    status: "pending",
+    currentTurn: 0,
+    totalTurns: recipe.steps.length,
+    createdAt: now,
+    updatedAt: now,
+    context: { ...initialContext, goal, contextId: sessionId },
+    turnResults: [],
+  };
+  
+  activeSessions.set(sessionId, session);
+  
+  // Execute turns
+  session.status = "running";
+  
+  for (let i = 0; i < recipe.steps.length; i++) {
+    const step = recipe.steps[i];
+    session.currentTurn = i + 1;
+    session.updatedAt = new Date().toISOString();
+    activeSessions.set(sessionId, session);
+    
+    const turnResult = await executeTurn(session, step, i);
+    session.turnResults.push(turnResult);
+    
+    // Stop on required failure
+    if (turnResult.status === "failed" && step.required) {
+      session.status = "failed";
+      break;
+    }
+  }
+  
+  // Mark complete
+  if (session.status !== "failed") {
+    session.status = "completed";
+  }
+  
+  session.updatedAt = new Date().toISOString();
+  
+  // Build final result
+  session.finalResult = {
+    sessionId,
+    recipe: recipe.name,
+    goal,
+    status: session.status,
+    turnsCompleted: session.turnResults.filter((t) => t.status === "completed").length,
+    turnsTotal: recipe.steps.length,
+    context: session.context,
+  };
+  
+  activeSessions.set(sessionId, session);
+  return session;
+}
+
+// =============================================================================
+// API Routes
+// =============================================================================
+
+/**
+ * GET /api/team
+ *
+ * Query params:
+ * - recipe: Get specific recipe by ID
+ * - sessions: List active sessions (true/false)
+ * - session: Get specific session by ID
+ */
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const recipeId = searchParams.get("recipe");
+  const showSessions = searchParams.get("sessions") === "true";
+  const sessionId = searchParams.get("session");
+  
+  // Get specific session
+  if (sessionId) {
+    const session = activeSessions.get(sessionId);
+    if (!session) {
+      return new Response(JSON.stringify({ error: "Session not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    return new Response(JSON.stringify(session), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  
+  // List sessions
+  if (showSessions) {
+    const sessions = Array.from(activeSessions.values())
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    
+    return new Response(
+      JSON.stringify({
+        sessions,
+        total: sessions.length,
+        active: sessions.filter((s) => s.status === "running").length,
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+  
+  // Get specific recipe
+  if (recipeId) {
+    const recipe = BUILTIN_RECIPES.find((r) => r.id === recipeId);
+    if (!recipe) {
+      return new Response(JSON.stringify({ error: "Recipe not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    return new Response(JSON.stringify(recipe), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  
+  // List all recipes
+  return new Response(
+    JSON.stringify({
+      recipes: BUILTIN_RECIPES,
+      total: BUILTIN_RECIPES.length,
+    }),
+    {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+}
+
+/**
+ * POST /api/team
+ *
+ * Execute a team session
+ *
+ * Body:
+ * - recipeId: Recipe to execute
+ * - goal: Specific goal for this session
+ * - context: Optional initial context
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { recipeId, goal, context } = body;
+    
+    if (!recipeId) {
+      return new Response(JSON.stringify({ error: "recipeId is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    
+    if (!goal) {
+      return new Response(JSON.stringify({ error: "goal is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    
+    const session = await executeSession(recipeId, goal, context || {});
+    
+    return new Response(JSON.stringify({ success: true, session }), {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("[Team API] Error:", error);
+    return new Response(
+      JSON.stringify({
+        error: error instanceof Error ? error.message : "Failed to execute team session",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+}
