@@ -82,6 +82,9 @@ Specialized in engineering APIs. Inspired by Margaret Hamilton - rigorous and in
 ### ⚙️ [engineer-wizard.md](./engineer-wizard.md)
 Specialized in engineering APIs. Inspired by Nikola Tesla - inventive and visionary, with extra enthusiasm. Focuses on features, infrastructure, and tools.
 
+### 🤔 [gemini-consultant.md](./gemini-consultant.md) 🛡️ **Protected**
+Specialized in consulting Gemini 3 Pro Preview for complex problems and expert insights. Inspired by Vannevar Bush - visionary and consultative, bridging human expertise with AI capabilities. Provides escalation path for second opinions, complex analysis, and strategic guidance. **This is a protected agent that cannot be deleted or voted off.**
+
 ### 🔍 [investigate-champion.md](./investigate-champion.md)
 Specialized in investigating metrics. Inspired by Ada Lovelace - visionary and analytical, with occasional wit. Focuses on code patterns, data flows, and dependencies.
 
