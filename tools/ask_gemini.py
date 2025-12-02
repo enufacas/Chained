@@ -9,25 +9,35 @@ can escalate complex problems to Gemini for expert consultation.
 **NEW: Code-Fixing Mode** - Specialized mode for getting actual code fixes instead
 of just analysis. Use ask_gemini_fix_code() or --fix-code flag for concrete solutions.
 
+⚠️ **CRITICAL LIMITATION**: The Gemini API has NO direct access to your repository.
+   You MUST provide actual code and context in the function parameters. Use view()
+   and bash() tools to gather context BEFORE calling Gemini.
+
 Usage:
-    # General consultation
-    python3 ask_gemini.py "What are the security implications of using regex for input validation?"
+    # General consultation (include code in prompt)
+    python3 ask_gemini.py "What are the security implications of using regex?" \\
+        --context "Code: $(cat tools/validator.py)"
     
-    # Code fixing mode (NEW)
+    # Code fixing mode (include actual code)
     python3 ask_gemini.py --fix-code "Auth allows expired tokens" \\
-        --file tools/auth.py --code "def validate_token(token): return jwt.decode(token, KEY)"
+        --file tools/auth.py --code "$(cat tools/auth.py)"
     
-    # As a Python module
+    # As a Python module - gather context first
     from tools.ask_gemini import ask_gemini, ask_gemini_fix_code
     
-    # Get general advice
-    response = ask_gemini("How should I structure this API?")
+    # Get general advice WITH code context
+    code = view("src/api.py")  # Read actual code first
+    response = ask_gemini(
+        "How should I structure this API?",
+        context=f"Current code:\\n{code}"  # Include code
+    )
     
-    # Get code fixes
+    # Get code fixes WITH actual code
+    code = view("src/utils.py")  # Read actual code first
     fix = ask_gemini_fix_code(
         issue_description="Function crashes on None input",
         file_path="src/utils.py",
-        code_snippet="def process(data): return data.split()"
+        code_snippet=code  # Must provide actual code
     )
 
 Authentication:
@@ -122,10 +132,14 @@ def ask_gemini_fix_code(
     This specialized function emphasizes getting actual code implementations
     rather than just analysis. Use this when you need concrete fixes.
     
+    **IMPORTANT:** Gemini API has NO direct access to your repository.
+    You MUST provide the actual code in code_snippet, not just file paths.
+    
     Args:
         issue_description: Description of the code issue/bug
-        file_path: Optional path to the file with the issue
-        code_snippet: Optional current code that needs fixing
+        file_path: Optional path to the file (for reference in response)
+        code_snippet: **REQUIRED** - The actual current code that needs fixing.
+                     Read this with view() before calling. Don't just pass file path.
         model: Gemini model to use (default: gemini-3-pro-preview)
         timeout_seconds: Maximum time to wait for response (default: 30)
         
@@ -134,11 +148,32 @@ def ask_gemini_fix_code(
         
     Raises:
         RuntimeError: If authentication is not configured or API call fails
+    
+    Example:
+        # ❌ BAD - No actual code provided
+        fix = ask_gemini_fix_code(
+            issue_description="Fix auth bug",
+            file_path="tools/auth.py"
+        )
+        
+        # ✅ GOOD - Actual code included
+        code = view("tools/auth.py")  # Get actual code first
+        fix = ask_gemini_fix_code(
+            issue_description="Fix expired token validation",
+            file_path="tools/auth.py",
+            code_snippet=code  # Pass actual code
+        )
     """
     # Check authentication
     mode, error = get_auth_mode()
     if mode is None:
         raise RuntimeError(error)
+    
+    # Warn if no code snippet provided
+    if not code_snippet:
+        import sys
+        print("⚠️  WARNING: No code_snippet provided. Gemini can't see your repository.", file=sys.stderr)
+        print("    Use view() to read the file first, then pass the code.", file=sys.stderr)
     
     # Build specialized code-fixing prompt
     context_parts = []
@@ -217,9 +252,13 @@ def ask_gemini(
     """
     Consult Gemini 3 Pro Preview with a question.
     
+    **IMPORTANT:** Gemini API has NO direct access to your repository.
+    You MUST provide code/context in the 'context' parameter, not just descriptions.
+    
     Args:
         question: The question or problem to ask Gemini about
-        context: Optional additional context to provide
+        context: **CRITICAL** - Repository context including actual code, not just descriptions.
+                Use view() and bash() to gather this BEFORE calling.
         model: Gemini model to use (default: gemini-3-pro-preview)
         timeout_seconds: Maximum time to wait for response (default: 30)
         
@@ -228,6 +267,19 @@ def ask_gemini(
         
     Raises:
         RuntimeError: If authentication is not configured or API call fails
+    
+    Example:
+        # ❌ BAD - No repository context
+        response = ask_gemini("How to fix auth?")
+        
+        # ✅ GOOD - Include actual code context
+        code = view("tools/auth.py")
+        tests = view("tests/test_auth.py")
+        context = f"Current auth code:\\n{code}\\n\\nTests:\\n{tests}"
+        response = ask_gemini(
+            "How to add expiration checking?",
+            context=context
+        )
     """
     # Check authentication
     mode, error = get_auth_mode()
