@@ -16,7 +16,6 @@ When making changes that will be merged to main, **you MUST update CHANGELOG.md*
 - ✅ New features (feat:)
 - ✅ Bug fixes (fix:)
 - ✅ Breaking changes
-- ✅ Major improvements
 - ✅ Significant refactors
 - ✅ Performance improvements
 - ✅ Security fixes
@@ -36,23 +35,19 @@ When making changes that will be merged to main, **you MUST update CHANGELOG.md*
 ```markdown
 ## YYYY-MM-DD
 
-### ✨ Major Improvements
-
-- 👤 User-initiated feature description [#PR_NUMBER](PR_LINK)
-
 ### ✨ Features
 
-- 🤖 Bot-generated feature description [#PR_NUMBER](PR_LINK)
-- 👤 User-prompted feature description [#PR_NUMBER](PR_LINK)
+- 👤 ⚙️ Workflows User-initiated feature description [#PR_NUMBER](PR_LINK)
+- 🤖 🔧 Agents Bot-generated feature description [#PR_NUMBER](PR_LINK)
 
 ### 🐛 Bug Fixes
 
 - 👤 Fix description [#PR_NUMBER](PR_LINK)
-- 🤖 Fix description [#PR_NUMBER](PR_LINK)
+- 🤖 📋 Instructions Fix description [#PR_NUMBER](PR_LINK)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Type**: Description [#PR_NUMBER](PR_LINK)
+- 🤖 📚 Docs **Documentation**: Description [#PR_NUMBER](PR_LINK)
 
 ---
 ```
@@ -61,15 +56,20 @@ When making changes that will be merged to main, **you MUST update CHANGELOG.md*
 - **👤** = User-initiated (from issues you logged or direct commits)
 - **🤖** = Bot-generated (autonomous system or agent task)
 
-#### Categories
+#### Codebase Area Indicators
+- ⚙️ **Workflows** - GitHub Actions (`.github/workflows/`)
+- 🔧 **Agents** - Custom agents (`.github/agents/`)
+- 📋 **Instructions** - Copilot instructions (`.github/instructions/`)
+- 🏗️ **Infrastructure** - GCP, Terraform, Docker
+- 📚 **Docs** - Documentation (`docs/`)
+- 🧠 **Learning** - Analytics and learning systems
+- 📊 **GitHub Pages** - Timeline and public site
 
-**Major Improvements** (user-initiated features only):
-- Features you explicitly requested through issues
-- Features from pair programming sessions
-- Significant improvements you prompted
+#### Categories
 
 **Features** (all features):
 - All feat: commits, both user and bot
+- Includes all new capabilities and enhancements
 - Group by actor type
 
 **Bug Fixes**:
@@ -82,19 +82,28 @@ When making changes that will be merged to main, **you MUST update CHANGELOG.md*
 
 ### Update Process
 
-#### Option 1: Automatic Generation
+#### Option 1: Automatic Generation (Recommended)
 Use the script to regenerate from git history:
 ```bash
 python3 tools/generate-changelog.py --since YYYY-MM-DD --output CHANGELOG.md
 ```
+
+The script:
+- Fetches all merged PRs from `origin/main` only
+- Achieves 100% PR link coverage
+- Auto-excludes AgentOps data syncs and routine maintenance
+- Adds actor indicators (👤 user vs 🤖 bot)
+- Adds codebase area indicators
+- Collapses repeated tasks (e.g., "Update timeline data (x10)")
 
 #### Option 2: Manual Update
 Add entry at the top of CHANGELOG.md:
 1. Determine today's date section (or create it)
 2. Choose appropriate category
 3. Add actor indicator (👤 or 🤖)
-4. Write clear, concise description
-5. Link to PR if available
+4. Add codebase area if applicable
+5. Write clear, concise description
+6. Link to PR if available
 
 ### Examples
 

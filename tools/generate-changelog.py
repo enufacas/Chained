@@ -112,10 +112,6 @@ class Commit:
         """Detect the codebase area this commit affects."""
         subject_lower = self.subject.lower()
         
-        # AG-UI / A2A UI
-        if 'ag-ui' in subject_lower or 'a2a' in subject_lower or 'adk' in subject_lower:
-            return '🎨 AG-UI'
-        
         # Workflows
         if '.github/workflows' in subject_lower or 'workflow' in subject_lower:
             return '⚙️ Workflows'
@@ -219,7 +215,7 @@ class Commit:
         return False
     
     def get_clean_subject(self) -> str:
-        """Get subject without PR number, prefix, and redundant area labels."""
+        """Get subject without PR number and prefix."""
         # Remove PR number at the end like (#1234)
         subject = re.sub(r'\s*\(#\d+\)', '', self.subject)
         
@@ -232,12 +228,6 @@ class Commit:
         # Remove commit type prefix if present
         if self.commit_type:
             subject = re.sub(rf'^{self.commit_type}:\s*', '', subject)
-        
-        # Remove redundant area prefix from subject when area badge is present
-        # e.g., "AG-UI Add..." becomes "Add..." when 🎨 AG-UI is in the prefix
-        if self.codebase_area:
-            # Remove "AG-UI" or "AG-UI:" from the beginning
-            subject = re.sub(r'^AG-UI:?\s*', '', subject, flags=re.IGNORECASE)
         
         return subject.strip()
     
@@ -386,7 +376,6 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
             '- 🤖 Bot-generated (autonomous system)',
             '',
             'Codebase areas:',
-            '- 🎨 AG-UI - A2A UI frontend',
             '- ⚙️ Workflows - GitHub Actions',
             '- 🔧 Agents/Tools - Custom agents and utilities',
             '- 📋 Instructions - Copilot instructions',
