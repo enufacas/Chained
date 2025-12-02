@@ -8,6 +8,8 @@
  * - A2A protocol objects (agent cards, tasks, messages)
  */
 
+import { logStorageError } from "./error-logging";
+
 // Storage keys
 const STORAGE_KEYS = {
   ARTIFACTS: "ag-ui-artifacts",
@@ -134,6 +136,11 @@ export function saveArtifact(artifact: Omit<StoredArtifact, "id" | "createdAt">)
     localStorage.setItem(STORAGE_KEYS.ARTIFACTS, JSON.stringify(trimmed));
   } catch (error) {
     console.warn("Failed to save artifact to storage:", error);
+    logStorageError(error, "saveArtifact", STORAGE_KEYS.ARTIFACTS, {
+      artifactName: artifact.name,
+      artifactType: artifact.type,
+      sourceId: artifact.sourceId,
+    });
   }
 
   return stored;
@@ -352,6 +359,11 @@ export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSe
     localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(trimmed));
   } catch (error) {
     console.warn("Failed to save session to storage:", error);
+    logStorageError(error, "saveSession", STORAGE_KEYS.SESSIONS, {
+      sessionId: session.id,
+      sessionType: session.type,
+      artifactsCount: session.artifacts?.length || 0,
+    });
   }
 
   return stored;

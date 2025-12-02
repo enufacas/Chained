@@ -16,6 +16,7 @@
 import { useState, useEffect, useCallback } from "react";
 import PipelineDetailView from "./PipelineDetailView";
 import { getArtifactsBySourceId } from "@/lib/storage";
+import { logApiError } from "@/lib/error-logging";
 
 
 interface PipelineResult {
@@ -71,14 +72,22 @@ export default function PipelineOutcomes() {
     try {
       const response = await fetch("/api/pipeline?limit=10");
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       const result = await response.json();
       setData(result);
       setError(null);
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to load pipelines";
       console.error("[PipelineOutcomes] Fetch error:", err);
-      setError(err instanceof Error ? err.message : "Failed to load pipelines");
+      
+      // Log error to backend for persistent logging
+      logApiError(err, "/api/pipeline", "GET", {
+        component: "PipelineOutcomes",
+        action: "fetchPipelines",
+      });
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
