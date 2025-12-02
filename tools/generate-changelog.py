@@ -54,20 +54,37 @@ BOT_ACTORS = ['github-actions[bot]', 'copilot-swe-agent[bot]']
 class Commit:
     """Represents a git commit with parsed metadata."""
     
-    def __init__(self, sha: str, subject: str, author_name: str, author_email: str, date: str):
+    def __init__(self, sha: str, subject: str, author_name: str, author_email: str, date: str, body: str = ''):
         self.sha = sha
         self.subject = subject
         self.author_name = author_name
         self.author_email = author_email
         self.date = datetime.fromisoformat(date.replace('+0000', '+00:00').replace(' ', 'T', 1))
+        self.body = body
         self.pr_number = self._extract_pr_number()
         self.commit_type = self._extract_commit_type()
         self.is_user_initiated = self._determine_user_initiated()
         
     def _extract_pr_number(self) -> Optional[int]:
-        """Extract PR number from commit subject like (#1234)."""
+        """Extract PR number from commit subject like (#1234) or from commit body."""
+        # Try subject first
         match = re.search(r'\(#(\d+)\)', self.subject)
-        return int(match.group(1)) if match else None
+        if match:
+            return int(match.group(1))
+        
+        # Try subject without parens
+        match = re.search(r'#(\d+)', self.subject)
+        if match:
+            return int(match.group(1))
+        
+        # Try commit body
+        if self.body:
+            # Look for PR references in body
+            match = re.search(r'#(\d+)', self.body)
+            if match:
+                return int(match.group(1))
+        
+        return None
     
     def _extract_commit_type(self) -> Optional[str]:
         """Extract commit type from conventional commit prefix."""
@@ -120,7 +137,9 @@ class Commit:
 
 def get_git_commits(since_date: Optional[str] = None) -> List[Commit]:
     """Fetch commits from git history."""
-    cmd = ['git', 'log', '--all', '--format=%H|%s|%an|%ae|%ad', '--date=iso']
+    # Use a unique separator less likely to appear in commit messages
+    separator = '|||COMMIT_SEP|||'
+    cmd = ['git', 'log', '--all', f'--format=%H{separator}%s{separator}%an{separator}%ae{separator}%ad{separator}%b{separator}END', '--date=iso']
     
     if since_date:
         cmd.extend(['--since', since_date])
@@ -129,14 +148,26 @@ def get_git_commits(since_date: Optional[str] = None) -> List[Commit]:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
         commits = []
         
-        for line in result.stdout.strip().split('\n'):
-            if not line:
+        # Split by END marker to get individual commits
+        commit_blocks = result.stdout.strip().split(f'{separator}END')
+        
+        for block in commit_blocks:
+            if not block.strip():
                 continue
             
-            parts = line.split('|')
+            parts = block.split(separator)
             if len(parts) >= 5:
-                sha, subject, author_name, author_email, date = parts[:5]
-                commit = Commit(sha, subject, author_name, author_email, date)
+                sha = parts[0].strip()
+                subject = parts[1].strip()
+                author_name = parts[2].strip()
+                author_email = parts[3].strip()
+                date = parts[4].strip()
+                body = parts[5].strip() if len(parts) > 5 else ''
+                
+                if not sha:
+                    continue
+                
+                commit = Commit(sha, subject, author_name, author_email, date, body)
                 
                 # Only include commits with conventional commit types
                 if commit.commit_type and not commit.should_exclude():
@@ -160,6 +191,27 @@ def group_commits_by_date_and_type(commits: List[Commit]) -> Dict[str, Dict[str,
     return grouped
 
 
+def collapse_similar_commits(commits: List[Commit]) -> List[Tuple[Commit, int]]:
+    """Collapse similar commits and return (commit, count) tuples."""
+    from collections import Counter
+    
+    # Group by clean subject
+    subject_groups = defaultdict(list)
+    for commit in commits:
+        clean_subject = commit.get_clean_subject()
+        subject_groups[clean_subject].append(commit)
+    
+    # Return collapsed list with counts
+    collapsed = []
+    for subject, group in subject_groups.items():
+        # Use the first commit as the representative
+        representative = sorted(group, key=lambda c: c.date, reverse=True)[0]
+        count = len(group)
+        collapsed.append((representative, count))
+    
+    return collapsed
+
+
 def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]]], 
                                include_header: bool = True) -> str:
     """Generate changelog markdown content."""
@@ -180,6 +232,8 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
             'Actor indicators:',
             '- 👤 User-initiated (from issues or direct commits)',
             '- 🤖 Bot-generated (autonomous system)',
+            '',
+            'Note: Repeated similar tasks are collapsed with count (e.g., x12 means 12 occurrences).',
             '',
             'This changelog excludes automated data syncs and routine maintenance commits.',
             '',
@@ -208,18 +262,22 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
         if major_improvements:
             lines.append('### ✨ Major Improvements')
             lines.append('')
-            for commit in sorted(major_improvements, key=lambda c: c.date, reverse=True):
+            collapsed = collapse_similar_commits(major_improvements)
+            for commit, count in sorted(collapsed, key=lambda x: x[0].date, reverse=True):
                 pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
-                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{pr_link}')
+                count_suffix = f' (x{count})' if count > 1 else ''
+                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{count_suffix}{pr_link}')
             lines.append('')
         
         # Features section (all features including bot-generated)
         if features:
             lines.append('### ✨ Features')
             lines.append('')
-            for commit in sorted(features, key=lambda c: c.date, reverse=True):
+            collapsed = collapse_similar_commits(features)
+            for commit, count in sorted(collapsed, key=lambda x: x[0].date, reverse=True):
                 pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
-                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{pr_link}')
+                count_suffix = f' (x{count})' if count > 1 else ''
+                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{count_suffix}{pr_link}')
             lines.append('')
         
         # Bug Fixes section
@@ -227,9 +285,11 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
         if fixes:
             lines.append('### 🐛 Bug Fixes')
             lines.append('')
-            for commit in sorted(fixes, key=lambda c: c.date, reverse=True):
+            collapsed = collapse_similar_commits(fixes)
+            for commit, count in sorted(collapsed, key=lambda x: x[0].date, reverse=True):
                 pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
-                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{pr_link}')
+                count_suffix = f' (x{count})' if count > 1 else ''
+                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{count_suffix}{pr_link}')
             lines.append('')
         
         # Other types grouped together
@@ -238,10 +298,12 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
             lines.append('### 🧹 Chores & Maintenance')
             lines.append('')
             for commit_type in other_types:
-                for commit in sorted(commits_by_type[commit_type], key=lambda c: c.date, reverse=True):
+                collapsed = collapse_similar_commits(commits_by_type[commit_type])
+                for commit, count in sorted(collapsed, key=lambda x: x[0].date, reverse=True):
                     pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
                     type_label = COMMIT_TYPES[commit_type].split(' ', 1)[1].rstrip('s')  # Remove emoji and plural
-                    lines.append(f'- {commit.get_actor_badge()} **{type_label}**: {commit.get_clean_subject()}{pr_link}')
+                    count_suffix = f' (x{count})' if count > 1 else ''
+                    lines.append(f'- {commit.get_actor_badge()} **{type_label}**: {commit.get_clean_subject()}{count_suffix}{pr_link}')
             lines.append('')
         
         lines.append('---')
