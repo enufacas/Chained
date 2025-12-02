@@ -708,6 +708,21 @@ The following documents serve as **authoritative sources of truth** for their re
 - **Owner**: @coach-master (primary), all agents (self-documentation)
 - **Update Frequency**: Within 24 hours of agent system changes
 
+#### 5. Feature Changelog
+**Document**: `CHANGELOG.md`
+- **Scope**: All notable changes to the project, categorized by type and actor
+- **Update Triggers**:
+  - Feature additions (feat:)
+  - Bug fixes (fix:)
+  - Breaking changes
+  - Major improvements
+  - User-facing changes
+- **Owner**: All contributors
+- **Update Frequency**: On every PR with user-facing changes
+- **Automation**: `update-changelog.yml` workflow + `tools/generate-changelog.py` script
+- **Excludes**: Auto-churn commits (data syncs, routine maintenance)
+- **Format**: Conventional commits with actor indicators (👤 user-initiated, 🤖 bot-generated)
+
 ### Agent Documentation Responsibilities
 
 Every agent, including **@support-master**, MUST:
