@@ -149,19 +149,88 @@ Apply this to `src/utils.py` line 45. Test with: `pytest tests/test_utils.py`"
 ### Supporting Tools
 - **view**: Read code, documentation, and context files to understand issues
 - **bash**: Execute analysis scripts, gather system information, apply fixes
+- **ask_gemini_mcp.py**: Enhanced Gemini tool with optional MCP server support
 
-## ⚠️ CRITICAL: Context Gathering Requirement
+## 🔑 Three Ways to Use Gemini
 
-**Gemini API has NO direct repository access.** It only receives text you send in the prompt.
+### Option 1: Gemini CLI Workflows (Issue Comments) ✅
 
-### What This Means
+**For issue-driven work, recommend users invoke workflows:**
+- `/gemini-invoke` - General purpose assistant with FULL repository access
+- `/gemini-fix` - Automatic issue fixing with PR creation
+- `/gemini-review` - Code review with repository context
+- `/gemini-triage` - Issue triage with codebase awareness
 
-The `ask_gemini.py` tool is just an API call - it doesn't have access to:
-- ❌ Repository files (unless you send them in the prompt)
-- ❌ Git history
-- ❌ GitHub MCP server
-- ❌ Other Copilot tools
-- ❌ Code search capabilities
+**Capabilities:**
+- ✅ GitHub MCP server provides direct file access
+- ✅ Can search, read, and analyze code automatically
+- ✅ Has git commands and history access
+- ✅ Can create branches and PRs
+
+**When to use:** Work triggered from GitHub issues/PRs
+
+### Option 2: ask_gemini_mcp.py with --mcp Flag (Copilot Sessions) ✨ NEW!
+
+**For Copilot sessions needing full repository access:**
+
+```python
+# Use MCP mode for automatic repository exploration
+bash("python3 tools/ask_gemini_mcp.py --mcp 'Analyze the auth system'")
+```
+
+**Capabilities:**
+- ✅ GitHub MCP server (same as workflows!)
+- ✅ Automatic file reading and code search
+- ✅ Git history access
+- ✅ No manual context gathering needed
+- ✅ Works during Copilot sessions
+
+**Requirements:**
+- Docker running
+- Node.js/npx available  
+- GITHUB_TOKEN environment variable set
+
+**When to use:** Complex repository-wide analysis during Copilot sessions
+
+### Option 3: ask_gemini.py (Quick Questions) ⚠️
+
+**For quick targeted questions with manual context:**
+
+```python
+# Gather context first
+code = view("path/to/file.py")
+# Then ask with context
+response = ask_gemini_fix_code(
+    issue_description="Bug description",
+    code_snippet=code
+)
+```
+
+**Limitations:**
+- ❌ No repository access
+- ❌ Requires manual context gathering
+
+**When to use:** Quick questions where you already have the code
+
+## 💡 Decision Tree: Which Option to Use?
+
+```
+Is this triggered from a GitHub issue/PR comment?
+├─ YES → Recommend workflows (/gemini-fix, /gemini-invoke)
+└─ NO → Is this during a Copilot session?
+    ├─ YES → Does it need repo-wide analysis?
+    │   ├─ YES → Use ask_gemini_mcp.py with --mcp flag
+    │   └─ NO → Use ask_gemini.py with manual context
+    └─ NO → Use ask_gemini.py
+```
+
+## ⚠️ CRITICAL: Context Requirements by Option
+
+**Option 1 (Workflows):** No context gathering needed - automatic ✅
+
+**Option 2 (MCP Mode):** No context gathering needed - automatic ✅
+
+**Option 3 (API Mode):** Manual context gathering required ⚠️
 
 ### Your Responsibility as @gemini-consultant
 

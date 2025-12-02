@@ -1,32 +1,57 @@
 # Ask Gemini - Code-Fixing and Expert Consultation
 
-This guide documents the "ask gemini" escalation pattern, enabling GitHub Copilot users to consult Google's Gemini 3 Pro Preview for **actual code fixes**, implementation solutions, and expert insights during coding sessions.
+This guide documents how to get help from Google's Gemini 3 Pro Preview for **actual code fixes**, implementation solutions, and expert insights.
 
-## 🎯 Overview
+## 🔑 Two Ways to Use Gemini
 
-**What is "Ask Gemini"?**
-A human-controlled escalation mechanism that provides **actual working code solutions** when you're stuck. Instead of just analyzing problems, gemini-consultant now delivers concrete fixes with before/after code examples.
+### Option 1: Gemini CLI Workflows (Recommended) ✅
 
-**Primary Use Cases:**
-- ✅ Get actual code fixes for bugs with before/after examples
-- ✅ Receive concrete implementations when stuck
-- ✅ Get specific file:line locations that need changes
-- ✅ Obtain working code for performance optimizations
-- ✅ Receive security fixes with actual implementations
-- ✅ Get refactoring guidance with transformed code
-- Second opinions on architectural decisions (with code examples)
+**For complex tasks with FULL repository access:**
 
-**🆕 NEW: Code-First Approach**
-The gemini-consultant agent has been upgraded to prioritize **actionable solutions over analysis**. When you ask for help with code, you'll get working implementations, not just recommendations.
+Use these commands in issue comments:
+- `/gemini-invoke` - General purpose assistant with GitHub MCP server
+- `/gemini-fix` - Automatic issue fixing with PR creation
+- `/gemini-review` - Code review with repository context
+- `/gemini-triage` - Issue triage with codebase awareness
 
-**How It Works:**
-1. Human says "ask gemini to fix X" or "ask gemini about X" during a Copilot session
-2. Copilot invokes the `@gemini-consultant` agent
-3. Agent calls Gemini 3 Pro Preview API via `tools/ask_gemini.py`
-4. **For code issues:** Gemini provides actual fixes with before/after examples
-5. **For architecture:** Gemini provides analysis with concrete code examples
-6. Agent synthesizes with repository context and implementation steps
-7. Human receives working code ready to implement
+**What they have:**
+- ✅ GitHub MCP server with direct file access
+- ✅ Can read, search, and analyze code automatically
+- ✅ Git commands and history access
+- ✅ Can create branches and PRs
+- ✅ Shell commands (cat, grep, git, gh)
+
+**When to use:** Complex tasks requiring extensive repository exploration, multi-file changes, or automatic PR creation.
+
+**Example:**
+```
+Comment on an issue:
+/gemini-fix
+
+# Gemini will:
+# - Analyze the issue with full repo access
+# - Explore relevant files automatically
+# - Implement the fix
+# - Create a PR with the changes
+```
+
+### Option 2: ask_gemini.py Tool (Quick Consultations) ⚠️
+
+**For quick consultations during Copilot sessions:**
+
+A simple tool for getting targeted advice when you control the context.
+
+**Important limitation:** This is just an API call with NO repository access. You must manually gather context using view() and bash() tools.
+
+**When to use:** Quick questions during active Copilot sessions where you already have the relevant code.
+
+---
+
+## 🎯 The Rest of This Guide
+
+The rest of this document covers **Option 2 (ask_gemini.py tool)** only.
+
+If you're using Gemini CLI workflows (Option 1), they already have full repository access and don't need manual context gathering.
 
 ## 🚀 Quick Start
 

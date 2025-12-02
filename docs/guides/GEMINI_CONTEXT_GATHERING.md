@@ -1,20 +1,46 @@
 # Gemini Context Gathering Guide
 
-## ⚠️ Critical Understanding: Gemini Has No Repository Access
+## 🔑 Two Ways to Use Gemini
 
-The Gemini API is **just an API call**. It does NOT have access to:
-- ❌ Your repository files
-- ❌ Git history
-- ❌ GitHub MCP server
-- ❌ Copilot tools (view, bash, etc.)
-- ❌ Code search capabilities
-- ❌ Any other context unless you explicitly send it
+### Option 1: Gemini CLI Workflows (Full Repository Access) ✅
 
-**You must gather and send context manually.**
+**These workflows have FULL repository access via GitHub MCP server:**
+- `/gemini-invoke` - General purpose assistant
+- `/gemini-fix` - Automatic issue fixing with PRs
+- `/gemini-review` - Code review
+- `/gemini-triage` - Issue triage
 
-## The Problem
+**What they have:**
+- ✅ GitHub MCP server with file access
+- ✅ Git commands and history
+- ✅ Search capabilities
+- ✅ Shell commands (cat, grep, etc.)
+- ✅ Direct file manipulation
 
-When you ask gemini-consultant for help without providing code context:
+**When to use:** For complex tasks requiring extensive repository exploration.
+
+### Option 2: ask_gemini.py Tool (Manual Context) ⚠️
+
+**The `ask_gemini.py` tool is just a direct API call with NO repository access:**
+- ❌ No repository files
+- ❌ No Git history  
+- ❌ No GitHub MCP server
+- ❌ No Copilot tools
+- ❌ No search capabilities
+
+**You must gather and send context manually using view() and bash() tools.**
+
+**When to use:** For quick consultations during Copilot sessions where you control context.
+
+---
+
+## ⚠️ This Guide is for ask_gemini.py Tool Only
+
+The rest of this guide applies to **Option 2** (ask_gemini.py tool). If you're using Gemini CLI workflows, they already have repository access and don't need manual context gathering.
+
+## The Problem (ask_gemini.py Only)
+
+When you use the `ask_gemini.py` tool without providing code context:
 
 ```python
 # ❌ BAD - Gemini has no idea what the code looks like
