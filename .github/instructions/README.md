@@ -36,6 +36,12 @@ GitHub Copilot has context size limits. Exceeding them causes HTTP 413 errors an
 ### Domain-Specific Instructions
 12. **`threejs-rendering.instructions.md`** - 3D rendering quick reference
 13. **`github-pages-testing.instructions.md`** - Pages testing quick reference
+14. **`terraform-provider-docs.instructions.md`** - Terraform provider documentation requirements
+15. **`a2a-ui-development.instructions.md`** - A2A UI development guidelines
+16. **`a2a-ui-real-data.instructions.md`** - A2A UI real data policy
+17. **`a2a-ui-data-sources.instructions.md`** - A2A UI data source rules
+18. **`root-directory-protection.instructions.md`** - Root directory file placement
+19. **`meta-coordinator-system.instructions.md`** - Meta-coordinator system rules
 
 ## Detailed Guides
 
