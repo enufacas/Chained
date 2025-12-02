@@ -500,6 +500,27 @@ In your code and comments, reference agents explicitly:
 - See `.github/instructions/agent-issue-updates.instructions.md` for details
 - This ensures transparency and keeps stakeholders informed
 
+### PR Documentation (REQUIRED)
+- **ALWAYS include an instruction source diagram** in PR descriptions
+- Use `tools/generate-instruction-diagram.py` to generate the diagram
+- The diagram shows where Copilot sourced instructions from:
+  - Repository-level instructions (`.copilot-instructions.md`, `.github/copilot-instructions.md`)
+  - Path-based instructions (`.github/instructions/*.instructions.md`)
+  - Agent profile instructions (`.github/agents/*.md`)
+  - Original issue/prompt
+- Include `--files` parameter with modified files to detect applicable path instructions
+- Include `--agent` parameter with agent name if an agent is assigned
+- Include `--issue` parameter with issue number
+- This provides transparency about the instruction sources used
+
+**Example usage:**
+```bash
+python3 tools/generate-instruction-diagram.py \
+  --files .github/workflows/test.yml docs/index.html \
+  --agent engineer-master \
+  --issue 123
+```
+
 ### Python Standards (when applicable)
 - Follow PEP 8 style guide
 - Use type hints for function signatures
