@@ -58,14 +58,46 @@ export function logError(
  */
 async function sendErrorToBackend(errorData: object): Promise<void> {
   try {
+    // Send to debug endpoint for logging
     await fetch("/api/debug/log-error", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(errorData),
     });
+    
+    // Also send to error observer for A2A error reporting
+    await sendErrorToA2AObserver(errorData);
   } catch (err) {
     // Silently fail - error is already logged to console
     throw err;
+  }
+}
+
+/**
+ * Send error to A2A Error Observer
+ */
+async function sendErrorToA2AObserver(errorData: any): Promise<void> {
+  try {
+    const errorObj = errorData.error || {};
+    
+    await fetch("/api/ui-error-report", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: errorObj.message || "Unknown error",
+        stack: errorObj.stack,
+        url: errorData.url,
+        user_agent: errorData.userAgent,
+        extra: {
+          type: errorData.type,
+          context: errorData.context,
+          timestamp: errorData.timestamp,
+        },
+      }),
+    });
+  } catch (err) {
+    // Silently fail - error is already logged
+    console.warn("[Frontend Error] Failed to send to A2A observer:", err);
   }
 }
 

@@ -50,20 +50,40 @@ function logErrorToConsole(error: Error, errorInfo: ErrorInfo, context?: string)
  */
 async function sendErrorToBackend(error: Error, errorInfo: ErrorInfo) {
   try {
+    const errorPayload = {
+      type: "react-error",
+      error: {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      },
+      componentStack: errorInfo.componentStack,
+      timestamp: new Date().toISOString(),
+      userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "unknown",
+      url: typeof window !== "undefined" ? window.location.href : "unknown",
+    };
+    
+    // Send to debug endpoint
     await fetch("/api/debug/log-error", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(errorPayload),
+    });
+    
+    // Also send to A2A error observer
+    await fetch("/api/ui-error-report", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        type: "react-error",
-        error: {
-          name: error.name,
-          message: error.message,
-          stack: error.stack,
+        message: error.message,
+        stack: error.stack,
+        url: errorPayload.url,
+        user_agent: errorPayload.userAgent,
+        extra: {
+          type: "react-error",
+          componentStack: errorInfo.componentStack,
+          errorName: error.name,
         },
-        componentStack: errorInfo.componentStack,
-        timestamp: new Date().toISOString(),
-        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "unknown",
-        url: typeof window !== "undefined" ? window.location.href : "unknown",
       }),
     });
   } catch (err) {

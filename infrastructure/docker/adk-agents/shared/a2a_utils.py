@@ -240,3 +240,88 @@ def parse_llm_json_response(text: str) -> Optional[Any]:
         return json.loads(text)
     except json.JSONDecodeError:
         return None
+
+
+async def send_error_to_observer(
+    error_event_dict: Dict[str, Any],
+    error_observer_url: Optional[str] = None,
+) -> bool:
+    """
+    Send an error event to the error_observer agent.
+    
+    This is a helper function for agents to report errors as A2A tasks.
+    
+    Args:
+        error_event_dict: Error event data as dict (should match ErrorEvent schema)
+        error_observer_url: URL of error_observer agent (defaults to env var)
+        
+    Returns:
+        True if successfully sent, False otherwise
+    """
+    if not error_observer_url:
+        error_observer_url = os.getenv("ERROR_OBSERVER_URL")
+    
+    if not error_observer_url:
+        print("⚠️ Error observer URL not configured, cannot send error event")
+        return False
+    
+    try:
+        async with A2AClient(error_observer_url) as client:
+            # Send error event as JSON in message
+            message = json.dumps(error_event_dict)
+            task = await client.send_message(
+                message=message,
+                context_id=f"error-{datetime.utcnow().timestamp()}",
+            )
+            print(f"✅ Sent error event to observer: {task.id}")
+            return True
+    except Exception as e:
+        print(f"❌ Failed to send error to observer: {str(e)}")
+        return False
+
+
+async def report_agent_error(
+    agent_name: str,
+    exception: Exception,
+    task_type: str = "agent_task",
+    a2a_ui_url: Optional[str] = None,
+    metadata: Optional[Dict[str, Any]] = None,
+) -> bool:
+    """
+    Report an agent error to the error_observer.
+    
+    This is a convenience wrapper that creates an ErrorEvent from an exception
+    and sends it to the error_observer agent.
+    
+    Args:
+        agent_name: Name of the agent where the error occurred
+        exception: The exception that was raised
+        task_type: Type of task that failed
+        a2a_ui_url: Optional URL to the A2A UI for this task
+        metadata: Optional additional metadata
+        
+    Returns:
+        True if successfully reported, False otherwise
+    """
+    # Import here to avoid circular dependency
+    try:
+        from shared.error_event import ErrorEvent
+    except ImportError:
+        print("⚠️ ErrorEvent module not available, cannot report error")
+        return False
+    
+    try:
+        error_event = ErrorEvent.from_exception(
+            service=agent_name,
+            exception=exception,
+            source_agent=agent_name,
+            source_channel="runtime",
+            a2a_ui_url=a2a_ui_url,
+            metadata=metadata or {},
+        )
+        
+        return await send_error_to_observer(error_event.model_dump())
+    
+    except Exception as e:
+        print(f"❌ Failed to create/send error event: {str(e)}")
+        return False
