@@ -38,7 +38,7 @@ COMMIT_TYPES = {
 
 # Patterns to identify auto-churn commits that should be excluded
 AUTO_CHURN_PATTERNS = [
-    r'^🔄\s+(AgentOps|data)\s+sync',
+    r'AgentOps.*data\s+sync',  # More flexible - matches "🔄 AgentOps data sync" etc
     r'^🧠\s+Daily\s+Learning\s+Reflection',
     r'^🏗️\s+Update\s+architecture\s+evolution\s+tracking',
     r'^Update\s+AI\s+ideas\s+history',
@@ -200,24 +200,25 @@ class Commit:
 
 
 def get_git_commits(since_date: Optional[str] = None) -> List[Commit]:
-    """Fetch commits from git history, prioritizing PRs (squash merges with #XXXX).
+    """Fetch commits from git history, ONLY from main branch.
     
-    This takes a PR-centric approach:
-    1. First, get all commits that represent merged PRs (#XXXX in subject)
-    2. These are the canonical entries - every one gets a changelog entry
-    3. For non-PR commits, only include if they have conventional prefix
+    This takes a strict PR-only approach:
+    1. Only fetch commits from main branch (merged PRs)
+    2. Each merged PR (#XXXX) is one changelog entry
+    3. Exclude auto-churn PRs (data syncs, etc.)
+    4. Very rarely, large PRs might be decomposed (future enhancement)
     """
     # Use a unique separator less likely to appear in commit messages
     separator = '|||COMMIT_SEP|||'
-    cmd = ['git', 'log', '--all', f'--format=%H{separator}%s{separator}%an{separator}%ae{separator}%ad{separator}%b{separator}END', '--date=iso']
+    # CRITICAL: Only fetch from main branch, not --all
+    cmd = ['git', 'log', 'origin/main', f'--format=%H{separator}%s{separator}%an{separator}%ae{separator}%ad{separator}%b{separator}END', '--date=iso']
     
     if since_date:
         cmd.extend(['--since', since_date])
     
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        pr_commits = []  # Commits that represent merged PRs
-        other_commits = []  # Other commits with conventional prefixes
+        pr_commits = []  # All commits on main are merged PRs
         
         # Split by END marker to get individual commits
         commit_blocks = result.stdout.strip().split(f'{separator}END')
@@ -238,30 +239,19 @@ def get_git_commits(since_date: Optional[str] = None) -> List[Commit]:
                 if not sha:
                     continue
                 
-                # Check if this is a PR commit (has #XXXX in subject)
-                has_pr_in_subject = bool(re.search(r'#(\d+)', subject))
-                
                 commit = Commit(sha, subject, author_name, author_email, date, body)
                 
                 # Skip auto-churn commits
                 if commit.should_exclude():
                     continue
                 
-                # Categorize: PR commits always included, others only if conventional
-                if has_pr_in_subject:
-                    # This is a PR - always include it
-                    pr_commits.append(commit)
-                elif commit.commit_type:
-                    # Has conventional prefix - might include
-                    other_commits.append(commit)
+                # All commits on main are merged PRs (squash merge)
+                # Each one gets a changelog entry
+                pr_commits.append(commit)
         
-        # Prioritize PR commits, then add others that aren't duplicates
-        # (A PR's sub-commits won't be in main branch anyway due to squash merge)
-        all_commits = pr_commits + other_commits
+        print(f"Found {len(pr_commits)} merged PRs on main branch")
         
-        print(f"Found {len(pr_commits)} PRs and {len(other_commits)} other conventional commits")
-        
-        return all_commits
+        return pr_commits
     
     except subprocess.CalledProcessError as e:
         print(f"Error running git command: {e}", file=sys.stderr)
