@@ -2,13 +2,14 @@
 """
 Generate and update CHANGELOG.md from git commit history.
 
-This script:
-1. Parses git commits with conventional commit prefixes (feat, fix, chore, etc.)
-2. Categorizes changes by type
-3. Differentiates between user-prompted and bot-only changes
-4. Excludes auto-churn commits (data syncs, automated updates)
-5. Links to PRs when available
-6. Maintains chronological order by date
+This script takes a PR-centric approach:
+1. Fetches all merged PRs (commits with #XXXX) as the primary source
+2. Ensures every changelog entry has a PR link
+3. Optionally includes sub-commits when they add significant value
+4. Categorizes by conventional commit type (feat, fix, chore, etc.)
+5. Differentiates user-prompted vs bot-only changes
+6. Excludes auto-churn commits (data syncs, automated updates)
+7. Maintains chronological order by date
 """
 
 import subprocess
@@ -16,7 +17,7 @@ import re
 import sys
 from datetime import datetime
 from collections import defaultdict
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional, Set
 import argparse
 
 
@@ -119,9 +120,34 @@ class Commit:
         return ' '.join(decorations) if decorations else ''
     
     def _extract_commit_type(self) -> Optional[str]:
-        """Extract commit type from conventional commit prefix."""
+        """Extract commit type from conventional commit prefix.
+        
+        For PR commits (#XXXX), try to extract from prefix.
+        If no prefix, infer from content or default to 'feat'.
+        """
         match = re.match(r'^(feat|fix|docs|chore|refactor|test|perf|ci|build|style|revert):', self.subject)
-        return match.group(1) if match else None
+        if match:
+            return match.group(1)
+        
+        # For PR commits without conventional prefix, try to infer
+        if self.pr_number:
+            subject_lower = self.subject.lower()
+            # Infer type from keywords
+            if any(word in subject_lower for word in ['fix', 'bug', 'error', 'crash', 'issue']):
+                return 'fix'
+            elif any(word in subject_lower for word in ['doc', 'readme', 'guide']):
+                return 'docs'
+            elif any(word in subject_lower for word in ['chore', 'cleanup', 'refactor', 'update']):
+                return 'chore'
+            elif any(word in subject_lower for word in ['test', 'spec']):
+                return 'test'
+            elif any(word in subject_lower for word in ['perf', 'performance', 'optimize']):
+                return 'perf'
+            else:
+                # Default PRs to 'feat' if can't determine
+                return 'feat'
+        
+        return None
     
     def _determine_user_initiated(self) -> bool:
         """Determine if this was user-initiated or bot-only."""
@@ -151,8 +177,14 @@ class Commit:
     
     def get_clean_subject(self) -> str:
         """Get subject without PR number and prefix."""
-        # Remove PR number
+        # Remove PR number at the end like (#1234)
         subject = re.sub(r'\s*\(#\d+\)', '', self.subject)
+        
+        # Remove PR number inline like #1234
+        subject = re.sub(r'\s*#\d+\s*', ' ', subject)
+        
+        # Remove "Merge pull request #XXX from..." pattern
+        subject = re.sub(r'^Merge pull request #\d+ from \S+\s*', '', subject)
         
         # Remove commit type prefix if present
         if self.commit_type:
@@ -168,7 +200,13 @@ class Commit:
 
 
 def get_git_commits(since_date: Optional[str] = None) -> List[Commit]:
-    """Fetch commits from git history."""
+    """Fetch commits from git history, prioritizing PRs (squash merges with #XXXX).
+    
+    This takes a PR-centric approach:
+    1. First, get all commits that represent merged PRs (#XXXX in subject)
+    2. These are the canonical entries - every one gets a changelog entry
+    3. For non-PR commits, only include if they have conventional prefix
+    """
     # Use a unique separator less likely to appear in commit messages
     separator = '|||COMMIT_SEP|||'
     cmd = ['git', 'log', '--all', f'--format=%H{separator}%s{separator}%an{separator}%ae{separator}%ad{separator}%b{separator}END', '--date=iso']
@@ -178,7 +216,8 @@ def get_git_commits(since_date: Optional[str] = None) -> List[Commit]:
     
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        commits = []
+        pr_commits = []  # Commits that represent merged PRs
+        other_commits = []  # Other commits with conventional prefixes
         
         # Split by END marker to get individual commits
         commit_blocks = result.stdout.strip().split(f'{separator}END')
@@ -199,63 +238,34 @@ def get_git_commits(since_date: Optional[str] = None) -> List[Commit]:
                 if not sha:
                     continue
                 
+                # Check if this is a PR commit (has #XXXX in subject)
+                has_pr_in_subject = bool(re.search(r'#(\d+)', subject))
+                
                 commit = Commit(sha, subject, author_name, author_email, date, body)
                 
-                # Only include commits with conventional commit types
-                if commit.commit_type and not commit.should_exclude():
-                    commits.append(commit)
+                # Skip auto-churn commits
+                if commit.should_exclude():
+                    continue
+                
+                # Categorize: PR commits always included, others only if conventional
+                if has_pr_in_subject:
+                    # This is a PR - always include it
+                    pr_commits.append(commit)
+                elif commit.commit_type:
+                    # Has conventional prefix - might include
+                    other_commits.append(commit)
         
-        # Second pass: enhance PR numbers by looking at merge commits
-        enhance_pr_numbers_from_merges(commits)
+        # Prioritize PR commits, then add others that aren't duplicates
+        # (A PR's sub-commits won't be in main branch anyway due to squash merge)
+        all_commits = pr_commits + other_commits
         
-        return commits
+        print(f"Found {len(pr_commits)} PRs and {len(other_commits)} other conventional commits")
+        
+        return all_commits
     
     except subprocess.CalledProcessError as e:
         print(f"Error running git command: {e}", file=sys.stderr)
         return []
-
-
-def enhance_pr_numbers_from_merges(commits: List[Commit]):
-    """Enhance PR numbers by looking at merge commits in git history."""
-    try:
-        # Get all merge commits with PR numbers
-        result = subprocess.run(
-            ['git', 'log', '--all', '--merges', '--format=%H|%s'],
-            capture_output=True, text=True, check=True
-        )
-        
-        # Build a mapping of commit SHA to PR number from merge commits
-        pr_map = {}
-        for line in result.stdout.strip().split('\n'):
-            if not line:
-                continue
-            parts = line.split('|', 1)
-            if len(parts) == 2:
-                merge_sha, merge_subject = parts
-                # Look for PR number in merge commit
-                match = re.search(r'#(\d+)', merge_subject)
-                if match:
-                    pr_number = int(match.group(1))
-                    # Get the commits included in this merge
-                    try:
-                        merge_commits = subprocess.run(
-                            ['git', 'log', '--format=%H', f'{merge_sha}^..{merge_sha}'],
-                            capture_output=True, text=True, check=True
-                        )
-                        for commit_sha in merge_commits.stdout.strip().split('\n'):
-                            if commit_sha:
-                                pr_map[commit_sha] = pr_number
-                    except:
-                        pass
-        
-        # Apply PR numbers to commits
-        for commit in commits:
-            if not commit.pr_number and commit.sha in pr_map:
-                commit.pr_number = pr_map[commit.sha]
-    
-    except Exception as e:
-        # Non-fatal, just skip enhancement
-        pass
 
 
 def group_commits_by_date_and_type(commits: List[Commit]) -> Dict[str, Dict[str, List[Commit]]]:
