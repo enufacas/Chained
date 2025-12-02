@@ -66,6 +66,7 @@ class Commit:
         self.commit_type = self._extract_commit_type()
         self.is_user_initiated = self._determine_user_initiated()
         self.file_types = self._detect_file_types()
+        self.codebase_area = self._detect_codebase_area()
         
     def _extract_pr_number(self) -> Optional[int]:
         """Extract PR number from commit subject like (#1234) or from commit body."""
@@ -106,6 +107,48 @@ class Commit:
             types.add('instruction')
         
         return types
+    
+    def _detect_codebase_area(self) -> Optional[str]:
+        """Detect the codebase area this commit affects."""
+        subject_lower = self.subject.lower()
+        
+        # AG-UI / A2A UI
+        if 'ag-ui' in subject_lower or 'a2a' in subject_lower or 'adk' in subject_lower:
+            return '🎨 AG-UI'
+        
+        # Workflows
+        if '.github/workflows' in subject_lower or 'workflow' in subject_lower:
+            return '⚙️ Workflows'
+        
+        # Agents
+        if '.github/agents' in subject_lower or 'agent' in subject_lower:
+            return '🔧 Agents'
+        
+        # Instructions
+        if '.github/instructions' in subject_lower or 'instruction' in subject_lower:
+            return '📋 Instructions'
+        
+        # Infrastructure / Terraform / GCP
+        if any(word in subject_lower for word in ['infrastructure', 'terraform', 'gcp', 'cloud run', 'docker']):
+            return '🏗️ Infrastructure'
+        
+        # Documentation
+        if any(word in subject_lower for word in ['docs/', 'documentation', 'readme', 'guide']):
+            return '📚 Docs'
+        
+        # Tools / Scripts
+        if 'tools/' in subject_lower or 'script' in subject_lower:
+            return '🔧 Tools'
+        
+        # Learning / Analytics
+        if any(word in subject_lower for word in ['learn', 'analytics', 'learnings/', 'summaries/']):
+            return '🧠 Learning'
+        
+        # Timeline / GitHub Pages
+        if 'timeline' in subject_lower or 'github pages' in subject_lower or 'docs/' in subject_lower:
+            return '📊 GitHub Pages'
+        
+        return None
     
     def get_special_decorations(self) -> str:
         """Get special decoration emojis for file types."""
@@ -200,25 +243,25 @@ class Commit:
 
 
 def get_git_commits(since_date: Optional[str] = None) -> List[Commit]:
-    """Fetch commits from git history, ONLY from main branch.
+    """Fetch commits from git history that are merged PRs.
     
     This takes a strict PR-only approach:
-    1. Only fetch commits from main branch (merged PRs)
-    2. Each merged PR (#XXXX) is one changelog entry
+    1. Fetch all commits that have PR numbers (#XXXX)
+    2. These represent merged PRs (main uses squash-and-merge)
     3. Exclude auto-churn PRs (data syncs, etc.)
-    4. Very rarely, large PRs might be decomposed (future enhancement)
+    4. Exclude commits from active feature branches (no PR number yet)
     """
     # Use a unique separator less likely to appear in commit messages
     separator = '|||COMMIT_SEP|||'
-    # CRITICAL: Only fetch from main branch, not --all
-    cmd = ['git', 'log', 'origin/main', f'--format=%H{separator}%s{separator}%an{separator}%ae{separator}%ad{separator}%b{separator}END', '--date=iso']
+    # Fetch all commits but we'll filter to merged PRs (those with #XXXX)
+    cmd = ['git', 'log', '--all', f'--format=%H{separator}%s{separator}%an{separator}%ae{separator}%ad{separator}%b{separator}END', '--date=iso']
     
     if since_date:
         cmd.extend(['--since', since_date])
     
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        pr_commits = []  # All commits on main are merged PRs
+        pr_commits = []  # Only commits that are merged PRs (have #XXXX)
         
         # Split by END marker to get individual commits
         commit_blocks = result.stdout.strip().split(f'{separator}END')
@@ -245,11 +288,12 @@ def get_git_commits(since_date: Optional[str] = None) -> List[Commit]:
                 if commit.should_exclude():
                     continue
                 
-                # All commits on main are merged PRs (squash merge)
-                # Each one gets a changelog entry
-                pr_commits.append(commit)
+                # Only include commits that have PR numbers (merged PRs)
+                # This excludes feature branch work-in-progress
+                if commit.pr_number:
+                    pr_commits.append(commit)
         
-        print(f"Found {len(pr_commits)} merged PRs on main branch")
+        print(f"Found {len(pr_commits)} merged PRs")
         
         return pr_commits
     
@@ -282,6 +326,10 @@ def collapse_similar_commits(commits: List[Commit], aggressive_docs: bool = True
     subject_groups = defaultdict(list)
     for commit in commits:
         clean_subject = commit.get_clean_subject()
+        
+        # SPECIAL CASE: Collapse "Update timeline data" commits
+        if 'update timeline data' in clean_subject.lower():
+            clean_subject = 'Update timeline data'
         
         # For documentation commits, further simplify by removing details
         if aggressive_docs and ('documentation' in clean_subject.lower() or 'doc:' in commit.subject.lower()):
@@ -325,17 +373,21 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
             'The format captures:',
             '- **Features** (feat): New capabilities and enhancements',
             '- **Bug Fixes** (fix): Corrections and fixes',
-            '- **Major Improvements**: Significant changes that improve the system',
             '- **Chores & Maintenance**: Routine updates and housekeeping',
             '',
             'Actor indicators:',
             '- 👤 User-initiated (from issues or direct commits)',
             '- 🤖 Bot-generated (autonomous system)',
             '',
-            'Special decorations:',
-            '- ⚙️ Workflow changes (.github/workflows)',
-            '- 🔧 Agent changes (.github/agents)',
-            '- 📋 Instruction changes (.github/instructions)',
+            'Codebase areas:',
+            '- 🎨 AG-UI - A2A UI frontend',
+            '- ⚙️ Workflows - GitHub Actions',
+            '- 🔧 Agents/Tools - Custom agents and utilities',
+            '- 📋 Instructions - Copilot instructions',
+            '- 🏗️ Infrastructure - GCP, Terraform, Docker',
+            '- 📚 Docs - Documentation',
+            '- 🧠 Learning - Analytics and learning systems',
+            '- 📊 GitHub Pages - Timeline and public site',
             '',
             'Note: Repeated similar tasks are collapsed with count (e.g., x12 means 12 occurrences).',
             '',
@@ -351,10 +403,6 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
     for date in sorted_dates:
         commits_by_type = grouped_commits[date]
         
-        # Count features and major improvements
-        features = commits_by_type.get('feat', [])
-        major_improvements = [c for c in features if c.is_user_initiated]
-        
         # Only create section if there are relevant commits
         if not any(commits_by_type.values()):
             continue
@@ -362,20 +410,8 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
         lines.append(f'## {date}')
         lines.append('')
         
-        # Major Improvements section (user-initiated features)
-        if major_improvements:
-            lines.append('### ✨ Major Improvements')
-            lines.append('')
-            collapsed = collapse_similar_commits(major_improvements, aggressive_docs=False)
-            for commit, count in sorted(collapsed, key=lambda x: x[0].date, reverse=True):
-                pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
-                count_suffix = f' (x{count})' if count > 1 else ''
-                decorations = commit.get_special_decorations()
-                decoration_prefix = f'{decorations} ' if decorations else ''
-                lines.append(f'- {commit.get_actor_badge()} {decoration_prefix}{commit.get_clean_subject()}{count_suffix}{pr_link}')
-            lines.append('')
-        
-        # Features section (all features including bot-generated)
+        # Features section (all features - no separate Major Improvements)
+        features = commits_by_type.get('feat', [])
         if features:
             lines.append('### ✨ Features')
             lines.append('')
@@ -383,9 +419,14 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
             for commit, count in sorted(collapsed, key=lambda x: x[0].date, reverse=True):
                 pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
                 count_suffix = f' (x{count})' if count > 1 else ''
-                decorations = commit.get_special_decorations()
-                decoration_prefix = f'{decorations} ' if decorations else ''
-                lines.append(f'- {commit.get_actor_badge()} {decoration_prefix}{commit.get_clean_subject()}{count_suffix}{pr_link}')
+                
+                # Build prefix with actor and area (area includes its own emoji)
+                prefix_parts = [commit.get_actor_badge()]
+                if commit.codebase_area:
+                    prefix_parts.append(commit.codebase_area)
+                
+                prefix = ' '.join(prefix_parts)
+                lines.append(f'- {prefix} {commit.get_clean_subject()}{count_suffix}{pr_link}')
             lines.append('')
         
         # Bug Fixes section
@@ -397,9 +438,14 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
             for commit, count in sorted(collapsed, key=lambda x: x[0].date, reverse=True):
                 pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
                 count_suffix = f' (x{count})' if count > 1 else ''
-                decorations = commit.get_special_decorations()
-                decoration_prefix = f'{decorations} ' if decorations else ''
-                lines.append(f'- {commit.get_actor_badge()} {decoration_prefix}{commit.get_clean_subject()}{count_suffix}{pr_link}')
+                
+                # Build prefix with actor and area (area includes its own emoji)
+                prefix_parts = [commit.get_actor_badge()]
+                if commit.codebase_area:
+                    prefix_parts.append(commit.codebase_area)
+                
+                prefix = ' '.join(prefix_parts)
+                lines.append(f'- {prefix} {commit.get_clean_subject()}{count_suffix}{pr_link}')
             lines.append('')
         
         # Other types grouped together
@@ -414,9 +460,14 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
                     pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
                     type_label = COMMIT_TYPES[commit_type].split(' ', 1)[1].rstrip('s')  # Remove emoji and plural
                     count_suffix = f' (x{count})' if count > 1 else ''
-                    decorations = commit.get_special_decorations()
-                    decoration_prefix = f'{decorations} ' if decorations else ''
-                    lines.append(f'- {commit.get_actor_badge()} {decoration_prefix}**{type_label}**: {commit.get_clean_subject()}{count_suffix}{pr_link}')
+                    
+                    # Build prefix with actor and area (area includes its own emoji)
+                    prefix_parts = [commit.get_actor_badge()]
+                    if commit.codebase_area:
+                        prefix_parts.append(commit.codebase_area)
+                    
+                    prefix = ' '.join(prefix_parts)
+                    lines.append(f'- {prefix} **{type_label}**: {commit.get_clean_subject()}{count_suffix}{pr_link}')
             lines.append('')
         
         lines.append('---')
