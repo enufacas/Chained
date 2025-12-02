@@ -139,7 +139,15 @@ Refs: #issue_number
 
 ### Automation
 
-A GitHub workflow updates CHANGELOG.md automatically on PR merge for commits with conventional prefixes. However, **you should still verify** the changelog entry is accurate.
+A GitHub workflow updates CHANGELOG.md automatically on PR merge for commits with conventional prefixes. **The workflow auto-merges changelog updates**, so manual review is not required. The changelog stays current automatically.
+
+**Auto-Merge Process:**
+1. PR merges to main
+2. Workflow detects conventional commits
+3. Generates updated CHANGELOG.md
+4. Creates PR with changes
+5. Enables auto-merge
+6. PR merges automatically when checks pass
 
 ### Backfill
 

@@ -96,11 +96,18 @@ The `update-changelog.yml` workflow runs automatically when:
 1. **Check for conventional commits** in the merged PR
 2. **Generate updated changelog** for the last 7 days
 3. **Create a new PR** if changes are detected
-4. **Link to the original PR** that triggered the update
+4. **Enable auto-merge** on the PR
+5. **Auto-merge when checks pass** (no manual review required)
 
 ### Auto-Merge
 
-Changelog update PRs are automatically created but require manual review and approval before merging.
+Changelog update PRs are **automatically merged** without requiring manual review:
+- Auto-merge is enabled immediately after PR creation
+- PR merges automatically once all CI checks pass
+- Uses squash merge to keep history clean
+- Branch is automatically deleted after merge
+
+This automation ensures the changelog stays up-to-date without requiring manual intervention.
 
 ## Conventional Commit Types
 
@@ -207,10 +214,12 @@ This separates "what the user wanted" from "what the bots did autonomously."
 
 ### Regular Tasks
 
-1. **Weekly**: Review recent changelog entries for accuracy
+1. **Weekly**: Review recent changelog entries for accuracy (optional, since auto-merged)
 2. **Monthly**: Verify auto-churn patterns are still effective
 3. **Release**: Generate clean changelog for release notes
 4. **Quarterly**: Backfill any missing entries from git history
+
+**Note**: With auto-merge enabled, the changelog updates automatically without requiring manual review. Spot-checking is optional.
 
 ### Troubleshooting
 

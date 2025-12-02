@@ -74,6 +74,7 @@ jobs:
 
       - name: Create PR with updated changelog
         if: steps.check_commits.outputs.has_changes == 'true' && steps.check_changes.outputs.has_changes == 'true'
+        id: create_pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -87,7 +88,7 @@ jobs:
           git push origin "$BRANCH_NAME"
 
           # Create PR
-          gh pr create \
+          PR_URL=$(gh pr create \
             --title "docs: Update CHANGELOG.md (post-merge #${PR_NUMBER})" \
             --body "## 📝 Automated Changelog Update
 
@@ -104,20 +105,67 @@ jobs:
           - Script: \`tools/generate-changelog.py\`
           - Triggered by: PR #${PR_NUMBER} merge
 
-          ### Review Checklist
-          - [ ] Changelog entries are accurate
-          - [ ] Actor indicators are correct
-          - [ ] No auto-churn commits documented
-          - [ ] Descriptions are clear and user-facing
+          ### Auto-Merge
+          This PR will be automatically merged without review as it contains only changelog updates.
 
           ---
 
           *🤖 Created by workflow: [\`${{ github.workflow }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
-            --label "automated,documentation" \
+            --label "automated,documentation,auto-merge,copilot" \
             --base main \
-            --head "$BRANCH_NAME"
+            --head "$BRANCH_NAME")
 
-          echo "✅ Created PR for changelog update"
+          # Extract PR number from URL
+          NEW_PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "pr_number=$NEW_PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+          echo "✅ Created PR #$NEW_PR_NUMBER for changelog update"
+
+      - name: Auto-merge changelog PR
+        if: steps.check_commits.outputs.has_changes == 'true' && steps.check_changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+
+          # Check if PR was created successfully
+          if [ -z "$PR_NUMBER" ]; then
+            echo "❌ No PR number found, skipping auto-merge"
+            exit 0
+          fi
+
+          # Attempt merge with auto strategy (squash for cleaner history)
+          echo "🚀 Attempting to merge PR #$PR_NUMBER..."
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
+            echo "✅ PR #$PR_NUMBER merge initiated successfully!"
+            echo "🎉 Changelog update PR merged"
+
+            # Brief wait to confirm merge completed
+            sleep 2
+            FINAL_STATE=$(gh pr view "$PR_NUMBER" --json state --jq '.state')
+            if [ "$FINAL_STATE" = "MERGED" ]; then
+              echo "✅ Merge confirmed!"
+            else
+              echo "ℹ️  Merge is processing (state: $FINAL_STATE)"
+            fi
+          else
+            echo "⚠️  Merge command failed, checking if PR can be force merged..."
+
+            # Try regular merge without auto flag
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
+              echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
+              echo "🎉 Changelog update PR merged"
+            else
+              echo "❌ Failed to merge PR #$PR_NUMBER"
+              echo "This may indicate:"
+              echo "  - Merge conflicts"
+              echo "  - Required checks not passing"
+              echo "  - Branch protection rules blocking"
+              echo ""
+              echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+              exit 1
+            fi
+          fi
 
       - name: Summary
         if: steps.check_commits.outputs.has_changes == 'true'
@@ -125,11 +173,18 @@ jobs:
           echo "## 📝 Changelog Update Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Trigger:** PR #${{ github.event.pull_request.number }} merged" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** ${{ steps.check_changes.outputs.has_changes == 'true' && '✅ PR created with updates' || 'ℹ️ No changes needed' }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
 
           if [ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]; then
-            echo "A PR has been created to update CHANGELOG.md with recent changes." >> $GITHUB_STEP_SUMMARY
+            PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+            PR_URL="${{ steps.create_pr.outputs.pr_url }}"
+            echo "**Status:** ✅ PR created and auto-merge initiated" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "A PR has been created to update CHANGELOG.md and will auto-merge when checks pass." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**PR:** #$PR_NUMBER" >> $GITHUB_STEP_SUMMARY
+            echo "**URL:** $PR_URL" >> $GITHUB_STEP_SUMMARY
           else
+            echo "**Status:** ℹ️ No changes needed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
             echo "No changelog updates were needed." >> $GITHUB_STEP_SUMMARY
           fi
