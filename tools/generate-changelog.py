@@ -64,6 +64,7 @@ class Commit:
         self.pr_number = self._extract_pr_number()
         self.commit_type = self._extract_commit_type()
         self.is_user_initiated = self._determine_user_initiated()
+        self.file_types = self._detect_file_types()
         
     def _extract_pr_number(self) -> Optional[int]:
         """Extract PR number from commit subject like (#1234) or from commit body."""
@@ -85,6 +86,37 @@ class Commit:
                 return int(match.group(1))
         
         return None
+    
+    def _detect_file_types(self) -> set:
+        """Detect special file types from commit subject."""
+        types = set()
+        subject_lower = self.subject.lower()
+        
+        # Check for workflow changes
+        if '.github/workflows' in subject_lower or 'workflow' in subject_lower:
+            types.add('workflow')
+        
+        # Check for agent changes
+        if '.github/agents' in subject_lower or 'agent' in subject_lower or '@' in self.subject:
+            types.add('agent')
+        
+        # Check for instruction changes
+        if '.github/instructions' in subject_lower or 'instruction' in subject_lower or 'copilot-instructions' in subject_lower:
+            types.add('instruction')
+        
+        return types
+    
+    def get_special_decorations(self) -> str:
+        """Get special decoration emojis for file types."""
+        decorations = []
+        if 'workflow' in self.file_types:
+            decorations.append('⚙️')
+        if 'agent' in self.file_types:
+            decorations.append('🔧')
+        if 'instruction' in self.file_types:
+            decorations.append('📋')
+        
+        return ' '.join(decorations) if decorations else ''
     
     def _extract_commit_type(self) -> Optional[str]:
         """Extract commit type from conventional commit prefix."""
@@ -173,11 +205,57 @@ def get_git_commits(since_date: Optional[str] = None) -> List[Commit]:
                 if commit.commit_type and not commit.should_exclude():
                     commits.append(commit)
         
+        # Second pass: enhance PR numbers by looking at merge commits
+        enhance_pr_numbers_from_merges(commits)
+        
         return commits
     
     except subprocess.CalledProcessError as e:
         print(f"Error running git command: {e}", file=sys.stderr)
         return []
+
+
+def enhance_pr_numbers_from_merges(commits: List[Commit]):
+    """Enhance PR numbers by looking at merge commits in git history."""
+    try:
+        # Get all merge commits with PR numbers
+        result = subprocess.run(
+            ['git', 'log', '--all', '--merges', '--format=%H|%s'],
+            capture_output=True, text=True, check=True
+        )
+        
+        # Build a mapping of commit SHA to PR number from merge commits
+        pr_map = {}
+        for line in result.stdout.strip().split('\n'):
+            if not line:
+                continue
+            parts = line.split('|', 1)
+            if len(parts) == 2:
+                merge_sha, merge_subject = parts
+                # Look for PR number in merge commit
+                match = re.search(r'#(\d+)', merge_subject)
+                if match:
+                    pr_number = int(match.group(1))
+                    # Get the commits included in this merge
+                    try:
+                        merge_commits = subprocess.run(
+                            ['git', 'log', '--format=%H', f'{merge_sha}^..{merge_sha}'],
+                            capture_output=True, text=True, check=True
+                        )
+                        for commit_sha in merge_commits.stdout.strip().split('\n'):
+                            if commit_sha:
+                                pr_map[commit_sha] = pr_number
+                    except:
+                        pass
+        
+        # Apply PR numbers to commits
+        for commit in commits:
+            if not commit.pr_number and commit.sha in pr_map:
+                commit.pr_number = pr_map[commit.sha]
+    
+    except Exception as e:
+        # Non-fatal, just skip enhancement
+        pass
 
 
 def group_commits_by_date_and_type(commits: List[Commit]) -> Dict[str, Dict[str, List[Commit]]]:
@@ -191,14 +269,35 @@ def group_commits_by_date_and_type(commits: List[Commit]) -> Dict[str, Dict[str,
     return grouped
 
 
-def collapse_similar_commits(commits: List[Commit]) -> List[Tuple[Commit, int]]:
-    """Collapse similar commits and return (commit, count) tuples."""
+def collapse_similar_commits(commits: List[Commit], aggressive_docs: bool = True) -> List[Tuple[Commit, int]]:
+    """Collapse similar commits and return (commit, count) tuples.
+    
+    Args:
+        commits: List of commits to collapse
+        aggressive_docs: If True, collapse documentation commits more aggressively
+    """
     from collections import Counter
     
     # Group by clean subject
     subject_groups = defaultdict(list)
     for commit in commits:
         clean_subject = commit.get_clean_subject()
+        
+        # For documentation commits, further simplify by removing details
+        if aggressive_docs and ('documentation' in clean_subject.lower() or 'doc:' in commit.subject.lower()):
+            # Normalize common documentation patterns
+            lower_subject = clean_subject.lower()
+            
+            # Collapse all variations of "add" documentation
+            if any(pattern in lower_subject for pattern in ['add comprehensive', 'add implementation', 'add troubleshooting', 'add issue resolution', 'add final summary', 'add examples', 'add comment', 'add investigation', 'add quick-start']):
+                clean_subject = 'Add documentation'
+            # Collapse all variations of "update" documentation
+            elif any(pattern in lower_subject for pattern in ['update documentation', 'update changelog', 'update guide', 'update readme']):
+                clean_subject = 'Update documentation'
+            # Collapse "complete" or "comprehensive" documentation
+            elif 'complete' in lower_subject or 'comprehensive' in lower_subject:
+                clean_subject = 'Add documentation'
+        
         subject_groups[clean_subject].append(commit)
     
     # Return collapsed list with counts
@@ -233,6 +332,11 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
             '- 👤 User-initiated (from issues or direct commits)',
             '- 🤖 Bot-generated (autonomous system)',
             '',
+            'Special decorations:',
+            '- ⚙️ Workflow changes (.github/workflows)',
+            '- 🔧 Agent changes (.github/agents)',
+            '- 📋 Instruction changes (.github/instructions)',
+            '',
             'Note: Repeated similar tasks are collapsed with count (e.g., x12 means 12 occurrences).',
             '',
             'This changelog excludes automated data syncs and routine maintenance commits.',
@@ -262,22 +366,26 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
         if major_improvements:
             lines.append('### ✨ Major Improvements')
             lines.append('')
-            collapsed = collapse_similar_commits(major_improvements)
+            collapsed = collapse_similar_commits(major_improvements, aggressive_docs=False)
             for commit, count in sorted(collapsed, key=lambda x: x[0].date, reverse=True):
                 pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
                 count_suffix = f' (x{count})' if count > 1 else ''
-                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{count_suffix}{pr_link}')
+                decorations = commit.get_special_decorations()
+                decoration_prefix = f'{decorations} ' if decorations else ''
+                lines.append(f'- {commit.get_actor_badge()} {decoration_prefix}{commit.get_clean_subject()}{count_suffix}{pr_link}')
             lines.append('')
         
         # Features section (all features including bot-generated)
         if features:
             lines.append('### ✨ Features')
             lines.append('')
-            collapsed = collapse_similar_commits(features)
+            collapsed = collapse_similar_commits(features, aggressive_docs=False)
             for commit, count in sorted(collapsed, key=lambda x: x[0].date, reverse=True):
                 pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
                 count_suffix = f' (x{count})' if count > 1 else ''
-                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{count_suffix}{pr_link}')
+                decorations = commit.get_special_decorations()
+                decoration_prefix = f'{decorations} ' if decorations else ''
+                lines.append(f'- {commit.get_actor_badge()} {decoration_prefix}{commit.get_clean_subject()}{count_suffix}{pr_link}')
             lines.append('')
         
         # Bug Fixes section
@@ -285,11 +393,13 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
         if fixes:
             lines.append('### 🐛 Bug Fixes')
             lines.append('')
-            collapsed = collapse_similar_commits(fixes)
+            collapsed = collapse_similar_commits(fixes, aggressive_docs=False)
             for commit, count in sorted(collapsed, key=lambda x: x[0].date, reverse=True):
                 pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
                 count_suffix = f' (x{count})' if count > 1 else ''
-                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{count_suffix}{pr_link}')
+                decorations = commit.get_special_decorations()
+                decoration_prefix = f'{decorations} ' if decorations else ''
+                lines.append(f'- {commit.get_actor_badge()} {decoration_prefix}{commit.get_clean_subject()}{count_suffix}{pr_link}')
             lines.append('')
         
         # Other types grouped together
@@ -298,12 +408,15 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
             lines.append('### 🧹 Chores & Maintenance')
             lines.append('')
             for commit_type in other_types:
-                collapsed = collapse_similar_commits(commits_by_type[commit_type])
+                # Use aggressive collapsing for documentation
+                collapsed = collapse_similar_commits(commits_by_type[commit_type], aggressive_docs=True)
                 for commit, count in sorted(collapsed, key=lambda x: x[0].date, reverse=True):
                     pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
                     type_label = COMMIT_TYPES[commit_type].split(' ', 1)[1].rstrip('s')  # Remove emoji and plural
                     count_suffix = f' (x{count})' if count > 1 else ''
-                    lines.append(f'- {commit.get_actor_badge()} **{type_label}**: {commit.get_clean_subject()}{count_suffix}{pr_link}')
+                    decorations = commit.get_special_decorations()
+                    decoration_prefix = f'{decorations} ' if decorations else ''
+                    lines.append(f'- {commit.get_actor_badge()} {decoration_prefix}**{type_label}**: {commit.get_clean_subject()}{count_suffix}{pr_link}')
             lines.append('')
         
         lines.append('---')
@@ -314,16 +427,19 @@ def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]
 
 def main():
     parser = argparse.ArgumentParser(description='Generate CHANGELOG.md from git history')
-    parser.add_argument('--since', help='Only include commits since this date (YYYY-MM-DD)')
+    parser.add_argument('--since', help='Only include commits since this date (YYYY-MM-DD). Default: repository inception (2025-11-08)')
     parser.add_argument('--output', default='CHANGELOG.md', help='Output file path')
     parser.add_argument('--append', action='store_true', help='Append to existing changelog')
     parser.add_argument('--backfill', action='store_true', help='Generate complete history from inception')
     
     args = parser.parse_args()
     
+    # Default to repository inception if no date specified
+    since_date = args.since if args.since else '2025-11-08'
+    
     # Get commits
-    print(f"Fetching commits{' since ' + args.since if args.since else ' from inception'}...")
-    commits = get_git_commits(since_date=args.since)
+    print(f"Fetching commits since {since_date}...")
+    commits = get_git_commits(since_date=since_date)
     print(f"Found {len(commits)} relevant commits")
     
     if not commits:
@@ -351,6 +467,11 @@ def main():
     bot_generated = len(commits) - user_initiated
     print(f"  User-initiated: {user_initiated}")
     print(f"  Bot-generated: {bot_generated}")
+    
+    # Count commits with PR links
+    with_pr = sum(1 for c in commits if c.pr_number)
+    print(f"  With PR links: {with_pr} ({with_pr*100//len(commits)}%)")
+    
     print(f"  Date range: {min(c.date for c in commits).date()} to {max(c.date for c in commits).date()}")
 
 
