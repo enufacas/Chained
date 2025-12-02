@@ -1,0 +1,12 @@
+# Log Consumer Agent Requirements
+# Inherits from parent requirements.txt but can add specific dependencies
+
+# FastAPI and ASGI server (already in parent)
+# fastapi>=0.100.0
+# uvicorn[standard]>=0.23.0
+
+# HTTP client for sending to error observer (already in parent)
+# httpx>=0.24.0
+
+# Data validation (already in parent)
+# pydantic>=2.0.0

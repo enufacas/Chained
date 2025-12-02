@@ -12,6 +12,8 @@
 # - code-reviewer: Reviews code and provides feedback
 # - data-analyst: Analyzes data and generates insights
 # - image-generator: Generates images for blog posts
+# - error-observer: A2A system agent for error observation and GitHub dispatch
+# - log-consumer: Processes Cloud Run logs and converts to error events
 #
 # Reference:
 # - ADK Cloud Run: https://google.github.io/adk-docs/deploy/cloud-run/
@@ -152,6 +154,8 @@ jobs:
           - code-reviewer
           - data-analyst
           - image-generator
+          - error-observer
+          - log-consumer
 
     steps:
       - name: Checkout code
@@ -423,6 +427,8 @@ jobs:
             ["chained-code-reviewer"]="google_cloud_run_v2_service.code_reviewer"
             ["chained-data-analyst"]="google_cloud_run_v2_service.data_analyst"
             ["chained-image-generator"]="google_cloud_run_v2_service.image_generator"
+            ["chained-error-observer"]="google_cloud_run_v2_service.error_observer"
+            ["chained-log-consumer"]="google_cloud_run_v2_service.log_consumer"
             ["chained-adk-api-server"]="google_cloud_run_v2_service.adk_api_server"
             ["chained-ag-ui-frontend"]="google_cloud_run_v2_service.ag_ui_frontend"
           )
@@ -573,7 +579,7 @@ jobs:
         run: |
           echo "🔍 Verifying ADK agent deployments..."
 
-          for agent in academic-research blog-writer google-trends code-reviewer data-analyst image-generator; do
+          for agent in academic-research blog-writer google-trends code-reviewer data-analyst image-generator error-observer log-consumer; do
             URL=$(gcloud run services describe chained-$agent \
               --region ${{ env.GCP_REGION }} \
               --format 'value(status.url)' 2>/dev/null || echo "")
