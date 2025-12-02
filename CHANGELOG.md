@@ -33,6 +33,14 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Implement main-branch-only automated changelog with 100% PR coverage, codebase area grouping, actor differentiation, auto-merge, and smart deduplication [#3519](https://github.com/enufacas/Chained/pull/3519)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-02 [#3524](https://github.com/enufacas/Chained/pull/3524)
 
+### 🐛 Bug Fixes
+
+- 👤 Implement A2A-native error observer system with GitHub dispatch integration [#3520](https://github.com/enufacas/Chained/pull/3520)
+
+### 🧹 Chores & Maintenance
+
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3531](https://github.com/enufacas/Chained/pull/3531)
+
 ---
 
 ## 2025-12-01
@@ -308,22 +316,10 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 ⚙️ Workflows Research: Claude AI trends, GPT-5.1, and agentic workflow maturity (idea:73) [#3024](https://github.com/enufacas/Chained/pull/3024)
 - 👤 🔧 Agents Complete AI/ML trends investigation (idea:75) - Multi-agent coordination patterns and sustainable growth insights [#3026](https://github.com/enufacas/Chained/pull/3026)
 - 👤 🧠 Learning @create-guru: Acknowledge GitHub Copilot learning session - 2025-11-25 [#3036](https://github.com/enufacas/Chained/pull/3036)
-- 👤 Initial plan (x2) [#3056](https://github.com/enufacas/Chained/pull/3056)
+- 👤 Initial plan [#3056](https://github.com/enufacas/Chained/pull/3056)
 - 🤖 🔧 Agents 📊 Sync agent data to GitHub Pages [#3070](https://github.com/enufacas/Chained/pull/3070)
 - 🤖 🔧 Agents 🔄 Daily agent evaluation and governance [#3067](https://github.com/enufacas/Chained/pull/3067)
 - 🤖 🔧 Agents 🌍 World Model: Agent Evaluation Sync [#3069](https://github.com/enufacas/Chained/pull/3069)
-- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-11-25 [#3032](https://github.com/enufacas/Chained/pull/3032)
-- 👤 🔧 Agents Add visual diagrams for agent instruction architecture [#3029](https://github.com/enufacas/Chained/pull/3029)
-- 👤 @meta-coordinator-system: 2025-11-25 16:17 coordination - merged 9 PRs, closed 1 stale [#2998](https://github.com/enufacas/Chained/pull/2998)
-- 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#3022](https://github.com/enufacas/Chained/pull/3022)
-- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-11-25 [#3014](https://github.com/enufacas/Chained/pull/3014)
-- 👤 🔧 Agents Add collaborative agent orchestrator for multi-agent coordination [#2999](https://github.com/enufacas/Chained/pull/2999)
-- 👤 🧠 Learning 🧠 Learning Summary: GitHub Copilot - 2025-11-25 (@create-guru) [#2975](https://github.com/enufacas/Chained/pull/2975)
-- 👤 🧠 Learning Add Discussion Learning Query API for self-documenting AI [#2981](https://github.com/enufacas/Chained/pull/2981)
-- 👤 Add Code Completion Predictor solution for challenge-ml_code_predictor-1764080154-287095 [#2991](https://github.com/enufacas/Chained/pull/2991)
-- 👤 🔧 Agents Add PR failure learning integration for AI agents (@create-guru) [#2952](https://github.com/enufacas/Chained/pull/2952)
-- 👤 🧠 Learning 🧠 DevOps: AWS Learning Mission Research Report (idea:71) [#2964](https://github.com/enufacas/Chained/pull/2964)
-- 👤 @meta-coordinator-system: Completed 12:26 coordination cycle [#2980](https://github.com/enufacas/Chained/pull/2980)
 
 ### 🐛 Bug Fixes
 
@@ -333,22 +329,14 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Fix: Mark all draft PRs as ready before merge eligibility check [#3048](https://github.com/enufacas/Chained/pull/3048)
 - 👤 [WIP] Troubleshoot error in action run [#3042](https://github.com/enufacas/Chained/pull/3042)
 - 👤 Fix confusing Gemini CLI authentication error with pre-flight validation [#3040](https://github.com/enufacas/Chained/pull/3040)
-- 👤 ⚙️ Workflows Add Vertex AI authentication support to Gemini workflows [#3038](https://github.com/enufacas/Chained/pull/3038)
 
 ### 🧹 Chores & Maintenance
 
 - 🤖 📚 Docs **Documentation**: Add Vertex AI API information to Gemini CLI documentation. [#3045](https://github.com/enufacas/Chained/pull/3045)
-- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3023](https://github.com/enufacas/Chained/pull/3023)
-- 👤 🔧 Agents **Documentation**: Clarify agent orchestration patterns and path-level instructions [#3000](https://github.com/enufacas/Chained/pull/3000)
-- 👤 🔧 Agents **Documentation**: Clarify agent collaboration status and document instruction architecture [#2993](https://github.com/enufacas/Chained/pull/2993)
-- 👤 🔧 Agents **Documentation**: Rewrite README to focus on agent orchestration experiment [#2987](https://github.com/enufacas/Chained/pull/2987)
 - 👤 ⚙️ Workflows **Chore**: Update Gemini workflows to use gemini-3-pro-latest [#3057](https://github.com/enufacas/Chained/pull/3057)
-- 🤖 **Chore**: 🤖 Update pattern repetition analysis (x3) [#3054](https://github.com/enufacas/Chained/pull/3054)
-- 🤖 📊 GitHub Pages **Chore**: 📊 Update timeline data - 2025-11-26 01:25:21 UTC (x5) [#3061](https://github.com/enufacas/Chained/pull/3061)
-- 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#3011](https://github.com/enufacas/Chained/pull/3011)
-- 🤖 **Chore**: 🌍 World Model Update - Pipeline [#3016](https://github.com/enufacas/Chained/pull/3016)
+- 🤖 **Chore**: 🤖 Update pattern repetition analysis [#3054](https://github.com/enufacas/Chained/pull/3054)
+- 🤖 📊 GitHub Pages **Chore**: 📊 Update timeline data - 2025-11-26 01:25:21 UTC (x2) [#3061](https://github.com/enufacas/Chained/pull/3061)
 - 👤 ⚙️ Workflows **Test**: Add autonomous workflow configuration A/B testing with automated variant generation [#3052](https://github.com/enufacas/Chained/pull/3052)
 - 🤖 **Test**: Add a test file [#3043](https://github.com/enufacas/Chained/pull/3043)
-- 👤 📋 Instructions **Test**: Clean up repository root and add path-specific protection instructions [#3001](https://github.com/enufacas/Chained/pull/3001)
 
 ---
