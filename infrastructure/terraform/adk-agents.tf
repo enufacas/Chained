@@ -12,11 +12,16 @@
 # - A2A Protocol: https://a2a-protocol.org/
 # - AG-UI Protocol: https://docs.ag-ui.com/
 #
-# CPU Quota Considerations:
+# CPU Quota and Concurrency Constraints:
 # - Each service uses 0.5 CPU (total: 4 CPUs for 8 services)
 # - All services have cpu_idle=true (scale to zero when not in use)
 # - GCP default quota: varies by region, typically 8-10 CPUs
 # - To increase quota: https://cloud.google.com/run/quotas
+#
+# IMPORTANT: Cloud Run Constraint
+# - When CPU < 1, max_instance_request_concurrency MUST be set to 1
+# - Reference: https://cloud.google.com/run/docs/configuring/cpu
+# - Error if violated: "Total cpu < 1 is not supported with concurrency > 1"
 #
 # NOTE: This file uses variables and providers defined in main.tf and variables.tf
 # =============================================================================
@@ -213,8 +218,9 @@ resource "google_cloud_run_v2_service" "academic_research" {
     }
 
     scaling {
-      min_instance_count = 0
-      max_instance_count = 3
+      min_instance_count              = 0
+      max_instance_count              = 3
+      max_instance_request_concurrency = 1  # Required when CPU < 1
     }
 
     service_account = google_service_account.adk_agents.email
@@ -351,8 +357,9 @@ resource "google_cloud_run_v2_service" "blog_writer" {
     }
 
     scaling {
-      min_instance_count = 0
-      max_instance_count = 3
+      min_instance_count              = 0
+      max_instance_count              = 3
+      max_instance_request_concurrency = 1  # Required when CPU < 1
     }
 
     service_account = google_service_account.adk_agents.email
@@ -481,8 +488,9 @@ resource "google_cloud_run_v2_service" "google_trends" {
     }
 
     scaling {
-      min_instance_count = 0
-      max_instance_count = 3
+      min_instance_count              = 0
+      max_instance_count              = 3
+      max_instance_request_concurrency = 1  # Required when CPU < 1
     }
 
     service_account = google_service_account.adk_agents.email
@@ -602,8 +610,9 @@ resource "google_cloud_run_v2_service" "code_reviewer" {
     }
 
     scaling {
-      min_instance_count = 0
-      max_instance_count = 3
+      min_instance_count              = 0
+      max_instance_count              = 3
+      max_instance_request_concurrency = 1  # Required when CPU < 1
     }
 
     service_account = google_service_account.adk_agents.email
@@ -723,8 +732,9 @@ resource "google_cloud_run_v2_service" "data_analyst" {
     }
 
     scaling {
-      min_instance_count = 0
-      max_instance_count = 3
+      min_instance_count              = 0
+      max_instance_count              = 3
+      max_instance_request_concurrency = 1  # Required when CPU < 1
     }
 
     service_account = google_service_account.adk_agents.email
@@ -844,8 +854,9 @@ resource "google_cloud_run_v2_service" "image_generator" {
     }
 
     scaling {
-      min_instance_count = 0
-      max_instance_count = 3
+      min_instance_count              = 0
+      max_instance_count              = 3
+      max_instance_request_concurrency = 1  # Required when CPU < 1
     }
 
     service_account = google_service_account.adk_agents.email
@@ -1003,8 +1014,9 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
     }
 
     scaling {
-      min_instance_count = 0
-      max_instance_count = 3
+      min_instance_count              = 0
+      max_instance_count              = 3
+      max_instance_request_concurrency = 1  # Required when CPU < 1
     }
 
     service_account = google_service_account.adk_agents.email
@@ -1217,8 +1229,9 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
     }
 
     scaling {
-      min_instance_count = 0
-      max_instance_count = 3
+      min_instance_count              = 0
+      max_instance_count              = 3
+      max_instance_request_concurrency = 1  # Required when CPU < 1
     }
 
     service_account = google_service_account.adk_agents.email
