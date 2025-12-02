@@ -6,13 +6,29 @@ This tool provides a simple interface for consulting Google's Gemini 3 Pro Previ
 during Copilot sessions. It enables the "ask gemini about X" pattern where a human
 can escalate complex problems to Gemini for expert consultation.
 
+**NEW: Code-Fixing Mode** - Specialized mode for getting actual code fixes instead
+of just analysis. Use ask_gemini_fix_code() or --fix-code flag for concrete solutions.
+
 Usage:
-    # As a standalone script
+    # General consultation
     python3 ask_gemini.py "What are the security implications of using regex for input validation?"
     
+    # Code fixing mode (NEW)
+    python3 ask_gemini.py --fix-code "Auth allows expired tokens" \\
+        --file tools/auth.py --code "def validate_token(token): return jwt.decode(token, KEY)"
+    
     # As a Python module
-    from tools.ask_gemini import ask_gemini
+    from tools.ask_gemini import ask_gemini, ask_gemini_fix_code
+    
+    # Get general advice
     response = ask_gemini("How should I structure this API?")
+    
+    # Get code fixes
+    fix = ask_gemini_fix_code(
+        issue_description="Function crashes on None input",
+        file_path="src/utils.py",
+        code_snippet="def process(data): return data.split()"
+    )
 
 Authentication:
     Requires one of:
@@ -93,6 +109,105 @@ See docs/GEMINI_CLI_INTEGRATION.md for detailed setup instructions.
     return None, error
 
 
+def ask_gemini_fix_code(
+    issue_description: str,
+    file_path: Optional[str] = None,
+    code_snippet: Optional[str] = None,
+    model: str = "gemini-3-pro-preview",
+    timeout_seconds: int = 30,
+) -> str:
+    """
+    Consult Gemini specifically for code fixes.
+    
+    This specialized function emphasizes getting actual code implementations
+    rather than just analysis. Use this when you need concrete fixes.
+    
+    Args:
+        issue_description: Description of the code issue/bug
+        file_path: Optional path to the file with the issue
+        code_snippet: Optional current code that needs fixing
+        model: Gemini model to use (default: gemini-3-pro-preview)
+        timeout_seconds: Maximum time to wait for response (default: 30)
+        
+    Returns:
+        Gemini's response with code fixes
+        
+    Raises:
+        RuntimeError: If authentication is not configured or API call fails
+    """
+    # Check authentication
+    mode, error = get_auth_mode()
+    if mode is None:
+        raise RuntimeError(error)
+    
+    # Build specialized code-fixing prompt
+    context_parts = []
+    if file_path:
+        context_parts.append(f"File: {file_path}")
+    if code_snippet:
+        context_parts.append(f"Current Code:\n```\n{code_snippet}\n```")
+    
+    context_str = "\n\n".join(context_parts) if context_parts else ""
+    
+    prompt = f"""You are Gemini 3 Pro Preview, consulted as a code-fixing expert by the Chained autonomous AI ecosystem.
+
+TASK: Provide actual working code to fix the issue described below.
+
+{context_str}
+
+Issue Description:
+{issue_description}
+
+REQUIREMENTS FOR YOUR RESPONSE:
+1. **Show the fixed code** - Provide the complete, corrected implementation
+2. **Before/After comparison** - Show both the problematic code and the fix
+3. **Specific location** - If file path provided, reference it with line numbers
+4. **Implementation steps** - Number the exact steps to apply this fix
+5. **Verification** - Provide the exact command to test the fix
+6. **Brief explanation** - Explain why this fixes the issue (keep short)
+
+FORMAT:
+## Fix for {file_path or "the issue"}
+
+**Before (Problematic Code):**
+```
+[current code]
+```
+
+**After (Fixed Code):**
+```
+[corrected code]
+```
+
+**What Changed:**
+- [Specific change 1]
+- [Specific change 2]
+
+**Why This Fixes It:**
+[Brief explanation]
+
+**Implementation Steps:**
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+**Test Command:**
+```bash
+[command to verify fix]
+```
+
+IMPORTANT: Focus on WORKING CODE first. The user needs an actual implementation, not analysis.
+"""
+    
+    try:
+        if mode == "vertex":
+            return _ask_gemini_vertex(prompt, model, timeout_seconds)
+        else:
+            return _ask_gemini_genai(prompt, model, timeout_seconds)
+    except Exception as e:
+        raise RuntimeError(f"Error consulting Gemini for code fix: {str(e)}") from e
+
+
 def ask_gemini(
     question: str,
     context: Optional[str] = None,
@@ -122,7 +237,14 @@ def ask_gemini(
     # Build the prompt
     prompt = f"""You are Gemini 3 Pro Preview, consulted as an expert by the Chained autonomous AI ecosystem.
 
-Context: You are being consulted to provide expert insights, second opinions, or analysis on a complex problem. Your response will be integrated with the Chained repository's context by a specialized gemini-consultant agent.
+Context: You are being consulted to provide ACTIONABLE solutions, not just analysis. Your response should prioritize:
+1. ACTUAL CODE FIXES when the question involves code issues
+2. SPECIFIC FILE LOCATIONS (path/to/file.py:line_number) where changes are needed
+3. BEFORE/AFTER code examples showing exact changes
+4. CONCRETE IMPLEMENTATION STEPS that can be executed immediately
+5. TEST COMMANDS to verify the fix works
+
+Your response will be integrated with the Chained repository's context by a specialized gemini-consultant agent.
 
 {f"Additional Context: {context}" if context else ""}
 
@@ -130,13 +252,14 @@ Question/Problem:
 {question}
 
 Please provide:
-1. A clear, thoughtful analysis of the problem
-2. Multiple perspectives or approaches where applicable
-3. Specific recommendations with rationale
-4. Any caveats, trade-offs, or considerations
-5. Actionable next steps
+1. **If this is a code issue:** Show the actual code fix with before/after examples
+2. **Identify exact locations:** Specify file paths and line numbers  
+3. **Implementation steps:** Clear, numbered steps to apply the solution
+4. **Verification:** How to test that the fix works
+5. **Explanation:** Why this solution works (AFTER showing the code)
 
-Be thorough but concise. Focus on practical, actionable insights.
+IMPORTANT: Prioritize showing code and solutions FIRST, explanations SECOND.
+Be thorough but focus on ACTIONABLE, IMPLEMENTABLE solutions.
 """
     
     try:
@@ -228,8 +351,12 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Ask a question
+  # Ask a general question
   python3 ask_gemini.py "What are the trade-offs between REST and GraphQL?"
+  
+  # Get a code fix
+  python3 ask_gemini.py --fix-code "Authentication allows expired tokens" \\
+    --file tools/auth.py --code "def validate_token(token): return jwt.decode(token, KEY)"
   
   # Provide additional context
   python3 ask_gemini.py "Should we refactor this code?" --context "High complexity, low test coverage"
@@ -247,11 +374,24 @@ Authentication:
     
     parser.add_argument(
         "question",
+        nargs='?',
         help="Question or problem to ask Gemini about"
     )
     parser.add_argument(
         "-c", "--context",
         help="Additional context to provide with the question"
+    )
+    parser.add_argument(
+        "--fix-code",
+        help="Use code-fixing mode: provide issue description for code fix"
+    )
+    parser.add_argument(
+        "--file",
+        help="File path where the code issue is located (for --fix-code mode)"
+    )
+    parser.add_argument(
+        "--code",
+        help="Current code snippet that needs fixing (for --fix-code mode)"
     )
     parser.add_argument(
         "-m", "--model",
@@ -267,15 +407,38 @@ Authentication:
     
     args = parser.parse_args()
     
+    # Validate arguments
+    if args.fix_code:
+        if not args.fix_code:
+            parser.error("--fix-code requires an issue description")
+        mode = "fix-code"
+        question_text = args.fix_code
+    elif args.question:
+        mode = "general"
+        question_text = args.question
+    else:
+        parser.error("Either provide a question or use --fix-code mode")
+    
     try:
-        print("🤔 Consulting Gemini 3 Pro Preview...\n", file=sys.stderr)
-        
-        response = ask_gemini(
-            question=args.question,
-            context=args.context,
-            model=args.model,
-            timeout_seconds=args.timeout,
-        )
+        if mode == "fix-code":
+            print("🔧 Consulting Gemini for code fix...\n", file=sys.stderr)
+            
+            response = ask_gemini_fix_code(
+                issue_description=question_text,
+                file_path=args.file,
+                code_snippet=args.code,
+                model=args.model,
+                timeout_seconds=args.timeout,
+            )
+        else:
+            print("🤔 Consulting Gemini 3 Pro Preview...\n", file=sys.stderr)
+            
+            response = ask_gemini(
+                question=question_text,
+                context=args.context,
+                model=args.model,
+                timeout_seconds=args.timeout,
+            )
         
         print("✅ Gemini's Response:\n", file=sys.stderr)
         print(response)
